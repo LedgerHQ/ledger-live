@@ -1,6 +1,6 @@
 ---
-"live-mobile": patch
-"ledger-live-mobile-e2e-tests": patch
+"live-mobile": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Record `fetch` traffic in the e2e network log alongside axios, so RTK Query — and therefore

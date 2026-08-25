@@ -250,20 +250,4 @@
 
 - [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
 
-## 0.25.0
-
-### Minor Changes
-
-- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
-
-- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
-
-## 0.25.0-next.0
-
-### Minor Changes
-
-- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
-
-- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

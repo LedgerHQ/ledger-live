@@ -1,5 +1,5 @@
 ---
-"@features/flow-contacts-list": patch
+"@features/flow-contacts-list": minor
 ---
 
 Fix the web ContactAvatar import for compact contact lists

@@ -154,20 +154,4 @@
   - @ledgerhq/live-env@2.37.0-next.0
   - @ledgerhq/live-network@2.6.3-next.0
 
-## 0.8.3
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0
-  - @ledgerhq/live-network@2.6.2
-
-## 0.8.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0-next.0
-  - @ledgerhq/live-network@2.6.2-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

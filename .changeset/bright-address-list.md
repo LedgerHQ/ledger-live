@@ -1,6 +1,6 @@
 ---
 "@features/flow-contacts": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Allow Contacts address groups to be resolved from a contact ID.

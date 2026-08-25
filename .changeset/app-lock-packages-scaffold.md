@@ -1,7 +1,7 @@
 ---
 "@features/platform-app-lock": minor
 "@shared/password-verifier": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Add the two app lock packages the User App Authentication tickets build on: `@shared/password-verifier` (the verifier record and its constant-time comparison) and `@features/platform-app-lock` (protection state schemas, biometrics status unions and errors).

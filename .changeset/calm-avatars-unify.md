@@ -1,7 +1,7 @@
 ---
-"@features/flow-contacts": patch
-"@features/flow-contacts-list": patch
-"@features/platform-contacts": patch
+"@features/flow-contacts": minor
+"@features/flow-contacts-list": minor
+"@features/platform-contacts": minor
 ---
 
 Expose ContactAvatar through the platform root API.

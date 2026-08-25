@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Fix the receive verify-address drawer becoming unusable a few seconds after opening on Android

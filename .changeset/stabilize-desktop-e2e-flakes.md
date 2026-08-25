@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Stabilize desktop Playwright settings and DevTools checks.

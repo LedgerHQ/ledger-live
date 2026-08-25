@@ -1,7 +1,7 @@
 ---
-"live-mobile": patch
-"@ledgerhq/live-e2e-shared": patch
-"ledger-live-mobile-e2e-tests": patch
+"live-mobile": minor
+"@ledgerhq/live-e2e-shared": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what

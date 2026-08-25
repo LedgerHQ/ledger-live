@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Enrich swap `CHECK_TRANSACTION_SIGNATURE` failures with privacy-safe diagnostics.

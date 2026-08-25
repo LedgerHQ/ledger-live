@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-zcash": patch
+"@ledgerhq/coin-zcash": minor
 ---
 
 Send transparent funds without the account's UFVK. Every Zcash send required one, so a public t→t send failed at the device step with "Missing UFVK — account not yet synced" on any account that had not run the viewing-key export flow — which is a device confirmation, and which the send flow deliberately does not ask for (only the private transfer option is gated on it). Transparent funds were therefore unspendable until the user activated their private balance.

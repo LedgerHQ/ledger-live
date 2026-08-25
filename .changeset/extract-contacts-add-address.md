@@ -1,7 +1,7 @@
 ---
 "@features/flow-contacts-add-address": minor
-"@features/platform-contacts": patch
-"@features/flow-contacts": patch
+"@features/platform-contacts": minor
+"@features/flow-contacts": minor
 ---
 
 Extract the Contacts Add address flow and centralize shared Contacts configuration in Platform Contacts.

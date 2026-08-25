@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-sui": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-sui": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Reject a SUI unstake above the staking position's principal, and make the remainder error actionable

@@ -1,6 +1,6 @@
 ---
 "@features/flow-pay-card-auth": minor
-"@shared/env": patch
+"@shared/env": minor
 "live-mobile": minor
 "ledger-live-desktop": minor
 ---

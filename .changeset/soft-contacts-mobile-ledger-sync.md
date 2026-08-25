@@ -1,7 +1,7 @@
 ---
-"@features/flow-contacts": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@features/flow-contacts": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Connect Contacts mutations to Ledger Sync availability and activation on Desktop and Mobile.

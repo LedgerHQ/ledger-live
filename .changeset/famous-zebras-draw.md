@@ -1,10 +1,10 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/live-signer-solana": patch
-"@shared/feature-flags": patch
-"@ledgerhq/types-live": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/live-signer-solana": minor
+"@shared/feature-flags": minor
+"@ledgerhq/types-live": minor
 ---
 
 Add Solana TXC flag

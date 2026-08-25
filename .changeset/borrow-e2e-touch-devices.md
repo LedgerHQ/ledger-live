@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Make the Borrow E2E Speculos approval work on touch devices: dispatch on the device model the way
