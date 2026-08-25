@@ -6,7 +6,7 @@ import {
   type InternetComputerOperation,
   type Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
-import type { Account, ResolvedAccountBridge } from "@ledgerhq/types-live";
+import type { Account, Operation, ResolvedAccountBridge } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import type { AppDispatch } from "~/state-manager/configureStore";
@@ -28,6 +28,7 @@ export const onClickStakeIcp = (
       transaction: bridge.updateTransaction(transaction, { type: "create_neuron" }),
       stepId: "amount",
       disableBacks: ["amount"],
+      onConfirmationHandler: onStakeConfirmed(dispatch, account),
     }),
   );
 };
@@ -69,3 +70,21 @@ export const applyNeuronOperation = (
     }),
   );
 };
+
+/**
+ * Hands the user back to their neurons once a staking transfer succeeds.
+ *
+ * Files the operation itself: supplying `onConfirmationHandler` makes the send modal close without
+ * calling its own `onOperationBroadcasted`, so nothing else would.
+ *
+ * Opens the list rather than the new neuron's manage screen — only a device-signed `list_neurons`
+ * puts that neuron in the snapshot, and the list is where that Sync lives.
+ */
+export const onStakeConfirmed =
+  (dispatch: AppDispatch, account: ICPAccount, knownNeuronId?: string) =>
+  (operation: Operation) => {
+    const icpOperation = operation as InternetComputerOperation;
+    applyNeuronOperation(dispatch, account, icpOperation);
+    const neuronId = knownNeuronId ?? icpOperation.extra.createdNeuronId;
+    dispatch(openModal("MODAL_ICP_LIST_NEURONS", { account, ...(neuronId && { neuronId }) }));
+  };
