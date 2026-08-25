@@ -180,6 +180,7 @@ describe("PerpsDeposit integration", () => {
         <PerpsDepositRoot />
         <PerpsReviewRoot />
       </>,
+      { initialState: { accounts: [fundingAccount] } },
     );
 
     act(() =>

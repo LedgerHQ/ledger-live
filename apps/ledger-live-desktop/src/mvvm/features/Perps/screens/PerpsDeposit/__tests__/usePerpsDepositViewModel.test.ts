@@ -27,11 +27,6 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCountervaluesState: () => ({}),
 }));
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
-  calculate: (_state: unknown, { value }: { value: number }) => value,
-}));
-
 // Prices the typed amount back into the funding currency, in its smallest unit.
 const mockCalculate = jest.fn();
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
@@ -290,19 +285,21 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("hands the review the amount converted into the funding currency", () => {
+
+    mockCalculate.mockReturnValue(2.5e16);
     const { result, onClose } = renderViewModel({
-      draft: { depositAccount: fundingAccount, depositAmount: 20 },
+      draft: { depositAccount: fundedAccount, depositAmount: 20 },
     });
 
     act(() => result.current.handleReview());
 
     expect(mockOpenPerpsReview).toHaveBeenCalledWith({
       receiverAccount,
-      depositAccount: fundingAccount,
-      amountSent: "0.000000000000002",
+      depositAccount: fundedAccount,
+      amountSent: "0.025",
       // The received side is whatever the provider quoted, not a local conversion.
       amountTo: "42",
-      draft: { depositAccount: fundingAccount, depositAmount: 20 },
+      draft: { depositAccount: fundedAccount, depositAmount: 20 },
     });
     expect(onClose).toHaveBeenCalled();
   });
