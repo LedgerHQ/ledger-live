@@ -237,4 +237,94 @@ describe("useRenameAddressDialogViewModel", () => {
     expect(result.current.addressEntry.value).toBe(address.address);
     expect(result.current.isSaving).toBe(false);
   });
+
+  it("GIVEN a failed save WHEN confirming THEN it stays closed without notifying success", async () => {
+    // GIVEN
+    const onCloseRequest = jest.fn();
+    const onSaveStart = jest.fn();
+    const onSaveSuccess = jest.fn();
+    const updateAddress = jest.fn().mockRejectedValue(new Error("device rejected"));
+    const { result } = renderHook(() =>
+      useRenameAddressDialogViewModel({
+        contactId: contact.id,
+        addressId: address.id,
+        currentLabel: address.label,
+        currentAddress: address.address,
+        currencyId: address.currencyId,
+        existingLabels: [],
+        editPort: createEditPort({ updateAddress }),
+        isRequestedOpen: true,
+        onCloseRequest,
+        onSaveStart,
+        onSaveSuccess,
+      }),
+    );
+
+    act(() => {
+      result.current.onDraftLabelChange("Main ETH");
+    });
+
+    // WHEN
+    await act(async () => {
+      await result.current.onConfirm();
+    });
+
+    // THEN
+    expect(onSaveSuccess).not.toHaveBeenCalled();
+    expect(onCloseRequest).toHaveBeenCalledTimes(1);
+    expect(onSaveStart).toHaveBeenCalledTimes(1);
+    expect(result.current.isSaving).toBe(false);
+  });
+
+  it("GIVEN a save handed to the device WHEN confirming THEN it closes before the outcome is known", async () => {
+    // GIVEN
+    const onCloseRequest = jest.fn();
+    const onSaveStart = jest.fn();
+    const onSaveSuccess = jest.fn();
+    let resolveUpdate: () => void = () => undefined;
+    const updateAddress = jest.fn().mockImplementation(
+      () =>
+        new Promise<void>(resolve => {
+          resolveUpdate = () => resolve();
+        }),
+    );
+    const { result } = renderHook(() =>
+      useRenameAddressDialogViewModel({
+        contactId: contact.id,
+        addressId: address.id,
+        currentLabel: address.label,
+        currentAddress: address.address,
+        currencyId: address.currencyId,
+        existingLabels: [],
+        editPort: createEditPort({ updateAddress }),
+        isRequestedOpen: true,
+        onCloseRequest,
+        onSaveStart,
+        onSaveSuccess,
+      }),
+    );
+
+    act(() => {
+      result.current.onDraftLabelChange("Main ETH");
+    });
+
+    // WHEN
+    let confirmed: Promise<void> = Promise.resolve();
+    await act(async () => {
+      confirmed = result.current.onConfirm();
+    });
+
+    // THEN
+    expect(onCloseRequest).toHaveBeenCalledTimes(1);
+    expect(onSaveStart).toHaveBeenCalledTimes(1);
+    expect(onSaveSuccess).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveUpdate();
+      await confirmed;
+    });
+
+    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(onCloseRequest).toHaveBeenCalledTimes(1);
+  });
 });

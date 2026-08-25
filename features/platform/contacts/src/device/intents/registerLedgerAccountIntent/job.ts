@@ -1,5 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
-import { concat, of } from "rxjs";
+import { concat, ignoreElements, of, timer } from "rxjs";
 import { stubProof } from "../stubProof";
 import type { RegisterLedgerAccountIntentInput, RegisterLedgerAccountJobState } from "./types";
 
@@ -11,6 +11,7 @@ export const registerLedgerAccountIntentJob: Job<
   concat(
     of({ type: "pending" } as const),
     of({ type: "awaiting-device-confirmation" } as const),
+    timer(2_000).pipe(ignoreElements()),
     of({
       type: "completed" as const,
       result: { ...input, hmacProof: stubProof("ledger-account-proof") },

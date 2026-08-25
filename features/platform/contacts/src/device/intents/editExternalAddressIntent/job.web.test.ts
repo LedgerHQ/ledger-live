@@ -35,6 +35,10 @@ function executeJob(input: EditExternalAddressIntentInput) {
 }
 
 describe("editExternalAddressIntentJob", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it.each([
     {
       change: "identifier",
@@ -68,11 +72,13 @@ describe("editExternalAddressIntentJob", () => {
     "GIVEN a changed $change WHEN executing THEN it runs only the required steps",
     ({ input, expectedStates }) => {
       // GIVEN
+      jest.useFakeTimers();
       const formatState = (state: EditExternalAddressJobState) =>
         state.type === "awaiting-device-confirmation" ? `${state.type}:${state.step}` : state.type;
 
       // WHEN
       const { states, onResult } = executeJob(input);
+      jest.runAllTimers();
 
       // THEN
       expect(states.map(formatState)).toEqual(expectedStates);
@@ -86,4 +92,35 @@ describe("editExternalAddressIntentJob", () => {
       });
     },
   );
+
+  it("should wait two seconds after each device confirmation", () => {
+    // GIVEN
+    jest.useFakeTimers();
+    const input = {
+      ...baseInput,
+      newAddress: "0x2222222222222222222222222222222222222222",
+    };
+
+    // WHEN
+    const { states, onResult } = executeJob(input);
+    jest.advanceTimersByTime(1_999);
+
+    // THEN
+    expect(states).toEqual([
+      { type: "pending" },
+      { type: "awaiting-device-confirmation", step: "identifier" },
+    ]);
+    expect(onResult).not.toHaveBeenCalled();
+
+    // WHEN
+    jest.advanceTimersByTime(1);
+
+    // THEN
+    expect(states).toEqual([
+      { type: "pending" },
+      { type: "awaiting-device-confirmation", step: "identifier" },
+      { type: "completed" },
+    ]);
+    expect(onResult).toHaveBeenCalledTimes(1);
+  });
 });

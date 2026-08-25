@@ -32,7 +32,7 @@ describe("createEditExternalAddressOperation", () => {
     "GIVEN the corresponding field changes WHEN creating an edit THEN it selects the expected operation",
     ({ label, value, expected }) => {
       // GIVEN
-      const input = { contact, address, label, updatedAddress: value };
+      const input = { contact, address, updatedLabel: label, updatedAddress: value };
 
       // WHEN
       const edit = createEditExternalAddressOperation(input);

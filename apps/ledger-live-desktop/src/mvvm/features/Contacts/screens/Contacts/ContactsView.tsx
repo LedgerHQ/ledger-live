@@ -41,23 +41,29 @@ export function ContactsView({
   dieProps,
   ...pageProps
 }: Readonly<ContactsViewProps>) {
+  const areContactsDialogsHidden = dieProps?.enabled === true;
+
   return (
     <>
       <ContactsFlowView {...pageProps} />
-      <ContactsAddContactDialog {...addContactDialog} />
-      <ContactAddressDetailDialog {...addressDetailDialog} />
-      <ContactsAddAddressFlowDialog {...addAddressFlowDialog} />
-      <ContactsRenameContactDialog {...editDeleteDialogs.renameDialog} />
-      <ContactsDeleteContactDialog {...editDeleteDialogs.deleteDialog} />
-      <ContactsEditSignerDialog {...editDeleteDialogs.signerDialog} />
-      <ContactsEditSignerMismatchDialog {...editDeleteDialogs.signerMismatchDialog} />
-      <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
-      <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
-      <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
-      <ContactsEditSignerMismatchDialog {...addressDetailActionsDialogs.signerMismatchDialog} />
-      {dieProps === undefined ? null : (
-        <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />
+      {areContactsDialogsHidden ? null : (
+        <>
+          <ContactsAddContactDialog {...addContactDialog} />
+          <ContactAddressDetailDialog {...addressDetailDialog} />
+          <ContactsAddAddressFlowDialog {...addAddressFlowDialog} />
+          <ContactsRenameContactDialog {...editDeleteDialogs.renameDialog} />
+          <ContactsDeleteContactDialog {...editDeleteDialogs.deleteDialog} />
+          <ContactsEditSignerDialog {...editDeleteDialogs.signerDialog} />
+          <ContactsEditSignerMismatchDialog {...editDeleteDialogs.signerMismatchDialog} />
+          <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
+          <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
+          <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
+          <ContactsEditSignerMismatchDialog {...addressDetailActionsDialogs.signerMismatchDialog} />
+        </>
       )}
+      {dieProps?.enabled === true ? (
+        <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />
+      ) : null}
     </>
   );
 }

@@ -61,6 +61,23 @@ jest.mock("~/renderer/store", () => ({
   resetStore: jest.fn(),
 }));
 
+// Device intents resolve without a device so these tests cover the dialog flows only.
+// The executor wiring is covered by Contacts.deviceIntents.integration.test.tsx.
+jest.mock("@features/platform-contacts/device", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-contacts/device")>(
+    "@features/platform-contacts/device",
+  );
+  const { createMockContactDeviceIntentsPort } = jest.requireActual<
+    typeof import("@features/platform-contacts")
+  >("@features/platform-contacts");
+  const deviceIntents = createMockContactDeviceIntentsPort();
+
+  return {
+    ...actual,
+    useContactsIntentsOrchestrator: () => ({ deviceIntents, dieProps: undefined }),
+  };
+});
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   ...jest.requireActual<typeof import("@ledgerhq/live-common/bridge/index")>(
     "@ledgerhq/live-common/bridge/index",

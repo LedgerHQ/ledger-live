@@ -135,40 +135,52 @@ export function useContactsViewModel(): ContactsPageViewModel {
     if (selectedContact === undefined) {
       return;
     }
-    const signedAddress = await deviceIntents.registerExternalAddress({
-      contact: selectedContact,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-    });
+    try {
+      const signedAddress = await deviceIntents.registerExternalAddress({
+        contact: selectedContact,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+      });
 
-    const address = contactAddress({
-      id: `address-${uuid()}`,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-      device: signedAddress.addressDeviceContext,
-    });
+      const address = contactAddress({
+        id: `address-${uuid()}`,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+        device: signedAddress.addressDeviceContext,
+      });
 
-    dispatch(
-      addAddress({
-        contactId: addAddressFlowState.selectedContactId,
-        address,
-        deviceCredentials: signedAddress.deviceCredentials,
-      }),
-    );
+      dispatch(
+        addAddress({
+          contactId: addAddressFlowState.selectedContactId,
+          address,
+          deviceCredentials: signedAddress.deviceCredentials,
+        }),
+      );
 
-    analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
-      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
-      network,
-      asset,
-      inputMethod,
-      isEns: inputMethod === "ens",
-      flow: CONTACTS_FLOW.CONTACTS,
-    });
+      analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+        source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+        network,
+        asset,
+        inputMethod,
+        isEns: inputMethod === "ens",
+        flow: CONTACTS_FLOW.CONTACTS,
+      });
 
-    continueFromReview();
-  }, [addAddressFlowState, analytics, contacts, continueFromReview, deviceIntents, dispatch]);
+      continueFromReview();
+    } catch {
+      closeAddAddress();
+    }
+  }, [
+    addAddressFlowState,
+    analytics,
+    closeAddAddress,
+    contacts,
+    continueFromReview,
+    deviceIntents,
+    dispatch,
+  ]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -226,7 +238,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBackAddAddress();
     selectCurrencyForContact(selectedContactId);
   }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
-  const addAddressEntryLabels = useMemo<ContactsAddAddressEntryLabels>(
+  const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
       addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),

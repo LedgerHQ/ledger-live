@@ -1,5 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
-import { concat, of, tap } from "rxjs";
+import { concat, ignoreElements, of, tap, timer } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
 import { stubRenamedContactHmacProof } from "../stubProof";
 import type { RenameContactIntentInput, RenameContactJobState, RenameContactResult } from "./types";
@@ -21,6 +21,7 @@ export const renameContactIntentJob: Job<
   return concat(
     of({ type: "pending" } as const),
     of({ type: "awaiting-device-confirmation" } as const),
+    timer(2_000).pipe(ignoreElements()),
     of({ type: "completed" } as const).pipe(
       tap(() => {
         reporter.report({ type: "success", result });

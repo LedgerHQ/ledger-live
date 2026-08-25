@@ -45,9 +45,11 @@ export function useRenameContactDialogViewModel({
         return;
       }
 
+      // Dismissed upfront: saving hands over to the device flow, and reopening this dialog
+      // once it ends would only flash it before the outcome is applied.
+      onCloseRequest();
       await save();
       onSaveSuccess();
-      onCloseRequest();
     } catch {
       return;
     } finally {

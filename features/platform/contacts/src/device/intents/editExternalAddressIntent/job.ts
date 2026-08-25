@@ -1,5 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
-import { from, tap } from "rxjs";
+import { concat, ignoreElements, of, tap, timer } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
 import { stubEditedAddressHmacRest } from "../stubProof";
 import type {
@@ -50,7 +50,13 @@ export const editExternalAddressIntentJob: Job<
   }
   states.push({ type: "completed" });
 
-  return from(states).pipe(
+  return concat(
+    ...states.map(state =>
+      state.type === "awaiting-device-confirmation"
+        ? concat(of(state), timer(2_000).pipe(ignoreElements()))
+        : of(state),
+    ),
+  ).pipe(
     tap(state => {
       if (state.type === "completed") {
         reporter.report({ type: "success", result });

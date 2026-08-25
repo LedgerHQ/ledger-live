@@ -9,7 +9,7 @@ jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
-const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
+const mockedContactsLedgerSyncStatus = { mockReturnValue: jest.fn() };
 const noop = () => undefined;
 
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
@@ -25,6 +25,9 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 jest.mock("@features/flow-contacts", () => {
   const actual =
     jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
+  const mismatchPort = actual.createMockContactSignerValidationPort({
+    currentSignerId: "signer-b",
+  });
 
   return {
     ...actual,
@@ -32,22 +35,11 @@ jest.mock("@features/flow-contacts", () => {
       deviceIntents: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[0],
       signerValidation?: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[1],
     ) =>
-      actual.useContactsAddressDetailActionsPorts(
-        deviceIntents,
-        signerValidation ??
-          actual.createMockContactSignerValidationPort({
-            currentSignerId: "signer-b",
-          }),
-      ),
+      actual.useContactsAddressDetailActionsPorts(deviceIntents, signerValidation ?? mismatchPort),
     useContactsEditDeletePorts: (
-      signerValidation?: Parameters<typeof actual.useContactsEditDeletePorts>[0],
-    ) =>
-      actual.useContactsEditDeletePorts(
-        signerValidation ??
-          actual.createMockContactSignerValidationPort({
-            currentSignerId: "signer-b",
-          }),
-      ),
+      deviceIntents: Parameters<typeof actual.useContactsEditDeletePorts>[0],
+      signerValidation?: Parameters<typeof actual.useContactsEditDeletePorts>[1],
+    ) => actual.useContactsEditDeletePorts(deviceIntents, signerValidation ?? mismatchPort),
   };
 });
 
