@@ -110,6 +110,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
