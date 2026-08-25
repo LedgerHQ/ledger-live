@@ -48,7 +48,7 @@ import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHead
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
-import HookDynamicContentCards from "~/dynamicContent/useContentCards";
+import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -371,45 +371,46 @@ export default class Root extends Component {
               <SetEnvsFromSettings />
               <SegmentSetup />
               <EvmAddressBookSetup />
-              <HookNotifications />
-              <HookDynamicContentCards />
-              <HookDevTools />
-              <TermsAndConditionMigrateLegacyData />
-              <QueuedBottomSheetsProvider>
-                {/* Two providers, one instance: `I18nextProvider` serves the app's own
+              <BrazeContentCardsProvider>
+                <HookNotifications />
+                <HookDevTools />
+                <TermsAndConditionMigrateLegacyData />
+                <QueuedBottomSheetsProvider>
+                  {/* Two providers, one instance: `I18nextProvider` serves the app's own
                     react-i18next call sites, `I18nProvider` serves the DDD packages through
                     `@shared/i18n`. */}
-                <I18nextProvider i18n={i18n}>
-                  <I18nProvider i18n={i18n}>
-                    <LocaleProvider>
-                      <PlatformAppProviderWrapper>
-                        <SafeAreaProvider>
-                          <ModalSystemPrimer />
-                          <StylesProvider>
-                            <StyledStatusBar />
-                            <NavBarColorHandler />
-                            <AuthPass>
-                              <GestureHandlerRootView style={styles.root}>
-                                <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                  <AppProviders initialCountervalues={initialCountervalues}>
-                                    <AppGeoBlocker>
-                                      <AppVersionBlocker>
-                                        <BridgeSyncProvider>
-                                          <App />
-                                        </BridgeSyncProvider>
-                                      </AppVersionBlocker>
-                                    </AppGeoBlocker>
-                                  </AppProviders>
-                                </WaitForAppReady>
-                              </GestureHandlerRootView>
-                            </AuthPass>
-                          </StylesProvider>
-                        </SafeAreaProvider>
-                      </PlatformAppProviderWrapper>
-                    </LocaleProvider>
-                  </I18nProvider>
-                </I18nextProvider>
-              </QueuedBottomSheetsProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <I18nProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <ModalSystemPrimer />
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <AppGeoBlocker>
+                                        <AppVersionBlocker>
+                                          <BridgeSyncProvider>
+                                            <App />
+                                          </BridgeSyncProvider>
+                                        </AppVersionBlocker>
+                                      </AppGeoBlocker>
+                                    </AppProviders>
+                                  </WaitForAppReady>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nProvider>
+                  </I18nextProvider>
+                </QueuedBottomSheetsProvider>
+              </BrazeContentCardsProvider>
             </RebootProvider>
           ) : (
             <LoadingApp />

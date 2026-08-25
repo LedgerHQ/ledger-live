@@ -4,6 +4,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
 import { applyBrazeConsentTransition, start, updateUserPreferences } from "./braze";
+import { useBrazeContentCards } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 
 type SyncedBrazeIdentity = {
   userId: UserId;
@@ -29,6 +30,7 @@ const HookNotifications = () => {
   const userId = useSelector(userIdSelector);
   const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
+  const { prepareForIdentityTransition, refreshContentCards } = useBrazeContentCards();
   const lastSyncedIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
   const pendingConsentTransitionRef = useRef<Promise<boolean> | null>(null);
   const targetIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
@@ -71,7 +73,12 @@ const HookNotifications = () => {
       lastSyncedIdentity.isTrackedUser !== currentIdentity.isTrackedUser;
 
     if (isConsentTransition) {
-      const transition = Promise.resolve(applyBrazeConsentTransition({ isTrackedUser, userId }))
+      const transition = Promise.resolve(
+        applyBrazeConsentTransition(
+          { isTrackedUser, userId },
+          { prepareForIdentityTransition, refreshContentCards },
+        ),
+      )
         .then(() => true)
         .catch(error => {
           console.warn("Braze consent transition failed", error);
@@ -109,7 +116,13 @@ const HookNotifications = () => {
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     });
     lastSyncedIdentityRef.current = currentIdentity;
-  }, [brazeOptOutIdentityCleanupEnabled, isTrackedUser, userId]);
+  }, [
+    brazeOptOutIdentityCleanupEnabled,
+    isTrackedUser,
+    prepareForIdentityTransition,
+    refreshContentCards,
+    userId,
+  ]);
 
   useEffect(() => {
     syncBrazeIdentityRef.current = syncBrazeIdentity;
