@@ -43,6 +43,7 @@ const StepThree = () => {
     <div data-testid="step-three">
       <p>Current: {currentStep}</p>
       <button onClick={navigation.goToPreviousStep}>Back</button>
+      <button onClick={() => navigation.resetToStep(TEST_STEPS.SECOND)}>Reset to Step Two</button>
     </div>
   );
 };
@@ -112,6 +113,18 @@ describe("FlowWizardOrchestrator", () => {
     await user.click(screen.getByText(/Skip to Step Three/));
 
     expect(screen.getByTestId("step-three")).toBeVisible();
+  });
+
+  it("drops the steps traveled since the target when resetting to a step", async () => {
+    const { user } = renderFlow();
+
+    await user.click(screen.getByText(/Next to Step Two/));
+    await user.click(screen.getByText(/Next to Step Three/));
+    await user.click(screen.getByText(/Reset to Step Two/));
+    expect(screen.getByTestId("step-two")).toBeVisible();
+
+    await user.click(screen.getByText(/Back/));
+    expect(screen.getByTestId("step-one")).toBeVisible();
   });
 
   it("respects custom initial step and history", () => {

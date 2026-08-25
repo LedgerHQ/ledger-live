@@ -168,6 +168,36 @@ describe("Send Flow Integration", () => {
       expect(screen.queryByTestId("send-recipient-card")).not.toBeInTheDocument();
     });
 
+    it("should add a new contact from the recipient card and return to recipient after review", async () => {
+      setMockContacts([], true);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      await user.type(await screen.findByTestId("send-recipient-input"), VALID_EVM_RECIPIENT);
+      await user.click(await screen.findByTestId("send-recipient-card-add-contact"));
+
+      expect(await screen.findByTestId("send-add-contact-step")).toBeVisible();
+      await user.click(screen.getByTestId("send-add-contact-new"));
+
+      expect(await screen.findByTestId("send-add-new-contact-step")).toBeVisible();
+      const nameInput = screen.getByTestId("contacts-add-contact-name-input");
+      await user.type(nameInput, "Benoit");
+      await user.click(screen.getByTestId("contacts-add-contact-save"));
+
+      expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-add-new-contact-step")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-add-address-name-continue"));
+
+      expect(await screen.findByTestId("contacts-add-address-review")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-add-address-review-continue"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("contacts-add-address-review")).not.toBeInTheDocument();
+    });
+
     it("should show the collapsable security card collapsed by default and expand on click", async () => {
       const { user } = renderSendFlow(ethereumAccount);
 

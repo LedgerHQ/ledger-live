@@ -23,6 +23,7 @@ import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
+import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -68,6 +69,7 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
+  const addNewContactHeader = useAddNewContactHeaderState();
   const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
@@ -112,7 +114,10 @@ export function useSendHeaderModel({
     return accountName || availableText || "";
   }, [accountName, availableText]);
 
-  const titleKey = currentStepConfig?.titleKey ?? "newSendFlow.title";
+  const titleKey =
+    currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT
+      ? addNewContactHeader.titleKey
+      : (currentStepConfig?.titleKey ?? "newSendFlow.title");
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
   const title = isSelectingContactAddress
@@ -132,6 +137,11 @@ export function useSendHeaderModel({
 
     if (isSelectingContactAddress) {
       clearSelectedContact();
+      return;
+    }
+
+    if (currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT && addNewContactHeader.onAddressPhaseBack) {
+      addNewContactHeader.onAddressPhaseBack();
       return;
     }
 
@@ -164,6 +174,7 @@ export function useSendHeaderModel({
       close();
     }
   }, [
+    addNewContactHeader,
     backTarget,
     clearSelectedContact,
     close,
