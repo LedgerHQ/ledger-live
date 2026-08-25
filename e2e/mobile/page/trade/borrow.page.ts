@@ -174,16 +174,22 @@ export default class BorrowPage {
 
   private async expectStepDone(doneId: string) {
     await device.disableSynchronization();
+    let done = false;
     try {
-      await waitWebElementByTestId(doneId, { timeout: EXECUTION_STEP_TIMEOUT_MS });
-    } catch {
-      const executionFailed = await this.isExecutionErrorVisible();
-      throw new Error(
-        executionFailed
-          ? `Borrow execution failed before "${doneId}". ${MAINNET_FUNDING_HINT}`
-          : `Borrow step "${doneId}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
-      );
+      await Promise.race([
+        waitWebElementByTestId(doneId, { timeout: EXECUTION_STEP_TIMEOUT_MS }),
+        (async () => {
+          while (!done) {
+            if (await this.isExecutionErrorVisible()) {
+              throw new Error(
+                `Borrow execution failed before "${doneId}". ${MAINNET_FUNDING_HINT}`,
+              );
+            }
+          }
+        })(),
+      ]);
     } finally {
+      done = true;
       await device.enableSynchronization();
     }
   }
