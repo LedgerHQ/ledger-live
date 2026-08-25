@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
@@ -11,7 +10,12 @@ import {
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useSelector } from "~/context/hooks";
-import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import type { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -59,12 +63,20 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const { receiverAccount } = route.params;
 
   const walletState = useSelector(walletSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const { openDrawer } = useModularDrawerController();
 
-  const [depositAccount, setDepositAccount] = useState<AccountLike | undefined>(undefined);
+  const [depositAccountId, setDepositAccountId] = useState<string | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
+
+  /** Read from the store so balances stay live while the form is open. */
+  const depositAccount = useMemo(
+    () => accounts.find(account => account.id === depositAccountId),
+    [accounts, depositAccountId],
+  );
 
   const depositAmount = useMemo(() => {
     const parsed = Number(amountText.replace(/[^0-9.]/g, ""));
@@ -107,6 +119,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
           to: counterValueCurrency,
           value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
           reverse: true,
+          disableRounding: true,
         }) ?? 0,
       ),
     [counterValueCurrency, counterValueUnit.magnitude, countervaluesState, depositAmount],
@@ -120,10 +133,15 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const receiverAccountCounterValue = useMemo(() => {
     const counterValue =
       calculateCountervalue(receiverCurrency, receiverAccount.spendableBalance) ?? new BigNumber(0);
-    return formatCurrencyUnit(counterValueUnit, counterValue, { showCode: false, locale });
+    return formatCurrencyUnit(counterValueUnit, counterValue, {
+      showCode: false,
+      discreet,
+      locale,
+    });
   }, [
     calculateCountervalue,
     counterValueUnit,
+    discreet,
     locale,
     receiverAccount.spendableBalance,
     receiverCurrency,
@@ -138,9 +156,10 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     if (!depositAccountBalanceCounterValue) return null;
     return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
       showCode: false,
+      discreet,
       locale,
     });
-  }, [counterValueUnit, depositAccountBalanceCounterValue, locale]);
+  }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
   const maxAmount = useMemo(
     () => depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? 0,
@@ -199,7 +218,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
       areCurrenciesFiltered: false,
       uiUseCase: PERPS_UI_USE_CASE.fund,
       onAccountSelected: account => {
-        setDepositAccount(account);
+        setDepositAccountId(account.id);
         setAmountText("");
       },
     });
