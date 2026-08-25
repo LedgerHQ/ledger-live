@@ -39,16 +39,20 @@ const OPTED_OUT_ANALYTICS_PROPS = {
   platform: "lwd",
 } as const;
 
+type SharedAnalyticsProps = {
+  deviceModel: "lns" | "lnsp" | "lnx";
+  personalRecoOptIn: boolean;
+  offerType: "discount" | "none";
+  platform: "lwd";
+};
+
 function daysAgoIso(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() - days);
   return date.toISOString();
 }
 
-function expectUpgradeClickTracking(
-  pageName: string,
-  sharedProps: typeof OPTED_IN_ANALYTICS_PROPS,
-) {
+function expectUpgradeClickTracking(pageName: string, sharedProps: SharedAnalyticsProps) {
   expect(track).toHaveBeenCalledWith("button_clicked", {
     button: "upgrade",
     page: pageName,
@@ -123,8 +127,8 @@ describe("LNSUpsellBanner", () => {
     );
 
     it.each([
-      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" },
-      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" },
+      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" as const },
+      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" as const },
     ])(
       "should render for $deviceModelId once its cooldown has elapsed",
       ({ deviceModelId, analyticsValue }) => {
