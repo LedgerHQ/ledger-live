@@ -1,5 +1,15 @@
 # @features/platform-device-intent
 
+## 5.1.0-next.0
+
+### Minor Changes
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the DeviceIntentExecutor component from the package public API.
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Move the Device Intent Executor to the platform layer and use DMK device model IDs throughout its connection contract.
+
+- [#21002](https://github.com/LedgerHQ/ledger-live/pull/21002) [`582f422`](https://github.com/LedgerHQ/ledger-live/commit/582f422ec2fbe8bb852c7a847c3ee0ff0a01ab32) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make DeviceIntentExecutor job lifecycle callbacks optional
+
 ## 6.0.0
 
 ### Patch Changes

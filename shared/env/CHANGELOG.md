@@ -1,5 +1,132 @@
 # @shared/env
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20593](https://github.com/LedgerHQ/ledger-live/pull/20593) [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Start the Baanx login with a PKCE challenge and a CSRF state (LIVE-34738)
+
+  Pressing Login now mints a login attempt client-side — a 16-byte `state` and a 32-byte PKCE verifier,
+  with `code_challenge = BASE64URL(SHA256(verifier))` — and sends it to
+  `GET /v1/auth/oauth/authorize/initiate`, whose `url` answer is opened in the platform
+  secure browser as before. The randomness comes from the platform CSPRNG on each side: `expo-crypto`
+  on mobile, WebCrypto on desktop.
+
+  The redirect URI now reaches the secure browser too, since that is what ends the session:
+  `ASWebAuthenticationSession` matches the callback against it, and so does the Android polyfill. The
+  opener only opens the URL; the redirect goes back to the app, so the browser result is not read and
+  closing the browser shows no error — a cancelled login is not a failed one.
+
+  The initiation carries `mode=api`. Without it the endpoint answers `302` and redirects to the hosted
+  UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead. That answer
+  also carries the JWT of Baanx's programmatic flow, which the hosted UI does not need, so the schema
+  drops it instead of parking a short-lived credential in the cache.
+
+  The request goes through `useInitiateAuthorizeMutation` from `@domain/api-card-management`, which owns
+  the Card Auth contract and injects it into the shared `cardApi` service. Every endpoint there is
+  declarative — `query`, `rawResponseSchema`, `transformResponse`, `responseSchema` — so the wire shape
+  is validated at the boundary and mapped in one place. `cardApiExtra` keeps only what the base query
+  needs: the base URL, the Baanx client key for the `x-client-key` header, and the session accessors.
+
+  The OAuth client id and redirect URI are the app's, so they reach `CardLogin` as an `oauthConfig`
+  prop: one value goes to the initiation and to the secure browser, and the token exchange will send it
+  again. Baanx uses the same value for the client key and the OAuth `client_id`, and the provider matches
+  `ledgerlive://paytab` verbatim on the token exchange. Each platform container opens the returned URL
+  itself, and no host-provided opener is needed. The Baanx secret key stays server-side and is never
+  sent from the apps.
+
+  The challenge is spent on the initiation, and nothing keeps the attempt afterwards. Completing the
+  callback — holding the `state` and the verifier, verifying the `state`, exchanging the code for
+  tokens and storing them in `expo-secure-store` — is the remainder of LIVE-34738 and is not part of
+  this change.
+
+- [#20816](https://github.com/LedgerHQ/ledger-live/pull/20816) [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show the signed-in card holder, and let them log out
+
+  `CardLogout` is a new component, and it is the only one that knows about logging out. It shows the
+  account id and the verification state, which is everything the user schema holds, beside a logout
+  action. Logout tells the provider first, while the session can still authorize that call, then clears
+  the session, the login attempt and the Card cache. A logout on a dead network still logs the user out
+  on this device.
+
+  The two directions stay apart. `CardLogin` runs the login and shows nothing once somebody is signed
+  in; `CardLogout` shows nothing until somebody is. Each one decides that for itself, so the Pay tab
+  places both and passes `CardLogout` nothing.
+
+  They agree through one Redux flag, `payCardAuth.isSignedIn`, because two login machines would each
+  hydrate the session and neither would agree with the other. The machine writes the flag on entering
+  `ready`, `idle` and `error`. `CardLogout` writes it once a logout is through, and the machine takes a
+  `SESSION_ENDED` event to put the login back on offer.
+
+  `CARD_OAUTH_REDIRECT_URI` now defaults to `https://go.ledger.com/ledger/card-baanx`. The provider
+  whitelists an HTTPS address, and it must match on the token exchange too.
+
+  `oauthConfig` gains `deepLink`, which is what closes the secure browser.
+  `ASWebAuthenticationSession` takes the scheme of this value as its `callbackURLScheme`, and the
+  Android polyfill matches the incoming link against the whole of it.
+
+  One value cannot serve both jobs. The provider accepts an `https` redirect URI alone, and only a
+  custom scheme ends a browser session. With no value that matches, the login still completes through
+  the app's own deep link, but nothing closes the browser and it stays on top of the Pay tab.
+
+  Mobile takes the value from `PAY_TAB_DEEP_LINK`, a new constant that sits beside the linking config
+  and shares the path that config maps onto the Pay tab, so the two cannot drift. It is not an
+  environment variable: the scheme is declared in `AndroidManifest.xml` and `Info.plist`, so it cannot
+  change without a release. Desktop passes no `deepLink`, because the user's own browser opens the page
+  and reports nothing back (LIVE-34740).
+
+- [#20998](https://github.com/LedgerHQ/ledger-live/pull/20998) [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: move hedera envs directly to config
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
+- [#20955](https://github.com/LedgerHQ/ledger-live/pull/20955) [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: move hedera envs to config/constants
+
+### Patch Changes
+
+- Updated dependencies [[`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @ledgerhq/live-env@3.1.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

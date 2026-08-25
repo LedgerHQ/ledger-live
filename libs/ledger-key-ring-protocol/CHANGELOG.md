@@ -1,5 +1,16 @@
 # @ledgerhq/live-wallet
 
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#21001](https://github.com/LedgerHQ/ledger-live/pull/21001) [`c0bdd70`](https://github.com/LedgerHQ/ledger-live/commit/c0bdd7075816b44d245832849b28e16f7a169006) Thanks [@KVNLS](https://github.com/KVNLS)! - Prevent keypair generation at each startup and remove zod valdiation which is coslty at startup
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/speculos-transport@0.10.12-next.0
+
 ## 0.20.0
 
 ### Minor Changes

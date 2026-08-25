@@ -1,5 +1,56 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#20895](https://github.com/LedgerHQ/ledger-live/pull/20895) [`eedbb67`](https://github.com/LedgerHQ/ledger-live/commit/eedbb671674c0923b6b273de2ebac1cba7b5f6d2) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Make the Borrow E2E Speculos approval work on touch devices: dispatch on the device model the way
+  the send flow does — swipe to "Hold to sign" then long-press on Stax/Flex/Nano Gen5, right then both
+  on Nano S+/X, "Accept and send" on Nano S — instead of hard-coding Nano button presses that a
+  touchscreen has no way to receive. Clear the "Enable Transaction Check?" opt-in the Ethereum app
+  shows before its first review, which blocks the review and cannot be dismissed by swipes or presses.
+  Report a signer failure as a rejection from the executor rather than an unhandled one that kills the
+  process, and reach the device through the shared helpers so navigation goes through the retry wrapper
+  and honours `SPECULOS_ADDRESS` instead of assuming localhost.
+
+- [#20991](https://github.com/LedgerHQ/ledger-live/pull/20991) [`3bea41d`](https://github.com/LedgerHQ/ledger-live/commit/3bea41dcb6a5ef8d26547be31dee94bc42448e46) Thanks [@jeportie](https://github.com/jeportie)! - Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what
+  `e2e/desktop` already does. The app records the `WebPTXPlayer` handoff URL in a
+  `Config.DETOX`-guarded store and exposes it over the e2e bridge as `getPtxHandoff`, so the
+  specs verify the provider and query parameters without ever loading Transak's or MoonPay's
+  site — removing a dependency on a third party's uptime, and the ~70s per test spent waiting
+  on it. Parsing lives in `libs/live-e2e-shared/src/buySellHandoff.ts` and handles the
+  double-encoded URL that made `new URL()` throw, plus provider aliases such as Mercuryo's
+  `mrcr`. Also fixes the sell flow asserting a minimum amount the flow never types, since it
+  taps the 75% button, and makes the "Buy and sell query parameters" test actually assert
+  query parameters.
+
+- [#20482](https://github.com/LedgerHQ/ledger-live/pull/20482) [`6e30537`](https://github.com/LedgerHQ/ledger-live/commit/6e3053733d826fe7b825143eb2d1aa69617ad9db) Thanks [@jeportie](https://github.com/jeportie)! - fix(e2e): retry Speculos 5xx/NetworkDown errors that live-network wraps into non-Axios errors
+
+- [#20555](https://github.com/LedgerHQ/ledger-live/pull/20555) [`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Isolate wallet sync module failures instead of failing the whole sync: the aggregator validates each module slice on its own and quarantines a broken one, preserving its raw distant value, while every other module keeps syncing. A quarantine is reported as the module key plus the failure kind only, never the offending data.
+
+  A distant document is now typed as what it is — a `DistantDocument` (`Record<string, unknown>`) whose slices are trusted per module — instead of the aggregate of the module schemas that nothing validates. `parseDistantState` is removed: it cast an unvalidated document to a validated type, and the aggregator already narrows the document at runtime. `CloudSyncSDK` drops its `schema` constructor option, which was never applied to anything and only served to infer that same misleading type; the class is now parameterised by its document type directly.
+
+  `recentAddresses` drops its corrupted-address repair path. `CorruptedNestedAddressDistantSchema` and the lenient `z.array(z.unknown())` wrapper that swallowed every bad entry are removed together: a corrupted distant entry now quarantines the module, so the slice is preserved verbatim and reported, instead of being silently rewritten — or, had only the transform been removed, silently dropped. The local-cache repair in `schema.ts`/`store.ts` is untouched; it migrates data on disk, which quarantine does not cover.
+
+### Patch Changes
+
+- Updated dependencies [[`61b4b5f`](https://github.com/LedgerHQ/ledger-live/commit/61b4b5f293524a51f9d34c11e7113c3c923e8dbd), [`26d8617`](https://github.com/LedgerHQ/ledger-live/commit/26d86172869e47608dd0f0e26dfbc905dafa3588), [`2a4b4b1`](https://github.com/LedgerHQ/ledger-live/commit/2a4b4b195a6074b0197e022f7c3ad3cc51b9cf90), [`bb58645`](https://github.com/LedgerHQ/ledger-live/commit/bb586459d2412e667e35bbaeb1c61b69d06aedf0), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`c566744`](https://github.com/LedgerHQ/ledger-live/commit/c566744a1a52db2843b3edeeb57c22043e704655), [`c0bdd70`](https://github.com/LedgerHQ/ledger-live/commit/c0bdd7075816b44d245832849b28e16f7a169006), [`b2a2e9e`](https://github.com/LedgerHQ/ledger-live/commit/b2a2e9ecec155c4ff3fdefa0b22e0ac2226bf830), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`d1ab42f`](https://github.com/LedgerHQ/ledger-live/commit/d1ab42f2b4db3cef7719d25a7b73a4cf223735dd), [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e), [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`32f3b76`](https://github.com/LedgerHQ/ledger-live/commit/32f3b7638dbe8c23fd64f60b8eb5e8dfe8f4c74a), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`f7e5005`](https://github.com/LedgerHQ/ledger-live/commit/f7e5005f306b306042e3022fcb299ef499e7491a), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`4555355`](https://github.com/LedgerHQ/ledger-live/commit/4555355dc1f4162841917325ffd539260322a54d), [`fb4a5bc`](https://github.com/LedgerHQ/ledger-live/commit/fb4a5bc6d78301182f56572ffedbe28bc995f271), [`6e1e0aa`](https://github.com/LedgerHQ/ledger-live/commit/6e1e0aa7b317b7fb5f7c73161198536232b3881e), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`306a681`](https://github.com/LedgerHQ/ledger-live/commit/306a6813eaabfd67dc575bb7bdfc2b52892037df), [`79bd143`](https://github.com/LedgerHQ/ledger-live/commit/79bd143c2b2fe9dd4036ffbf2f75b82afc6e677f), [`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249), [`e11eebe`](https://github.com/LedgerHQ/ledger-live/commit/e11eebedce8093322ce9dd9140be2e1f29817735), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`a826856`](https://github.com/LedgerHQ/ledger-live/commit/a826856200049687f4b3b37f85bb588eaa4fb4a2), [`b3095f5`](https://github.com/LedgerHQ/ledger-live/commit/b3095f5500b76110b5ce2ed1f08aee9f346a40f3), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`a56baa8`](https://github.com/LedgerHQ/ledger-live/commit/a56baa8d0b71460066bc8173767920049aa50e37), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9), [`9d84383`](https://github.com/LedgerHQ/ledger-live/commit/9d84383b5197f7509eaf232c9a5f12efb6fa162f), [`3908965`](https://github.com/LedgerHQ/ledger-live/commit/3908965e8872b6502558b669897028d39c492f7e), [`d7a9847`](https://github.com/LedgerHQ/ledger-live/commit/d7a9847244eeff976b10ae1aee39fadafec3d1e2)]:
+  - @ledgerhq/live-common@37.4.0-next.0
+  - @shared/feature-flags@0.20.0-next.0
+  - @ledgerhq/types-live@6.121.0-next.0
+  - @ledgerhq/live-wallet@1.1.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.21.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
+  - @shared/env@0.4.0-next.0
+  - @shared/cloud-sync-module@0.3.0-next.0
+  - @shared/cloud-sync@0.2.0-next.0
+  - @ledgerhq/live-signer-aleo@0.19.8-next.0
+  - @ledgerhq/device-core@0.11.13-next.0
+  - @ledgerhq/live-signer-evm@0.22.4-next.0
+  - @ledgerhq/live-dmk-speculos@0.10.6-next.0
+  - @ledgerhq/speculos-transport@0.10.12-next.0
+  - @features/platform-wallet-sync@0.1.2-next.0
+
 ## 0.8.0
 
 ### Minor Changes

@@ -1,5 +1,125 @@
 # @features/flow-pay-card-auth
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20810](https://github.com/LedgerHQ/ledger-live/pull/20810) [`bb045d8`](https://github.com/LedgerHQ/ledger-live/commit/bb045d88e3cbeb411643acfc26252e8cb1ce39ac) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Complete the Pay Card login from the Baanx redirect (LIVE-34742)
+
+  An XState 5 machine now owns the journey: it mints and stores the PKCE attempt, starts the
+  authorization, opens the OS browser, compares the `state` on the redirect, exchanges the code, stores
+  the session, and reads `GET /v1/user` into the RTK Query cache. On mobile the redirect arrives either
+  from the browser session or from the `ledgerlive://paytab?code=…&state=…` deep link, and the first one
+  wins. `CardLogin` shows the login action only when there is something to log in to, and renders nothing
+  once the user is signed in.
+
+- [#20593](https://github.com/LedgerHQ/ledger-live/pull/20593) [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Start the Baanx login with a PKCE challenge and a CSRF state (LIVE-34738)
+
+  Pressing Login now mints a login attempt client-side — a 16-byte `state` and a 32-byte PKCE verifier,
+  with `code_challenge = BASE64URL(SHA256(verifier))` — and sends it to
+  `GET /v1/auth/oauth/authorize/initiate`, whose `url` answer is opened in the platform
+  secure browser as before. The randomness comes from the platform CSPRNG on each side: `expo-crypto`
+  on mobile, WebCrypto on desktop.
+
+  The redirect URI now reaches the secure browser too, since that is what ends the session:
+  `ASWebAuthenticationSession` matches the callback against it, and so does the Android polyfill. The
+  opener only opens the URL; the redirect goes back to the app, so the browser result is not read and
+  closing the browser shows no error — a cancelled login is not a failed one.
+
+  The initiation carries `mode=api`. Without it the endpoint answers `302` and redirects to the hosted
+  UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead. That answer
+  also carries the JWT of Baanx's programmatic flow, which the hosted UI does not need, so the schema
+  drops it instead of parking a short-lived credential in the cache.
+
+  The request goes through `useInitiateAuthorizeMutation` from `@domain/api-card-management`, which owns
+  the Card Auth contract and injects it into the shared `cardApi` service. Every endpoint there is
+  declarative — `query`, `rawResponseSchema`, `transformResponse`, `responseSchema` — so the wire shape
+  is validated at the boundary and mapped in one place. `cardApiExtra` keeps only what the base query
+  needs: the base URL, the Baanx client key for the `x-client-key` header, and the session accessors.
+
+  The OAuth client id and redirect URI are the app's, so they reach `CardLogin` as an `oauthConfig`
+  prop: one value goes to the initiation and to the secure browser, and the token exchange will send it
+  again. Baanx uses the same value for the client key and the OAuth `client_id`, and the provider matches
+  `ledgerlive://paytab` verbatim on the token exchange. Each platform container opens the returned URL
+  itself, and no host-provided opener is needed. The Baanx secret key stays server-side and is never
+  sent from the apps.
+
+  The challenge is spent on the initiation, and nothing keeps the attempt afterwards. Completing the
+  callback — holding the `state` and the verifier, verifying the `state`, exchanging the code for
+  tokens and storing them in `expo-secure-store` — is the remainder of LIVE-34738 and is not part of
+  this change.
+
+- [#20983](https://github.com/LedgerHQ/ledger-live/pull/20983) [`eba4d17`](https://github.com/LedgerHQ/ledger-live/commit/eba4d175ad10f1431a222a4fa98481ea4285e891) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Open the Baanx authorize page directly, and drop the CSRF state (LIVE-36301)
+
+  The login no longer asks the backend where to send the user. It builds the authorize URL itself and
+  opens the secure browser on it, and the provider hosts the page and owns the redirect. That removes a
+  network call, a machine state and one way a login could fail.
+
+  ```
+  GET {CARD_API_URL}/v1/auth/oauth2/authorize
+    ?client_id=…&response_type=code
+    &scope=openid profile email offline_access
+    &redirect_uri=…&code_challenge=…&code_challenge_method=S256&prompt=consent
+  ```
+
+  The attempt is now a PKCE pair alone. The redirect carries `code`, and the `state` that used to travel
+  with it is gone, because PKCE already ties the code to the verifier on disk: the provider issues the
+  code against this attempt's challenge, so no other attempt can exchange it. Both token grants move to
+  `/v1/auth/oauth2/token`, and neither repeats `redirect_uri` there: Baanx's contract for that endpoint
+  takes only `grant_type`, `code`, and `code_verifier`.
+
+  `oauthConfig` gains `apiUrl`, which is the host the authorize page lives on.
+
+  `prepareAttempt` builds the authorize URL, rather than the transition that follows it. The URL builder
+  throws on a misconfigured `apiUrl`, and a throw inside an action stops the machine instead of reaching
+  a transition. From the actor it lands on `onError`, which wipes the stored attempt and reports a
+  failure the user can retry.
+
+  A live exchange against Baanx's UAT environment answered with no `refresh_token_expires_in`, which
+  `PayCardSessionResponseSchema` required. That field is gone from the schema, the session, and the
+  stored lifetimes: Baanx's contract carries no lifetime for the refresh token, only for the access
+  token, so nothing here can track one.
+
+- [#20816](https://github.com/LedgerHQ/ledger-live/pull/20816) [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show the signed-in card holder, and let them log out
+
+  `CardLogout` is a new component, and it is the only one that knows about logging out. It shows the
+  account id and the verification state, which is everything the user schema holds, beside a logout
+  action. Logout tells the provider first, while the session can still authorize that call, then clears
+  the session, the login attempt and the Card cache. A logout on a dead network still logs the user out
+  on this device.
+
+  The two directions stay apart. `CardLogin` runs the login and shows nothing once somebody is signed
+  in; `CardLogout` shows nothing until somebody is. Each one decides that for itself, so the Pay tab
+  places both and passes `CardLogout` nothing.
+
+  They agree through one Redux flag, `payCardAuth.isSignedIn`, because two login machines would each
+  hydrate the session and neither would agree with the other. The machine writes the flag on entering
+  `ready`, `idle` and `error`. `CardLogout` writes it once a logout is through, and the machine takes a
+  `SESSION_ENDED` event to put the login back on offer.
+
+  `CARD_OAUTH_REDIRECT_URI` now defaults to `https://go.ledger.com/ledger/card-baanx`. The provider
+  whitelists an HTTPS address, and it must match on the token exchange too.
+
+  `oauthConfig` gains `deepLink`, which is what closes the secure browser.
+  `ASWebAuthenticationSession` takes the scheme of this value as its `callbackURLScheme`, and the
+  Android polyfill matches the incoming link against the whole of it.
+
+  One value cannot serve both jobs. The provider accepts an `https` redirect URI alone, and only a
+  custom scheme ends a browser session. With no value that matches, the login still completes through
+  the app's own deep link, but nothing closes the browser and it stays on top of the Pay tab.
+
+  Mobile takes the value from `PAY_TAB_DEEP_LINK`, a new constant that sits beside the linking config
+  and shares the path that config maps onto the Pay tab, so the two cannot drift. It is not an
+  environment variable: the scheme is declared in `AndroidManifest.xml` and `Info.plist`, so it cannot
+  change without a release. Desktop passes no `deepLink`, because the user's own browser opens the page
+  and reports nothing back (LIVE-34740).
+
+### Patch Changes
+
+- Updated dependencies [[`e732d3e`](https://github.com/LedgerHQ/ledger-live/commit/e732d3e258c653fc83e1474434f3bb02c136ae62), [`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`0ad6182`](https://github.com/LedgerHQ/ledger-live/commit/0ad6182ac7fa955c01a8fd679182f7fe3b83cace), [`eba4d17`](https://github.com/LedgerHQ/ledger-live/commit/eba4d175ad10f1431a222a4fa98481ea4285e891)]:
+  - @features/platform-card@0.3.0-next.0
+  - @domain/api-card-management@0.3.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

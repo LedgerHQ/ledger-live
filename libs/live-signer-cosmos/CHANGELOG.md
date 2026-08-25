@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.4.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-cosmos@1.0.1-next.0
+
 ## 0.4.6
 
 ### Patch Changes

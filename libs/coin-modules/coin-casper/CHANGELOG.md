@@ -1,5 +1,21 @@
 # @ledgerhq/coin-casper
 
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#20886](https://github.com/LedgerHQ/ledger-live/pull/20886) [`98f4802`](https://github.com/LedgerHQ/ledger-live/commit/98f48028b931c5aabf364988c53488e6124cc42e) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement `validateIntent` for the Casper coin module and wire it into `createApi`, porting the `bridge/getTransactionStatus` rules to the Alpaca surface. The legacy bridge is unchanged and stays live as the rollback path, so the tests assert rule parity between the two.
+
+- [#20896](https://github.com/LedgerHQ/ledger-live/pull/20896) [`5125ac7`](https://github.com/LedgerHQ/ledger-live/commit/5125ac7d7c27a76541835d596c122f30d04e759b) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Wire `validateAddress` in the Casper coin module API to the existing address validation logic. `getNextSequence` now returns `0n` instead of throwing, as Casper has no account nonce.
+
+- [#20946](https://github.com/LedgerHQ/ledger-live/pull/20946) [`3908965`](https://github.com/LedgerHQ/ledger-live/commit/3908965e8872b6502558b669897028d39c492f7e) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add a `CoinFrameworkSigner` for Casper so the family can derive addresses and sign through the generic coin adapter. Address derivation, signature tagging and device access are now shared with the legacy bridge instead of duplicated, so the two paths cannot drift; legacy behaviour is unchanged and the adapter flag stays off.
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
+  - @ledgerhq/types-live@6.121.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
+
 ## 3.0.0
 
 ### Major Changes
