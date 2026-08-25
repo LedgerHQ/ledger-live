@@ -24,7 +24,10 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
       source: REQUEST_PAGE,
       enableAccountSelection: true,
       onAccountSelected: (account, parentAccount) => {
-        navigate(ScreenName.PayTabRequestReceive, { account, parentAccount });
+        navigate(ScreenName.PayTabRequestReceive, {
+          accountId: account.id,
+          parentId: parentAccount?.id,
+        });
       },
     });
   }, [openDrawer, navigate]);

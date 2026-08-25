@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Share } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RequestReceiveProps } from "@features/flow-pay-card-request";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";
 import type { PayTabNavigatorParamList } from "../../types";
 import { useTranslation } from "~/context/Locale";
@@ -18,12 +19,17 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
 
   const { t } = useTranslation();
   const { goBack } = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
-  const { params } =
-    useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
-  const { account, parentAccount } = params;
+  const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
+  const { account, parentAccount } = useAccountScreen(route);
+
+  useEffect(() => {
+    if (!account) {
+      goBack();
+    }
+  }, [account, goBack]);
 
   const data = useMemo(
-    () => deriveRequestReceiveData(account, parentAccount),
+    () => (account ? deriveRequestReceiveData(account, parentAccount ?? undefined) : undefined),
     [account, parentAccount],
   );
 
@@ -45,8 +51,8 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
 
   const labels = useMemo(
     () => ({
-      title: t("payTab.request.title", { asset: data.asset.name }),
-      networkLabel: t("payTab.request.networkLabel", { network: data.network }),
+      title: t("payTab.request.title", { asset: data?.asset.name ?? "" }),
+      networkLabel: t("payTab.request.networkLabel", { network: data?.network ?? "" }),
       actions: {
         share: t("payTab.request.actions.share"),
         copy: t("payTab.request.actions.copy"),
@@ -60,13 +66,13 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
 
   return {
     isOpen: true,
-    address: data.address,
-    asset: data.asset,
-    network: data.network,
+    address: data?.address ?? "",
+    asset: data?.asset ?? { name: "", ticker: "" },
+    network: data?.network ?? "",
     page: REQUEST_PAGE,
     labels,
-    assetIcon: data.assetIcon,
-    networkIcon: data.networkIcon,
+    assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
+    networkIcon: data?.networkIcon,
     visibleActions: ["share", "copy", "verify"],
     onShare,
     onCopy,

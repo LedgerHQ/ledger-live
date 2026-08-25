@@ -308,8 +308,9 @@ describe("PayTab integration", () => {
     });
 
     it("shows the request receive screen when an account is selected in the drawer", async () => {
-      const account = genAccount("pay-tab-request", { currency: ethereum });
       const { user, store } = renderPayTab({ holdsUsdc: true });
+      const parentAccount = store.getState().accounts.active[0];
+      const account = parentAccount.subAccounts![0];
 
       await user.press(await screen.findByTestId("action-tile-request"));
 
@@ -318,9 +319,9 @@ describe("PayTab integration", () => {
       });
 
       const callbackId = store.getState().modularDrawer.callbackId;
-      await act(async () => registryActions.executeCallback(callbackId!, account));
+      await act(async () => registryActions.executeCallback(callbackId!, account, parentAccount));
 
-      expect(await screen.findByText("Request Ethereum")).toBeVisible();
+      expect(await screen.findByText("Request USD Coin")).toBeVisible();
       expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
 
       await user.press(screen.getByTestId("pay-card-request-receive-close"));

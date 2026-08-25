@@ -1,4 +1,3 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type PayTabNavigatorParamList = {
@@ -8,7 +7,7 @@ export type PayTabNavigatorParamList = {
    */
   [ScreenName.PayTab]: { code?: string } | undefined;
   [ScreenName.PayTabRequestReceive]: {
-    account: AccountLike;
-    parentAccount?: Account;
+    accountId: string;
+    parentId?: string;
   };
 };
