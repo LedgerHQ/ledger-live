@@ -9866,7 +9866,7 @@
     "inputSubText": "Swap and deposit via SwapKit",
     "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
     "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
-    "selectCurrencyDescription": "No account",
+    "selectCurrencyNoAccount": "No account",
     "review": "Review",
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
