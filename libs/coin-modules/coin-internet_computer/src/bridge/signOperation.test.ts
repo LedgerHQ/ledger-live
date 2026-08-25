@@ -85,4 +85,20 @@ describe("buildSignOperation routing", () => {
     expect(raw.requestId).toMatch(/^[0-9a-f]+$/);
     expect(raw.encodedSignedReadStateBlob).toMatch(/^[0-9a-f]+$/);
   });
+
+  it("types a governance op so it stays out of account history", async () => {
+    const events = await run(makeSigner(), tx({ type: "refresh_voting_power", neuronId: "7" }));
+
+    expect(events.find(e => e.type === "signed").signedOperation.operation.type).toBe("NONE");
+  });
+
+  it.each([
+    ["send", "OUT"],
+    ["create_neuron", "STAKE_NEURON"],
+    ["increase_stake", "TOP_UP_NEURON"],
+  ])("keeps %s in history as a real transfer, typed %s", async (type, expected) => {
+    const events = await run(makeSigner(), tx({ type, recipient: ACCOUNT_ID, memo: "1" } as never));
+
+    expect(events.find(e => e.type === "signed").signedOperation.operation.type).toBe(expected);
+  });
 });

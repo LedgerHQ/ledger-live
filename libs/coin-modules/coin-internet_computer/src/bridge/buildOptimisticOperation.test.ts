@@ -29,10 +29,10 @@ describe("buildOptimisticOperation", () => {
       account,
       tx({ type: "start_dissolving" }),
       "hash",
-      "FEES",
+      "NONE",
     );
     expect(op.fee.toString()).toBe("0");
     expect(op.value.toString()).toBe("0");
-    expect(op.type).toBe("FEES");
+    expect(op.type).toBe("NONE");
   });
 });
