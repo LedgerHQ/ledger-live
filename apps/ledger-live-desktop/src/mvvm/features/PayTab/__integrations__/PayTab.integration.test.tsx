@@ -15,7 +15,7 @@ import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecu
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, makeItem } from "../hooks/__tests__/fixtures";

@@ -1,8 +1,8 @@
 {
-  "name": "@features/flow-pay-card-feature-tour",
-  "version": "0.3.0",
+  "name": "@features/flow-pay-balance",
+  "version": "0.2.0",
   "private": true,
-  "description": "First-time Pay tab feature tour for Ledger Wallet (native bottom sheet, web dialog)",
+  "description": "Shared Pay balance hero (empty and funded states) for Ledger Wallet",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -26,14 +26,18 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-feature-tour"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-balance"
   },
   "dependencies": {
+    "@domain/entity-currency-unit": "workspace:^",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -56,8 +60,6 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "catalog:",
-    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -73,15 +75,10 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:",
-    "react-native-svg": "catalog:",
-    "react-redux": "catalog:"
+    "react-native": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
-      "optional": true
-    },
-    "react-native-svg": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {

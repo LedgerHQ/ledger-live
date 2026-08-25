@@ -1,4 +1,4 @@
-# Pay Card Balance
+# Pay Balance
 
 > [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
 
@@ -13,7 +13,7 @@ Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Rend
 ## Usage
 
 ```tsx
-import { Balance } from "@features/flow-pay-card-balance";
+import { Balance } from "@features/flow-pay-balance";
 
 <Balance
   status={status}
@@ -29,7 +29,7 @@ formatter) and the display `labels` directly, so the views stay props-only and p
 and data access remain at the app composition root.
 
 Store, persistence and test setup should import the slice from
-`@features/flow-pay-card-balance/state` so they do not load the hero UI.
+`@features/flow-pay-balance/state` so they do not load the hero UI.
 
 ## Shared data hook (`useBalanceData`)
 
@@ -39,7 +39,7 @@ stale-filter self-heal all live in one place (LIVE-34898). Each app only writes 
 supplies its portfolio source, formatters and Redux/analytics callbacks:
 
 ```tsx
-import { useBalanceData } from "@features/flow-pay-card-balance";
+import { useBalanceData } from "@features/flow-pay-balance";
 
 return useBalanceData({
   stablecoins,
@@ -92,7 +92,7 @@ component); the platform-agnostic logic lives in `logic/`, the host hook in `hoo
 `state/` (also exported as `./state`) and the shared contracts in `types.ts`.
 
 ```text
-pay-card-balance/
+pay-balance/
 ├── package.json                              # Package metadata and public exports
 └── src/
     ├── __tests__/                            # Tests + shared fixtures (fixtures.tsx, renderWithStyle.web.tsx)

@@ -1,4 +1,4 @@
-# Pay Card Deposit
+# Pay Deposit
 
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
@@ -10,7 +10,7 @@ deposit options (Bank transfer, Swap, Receive, Buy).
 ## Usage
 
 ```tsx
-import { DepositOptions } from "@features/flow-pay-card-deposit";
+import { DepositOptions } from "@features/flow-pay-deposit";
 
 <DepositOptions
   isOpen={isDepositOpen}
@@ -54,7 +54,7 @@ it through its full platform filename.
 Every `index.*` is a pure barrel (`export *` only).
 
 ```text
-pay-card-deposit/
+pay-deposit/
 ├── package.json
 └── src/
     ├── components/DepositOptions/

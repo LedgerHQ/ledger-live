@@ -8,7 +8,7 @@ import {
   type DepositOptionsLabels,
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
-} from "@features/flow-pay-card-deposit";
+} from "@features/flow-pay-deposit";
 import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";

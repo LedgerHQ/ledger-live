@@ -1,7 +1,7 @@
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { withFlagOverrides } from "tests/testSetup";
 import type { PayStablecoins } from "../hooks/usePayStablecoins";

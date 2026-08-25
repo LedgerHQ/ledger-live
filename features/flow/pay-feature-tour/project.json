@@ -1,5 +1,5 @@
 {
-  "name": "@features/flow-pay-card-feature-tour",
+  "name": "@features/flow-pay-feature-tour",
   "targets": {
     "build": {
       "executor": "nx:noop"

@@ -1,11 +1,11 @@
 import React from "react";
-import { Balance } from "@features/flow-pay-card-balance";
-import { DepositOptions } from "@features/flow-pay-card-deposit";
+import { Balance } from "@features/flow-pay-balance";
+import { DepositOptions } from "@features/flow-pay-deposit";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
-import { FeatureTour } from "@features/flow-pay-card-feature-tour";
+import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";

@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
-import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
+import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
 import {
   Balance,
   type ActionTilesProps,
   type BalanceData,
   type BalanceLabels,
-} from "@features/flow-pay-card-balance";
-import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
+} from "@features/flow-pay-balance";
+import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 

@@ -1,4 +1,4 @@
-# @features/flow-pay-card-balance
+# @features/flow-pay-balance
 
 ## 0.2.0
 
