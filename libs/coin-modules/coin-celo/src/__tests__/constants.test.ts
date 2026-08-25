@@ -6,11 +6,12 @@ import {
 } from "../constants";
 
 describe("celo fee currency constants", () => {
-  it("includes CELO, USDT and USDC as fee currency options", () => {
+  it("includes CELO, USDT, USDC and USAT as fee currency options", () => {
     const names = FEE_CURRENCY_OPTIONS.map(option => option.name);
     expect(names).toContain("CELO");
     expect(names).toContain("USDT");
     expect(names).toContain("USDC");
+    expect(names).toContain("USAT");
   });
 
   it("lists all expected fee currency tokens", () => {
@@ -19,6 +20,7 @@ describe("celo fee currency constants", () => {
       "CELO",
       "USDT",
       "USDC",
+      "USAT",
       "PHPm",
       "KESm",
       "ZARm",
@@ -39,13 +41,13 @@ describe("celo fee currency constants", () => {
   });
 
   it("keeps adapter address distinct from token contract for 6 decimals stablecoins", () => {
-    const usdc = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDC");
-    const usdt = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDT");
+    const sixDecimalNames = ["USDT", "USDC", "USAT"];
 
-    expect(usdc?.adapterAddress).toEqual(expect.any(String));
-    expect(usdt?.adapterAddress).toEqual(expect.any(String));
-    expect(usdc?.adapterAddress).not.toEqual(usdc?.contractAddress);
-    expect(usdt?.adapterAddress).not.toEqual(usdt?.contractAddress);
+    for (const name of sixDecimalNames) {
+      const option = FEE_CURRENCY_OPTIONS.find(o => o.name === name);
+      expect(option?.adapterAddress).toEqual(expect.any(String));
+      expect(option?.adapterAddress).not.toEqual(option?.contractAddress);
+    }
   });
 
   it("supports case-insensitive lookup by token contract address", () => {
