@@ -17,7 +17,7 @@ import type {
   AleoOperationExtra,
   AleoOperationExtraRaw,
 } from "../types";
-import { isAleoOperationExtra, isAleoOperationExtraRaw } from "../types";
+import { isAleoOperationExtra, isAleoOperationExtraRaw } from "../logic/utils";
 
 export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
   return {

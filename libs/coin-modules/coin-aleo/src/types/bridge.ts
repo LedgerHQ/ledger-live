@@ -3,8 +3,6 @@ import type {
   Account,
   AccountRaw,
   Operation,
-  OperationExtra,
-  OperationExtraRaw,
   OperationRaw,
   TokenAccount,
   TokenAccountRaw,
@@ -226,16 +224,6 @@ export type AleoOperationExtraRaw = {
   programId?: string;
   transitionId?: string;
 };
-
-export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
-  return extra !== null && typeof extra === "object" && "functionId" in extra;
-}
-
-export function isAleoOperationExtraRaw(
-  extraRaw: OperationExtraRaw,
-): extraRaw is AleoOperationExtraRaw {
-  return extraRaw !== null && typeof extraRaw === "object" && "functionId" in extraRaw;
-}
 
 export type OperationDetailsExtraField = {
   key: keyof AleoOperationExtra;

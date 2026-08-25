@@ -49,6 +49,15 @@ export type AleoAccountInfo = {
   scannedHeight: number;
 };
 
+/** A committee member as the bond flow needs it: the raw tuple, resolved and named. */
+export type AleoValidator = {
+  address: string;
+  name?: string;
+  stake: number;
+  isOpen: boolean;
+  commission: number;
+};
+
 /** `<maxBlockHeight>:<blockNumber>:<transitionId>` — the pinned ceiling, then the row to resume after. */
 export type OperationsCursor = {
   maxBlockHeight: number;

@@ -254,7 +254,7 @@ async function validateBondValidatorIsOpen({
   recipient: string;
 }): Promise<Error | null> {
   try {
-    const validators = await getValidators(account.currency);
+    const validators = await getValidators(account.currency.id);
     const validator = validators.find(({ address }) => address === recipient);
 
     if (validator && !validator.isOpen) {

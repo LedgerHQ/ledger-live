@@ -5,7 +5,10 @@ export type AleoTransactionType = "public" | "private";
 export type AleoCommitteeMember = [number, boolean, number];
 
 export interface AleoCommitteeResponse {
+  id?: string;
+  starting_round?: number;
   members?: Record<string, AleoCommitteeMember>;
+  total_stake?: number;
 }
 
 // Maps a validator address to its human-readable name.

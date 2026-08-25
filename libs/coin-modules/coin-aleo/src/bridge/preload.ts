@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getValidators, type AleoValidator } from "../logic";
+import { getValidators } from "../logic";
+import type { AleoValidator } from "../types";
 
 // Keep the platform's preload cadence aligned with the getValidators LRU TTL so
 // preload does real work (a fresh fetch) rather than being throttled longer than
@@ -18,7 +19,7 @@ export const getPreloadStrategy = () => ({
 // platform persists and later hands back to hydrate().
 export const preload = async (currency: CryptoCurrency): Promise<AleoValidator[]> => {
   try {
-    return await getValidators(currency);
+    return await getValidators(currency.id);
   } catch (error) {
     // Validators are non-critical for account sync; never let a fetch failure
     // block preload. A subsequent getValidators() call (e.g. on modal open)

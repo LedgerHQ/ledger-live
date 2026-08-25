@@ -22,11 +22,10 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
-import { getValidators, AleoValidator } from "@ledgerhq/live-common/families/aleo/logic";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { Transaction, AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
+import { getValidators } from "@ledgerhq/live-common/families/aleo/logic";
 
-function useAleoValidators(search: string, currency: CryptoCurrency) {
+function useAleoValidators(search: string, currencyId: string) {
   const [validators, setValidators] = useState<AleoValidator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -36,7 +35,7 @@ function useAleoValidators(search: string, currency: CryptoCurrency) {
 
     setIsLoading(true);
     setFetchFailed(false);
-    getValidators(currency)
+    getValidators(currencyId)
       .then(validators => {
         if (!cancelled) {
           setValidators(validators);
@@ -57,7 +56,7 @@ function useAleoValidators(search: string, currency: CryptoCurrency) {
     return () => {
       cancelled = true;
     };
-  }, [currency]);
+  }, [currencyId]);
 
   return useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -93,7 +92,7 @@ export default function StepValidator({
   const explorerView = getDefaultExplorerView(account.currency);
 
   const recipient = transaction.recipient || "";
-  const { validators, isLoading, fetchFailed } = useAleoValidators(search, account.currency);
+  const { validators, isLoading, fetchFailed } = useAleoValidators(search, account.currency.id);
 
   const setValidator = useCallback(
     (address: string) =>

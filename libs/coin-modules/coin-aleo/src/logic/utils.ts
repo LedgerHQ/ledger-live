@@ -5,6 +5,8 @@ import type {
   Account,
   AccountLike,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
@@ -48,6 +50,7 @@ import type {
   AleoTransactionIntentData,
   AleoPublicTransaction,
   AleoOperationExtra,
+  AleoOperationExtraRaw,
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
@@ -674,14 +677,23 @@ export function findBestRecordForFee({
   return bestFeeRecord;
 }
 
+/**
+ * Narrows the generic `OperationExtra` to Aleo's shape. `functionId` is the discriminant:
+ * every Aleo extra carries one and no other family's does.
+ */
+export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
+  return extra !== null && typeof extra === "object" && "functionId" in extra;
+}
+
+/** {@link isAleoOperationExtra} for the serialized form. */
+export function isAleoOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is AleoOperationExtraRaw {
+  return extraRaw !== null && typeof extraRaw === "object" && "functionId" in extraRaw;
+}
+
 function isPrivateOperation(operation: Operation): boolean {
-  const { extra } = operation;
-  return (
-    typeof extra === "object" &&
-    extra !== null &&
-    "transactionType" in extra &&
-    extra.transactionType === "private"
-  );
+  return isAleoOperationExtra(operation.extra) && operation.extra.transactionType === "private";
 }
 
 export function splitPrivateAndPublicOperations(
