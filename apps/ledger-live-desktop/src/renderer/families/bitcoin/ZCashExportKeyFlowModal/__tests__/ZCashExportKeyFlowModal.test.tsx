@@ -1,11 +1,14 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, userEvent, waitFor } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { openURL } from "~/renderer/linking";
 import Body from "../Body";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
   const actual = jest.requireActual<Record<PropertyKey, unknown>>(
@@ -108,6 +111,33 @@ describe("ZCash Export UFVK Flow", () => {
         name: /continue/i,
       }),
     ).toBeVisible();
+  });
+
+  it("opens the support article when Learn more is clicked", async () => {
+    const stepId: StepId = "birthday";
+
+    render(
+      <Body
+        stepId={stepId}
+        ufvk={ufvk}
+        ufvkExportError={ufvkExportError}
+        onStepIdChanged={jest.fn()}
+        onUfvkChanged={jest.fn()}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        birthday={birthday}
+        invalidBirthday={invalidBirthday}
+        syncFromZero={syncFromZero}
+        handleBirthdayChange={jest.fn()}
+        handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
+        params={{ account }}
+      />,
+    );
+
+    await userEvent.click(screen.getByText(/learn more/i));
+
+    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/115005177269-zd");
   });
 
   it("should show ufvk step", async () => {
