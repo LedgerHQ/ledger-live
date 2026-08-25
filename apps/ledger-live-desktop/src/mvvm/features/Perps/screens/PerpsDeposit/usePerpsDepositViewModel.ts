@@ -264,6 +264,7 @@ export function usePerpsDepositViewModel(
       depositAccount,
       amountSent: sentAmount,
       amountTo: quote.amountTo.toFixed(),
+      quoteId: quote.quoteId,
       draft: { depositAccount, depositAmount },
     });
     onClose();
