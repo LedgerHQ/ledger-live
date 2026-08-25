@@ -13,7 +13,9 @@ describe("wallet persistence", () => {
   };
 
   it("exports Contacts with the wallet state", () => {
-    expect(exportWalletState({ wallet: initialState, contacts }).contacts).toEqual(contacts.contacts);
+    expect(exportWalletState({ wallet: initialState, contacts }).contacts).toEqual(
+      contacts.contacts,
+    );
   });
 
   it("persists when Contacts change", () => {
