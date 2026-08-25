@@ -117,8 +117,10 @@
       "listNeuron": {
         "title": "Neurons",
         "empty": "You have no neurons yet. Stake ICP to create one.",
-        "lastSynced": "Last synced: {{date}}",
+        "lastSynced": "Last synced:",
         "never": "Never",
+        "decayingTitle": "One of your neurons is losing voting power.",
+        "decayingDescription": "Confirming its following restores it for another six months.",
         "sync": "Refresh neurons"
       },
       "manage": {
