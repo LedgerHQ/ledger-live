@@ -1,4 +1,3 @@
-import React from "react";
 import { renderHook } from "tests/testSetup";
 import type { Card as BrazeCard } from "@braze/web-sdk";
 
@@ -42,14 +41,12 @@ const childCard: BrazeCard =
     },
   } as unknown as BrazeCard;
 
-const leadingSlide = <div data-testid="leading-slide">Leading</div>;
-
 describe("usePortfolioCategoryContentCardsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("routes the leading slide to the category carousel when portfolio categories exist", () => {
+  it("returns renderable portfolio categories", () => {
     mockUseDynamicContent.mockReturnValue({
       categoriesCards: [CATEGORY],
       categoryChildCards: [childCard],
@@ -59,16 +56,12 @@ describe("usePortfolioCategoryContentCardsViewModel", () => {
       trackContentCardEvent: jest.fn(),
     });
 
-    const { result } = renderHook(() =>
-      usePortfolioCategoryContentCardsViewModel({ leadingSlide }),
-    );
+    const { result } = renderHook(() => usePortfolioCategoryContentCardsViewModel());
 
     expect(result.current.categories).toHaveLength(1);
-    expect(result.current.categoryLeadingSlide).toBe(leadingSlide);
-    expect(result.current.portfolioLeadingSlide).toBeUndefined();
   });
 
-  it("routes the leading slide to the portfolio carousel when category children are not renderable", () => {
+  it("drops categories whose children are not renderable", () => {
     const emptyChild: BrazeCard =
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
@@ -90,12 +83,8 @@ describe("usePortfolioCategoryContentCardsViewModel", () => {
       trackContentCardEvent: jest.fn(),
     });
 
-    const { result } = renderHook(() =>
-      usePortfolioCategoryContentCardsViewModel({ leadingSlide }),
-    );
+    const { result } = renderHook(() => usePortfolioCategoryContentCardsViewModel());
 
     expect(result.current.categories).toHaveLength(0);
-    expect(result.current.categoryLeadingSlide).toBeUndefined();
-    expect(result.current.portfolioLeadingSlide).toBe(leadingSlide);
   });
 });
