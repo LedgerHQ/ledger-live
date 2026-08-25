@@ -1,6 +1,6 @@
 import { NEVER, of, throwError } from "rxjs";
 import { ContactDeviceIntentCancelledError } from "../../contactDeviceIntentsPort";
-import { createContactIntentResultReporter, type ContactIntentResult } from "./result";
+import { createContactIntentResultReporter, type ContactIntentResult } from "./resultReporter";
 
 describe("createContactIntentResultReporter", () => {
   it("GIVEN a reported success WHEN the observable finalizes THEN it keeps the success as the only result", () => {

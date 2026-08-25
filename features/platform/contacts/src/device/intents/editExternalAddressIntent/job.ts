@@ -1,6 +1,6 @@
 import type { Job } from "@features/platform-device-intent";
 import { concat, ignoreElements, of, tap, timer } from "rxjs";
-import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
+import { createContactIntentResultReporter, type ContactIntentResult } from "../resultReporter";
 import { stubEditedAddressHmacRest } from "../stubProof";
 import type {
   EditExternalAddressIntentInput,

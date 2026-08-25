@@ -5,6 +5,10 @@ export type ContactIntentResult<Value> =
   | { readonly type: "success"; readonly result: Value }
   | { readonly type: "failure"; readonly error: Error };
 
+/**
+ * Reports one terminal intent result so consumers awaiting `onResult` always settle.
+ * An unsubscribe before normal completion is reported as a cancellation failure.
+ */
 export function createContactIntentResultReporter<Value>(
   onResult: (result: ContactIntentResult<Value>) => void,
 ): Readonly<{

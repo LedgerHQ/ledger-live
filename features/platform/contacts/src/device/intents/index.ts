@@ -4,7 +4,7 @@ export * from "./registerExternalAddressIntent/intentDefinition";
 export * from "./registerExternalAddressIntent/types";
 export * from "./registerLedgerAccountIntent/intentDefinition";
 export * from "./registerLedgerAccountIntent/types";
-export * from "./result";
+export * from "./resultReporter";
 export * from "./renameContactIntent/intentDefinition";
 export * from "./renameContactIntent/types";
 export * from "./renameLedgerAccountIntent/intentDefinition";

@@ -3,7 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
-import type { ContactIntentResult } from "../result";
+import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
 type ChainId = string | number;
