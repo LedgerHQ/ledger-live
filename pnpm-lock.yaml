@@ -6969,9 +6969,6 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
-      react-lottie:
-        specifier: 1.2.10
-        version: 1.2.10(react@19.1.4)
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
@@ -7027,6 +7024,9 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      react-lottie:
+        specifier: 1.2.10
+        version: 1.2.10(react@19.1.4)
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)

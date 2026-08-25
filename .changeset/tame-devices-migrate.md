@@ -1,5 +1,5 @@
 ---
-"@features/platform-device-action-content": patch
+"@features/platform-device-action-content": minor
 "live-mobile": patch
 "ledger-live-desktop": patch
 "@support/jest-features-flow": patch

@@ -24,8 +24,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@shared/env": "workspace:*",
-    "react-lottie": "1.2.10"
+    "@shared/env": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -33,6 +32,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "lottie-react-native": "7.3.6",
+    "react-lottie": "1.2.10",
     "react-native-config": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -46,6 +46,9 @@
       "optional": true
     },
     "lottie-react-native": {
+      "optional": true
+    },
+    "react-lottie": {
       "optional": true
     },
     "react-native-config": {
