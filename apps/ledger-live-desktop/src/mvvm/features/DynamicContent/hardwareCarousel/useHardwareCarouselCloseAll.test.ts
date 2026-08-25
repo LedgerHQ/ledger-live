@@ -44,7 +44,7 @@ describe("useHardwareCarouselCloseAll", () => {
       deviceModel: "lnx",
       personalRecoOptIn: true,
       offerType: "discount",
-      platform: "lld",
+      platform: "lwd",
     });
   });
 
