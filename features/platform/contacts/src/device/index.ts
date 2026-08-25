@@ -1,4 +1,2 @@
-export * from "./errors";
-export * from "./resolveContactDeviceContext";
-export * from "./types";
-export * from "./useContactsIntentsOrchestrator";
+export { useContactsIntentsOrchestrator } from "./useContactsIntentsOrchestrator";
+export type { ContactsDeviceIntentExecutorProps } from "./types";
