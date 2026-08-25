@@ -112,6 +112,7 @@
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-app-lock": "workspace:*",
+    "@features/flow-pay-card": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-pay-card-balance": "workspace:^",
     "@features/flow-pay-card-deposit": "workspace:^",

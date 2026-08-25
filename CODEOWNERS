@@ -127,6 +127,7 @@ features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp
 features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 
 # Wallet — Pay Card
+features/flow/pay-card/                                  @ledgerhq/wallet-xp
 features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
 features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
 features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp

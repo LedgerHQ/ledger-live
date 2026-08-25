@@ -1,14 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
+import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { CardViewModel } from "./types";
-
-/** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
-const MOCK_CARD_BALANCE = 100;
 
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
@@ -22,9 +20,20 @@ export function useCardViewModel(): CardViewModel {
     [unit, locale],
   );
 
+  // Baanx uses the same value for the client key header and the OAuth `client_id`.
+  const oauthConfig: CardViewModel["oauthConfig"] = useMemo(
+    () => ({
+      apiUrl: getEnv("CARD_API_URL"),
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+    }),
+    [],
+  );
+
   return {
-    balance: MOCK_CARD_BALANCE,
     formatCountervalue,
     balanceLabel: t("payTab.card.balanceLabel"),
+    oauthConfig,
   };
 }

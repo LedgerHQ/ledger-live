@@ -1,9 +1,7 @@
 import React from "react";
-import { CardLogin, CardLogout, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
-import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
@@ -15,14 +13,6 @@ import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
 import { usePayTabNewPayment } from "./hooks/usePayTabNewPayment";
 import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
-
-// Baanx uses the same value for the client key header and the OAuth `client_id`.
-const oauthConfig: CardLoginOauthConfig = {
-  apiUrl: getEnv("CARD_API_URL"),
-  clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
-  // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
-  redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
-};
 
 const PayTab = () => {
   const balance = usePayCardBalance();
@@ -54,10 +44,6 @@ const PayTab = () => {
           onExit={verify.deviceIntent.onExit}
         />
       )}
-      {/* Each one decides whether it belongs on screen: the login while nobody is signed in, and
-          the logout once somebody is. */}
-      <CardLogin oauthConfig={oauthConfig} />
-      <CardLogout />
       <FeatureTour {...featureTour} />
     </div>
   );

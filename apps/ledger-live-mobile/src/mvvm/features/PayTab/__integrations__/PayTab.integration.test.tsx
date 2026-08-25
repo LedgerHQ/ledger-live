@@ -25,12 +25,15 @@ jest.mock("~/analytics", () => ({
   track: (...args: unknown[]) => mockTrack(...args),
 }));
 
-jest.mock("@features/flow-pay-card-auth", () => {
+jest.mock("@features/flow-pay-card", () => {
   const ReactModule = require("react");
   const { View } = require("react-native");
   return {
-    CardLogin: () => ReactModule.createElement(View, { testID: "card-login" }),
-    CardLogout: () => ReactModule.createElement(View, { testID: "card-logout" }),
+    Card: () =>
+      ReactModule.createElement(ReactModule.Fragment, null, [
+        ReactModule.createElement(View, { testID: "card-login", key: "login" }),
+        ReactModule.createElement(View, { testID: "card-logout", key: "logout" }),
+      ]),
   };
 });
 
