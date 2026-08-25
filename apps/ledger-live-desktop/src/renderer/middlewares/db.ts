@@ -165,14 +165,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (
     oldState.wallet &&
-    walletStateExportShouldDiffer(
-      oldState.wallet,
-      newState.wallet,
-      oldState.contacts,
-      newState.contacts,
-    )
+    walletStateExportShouldDiffer(oldState, newState)
   ) {
-    setKey("app", "wallet", exportWalletState(newState.wallet, newState.contacts));
+    setKey("app", "wallet", exportWalletState(newState));
   }
 
   if (accountsPersistedStateChanged(oldState.accounts, newState.accounts)) {

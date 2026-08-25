@@ -13,6 +13,7 @@ import {
   updateRecentAddresses,
   type RecentAddressesState,
 } from "@domain/entity-recent-addresses";
+import type { State } from ".";
 
 export const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,
@@ -37,32 +38,29 @@ export type ExportedWalletState = {
   recentAddresses: RecentAddressesState;
 };
 
-export const exportWalletState = (
-  state: WalletState,
-  contacts: ContactsState,
-): ExportedWalletState => ({
-  walletSyncState: state.walletSync.walletSyncState,
-  nonImportedAccountInfos: state.nonImportedAccountInfos,
+type WalletPersistenceState = Pick<State, "wallet" | "contacts">;
+
+export const exportWalletState = (state: WalletPersistenceState): ExportedWalletState => ({
+  walletSyncState: state.wallet.walletSync.walletSyncState,
+  nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
   accountsData: {
-    accountNames: Array.from(state.accountNames),
-    starredAccountIds: Array.from(state.starredAccountIds),
+    accountNames: Array.from(state.wallet.accountNames),
+    starredAccountIds: Array.from(state.wallet.starredAccountIds),
   },
-  contacts: contacts.contacts,
-  recentAddresses: state.recentAddresses,
+  contacts: state.contacts.contacts,
+  recentAddresses: state.wallet.recentAddresses,
 });
 
 export const walletStateExportShouldDiffer = (
-  a: WalletState,
-  b: WalletState,
-  aContacts: ContactsState,
-  bContacts: ContactsState,
+  a: WalletPersistenceState,
+  b: WalletPersistenceState,
 ): boolean =>
-  a.walletSync.walletSyncState !== b.walletSync.walletSyncState ||
-  a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
-  a.accountNames !== b.accountNames ||
-  a.starredAccountIds !== b.starredAccountIds ||
-  aContacts.contacts !== bContacts.contacts ||
-  a.recentAddresses !== b.recentAddresses;
+  a.wallet.walletSync.walletSyncState !== b.wallet.walletSync.walletSyncState ||
+  a.wallet.nonImportedAccountInfos !== b.wallet.nonImportedAccountInfos ||
+  a.wallet.accountNames !== b.wallet.accountNames ||
+  a.wallet.starredAccountIds !== b.wallet.starredAccountIds ||
+  a.contacts.contacts !== b.contacts.contacts ||
+  a.wallet.recentAddresses !== b.wallet.recentAddresses;
 
 export const importWalletState =
   (payload: Partial<ExportedWalletState>) =>

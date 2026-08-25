@@ -13,16 +13,14 @@ describe("wallet persistence", () => {
   };
 
   it("exports Contacts with the wallet state", () => {
-    expect(exportWalletState(INITIAL_STATE, contacts).contacts).toEqual(contacts.contacts);
+    expect(exportWalletState({ wallet: INITIAL_STATE, contacts }).contacts).toEqual(contacts.contacts);
   });
 
   it("persists when Contacts change", () => {
     expect(
       walletStateExportShouldDiffer(
-        INITIAL_STATE,
-        INITIAL_STATE,
-        { contacts: mockEmptyContacts() },
-        contacts,
+        { wallet: INITIAL_STATE, contacts: { contacts: mockEmptyContacts() } },
+        { wallet: INITIAL_STATE, contacts },
       ),
     ).toBe(true);
   });

@@ -165,7 +165,7 @@ type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
 const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
   accounts: [],
   trustchain: trustchainInitialState,
-  wallet: exportWalletState(walletInitialState, contactsInitialState),
+  wallet: exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
 };
 
 for (const [, keyPath] of encryptedDataPaths) {
