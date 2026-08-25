@@ -22,6 +22,38 @@ type DepositAccountSelectorProps = Readonly<{
   onSelect: () => void;
 }>;
 
+function DepositAccountDescription({
+  accountName,
+  counterValue,
+  exceedsBalance,
+  missingAccount,
+}: Pick<
+  DepositAccountSelectorProps,
+  "accountName" | "counterValue" | "exceedsBalance" | "missingAccount"
+>) {
+  const { t } = useTranslation();
+
+  if (accountName === null) {
+    return (
+      <span className={cn(missingAccount && "text-error")}>
+        {t("perpsDeposit.selectCurrencyNoAccount")}
+      </span>
+    );
+  }
+
+  if (counterValue === null) return <span>{accountName}</span>;
+
+  return (
+    <Trans
+      i18nKey="perpsDeposit.selectCurrencyAccount"
+      values={{ accountName, counterValue }}
+      components={{
+        balance: <span className={cn(exceedsBalance && "text-error")} />,
+      }}
+    />
+  );
+}
+
 export function DepositAccountSelector({
   ticker,
   ledgerId,
@@ -46,19 +78,12 @@ export function DepositAccountSelector({
             {t("perpsDeposit.selectCurrencyTitle", { currencyTicker: ticker })}
           </ListItemTitle>
           <ListItemDescription>
-            {accountName && counterValue ? (
-              <Trans
-                i18nKey="perpsDeposit.selectCurrencyAccount"
-                values={{ accountName, counterValue }}
-                components={{
-                  balance: <span className={cn(exceedsBalance && "text-error")} />,
-                }}
-              />
-            ) : (
-              <span className={cn(missingAccount && "text-error")}>
-                {t("perpsDeposit.selectCurrencyDescription")}
-              </span>
-            )}
+            <DepositAccountDescription
+              accountName={accountName}
+              counterValue={counterValue}
+              exceedsBalance={exceedsBalance}
+              missingAccount={missingAccount}
+            />
           </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
