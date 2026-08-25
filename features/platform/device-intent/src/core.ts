@@ -51,8 +51,9 @@ export type DeviceExtractedContext = {
 /**
  * Execution logic for one step of a flow.
  *
- * A job is called with the connected device, the extracted device context and
- * step-specific input, and returns an `Observable` that emits typed state
+ * A job is called with the connected device, the extracted device context,
+ * step-specific input, and an `onResult` callback for reporting a typed
+ * consumer-facing result. It returns an `Observable` that emits typed state
  * updates (`JobState`) as it progresses.
  *
  * @typeParam JobState - Discriminated union of states emitted by this job.
