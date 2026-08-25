@@ -403,6 +403,64 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
       expect(onUfvkChanged).toHaveBeenCalledWith("", null, exportError);
     });
   });
+
+  it("disables Continue on the birthday step when the birthday is invalid", async () => {
+    render(
+      <RealBody
+        stepId="birthday"
+        ufvk={ufvk}
+        ufvkExportError={ufvkExportError}
+        onStepIdChanged={jest.fn()}
+        onUfvkChanged={jest.fn()}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        birthday="2000-02-11"
+        invalidBirthday
+        syncFromZero={false}
+        handleBirthdayChange={jest.fn()}
+        handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
+        params={{ account }}
+      />,
+      {
+        initialState: {
+          settings: AFTER_ONBOARDING_STATE,
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+        },
+      },
+    );
+
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+  });
+
+  it("enables Continue on the birthday step when the birthday is valid", async () => {
+    render(
+      <RealBody
+        stepId="birthday"
+        ufvk={ufvk}
+        ufvkExportError={ufvkExportError}
+        onStepIdChanged={jest.fn()}
+        onUfvkChanged={jest.fn()}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        birthday={birthday}
+        invalidBirthday={false}
+        syncFromZero={false}
+        handleBirthdayChange={jest.fn()}
+        handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
+        params={{ account }}
+      />,
+      {
+        initialState: {
+          settings: AFTER_ONBOARDING_STATE,
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+        },
+      },
+    );
+
+    expect(screen.getByRole("button", { name: /continue/i })).toBeEnabled();
+  });
 });
 
 describe("ZCash Export UFVK Flow - Persistence integration", () => {
