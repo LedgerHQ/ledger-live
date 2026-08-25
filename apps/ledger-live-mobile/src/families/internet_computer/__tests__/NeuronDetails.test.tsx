@@ -1,12 +1,19 @@
 import {
+  E8S_PER_ICP,
   ICP_FEES,
   MIN_NEURON_STAKE,
+  NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_7_DAYS,
   SECONDS_IN_DAY,
+  SECONDS_IN_FOUR_YEARS,
   SECONDS_IN_MONTH,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
-import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
+import {
+  NeuronState,
+  type ICPNeuron,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { render, screen } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -43,6 +50,24 @@ jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
   useICPNeuronById: () => neuron,
 }));
 
+// 1 ICP at both bonuses maxed (3x delay, 1.25x age): potential voting power is exactly 3.75 ICP.
+const fullyBonused = (overrides: Partial<ICPNeuron> = {}) =>
+  makeHealthyNeuron({
+    controller: CONTROLLER,
+    cachedNeuronStakeE8s: BigInt(E8S_PER_ICP),
+    dissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
+    dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) },
+    ageSeconds: BigInt(SECONDS_IN_FOUR_YEARS),
+    ...overrides,
+  });
+
+// Pinned for the whole suite: the decayed figures below are asserted to the digit, and a second
+// elapsing between fixture and render turns 1.875 ICP into 1.87499858.
+const FIXED_NOW_MSECS = 1_800_000_000_000;
+
+const refreshedSecondsAgo = (seconds: number) =>
+  BigInt(Math.floor(FIXED_NOW_MSECS / 1000) - Math.floor(seconds));
+
 const renderDetails = () =>
   render(
     <NeuronDetails
@@ -55,10 +80,15 @@ const renderDetails = () =>
 
 describe("NeuronDetails", () => {
   beforeEach(() => {
+    jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
     neuron = makeHealthyNeuron({ controller: CONTROLLER });
     principal = CONTROLLER;
     spendableBalance = new BigNumber(MIN_NEURON_STAKE);
     mockNavigate.mockClear();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("offers the controller-only actions when the account controls the neuron", () => {
@@ -189,6 +219,57 @@ describe("NeuronDetails", () => {
 
     expect(screen.getByText(/Voting power is decaying/)).toBeVisible();
     expect(screen.queryByText(/starts decaying/)).toBeNull();
+  });
+
+  // A freshly staked neuron defaults to a 7-day delay, so this is the first-stake path.
+  it("hides the whole periodic-confirmation row below the voting threshold", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+      dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) },
+    });
+
+    renderDetails();
+
+    expect(screen.queryByText("Confirm following")).toBeNull();
+    expect(screen.queryByText(/decaying/)).toBeNull();
+  });
+
+  it("quotes the potential figure while nothing has decayed yet", () => {
+    neuron = fullyBonused();
+
+    renderDetails();
+
+    expect(screen.getByText("3.75 ICP")).toBeVisible();
+  });
+
+  it("reduces the figure in step with the decay the row beside it announces", () => {
+    neuron = fullyBonused({
+      votingPowerRefreshedTimestampSeconds: refreshedSecondsAgo(
+        NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS + NNS_CLEAR_FOLLOWING_AFTER_SECONDS / 2,
+      ),
+    });
+
+    renderDetails();
+
+    // Half the decay window has passed, so the canister counts half of the 3.75 ICP potential.
+    expect(screen.getByText(/Voting power is decaying/)).toBeVisible();
+    expect(screen.getByText("1.875 ICP")).toBeVisible();
+    expect(screen.queryByText("3.75 ICP")).toBeNull();
+  });
+
+  it("reads None once the window has fully elapsed, matching its own warning", () => {
+    neuron = fullyBonused({
+      votingPowerRefreshedTimestampSeconds: refreshedSecondsAgo(
+        NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS * 4,
+      ),
+    });
+
+    renderDetails();
+
+    expect(screen.getByText(/Voting power lost/)).toBeVisible();
+    expect(screen.getByText("None")).toBeVisible();
+    expect(screen.queryByText("3.75 ICP")).toBeNull();
   });
 
   // Staked maturity belongs to two totals — the maturity the neuron holds, and the base its voting

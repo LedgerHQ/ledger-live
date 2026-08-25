@@ -1,9 +1,12 @@
-import { SECONDS_IN_DAY } from "@ledgerhq/live-common/families/internet_computer/consts";
+import {
+  SECONDS_IN_7_DAYS,
+  SECONDS_IN_DAY,
+} from "@ledgerhq/live-common/families/internet_computer/consts";
 import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import React from "react";
 import RefreshVotingPower from "../NeuronManageFlow/RefreshVotingPower";
-import { ICP_UNIT, makeHealthyNeuron, makeICPAccount } from "./testUtils";
+import { ICP_UNIT, makeHealthyNeuron, makeICPAccount, makeNeuron } from "./testUtils";
 
 // The confirmation window is six months at full power, then one month of decay, then power is lost.
 // The fixture ages below are chosen to land in each of those three bands.
@@ -57,6 +60,23 @@ describe("RefreshVotingPower", () => {
     renderScreen();
 
     expect(screen.getByText(/None of your neurons/, { exact: false })).toBeVisible();
+  });
+
+  // The canister refreshes such a neuron all the same, so the timestamp filter above misses it.
+  it("leaves out neurons whose dissolve delay is too short to vote", () => {
+    neurons = [
+      makeNeuron({
+        id: 1n,
+        dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+        votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
+      }),
+      refreshedDaysAgo(2n, 0),
+    ];
+
+    renderScreen();
+
+    expect(screen.getAllByText("Confirm")).toHaveLength(1);
+    expect(screen.getByText("2")).toBeVisible();
   });
 
   it("marks a neuron that is already decaying, so it does not read like a healthy one", () => {
