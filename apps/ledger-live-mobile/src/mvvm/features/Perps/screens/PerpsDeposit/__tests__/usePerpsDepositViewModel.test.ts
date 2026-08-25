@@ -10,9 +10,11 @@ jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
+const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
-  useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
+  useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
+    mockCalculateCountervalue(currency, value),
   useCountervaluesState: () => ({}),
 }));
 
@@ -77,6 +79,7 @@ function typeAmount(pressAmountKey: (key: string) => void, amount: string) {
 describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
@@ -167,6 +170,24 @@ describe("usePerpsDepositViewModel", () => {
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
+  });
+
+  it("holds back rather than blaming the balance while the funding rate is missing", () => {
+   
+    mockCalculateCountervalue.mockReturnValue(null as unknown as BigNumber);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+    typeAmount(result.current.pressAmountKey, "20");
+
+    expect(result.current.exceedsBalance).toBe(false);
+    expect(result.current.statusError).toBeNull();
+    expect(result.current.maxAmount).toBe(0);
+
+    expect(result.current.canReview).toBe(false);
+    expect(quotedAmount()).toBe("");
   });
 
   it("enables the review CTA once a funding account and amount are set", () => {

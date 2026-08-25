@@ -167,11 +167,15 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
   const maxAmount = useMemo(
-    () => depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? 0,
+    () =>
+      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
-  const selectMax = useCallback(() => selectAmountRatio(maxAmount), [maxAmount, selectAmountRatio]);
+  const selectMax = useCallback(() => {
+    if (maxAmount === null) return;
+    selectAmountRatio(maxAmount);
+  }, [maxAmount, selectAmountRatio]);
 
   const submitError = useMemo(
     () =>
@@ -185,7 +189,9 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const exceedsBalance = submitError !== null;
   const missingAccount = !depositAccount && depositAmount > 0;
-  const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && submitError === null;
+ 
+  const isFormComplete =
+    depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
 
   const sentAmount = useMemo(() => {
     if (!isFormComplete || !depositAccount || !depositCurrency) return "";
@@ -255,7 +261,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
       ? accountNameWithDefaultSelector(walletState, depositAccount)
       : null,
     depositAccountCounterValue,
-    maxAmount,
+    maxAmount: maxAmount ?? 0,
     selectMax,
     statusError,
     canReview,
