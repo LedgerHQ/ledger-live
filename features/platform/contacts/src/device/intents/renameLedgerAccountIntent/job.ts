@@ -1,6 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
 import { concat, ignoreElements, of, timer } from "rxjs";
-import { stubProof } from "../stubProof";
 import type { RenameLedgerAccountIntentInput, RenameLedgerAccountJobState } from "./types";
 
 // Temporary deterministic stub until the ContactsManager integration lands.
@@ -20,7 +19,7 @@ export const renameLedgerAccountIntentJob: Job<
         derivationPath: input.derivationPath,
         blockchainFamily: input.blockchainFamily,
         chainId: input.chainId,
-        hmacProof: stubProof("renamed-ledger-account-proof"),
+        hmacProof: "contacts-die-stub-renamed-ledger-account-proof",
       },
     }),
   );

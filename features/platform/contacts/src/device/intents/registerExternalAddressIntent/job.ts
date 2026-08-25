@@ -1,7 +1,10 @@
 import type { Job } from "@features/platform-device-intent";
+import {
+  mockDeviceContactGroupCredentials,
+  mockExternalAddressDeviceContext,
+} from "@domain/entity-contact/schema.mock";
 import { concat, ignoreElements, of, tap, timer } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../resultReporter";
-import { stubDeviceContactGroupCredentials, stubExternalAddressDeviceContext } from "../stubProof";
 import type {
   RegisterExternalAddressIntentInput,
   RegisterExternalAddressJobState,
@@ -15,6 +18,8 @@ export const registerExternalAddressIntentJob: Job<
   ContactIntentResult<RegisterExternalAddressResult>
 > = ({ input, onResult }) => {
   const reporter = createContactIntentResultReporter(onResult);
+  const deviceContactGroupCredentials = mockDeviceContactGroupCredentials();
+  const externalAddressDeviceContext = mockExternalAddressDeviceContext();
   const result: RegisterExternalAddressResult = {
     mode: input.existingContactGroup === undefined ? "newContactGroup" : "existingContactGroup",
     contactName: input.contactName,
@@ -23,9 +28,9 @@ export const registerExternalAddressIntentJob: Job<
     blockchainFamily: input.blockchainFamily,
     chainId: input.chainId,
     groupHandle:
-      input.existingContactGroup?.groupHandle ?? stubDeviceContactGroupCredentials.groupHandle,
-    hmacProof: input.existingContactGroup?.hmacProof ?? stubDeviceContactGroupCredentials.hmacProof,
-    hmacRest: stubExternalAddressDeviceContext.hmacRest,
+      input.existingContactGroup?.groupHandle ?? deviceContactGroupCredentials.groupHandle,
+    hmacProof: input.existingContactGroup?.hmacProof ?? deviceContactGroupCredentials.hmacProof,
+    hmacRest: externalAddressDeviceContext.hmacRest,
   };
 
   return concat(

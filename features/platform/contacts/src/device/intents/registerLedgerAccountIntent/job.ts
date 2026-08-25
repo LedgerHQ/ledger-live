@@ -1,6 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
 import { concat, ignoreElements, of, timer } from "rxjs";
-import { stubProof } from "../stubProof";
 import type { RegisterLedgerAccountIntentInput, RegisterLedgerAccountJobState } from "./types";
 
 // Temporary deterministic stub until the ContactsManager integration lands.
@@ -14,6 +13,6 @@ export const registerLedgerAccountIntentJob: Job<
     timer(2_000).pipe(ignoreElements()),
     of({
       type: "completed" as const,
-      result: { ...input, hmacProof: stubProof("ledger-account-proof") },
+      result: { ...input, hmacProof: "contacts-die-stub-ledger-account-proof" },
     }),
   );

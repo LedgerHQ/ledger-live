@@ -1,7 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
+import { ExternalAddressProofSchema } from "@domain/entity-contact";
 import { concat, ignoreElements, of, tap, timer } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../resultReporter";
-import { stubEditedAddressHmacRest } from "../stubProof";
 import type {
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
@@ -35,7 +35,10 @@ export const editExternalAddressIntentJob: Job<
   const reporter = createContactIntentResultReporter(onResult);
   const addressChanged = input.previousAddress !== input.newAddress;
   const scopeChanged = input.previousScope !== input.newScope;
-  const hmacRest = scopeChanged || addressChanged ? stubEditedAddressHmacRest : input.hmacRest;
+  const hmacRest =
+    scopeChanged || addressChanged
+      ? ExternalAddressProofSchema.parse("mock-external-address-proof-after-scope-edit")
+      : input.hmacRest;
   const result = editResult(input, input.newScope, input.newAddress, hmacRest);
   const states: EditExternalAddressJobState[] = [{ type: "pending" }];
 
