@@ -56,10 +56,16 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
     });
   }
 
-  stakingAccount.stakingResources = solanaStakesToStakingResources(
-    stakes,
-    parsePersistedUnstakeReserve(legacyRaw.unstakeReserve),
-  );
+  // The conversion reads fields like `activation.state` unguarded, so a corrupted entry would throw
+  // here. The next sync rewrites `stakingResources` from the chain anyway, so degrading to empty is
+  // enough: what matters is that the account still loads.
+  const reserve = parsePersistedUnstakeReserve(legacyRaw.unstakeReserve);
+  try {
+    stakingAccount.stakingResources = solanaStakesToStakingResources(stakes, reserve);
+  } catch (error) {
+    log("warn", "solana: failed to revive persisted solanaResources.stakes items", { error });
+    stakingAccount.stakingResources = solanaStakesToStakingResources([], reserve);
+  }
 }
 
 function parsePersistedUnstakeReserve(value: unknown): BigNumber {

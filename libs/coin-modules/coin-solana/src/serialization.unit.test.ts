@@ -79,6 +79,31 @@ describe("solana account serialization", () => {
     },
   );
 
+  it.each([
+    ["a stake with no activation", { stakeAccAddr: "a", withdrawable: 0, rentExemptReserve: 0 }],
+    [
+      "a stake with an unknown activation state",
+      {
+        stakeAccAddr: "b",
+        withdrawable: 0,
+        rentExemptReserve: 0,
+        activation: { state: "wat", active: 0, inactive: 0 },
+      },
+    ],
+  ])("falls back to empty resources when the blob contains %s", (_label, stake) => {
+    const accountRaw = {
+      solanaResources: { stakes: JSON.stringify([stake]), unstakeReserve: "3" },
+    } as unknown as AccountRaw;
+    const account = {} as Account;
+
+    expect(() => assignFromAccountRaw(accountRaw, account)).not.toThrow();
+
+    const resources = (account as StakingAccount).stakingResources;
+    expect(resources?.delegations).toEqual([]);
+    expect(resources?.unbondings).toEqual([]);
+    expect(resources?.actionFeeReserve).toEqual(new BigNumber(3));
+  });
+
   it.each([[undefined], [null], ["not-a-number"], [-1], [{ corrupted: true }]])(
     "defaults actionFeeReserve to 0 when persisted unstakeReserve is unusable",
     unstakeReserve => {
