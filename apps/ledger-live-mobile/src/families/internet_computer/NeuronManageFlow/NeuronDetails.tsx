@@ -15,7 +15,8 @@ import {
   isEnoughMaturityToSpawn,
   isNeuronDissolved,
   neuronCanBeSplit,
-  neuronPotentialVotingPower,
+  neuronCanVote,
+  neuronDecidingVotingPower,
   neuronStake,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import {
@@ -89,9 +90,11 @@ export default function NeuronDetails({ navigation, route }: Props) {
 
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);
-  const votingPower = neuronPotentialVotingPower(neuron);
+  const votingPower = neuronDecidingVotingPower(neuron);
   const dissolveDelay = getNeuronDissolveDurationSeconds(neuron);
-  const secondsTillExpiry = getSecondsTillVotingPowerExpires(neuron);
+  const secondsTillExpiry = neuronCanVote(neuron)
+    ? getSecondsTillVotingPowerExpires(neuron)
+    : undefined;
   const maturity = neuron.maturityE8sEquivalent + neuron.stakedMaturityE8sEquivalent;
 
   // Anything that moves the stake needs the controller.
