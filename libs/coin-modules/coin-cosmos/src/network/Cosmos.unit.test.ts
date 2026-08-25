@@ -417,6 +417,37 @@ describe("CosmosApi", () => {
       // sender + recipient, not truncated at the first short page
       expect(txs.length).toEqual(simulatedTotal * 2);
     });
+
+    it("stops instead of looping forever when a node serves an empty page under its own total", async () => {
+      // `total` is the index's count; a node can serve fewer than it counts and answer 200 with
+      // `tx_responses: null` rather than 500. The loop only advances on txs, so no progress here
+      // means it never reaches `total`. The cap below stands in for "forever".
+      const callCap = 20;
+      let pageFetches = 0;
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        pageFetches += 1;
+        if (pageFetches > callCap) return Promise.reject(new Error("looped past the cap"));
+        const page = Number(networkOptions.url.split("page=")[1].split("&")[0]);
+        return Promise.resolve({
+          data: {
+            total: "50",
+            tx_responses: page === 1 ? [{ txhash: "a" }, { txhash: "b" }] : null,
+          },
+        });
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 100);
+
+      // one full page + one empty page, per stream
+      expect(pageFetches).toEqual(4);
+      expect(txs).toEqual([{ txhash: "a" }, { txhash: "b" }, { txhash: "a" }, { txhash: "b" }]);
+    });
   });
 
   describe("getTransactionsPage", () => {
