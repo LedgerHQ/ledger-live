@@ -90,7 +90,7 @@ export default function IncreaseStake({ navigation, route }: Props) {
         bridgePending={bridgePending}
         onContinue={continueToDevice}
         canContinue={amount.gt(0)}
-        showAmountError={amount.gt(0)}
+        pristineField={amount.eq(0) ? "amount" : undefined}
       />
     </SafeAreaView>
   );

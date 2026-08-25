@@ -1,5 +1,5 @@
 import { BaseInput, Flex, Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
@@ -44,7 +44,9 @@ export default function StakeMaturity({ navigation, route }: Props) {
   } = useNeuronAction(navigation, route);
   const unit = useAccountUnit(account);
 
-  const percentage = transaction?.percentageToStake ?? "";
+  // Held locally so the field does not wait on a bridge round-trip; see SetDissolveDelay for why a
+  // transaction-backed value loses keystrokes typed faster than the status refresh.
+  const [percentage, setPercentage] = useState(() => transaction?.percentageToStake ?? "");
 
   const onChange = useCallback(
     (next: string) => {
@@ -53,7 +55,9 @@ export default function StakeMaturity({ navigation, route }: Props) {
       // times the maturity the neuron actually has.
       const entered = digits ? BigInt(digits) : 0n;
       const clamped = entered > MAX_PERCENTAGE ? MAX_PERCENTAGE : entered;
-      updateTransaction(tx => ({ ...tx, percentageToStake: digits ? String(clamped) : "" }));
+      const nextPercentage = digits ? String(clamped) : "";
+      setPercentage(nextPercentage);
+      updateTransaction(tx => ({ ...tx, percentageToStake: nextPercentage }));
     },
     [updateTransaction],
   );

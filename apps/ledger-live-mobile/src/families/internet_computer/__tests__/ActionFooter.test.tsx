@@ -7,13 +7,13 @@ import ActionFooter from "../components/ActionFooter";
 const makeError = (name: string, fields: Record<string, unknown> = {}) =>
   Object.assign(new Error(name), { name, ...fields });
 
-const renderFooter = (errors: Record<string, Error>, showAmountError?: boolean) =>
+const renderFooter = (errors: Record<string, Error>, pristineField?: "amount" | "transaction") =>
   render(
     <ActionFooter
       status={{ errors, warnings: {} } as never}
       bridgePending={false}
       onContinue={jest.fn()}
-      showAmountError={showAmountError}
+      pristineField={pristineField}
     />,
   );
 
@@ -48,23 +48,31 @@ describe("ActionFooter", () => {
     expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
   });
 
-  // The bridge faults a zero amount, so an amount screen used to open with a red error against a
-  // field nobody had typed in yet.
-  it("says nothing about the amount while the amount is untouched, but still blocks Continue", () => {
-    renderFooter({ amount: makeError("NotEnoughTransferAmount") }, false);
+  // Every one of these screens arrives with its field blank, which the bridge faults, so they all
+  // used to open with a red error against a field nobody had typed in yet.
+  it("says nothing about the pristine field, but still blocks Continue", () => {
+    renderFooter({ amount: makeError("NotEnoughTransferAmount") }, "amount");
 
     expect(screen.queryByText("Amount too small")).toBeNull();
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 
-  it("still reports an error that is not about the amount", () => {
-    renderFooter({ transaction: makeError("ICPStakeMemoNotRecoverable") }, false);
+  it("withholds a pristine transaction-level error too, which is where a hot key faults", () => {
+    renderFooter({ transaction: makeError("ICPInvalidHotKey") }, "transaction");
+
+    expect(screen.queryByText("Invalid principal")).toBeNull();
+  });
+
+  // Typing in the amount field will never recover the missing stake memo, so that one is reported
+  // the moment the screen opens.
+  it("reports an error against a field other than the pristine one", () => {
+    renderFooter({ transaction: makeError("ICPStakeMemoNotRecoverable") }, "amount");
 
     expect(screen.getByText("Cannot top up this neuron")).toBeVisible();
   });
 
-  it("reports the amount error once the amount has been entered", () => {
-    renderFooter({ amount: makeError("NotEnoughTransferAmount") }, true);
+  it("reports the error once the field has an entry to fault", () => {
+    renderFooter({ amount: makeError("NotEnoughTransferAmount") });
 
     expect(screen.getByText("Amount too small")).toBeVisible();
   });

@@ -50,6 +50,19 @@ describe("StakeMaturity", () => {
     expect(transaction.percentageToStake).toBe("100");
   });
 
+  // The field holds its own text rather than reading it back out of the transaction: that round-trip
+  // runs prepareTransaction and getTransactionStatus, and anything typed before it lands is lost when
+  // the stale value is pushed back to the input. This mock never re-renders on an update, so the
+  // displayed value can only be right if it comes from the screen's own state.
+  it("shows the clamped entry without waiting for the transaction to echo it back", () => {
+    renderScreen();
+
+    enter("999");
+
+    expect(screen.getByTestId("icp-stake-maturity-input")).toHaveDisplayValue("100");
+    expect(screen.getByText("4 ICP")).toBeVisible();
+  });
+
   it("previews the share of maturity the entered percentage selects", () => {
     transaction = { type: "stake_maturity", percentageToStake: "25" };
     renderScreen();

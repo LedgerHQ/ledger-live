@@ -11,11 +11,14 @@ type Props = {
   /** Extra condition beyond the bridge's own validation, for input the bridge cannot see yet. */
   canContinue?: boolean;
   /**
-   * Set false while the amount is still untouched. The bridge rejects a zero amount, but faulting a
-   * field nobody has typed in yet reads as the screen having gone wrong on arrival. Continue stays
-   * disabled either way, and non-amount errors are still reported.
+   * The status field this screen's own input drives, named only while that input is still empty.
+   *
+   * Every one of these screens arrives with its field blank, which the bridge rightly rejects — but
+   * faulting a field nobody has typed in yet reads as the screen having failed on arrival. The error
+   * it names is withheld until there is an entry to fault; anything else is reported at once, since
+   * no amount of typing in this field will fix it. Continue stays disabled either way.
    */
-  showAmountError?: boolean;
+  pristineField?: "amount" | "transaction";
 };
 
 /**
@@ -27,14 +30,14 @@ export default function ActionFooter({
   bridgePending,
   onContinue,
   canContinue = true,
-  showAmountError = true,
+  pristineField,
 }: Props) {
   const { t } = useTranslation();
   const errors = Object.entries(status.errors);
   // Blocking is measured over every error, including one this footer chooses not to report: the
-  // amount is still invalid whether or not saying so yet would help.
+  // entry is still invalid whether or not saying so yet would help.
   const blocking = errors.length > 0;
-  const reported = errors.find(([field]) => showAmountError || field !== "amount")?.[1];
+  const reported = errors.find(([field]) => field !== pristineField)?.[1];
 
   return (
     <Flex p={6} style={{ gap: 12 }}>
