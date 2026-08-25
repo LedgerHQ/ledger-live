@@ -130,6 +130,19 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates earn simulate route", () => {
+      const parsed = parseDeepLink("ledgerwallet://earn/simulate");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "earn",
+        path: "simulate",
+        cryptoAssetId: undefined,
+        accountId: undefined,
+        search: "",
+      });
+    });
+
     it("creates borrow route", () => {
       const parsed = parseDeepLink("ledgerwallet://borrow?action=open");
       const route = createRoute(parsed);

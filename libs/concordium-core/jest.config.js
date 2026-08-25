@@ -24,15 +24,13 @@ module.exports = {
     "!src/**/*.d.ts",
     "!src/index.ts",
   ],
-  coverageReporters: [
-    "json",
-    ["lcov", { file: "lcov.info", projectRoot: "../../" }],
-    "text",
-  ],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };
