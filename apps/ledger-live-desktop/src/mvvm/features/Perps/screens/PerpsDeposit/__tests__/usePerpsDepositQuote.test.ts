@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { usePerpsDepositQuote } from "../usePerpsDepositQuote";
+import { usePerpsDepositQuote, type PerpsDepositQuoteState } from "../usePerpsDepositQuote";
 
 const mockFetchPerpsDepositQuote = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/depositQuote", () => ({
@@ -14,9 +14,17 @@ const depositAccount = { id: "funding-1" } as AccountLike;
 type QuoteProps = { amount: string; depositAccount: AccountLike | undefined };
 
 function renderQuote(initialProps: QuoteProps) {
-  return renderHook((props: QuoteProps) => usePerpsDepositQuote({ ...props, receiverAccount }), {
-    initialProps,
-  });
+  const seen: PerpsDepositQuoteState[] = [];
+  const view = renderHook(
+    (props: QuoteProps) => {
+      const state = usePerpsDepositQuote({ ...props, receiverAccount });
+      seen.push(state);
+      return state;
+    },
+    { initialProps },
+  );
+ 
+  return { ...view, seen };
 }
 
 /** Outlasts the debounce the hook waits out before reaching the provider. */
@@ -87,13 +95,26 @@ describe("usePerpsDepositQuote", () => {
     expect(result.current).toEqual({ quote: undefined, isLoading: false, isUnavailable: false });
   });
 
-  it("drops the quoted amount once the amount changes", async () => {
-    const { result, rerender } = renderQuote({ amount: "2000", depositAccount });
+  it("drops the quoted amount in the very render the amount changes", async () => {
+    const { result, rerender, seen } = renderQuote({ amount: "2000", depositAccount });
 
     await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    seen.length = 0;
     rerender({ amount: "3000", depositAccount });
 
+    // The review reads the quote during render, so $2000 must not still be
+    // quotable in the render that asks for $3000.
+    expect(seen[0]).toEqual({ quote: undefined, isLoading: true, isUnavailable: false });
     expect(result.current.quote).toBeUndefined();
-    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("drops the quoted amount when the funding account changes", async () => {
+    const { result, rerender, seen } = renderQuote({ amount: "2000", depositAccount });
+
+    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    seen.length = 0;
+    rerender({ amount: "2000", depositAccount: { id: "funding-2" } as AccountLike });
+
+    expect(seen[0]?.quote).toBeUndefined();
   });
 });
