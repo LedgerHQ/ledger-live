@@ -9820,7 +9820,7 @@
     "inputSubText": "Swap and deposit via SwapKit",
     "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
     "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
-    "selectCurrencyDescription": "No account",
+    "selectCurrencyNoAccount": "No account",
     "review": "Review",
     "keypadDelete": "Delete last digit",
     "formErrors": {

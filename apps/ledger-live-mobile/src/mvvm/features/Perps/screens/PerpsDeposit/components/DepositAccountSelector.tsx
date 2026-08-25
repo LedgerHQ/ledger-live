@@ -31,8 +31,15 @@ export function DepositAccountSelector({
   onSelect,
 }: DepositAccountSelectorProps) {
   const { t } = useTranslation();
-  const hasAccount = accountName !== null && counterValue !== null;
+  const hasAccount = accountName !== null;
   const hasError = hasAccount ? exceedsBalance : missingAccount;
+
+  const description =
+    accountName === null
+      ? t("perpsDeposit.selectCurrencyNoAccount")
+      : counterValue === null
+        ? accountName
+        : t("perpsDeposit.selectCurrencyAccount", { accountName, counterValue });
 
   return (
     <ListItem
@@ -47,9 +54,7 @@ export function DepositAccountSelector({
             {t("perpsDeposit.selectCurrencyTitle", { currencyTicker: ticker })}
           </ListItemTitle>
           <ListItemDescription lx={{ color: hasError ? "error" : "muted" }}>
-            {hasAccount
-              ? t("perpsDeposit.selectCurrencyAccount", { accountName, counterValue })
-              : t("perpsDeposit.selectCurrencyDescription")}
+            {description}
           </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
