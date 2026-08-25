@@ -14867,6 +14867,9 @@ importers:
       '@domain/entity-account-name':
         specifier: workspace:*
         version: link:../../domain/entity/account-name
+      '@domain/entity-contact':
+        specifier: workspace:*
+        version: link:../../domain/entity/contact
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto

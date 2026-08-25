@@ -1,4 +1,5 @@
 import { of } from "rxjs";
+import { contact, contactsInitialState } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
@@ -23,6 +24,7 @@ function makeLocalState(overrides: Partial<WalletSyncLocalState> = {}): WalletSy
   return {
     accounts: { list: [account1], nonImportedAccountInfos: [] },
     accountNames: new Map([[account1.id, "Local name"]]),
+    contacts: [...contactsInitialState.contacts],
     recentAddresses: { bitcoin: [{ address: "bc1local", lastUsed: 1000 }] },
     ...overrides,
   } as WalletSyncLocalState;
@@ -31,6 +33,7 @@ function makeLocalState(overrides: Partial<WalletSyncLocalState> = {}): WalletSy
 const emptyLocalState = {
   accounts: { list: [], nonImportedAccountInfos: [] },
   accountNames: new Map<string, string>(),
+  contacts: [...contactsInitialState.contacts],
   recentAddresses: {},
 } as unknown as WalletSyncLocalState;
 
@@ -144,6 +147,49 @@ describe("walletsync composition", () => {
       expect(nextState.recentAddresses).toEqual({
         bitcoin: "corrupted by some other app version",
       });
+    });
+  });
+
+  describe("Contacts Wallet Sync registration", () => {
+    const contacts = [
+      ...contactsInitialState.contacts,
+      contact({ id: "contact-ada", isMe: false, name: "Ada", addresses: [] }),
+    ];
+
+    it("serializes and resolves Contacts through the wallet-sync aggregate", async () => {
+      const distant = walletsync.diffLocalToDistant(
+        { ...emptyLocalState, contacts },
+        null,
+      ).nextState;
+
+      expect(distant.contacts).toMatchObject({
+        me: { name: "Me" },
+        contactGroups: [{ id: "contact-ada", name: "Ada" }],
+      });
+
+      await expect(
+        walletsync.resolveIncrementalUpdate(emptyLocalState, null, distant),
+      ).resolves.toMatchObject({
+        hasChanges: true,
+        update: { contacts: { hasChanges: true, update: contacts } },
+      });
+    });
+
+    it("quarantines a corrupted Contacts slice without blocking healthy modules", async () => {
+      const distant = {
+        accountNames: { [account2.id]: "Distant name" },
+        contacts: { me: { name: "Me" }, contactGroups: "invalid" },
+      };
+      const resolved = await walletsync.resolveIncrementalUpdate(makeLocalState(), null, distant);
+
+      expect(resolved).toMatchObject({
+        hasChanges: true,
+        update: {
+          accountNames: { hasChanges: true },
+          contacts: { hasChanges: false },
+        },
+      });
+      expect(onModuleError).toHaveBeenCalledWith("contacts", expect.anything());
     });
   });
 

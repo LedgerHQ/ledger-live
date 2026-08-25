@@ -7,6 +7,7 @@ export type {
   DistantDocument,
 } from "@shared/cloud-sync-module";
 import { accountNamesSyncModule } from "@domain/entity-account-name";
+import { contactsSyncModule } from "@domain/entity-contact";
 import { recentAddressesSyncModule } from "@domain/entity-recent-addresses";
 import {
   accountsSyncModule,
@@ -18,6 +19,7 @@ import {
 export const walletSyncSchema = z.object({
   accounts: z.optional(accountsSyncModule.schema),
   accountNames: z.optional(accountNamesSyncModule.schema),
+  contacts: z.optional(contactsSyncModule.schema),
   recentAddresses: z.optional(recentAddressesSyncModule.schema),
 });
 
@@ -29,6 +31,7 @@ export function createWalletsync(
     {
       accounts: bindCtx(ctx),
       accountNames: accountNamesSyncModule,
+      contacts: contactsSyncModule,
       recentAddresses: recentAddressesSyncModule,
     },
     options,

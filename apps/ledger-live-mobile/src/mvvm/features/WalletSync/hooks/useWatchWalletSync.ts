@@ -9,6 +9,7 @@ import {
   makeLocalIncrementalUpdate,
 } from "@features/platform-wallet-sync";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
+import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
 import { setNonImportedAccounts } from "@ledgerhq/live-wallet/accounts";
 import {
@@ -72,6 +73,7 @@ function localStateSelector(state: State) {
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
+    contacts: selectContacts(state),
     recentAddresses: state.wallet.recentAddresses,
   };
 }
@@ -86,6 +88,7 @@ async function save(
   if (newLocalState) {
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(bulkSetAccountNames(newLocalState.accountNames));
+    dispatch(setContacts(newLocalState.contacts));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
     dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
   }
