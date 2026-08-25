@@ -1,31 +1,23 @@
-import type {
-  ContactAddress,
-  ContactAddressId,
-  ContactAddressLabel,
-  ContactId,
-} from "@domain/entity-contact";
+import type { ContactAddress } from "@domain/entity-contact";
 import { useCallback, useMemo } from "react";
-import type {
-  ContactAddressEditPort,
-  ContactsAddressEntryState,
-} from "@features/platform-contacts";
 import { createRenameAddressController } from "./model/controller";
-import type { RenameAddressViewModel } from "./types";
+import type { RenameAddressViewModel, UseRenameAddressViewModelOptions } from "./types";
 
 export type UseRenameAddressViewModelResult = RenameAddressViewModel &
   Readonly<{
     save: () => Promise<ContactAddress>;
   }>;
 
-export function useRenameAddressViewModel(
-  contactId: ContactId,
-  addressId: ContactAddressId,
-  currentLabel: string,
-  currentAddress: ContactAddress["address"] | undefined,
-  draftLabel: string,
-  addressEntry: ContactsAddressEntryState,
-  existingLabels: readonly ContactAddressLabel[],
-  editPort: ContactAddressEditPort,
+export function useRenameAddressViewModel({
+  contactId,
+  addressId,
+  currentLabel,
+  currentAddress,
+  draftLabel,
+  addressEntry,
+  existingLabels,
+  editPort,
+}: UseRenameAddressViewModelOptions,
 ): UseRenameAddressViewModelResult {
   const controller = useMemo(() => createRenameAddressController(editPort), [editPort]);
   const viewModel = useMemo(

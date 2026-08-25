@@ -37,20 +37,29 @@ export type RenameAddressDialogViewModel = RenameAddressViewModel &
     onConfirm: () => Promise<void>;
   }>;
 
-export type UseRenameAddressDialogViewModelOptions = Readonly<{
+export type UseRenameAddressViewModelOptions = Readonly<{
   contactId: ContactId;
   addressId: ContactAddressId;
   currentLabel: string;
   currentAddress: ContactAddress["address"] | undefined;
-  currencyId: ContactAddress["currencyId"] | undefined;
   existingLabels: readonly ContactAddressLabel[];
   editPort: ContactAddressEditPort;
-  isRequestedOpen: boolean;
-  isEditSessionActive?: boolean;
-  onCloseRequest: () => void;
-  onSaveSuccess?: (payload: ContactAddressEditSavePayload) => void;
-  requestSaveApproval?: () => Promise<boolean>;
+  addressEntry: ContactsAddressEntryState;
+  draftLabel: string;
 }>;
+
+export type UseRenameAddressDialogViewModelOptions = Omit<
+  UseRenameAddressViewModelOptions,
+  "addressEntry" | "draftLabel"
+> &
+  Readonly<{
+    currencyId: ContactAddress["currencyId"] | undefined;
+    isRequestedOpen: boolean;
+    isEditSessionActive?: boolean;
+    onCloseRequest: () => void;
+    onSaveSuccess?: (payload: ContactAddressEditSavePayload) => void;
+    requestSaveApproval?: () => Promise<boolean>;
+  }>;
 
 export type ContactsEditAddressValidationLabels = Readonly<{
   addressPlaceholder: string;

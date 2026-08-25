@@ -37,7 +37,7 @@ export function useRenameAddressDialogViewModel({
     isActive: isEditSessionActive,
     manualValidationDebounceMs,
   });
-  const { invalidLabelError, isConfirmEnabled, save } = useRenameAddressViewModel(
+  const { invalidLabelError, isConfirmEnabled, save } = useRenameAddressViewModel({
     contactId,
     addressId,
     currentLabel,
@@ -46,7 +46,7 @@ export function useRenameAddressDialogViewModel({
     addressEntry,
     existingLabels,
     editPort,
-  );
+  });
 
   useEffect(() => {
     if (isEditSessionActive) {

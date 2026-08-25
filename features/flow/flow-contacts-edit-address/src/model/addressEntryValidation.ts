@@ -1,11 +1,4 @@
 import type { ContactAddress } from "@domain/entity-contact";
-import {
-  applyAddressEntryIfCurrent,
-  createValidatingAddressEntryState,
-  EMPTY_ADDRESS_ENTRY_STATE,
-  requestAddressValidation,
-  resolveAddressEntryState,
-} from "@features/platform-contacts";
 import type { ContactsAddressEntryState } from "@features/platform-contacts";
 
 export {
@@ -13,9 +6,8 @@ export {
   createValidatingAddressEntryState,
   requestAddressValidation,
   resolveAddressEntryState,
-};
-
-export const EMPTY_EDIT_ADDRESS_ENTRY_STATE = EMPTY_ADDRESS_ENTRY_STATE;
+  EMPTY_ADDRESS_ENTRY_STATE as EMPTY_EDIT_ADDRESS_ENTRY_STATE,
+} from "@features/platform-contacts";
 
 export function createInitialEditAddressEntryState(
   currentAddress: ContactAddress["address"],
