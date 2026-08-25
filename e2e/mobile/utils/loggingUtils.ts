@@ -141,7 +141,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
 
   await allure.attachment(
     "App logs",
-    JSON.stringify(parsed.appLogs ?? logsPayload),
+    JSON.stringify(parsed.appLogs ?? logsPayload, null, 2),
     "application/json",
   );
   parsed.appLogs = undefined;
