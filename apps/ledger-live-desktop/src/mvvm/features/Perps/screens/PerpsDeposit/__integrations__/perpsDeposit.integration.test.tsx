@@ -48,6 +48,7 @@ describe("PerpsDeposit integration", () => {
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
       isLoading: false,
+      isUnavailable: false,
     });
   });
 
@@ -71,6 +72,27 @@ describe("PerpsDeposit integration", () => {
     expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
       expect.objectContaining({ uiUseCase: "perpetuals:fund" }),
     );
+  });
+
+  it("should keep a partially typed decimal while the amount is edited", async () => {
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    const input = screen.getByTestId("perps-deposit-amount-input");
+    // The field reads zero until something is entered, and never goes blank.
+    expect(input).toHaveValue("0");
+
+    await user.type(input, "1.50");
+    expect(input).toHaveValue("1.50");
+
+    // Deleting back across the separator leaves the dot in place, so the next
+    // digit lands in the decimals rather than the integers.
+    await user.type(input, "{Backspace}{Backspace}");
+    expect(input).toHaveValue("1.");
+
+    await user.type(input, "{Backspace}{Backspace}");
+    expect(input).toHaveValue("0");
   });
 
   it("should enable the review CTA once a funding account and amount are entered", async () => {
@@ -97,8 +119,35 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByText("Swap and deposit via SwapKit")).toBeVisible();
   });
 
+  it("should tell the user when the provider has no quote for the pair", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
+    const { user } = renderDeposit();
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+
+    expect(screen.getByTestId("perps-deposit-form-error")).toHaveTextContent(
+      "We can’t get a quote from SwapKit, try with a different asset or come back later.",
+    );
+    // The message replaces the provider notice instead of stacking with it.
+    expect(screen.queryByText("Swap and deposit via SwapKit")).not.toBeInTheDocument();
+    // The amount is what cannot be quoted, so the field carries the error too.
+    expect(screen.getByTestId("perps-deposit-amount-input")).toBeInvalid();
+    expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
     const { user } = renderDeposit();
 
     act(() => openPerpsDeposit({ receiverAccount }));

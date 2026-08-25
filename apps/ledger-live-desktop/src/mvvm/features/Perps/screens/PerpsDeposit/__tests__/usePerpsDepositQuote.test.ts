@@ -46,20 +46,22 @@ describe("usePerpsDepositQuote", () => {
     );
   });
 
-  it("stops loading when the provider has no route for the pair", async () => {
+  it("reports no route for the pair as unavailable", async () => {
     mockFetchPerpsDepositQuote.mockResolvedValue(undefined);
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
     expect(result.current.quote).toBeUndefined();
+    expect(result.current.isUnavailable).toBe(true);
   });
 
-  it("stops loading when the provider request fails", async () => {
+  it("reports a failed provider request as unavailable", async () => {
     mockFetchPerpsDepositQuote.mockRejectedValue(new Error("network down"));
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
     expect(result.current.quote).toBeUndefined();
+    expect(result.current.isUnavailable).toBe(true);
   });
 
   it("only quotes the amount the form settled on", async () => {
@@ -81,8 +83,8 @@ describe("usePerpsDepositQuote", () => {
     await passDebounce();
 
     expect(mockFetchPerpsDepositQuote).not.toHaveBeenCalled();
-    // Nothing to quote is idle, not pending.
-    expect(result.current).toEqual({ quote: undefined, isLoading: false });
+    // Nothing to quote is idle: neither pending nor a provider outage.
+    expect(result.current).toEqual({ quote: undefined, isLoading: false, isUnavailable: false });
   });
 
   it("drops the quoted amount once the amount changes", async () => {

@@ -14,21 +14,22 @@ import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 export function PerpsDepositView({
   headerDescription,
+  amountText,
   depositAmount,
-  formattedDepositAmount,
-  depositAmountTicker,
+  formattedQuotedAmount,
+  quotedAmountTicker,
   isQuoteLoading,
   counterValueCode,
   maxDecimalLength,
   changeDepositAmount,
-  setDepositAmount,
+  selectAmountRatio,
   depositCurrencyTicker,
   depositCurrencyLedgerId,
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
   selectMax,
-  submitError,
+  statusError,
   canReview,
   exceedsBalance,
   missingAccount,
@@ -46,27 +47,27 @@ export function PerpsDepositView({
       />
       <DialogBody>
         <AmountInput
-          value={depositAmount}
+          value={amountText}
           onChange={event => changeDepositAmount(event.target.value)}
           currencyText={counterValueCode}
-          aria-invalid={submitError !== null}
+          aria-invalid={statusError !== null}
           maxDecimalLength={maxDecimalLength}
           data-testid="perps-deposit-amount-input"
         />
 
         <DepositAmountStatus
-          formattedAmount={formattedDepositAmount}
-          currencyTicker={depositAmountTicker}
+          formattedAmount={formattedQuotedAmount}
+          currencyTicker={quotedAmountTicker}
           isQuoteLoading={isQuoteLoading}
           hasAmount={depositAmount > 0}
-          error={submitError}
+          error={statusError}
         />
 
         <RatioPicker
           maxValue={maxAmount}
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
-          onChange={setDepositAmount}
+          onChange={selectAmountRatio}
           onMax={selectMax}
           className="justify-around"
         />

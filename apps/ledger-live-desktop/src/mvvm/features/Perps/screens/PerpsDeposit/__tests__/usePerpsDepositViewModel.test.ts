@@ -19,9 +19,16 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
 }));
 
+// Prices the typed amount back into the funding currency, in its smallest unit.
+const mockCalculate = jest.fn();
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+  calculate: (...args: unknown[]) => mockCalculate(...args),
+}));
+
 const mockUsePerpsDepositQuote = jest.fn();
 jest.mock("../usePerpsDepositQuote", () => ({
-  usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
+  usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
 }));
 
 function createAccount(id: string, currencyId: string, spendableBalance: number): Account {
@@ -34,19 +41,26 @@ function createAccount(id: string, currencyId: string, spendableBalance: number)
 
 const receiverAccount = createAccount("receiver-1", "ethereum", 0);
 const fundingAccount = createAccount("funding-1", "ethereum", 10000);
+const fundedAccount = createAccount("funding-2", "ethereum", 1e18);
 
 function renderViewModel(
   data: Partial<PerpsDepositData> = {},
   onClose = jest.fn(),
   discreetMode = false,
 ) {
-  // Kept stable: the view model resets the form whenever this object changes identity.
   const props: PerpsDepositData = { receiverAccount, ...data };
-  // The funding account is read back from the store, so it has to live there.
   const { result } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
-    initialState: { accounts: [fundingAccount], settings: { discreetMode } },
+    initialState: {
+      accounts: [fundingAccount, fundedAccount],
+      settings: { discreetMode },
+    },
   });
   return { result, onClose };
+}
+
+/** The display-unit amount the form settled on and sent to the provider. */
+function quotedAmount(): string {
+  return mockUsePerpsDepositQuote.mock.lastCall?.[0].amount;
 }
 
 /** The account arrives from a promise, so the picker has to settle before asserting. */
@@ -60,9 +74,11 @@ describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
+    mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
       isLoading: false,
+      isUnavailable: false,
     });
   });
 
@@ -81,7 +97,7 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.changeDepositAmount("3"));
 
     expect(result.current.depositAmount).toBe(3);
-    expect(result.current.submitError).toBeNull();
+    expect(result.current.statusError).toBeNull();
     expect(result.current.missingAccount).toBe(true);
     expect(result.current.canReview).toBe(false);
   });
@@ -118,7 +134,7 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.changeDepositAmount("150"));
 
     expect(result.current.exceedsBalance).toBe(true);
-    expect(result.current.submitError).toEqual({
+    expect(result.current.statusError).toEqual({
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
@@ -145,6 +161,43 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(true);
   });
 
+  it("quotes the typed amount converted into the funding currency", async () => {
+    mockOpenAssetAndAccount.mockResolvedValue({ account: fundedAccount });
+
+    mockCalculate.mockReturnValue(2.5e16);
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    expect(quotedAmount()).toBe("0.025");
+  });
+
+  it("quotes no more than the funding account can spend", async () => {
+    mockCalculate.mockReturnValue(2.5e16);
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    expect(result.current.statusError).toBeNull();
+    expect(quotedAmount()).toBe(new BigNumber(10000).shiftedBy(-18).toFixed());
+  });
+
+  it("floors a quote that lands between two atomic units", async () => {
+    mockCalculate.mockReturnValue(1.6);
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    expect(mockCalculate).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ reverse: true, disableRounding: true }),
+    );
+    expect(quotedAmount()).toBe(new BigNumber(1).shiftedBy(-18).toFixed());
+  });
+
   it("hides both balances when discreet mode is on", async () => {
     const { result } = renderViewModel({}, jest.fn(), true);
 
@@ -155,21 +208,29 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("holds the review CTA back until the quote lands", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
     const { result } = renderViewModel();
 
     await pickFundingAccount(result);
     act(() => result.current.changeDepositAmount("20"));
 
     // The form itself is valid, so only the missing quote keeps the CTA disabled.
-    expect(result.current.submitError).toBeNull();
+    expect(result.current.statusError).toBeNull();
     expect(result.current.canReview).toBe(false);
     expect(result.current.isQuoteLoading).toBe(true);
-    expect(result.current.formattedDepositAmount).toBe("");
+    expect(result.current.formattedQuotedAmount).toBe("");
   });
 
-  it("stops shimmering when the provider settles on no quote", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: false });
+  it("stops shimmering and explains itself when the provider has no quote", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
     const { result } = renderViewModel();
 
     await pickFundingAccount(result);
@@ -178,6 +239,25 @@ describe("usePerpsDepositViewModel", () => {
     // A pair the provider cannot route is an answer, not a pending request.
     expect(result.current.isQuoteLoading).toBe(false);
     expect(result.current.canReview).toBe(false);
+    expect(result.current.statusError).toEqual({
+      labelKey: "perpsDeposit.formErrors.quoteUnavailable",
+    });
+  });
+
+  it("blames the balance rather than the provider when both are wrong", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("150"));
+
+    expect(result.current.statusError).toEqual({
+      labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
+    });
   });
 
   it("closes the dialog when the form is ready to review", () => {
