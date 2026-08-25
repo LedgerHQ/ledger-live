@@ -3,7 +3,7 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import { getEnv } from "@shared/env";
 import { useTranslation } from "~/context/Locale";
 import type { ScreenName } from "~/const";
-import type { CardLoginOauthConfig, PayCardAuthCallback } from "@features/flow-pay-card-auth";
+import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
@@ -39,7 +39,7 @@ export function usePayTabViewModel() {
   );
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
-  const oauthConfig: CardLoginOauthConfig = useMemo(
+  const oauthConfig: CardProps["oauthConfig"] = useMemo(
     () => ({
       apiUrl: getEnv("CARD_API_URL"),
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
@@ -51,7 +51,7 @@ export function usePayTabViewModel() {
 
   // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
   // the verifier on disk, so nothing else has to be echoed back.
-  const callback: PayCardAuthCallback | null = useMemo(
+  const callback: CardProps["callback"] = useMemo(
     () => (params?.code ? { code: params.code } : null),
     [params?.code],
   );
