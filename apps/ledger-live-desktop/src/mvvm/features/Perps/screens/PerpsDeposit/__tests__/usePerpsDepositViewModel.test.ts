@@ -85,7 +85,7 @@ describe("usePerpsDepositViewModel", () => {
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      quote: { amountTo: new BigNumber(42), quoteId: "quote-1" },
       isLoading: false,
       isUnavailable: false,
     });
@@ -285,7 +285,6 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("hands the review the amount converted into the funding currency", () => {
-
     mockCalculate.mockReturnValue(2.5e16);
     const { result, onClose } = renderViewModel({
       draft: { depositAccount: fundedAccount, depositAmount: 20 },
@@ -297,8 +296,8 @@ describe("usePerpsDepositViewModel", () => {
       receiverAccount,
       depositAccount: fundedAccount,
       amountSent: "0.025",
-      // The received side is whatever the provider quoted, not a local conversion.
       amountTo: "42",
+      quoteId: "quote-1",
       draft: { depositAccount: fundedAccount, depositAmount: 20 },
     });
     expect(onClose).toHaveBeenCalled();
