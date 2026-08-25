@@ -2,7 +2,7 @@ import type {
   ICPAccount,
   InternetComputerOperation,
 } from "@ledgerhq/live-common/families/internet_computer/types";
-import { applyNeuronOperation } from "../common";
+import { applyNeuronOperation, onStakeConfirmed } from "../common";
 import { makeICPAccount, makeNeuron } from "./testUtils";
 
 const NEURON_ADDRESS = "neuron-account-identifier";
@@ -116,5 +116,29 @@ describe("applyNeuronOperation", () => {
     const updated = runUpdater(account, operation);
 
     expect(updated.operations[0].type).toBe("OUT");
+  });
+});
+
+describe("onStakeConfirmed", () => {
+  it("files the staking transfer before reopening the neuron list", () => {
+    const account = makeICPAccount({ neurons: [] });
+    const operation = {
+      id: "op-1",
+      hash: "hash-1",
+      accountId: account.id,
+      type: "STAKE_NEURON",
+      date: new Date("2026-08-12T10:00:00Z"),
+      recipients: [],
+      senders: [],
+      blockHeight: 1,
+      extra: { createdNeuronId: "42" },
+    } as unknown as InternetComputerOperation;
+    const dispatch = jest.fn();
+
+    onStakeConfirmed(dispatch, account)(operation);
+
+    const [update, open] = dispatch.mock.calls.map(([action]) => action);
+    expect((update.payload.updater(account) as ICPAccount).pendingOperations).toHaveLength(1);
+    expect(open.payload).toMatchObject({ name: "MODAL_ICP_LIST_NEURONS" });
   });
 });

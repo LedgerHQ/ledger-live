@@ -98,6 +98,37 @@ describe("AccountHeaderManageActions (internet_computer)", () => {
     expect(store.getState().modals.MODAL_SEND?.isOpened).toBe(true);
   });
 
+  it("returns to the neuron list once the stake is confirmed", () => {
+    const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
+    const { result, store } = renderActions(account);
+
+    act(() => {
+      result.current?.find(a => a.key === "Stake")?.onClick();
+    });
+    // The store types a closed modal as having no data at all, hence the local shape.
+    const sendData = (
+      store.getState().modals.MODAL_SEND as
+        | { data?: { onConfirmationHandler?: (operation: never) => void } }
+        | undefined
+    )?.data;
+    expect(sendData?.onConfirmationHandler).toBeDefined();
+
+    act(() => {
+      sendData?.onConfirmationHandler?.({
+        type: "STAKE_NEURON",
+        accountId: account.id,
+        date: new Date(),
+        extra: { createdNeuronId: "42" },
+      } as never);
+    });
+
+    const listModal = store.getState().modals.MODAL_ICP_LIST_NEURONS as
+      | { isOpened?: boolean; data?: { neuronId?: string } }
+      | undefined;
+    expect(listModal?.isOpened).toBe(true);
+    expect(listModal?.data?.neuronId).toBe("42");
+  });
+
   it("opens the neuron list modal when Manage is clicked", () => {
     const account = makeICPAccount({
       spendableBalance: NOT_ENOUGH_TO_STAKE,
