@@ -1,4 +1,3 @@
-import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import {
   useSolanaStakesWithMeta,
   useValidators,
@@ -47,10 +46,7 @@ export function useStakeValidatorStep(
   }
 
   const { stakeAccAddr } = model.uiState;
-  const stakesWithMeta = useSolanaStakesWithMeta(
-    account.currency,
-    listSolanaStakingPositions(account.stakingResources),
-  );
+  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const stakeWithMeta = stakesWithMeta.find(s => s.stake.positionId === stakeAccAddr);
   if (stakeWithMeta === undefined) {
     throw new Error(`stake with account address <${stakeAccAddr}> not found`);

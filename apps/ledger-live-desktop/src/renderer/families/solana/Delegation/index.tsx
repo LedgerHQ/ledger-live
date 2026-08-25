@@ -1,5 +1,4 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -35,10 +34,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const Delegation = ({ account }: { account: SolanaAccount }) => {
   const dispatch = useDispatch();
-  const stakesWithMeta = useSolanaStakesWithMeta(
-    account.currency,
-    listSolanaStakingPositions(account.stakingResources),
-  );
+  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_SOLANA_REWARDS_INFO", {

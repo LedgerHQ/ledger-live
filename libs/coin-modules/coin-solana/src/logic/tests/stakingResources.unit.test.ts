@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { StakingDelegation, StakingUnbonding } from "@ledgerhq/types-live";
 import {
-  activationFromPosition,
   emptyStakingResources,
   findSolanaStakingPosition,
   listSolanaStakingPositions,
@@ -237,25 +236,6 @@ describe("stakeActivePercent", () => {
   it("returns 0 when nothing is delegated or the active amount is unknown", () => {
     expect(stakeActivePercent(delegation({ amount: new BigNumber(0) }))).toBe(0);
     expect(stakeActivePercent(delegation({ amount: new BigNumber(100) }))).toBe(0);
-  });
-});
-
-describe("activationFromPosition", () => {
-  it("rebuilds the legacy activation shape, defaulting unknown amounts to zero", () => {
-    expect(
-      activationFromPosition(
-        delegation({
-          activeAmount: new BigNumber(80),
-          inactiveAmount: new BigNumber(20),
-        }),
-      ),
-    ).toEqual({ state: "active", active: 80, inactive: 20 });
-
-    expect(activationFromPosition(unbonding({ status: "withdrawable" }))).toEqual({
-      state: "inactive",
-      active: 0,
-      inactive: 0,
-    });
   });
 });
 

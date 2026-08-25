@@ -41,7 +41,6 @@ import {
 import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
 import { calculateToken2022TransferFees, getAtaDataLengthForMint } from "./helpers/token";
 import {
-  activationFromPosition,
   decodeAccountIdWithTokenAccountAddress,
   findSolanaStakingPosition,
   isEd25519Address,
@@ -831,7 +830,10 @@ async function deriveStakeWithdrawCommandDescriptor(
         0,
         withdrawableFromStake({
           stakeAccBalance: liveLamports,
-          activation: activationFromPosition(stake),
+          activation: {
+            state: solanaActivationState(stake),
+            active: stake.activeAmount?.toNumber() ?? 0,
+          },
           rentExemptReserve: stake.lockedReserve?.toNumber() ?? 0,
         }),
       );

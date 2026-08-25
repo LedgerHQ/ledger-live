@@ -7,7 +7,6 @@ import { SolanaStake } from "./types";
 import { assertUnreachable } from "./utils";
 
 export {
-  activationFromPosition,
   emptyStakingResources,
   findSolanaStakingPosition,
   listSolanaStakingPositions,
@@ -61,7 +60,8 @@ export function withdrawableFromStake({
   rentExemptReserve,
 }: {
   stakeAccBalance: number;
-  activation: SolanaStake["activation"];
+  // Structural, not `SolanaStake["activation"]`, so a generic staking position fits too.
+  activation: { state: SolanaStake["activation"]["state"]; active: number };
   rentExemptReserve: number;
 }) {
   switch (activation.state) {

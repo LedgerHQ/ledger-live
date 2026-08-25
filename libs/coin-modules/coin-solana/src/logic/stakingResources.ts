@@ -168,11 +168,3 @@ export function stakeActivePercent(position: SolanaStakingPosition): number {
   }
   return (position.activeAmount ?? new BigNumber(0)).div(position.amount).times(100).toNumber();
 }
-
-export function activationFromPosition(position: SolanaStakingPosition): SolanaStake["activation"] {
-  return {
-    state: solanaActivationState(position),
-    active: position.activeAmount?.toNumber() ?? 0,
-    inactive: position.inactiveAmount?.toNumber() ?? 0,
-  };
-}

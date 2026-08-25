@@ -13,17 +13,13 @@ import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-co
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
-import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
 const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
-  const stakesWithMeta = useSolanaStakesWithMeta(
-    account.currency,
-    listSolanaStakingPositions(account.stakingResources),
-  );
+  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
   const bridge = useAccountBridge(account);

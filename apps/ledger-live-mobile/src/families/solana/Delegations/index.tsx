@@ -2,7 +2,6 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import {
-  listSolanaStakingPositions,
   solanaActivationState,
   stakeActions,
   stakeActivePercent,
@@ -62,7 +61,7 @@ function Delegations({ account }: Props) {
 
   const stakesWithMeta: SolanaStakeWithMeta[] = useSolanaStakesWithMeta(
     currency,
-    listSolanaStakingPositions(mainAccount.stakingResources),
+    mainAccount.stakingResources,
   );
 
   const unit = useAccountUnit(mainAccount);
