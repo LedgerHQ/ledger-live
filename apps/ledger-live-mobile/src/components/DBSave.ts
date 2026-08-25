@@ -1,10 +1,7 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import {
-  exportWalletState,
-  walletStateExportShouldDiffer,
-} from "~/reducers/wallet";
+import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
