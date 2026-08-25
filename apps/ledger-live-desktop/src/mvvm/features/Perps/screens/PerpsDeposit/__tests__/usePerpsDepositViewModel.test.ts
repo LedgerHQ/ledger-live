@@ -14,9 +14,11 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
 
 // Countervalues are priced 1:1 with the account balance so the form ceiling is
 // predictable: a balance of 10_000 (2 decimals for USD) means a $100 maximum.
+const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
-  useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
+  useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
+    mockCalculateCountervalue(currency, value),
 }));
 
 // Prices the typed amount back into the funding currency, in its smallest unit.
@@ -73,6 +75,7 @@ async function pickFundingAccount(result: { current: { pickDepositAccount: () =>
 describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
@@ -138,6 +141,22 @@ describe("usePerpsDepositViewModel", () => {
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
+  });
+
+  it("holds back rather than blaming the balance while the funding rate is missing", async () => {
+   
+    mockCalculateCountervalue.mockReturnValue(null as unknown as BigNumber);
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    expect(result.current.exceedsBalance).toBe(false);
+    expect(result.current.statusError).toBeNull();
+    expect(result.current.maxAmount).toBe(0);
+
+    expect(result.current.canReview).toBe(false);
+    expect(quotedAmount()).toBe("");
   });
 
   it("fills the whole funding balance when picking max", async () => {

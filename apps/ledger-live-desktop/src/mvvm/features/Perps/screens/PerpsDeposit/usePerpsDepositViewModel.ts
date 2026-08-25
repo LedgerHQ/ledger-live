@@ -176,14 +176,15 @@ export function usePerpsDepositViewModel(
   }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
   const maxAmount = useMemo(
-    () => depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? 0,
+    () =>
+      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
-  const selectMax = useCallback(
-    () => setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength))),
-    [maxAmount, maxDecimalLength],
-  );
+  const selectMax = useCallback(() => {
+    if (maxAmount === null) return;
+    setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength)));
+  }, [maxAmount, maxDecimalLength]);
 
   const submitError = useMemo(
     () =>
@@ -197,7 +198,10 @@ export function usePerpsDepositViewModel(
 
   const exceedsBalance = submitError !== null;
   const missingAccount = !depositAccount && depositAmount > 0;
-  const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && submitError === null;
+  // Without a ceiling there is nothing to check the amount against, so the form
+  // waits for the price rather than quoting an amount it cannot vouch for.
+  const isFormComplete =
+    depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
 
   const sentAmount = useMemo(() => {
     if (!isFormComplete || !depositAccount || !depositCurrency) return "";
@@ -276,7 +280,7 @@ export function usePerpsDepositViewModel(
       ? accountNameWithDefaultSelector(walletState, depositAccount)
       : null,
     depositAccountCounterValue,
-    maxAmount,
+    maxAmount: maxAmount ?? 0,
     selectMax,
     statusError,
     canReview,
