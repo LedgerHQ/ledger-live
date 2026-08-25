@@ -12,7 +12,12 @@ import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currenc
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import {
@@ -63,19 +68,25 @@ export function usePerpsDepositViewModel(
   onClose: () => void,
 ): PerpsDepositViewModel {
   const walletState = useSelector(walletSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
 
-  const [depositAccount, setDepositAccount] = useState<AccountLike | undefined>(
-    data.draft?.depositAccount,
-  );
+  const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
   const [depositAmount, setDepositAmount] = useState(data.draft?.depositAmount ?? 0);
 
   useEffect(() => {
-    setDepositAccount(data.draft?.depositAccount);
+    setDepositAccountId(data.draft?.depositAccount.id);
     setDepositAmount(data.draft?.depositAmount ?? 0);
   }, [data]);
+
+  /** Read from the store so balances stay live while the form is open. */
+  const depositAccount = useMemo(
+    () => accounts.find(account => account.id === depositAccountId),
+    [accounts, depositAccountId],
+  );
 
   const receiverAccount = data.receiverAccount;
   const receiverCurrency = useMemo(() => getAccountCurrency(receiverAccount), [receiverAccount]);
@@ -98,6 +109,7 @@ export function usePerpsDepositViewModel(
           to: counterValueCurrency,
           value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
           reverse: true,
+          disableRounding: true,
         }) ?? 0,
       ),
     [counterValueCurrency, counterValueUnit.magnitude, countervaluesState, depositAmount],
@@ -111,10 +123,15 @@ export function usePerpsDepositViewModel(
   const receiverAccountCounterValue = useMemo(() => {
     const counterValue =
       calculateCountervalue(receiverCurrency, receiverAccount.spendableBalance) ?? new BigNumber(0);
-    return formatCurrencyUnit(counterValueUnit, counterValue, { showCode: false, locale });
+    return formatCurrencyUnit(counterValueUnit, counterValue, {
+      showCode: false,
+      discreet,
+      locale,
+    });
   }, [
     calculateCountervalue,
     counterValueUnit,
+    discreet,
     locale,
     receiverAccount.spendableBalance,
     receiverCurrency,
@@ -129,9 +146,10 @@ export function usePerpsDepositViewModel(
     if (!depositAccountBalanceCounterValue) return null;
     return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
       showCode: false,
+      discreet,
       locale,
     });
-  }, [counterValueUnit, depositAccountBalanceCounterValue, locale]);
+  }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
   const maxAmount = useMemo(
     () => depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? 0,
@@ -198,7 +216,7 @@ export function usePerpsDepositViewModel(
       areCurrenciesFiltered: false,
     })
       .then(({ account }) => {
-        setDepositAccount(account);
+        setDepositAccountId(account.id);
         setDepositAmount(0);
       })
       .catch(() => undefined);

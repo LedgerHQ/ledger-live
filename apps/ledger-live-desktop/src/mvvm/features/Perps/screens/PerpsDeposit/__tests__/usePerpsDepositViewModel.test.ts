@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook } from "tests/testSetup";
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
 
@@ -23,23 +24,28 @@ jest.mock("../usePerpsDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
-function createAccount(id: string, currencyId: string, spendableBalance: number): AccountLike {
+function createAccount(id: string, currencyId: string, spendableBalance: number): Account {
   return {
-    type: "Account",
-    id,
-    currency: getCryptoCurrencyById(currencyId),
+    ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
     spendableBalance: new BigNumber(spendableBalance),
     balance: new BigNumber(spendableBalance),
-  } as AccountLike;
+  };
 }
 
 const receiverAccount = createAccount("receiver-1", "ethereum", 0);
 const fundingAccount = createAccount("funding-1", "ethereum", 10000);
 
-function renderViewModel(data: Partial<PerpsDepositData> = {}, onClose = jest.fn()) {
+function renderViewModel(
+  data: Partial<PerpsDepositData> = {},
+  onClose = jest.fn(),
+  discreetMode = false,
+) {
   // Kept stable: the view model resets the form whenever this object changes identity.
   const props: PerpsDepositData = { receiverAccount, ...data };
-  const { result } = renderHook(() => usePerpsDepositViewModel(props, onClose));
+  // The funding account is read back from the store, so it has to live there.
+  const { result } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
+    initialState: { accounts: [fundingAccount], settings: { discreetMode } },
+  });
   return { result, onClose };
 }
 
@@ -137,6 +143,15 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.depositAmount).toBe(20);
     expect(result.current.depositCurrencyTicker).toBe("ETH");
     expect(result.current.canReview).toBe(true);
+  });
+
+  it("hides both balances when discreet mode is on", async () => {
+    const { result } = renderViewModel({}, jest.fn(), true);
+
+    await pickFundingAccount(result);
+
+    expect(result.current.headerDescription).toContain("***");
+    expect(result.current.depositAccountCounterValue).toBe("***");
   });
 
   it("holds the review CTA back until the quote lands", async () => {
