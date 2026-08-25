@@ -1,5 +1,6 @@
 import {
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_7_DAYS,
   SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import React from "react";
@@ -38,6 +39,22 @@ describe("StepRefreshList", () => {
   it("leaves out neurons the canister reported no refresh timestamp for", () => {
     const neurons = [
       makeNeuron({ id: 1n, votingPowerRefreshedTimestampSeconds: undefined }),
+      makeHealthyNeuron({ id: 2n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
+    ];
+    render(<StepRefreshList {...makeStepProps({ neurons })} />);
+
+    expect(screen.getAllByTestId("icp-neuron-row")).toHaveLength(1);
+    expect(screen.getByText("2")).toBeInTheDocument();
+  });
+
+  // The canister refreshes such a neuron all the same, so the timestamp filter above misses it.
+  it("leaves out neurons whose dissolve delay is too short to vote", () => {
+    const neurons = [
+      makeNeuron({
+        id: 1n,
+        dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+        votingPowerRefreshedTimestampSeconds: refreshedAgo(0),
+      }),
       makeHealthyNeuron({ id: 2n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
     ];
     render(<StepRefreshList {...makeStepProps({ neurons })} />);
