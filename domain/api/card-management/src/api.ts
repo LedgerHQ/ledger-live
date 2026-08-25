@@ -5,6 +5,7 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 import { transformPayCardSessionResponse } from "./transforms";
@@ -14,6 +15,7 @@ import type {
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
+  PayCardStatus,
   PayCardUser,
 } from "./types";
 
@@ -78,6 +80,18 @@ export const cardManagementApi = cardApi
           body: { type: "VIRTUAL" },
         }),
         responseSchema: PayCardOrderResponseSchema,
+        // The order answers `{ success: true }` and nothing else, so the card it created only
+        // becomes observable once the status is read again.
+        invalidatesTags: ["CardStatus"],
+      }),
+
+      getCardStatus: build.query<PayCardStatus, void>({
+        query: () => ({
+          url: "/v1/card/status",
+          method: "GET",
+        }),
+        responseSchema: PayCardStatusResponseSchema,
+        providesTags: ["CardStatus"],
       }),
     }),
   });
@@ -90,4 +104,5 @@ export const {
   useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,
+  useGetCardStatusQuery,
 } = cardManagementApi;

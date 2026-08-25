@@ -37,3 +37,18 @@ export const PayCardUserResponseSchema = z.object({
 export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
+
+/**
+ * Narrow on purpose, like the user schema: the card's own status carries no PAN, CVV or PIN, and
+ * anything the provider adds later stays out of the cache until a caller asks for it.
+ */
+export const PayCardStatusResponseSchema = z.object({
+  id: z.string().min(1),
+  holderName: z.string().min(1),
+  /** `YYYY/MM`, as the provider formats it. */
+  expiryDate: z.string().min(1),
+  panLast4: z.string().min(1),
+  status: z.enum(["ACTIVE", "FROZEN", "BLOCKED"]),
+  type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
+  orderedAt: z.string().min(1),
+});
