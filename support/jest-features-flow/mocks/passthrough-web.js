@@ -37,6 +37,20 @@ function InteractiveIcon({ icon: _icon, iconType: _iconType, size: _size, ...pro
   return React.createElement("button", { type: "button", ...props });
 }
 
+function Banner({ children, title, description, ...props }) {
+  return React.createElement(
+    "div",
+    props,
+    title === undefined ? null : React.createElement("span", undefined, title),
+    description === undefined ? null : React.createElement("span", undefined, description),
+    children,
+  );
+}
+
+function Tag({ label, ...props }) {
+  return React.createElement("span", props, label);
+}
+
 function Tooltip({ children, onOpenChange, open }) {
   return React.createElement(
     TooltipOpenContext.Provider,
@@ -85,8 +99,10 @@ module.exports = new Proxy(
   {
     __esModule: true,
     Avatar,
+    Banner,
     DialogHeader,
     InteractiveIcon,
+    Tag,
     resolveAvatarColor,
     Tooltip,
     TooltipContent,
