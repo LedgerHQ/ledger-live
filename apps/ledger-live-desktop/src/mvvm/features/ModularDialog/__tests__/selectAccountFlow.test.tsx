@@ -455,18 +455,18 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
     expect(
-      screen.getAllByText(/To fund your perps, you need a Hyperliquid account/i)[0],
+      screen.getAllByText(/select an account you want to deposit funds into/i)[0],
     ).toBeVisible();
   });
 
-  it("should keep the empty-accounts description on the receiving account step", async () => {
+  it("should ask for a Hyperliquid account when the receiving step has none", async () => {
     await renderAccountStep("perpetuals:receive", []);
 
     expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
-    expect(screen.getAllByText(/you don't have ethereum accounts yet/i)[0]).toBeVisible();
     expect(
-      screen.queryByText(/To fund your perps, you need a Hyperliquid account/i),
-    ).not.toBeInTheDocument();
+      screen.getAllByText(/To fund your perps, you need a Hyperliquid account/i)[0],
+    ).toBeVisible();
+    expect(screen.queryByText(/you don't have ethereum accounts yet/i)).not.toBeInTheDocument();
   });
 
   it("should show the deposit asset header for the perpetuals funding use case", async () => {

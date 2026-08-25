@@ -78,16 +78,22 @@ const AccountSelectionContent = ({
     ? t("modularDrawer.selectAccountPerpsTitle")
     : t("modularDrawer.selectAccount");
 
-  const emptyAccountsDescription =
-    detailedAccounts.length === 0
-      ? t("modularDrawer.emptyAccounts", { network: asset.name })
-      : undefined;
+  const hasAccounts = detailedAccounts.length > 0;
+
+  const emptyAccountsDescription = hasAccounts
+    ? undefined
+    : t("modularDrawer.emptyAccounts", { network: asset.name });
 
   const perpsDescription = isPerpsReceive
-    ? t("modularDrawer.selectAccountPerpsDescription")
+    ? t(
+        hasAccounts
+          ? "modularDrawer.selectAccountPerpsDescription"
+          : "modularDrawer.selectAccountPerpsEmptyDescription",
+      )
     : undefined;
 
-  const headerDescription = emptyAccountsDescription ?? perpsDescription;
+  // Perps spells out its own empty state, so it wins over the generic "no account" copy.
+  const headerDescription = perpsDescription ?? emptyAccountsDescription;
 
   return (
     <>
