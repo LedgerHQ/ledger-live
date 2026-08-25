@@ -11,11 +11,9 @@ import type {
   EditExternalAddressResult,
 } from "../contactDeviceIntentsPort";
 import { ContactDeviceIntentCancelledError, ContactDeviceIntentMissingResultError } from "./errors";
-import {
-  createEditExternalAddressOperation,
-  createRegisterExternalAddressOperation,
-  createRenameExternalContactOperation,
-} from "./operations";
+import { createEditExternalAddressOperation } from "./operations/editExternalAddress";
+import { createRegisterExternalAddressOperation } from "./operations/registerExternalAddress";
+import { createRenameExternalContactOperation } from "./operations/renameExternalContact";
 import {
   editExternalAddressIntentPlatformDefinition,
   registerExternalAddressIntentPlatformDefinition,
