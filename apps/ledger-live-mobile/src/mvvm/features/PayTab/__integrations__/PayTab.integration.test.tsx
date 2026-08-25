@@ -14,10 +14,16 @@ import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { NavigatorName, ScreenName } from "~/const";
-import { track, screen as trackScreen } from "~/analytics";
+import { track } from "~/analytics";
+import { screen as trackScreen } from "~/analytics/segment";
 import type { State } from "~/reducers/types";
 import PayTabNavigator from "LLM/features/PayTab";
 import { registryActions } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
+
+jest.mock("~/analytics", () => ({
+  ...jest.requireActual("~/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
@@ -175,7 +181,7 @@ describe("PayTab integration", () => {
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
-      expect(track).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "deposit",
         buttonLocation: "quick_action",
         page: "Pay",
@@ -183,7 +189,7 @@ describe("PayTab integration", () => {
 
       await user.press(screen.getByTestId("action-tile-request"));
 
-      expect(track).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "request",
         buttonLocation: "quick_action",
         page: "Pay",
@@ -216,7 +222,9 @@ describe("PayTab integration", () => {
       await user.press(pill);
 
       expect(await screen.findByTestId("pay-card-balance-filter-picker")).toBeVisible();
-      expect(track).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "balance_filter",
+      });
     });
 
     it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
@@ -234,7 +242,7 @@ describe("PayTab integration", () => {
       const pill = screen.getByTestId("pay-card-balance-filter-pill");
       expect(within(pill).getByText("USDC")).toBeVisible();
 
-      expect(track).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "confirm_balance_filter",
         asset: "USDC",
       });
