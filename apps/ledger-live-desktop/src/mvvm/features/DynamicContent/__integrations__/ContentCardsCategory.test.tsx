@@ -274,6 +274,24 @@ describe("ContentCardsLocation", () => {
     );
   });
 
+  test("tracks Gen5 device click for Nano Pod carousel titles", async () => {
+    render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    fireEvent.click(await screen.findByText("Nano Pod"));
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "ledger gen5",
+        page: "carousel hardware",
+        deviceModel: "lnx",
+        platform: "lwd",
+      }),
+    );
+  });
+
   test("tracks hardware carousel card dismiss when a child card is dismissed", async () => {
     const { user } = render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
       initialState: hardwareCarouselState,

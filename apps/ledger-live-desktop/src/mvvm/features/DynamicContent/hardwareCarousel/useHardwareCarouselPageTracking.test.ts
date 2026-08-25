@@ -1,4 +1,4 @@
-import { act, renderHook } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useHardwareCarouselPageTracking } from "./useHardwareCarouselPageTracking";
 import { trackHardwareCarouselShown } from "./analytics";

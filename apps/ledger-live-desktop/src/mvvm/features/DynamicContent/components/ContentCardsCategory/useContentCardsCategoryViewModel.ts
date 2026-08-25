@@ -20,9 +20,9 @@ import { useDynamicContent } from "../../hooks/useDynamicContent";
 import {
   trackHardwareCarouselCardDismiss,
   trackHardwareCarouselDeviceClick,
-  type HardwareCarouselDevice,
   type HardwareCarouselSharedAnalyticsProps,
 } from "../../hardwareCarousel/analytics";
+import { extractHardwareCarouselDevice } from "../../hardwareCarousel/extractHardwareCarouselDevice";
 import { shouldShowHardwareCarouselCloseAll } from "../../hardwareCarousel/shouldShowHardwareCarouselCloseAll";
 import { getRenderableSmallSquareSlides } from "../../utils/getRenderableSmallSquareSlides";
 import type { SmallSquareContentCard } from "../../utils/mapSmallSquareContentCard";
@@ -59,25 +59,6 @@ function resolveHardwareCarouselCardLink(link: string): string {
     "desktop",
     LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
   );
-}
-
-function extractDeviceType(title?: string): HardwareCarouselDevice | null {
-  if (!title) {
-    return null;
-  }
-
-  const titleLower = title.toLowerCase();
-  if (titleLower.includes("gen5") || titleLower.includes("gen 5")) {
-    return "ledger gen5";
-  }
-  if (titleLower.includes("flex")) {
-    return "ledger flex";
-  }
-  if (titleLower.includes("stax")) {
-    return "ledger stax";
-  }
-
-  return null;
 }
 
 export type MappedCategorySlide = {
@@ -174,7 +155,7 @@ export function useContentCardsCategoryViewModel({
       }
 
       if (hardwareCarouselSharedProps) {
-        const deviceType = extractDeviceType(card.title);
+        const deviceType = extractHardwareCarouselDevice(card.title);
         if (deviceType) {
           trackHardwareCarouselDeviceClick(deviceType, hardwareCarouselSharedProps);
         }

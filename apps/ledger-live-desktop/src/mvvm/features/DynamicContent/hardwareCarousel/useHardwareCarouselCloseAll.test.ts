@@ -59,4 +59,23 @@ describe("useHardwareCarouselCloseAll", () => {
     expect(mockDismissCards).toHaveBeenCalledWith(["card-1"]);
     expect(trackHardwareCarouselCloseAll).not.toHaveBeenCalled();
   });
+
+  it("does not track analytics when the user has no eligible device model", () => {
+    mockDismissCards.mockReturnValue(true);
+    const { result } = renderHook(() => useHardwareCarouselCloseAll(["card-1"]), {
+      initialState: {
+        settings: {
+          devicesModelList: [DeviceModelId.nanoS],
+          sharePersonalizedRecommandations: true,
+        },
+      },
+    });
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockDismissCards).toHaveBeenCalledWith(["card-1"]);
+    expect(trackHardwareCarouselCloseAll).not.toHaveBeenCalled();
+  });
 });
