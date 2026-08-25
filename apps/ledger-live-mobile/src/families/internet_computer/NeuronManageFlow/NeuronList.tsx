@@ -20,6 +20,7 @@ import React, { useCallback } from "react";
 import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import FormatDate from "~/components/DateFormat/FormatDate";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -140,15 +141,21 @@ export default function NeuronListScreen({ navigation, route }: Props) {
         renderNeuron={renderNeuron}
         onPressNeuron={onPressNeuron}
         header={
-          // Desktop reaches the confirm-following screen from the account's stake banner, which
-          // mobile does not have yet, so the only route to it is from here — and only when
-          // something is actually decaying, since confirming otherwise is a no-op.
+          // A second way into the confirm-following screen, alongside the account's stake banner:
+          // once inside the flow, leaving it to act on a warning shown outside is a detour. Only
+          // while something is actually decaying, since confirming otherwise is a no-op.
           decaying ? (
             <Flex mb={4}>
+              {/* The title names the condition and the body the remedy: a warning that opens with
+                  what confirming achieves never says why it is on screen. */}
+              {/* Its own copy rather than the confirm screen's: that one has to stand alone, so it
+                  names the neuron again where this can just say "its". */}
               <Alert
                 type="warning"
-                title={t("internetComputer.refreshVotingPowerFlow.description")}
-              />
+                title={t("internetComputer.manageNeuronFlow.listNeuron.decayingTitle")}
+              >
+                {t("internetComputer.manageNeuronFlow.listNeuron.decayingDescription")}
+              </Alert>
               <Button
                 type="main"
                 mt={4}
@@ -164,13 +171,18 @@ export default function NeuronListScreen({ navigation, route }: Props) {
       />
       <Flex p={6} style={{ gap: 12 }}>
         <Text variant="small" color="neutral.c70" textAlign="center">
-          {t("internetComputer.manageNeuronFlow.listNeuron.lastSynced", {
-            date: lastUpdatedMSecs
-              ? new Date(lastUpdatedMSecs).toLocaleString()
-              : t("internetComputer.manageNeuronFlow.listNeuron.never"),
-          })}
+          {/* Formatted through the shared component rather than toLocaleString, which reads the
+              device locale and ignores the date format chosen in Settings. */}
+          {t("internetComputer.manageNeuronFlow.listNeuron.lastSynced")}{" "}
+          {lastUpdatedMSecs ? (
+            <FormatDate date={new Date(lastUpdatedMSecs)} withHoursMinutes />
+          ) : (
+            t("internetComputer.manageNeuronFlow.listNeuron.never")
+          )}
         </Text>
-        <Button type="main" onPress={onSync} testID="icp-sync-neurons-button">
+        {/* Secondary: the warning above points at Confirm following, and two filled buttons on one
+            screen give a routine refresh the same weight as the thing that needs attention. */}
+        <Button type="main" outline onPress={onSync} testID="icp-sync-neurons-button">
           {t("internetComputer.manageNeuronFlow.listNeuron.sync")}
         </Button>
       </Flex>

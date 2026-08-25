@@ -60,6 +60,18 @@ describe("NeuronList", () => {
     expect(screen.getByText(/Never/, { exact: false })).toBeVisible();
   });
 
+  // Formatted through the shared FormatDate, which honours the language and date format chosen in
+  // Settings. `toLocaleString()` reads the device locale instead, and gives itself away by printing
+  // seconds — the shared formatter never does.
+  it("formats the sync time through the app's date settings, not the device locale", () => {
+    lastUpdatedMSecs = 1_787_000_000_000;
+
+    renderScreen();
+
+    expect(screen.getByText(/Last synced:/)).toBeVisible();
+    expect(screen.queryByText(/Last synced:.*\d:\d\d:\d\d/)).toBeNull();
+  });
+
   it("routes Sync to the device with a list_neurons transaction", () => {
     renderScreen();
     fireEvent.press(screen.getByTestId("icp-sync-neurons-button"));
