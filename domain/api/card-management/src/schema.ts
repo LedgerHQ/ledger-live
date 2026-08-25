@@ -31,6 +31,15 @@ export const PayCardUserResponseSchema = z.object({
 });
 
 /**
+ * Not wired to an endpoint's `rawErrorResponseSchema`: a body that failed to validate would replace
+ * the `FetchBaseQueryError` with a schema error, and `isUnauthorizedError` reads `status === 401`
+ * off that error to end a session.
+ */
+export const PayCardErrorResponseSchema = z.object({
+  message: z.string(),
+});
+
+/**
  * `POST /v1/card/order` answers with nothing but this flag. The card itself only becomes observable
  * through the card status endpoint.
  */
@@ -38,10 +47,6 @@ export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
 
-/**
- * Narrow on purpose, like the user schema: the card's own status carries no PAN, CVV or PIN, and
- * anything the provider adds later stays out of the cache until a caller asks for it.
- */
 export const PayCardStatusResponseSchema = z.object({
   id: z.string().min(1),
   holderName: z.string().min(1),
