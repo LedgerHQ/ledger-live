@@ -8338,9 +8338,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.1.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:^
-        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -8363,18 +8360,6 @@ importers:
         specifier: ^1.8.0
         version: 1.11.0
     devDependencies:
-      '@ledgerhq/disable-network-setup':
-        specifier: workspace:^
-        version: link:../../disable-network-setup
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../../support/test-quarantine
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../types-live
-      '@ledgerhq/wallet-framework-test-setup':
-        specifier: workspace:^
-        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -28424,7 +28409,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

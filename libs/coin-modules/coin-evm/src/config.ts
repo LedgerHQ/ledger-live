@@ -1,5 +1,4 @@
 import { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import { log } from "@ledgerhq/logs";
 import type { InternalTxSourceList } from "./internalTxSources";
 
@@ -33,7 +32,7 @@ export type EvmConfig = {
       }
     | {
         type: "ledger";
-        explorerId: LedgerExplorerId;
+        explorerId: string;
         /** Number of retries for Ledger explorer API calls. Defaults to 2 if not set. Set to 0 for no retries. */
         retries?: number;
       };
@@ -53,7 +52,7 @@ export type EvmConfig = {
       }
     | {
         type: "ledger";
-        explorerId: LedgerExplorerId;
+        explorerId: string;
         batchSize?: number | undefined;
       }
     | {
@@ -63,7 +62,7 @@ export type EvmConfig = {
       };
   gasTracker?: {
     type: "ledger";
-    explorerId: LedgerExplorerId;
+    explorerId: string;
   };
   /**
    * NFT token standards to surface for this chain. Each standard is independent: an empty

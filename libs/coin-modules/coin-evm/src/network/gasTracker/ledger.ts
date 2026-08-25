@@ -1,5 +1,4 @@
 import network from "@ledgerhq/live-network/network";
-import type { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import {
   DEFAULT_EIP1559_BASE_FEE_MULTIPLIER,
@@ -20,7 +19,7 @@ type GasTracker = {
 // Shouldn't this be a dynamic / remote config? For example if there is an
 // update of the explorer backend to support EIP1559, we should be able to
 // update this config without having to release a new version of the app?
-const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
+const explorerIdGasTrackerMap = new Map<string, GasTracker>([
   ["avax", { compatibilty: { eip1559: false } }],
   ["bnb", { compatibilty: { eip1559: false } }],
   ["eth", { compatibilty: { eip1559: true } }],
