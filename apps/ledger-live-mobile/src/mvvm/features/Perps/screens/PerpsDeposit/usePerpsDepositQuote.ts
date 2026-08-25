@@ -94,7 +94,9 @@ export function usePerpsDepositQuote({
       stale = true;
       clearTimeout(timeout);
     };
-  }, [accounts, amount, counterValueCurrency.ticker, depositAccount, receiverAccount, requestKey]);
+    // The key covers every input; account churn must not restart the request.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestKey]);
 
   // Effects run a render late, so the stale quote is dropped here instead.
   if (current.key !== requestKey) return requestKey === null ? IDLE : LOADING;
