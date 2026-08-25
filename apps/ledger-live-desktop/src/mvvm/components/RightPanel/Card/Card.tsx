@@ -1,14 +1,13 @@
 import React from "react";
-import PayCardContainer from "LLD/features/PayTab/components/PayCardContainer";
+import { CardView } from "./CardView";
+import { useCardViewModel } from "./useCardViewModel";
 
 /**
  * Card
- * Right-panel content for the Pay tab: the Pay Card container frame.
+ * Right-panel content for the Pay tab: the Pay Card visual with a mock balance.
  */
 export const Card = () => {
-  return (
-    <div className="flex h-full flex-col pb-32">
-      <PayCardContainer />
-    </div>
-  );
+  const viewModel = useCardViewModel();
+
+  return <CardView viewModel={viewModel} />;
 };
