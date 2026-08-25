@@ -1,15 +1,16 @@
 import type { ReactNode } from "react";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";
+
+/** Device models with a device-action animation. Excludes Ledger Blue. */
+export type DeviceActionModelId = "nanoS" | "nanoSP" | "nanoX" | "stax" | "europa" | "apex";
 
 /** Device-side action illustrated by the content animation. */
 export type DeviceActionContentAction = "continue" | "power-and-unlock";
 
-/** Lottie source returned by the device-action animation helper. */
-export type DeviceActionAnimationSource = unknown;
+/** Theme variant used to select light or dark animation assets. */
+export type DeviceActionAnimationTheme = "light" | "dark";
 
-/** Device models supported by DeviceActionContent animations. */
-export type SupportedDeviceActionModelId = Exclude<DeviceModelId, DeviceModelId.blue>;
+/** Lottie source returned by the device-action animation lookup. */
+export type DeviceActionAnimationSource = unknown;
 
 /** Lumen banner displayed below the main device instructions. */
 export type DeviceActionContentBanner = Readonly<{
@@ -34,20 +35,18 @@ export type DeviceActionContentProps = Readonly<{
   /** Optional device label rendered as a Tag below the animation. */
   deviceName?: string;
 
-  /** Device model used to select the animation asset. */
-  deviceModelId: DeviceModelId;
+  /** Device model used to select the animation asset. Omit the animation when null. */
+  deviceModelId: DeviceActionModelId | null;
 
   /** Device-side action used to select the animation state. */
   action: DeviceActionContentAction;
 
+  /** Current app theme, used to select the light or dark animation asset. */
+  theme: DeviceActionAnimationTheme;
+
   /** Optional banner rendered below the title and description. */
   banner?: DeviceActionContentBanner;
-
-  /** Optional animation theme override. Defaults to the current styled theme. */
-  theme?: DeviceActionAnimationTheme;
 
   /** Optional test identifier applied to the root container. */
   testID?: string;
 }>;
-
-export type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";

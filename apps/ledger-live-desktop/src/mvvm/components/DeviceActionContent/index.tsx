@@ -1,67 +1,30 @@
 import React from "react";
-import { Banner, Tag } from "@ledgerhq/lumen-ui-react";
-import Animation from "~/renderer/animations";
-import useTheme from "~/renderer/hooks/useTheme";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
-  getDeviceActionAnimation,
-  getDeviceActionAnimationStyle,
-} from "./getDeviceActionAnimation";
-import type { DeviceActionAnimationTheme, DeviceActionContentProps } from "./types";
+  DeviceActionContent as PlatformDeviceActionContent,
+  toDeviceActionModelId,
+} from "@features/platform-device-action-content";
+import useTheme from "~/renderer/hooks/useTheme";
+import type {
+  DeviceActionAnimationTheme,
+  DeviceActionContentProps,
+  SupportedDeviceActionModelId,
+} from "./types";
 
 /**
- * Shared desktop layout for device-side actions with animation, copy, and banner.
+ * Desktop adapter for `@features/platform-device-action-content`: resolves the current app
+ * theme and converts the legacy `DeviceModelId` enum, so consumers keep passing today's props.
  */
-export function DeviceActionContent({
-  title,
-  description,
-  deviceName,
-  deviceModelId,
-  action,
-  banner,
-  testID,
-}: DeviceActionContentProps) {
+export function DeviceActionContent({ deviceModelId, theme, ...props }: DeviceActionContentProps) {
   const styledTheme = useTheme();
-  const resolvedTheme = getStyledAnimationTheme(styledTheme);
-  const animationSource = getDeviceActionAnimation({
-    action,
-    modelId: deviceModelId,
-    theme: resolvedTheme,
-  });
+  const resolvedTheme = theme ?? getStyledAnimationTheme(styledTheme);
 
   return (
-    <div
-      className="flex w-full flex-col items-center gap-32 overflow-hidden pb-16"
-      data-testid={testID}
-    >
-      <div className="flex w-full flex-col items-center gap-16">
-        {animationSource ? (
-          <div
-            style={getDeviceActionAnimationStyle(deviceModelId)}
-            data-testid={testID ? `${testID}-animation` : undefined}
-          >
-            <Animation animation={animationSource} width="100%" height="100%" />
-          </div>
-        ) : null}
-        {deviceName ? <Tag size="md" appearance="base" label={deviceName} /> : null}
-      </div>
-
-      {title || description ? (
-        <div className="flex w-full flex-col items-center gap-8 break-words text-center">
-          {title ? <h3 className="heading-4-semi-bold w-full text-base">{title}</h3> : null}
-          {description ? <p className="body-2 w-full text-muted">{description}</p> : null}
-        </div>
-      ) : null}
-
-      {banner ? (
-        <div className="w-full">
-          <Banner
-            appearance={banner.appearance ?? "info"}
-            title={banner.title}
-            description={banner.description}
-          />
-        </div>
-      ) : null}
-    </div>
+    <PlatformDeviceActionContent
+      {...props}
+      deviceModelId={toDeviceActionModelId(deviceModelId)}
+      theme={resolvedTheme}
+    />
   );
 }
 
@@ -69,10 +32,9 @@ function getStyledAnimationTheme(styledTheme: { theme?: string }): DeviceActionA
   return styledTheme.theme === "dark" ? "dark" : "light";
 }
 
-export {
-  getDeviceActionAnimation,
-  supportedDeviceActionModelIds,
-} from "./getDeviceActionAnimation";
+export const supportedDeviceActionModelIds: SupportedDeviceActionModelId[] = Object.values(
+  DeviceModelId,
+).filter((modelId): modelId is SupportedDeviceActionModelId => modelId !== DeviceModelId.blue);
 
 export type {
   DeviceActionAnimationSource,
