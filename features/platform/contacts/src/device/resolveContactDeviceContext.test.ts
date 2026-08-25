@@ -39,9 +39,28 @@ describe("resolveContactDeviceContext", () => {
     });
   });
 
-  it("GIVEN Tron WHEN resolving its context THEN it rejects the unsupported app", () => {
+  it("GIVEN Tron WHEN resolving its context THEN it returns the Tron app and coin type", () => {
     // GIVEN
     const currencyId = ContactCurrencyIdSchema.parse("tron");
+
+    // WHEN
+    const context = resolveContactDeviceContext(currencyId);
+
+    // THEN
+    expect(context).toEqual({
+      blockchainFamily: "tron",
+      chainId: 195,
+      initializationInput: {
+        appName: "Tron",
+        dependencies: [],
+        requireLatestFirmware: false,
+      },
+    });
+  });
+
+  it("GIVEN an unsupported app WHEN resolving its context THEN it rejects the currency", () => {
+    // GIVEN
+    const currencyId = ContactCurrencyIdSchema.parse("bitcoin");
 
     // WHEN
     const resolve = () => resolveContactDeviceContext(currencyId);

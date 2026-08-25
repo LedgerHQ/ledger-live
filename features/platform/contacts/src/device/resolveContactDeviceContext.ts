@@ -2,7 +2,7 @@ import type { ContactAddress } from "@domain/entity-contact";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { ContactsDeviceInitializationInput } from "./types";
 
-const SUPPORTED_MANAGER_APP_NAME = "Ethereum";
+const SUPPORTED_MANAGER_APP_NAMES = new Set(["Ethereum", "Tron"]);
 
 export class UnsupportedContactDeviceCurrencyError extends Error {
   override name = "UnsupportedContactDeviceCurrencyError" as const;
@@ -24,17 +24,13 @@ export function resolveContactDeviceContext(
   const currency =
     findCryptoCurrencyById(currencyId) ?? findCryptoCurrencyById(currencyId.split("/")[0]);
 
-  if (
-    currency === undefined ||
-    currency.managerAppName !== SUPPORTED_MANAGER_APP_NAME ||
-    currency.ethereumLikeInfo?.chainId === undefined
-  ) {
+  if (currency === undefined || !SUPPORTED_MANAGER_APP_NAMES.has(currency.managerAppName)) {
     throw new UnsupportedContactDeviceCurrencyError(currencyId);
   }
 
   return {
     blockchainFamily: currency.family,
-    chainId: currency.ethereumLikeInfo.chainId,
+    chainId: currency.ethereumLikeInfo?.chainId ?? currency.coinType,
     initializationInput: {
       appName: currency.managerAppName,
       dependencies: [],
