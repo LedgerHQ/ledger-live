@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook } from "@tests/test-renderer";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
 
@@ -25,15 +26,12 @@ jest.mock("../usePerpsDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
-function createAccount(id: string, currencyId: string, spendableBalance: number): AccountLike {
-  const currency = getCryptoCurrencyById(currencyId);
+function createAccount(id: string, currencyId: string, spendableBalance: number): Account {
   return {
-    type: "Account",
-    id,
-    currency,
+    ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
     spendableBalance: new BigNumber(spendableBalance),
     balance: new BigNumber(spendableBalance),
-  } as AccountLike;
+  };
 }
 
 const receiverAccount = createAccount("receiver-1", "ethereum", 0);
@@ -44,6 +42,17 @@ function createProps(navigate = jest.fn()) {
     props: { navigation: { navigate }, route: { params: { receiverAccount } } } as never,
     navigate,
   };
+}
+
+/** The funding account is read back from the store, so it has to live there. */
+function renderViewModel(props: never, discreetMode = false) {
+  return renderHook(() => usePerpsDepositViewModel(props), {
+    overrideInitialState: state => ({
+      ...state,
+      accounts: { ...state.accounts, active: [fundingAccount] },
+      settings: { ...state.settings, discreetMode },
+    }),
+  });
 }
 
 function selectFundingAccount() {
@@ -67,7 +76,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("starts with an empty amount and no funding account", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     expect(result.current.amountText).toBe("");
     expect(result.current.depositAmount).toBe(0);
@@ -78,7 +87,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("keeps partially typed decimals and leaves the deposit floor to the live app", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     typeAmount(result.current.pressAmountKey, "3.");
 
@@ -91,7 +100,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("types, corrects and clears the amount from the keypad", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     act(() => ["5", "0", "0"].forEach(key => result.current.pressAmountKey(key)));
     expect(result.current.amountText).toBe("500");
@@ -113,7 +122,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("adopts the funding account picked in the modular drawer", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     typeAmount(result.current.pressAmountKey, "42");
     act(() => result.current.pickDepositAccount());
@@ -136,7 +145,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("flags amounts above the funding balance", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     act(() => result.current.pickDepositAccount());
     selectFundingAccount();
@@ -151,7 +160,7 @@ describe("usePerpsDepositViewModel", () => {
 
   it("enables the review CTA once a funding account and amount are set", () => {
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     act(() => result.current.pickDepositAccount());
     selectFundingAccount();
@@ -160,10 +169,21 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(true);
   });
 
+  it("hides both balances when discreet mode is on", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props, true);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+
+    expect(result.current.headerDescription).toContain("***");
+    expect(result.current.depositAccountCounterValue).toBe("***");
+  });
+
   it("holds the review CTA back until the quote lands", () => {
     mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     act(() => result.current.pickDepositAccount());
     selectFundingAccount();
@@ -179,7 +199,7 @@ describe("usePerpsDepositViewModel", () => {
   it("stops shimmering when the provider settles on no quote", () => {
     mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: false });
     const { props } = createProps();
-    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+    const { result } = renderViewModel(props);
 
     act(() => result.current.pickDepositAccount());
     selectFundingAccount();

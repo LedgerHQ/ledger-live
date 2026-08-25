@@ -1,7 +1,8 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen } from "@tests/test-renderer";
 import PerpsDepositScreen from "../PerpsDepositScreen";
 
@@ -28,14 +29,12 @@ jest.mock("../usePerpsDepositQuote", () => ({
   usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
 }));
 
-function createAccount(id: string, spendableBalance: number): AccountLike {
+function createAccount(id: string, spendableBalance: number): Account {
   return {
-    type: "Account",
-    id,
-    currency: getCryptoCurrencyById("ethereum"),
+    ...genAccount(id, { currency: getCryptoCurrencyById("ethereum"), operationsSize: 0 }),
     spendableBalance: new BigNumber(spendableBalance),
     balance: new BigNumber(spendableBalance),
-  } as AccountLike;
+  };
 }
 
 const receiverAccount = createAccount("receiver-1", 0);
@@ -43,6 +42,19 @@ const fundingAccount = createAccount("funding-1", 10000);
 
 const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), setOptions: jest.fn() };
 const mockRoute = { params: { receiverAccount } };
+
+/** The funding account is read back from the store, so it has to live there. */
+function renderDeposit() {
+  return render(
+    <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
+    {
+      overrideInitialState: state => ({
+        ...state,
+        accounts: { ...state.accounts, active: [fundingAccount] },
+      }),
+    },
+  );
+}
 
 describe("PerpsDeposit integration", () => {
   beforeEach(() => {
@@ -54,9 +66,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should let the user pick a funding account before reviewing", async () => {
-    const { user } = render(
-      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    const { user } = renderDeposit();
 
     expect(screen.getByTestId("perps-deposit-amount-input")).toBeOnTheScreen();
     // No funding account and no amount yet, so the review CTA stays disabled.
@@ -70,9 +80,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should type the amount with the in-app keypad", async () => {
-    const { user } = render(
-      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    const { user } = renderDeposit();
 
     await user.press(screen.getByTestId("perps-deposit-key-5"));
     await user.press(screen.getByTestId("perps-deposit-key-0"));
@@ -85,9 +93,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should enable the review CTA once a funding account and amount are entered", async () => {
-    const { user } = render(
-      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    const { user } = renderDeposit();
 
     await user.press(screen.getByTestId("perps-deposit-select-currency"));
     const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
@@ -100,9 +106,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should only advertise the provider once an amount is entered", async () => {
-    const { user } = render(
-      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    const { user } = renderDeposit();
 
     expect(screen.queryByText("Swap and deposit via SwapKit")).not.toBeOnTheScreen();
 
@@ -118,9 +122,7 @@ describe("PerpsDeposit integration", () => {
 
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
     mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
-    const { user } = render(
-      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
-    );
+    const { user } = renderDeposit();
 
     await user.press(screen.getByTestId("perps-deposit-select-currency"));
     const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
