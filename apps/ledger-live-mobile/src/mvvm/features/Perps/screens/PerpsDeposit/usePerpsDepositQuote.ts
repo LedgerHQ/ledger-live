@@ -19,9 +19,17 @@ type PerpsDepositQuoteParams = {
 export type PerpsDepositQuoteState = {
   quote: PerpsDepositQuote | undefined;
   isLoading: boolean;
+  /** The provider answered, but has nothing to route this pair with. */
+  isUnavailable: boolean;
 };
 
-const IDLE: PerpsDepositQuoteState = { quote: undefined, isLoading: false };
+const IDLE: PerpsDepositQuoteState = { quote: undefined, isLoading: false, isUnavailable: false };
+const LOADING: PerpsDepositQuoteState = { quote: undefined, isLoading: true, isUnavailable: false };
+const UNAVAILABLE: PerpsDepositQuoteState = {
+  quote: undefined,
+  isLoading: false,
+  isUnavailable: true,
+};
 
 /**
  * Debounced quote for the funding pair.
@@ -41,7 +49,7 @@ export function usePerpsDepositQuote({
       return;
     }
 
-    setState({ quote: undefined, isLoading: true });
+    setState(LOADING);
 
     let stale = false;
     const timeout = setTimeout(() => {
@@ -53,10 +61,13 @@ export function usePerpsDepositQuote({
         counterValueCurrency: counterValueCurrency.ticker,
       })
         .then(received => {
-          if (!stale) setState({ quote: received, isLoading: false });
+          if (stale) return;
+          setState(
+            received ? { quote: received, isLoading: false, isUnavailable: false } : UNAVAILABLE,
+          );
         })
         .catch(() => {
-          if (!stale) setState(IDLE);
+          if (!stale) setState(UNAVAILABLE);
         });
     }, QUOTE_DEBOUNCE_MS);
 
