@@ -39,6 +39,65 @@ describe("createEditExternalAddressOperation", () => {
     },
   );
 
+  it("GIVEN a changed address WHEN creating an edit THEN it maps the device result", () => {
+    const edit = createEditExternalAddressOperation(
+      {
+        contact,
+        address,
+        updatedLabel,
+        updatedAddress,
+      },
+      intentDefinition,
+    );
+    if (edit === null) {
+      throw new Error("Expected a combined operation");
+    }
+
+    expect(edit.intentInput).toMatchObject({
+      contactName: contact.name,
+      previousScope: address.label,
+      newScope: updatedLabel,
+      previousAddress: address.address,
+      newAddress: updatedAddress,
+      groupHandle: contact.deviceCredentials?.groupHandle,
+      hmacProof: contact.deviceCredentials?.hmacProof,
+      hmacRest: address.device.hmacRest,
+    });
+    expect(
+      edit.mapIntentResultToResult({
+        type: "success",
+        result: {
+          contactName: contact.name,
+          scope: updatedLabel,
+          address: updatedAddress,
+          blockchainFamily: "evm",
+          chainId: 1,
+          groupHandle: "group-handle",
+          hmacProof: "proof",
+          hmacRest: "rest",
+        },
+      }),
+    ).toEqual({
+      blockchainFamily: "evm",
+      chainId: 1,
+      hmacRest: "rest",
+    });
+  });
+
+  it("GIVEN a contact without device credentials WHEN creating an edit THEN it throws", () => {
+    expect(() =>
+      createEditExternalAddressOperation(
+        {
+          contact: { ...contact, deviceCredentials: undefined },
+          address,
+          updatedLabel,
+          updatedAddress,
+        },
+        intentDefinition,
+      ),
+    ).toThrow("Contact device credentials are required to edit an address");
+  });
+
   it("GIVEN a failed edit WHEN mapping its Result THEN it preserves the cause", () => {
     const cause = new Error("scope failed");
     const edit = createEditExternalAddressOperation(
