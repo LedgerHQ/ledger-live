@@ -8,6 +8,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
 import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
@@ -30,8 +31,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     isLoading,
     showInitialState,
     showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
     contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
+    handleContactSelect,
+    handleContactAddressSelect,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -43,7 +49,6 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
-    handleContactSelect,
   } = recipient;
 
   return (
@@ -68,6 +73,21 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
             <RecipientContactsList
               contacts={contactsOnNetwork}
               onContactSelect={handleContactSelect}
+            />
+          )}
+
+          {showContactSearchResult && contactSearchResult && (
+            <RecipientContactsList
+              contacts={[contactSearchResult]}
+              onContactSelect={handleContactSelect}
+            />
+          )}
+
+          {selectedContact && (
+            <RecipientContactAddressSelection
+              contact={selectedContact}
+              network={recipient.mainAccount.currency}
+              onAddressSelect={handleContactAddressSelect}
             />
           )}
 

@@ -14,6 +14,8 @@ import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
 import { useSelector } from "~/context/hooks";
 import { useContactsFeature } from "@features/platform-contacts";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { mockContact } from "@domain/entity-contact/schema.mock";
+import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
@@ -26,6 +28,7 @@ jest.mock("~/context/Locale", () => ({
 }));
 jest.mock("~/reducers/wallet");
 jest.mock("../../context/SendFlowContext");
+jest.mock("../../context/RecipientContactSelectionContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
@@ -44,6 +47,7 @@ const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedUseSendAmountDisplayMode = jest.mocked(useSendAmountDisplayMode);
 const mockedUseAvailableBalance = jest.mocked(useAvailableBalance);
 const mockedUseCurrentSendFlowStep = jest.mocked(useCurrentSendFlowStep);
+const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 
 const mockAccount = {
   type: "Account",
@@ -65,6 +69,7 @@ describe("useSendHeaderViewModel", () => {
   const mockNavigate = jest.fn();
   const mockGoBack = jest.fn();
   const mockCanGoBack = jest.fn(() => false);
+  const mockAddListener = jest.fn(() => jest.fn());
   const mockClearRecipientSearch = jest.fn();
   const mockSetRecipientSearchValue = jest.fn();
 
@@ -75,6 +80,7 @@ describe("useSendHeaderViewModel", () => {
       canGoBack: mockCanGoBack,
       goBack: mockGoBack,
       navigate: mockNavigate,
+      addListener: mockAddListener,
     } as never);
     mockedUseMaybeAccountName.mockReturnValue("Base 1");
     mockedUseSendAmountDisplayMode.mockReturnValue({
@@ -92,6 +98,11 @@ describe("useSendHeaderViewModel", () => {
         showHeaderRight: true,
       },
     ]);
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: undefined,
+      selectContact: jest.fn(),
+      clearSelectedContact: jest.fn(),
+    });
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: {
         recipientSupportsDomain: true,
@@ -135,6 +146,29 @@ describe("useSendHeaderViewModel", () => {
     expect(result.current.title).toBe("Send ETH");
     expect(result.current.descriptionText).toBe("Base 1 · $5,969.83");
     expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat");
+  });
+
+  it("shows address selection for a contact and returns to the recipient list", () => {
+    const clearSelectedContact = jest.fn();
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: mockContact({ name: "Benoit" }),
+      selectContact: jest.fn(),
+      clearSelectedContact,
+    });
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.title).toBe("send.newSendFlow.selectAddress");
+    expect(result.current.descriptionText).toBe("Benoit");
+    expect(result.current.showRecipientInput).toBe(false);
+    expect(result.current.showHeaderRight).toBe(false);
+    expect(result.current.canGoBack).toBe(true);
+    expect(mockAddListener).toHaveBeenCalledWith("beforeRemove", expect.any(Function));
+
+    result.current.handleBackPress();
+
+    expect(clearSelectedContact).toHaveBeenCalledTimes(1);
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 
   it("formats the header balance with the selected amount display mode", () => {
