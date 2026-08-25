@@ -1,6 +1,5 @@
-import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, waitFor } from "tests/testSetup";
 import { usePerpsReviewViewModel, type PerpsReviewData } from "../usePerpsReviewViewModel";
 
@@ -9,18 +8,9 @@ jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
   openPerpsDeposit: (data: unknown) => mockOpenPerpsDeposit(data),
 }));
 
-function createAccount(id: string, currencyId: string): AccountLike {
-  return {
-    type: "Account",
-    id,
-    currency: getCryptoCurrencyById(currencyId),
-    spendableBalance: new BigNumber(0),
-    balance: new BigNumber(0),
-  } as AccountLike;
-}
-
-const depositAccount = createAccount("funding-1", "ethereum");
-const receiverAccount = createAccount("receiver-1", "ethereum");
+const ethereum = getCryptoCurrencyById("ethereum");
+const depositAccount = genAccount("funding-1", { currency: ethereum, operationsSize: 0 });
+const receiverAccount = genAccount("receiver-1", { currency: ethereum, operationsSize: 0 });
 
 function createData(overrides?: Partial<PerpsReviewData>): PerpsReviewData {
   return {
@@ -47,7 +37,7 @@ describe("usePerpsReviewViewModel", () => {
   });
 
   it("should read the amount in the unit it was handed over in", async () => {
-    const gwei = getCryptoCurrencyById("ethereum").units[1];
+    const gwei = ethereum.units[1];
     const { result } = renderHook(() => usePerpsReviewViewModel(createData(), jest.fn()), {
       initialState: { settings: { currenciesSettings: { ETH: { unit: gwei } } } },
     });
