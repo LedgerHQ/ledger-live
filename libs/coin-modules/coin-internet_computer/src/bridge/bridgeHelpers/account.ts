@@ -47,20 +47,27 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
   );
 
   // Neurons aren't fetched during background sync (that needs device signing). They're refreshed by
-  // the device-signed list_neurons operation, whose result rides in operation.extra.neurons. Apply
-  // the newest such snapshot onto the account; otherwise carry the previous one across resyncs.
+  // the device-signed list_neurons operation, whose result rides in operation.extra.neurons.
+  //
+  // Seeded with the account's own snapshot so the fold can only move forward: an account persisted
+  // before governance ops stopped entering history may still hold one, older than what it carries.
+  const previous = initialAccount?.neurons;
   const latestSnapshot = [
     ...(initialAccount?.pendingOperations ?? []),
     ...(initialAccount?.operations ?? []),
-  ].reduce<{ neurons: ICPNeuron[]; date: Date } | undefined>((latest, op) => {
-    const snapshot = (op.extra as InternetComputerOperationExtra | undefined)?.neurons;
-    return snapshot && (!latest || op.date > latest.date)
-      ? { neurons: snapshot, date: op.date }
-      : latest;
-  }, undefined);
-  const neurons = latestSnapshot
-    ? new NeuronsData(latestSnapshot.neurons, latestSnapshot.date.getTime())
-    : (initialAccount?.neurons ?? NeuronsData.empty());
+  ].reduce<{ neurons: ICPNeuron[]; date: number }>(
+    (latest, op) => {
+      const snapshot = (op.extra as InternetComputerOperationExtra | undefined)?.neurons;
+      return snapshot && op.date.getTime() > latest.date
+        ? { neurons: snapshot, date: op.date.getTime() }
+        : latest;
+    },
+    {
+      neurons: previous?.fullNeurons ?? [],
+      date: previous?.lastUpdatedMSecs ?? 0,
+    },
+  );
+  const neurons = new NeuronsData(latestSnapshot.neurons, latestSnapshot.date);
 
   const neuronAddresses = neurons.fullNeurons.map(n => n.accountIdentifier);
 

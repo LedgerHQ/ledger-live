@@ -82,4 +82,26 @@ describe("getAccountShape neuron persistence", () => {
     expect(shape.neurons.fullNeurons).toEqual([neuron]);
     expect(shape.neurons.lastUpdatedMSecs).toBe(5);
   });
+
+  it("keeps the account's snapshot when an older operation still carries one", async () => {
+    const staleOp = {
+      type: "FEES",
+      date: new Date(1_000),
+      recipients: [],
+      extra: { neurons: [] },
+    };
+    const shape = (await getAccountShape(
+      infoWith({
+        id: "x",
+        blockHeight: 0,
+        operations: [staleOp],
+        pendingOperations: [],
+        neurons: new NeuronsData([neuron], 2_000),
+      }),
+      {} as any,
+    )) as ICPAccount;
+
+    expect(shape.neurons.fullNeurons).toEqual([neuron]);
+    expect(shape.neurons.lastUpdatedMSecs).toBe(2_000);
+  });
 });
