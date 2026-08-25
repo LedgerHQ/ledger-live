@@ -14,7 +14,7 @@ const makeOperation = (
     id: "op-1",
     hash: "hash-1",
     accountId: "account-1",
-    type: "FEES",
+    type: "NONE",
     date: new Date("2026-08-12T10:00:00Z"),
     recipients: [],
     senders: [],
@@ -33,6 +33,33 @@ const runUpdater = (account: ICPAccount, operation: InternetComputerOperation): 
 };
 
 describe("applyNeuronOperation", () => {
+  it("keeps a governance operation out of history while still applying its snapshot", () => {
+    const account = makeICPAccount({ neurons: [] });
+    // Named for this account, so an empty pendingOperations can only mean the type was honoured.
+    const operation = makeOperation({
+      accountId: account.id,
+      extra: { neurons: [makeNeuron({ id: 9n })] },
+    });
+
+    const updated = runUpdater(account, operation);
+
+    expect(updated.pendingOperations).toHaveLength(0);
+    expect(updated.neurons.fullNeurons.map(n => n.id)).toEqual([9n]);
+  });
+
+  it("still lists a staking transfer, which is a real ledger transaction", () => {
+    const account = makeICPAccount({ neurons: [] });
+    const operation = makeOperation({
+      type: "STAKE_NEURON",
+      accountId: account.id,
+      extra: {},
+    });
+
+    const updated = runUpdater(account, operation);
+
+    expect(updated.pendingOperations.map(op => op.type)).toEqual(["STAKE_NEURON"]);
+  });
+
   it("leaves the neurons alone when the operation carries no snapshot", () => {
     const account = makeICPAccount({ neurons: [makeNeuron({ id: 1n })] });
 
