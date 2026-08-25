@@ -22,7 +22,7 @@ export function usePayTabViewModel() {
 
   const balance = usePayCardBalance();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
-  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
   const balanceLabels: BalanceLabels = useMemo(
@@ -93,6 +93,5 @@ export function usePayTabViewModel() {
     balanceLabels,
     actionTiles,
     depositOptions: deposit.depositOptions,
-    requestReceive: request.requestReceive,
   };
 }

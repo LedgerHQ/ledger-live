@@ -1,120 +1,127 @@
 import React from "react";
-import { render, screen, waitFor, within } from "@tests/test-renderer";
+import { Text, View } from "react-native";
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from "@react-navigation/native-stack";
+import { act, render, screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-card-balance/state";
+import { AssetCategory } from "@domain/api-aggregated-assets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { screen as trackScreen } from "~/analytics/segment";
 import type { State } from "~/reducers/types";
-import { PayTabScreen } from "LLM/features/PayTab";
-
-const mockTrackScreen = jest.fn();
-const mockTrack = jest.fn();
-const mockUsePayStablecoins = jest.fn();
-const mockNavigate = jest.fn();
-const mockHandleOpenReceiveDrawer = jest.fn();
-const mockHandleOpenSwap = jest.fn();
-const mockHandleOpenBuySell = jest.fn();
-
-jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
-  useNavigationBarHeights: () => ({ top: 0 }),
-}));
+import PayTabNavigator from "LLM/features/PayTab";
+import { registryActions } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 
 jest.mock("~/analytics", () => ({
-  TrackScreen: (props: Record<string, unknown>) => {
-    mockTrackScreen(props);
-    return null;
-  },
-  track: (...args: unknown[]) => mockTrack(...args),
+  ...jest.requireActual("~/analytics"),
+  track: jest.fn(),
 }));
 
-jest.mock("@features/flow-pay-card", () => {
-  const ReactModule = require("react");
-  const { View } = require("react-native");
-  return {
-    Card: () =>
-      ReactModule.createElement(ReactModule.Fragment, null, [
-        ReactModule.createElement(View, { testID: "card-login", key: "login" }),
-        ReactModule.createElement(View, { testID: "card-logout", key: "logout" }),
-      ]),
-  };
-});
-
-jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
-  usePayStablecoins: () => mockUsePayStablecoins(),
-}));
-
-// PayTabScreen sits inside the Pay tab navigator in the app; these tests render it on its own, so
-// the route that carries the OAuth redirect has to come from here.
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
-  useRoute: () => ({ params: undefined }),
-}));
-
-jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
-}));
-
-jest.mock("LLM/features/Swap", () => ({
-  useOpenSwap: () => ({ handleOpenSwap: mockHandleOpenSwap }),
-}));
-
-jest.mock("LLM/features/Buy", () => ({
-  useOpenBuySell: () => ({ handleOpenBuySell: mockHandleOpenBuySell }),
+jest.mock("@features/flow-pay-card", () => ({
+  Card: () => (
+    <>
+      <View testID="card-login" />
+      <View testID="card-logout" />
+    </>
+  ),
 }));
 
 const EMPTY_TITLE = "Pay and get paid";
 const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
-
 const FEATURE_TOUR_ROW = "Minimal volatility";
 const FEATURE_TOUR_CTA = "Got it";
 
-const USDC_ID = "ethereum/erc20/usd__coin";
-const USDT_ID = "ethereum/erc20/usd_tether__erc20_";
-
-const DEFAULT_STABLECOINS = [
-  { id: USDC_ID, ticker: "USDC", name: "USD Coin", magnitude: 6 },
-  { id: USDT_ID, ticker: "USDT", name: "Tether USD", magnitude: 6 },
-];
-
-const heldUsdc = (value: number) => ({
-  currency: {
-    id: USDC_ID,
-    name: "USD Coin",
-    ticker: "USDC",
-    units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
-  },
-  balance: value * 1_000_000,
-  value,
+const ethereum = getCryptoCurrencyById("ethereum");
+const usd = getFiatCurrencyByTicker("USD");
+const usdc = TokenCurrencySchema.parse({
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd__coin",
+  parentCurrencyId: ethereum.id,
+  contractAddress: "0xA0b86991c6218b36c1D19D4a2e9Eb0cE3606eB48",
+  tokenType: "erc20",
+  ticker: "USDC",
+  name: "USD Coin",
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 });
 
-const withFeatureTourSeen =
-  (hasSeenFeatureTour: boolean) =>
-  (state: State): State => ({
+type TestStackParamList = {
+  PayTabTest: undefined;
+  [NavigatorName.ReceiveFunds]: {
+    screen: ScreenName.ReceiveProvider;
+    params: { manifestId: string; fromMenu: boolean };
+  };
+};
+
+const Stack = createNativeStackNavigator<TestStackParamList>();
+
+function ReceiveFundsScreen({
+  route,
+}: NativeStackScreenProps<TestStackParamList, NavigatorName.ReceiveFunds>) {
+  return (
+    <Text testID="receive-funds-screen">
+      {route.params.screen}:{route.params.params.manifestId}
+    </Text>
+  );
+}
+
+type RenderPayTabOptions = Readonly<{
+  hasSeenFeatureTour?: boolean;
+  holdsUsdc?: boolean;
+}>;
+
+function withUsdcHoldings(state: State): State {
+  const ethAccount = genAccount("pay-tab-eth", { currency: ethereum });
+
+  return {
     ...state,
-    payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
-  });
+    accounts: { active: [{ ...ethAccount, subAccounts: [genTokenAccount(0, ethAccount, usdc)] }] },
+    countervalues: {
+      ...state.countervalues,
+      countervalues: {
+        ...state.countervalues.countervalues,
+        state: importCountervalues(
+          { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
+          state.countervalues.userSettings,
+        ),
+      },
+    },
+  };
+}
 
-const tourSeen = withFeatureTourSeen(true);
-const tourNotSeen = withFeatureTourSeen(false);
-
-function mockStablecoins(overrides: Record<string, unknown> = {}) {
-  mockUsePayStablecoins.mockReturnValue({
-    stablecoins: [],
-    defaultStablecoins: DEFAULT_STABLECOINS,
-    isLoading: false,
-    isError: false,
-    ...overrides,
-  });
+function renderPayTab({ hasSeenFeatureTour = true, holdsUsdc = false }: RenderPayTabOptions = {}) {
+  return render(
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
+      <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
+    </Stack.Navigator>,
+    {
+      overrideInitialState: state => {
+        const next: State = {
+          ...state,
+          payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
+        };
+        return holdsUsdc ? withUsdcHoldings(next) : next;
+      },
+    },
+  );
 }
 
 describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockStablecoins();
   });
 
   describe("feature tour", () => {
     it("should show the feature tour on first visit", async () => {
-      render(<PayTabScreen />, { overrideInitialState: tourNotSeen });
+      renderPayTab({ hasSeenFeatureTour: false });
 
       expect(screen.getByTestId("paytab-screen")).toBeVisible();
       await waitFor(() => {
@@ -123,7 +130,7 @@ describe("PayTab integration", () => {
     });
 
     it("should persist dismissal and hide the tour after pressing Got it", async () => {
-      const { user, store } = render(<PayTabScreen />, { overrideInitialState: tourNotSeen });
+      const { user, store } = renderPayTab({ hasSeenFeatureTour: false });
 
       await waitFor(() => {
         expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
@@ -138,7 +145,7 @@ describe("PayTab integration", () => {
     });
 
     it("should not show the feature tour once it has been seen", () => {
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab();
 
       expect(screen.getByTestId("paytab-screen")).toBeVisible();
       expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
@@ -147,7 +154,7 @@ describe("PayTab integration", () => {
 
   describe("balance", () => {
     it("should render the empty hero when the user holds no stablecoins", async () => {
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab();
 
       expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
       expect(screen.getByText(EMPTY_TITLE)).toBeVisible();
@@ -158,18 +165,14 @@ describe("PayTab integration", () => {
     });
 
     it("should render the aggregated stablecoin balance when the user holds stablecoins", async () => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab({ holdsUsdc: true });
 
       expect(await screen.findByTestId("pay-card-balance-funded-state")).toBeVisible();
       expect(screen.queryByTestId("pay-card-balance-empty-state")).toBeNull();
     });
 
     it("should render Deposit and Request action tiles when the hero is funded", async () => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab({ holdsUsdc: true });
 
       expect(await screen.findByTestId("action-tile-deposit")).toBeVisible();
       expect(screen.getByTestId("action-tile-request")).toBeVisible();
@@ -178,13 +181,11 @@ describe("PayTab integration", () => {
     });
 
     it("should track button_clicked with quick_action location when an action tile is pressed", async () => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-
-      const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "deposit",
         buttonLocation: "quick_action",
         page: "Pay",
@@ -192,7 +193,7 @@ describe("PayTab integration", () => {
 
       await user.press(screen.getByTestId("action-tile-request"));
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "request",
         buttonLocation: "quick_action",
         page: "Pay",
@@ -200,26 +201,24 @@ describe("PayTab integration", () => {
     });
 
     it("should track the Pay page with the active balance filter on view", async () => {
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab();
 
       await waitFor(() => {
-        expect(mockTrackScreen).toHaveBeenCalledWith(
-          expect.objectContaining({ category: "Pay", balance_filter: "all" }),
-        );
+        const [category, , properties] = jest.mocked(trackScreen).mock.calls[0] ?? [];
+        expect(category).toBe("Pay");
+        expect(properties).toEqual(expect.objectContaining({ balance_filter: "all" }));
       });
     });
 
     it("should still render the card login block below the hero", async () => {
-      render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      renderPayTab();
 
       expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
     });
 
     it("should open the balance filter bottom sheet from the hero pill and track the interaction", async () => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-
-      const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user } = renderPayTab({ holdsUsdc: true });
 
       const pill = await screen.findByTestId("pay-card-balance-filter-pill");
       expect(pill).toBeVisible();
@@ -227,13 +226,13 @@ describe("PayTab integration", () => {
       await user.press(pill);
 
       expect(await screen.findByTestId("pay-card-balance-filter-picker")).toBeVisible();
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "balance_filter",
+      });
     });
 
     it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-
-      const { user, store } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("pay-card-balance-filter-pill"));
 
@@ -247,7 +246,7 @@ describe("PayTab integration", () => {
       const pill = screen.getByTestId("pay-card-balance-filter-pill");
       expect(within(pill).getByText("USDC")).toBeVisible();
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
         button: "confirm_balance_filter",
         asset: "USDC",
       });
@@ -255,12 +254,8 @@ describe("PayTab integration", () => {
   });
 
   describe("deposit options", () => {
-    beforeEach(() => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-    });
-
     it("opens the deposit options bottom sheet with the four options from the deposit tile", async () => {
-      const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
 
@@ -271,43 +266,71 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("opens the receive drawer when the receive option is selected", async () => {
-      const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+    it("opens the modular asset drawer for the receive flow when the receive option is selected", async () => {
+      const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
       await user.press(await screen.findByTestId("pay-card-deposit-option-receive"));
 
-      expect(mockHandleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(store.getState().modularDrawer).toMatchObject({
+          isOpen: true,
+          flow: "receive_flow",
+          source: "Pay",
+          categories: [AssetCategory.Stablecoins],
+        });
+      });
     });
 
     it("navigates to the Noah fiat provider when the bank transfer option is selected", async () => {
-      const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
       await user.press(await screen.findByTestId("pay-card-deposit-option-bankTransfer"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveProvider,
-        params: { manifestId: "noah", fromMenu: true },
-      });
+      expect(await screen.findByTestId("receive-funds-screen")).toHaveTextContent(
+        `${ScreenName.ReceiveProvider}:noah`,
+      );
     });
   });
 
   describe("request", () => {
-    beforeEach(() => {
-      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
-    });
-
     it("opens the modular asset drawer for the request flow when the request tile is pressed", async () => {
-      const { user, store } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+      const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-request"));
 
       await waitFor(() => {
-        expect(store.getState().modularDrawer.isOpen).toBe(true);
+        expect(store.getState().modularDrawer).toMatchObject({
+          isOpen: true,
+          flow: "request",
+          source: "Pay",
+          categories: [AssetCategory.Stablecoins],
+          enableAccountSelection: true,
+        });
       });
-      expect(store.getState().modularDrawer.flow).toBe("request");
-      expect(store.getState().modularDrawer.source).toBe("Pay");
+    });
+
+    it("shows the request receive screen when an account is selected in the drawer", async () => {
+      const { user, store } = renderPayTab({ holdsUsdc: true });
+      const parentAccount = store.getState().accounts.active[0];
+      const account = parentAccount.subAccounts![0];
+
+      await user.press(await screen.findByTestId("action-tile-request"));
+
+      await waitFor(() => {
+        expect(store.getState().modularDrawer.callbackId).toBeDefined();
+      });
+
+      const callbackId = store.getState().modularDrawer.callbackId;
+      await act(async () => registryActions.executeCallback(callbackId!, account, parentAccount));
+
+      expect(await screen.findByText("Request USD Coin")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
+
+      await user.press(screen.getByTestId("pay-card-request-receive-close"));
+
+      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
     });
   });
 });
