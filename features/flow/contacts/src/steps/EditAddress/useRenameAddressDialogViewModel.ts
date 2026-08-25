@@ -73,8 +73,8 @@ export function useRenameAddressDialogViewModel({
       }
 
       /**
-       * Dismissed upfront: save() hands over to the DeviceIntentExecutor UI, which handles
-       * all the UI interactions with the device.
+       * Dismiss the dialog before save(): the Device Intent Executor takes over the device
+       * interaction UI.
        */
       onCloseRequest();
       onSaveStart?.();

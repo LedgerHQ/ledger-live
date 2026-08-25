@@ -45,8 +45,10 @@ export function useRenameContactDialogViewModel({
         return;
       }
 
-      // Dismissed upfront: saving hands over to the device flow, and reopening this dialog
-      // once it ends would only flash it before the outcome is applied.
+      /**
+       * Dismiss the dialog before save(): the Device Intent Executor takes over the device
+       * interaction UI.
+       */
       onCloseRequest();
       await save();
       onSaveSuccess();
