@@ -5,15 +5,9 @@ import type {
 } from "@features/platform-device-intent";
 import type {
   ContactIntentResult,
-  EditExternalAddressIdentifierIntentInput,
-  EditExternalAddressIdentifierJobState,
-  EditExternalAddressIdentifierResult,
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
   EditExternalAddressResult,
-  EditExternalAddressScopeIntentInput,
-  EditExternalAddressScopeJobState,
-  EditExternalAddressScopeResult,
   RegisterExternalAddressIntentInput,
   RegisterExternalAddressJobState,
   RegisterExternalAddressResult,
@@ -31,22 +25,16 @@ export type ContactsDeviceInitializationInput = Readonly<{
 export type ContactDeviceIntentJobState =
   | RegisterExternalAddressJobState
   | RenameContactJobState
-  | EditExternalAddressIdentifierJobState
-  | EditExternalAddressScopeJobState
   | EditExternalAddressJobState;
 
 export type ContactDeviceIntentInput =
   | RegisterExternalAddressIntentInput
   | RenameContactIntentInput
-  | EditExternalAddressIdentifierIntentInput
-  | EditExternalAddressScopeIntentInput
   | EditExternalAddressIntentInput;
 
 export type ContactDeviceIntentResult =
   | ContactIntentResult<RegisterExternalAddressResult>
   | ContactIntentResult<RenameContactResult>
-  | ContactIntentResult<EditExternalAddressIdentifierResult>
-  | ContactIntentResult<EditExternalAddressScopeResult>
   | ContactIntentResult<EditExternalAddressResult>;
 
 export type ContactDeviceIntent = Intent<

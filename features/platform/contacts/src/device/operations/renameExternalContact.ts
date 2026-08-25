@@ -4,7 +4,6 @@ import type {
   RenameExternalContactResult,
 } from "../../contactDeviceIntentsPort";
 import {
-  renameContactIntentPlatformDefinition,
   type ContactIntentResult,
   type RenameContactIntentInput,
   type RenameContactJobState,
@@ -12,6 +11,7 @@ import {
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
+import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
 type IntentOutcome = ContactIntentResult<RenameContactResult>;
 
@@ -28,6 +28,12 @@ function mapIntentResultToResult(outcome: IntentOutcome): RenameExternalContactR
 
 export function createRenameExternalContactOperation(
   input: RenameExternalContactInput,
+  intentDefinition: IntentPlatformDefinition<
+    RenameContactJobState,
+    RenameContactIntentInput,
+    undefined,
+    IntentOutcome
+  >,
 ): ContactOperation<
   RenameContactJobState,
   RenameContactIntentInput,
@@ -42,7 +48,7 @@ export function createRenameExternalContactOperation(
   }
 
   return {
-    intentDefinition: renameContactIntentPlatformDefinition,
+    intentDefinition,
     intentInput: {
       previousContactName: input.contact.name,
       newContactName: input.name,

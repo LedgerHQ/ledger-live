@@ -7,7 +7,6 @@ import type {
   RegisterExternalAddressResult as PortResult,
 } from "../../contactDeviceIntentsPort";
 import {
-  registerExternalAddressIntentPlatformDefinition,
   type ContactIntentResult,
   type RegisterExternalAddressIntentInput,
   type RegisterExternalAddressJobState,
@@ -15,6 +14,7 @@ import {
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
+import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
 type IntentOutcome = ContactIntentResult<IntentResult>;
 
@@ -38,6 +38,12 @@ function mapIntentResultToResult(outcome: IntentOutcome): PortResult {
 
 export function createRegisterExternalAddressOperation(
   input: RegisterExternalAddressInput,
+  intentDefinition: IntentPlatformDefinition<
+    RegisterExternalAddressJobState,
+    RegisterExternalAddressIntentInput,
+    undefined,
+    IntentOutcome
+  >,
 ): ContactOperation<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
@@ -47,7 +53,7 @@ export function createRegisterExternalAddressOperation(
   const context = resolveContactDeviceContext(input.currencyId);
 
   return {
-    intentDefinition: registerExternalAddressIntentPlatformDefinition,
+    intentDefinition,
     intentInput: {
       contactName: input.contact.name,
       scope: input.label,

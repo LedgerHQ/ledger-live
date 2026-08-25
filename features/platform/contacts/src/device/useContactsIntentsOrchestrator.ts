@@ -16,6 +16,11 @@ import {
   createRegisterExternalAddressOperation,
   createRenameExternalContactOperation,
 } from "./operations";
+import {
+  editExternalAddressIntentPlatformDefinition,
+  registerExternalAddressIntentPlatformDefinition,
+  renameContactIntentPlatformDefinition,
+} from "./intents";
 import type {
   ContactDeviceIntent,
   ContactDeviceIntentInput,
@@ -100,7 +105,10 @@ export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
 
   const editExternalAddress = useCallback(
     async (input: EditExternalAddressInput): Promise<EditExternalAddressResult> => {
-      const operation = createEditExternalAddressOperation(input);
+      const operation = createEditExternalAddressOperation(
+        input,
+        editExternalAddressIntentPlatformDefinition,
+      );
       return operation === null ? input.address.device : execute(operation);
     },
     [execute],
@@ -109,8 +117,14 @@ export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
   const deviceIntents = useMemo<ContactDeviceIntentsPort>(
     () => ({
       registerExternalAddress: async input =>
-        execute(createRegisterExternalAddressOperation(input)),
-      renameExternalContact: async input => execute(createRenameExternalContactOperation(input)),
+        execute(
+          createRegisterExternalAddressOperation(
+            input,
+            registerExternalAddressIntentPlatformDefinition,
+          ),
+        ),
+      renameExternalContact: async input =>
+        execute(createRenameExternalContactOperation(input, renameContactIntentPlatformDefinition)),
       editExternalAddress,
     }),
     [editExternalAddress, execute],

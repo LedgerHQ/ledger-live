@@ -5,7 +5,6 @@ import {
   type EditExternalAddressResult as PortResult,
 } from "../../contactDeviceIntentsPort";
 import {
-  editExternalAddressIntentPlatformDefinition,
   type ContactIntentResult,
   type EditExternalAddressIntentInput,
   type EditExternalAddressJobState,
@@ -13,6 +12,7 @@ import {
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
+import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
 type Result = ContactIntentResult<EditExternalAddressResult>;
 
@@ -29,6 +29,12 @@ function toCombinedEditPortResult(result: Result): PortResult {
 
 export function createEditExternalAddressOperation(
   input: EditExternalAddressInput,
+  intentDefinition: IntentPlatformDefinition<
+    EditExternalAddressJobState,
+    EditExternalAddressIntentInput,
+    undefined,
+    ContactIntentResult<EditExternalAddressResult>
+  >,
 ): ContactOperation<
   EditExternalAddressJobState,
   EditExternalAddressIntentInput,
@@ -49,7 +55,7 @@ export function createEditExternalAddressOperation(
 
   const context = resolveContactDeviceContext(input.address.currencyId);
   return {
-    intentDefinition: editExternalAddressIntentPlatformDefinition,
+    intentDefinition: intentDefinition,
     intentInput: {
       contactName: input.contact.name,
       previousScope: input.address.label,
