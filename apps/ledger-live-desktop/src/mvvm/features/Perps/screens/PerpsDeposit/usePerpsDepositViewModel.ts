@@ -27,7 +27,7 @@ import {
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyRatio } from "./utils/applyRatio";
 import { toAmountValue } from "./utils/toAmountValue";
-import { validateDepositFlow } from "./utils/validateDepositFlow";
+import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
 
 /** Snapshot of the amount-entry form, used to restore it when re-opened. */
 export type PerpsDepositDraft = Readonly<{
@@ -39,23 +39,35 @@ export type PerpsDepositData = PerpsDepositUiParams & {
   draft?: PerpsDepositDraft;
 };
 
+const EMPTY_AMOUNT_TEXT = "0";
+
+const QUOTE_UNAVAILABLE_ERROR: DepositFormError = {
+  labelKey: "perpsDeposit.formErrors.quoteUnavailable",
+};
+
+/** Serializes a computed amount (ratio, max, draft) as input text. */
+function toAmountText(amount: number | undefined): string {
+  return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
+}
+
 export type PerpsDepositViewModel = Readonly<{
   headerDescription: string | undefined;
+  amountText: string;
   depositAmount: number;
-  formattedDepositAmount: string;
-  depositAmountTicker: string;
+  formattedQuotedAmount: string;
+  quotedAmountTicker: string;
   isQuoteLoading: boolean;
   counterValueCode: string;
   maxDecimalLength: number;
   changeDepositAmount: (formattedValue: string) => void;
-  setDepositAmount: (amount: number) => void;
+  selectAmountRatio: (amount: number) => void;
   depositCurrencyTicker: string;
   depositCurrencyLedgerId: string;
   depositAccountName: string | null;
   depositAccountCounterValue: string | null;
   maxAmount: number;
   selectMax: () => void;
-  submitError: ReturnType<typeof validateDepositFlow>;
+  statusError: DepositFormError | null;
   canReview: boolean;
   exceedsBalance: boolean;
   missingAccount: boolean;
@@ -75,12 +87,24 @@ export function usePerpsDepositViewModel(
   const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
 
   const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
-  const [depositAmount, setDepositAmount] = useState(data.draft?.depositAmount ?? 0);
+  const [amountText, setAmountText] = useState(() => toAmountText(data.draft?.depositAmount));
 
   useEffect(() => {
     setDepositAccountId(data.draft?.depositAccount.id);
-    setDepositAmount(data.draft?.depositAmount ?? 0);
+    setAmountText(toAmountText(data.draft?.depositAmount));
   }, [data]);
+
+  /** The input owns the text it displays; the number is derived for quoting and validation. */
+  const depositAmount = useMemo(() => {
+    const parsed = Number(amountText.replace(/[^0-9.]/g, ""));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }, [amountText]);
+
+  /** Fills the input with the amount a ratio pill resolved to. */
+  const selectAmountRatio = useCallback(
+    (amount: number) => setAmountText(toAmountText(amount)),
+    [],
+  );
 
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
@@ -157,7 +181,7 @@ export function usePerpsDepositViewModel(
   );
 
   const selectMax = useCallback(
-    () => setDepositAmount(applyRatio(maxAmount, 1, maxDecimalLength)),
+    () => setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength))),
     [maxAmount, maxDecimalLength],
   );
 
@@ -184,7 +208,11 @@ export function usePerpsDepositViewModel(
     return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
   }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
 
-  const { quote, isLoading: isQuoteLoading } = usePerpsDepositQuote({
+  const {
+    quote,
+    isLoading: isQuoteLoading,
+    isUnavailable: isQuoteUnavailable,
+  } = usePerpsDepositQuote({
     depositAccount,
     receiverAccount,
     amount: sentAmount,
@@ -192,9 +220,12 @@ export function usePerpsDepositViewModel(
 
   const canReview = isFormComplete && quote !== undefined;
 
+  /** What the user typed comes first; a missing quote only matters once it is valid. */
+  const statusError = submitError ?? (isQuoteUnavailable ? QUOTE_UNAVAILABLE_ERROR : null);
+
   const receiverUnit = receiverCurrency.units[0];
 
-  const formattedDepositAmount = useMemo(
+  const formattedQuotedAmount = useMemo(
     () =>
       quote
         ? formatCurrencyUnit(receiverUnit, valueFromUnit(quote.amountTo, receiverUnit), {
@@ -206,8 +237,7 @@ export function usePerpsDepositViewModel(
   );
 
   const changeDepositAmount = useCallback((formattedValue: string) => {
-    const parsed = Number(formattedValue.replace(/[^0-9.]/g, ""));
-    setDepositAmount(Number.isFinite(parsed) ? parsed : 0);
+    setAmountText(formattedValue === "" ? EMPTY_AMOUNT_TEXT : formattedValue);
   }, []);
 
   const pickDepositAccount = useCallback(() => {
@@ -217,7 +247,7 @@ export function usePerpsDepositViewModel(
     })
       .then(({ account }) => {
         setDepositAccountId(account.id);
-        setDepositAmount(0);
+        setAmountText(EMPTY_AMOUNT_TEXT);
       })
       .catch(() => undefined);
   }, [openAssetAndAccountPromise]);
@@ -231,14 +261,15 @@ export function usePerpsDepositViewModel(
 
   return {
     headerDescription,
+    amountText,
     depositAmount,
-    formattedDepositAmount,
-    depositAmountTicker: receiverCurrency.ticker,
+    formattedQuotedAmount,
+    quotedAmountTicker: receiverCurrency.ticker,
     isQuoteLoading,
     counterValueCode: counterValueUnit.code,
     maxDecimalLength,
     changeDepositAmount,
-    setDepositAmount,
+    selectAmountRatio,
     depositCurrencyTicker: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
     depositCurrencyLedgerId: depositCurrency?.id ?? PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
     depositAccountName: depositAccount
@@ -247,7 +278,7 @@ export function usePerpsDepositViewModel(
     depositAccountCounterValue,
     maxAmount,
     selectMax,
-    submitError,
+    statusError,
     canReview,
     exceedsBalance,
     missingAccount,

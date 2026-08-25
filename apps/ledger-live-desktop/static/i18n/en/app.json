@@ -9869,7 +9869,8 @@
     "selectCurrencyDescription": "No account",
     "review": "Review",
     "formErrors": {
-      "amountExceedsBalance": "Insufficient balance"
+      "amountExceedsBalance": "Insufficient balance",
+      "quoteUnavailable": "We can’t get a quote from SwapKit, try with a different asset or come back later."
     }
   }
 }
