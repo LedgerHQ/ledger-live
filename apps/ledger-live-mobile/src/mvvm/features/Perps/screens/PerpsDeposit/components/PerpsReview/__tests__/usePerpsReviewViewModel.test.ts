@@ -39,6 +39,23 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
   });
 
+  it("reads the amount in the unit it was handed over in", async () => {
+   
+    const gwei = getCryptoCurrencyById("ethereum").units[1];
+    const { result } = renderHook(() => usePerpsReviewViewModel(createProps()), {
+      overrideInitialState: state => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          currenciesSettings: { ETH: { unit: gwei, confirmationsNb: 0 } },
+        },
+      }),
+    });
+
+    await waitFor(() => expect(result.current.swapDetails[0].value).not.toBe(""));
+    expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
+  });
+
   it("formats the received amount in the receiving currency, as an estimate", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createProps()));
 
