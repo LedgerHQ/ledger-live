@@ -11,6 +11,18 @@ import { makeHealthyNeuron } from "./testUtils";
 
 let transaction: Partial<Transaction> = { type: "set_dissolve_delay" };
 let neuron = makeHealthyNeuron();
+let status: { errors: Record<string, Error>; warnings: Record<string, Error> } = {
+  errors: {},
+  warnings: {},
+};
+
+// Shaped like the coin module's error classes: the message defaults to the class name, and the bound
+// travels as an enumerable field for the copy to interpolate.
+const tooShort = Object.assign(new Error("ICPDissolveDelayLTMin"), {
+  name: "ICPDissolveDelayLTMin",
+  minSeconds: 1,
+  minDays: 1,
+});
 
 // The fixture neuron is already locked for the 14-day voting minimum, so an increase may only add
 // the rest of the two-year allowance.
@@ -28,7 +40,7 @@ jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
     neuron,
     transaction,
     updateTransaction: mockUpdateTransaction,
-    status: { errors: {}, warnings: {} },
+    status,
     bridgePending: false,
     continueToDevice: mockNavigate,
   }),
@@ -48,7 +60,31 @@ describe("SetDissolveDelay", () => {
   beforeEach(() => {
     transaction = { type: "set_dissolve_delay" };
     neuron = makeHealthyNeuron();
+    status = { errors: {}, warnings: {} };
     mockUpdateTransaction.mockClear();
+  });
+
+  // The bridge faults an absent delay, so the screen opened accusing a field with nothing in it.
+  // Seeded before render: the transaction lives in a module-level mock, so a fireEvent entry never
+  // re-renders the screen.
+  it("does not fault the delay before anything has been entered", () => {
+    status = { errors: { transaction: tooShort }, warnings: {} };
+
+    renderScreen();
+
+    expect(screen.queryByText("Dissolve delay too short")).toBeNull();
+  });
+
+  it("faults the delay once a value has been entered", () => {
+    transaction = {
+      type: "increase_dissolve_delay",
+      additionalDissolveDelay: String(SECONDS_IN_DAY),
+    };
+    status = { errors: { transaction: tooShort }, warnings: {} };
+
+    renderScreen();
+
+    expect(screen.getByText("Dissolve delay too short")).toBeVisible();
   });
 
   it("stores the entered days as seconds", () => {
@@ -65,6 +101,20 @@ describe("SetDissolveDelay", () => {
     enter("99999");
 
     expect(transaction.dissolveDelay).toBe(String(MAX_DAYS * SECONDS_IN_DAY));
+  });
+
+  // The field holds its own text rather than reading it back out of the transaction: that round-trip
+  // runs prepareTransaction and getTransactionStatus, debounced by 300ms, and keystrokes arriving
+  // before it lands were discarded when the stale value was pushed back to the input — "9999" reached
+  // the screen as "9". This mock never re-renders on an update, so the displayed value and the
+  // preview can only be right if they come from the screen's own state.
+  it("shows the clamped entry without waiting for the transaction to echo it back", () => {
+    renderScreen();
+
+    enter("99999");
+
+    expect(screen.getByTestId("icp-dissolve-delay-input")).toHaveDisplayValue(String(MAX_DAYS));
+    expect(screen.getByText("New dissolve delay: 1 year, 11 months")).toBeVisible();
   });
 
   it("clamps a pasted value too large for Number without throwing", () => {
@@ -155,5 +205,27 @@ describe("SetDissolveDelay", () => {
     renderScreen();
 
     expect(screen.getByText(/cannot vote/, { exact: false })).toBeVisible();
+  });
+
+  it("still warns a day short of the voting threshold", () => {
+    transaction = {
+      type: "set_dissolve_delay",
+      dissolveDelay: String(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE - SECONDS_IN_DAY),
+    };
+    renderScreen();
+
+    expect(screen.getByText(/cannot vote/, { exact: false })).toBeVisible();
+  });
+
+  // The threshold itself is eligible, so the warning has to clear exactly on it rather than one day
+  // later.
+  it("stops warning at exactly the voting threshold", () => {
+    transaction = {
+      type: "set_dissolve_delay",
+      dissolveDelay: String(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE),
+    };
+    renderScreen();
+
+    expect(screen.queryByText(/cannot vote/)).toBeNull();
   });
 });

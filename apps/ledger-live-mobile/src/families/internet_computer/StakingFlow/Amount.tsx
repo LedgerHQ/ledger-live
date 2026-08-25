@@ -102,6 +102,7 @@ export default function StakingAmount({ navigation, route }: Props) {
             </Text>
             <Text variant="small" fontWeight="semiBold" color="neutral.c70">
               <CurrencyUnitValue
+                disableRounding
                 showCode
                 unit={unit}
                 value={toBigNumber(BigInt(MIN_NEURON_STAKE))}
@@ -114,7 +115,10 @@ export default function StakingAmount({ navigation, route }: Props) {
             </Text>
             {maxSpendable ? (
               <Text variant="small" fontWeight="semiBold" color="neutral.c70">
-                <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
+                {/* Unrounded, like every bound in these flows: at six significant digits a max of
+                    12.34567891 ICP displays as 12.3457, and typing back the figure shown is then
+                    rejected for exceeding the balance. */}
+                <CurrencyUnitValue disableRounding showCode unit={unit} value={maxSpendable} />
               </Text>
             ) : null}
           </Flex>
@@ -125,7 +129,7 @@ export default function StakingAmount({ navigation, route }: Props) {
         bridgePending={bridgePending}
         onContinue={onContinue}
         canContinue={amount.gt(0)}
-        showAmountError={amount.gt(0)}
+        pristineField={amount.eq(0) ? "amount" : undefined}
       />
     </SafeAreaView>
   );

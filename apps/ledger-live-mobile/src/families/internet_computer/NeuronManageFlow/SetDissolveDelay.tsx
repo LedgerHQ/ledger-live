@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import { getNeuronDissolveDurationSeconds } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { BaseInput, Flex, Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -37,11 +37,20 @@ export default function SetDissolveDelay({ navigation, route }: Props) {
     useNeuronAction(navigation, route);
 
   const isIncrease = transaction?.type === "increase_dissolve_delay";
-  const value = isIncrease
-    ? (transaction?.additionalDissolveDelay ?? "")
-    : (transaction?.dissolveDelay ?? "");
-  const enteredSeconds = value ? BigInt(value) : 0n;
-  const days = value ? String(enteredSeconds / BigInt(SECONDS_IN_DAY)) : "";
+
+  // Held locally rather than read back out of the transaction. BaseInput is fully controlled, and a
+  // transaction round-trip is not one render: updateTransaction schedules prepareTransaction and
+  // getTransactionStatus, debounced by 300ms after the first. The handler saw every keystroke, but
+  // the field displayed whatever the transaction had last echoed back, so typing "9999" left "9" on
+  // screen while the transaction held the clamped value.
+  const [days, setDays] = useState(() => {
+    const seconds =
+      transaction?.type === "increase_dissolve_delay"
+        ? transaction.additionalDissolveDelay
+        : transaction?.dissolveDelay;
+    return seconds ? String(BigInt(seconds) / BigInt(SECONDS_IN_DAY)) : "";
+  });
+  const enteredSeconds = days ? BigInt(days) * BigInt(SECONDS_IN_DAY) : 0n;
 
   // Read before the guard below because onChange closes over it: hooks cannot sit behind an early
   // return, so the delay has to be resolvable while the neuron is still optional.
@@ -61,6 +70,7 @@ export default function SetDissolveDelay({ navigation, route }: Props) {
       // bound the description already advertises, rather than leaving it to submit-time validation.
       const entered = digits ? BigInt(digits) : 0n;
       const clamped = entered > allowedDays ? allowedDays : entered;
+      setDays(digits ? String(clamped) : "");
       const seconds = digits ? String(clamped * BigInt(SECONDS_IN_DAY)) : "";
       updateTransaction(tx => ({
         ...tx,
@@ -130,6 +140,7 @@ export default function SetDissolveDelay({ navigation, route }: Props) {
         // Gated on a positive delay rather than on presence: a zero-day entry stores "0" seconds,
         // which is a non-empty string, so it used to reach the bridge and come back as a range error.
         canContinue={enteredSeconds > 0n}
+        pristineField={days ? undefined : "transaction"}
       />
     </SafeAreaView>
   );

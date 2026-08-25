@@ -1,5 +1,5 @@
 import { BaseInput, Flex, Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -24,8 +24,15 @@ export default function AddHotKey({ navigation, route }: Props) {
   const { transaction, updateTransaction, status, bridgePending, continueToDevice } =
     useNeuronAction(navigation, route);
 
+  // Held locally so the field does not wait on a bridge round-trip; see SetDissolveDelay for why a
+  // transaction-backed value loses keystrokes typed faster than the status refresh.
+  const [hotKey, setHotKey] = useState(() => transaction?.hotKeyToAdd ?? "");
+
   const onChange = useCallback(
-    (hotKeyToAdd: string) => updateTransaction(tx => ({ ...tx, hotKeyToAdd })),
+    (hotKeyToAdd: string) => {
+      setHotKey(hotKeyToAdd);
+      updateTransaction(tx => ({ ...tx, hotKeyToAdd }));
+    },
     [updateTransaction],
   );
 
@@ -47,7 +54,7 @@ export default function AddHotKey({ navigation, route }: Props) {
               {t("internetComputer.manageNeuronFlow.addHotKey.principal")}
             </Text>
             <BaseInput
-              value={transaction?.hotKeyToAdd ?? ""}
+              value={hotKey}
               onChange={onChange}
               autoCapitalize="none"
               autoCorrect={false}
@@ -61,7 +68,8 @@ export default function AddHotKey({ navigation, route }: Props) {
         status={status}
         bridgePending={bridgePending}
         onContinue={continueToDevice}
-        canContinue={!!transaction?.hotKeyToAdd}
+        canContinue={!!hotKey}
+        pristineField={hotKey ? undefined : "transaction"}
       />
     </SafeAreaView>
   );
