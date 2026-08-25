@@ -159,6 +159,8 @@ PODS:
     - ExpoModulesCore
   - ExpoCrypto (15.0.8):
     - ExpoModulesCore
+  - ExpoDocumentPicker (13.1.6):
+    - ExpoModulesCore
   - ExpoFileSystem (19.0.21):
     - ExpoModulesCore
   - ExpoFont (14.0.12):
@@ -3596,6 +3598,7 @@ DEPENDENCIES:
   - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_01371b6b08adf68dcde9ab2ace4a34f9/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._99dfc036b426e2a2d9de9228e2630812/node_modules/expo-asset/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_rea_4e292f7632f2471d745c46e7665095c9/node_modules/expo-crypto/ios`)"
+  - "ExpoDocumentPicker (from `../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo-modules-core@3_8c408c9dc068ba0549f6c3aeb598dac2/node_modules/expo-document-picker/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._19922c573eb4dbc9cb24f26f748bd653/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_d51dc941dd38eee864b748d1d9fc8539/node_modules/expo-font/ios`)"
   - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_re_a43450fc0889cbcc93690681970eb4d6/node_modules/expo-haptics/ios`)"
@@ -3786,6 +3789,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_@typescript+typescript6@6.0._99dfc036b426e2a2d9de9228e2630812/node_modules/expo-asset/ios"
   ExpoCrypto:
     :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_rea_4e292f7632f2471d745c46e7665095c9/node_modules/expo-crypto/ios"
+  ExpoDocumentPicker:
+    :path: "../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo-modules-core@3_8c408c9dc068ba0549f6c3aeb598dac2/node_modules/expo-document-picker/ios"
   ExpoFileSystem:
     :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._19922c573eb4dbc9cb24f26f748bd653/node_modules/expo-file-system/ios"
   ExpoFont:
@@ -4059,6 +4064,7 @@ SPEC CHECKSUMS:
   Expo: ec20d60a9ba93352323b8f773c0e59bc7aa1c492
   ExpoAsset: 9e5a7c9c0a9fb83ad5b2bb365141f2bd7f289b66
   ExpoCrypto: b6105ebaa15d6b38a811e71e43b52cd934945322
+  ExpoDocumentPicker: b263a279685b6640b8c8bc70d71c83067aeaae55
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
   ExpoFont: dfb7c572372b610da45b41e3b436321fd6a97215
   ExpoHaptics: d3a6375d8dcc3a1083d003bc2298ff654fafb536

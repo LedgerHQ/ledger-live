@@ -82,6 +82,7 @@
         "@react-native/gradle-plugin",
         "buffer",
         "expo-crypto",
+        "expo-document-picker",
         "expo-file-system",
         "expo-image-loader",
         "expo-modules-autolinking",
