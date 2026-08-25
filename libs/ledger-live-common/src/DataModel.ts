@@ -1,6 +1,3 @@
-import { getCurrencyConfiguration } from "./config";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-
 /**
  * Interface for the end user.
  * @memberof DataModel
@@ -43,13 +40,6 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
   const version = migrations.length;
   async function decodeModel(raw) {
     let { data } = raw;
-    const { currencyId } = data;
-    const currency = findCryptoCurrencyById(currencyId);
-    if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency.id).showNfts) {
-      if (Array.isArray(data.operations)) {
-        data.operations = data.operations.filter(tx => !("nftOperations" in tx));
-      }
-    }
 
     for (let i = raw.version; i < version; i++) {
       data = migrations[i](data);

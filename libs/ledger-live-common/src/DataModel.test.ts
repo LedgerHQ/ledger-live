@@ -3,12 +3,7 @@ import { APTOS_NON_HARDENED_DERIVATION_PATH } from "@ledgerhq/coin-aptos/constan
 import { accountRawToAccountUserData } from "./account/serialization";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
-import { getCurrencyConfiguration } from "./config";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-
-jest.mock("./config", () => ({
-  getCurrencyConfiguration: jest.fn(),
-}));
 
 const opRetentionStategy =
   (maxDaysOld: number, keepFirst: number) =>
@@ -139,31 +134,12 @@ describe("DataModel", () => {
     expect(migratedAptosAccountRaw.id).toBeDefined();
   });
 
-  describe("test for shownNfts true", () => {
-    beforeAll(() => {
-      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
-        showNfts: true,
-      });
-    });
-
-    test("evm account", async () => {
+  describe("evm account", () => {
+    test("decodes all operations including those with nftOperations", async () => {
       const data = await createDataModel(schema).decode(evmAccount);
       const account = data.at(0) as Account;
-      expect(account.id).toBeDefined();
-    });
-  });
-
-  describe("test for shownNfts false", () => {
-    beforeAll(() => {
-      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
-        showNfts: false,
-      });
-    });
-
-    test("evm account", async () => {
-      const data = await createDataModel(schema).decode(evmAccount);
-      const account = data.at(0) as Account;
-      expect(account.id).toBeDefined();
+      expect(account.operations).toHaveLength(2);
+      expect(account.operations.find(op => op.id === "op_evm_002")).toBeDefined();
     });
   });
 });
