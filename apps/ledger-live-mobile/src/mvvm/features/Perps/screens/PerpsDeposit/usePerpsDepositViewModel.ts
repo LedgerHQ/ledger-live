@@ -28,30 +28,34 @@ import {
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
-import { validateDepositFlow } from "./utils/validateDepositFlow";
+import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsDeposit>
 >;
 
+const QUOTE_UNAVAILABLE_ERROR: DepositFormError = {
+  labelKey: "perpsDeposit.formErrors.quoteUnavailable",
+};
+
 export type PerpsDepositViewModel = Readonly<{
   headerDescription: string;
   amountText: string;
   depositAmount: number;
-  formattedDepositAmount: string;
-  depositAmountTicker: string;
+  formattedQuotedAmount: string;
+  quotedAmountTicker: string;
   isQuoteLoading: boolean;
   counterValueCode: string;
   maxDecimalLength: number;
   pressAmountKey: (key: string) => void;
-  setDepositAmount: (amount: number) => void;
+  selectAmountRatio: (amount: number) => void;
   depositCurrencyTicker: string;
   depositCurrencyLedgerId: string;
   depositAccountName: string | null;
   depositAccountCounterValue: string | null;
   maxAmount: number;
   selectMax: () => void;
-  submitError: ReturnType<typeof validateDepositFlow>;
+  statusError: DepositFormError | null;
   canReview: boolean;
   exceedsBalance: boolean;
   missingAccount: boolean;
@@ -87,7 +91,8 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const maxDecimalLength = Math.max(0, counterValueUnit.magnitude);
 
-  const setDepositAmount = useCallback(
+  /** Fills the input with the amount a ratio pill resolved to. */
+  const selectAmountRatio = useCallback(
     (amount: number) => {
       setAmountText(toAmountText(amount, maxDecimalLength));
     },
@@ -166,7 +171,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
-  const selectMax = useCallback(() => setDepositAmount(maxAmount), [maxAmount, setDepositAmount]);
+  const selectMax = useCallback(() => selectAmountRatio(maxAmount), [maxAmount, selectAmountRatio]);
 
   const submitError = useMemo(
     () =>
@@ -191,7 +196,11 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
   }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
 
-  const { quote, isLoading: isQuoteLoading } = usePerpsDepositQuote({
+  const {
+    quote,
+    isLoading: isQuoteLoading,
+    isUnavailable: isQuoteUnavailable,
+  } = usePerpsDepositQuote({
     depositAccount,
     receiverAccount,
     amount: sentAmount,
@@ -199,9 +208,12 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const canReview = isFormComplete && quote !== undefined;
 
+  /** What the user typed comes first; a missing quote only matters once it is valid. */
+  const statusError = submitError ?? (isQuoteUnavailable ? QUOTE_UNAVAILABLE_ERROR : null);
+
   const receiverUnit = receiverCurrency.units[0];
 
-  const formattedDepositAmount = useMemo(
+  const formattedQuotedAmount = useMemo(
     () =>
       quote
         ? formatCurrencyUnit(receiverUnit, valueFromUnit(quote.amountTo, receiverUnit), {
@@ -230,13 +242,13 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     headerDescription: `${receiverAccountName} · ${receiverAccountCounterValue}`,
     amountText,
     depositAmount,
-    formattedDepositAmount,
-    depositAmountTicker: receiverCurrency.ticker,
+    formattedQuotedAmount,
+    quotedAmountTicker: receiverCurrency.ticker,
     isQuoteLoading,
     counterValueCode: counterValueUnit.code,
     maxDecimalLength,
     pressAmountKey,
-    setDepositAmount,
+    selectAmountRatio,
     depositCurrencyTicker: depositCurrency?.ticker ?? PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
     depositCurrencyLedgerId: depositCurrency?.id ?? PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
     depositAccountName: depositAccount
@@ -245,7 +257,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     depositAccountCounterValue,
     maxAmount,
     selectMax,
-    submitError,
+    statusError,
     canReview,
     exceedsBalance,
     missingAccount,

@@ -11,13 +11,10 @@ import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
 
 function QuotedAmount({
-  formattedDepositAmount,
-  depositAmountTicker,
+  formattedQuotedAmount,
+  quotedAmountTicker,
   isQuoteLoading,
-}: Pick<
-  PerpsDepositViewModel,
-  "formattedDepositAmount" | "depositAmountTicker" | "isQuoteLoading"
->) {
+}: Pick<PerpsDepositViewModel, "formattedQuotedAmount" | "quotedAmountTicker" | "isQuoteLoading">) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
@@ -30,28 +27,28 @@ function QuotedAmount({
     );
   }
 
-  if (!formattedDepositAmount) return null;
+  if (!formattedQuotedAmount) return null;
 
   return (
     <Text typography="body3" lx={{ color: "muted" }}>
       {t("perpsDeposit.inputDepositAmount", {
-        value: formattedDepositAmount,
-        currencyTicker: depositAmountTicker,
+        value: formattedQuotedAmount,
+        currencyTicker: quotedAmountTicker,
       })}
     </Text>
   );
 }
 
 function AmountMessage({
-  submitError,
+  statusError,
   depositAmount,
-}: Pick<PerpsDepositViewModel, "submitError" | "depositAmount">) {
+}: Pick<PerpsDepositViewModel, "statusError" | "depositAmount">) {
   const { t } = useTranslation();
 
-  if (submitError) {
+  if (statusError) {
     return (
       <Text typography="body3" lx={{ color: "error" }} testID="perps-deposit-form-error">
-        {t(submitError.labelKey)}
+        {t(statusError.labelKey)}
       </Text>
     );
   }
@@ -71,20 +68,20 @@ export function PerpsDepositView({
   headerDescription,
   amountText,
   depositAmount,
-  formattedDepositAmount,
-  depositAmountTicker,
+  formattedQuotedAmount,
+  quotedAmountTicker,
   isQuoteLoading,
   counterValueCode,
   maxDecimalLength,
   pressAmountKey,
-  setDepositAmount,
+  selectAmountRatio,
   depositCurrencyTicker,
   depositCurrencyLedgerId,
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
   selectMax,
-  submitError,
+  statusError,
   canReview,
   exceedsBalance,
   missingAccount,
@@ -117,15 +114,15 @@ export function PerpsDepositView({
             showSoftInputOnFocus={false}
             // The in-app keypad is the only input path, so the field is display-only.
             onChangeText={() => undefined}
-            isInvalid={submitError !== null}
+            isInvalid={statusError !== null}
             testID="perps-deposit-amount-input"
           />
           <QuotedAmount
-            formattedDepositAmount={formattedDepositAmount}
-            depositAmountTicker={depositAmountTicker}
+            formattedQuotedAmount={formattedQuotedAmount}
+            quotedAmountTicker={quotedAmountTicker}
             isQuoteLoading={isQuoteLoading}
           />
-          <AmountMessage submitError={submitError} depositAmount={depositAmount} />
+          <AmountMessage statusError={statusError} depositAmount={depositAmount} />
         </Box>
 
         <DepositAccountSelector
@@ -142,7 +139,7 @@ export function PerpsDepositView({
           maxValue={maxAmount}
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
-          onChange={setDepositAmount}
+          onChange={selectAmountRatio}
           onMax={selectMax}
           testIDPrefix="perps-deposit-ratio"
         />
