@@ -33,6 +33,14 @@ const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: any[]) => getBridgeApiMock(...a),
 }));
+
+// Keeps the dummy addresses below out of the real A4 indexer (LIVE-36423): the sync fires a
+// fire-and-forget registration that is *not* routed through the `../api` mock, so it reaches
+// production the moment LiveConfig holds a config — which is exactly what the suite next door does.
+jest.mock("../a4/client/registration", () => ({
+  ensureA4Registered: jest.fn(),
+  clearA4RegistrationCache: jest.fn(),
+}));
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
   getChainSpecificRules: {
