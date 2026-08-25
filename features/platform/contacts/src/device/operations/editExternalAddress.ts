@@ -14,9 +14,9 @@ import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
-type Result = ContactIntentResult<EditExternalAddressResult>;
+type IntentResult = ContactIntentResult<EditExternalAddressResult>;
 
-function mapIntentResultToResult(result: Result): PortResult {
+function mapIntentResultToResult(result: IntentResult): PortResult {
   if (result.type === "failure") {
     throw new EditExternalAddressError({ cause: result.error });
   }
@@ -38,7 +38,7 @@ export function createEditExternalAddressOperation(
 ): ContactOperation<
   EditExternalAddressJobState,
   EditExternalAddressIntentInput,
-  Result,
+  IntentResult,
   PortResult
 > | null {
   const labelChanged = input.updatedLabel !== input.address.label;

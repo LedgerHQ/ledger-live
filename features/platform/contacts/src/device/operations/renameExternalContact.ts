@@ -7,15 +7,15 @@ import {
   type ContactIntentResult,
   type RenameContactIntentInput,
   type RenameContactJobState,
-  type RenameContactResult,
+  type RenameContactResult as RenameContactIntentResult,
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
-type IntentOutcome = ContactIntentResult<RenameContactResult>;
+type IntentResult = ContactIntentResult<RenameContactIntentResult>;
 
-function mapIntentResultToResult(outcome: IntentOutcome): RenameExternalContactResult {
+function mapIntentResultToResult(outcome: IntentResult): RenameExternalContactResult {
   if (outcome.type === "failure") {
     throw outcome.error;
   }
@@ -32,12 +32,12 @@ export function createRenameExternalContactOperation(
     RenameContactJobState,
     RenameContactIntentInput,
     undefined,
-    IntentOutcome
+    IntentResult
   >,
 ): ContactOperation<
   RenameContactJobState,
   RenameContactIntentInput,
-  IntentOutcome,
+  IntentResult,
   RenameExternalContactResult
 > {
   const address = input.contact.addresses[0];

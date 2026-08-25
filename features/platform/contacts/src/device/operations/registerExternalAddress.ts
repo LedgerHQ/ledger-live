@@ -10,15 +10,15 @@ import {
   type ContactIntentResult,
   type RegisterExternalAddressIntentInput,
   type RegisterExternalAddressJobState,
-  type RegisterExternalAddressResult as IntentResult,
+  type RegisterExternalAddressResult as RegisterExternalAddressIntentResult,
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
-type IntentOutcome = ContactIntentResult<IntentResult>;
+type IntentResult = ContactIntentResult<RegisterExternalAddressIntentResult>;
 
-function mapIntentResultToResult(outcome: IntentOutcome): PortResult {
+function mapIntentResultToResult(outcome: IntentResult): PortResult {
   if (outcome.type === "failure") {
     throw outcome.error;
   }
@@ -42,12 +42,12 @@ export function createRegisterExternalAddressOperation(
     RegisterExternalAddressJobState,
     RegisterExternalAddressIntentInput,
     undefined,
-    IntentOutcome
+    IntentResult
   >,
 ): ContactOperation<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
-  IntentOutcome,
+  IntentResult,
   PortResult
 > {
   const context = resolveContactDeviceContext(input.currencyId);
