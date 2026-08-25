@@ -47,9 +47,11 @@ export default class MainNavigationPage {
   async waitForWallet40Ready(timeout = 60000) {
     await retryUntilTimeout(
       async () => {
-        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, 500))) {
-          await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
-          await waitForElementNotVisible(ANALYTICS_CONSENT_DRAWER_ID);
+        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_DRAWER_ID, 500))) {
+          if (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, 1000)) {
+            await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
+          }
+          throw new Error("analytics consent drawer still present");
         }
         if (!(await IsIdVisible(this.topBarDiscoverId, 500))) {
           throw new Error(`"${this.topBarDiscoverId}" not visible yet`);
