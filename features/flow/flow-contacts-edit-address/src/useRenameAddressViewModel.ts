@@ -17,8 +17,7 @@ export function useRenameAddressViewModel({
   addressEntry,
   existingLabels,
   editPort,
-}: UseRenameAddressViewModelOptions,
-): UseRenameAddressViewModelResult {
+}: UseRenameAddressViewModelOptions): UseRenameAddressViewModelResult {
   const controller = useMemo(() => createRenameAddressController(editPort), [editPort]);
   const viewModel = useMemo(
     () =>
