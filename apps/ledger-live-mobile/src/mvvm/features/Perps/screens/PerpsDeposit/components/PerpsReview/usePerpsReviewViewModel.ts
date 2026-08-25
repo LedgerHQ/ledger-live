@@ -38,7 +38,7 @@ export function usePerpsReviewViewModel({
 }: PerpsReviewProps): PerpsReviewViewModel {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
-  
+
   const sentUnit = getAccountCurrency(depositAccount).units[0];
   const receivedUnit = getAccountCurrency(receiverAccount).units[0];
 
