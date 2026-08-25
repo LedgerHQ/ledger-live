@@ -9,6 +9,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronDown } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { TFunction } from "i18next";
 import { useTranslation } from "~/context/Locale";
 
 type DepositAccountSelectorProps = Readonly<{
@@ -20,6 +21,17 @@ type DepositAccountSelectorProps = Readonly<{
   missingAccount: boolean;
   onSelect: () => void;
 }>;
+
+/** An account with no price to show falls back to its name alone. */
+function describeAccount(
+  t: TFunction,
+  accountName: string | null,
+  counterValue: string | null,
+): string {
+  if (accountName === null) return t("perpsDeposit.selectCurrencyNoAccount");
+  if (counterValue === null) return accountName;
+  return t("perpsDeposit.selectCurrencyAccount", { accountName, counterValue });
+}
 
 export function DepositAccountSelector({
   ticker,
@@ -34,12 +46,7 @@ export function DepositAccountSelector({
   const hasAccount = accountName !== null;
   const hasError = hasAccount ? exceedsBalance : missingAccount;
 
-  const description =
-    accountName === null
-      ? t("perpsDeposit.selectCurrencyNoAccount")
-      : counterValue === null
-        ? accountName
-        : t("perpsDeposit.selectCurrencyAccount", { accountName, counterValue });
+  const description = describeAccount(t, accountName, counterValue);
 
   return (
     <ListItem
