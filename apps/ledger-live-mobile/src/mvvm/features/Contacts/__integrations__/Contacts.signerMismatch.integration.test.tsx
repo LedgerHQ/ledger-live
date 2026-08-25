@@ -9,7 +9,7 @@ jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
-const mockedContactsLedgerSyncStatus = { mockReturnValue: jest.fn() };
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 const noop = () => undefined;
 
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
@@ -25,21 +25,27 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 jest.mock("@features/flow-contacts", () => {
   const actual =
     jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
-  const mismatchPort = actual.createMockContactSignerValidationPort({
-    currentSignerId: "signer-b",
-  });
 
   return {
     ...actual,
     useContactsAddressDetailActionsPorts: (
-      deviceIntents: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[0],
-      signerValidation?: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[1],
+      signerValidation?: Parameters<typeof actual.useContactsAddressDetailActionsPorts>[0],
     ) =>
-      actual.useContactsAddressDetailActionsPorts(deviceIntents, signerValidation ?? mismatchPort),
+      actual.useContactsAddressDetailActionsPorts(
+        signerValidation ??
+          actual.createMockContactSignerValidationPort({
+            currentSignerId: "signer-b",
+          }),
+      ),
     useContactsEditDeletePorts: (
-      deviceIntents: Parameters<typeof actual.useContactsEditDeletePorts>[0],
-      signerValidation?: Parameters<typeof actual.useContactsEditDeletePorts>[1],
-    ) => actual.useContactsEditDeletePorts(deviceIntents, signerValidation ?? mismatchPort),
+      signerValidation?: Parameters<typeof actual.useContactsEditDeletePorts>[0],
+    ) =>
+      actual.useContactsEditDeletePorts(
+        signerValidation ??
+          actual.createMockContactSignerValidationPort({
+            currentSignerId: "signer-b",
+          }),
+      ),
   };
 });
 

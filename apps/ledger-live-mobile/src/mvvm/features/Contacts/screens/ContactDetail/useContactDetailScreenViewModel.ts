@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -11,6 +11,7 @@ import {
   type ContactDetailViewProps,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
+  useContactsLedgerSyncMutationGuard,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   CONTACTS_EVENT_SOURCE,
@@ -21,20 +22,22 @@ import {
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
 } from "@features/flow-contacts";
+import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
+import type {
+  ContactsLedgerSyncIntroduction,
+  ContactsLedgerSyncIntroductionContentProps,
+} from "@features/flow-contacts-introduction";
 import {
   useAddAddressFlowViewModel,
   type AddAddressFlowState,
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
 import {
+  createMockContactDeviceIntentsPort,
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
 } from "@features/platform-contacts";
-import {
-  useContactsIntentsOrchestrator,
-  type ContactsDeviceIntentExecutorProps,
-} from "@features/platform-contacts/device";
 import {
   resolveContactsCurrencyAnalytics,
   useContactsAnalytics,
@@ -47,6 +50,7 @@ import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
+import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
 import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
@@ -64,7 +68,11 @@ type ContactDetailScreenViewModel =
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
       addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
-      dieProps: ContactsDeviceIntentExecutorProps | undefined;
+      ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
+      ledgerSyncIntroductionContent: Pick<
+        ContactsLedgerSyncIntroductionContentProps,
+        "title" | "activateLabel" | "onActivate"
+      >;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -82,8 +90,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const route =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
+  const ledgerSyncStatus = useContactsLedgerSyncStatus();
+  const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
+  const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
+  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
@@ -189,12 +200,28 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   useEffect(() => {
     void completeMockAddressConfirmation();
   }, [completeMockAddressConfirmation]);
-  const onAddAddress = useCallback(() => {
+  const startAddAddressForContact = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
 
     trackContactsAddAddressClick(analytics, contact.id, meContact.id);
     startAddAddress(contact);
   }, [analytics, contact, eligibleNetworkIds.length, meContact.id, startAddAddress]);
+  const onAddAddress = useCallback(() => {
+    if (!contact || eligibleNetworkIds.length === 0) return;
+
+    const result = requestMutation({ kind: "addAddress", contactId: contact.id }, ledgerSyncStatus);
+    if (result.status === "allowed") {
+      startAddAddressForContact();
+    } else if (result.status === "blocked") {
+      setIsLedgerSyncIntroductionOpen(true);
+    }
+  }, [
+    contact,
+    eligibleNetworkIds.length,
+    ledgerSyncStatus,
+    requestMutation,
+    startAddAddressForContact,
+  ]);
   const onCurrencySelected = useCallback<ContactsAddAddressFlowDrawerProps["onCurrencySelected"]>(
     selection => {
       if (addAddressFlowState.status === "selectingCurrency") {
@@ -211,6 +238,22 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       },
     });
   }, [navigation]);
+  const onActivateLedgerSync = useCallback(() => {
+    dismissPendingIntent();
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncActivationInit,
+    });
+  }, [dismissPendingIntent, navigation]);
+  const onDismissLedgerSyncIntroduction = useCallback(() => {
+    dismissPendingIntent();
+    setIsLedgerSyncIntroductionOpen(false);
+  }, [dismissPendingIntent]);
+  useEffect(() => {
+    if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+      dismissPendingIntent();
+      setIsLedgerSyncIntroductionOpen(false);
+    }
+  }, [dismissPendingIntent, ledgerSyncStatus]);
   const onAddressChange = useCallback(
     (value: string, inputMethod: AddAddressInputSource) => {
       void updateAddress(value, inputMethod);
@@ -292,16 +335,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [navigation]);
   const addressDetailAsset = selection?.network?.networkTicker;
   const addressDetailNetwork = selection?.network?.networkName;
-  const editDeleteFlow = useContactDetailEditDeleteAdapter(
-    route.params.contactId,
-    onDeleteSuccess,
-    deviceIntents,
-  );
+  const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
   const addressDetailActions = useContactAddressDetailActionsAdapter(
     route.params.contactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
-    deviceIntents,
     addressDetailAsset,
     addressDetailNetwork,
   );
@@ -425,6 +463,17 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     addressDetailActions,
     editDeleteFlow,
-    dieProps,
+    ledgerSyncIntroduction: {
+      isOpen:
+        isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && isLedgerSyncIntroductionOpen,
+      description: t("contacts.ledgerSyncIntroduction.description"),
+      dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
+      onDismiss: onDismissLedgerSyncIntroduction,
+    },
+    ledgerSyncIntroductionContent: {
+      title: t("contacts.ledgerSyncIntroduction.title"),
+      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
+      onActivate: onActivateLedgerSync,
+    },
   };
 }

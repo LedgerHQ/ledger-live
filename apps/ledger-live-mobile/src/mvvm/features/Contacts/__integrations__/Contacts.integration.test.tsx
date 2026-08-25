@@ -31,20 +31,7 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
 }));
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
-jest.mock("@features/platform-contacts/device", () => {
-  const actual = jest.requireActual<typeof import("@features/platform-contacts/device")>(
-    "@features/platform-contacts/device",
-  );
-  const { createMockContactDeviceIntentsPort } = jest.requireActual<
-    typeof import("@features/platform-contacts")
-  >("@features/platform-contacts");
-  const deviceIntents = createMockContactDeviceIntentsPort();
-
-  return {
-    ...actual,
-    useContactsIntentsOrchestrator: () => ({ deviceIntents, dieProps: undefined }),
-  };
-});
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
     validateAddress: async ({ address }: { address: string }) => ({
@@ -56,7 +43,7 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 }));
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
-const mockedContactsLedgerSyncStatus = { mockReturnValue: jest.fn() };
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 const Stack = createNativeStackNavigator();
 const AccountsStack = createNativeStackNavigator<AccountsNavigatorParamList>();

@@ -1,6 +1,5 @@
 ---
 "ledger-live-desktop": minor
-"live-mobile": minor
 "@features/flow-contacts": patch
 "@features/platform-contacts": patch
 ---
