@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 import type { Spot } from "@ledgerhq/lumen-ui-react";
-import type { DialogBackgroundTone } from "./background/DialogBackgroundContext";
+import type { DialogBackgroundTone } from "./background/DialogBackgroundContext.web";
 import type { InfoStateBaseProps } from "./sharedTypes";
 
 export * from "./sharedTypes";

@@ -1,11 +1,11 @@
 import React from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
-import { cn } from "./internals/cn";
+import { cn } from "./internals/cn.web";
 import type { InfoStateProps } from "./types.web";
 import { InfoStateButton } from "./components/InfoStateButton.web";
 import { PresetVisual } from "./components/PresetVisual.web";
 import { getInfoStateDialogTone } from "./utils/getInfoStateDialogTone.web";
-import { useDialogBackgroundTone } from "./background/useDialogBackgroundTone";
+import { useDialogBackgroundTone } from "./background/useDialogBackgroundTone.web";
 
 /**
  * Shared web state layout for informational, success, and error screens.

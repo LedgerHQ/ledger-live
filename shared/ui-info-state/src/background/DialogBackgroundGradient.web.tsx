@@ -1,7 +1,7 @@
 import React from "react";
-import { cn } from "../internals/cn";
-import { DialogBackgroundContext, type DialogBackgroundTone } from "./DialogBackgroundContext";
-import { useDialogBackgroundToneRequests } from "./useDialogBackgroundToneRequests";
+import { cn } from "../internals/cn.web";
+import { DialogBackgroundContext, type DialogBackgroundTone } from "./DialogBackgroundContext.web";
+import { useDialogBackgroundToneRequests } from "./useDialogBackgroundToneRequests.web";
 
 type DialogBackgroundGradientProps = Readonly<{
   tone: DialogBackgroundTone;

@@ -1,4 +1,4 @@
-import type { DialogBackgroundTone } from "../background/DialogBackgroundContext";
+import type { DialogBackgroundTone } from "../background/DialogBackgroundContext.web";
 import type { InfoStateProps } from "../types.web";
 
 export function getInfoStateDialogTone(props: InfoStateProps): DialogBackgroundTone | undefined {

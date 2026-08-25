@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect } from "react";
-import { DialogBackgroundContext, type DialogBackgroundTone } from "./DialogBackgroundContext";
+import { DialogBackgroundContext, type DialogBackgroundTone } from "./DialogBackgroundContext.web";
 
 /**
  * Tints the enclosing dialog with the given status tone.

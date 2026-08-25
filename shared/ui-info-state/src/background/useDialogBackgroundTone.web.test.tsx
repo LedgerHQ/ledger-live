@@ -4,8 +4,8 @@ import {
   DialogBackgroundContext,
   type DialogBackgroundContextValue,
   type DialogBackgroundTone,
-} from "./DialogBackgroundContext";
-import { useDialogBackgroundTone } from "./useDialogBackgroundTone";
+} from "./DialogBackgroundContext.web";
+import { useDialogBackgroundTone } from "./useDialogBackgroundTone.web";
 
 describe("useDialogBackgroundTone", () => {
   it("GIVEN no DialogBackgroundContext provider WHEN the hook is called THEN it does not throw", () => {
