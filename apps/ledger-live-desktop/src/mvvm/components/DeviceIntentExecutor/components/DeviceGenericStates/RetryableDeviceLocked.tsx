@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { getProductName } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 type RetryableDeviceLockedProps = Readonly<{
   deviceModelId: DeviceModelId;
