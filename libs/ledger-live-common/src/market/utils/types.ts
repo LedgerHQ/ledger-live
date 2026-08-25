@@ -138,12 +138,13 @@ export type MarketItemResponse = {
   name: string;
   price: number;
   priceChange24h: number;
-  priceChangePercentage1h: number;
-  priceChangePercentage24h: number;
-  priceChangePercentage30d: number;
-  priceChangePercentage7d: number;
-  priceChangePercentage6m?: number;
-  priceChangePercentage1y: number;
+  // Nullable in practice: the API omits a value for coins with too little price history.
+  priceChangePercentage1h: number | null;
+  priceChangePercentage24h: number | null;
+  priceChangePercentage30d: number | null;
+  priceChangePercentage7d: number | null;
+  priceChangePercentage6m?: number | null;
+  priceChangePercentage1y: number | null;
   sparkline: number[];
   ticker: string;
   totalSupply: number;

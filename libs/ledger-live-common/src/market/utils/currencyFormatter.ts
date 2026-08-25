@@ -62,12 +62,12 @@ export const format = (currency: MarketItemResponse): MarketCurrencyData => {
     ticker: currency.ticker,
     price: currency.price,
     priceChangePercentage: {
-      [KeysPriceChange.hour]: currency.priceChangePercentage1h,
-      [KeysPriceChange.day]: currency.priceChangePercentage24h,
-      [KeysPriceChange.week]: currency.priceChangePercentage7d,
-      [KeysPriceChange.month]: currency.priceChangePercentage30d,
+      [KeysPriceChange.hour]: currency.priceChangePercentage1h ?? 0,
+      [KeysPriceChange.day]: currency.priceChangePercentage24h ?? 0,
+      [KeysPriceChange.week]: currency.priceChangePercentage7d ?? 0,
+      [KeysPriceChange.month]: currency.priceChangePercentage30d ?? 0,
       [KeysPriceChange.sixMonths]: currency.priceChangePercentage6m ?? 0,
-      [KeysPriceChange.year]: currency.priceChangePercentage1y,
+      [KeysPriceChange.year]: currency.priceChangePercentage1y ?? 0,
     },
     marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
     circulatingSupply: currency.circulatingSupply,
@@ -84,16 +84,18 @@ export const format = (currency: MarketItemResponse): MarketCurrencyData => {
   };
 };
 
+// The API returns `null` price changes for coins with too little history. Coalesce here, at the
+// boundary every performer consumer goes through, so no view ever calls `.toFixed()` on null.
 export const formatPerformer = (currency: MarketItemResponse): MarketItemPerformer => ({
   id: currency.id,
   ledgerIds: currency.ledgerIds,
   name: currency.name,
   image: currency.image,
   ticker: currency.ticker,
-  priceChangePercentage1h: currency.priceChangePercentage1h,
-  priceChangePercentage24h: currency.priceChangePercentage24h,
-  priceChangePercentage7d: currency.priceChangePercentage7d,
-  priceChangePercentage30d: currency.priceChangePercentage30d,
-  priceChangePercentage1y: currency.priceChangePercentage1y,
+  priceChangePercentage1h: currency.priceChangePercentage1h ?? 0,
+  priceChangePercentage24h: currency.priceChangePercentage24h ?? 0,
+  priceChangePercentage7d: currency.priceChangePercentage7d ?? 0,
+  priceChangePercentage30d: currency.priceChangePercentage30d ?? 0,
+  priceChangePercentage1y: currency.priceChangePercentage1y ?? 0,
   price: currency.price,
 });
