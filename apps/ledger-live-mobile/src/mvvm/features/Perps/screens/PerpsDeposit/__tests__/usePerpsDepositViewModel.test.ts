@@ -337,6 +337,30 @@ describe("usePerpsDepositViewModel", () => {
     });
   });
 
+  it("holds the reviewed amounts still while quotes refresh behind it", () => {
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result, rerender } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.handleReview());
+
+    const reviewed = result.current.reviewParams;
+    // The provider drops the quote while refetching; the open review must not
+    // vanish along with it.
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
+    act(() => rerender(undefined));
+
+    expect(result.current.isReviewOpen).toBe(true);
+    expect(result.current.reviewParams).toEqual(reviewed);
+  });
+
   it("keeps the review closed while the form is incomplete", () => {
     const { props } = createProps();
     const { result } = renderViewModel(props);

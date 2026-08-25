@@ -80,6 +80,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const [depositAccountId, setDepositAccountId] = useState<string | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
 
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
@@ -247,21 +248,16 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     });
   }, [openDrawer]);
 
-  const reviewParams = useMemo<PerpsReviewParams | null>(() => {
-    if (!depositAccount || !depositCurrency || !sentAmount || !quote) return null;
-
-    return {
+  const handleReview = useCallback(() => {
+    if (!canReview || !depositAccount || !sentAmount || !quote) return;
+    setReviewParams({
       depositAccount,
       receiverAccount,
       amountSent: sentAmount,
       amountTo: quote.amountTo.toFixed(),
-    };
-  }, [depositAccount, depositCurrency, quote, receiverAccount, sentAmount]);
-
-  const handleReview = useCallback(() => {
-    if (!canReview) return;
+    });
     setIsReviewOpen(true);
-  }, [canReview]);
+  }, [canReview, depositAccount, quote, receiverAccount, sentAmount]);
 
   const closeReview = useCallback(() => setIsReviewOpen(false), []);
 
