@@ -952,6 +952,9 @@ importers:
       '@features/flow-contacts-introduction':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-introduction
+      '@features/flow-contacts-list':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-list
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
@@ -1764,6 +1767,9 @@ importers:
       '@features/flow-contacts-introduction':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-introduction
+      '@features/flow-contacts-list':
+        specifier: workspace:^
+        version: link:../../features/flow/flow-contacts-list
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
