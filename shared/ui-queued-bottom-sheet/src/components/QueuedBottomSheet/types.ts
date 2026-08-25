@@ -1,7 +1,7 @@
 import type React from "react";
 import type { BottomSheetProps } from "@ledgerhq/lumen-ui-rnative";
 
-export type QueuedBottomSheetProps = {
+export type QueuedBottomSheetProps = Readonly<{
   /** Whether this drawer is requesting to be opened (queued). */
   isRequestingToBeOpened?: boolean;
   /** Whether this drawer should force-open (clears queue). */
@@ -47,4 +47,4 @@ export type QueuedBottomSheetProps = {
   testID?: string;
   /** Content of the drawer. */
   children: React.ReactNode;
-};
+}>;

@@ -66,6 +66,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      isAddressDetailActionSheetOpen: boolean;
       addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
@@ -343,24 +344,18 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     addressDetailAsset,
     addressDetailNetwork,
   );
+  const isAddressDetailActionSheetOpen =
+    addressDetailActions.deleteSheet.isOpen ||
+    addressDetailActions.renameSheet.isOpen ||
+    addressDetailActions.signerSheet.isOpen ||
+    addressDetailActions.signerMismatchSheet.isOpen;
   const onCloseAddressDetailSheet = useCallback(() => {
-    if (
-      addressDetailActions.deleteSheet.isOpen ||
-      addressDetailActions.renameSheet.isOpen ||
-      addressDetailActions.signerSheet.isOpen ||
-      addressDetailActions.signerMismatchSheet.isOpen
-    ) {
+    if (isAddressDetailActionSheetOpen) {
       return;
     }
 
     onCloseAddressDetail();
-  }, [
-    addressDetailActions.deleteSheet.isOpen,
-    addressDetailActions.renameSheet.isOpen,
-    addressDetailActions.signerSheet.isOpen,
-    addressDetailActions.signerMismatchSheet.isOpen,
-    onCloseAddressDetail,
-  ]);
+  }, [isAddressDetailActionSheetOpen, onCloseAddressDetail]);
   const shouldRedirect = !isEnabled || !contact;
 
   useEffect(() => {
@@ -461,6 +456,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       onClose: onCloseAddressDetailSheet,
       ...addressDetailActions.addressDetailDialog,
     },
+    isAddressDetailActionSheetOpen,
     addressDetailActions,
     editDeleteFlow,
     ledgerSyncIntroduction: {
