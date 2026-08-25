@@ -257,13 +257,13 @@ export const getAllEnvs = (): Record<string, unknown> => ({ ...configured().env 
 export function getEnv<K extends EnvName>(name: K): EnvTypes[K];
 export function getEnv(name: string): unknown;
 export function getEnv(name: string): unknown {
-  return configured().env[name];
+  return configured(name).env[name];
 }
 
 export function getEnvDefault<K extends EnvName>(name: K): EnvTypes[K];
 export function getEnvDefault(name: string): unknown;
 export function getEnvDefault(name: string): unknown {
-  return configured().defaults[name];
+  return configured(name).defaults[name];
 }
 
 export const isEnvDefault = (name: string): boolean => {

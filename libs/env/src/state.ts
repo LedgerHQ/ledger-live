@@ -49,8 +49,15 @@ export function injectDefinitions(defs: EnvDefs): void {
   g.__ledgerLiveEnvState = { definitions: defs, env: { ...defaults }, defaults };
 }
 
-export function configured(): State {
+export function configured(name?: string): State {
   if (g.__ledgerLiveEnvState === undefined)
     throw new Error("[live-env] Call injectDefinitions() before using live-env");
+  if (
+    name !== undefined &&
+    !Object.prototype.hasOwnProperty.call(g.__ledgerLiveEnvState.definitions, name)
+  )
+    throw new Error(
+      `[live-env] "${name}" is not in injected definitions. Add it to your injectDefinitions() call.`,
+    );
   return g.__ledgerLiveEnvState;
 }
