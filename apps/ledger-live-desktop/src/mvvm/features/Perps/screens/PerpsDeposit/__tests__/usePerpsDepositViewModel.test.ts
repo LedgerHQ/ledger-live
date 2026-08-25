@@ -144,7 +144,6 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("holds back rather than blaming the balance while the funding rate is missing", async () => {
-   
     mockCalculateCountervalue.mockReturnValue(null as unknown as BigNumber);
     const { result } = renderViewModel();
 
