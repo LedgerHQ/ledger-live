@@ -1255,4 +1255,36 @@ describe("apiClient", () => {
       );
     });
   });
+
+  // The bond flow reads validators from whichever network the coin config names, so
+  // each of these must build its URL from `networkType` rather than a hardcoded network.
+  describe("staking endpoints", () => {
+    it.each([
+      ["getCommittee", "committee/latest", { members: {}, total_stake: 0 }],
+      ["getValidatorMetadata", "committee/validator-metadata", {}],
+      ["getTotalSupply", "latest/totalSupply", 2_056_277_710],
+    ] as const)("%s targets the configured network", async (method, path, mockResponse) => {
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await expect(apiClient[method](mockConfig)).resolves.toEqual(mockResponse);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `https://node.example.com/v2/mainnet/${path}`,
+      });
+
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient[method](testnetConfig);
+      expect(network).toHaveBeenLastCalledWith({
+        method: "GET",
+        url: `https://node.example.com/v2/testnet/${path}`,
+      });
+    });
+
+    it("getTotalSupply passes a string body through untouched, for the logic layer to parse", async () => {
+      jest.mocked(network).mockResolvedValue({ data: "2056277710", status: 200 });
+
+      await expect(apiClient.getTotalSupply(mockConfig)).resolves.toBe("2056277710");
+    });
+  });
 });

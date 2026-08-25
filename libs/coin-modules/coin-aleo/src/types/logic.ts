@@ -56,6 +56,12 @@ export type AleoValidator = {
   stake: number;
   isOpen: boolean;
   commission: number;
+  /**
+   * Estimated net yearly rate, as a fraction (0.07 = 7%) — note `commission`
+   * above is a percent. Absent when it could not be derived; `0` is a real
+   * value meaning "earns nothing" and is not the same as absent.
+   */
+  estimatedYearlyRewardsRate?: number;
 };
 
 /** `<maxBlockHeight>:<blockNumber>:<transitionId>` — the pinned ceiling, then the row to resume after. */

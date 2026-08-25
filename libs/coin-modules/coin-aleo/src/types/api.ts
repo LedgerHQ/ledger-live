@@ -14,6 +14,16 @@ export interface AleoCommitteeResponse {
 // Maps a validator address to its human-readable name.
 export type AleoValidatorMetadataResponse = Record<string, string>;
 
+/**
+ * Total circulating supply, served as a bare JSON scalar.
+ *
+ * Unlike every other amount in this API it is denominated in **credits**, not
+ * microcredits — convert before combining it with `AleoCommitteeResponse.total_stake`.
+ * Typed as a union because the endpoint is not guaranteed to keep serving a JSON
+ * number; `parseTotalSupply` accepts either form and rejects anything else.
+ */
+export type AleoTotalSupplyResponse = number | string;
+
 export type AleoTransitionValue =
   | {
       id: string;

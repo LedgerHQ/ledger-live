@@ -115,3 +115,19 @@ export const MIN_BOND_AMOUNT = 1_000_000;
 // (already-bonded balance + this bond amount), so top-ups on an existing
 // >= 10,000 ALEO position only need to satisfy MIN_BOND_AMOUNT.
 export const MIN_STAKE_AMOUNT = 10_000 * 1_000_000;
+
+// 1 ALEO credit = 1_000_000 microcredits. The committee endpoint reports stake in
+// microcredits while `latest/totalSupply` reports credits, so the two must be put on
+// the same scale before they are divided.
+export const MICROCREDITS_PER_CREDIT = 1_000_000;
+
+// Annual issuance as a fraction of total supply. Follows from snarkVM's
+// `block_reward_v2 = floor(0.05 * S * I / S_Y) + CR/3 + TX_F`
+// (ledger/block/src/helpers/target.rs), whose `I / S_Y` weighting integrates to 1
+// over a year. The dropped coinbase (CR/3) and transaction-fee (TX_F) terms are why
+// the derived rate is a lower bound and must be surfaced as an estimate.
+export const ANNUAL_INFLATION_RATE = 0.05;
+
+// A validator holding more than this share of the network's total stake earns no
+// rewards at all — not a reduced rate, zero.
+export const MAX_VALIDATOR_STAKE_SHARE = 0.25;

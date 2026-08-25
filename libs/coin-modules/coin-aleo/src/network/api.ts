@@ -14,6 +14,7 @@ import type {
   AleoTransitionCursor,
   AleoCommitteeResponse,
   AleoValidatorMetadataResponse,
+  AleoTotalSupplyResponse,
 } from "../types/api";
 import type { AleoCoinConfig } from "../types";
 import { MAX_TRANSITIONS_PER_PAGE, PROGRAM_ID } from "../constants";
@@ -84,6 +85,20 @@ async function getValidatorMetadata(
   const res = await network<AleoValidatorMetadataResponse>({
     method: "GET",
     url: `${apiUrls.node}/v2/${networkType}/committee/validator-metadata`,
+  });
+
+  return res.data;
+}
+
+/**
+ * Fetches the network's total circulating supply, in **credits** (not microcredits).
+ */
+async function getTotalSupply(config: AleoCoinConfig): Promise<AleoTotalSupplyResponse> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<AleoTotalSupplyResponse>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/latest/totalSupply`,
   });
 
   return res.data;
@@ -382,6 +397,7 @@ export const apiClient = {
   getUnbondingMapping,
   getCommittee,
   getValidatorMetadata,
+  getTotalSupply,
   getTokenBalance,
   getTokens,
   getTransactionById,
