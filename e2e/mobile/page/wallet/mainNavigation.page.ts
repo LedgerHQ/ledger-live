@@ -1,7 +1,12 @@
 import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink, isAndroid } from "../../helpers/commonHelpers";
+import { retryUntilTimeout } from "../../utils/retry";
 import { isMyWalletEnabled } from "../../utils/initUtil";
+import {
+  ANALYTICS_CONSENT_DRAWER_ID,
+  ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID,
+} from "../drawer/wallet40Drawers.drawer";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card";
 
@@ -40,7 +45,19 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready(timeout = 60000) {
-    await waitForElementById(this.topBarDiscoverId, timeout);
+    await retryUntilTimeout(
+      async () => {
+        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, 500))) {
+          await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
+          await waitForElementNotVisible(ANALYTICS_CONSENT_DRAWER_ID);
+        }
+        if (!(await IsIdVisible(this.topBarDiscoverId, 500))) {
+          throw new Error(`"${this.topBarDiscoverId}" not visible yet`);
+        }
+      },
+      timeout,
+      600,
+    );
   }
 
   @Step("Wait for Legacy navigation to be ready")
