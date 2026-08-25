@@ -1,14 +1,10 @@
 import type { PayCardSession } from "@domain/api-card-management";
 import { fromPromise } from "xstate";
+import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { parseCallbackUrl } from "./callbackUrl";
 import { MissingLoginStateError } from "./errors";
 import type { PayCardLoginErrorKind } from "./errors";
-import type {
-  CardLoginInitiation,
-  CardLoginOauthConfig,
-  CardLoginPorts,
-  PayCardAuthCallback,
-} from "./types";
+import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "./types";
 
 /**
  * Every asynchronous step of the login, as an invoked actor. Each one takes what it needs as input and
@@ -26,36 +22,23 @@ export const hydrate = fromPromise(async ({ input }: { input: { ports: CardLogin
   return { hasAttempt: attempt !== null, hasSession };
 });
 
+/**
+ * Mints the attempt, stores it, and builds the URL that opens it. The URL is built here and not in an
+ * `assign`, because `buildAuthorizeUrl` throws on a misconfigured `apiUrl`, and a throw inside an
+ * action stops the machine instead of reaching a transition. As a rejection it lands on `onError`, and
+ * the login reports a failure it can retry.
+ */
 export const prepareAttempt = fromPromise(
-  async ({ input }: { input: { ports: CardLoginPorts } }): Promise<CardLoginInitiation> => {
-    const { state, codeVerifier, codeChallenge } = await input.ports.createAttempt();
-    await input.ports.saveAttempt({ state, codeVerifier });
-
-    // Only the public halves travel on. The verifier stays in the store until the token exchange.
-    return { state, codeChallenge };
-  },
-);
-
-export const initiateAuthorize = fromPromise(
-  ({
+  async ({
     input,
   }: {
-    input: {
-      ports: CardLoginPorts;
-      oauthConfig: CardLoginOauthConfig;
-      initiation: CardLoginInitiation | null;
-    };
-  }) => {
-    if (!input.initiation) {
-      throw new MissingLoginStateError("attempt");
-    }
+    input: { ports: CardLoginPorts; oauthConfig: CardLoginOauthConfig };
+  }): Promise<{ loginUrl: string }> => {
+    const { codeVerifier, codeChallenge } = await input.ports.createAttempt();
+    await input.ports.saveAttempt({ codeVerifier });
 
-    return input.ports.initiateAuthorize({
-      clientId: input.oauthConfig.clientId,
-      redirectUri: input.oauthConfig.redirectUri,
-      state: input.initiation.state,
-      codeChallenge: input.initiation.codeChallenge,
-    });
+    // Only the challenge leaves the device. The verifier stays in the store until the token exchange.
+    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge) };
   },
 );
 
@@ -79,7 +62,11 @@ export const openHostedLogin = fromPromise(
   },
 );
 
-/** Compares the redirect against the attempt on disk. `kind` is null when they agree. */
+/**
+ * Checks that a redirect and the attempt behind it are both there. Nothing is compared: the OAuth
+ * `state` is gone, so there are no two values to hold against each other. `kind` is null when both
+ * are present.
+ */
 export const validateCallback = fromPromise(
   async ({
     input,
@@ -87,20 +74,15 @@ export const validateCallback = fromPromise(
     input: { ports: CardLoginPorts; callback: PayCardAuthCallback | null };
   }): Promise<{ kind: PayCardLoginErrorKind | null }> => {
     const attempt = await input.ports.loadAttempt();
-    if (!attempt || !input.callback) {
-      return { kind: "missing_attempt" };
-    }
 
-    return { kind: attempt.state === input.callback.state ? null : "state_mismatch" };
+    // A redirect with no verifier behind it cannot be exchanged, so the login starts over. PKCE does
+    // the rest: the provider only accepts this code against the challenge this attempt sent.
+    return { kind: attempt && input.callback ? null : "missing_attempt" };
   },
 );
 
 export const exchangeAuthorizationCode = fromPromise(
-  async ({
-    input,
-  }: {
-    input: { ports: CardLoginPorts; callback: PayCardAuthCallback | null; redirectUri: string };
-  }) => {
+  async ({ input }: { input: { ports: CardLoginPorts; callback: PayCardAuthCallback | null } }) => {
     const attempt = await input.ports.loadAttempt();
     if (!attempt || !input.callback) {
       throw new MissingLoginStateError("attempt");
@@ -108,7 +90,6 @@ export const exchangeAuthorizationCode = fromPromise(
 
     return input.ports.exchangeAuthorizationCode({
       code: input.callback.code,
-      redirectUri: input.redirectUri,
       codeVerifier: attempt.codeVerifier,
     });
   },

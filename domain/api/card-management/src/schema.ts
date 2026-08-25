@@ -1,29 +1,20 @@
 import { z } from "zod";
 
 /**
- * `mode=api` also answers with a `token`, the JWT of the programmatic flow — `POST /v1/auth/login`
- * then `POST /v1/auth/oauth/authorize`. The hosted UI needs none of it, so zod drops it here rather
- * than parking a short-lived credential in the cache.
+ * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
+ * carries no lifetime for the refresh token itself, only for the access token.
  */
-export const PayCardAuthorizeInitiateResponseSchema = z.object({
-  /** Handed straight to a browser, so no other scheme is accepted. */
-  url: z.string().url().startsWith("https://"),
-});
-
-/** Both grants — `authorization_code` and `refresh_token` — answer with this shape. */
 export const PayCardSessionResponseSchema = z.object({
   access_token: z.string().min(1),
   expires_in: z.number().int().positive(),
   refresh_token: z.string().min(1),
-  refresh_token_expires_in: z.number().int().positive(),
 });
 
-/** Lifetimes stay the durations the backend sent: turning them into instants needs a clock. */
+/** The lifetime stays the duration the backend sent: turning it into an instant needs a clock. */
 export const PayCardSessionSchema = z.object({
   accessToken: z.string().min(1),
   expiresIn: z.number().int().positive(),
   refreshToken: z.string().min(1),
-  refreshTokenExpiresIn: z.number().int().positive(),
 });
 
 export const PayCardLogoutResponseSchema = z.object({

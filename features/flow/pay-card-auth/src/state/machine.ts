@@ -4,7 +4,6 @@ import {
   exchangeAuthorizationCode,
   getUser,
   hydrate,
-  initiateAuthorize,
   openHostedLogin,
   persistSession,
   prepareAttempt,
@@ -24,7 +23,6 @@ export const cardLoginMachine = setup({
   actors: {
     hydrate,
     prepareAttempt,
-    initiateAuthorize,
     openHostedLogin,
     validateCallback,
     exchangeAuthorizationCode,
@@ -53,7 +51,6 @@ export const cardLoginMachine = setup({
     ports: input.ports,
     oauthConfig: input.oauthConfig,
     callback: input.callback ?? null,
-    initiation: null,
     loginUrl: null,
     session: null,
     errorKind: null,
@@ -91,7 +88,7 @@ export const cardLoginMachine = setup({
         // arrives one render after mount can never overtake the disk read.
         CALLBACK_RECEIVED: {
           actions: assign({
-            callback: ({ event }) => ({ code: event.code, state: event.state }),
+            callback: ({ event }) => ({ code: event.code }),
           }),
         },
       },
@@ -106,32 +103,16 @@ export const cardLoginMachine = setup({
       entry: ["forgetAttempt", "clearErrorKind"],
       invoke: {
         src: "prepareAttempt",
-        input: ({ context }) => ({ ports: context.ports }),
+        input: ({ context }) => ({ ports: context.ports, oauthConfig: context.oauthConfig }),
         onDone: {
-          target: "initiatingAuthorize",
-          actions: assign({ initiation: ({ event }) => event.output }),
-        },
-        // Nothing reached the store, so there is nothing to wipe.
-        onError: { target: "error", actions: "failPkce" },
-      },
-    },
-
-    initiatingAuthorize: {
-      invoke: {
-        src: "initiateAuthorize",
-        input: ({ context }) => ({
-          ports: context.ports,
-          oauthConfig: context.oauthConfig,
-          initiation: context.initiation,
-        }),
-        onDone: {
+          // The provider hosts the authorize page, so the actor builds the URL and nothing is asked
+          // of the backend first. One step fewer, and one fewer way for a login to fail.
           target: "awaitingHostedLogin",
-          actions: assign({ loginUrl: ({ event }) => event.output.url }),
+          actions: assign({ loginUrl: ({ event }) => event.output.loginUrl }),
         },
-        onError: {
-          target: "clearingAttempt",
-          actions: assign({ errorKind: "initiate_failed" }),
-        },
+        // The attempt may already be stored, because the URL is built after the write. `clearingAttempt`
+        // wipes it and then reads the error kind, which sends this to `error`.
+        onError: { target: "clearingAttempt", actions: "failPkce" },
       },
     },
 
@@ -163,7 +144,7 @@ export const cardLoginMachine = setup({
         CALLBACK_RECEIVED: {
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code, state: event.state }),
+            callback: ({ event }) => ({ code: event.code }),
           }),
         },
       },
@@ -193,7 +174,6 @@ export const cardLoginMachine = setup({
         input: ({ context }) => ({
           ports: context.ports,
           callback: context.callback,
-          redirectUri: context.oauthConfig.redirectUri,
         }),
         onDone: {
           target: "persistingSession",

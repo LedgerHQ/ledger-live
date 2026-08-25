@@ -6,10 +6,8 @@ const UNAUTHORIZED_STATUS = 401;
  */
 export type PayCardLoginErrorKind =
   | "pkce_failed"
-  | "initiate_failed"
   | "browser_open_failed"
   | "missing_attempt"
-  | "state_mismatch"
   | "exchange_failed"
   | "persist_failed"
   | "fetch_user_failed";

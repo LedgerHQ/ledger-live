@@ -17,14 +17,12 @@ const sessionResponse = {
   access_token: "at_token",
   expires_in: 21600,
   refresh_token: "rt_token",
-  refresh_token_expires_in: 15897600,
 };
 
 const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
 
 // Wired the way the apps wire it: the store registers the service api, never this package.
@@ -58,7 +56,6 @@ describe("cardManagementApi configuration", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "exchangeAuthorizationCode",
       "getUser",
-      "initiateAuthorize",
       "logout",
       "orderCard",
       "refreshSession",
@@ -84,40 +81,6 @@ describe("cardManagementApi requests", () => {
     fetchSpy?.mockRestore();
   });
 
-  describe("initiateAuthorize", () => {
-    it("sends the OAuth parameters and returns the hosted login URL", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockResolvedValue(jsonResponse({ token: "jwt", url: "https://card.test/login" }));
-
-      const store = makeStore();
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.initiateAuthorize.initiate({
-          clientId: "client-key",
-          redirectUri: "ledgerlive://paytab",
-          state: "state-value",
-          codeChallenge: "challenge-value",
-        }),
-      );
-
-      const { searchParams, pathname } = new URL(request(fetchSpy).url);
-      expect(pathname).toBe("/v1/auth/oauth/authorize/initiate");
-      expect(request(fetchSpy).method).toBe("GET");
-      expect(Object.fromEntries(searchParams)).toEqual({
-        client_id: "client-key",
-        response_type: "code",
-        redirect_uri: "ledgerlive://paytab",
-        state: "state-value",
-        code_challenge: "challenge-value",
-        code_challenge_method: "S256",
-        mode: "api",
-      });
-      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
-      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
-      expect(result.data).toEqual({ url: "https://card.test/login" });
-    });
-  });
-
   describe("exchangeAuthorizationCode", () => {
     it("posts the authorization_code grant and maps the session onto camelCase", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
@@ -126,17 +89,15 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
 
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth/token");
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
       expect(request(fetchSpy).method).toBe("POST");
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "authorization_code",
         code: "auth-code",
-        redirect_uri: "ledgerlive://paytab",
         code_verifier: "verifier",
       });
       expect(result.data).toEqual(session);
@@ -156,7 +117,6 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
@@ -177,7 +137,7 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.refreshSession.initiate({ refreshToken: "rt_token" }),
       );
 
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth/token");
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "refresh_token",
         refresh_token: "rt_token",
@@ -284,17 +244,10 @@ describe("cardManagementApi requests", () => {
   it("rejects a response that does not match the wire contract", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
-      .mockResolvedValue(jsonResponse({ token: "jwt", url: "not-a-url" }));
+      .mockResolvedValue(jsonResponse({ id: "not-a-uuid", verification_state: "VERIFIED" }));
 
-    const store = makeStore();
-    const result = await store.dispatch(
-      cardManagementApi.endpoints.initiateAuthorize.initiate({
-        clientId: "client-key",
-        redirectUri: "ledgerlive://paytab",
-        state: "state-value",
-        codeChallenge: "challenge-value",
-      }),
-    );
+    const store = makeStore(async () => "session-token");
+    const result = await store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();

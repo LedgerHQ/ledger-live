@@ -33,8 +33,6 @@ export function createCardLoginPorts({
     hasSession: async () => Boolean(await getCardSessionToken()),
     persistSession: session => cardSession.set(session),
     clearSession: () => cardSession.clear(),
-    initiateAuthorize: request =>
-      dispatch(cardManagementApi.endpoints.initiateAuthorize.initiate(request)).unwrap(),
     exchangeAuthorizationCode: request =>
       dispatch(cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request)).unwrap(),
     getUser: async () => {
