@@ -2,6 +2,7 @@ import {
   createFakeClock,
   createFetchMock,
   jwtWithExpiry,
+  RFC6238_SECRET,
   testConfig,
 } from "../__mocks__/fetchMock";
 import { REDACTION_PLACEHOLDER } from "../http/body";
@@ -294,6 +295,25 @@ describe("loginToBaanx — 200 with no token and no reason", () => {
     expect(error).toBeInstanceOf(BaanxNoTokenError);
   });
 
+  it.each(["null", "undefined", "NULL", " null ", "none", "0", "false"])(
+    "rejects the string sentinel %p rather than sending it as a Bearer token",
+    async token => {
+      const { fetchImpl } = createFetchMock([{ body: { accessToken: token } }]);
+
+      await expect(loginToBaanx(testConfig(), { fetchImpl })).rejects.toBeInstanceOf(
+        BaanxNoTokenError,
+      );
+    },
+  );
+
+  it("still accepts a legitimate token that merely contains a sentinel word", async () => {
+    const { fetchImpl } = createFetchMock([{ body: { accessToken: "null-ish-but-real-token" } }]);
+
+    const session = await loginToBaanx(testConfig(), { fetchImpl });
+
+    expect(session.accessToken).toBe("null-ish-but-real-token");
+  });
+
   it("attaches the raw body with credentials redacted", async () => {
     const { fetchImpl } = createFetchMock([
       {
@@ -418,6 +438,23 @@ describe("loginToBaanx — mapped HTTP failures", () => {
     const error = await captureError(loginToBaanx(testConfig(), { fetchImpl }));
 
     expect(error.message).toContain("HTTP 500");
+  });
+
+  it.each([
+    ["the client key", "test-client-key"],
+    ["the password", "correct horse battery staple"],
+    ["the TOTP secret", RFC6238_SECRET],
+  ])("scrubs %s if the API echoes it back in a message", async (_label, secret) => {
+    // A gateway that reflects a submitted value would otherwise put it
+    // straight into the error message, which redacting the body does not cover.
+    const { fetchImpl } = createFetchMock([
+      { status: 400, body: { message: `Rejected value ${secret} for this request` } },
+    ]);
+
+    const error = await captureError(loginToBaanx(testConfig(), { fetchImpl }));
+
+    expect(error.message).not.toContain(secret);
+    expect(error.message).toContain("[redacted]");
   });
 
   it("surfaces a transport failure without echoing the request", async () => {

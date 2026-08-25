@@ -1,5 +1,5 @@
 import { ENV_VARS } from "./config";
-import { parseCliArgs } from "./cliArgs";
+import { flagNameOf, parseCliArgs } from "./cliArgs";
 import { BaanxAuthError } from "./errors";
 import { getBaanxAuthToken } from "./auth/session";
 
@@ -54,7 +54,7 @@ async function main(argv: string[]): Promise<number> {
 
   if (parsed.kind === "unknown") {
     process.stderr.write(
-      `Unrecognised argument: ${parsed.argument}\n\n` +
+      `Unrecognised argument: ${flagNameOf(parsed.argument)}\n\n` +
         `Credentials are never passed as flags — they would leak into the process list and shell ` +
         `history. Set them in the environment instead.\n\n${USAGE}`,
     );

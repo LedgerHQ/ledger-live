@@ -96,13 +96,33 @@ async function parseBody(response: Response): Promise<unknown> {
 }
 
 /**
+ * Strip known credential values out of a string.
+ *
+ * Baanx (or a proxy in front of it) controls the text in `message`, and an API
+ * that echoes a submitted value would otherwise put it straight into an error.
+ * Redacting the attached body is not enough on its own — the message is a
+ * separate path, and this is the chokepoint both go through.
+ */
+export function redactSecrets(text: string | null, secrets: readonly string[]): string | null {
+  if (!text) return text;
+
+  let out = text;
+  for (const secret of secrets) {
+    // Very short values would match everywhere and destroy the message.
+    if (secret && secret.length >= 4) out = out.split(secret).join("[redacted]");
+  }
+  return out;
+}
+
+/**
  * Map a non-2xx onto the error that explains it, keeping Baanx's own message.
  *
  * Shared by the login flow and by `baanxRequest`, so a 429 during data setup
- * reads exactly like a 429 during login.
+ * reads exactly like a 429 during login. `secrets` are scrubbed from the
+ * API-supplied message before it is interpolated.
  */
-export function toTypedError(response: BaanxResponse): Error {
-  const apiMessage = extractApiMessage(response.body);
+export function toTypedError(response: BaanxResponse, secrets: readonly string[] = []): Error {
+  const apiMessage = redactSecrets(extractApiMessage(response.body), secrets);
 
   switch (response.status) {
     case 498:

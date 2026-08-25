@@ -111,6 +111,49 @@ describe("getBaanxAuthToken", () => {
     expect(requests).toHaveLength(2);
   });
 
+  it("joins a running login instead of stampeding when forceRefresh races", async () => {
+    // Concurrent 401 handlers all calling forceRefresh must produce ONE login;
+    // a second response would mean the mock was called twice.
+    const { fetchImpl, requests } = createFetchMock([{ body: { accessToken: "token-1" } }]);
+
+    const results = await Promise.all([
+      getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, forceRefresh: true }),
+      getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, forceRefresh: true }),
+      getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, forceRefresh: true }),
+    ]);
+
+    expect(requests).toHaveLength(1);
+    expect(new Set(results.map(r => r.accessToken))).toEqual(new Set(["token-1"]));
+  });
+
+  it("still bypasses a cached token when forceRefresh is set", async () => {
+    const { fetchImpl, requests } = createFetchMock([
+      { body: { accessToken: "token-1" } },
+      { body: { accessToken: "token-2" } },
+    ]);
+
+    await getBaanxAuthToken({ env: ENV, deps: { fetchImpl } });
+    const second = await getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, forceRefresh: true });
+
+    expect(second.accessToken).toBe("token-2");
+    expect(requests).toHaveLength(2);
+  });
+
+  it("does not reuse a token across different client keys", async () => {
+    // The client key selects the Baanx tenant, so a token minted under one
+    // must never be sent with another.
+    const { fetchImpl, requests } = createFetchMock([
+      { body: { accessToken: "token-key-a" } },
+      { body: { accessToken: "token-key-b" } },
+    ]);
+
+    const a = await getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, clientKey: "key-a" });
+    const b = await getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, clientKey: "key-b" });
+
+    expect(a.accessToken).not.toBe(b.accessToken);
+    expect(requests).toHaveLength(2);
+  });
+
   it("caches per user, host and region", async () => {
     const { fetchImpl, requests } = createFetchMock([
       { body: { accessToken: "token-intl" } },

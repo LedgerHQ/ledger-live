@@ -78,10 +78,17 @@ describe("generateTotpCodeAt", () => {
     expect(() => generateTotpCodeAt(totpConfig({ secret }), 59_000)).toThrow(
       /BAANX_TEST_USER_TOTP_SECRET/,
     );
-    // The offending value must never reach the message.
-    expect(() => generateTotpCodeAt(totpConfig({ secret }), 59_000)).not.toThrow(
-      new RegExp(secret.replace(/[!]/g, "\\!")),
-    );
+    // The offending value must never reach the message. Asserted with a
+    // substring check rather than a regex built from the value: escaping the
+    // value correctly is its own trap (CodeQL flags partial escaping), and
+    // containment is exactly what we mean.
+    let message = "";
+    try {
+      generateTotpCodeAt(totpConfig({ secret }), 59_000);
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).not.toContain(secret);
   });
 });
 

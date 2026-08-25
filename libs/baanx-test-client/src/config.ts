@@ -1,4 +1,5 @@
 import { BaanxConfigError, BaanxInvalidConfigError } from "./errors";
+import { trimTrailing } from "./text";
 import {
   DEFAULT_BAANX_BASE_URL,
   DEFAULT_TOTP_ALGORITHM,
@@ -39,11 +40,15 @@ export function resolveBaanxAuthConfig(
   overrides: Partial<BaanxAuthConfig> = {},
   env: EnvSource = process.env,
 ): ResolvedBaanxAuthConfig {
-  const clientKey = overrides.clientKey ?? read(env, ENV_VARS.clientKey);
-  const email = overrides.email ?? read(env, ENV_VARS.email);
+  // Overrides go through the same normalisation as the environment. A caller
+  // passing `clientKey: " "` must fail the missing-check exactly as an empty
+  // variable would, rather than sending whitespace as a credential.
+  const clientKey = clean(overrides.clientKey, ENV_VARS.clientKey) ?? read(env, ENV_VARS.clientKey);
+  const email = clean(overrides.email, ENV_VARS.email) ?? read(env, ENV_VARS.email);
   // Not trimmed: trailing whitespace may genuinely be part of a password.
   const password = overrides.password ?? env[ENV_VARS.password];
-  const totpSecret = overrides.totp?.secret ?? read(env, ENV_VARS.totpSecret);
+  const totpSecret =
+    clean(overrides.totp?.secret, ENV_VARS.totpSecret) ?? read(env, ENV_VARS.totpSecret);
 
   const missing: string[] = [];
   if (!clientKey) missing.push(ENV_VARS.clientKey);
@@ -56,7 +61,7 @@ export function resolveBaanxAuthConfig(
 
   return {
     // A trailing slash would double up against the "/v1/..." paths.
-    baseUrl: baseUrl.replace(/\/+$/, ""),
+    baseUrl: trimTrailing(baseUrl, "/"),
     clientKey: clientKey as string,
     email: email as string,
     password: password as string,
@@ -64,16 +69,58 @@ export function resolveBaanxAuthConfig(
     totp: {
       secret: totpSecret as string,
       digits:
-        overrides.totp?.digits ??
+        checkInt(
+          overrides.totp?.digits,
+          ENV_VARS.totpDigits,
+          "a digit count between 6 and 10",
+          6,
+          10,
+        ) ??
         readInt(env, ENV_VARS.totpDigits, "a digit count between 6 and 10", 6, 10) ??
         DEFAULT_TOTP_DIGITS,
       period:
-        overrides.totp?.period ??
+        checkInt(
+          overrides.totp?.period,
+          ENV_VARS.totpPeriod,
+          "a period in seconds between 1 and 300",
+          1,
+          300,
+        ) ??
         readInt(env, ENV_VARS.totpPeriod, "a period in seconds between 1 and 300", 1, 300) ??
         DEFAULT_TOTP_PERIOD_S,
       algorithm: resolveAlgorithm(overrides.totp?.algorithm, env),
     },
   };
+}
+
+/**
+ * Trim an explicit override.
+ *
+ * A key that was *provided* but is blank is an error rather than a silent
+ * fall-through to the environment: the caller asked for a specific value, and
+ * quietly authenticating with a different one would be worse than failing.
+ */
+function clean(value: string | undefined, name: string): string | undefined {
+  if (value === undefined) return undefined;
+
+  const trimmed = value.trim();
+  if (!trimmed) throw new BaanxInvalidConfigError(name, "a non-empty value");
+  return trimmed;
+}
+
+/** Range-check an explicit numeric override, mirroring `readInt`. */
+function checkInt(
+  value: number | undefined,
+  name: string,
+  expected: string,
+  min: number,
+  max: number,
+): number | undefined {
+  if (value === undefined) return undefined;
+  if (!Number.isInteger(value) || value < min || value > max) {
+    throw new BaanxInvalidConfigError(name, expected);
+  }
+  return value;
 }
 
 function read(env: EnvSource, name: string): string | undefined {
@@ -82,7 +129,10 @@ function read(env: EnvSource, name: string): string | undefined {
 }
 
 function resolveRegion(override: BaanxRegion | undefined, env: EnvSource): BaanxRegion {
-  if (override) return override;
+  if (override !== undefined) {
+    if (override === "us" || override === "international") return override;
+    throw new BaanxInvalidConfigError("region", `"international" or "us"`);
+  }
 
   const raw = read(env, ENV_VARS.region)?.toLowerCase();
   if (!raw) return "international";
@@ -92,7 +142,10 @@ function resolveRegion(override: BaanxRegion | undefined, env: EnvSource): Baanx
 }
 
 function resolveAlgorithm(override: TotpAlgorithm | undefined, env: EnvSource): TotpAlgorithm {
-  if (override) return override;
+  if (override !== undefined) {
+    if (TOTP_ALGORITHMS.has(override)) return override;
+    throw new BaanxInvalidConfigError(ENV_VARS.totpAlgorithm, `one of SHA1, SHA256, SHA512`);
+  }
 
   const raw = read(env, ENV_VARS.totpAlgorithm)?.toUpperCase();
   if (!raw) return DEFAULT_TOTP_ALGORITHM;

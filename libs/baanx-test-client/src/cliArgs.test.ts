@@ -1,4 +1,4 @@
-import { parseCliArgs } from "./cliArgs";
+import { flagNameOf, parseCliArgs } from "./cliArgs";
 
 /**
  * `pnpm run <script> -- --json` forwards the `--` separator into argv, so the
@@ -38,5 +38,23 @@ describe("parseCliArgs", () => {
       kind: "unknown",
       argument: "--first",
     });
+  });
+});
+
+describe("flagNameOf", () => {
+  it.each([
+    ["--password=hunter2", "--password=[redacted]"],
+    ["--client-key=abc123", "--client-key=[redacted]"],
+    ["--secret=a=b=c", "--secret=[redacted]"],
+  ])("redacts the value in %p", (input, expected) => {
+    expect(flagNameOf(input)).toBe(expected);
+  });
+
+  it.each(["--nope", "-j", "extra"])("leaves the valueless argument %p intact", argument => {
+    expect(flagNameOf(argument)).toBe(argument);
+  });
+
+  it("never returns the secret half", () => {
+    expect(flagNameOf("--password=hunter2")).not.toContain("hunter2");
   });
 });

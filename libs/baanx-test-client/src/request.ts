@@ -55,6 +55,14 @@ export async function baanxRequest<T = unknown>({
   const config = resolveBaanxAuthConfig(stripRuntimeOptions(auth), auth.env);
   const fullPath = `${path}${buildQuery(query)}`;
 
+  // The login this triggers must use the same transport as the request itself,
+  // or injecting `fetchImpl` for a test would still send the login over the
+  // real network. An explicit `auth.deps.fetchImpl` still wins.
+  const authWithTransport: BaanxAuthTokenOptions = {
+    ...auth,
+    deps: { fetchImpl, ...auth.deps },
+  };
+
   const send = async (token: string) =>
     sendJson({
       baseUrl: config.baseUrl,
@@ -67,11 +75,11 @@ export async function baanxRequest<T = unknown>({
       fetchImpl,
     });
 
-  const session = await getBaanxAuthToken(auth);
+  const session = await getBaanxAuthToken(authWithTransport);
   let response = await send(session.accessToken);
 
   if (response.status === 401) {
-    const refreshed = await getBaanxAuthToken({ ...auth, forceRefresh: true });
+    const refreshed = await getBaanxAuthToken({ ...authWithTransport, forceRefresh: true });
     response = await send(refreshed.accessToken);
   }
 

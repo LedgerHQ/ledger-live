@@ -1,6 +1,7 @@
 import { Secret, TOTP } from "otpauth";
 import { BaanxTotpSecretError } from "../errors";
 import { ENV_VARS } from "../config";
+import { trimTrailing } from "../text";
 import { MIN_WINDOW_REMAINING_MS } from "../types";
 import type { BaanxTotpConfig, TotpClock } from "../types";
 
@@ -108,7 +109,14 @@ function buildTotp(config: Required<BaanxTotpConfig>): TOTP {
   });
 }
 
-/** Setup keys are shown in spaced, lower-case or padded forms. All are fine. */
+/**
+ * Setup keys are shown in spaced, lower-case or padded forms. All are fine.
+ *
+ * Padding is stripped with a loop rather than `/=+$/`: that pattern is
+ * polynomial on input with many trailing '=' (CodeQL flags it as a ReDoS
+ * shape), and this is both linear and easier to read.
+ */
 function normalizeBase32(secret: string): string {
-  return secret.replace(/[\s-]/g, "").replace(/=+$/, "").toUpperCase();
+  const compact = secret.replace(/[\s-]/g, "");
+  return trimTrailing(compact, "=").toUpperCase();
 }

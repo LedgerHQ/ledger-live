@@ -119,6 +119,57 @@ describe("resolveBaanxAuthConfig", () => {
     });
   });
 
+  describe("explicit overrides are validated, not trusted", () => {
+    it.each([["clientKey"], ["email"]])(
+      "treats a whitespace-only %s override as missing",
+      field => {
+        expect(() => resolveBaanxAuthConfig({ [field]: "   " }, fullEnv())).toThrow(
+          BaanxInvalidConfigError,
+        );
+      },
+    );
+
+    it("treats a whitespace-only TOTP secret override as missing", () => {
+      expect(() => resolveBaanxAuthConfig({ totp: { secret: "  " } }, fullEnv())).toThrow(
+        BaanxInvalidConfigError,
+      );
+    });
+
+    it("trims a padded override rather than sending the padding", () => {
+      expect(resolveBaanxAuthConfig({ email: "  a@b.test  " }, fullEnv()).email).toBe("a@b.test");
+    });
+
+    it.each([
+      [{ totp: { secret: RFC6238_SECRET, digits: 999 } }],
+      [{ totp: { secret: RFC6238_SECRET, digits: 0 } }],
+      [{ totp: { secret: RFC6238_SECRET, period: -5 } }],
+      [{ totp: { secret: RFC6238_SECRET, period: 0 } }],
+    ])("rejects out-of-range TOTP override %j", overrides => {
+      expect(() => resolveBaanxAuthConfig(overrides, fullEnv())).toThrow(BaanxInvalidConfigError);
+    });
+
+    it("rejects an invalid algorithm override", () => {
+      expect(() =>
+        resolveBaanxAuthConfig(
+          { totp: { secret: RFC6238_SECRET, algorithm: "MD5" as never } },
+          fullEnv(),
+        ),
+      ).toThrow(BaanxInvalidConfigError);
+    });
+
+    it("rejects an invalid region override", () => {
+      expect(() => resolveBaanxAuthConfig({ region: "eu" as never }, fullEnv())).toThrow(
+        BaanxInvalidConfigError,
+      );
+    });
+
+    it("still preserves password whitespace, which may be significant", () => {
+      expect(resolveBaanxAuthConfig({ password: "  spaced  " }, fullEnv()).password).toBe(
+        "  spaced  ",
+      );
+    });
+  });
+
   describe("region", () => {
     it("defaults to international", () => {
       expect(resolveBaanxAuthConfig({}, fullEnv()).region).toBe("international");

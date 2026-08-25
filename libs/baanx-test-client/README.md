@@ -7,13 +7,14 @@ A test-only client for the **Baanx API**. It logs a test user in — answering t
 automatically from their TOTP setup key, so suites stay headless — and then lets you make
 authenticated calls for the data creation and validation a Paytab↔Baanx integration test needs.
 
-Test-only tooling: `private`, never published, not imported by the shipped apps. It is not the app's
-Card authentication — `shared/api-services/src/services/card` already sends `x-client-key` and expects
-a token to be injected, and this fills that gap for tests via the existing seam:
+Test-only tooling: `private`, never published, not imported by the shipped apps.
 
-```ts
-cardSession.set((await getBaanxAuthToken()).accessToken);
-```
+**It is not the app's Card authentication, and does not plug into it.** The app's
+`@features/platform-card` session stores a `PayCardSession` — `{ accessToken, expiresIn,
+refreshToken, refreshTokenExpiresIn }` — minted by the OAuth/PKCE flow in
+`@features/flow-pay-card-auth`. The Baanx password login used here returns **no refresh token at
+all**, so its session cannot satisfy that shape. Use the token directly as a `Bearer` credential
+against the Baanx API; it is not a drop-in for `cardSession`.
 
 ## Assumption: our test users are authenticator-based, not SMS
 

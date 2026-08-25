@@ -135,6 +135,24 @@ async function triggerOtp(
   }
 }
 
+/** Values that must never survive into an error message. */
+function secretsOf(config: ResolvedBaanxAuthConfig): readonly string[] {
+  return [config.clientKey, config.password, config.totp.secret];
+}
+
+/**
+ * Tokens that are technically non-empty strings but are plainly not tokens.
+ *
+ * A gateway that serialises a null token as the *string* "null" would otherwise
+ * pass the emptiness check and produce a literal `Authorization: Bearer null`,
+ * which is the exact failure this package exists to prevent.
+ */
+const TOKEN_SENTINELS = new Set(["null", "undefined", "nil", "none", "false", "0"]);
+
+function isUsableToken(token: string | null): token is string {
+  return token !== null && !TOKEN_SENTINELS.has(token.trim().toLowerCase());
+}
+
 /** Build the session, or refuse to — this is what stops `Bearer null`. */
 function toSession(
   config: ResolvedBaanxAuthConfig,
@@ -144,9 +162,10 @@ function toSession(
   const payload = asRecord(body);
   const accessToken = asString(payload.accessToken);
 
-  // `asString` rejects null, undefined, "" and whitespace, so a token here is
-  // always something we can put behind `Bearer`.
-  if (!accessToken) throw new BaanxNoTokenError(redactBody(body));
+  // `asString` rejects null, undefined, "" and whitespace; `isUsableToken`
+  // additionally rejects string sentinels like "null", so a token reaching
+  // `Bearer` is always something real.
+  if (!isUsableToken(accessToken)) throw new BaanxNoTokenError(redactBody(body));
 
   const issuedAt = new Date();
   const { expiresAt, source } = resolveExpiry(accessToken, issuedAt);
@@ -181,7 +200,7 @@ async function post(
     fetchImpl,
   });
 
-  if (!response.ok) throw toTypedError(response);
+  if (!response.ok) throw toTypedError(response, secretsOf(config));
 
   return response;
 }
