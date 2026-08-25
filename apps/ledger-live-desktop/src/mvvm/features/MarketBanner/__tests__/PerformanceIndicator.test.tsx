@@ -33,4 +33,18 @@ describe("PerformanceIndicator", () => {
 
     expect(screen.getByText("+12.35%")).toBeInTheDocument();
   });
+
+  it.each([null, undefined])(
+    "should render a placeholder when percentage is %s",
+    priceChangePercentage24h => {
+      const { container } = render(
+        <PerformanceIndicator value={{ priceChangePercentage24h }} />,
+      );
+
+      expect(screen.getByText("--")).toBeInTheDocument();
+      expect(container.firstChild).toHaveClass("body-3");
+      expect(container.firstChild).not.toHaveClass("text-success");
+      expect(container.firstChild).not.toHaveClass("text-error");
+    },
+  );
 });
