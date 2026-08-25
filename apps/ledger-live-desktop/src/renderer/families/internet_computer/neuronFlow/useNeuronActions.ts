@@ -8,6 +8,7 @@ import type {
 import { useDispatch } from "LLD/hooks/redux";
 import { useCallback, useMemo } from "react";
 import { closeModal, openModal } from "~/renderer/actions/modals";
+import { onStakeConfirmed } from "../common";
 import type { StepId, StepProps } from "./types";
 
 type Params = Pick<
@@ -72,11 +73,7 @@ export function useNeuronActions({
         // The neuron's subaccount is the recipient and prepareTransaction derives it, so there is no
         // recipient step to go back to.
         disableBacks: ["amount"],
-        // The send flow closes itself and hands back here, so the user returns to their neurons
-        // rather than being dropped on the account page.
-        onConfirmationHandler: () => {
-          dispatch(openModal("MODAL_ICP_LIST_NEURONS", { account, neuronId }));
-        },
+        onConfirmationHandler: onStakeConfirmed(dispatch, account, neuronId),
       }),
     );
   }, [account, bridge, dispatch, neuronId]);
