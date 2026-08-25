@@ -16,7 +16,7 @@ import type { IntentPlatformDefinition } from "@features/platform-device-intent"
 
 type Result = ContactIntentResult<EditExternalAddressResult>;
 
-function toCombinedEditPortResult(result: Result): PortResult {
+function mapIntentResultToResult(result: Result): PortResult {
   if (result.type === "failure") {
     throw new EditExternalAddressError({ cause: result.error });
   }
@@ -69,6 +69,6 @@ export function createEditExternalAddressOperation(
       hmacRest: input.address.device.hmacRest,
     },
     initializationInput: context.initializationInput,
-    mapIntentResultToResult: toCombinedEditPortResult,
+    mapIntentResultToResult,
   };
 }
