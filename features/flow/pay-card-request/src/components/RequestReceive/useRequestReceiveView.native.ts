@@ -15,14 +15,23 @@ export function useRequestReceiveView({
   onCopy,
 }: UseRequestReceiveViewParams): UseRequestReceiveView {
   const [hasCopied, setHasCopied] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  useEffect(() => () => clearTimeout(timeoutRef.current), []);
+  useEffect(
+    () => () => {
+      if (timeoutRef.current !== undefined) {
+        clearTimeout(timeoutRef.current);
+      }
+    },
+    [],
+  );
 
   const handleCopy = useCallback(() => {
     onCopy();
     setHasCopied(true);
-    clearTimeout(timeoutRef.current);
+    if (timeoutRef.current !== undefined) {
+      clearTimeout(timeoutRef.current);
+    }
     timeoutRef.current = setTimeout(() => setHasCopied(false), COPY_FEEDBACK_MS);
   }, [onCopy]);
 
