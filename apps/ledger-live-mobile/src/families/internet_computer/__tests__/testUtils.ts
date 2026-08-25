@@ -54,6 +54,7 @@ export const makeICPAccount = ({
     spendableBalance,
     balance: spendableBalance,
     operations: [],
+    pendingOperations: [],
     neurons: { fullNeurons: neurons, lastUpdatedMSecs },
   }) as unknown as ICPAccount;
 
