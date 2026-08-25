@@ -15,6 +15,7 @@ import {
   LocationContentCard,
 } from "~/types/dynamicContent";
 import ContentCardsLocation from "../components/ContentCardsLocation";
+import PortfolioCategoryContentCards from "../components/PortfolioCategoryContentCards";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/renderer/reducers/dynamicContent";
 
 jest.mock("@braze/web-sdk", () => {
@@ -271,5 +272,25 @@ describe("ContentCardsLocation", () => {
       }),
     );
     expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Dismissed, expect.anything());
+  });
+});
+
+describe("PortfolioCategoryContentCards", () => {
+  test("keeps the LNS upsell banner out of the hardware carousel", async () => {
+    render(
+      <PortfolioCategoryContentCards
+        leadingSlide={<div data-testid="lns-upsell-banner">upsell</div>}
+      />,
+      { initialState: hardwareCarouselState },
+    );
+
+    await screen.findByText("Nano Pod");
+
+    const banner = screen.getByTestId("lns-upsell-banner");
+    const carousel = screen.getByTestId("category-carousel");
+
+    expect(banner).toBeVisible();
+    expect(carousel).not.toContainElement(banner);
+    expect(banner.compareDocumentPosition(carousel)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 });
