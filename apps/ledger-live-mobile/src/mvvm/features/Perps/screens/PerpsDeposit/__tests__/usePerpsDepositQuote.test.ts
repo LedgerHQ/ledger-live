@@ -116,6 +116,19 @@ describe("usePerpsDepositQuote", () => {
     expect(result.current.quote).toBeUndefined();
   });
 
+  it("keeps the quote when the funding account is only refreshed", async () => {
+    const { result, rerenderWith } = renderQuote({ amount: "2000", depositAccount });
+
+    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
+    // A background sync hands back the same account as a new object.
+    rerenderWith({ amount: "2000", depositAccount: { ...depositAccount } });
+    await passDebounce();
+
+    expect(result.current.quote?.quoteId).toBe("quote-1");
+    expect(result.current.isLoading).toBe(false);
+    expect(mockFetchPerpsDepositQuote).toHaveBeenCalledTimes(1);
+  });
+
   it("drops the quoted amount when the funding account changes", async () => {
     const { result, rerenderWith, seen } = renderQuote({ amount: "2000", depositAccount });
 
