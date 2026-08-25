@@ -53,6 +53,7 @@ export type EvmConfig = {
         type: "ledger";
         explorerId: LedgerExplorerId;
         batchSize?: number | undefined;
+        maxOperations?: number | undefined;
       }
     | {
         type: "none";

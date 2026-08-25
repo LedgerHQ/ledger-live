@@ -1,5 +1,6 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
+import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
@@ -15,6 +16,13 @@ import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
 
 export const DEFAULT_BATCH_SIZE = 10_000;
+
+/**
+ * The explorer keeps issuing a continuation token until it has served the whole history, so an
+ * unbounded fetch exhausts the heap on very large addresses. Counted in operations, not batches:
+ * the explorer serves at most 500 records per call whatever `batchSize` asks for.
+ */
+export const DEFAULT_MAX_OPERATIONS = 50_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
 export const DEFAULT_RETRIES_API = 2;
 
@@ -23,6 +31,7 @@ type OperationsRequestParams = {
   address: string;
   fromBlock?: number;
   batchSize: number;
+  maxOperations: number;
 };
 
 /** Both default to what the env used to supply, so the previous call shape keeps working. */
@@ -62,14 +71,25 @@ export async function fetchPaginatedOpsWithRetries(
       },
     });
 
-    const mergedOperations = [...previousOperations, ...operationsBatch];
+    previousOperations.push(...operationsBatch);
 
-    return token
-      ? fetchPaginatedOpsWithRetries(params, token, mergedOperations, retries)
-      : mergedOperations.sort(
-          // sorting DESC order
-          (a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime(),
-        );
+    const sortDescByBlockTime = (): LedgerExplorerOperation[] =>
+      previousOperations.sort(
+        (a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime(),
+      );
+
+    if (!token) return sortDescByBlockTime();
+
+    if (previousOperations.length >= params.maxOperations) {
+      log("coin-evm", "ledger explorer hit the operation cap, truncating history", {
+        address: params.address,
+        operations: previousOperations.length,
+        maxOperations: params.maxOperations,
+      });
+      return sortDescByBlockTime();
+    }
+
+    return fetchPaginatedOpsWithRetries(params, token, previousOperations, retries);
   } catch (e) {
     if (retries) {
       // wait the API timeout before trying again
@@ -108,6 +128,7 @@ export const getOperations: ExplorerApi["getOperations"] = async (
     address,
     fromBlock,
     batchSize: explorer.batchSize ?? DEFAULT_BATCH_SIZE,
+    maxOperations: explorer.maxOperations ?? DEFAULT_MAX_OPERATIONS,
   });
 
   const lastCoinOperations: Array<Operation<MemoNotSupported>> = [];

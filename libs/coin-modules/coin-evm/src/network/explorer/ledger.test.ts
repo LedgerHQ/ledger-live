@@ -119,6 +119,46 @@ describe("EVM Family", () => {
         expect(response).toEqual([coinOperation1, coinOperation2, coinOperation3]);
       });
 
+      it("stops once the operation cap is reached, even while the explorer keeps issuing a token", async () => {
+        // Without a cap this recursed until the whole history was in memory, which exhausted the
+        // heap on very large addresses.
+        const op = { block: { time: "2020-01-01T00:00:00Z" } };
+        const spy = jest
+          .spyOn(axios, "request")
+          .mockResolvedValue({ data: { data: [op, op], token: "never-ending" } });
+
+        const ops = await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 2,
+          maxOperations: 6,
+        });
+
+        // 3 calls of 2 operations reach the cap of 6, then the walk stops.
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(ops).toHaveLength(6);
+      });
+
+      it("keeps going while under the cap and stops when the explorer drops the token", async () => {
+        const op = { block: { time: "2020-01-01T00:00:00Z" } };
+        const spy = jest
+          .spyOn(axios, "request")
+          .mockResolvedValueOnce({ data: { data: [op], token: "t1" } })
+          .mockResolvedValueOnce({ data: { data: [op] } });
+
+        const ops = await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 1,
+          maxOperations: 1000,
+        });
+
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(ops).toHaveLength(2);
+      });
+
       it("should hit the configured explorer", async () => {
         const spy = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
@@ -129,6 +169,7 @@ describe("EVM Family", () => {
           address: "0xkvn",
           fromBlock: 0,
           batchSize: 1,
+          maxOperations: LEDGER_API.DEFAULT_MAX_OPERATIONS,
         });
 
         expect(spy).toHaveBeenCalledWith(
@@ -150,6 +191,7 @@ describe("EVM Family", () => {
           address: "0xkvn",
           fromBlock: 0,
           batchSize: 1,
+          maxOperations: LEDGER_API.DEFAULT_MAX_OPERATIONS,
         });
 
         expect(spy).toHaveBeenCalledWith(
