@@ -1,6 +1,8 @@
 import {
   buildSmartContractDetails,
   isSmartContractInput,
+  nftDisabled,
+  nftEnabled,
   parseDecimalIntegerPart,
   safeEncodeEIP55,
 } from "./utils";
@@ -82,4 +84,88 @@ describe("parseDecimalIntegerPart", () => {
       expect(parseDecimalIntegerPart(input)).toBe(0n);
     },
   );
+});
+
+describe("nftEnabled", () => {
+  beforeEach(() => {
+    process.env.NFT_CURRENCIES = JSON.stringify([]);
+  });
+
+  it("should return false when currency is null or undefined", () => {
+    expect(nftEnabled(null)).toEqual(false);
+    expect(nftEnabled(undefined)).toEqual(false);
+  });
+
+  it("should return false when NFT_CURRENCIES env does not include currency", () => {
+    process.env.NFT_CURRENCIES = JSON.stringify(["base", "polygon"]);
+    expect(nftEnabled("ethereum")).toEqual(false);
+  });
+
+  it("should return true when NFT_CURRENCIES env include currency", () => {
+    process.env.NFT_CURRENCIES = JSON.stringify(["base", "ethereum", "polygon"]);
+    expect(nftEnabled("ethereum")).toEqual(true);
+  });
+
+  it.each([
+    "",
+    "word",
+    "a simple sentence",
+    "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+    "[]}",
+    "{ [] }",
+  ])("should return false when NFT_CURRENCIES is not a valid JSON (%s)", value => {
+    process.env.NFT_CURRENCIES = value;
+    expect(nftEnabled("ethereum")).toEqual(false);
+  });
+
+  it("should return false when NFT_CURRENCIES is not an array", () => {
+    // A new config not supported for example (feature flag like)
+    process.env.NFT_CURRENCIES = JSON.stringify({
+      enabled: true,
+      params: { families: ["ethereum"] },
+    });
+    expect(nftEnabled("ethereum")).toBe(false);
+  });
+});
+
+describe("nftDisabled", () => {
+  beforeEach(() => {
+    process.env.NFT_CURRENCIES = JSON.stringify([]);
+  });
+
+  it("should return false when currency is null or undefined", () => {
+    expect(nftDisabled(null)).toEqual(true);
+    expect(nftDisabled(undefined)).toEqual(true);
+  });
+
+  it("should return true when NFT_CURRENCIES env does not include currency", () => {
+    process.env.NFT_CURRENCIES = JSON.stringify(["base", "polygon"]);
+    expect(nftDisabled("ethereum")).toEqual(true);
+  });
+
+  it("should return false when NFT_CURRENCIES env include currency", () => {
+    process.env.NFT_CURRENCIES = JSON.stringify(["base", "ethereum", "polygon"]);
+    expect(nftDisabled("ethereum")).toEqual(false);
+  });
+
+  it.each([
+    "",
+    "word",
+    "a simple sentence",
+    "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+    "[]}",
+    "{ [] }",
+  ])("should return true when NFT_CURRENCIES is not a valid JSON (%s)", value => {
+    process.env.NFT_CURRENCIES = value;
+    expect(nftDisabled("ethereum")).toEqual(true);
+  });
+
+  it("should return true when NFT_CURRENCIES is not an array", () => {
+    // A new config not supported for example (feature flag like)
+    process.env.NFT_CURRENCIES = JSON.stringify({
+      enabled: true,
+      params: { families: ["ethereum"] },
+    });
+    expect(nftDisabled("ethereum")).toBe(true);
+  });
 });

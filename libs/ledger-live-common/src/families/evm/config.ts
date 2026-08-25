@@ -60,7 +60,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 200625,
       name: "Akroma",
-      showNfts: false,
     },
   },
   config_currency_atheios: {
@@ -72,7 +71,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1620,
       name: "Atheios",
-      showNfts: false,
     },
   },
   config_currency_avalanche_c_chain: {
@@ -96,7 +94,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "avax",
       },
-      showNfts: false,
     },
   },
   config_currency_avalanche_c_chain_fuji: {
@@ -116,7 +113,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/43113",
       },
-      showNfts: false,
     },
   },
   config_currency_bitlayer: {
@@ -135,7 +131,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      showNfts: false,
     },
   },
   config_currency_bsc: {
@@ -159,7 +154,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "bnb",
       },
-      showNfts: false,
     },
   },
   config_currency_callisto: {
@@ -171,7 +165,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 820,
       name: "Callisto",
-      showNfts: false,
     },
   },
   config_currency_dexon: {
@@ -183,7 +176,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 237,
       name: "DEXON",
-      showNfts: false,
     },
   },
   config_currency_ellaism: {
@@ -195,7 +187,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 64,
       name: "Ellaism",
-      showNfts: false,
     },
   },
   config_currency_ethereum: {
@@ -219,7 +210,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "eth",
       },
-      showNfts: false,
     },
   },
   config_currency_sonic: {
@@ -236,7 +226,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
       },
-      showNfts: false,
     },
   },
   config_currency_ethereum_classic: {
@@ -260,7 +249,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "etc",
       },
-      showNfts: false,
     },
   },
   config_currency_ether1: {
@@ -272,7 +260,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1313114,
       name: "Ether1",
-      showNfts: false,
     },
   },
   config_currency_ethergem: {
@@ -284,7 +271,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 1987,
       name: "EtherGem",
-      showNfts: false,
     },
   },
   config_currency_ethersocial: {
@@ -296,7 +282,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 31102,
       name: "Ethersocial",
-      showNfts: false,
     },
   },
   config_currency_expanse: {
@@ -308,7 +293,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 2,
       name: "Expanse",
-      showNfts: false,
     },
   },
   config_currency_gochain: {
@@ -320,7 +304,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 60,
       name: "GoChain",
-      showNfts: false,
     },
   },
   config_currency_hpb: {
@@ -332,7 +315,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 269,
       name: "High Performance Blockchain",
-      showNfts: false,
     },
   },
   config_currency_mix: {
@@ -344,7 +326,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 76,
       name: "MIX Blockchain",
-      showNfts: false,
     },
   },
   config_currency_musicoin: {
@@ -356,7 +337,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 7762959,
       name: "Musicoin",
-      showNfts: false,
     },
   },
   config_currency_pirl: {
@@ -379,7 +359,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 99,
       name: "POA",
-      showNfts: false,
     },
   },
   config_currency_polygon: {
@@ -404,7 +383,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "ledger",
         explorerId: "matic",
       },
-      showNfts: false,
       minGasPrice: "25000000000",
     },
   },
@@ -417,7 +395,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 2894,
       name: "REOSC",
-      showNfts: false,
     },
   },
   config_currency_thundercore: {
@@ -429,7 +406,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 108,
       name: "Thundercore",
-      showNfts: false,
     },
   },
   config_currency_tomo: {
@@ -441,7 +417,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 88,
       name: "TomoChain",
-      showNfts: false,
     },
   },
   config_currency_ubiq: {
@@ -453,7 +428,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 8,
       name: "Ubiq",
-      showNfts: false,
     },
   },
   config_currency_wanchain: {
@@ -465,7 +439,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       chainId: 888,
       name: "Wanchain",
-      showNfts: false,
     },
   },
   config_currency_arbitrum: {
@@ -485,7 +458,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
       },
-      showNfts: false,
     },
   },
   config_currency_cronos: {
@@ -505,7 +477,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "cronos",
         uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
       },
-      showNfts: false,
     },
   },
   config_currency_core: {
@@ -524,7 +495,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      showNfts: false,
     },
   },
   config_currency_fantom: {
@@ -544,7 +514,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://ftmscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_flare: {
@@ -564,7 +533,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://flare-explorer.flare.network/api",
       },
-      showNfts: false,
     },
   },
   config_currency_songbird: {
@@ -584,7 +552,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://songbird-explorer.flare.network/api",
       },
-      showNfts: false,
     },
   },
   config_currency_moonbeam: {
@@ -604,7 +571,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
       },
-      showNfts: false,
     },
   },
   config_currency_rsk: {
@@ -624,7 +590,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://rootstock.blockscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_bittorrent: {
@@ -644,7 +609,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/199",
       },
-      showNfts: false,
     },
   },
   config_currency_optimism: {
@@ -664,7 +628,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://optimism.blockscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_optimism_sepolia: {
@@ -678,7 +641,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "OP Sepolia",
       node: { type: "external", uri: "https://optimism-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://optimism-sepolia.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_energy_web: {
@@ -698,7 +660,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.energyweb.org/api",
       },
-      showNfts: false,
     },
   },
   config_currency_astar: {
@@ -718,7 +679,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://astar.blockscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_metis: {
@@ -738,7 +698,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://andromeda-explorer.metis.io/api",
       },
-      showNfts: false,
     },
   },
   config_currency_mantle: {
@@ -758,7 +717,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.mantle.xyz/api",
       },
-      showNfts: false,
     },
   },
   config_currency_mantle_sepolia: {
@@ -778,7 +736,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.sepolia.mantle.xyz/api",
       },
-      showNfts: false,
     },
   },
   config_currency_boba: {
@@ -798,7 +755,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://api.routescan.io/v2/network/mainnet/evm/288/etherscan",
       },
-      showNfts: false,
     },
   },
   config_currency_moonriver: {
@@ -818,7 +774,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1285",
       },
-      showNfts: false,
     },
   },
   config_currency_velas_evm: {
@@ -838,7 +793,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://evmexplorer.velas.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_syscoin: {
@@ -858,7 +812,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.syscoin.org/api",
       },
-      showNfts: false,
     },
   },
   config_currency_telos_evm: {
@@ -878,7 +831,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "teloscan",
         uri: "https://api.teloscan.io/api",
       },
-      showNfts: false,
     },
   },
   config_currency_sei_evm: {
@@ -898,7 +850,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
       },
-      showNfts: false,
     },
   },
   config_currency_berachain: {
@@ -918,7 +869,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/80094",
       },
-      showNfts: false,
     },
   },
   config_currency_hyperevm: {
@@ -938,7 +888,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/999",
       },
-      showNfts: false,
     },
   },
   config_currency_polygon_zk_evm: {
@@ -958,7 +907,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1101",
       },
-      showNfts: false,
     },
   },
   config_currency_base: {
@@ -978,7 +926,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/8453",
       },
-      showNfts: false,
     },
   },
   config_currency_klaytn: {
@@ -998,7 +945,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "klaytnfinder",
         uri: "https://cypress-oapi.klaytnfinder.io/api",
       },
-      showNfts: false,
     },
   },
   config_currency_klaytn_baobab: {
@@ -1018,7 +964,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "klaytnfinder",
         uri: "https://baobab-oapi.klaytnfinder.io/api",
       },
-      showNfts: false,
     },
   },
   config_currency_neon_evm: {
@@ -1038,7 +983,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://neon.blockscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_lukso: {
@@ -1058,7 +1002,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.execution.mainnet.lukso.network/api/v1/",
       },
-      showNfts: false,
     },
   },
   config_currency_linea: {
@@ -1078,7 +1021,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59144",
       },
-      showNfts: false,
     },
   },
   // testnets
@@ -1094,7 +1036,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       node: { type: "ledger", explorerId: "eth_sepolia" },
       explorer: { type: "ledger", explorerId: "eth_sepolia" },
       gasTracker: { type: "ledger", explorerId: "eth_sepolia" },
-      showNfts: false,
     },
   },
   config_currency_ethereum_hoodi: {
@@ -1109,7 +1050,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       node: { type: "ledger", explorerId: "eth_hoodi" },
       explorer: { type: "ledger", explorerId: "eth_hoodi" },
       gasTracker: { type: "ledger", explorerId: "eth_hoodi" },
-      showNfts: false,
     },
   },
   config_currency_polygon_amoy: {
@@ -1124,7 +1064,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       node: { type: "ledger", explorerId: "matic_amoy" },
       explorer: { type: "ledger", explorerId: "matic_amoy" },
       gasTracker: { type: "ledger", explorerId: "matic_amoy" },
-      showNfts: false,
     },
   },
   config_currency_arbitrum_sepolia: {
@@ -1138,7 +1077,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/421614",
       },
-      showNfts: false,
     },
   },
   config_currency_polygon_zk_evm_testnet: {
@@ -1155,7 +1093,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1442",
       },
-      showNfts: false,
     },
   },
   config_currency_base_sepolia: {
@@ -1169,7 +1106,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Base Sepolia",
       node: { type: "external", uri: "https://base-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://base-sepolia.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_linea_sepolia: {
@@ -1186,7 +1122,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59141",
       },
-      showNfts: false,
     },
   },
   config_currency_blast: {
@@ -1203,7 +1138,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
       },
-      showNfts: false,
     },
   },
   config_currency_blast_sepolia: {
@@ -1220,7 +1154,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
       },
-      showNfts: false,
     },
   },
   config_currency_scroll: {
@@ -1234,7 +1167,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Scroll",
       node: { type: "external", uri: "https://scroll.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://scroll.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_shape: {
@@ -1248,7 +1180,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Shape",
       node: { type: "external", uri: "https://mainnet.shape.network" },
       explorer: { type: "blockscout", uri: "https://shapescan.xyz/api" },
-      showNfts: false,
     },
   },
   config_currency_story: {
@@ -1262,7 +1193,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Story",
       node: { type: "external", uri: "https://story.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://www.storyscan.io/api" },
-      showNfts: false,
     },
   },
   config_currency_etherlink: {
@@ -1276,7 +1206,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Etherlink",
       node: { type: "external", uri: "https://node.mainnet.etherlink.com" },
       explorer: { type: "blockscout", uri: "https://explorer.etherlink.com/api" },
-      showNfts: false,
     },
   },
   config_currency_zksync: {
@@ -1290,7 +1219,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "ZKsync",
       node: { type: "external", uri: "https://zksync.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_zksync_sepolia: {
@@ -1304,7 +1232,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "ZKsync Sepolia",
       node: { type: "external", uri: "https://zksync-sepolia.coin.ledger.com" },
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_monad: {
@@ -1324,7 +1251,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/143",
       },
-      showNfts: false,
     },
   },
   config_currency_monad_testnet: {
@@ -1344,7 +1270,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10143",
       },
-      showNfts: false,
     },
   },
   config_currency_somnia: {
@@ -1364,7 +1289,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://mainnet.somnia.w3us.site/api",
       },
-      showNfts: false,
     },
   },
   config_currency_zero_gravity: {
@@ -1384,7 +1308,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://chainscan.0g.ai/open/api",
       },
-      showNfts: false,
       minGasPrice: "2000000000",
     },
   },
@@ -1405,7 +1328,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer-bls.adifoundation.ai/api",
       },
-      showNfts: false,
     },
   },
   config_currency_unichain: {
@@ -1425,7 +1347,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://unichain.blockscout.com/api",
       },
-      showNfts: false,
     },
   },
   config_currency_unichain_sepolia: {
@@ -1439,7 +1360,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "Unichain Sepolia",
       node: { type: "external", uri: "https://unichain-sepolia-rpc.publicnode.com" },
       explorer: { type: "blockscout", uri: "https://unichain-sepolia.blockscout.com/api" },
-      showNfts: false,
     },
   },
   config_currency_arc: {
@@ -1458,7 +1378,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      showNfts: false,
       nativeContracts: ["0x0000000000000000000000000000000000000000"],
       feeHistoryBlockCount: 1024,
       feeHistoryRewardPercentile: 60,
@@ -1478,7 +1397,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://proxyblockscout.api.live.ledger.com/5042002/api",
       },
-      showNfts: false,
       nativeContracts: ["0x3600000000000000000000000000000000000000"],
       feeHistoryBlockCount: 1024,
       feeHistoryRewardPercentile: 60,
@@ -1497,7 +1415,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      showNfts: false,
     },
   },
   config_currency_robinhood_testnet: {
@@ -1513,7 +1430,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      showNfts: false,
     },
   },
 };
