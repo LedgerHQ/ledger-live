@@ -8,6 +8,7 @@ import { ContactsAddContactContent } from "../..";
 import type { ContactsAddContactContentProps } from "./types";
 
 jest.mock("@features/platform-contacts", () => ({
+  ...jest.requireActual("@features/platform-contacts"),
   getContactInitial: (name: string) => name.slice(0, 1),
 }));
 

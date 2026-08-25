@@ -1,5 +1,5 @@
 import type { ContactId, ContactNameValidationErrorName } from "@domain/entity-contact";
-import type { ContactEditPort } from "../Detail/model/ports";
+import type { ContactEditPort } from "@features/platform-contacts";
 
 export type RenameContactViewModel = Readonly<{
   draftName: string;

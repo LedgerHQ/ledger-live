@@ -5,5 +5,5 @@
     "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "src/**/*.native.*", "src/**/native.ts"]
+  "exclude": ["node_modules", "src/**/*.native.*"]
 }

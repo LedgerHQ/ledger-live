@@ -1,7 +1,7 @@
 import type { ContactId } from "@domain/entity-contact";
+import type { ContactEditPort } from "@features/platform-contacts";
 import { useCallback, useMemo } from "react";
 import { createRenameContactController } from "./model/controller";
-import type { ContactEditPort } from "../Detail/model/ports";
 import type { RenameContactViewModel } from "./types";
 
 export type UseRenameContactViewModelResult = RenameContactViewModel &

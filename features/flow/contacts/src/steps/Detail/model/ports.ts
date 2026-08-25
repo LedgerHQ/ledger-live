@@ -1,27 +1,17 @@
 import type {
-  Contact,
   ContactAddress,
   ContactAddressId,
   ContactAddressLabel,
   ContactAddressValue,
   ContactId,
-  ContactInput,
 } from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { ContactEditPort } from "@features/platform-contacts";
 import type { ContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
 import type { ContactAddressDetailAsset, ContactAddressDetailNetwork } from "../types";
 
 export type ContactAddressCurrencyPort = Readonly<{
   resolveNetworkId(currencyId: ContactAddress["currencyId"]): CryptoCurrency["id"] | undefined;
-}>;
-
-export type ContactRenameInput = Readonly<{
-  contactId: ContactId;
-  name: ContactInput["name"];
-}>;
-
-export type ContactEditPort = Readonly<{
-  renameContact(input: ContactRenameInput): Promise<Contact>;
 }>;
 
 export type ContactDeletionPort = Readonly<{

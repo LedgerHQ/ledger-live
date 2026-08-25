@@ -16,11 +16,11 @@ This package describes what Contacts flows manipulate:
 
 `currencyId` is the id of the `CryptoOrTokenCurrency` selected by MAD. `address` is intentionally stored as a generic non-empty string because address parsing and currency-specific validation belong to later flow or integration adapters. Asset names, tickers, icons, and network display data are also resolved later by those adapters.
 
-Address labels must contain at least one letter or number, may also include punctuation and spaces,
-and are limited to 32 characters. The domain validation helpers treat a blank draft as incomplete
-without surfacing an error and can reject labels already used by the same contact. Input schemas
-trim surrounding whitespace and normalize Unicode NFC before validation. Duplicate comparison
-ignores casing.
+Contact names and address labels are limited to 32 characters. Address labels must contain at least
+one letter or number and may also include punctuation and spaces. The domain validation helpers
+treat a blank draft as incomplete without surfacing an error and can reject labels already used by
+the same contact. Input schemas trim surrounding whitespace and normalize Unicode NFC before
+validation. Duplicate comparison ignores casing.
 
 Each contact with one or more addresses carries `deviceCredentials` returned by Device Intents.
 Each address carries its own device context: `blockchainFamily`, `chainId`, and `hmacRest`.

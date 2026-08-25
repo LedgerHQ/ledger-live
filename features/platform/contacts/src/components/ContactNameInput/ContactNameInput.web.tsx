@@ -1,6 +1,6 @@
 import React from "react";
+import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { TextInput } from "@ledgerhq/lumen-ui-react";
-import { CONTACT_NAME_MAX_LENGTH } from "./constants";
 
 type ContactNameInputProps = Readonly<{
   value: string;

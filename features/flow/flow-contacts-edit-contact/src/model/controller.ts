@@ -1,5 +1,5 @@
 import { parseContactName, type Contact } from "@domain/entity-contact";
-import type { ContactEditPort } from "../../Detail/model/ports";
+import type { ContactEditPort } from "@features/platform-contacts";
 import { createRenameContactViewModel } from "./viewModel";
 import type { RenameContactViewModel } from "../types";
 

@@ -11,12 +11,13 @@
   "sideEffects": false,
   "files": [
     "index.js",
+    "resolver.native.js",
     "mocks",
     "setup"
   ],
   "scripts": {
-    "format": "oxfmt index.js mocks setup",
-    "format:check": "oxfmt index.js mocks setup --check",
+    "format": "oxfmt index.js mocks setup resolver.native.js",
+    "format:check": "oxfmt index.js mocks setup resolver.native.js --check",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

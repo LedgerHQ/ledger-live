@@ -1,6 +1,6 @@
 import React from "react";
 import { Banner, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { ContactNameInput } from "../../components/ContactNameInput/ContactNameInput.native";
+import { ContactNameInput } from "@features/platform-contacts";
 import type { ContactsAddContactContentProps } from "./types";
 
 export function ContactsAddContactContent({

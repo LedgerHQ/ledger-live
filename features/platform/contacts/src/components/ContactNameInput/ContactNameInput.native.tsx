@@ -1,7 +1,7 @@
 import React from "react";
+import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { Box, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { DeleteCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CONTACT_NAME_MAX_LENGTH } from "./constants";
 
 type ContactNameInputProps = Readonly<{
   value: string;

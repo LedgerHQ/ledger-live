@@ -1,7 +1,6 @@
 import React, { useId } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { ContactNameInput } from "../../components/ContactNameInput/ContactNameInput.web";
-import { ContactsAddContactNamingDisclaimer } from "../../components/ContactsAddContactNamingDisclaimer.web";
+import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
 import type { ContactsAddContactContentProps } from "./types";
 
 export function ContactsAddContactContent({
@@ -26,10 +25,7 @@ export function ContactsAddContactContent({
         isEditable={!isSaving}
         onChange={onDraftNameChange}
       />
-      <ContactsAddContactNamingDisclaimer
-        disclaimerId={namingDisclaimerId}
-        text={labels.namingDisclaimer}
-      />
+      <ContactNameDisclaimer disclaimerId={namingDisclaimerId} text={labels.namingDisclaimer} />
       <Button
         appearance="base"
         size="lg"

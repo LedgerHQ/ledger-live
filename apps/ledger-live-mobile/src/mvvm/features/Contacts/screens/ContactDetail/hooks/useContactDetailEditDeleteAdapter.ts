@@ -3,7 +3,6 @@ import {
   type ContactsDeleteContactDrawerProps,
   type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
-  type ContactsRenameContactDrawerProps,
   type ContactDetailActionsLabels,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_PAGE_PROPERTY,
@@ -15,6 +14,7 @@ import {
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
 import { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";

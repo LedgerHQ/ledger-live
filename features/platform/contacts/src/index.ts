@@ -16,3 +16,7 @@ export * from "./addressEntry/classifyNativeAddressInputMethod";
 export * from "./addressEntry/getInsertedCharacterCount";
 export * from "./addressEntry/getPastedValue.web";
 export * from "./addressEntry/wait";
+export * from "./contactEdit/ports";
+export * from "./contactEdit/createContactEditPort";
+export * from "./components/ContactNameInput";
+export * from "./components/ContactNameDisclaimer";
