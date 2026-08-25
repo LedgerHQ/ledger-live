@@ -72,8 +72,10 @@ export function useRenameAddressDialogViewModel({
         return;
       }
 
-      // Dismissed upfront: saving hands over to the device flow, and reopening this dialog
-      // or the address detail once it ends would only flash them before the outcome is applied.
+      /**
+       * Dismissed upfront: save() hands over to the DeviceIntentExecutor UI, which handles
+       * all the UI interactions with the device.
+       */
       onCloseRequest();
       onSaveStart?.();
       await save();
