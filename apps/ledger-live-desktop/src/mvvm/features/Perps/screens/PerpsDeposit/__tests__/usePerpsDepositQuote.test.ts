@@ -23,7 +23,7 @@ function renderQuote(initialProps: QuoteProps) {
     },
     { initialProps },
   );
- 
+
   return { ...view, seen };
 }
 
