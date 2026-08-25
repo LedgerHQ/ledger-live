@@ -293,7 +293,7 @@ describe("DebugContentCards", () => {
     expect(afterSeed.localMobileCards.length + afterSeed.localWalletCards.length).toBe(
       ALL_BUILDER_PRESETS.length * CARDS_PER_PLACEMENT_SEED,
     );
-    expect(afterSeed.localCategoriesCards).toHaveLength(3);
+    expect(afterSeed.localCategoriesCards).toHaveLength(6);
     expect(toastsAfterSeed.toasts.at(-1)?.title).toBe(
       `Seeded ${ALL_BUILDER_PRESETS.length * CARDS_PER_PLACEMENT_SEED} local cards`,
     );
