@@ -157,6 +157,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
     "@swc/core": "catalog:",
