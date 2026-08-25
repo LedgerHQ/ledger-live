@@ -99,6 +99,7 @@ describe("useRecipientScreenContentViewModel", () => {
         onAddressSelected: jest.fn(),
         recipientSupportsDomain: true,
         onMemoProceed,
+        onAddContact: jest.fn(),
       }),
     );
   }
@@ -130,6 +131,7 @@ describe("useRecipientScreenContentViewModel", () => {
         isContactsFeatureEnabled: true,
         hasAddressBook: false,
         addressBookFamilyName: "Bitcoin",
+        onAddContact: expect.any(Function),
       }),
     );
   });
