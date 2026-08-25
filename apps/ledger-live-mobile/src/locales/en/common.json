@@ -10091,6 +10091,17 @@
       "deposit": "Add stablecoin",
       "request": "Request"
     },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      }
+    },
     "deposit": {
       "title": "Add stablecoins",
       "options": {
