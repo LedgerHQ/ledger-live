@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  CardLogin,
-  CardLogout,
-  type CardLoginOauthConfig,
-  type PayCardAuthCallback,
-} from "@features/flow-pay-card-auth";
+import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import {
   Balance,
@@ -18,8 +13,8 @@ import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
-  readonly oauthConfig: CardLoginOauthConfig;
-  readonly callback: PayCardAuthCallback | null;
+  readonly oauthConfig: CardProps["oauthConfig"];
+  readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly balanceLabels: BalanceLabels;
@@ -46,8 +41,7 @@ export function PayTabView({
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
-      <CardLogin oauthConfig={oauthConfig} callback={callback} />
-      <CardLogout />
+      <Card oauthConfig={oauthConfig} callback={callback} />
       <FeatureTour {...featureTour} />
     </Box>
   );

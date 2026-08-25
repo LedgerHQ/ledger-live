@@ -368,3 +368,44 @@ export type EvmStakingIntent = StakingTransactionIntent & {
 export function isStakingIntent(intent: TransactionIntent): intent is EvmStakingIntent {
   return intent.intentType === "staking";
 }
+
+export function nftEnabled(currencyId: string | undefined | null): boolean {
+  let parsedNftCurrencies: unknown = undefined;
+  if (process.env.NFT_CURRENCIES) {
+    try {
+      parsedNftCurrencies = JSON.parse(process.env.NFT_CURRENCIES);
+    } catch (error) {
+      log(
+        "EVM Family - utils.ts",
+        "Env variable NFT_CURRENCIES is malformed, expecting a string array",
+        {
+          envName: "NFT_CURRENCIES",
+          envValue: process.env.NFT_CURRENCIES,
+          error,
+        },
+      );
+
+      return false;
+    }
+  }
+
+  if (!Array.isArray(parsedNftCurrencies)) {
+    log(
+      "EVM Family - utils.ts",
+      "Env variable NFT_CURRENCIES is malformed, expecting a string array",
+      {
+        envName: "NFT_CURRENCIES",
+        envValue: process.env.NFT_CURRENCIES,
+      },
+    );
+
+    return false;
+  }
+
+  return Boolean(currencyId && parsedNftCurrencies.includes(currencyId));
+}
+
+// Simple utility function, to ease reading code
+export function nftDisabled(currencyId: string | undefined | null): boolean {
+  return !nftEnabled(currencyId);
+}

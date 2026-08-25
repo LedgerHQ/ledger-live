@@ -63,11 +63,6 @@ function mockFundedPayStablecoins() {
   });
 }
 
-jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <button type="button">Login</button>,
-  CardLogout: () => null,
-}));
-
 type CapturedExecutor = {
   sourceFlow: string;
   intent: { input: { expectedAddress: string } };
@@ -181,12 +176,13 @@ describe("PayTab integration", () => {
     );
   });
 
-  it("should still render the card login block below the hero", async () => {
+  it("should leave the card and its login to the right panel", async () => {
     renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: { ...onboardedState, ...tourSeenState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(await screen.findByRole("button", { name: "Login" })).toBeVisible();
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Login" })).not.toBeInTheDocument();
   });
 
   it("should open the balance filter dialog from the hero pill and track the interaction", async () => {

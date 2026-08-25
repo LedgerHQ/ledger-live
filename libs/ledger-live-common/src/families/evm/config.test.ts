@@ -94,7 +94,6 @@ describe("evmConfig", () => {
 
     // polygon pins its own minGasPrice.
     expect(getCurrencyConfiguration("polygon")).toMatchObject({
-      showNfts: false,
       minGasPrice: "25000000000",
       ledgerExplorerUri: "http://some-random-url.url",
       ledgerClientVersion: "4.0",

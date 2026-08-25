@@ -164,7 +164,7 @@ describe("CoinConfigSettings integration", () => {
   it("clicking Restore all clears every override", async () => {
     const { user, store } = renderSettings({
       [SOLANA_KEY]: { token2022Enabled: true },
-      [ETH_KEY]: { showNfts: false },
+      [ETH_KEY]: { supportedTokens: [] },
     });
 
     await user.click(screen.getByRole("button", { name: /Show/i }));
@@ -189,11 +189,11 @@ describe("CoinConfigSettings integration", () => {
     it("dispatching setCoinConfigOverride flows through the bridge into LiveConfig", async () => {
       const { store } = renderSettings();
 
-      store.dispatch(setCoinConfigOverride({ key: ETH_KEY, value: { showNfts: false } }));
+      store.dispatch(setCoinConfigOverride({ key: ETH_KEY, value: { supportedTokens: [] } }));
 
       await waitFor(() => {
-        const resolved = LiveConfig.getValueByKey(ETH_KEY) as { showNfts: boolean };
-        expect(resolved.showNfts).toBe(false);
+        const resolved = LiveConfig.getValueByKey(ETH_KEY) as { supportedTokens: string[] };
+        expect(resolved.supportedTokens).toEqual([]);
       });
     });
 

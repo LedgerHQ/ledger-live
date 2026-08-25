@@ -25,9 +25,13 @@ jest.mock("~/analytics", () => ({
   track: jest.fn(),
 }));
 
-jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <View testID="card-login" />,
-  CardLogout: () => <View testID="card-logout" />,
+jest.mock("@features/flow-pay-card", () => ({
+  Card: () => (
+    <>
+      <View testID="card-login" />
+      <View testID="card-logout" />
+    </>
+  ),
 }));
 
 const EMPTY_TITLE = "Pay and get paid";
