@@ -16,14 +16,16 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCountervaluesState: () => ({}),
 }));
 
+// Prices the typed amount back into the funding currency, in its smallest unit.
+const mockCalculate = jest.fn();
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
-  calculate: () => 20000000000000000,
+  calculate: (...args: unknown[]) => mockCalculate(...args),
 }));
 
 const mockUsePerpsDepositQuote = jest.fn();
 jest.mock("../usePerpsDepositQuote", () => ({
-  usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
+  usePerpsDepositQuote: (params: unknown) => mockUsePerpsDepositQuote(params),
 }));
 
 function createAccount(id: string, currencyId: string, spendableBalance: number): Account {
@@ -36,6 +38,8 @@ function createAccount(id: string, currencyId: string, spendableBalance: number)
 
 const receiverAccount = createAccount("receiver-1", "ethereum", 0);
 const fundingAccount = createAccount("funding-1", "ethereum", 10000);
+/** Holds more than the form can ask for, so the balance cap never kicks in. */
+const fundedAccount = createAccount("funding-2", "ethereum", 1e18);
 
 function createProps(navigate = jest.fn()) {
   return {
@@ -49,15 +53,20 @@ function renderViewModel(props: never, discreetMode = false) {
   return renderHook(() => usePerpsDepositViewModel(props), {
     overrideInitialState: state => ({
       ...state,
-      accounts: { ...state.accounts, active: [fundingAccount] },
+      accounts: { ...state.accounts, active: [fundingAccount, fundedAccount] },
       settings: { ...state.settings, discreetMode },
     }),
   });
 }
 
-function selectFundingAccount() {
+function selectFundingAccount(account: Account = fundingAccount) {
   const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
-  act(() => onAccountSelected(fundingAccount));
+  act(() => onAccountSelected(account));
+}
+
+/** The display-unit amount the form settled on and sent to the provider. */
+function quotedAmount(): string {
+  return mockUsePerpsDepositQuote.mock.lastCall?.[0].amount;
 }
 
 /** The keypad is the only way into the amount, so tests enter digits the same way. */
@@ -68,9 +77,11 @@ function typeAmount(pressAmountKey: (key: string) => void, amount: string) {
 describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
       isLoading: false,
+      isUnavailable: false,
     });
   });
 
@@ -93,7 +104,7 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.amountText).toBe("3.");
     expect(result.current.depositAmount).toBe(3);
-    expect(result.current.submitError).toBeNull();
+    expect(result.current.statusError).toBeNull();
     expect(result.current.missingAccount).toBe(true);
     expect(result.current.canReview).toBe(false);
   });
@@ -152,7 +163,7 @@ describe("usePerpsDepositViewModel", () => {
     typeAmount(result.current.pressAmountKey, "150");
 
     expect(result.current.exceedsBalance).toBe(true);
-    expect(result.current.submitError).toEqual({
+    expect(result.current.statusError).toEqual({
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);
@@ -169,6 +180,51 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(true);
   });
 
+  it("quotes the typed amount converted into the funding currency", () => {
+    // $20 buys 0.025 ETH, which the provider expects in display units.
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+
+    expect(quotedAmount()).toBe("0.025");
+  });
+
+  it("quotes no more than the funding account can spend", () => {
+    // The rate prices the amount above the balance, which caps what we can send.
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+    typeAmount(result.current.pressAmountKey, "20");
+
+    expect(result.current.statusError).toBeNull();
+    expect(quotedAmount()).toBe(new BigNumber(10000).shiftedBy(-18).toFixed());
+  });
+
+  it("floors a quote that lands between two atomic units", () => {
+    mockCalculate.mockReturnValue(1.6);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+    typeAmount(result.current.pressAmountKey, "20");
+
+    // Rounding up would price the deposit above what the user typed, so the
+    // conversion stays fractional and only the floor below rounds it.
+    expect(mockCalculate).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({ reverse: true, disableRounding: true }),
+    );
+    expect(quotedAmount()).toBe(new BigNumber(1).shiftedBy(-18).toFixed());
+  });
+
   it("hides both balances when discreet mode is on", () => {
     const { props } = createProps();
     const { result } = renderViewModel(props, true);
@@ -181,7 +237,11 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("holds the review CTA back until the quote lands", () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
     const { props } = createProps();
     const { result } = renderViewModel(props);
 
@@ -190,14 +250,18 @@ describe("usePerpsDepositViewModel", () => {
     typeAmount(result.current.pressAmountKey, "20");
 
     // The form itself is valid, so only the missing quote keeps the CTA disabled.
-    expect(result.current.submitError).toBeNull();
+    expect(result.current.statusError).toBeNull();
     expect(result.current.canReview).toBe(false);
     expect(result.current.isQuoteLoading).toBe(true);
-    expect(result.current.formattedDepositAmount).toBe("");
+    expect(result.current.formattedQuotedAmount).toBe("");
   });
 
-  it("stops shimmering when the provider settles on no quote", () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: false });
+  it("stops shimmering and explains itself when the provider has no quote", () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
     const { props } = createProps();
     const { result } = renderViewModel(props);
 
@@ -208,5 +272,26 @@ describe("usePerpsDepositViewModel", () => {
     // A pair the provider cannot route is an answer, not a pending request.
     expect(result.current.isQuoteLoading).toBe(false);
     expect(result.current.canReview).toBe(false);
+    expect(result.current.statusError).toEqual({
+      labelKey: "perpsDeposit.formErrors.quoteUnavailable",
+    });
+  });
+
+  it("blames the balance rather than the provider when both are wrong", () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+    typeAmount(result.current.pressAmountKey, "150");
+
+    expect(result.current.statusError).toEqual({
+      labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
+    });
   });
 });

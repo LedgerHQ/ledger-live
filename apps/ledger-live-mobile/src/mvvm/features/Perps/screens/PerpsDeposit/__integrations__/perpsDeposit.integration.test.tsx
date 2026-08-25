@@ -62,6 +62,7 @@ describe("PerpsDeposit integration", () => {
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: { amountTo: new BigNumber(42) },
       isLoading: false,
+      isUnavailable: false,
     });
   });
 
@@ -120,8 +121,35 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByText("Swap and deposit via SwapKit")).toBeOnTheScreen();
   });
 
+  it("should tell the user when the provider has no quote for the pair", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: false,
+      isUnavailable: true,
+    });
+    const { user } = renderDeposit();
+
+    await user.press(screen.getByTestId("perps-deposit-select-currency"));
+    const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
+    act(() => onAccountSelected(fundingAccount));
+
+    await user.press(screen.getByTestId("perps-deposit-key-2"));
+    await user.press(screen.getByTestId("perps-deposit-key-0"));
+
+    expect(screen.getByTestId("perps-deposit-form-error")).toHaveTextContent(
+      "We can’t get a quote from SwapKit, try with a different asset or come back later.",
+    );
+    // The message replaces the provider notice instead of stacking with it.
+    expect(screen.queryByText("Swap and deposit via SwapKit")).not.toBeOnTheScreen();
+    expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
     const { user } = renderDeposit();
 
     await user.press(screen.getByTestId("perps-deposit-select-currency"));
