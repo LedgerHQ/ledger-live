@@ -49,8 +49,8 @@ catalogs:
       specifier: 0.4.0
       version: 0.4.0
     '@ledgerhq/device-signer-kit-concordium':
-      specifier: 0.4.0
-      version: 0.4.0
+      specifier: 0.5.0
+      version: 0.5.0
     '@ledgerhq/device-signer-kit-cosmos':
       specifier: 1.0.1
       version: 1.0.1
@@ -15603,7 +15603,7 @@ importers:
         version: 1.9.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -22161,11 +22161,11 @@ packages:
       '@ledgerhq/context-module': 2.5.0
       '@ledgerhq/device-management-kit': ^1.6.0
 
-  '@ledgerhq/device-signer-kit-concordium@0.4.0':
-    resolution: {integrity: sha512-jqVp8232dkI34ZVbsQOcGpjK9J+g8BzGD9+/0Ezy7nGtMUfX8c6AhEmn79kj3w96kJ0z1YkakaClCHxicFWtKQ==}
+  '@ledgerhq/device-signer-kit-concordium@0.5.0':
+    resolution: {integrity: sha512-INuy0FEnfnsPwiXvozJnH3SlsA1srtYgyu8lRY19w+4pi5i34Yz/Ou9b9SPU1q6qR0VqD9x2D1CpV13Dg80VSA==}
     peerDependencies:
       '@ledgerhq/context-module': 2.5.0
-      '@ledgerhq/device-management-kit': ^1.5.0
+      '@ledgerhq/device-management-kit': ^1.9.0
 
   '@ledgerhq/device-signer-kit-cosmos@1.0.1':
     resolution: {integrity: sha512-822hk0ef7/ELTTi+mIPO+hX5MHLiZ6M8oMWz1eQOfoemcGiVxtiqLsodDKJ60GVmOVP6X6eoqihdrAomS6EvZQ==}
@@ -48695,7 +48695,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)

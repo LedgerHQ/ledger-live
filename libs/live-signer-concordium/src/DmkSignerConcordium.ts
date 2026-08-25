@@ -17,7 +17,10 @@ import {
 } from "@ledgerhq/device-management-kit";
 import {
   ConcordiumAddressVerificationFailedError,
+  ConcordiumAppOutdatedError,
   ConcordiumInvalidMaxFeeError,
+  ConcordiumInvalidPltPayloadError,
+  ConcordiumSignerProtocolError,
   ConcordiumTrustedMetadataServiceError,
 } from "@ledgerhq/coin-concordium/types";
 import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
@@ -151,6 +154,29 @@ export class DmkSignerConcordium implements ConcordiumSigner {
         return new ConcordiumAddressVerificationFailedError(originalMessage);
       case "invalid_max_fee":
         return new ConcordiumInvalidMaxFeeError(originalMessage);
+      case "6b04":
+      case "6b0d":
+      case "6b0e":
+      case "6b0f":
+      case "6b10":
+      case "6b11":
+      case "invalid_plt_transaction":
+        return new ConcordiumInvalidPltPayloadError(originalMessage);
+      case "6b00":
+      case "6b01":
+      case "6b02":
+      case "6b03":
+      case "6b06":
+      case "6b07":
+      case "unsupported_transaction_type":
+        return new ConcordiumSignerProtocolError(originalMessage);
+      // 6d00 means the app does not know the instruction at all, which is how a
+      // pre-PLT app answers INS 0x27. It is treated as an outdated app rather
+      // than a protocol defect, so the version guard still works if the shipped
+      // app version differs from the one the signer pins.
+      case "6d00":
+      case "unsupported_app_version":
+        return new ConcordiumAppOutdatedError(originalMessage);
       default:
         return new Error(this.formatGenericMessage(error._tag, originalMessage));
     }

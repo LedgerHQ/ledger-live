@@ -61,3 +61,42 @@ export class SimulationError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/**
+ * The device refused the PLT payload the wallet built, or the signer refused it
+ * before sending. The user did nothing wrong, so this is reported as a defect
+ * rather than as a rejected transaction.
+ */
+export class ConcordiumInvalidPltPayloadError extends Error {
+  override name = "ConcordiumInvalidPltPayloadError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumInvalidPltPayloadError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The signer and the device app disagree on the APDU contract: wrong P1/P2,
+ * unexpected state, malformed parameter or derivation path, or a device-side
+ * buffer or crypto failure.
+ */
+export class ConcordiumSignerProtocolError extends Error {
+  override name = "ConcordiumSignerProtocolError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumSignerProtocolError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The installed Concordium app predates PLT support. Kept distinct from the
+ * other signer errors so the send flow can offer an app update instead of
+ * reporting a signing failure.
+ */
+export class ConcordiumAppOutdatedError extends Error {
+  override name = "ConcordiumAppOutdatedError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumAppOutdatedError");
+    if (fields) Object.assign(this, fields);
+  }
+}
