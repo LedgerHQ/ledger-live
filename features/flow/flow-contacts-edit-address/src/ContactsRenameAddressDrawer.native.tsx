@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
-import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts/native";
+import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
 
@@ -64,6 +64,7 @@ export function ContactsRenameAddressDialog({
               maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
               onChangeText={onDraftLabelChange}
               status={labelValidationError ? "error" : undefined}
+              testID="contacts-rename-address-input"
               value={draftLabel}
             />
             <Button

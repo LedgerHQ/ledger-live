@@ -5,8 +5,10 @@ import type {
   ContactId,
 } from "@domain/entity-contact";
 import { useCallback, useMemo } from "react";
-import type { ContactsAddressEntryState } from "@features/platform-contacts";
-import type { ContactAddressEditPort } from "../Detail/model/ports";
+import type {
+  ContactAddressEditPort,
+  ContactsAddressEntryState,
+} from "@features/platform-contacts";
 import { createRenameAddressController } from "./model/controller";
 import type { RenameAddressViewModel } from "./types";
 

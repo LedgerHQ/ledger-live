@@ -9,8 +9,8 @@ import type {
   ContactsAddressEntryState,
   ContactsAddressInputMethod,
   ContactsAddressInputSource,
+  ContactAddressEditPort,
 } from "@features/platform-contacts";
-import type { ContactAddressEditPort } from "../Detail/model/ports";
 
 export type ContactAddressEditSavePayload = Readonly<{
   currencyId: ContactAddress["currencyId"] | undefined;

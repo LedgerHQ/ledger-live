@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { contactAddress } from "@domain/entity-contact";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
-import type { ContactAddressEditPort } from "../Detail/model/ports";
+import type { ContactAddressEditPort } from "@features/platform-contacts";
 import { useRenameAddressDialogViewModel } from "./useRenameAddressDialogViewModel";
 
 describe("useRenameAddressDialogViewModel", () => {

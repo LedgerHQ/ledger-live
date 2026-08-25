@@ -3,8 +3,8 @@ import {
   ContactsDeleteAddressDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-  ContactsRenameAddressDialog,
 } from "@features/flow-contacts";
+import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts";

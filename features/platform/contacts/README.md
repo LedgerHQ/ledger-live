@@ -28,6 +28,8 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   network identifiers.
 - `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
   operation, including device credentials for external contacts.
+- `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared
+  Contact address update operation, including device credentials for external addresses.
 - `ContactNameInput`: a cross-platform primitive resolved from the package root and shared by Add
   and Edit contact without coupling their leaf flows.
 - `ContactNameDisclaimer`: a Web-only primitive shared by the Add and Edit contact dialogs.

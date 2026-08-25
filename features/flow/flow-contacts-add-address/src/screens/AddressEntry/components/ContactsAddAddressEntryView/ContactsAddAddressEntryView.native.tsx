@@ -7,7 +7,7 @@ import {
   Box,
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
-import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts/native";
+import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
 import type { ContactsAddAddressEntryViewProps } from "../ContactsAddAddressEntry/ContactsAddAddressEntry.types";
 import { SanctionedAddressBanner } from "../../../../components/SanctionedAddressBanner/SanctionedAddressBanner";
 
