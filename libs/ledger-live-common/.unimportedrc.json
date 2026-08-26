@@ -651,6 +651,7 @@
     "src/flows/send/recipient/utils/getRecipientHeaderPresentation.ts",
     "src/flows/send/recipient/utils/getRecipientMatchPresentation.ts",
     "src/flows/send/recipient/utils/hasContactsOnNetwork.ts",
+    "src/flows/send/recipient/utils/isEligibleAddressCurrency.ts",
     "src/flows/send/recipient/utils/memoValue.ts",
     "src/flows/send/recipient/utils/pickContactAddressForCurrency.ts",
     "src/flows/send/recipient/utils/resolveRecipientNetworkId.ts",

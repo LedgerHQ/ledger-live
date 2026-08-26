@@ -7,7 +7,6 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   buildTransactionPatchFromURIScheme,
@@ -22,6 +21,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
@@ -73,7 +73,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
 
@@ -240,7 +241,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   ]);
 
   const canSearchContacts =
-    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+    isContactsFeatureEnabled &&
+    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

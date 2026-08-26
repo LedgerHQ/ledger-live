@@ -127,6 +127,7 @@ describe("useRecipientScreenContentViewModel", () => {
     });
     expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenCalledWith(
       expect.objectContaining({
+        isContactsFeatureEnabled: true,
         hasAddressBook: false,
         addressBookFamilyName: "Bitcoin",
       }),
