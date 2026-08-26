@@ -34,12 +34,15 @@
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
     "@features/platform-device-intent": "workspace:*",
-    "rxjs": "catalog:"
+    "@ledgerhq/device-contacts-kit": "catalog:",
+    "rxjs": "catalog:",
+    "semver": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0",
     "react-native": ">=0.70.0",
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
@@ -56,6 +59,8 @@
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@types/semver": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",
