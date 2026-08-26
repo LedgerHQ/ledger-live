@@ -403,6 +403,7 @@ libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/liv
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-intent/                                                @ledgerhq/live-devices
 features/platform/device-intent/                                   @ledgerhq/live-devices
+features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/live-dmk/                                                     @ledgerhq/live-devices

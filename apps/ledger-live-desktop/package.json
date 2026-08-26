@@ -110,6 +110,7 @@
     "@features/platform-card": "workspace:*",
     "@features/platform-contacts": "workspace:^",
     "@features/platform-currencies": "workspace:^",
+    "@features/platform-device-action-content": "workspace:^",
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
