@@ -137,8 +137,9 @@ const Body = ({
           neurons: account.neurons.fullNeurons,
           lastUpdatedMSecs: account.neurons.lastUpdatedMSecs,
         };
+        const outcome = operation.extra.outcome;
         const patched = applyNeuronCommand(base.neurons, transaction, {
-          outcome: operation.extra.outcome,
+          ...(outcome !== undefined && { outcome }),
         });
         return patched ? { ...base, neurons: patched } : current;
       });

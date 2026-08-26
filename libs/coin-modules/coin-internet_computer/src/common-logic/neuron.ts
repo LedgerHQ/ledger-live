@@ -329,22 +329,14 @@ const withIncreasedDissolveDelay = (
 };
 
 /**
- * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
- * `undefined` when the result cannot be reproduced locally.
- *
- * An accepted update call is final — governance state changed in the round that replied, with no
- * indexing lag — but only a device-signed `list_neurons` can read it back. Rather than ask for a
- * second signature per action, replay the commands whose effect is fully determined by the command
- * plus the current neuron, and the one that states its own result in the reply (stake_maturity).
- *
- * Split, spawn and disburse are what remain: each yields figures only the canister has, or a neuron
- * whose id it alone assigns, so they wait for an explicit refresh.
+ * The four commands that move a neuron's dissolve state, kept together because they are one subject:
+ * each either starts, stops or extends the same clock, and the last two both land on the canister's
+ * `increase_dissolve_delay`.
  */
-const patchNeuron = (
+const patchDissolveState = (
   neuron: ICPNeuron,
   transaction: Transaction,
   nowSeconds: number,
-  outcome: NeuronCommandOutcome | undefined,
 ): ICPNeuron | undefined => {
   switch (transaction.type) {
     case "start_dissolving": {
@@ -388,6 +380,35 @@ const patchNeuron = (
         BigInt(transaction.dissolveDelay) - getNeuronDissolveDurationSeconds(neuron, nowSeconds);
       return withIncreasedDissolveDelay(neuron, delta, nowSeconds);
     }
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
+ * `undefined` when the result cannot be reproduced locally.
+ *
+ * An accepted update call is final — governance state changed in the round that replied, with no
+ * indexing lag — but only a device-signed `list_neurons` can read it back. Rather than ask for a
+ * second signature per action, replay the commands whose effect is fully determined by the command
+ * plus the current neuron, and the one that states its own result in the reply (stake_maturity).
+ *
+ * Split, spawn and disburse are what remain: each yields figures only the canister has, or a neuron
+ * whose id it alone assigns, so they wait for an explicit refresh.
+ */
+const patchNeuron = (
+  neuron: ICPNeuron,
+  transaction: Transaction,
+  nowSeconds: number,
+  outcome: NeuronCommandOutcome | undefined,
+): ICPNeuron | undefined => {
+  switch (transaction.type) {
+    case "start_dissolving":
+    case "stop_dissolving":
+    case "increase_dissolve_delay":
+    case "set_dissolve_delay":
+      return patchDissolveState(neuron, transaction, nowSeconds);
     case "add_hot_key": {
       const hotKey = transaction.hotKeyToAdd;
       if (!hotKey || neuron.hotKeys.includes(hotKey)) return undefined;
@@ -403,7 +424,7 @@ const patchNeuron = (
     case "follow": {
       if (!transaction.followTopic) return undefined;
       const topic = KNOWN_TOPICS[transaction.followTopic];
-      const followeeIds = (transaction.followeesIds ?? []).map(id => BigInt(id));
+      const followeeIds = (transaction.followeesIds ?? []).map(BigInt);
       const others = neuron.followees.filter(followee => followee.topic !== topic);
       // The command replaces the whole list for the topic, so an empty one clears it rather than
       // leaving an entry with no followees.
@@ -453,7 +474,7 @@ export const applyNeuronCommand = (
   {
     nowSeconds = Math.floor(Date.now() / 1000),
     outcome,
-  }: { nowSeconds?: number; outcome?: NeuronCommandOutcome | undefined } = {},
+  }: { nowSeconds?: number; outcome?: NeuronCommandOutcome } = {},
 ): ICPNeuron[] | undefined => {
   if (!transaction.neuronId) return undefined;
   const index = neurons.findIndex(neuron => neuron.id?.toString() === transaction.neuronId);
