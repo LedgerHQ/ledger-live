@@ -23,6 +23,9 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
 } from "react";
 
 export interface PollingState {
@@ -68,6 +71,8 @@ export type Polling = {
   error: Error | null | undefined;
 };
 
+type PollingActions = Pick<Polling, "poll" | "start" | "stop">;
+
 export type Props = {
   /** Bridge enabling platform-specific persistence of countervalues state. */
   bridge: CountervaluesBridge;
@@ -85,6 +90,7 @@ export type Props = {
  * Base Countervalues Context to use without polling logic.
  */
 export const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
+const PollingActionsContext = createContext<PollingActions | null>(null);
 
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);
@@ -111,7 +117,10 @@ function Effect({
   savedState,
   debounceDelay = 1000,
   pollInitDelay = 3 * 1000,
-}: Pick<Props, "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState">) {
+  pollingActionsRef,
+}: Pick<Props, "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState"> & {
+  pollingActionsRef: MutableRefObject<PollingActions | null>;
+}) {
   const userSettings = bridge.useUserSettings();
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
 
@@ -136,40 +145,163 @@ function Effect({
     [marketCapBatchingAfterRank, marketcapIds],
   );
 
-  // flag used to trigger a loadCountervalues
-  const triggerLoad = bridge.usePollingTriggerLoad();
-
-  // trigger poll only when userSettings changes in a debounced way
-  useEffect(() => {
-    bridge.setPollingTriggerLoad(true);
-  }, [bridge, debouncedUserSettings]);
-
-  // loadCountervalues logic
   const currentState = bridge.useState();
   const pending = bridge.useStatePending();
+  const isPolling = bridge.usePollingIsPolling();
+  const pollingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const pendingRef = useRef(pending);
+  const isPollingRef = useRef(isPolling);
+  const isLoadingRef = useRef(false);
+  const isPollScheduledRef = useRef(false);
+  const hasQueuedPollRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const hasInitializedSettingsRef = useRef(false);
+  const [pollRequest, setPollRequest] = useState(0);
 
-  // loadCountervalues logic using bridge
+  pendingRef.current = pending;
+
+  const clearPollingTimeout = useCallback(() => {
+    if (pollingTimeoutRef.current === undefined) return;
+    clearTimeout(pollingTimeoutRef.current);
+    pollingTimeoutRef.current = undefined;
+  }, []);
+
+  const requestPoll = useCallback(() => {
+    clearPollingTimeout();
+
+    if (!isPollingRef.current) return;
+
+    if (isLoadingRef.current || pendingRef.current) {
+      hasQueuedPollRef.current = true;
+      return;
+    }
+
+    if (isPollScheduledRef.current) return;
+
+    isPollScheduledRef.current = true;
+    setPollRequest(request => request + 1);
+  }, [clearPollingTimeout]);
+
+  const schedulePoll = useCallback(
+    (delay: number) => {
+      clearPollingTimeout();
+
+      if (!isPollingRef.current) return;
+
+      pollingTimeoutRef.current = setTimeout(() => {
+        pollingTimeoutRef.current = undefined;
+        requestPoll();
+      }, delay);
+    },
+    [clearPollingTimeout, requestPoll],
+  );
+
+  const startPolling = useCallback(() => {
+    isPollingRef.current = true;
+    bridge.setPollingIsPolling(true);
+
+    if (!isLoadingRef.current && !isPollScheduledRef.current && !hasQueuedPollRef.current) {
+      schedulePoll(pollInitDelay);
+    }
+  }, [bridge, pollInitDelay, schedulePoll]);
+
+  const stopPolling = useCallback(() => {
+    isPollingRef.current = false;
+    hasQueuedPollRef.current = false;
+    isPollScheduledRef.current = false;
+    clearPollingTimeout();
+    bridge.setPollingIsPolling(false);
+  }, [bridge, clearPollingTimeout]);
+
+  pollingActionsRef.current = {
+    poll: requestPoll,
+    start: startPolling,
+    stop: stopPolling,
+  };
+
   useEffect(() => {
-    if (pending || !triggerLoad) return;
-    bridge.setPollingTriggerLoad(false);
+    isPollingRef.current = isPolling;
 
+    if (!isPolling) {
+      hasQueuedPollRef.current = false;
+      isPollScheduledRef.current = false;
+      clearPollingTimeout();
+      return;
+    }
+
+    if (!isLoadingRef.current && !isPollScheduledRef.current && !hasQueuedPollRef.current) {
+      schedulePoll(pollInitDelay);
+    }
+  }, [clearPollingTimeout, isPolling, pollInitDelay, schedulePoll]);
+
+  useEffect(() => {
+    if (!hasInitializedSettingsRef.current) {
+      hasInitializedSettingsRef.current = true;
+      return;
+    }
+
+    requestPoll();
+  }, [debouncedUserSettings, requestPoll]);
+
+  useEffect(() => {
+    if (pollRequest === 0 || !isPollScheduledRef.current) return;
+
+    isPollScheduledRef.current = false;
+
+    if (!isPollingRef.current) return;
+
+    if (isLoadingRef.current || pendingRef.current) {
+      hasQueuedPollRef.current = true;
+      return;
+    }
+
+    isLoadingRef.current = true;
+    pendingRef.current = true;
     bridge.setStatePending(true);
     loadCountervalues(
       currentState,
       filteredUserSettings,
       batchStrategySolver,
       filteredUserSettings.granularitiesRates,
-    ).then(
-      s => {
-        bridge.setState(s);
-        bridge.setStatePending(false);
-      },
-      e => {
-        bridge.setStateError(e);
-        bridge.setStatePending(false);
-      },
-    );
-  }, [pending, currentState, filteredUserSettings, triggerLoad, batchStrategySolver, bridge]);
+    )
+      .then(
+        s => {
+          bridge.setState(s);
+          pendingRef.current = false;
+          bridge.setStatePending(false);
+        },
+        e => {
+          bridge.setStateError(e);
+          pendingRef.current = false;
+          bridge.setStatePending(false);
+        },
+      )
+      .finally(() => {
+        isLoadingRef.current = false;
+
+        if (!isMountedRef.current || !isPollingRef.current) {
+          hasQueuedPollRef.current = false;
+          return;
+        }
+
+        if (hasQueuedPollRef.current) {
+          hasQueuedPollRef.current = false;
+          requestPoll();
+          return;
+        }
+
+        schedulePoll(refreshRate);
+      });
+  }, [
+    batchStrategySolver,
+    bridge,
+    currentState,
+    filteredUserSettings,
+    pollRequest,
+    refreshRate,
+    requestPoll,
+    schedulePoll,
+  ]);
 
   // restore state from persisted raw (history only so we know it's first run and check holes)
   useEffect(() => {
@@ -178,18 +310,20 @@ function Effect({
     bridge.setState(importCountervalues(savedState, userSettings));
   }, [bridge, savedState, userSettings]);
 
-  // manage the auto polling loop
-  const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
-    if (!isPolling) return;
-    let pollingTimeout: ReturnType<typeof setTimeout>;
-    function pollingLoop() {
-      bridge.setPollingTriggerLoad(true);
-      pollingTimeout = setTimeout(pollingLoop, refreshRate);
-    }
-    pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
-    return () => clearTimeout(pollingTimeout);
-  }, [refreshRate, pollInitDelay, isPolling, bridge]);
+    isMountedRef.current = true;
+    pollingActionsRef.current = {
+      poll: requestPoll,
+      start: startPolling,
+      stop: stopPolling,
+    };
+
+    return () => {
+      isMountedRef.current = false;
+      clearPollingTimeout();
+      pollingActionsRef.current = null;
+    };
+  }, [clearPollingTimeout, pollingActionsRef, requestPoll, startPolling, stopPolling]);
 
   return null;
 }
@@ -198,10 +332,22 @@ function Effect({
  * Root countervalues provider (polling + calculation).
  */
 export function CountervaluesProvider({ children, bridge, ...rest }: Props): ReactElement {
+  const pollingActionsRef = useRef<PollingActions | null>(null);
+  const pollingActions = useMemo<PollingActions>(
+    () => ({
+      poll: () => pollingActionsRef.current?.poll(),
+      start: () => pollingActionsRef.current?.start(),
+      stop: () => pollingActionsRef.current?.stop(),
+    }),
+    [],
+  );
+
   return (
     <CountervaluesContext.Provider value={bridge}>
-      <Effect {...rest} bridge={bridge} />
-      {children}
+      <PollingActionsContext.Provider value={pollingActions}>
+        <Effect {...rest} bridge={bridge} pollingActionsRef={pollingActionsRef} />
+        {children}
+      </PollingActionsContext.Provider>
     </CountervaluesContext.Provider>
   );
 }
@@ -214,18 +360,22 @@ export function useCountervaluesState(): CounterValuesState {
 /** Allows consumer to access the countervalues polling control object */
 export function useCountervaluesPolling(): Polling {
   const bridge = useCountervaluesBridgeContext();
+  const pollingActions = useContext(PollingActionsContext);
   const pending = bridge.useStatePending();
   const error = bridge.useStateError();
+
+  if (!pollingActions) {
+    throw new Error("'useCountervaluesPolling' must be used within a 'CountervaluesProvider'");
+  }
+
   return useMemo(
     () => ({
-      poll: () => bridge.setPollingTriggerLoad(true),
-      start: () => bridge.setPollingIsPolling(true),
-      stop: () => bridge.setPollingIsPolling(false),
+      ...pollingActions,
       wipe: () => bridge.wipe(),
       pending,
       error,
     }),
-    [bridge, error, pending],
+    [bridge, error, pending, pollingActions],
   );
 }
 

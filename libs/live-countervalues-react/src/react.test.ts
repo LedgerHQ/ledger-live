@@ -1,5 +1,10 @@
 import React from "react";
-import { CountervaluesProvider, useTrackingPairForAccounts, type CountervaluesBridge } from ".";
+import {
+  CountervaluesProvider,
+  useCountervaluesPolling,
+  useTrackingPairForAccounts,
+  type CountervaluesBridge,
+} from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act, render, waitFor } from "@testing-library/react";
 import {
@@ -176,13 +181,19 @@ describe("CountervaluesProvider", () => {
     mockLoadCountervalues.mockResolvedValue(initialState);
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("should filter unsupported tracking pairs before polling when marketcap ids are loaded", async () => {
     const bridge = createBridge({
       marketcapIds: [bitcoin.id],
       trackingPairs: [supportedPair, unsupportedPair],
     });
 
-    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+    render(
+      React.createElement(CountervaluesProvider, { bridge, children: null, pollInitDelay: 0 }),
+    );
 
     await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toEqual([supportedPair]);
@@ -192,10 +203,140 @@ describe("CountervaluesProvider", () => {
     const trackingPairs = [supportedPair, unsupportedPair];
     const bridge = createBridge({ marketcapIds: [], trackingPairs });
 
-    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+    render(
+      React.createElement(CountervaluesProvider, { bridge, children: null, pollInitDelay: 0 }),
+    );
 
     await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toBe(trackingPairs);
+  });
+
+  it("should perform an explicit poll immediately and wait a refresh interval before polling again", async () => {
+    jest.useFakeTimers();
+    const bridge = createBridge({ marketcapIds: [], trackingPairs: [supportedPair] });
+    const { result, unmount } = renderPolling(bridge);
+
+    act(() => {
+      result.current.poll();
+    });
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(3_000);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(57_000);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(2);
+    unmount();
+  });
+
+  it("should coalesce polls requested while a countervalue request is in flight", async () => {
+    const bridge = createBridge({ marketcapIds: [], trackingPairs: [supportedPair] });
+    const inFlightLoad = deferred<CounterValuesState>();
+    mockLoadCountervalues
+      .mockResolvedValueOnce(initialState)
+      .mockReturnValueOnce(inFlightLoad.promise);
+    const { result, unmount } = renderPolling(bridge);
+
+    act(() => {
+      result.current.poll();
+    });
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+
+    act(() => {
+      result.current.poll();
+    });
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(2));
+
+    act(() => {
+      result.current.poll();
+      result.current.poll();
+    });
+
+    await act(async () => {
+      inFlightLoad.resolve(initialState);
+      await Promise.resolve();
+    });
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(3));
+    unmount();
+  });
+
+  it("should not run a queued poll after polling stops", async () => {
+    const bridge = createBridge({ marketcapIds: [], trackingPairs: [supportedPair] });
+    const inFlightLoad = deferred<CounterValuesState>();
+    mockLoadCountervalues.mockReturnValueOnce(inFlightLoad.promise);
+    const { result, unmount } = renderPolling(bridge);
+
+    act(() => {
+      result.current.poll();
+    });
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+
+    act(() => {
+      result.current.poll();
+      result.current.stop();
+    });
+
+    await act(async () => {
+      inFlightLoad.resolve(initialState);
+      await Promise.resolve();
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(1);
+    expect(bridge.setPollingIsPolling).toHaveBeenLastCalledWith(false);
+    unmount();
+  });
+
+  it("should start automatic polling after the initial delay", async () => {
+    jest.useFakeTimers();
+    const bridge = createBridge({ marketcapIds: [], trackingPairs: [supportedPair] });
+    const { unmount } = renderPolling(bridge, 3_000);
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(2_999);
+    });
+
+    expect(mockLoadCountervalues).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(1);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
+  it("should retry at the refresh interval after a failed poll", async () => {
+    jest.useFakeTimers();
+    const bridge = createBridge({ marketcapIds: [], trackingPairs: [supportedPair] });
+    mockLoadCountervalues.mockRejectedValueOnce(new Error("countervalues unavailable"));
+    const { unmount } = renderPolling(bridge, 0);
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(0);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(59_999);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(1);
+    });
+
+    expect(mockLoadCountervalues).toHaveBeenCalledTimes(2);
+    unmount();
   });
 });
 
@@ -225,7 +366,7 @@ function createBridge({
     setStateError: jest.fn(),
     setStatePending: jest.fn(),
     useMarketcapIds: () => marketcapIds,
-    usePollingIsPolling: () => false,
+    usePollingIsPolling: () => true,
     usePollingTriggerLoad: () => true,
     useStateError: () => null,
     useStatePending: () => false,
@@ -233,4 +374,20 @@ function createBridge({
     useUserSettings: () => settings,
     wipe: jest.fn(),
   };
+}
+
+function renderPolling(bridge: CountervaluesBridge, pollInitDelay = 0) {
+  return renderHook(() => useCountervaluesPolling(), {
+    wrapper: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(CountervaluesProvider, { bridge, pollInitDelay, children }),
+  });
+}
+
+function deferred<T>() {
+  let resolve: (value: T) => void;
+  const promise = new Promise<T>(resolvePromise => {
+    resolve = resolvePromise;
+  });
+
+  return { promise, resolve: resolve! };
 }
