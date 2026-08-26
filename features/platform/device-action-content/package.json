@@ -23,6 +23,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
   },
+  "dependencies": {
+    "@features/platform-style": "workspace:^"
+  },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
@@ -83,8 +86,5 @@
     "react-test-renderer": "catalog:",
     "styled-components": "catalog:",
     "typescript": "catalog:"
-  },
-  "dependencies": {
-    "@features/platform-style": "workspace:^"
   }
 }
