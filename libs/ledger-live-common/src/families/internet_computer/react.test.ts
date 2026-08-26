@@ -3,6 +3,10 @@
  */
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react";
+import {
+  derivePrincipalFromPubkey,
+  getNeuronStakeSubAccountIdentifier,
+} from "@ledgerhq/coin-internet_computer/logic";
 import { ICP_FEES, MIN_NEURON_STAKE } from "./consts";
 import { NeuronsData, NeuronState } from "./types";
 import type { ICPAccount, ICPNeuron } from "./types";
@@ -13,6 +17,7 @@ import {
   useICPNeurons,
   useTotalMaturity,
   useTotalStaked,
+  useCanTopUpNeuron,
   useTotalStakedMaturity,
 } from "./react";
 import type { ICPNeuronStateLabel } from "./react";
@@ -313,5 +318,81 @@ describe("useTotalStakedMaturity", () => {
       useTotalStakedMaturity(makeICPAccount(NeuronsData.empty())),
     );
     expect(result.current).toEqual(new BigNumber(0));
+  });
+});
+
+describe("useCanTopUpNeuron", () => {
+  // A real secp256k1 pubkey: the controller principal, and so the neuron subaccount, are derived
+  // from it, and a fabricated one cannot produce a matching pair.
+  const PUBKEY =
+    "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";
+  const NONCE = "1234";
+  const NEURON_ADDRESS = getNeuronStakeSubAccountIdentifier(
+    derivePrincipalFromPubkey(PUBKEY),
+    BigInt(NONCE),
+  );
+
+  const accountWith = (operations: unknown[], xpub: string | undefined = PUBKEY): ICPAccount =>
+    ({ ...makeICPAccount(NeuronsData.empty()), xpub, operations }) as unknown as ICPAccount;
+
+  const stakeOperation = (overrides: Record<string, unknown> = {}) => ({
+    recipients: [NEURON_ADDRESS],
+    extra: { memo: NONCE },
+    ...overrides,
+  });
+
+  const neuron = makeNeuron({ id: 7n, accountIdentifier: NEURON_ADDRESS });
+
+  it("allows a top-up when the creating transfer is in this account's history", () => {
+    const { result } = renderHook(() => useCanTopUpNeuron(accountWith([stakeOperation()]), neuron));
+
+    expect(result.current).toBe(true);
+  });
+
+  // The nonce is only in the history of the account that created the neuron, so a neuron adopted
+  // from elsewhere cannot be topped up from here — which is what the action has to know before it is
+  // offered, rather than after the user has entered an amount.
+  it("refuses when nothing in the history created this neuron", () => {
+    const { result } = renderHook(() => useCanTopUpNeuron(accountWith([]), neuron));
+
+    expect(result.current).toBe(false);
+  });
+
+  // Top-ups carry memo 0, so a past top-up is not itself a source for the nonce.
+  it("refuses when the only transfer to the neuron carries no nonce", () => {
+    const { result } = renderHook(() =>
+      useCanTopUpNeuron(accountWith([stakeOperation({ extra: { memo: "0" } })]), neuron),
+    );
+
+    expect(result.current).toBe(false);
+  });
+
+  it("refuses a memo that does not derive this neuron's account", () => {
+    const { result } = renderHook(() =>
+      useCanTopUpNeuron(accountWith([stakeOperation({ extra: { memo: "999" } })]), neuron),
+    );
+
+    expect(result.current).toBe(false);
+  });
+
+  it.each([
+    ["there is no neuron to top up", undefined],
+    ["the neuron is absent", undefined],
+  ])("refuses when %s", (_case, missing) => {
+    const { result } = renderHook(() =>
+      useCanTopUpNeuron(accountWith([stakeOperation()]), missing),
+    );
+
+    expect(result.current).toBe(false);
+  });
+
+  // An unparseable key means the controller cannot be derived, and a thrown error there would take
+  // the manage screen down with it.
+  it("refuses rather than throwing on a key it cannot parse", () => {
+    const { result } = renderHook(() =>
+      useCanTopUpNeuron(accountWith([stakeOperation()], "not-a-key"), neuron),
+    );
+
+    expect(result.current).toBe(false);
   });
 });
