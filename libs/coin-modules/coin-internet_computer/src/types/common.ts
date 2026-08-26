@@ -2,6 +2,8 @@ import {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -107,3 +109,35 @@ export type InternetComputerOperationExtra = {
   // The governance method a neuron operation invoked (for display / operation typing).
   methodName?: string;
 };
+
+/**
+ * Persisted form of the above. Identical except for `neurons`, whose `bigint` fields have no JSON
+ * form and so travel as the same tagged string the account snapshot uses.
+ *
+ * Without this pair the framework copies `extra` into the raw operation untouched
+ * (`ledger-wallet-framework/src/serialization/operation.ts`), and one bigint reaching `JSON.stringify`
+ * fails the whole namespace save.
+ */
+export type InternetComputerOperationExtraRaw = {
+  memo?: string;
+  createdNeuronId?: string;
+  neurons?: string;
+  outcome?: NeuronCommandOutcome;
+  methodName?: string;
+};
+
+const EXTRA_KEYS = ["memo", "createdNeuronId", "neurons", "outcome", "methodName"] as const;
+
+const hasAnyExtraKey = (value: object): boolean => EXTRA_KEYS.some(key => key in value);
+
+export function isInternetComputerOperationExtra(
+  extra: OperationExtra,
+): extra is InternetComputerOperationExtra {
+  return extra !== null && typeof extra === "object" && hasAnyExtraKey(extra);
+}
+
+export function isInternetComputerOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is InternetComputerOperationExtraRaw {
+  return extraRaw !== null && typeof extraRaw === "object" && hasAnyExtraKey(extraRaw);
+}
