@@ -8223,6 +8223,10 @@
       "title": "Outcome unknown",
       "description": "The Internet Computer accepted the request but returned no result, so it may or may not have taken effect. Sync your neurons to check before trying again."
     },
+    "ICPNeuronsNotRead": {
+      "title": "Neurons not refreshed",
+      "description": "The Internet Computer did not return your neurons, so they are unchanged. Please try again."
+    },
     "ICPCreateNeuronWarning": {
       "title": "This locks your ICP in a new neuron",
       "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."

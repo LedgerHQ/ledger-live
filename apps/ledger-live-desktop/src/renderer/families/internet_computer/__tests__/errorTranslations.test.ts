@@ -18,6 +18,7 @@ const REACHABLE_ERRORS = [
   "ICPSplitNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
+  "ICPNeuronsNotRead",
   "ICPGovernanceRejected",
   "ICPCallRejected",
   "ICPInvalidPercentage",
@@ -47,6 +48,12 @@ describe("internet_computer error translations", () => {
       expect(errors[name]?.description).toBeTruthy();
     },
   );
+
+  // A read that returned nothing changed nothing, and the copy has to say so: reusing
+  // ICPCallUnconfirmed here would tell the user a refresh "may or may not have taken effect".
+  it("tells the user a failed neuron read left them unchanged", () => {
+    expect(errors.ICPNeuronsNotRead?.description).toMatch(/unchanged/);
+  });
 
   // Without their own description these fall back to "Something went wrong. Please retry or contact
   // Ledger Support.", which is the wrong instruction for a value the user can simply correct.
