@@ -76,8 +76,14 @@ const StepSplitNeuron = ({
   );
 };
 
+// `hasInput` matches the input's own `error={amount.gt(0) ? ... : null}` gate, so the banner and the
+// field agree on when an untouched amount is not yet worth complaining about.
 export const StepSplitNeuronFooter = (props: StepProps) => (
-  <SubmitFooter {...props} canContinue={!!props.transaction?.amount.gt(0)} />
+  <SubmitFooter
+    {...props}
+    canContinue={!!props.transaction?.amount.gt(0)}
+    hasInput={!!props.transaction?.amount.gt(0)}
+  />
 );
 
 export default StepSplitNeuron;

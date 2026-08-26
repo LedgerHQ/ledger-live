@@ -16,13 +16,17 @@ jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
   // The account's real principal comes from a device-provided key genAccount cannot fake.
   useICPPrincipal: () => TEST_PRINCIPAL,
 }));
-import StepAddHotKey from "../ManageNeuronFlowModal/steps/StepAddHotKey";
+import StepAddHotKey, { StepAddHotKeyFooter } from "../ManageNeuronFlowModal/steps/StepAddHotKey";
 import StepFollowTopic from "../ManageNeuronFlowModal/steps/StepFollowTopic";
-import StepSelectFollowees from "../ManageNeuronFlowModal/steps/StepSelectFollowees";
+import StepSelectFollowees, {
+  StepSelectFolloweesFooter,
+} from "../ManageNeuronFlowModal/steps/StepSelectFollowees";
 import StepSetDissolveDelay, {
   StepSetDissolveDelayFooter,
 } from "../ManageNeuronFlowModal/steps/StepSetDissolveDelay";
-import StepSplitNeuron from "../ManageNeuronFlowModal/steps/StepSplitNeuron";
+import StepSplitNeuron, {
+  StepSplitNeuronFooter,
+} from "../ManageNeuronFlowModal/steps/StepSplitNeuron";
 import StepStakeMaturity, {
   StepStakeMaturityFooter,
 } from "../ManageNeuronFlowModal/steps/StepStakeMaturity";
@@ -338,6 +342,20 @@ describe("StepAddHotKey", () => {
     // Unvalidated here on purpose: the bridge rejects a malformed principal.
     expect(patched.hotKeyToAdd).toBe("aaaaa-aa");
   });
+
+  // The step asks for a principal, and this is the only place in the app that shows one — without it
+  // the user has no way to recognize the identifier the field wants.
+  it("shows the account's own principal for reference", () => {
+    render(<StepAddHotKey {...stepProps({ transaction: { type: "add_hot_key" } })} />);
+
+    expect(screen.getByTestId("icp-own-principal")).toHaveTextContent(TEST_PRINCIPAL);
+  });
+
+  it("says the hot key has to be a different principal from this one", () => {
+    render(<StepAddHotKey {...stepProps({ transaction: { type: "add_hot_key" } })} />);
+
+    expect(screen.getByText(/Enter a different principal/)).toBeInTheDocument();
+  });
 });
 
 describe("StepFollowTopic", () => {
@@ -423,7 +441,9 @@ describe("StepSelectFollowees", () => {
     expect(patched.followeesIds).toEqual(["8"]);
   });
 
-  it("says the neuron will not vote while the list is empty", () => {
+  // NEURON follows one neuron on Governance already, so an empty submission would clear it — the
+  // canister replaces the whole list per call. The neutral empty-state copy read like a no-op.
+  it("warns that submitting an empty list stops existing following", () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
@@ -432,7 +452,44 @@ describe("StepSelectFollowees", () => {
     });
     render(<StepSelectFollowees {...props} />);
 
+    expect(screen.getByText(/stops this neuron following anyone/)).toBeInTheDocument();
+  });
+
+  it("says the neuron will not vote while there was nothing to clear", () => {
+    const props = makeStepProps({
+      neurons: [makeHealthyNeuron({ id: 5n, followees: [] })],
+      selectedNeuronId: "5",
+      followTopic: "Governance",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    render(<StepSelectFollowees {...props} />);
+
     expect(screen.getByText(/No followees yet/)).toBeInTheDocument();
+  });
+
+  // Empty over empty is a device confirmation that changes nothing.
+  it("keeps continue disabled when there is neither a new list nor one to clear", () => {
+    const props = makeStepProps({
+      neurons: [makeHealthyNeuron({ id: 5n, followees: [] })],
+      selectedNeuronId: "5",
+      followTopic: "Governance",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    render(<StepSelectFolloweesFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it("allows continue on an empty list when it would clear existing following", () => {
+    const props = makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      followTopic: "Governance",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    render(<StepSelectFolloweesFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
   });
 });
 
@@ -463,5 +520,87 @@ describe("SubmitFooter", () => {
     await user.click(screen.getByTestId("icp-continue-button"));
 
     expect(props.transitionTo).toHaveBeenCalledWith("manageAction");
+  });
+});
+
+describe("SubmitFooter error banner", () => {
+  const withBridgeError = () =>
+    makeStepProps({
+      status: {
+        errors: { transaction: new Error("nope") },
+        warnings: {},
+        amount: new BigNumber(0),
+      },
+    });
+
+  // The bridge validates an empty required field as invalid, so every input step used to open with a
+  // red banner before the user had typed a character.
+  it("stays quiet about an untouched field the bridge already calls invalid", () => {
+    render(<SubmitFooter {...withBridgeError()} hasInput={false} />);
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it("explains the error once something has been entered", () => {
+    render(<SubmitFooter {...withBridgeError()} hasInput />);
+
+    expect(screen.getByText("nope")).toBeInTheDocument();
+  });
+
+  // An entry that is present but out of range is where hasInput and canContinue diverge: Continue
+  // stays disabled, and the reason has to be on screen or nothing explains why.
+  it("explains an out-of-range entry while still blocking continue", () => {
+    render(<SubmitFooter {...withBridgeError()} hasInput canContinue={false} />);
+
+    expect(screen.getByText("nope")).toBeInTheDocument();
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+});
+
+describe("input step footers on an untouched field", () => {
+  const pristine = (transaction: Record<string, unknown>) =>
+    makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      transaction,
+      status: {
+        // Both slots, since the steps do not all report through the same one.
+        errors: { transaction: new Error("nope"), amount: new Error("nope") },
+        warnings: {},
+        amount: new BigNumber(0),
+      },
+    });
+
+  it("says nothing on the add-hot-key step", () => {
+    render(<StepAddHotKeyFooter {...pristine({ type: "add_hot_key", hotKeyToAdd: "" })} />);
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
+  });
+
+  it("says nothing on the stake-maturity step", () => {
+    render(
+      <StepStakeMaturityFooter {...pristine({ type: "stake_maturity", percentageToStake: "" })} />,
+    );
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
+  });
+
+  it("says nothing on the dissolve-delay step", () => {
+    render(
+      <StepSetDissolveDelayFooter
+        {...pristine({ type: "increase_dissolve_delay", additionalDissolveDelay: "" })}
+      />,
+    );
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
+  });
+
+  it("says nothing on the split step", () => {
+    render(
+      <StepSplitNeuronFooter {...pristine({ type: "split_neuron", amount: new BigNumber(0) })} />,
+    );
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
   });
 });
