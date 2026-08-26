@@ -27,6 +27,23 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   }),
 }));
 
+// Both render null, so recording the props rather than substituting markup keeps the DOM the other
+// tests assert on unchanged.
+const syncSkip = jest.fn();
+const syncOne = jest.fn();
+
+jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  __esModule: true,
+  SyncSkipUnderPriority: (props: { priority: number }) => {
+    syncSkip(props);
+    return null;
+  },
+  SyncOneAccountOnMount: (props: { priority: number; accountId: string }) => {
+    syncOne(props);
+    return null;
+  },
+}));
+
 // The device steps drive a real DeviceAction; stub them so the flow can be walked without hardware,
 // exposing the two callbacks the Body wires up.
 jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
@@ -175,5 +192,70 @@ describe("modal shells", () => {
     const { container } = render(<Component />);
 
     expect(container).toBeInTheDocument();
+  });
+});
+
+describe("account sync while the flow is open", () => {
+  // A stake hands over through onConfirmationHandler, so the send flow never renders the confirmation
+  // step it would have synced from — this list, which the stake opens onto, is the only sync left. The
+  // skip used to be mounted for the modal's whole life and outranked it, so the balance never moved.
+  it("lets the neuron list's own sync through", () => {
+    render(<ControlledBody />);
+
+    expect(syncOne).toHaveBeenCalledWith(expect.objectContaining({ accountId: account.id }));
+    expect(syncSkip).not.toHaveBeenCalled();
+  });
+
+  it("lets the confirmation step's sync through too", () => {
+    render(<ControlledBody initialStep="confirmation" />);
+
+    expect(syncSkip).not.toHaveBeenCalled();
+  });
+
+  // Still suppressed where it earns its place: a background sync mid-entry would churn the
+  // transaction being built.
+  it("still suppresses background sync while a transaction is being built", () => {
+    render(<ControlledBody initialStep="addHotKey" />);
+
+    expect(syncSkip).toHaveBeenCalledWith(expect.objectContaining({ priority: 100 }));
+  });
+});
+
+// QA's repro: the modal is never closed, so the success from the first action was still on the Body
+// when the second was refused — the confirmation step preferred it and reported Done, with the copy
+// for the action that had just been rejected, and offered Back to neurons beside Retry.
+describe("a refusal after an earlier success in the same modal", () => {
+  const succeedThenRefuse = async (user: ReturnType<typeof render>["user"]) => {
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-broadcast"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-back-to-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-fail"));
+    });
+  };
+
+  it("does not report the refused action as done", async () => {
+    const { user } = render(<ControlledBody />);
+
+    await succeedThenRefuse(user);
+
+    expect(screen.queryByText("Done")).not.toBeInTheDocument();
+  });
+
+  it("does not leave the success action on screen beside the failure", async () => {
+    const { user } = render(<ControlledBody />);
+
+    await succeedThenRefuse(user);
+
+    expect(screen.queryByTestId("icp-back-to-neurons-button")).not.toBeInTheDocument();
   });
 });

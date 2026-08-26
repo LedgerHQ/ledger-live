@@ -1,4 +1,5 @@
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { applyNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { reassignOperationType } from "@ledgerhq/live-common/families/internet_computer/utils";
 import {
   NeuronsData,
@@ -43,11 +44,16 @@ export const onClickManageNeurons = (dispatch: AppDispatch, account: ICPAccount)
  * Background sync cannot fetch neurons — that needs a device signature — so a signed `list_neurons`
  * is the only thing that refreshes them, and its result rides in `extra.neurons`. The bridge does
  * the same fold on the next sync (bridgeHelpers/account.ts); this makes it visible immediately.
+ *
+ * A `manage_neuron` call returns no snapshot, so `transaction` lets the command the canister just
+ * accepted be replayed onto the stored neuron instead. `lastUpdatedMSecs` deliberately does not move
+ * for that: the neuron is only as fresh as the last real read.
  */
 export const applyNeuronOperation = (
   dispatch: AppDispatch,
   account: ICPAccount,
   operation: InternetComputerOperation,
+  transaction?: Transaction,
 ) => {
   dispatch(
     updateAccountWithUpdater(account.id, (current: Account): Account => {
@@ -55,7 +61,17 @@ export const applyNeuronOperation = (
         operation.type !== "NONE" ? addPendingOperation(current, operation) : current
       ) as ICPAccount;
       const snapshot = operation.extra.neurons;
-      if (!snapshot) return next;
+      if (!snapshot) {
+        const patched = transaction
+          ? applyNeuronCommand(next.neurons.fullNeurons, transaction)
+          : undefined;
+        if (!patched) return next;
+        const replayed: ICPAccount = {
+          ...next,
+          neurons: new NeuronsData(patched, next.neurons.lastUpdatedMSecs),
+        };
+        return replayed;
+      }
       const updated: ICPAccount = {
         ...next,
         neurons: new NeuronsData(snapshot, operation.date.getTime()),

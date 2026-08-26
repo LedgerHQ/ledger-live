@@ -1,6 +1,9 @@
-import type {
-  ICPAccount,
-  InternetComputerOperation,
+import { SECONDS_IN_YEAR } from "@ledgerhq/live-common/families/internet_computer/consts";
+import {
+  NeuronState,
+  type ICPAccount,
+  type InternetComputerOperation,
+  type Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import { applyNeuronOperation, onStakeConfirmed } from "../common";
 import { makeICPAccount, makeNeuron } from "./testUtils";
@@ -140,5 +143,63 @@ describe("onStakeConfirmed", () => {
     const [update, open] = dispatch.mock.calls.map(([action]) => action);
     expect((update.payload.updater(account) as ICPAccount).pendingOperations).toHaveLength(1);
     expect(open.payload).toMatchObject({ name: "MODAL_ICP_LIST_NEURONS" });
+  });
+});
+
+describe("applyNeuronOperation replaying an accepted command", () => {
+  const DELAY = BigInt(SECONDS_IN_YEAR);
+
+  const lockedNeuron = () =>
+    makeNeuron({
+      id: 7n,
+      state: NeuronState.Locked,
+      dissolveDelaySeconds: DELAY,
+      dissolveState: { DissolveDelaySeconds: DELAY },
+    });
+
+  const replay = (account: ICPAccount, transaction: Record<string, unknown>): ICPAccount => {
+    const dispatch = jest.fn();
+    applyNeuronOperation(dispatch, account, makeOperation(), transaction as unknown as Transaction);
+    const [action] = dispatch.mock.calls[0];
+    return action.payload.updater(account) as ICPAccount;
+  };
+
+  // A manage_neuron reply carries no snapshot, and reading one back costs another device signature.
+  // Without the replay the card kept showing the state the action was meant to change.
+  it("shows the neuron dissolving without waiting for a refresh", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+
+    const updated = replay(account, { type: "start_dissolving", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Dissolving);
+  });
+
+  // The neuron is only as fresh as the last real canister read, so "Last synced" must not move.
+  it("leaves the last-synced stamp where it was", () => {
+    const lastUpdatedMSecs = 1_700_000_000_000;
+    const account = makeICPAccount({ neurons: [lockedNeuron()], lastUpdatedMSecs });
+
+    const updated = replay(account, { type: "start_dissolving", neuronId: "7" });
+
+    expect(updated.neurons.lastUpdatedMSecs).toBe(lastUpdatedMSecs);
+  });
+
+  it("leaves the snapshot untouched for a command whose result only the canister knows", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+
+    const updated = replay(account, { type: "disburse", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Locked);
+  });
+
+  it("leaves the snapshot untouched when no transaction is supplied", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+    const dispatch = jest.fn();
+
+    applyNeuronOperation(dispatch, account, makeOperation());
+    const [action] = dispatch.mock.calls[0];
+    const updated = action.payload.updater(account) as ICPAccount;
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Locked);
   });
 });

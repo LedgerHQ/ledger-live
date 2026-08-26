@@ -95,6 +95,33 @@ describe("StepConfirmation", () => {
 
     expect(container.textContent).toContain("signed");
   });
+
+  // The modal stays open across actions and kept its last success, so a refusal on device after any
+  // earlier success rendered "Done" — with the copy for the action that had just been refused.
+  it("reports the failure rather than an earlier success in the same modal", () => {
+    renderConfirmation({
+      error: new Error("boom"),
+      signed: true,
+      lastAction: "stop_dissolving",
+    });
+
+    expect(screen.queryByText("Done")).not.toBeInTheDocument();
+    expect(screen.queryByText("Your neuron has stopped dissolving.")).not.toBeInTheDocument();
+  });
+
+  // "signed but could not be sent" is a claim about delivery. Each of these errors IS the network's
+  // own answer, so the request plainly did reach it.
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPCallUnconfirmed"])(
+    "does not claim the request never reached the network for %s",
+    name => {
+      const error = Object.assign(new Error("boom"), { name });
+      const { container } = render(
+        <StepConfirmation {...makeStepProps({ error, signed: true })} />,
+      );
+
+      expect(container.textContent).not.toContain("could not be sent");
+    },
+  );
 });
 
 describe("StepConfirmationFooter", () => {
@@ -113,7 +140,7 @@ describe("StepConfirmationFooter", () => {
 
     await user.click(screen.getByText("Retry"));
 
-    expect(props.onRetry).toHaveBeenCalled();
+    expect(props.resetAttempt).toHaveBeenCalled();
     expect(props.transitionTo).toHaveBeenCalledWith("manageAction");
   });
 
@@ -122,5 +149,75 @@ describe("StepConfirmationFooter", () => {
 
     expect(screen.queryByTestId("icp-back-to-neurons-button")).not.toBeInTheDocument();
     expect(screen.queryByText("Retry")).not.toBeInTheDocument();
+  });
+
+  // Retry beside a success action was the visible tell that both states were set at once.
+  it("does not offer the success action beside Retry", () => {
+    render(
+      <StepConfirmationFooter
+        {...makeStepProps({ optimisticOperation: operation, error: new Error("boom") })}
+      />,
+    );
+
+    expect(screen.queryByTestId("icp-back-to-neurons-button")).not.toBeInTheDocument();
+    expect(screen.getByText("Retry")).toBeInTheDocument();
+  });
+});
+
+describe("StepConfirmationFooter retry", () => {
+  const failed = (lastAction: ICPTransactionType, name = "Error") =>
+    makeStepProps({ error: Object.assign(new Error("boom"), { name }), lastAction });
+
+  // Retry always went to the device step, so a value the user needed to correct could not be
+  // corrected — the only option was re-signing the same transaction.
+  it.each([
+    ["add_hot_key", "addHotKey"],
+    ["split_neuron", "splitNeuron"],
+    ["stake_maturity", "stakeMaturity"],
+    ["set_dissolve_delay", "setDissolveDelay"],
+    ["increase_dissolve_delay", "setDissolveDelay"],
+    ["follow", "selectFollowees"],
+  ])("returns to the step that collected input for %s", async (action, step) => {
+    const props = failed(action as ICPTransactionType);
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByText("Retry"));
+
+    expect(props.transitionTo).toHaveBeenCalledWith(step);
+  });
+
+  // These take no input, so the device step is where a retry belongs — and it is the one signing step
+  // both flows have.
+  it.each(["start_dissolving", "disburse", "refresh_voting_power", "list_neurons"])(
+    "retries %s at the device step",
+    async action => {
+      const props = failed(action as ICPTransactionType);
+      const { user } = render(<StepConfirmationFooter {...props} />);
+
+      await user.click(screen.getByText("Retry"));
+
+      expect(props.transitionTo).toHaveBeenCalledWith("manageAction");
+    },
+  );
+
+  // The call was accepted but never answered. Its own copy says to sync before trying again, and for
+  // an additive command a second one that lands applies twice — so re-signing must not be on offer.
+  it("does not offer a retry when the outcome is unknown", () => {
+    render(<StepConfirmationFooter {...failed("split_neuron", "ICPCallUnconfirmed")} />);
+
+    expect(screen.queryByText("Retry")).not.toBeInTheDocument();
+  });
+
+  it("sends the user to the list instead, where the refresh lives", () => {
+    render(<StepConfirmationFooter {...failed("split_neuron", "ICPCallUnconfirmed")} />);
+
+    expect(screen.getByTestId("icp-back-to-neurons-button")).toBeInTheDocument();
+  });
+
+  // A rejection is a known outcome: nothing ran, so re-signing is safe and is the useful offer.
+  it.each(["ICPGovernanceRejected", "ICPCallRejected"])("still offers a retry after %s", name => {
+    render(<StepConfirmationFooter {...failed("split_neuron", name)} />);
+
+    expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 });

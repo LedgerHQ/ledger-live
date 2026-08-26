@@ -87,7 +87,7 @@ export const makeStepProps = (
     onUpdateTransaction: jest.fn(),
     onTransactionError: jest.fn(),
     onOperationBroadcasted: jest.fn(),
-    onRetry: jest.fn(),
+    resetAttempt: jest.fn(),
     setSigned: jest.fn(),
     neurons: [],
     lastUpdatedMSecs: 0,
