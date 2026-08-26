@@ -11,7 +11,7 @@ Test-only tooling: `private`, never published, not imported by the shipped apps.
 
 **It is not the app's Card authentication, and does not plug into it.** The app's
 `@features/platform-card` session stores a `PayCardSession` — `{ accessToken, expiresIn,
-refreshToken, refreshTokenExpiresIn }` — minted by the OAuth/PKCE flow in
+refreshToken }` — minted by the OAuth/PKCE flow in
 `@features/flow-pay-card-auth`. The Baanx password login used here returns **no refresh token at
 all**, so its session cannot satisfy that shape. Use the token directly as a `Bearer` credential
 against the Baanx API; it is not a drop-in for `cardSession`.
@@ -77,14 +77,24 @@ the app's own Card base query does after a 401.
 
 Tokens are cached in memory and reused until five minutes before expiry; concurrent callers in one
 process share a single in-flight login. That cache cannot cross processes, and Playwright and Detox
-fork a worker per shard — **logging in per worker is how you earn a `429`**. Authenticate once in
-global setup and pass it down:
+fork a worker per shard — **logging in per worker is how you earn a `429`**.
+
+There is no pre-authenticated-token input on `getBaanxAuthToken` or `baanxRequest`: hand the token to
+whatever consumes it, not back into this client. For the app, that is `CARD_SESSION_BOOTSTRAP` (see
+below). For a suite calling the API directly, mint once outside the workers and read the token from
+the environment yourself:
+
+```bash
+# once, before the workers start
+export CARD_API_TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)
+```
 
 ```ts
-export default async function globalSetup() {
-  process.env.BAANX_ACCESS_TOKEN = (await getBaanxAuthToken()).accessToken;
-}
+// in a worker — no login, no OTP, no 429
+const token = process.env.CARD_API_TOKEN;
 ```
+
+Calling `getBaanxAuthToken()` inside each worker logs in per worker; that is the case to avoid.
 
 Tokens last 6 hours and there is **no refresh token** on this endpoint (they exist only in Baanx's
 OAuth flow, and rotate), so nothing tries to renew. Re-authenticate per CI run.

@@ -57,7 +57,10 @@ export function resolveBaanxAuthConfig(
   if (!totpSecret) missing.push(ENV_VARS.totpSecret);
   if (missing.length > 0) throw new BaanxConfigError(missing);
 
-  const baseUrl = overrides.baseUrl ?? read(env, ENV_VARS.baseUrl) ?? DEFAULT_BAANX_BASE_URL;
+  const baseUrl =
+    clean(overrides.baseUrl, ENV_VARS.baseUrl) ??
+    read(env, ENV_VARS.baseUrl) ??
+    DEFAULT_BAANX_BASE_URL;
 
   return {
     // A trailing slash would double up against the "/v1/..." paths.

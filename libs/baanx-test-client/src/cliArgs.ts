@@ -37,6 +37,10 @@ export function parseCliArgs(argv: string[]): CliArgs {
  * rather than in cli.ts so tests can import it without running the entry point.
  */
 export function flagNameOf(argument: string): string {
+  // A positional argument is not a flag name, so nothing about it is safe to
+  // print: `token hunter2` would otherwise echo the secret itself.
+  if (!argument.startsWith("-")) return "[redacted positional argument]";
+
   const eq = argument.indexOf("=");
   return eq === -1 ? argument : `${argument.slice(0, eq)}=[redacted]`;
 }

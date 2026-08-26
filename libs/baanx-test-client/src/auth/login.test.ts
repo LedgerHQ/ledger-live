@@ -263,6 +263,24 @@ describe("loginToBaanx — OTP required", () => {
     expect((error as BaanxRateLimitError).retryAfter).toBe("60");
   });
 
+  it("scrubs the generated OTP code if the API echoes it back", async () => {
+    // The package promises generated codes never reach an error. The retry is
+    // the only request that carries one, so it is the only place it can leak.
+    const code = generateTotpCodeAt(testConfig().totp, AT_MS);
+    const { fetchImpl } = createFetchMock([
+      { body: { isOtpRequired: true, userId: "user-1" } },
+      { body: { success: true } },
+      { status: 400, body: { message: `otpCode ${code} was rejected` } },
+    ]);
+
+    const error = await captureError(
+      loginToBaanx(testConfig(), { fetchImpl, clock: fixedClock() }),
+    );
+
+    expect(error.message).not.toContain(code);
+    expect(JSON.stringify((error as BaanxHttpError).body ?? "")).not.toContain(code);
+  });
+
   it("reports an onboarding phase that only appears on the retry", async () => {
     const { fetchImpl } = createFetchMock([
       { body: { isOtpRequired: true, userId: "user-1" } },

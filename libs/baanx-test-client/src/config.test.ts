@@ -163,6 +163,14 @@ describe("resolveBaanxAuthConfig", () => {
       );
     });
 
+    it.each(["", "   "])("rejects a blank baseUrl override %p", value => {
+      // Every other blank override fails here; this one used to slip through and
+      // produce a malformed URL that only failed later as a transport error.
+      expect(() => resolveBaanxAuthConfig({ baseUrl: value }, fullEnv())).toThrow(
+        BaanxInvalidConfigError,
+      );
+    });
+
     it("still preserves password whitespace, which may be significant", () => {
       expect(resolveBaanxAuthConfig({ password: "  spaced  " }, fullEnv()).password).toBe(
         "  spaced  ",

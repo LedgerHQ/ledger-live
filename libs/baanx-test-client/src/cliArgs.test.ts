@@ -59,9 +59,18 @@ describe("flagNameOf", () => {
     expect(flagNameOf(input)).toBe(expected);
   });
 
-  it.each(["--nope", "-j", "extra"])("leaves the valueless argument %p intact", argument => {
+  it.each(["--nope", "-j"])("leaves the valueless flag %p intact", argument => {
     expect(flagNameOf(argument)).toBe(argument);
   });
+
+  it.each(["hunter2", "extra", "some-token-value"])(
+    "never echoes the positional argument %p, which could itself be the secret",
+    argument => {
+      const reported = flagNameOf(argument);
+      expect(reported).not.toContain(argument);
+      expect(reported).toBe("[redacted positional argument]");
+    },
+  );
 
   it("never returns the secret half", () => {
     expect(flagNameOf("--password=hunter2")).not.toContain("hunter2");

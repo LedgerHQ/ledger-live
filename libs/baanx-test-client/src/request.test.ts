@@ -177,6 +177,35 @@ describe("baanxRequest", () => {
       ).rejects.toBeInstanceOf(expected);
     });
 
+    it.each([
+      ["the client key", "env-client-key"],
+      ["the password", "env-password"],
+    ])("scrubs %s if the API echoes it back", async (_label, secret) => {
+      const { mock, auth } = callWith([
+        LOGIN_OK,
+        { status: 400, body: { message: `rejected ${secret}` } },
+      ]);
+
+      const error = await captureError(
+        baanxRequest({ path: "/v1/user", auth, fetchImpl: mock.fetchImpl }),
+      );
+
+      expect(error.message).not.toContain(secret);
+    });
+
+    it("scrubs the bearer token it actually sent", async () => {
+      const { mock, auth } = callWith([
+        LOGIN_OK,
+        { status: 400, body: { message: "bad token token-1 here" } },
+      ]);
+
+      const error = await captureError(
+        baanxRequest({ path: "/v1/user", auth, fetchImpl: mock.fetchImpl }),
+      );
+
+      expect(error.message).not.toContain("token-1");
+    });
+
     it("keeps the status on a generic HTTP error", async () => {
       const { mock, auth } = callWith([LOGIN_OK, { status: 404, body: { message: "not found" } }]);
 
@@ -226,3 +255,14 @@ describe("baanxRequest", () => {
     });
   });
 });
+
+/** Await a rejection and hand back the error, so assertions can inspect it. */
+async function captureError(promise: Promise<unknown>): Promise<Error> {
+  try {
+    await promise;
+  } catch (error) {
+    return error as Error;
+  }
+
+  throw new Error("expected the promise to reject, but it resolved");
+}

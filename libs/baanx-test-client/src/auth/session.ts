@@ -51,14 +51,15 @@ export async function getBaanxAuthToken(
   const entry = cache.get(key);
 
   if (entry) {
-    if (!forceRefresh && entry.session && isFresh(entry.session, now())) return entry.session;
-
-    // Join a running login even under forceRefresh. `inFlight` only ever holds
-    // an *unresolved* login (it is replaced by `session` on success), so the
-    // token it will produce is necessarily newer than whatever the caller is
-    // trying to replace. Starting a second login here is how concurrent 401
-    // handlers turn one refresh into a stampede and earn a 429.
+    // The in-flight check comes first, and deliberately outranks the cached
+    // session. While a forced refresh is running, `entry.session` still holds
+    // the very token that provoked it, so serving it here would hand a caller
+    // a token already known to be stale — and its 401 would start yet another
+    // refresh. `inFlight` only ever holds an *unresolved* login, so joining it
+    // always yields something newer.
     if (entry.inFlight) return entry.inFlight;
+
+    if (!forceRefresh && entry.session && isFresh(entry.session, now())) return entry.session;
   }
 
   const inFlight = loginToBaanx(config, deps)

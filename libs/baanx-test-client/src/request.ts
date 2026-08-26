@@ -77,13 +77,25 @@ export async function baanxRequest<T = unknown>({
 
   const session = await getBaanxAuthToken(authWithTransport);
   let response = await send(session.accessToken);
+  // Tracked so the error mapping can scrub whichever bearer actually went out.
+  let usedToken = session.accessToken;
 
   if (response.status === 401) {
     const refreshed = await getBaanxAuthToken({ ...authWithTransport, forceRefresh: true });
+    usedToken = refreshed.accessToken;
     response = await send(refreshed.accessToken);
   }
 
-  if (!response.ok) throw toTypedError(response);
+  // Without these, an API or proxy echoing the client key, the password or the
+  // bearer would have it copied verbatim into a typed error and printed.
+  if (!response.ok) {
+    throw toTypedError(response, [
+      config.clientKey,
+      config.password,
+      config.totp.secret,
+      usedToken,
+    ]);
+  }
 
   return { status: response.status, data: response.body as T };
 }

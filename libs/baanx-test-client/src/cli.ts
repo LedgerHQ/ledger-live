@@ -88,11 +88,11 @@ function render(session: BaanxAuthSession, format: OutputFormat): string {
     Math.floor((Date.parse(session.expiresAt) - Date.parse(session.issuedAt)) / 1000),
   );
 
+  // Matches the app's PayCardSession exactly: accessToken, refreshToken, expiresIn.
   return JSON.stringify({
     accessToken: session.accessToken,
     refreshToken: REFRESH_TOKEN_PLACEHOLDER,
     expiresIn,
-    refreshTokenExpiresIn: expiresIn,
   });
 }
 

@@ -78,19 +78,39 @@ const REDACTED_KEYS = new Set([
  * for an error object or a log line, so `accessToken` is redacted too — the
  * caller already has the real token from the session object.
  */
-export function redactBody(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(redactBody);
+export function redactBody(value: unknown, secrets: readonly string[] = []): unknown {
+  if (Array.isArray(value)) return value.map(entry => redactBody(entry, secrets));
 
   if (typeof value === "object" && value !== null) {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
         key,
-        REDACTED_KEYS.has(key.toLowerCase()) ? REDACTION_PLACEHOLDER : redactBody(entry),
+        REDACTED_KEYS.has(key.toLowerCase()) ? REDACTION_PLACEHOLDER : redactBody(entry, secrets),
       ]),
     );
   }
 
+  // Field names only get you so far: a proxy echoing a credential in `message`,
+  // `detail` or the `nonJsonBody` excerpt lands in a field we do not know, and
+  // that body is attached to errors and printed by the CLI.
+  if (typeof value === "string") return redactSecretsInText(value, secrets);
+
   return value;
+}
+
+/**
+ * Replace every occurrence of a known secret in a string.
+ *
+ * No minimum length: a short credential is still a credential, and a mangled
+ * message is a better outcome than a leaked one. Lives here rather than in
+ * `send.ts` so body and message redaction share exactly one implementation.
+ */
+export function redactSecretsInText(text: string, secrets: readonly string[]): string {
+  let out = text;
+  for (const secret of secrets) {
+    if (secret) out = out.split(secret).join(REDACTION_PLACEHOLDER);
+  }
+  return out;
 }
 
 /** Case-insensitive match against the documented onboarding phase strings. */

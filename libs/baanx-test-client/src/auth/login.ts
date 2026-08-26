@@ -70,7 +70,7 @@ async function completeOtpChallenge(
   if (!userId) {
     throw new BaanxOtpError(
       "Baanx asked for an OTP but returned no userId, so the challenge cannot be triggered.",
-      redactBody(first.body),
+      redactBody(first.body, secretsOf(config)),
     );
   }
 
@@ -87,6 +87,9 @@ async function completeOtpChallenge(
     LOGIN_PATH,
     { email: config.email, password: config.password, otpCode: code },
     fetchImpl,
+    // The package promises generated codes never reach an error message, and an
+    // API that echoes `otpCode` back would otherwise break that.
+    [code],
   );
 
   const phase = asString(asRecord(retry.body).phase);
@@ -101,7 +104,7 @@ async function completeOtpChallenge(
       "Baanx still requires an OTP after the generated code was submitted. The code was rejected — " +
         `check that ${ENV_VARS.totpSecret} is this user's setup key and that the digits/period/algorithm ` +
         `match how the authenticator was enrolled.`,
-      redactBody(retry.body),
+      redactBody(retry.body, [...secretsOf(config), code]),
     );
   }
 
@@ -165,7 +168,7 @@ function toSession(
   // `asString` rejects null, undefined, "" and whitespace; `isUsableToken`
   // additionally rejects string sentinels like "null", so a token reaching
   // `Bearer` is always something real.
-  if (!isUsableToken(accessToken)) throw new BaanxNoTokenError(redactBody(body));
+  if (!isUsableToken(accessToken)) throw new BaanxNoTokenError(redactBody(body, secretsOf(config)));
 
   const issuedAt = new Date();
   const { expiresAt, source } = resolveExpiry(accessToken, issuedAt);
@@ -190,6 +193,8 @@ async function post(
   path: string,
   body: Record<string, unknown>,
   fetchImpl: FetchImpl,
+  /** Extra values to scrub, e.g. the generated OTP code on the retry. */
+  extraSecrets: readonly string[] = [],
 ): Promise<BaanxResponse> {
   const response = await sendJson({
     baseUrl: config.baseUrl,
@@ -200,7 +205,7 @@ async function post(
     fetchImpl,
   });
 
-  if (!response.ok) throw toTypedError(response, secretsOf(config));
+  if (!response.ok) throw toTypedError(response, [...secretsOf(config), ...extraSecrets]);
 
   return response;
 }

@@ -41,31 +41,44 @@ export async function bootstrapCardSession(dispatch: AppDispatch): Promise<void>
 
 /**
  * `readSession` treats a session as valid only when the access token, the refresh token and the
- * lifetimes all agree, so every field has to be present. The Baanx password login returns no refresh
- * token, so a caller using a real token must pass a placeholder for it.
+ * lifetimes all agree, so all three fields have to be present. The Baanx password login returns no
+ * refresh token, so a caller using a real token must pass a placeholder for it.
+ *
+ * Values are validated rather than coerced: `String(null)` would smuggle in the token `"null"`, and
+ * `Number(undefined)` an expiry of `NaN`, which is exactly the broken-session state the app guards
+ * against everywhere else.
+ *
+ * Intentionally unannotated: `cardSession.set` supplies the type, so a future change to
+ * `PayCardSession` fails to compile here instead of silently bootstrapping a stale shape — which is
+ * how the dropped `refreshTokenExpiresIn` slipped through once already.
  */
 function parseSession(raw: string) {
-  const parsed: unknown = JSON.parse(raw);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    // V8 quotes the first ~10 characters of the input in its SyntaxError, so a
+    // bare token pasted here would put part of the credential in the log. The
+    // reason is reported without the value.
+    throw new Error("value is not valid JSON");
+  }
+
   if (typeof parsed !== "object" || parsed === null) {
     throw new Error("expected a JSON object");
   }
 
-  const { accessToken, refreshToken, expiresIn, refreshTokenExpiresIn } = parsed as Record<
-    string,
-    unknown
-  >;
+  const { accessToken, refreshToken, expiresIn } = parsed as Record<string, unknown>;
 
-  const missing = Object.entries({ accessToken, refreshToken, expiresIn, refreshTokenExpiresIn })
-    .filter(([, value]) => value === undefined || value === "")
-    .map(([name]) => name);
-  if (missing.length > 0) {
-    throw new Error(`missing field(s): ${missing.join(", ")}`);
+  if (typeof accessToken !== "string" || accessToken.trim() === "") {
+    throw new Error("accessToken must be a non-empty string");
+  }
+  if (typeof refreshToken !== "string" || refreshToken.trim() === "") {
+    throw new Error("refreshToken must be a non-empty string");
+  }
+  // The app schema is z.number().int().positive(), so a float is not a valid session.
+  if (typeof expiresIn !== "number" || !Number.isInteger(expiresIn) || expiresIn <= 0) {
+    throw new Error("expiresIn must be a positive whole number of seconds");
   }
 
-  return {
-    accessToken: String(accessToken),
-    refreshToken: String(refreshToken),
-    expiresIn: Number(expiresIn),
-    refreshTokenExpiresIn: Number(refreshTokenExpiresIn),
-  };
+  return { accessToken, refreshToken, expiresIn };
 }

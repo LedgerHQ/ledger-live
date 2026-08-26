@@ -141,3 +141,39 @@ describe("looksAccountLocked", () => {
     },
   );
 });
+
+describe("redactBody with known secrets", () => {
+  const SECRET = "sup3r-s3cret";
+
+  it.each(["message", "detail", "nonJsonBody", "anythingElse"])(
+    "scrubs a secret echoed in the free-form field %p",
+    field => {
+      const redacted = redactBody({ [field]: `rejected ${SECRET} sorry` }, [SECRET]);
+
+      expect(JSON.stringify(redacted)).not.toContain(SECRET);
+      expect(JSON.stringify(redacted)).toContain(REDACTION_PLACEHOLDER);
+    },
+  );
+
+  it("scrubs secrets nested in objects and arrays", () => {
+    const redacted = redactBody({ a: [{ note: `x ${SECRET} y` }] }, [SECRET]);
+
+    expect(JSON.stringify(redacted)).not.toContain(SECRET);
+  });
+
+  it("redacts a short secret too — a mangled message beats a leaked one", () => {
+    const redacted = redactBody({ message: "value ab rejected" }, ["ab"]);
+
+    expect(JSON.stringify(redacted)).not.toContain('"value ab rejected"');
+  });
+
+  it("leaves unrelated text alone when no secret matches", () => {
+    expect(redactBody({ message: "nothing to see" }, [SECRET])).toEqual({
+      message: "nothing to see",
+    });
+  });
+
+  it("still works with no secrets supplied", () => {
+    expect(redactBody({ message: "plain" })).toEqual({ message: "plain" });
+  });
+});

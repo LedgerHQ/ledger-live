@@ -1,4 +1,4 @@
-import { extractApiMessage, looksAccountLocked, redactBody } from "./body";
+import { extractApiMessage, looksAccountLocked, redactBody, redactSecretsInText } from "./body";
 import { ENV_VARS } from "../config";
 import {
   BaanxHttpError,
@@ -105,13 +105,7 @@ async function parseBody(response: Response): Promise<unknown> {
  */
 export function redactSecrets(text: string | null, secrets: readonly string[]): string | null {
   if (!text) return text;
-
-  let out = text;
-  for (const secret of secrets) {
-    // Very short values would match everywhere and destroy the message.
-    if (secret && secret.length >= 4) out = out.split(secret).join("[redacted]");
-  }
-  return out;
+  return redactSecretsInText(text, secrets);
 }
 
 /**
@@ -134,6 +128,6 @@ export function toTypedError(response: BaanxResponse, secrets: readonly string[]
     case 429:
       return new BaanxRateLimitError(apiMessage, response.retryAfter);
     default:
-      return new BaanxHttpError(response.status, apiMessage, redactBody(response.body));
+      return new BaanxHttpError(response.status, apiMessage, redactBody(response.body, secrets));
   }
 }

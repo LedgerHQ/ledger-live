@@ -126,6 +126,26 @@ describe("getBaanxAuthToken", () => {
     expect(new Set(results.map(r => r.accessToken))).toEqual(new Set(["token-1"]));
   });
 
+  it("does not serve the stale cached token while a forced refresh is running", async () => {
+    // The cached session is exactly the token that provoked the refresh, so
+    // handing it to a concurrent caller guarantees a second 401 and a second
+    // refresh. The in-flight login must win.
+    const { fetchImpl, requests } = createFetchMock([
+      { body: { accessToken: "token-1" } },
+      { body: { accessToken: "token-2" } },
+    ]);
+
+    await getBaanxAuthToken({ env: ENV, deps: { fetchImpl } });
+
+    const forced = getBaanxAuthToken({ env: ENV, deps: { fetchImpl }, forceRefresh: true });
+    const concurrent = getBaanxAuthToken({ env: ENV, deps: { fetchImpl } });
+
+    expect((await concurrent).accessToken).toBe("token-2");
+    expect((await forced).accessToken).toBe("token-2");
+    // One login for the refresh, not one per caller.
+    expect(requests).toHaveLength(2);
+  });
+
   it("still bypasses a cached token when forceRefresh is set", async () => {
     const { fetchImpl, requests } = createFetchMock([
       { body: { accessToken: "token-1" } },
