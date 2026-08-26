@@ -95,7 +95,5 @@ export const makeStepProps = (
     setSelectedNeuronId: jest.fn(),
     lastAction: null,
     setLastAction: jest.fn(),
-    followTopic: null,
-    setFollowTopic: jest.fn(),
     ...overrides,
   }) as unknown as StepProps;
