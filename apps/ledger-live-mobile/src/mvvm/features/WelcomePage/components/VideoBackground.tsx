@@ -40,6 +40,11 @@ export function VideoBackground({
     [onVideoLoad],
   );
 
+  useEffect(() => {
+    if (videoMounted) return;
+    hasLoadedRef.current = false;
+  }, [videoMounted]);
+
   // Rewind on entering the stage rather than on leaving it: a hidden player can drop a
   // seek it was asked to perform, which would resume the story mid-clip on the next visit.
   // A player that has not loaded yet is already at its first frame, and seeking it before

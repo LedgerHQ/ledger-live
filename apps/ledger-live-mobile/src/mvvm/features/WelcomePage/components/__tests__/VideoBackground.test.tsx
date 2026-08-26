@@ -5,6 +5,7 @@ import videoSources from "../../assets";
 import { VideoBackground } from "../VideoBackground";
 
 const mockSeek = jest.fn();
+const mockUseIsAppInBackground = jest.fn(() => false);
 const mockPlayer: { onLoad?: (data: OnLoadData) => void; onEnd?: () => void } = {};
 
 jest.mock("react-native-video", () => {
@@ -24,10 +25,9 @@ jest.mock("react-native-video", () => {
   return { __esModule: true, default: Video };
 });
 
-// AppState is not "active" under Jest, which would keep the player unmounted.
 jest.mock("~/components/useIsAppInBackground", () => ({
   __esModule: true,
-  default: () => false,
+  default: () => mockUseIsAppInBackground(),
 }));
 
 const baseProps = {
@@ -46,6 +46,7 @@ function endVideo() {
 describe("VideoBackground", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsAppInBackground.mockReturnValue(false);
   });
 
   it("should not rewind a story whose player has not loaded yet", () => {
@@ -87,6 +88,20 @@ describe("VideoBackground", () => {
 
     expect(mockSeek).toHaveBeenCalledWith(0);
     expect(onVideoEnd).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not rewind after the player remounts until it has loaded again", () => {
+    const { rerender } = render(<VideoBackground {...baseProps} isOnStage restartKey={0} />);
+    loadVideo();
+    mockSeek.mockClear();
+
+    mockUseIsAppInBackground.mockReturnValue(true);
+    rerender(<VideoBackground {...baseProps} isOnStage restartKey={0} />);
+
+    mockUseIsAppInBackground.mockReturnValue(false);
+    rerender(<VideoBackground {...baseProps} isOnStage restartKey={1} />);
+
+    expect(mockSeek).not.toHaveBeenCalled();
   });
 
   it("should ignore the end of a story that is not on stage", () => {
