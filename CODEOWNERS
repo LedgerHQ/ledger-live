@@ -80,6 +80,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 # Platform — support
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
+support/jest-shared/                                     @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
