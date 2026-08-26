@@ -14,8 +14,12 @@ export function useAddContactViewModel(): AddContactViewModel {
     navigation.goToStep(SEND_FLOW_STEP.ADD_NEW_CONTACT);
   }, [navigation]);
 
+  const onAddToExistingContact = useCallback(() => {
+    navigation.goToStep(SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT);
+  }, [navigation]);
+
   return {
     onAddNewContact,
-    onAddToExistingContact: undefined,
+    onAddToExistingContact,
   };
 }

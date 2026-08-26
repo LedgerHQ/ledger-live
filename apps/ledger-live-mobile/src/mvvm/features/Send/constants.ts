@@ -51,6 +51,13 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     showHeaderRight: false,
     showTitle: false,
   },
+  [SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT]: {
+    id: SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
+    canGoBack: true,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,
