@@ -98,6 +98,7 @@ export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
 export type ContactsRenameAddressDrawerProps = RenameAddressDialogViewModel &
   Readonly<{
     bottomInset?: number;
+    keyboardInset?: number;
     labels: ContactsRenameAddressLabels;
   }>;
 

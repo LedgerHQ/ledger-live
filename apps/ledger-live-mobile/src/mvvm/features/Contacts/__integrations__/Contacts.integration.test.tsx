@@ -1061,6 +1061,35 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should reopen the edit address sheet after closing it", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+
+    expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
+
+    // The address detail sheet stays mounted behind the edit sheet, which is rendered last.
+    const closeButtons = screen.getAllByTestId("bottom-sheet-header-close-button");
+    await user.press(closeButtons[closeButtons.length - 1]);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+
+    expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
+  });
+
   it("should rename an address after confirming on the signer sheet", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(

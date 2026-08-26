@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Keyboard } from "react-native";
 import { renderHook, act } from "@testing-library/react-native";
 import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
 import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
@@ -24,6 +25,8 @@ jest.mock("../contexts/QueuedBottomSheetsContext", () => ({
     _clearQueueDIRTYDONOTUSE: jest.fn(),
   }),
 }));
+
+type HookResult = ReturnType<typeof useQueuedBottomSheet>;
 
 function setupBottomSheetStateCapture() {
   let stateHandlers: BottomSheetStateHandlers | undefined;
@@ -51,6 +54,10 @@ function setupBottomSheetStateCapture() {
 describe("useQueuedBottomSheet", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("calls present() when the queue signals the drawer to open", () => {
@@ -652,6 +659,40 @@ describe("useQueuedBottomSheet", () => {
     });
 
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["the close animation starts", (result: HookResult) => result.handleAnimate(0, -1)],
+    ["the header close is pressed", (result: HookResult) => result.handleHeaderClosePressed()],
+    ["the backdrop is pressed", (result: HookResult) => result.handleBackdropPress()],
+  ])("retracts the keyboard as soon as %s", (_description, startClose) => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    expect(dismissKeyboard).not.toHaveBeenCalled();
+
+    act(() => {
+      startClose(result.current);
+    });
+
+    expect(dismissKeyboard).toHaveBeenCalled();
+  });
+
+  it("retracts the keyboard when the queue closes the drawer", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    signalClose();
+
+    expect(dismissKeyboard).toHaveBeenCalled();
   });
 
   it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
