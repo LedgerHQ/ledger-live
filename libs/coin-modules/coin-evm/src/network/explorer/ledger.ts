@@ -62,11 +62,11 @@ export async function fetchPaginatedOpsWithRetries(
       },
     });
 
-    const mergedOperations = [...previousOperations, ...operationsBatch];
+    previousOperations.push(...operationsBatch);
 
     return token
-      ? fetchPaginatedOpsWithRetries(params, token, mergedOperations, retries)
-      : mergedOperations.sort(
+      ? fetchPaginatedOpsWithRetries(params, token, previousOperations, retries)
+      : previousOperations.sort(
           // sorting DESC order
           (a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime(),
         );

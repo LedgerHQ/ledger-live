@@ -531,10 +531,9 @@ type FrameworkOperationExtra = {
 };
 
 /**
- * Every key of the above, plus `pagingToken` — read as the next sync's cursor in `getAccountShape` but
- * never written here. The family bag lands flat beside these, so a collision is dropped rather than
- * merged: each framework key is written *conditionally*, so a surviving family key would supply the
- * framework's own answer on an operation where the framework wrote none.
+ * Every key of the above. The family bag lands flat beside these, so a collision is dropped rather
+ * than merged: each framework key is written *conditionally*, so a surviving family key would supply
+ * the framework's own answer on an operation where the framework wrote none.
  *
  * `satisfies Record<…, true>` keeps this list honest: adding a field to `FrameworkOperationExtra`
  * without reserving it here fails to compile.
@@ -553,8 +552,7 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     internal: true,
     feePayer: true,
     stake: true,
-    pagingToken: true,
-  } satisfies Record<keyof FrameworkOperationExtra | "pagingToken", true>),
+  } satisfies Record<keyof FrameworkOperationExtra, true>),
 );
 
 function stripFrameworkReservedKeys(bag: Record<string, unknown>): Record<string, unknown> {
