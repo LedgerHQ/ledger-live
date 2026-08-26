@@ -1,4 +1,4 @@
-import { ledger_swap } from "./generate-protocol";
+import { ledger_trade } from "./generate-protocol";
 import { isHexadecimal } from "./shared-utils";
 import { SwapPayloadFieldExceedsLimit } from "./errors";
 
@@ -50,7 +50,7 @@ function decodeNewTransactionResponse(payload: string): SwapProtobufPayload {
     : Buffer.from(normalized.replace(/-/g, "+").replace(/_/g, "/"), "base64");
   // `decode` throws on malformed wire bytes, which is the validation we want here.
   // (protobufjs `verify` only checks a plain message object, not an encoded buffer.)
-  return ledger_swap.NewTransactionResponse.decode(buffer) as unknown as SwapProtobufPayload;
+  return ledger_trade.NewTransactionResponse.decode(buffer) as unknown as SwapProtobufPayload;
 }
 
 export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {

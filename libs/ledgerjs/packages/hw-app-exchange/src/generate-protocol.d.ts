@@ -1,7 +1,7 @@
 import * as $protobuf from "protobufjs";
 import Long = require("long");
-/** Namespace ledger_swap. */
-export namespace ledger_swap {
+/** Namespace ledger_trade. */
+export namespace ledger_trade {
 
     /** Properties of a NewTransactionResponse. */
     interface INewTransactionResponse {
@@ -50,7 +50,7 @@ export namespace ledger_swap {
          * Constructs a new NewTransactionResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: ledger_swap.INewTransactionResponse);
+        constructor(properties?: ledger_trade.INewTransactionResponse);
 
         /** NewTransactionResponse payinAddress. */
         public payinAddress: string;
@@ -93,23 +93,23 @@ export namespace ledger_swap {
          * @param [properties] Properties to set
          * @returns NewTransactionResponse instance
          */
-        public static create(properties?: ledger_swap.INewTransactionResponse): ledger_swap.NewTransactionResponse;
+        public static create(properties?: ledger_trade.INewTransactionResponse): ledger_trade.NewTransactionResponse;
 
         /**
-         * Encodes the specified NewTransactionResponse message. Does not implicitly {@link ledger_swap.NewTransactionResponse.verify|verify} messages.
+         * Encodes the specified NewTransactionResponse message. Does not implicitly {@link ledger_trade.NewTransactionResponse.verify|verify} messages.
          * @param message NewTransactionResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: ledger_swap.INewTransactionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: ledger_trade.INewTransactionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified NewTransactionResponse message, length delimited. Does not implicitly {@link ledger_swap.NewTransactionResponse.verify|verify} messages.
+         * Encodes the specified NewTransactionResponse message, length delimited. Does not implicitly {@link ledger_trade.NewTransactionResponse.verify|verify} messages.
          * @param message NewTransactionResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: ledger_swap.INewTransactionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: ledger_trade.INewTransactionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
          * Decodes a NewTransactionResponse message from the specified reader or buffer.
@@ -119,7 +119,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_swap.NewTransactionResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_trade.NewTransactionResponse;
 
         /**
          * Decodes a NewTransactionResponse message from the specified reader or buffer, length delimited.
@@ -128,7 +128,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_swap.NewTransactionResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_trade.NewTransactionResponse;
 
         /**
          * Verifies a NewTransactionResponse message.
@@ -142,7 +142,7 @@ export namespace ledger_swap {
          * @param object Plain object
          * @returns NewTransactionResponse
          */
-        public static fromObject(object: { [k: string]: any }): ledger_swap.NewTransactionResponse;
+        public static fromObject(object: { [k: string]: any }): ledger_trade.NewTransactionResponse;
 
         /**
          * Creates a plain object from a NewTransactionResponse message. Also converts values to other types if specified.
@@ -150,7 +150,7 @@ export namespace ledger_swap {
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: ledger_swap.NewTransactionResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: ledger_trade.NewTransactionResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
          * Converts this NewTransactionResponse to JSON.
@@ -183,7 +183,7 @@ export namespace ledger_swap {
          * Constructs a new UDecimal.
          * @param [properties] Properties to set
          */
-        constructor(properties?: ledger_swap.IUDecimal);
+        constructor(properties?: ledger_trade.IUDecimal);
 
         /** UDecimal coefficient. */
         public coefficient: Uint8Array;
@@ -196,23 +196,23 @@ export namespace ledger_swap {
          * @param [properties] Properties to set
          * @returns UDecimal instance
          */
-        public static create(properties?: ledger_swap.IUDecimal): ledger_swap.UDecimal;
+        public static create(properties?: ledger_trade.IUDecimal): ledger_trade.UDecimal;
 
         /**
-         * Encodes the specified UDecimal message. Does not implicitly {@link ledger_swap.UDecimal.verify|verify} messages.
+         * Encodes the specified UDecimal message. Does not implicitly {@link ledger_trade.UDecimal.verify|verify} messages.
          * @param message UDecimal message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: ledger_swap.IUDecimal, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: ledger_trade.IUDecimal, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified UDecimal message, length delimited. Does not implicitly {@link ledger_swap.UDecimal.verify|verify} messages.
+         * Encodes the specified UDecimal message, length delimited. Does not implicitly {@link ledger_trade.UDecimal.verify|verify} messages.
          * @param message UDecimal message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: ledger_swap.IUDecimal, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: ledger_trade.IUDecimal, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
          * Decodes a UDecimal message from the specified reader or buffer.
@@ -222,7 +222,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_swap.UDecimal;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_trade.UDecimal;
 
         /**
          * Decodes a UDecimal message from the specified reader or buffer, length delimited.
@@ -231,7 +231,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_swap.UDecimal;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_trade.UDecimal;
 
         /**
          * Verifies a UDecimal message.
@@ -245,7 +245,7 @@ export namespace ledger_swap {
          * @param object Plain object
          * @returns UDecimal
          */
-        public static fromObject(object: { [k: string]: any }): ledger_swap.UDecimal;
+        public static fromObject(object: { [k: string]: any }): ledger_trade.UDecimal;
 
         /**
          * Creates a plain object from a UDecimal message. Also converts values to other types if specified.
@@ -253,7 +253,7 @@ export namespace ledger_swap {
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: ledger_swap.UDecimal, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: ledger_trade.UDecimal, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
          * Converts this UDecimal to JSON.
@@ -288,7 +288,7 @@ export namespace ledger_swap {
         outCurrency?: (string|null);
 
         /** NewSellResponse outAmount */
-        outAmount?: (ledger_swap.IUDecimal|null);
+        outAmount?: (ledger_trade.IUDecimal|null);
 
         /** NewSellResponse deviceTransactionId */
         deviceTransactionId?: (Uint8Array|null);
@@ -304,7 +304,7 @@ export namespace ledger_swap {
          * Constructs a new NewSellResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: ledger_swap.INewSellResponse);
+        constructor(properties?: ledger_trade.INewSellResponse);
 
         /** NewSellResponse traderEmail. */
         public traderEmail: string;
@@ -322,7 +322,7 @@ export namespace ledger_swap {
         public outCurrency: string;
 
         /** NewSellResponse outAmount. */
-        public outAmount?: (ledger_swap.IUDecimal|null);
+        public outAmount?: (ledger_trade.IUDecimal|null);
 
         /** NewSellResponse deviceTransactionId. */
         public deviceTransactionId: Uint8Array;
@@ -335,23 +335,23 @@ export namespace ledger_swap {
          * @param [properties] Properties to set
          * @returns NewSellResponse instance
          */
-        public static create(properties?: ledger_swap.INewSellResponse): ledger_swap.NewSellResponse;
+        public static create(properties?: ledger_trade.INewSellResponse): ledger_trade.NewSellResponse;
 
         /**
-         * Encodes the specified NewSellResponse message. Does not implicitly {@link ledger_swap.NewSellResponse.verify|verify} messages.
+         * Encodes the specified NewSellResponse message. Does not implicitly {@link ledger_trade.NewSellResponse.verify|verify} messages.
          * @param message NewSellResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: ledger_swap.INewSellResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: ledger_trade.INewSellResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified NewSellResponse message, length delimited. Does not implicitly {@link ledger_swap.NewSellResponse.verify|verify} messages.
+         * Encodes the specified NewSellResponse message, length delimited. Does not implicitly {@link ledger_trade.NewSellResponse.verify|verify} messages.
          * @param message NewSellResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: ledger_swap.INewSellResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: ledger_trade.INewSellResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
          * Decodes a NewSellResponse message from the specified reader or buffer.
@@ -361,7 +361,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_swap.NewSellResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_trade.NewSellResponse;
 
         /**
          * Decodes a NewSellResponse message from the specified reader or buffer, length delimited.
@@ -370,7 +370,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_swap.NewSellResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_trade.NewSellResponse;
 
         /**
          * Verifies a NewSellResponse message.
@@ -384,7 +384,7 @@ export namespace ledger_swap {
          * @param object Plain object
          * @returns NewSellResponse
          */
-        public static fromObject(object: { [k: string]: any }): ledger_swap.NewSellResponse;
+        public static fromObject(object: { [k: string]: any }): ledger_trade.NewSellResponse;
 
         /**
          * Creates a plain object from a NewSellResponse message. Also converts values to other types if specified.
@@ -392,7 +392,7 @@ export namespace ledger_swap {
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: ledger_swap.NewSellResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: ledger_trade.NewSellResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
          * Converts this NewSellResponse to JSON.
@@ -440,7 +440,7 @@ export namespace ledger_swap {
          * Constructs a new NewFundResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: ledger_swap.INewFundResponse);
+        constructor(properties?: ledger_trade.INewFundResponse);
 
         /** NewFundResponse userId. */
         public userId: string;
@@ -468,23 +468,23 @@ export namespace ledger_swap {
          * @param [properties] Properties to set
          * @returns NewFundResponse instance
          */
-        public static create(properties?: ledger_swap.INewFundResponse): ledger_swap.NewFundResponse;
+        public static create(properties?: ledger_trade.INewFundResponse): ledger_trade.NewFundResponse;
 
         /**
-         * Encodes the specified NewFundResponse message. Does not implicitly {@link ledger_swap.NewFundResponse.verify|verify} messages.
+         * Encodes the specified NewFundResponse message. Does not implicitly {@link ledger_trade.NewFundResponse.verify|verify} messages.
          * @param message NewFundResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: ledger_swap.INewFundResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: ledger_trade.INewFundResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified NewFundResponse message, length delimited. Does not implicitly {@link ledger_swap.NewFundResponse.verify|verify} messages.
+         * Encodes the specified NewFundResponse message, length delimited. Does not implicitly {@link ledger_trade.NewFundResponse.verify|verify} messages.
          * @param message NewFundResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: ledger_swap.INewFundResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: ledger_trade.INewFundResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
          * Decodes a NewFundResponse message from the specified reader or buffer.
@@ -494,7 +494,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_swap.NewFundResponse;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ledger_trade.NewFundResponse;
 
         /**
          * Decodes a NewFundResponse message from the specified reader or buffer, length delimited.
@@ -503,7 +503,7 @@ export namespace ledger_swap {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_swap.NewFundResponse;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ledger_trade.NewFundResponse;
 
         /**
          * Verifies a NewFundResponse message.
@@ -517,7 +517,7 @@ export namespace ledger_swap {
          * @param object Plain object
          * @returns NewFundResponse
          */
-        public static fromObject(object: { [k: string]: any }): ledger_swap.NewFundResponse;
+        public static fromObject(object: { [k: string]: any }): ledger_trade.NewFundResponse;
 
         /**
          * Creates a plain object from a NewFundResponse message. Also converts values to other types if specified.
@@ -525,7 +525,7 @@ export namespace ledger_swap {
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: ledger_swap.NewFundResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: ledger_trade.NewFundResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
          * Converts this NewFundResponse to JSON.

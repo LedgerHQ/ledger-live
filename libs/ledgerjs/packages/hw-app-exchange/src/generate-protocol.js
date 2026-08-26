@@ -5,22 +5,22 @@ import * as $protobuf from "protobufjs/minimal";
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
 
 // Exported root namespace
-const $root = $protobuf.roots.ledger_swap || ($protobuf.roots.ledger_swap = {});
+const $root = $protobuf.roots.ledger_trade || ($protobuf.roots.ledger_trade = {});
 
-export const ledger_swap = $root.ledger_swap = (() => {
+export const ledger_trade = $root.ledger_trade = (() => {
 
     /**
-     * Namespace ledger_swap.
-     * @exports ledger_swap
+     * Namespace ledger_trade.
+     * @exports ledger_trade
      * @namespace
      */
-    const ledger_swap = {};
+    const ledger_trade = {};
 
-    ledger_swap.NewTransactionResponse = (function() {
+    ledger_trade.NewTransactionResponse = (function() {
 
         /**
          * Properties of a NewTransactionResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @interface INewTransactionResponse
          * @property {string|null} [payinAddress] NewTransactionResponse payinAddress
          * @property {string|null} [payinExtraId] NewTransactionResponse payinExtraId
@@ -38,11 +38,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
 
         /**
          * Constructs a new NewTransactionResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @classdesc Represents a NewTransactionResponse.
          * @implements INewTransactionResponse
          * @constructor
-         * @param {ledger_swap.INewTransactionResponse=} [properties] Properties to set
+         * @param {ledger_trade.INewTransactionResponse=} [properties] Properties to set
          */
         function NewTransactionResponse(properties) {
             if (properties)
@@ -54,7 +54,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse payinAddress.
          * @member {string} payinAddress
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.payinAddress = "";
@@ -62,7 +62,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse payinExtraId.
          * @member {string} payinExtraId
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.payinExtraId = "";
@@ -70,7 +70,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse refundAddress.
          * @member {string} refundAddress
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.refundAddress = "";
@@ -78,7 +78,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse refundExtraId.
          * @member {string} refundExtraId
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.refundExtraId = "";
@@ -86,7 +86,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse payoutAddress.
          * @member {string} payoutAddress
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.payoutAddress = "";
@@ -94,7 +94,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse payoutExtraId.
          * @member {string} payoutExtraId
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.payoutExtraId = "";
@@ -102,7 +102,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse currencyFrom.
          * @member {string} currencyFrom
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.currencyFrom = "";
@@ -110,7 +110,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse currencyTo.
          * @member {string} currencyTo
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.currencyTo = "";
@@ -118,7 +118,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse amountToProvider.
          * @member {Uint8Array} amountToProvider
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.amountToProvider = $util.newBuffer([]);
@@ -126,7 +126,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse amountToWallet.
          * @member {Uint8Array} amountToWallet
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.amountToWallet = $util.newBuffer([]);
@@ -134,7 +134,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse deviceTransactionId.
          * @member {string} deviceTransactionId
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.deviceTransactionId = "";
@@ -142,7 +142,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewTransactionResponse deviceTransactionIdNg.
          * @member {Uint8Array} deviceTransactionIdNg
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          */
         NewTransactionResponse.prototype.deviceTransactionIdNg = $util.newBuffer([]);
@@ -150,21 +150,21 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a new NewTransactionResponse instance using the specified properties.
          * @function create
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
-         * @param {ledger_swap.INewTransactionResponse=} [properties] Properties to set
-         * @returns {ledger_swap.NewTransactionResponse} NewTransactionResponse instance
+         * @param {ledger_trade.INewTransactionResponse=} [properties] Properties to set
+         * @returns {ledger_trade.NewTransactionResponse} NewTransactionResponse instance
          */
         NewTransactionResponse.create = function create(properties) {
             return new NewTransactionResponse(properties);
         };
 
         /**
-         * Encodes the specified NewTransactionResponse message. Does not implicitly {@link ledger_swap.NewTransactionResponse.verify|verify} messages.
+         * Encodes the specified NewTransactionResponse message. Does not implicitly {@link ledger_trade.NewTransactionResponse.verify|verify} messages.
          * @function encode
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
-         * @param {ledger_swap.INewTransactionResponse} message NewTransactionResponse message or plain object to encode
+         * @param {ledger_trade.INewTransactionResponse} message NewTransactionResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -199,11 +199,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
         };
 
         /**
-         * Encodes the specified NewTransactionResponse message, length delimited. Does not implicitly {@link ledger_swap.NewTransactionResponse.verify|verify} messages.
+         * Encodes the specified NewTransactionResponse message, length delimited. Does not implicitly {@link ledger_trade.NewTransactionResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
-         * @param {ledger_swap.INewTransactionResponse} message NewTransactionResponse message or plain object to encode
+         * @param {ledger_trade.INewTransactionResponse} message NewTransactionResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -214,18 +214,18 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewTransactionResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {ledger_swap.NewTransactionResponse} NewTransactionResponse
+         * @returns {ledger_trade.NewTransactionResponse} NewTransactionResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         NewTransactionResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_swap.NewTransactionResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_trade.NewTransactionResponse();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -288,10 +288,10 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewTransactionResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {ledger_swap.NewTransactionResponse} NewTransactionResponse
+         * @returns {ledger_trade.NewTransactionResponse} NewTransactionResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -304,7 +304,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Verifies a NewTransactionResponse message.
          * @function verify
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -354,15 +354,15 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a NewTransactionResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {ledger_swap.NewTransactionResponse} NewTransactionResponse
+         * @returns {ledger_trade.NewTransactionResponse} NewTransactionResponse
          */
         NewTransactionResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.ledger_swap.NewTransactionResponse)
+            if (object instanceof $root.ledger_trade.NewTransactionResponse)
                 return object;
-            let message = new $root.ledger_swap.NewTransactionResponse();
+            let message = new $root.ledger_trade.NewTransactionResponse();
             if (object.payinAddress != null)
                 message.payinAddress = String(object.payinAddress);
             if (object.payinExtraId != null)
@@ -402,9 +402,9 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a plain object from a NewTransactionResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
-         * @param {ledger_swap.NewTransactionResponse} message NewTransactionResponse
+         * @param {ledger_trade.NewTransactionResponse} message NewTransactionResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -474,7 +474,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Converts this NewTransactionResponse to JSON.
          * @function toJSON
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -485,7 +485,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Gets the default type url for NewTransactionResponse
          * @function getTypeUrl
-         * @memberof ledger_swap.NewTransactionResponse
+         * @memberof ledger_trade.NewTransactionResponse
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
@@ -494,17 +494,17 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/ledger_swap.NewTransactionResponse";
+            return typeUrlPrefix + "/ledger_trade.NewTransactionResponse";
         };
 
         return NewTransactionResponse;
     })();
 
-    ledger_swap.UDecimal = (function() {
+    ledger_trade.UDecimal = (function() {
 
         /**
          * Properties of a UDecimal.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @interface IUDecimal
          * @property {Uint8Array|null} [coefficient] UDecimal coefficient
          * @property {number|null} [exponent] UDecimal exponent
@@ -512,11 +512,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
 
         /**
          * Constructs a new UDecimal.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @classdesc Represents a UDecimal.
          * @implements IUDecimal
          * @constructor
-         * @param {ledger_swap.IUDecimal=} [properties] Properties to set
+         * @param {ledger_trade.IUDecimal=} [properties] Properties to set
          */
         function UDecimal(properties) {
             if (properties)
@@ -528,7 +528,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * UDecimal coefficient.
          * @member {Uint8Array} coefficient
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @instance
          */
         UDecimal.prototype.coefficient = $util.newBuffer([]);
@@ -536,7 +536,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * UDecimal exponent.
          * @member {number} exponent
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @instance
          */
         UDecimal.prototype.exponent = 0;
@@ -544,21 +544,21 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a new UDecimal instance using the specified properties.
          * @function create
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
-         * @param {ledger_swap.IUDecimal=} [properties] Properties to set
-         * @returns {ledger_swap.UDecimal} UDecimal instance
+         * @param {ledger_trade.IUDecimal=} [properties] Properties to set
+         * @returns {ledger_trade.UDecimal} UDecimal instance
          */
         UDecimal.create = function create(properties) {
             return new UDecimal(properties);
         };
 
         /**
-         * Encodes the specified UDecimal message. Does not implicitly {@link ledger_swap.UDecimal.verify|verify} messages.
+         * Encodes the specified UDecimal message. Does not implicitly {@link ledger_trade.UDecimal.verify|verify} messages.
          * @function encode
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
-         * @param {ledger_swap.IUDecimal} message UDecimal message or plain object to encode
+         * @param {ledger_trade.IUDecimal} message UDecimal message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -573,11 +573,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
         };
 
         /**
-         * Encodes the specified UDecimal message, length delimited. Does not implicitly {@link ledger_swap.UDecimal.verify|verify} messages.
+         * Encodes the specified UDecimal message, length delimited. Does not implicitly {@link ledger_trade.UDecimal.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
-         * @param {ledger_swap.IUDecimal} message UDecimal message or plain object to encode
+         * @param {ledger_trade.IUDecimal} message UDecimal message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -588,18 +588,18 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a UDecimal message from the specified reader or buffer.
          * @function decode
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {ledger_swap.UDecimal} UDecimal
+         * @returns {ledger_trade.UDecimal} UDecimal
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         UDecimal.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_swap.UDecimal();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_trade.UDecimal();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -622,10 +622,10 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a UDecimal message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {ledger_swap.UDecimal} UDecimal
+         * @returns {ledger_trade.UDecimal} UDecimal
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -638,7 +638,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Verifies a UDecimal message.
          * @function verify
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -658,15 +658,15 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a UDecimal message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {ledger_swap.UDecimal} UDecimal
+         * @returns {ledger_trade.UDecimal} UDecimal
          */
         UDecimal.fromObject = function fromObject(object) {
-            if (object instanceof $root.ledger_swap.UDecimal)
+            if (object instanceof $root.ledger_trade.UDecimal)
                 return object;
-            let message = new $root.ledger_swap.UDecimal();
+            let message = new $root.ledger_trade.UDecimal();
             if (object.coefficient != null)
                 if (typeof object.coefficient === "string")
                     $util.base64.decode(object.coefficient, message.coefficient = $util.newBuffer($util.base64.length(object.coefficient)), 0);
@@ -680,9 +680,9 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a plain object from a UDecimal message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
-         * @param {ledger_swap.UDecimal} message UDecimal
+         * @param {ledger_trade.UDecimal} message UDecimal
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -710,7 +710,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Converts this UDecimal to JSON.
          * @function toJSON
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -721,7 +721,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Gets the default type url for UDecimal
          * @function getTypeUrl
-         * @memberof ledger_swap.UDecimal
+         * @memberof ledger_trade.UDecimal
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
@@ -730,35 +730,35 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/ledger_swap.UDecimal";
+            return typeUrlPrefix + "/ledger_trade.UDecimal";
         };
 
         return UDecimal;
     })();
 
-    ledger_swap.NewSellResponse = (function() {
+    ledger_trade.NewSellResponse = (function() {
 
         /**
          * Properties of a NewSellResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @interface INewSellResponse
          * @property {string|null} [traderEmail] NewSellResponse traderEmail
          * @property {string|null} [inCurrency] NewSellResponse inCurrency
          * @property {Uint8Array|null} [inAmount] NewSellResponse inAmount
          * @property {string|null} [inAddress] NewSellResponse inAddress
          * @property {string|null} [outCurrency] NewSellResponse outCurrency
-         * @property {ledger_swap.IUDecimal|null} [outAmount] NewSellResponse outAmount
+         * @property {ledger_trade.IUDecimal|null} [outAmount] NewSellResponse outAmount
          * @property {Uint8Array|null} [deviceTransactionId] NewSellResponse deviceTransactionId
          * @property {string|null} [inExtraId] NewSellResponse inExtraId
          */
 
         /**
          * Constructs a new NewSellResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @classdesc Represents a NewSellResponse.
          * @implements INewSellResponse
          * @constructor
-         * @param {ledger_swap.INewSellResponse=} [properties] Properties to set
+         * @param {ledger_trade.INewSellResponse=} [properties] Properties to set
          */
         function NewSellResponse(properties) {
             if (properties)
@@ -770,7 +770,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse traderEmail.
          * @member {string} traderEmail
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.traderEmail = "";
@@ -778,7 +778,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse inCurrency.
          * @member {string} inCurrency
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.inCurrency = "";
@@ -786,7 +786,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse inAmount.
          * @member {Uint8Array} inAmount
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.inAmount = $util.newBuffer([]);
@@ -794,7 +794,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse inAddress.
          * @member {string} inAddress
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.inAddress = "";
@@ -802,15 +802,15 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse outCurrency.
          * @member {string} outCurrency
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.outCurrency = "";
 
         /**
          * NewSellResponse outAmount.
-         * @member {ledger_swap.IUDecimal|null|undefined} outAmount
-         * @memberof ledger_swap.NewSellResponse
+         * @member {ledger_trade.IUDecimal|null|undefined} outAmount
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.outAmount = null;
@@ -818,7 +818,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse deviceTransactionId.
          * @member {Uint8Array} deviceTransactionId
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.deviceTransactionId = $util.newBuffer([]);
@@ -826,7 +826,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewSellResponse inExtraId.
          * @member {string} inExtraId
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          */
         NewSellResponse.prototype.inExtraId = "";
@@ -834,21 +834,21 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a new NewSellResponse instance using the specified properties.
          * @function create
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
-         * @param {ledger_swap.INewSellResponse=} [properties] Properties to set
-         * @returns {ledger_swap.NewSellResponse} NewSellResponse instance
+         * @param {ledger_trade.INewSellResponse=} [properties] Properties to set
+         * @returns {ledger_trade.NewSellResponse} NewSellResponse instance
          */
         NewSellResponse.create = function create(properties) {
             return new NewSellResponse(properties);
         };
 
         /**
-         * Encodes the specified NewSellResponse message. Does not implicitly {@link ledger_swap.NewSellResponse.verify|verify} messages.
+         * Encodes the specified NewSellResponse message. Does not implicitly {@link ledger_trade.NewSellResponse.verify|verify} messages.
          * @function encode
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
-         * @param {ledger_swap.INewSellResponse} message NewSellResponse message or plain object to encode
+         * @param {ledger_trade.INewSellResponse} message NewSellResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -866,7 +866,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (message.outCurrency != null && Object.hasOwnProperty.call(message, "outCurrency"))
                 writer.uint32(/* id 5, wireType 2 =*/42).string(message.outCurrency);
             if (message.outAmount != null && Object.hasOwnProperty.call(message, "outAmount"))
-                $root.ledger_swap.UDecimal.encode(message.outAmount, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                $root.ledger_trade.UDecimal.encode(message.outAmount, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.deviceTransactionId != null && Object.hasOwnProperty.call(message, "deviceTransactionId"))
                 writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.deviceTransactionId);
             if (message.inExtraId != null && Object.hasOwnProperty.call(message, "inExtraId"))
@@ -875,11 +875,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
         };
 
         /**
-         * Encodes the specified NewSellResponse message, length delimited. Does not implicitly {@link ledger_swap.NewSellResponse.verify|verify} messages.
+         * Encodes the specified NewSellResponse message, length delimited. Does not implicitly {@link ledger_trade.NewSellResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
-         * @param {ledger_swap.INewSellResponse} message NewSellResponse message or plain object to encode
+         * @param {ledger_trade.INewSellResponse} message NewSellResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -890,18 +890,18 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewSellResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {ledger_swap.NewSellResponse} NewSellResponse
+         * @returns {ledger_trade.NewSellResponse} NewSellResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         NewSellResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_swap.NewSellResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_trade.NewSellResponse();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -926,7 +926,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
                         break;
                     }
                 case 6: {
-                        message.outAmount = $root.ledger_swap.UDecimal.decode(reader, reader.uint32());
+                        message.outAmount = $root.ledger_trade.UDecimal.decode(reader, reader.uint32());
                         break;
                     }
                 case 7: {
@@ -948,10 +948,10 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewSellResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {ledger_swap.NewSellResponse} NewSellResponse
+         * @returns {ledger_trade.NewSellResponse} NewSellResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -964,7 +964,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Verifies a NewSellResponse message.
          * @function verify
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -988,7 +988,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
                 if (!$util.isString(message.outCurrency))
                     return "outCurrency: string expected";
             if (message.outAmount != null && message.hasOwnProperty("outAmount")) {
-                let error = $root.ledger_swap.UDecimal.verify(message.outAmount);
+                let error = $root.ledger_trade.UDecimal.verify(message.outAmount);
                 if (error)
                     return "outAmount." + error;
             }
@@ -1004,15 +1004,15 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a NewSellResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {ledger_swap.NewSellResponse} NewSellResponse
+         * @returns {ledger_trade.NewSellResponse} NewSellResponse
          */
         NewSellResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.ledger_swap.NewSellResponse)
+            if (object instanceof $root.ledger_trade.NewSellResponse)
                 return object;
-            let message = new $root.ledger_swap.NewSellResponse();
+            let message = new $root.ledger_trade.NewSellResponse();
             if (object.traderEmail != null)
                 message.traderEmail = String(object.traderEmail);
             if (object.inCurrency != null)
@@ -1028,8 +1028,8 @@ export const ledger_swap = $root.ledger_swap = (() => {
                 message.outCurrency = String(object.outCurrency);
             if (object.outAmount != null) {
                 if (typeof object.outAmount !== "object")
-                    throw TypeError(".ledger_swap.NewSellResponse.outAmount: object expected");
-                message.outAmount = $root.ledger_swap.UDecimal.fromObject(object.outAmount);
+                    throw TypeError(".ledger_trade.NewSellResponse.outAmount: object expected");
+                message.outAmount = $root.ledger_trade.UDecimal.fromObject(object.outAmount);
             }
             if (object.deviceTransactionId != null)
                 if (typeof object.deviceTransactionId === "string")
@@ -1044,9 +1044,9 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a plain object from a NewSellResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
-         * @param {ledger_swap.NewSellResponse} message NewSellResponse
+         * @param {ledger_trade.NewSellResponse} message NewSellResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -1087,7 +1087,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (message.outCurrency != null && message.hasOwnProperty("outCurrency"))
                 object.outCurrency = message.outCurrency;
             if (message.outAmount != null && message.hasOwnProperty("outAmount"))
-                object.outAmount = $root.ledger_swap.UDecimal.toObject(message.outAmount, options);
+                object.outAmount = $root.ledger_trade.UDecimal.toObject(message.outAmount, options);
             if (message.deviceTransactionId != null && message.hasOwnProperty("deviceTransactionId"))
                 object.deviceTransactionId = options.bytes === String ? $util.base64.encode(message.deviceTransactionId, 0, message.deviceTransactionId.length) : options.bytes === Array ? Array.prototype.slice.call(message.deviceTransactionId) : message.deviceTransactionId;
             if (message.inExtraId != null && message.hasOwnProperty("inExtraId"))
@@ -1098,7 +1098,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Converts this NewSellResponse to JSON.
          * @function toJSON
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -1109,7 +1109,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Gets the default type url for NewSellResponse
          * @function getTypeUrl
-         * @memberof ledger_swap.NewSellResponse
+         * @memberof ledger_trade.NewSellResponse
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
@@ -1118,17 +1118,17 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/ledger_swap.NewSellResponse";
+            return typeUrlPrefix + "/ledger_trade.NewSellResponse";
         };
 
         return NewSellResponse;
     })();
 
-    ledger_swap.NewFundResponse = (function() {
+    ledger_trade.NewFundResponse = (function() {
 
         /**
          * Properties of a NewFundResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @interface INewFundResponse
          * @property {string|null} [userId] NewFundResponse userId
          * @property {string|null} [accountName] NewFundResponse accountName
@@ -1141,11 +1141,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
 
         /**
          * Constructs a new NewFundResponse.
-         * @memberof ledger_swap
+         * @memberof ledger_trade
          * @classdesc Represents a NewFundResponse.
          * @implements INewFundResponse
          * @constructor
-         * @param {ledger_swap.INewFundResponse=} [properties] Properties to set
+         * @param {ledger_trade.INewFundResponse=} [properties] Properties to set
          */
         function NewFundResponse(properties) {
             if (properties)
@@ -1157,7 +1157,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse userId.
          * @member {string} userId
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.userId = "";
@@ -1165,7 +1165,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse accountName.
          * @member {string} accountName
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.accountName = "";
@@ -1173,7 +1173,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse inCurrency.
          * @member {string} inCurrency
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.inCurrency = "";
@@ -1181,7 +1181,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse inAmount.
          * @member {Uint8Array} inAmount
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.inAmount = $util.newBuffer([]);
@@ -1189,7 +1189,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse inAddress.
          * @member {string} inAddress
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.inAddress = "";
@@ -1197,7 +1197,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse deviceTransactionId.
          * @member {Uint8Array} deviceTransactionId
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.deviceTransactionId = $util.newBuffer([]);
@@ -1205,7 +1205,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * NewFundResponse inExtraId.
          * @member {string} inExtraId
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          */
         NewFundResponse.prototype.inExtraId = "";
@@ -1213,21 +1213,21 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a new NewFundResponse instance using the specified properties.
          * @function create
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
-         * @param {ledger_swap.INewFundResponse=} [properties] Properties to set
-         * @returns {ledger_swap.NewFundResponse} NewFundResponse instance
+         * @param {ledger_trade.INewFundResponse=} [properties] Properties to set
+         * @returns {ledger_trade.NewFundResponse} NewFundResponse instance
          */
         NewFundResponse.create = function create(properties) {
             return new NewFundResponse(properties);
         };
 
         /**
-         * Encodes the specified NewFundResponse message. Does not implicitly {@link ledger_swap.NewFundResponse.verify|verify} messages.
+         * Encodes the specified NewFundResponse message. Does not implicitly {@link ledger_trade.NewFundResponse.verify|verify} messages.
          * @function encode
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
-         * @param {ledger_swap.INewFundResponse} message NewFundResponse message or plain object to encode
+         * @param {ledger_trade.INewFundResponse} message NewFundResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1252,11 +1252,11 @@ export const ledger_swap = $root.ledger_swap = (() => {
         };
 
         /**
-         * Encodes the specified NewFundResponse message, length delimited. Does not implicitly {@link ledger_swap.NewFundResponse.verify|verify} messages.
+         * Encodes the specified NewFundResponse message, length delimited. Does not implicitly {@link ledger_trade.NewFundResponse.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
-         * @param {ledger_swap.INewFundResponse} message NewFundResponse message or plain object to encode
+         * @param {ledger_trade.INewFundResponse} message NewFundResponse message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1267,18 +1267,18 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewFundResponse message from the specified reader or buffer.
          * @function decode
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {ledger_swap.NewFundResponse} NewFundResponse
+         * @returns {ledger_trade.NewFundResponse} NewFundResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         NewFundResponse.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_swap.NewFundResponse();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ledger_trade.NewFundResponse();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1321,10 +1321,10 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Decodes a NewFundResponse message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {ledger_swap.NewFundResponse} NewFundResponse
+         * @returns {ledger_trade.NewFundResponse} NewFundResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
@@ -1337,7 +1337,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Verifies a NewFundResponse message.
          * @function verify
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1372,15 +1372,15 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a NewFundResponse message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {ledger_swap.NewFundResponse} NewFundResponse
+         * @returns {ledger_trade.NewFundResponse} NewFundResponse
          */
         NewFundResponse.fromObject = function fromObject(object) {
-            if (object instanceof $root.ledger_swap.NewFundResponse)
+            if (object instanceof $root.ledger_trade.NewFundResponse)
                 return object;
-            let message = new $root.ledger_swap.NewFundResponse();
+            let message = new $root.ledger_trade.NewFundResponse();
             if (object.userId != null)
                 message.userId = String(object.userId);
             if (object.accountName != null)
@@ -1407,9 +1407,9 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Creates a plain object from a NewFundResponse message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
-         * @param {ledger_swap.NewFundResponse} message NewFundResponse
+         * @param {ledger_trade.NewFundResponse} message NewFundResponse
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
@@ -1458,7 +1458,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Converts this NewFundResponse to JSON.
          * @function toJSON
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
@@ -1469,7 +1469,7 @@ export const ledger_swap = $root.ledger_swap = (() => {
         /**
          * Gets the default type url for NewFundResponse
          * @function getTypeUrl
-         * @memberof ledger_swap.NewFundResponse
+         * @memberof ledger_trade.NewFundResponse
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
@@ -1478,13 +1478,13 @@ export const ledger_swap = $root.ledger_swap = (() => {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/ledger_swap.NewFundResponse";
+            return typeUrlPrefix + "/ledger_trade.NewFundResponse";
         };
 
         return NewFundResponse;
     })();
 
-    return ledger_swap;
+    return ledger_trade;
 })();
 
 export { $root as default };

@@ -1,4 +1,4 @@
-import { ledger_swap } from "./generate-protocol";
+import { ledger_trade } from "./generate-protocol";
 import { isHexadecimal } from "./shared-utils";
 
 export type FundPayload = {
@@ -16,7 +16,7 @@ export async function decodeFundPayload(payload: string): Promise<FundPayload> {
     ? Buffer.from(payload, "hex")
     : Buffer.from(payload, "base64");
 
-  const FundResponse = ledger_swap.NewFundResponse;
+  const FundResponse = ledger_trade.NewFundResponse;
   const decodedPayload = FundResponse.decode(buffer);
   const err = FundResponse.verify(decodedPayload);
 
