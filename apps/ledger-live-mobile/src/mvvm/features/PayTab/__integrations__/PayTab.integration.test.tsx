@@ -184,8 +184,8 @@ describe("PayTab integration", () => {
       expect(screen.getByText(EMPTY_TITLE)).toBeVisible();
       expect(screen.getByText(EMPTY_DESCRIPTION)).toBeVisible();
       expect(screen.queryByTestId("pay-card-balance-funded-state")).toBeNull();
-      expect(screen.queryByTestId("action-tile-deposit")).toBeNull();
-      expect(screen.queryByTestId("action-tile-request")).toBeNull();
+      expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
+      expect(screen.getByTestId("action-tile-request")).toBeVisible();
     });
 
     it("should render the aggregated stablecoin balance when the user holds stablecoins", async () => {

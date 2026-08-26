@@ -10,6 +10,9 @@ Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Rend
 - **empty** — a placeholder title and description, no balance. Used when the balance is zero or
   `status` is `"error"`.
 
+Action tiles render in both modes, as a sibling of the hero so they do not remount when
+empty and funded swap.
+
 ## Usage
 
 ```tsx

@@ -41,7 +41,7 @@ export function useBalanceViewModel({
   );
 
   if (!isFunded) {
-    return { displayMode: "empty", labels };
+    return { displayMode: "empty", labels, actionTiles };
   }
 
   return {
