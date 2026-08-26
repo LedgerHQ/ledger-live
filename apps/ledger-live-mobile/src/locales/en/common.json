@@ -1639,6 +1639,18 @@
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."
     },
+    "ICPNeuronsNotRead": {
+      "title": "Neurons not refreshed",
+      "description": "The Internet Computer did not return your neurons, so they are unchanged. Please try again."
+    },
+    "ICPGovernanceRejected": {
+      "title": "The network refused this operation",
+      "description": "Internet Computer governance rejected the request, so the neuron is unchanged. Sync your neurons to see their current state. {{reason}}"
+    },
+    "ICPCallRejected": {
+      "title": "Request not accepted",
+      "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
+    },
     "ICPCreateNeuronWarning": {
       "title": "This locks your ICP in a new neuron",
       "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
