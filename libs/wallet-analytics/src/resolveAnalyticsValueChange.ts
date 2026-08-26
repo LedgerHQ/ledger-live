@@ -18,6 +18,10 @@ export function resolveAnalyticsValueChange({
   readonly cvState: CounterValuesState;
   readonly counterValue: Currency;
 }): ValueChange {
+  if (!portfolio.countervalueComplete) {
+    return { value: 0, percentage: null };
+  }
+
   if (selectedTimeRange === "all") {
     return computeAllTimeValueChangeFromFirstReceive(
       accounts,

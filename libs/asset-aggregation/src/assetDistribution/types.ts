@@ -31,7 +31,7 @@ export type MetaGroup = {
   metaCurrencyId: string;
   currency: CryptoCurrency | TokenCurrency;
   accounts: AccountLike[];
-  countervalue: number;
+  countervalue?: number;
   amount: number;
   networks: Map<string, NetworkDistributionDetail>;
   marketId?: string;

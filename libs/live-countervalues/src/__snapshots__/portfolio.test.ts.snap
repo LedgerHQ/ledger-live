@@ -2,6 +2,7 @@
 
 exports[`Portfolio getAssetsDistribution snapshot 1`] = `
 {
+  "countervalueComplete": true,
   "isAvailable": true,
   "list": [
     {
@@ -6392,6 +6393,7 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
     "percentage": 323.64,
     "value": 16182,
   },
+  "countervalueComplete": true,
   "countervalueReceiveSum": 0,
   "countervalueSendSum": 0,
   "histories": [

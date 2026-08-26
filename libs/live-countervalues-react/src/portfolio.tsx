@@ -70,6 +70,9 @@ const lowThrottleDelay = 100;
  * keep an intermediate throttle until some additional data is available
  */
 const intermediateThrottleDelay = 300;
+
+const getCurrencyKey = (currency: Currency): string =>
+  currency.type === "FiatCurrency" ? currency.ticker : currency.id;
 /**
  * Computes the data necessary to plot of a graph of the user's balance.
  * It throttles that expensive computation by throttling the `accounts` and
@@ -110,9 +113,11 @@ export function usePortfolioThrottled({
    * time.
    * */
   const opts = useRef(options);
-  const [portfolio, setPortfolio] = useState(() =>
-    getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current),
-  );
+  const toKey = getCurrencyKey(to);
+  const [computed, setComputed] = useState(() => ({
+    portfolio: getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current),
+    toKey,
+  }));
 
   const ignoreUseEffectFirstCall = useRef(true);
   useEffect(() => {
@@ -123,13 +128,15 @@ export function usePortfolioThrottled({
       return;
     }
     const portfolio = getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current);
-    setPortfolio(portfolio);
+    setComputed({ portfolio, toKey });
     if (portfolio.balanceAvailable) setVariableThrottleDelay(intermediateThrottleDelay);
     if (throttledAccounts.length > 0 && portfolio.availableAccounts.length > 0)
       setVariableThrottleDelay(stableThrottleDelay);
-  }, [throttledAccounts, range, throttledCVState, to, stableThrottleDelay]);
+  }, [throttledAccounts, range, throttledCVState, to, toKey, stableThrottleDelay]);
 
-  return portfolio;
+  if (computed.toKey === toKey) return computed.portfolio;
+
+  return getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current);
 }
 
 export function useCurrencyPortfolio({
@@ -150,6 +157,7 @@ export function useCurrencyPortfolio({
 
 const emptyDistribution: AssetsDistribution = {
   isAvailable: false,
+  countervalueComplete: false,
   list: [],
   showFirst: 0,
   sum: 0,

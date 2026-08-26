@@ -66,6 +66,7 @@ export type CurrencyPortfolio = {
 export type Portfolio = {
   balanceHistory: BalanceHistory;
   balanceAvailable: boolean;
+  countervalueComplete: boolean;
   availableAccounts: AccountLike[];
   unavailableCurrencies: (CryptoCurrency | TokenCurrency)[];
   accounts: AccountLike[];
@@ -114,8 +115,10 @@ export type DistributionItem = {
  *
  */
 export type AssetsDistribution = {
-  // false if no distribution can be done (sum is zero)
+  // false when no distribution list can be built
   isAvailable: boolean;
+  // false when at least one positive balance has no current countervalue
+  countervalueComplete: boolean;
   // a sorted list of assets with data
   list: DistributionItem[];
   // number of accounts to show first (before the see all)

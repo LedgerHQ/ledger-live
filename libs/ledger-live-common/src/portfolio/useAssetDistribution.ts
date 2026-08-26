@@ -31,6 +31,7 @@ export type UseAssetDistributionOpts = {
 
 const emptyDistribution: AssetsDistribution = {
   isAvailable: false,
+  countervalueComplete: false,
   list: [],
   showFirst: 0,
   sum: 0,

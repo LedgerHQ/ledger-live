@@ -4,7 +4,6 @@ import {
   flattenAccounts,
   getAccountCurrency,
   getAccountHistoryBalances,
-  isAccountEmpty,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
@@ -175,7 +174,6 @@ function getBalanceHistoryWithChanges(
     from: currency,
     to: cvCurrency,
   });
-  let countervalueAvailable = false;
   const history: Array<{
     date: Date;
     value: number;
@@ -185,9 +183,6 @@ function getBalanceHistoryWithChanges(
   for (let i = 0; i < balanceHistory.length; i++) {
     const { date, value } = balanceHistory[i];
     const countervalue = counterValues[i];
-    if (countervalue !== undefined && countervalue !== null) {
-      countervalueAvailable = true;
-    }
     history.push({
       date,
       value,
@@ -198,6 +193,8 @@ function getBalanceHistoryWithChanges(
   function calcChanges(start = 0) {
     const from = history.at(start) ?? { value: 0, countervalue: 0 };
     const to = history.at(-1) ?? { value: 0, countervalue: 0 };
+    const countervalueChangeComplete =
+      (from.value <= 0 || from.countervalue != null) && (to.value <= 0 || to.countervalue != null);
     return {
       countervalueReceiveSum: 0,
       // not available here
@@ -206,19 +203,27 @@ function getBalanceHistoryWithChanges(
         value: to.value - from.value,
         percentage: null,
       },
-      countervalueChange: {
-        value: (to.countervalue || 0) - (from.countervalue || 0),
-        percentage: meaningfulPercentage(
-          (to.countervalue || 0) - (from.countervalue || 0),
-          from.countervalue,
-        ),
-      },
+      countervalueChange: countervalueChangeComplete
+        ? {
+            value: (to.countervalue || 0) - (from.countervalue || 0),
+            percentage: meaningfulPercentage(
+              (to.countervalue || 0) - (from.countervalue || 0),
+              from.countervalue,
+            ),
+          }
+        : { value: 0, percentage: null },
     };
   }
 
   return {
     history,
-    countervalueAvailable,
+    countervalueAvailable:
+      calculate(cvState, {
+        value: account.balance.toNumber(),
+        from: currency,
+        to: cvCurrency,
+        disableRounding: true,
+      }) != null,
     changes: calcChanges,
   };
 }
@@ -228,6 +233,10 @@ export function meaningfulPercentage(
   balanceDivider: number | null | undefined,
   percentageHighThreshold = 100000,
 ): number | null | undefined {
+  if (deltaChange === 0 && balanceDivider != null && balanceDivider !== 0) {
+    return 0;
+  }
+
   if (deltaChange && balanceDivider && balanceDivider !== 0) {
     const percent = deltaChange / balanceDivider;
 
@@ -308,10 +317,30 @@ export function getPortfolio(
       : countervalueReceiveSum
     : firstSignificantHistoryValue;
 
+  const countervalueComplete = accounts.every(account => {
+    if (!account.balance.isGreaterThan(0)) return true;
+    return (
+      calculate(cvState, {
+        value: account.balance.toNumber(),
+        from: getAccountCurrency(account),
+        to: cvCurrency,
+        disableRounding: true,
+      }) != null
+    );
+  });
+  const countervalueChangeComplete =
+    countervalueComplete &&
+    availables.every(({ history }) =>
+      history.every(point => point.value <= 0 || point.countervalue != null),
+    );
+
   return {
     balanceHistory,
     balanceAvailable:
-      accounts.length === 0 || availables.length > 0 || unavailableAccounts.every(isAccountEmpty),
+      accounts.length === 0 ||
+      availables.length > 0 ||
+      unavailableAccounts.every(account => !account.balance.isGreaterThan(0)),
+    countervalueComplete,
     availableAccounts: availables.map(a => a.account),
     unavailableCurrencies: [...new Set(unavailableAccounts.map(a => getAccountCurrency(a)))],
     accounts,
@@ -319,10 +348,12 @@ export function getPortfolio(
     histories,
     countervalueReceiveSum,
     countervalueSendSum,
-    countervalueChange: {
-      percentage: meaningfulPercentage(countervalueChangeValue, balanceDivider),
-      value: countervalueChangeValue,
-    },
+    countervalueChange: countervalueChangeComplete
+      ? {
+          percentage: meaningfulPercentage(countervalueChangeValue, balanceDivider),
+          value: countervalueChangeValue,
+        }
+      : { value: 0, percentage: null },
   };
 }
 
@@ -355,13 +386,20 @@ export function getCurrencyPortfolio(
     value: to.value - from.value,
     percentage: null,
   };
-  const countervalueChange = {
-    value: (to.countervalue || 0) - (from.countervalue || 0),
-    percentage: meaningfulPercentage(
-      (to.countervalue || 0) - (from.countervalue || 0),
-      from.countervalue,
-    ),
-  };
+  const countervalueChangeComplete =
+    countervalueAvailable &&
+    histories.every(history =>
+      history.every(point => point.value <= 0 || point.countervalue != null),
+    );
+  const countervalueChange = countervalueChangeComplete
+    ? {
+        value: (to.countervalue || 0) - (from.countervalue || 0),
+        percentage: meaningfulPercentage(
+          (to.countervalue || 0) - (from.countervalue || 0),
+          from.countervalue,
+        ),
+      }
+    : { value: 0, percentage: null };
   return {
     history,
     countervalueAvailable,
@@ -465,16 +503,20 @@ export function getAssetsDistribution(
   }
 
   const idCountervalues: Record<string, number | undefined> = {};
-  let sum = 0;
+  let calculatedSum = 0;
 
   for (const [id, value] of Object.entries(idBalances)) {
+    if (value <= 0) {
+      idCountervalues[id] = 0;
+      continue;
+    }
     const cv = calculate(cvState, {
       value: Number(value),
       from: idCurrencies[id],
       to: cvCurrency,
     });
-    if (cv) {
-      sum += cv;
+    if (cv != null) {
+      calculatedSum += cv;
       idCountervalues[id] = cv;
     }
   }
@@ -485,27 +527,31 @@ export function getAssetsDistribution(
     return assetsDistributionNotAvailable;
   }
 
-  const isAvailable = sum !== 0 || showEmptyAccounts;
+  const countervalueComplete = idCurrenciesKeys.every(
+    id => idBalances[id] <= 0 || idCountervalues[id] != null,
+  );
+  const sum = countervalueComplete ? calculatedSum : 0;
+  const isAvailable = true;
   const list = idCurrenciesKeys
     .map(id => {
       const currency = idCurrencies[id];
       const amount = idBalances[id];
-      const countervalue = idCountervalues[id] ?? 0;
+      const countervalue = idCountervalues[id];
       const currencyAccounts = currenciesAccounts[id];
       return {
         currency,
         countervalue,
         amount,
-        distribution: isAvailable
+        distribution: countervalueComplete
           ? sum !== 0
-            ? countervalue / sum
+            ? (countervalue ?? 0) / sum
             : 1 / idCurrenciesKeys.length
           : 0,
         accounts: currencyAccounts,
       };
     })
     .sort((a, b) => {
-      const diff = b.countervalue - a.countervalue;
+      const diff = (b.countervalue ?? 0) - (a.countervalue ?? 0);
       return diff === 0 ? a.currency.name.localeCompare(b.currency.name) : diff;
     });
   let i;
@@ -522,6 +568,7 @@ export function getAssetsDistribution(
   const showFirst = Math.max(minShowFirst, i);
   const data = {
     isAvailable,
+    countervalueComplete,
     list,
     showFirst,
     sum,
@@ -530,6 +577,7 @@ export function getAssetsDistribution(
 }
 const assetsDistributionNotAvailable: AssetsDistribution = {
   isAvailable: false,
+  countervalueComplete: true,
   list: [],
   showFirst: 0,
   sum: 0,

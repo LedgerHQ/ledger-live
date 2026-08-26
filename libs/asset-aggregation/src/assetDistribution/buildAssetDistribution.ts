@@ -86,6 +86,7 @@ function sumNetworkAmountsAtReferenceMagnitude(
 
 const EMPTY_DISTRIBUTION: AssetsDistribution = Object.freeze({
   isAvailable: false,
+  countervalueComplete: true,
   list: [],
   showFirst: 0,
   sum: 0,
@@ -148,7 +149,8 @@ export function buildAssetDistribution(
 
   if (groups.size === 0) return EMPTY_DISTRIBUTION;
 
-  let sum = 0;
+  let calculatedSum = 0;
+  let countervalueComplete = true;
   for (const group of groups.values()) {
     const primaryAssetId = primaryAssets[group.metaCurrencyId];
     const normalizedCurrency = resolveNormalizedCurrency(
@@ -167,26 +169,37 @@ export function buildAssetDistribution(
     const referenceMagnitude = group.currency.units[0]?.magnitude ?? 0;
     group.amount = sumNetworkAmountsAtReferenceMagnitude(group.networks, referenceMagnitude);
 
-    let groupCountervalue = 0;
+    let groupCountervalue: number | undefined = 0;
     for (const network of group.networks.values()) {
       const countervalue =
-        calculate(cvState, { value: network.amount, from: network.currency, to }) ?? 0;
-      network.countervalue = countervalue;
-      groupCountervalue += countervalue;
+        network.amount > 0
+          ? calculate(cvState, { value: network.amount, from: network.currency, to })
+          : 0;
+      network.countervalue = countervalue ?? undefined;
+      if (countervalue == null) {
+        groupCountervalue = undefined;
+        countervalueComplete = false;
+      } else if (groupCountervalue != null) {
+        groupCountervalue += countervalue;
+      }
     }
     group.countervalue = groupCountervalue;
-    sum += groupCountervalue;
+    if (groupCountervalue != null) calculatedSum += groupCountervalue;
   }
 
-  const isAvailable = sum !== 0 || showEmptyAccounts;
-  const uniformDistribution = isAvailable ? 1 / groups.size : 0;
+  const sum = countervalueComplete ? calculatedSum : 0;
+  const isAvailable = true;
+  const uniformDistribution = countervalueComplete ? 1 / groups.size : 0;
 
   const list: DistributionItem[] = Array.from(groups.values())
     .map(group => ({
       currency: group.currency,
       countervalue: group.countervalue,
       amount: group.amount,
-      distribution: computeDistribution(group.countervalue, sum, uniformDistribution),
+      distribution:
+        countervalueComplete && group.countervalue != null
+          ? computeDistribution(group.countervalue, sum, uniformDistribution)
+          : 0,
       accounts: group.accounts,
       metaCurrencyId: group.metaCurrencyId,
       networks: Array.from(group.networks.values()),
@@ -194,8 +207,17 @@ export function buildAssetDistribution(
       slug: toSlug(group.metaCurrencyId),
     }))
     .sort(
-      (a, b) => b.countervalue - a.countervalue || a.currency.name.localeCompare(b.currency.name),
+      (a, b) =>
+        (b.countervalue ?? 0) - (a.countervalue ?? 0) ||
+        a.currency.name.localeCompare(b.currency.name),
     );
 
-  return { isAvailable, list, showFirst: list.length, sum, bySlug: buildSlugIndex(list) };
+  return {
+    isAvailable,
+    countervalueComplete,
+    list,
+    showFirst: list.length,
+    sum,
+    bySlug: buildSlugIndex(list),
+  };
 }

@@ -6,7 +6,7 @@ export type CategorizedAssetItem = {
   currency: CryptoCurrency | TokenCurrency;
   marketId?: string;
   balance: number;
-  value: number;
+  value: number | undefined;
   distribution: number;
   accounts: AccountLike[];
 };

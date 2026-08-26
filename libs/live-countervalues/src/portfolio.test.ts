@@ -2,7 +2,7 @@ import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
-import { pairId } from "./helpers";
+import { formatCounterValueHour, pairId } from "./helpers";
 import {
   getPortfolioCount,
   getBalanceHistory,
@@ -115,6 +115,16 @@ describe("Portfolio", () => {
       const cv = getBalanceHistoryWithCountervalue(account, range, count, state, to);
       expect(cv).toMatchSnapshot();
     });
+    it("does not report historical-only data as a current countervalue", async () => {
+      const { state, to } = await loadCV(account);
+      const stateWithoutLatest = withoutLatestRate(state, account, to);
+
+      const cv = getBalanceHistoryWithCountervalue(account, range, count, stateWithoutLatest, to);
+
+      expect(cv.history.some(point => point.countervalue != null)).toBe(true);
+      expect(cv.countervalueAvailable).toBe(false);
+      expect(cv.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
   });
   describe("getPortfolio", () => {
     const account = genAccountBitcoin();
@@ -123,6 +133,7 @@ describe("Portfolio", () => {
       const { state, to } = await loadCV(account);
       const portfolio = getPortfolio([account], range, state, to);
       expect(portfolio.balanceAvailable).toBe(true);
+      expect(portfolio.countervalueComplete).toBe(true);
       expect(portfolio.availableAccounts).toMatchObject([account]);
     });
     test("balanceAvailable should be false and return as unavilableCurrenccies when the latest countervalue does NOT exists", async () => {
@@ -131,6 +142,7 @@ describe("Portfolio", () => {
       const portfolio = getPortfolio([account], range, state, to);
       expect(portfolio.unavailableCurrencies).toMatchObject([getAccountCurrency(account)]);
       expect(portfolio.balanceAvailable).toBe(false);
+      expect(portfolio.countervalueComplete).toBe(false);
     });
     test("balanceAvailable should be true when the only account is empty (no rate to fetch)", () => {
       const to = getFiatCurrencyByTicker("USD");
@@ -146,6 +158,23 @@ describe("Portfolio", () => {
       const state = { ...initialState, data: {} };
       const portfolio = getPortfolio([emptyAccount], range, state, to);
       expect(portfolio.balanceAvailable).toBe(true);
+      expect(portfolio.countervalueComplete).toBe(true);
+    });
+    test("balanceAvailable should be true for a zero balance account with historical operations", () => {
+      const to = getFiatCurrencyByTicker("USD");
+      const zero = account.balance.minus(account.balance);
+      const zeroBalanceAccount: Account = {
+        ...account,
+        balance: zero,
+        spendableBalance: zero,
+        operationsCount: Math.max(account.operationsCount, 1),
+      };
+      const state = { ...initialState, data: {} };
+      const portfolio = getPortfolio([zeroBalanceAccount], range, state, to);
+
+      expect(portfolio.balanceHistory.at(-1)?.value).toBe(0);
+      expect(portfolio.balanceAvailable).toBe(true);
+      expect(portfolio.countervalueComplete).toBe(true);
     });
     test("balanceAvailable should be false when a non-empty account is still unpriced", () => {
       const to = getFiatCurrencyByTicker("USD");
@@ -162,6 +191,57 @@ describe("Portfolio", () => {
       const state = { ...initialState, data: {} };
       const portfolio = getPortfolio([emptyAccount, nonEmptyUnpriced], range, state, to);
       expect(portfolio.balanceAvailable).toBe(false);
+      expect(portfolio.countervalueComplete).toBe(false);
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
+    it("keeps priced rows but marks a mixed portfolio incomplete", async () => {
+      const ethereum = genAccount("ethereum_1", {
+        currency: getCryptoCurrencyById("ethereum"),
+      });
+      const { state, to } = await loadCV([account, ethereum]);
+      const stateWithoutEthereumLatest = withoutLatestRate(state, ethereum, to);
+
+      const portfolio = getPortfolio([account, ethereum], range, stateWithoutEthereumLatest, to);
+
+      expect(portfolio.availableAccounts).toContain(account);
+      expect(portfolio.availableAccounts).not.toContain(ethereum);
+      expect(portfolio.countervalueComplete).toBe(false);
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
+    it("does not use historical rates as current availability", async () => {
+      const { state, to } = await loadCV(account);
+      const stateWithoutLatest = withoutLatestRate(state, account, to);
+
+      const portfolio = getPortfolio([account], range, stateWithoutLatest, to);
+
+      expect(
+        stateWithoutLatest.cache[pairId({ from: account.currency, to })]?.map.size,
+      ).toBeGreaterThan(0);
+      expect(portfolio.countervalueComplete).toBe(false);
+      expect(portfolio.balanceAvailable).toBe(false);
+    });
+    it("neutralizes the trend when an intermediate historical rate is missing", () => {
+      const flatAccount = genFlatBalanceAccount();
+      const to = getFiatCurrencyByTicker("USD");
+      const missingIndex = Math.floor(count / 2);
+      const state = stateWithHourlyRates(flatAccount, to, range, missingIndex);
+
+      const portfolio = getPortfolio([flatAccount], range, state, to);
+
+      expect(portfolio.countervalueComplete).toBe(true);
+      expect(portfolio.histories[0][missingIndex].countervalue).toBeUndefined();
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
+    it("reports a real 0% trend for a flat priced portfolio", () => {
+      const flatAccount = genFlatBalanceAccount();
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithHourlyRates(flatAccount, to, range);
+
+      const portfolio = getPortfolio([flatAccount], range, state, to);
+
+      expect(portfolio.countervalueComplete).toBe(true);
+      expect(portfolio.countervalueChange.value).toBe(0);
+      expect(portfolio.countervalueChange.percentage).toBe(0);
     });
     it("should have history identical to the account history", async () => {
       const account2 = genAccountBitcoin("bitcoin_2");
@@ -224,6 +304,27 @@ describe("Portfolio", () => {
       const portfolio = getCurrencyPortfolio([account], range, state, to);
       expect(portfolio.countervalueAvailable).toBe(false);
     });
+    it("neutralizes the trend when only historical rates remain", async () => {
+      const { state, to } = await loadCV(account);
+      const stateWithoutLatest = withoutLatestRate(state, account, to);
+
+      const portfolio = getCurrencyPortfolio([account], range, stateWithoutLatest, to);
+
+      expect(portfolio.countervalueAvailable).toBe(false);
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
+    it("neutralizes the trend when an intermediate historical rate is missing", () => {
+      const flatAccount = genFlatBalanceAccount();
+      const to = getFiatCurrencyByTicker("USD");
+      const missingIndex = Math.floor(count / 2);
+      const state = stateWithHourlyRates(flatAccount, to, range, missingIndex);
+
+      const portfolio = getCurrencyPortfolio([flatAccount], range, state, to);
+
+      expect(portfolio.countervalueAvailable).toBe(true);
+      expect(portfolio.histories[0][missingIndex].countervalue).toBeUndefined();
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
     it("should have history identical to the account history", async () => {
       const account2 = genAccountBitcoin("bitcoin_2");
       const { state, to } = await loadCV(account);
@@ -256,21 +357,6 @@ describe("Portfolio", () => {
     const range: PortfolioRange = "day";
     // Builds an account whose hourly balance history is flat (= current balance) over the range,
     // so getCurrencyPortfolio (historical balance) reduces to the same price-only change.
-    function genFlatBalanceAccount(id = "bitcoin_1"): Account {
-      const account = genAccountBitcoin(id);
-      const balance = account.balance.toNumber();
-      return {
-        ...account,
-        balanceHistoryCache: {
-          ...account.balanceHistoryCache,
-          HOUR: {
-            latestDate: startOfHour(new Date()).getTime(),
-            balances: new Array(8 * 24).fill(balance),
-          },
-        },
-      };
-    }
-
     it("returns a neutral change for an empty accounts list", () => {
       const to = getFiatCurrencyByTicker("USD");
       const state = { ...initialState, data: {} };
@@ -367,14 +453,65 @@ describe("Portfolio", () => {
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
+
+    it("neutralizes a currency portfolio trend when only the historical start rate is missing", () => {
+      const account = genFlatBalanceAccount();
+      const to = getFiatCurrencyByTicker("USD");
+      const state = stateWithRates({ now: 100, then: undefined });
+      const id = pairId({ from: account.currency, to });
+      const pairCache = state.cache[id];
+      const recentHistoryDate = new Date(Date.now() - 60 * 60 * 1000);
+      const recentHistoryKey = formatCounterValueHour(recentHistoryDate);
+      pairCache.map.set(recentHistoryKey, 90);
+      pairCache.stats.earliest = recentHistoryKey;
+      pairCache.stats.earliestDate = recentHistoryDate;
+
+      const portfolio = getCurrencyPortfolio([account], range, state, to);
+
+      expect(portfolio.countervalueAvailable).toBe(true);
+      expect(portfolio.histories[0][0].countervalue).toBeUndefined();
+      expect(portfolio.histories[0].at(-1)?.countervalue).toBeDefined();
+      expect(portfolio.countervalueChange).toEqual({ value: 0, percentage: null });
+    });
   });
 
   describe("getAssetsDistribution", () => {
+    it("treats a computed empty distribution as complete", () => {
+      const assets = getAssetsDistribution([], initialState, getFiatCurrencyByTicker("USD"));
+
+      expect(assets).toMatchObject({
+        isAvailable: false,
+        countervalueComplete: true,
+        sum: 0,
+        list: [],
+      });
+    });
+
     it("snapshot", async () => {
       const account = genAccountBitcoin();
       const { state, to } = await loadCV(account);
       const assets = getAssetsDistribution([account], state, to);
       expect(assets).toMatchSnapshot();
+    });
+
+    it("keeps individual priced rows but invalidates totals and allocations", async () => {
+      const bitcoin = genAccountBitcoin();
+      const ethereum = genAccount("ethereum_1", {
+        currency: getCryptoCurrencyById("ethereum"),
+      });
+      const { state, to } = await loadCV([bitcoin, ethereum]);
+      const stateWithoutEthereumLatest = withoutLatestRate(state, ethereum, to);
+
+      const assets = getAssetsDistribution([bitcoin, ethereum], stateWithoutEthereumLatest, to);
+      const bitcoinItem = assets.list.find(item => item.currency.id === "bitcoin");
+      const ethereumItem = assets.list.find(item => item.currency.id === "ethereum");
+
+      expect(assets.isAvailable).toBe(true);
+      expect(assets.countervalueComplete).toBe(false);
+      expect(assets.sum).toBe(0);
+      expect(assets.list.every(item => item.distribution === 0)).toBe(true);
+      expect(bitcoinItem?.countervalue).toBeDefined();
+      expect(ethereumItem?.countervalue).toBeUndefined();
     });
 
     it("should include an asset with a countervalue of 0 in the distribution", async () => {
@@ -394,6 +531,7 @@ describe("Portfolio", () => {
       });
 
       expect(assets.isAvailable).toBe(true);
+      expect(assets.countervalueComplete).toBe(true);
       expect(assets.list.length).toBeGreaterThan(0);
 
       const btcEntry = assets.list.find(a => a.currency.id === "bitcoin");
@@ -476,6 +614,54 @@ function genAccountBitcoin(id = "bitcoin_1") {
   });
 }
 
+function genFlatBalanceAccount(id = "bitcoin_1"): Account {
+  const account = genAccountBitcoin(id);
+  const balance = account.balance.toNumber();
+  return {
+    ...account,
+    balanceHistoryCache: {
+      ...account.balanceHistoryCache,
+      HOUR: {
+        latestDate: startOfHour(new Date()).getTime(),
+        balances: new Array(8 * 24).fill(balance),
+      },
+    },
+  };
+}
+
+function stateWithHourlyRates(
+  account: Account,
+  to: ReturnType<typeof getFiatCurrencyByTicker>,
+  range: PortfolioRange,
+  missingIndex?: number,
+) {
+  const dates = getDates(range, getPortfolioCount([account], range));
+  const historicalKeys = dates.slice(0, -1).map(formatCounterValueHour);
+  const map = new Map<string, number>(historicalKeys.map(key => [key, 100]));
+  map.set("latest", 100);
+  if (missingIndex != null) map.delete(formatCounterValueHour(dates[missingIndex]));
+
+  const oldest = historicalKeys[0];
+  const earliest = historicalKeys.at(-1);
+  const id = pairId({ from: account.currency, to });
+
+  return {
+    ...initialState,
+    cache: {
+      [id]: {
+        map,
+        stats: {
+          oldest,
+          earliest,
+          oldestDate: oldest ? new Date(`${oldest}:00:00.000Z`) : null,
+          earliestDate: earliest ? new Date(`${earliest}:00:00.000Z`) : null,
+          earliestStableDate: earliest ? new Date(`${earliest}:00:00.000Z`) : null,
+        },
+      },
+    },
+  };
+}
+
 async function loadCV(a: Account | Account[], cvTicker = "USD") {
   const to = getFiatCurrencyByTicker(cvTicker);
   const accounts = Array.isArray(a) ? a : [a];
@@ -488,5 +674,24 @@ async function loadCV(a: Account | Account[], cvTicker = "USD") {
   return {
     state,
     to,
+  };
+}
+
+function withoutLatestRate(
+  state: Awaited<ReturnType<typeof loadCV>>["state"],
+  account: Account,
+  to: ReturnType<typeof getFiatCurrencyByTicker>,
+) {
+  const id = pairId({ from: account.currency, to });
+  const pairCache = state.cache[id];
+  if (!pairCache) throw new Error(`Missing countervalue cache for ${id}`);
+  const map = new Map(pairCache.map);
+  map.delete("latest");
+  return {
+    ...state,
+    cache: {
+      ...state.cache,
+      [id]: { ...pairCache, map },
+    },
   };
 }

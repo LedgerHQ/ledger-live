@@ -58,9 +58,9 @@ describe("categorizeAssets", () => {
     expect(result.stablecoins).toHaveLength(0);
   });
 
-  it("should default undefined countervalue to 0", () => {
+  it("should preserve an unavailable countervalue", () => {
     const item = [makeDistItem(btc, { distribution: 1, amount: 1e8, countervalue: undefined })];
-    expect(categorizeAssets(item, stablecoinTickers).cryptos[0].value).toBe(0);
+    expect(categorizeAssets(item, stablecoinTickers).cryptos[0].value).toBeUndefined();
   });
 
   it("should preserve accounts for single-chain assets", () => {

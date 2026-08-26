@@ -4,6 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
 
 const mockFindCryptoCurrencyById = jest.fn();
 
@@ -14,6 +15,8 @@ jest.mock("@domain/entity-currency-crypto", () => ({
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   calculate: jest.fn((_state, { value }: { value: number }) => value * 2),
 }));
+
+const mockCalculate = jest.mocked(calculate);
 
 function makeCurrency(id: string, name = id, magnitude = 8): CryptoCurrency {
   return {
@@ -47,6 +50,7 @@ describe("buildAssetDistribution", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCalculate.mockImplementation((_state, { value }) => value * 2);
     mockFindCryptoCurrencyById.mockImplementation((id: string) => {
       if (id === "ethereum") return ethMainnet;
       return undefined;
@@ -179,7 +183,49 @@ describe("buildAssetDistribution", () => {
     const result = distribute([]);
 
     expect(result.isAvailable).toBe(false);
+    expect(result.countervalueComplete).toBe(true);
     expect(result.list).toHaveLength(0);
+  });
+
+  it("marks the whole distribution incomplete when one positive network is unpriced", () => {
+    mockCalculate.mockImplementation((_state, { value, from }) =>
+      from === ethArbitrum ? undefined : value * 2,
+    );
+
+    const result = distribute([
+      makeAccount("eth-1", ethMainnet, 1000),
+      makeAccount("arb-1", ethArbitrum, 500),
+      makeAccount("btc-1", btcCurrency, 2000),
+    ]);
+    const ethereum = result.list.find(item => item.currency.id === "ethereum");
+    const bitcoin = result.list.find(item => item.currency.id === "bitcoin");
+
+    expect(result.isAvailable).toBe(true);
+    expect(result.countervalueComplete).toBe(false);
+    expect(result.sum).toBe(0);
+    expect(result.list.every(item => item.distribution === 0)).toBe(true);
+    expect(ethereum?.countervalue).toBeUndefined();
+    expect(
+      ethereum?.networks?.find(network => network.currency.id === "ethereum")?.countervalue,
+    ).toBe(2000);
+    expect(
+      ethereum?.networks?.find(network => network.currency.id === "arbitrum")?.countervalue,
+    ).toBeUndefined();
+    expect(bitcoin?.countervalue).toBe(4000);
+  });
+
+  it("keeps a zero-balance distribution complete without requiring a rate", () => {
+    mockCalculate.mockReturnValue(undefined);
+
+    const result = distribute([makeAccount("eth-1", ethMainnet, 0)], {
+      showEmptyAccounts: true,
+    });
+
+    expect(result.countervalueComplete).toBe(true);
+    expect(result.sum).toBe(0);
+    expect(result.list[0].countervalue).toBe(0);
+    expect(result.list[0].distribution).toBe(1);
+    expect(mockCalculate).not.toHaveBeenCalled();
   });
 
   it("should sort by countervalue descending", () => {

@@ -9,6 +9,7 @@ const defaultPortfolio = {
   balanceHistory: [],
   countervalueChange: { percentage: 0.12, value: 120 },
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -38,6 +39,19 @@ describe("resolveAnalyticsValueChange", () => {
       accounts: [],
       currentBalance: 1000,
       portfolio: defaultPortfolio,
+      cvState: mockCvState,
+      counterValue: mockCounterValue,
+    });
+
+    expect(result).toEqual({ value: 0, percentage: null });
+  });
+
+  it("returns a neutral change when the current valuation is incomplete", () => {
+    const result = resolveAnalyticsValueChange({
+      selectedTimeRange: "week",
+      accounts: [],
+      currentBalance: 1000,
+      portfolio: { ...defaultPortfolio, countervalueComplete: false },
       cvState: mockCvState,
       counterValue: mockCounterValue,
     });

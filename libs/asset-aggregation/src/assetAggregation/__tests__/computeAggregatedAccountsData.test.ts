@@ -43,7 +43,7 @@ describe("computeAggregatedAccountsData", () => {
   it("computes countervalue for a main account with no sub-accounts", () => {
     const account = withBalance(BTC_ACCOUNT, new BigNumber(100));
     const map = computeAggregatedAccountsData([account], calculateCountervalue);
-    expect(map.get(account.id)?.countervalue.toString()).toBe("200");
+    expect(map.get(account.id)?.countervalue?.toString()).toBe("200");
     expect(map.get(account.id)?.subAccountsCount).toBe(0);
   });
 
@@ -56,7 +56,7 @@ describe("computeAggregatedAccountsData", () => {
     };
 
     const map = computeAggregatedAccountsData([parent], calculateCountervalue);
-    expect(map.get(parent.id)?.countervalue.toString()).toBe("300");
+    expect(map.get(parent.id)?.countervalue?.toString()).toBe("300");
     expect(map.get(parent.id)?.subAccountsCount).toBe(1);
   });
 
@@ -69,11 +69,11 @@ describe("computeAggregatedAccountsData", () => {
     };
 
     const map = computeAggregatedAccountsData([parent], calculateCountervalue);
-    expect(map.get(parent.id)?.countervalue.toString()).toBe("100");
+    expect(map.get(parent.id)?.countervalue?.toString()).toBe("100");
     expect(map.get(parent.id)?.subAccountsCount).toBe(1);
   });
 
-  it("treats null/undefined countervalues as zero", () => {
+  it("marks an aggregate unavailable when a positive main or sub-account is unpriced", () => {
     calculateCountervalue.mockReturnValueOnce(null).mockReturnValueOnce(undefined);
     const usdc = createFixtureTokenAccount("usdc1", usdcToken);
     const parent: Account = {
@@ -83,6 +83,19 @@ describe("computeAggregatedAccountsData", () => {
     };
 
     const map = computeAggregatedAccountsData([parent], calculateCountervalue);
-    expect(map.get(parent.id)?.countervalue.toString()).toBe("0");
+    expect(map.get(parent.id)?.countervalue).toBeUndefined();
+  });
+
+  it("does not require a countervalue for a zero-balance account", () => {
+    calculateCountervalue.mockReturnValueOnce(undefined).mockReturnValueOnce(new BigNumber(100));
+    const usdc = createFixtureTokenAccount("usdc1", usdcToken);
+    const parent: Account = {
+      ...ETH_ACCOUNT,
+      balance: new BigNumber(0),
+      subAccounts: [{ ...usdc, balance: new BigNumber(50) }],
+    };
+
+    const map = computeAggregatedAccountsData([parent], calculateCountervalue);
+    expect(map.get(parent.id)?.countervalue?.toString()).toBe("100");
   });
 });

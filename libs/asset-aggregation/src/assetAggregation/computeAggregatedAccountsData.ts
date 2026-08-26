@@ -8,7 +8,7 @@ export type CalculateCountervalue = (
 ) => BigNumber | null | undefined;
 
 export type AggregatedAccountEntry = {
-  countervalue: BigNumber;
+  countervalue?: BigNumber;
   subAccountsCount: number;
 };
 
@@ -22,12 +22,17 @@ export function computeAggregatedAccountsData(
     if (account.type !== "Account") continue;
 
     const mainCv = calculateCountervalue(account.currency, account.balance);
-    let countervalue = new BigNumber(mainCv ?? 0);
+    let countervalue =
+      account.balance.isGreaterThan(0) && mainCv == null ? undefined : new BigNumber(mainCv ?? 0);
 
     const subs = account.subAccounts ?? [];
     for (const sub of subs) {
       const subCv = calculateCountervalue(sub.token, sub.balance);
-      countervalue = countervalue.plus(subCv ?? 0);
+      if (sub.balance.isGreaterThan(0) && subCv == null) {
+        countervalue = undefined;
+      } else if (countervalue) {
+        countervalue = countervalue.plus(subCv ?? 0);
+      }
     }
 
     map.set(account.id, { countervalue, subAccountsCount: subs.length });

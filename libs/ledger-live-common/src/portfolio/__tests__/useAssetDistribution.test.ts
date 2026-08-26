@@ -47,6 +47,7 @@ const baseOpts = { accounts, to: usd, product: "lld" as const, version: "1.0.0" 
 
 const assetResult: AssetsDistribution = {
   isAvailable: true,
+  countervalueComplete: true,
   list: [
     {
       currency: btc,
@@ -81,7 +82,11 @@ describe("useAssetDistribution", () => {
 
     const { result } = renderHook(() => useAssetDistribution(baseOpts));
 
-    expect(result.current.distribution).toMatchObject({ isAvailable: false, list: [] });
+    expect(result.current.distribution).toMatchObject({
+      isAvailable: false,
+      countervalueComplete: false,
+      list: [],
+    });
     expect(result.current.isLoading).toBe(true);
     expect(mockUseChunkedAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({ product: "lld", version: "1.0.0", skip: false }),

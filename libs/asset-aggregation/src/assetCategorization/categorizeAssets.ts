@@ -14,7 +14,7 @@ export function categorizeAssets(
       currency: item.currency,
       marketId: item.marketId,
       balance: item.amount,
-      value: item.countervalue ?? 0,
+      value: item.countervalue,
       distribution: item.distribution,
       accounts: item.accounts,
     };
