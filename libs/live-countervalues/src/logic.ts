@@ -104,6 +104,7 @@ export function importCountervalues(
     const map = new Map<string, number>();
 
     for (const k in obj) {
+      if (k === "latest") continue;
       map.set(k, obj[k]);
     }
 
@@ -321,10 +322,20 @@ export async function loadCountervalues(
         let hasData = false;
         latestToFetch.forEach((pair, i) => {
           const key = pairId(pair);
-          const latest = rates[i];
-          if (data[key]?.get("latest") === latest) return;
+          const rate = rates[i];
+          const latest =
+            typeof rate === "number" && Number.isFinite(rate) && rate > 0 ? rate : undefined;
+          const hasLatestInData = data[key]?.has("latest") === true;
+          const hasLatestInCache = cache[key]?.map.has("latest") === true;
+          if (
+            hasLatestInData === hasLatestInCache &&
+            data[key]?.get("latest") === latest &&
+            cache[key]?.map.get("latest") === latest
+          ) {
+            return;
+          }
           out[key] = {
-            latest: rates[i],
+            latest,
           };
           hasData = true;
         });
@@ -361,11 +372,17 @@ export async function loadCountervalues(
 
       if (!data[key]) {
         data[key] = new Map();
+      } else if (data[key] === state.data[key]) {
+        data[key] = new Map(data[key]);
       }
 
       const map = data[key];
       Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") map.set(k, v);
+        if (k === "latest" && (typeof v !== "number" || !Number.isFinite(v) || v <= 0)) {
+          map.delete(k);
+        } else if (typeof v === "number") {
+          map.set(k, v);
+        }
       });
     });
   });
@@ -534,10 +551,6 @@ function generateCache(
           shiftingValue = map.get(k) || 0;
         }
       }
-    }
-
-    if (!map.get("latest") && settings.autofillGaps) {
-      map.set("latest", shiftingValue);
     }
   } else {
     if (settings.autofillGaps) {

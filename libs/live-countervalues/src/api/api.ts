@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network";
 import URL from "url";
 import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { formatPerGranularity, inferCurrencyAPIID, pairId } from "../helpers";
 import type { BatchStrategySolver, CounterValuesAPI, TrackingPair } from "../types";
@@ -53,14 +54,17 @@ const api: CounterValuesAPI = {
         end: corrected_end_date,
       },
     });
-    const { data } = await network<Record<string, number>>({ method: "GET", url });
+    const { data } = await network<Record<string, number>>({
+      method: "GET",
+      url,
+    });
     return data;
   },
 
   fetchLatest: async (
     pairs: TrackingPair[],
     batchStrategySolver?: BatchStrategySolver,
-  ): Promise<number[]> => {
+  ): Promise<Array<number | undefined>> => {
     if (pairs.length === 0) return [];
 
     const shouldBatchCurrencyFrom = batchStrategySolver?.shouldBatchCurrencyFrom || (() => true);
@@ -92,29 +96,56 @@ const api: CounterValuesAPI = {
     batches.push(batch);
     const allBatches = batches.concat(singles);
 
-    const map = new Map();
+    const map = new Map<string, number | undefined>();
     await promiseAllBatched(4, allBatches, async ([froms, to]) => {
       const fromIds = froms.map(inferCurrencyAPIID);
+      const toId = inferCurrencyAPIID(to);
       const url = URL.format({
         pathname: `${baseURL()}/v3/spot/simple`,
         query: {
-          to: inferCurrencyAPIID(to),
+          to: toId,
           froms: fromIds.join(","),
         },
       });
 
-      const { data } = await network<Record<string, number>>({ method: "GET", url });
+      const { data } = await network<Record<string, unknown>>({
+        method: "GET",
+        url,
+      });
+      const response = data && typeof data === "object" ? data : {};
+      const missingIds: string[] = [];
+      const invalidIds: string[] = [];
 
       // store all countervalues in a global map
       for (let i = 0; i < fromIds.length; i++) {
         const from = froms[i];
-        const value = data[fromIds[i]];
-        map.set(pairId({ from, to }), value);
+        const fromId = fromIds[i];
+        const hasValue = Object.prototype.hasOwnProperty.call(response, fromId);
+        const value = response[fromId];
+
+        if (!hasValue) {
+          missingIds.push(fromId);
+          map.set(pairId({ from, to }), undefined);
+        } else if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+          invalidIds.push(fromId);
+          map.set(pairId({ from, to }), undefined);
+        } else {
+          map.set(pairId({ from, to }), value);
+        }
+      }
+
+      if (missingIds.length > 0 || invalidIds.length > 0) {
+        log(
+          "countervalues-error",
+          `Incomplete latest rates batch: to=${toId} requested=${fromIds.join(
+            ",",
+          )} missing=${missingIds.join(",")} invalid=${invalidIds.join(",")}`,
+        );
       }
     });
 
     // we return the result in the same order as the input pairs
-    const data = pairs.map(pair => map.get(pairId(pair)) || 0);
+    const data = pairs.map(pair => map.get(pairId(pair)));
 
     return data;
   },
