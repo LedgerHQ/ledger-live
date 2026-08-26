@@ -24,7 +24,12 @@ import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { validateAddress } from "./validateAddress";
 
@@ -75,6 +80,8 @@ function buildAccountBridge(
     validateAddress,
     assignToAccountRaw,
     assignFromAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
   };
 }
 
