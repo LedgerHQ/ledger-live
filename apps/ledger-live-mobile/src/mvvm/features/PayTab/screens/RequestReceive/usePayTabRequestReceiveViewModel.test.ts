@@ -1,4 +1,5 @@
-import { Share } from "react-native";
+import Share from "react-native-share";
+import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -41,16 +42,19 @@ describe("usePayTabRequestReceiveViewModel", () => {
     expect(Clipboard.setString).toHaveBeenCalledWith(account.freshAddress);
   });
 
-  it("should share the address", () => {
-    const share = jest.spyOn(Share, "share").mockResolvedValue({ action: Share.sharedAction });
+  it("should share a picture of the request card", async () => {
     const { result } = renderHook(() => usePayTabRequestReceiveViewModel(), {
       overrideInitialState: withAccount,
     });
 
-    act(() => result.current.onShare?.(account.freshAddress));
+    await act(async () => result.current.onShare?.(account.freshAddress));
 
-    expect(share).toHaveBeenCalledWith({ message: account.freshAddress });
-    share.mockRestore();
+    expect(captureRef).toHaveBeenCalledWith(result.current.cardRef, { format: "png" });
+    expect(Share.open).toHaveBeenCalledWith({
+      url: "file://mock.png",
+      message: account.freshAddress,
+      failOnCancel: false,
+    });
   });
 
   it("should hide the tab bar while mounted and restore it on unmount", () => {
