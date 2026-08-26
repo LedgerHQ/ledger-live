@@ -1,14 +1,10 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   getNeuronDissolveDurationSeconds,
   neuronStake,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { getNeuronState } from "@ledgerhq/live-common/families/internet_computer/react";
-import type {
-  ICPNeuron,
-  Transaction,
-} from "@ledgerhq/live-common/families/internet_computer/types";
+import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -20,6 +16,7 @@ import Text from "~/renderer/components/Text";
 import NeuronList, { type NeuronColumn } from "../../components/NeuronList";
 import { toBigNumber } from "../../amounts";
 import { useFormatDuration } from "../../useFormatDuration";
+import { useStartNeuronAction } from "../../neuronFlow/useStartNeuronAction";
 import type { StepProps } from "../../neuronFlow/types";
 
 const COLUMNS: readonly NeuronColumn[] = [
@@ -149,18 +146,17 @@ export const StepListNeuronFooter = ({
   transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
-  const bridge = useAccountBridge<Transaction>(account);
+  const startAction = useStartNeuronAction({
+    account,
+    onChangeTransaction,
+    transitionTo,
+    setLastAction,
+    resetAttempt,
+  });
 
   // Neurons are never refreshed by background sync — only a device-signed list_neurons updates them,
   // so the user has to ask for it explicitly.
-  const onClickSync = useCallback(() => {
-    // As in useNeuronActions: a fresh attempt must not inherit the last one's outcome.
-    resetAttempt();
-    const transaction = bridge.createTransaction(account);
-    onChangeTransaction(bridge.updateTransaction(transaction, { type: "list_neurons" }));
-    setLastAction("list_neurons");
-    transitionTo("device");
-  }, [account, bridge, onChangeTransaction, resetAttempt, setLastAction, transitionTo]);
+  const onClickSync = useCallback(() => startAction("device", "list_neurons"), [startAction]);
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" width="100%">
