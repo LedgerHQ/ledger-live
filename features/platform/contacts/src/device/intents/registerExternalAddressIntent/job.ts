@@ -1,10 +1,5 @@
 import type { Job } from "@features/platform-device-intent";
-import {
-  bufferToHexaString,
-  DeviceActionStatus,
-  hexaStringToBuffer,
-  UserInteractionRequired,
-} from "@ledgerhq/device-management-kit";
+import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
 import type {
   RegisterExternalAddressDAError,
@@ -12,6 +7,14 @@ import type {
   RegisterExternalAddressDAState,
 } from "@ledgerhq/device-contacts-kit/api/app-binder/RegisterExternalAddressDeviceActionTypes.js";
 import { Observable } from "rxjs";
+import {
+  mapBytesToGroupHandle,
+  mapBytesToProof,
+  mapChainIdToBigInt,
+  mapGroupHandleToBytes,
+  mapIdentifierToBytes,
+  mapProofToBytes,
+} from "../../contactsKitMappers";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../resultReporter";
 import type {
   RegisterExternalAddressIntentInput,
@@ -19,50 +22,24 @@ import type {
   RegisterExternalAddressResult,
 } from "./types";
 
-export class RegisterExternalAddressInputError extends Error {
-  override name = "RegisterExternalAddressInputError" as const;
-}
-
-function toDeviceActionError(error: RegisterExternalAddressDAError): Error {
+function mapDeviceActionErrorToError(error: RegisterExternalAddressDAError): Error {
   if (error instanceof Error) return error;
   const tag = (error as { _tag?: unknown })._tag;
   return new Error(typeof tag === "string" ? tag : "Register external address failed");
 }
 
-function toIdentifier(address: string): Uint8Array {
-  const identifier = hexaStringToBuffer(address);
-  if (identifier === null) {
-    throw new RegisterExternalAddressInputError(
-      `address ${JSON.stringify(address)} is not valid hex`,
-    );
-  }
-  return identifier;
-}
-
-function toChainId(chainId: string | number): bigint {
-  try {
-    return BigInt(chainId);
-  } catch {
-    throw new RegisterExternalAddressInputError(
-      `chainId ${JSON.stringify(chainId)} is not an integer`,
-    );
-  }
-}
-
-function toExistingContactGroup(
+function mapExistingContactGroupToBytes(
   existingContactGroup: RegisterExternalAddressIntentInput["existingContactGroup"],
 ): { groupHandle: Uint8Array; hmacProof: Uint8Array } | undefined {
   if (existingContactGroup === undefined) return undefined;
 
-  const groupHandle = hexaStringToBuffer(existingContactGroup.groupHandle);
-  const hmacProof = hexaStringToBuffer(existingContactGroup.hmacProof);
-  if (groupHandle === null || hmacProof === null) {
-    throw new RegisterExternalAddressInputError("existingContactGroup is not valid hex");
-  }
-  return { groupHandle, hmacProof };
+  return {
+    groupHandle: mapGroupHandleToBytes(existingContactGroup.groupHandle),
+    hmacProof: mapProofToBytes(existingContactGroup.hmacProof),
+  };
 }
 
-function toResult(
+function mapDeviceActionOutputToResult(
   input: RegisterExternalAddressIntentInput,
   output: RegisterExternalAddressDAOutput,
 ): RegisterExternalAddressResult {
@@ -76,9 +53,9 @@ function toResult(
     address: input.address,
     blockchainFamily: input.blockchainFamily,
     chainId: input.chainId,
-    groupHandle: bufferToHexaString(output.groupHandle),
-    hmacProof: bufferToHexaString(output.hmacProof),
-    hmacRest: bufferToHexaString(output.hmacRest),
+    groupHandle: mapBytesToGroupHandle(output.groupHandle),
+    hmacProof: mapBytesToProof(output.hmacProof),
+    hmacRest: mapBytesToProof(output.hmacRest),
   };
 }
 
@@ -102,12 +79,11 @@ export const registerExternalAddressIntentJob: Job<
     let chainId: bigint;
     let existingContactGroup: { groupHandle: Uint8Array; hmacProof: Uint8Array } | undefined;
     try {
-      identifier = toIdentifier(input.address);
-      chainId = toChainId(input.chainId);
-      existingContactGroup = toExistingContactGroup(input.existingContactGroup);
+      identifier = mapIdentifierToBytes(input.address);
+      chainId = mapChainIdToBigInt(input.chainId);
+      existingContactGroup = mapExistingContactGroupToBytes(input.existingContactGroup);
     } catch (error) {
-      const typedError =
-        error instanceof Error ? error : new RegisterExternalAddressInputError(String(error));
+      const typedError = error instanceof Error ? error : new Error(String(error));
       reporter.report({ type: "failure", error: typedError });
       subscriber.next({ type: "failed", error: typedError });
       subscriber.complete();
@@ -147,7 +123,7 @@ export const registerExternalAddressIntentJob: Job<
             );
             return;
           case DeviceActionStatus.Completed: {
-            const result = toResult(input, state.output);
+            const result = mapDeviceActionOutputToResult(input, state.output);
             reporter.report({ type: "success", result });
             subscriber.next({ type: "completed" });
             subscriber.complete();
@@ -161,7 +137,7 @@ export const registerExternalAddressIntentJob: Job<
             return;
           }
           case DeviceActionStatus.Error: {
-            const error = toDeviceActionError(state.error);
+            const error = mapDeviceActionErrorToError(state.error);
             reporter.report({ type: "failure", error });
             subscriber.next({ type: "failed", error });
             subscriber.complete();
