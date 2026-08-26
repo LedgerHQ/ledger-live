@@ -1253,7 +1253,7 @@ jobs:
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/qaa_fix_detect_skipped_shards
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -1333,7 +1333,7 @@ jobs:
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/qaa_fix_detect_skipped_shards
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
