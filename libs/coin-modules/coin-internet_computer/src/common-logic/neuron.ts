@@ -23,6 +23,7 @@ import type { Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
+  NeuronCommandOutcome,
   NeuronsData,
   NeuronState,
   RawNeuron,
@@ -280,16 +281,6 @@ export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): 
 // ---- optimistic command application -------------------------------------------------------------
 
 /**
- * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
- * `undefined` when the result cannot be reproduced locally.
- *
- * An accepted update call is final — governance state changed in the round that replied, with no
- * indexing lag — but only a device-signed `list_neurons` can read it back. Rather than ask for a
- * second signature per action, replay the commands whose effect is fully determined by the command
- * plus the current neuron. Everything else (split, spawn, disburse, stake_maturity) yields figures
- * the canister computes, or a neuron whose id only it knows, and is left to an explicit refresh.
- */
-/**
  * The neuron after the canister's `increase_dissolve_delay`, which both dissolve-delay commands land
  * on: `neuron/types.rs` validates `SetDissolveTimestamp` against the current delay and applies the
  * difference through the same function. Shaped after its three arms
@@ -337,10 +328,23 @@ const withIncreasedDissolveDelay = (
   }
 };
 
+/**
+ * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
+ * `undefined` when the result cannot be reproduced locally.
+ *
+ * An accepted update call is final — governance state changed in the round that replied, with no
+ * indexing lag — but only a device-signed `list_neurons` can read it back. Rather than ask for a
+ * second signature per action, replay the commands whose effect is fully determined by the command
+ * plus the current neuron, and the one that states its own result in the reply (stake_maturity).
+ *
+ * Split, spawn and disburse are what remain: each yields figures only the canister has, or a neuron
+ * whose id it alone assigns, so they wait for an explicit refresh.
+ */
 const patchNeuron = (
   neuron: ICPNeuron,
   transaction: Transaction,
   nowSeconds: number,
+  outcome: NeuronCommandOutcome | undefined,
 ): ICPNeuron | undefined => {
   switch (transaction.type) {
     case "start_dissolving": {
@@ -408,11 +412,26 @@ const patchNeuron = (
         followees: followeeIds.length === 0 ? others : [...others, { topic, followeeIds }],
       };
     }
+    case "stake_maturity": {
+      // The canister reports both totals after the split, so this is its answer rather than a local
+      // re-derivation — which would have to apply the percentage to a maturity figure that may have
+      // accrued since the snapshot was read, and match the canister's rounding.
+      const { maturityE8s, stakedMaturityE8s } = outcome ?? {};
+      // Checked against undefined, not for truthiness: staking the whole maturity reports "0".
+      if (maturityE8s === undefined || stakedMaturityE8s === undefined) return undefined;
+      return {
+        ...neuron,
+        maturityE8sEquivalent: BigInt(maturityE8s),
+        stakedMaturityE8sEquivalent: BigInt(stakedMaturityE8s),
+      };
+    }
     case "refresh_voting_power":
       return {
         ...neuron,
+        // Restarting the clock is what restores the power: neuronDecidingVotingPower derives the
+        // figure from this timestamp, so the decoded snapshot field is brought along only to keep
+        // the two from disagreeing.
         votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
-        // Confirming restores the decayed figure to the full potential.
         decidingVotingPower: neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron),
       };
     default:
@@ -424,16 +443,22 @@ const patchNeuron = (
  * The snapshot with `transaction`'s effect applied to the neuron it targets, or `undefined` when
  * nothing could be applied — in which case callers must leave the existing snapshot alone rather
  * than write an unchanged copy, so `lastUpdatedMSecs` keeps meaning "last read from the canister".
+ *
+ * `outcome` is what the accepted command reported about itself, where it reported anything; the
+ * commands that need it cannot be replayed without it.
  */
 export const applyNeuronCommand = (
   neurons: readonly ICPNeuron[],
   transaction: Transaction,
-  nowSeconds: number = Math.floor(Date.now() / 1000),
+  {
+    nowSeconds = Math.floor(Date.now() / 1000),
+    outcome,
+  }: { nowSeconds?: number; outcome?: NeuronCommandOutcome | undefined } = {},
 ): ICPNeuron[] | undefined => {
   if (!transaction.neuronId) return undefined;
   const index = neurons.findIndex(neuron => neuron.id?.toString() === transaction.neuronId);
   if (index === -1) return undefined;
-  const patched = patchNeuron(neurons[index]!, transaction, nowSeconds);
+  const patched = patchNeuron(neurons[index]!, transaction, nowSeconds, outcome);
   if (!patched) return undefined;
   const next = [...neurons];
   next[index] = patched;
