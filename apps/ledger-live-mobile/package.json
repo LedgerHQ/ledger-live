@@ -227,6 +227,7 @@
     "date-fns": "2.30.0",
     "expo": "catalog:",
     "expo-crypto": "catalog:",
+    "expo-document-picker": "catalog:",
     "expo-file-system": "catalog:",
     "expo-haptics": "catalog:",
     "expo-image-loader": "catalog:",

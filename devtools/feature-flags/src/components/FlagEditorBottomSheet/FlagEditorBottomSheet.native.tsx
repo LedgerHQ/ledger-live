@@ -15,7 +15,7 @@ export function FlagEditorBottomSheet() {
   const display = selectedFlagId ? getFlagDisplayState(selectedFlagId) : null;
 
   return (
-    <BottomSheet ref={bottomSheetRef} snapPoints={["60%"]} onDismiss={closeFlag}>
+    <BottomSheet ref={bottomSheetRef} snapPoints={["80%"]} onDismiss={closeFlag}>
       {display && (
         <FlagEditorBottomSheetContent
           display={display}
