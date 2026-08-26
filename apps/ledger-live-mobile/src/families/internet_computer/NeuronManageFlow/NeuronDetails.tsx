@@ -22,11 +22,12 @@ import {
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import {
   getNeuronState,
+  useCanTopUpNeuron,
   useICPNeuronById,
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
 import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
-import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { TrackScreen } from "~/analytics";
@@ -86,8 +87,34 @@ export default function NeuronDetails({ navigation, route }: Props) {
   );
 
   const actions = useNeuronActions({ account: icpAccount, neuron, navigate });
+  const canTopUp = useCanTopUpNeuron(icpAccount, neuron);
 
-  if (!neuron) return null;
+  const backToList = useCallback(
+    () =>
+      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+        accountId: route.params.accountId,
+        parentId: route.params.parentId,
+      }),
+    [navigation, route.params.accountId, route.params.parentId],
+  );
+
+  // Disburse and a refresh both drop a neuron from the snapshot while this screen may still name it.
+  // Rendering nothing left the user on a blank screen with no way to read what had happened, so say
+  // so and offer the list.
+  if (!neuron) {
+    return (
+      <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
+        <Flex flex={1} p={6} justifyContent="center" style={{ gap: 16 }}>
+          <Text variant="body" color="neutral.c70" textAlign="center">
+            {t("internetComputer.manageNeuronFlow.manage.missingNeuron")}
+          </Text>
+          <Button type="main" onPress={backToList} testID="icp-manage-missing-back-button">
+            {t("internetComputer.manageNeuronFlow.confirmation.backToNeurons")}
+          </Button>
+        </Flex>
+      </SafeAreaView>
+    );
+  }
 
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);
@@ -184,8 +211,10 @@ export default function NeuronDetails({ navigation, route }: Props) {
             actions={
               // A top-up is a ledger transfer with no minimum, so the only bound is covering the fee.
               // Without spendable ICP every amount comes back as NotEnoughBalance, which makes the
-              // whole flow a dead end rather than a correctable mistake.
-              isControlled && icpAccount.spendableBalance.gt(ICP_FEES)
+              // whole flow a dead end rather than a correctable mistake. The same is true without a
+              // recoverable stake nonce, which the transfer has to reuse and only this account's own
+              // history holds.
+              isControlled && canTopUp && icpAccount.spendableBalance.gt(ICP_FEES)
                 ? [
                     {
                       label: t(

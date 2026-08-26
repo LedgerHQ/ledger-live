@@ -28,6 +28,9 @@ let principal = CONTROLLER;
 // Funded by default: the top-up action is hidden when the balance cannot cover the transfer fee, so a
 // zero-balance fixture would leave the tests around it passing without rendering the action at all.
 let spendableBalance = new BigNumber(MIN_NEURON_STAKE);
+// Topping up reuses the stake nonce of the transfer that created the neuron, which only this
+// account's own history holds. True by default so the tests around the action render it at all.
+let canTopUp = true;
 
 const mockNavigate = jest.fn();
 
@@ -48,6 +51,7 @@ jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
   useICPPrincipal: () => principal,
   useICPNeuronById: () => neuron,
+  useCanTopUpNeuron: () => canTopUp,
 }));
 
 // 1 ICP at both bonuses maxed (3x delay, 1.25x age): potential voting power is exactly 3.75 ICP.
@@ -84,6 +88,7 @@ describe("NeuronDetails", () => {
     neuron = makeHealthyNeuron({ controller: CONTROLLER });
     principal = CONTROLLER;
     spendableBalance = new BigNumber(MIN_NEURON_STAKE);
+    canTopUp = true;
     mockNavigate.mockClear();
   });
 
@@ -378,10 +383,34 @@ describe("NeuronDetails", () => {
     expect(screen.getAllByText("Staked maturity")).toHaveLength(2);
   });
 
-  it("renders nothing when the neuron has gone missing between screens", () => {
+  // Disburse and a refresh both drop a neuron from the snapshot while this screen may still name it.
+  // Rendering nothing left the user on a blank screen with no way to read what had happened.
+  it("says so when the neuron has gone missing between screens, and offers the list", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     neuron = undefined as any;
 
-    expect(renderDetails().toJSON()).toBeNull();
+    renderDetails();
+
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
+    expect(screen.getByTestId("icp-manage-missing-back-button")).toBeVisible();
+  });
+
+  /*
+   * A top-up transfer has to reuse the stake nonce of the transfer that created the neuron, and only
+   * this account's own history holds it. Without one the bridge refuses every amount, so offering the
+   * action is a dead end rather than a correctable mistake.
+   */
+  it("withholds the top-up when the stake nonce cannot be recovered", () => {
+    canTopUp = false;
+
+    renderDetails();
+
+    expect(screen.queryByText("Increase stake")).toBeNull();
+  });
+
+  it("offers the top-up when it can be recovered and the balance covers the fee", () => {
+    renderDetails();
+
+    expect(screen.getByText("Increase stake")).toBeVisible();
   });
 });
