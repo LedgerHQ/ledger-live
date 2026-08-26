@@ -14,7 +14,7 @@ const ICONS: Record<ActionTileId, TileIcon> = {
 
 export function ActionTilesView({ tiles }: ActionTilesViewProps) {
   return (
-    <div className="flex gap-8" data-testid="action-tiles">
+    <div className="flex flex-wrap gap-8" data-testid="action-tiles">
       {tiles.map(tile => (
         <Button
           appearance={tile.appearance}
@@ -23,6 +23,7 @@ export function ActionTilesView({ tiles }: ActionTilesViewProps) {
           onClick={tile.onPress}
           data-testid={`action-tile-${tile.id}`}
           size="sm"
+          className="shrink-0"
         >
           {tile.label}
         </Button>
