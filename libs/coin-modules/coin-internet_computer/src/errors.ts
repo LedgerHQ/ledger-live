@@ -108,6 +108,17 @@ export class ICPCallUnconfirmed extends Error {
   }
 }
 
+// A list_neurons read returned no reply. Distinct from ICPCallUnconfirmed: a read has no effect to
+// be unsure about, so the neurons are simply unchanged and asking again is safe.
+export class ICPNeuronsNotRead extends Error {
+  override name = "ICPNeuronsNotRead";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPNeuronsNotRead");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Non-blocking notices surfaced on staking transactions.
 export class ICPIncreaseStakeWarning extends Error {
   override name = "ICPIncreaseStakeWarning";

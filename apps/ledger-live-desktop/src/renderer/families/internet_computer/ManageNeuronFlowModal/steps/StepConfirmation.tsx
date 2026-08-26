@@ -24,12 +24,13 @@ const Container = styled(Box).attrs(() => ({
 /**
  * Errors that already say what the network did with the request, so the "could not be sent"
  * disclaimer would contradict them: the first two were answered by the canister or the replica, and
- * the third reports an accepted call whose outcome is simply unknown.
+ * the last two report an accepted call that went unanswered.
  */
 const DELIVERED_ERRORS = new Set([
   "ICPGovernanceRejected",
   "ICPCallRejected",
   "ICPCallUnconfirmed",
+  "ICPNeuronsNotRead",
 ]);
 
 /**

@@ -111,7 +111,7 @@ describe("StepConfirmation", () => {
 
   // "signed but could not be sent" is a claim about delivery. Each of these errors IS the network's
   // own answer, so the request plainly did reach it.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPCallUnconfirmed"])(
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPCallUnconfirmed", "ICPNeuronsNotRead"])(
     "does not claim the request never reached the network for %s",
     name => {
       const error = Object.assign(new Error("boom"), { name });
