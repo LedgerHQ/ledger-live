@@ -18,13 +18,14 @@ const REACHABLE_ERRORS = [
   "ICPSplitNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
+  "ICPGovernanceRejected",
+  "ICPCallRejected",
   "ICPInvalidPercentage",
+  // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
+  // read. The family's own SendAmountFields renders it, which is what makes them reachable.
+  "ICPCreateNeuronWarning",
+  "ICPIncreaseStakeWarning",
 ];
-
-// getTransactionStatus assigns these to `warnings.staking`, which nothing in the app reads — the send
-// flow renders `warnings.amount` and MemoField `warnings.transaction`. Translating them would suggest
-// they reach the user; they do not. Add them here once something renders the slot.
-const UNRENDERED_WARNINGS = ["ICPCreateNeuronWarning", "ICPIncreaseStakeWarning"];
 
 // Through `unknown` because the block is not uniform: a few entries carry a null description, and
 // others nest an object under `list`.
@@ -38,9 +39,14 @@ describe("internet_computer error translations", () => {
     expect(errors[name]?.title).toBeTruthy();
   });
 
-  it.each(UNRENDERED_WARNINGS)("%s is deliberately left untranslated", name => {
-    expect(errors[name]).toBeUndefined();
-  });
+  // A warning whose only job is to explain a consequence is useless without one, and the generic
+  // fallback description ("Something went wrong…") is the wrong instruction for a notice.
+  it.each(["ICPCreateNeuronWarning", "ICPIncreaseStakeWarning"])(
+    "%s explains the consequence it is warning about",
+    name => {
+      expect(errors[name]?.description).toBeTruthy();
+    },
+  );
 
   // Without their own description these fall back to "Something went wrong. Please retry or contact
   // Ledger Support.", which is the wrong instruction for a value the user can simply correct.
@@ -57,4 +63,13 @@ describe("internet_computer error translations", () => {
   ])("%s quotes the bound in days, the unit the input uses", (name, placeholder) => {
     expect(errors[name]?.description).toContain(placeholder);
   });
+
+  // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
+  // only part of the message that says what actually went wrong.
+  it.each(["ICPGovernanceRejected", "ICPCallRejected"])(
+    "%s passes the network's own wording through",
+    name => {
+      expect(errors[name]?.description).toContain("{{reason}}");
+    },
+  );
 });
