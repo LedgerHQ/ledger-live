@@ -1,13 +1,9 @@
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   getSecondsTillVotingPowerExpires,
   neuronCanVote,
   votingPowerNeedsRefresh,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
-import type {
-  ICPNeuron,
-  Transaction,
-} from "@ledgerhq/live-common/families/internet_computer/types";
+import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,6 +13,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import Text from "~/renderer/components/Text";
 import NeuronList, { type NeuronColumn } from "../../components/NeuronList";
 import { useFormatDuration } from "../../useFormatDuration";
+import { useStartNeuronAction } from "../../neuronFlow/useStartNeuronAction";
 import type { StepProps } from "../../neuronFlow/types";
 
 const COLUMNS: readonly NeuronColumn[] = [
@@ -51,13 +48,20 @@ const StepRefreshList = ({
   neurons,
   error,
   onChangeTransaction,
+  resetAttempt,
   setLastAction,
   setSelectedNeuronId,
   transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
-  const bridge = useAccountBridge<Transaction>(account);
+  const startAction = useStartNeuronAction({
+    account,
+    onChangeTransaction,
+    transitionTo,
+    setLastAction,
+    resetAttempt,
+  });
 
   // The countdown is measured once for the whole list. Reading it inside the comparator would let
   // the clock tick between comparisons, which breaks the ordering contract and can reorder rows.
@@ -86,15 +90,11 @@ const StepRefreshList = ({
     (neuron: ICPNeuron) => {
       const neuronId = neuron.id?.toString();
       if (!neuronId) return;
-      const transaction = bridge.createTransaction(account);
-      onChangeTransaction(
-        bridge.updateTransaction(transaction, { type: "refresh_voting_power", neuronId }),
-      );
+      // Selecting the neuron as well, so the confirmation step names the one that was confirmed.
       setSelectedNeuronId(neuronId);
-      setLastAction("refresh_voting_power");
-      transitionTo("manageAction");
+      startAction("manageAction", "refresh_voting_power", { neuronId });
     },
-    [account, bridge, onChangeTransaction, setLastAction, setSelectedNeuronId, transitionTo],
+    [setSelectedNeuronId, startAction],
   );
 
   const renderCell = useCallback(

@@ -9,6 +9,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useCallback, useMemo } from "react";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { onStakeConfirmed } from "../common";
+import { useStartNeuronAction } from "./useStartNeuronAction";
 import type { StepId, StepProps } from "./types";
 
 type Params = Pick<
@@ -38,20 +39,20 @@ export function useNeuronActions({
   const dispatch = useDispatch();
   const bridge = useAccountBridge<Transaction>(account);
   const neuronId = neuron?.id?.toString();
+  const startAction = useStartNeuronAction({
+    account,
+    onChangeTransaction,
+    transitionTo,
+    setLastAction,
+    resetAttempt,
+  });
 
-  // Seeds the transaction for the chosen operation and moves to the step that finishes it. Input
-  // steps then only patch their own field, so none of them has to know how to build a transaction.
+  // Every action here targets the neuron on screen. Input steps then only patch their own field, so
+  // none of them has to know how to build a transaction.
   const start = useCallback(
-    (step: StepId, type: ICPTransactionType, patch: Partial<Transaction> = {}) => {
-      // A new action must not inherit the last one's outcome: the modal stays open across actions, so
-      // without this the confirmation step still holds the previous success.
-      resetAttempt();
-      const transaction = bridge.createTransaction(account);
-      onChangeTransaction(bridge.updateTransaction(transaction, { ...patch, type, neuronId }));
-      setLastAction(type);
-      transitionTo(step);
-    },
-    [account, bridge, neuronId, onChangeTransaction, resetAttempt, setLastAction, transitionTo],
+    (step: StepId, type: ICPTransactionType, patch: Partial<Transaction> = {}) =>
+      startAction(step, type, { ...patch, neuronId }),
+    [neuronId, startAction],
   );
 
   // Operations that need nothing from the user go straight to the device.

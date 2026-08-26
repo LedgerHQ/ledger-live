@@ -138,4 +138,28 @@ describe("StepRefreshList", () => {
     expect(props.setSelectedNeuronId).toHaveBeenCalledWith("77");
     expect(props.transitionTo).toHaveBeenCalledWith("manageAction");
   });
+
+  // This flow's own entry point had no reset, so a confirmation that failed left its error set and
+  // the next one showed it — this step renders the error in place of the list.
+  it("discards the previous attempt before starting a confirmation", async () => {
+    const neurons = [
+      makeHealthyNeuron({ id: 77n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
+    ];
+    const props = makeStepProps({ neurons });
+    const { user } = render(<StepRefreshList {...props} />);
+
+    await user.click(screen.getByTestId("icp-confirm-following-button"));
+
+    expect(props.resetAttempt).toHaveBeenCalled();
+  });
+
+  it("shows the failure in place of the list once an attempt has failed", () => {
+    const neurons = [
+      makeHealthyNeuron({ id: 77n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
+    ];
+    render(<StepRefreshList {...makeStepProps({ neurons, error: new Error("boom") })} />);
+
+    expect(screen.queryByTestId("icp-neuron-row")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("icp-confirm-following-button")).not.toBeInTheDocument();
+  });
 });
