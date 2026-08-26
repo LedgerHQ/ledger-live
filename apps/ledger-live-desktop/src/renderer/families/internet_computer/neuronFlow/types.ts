@@ -43,7 +43,8 @@ export type StepProps = {
   onUpdateTransaction: (updater: (transaction: Transaction) => Transaction) => void;
   onTransactionError: (error: Error) => void;
   onOperationBroadcasted: (operation: InternetComputerOperation) => void;
-  onRetry: () => void;
+  /** Discards the previous attempt's outcome — both on Retry and when a new action starts. */
+  resetAttempt: () => void;
   setSigned: (signed: boolean) => void;
 
   // The neurons the flow is working from: the account's snapshot until a list_neurons operation

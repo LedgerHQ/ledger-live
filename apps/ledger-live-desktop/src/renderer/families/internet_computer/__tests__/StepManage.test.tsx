@@ -28,10 +28,14 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => bridgeMock,
 }));
 
+// Both hooks read a device-provided key that genAccount cannot fake, so the tests drive them
+// directly. `useCanTopUpNeuron`'s own logic is covered in live-common's react.test.ts.
+let canTopUp = true;
+
 jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
-  // The account's real principal is derived from a device-provided key that genAccount cannot fake.
   useICPPrincipal: () => CONTROLLER,
+  useCanTopUpNeuron: () => canTopUp,
 }));
 
 import StepManage from "../ManageNeuronFlowModal/steps/StepManage";
@@ -75,6 +79,7 @@ const renderManage = (
 
 beforeEach(() => {
   jest.clearAllMocks();
+  canTopUp = true;
   jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
 });
 
@@ -83,20 +88,33 @@ afterEach(() => {
 });
 
 describe("StepManage", () => {
-  it("renders nothing when the selected neuron is no longer in the list", () => {
+  // Rendering nothing left the stepper sitting on Manage with an empty body and no explanation, which
+  // is reachable whenever a disburse or a refresh drops the neuron this step still names.
+  it("explains itself when the selected neuron is no longer in the list", () => {
     const props = makeStepProps({ neurons: [controlled()], selectedNeuronId: "999" });
-    const { container } = render(<StepManage {...props} />);
+    render(<StepManage {...props} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeInTheDocument();
   });
 
   // useNeuronActions runs before the guard above, so it has to tolerate an absent neuron. It used to
   // be handed `neurons[0]`, which is itself undefined once the snapshot comes back empty.
-  it("renders nothing rather than throwing when the snapshot has no neurons at all", () => {
+  it("explains itself rather than throwing when the snapshot has no neurons at all", () => {
     const props = makeStepProps({ neurons: [], selectedNeuronId: "7" });
-    const { container } = render(<StepManage {...props} />);
+    render(<StepManage {...props} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeInTheDocument();
+  });
+
+  // Leaving the id set would let the step be re-entered on a neuron that is gone.
+  it("clears the stale selection on the way back to the list", async () => {
+    const props = makeStepProps({ neurons: [], selectedNeuronId: "7" });
+    const { user } = render(<StepManage {...props} />);
+
+    await user.click(screen.getByTestId("icp-manage-missing-back-button"));
+
+    expect(props.setSelectedNeuronId).toHaveBeenCalledWith(null);
+    expect(props.transitionTo).toHaveBeenCalledWith("listNeuron");
   });
 
   it("offers the controller the actions that change the neuron", () => {
@@ -151,6 +169,16 @@ describe("StepManage", () => {
     renderManage(controlled({ state }));
 
     expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  // The modal stays open across actions and used to keep the previous one's outcome, so a refusal on
+  // device after any earlier success still landed on a "Done" screen.
+  it("discards the previous attempt's outcome when a new action starts", async () => {
+    const { props, user } = renderManage(controlled({ state: NeuronState.Locked }));
+
+    await user.click(screen.getByText("Start dissolving"));
+
+    expect(props.resetAttempt).toHaveBeenCalled();
   });
 
   // The reference compared dissolveState to the string "Dissolving", which no variant can equal, so
@@ -329,6 +357,16 @@ describe("StepManage", () => {
     // The neuron list closes so the send modal can take over, and is reopened on success.
     const opened = props.openModal as jest.Mock;
     expect(opened).not.toHaveBeenCalled();
+  });
+
+  // The transfer has to reuse the nonce of the one that created the neuron, and only this account's
+  // own history holds it — so a neuron created elsewhere cannot be topped up from here, and offering
+  // the action sent the user into the send flow to be refused at the amount step.
+  it("hides the top-up action when the neuron's stake nonce is not recoverable", () => {
+    canTopUp = false;
+    renderManage();
+
+    expect(screen.queryByTestId("icp-increase-stake-button")).not.toBeInTheDocument();
   });
 
   // A top-up has no minimum, so the only bound is covering the fee. Below that every amount comes

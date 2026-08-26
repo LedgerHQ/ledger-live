@@ -144,6 +144,7 @@ export const StepListNeuronFooter = ({
   lastUpdatedMSecs,
   onChangeTransaction,
   onClose,
+  resetAttempt,
   setLastAction,
   transitionTo,
 }: StepProps) => {
@@ -153,11 +154,13 @@ export const StepListNeuronFooter = ({
   // Neurons are never refreshed by background sync — only a device-signed list_neurons updates them,
   // so the user has to ask for it explicitly.
   const onClickSync = useCallback(() => {
+    // As in useNeuronActions: a fresh attempt must not inherit the last one's outcome.
+    resetAttempt();
     const transaction = bridge.createTransaction(account);
     onChangeTransaction(bridge.updateTransaction(transaction, { type: "list_neurons" }));
     setLastAction("list_neurons");
     transitionTo("device");
-  }, [account, bridge, onChangeTransaction, setLastAction, transitionTo]);
+  }, [account, bridge, onChangeTransaction, resetAttempt, setLastAction, transitionTo]);
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" width="100%">
