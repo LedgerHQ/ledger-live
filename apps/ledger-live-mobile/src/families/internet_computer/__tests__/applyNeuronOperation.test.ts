@@ -1,6 +1,9 @@
-import type {
-  ICPAccount,
-  InternetComputerOperation,
+import { SECONDS_IN_YEAR } from "@ledgerhq/live-common/families/internet_computer/consts";
+import {
+  NeuronState,
+  type ICPAccount,
+  type InternetComputerOperation,
+  type Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import { applyNeuronOperation } from "../common";
 import { makeICPAccount, makeNeuron } from "./testUtils";
@@ -126,5 +129,104 @@ describe("applyNeuronOperation", () => {
     const updated = runUpdater(account, operation);
 
     expect(updated.operations[0].type).toBe("OUT");
+  });
+});
+
+describe("applyNeuronOperation replaying an accepted command", () => {
+  const DELAY = BigInt(SECONDS_IN_YEAR);
+
+  const lockedNeuron = () =>
+    makeNeuron({
+      id: 7n,
+      state: NeuronState.Locked,
+      dissolveDelaySeconds: DELAY,
+      dissolveState: { DissolveDelaySeconds: DELAY },
+    });
+
+  const replay = (
+    account: ICPAccount,
+    transaction: Record<string, unknown>,
+    operation = makeOperation(),
+  ): ICPAccount => {
+    const dispatch = jest.fn();
+    applyNeuronOperation(dispatch, account, operation, transaction as unknown as Transaction);
+    const [action] = dispatch.mock.calls[0];
+    return action.payload.updater(account) as ICPAccount;
+  };
+
+  // A manage_neuron reply carries no snapshot, and reading one back costs another device signature.
+  // Without the replay the details screen kept showing the state the action was meant to change.
+  it("shows the neuron dissolving without waiting for a refresh", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+
+    const updated = replay(account, { type: "start_dissolving", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Dissolving);
+  });
+
+  // The neuron is only as fresh as the last real canister read, so "Last synced" must not move.
+  it("leaves the last-synced stamp where it was", () => {
+    const lastUpdatedMSecs = 1_700_000_000_000;
+    const account = makeICPAccount({ neurons: [lockedNeuron()], lastUpdatedMSecs });
+
+    const updated = replay(account, { type: "start_dissolving", neuronId: "7" });
+
+    expect(updated.neurons.lastUpdatedMSecs).toBe(lastUpdatedMSecs);
+  });
+
+  it("leaves the snapshot untouched for a command whose result only the canister knows", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+
+    const updated = replay(account, { type: "disburse", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Locked);
+  });
+
+  /*
+   * stake_maturity states its own result, and this is the one place that carries it from the
+   * operation into the replay. Drop the argument and the arm silently declines instead — the neuron
+   * keeps its pre-command maturity and nothing fails, which is why it is pinned here and not only in
+   * the coin module.
+   */
+  it("moves the maturity a stake_maturity command reported", () => {
+    const account = makeICPAccount({
+      neurons: [
+        makeNeuron({
+          id: 7n,
+          maturityE8sEquivalent: 400_000_000n,
+          stakedMaturityE8sEquivalent: 0n,
+        }),
+      ],
+    });
+    const operation = makeOperation({
+      extra: { outcome: { maturityE8s: "200000000", stakedMaturityE8s: "200000000" } },
+    });
+
+    const updated = replay(
+      account,
+      { type: "stake_maturity", neuronId: "7", percentageToStake: 50 },
+      operation,
+    );
+
+    expect(updated.neurons.fullNeurons[0].maturityE8sEquivalent).toBe(200_000_000n);
+    expect(updated.neurons.fullNeurons[0].stakedMaturityE8sEquivalent).toBe(200_000_000n);
+  });
+
+  it("leaves the maturity alone when the command reported nothing", () => {
+    const account = makeICPAccount({
+      neurons: [makeNeuron({ id: 7n, maturityE8sEquivalent: 400_000_000n })],
+    });
+
+    const updated = replay(account, { type: "stake_maturity", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].maturityE8sEquivalent).toBe(400_000_000n);
+  });
+
+  it("leaves the snapshot untouched when no transaction is supplied", () => {
+    const account = makeICPAccount({ neurons: [lockedNeuron()] });
+
+    const updated = runUpdater(account, makeOperation());
+
+    expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Locked);
   });
 });

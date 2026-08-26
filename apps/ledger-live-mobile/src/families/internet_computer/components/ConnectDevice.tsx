@@ -89,7 +89,7 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
             const operation = (await broadcast(
               payload.signedOperation,
             )) as InternetComputerOperation;
-            applyNeuronOperation(dispatch, mainAccount, operation);
+            applyNeuronOperation(dispatch, mainAccount, operation, transaction);
             stepNavigation.replace(route.name.replace("ConnectDevice", "ValidationSuccess"), {
               ...route.params,
               // The snapshot is already on the account, and route params are persisted state: the
@@ -110,7 +110,7 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
       }
       return renderLoading({ t });
     },
-    [broadcast, dispatch, mainAccount, route.name, route.params, stepNavigation, t],
+    [broadcast, dispatch, mainAccount, route.name, route.params, stepNavigation, t, transaction],
   );
 
   const onSelectDeviceLink = useCallback(
