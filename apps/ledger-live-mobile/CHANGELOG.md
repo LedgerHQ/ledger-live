@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.18.0-next.2
+
+### Minor Changes
+
+- [#21165](https://github.com/LedgerHQ/ledger-live/pull/21165) [`e903cf0`](https://github.com/LedgerHQ/ledger-live/commit/e903cf05f66c5fbef8e221a1cbe7aa0e8b811257) Thanks [@sarneijim](https://github.com/sarneijim)! - Add missing Touchscreen Upgrade Program tracking for Backup Hub Recovery Key upsell and Lazy Onboarding Banner (LIVE-36494)
+
 ## 4.18.0-next.1
 
 ### Minor Changes
