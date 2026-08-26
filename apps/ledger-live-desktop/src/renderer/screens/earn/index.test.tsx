@@ -1,11 +1,12 @@
 import React from "react";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { act, render, screen, withFlagOverrides } from "tests/testSetup";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useDeepLinkListener } from "./useDeepLinkListener";
+import { EARN_GO_TO_DASHBOARD_EVENT } from "./constants";
 import Earn from ".";
 
 const mockWebPlatformPlayer = jest.fn((_props: unknown) => (
@@ -220,6 +221,36 @@ describe("Earn screen", () => {
     };
 
     expect(lastCall.inputs.swapToEarn).toBe(JSON.stringify({ enabled: false }));
+  });
+
+  it("remounts the live app without the deposit intent on a dashboard reset", () => {
+    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
+      pathname: "/earn",
+      search: "",
+      hash: "",
+      state: { intent: "deposit", cryptoAssetId: "bitcoin" },
+    });
+
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+      }),
+    });
+
+    useLocationSpy.mockReturnValue({ pathname: "/earn", search: "", hash: "", state: null });
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent(EARN_GO_TO_DASHBOARD_EVENT));
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.intent).toBeUndefined();
+    expect(lastCall.inputs.cryptoAssetId).toBeUndefined();
+    useLocationSpy.mockRestore();
   });
 
   it("passes uiVersion v4 when earn simulator is enabled", () => {
