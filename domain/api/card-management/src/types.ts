@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   PayCardErrorResponseSchema,
+  PayCardFreezeResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
@@ -21,6 +22,8 @@ export type PayCardLogoutResult = z.infer<typeof PayCardLogoutResponseSchema>;
 export type PayCardUser = z.infer<typeof PayCardUserResponseSchema>;
 
 export type PayCardOrderResult = z.infer<typeof PayCardOrderResponseSchema>;
+
+export type PayCardFreezeResult = z.infer<typeof PayCardFreezeResponseSchema>;
 
 export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 
