@@ -8223,6 +8223,22 @@
       "title": "Outcome unknown",
       "description": "The Internet Computer accepted the request but returned no result, so it may or may not have taken effect. Sync your neurons to check before trying again."
     },
+    "ICPCreateNeuronWarning": {
+      "title": "This locks your ICP in a new neuron",
+      "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
+    },
+    "ICPIncreaseStakeWarning": {
+      "title": "This adds to a locked stake",
+      "description": "The amount joins the neuron's existing stake and follows its dissolve delay, so it is not spendable until the neuron dissolves."
+    },
+    "ICPGovernanceRejected": {
+      "title": "The network refused this operation",
+      "description": "Internet Computer governance rejected the request, so the neuron is unchanged. Sync your neurons to see their current state. {{reason}}"
+    },
+    "ICPCallRejected": {
+      "title": "Request not accepted",
+      "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
+    },
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."
@@ -10169,6 +10185,7 @@
         "title": "Manage",
         "neuron": "Neuron {{neuronId}}",
         "hotKeyOnly": "You hold a hot key on this neuron. You can vote and set following, but not move its stake.",
+        "missingNeuron": "This neuron is no longer in your synced snapshot. Go back to your neurons and sync to pick another.",
         "votingPower": {
           "title": "Voting power",
           "tooltip": "Voting power decides how much weight your neuron carries in governance, and how many rewards it earns.",
@@ -10245,7 +10262,9 @@
       "addHotKey": {
         "title": "Add hot key",
         "description": "Grant another principal permission to vote and set following on this neuron. It can never move the stake.",
-        "principal": "Principal ID"
+        "principal": "Principal ID",
+        "ownPrincipal": "This account's principal",
+        "ownPrincipalHint": "Enter a different principal — typically the one you sign in with on the NNS dapp. This account already controls the neuron, so adding its own principal grants nothing."
       },
       "followTopic": {
         "title": "Topic",
@@ -10259,7 +10278,8 @@
         "neuronId": "Neuron ID to follow",
         "add": "Add",
         "remove": "Remove",
-        "empty": "No followees yet. Your neuron will not vote on this topic."
+        "empty": "No followees yet. Your neuron will not vote on this topic.",
+        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}."
       }
     },
     "refreshVotingPowerFlow": {
