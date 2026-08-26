@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Platform } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
@@ -20,11 +20,18 @@ export function ContactsAddContactDrawerSheet({
   const keyboardInset = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
     ? keyboardHeight
     : 0;
+  const [hasOpened, setHasOpened] = useState(false);
+  const handleOpened = useCallback(() => setHasOpened(true), []);
+  const handleClose = useCallback(() => {
+    setHasOpened(false);
+    onClose();
+  }, [onClose]);
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={onClose}
+      onOpened={handleOpened}
+      onClose={handleClose}
       testID="contacts-add-contact-drawer"
       enableDynamicSizing
     >
@@ -32,7 +39,7 @@ export function ContactsAddContactDrawerSheet({
         {isOpen ? (
           <Box lx={{ gap: "s24" }}>
             <BottomSheetHeader />
-            <ContactsAddContactContent {...contentProps} />
+            <ContactsAddContactContent {...contentProps} autoFocus={hasOpened} />
           </Box>
         ) : null}
       </BottomSheetView>

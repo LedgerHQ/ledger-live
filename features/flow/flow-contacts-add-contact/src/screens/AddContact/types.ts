@@ -29,3 +29,9 @@ export type ContactsAddContactContentProps = AddContactContentViewModel &
   Readonly<{
     labels: ContactsAddContactContentLabels;
   }>;
+
+export type ContactsAddContactContentNativeProps = ContactsAddContactContentProps &
+  Readonly<{
+    /** Lets the host drawer hold the keyboard back until it has finished opening. */
+    autoFocus?: boolean;
+  }>;

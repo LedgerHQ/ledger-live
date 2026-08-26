@@ -27,6 +27,12 @@ export type QueuedBottomSheetProps = Readonly<{
    * drawer is dismissed. Use it to track close intent accurately.
    */
   onBackdropPress?: () => void;
+  /**
+   * Callback after the drawer has finished animating open and settled on its snap point. Use it to
+   * defer work that would otherwise compete with the opening animation, such as focusing an input
+   * (which raises the keyboard and, with {@link enableDynamicSizing}, resizes the drawer mid-flight).
+   */
+  onOpened?: () => void;
   /** Callback after the drawer is fully hidden. */
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
