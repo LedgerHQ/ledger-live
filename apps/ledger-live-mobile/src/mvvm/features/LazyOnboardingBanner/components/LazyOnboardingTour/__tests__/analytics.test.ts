@@ -1,5 +1,10 @@
 import { screen, track } from "~/analytics";
 import {
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+  LAZY_ONBOARDING_SOURCE_FLOW,
+} from "../../analyticsConstants";
+import {
   trackLazyOnboardingTourBuyClicked,
   trackLazyOnboardingTourCloseClicked,
   trackLazyOnboardingTourContinueClicked,
@@ -20,10 +25,10 @@ jest.mock("~/analytics", () => ({
 const sharedProps: LazyOnboardingTourSharedAnalyticsProps = {
   hasConnectedDevice: false,
   personalRecoOptIn: true,
-  offerType: "none",
-  platform: "llm",
-  source: "lazy onboarding",
-  mode: "feature_intro",
+  offerType: "discount",
+  platform: "lwm",
+  deviceModel: "none",
+  abLazyBannerFlow: "feature intro",
 };
 
 describe("LazyOnboardingTour analytics", () => {
@@ -33,11 +38,16 @@ describe("LazyOnboardingTour analytics", () => {
 
   it("tracks tour open once and ignores duplicate opens", () => {
     expect(trackLazyOnboardingTourOpened(sharedProps, false)).toBe(true);
-    expect(screen).toHaveBeenCalledWith(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
-      name: "lazy onboarding tour",
-      card: 1,
-      ...sharedProps,
-    });
+    expect(screen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+      undefined,
+      {
+        name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+        sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
+        ...sharedProps,
+      },
+      false,
+    );
 
     expect(trackLazyOnboardingTourOpened(sharedProps, true)).toBe(false);
     expect(screen).toHaveBeenCalledTimes(1);
