@@ -37,18 +37,21 @@ function InteractiveIcon({ icon: _icon, iconType: _iconType, size: _size, ...pro
   return React.createElement("button", { type: "button", ...props });
 }
 
+// Text passed through props (Banner's title/description, Tag's label) has to be rendered as
+// children to be queryable, but the props must stay on the node too: consumer tests assert on
+// them (e.g. `toHaveAttribute("label", …)`), which the generic stub below supported.
 function Banner({ children, title, description, ...props }) {
   return React.createElement(
     "div",
-    props,
+    { ...props, title, description },
     title === undefined ? null : React.createElement("span", undefined, title),
     description === undefined ? null : React.createElement("span", undefined, description),
     children,
   );
 }
 
-function Tag({ label, ...props }) {
-  return React.createElement("span", props, label);
+function Tag({ label, children, ...props }) {
+  return React.createElement("span", { ...props, label }, label, children);
 }
 
 function Tooltip({ children, onOpenChange, open }) {

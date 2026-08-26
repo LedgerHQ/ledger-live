@@ -28,11 +28,12 @@ function Banner({ children, title, description, primaryAction, secondaryAction, 
   );
 }
 
-function Tag({ label, ...props }) {
+function Tag({ label, children, ...props }) {
   return React.createElement(
     "Tag",
     { ...props, label },
     label === undefined ? null : React.createElement("Text", undefined, label),
+    wrapTextChildren(children),
   );
 }
 
