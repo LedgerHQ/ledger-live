@@ -1,22 +1,10 @@
 const React = require("react");
+const passthroughNative = require("@support/jest-shared/mocks/passthrough-native");
 
-function wrapTextChildren(children) {
-  if (typeof children === "string" || typeof children === "number") {
-    return React.createElement("Text", undefined, children);
-  }
-  if (Array.isArray(children)) {
-    return children.map((child, index) =>
-      typeof child === "string" || typeof child === "number"
-        ? React.createElement("Text", { key: `text-${index}` }, child)
-        : child,
-    );
-  }
-  return children;
-}
-
-// The generic @support/jest-features-flow native stub renders Banner's description as visible
-// Text but not its title (features/flow Banners don't set one). InfoState always sets both, so
-// this override adds title too and keeps everything else identical to the shared stub.
+// The shared native stub renders Banner's `description` as visible Text but not its `title`
+// (flow packages don't set one). InfoState always sets both, and its tests assert the title.
+// Everything except Banner is delegated to @support/jest-shared so this stays in lockstep
+// with the shared stub instead of forking it.
 function Banner({ children, title, description, primaryAction, secondaryAction, ...props }) {
   return React.createElement(
     "Banner",
@@ -29,20 +17,8 @@ function Banner({ children, title, description, primaryAction, secondaryAction, 
   );
 }
 
-module.exports = new Proxy(
-  { __esModule: true, Banner },
-  {
-    get(target, prop) {
-      if (prop in target) return target[prop];
-      if (typeof prop !== "string") return undefined;
-      if (prop.startsWith("use")) {
-        return () => ({ current: null });
-      }
-      if (prop === "Text") {
-        return ({ children, ...props }) => React.createElement("Text", props, children);
-      }
-      return ({ children, ...props }) =>
-        React.createElement(prop, props, wrapTextChildren(children));
-    },
+module.exports = new Proxy(passthroughNative, {
+  get(target, prop) {
+    return prop === "Banner" ? Banner : target[prop];
   },
-);
+});
