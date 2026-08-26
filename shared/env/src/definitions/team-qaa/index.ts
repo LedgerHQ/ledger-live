@@ -11,6 +11,13 @@ const teamQaa = {
     parser: boolParser,
     desc: "true when launched for E2E testing",
   },
+  CARD_SESSION_BOOTSTRAP: {
+    def: "",
+    parser: stringParser,
+    desc:
+      "Test-only. A PayCardSession as JSON, injected at launch so the app starts signed in. " +
+      "Honoured only in a dev build or under PLAYWRIGHT_RUN; a packaged build ignores it.",
+  },
   E2E_NANO_APP_VERSION_PATH: {
     def: "",
     parser: stringParser,

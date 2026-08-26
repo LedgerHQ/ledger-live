@@ -6,16 +6,25 @@ import { flagNameOf, parseCliArgs } from "./cliArgs";
  */
 describe("parseCliArgs", () => {
   it("runs with no arguments", () => {
-    expect(parseCliArgs([])).toEqual({ kind: "run", asJson: false });
+    expect(parseCliArgs([])).toEqual({ kind: "run", format: "token" });
   });
 
   it("recognises --json", () => {
-    expect(parseCliArgs(["--json"])).toEqual({ kind: "run", asJson: true });
+    expect(parseCliArgs(["--json"])).toEqual({ kind: "run", format: "json" });
+  });
+
+  it("recognises --session", () => {
+    expect(parseCliArgs(["--session"])).toEqual({ kind: "run", format: "session" });
+  });
+
+  it("prefers --session when both are given, as the more specific request", () => {
+    expect(parseCliArgs(["--json", "--session"])).toEqual({ kind: "run", format: "session" });
   });
 
   it.each([
-    [["--"], { kind: "run", asJson: false }],
-    [["--", "--json"], { kind: "run", asJson: true }],
+    [["--"], { kind: "run", format: "token" }],
+    [["--", "--json"], { kind: "run", format: "json" }],
+    [["--", "--session"], { kind: "run", format: "session" }],
     [["--", "--help"], { kind: "help" }],
   ])("drops the pnpm -- separator in %j", (argv, expected) => {
     expect(parseCliArgs(argv as string[])).toEqual(expected);

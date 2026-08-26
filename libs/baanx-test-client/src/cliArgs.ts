@@ -4,9 +4,11 @@
  * real login on import).
  */
 
+export type OutputFormat = "token" | "json" | "session";
+
 export type CliArgs =
   | { kind: "help" }
-  | { kind: "run"; asJson: boolean }
+  | { kind: "run"; format: OutputFormat }
   | { kind: "unknown"; argument: string };
 
 /**
@@ -18,10 +20,13 @@ export function parseCliArgs(argv: string[]): CliArgs {
 
   if (args.includes("--help") || args.includes("-h")) return { kind: "help" };
 
-  const unknown = args.find(arg => arg !== "--json");
+  const known = new Set(["--json", "--session"]);
+  const unknown = args.find(arg => !known.has(arg));
   if (unknown !== undefined) return { kind: "unknown", argument: unknown };
 
-  return { kind: "run", asJson: args.includes("--json") };
+  // `--session` wins: it is the more specific request.
+  if (args.includes("--session")) return { kind: "run", format: "session" };
+  return { kind: "run", format: args.includes("--json") ? "json" : "token" };
 }
 
 /**

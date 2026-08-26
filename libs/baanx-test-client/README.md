@@ -99,6 +99,33 @@ TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)
 
 `-- --json` prints the full session, `-- --help` lists the variables.
 
+### Starting Ledger Wallet Desktop already signed in
+
+Desktop cannot finish the OAuth login today — the hosted page opens in the user's own browser and
+reports nothing back (LIVE-34740) — so a signed-in state has to be injected. `-- --session` prints a
+`PayCardSession` for exactly that:
+
+```bash
+export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
+export CARD_API_URL=https://<the Baanx host that minted the token>
+pnpm --filter ledger-live-desktop start
+```
+
+The same variable works for Playwright, which already spreads `process.env` into `electron.launch`:
+
+```bash
+export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
+pnpm --filter ledger-live-desktop-e2e-tests test:playwright
+```
+
+Two things to know. `CARD_API_URL` **must** point at the host that minted the token, or the bearer is
+for the wrong audience and every Card call answers 401. And the password login returns no refresh
+token, so `--session` fills that field with a placeholder: nothing can refresh with it, which is fine
+for a run shorter than the 6-hour token life but is not a substitute for the OAuth flow.
+
+The app honours the variable only in a development build or under `PLAYWRIGHT_RUN`; a packaged build
+ignores it. Mint once per run and reuse it — Baanx rate limits the OTP trigger.
+
 ## The login flow
 
 Baanx returns **HTTP 200 even when login has not completed**, so every decision branches on the
