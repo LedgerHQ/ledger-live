@@ -34,8 +34,7 @@
     "@ethersproject/signing-key",
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
     "bn.js",
-    "lru-cache",
-    "@ledgerhq/types-live"
+    "lru-cache"
   ],
   "ignoreUnused": []
 }
