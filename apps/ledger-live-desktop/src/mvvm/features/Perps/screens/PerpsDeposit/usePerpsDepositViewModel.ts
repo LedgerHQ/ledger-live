@@ -198,7 +198,7 @@ export function usePerpsDepositViewModel(
 
   const exceedsBalance = submitError !== null;
   const missingAccount = !depositAccount && depositAmount > 0;
- 
+
   const isFormComplete =
     depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
 
