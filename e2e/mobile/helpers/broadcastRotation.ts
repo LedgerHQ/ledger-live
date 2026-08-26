@@ -8,7 +8,7 @@
 
 const PLATFORM_SLOTS = ["ios", "android"] as const;
 
-export const BroadcastFlow = { APPROVAL: 0, REAPPROVAL: 1 } as const;
+export const BroadcastFlow = { APPROVAL: 0, REAPPROVAL: 1, BORROW: 2 } as const;
 export type BroadcastFlow = (typeof BroadcastFlow)[keyof typeof BroadcastFlow];
 
 const MONDAY_EPOCH_UTC_MS = Date.UTC(2024, 0, 1);
