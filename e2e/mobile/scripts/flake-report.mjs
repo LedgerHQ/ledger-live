@@ -286,7 +286,7 @@ const pickFrames = trace => {
       return { fn, file, lineNo };
     })
     .filter(Boolean)
-    .filter(frame => !frame.file.includes("node_modules"))
+    .filter(frame => !frame.file.includes("node_modules") && !frame.file.startsWith("node:"))
     .map(frame => ({
       ...frame,
       // Repo-relative and machine-independent: the CI checkout path differs from a local one,
@@ -299,7 +299,8 @@ const pickFrames = trace => {
   const meaningful =
     frames.find(frame => !GENERIC_FRAME_RE.test(frame.rel)) ?? specFrame ?? frames[0];
   return {
-    frame: meaningful ? `${meaningful.rel}:${meaningful.lineNo} ${meaningful.fn}` : "",
+    frame: meaningful ? `${meaningful.rel} ${meaningful.fn}` : "",
+    frameLine: meaningful ? `${meaningful.rel}:${meaningful.lineNo}` : "",
     specFrame: specFrame ? `${specFrame.rel}:${specFrame.lineNo}` : "",
   };
 };
@@ -307,11 +308,12 @@ const pickFrames = trace => {
 const signatureOf = attempt => {
   const message = attempt.statusDetails?.message ?? "";
   const kind = classifyKind(message);
-  const { frame, specFrame } = pickFrames(attempt.statusDetails?.trace ?? "");
+  const { frame, frameLine, specFrame } = pickFrames(attempt.statusDetails?.trace ?? "");
   const normalized = normalizeMessage(message);
   return {
     kind,
     frame,
+    frameLine,
     specFrame,
     message: normalized,
     key: `${kind}|${frame}|${normalized.slice(0, 80)}`,
@@ -403,6 +405,7 @@ const readRun = (runDir, wantedPlatforms) => {
 const aggregate = runs => {
   const tests = new Map();
   const groups = new Map();
+  const latestRun = runs.reduce((a, b) => (a && a.date >= b.date ? a : b), null);
 
   for (const run of runs) {
     for (const observation of run.tests) {
@@ -446,20 +449,28 @@ const aggregate = runs => {
             kind: signature.kind,
             frame: signature.frame,
             sampleMessage: signature.message,
+            frameLines: new Set(),
             specFrames: new Set(),
+            files: new Set(),
             tests: new Set(),
             specs: new Set(),
             platforms: new Set(),
             runs: new Set(),
+            nights: new Set(),
             occurrences: 0,
           });
         }
         const group = groups.get(signature.key);
+        if (signature.frameLine) group.frameLines.add(signature.frameLine);
         if (signature.specFrame) group.specFrames.add(signature.specFrame);
+        for (const frameLine of [signature.frameLine, signature.specFrame]) {
+          if (frameLine) group.files.add(frameLine.split(":")[0]);
+        }
         group.tests.add(observation.key);
         group.specs.add(observation.spec);
         group.platforms.add(observation.platform);
         group.runs.add(run.runId);
+        group.nights.add(run.date);
         group.occurrences += 1;
       }
     }
@@ -476,6 +487,11 @@ const aggregate = runs => {
   const groupList = [...groups.values()]
     .map(group => ({
       ...group,
+      inLatestRun: latestRun ? group.runs.has(latestRun.runId) : false,
+      lastSeen: [...group.nights].toSorted().at(-1) ?? "",
+      nights: [...group.nights].toSorted(),
+      files: [...group.files].toSorted(),
+      frameLines: [...group.frameLines].toSorted(),
       specFrames: [...group.specFrames].toSorted(),
       tests: [...group.tests].toSorted(),
       specs: [...group.specs].toSorted(),
@@ -483,13 +499,17 @@ const aggregate = runs => {
       runs: [...group.runs].toSorted(),
       runCount: group.runs.size,
     }))
-    // Breadth first: a signature hitting several specs across several nights is the best ticket.
+    // Latest nightly first, then breadth: a signature that still fires on today's develop is a
+    // better ticket than one with a higher historical rate that has not been seen since.
     .toSorted(
       (a, b) =>
-        b.runCount - a.runCount || b.specs.length - a.specs.length || b.occurrences - a.occurrences,
+        Number(b.inLatestRun) - Number(a.inLatestRun) ||
+        b.runCount - a.runCount ||
+        b.specs.length - a.specs.length ||
+        b.occurrences - a.occurrences,
     );
 
-  return { tests: testList, groups: groupList };
+  return { tests: testList, groups: groupList, latestRun };
 };
 
 const pct = value => `${Math.round(value * 100)}%`;
@@ -528,19 +548,40 @@ const renderMarkdown = report => {
     );
   }
 
+  const live = report.groups.filter(group => group.inLatestRun);
+  const notLatest = report.groups.filter(group => !group.inLatestRun);
+  lines.push("");
+  lines.push(
+    `**${live.length} signature(s) still firing in the latest nightly** ` +
+      `(${report.latestRun?.date ?? "?"}); ${notLatest.length} not seen in it.`,
+  );
+  lines.push("");
+  lines.push(
+    "> A signature missing from the latest nightly is NOT proof it was fixed - a flake passes on " +
+      "some nights by definition. Only a merged change to the implicated files is evidence of a " +
+      "fix. Each such entry below carries the `git log` command to check.",
+  );
+
   lines.push("");
   lines.push("## Flaky signatures, ranked");
   if (report.groups.length === 0) lines.push("");
   if (report.groups.length === 0) lines.push("_No flake healed by a retry in the analysed runs._");
   report.groups.forEach((group, index) => {
     lines.push("");
+    const status = group.inLatestRun
+      ? "🔴 STILL FAILING in the latest nightly"
+      : `⚪ not in the latest nightly — last seen ${group.lastSeen}`;
     lines.push(`### ${index + 1}. ${group.kind} — ${group.frame || "unknown call site"}`);
     lines.push("");
-    lines.push(`- **Nightlies affected:** ${group.runCount}/${report.runs.length}`);
+    lines.push(`- **Status:** ${status}`);
+    lines.push(
+      `- **Nightlies affected:** ${group.runCount}/${report.runs.length} (${group.nights.join(", ")})`,
+    );
     lines.push(`- **Platforms:** ${group.platforms.join(", ")}`);
     lines.push(`- **Specs:** ${group.specs.join(", ")}`);
     lines.push(`- **Occurrences:** ${group.occurrences}`);
     lines.push(`- **Message:** \`${group.sampleMessage}\``);
+    if (group.frameLines.length > 0) lines.push(`- **Seen at:** ${group.frameLines.join(", ")}`);
     if (group.specFrames.length > 0)
       lines.push(`- **Spec call sites:** ${group.specFrames.join(", ")}`);
     lines.push("- **Tests:**");
@@ -554,6 +595,14 @@ const renderMarkdown = report => {
       "|",
     );
     lines.push(`- **Reproduce locally:** \`scripts/flake-check.sh '${specFilter}' --runs 5\``);
+    if (!group.inLatestRun && group.files.length > 0) {
+      // Absent from the latest nightly: a fix merged since it was last seen would make this entry
+      // stale, and ticketing it would re-report work someone has already done.
+      const paths = group.files.map(file => `e2e/mobile/${file}`).join(" ");
+      lines.push(
+        `- **Fixed since?** \`git log origin/develop --merges --since=${group.lastSeen} -- ${paths}\``,
+      );
+    }
   });
 
   lines.push("");
@@ -631,13 +680,16 @@ const main = async () => {
   });
 
   const ordered = analysed.toSorted((a, b) => (a.date < b.date ? 1 : -1));
-  const { tests, groups } = aggregate(ordered);
+  const { tests, groups, latestRun } = aggregate(ordered);
   const report = {
     generatedAt: new Date().toISOString(),
     workflow: WORKFLOW,
     repo: opts.repo,
     platforms,
     runs: ordered,
+    latestRun: latestRun
+      ? { runId: latestRun.runId, date: latestRun.date, url: latestRun.url }
+      : null,
     tests,
     groups,
   };

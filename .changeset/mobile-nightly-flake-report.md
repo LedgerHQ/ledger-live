@@ -19,3 +19,10 @@ Failures are then grouped by signature — failure kind plus the first non-wrapp
 the stack — so two specs timing out inside the same page object are one entry instead of two, and
 each group carries its flake rate, affected platforms, run links and a ready `flake-check.sh`
 command to reproduce it locally.
+
+The latest nightly is treated as the primary signal, since it is the only run that reflects
+`develop` as it stands now: every signature is tagged as still firing in it or not, ranking puts
+the ones that are first, and each of the others carries a `git log --merges --since=<last seen>`
+command over the files it implicates — because a fix merged in between makes a high historical
+rate describe code that no longer exists. Absence from one nightly is not itself treated as a
+fix; a flake passes on some nights by definition.
