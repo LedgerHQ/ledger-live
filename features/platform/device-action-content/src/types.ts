@@ -10,7 +10,7 @@ export type DeviceActionContentAction = "continue" | "power-and-unlock";
 export type DeviceActionAnimationTheme = "light" | "dark";
 
 /** Lottie source returned by the device-action animation lookup. */
-export type DeviceActionAnimationSource = unknown;
+export type DeviceActionAnimationSource = Record<string, unknown>;
 
 /** Lumen banner displayed below the main device instructions. */
 export type DeviceActionContentBanner = Readonly<{
