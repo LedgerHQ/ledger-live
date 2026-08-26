@@ -33,6 +33,12 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
   useRecipientContactSelection: jest.fn(),
 }));
+jest.mock("../../context/AddNewContactHeaderContext", () => ({
+  useAddNewContactHeaderState: jest.fn(() => ({
+    titleKey: "contacts.addContact",
+    onAddressPhaseBack: null,
+  })),
+}));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
@@ -44,6 +50,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
+import { useAddNewContactHeaderState } from "../../context/AddNewContactHeaderContext";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -138,6 +145,10 @@ beforeEach(() => {
     selectedContact: undefined,
     selectContact: jest.fn(),
     clearSelectedContact: jest.fn(),
+  });
+  jest.mocked(useAddNewContactHeaderState).mockReturnValue({
+    titleKey: "contacts.addContact",
+    onAddressPhaseBack: null,
   });
 });
 
@@ -375,6 +386,31 @@ describe("useSendHeaderModel", () => {
         utxoStrategy: { strategy: 0, excludeUTXOs: [] },
       });
       expect(goToPreviousStep).toHaveBeenCalled();
+    });
+
+    it("stays on add new contact when the address phase handles back", () => {
+      const onAddressPhaseBack = jest.fn();
+      const { goToStep, goToPreviousStep } = mockNavigation();
+      const { close } = mockActions();
+      jest.mocked(useAddNewContactHeaderState).mockReturnValue({
+        titleKey: "contacts.addAddressEntry.title",
+        onAddressPhaseBack,
+      });
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.ADD_NEW_CONTACT,
+        currentStepConfig: { titleKey: "contacts.addContact", showTitle: true },
+        navigation: { goToStep, goToPreviousStep, canGoBack: () => true },
+      });
+
+      renderHook();
+
+      expect(latestVM?.title).toBe("Enter address");
+      latestVM?.handleBack();
+
+      expect(onAddressPhaseBack).toHaveBeenCalled();
+      expect(goToPreviousStep).not.toHaveBeenCalled();
+      expect(goToStep).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
     });
   });
 

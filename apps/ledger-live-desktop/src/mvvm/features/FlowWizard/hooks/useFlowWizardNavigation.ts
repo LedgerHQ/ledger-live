@@ -11,6 +11,7 @@ import {
 
 type NavigationAction<TStep extends FlowStep, TStepConfig extends FlowStepConfig<TStep>> =
   | { type: "GO_TO_STEP"; step: TStep }
+  | { type: "RESET_TO_STEP"; step: TStep }
   | { type: "GO_FORWARD"; stepOrder: readonly TStep[] }
   | { type: "GO_BACKWARD"; stepConfigs: Record<TStep, TStepConfig> };
 
@@ -55,6 +56,20 @@ function createNavigationReducer<
           currentStep: action.step,
           direction,
           stepHistory: [...state.stepHistory, state.currentStep],
+        };
+      }
+
+      case "RESET_TO_STEP": {
+        const previousVisitIndex = state.stepHistory.lastIndexOf(action.step);
+        const stepHistory =
+          previousVisitIndex === -1 ? [] : state.stepHistory.slice(0, previousVisitIndex);
+        if (action.step === state.currentStep) {
+          return { ...state, stepHistory };
+        }
+        return {
+          currentStep: action.step,
+          direction: determineDirection(state.currentStep, action.step, stepOrder),
+          stepHistory,
         };
       }
 
@@ -125,6 +140,10 @@ export function useFlowWizardNavigation<
     dispatch({ type: "GO_TO_STEP", step });
   }, []);
 
+  const resetToStep = useCallback((step: TStep) => {
+    dispatch({ type: "RESET_TO_STEP", step });
+  }, []);
+
   const goToNextStep = useCallback(() => {
     dispatch({ type: "GO_FORWARD", stepOrder });
   }, [stepOrder]);
@@ -143,8 +162,8 @@ export function useFlowWizardNavigation<
   }, [state.currentStep, stepOrder]);
 
   const actions: FlowNavigationActions<TStep> = useMemo(
-    () => ({ goToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward }),
-    [goToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward],
+    () => ({ goToStep, resetToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward }),
+    [goToStep, resetToStep, goToNextStep, goToPreviousStep, canGoBack, canGoForward],
   );
 
   const currentStepConfig = stepConfigs[state.currentStep];

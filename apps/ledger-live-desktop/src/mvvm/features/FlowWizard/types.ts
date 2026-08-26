@@ -28,6 +28,7 @@ export type FlowNavigationState<TStep extends FlowStep = FlowStep> = Readonly<{
 
 export type FlowNavigationActions<TStep extends FlowStep = FlowStep> = Readonly<{
   goToStep: (step: TStep) => void;
+  resetToStep: (step: TStep) => void;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
   canGoBack: () => boolean;
