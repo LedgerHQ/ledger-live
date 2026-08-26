@@ -19,7 +19,7 @@ import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { applyNeuronOperation } from "../common";
-import type { FollowTopic, Step, StepId, StepProps } from "./types";
+import type { Step, StepId, StepProps } from "./types";
 
 /**
  * Steps with no transaction in flight, where the skip that protects one is not wanted.
@@ -87,7 +87,6 @@ const Body = ({
   const [lastAction, setLastAction] = useState<ICPTransactionType | null>(
     params.lastAction ?? null,
   );
-  const [followTopic, setFollowTopic] = useState<FollowTopic | null>(null);
 
   // What the flow has learned since it opened, if anything. `account` is the payload the modal was
   // opened with and is never re-read from the store, so a refresh performed here has to be held —
@@ -196,8 +195,6 @@ const Body = ({
     setSelectedNeuronId,
     lastAction,
     setLastAction,
-    followTopic,
-    setFollowTopic,
   };
 
   if (!status) return null;

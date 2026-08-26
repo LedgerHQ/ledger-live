@@ -58,8 +58,6 @@ export type StepProps = {
   // The operation the device is about to sign, so the confirmation step can name what happened.
   lastAction: ICPTransactionType | null;
   setLastAction: (action: ICPTransactionType | null) => void;
-  followTopic: FollowTopic | null;
-  setFollowTopic: (topic: FollowTopic | null) => void;
 };
 
 export type Step = StepperStep<StepId, StepProps>;
