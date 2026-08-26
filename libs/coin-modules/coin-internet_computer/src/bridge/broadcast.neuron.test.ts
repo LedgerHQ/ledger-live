@@ -1,5 +1,5 @@
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed } from "../errors";
+import { ICPCallUnconfirmed, ICPNeuronsNotRead } from "../errors";
 import { broadcast } from "./broadcast";
 
 jest.mock("../api");
@@ -96,20 +96,22 @@ describe("broadcast routing", () => {
     expect(api.decodeManageNeuronReply).not.toHaveBeenCalled();
   });
 
-  it("tolerates an indeterminate list_neurons reply (idempotent read, no snapshot update)", async () => {
+  // Reporting this as a successful broadcast spent a signature and then told the user their neurons
+  // were up to date, with the snapshot untouched. Nothing was read, so say so.
+  it("reports an indeterminate list_neurons reply rather than an unchanged snapshot", async () => {
     (api.readReplyFromCanister as jest.Mock).mockResolvedValue(null);
 
-    const op = await broadcast(
-      signed({
-        encodedSignedCallBlob: "aa",
-        encodedSignedReadStateBlob: "cc",
-        requestId: "dd",
-        methodName: "list_neurons",
-      }),
-    );
-
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          encodedSignedReadStateBlob: "cc",
+          requestId: "dd",
+          methodName: "list_neurons",
+        }),
+      ),
+    ).rejects.toThrow(ICPNeuronsNotRead);
     expect(api.decodeListNeuronsReply).not.toHaveBeenCalled();
-    expect(op.extra).toEqual({});
   });
 
   it("decodes a list_neurons reply into the operation's neuron snapshot", async () => {
