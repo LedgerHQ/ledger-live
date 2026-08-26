@@ -3,7 +3,7 @@ import {
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
   LAZY_ONBOARDING_SOURCE_FLOW,
-} from "../../analyticsConstants";
+} from "../../../analyticsConstants";
 import {
   trackLazyOnboardingTourBuyClicked,
   trackLazyOnboardingTourCloseClicked,
