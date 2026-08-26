@@ -11,7 +11,7 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { useSelector } from "LLD/hooks/redux";
 import { toLargeScreenUpsellDeviceModelAnalyticsValue } from "LLD/features/LargeScreenUpsell/analytics";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -26,6 +26,8 @@ import { getBackupBucket } from "./utils/getBackupBucket";
 import {
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+  BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
   BACKUP_HUB_UPSELL_FALLBACK_LINK,
   RECOVER_DEEPLINK_BASE,
@@ -85,9 +87,39 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
     );
   }, [largeScreenUpsell?.params, personalRecoOptIn]);
 
+  const upsellSharedAnalyticsProps = useMemo(
+    () =>
+      incompatibleModel
+        ? {
+            deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(incompatibleModel),
+            personalRecoOptIn,
+            offerType: personalRecoOptIn ? ("discount" as const) : ("none" as const),
+            platform: "lwd" as const,
+          }
+        : undefined,
+    [incompatibleModel, personalRecoOptIn],
+  );
+
   useEffect(() => {
     track("page_viewed", { page: BACKUP_HUB_TRACKING_PAGE_NAME });
   }, []);
+
+  useEffect(() => {
+    if (!upsellSharedAnalyticsProps) {
+      return;
+    }
+
+    trackPage(
+      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      undefined,
+      {
+        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        ...upsellSharedAnalyticsProps,
+      },
+      true,
+      false,
+    );
+  }, [upsellSharedAnalyticsProps]);
 
   const handleBack = useCallback(() => {
     track("button_clicked", {
@@ -130,28 +162,32 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
       return;
     }
 
-    const sharedProps = {
-      deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(incompatibleModel),
-      personalRecoOptIn,
-      offerType: personalRecoOptIn ? ("discount" as const) : ("none" as const),
-      platform: "lwd" as const,
-    };
+    if (!upsellSharedAnalyticsProps) {
+      return;
+    }
 
     track("button_clicked", {
-      button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
-      page: BACKUP_HUB_TRACKING_PAGE_NAME,
-      ...sharedProps,
+      button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+      page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      ...upsellSharedAnalyticsProps,
     });
     track("deeplink_clicked", {
-      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
       deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
       deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
       deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
-      ...sharedProps,
+      ...upsellSharedAnalyticsProps,
     });
     openURL(upsellLink);
     onClose();
-  }, [incompatibleModel, onClose, openShop, personalRecoOptIn, recoveryKeyUrl, upsellLink]);
+  }, [
+    incompatibleModel,
+    onClose,
+    openShop,
+    recoveryKeyUrl,
+    upsellLink,
+    upsellSharedAnalyticsProps,
+  ]);
 
   const physicalRows = useMemo<readonly PhysicalRowData[]>(
     () => [

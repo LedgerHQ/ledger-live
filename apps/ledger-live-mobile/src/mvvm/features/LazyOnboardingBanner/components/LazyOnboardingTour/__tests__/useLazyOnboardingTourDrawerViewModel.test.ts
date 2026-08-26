@@ -1,6 +1,11 @@
 import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { screen, track } from "~/analytics";
+import {
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+  LAZY_ONBOARDING_SOURCE_FLOW,
+} from "../../analyticsConstants";
 import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "../const";
 import {
   __resetLazyOnboardingTourControllerForTests,
@@ -50,9 +55,8 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
       expect.objectContaining({
         page: LAZY_ONBOARDING_TOUR_PAGE,
         card: 1,
-        source: "lazy onboarding",
-        mode: "feature_intro",
-        platform: "llm",
+        abLazyBannerFlow: "feature intro",
+        platform: "lwm",
       }),
     );
     expect(result.current?.isOpen).toBe(false);
@@ -119,9 +123,14 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
     });
 
     expect(screen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_TOUR_PAGE,
+      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
       undefined,
-      expect.objectContaining({ name: "lazy onboarding tour", card: 1 }),
+      expect.objectContaining({
+        name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+        sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
+        abLazyBannerFlow: "feature intro",
+      }),
+      false,
     );
 
     act(() => {
