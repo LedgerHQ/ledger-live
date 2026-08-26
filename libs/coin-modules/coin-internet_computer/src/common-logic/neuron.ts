@@ -1,6 +1,7 @@
 import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
 import { Principal } from "@dfinity/principal";
 import {
+  KNOWN_TOPICS,
   LAST_SYNC_THRESHOLD_IN_DAYS,
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAX_AGE_BONUS,
@@ -18,6 +19,7 @@ import {
   SECONDS_IN_MONTH,
   SECONDS_IN_YEAR,
 } from "../consts";
+import type { Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
@@ -274,6 +276,169 @@ export const neuronsNeedSync = (neurons: NeuronsData, nowMSecs: number = Date.no
  */
 export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): boolean =>
   neuron.controller === principal;
+
+// ---- optimistic command application -------------------------------------------------------------
+
+/**
+ * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
+ * `undefined` when the result cannot be reproduced locally.
+ *
+ * An accepted update call is final — governance state changed in the round that replied, with no
+ * indexing lag — but only a device-signed `list_neurons` can read it back. Rather than ask for a
+ * second signature per action, replay the commands whose effect is fully determined by the command
+ * plus the current neuron. Everything else (split, spawn, disburse, stake_maturity) yields figures
+ * the canister computes, or a neuron whose id only it knows, and is left to an explicit refresh.
+ */
+/**
+ * The neuron after the canister's `increase_dissolve_delay`, which both dissolve-delay commands land
+ * on: `neuron/types.rs` validates `SetDissolveTimestamp` against the current delay and applies the
+ * difference through the same function. Shaped after its three arms
+ * (`neuron/dissolve_state_and_age.rs`), because which one runs decides whether the neuron ends up
+ * locked or dissolving — the difference the card reports.
+ */
+const withIncreasedDissolveDelay = (
+  neuron: ICPNeuron,
+  additional: bigint,
+  nowSeconds: number,
+): ICPNeuron | undefined => {
+  // The canister rejects a zero delta rather than treating it as a no-op.
+  if (additional <= 0n) return undefined;
+  const maximum = BigInt(NNS_MAXIMUM_DISSOLVE_DELAY);
+  const capped = (seconds: bigint) => (seconds > maximum ? maximum : seconds);
+  const next = capped(getNeuronDissolveDurationSeconds(neuron, nowSeconds) + additional);
+
+  switch (neuron.state) {
+    case NeuronState.Locked:
+      // Aging is deliberately left alone: the canister carries `aging_since_timestamp_seconds` over.
+      return {
+        ...neuron,
+        dissolveState: { DissolveDelaySeconds: next },
+        dissolveDelaySeconds: next,
+      };
+    case NeuronState.Dissolving:
+      // Still dissolving — the unlock timestamp moves out, the neuron does not re-lock.
+      return {
+        ...neuron,
+        dissolveState: { WhenDissolvedTimestampSeconds: BigInt(nowSeconds) + next },
+        dissolveDelaySeconds: next,
+      };
+    case NeuronState.Dissolved:
+      // "This neuron is dissolved. Set it to non-dissolving." Its remaining delay is zero, so the
+      // delta is the whole new delay, and aging restarts from now.
+      return {
+        ...neuron,
+        state: NeuronState.Locked,
+        dissolveState: { DissolveDelaySeconds: capped(additional) },
+        dissolveDelaySeconds: capped(additional),
+        ageSeconds: 0n,
+      };
+    default:
+      return undefined;
+  }
+};
+
+const patchNeuron = (
+  neuron: ICPNeuron,
+  transaction: Transaction,
+  nowSeconds: number,
+): ICPNeuron | undefined => {
+  switch (transaction.type) {
+    case "start_dissolving": {
+      if (neuron.state !== NeuronState.Locked) return undefined;
+      const remaining = getNeuronDissolveDurationSeconds(neuron, nowSeconds);
+      return {
+        ...neuron,
+        state: NeuronState.Dissolving,
+        dissolveState: { WhenDissolvedTimestampSeconds: BigInt(nowSeconds) + remaining },
+        dissolveDelaySeconds: remaining,
+        // Dissolving parks `aging_since_timestamp_seconds` at u64::MAX, which reports as age zero,
+        // so the age bonus stops accruing.
+        ageSeconds: 0n,
+      };
+    }
+    case "stop_dissolving": {
+      if (neuron.state !== NeuronState.Dissolving) return undefined;
+      const remaining = getNeuronDissolveDurationSeconds(neuron, nowSeconds);
+      return {
+        ...neuron,
+        state: NeuronState.Locked,
+        dissolveState: { DissolveDelaySeconds: remaining },
+        dissolveDelaySeconds: remaining,
+        // Aging restarts from the moment dissolving stops.
+        ageSeconds: 0n,
+      };
+    }
+    case "increase_dissolve_delay":
+      if (!transaction.additionalDissolveDelay) return undefined;
+      return withIncreasedDissolveDelay(
+        neuron,
+        BigInt(transaction.additionalDissolveDelay),
+        nowSeconds,
+      );
+    case "set_dissolve_delay": {
+      // The command carries an absolute unlock timestamp, which the canister turns into the delta
+      // from the delay the neuron already has — and refuses a target at or below it, so there is
+      // nothing to replay in that case.
+      if (!transaction.dissolveDelay) return undefined;
+      const delta =
+        BigInt(transaction.dissolveDelay) - getNeuronDissolveDurationSeconds(neuron, nowSeconds);
+      return withIncreasedDissolveDelay(neuron, delta, nowSeconds);
+    }
+    case "add_hot_key": {
+      const hotKey = transaction.hotKeyToAdd;
+      if (!hotKey || neuron.hotKeys.includes(hotKey)) return undefined;
+      return { ...neuron, hotKeys: [...neuron.hotKeys, hotKey] };
+    }
+    case "remove_hot_key": {
+      const hotKey = transaction.hotKeyToRemove;
+      if (!hotKey) return undefined;
+      return { ...neuron, hotKeys: neuron.hotKeys.filter(key => key !== hotKey) };
+    }
+    case "auto_stake_maturity":
+      return { ...neuron, autoStakeMaturity: Boolean(transaction.autoStakeMaturity) };
+    case "follow": {
+      if (!transaction.followTopic) return undefined;
+      const topic = KNOWN_TOPICS[transaction.followTopic];
+      const followeeIds = (transaction.followeesIds ?? []).map(id => BigInt(id));
+      const others = neuron.followees.filter(followee => followee.topic !== topic);
+      // The command replaces the whole list for the topic, so an empty one clears it rather than
+      // leaving an entry with no followees.
+      return {
+        ...neuron,
+        followees: followeeIds.length === 0 ? others : [...others, { topic, followeeIds }],
+      };
+    }
+    case "refresh_voting_power":
+      return {
+        ...neuron,
+        votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
+        // Confirming restores the decayed figure to the full potential.
+        decidingVotingPower: neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron),
+      };
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * The snapshot with `transaction`'s effect applied to the neuron it targets, or `undefined` when
+ * nothing could be applied — in which case callers must leave the existing snapshot alone rather
+ * than write an unchanged copy, so `lastUpdatedMSecs` keeps meaning "last read from the canister".
+ */
+export const applyNeuronCommand = (
+  neurons: readonly ICPNeuron[],
+  transaction: Transaction,
+  nowSeconds: number = Math.floor(Date.now() / 1000),
+): ICPNeuron[] | undefined => {
+  if (!transaction.neuronId) return undefined;
+  const index = neurons.findIndex(neuron => neuron.id?.toString() === transaction.neuronId);
+  if (index === -1) return undefined;
+  const patched = patchNeuron(neurons[index]!, transaction, nowSeconds);
+  if (!patched) return undefined;
+  const next = [...neurons];
+  next[index] = patched;
+  return next;
+};
 
 // ---- account banner -----------------------------------------------------------------------------
 
