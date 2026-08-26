@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Add `stableSavings` feature flag and send it to Mixpanel as a boolean identify trait on desktop and mobile.
+Add the `stableSavings` feature flag, forward it to Earn on initial load, and send it to Mixpanel as a boolean identify trait on desktop and mobile.
