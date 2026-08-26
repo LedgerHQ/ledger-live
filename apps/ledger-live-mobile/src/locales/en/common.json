@@ -207,7 +207,9 @@
       "addHotKey": {
         "title": "Add hot key",
         "description": "Grant another principal permission to vote and set following on this neuron. It can never move the stake.",
-        "principal": "Principal ID"
+        "principal": "Principal ID",
+        "ownPrincipal": "This account's principal",
+        "ownPrincipalHint": "Enter a different principal — typically the one you sign in with on the NNS dapp. This account already controls the neuron, so adding its own principal grants nothing."
       },
       "followTopic": {
         "title": "Topic",
