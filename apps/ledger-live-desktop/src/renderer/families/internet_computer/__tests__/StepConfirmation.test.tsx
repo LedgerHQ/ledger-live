@@ -134,6 +134,22 @@ describe("StepConfirmationFooter", () => {
     expect(props.transitionTo).toHaveBeenCalledWith("listNeuron");
   });
 
+  // Both list steps render the error in place of the list, so an attempt left set on the way out
+  // lands the user straight back on the failure they were leaving.
+  it("discards the attempt on the way back to the list", async () => {
+    const props = makeStepProps({
+      error: Object.assign(new Error("boom"), { name: "ICPCallUnconfirmed" }),
+      lastAction: "split_neuron",
+      signed: true,
+    });
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByTestId("icp-back-to-neurons-button"));
+
+    expect(props.resetAttempt).toHaveBeenCalled();
+    expect(props.transitionTo).toHaveBeenCalledWith("listNeuron");
+  });
+
   it("offers a retry after a failure, returning to the signing step", async () => {
     const props = makeStepProps({ error: new Error("boom") });
     const { user } = render(<StepConfirmationFooter {...props} />);
@@ -188,7 +204,7 @@ describe("StepConfirmationFooter retry", () => {
 
   // These take no input, so the device step is where a retry belongs — and it is the one signing step
   // both flows have.
-  it.each(["start_dissolving", "disburse", "refresh_voting_power", "list_neurons"])(
+  it.each(["start_dissolving", "disburse", "refresh_voting_power"])(
     "retries %s at the device step",
     async action => {
       const props = failed(action as ICPTransactionType);
@@ -200,24 +216,87 @@ describe("StepConfirmationFooter retry", () => {
     },
   );
 
-  // The call was accepted but never answered. Its own copy says to sync before trying again, and for
-  // an additive command a second one that lands applies twice — so re-signing must not be on offer.
-  it("does not offer a retry when the outcome is unknown", () => {
-    render(<StepConfirmationFooter {...failed("split_neuron", "ICPCallUnconfirmed")} />);
+  // Started from the neuron list with no neuron selected, so manageAction — which backs to the manage
+  // step — is not somewhere this one can return to.
+  it("retries list_neurons at the list flow's own device step", async () => {
+    const props = failed("list_neurons");
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByText("Retry"));
+
+    expect(props.transitionTo).toHaveBeenCalledWith("device");
+  });
+});
+
+/**
+ * Once the signature has left the device the request may already be executing, and re-signing is not
+ * a redelivery: the expiry is minted at build time, so the retry carries a new request id that the
+ * IC's de-duplication does not match. Whether a retry may be offered is therefore a question about
+ * the command, not about the error text.
+ */
+describe("StepConfirmationFooter retry after signing", () => {
+  const failedAfterSigning = (lastAction: ICPTransactionType, name = "Error") =>
+    makeStepProps({
+      error: Object.assign(new Error("boom"), { name }),
+      lastAction,
+      signed: true,
+    });
+
+  // An additive command applies twice if both copies land; the rest move funds or mint a neuron.
+  it.each<ICPTransactionType>([
+    "increase_dissolve_delay",
+    "set_dissolve_delay",
+    "split_neuron",
+    "disburse",
+    "spawn_neuron",
+    "stake_maturity",
+  ])("does not offer a retry for %s once it may already be executing", action => {
+    render(<StepConfirmationFooter {...failedAfterSigning(action)} />);
 
     expect(screen.queryByText("Retry")).not.toBeInTheDocument();
   });
 
   it("sends the user to the list instead, where the refresh lives", () => {
-    render(<StepConfirmationFooter {...failed("split_neuron", "ICPCallUnconfirmed")} />);
+    render(<StepConfirmationFooter {...failedAfterSigning("split_neuron")} />);
 
     expect(screen.getByTestId("icp-back-to-neurons-button")).toBeInTheDocument();
   });
 
-  // A rejection is a known outcome: nothing ran, so re-signing is safe and is the useful offer.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected"])("still offers a retry after %s", name => {
-    render(<StepConfirmationFooter {...failed("split_neuron", name)} />);
+  // A second execution of any of these leaves the neuron where the first one did.
+  it.each<ICPTransactionType>([
+    "list_neurons",
+    "refresh_voting_power",
+    "start_dissolving",
+    "stop_dissolving",
+    "add_hot_key",
+    "remove_hot_key",
+    "auto_stake_maturity",
+    "follow",
+  ])("still offers a retry for %s, which repeats harmlessly", action => {
+    render(<StepConfirmationFooter {...failedAfterSigning(action)} />);
 
     expect(screen.getByText("Retry")).toBeInTheDocument();
   });
+
+  // Both say the command did not take effect — the canister refused it, or the replica refused the
+  // message before the canister saw it — so there is nothing for a second attempt to duplicate.
+  it.each(["ICPGovernanceRejected", "ICPCallRejected"])(
+    "still offers a retry after %s, which reports that nothing ran",
+    name => {
+      render(<StepConfirmationFooter {...failedAfterSigning("split_neuron", name)} />);
+
+      expect(screen.getByText("Retry")).toBeInTheDocument();
+    },
+  );
+
+  // The gate used to key on this error name alone, which left every other post-signature failure —
+  // an HTTP error from the call endpoint, a throw inside the read-state poll — offering a retry.
+  it.each(["ICPCallUnconfirmed", "Error", "NetworkDown"])(
+    "withholds the retry after %s, which says nothing about whether the command ran",
+    name => {
+      render(<StepConfirmationFooter {...failedAfterSigning("increase_dissolve_delay", name)} />);
+
+      expect(screen.queryByText("Retry")).not.toBeInTheDocument();
+    },
+  );
 });
