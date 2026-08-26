@@ -59,6 +59,7 @@ const activatingStake: SolanaStake = {
 
 function delegation(overrides: Partial<StakingDelegation> = {}): StakingDelegation {
   return {
+    positionId: "stake-delegation",
     validatorAddress: "vote-1",
     amount: new BigNumber(100),
     pendingRewards: new BigNumber(0),
@@ -69,6 +70,7 @@ function delegation(overrides: Partial<StakingDelegation> = {}): StakingDelegati
 
 function unbonding(overrides: Partial<StakingUnbonding> = {}): StakingUnbonding {
   return {
+    positionId: "stake-unbonding",
     validatorAddress: "vote-2",
     amount: new BigNumber(50),
     completionDate: new Date(0),
@@ -159,6 +161,39 @@ describe("listSolanaStakingPositions", () => {
     expect(listSolanaStakingPositions(resources)).toEqual([delegation(), unbonding()]);
     expect(listSolanaStakingPositions(undefined)).toEqual([]);
   });
+
+  it("orders by delegated amount across both buckets, not delegations first", () => {
+    const resources = {
+      ...emptyStakingResources(),
+      delegations: [delegation({ positionId: "small-active", amount: new BigNumber(10) })],
+      unbondings: [unbonding({ positionId: "large-deactivating", amount: new BigNumber(900) })],
+    };
+
+    expect(listSolanaStakingPositions(resources).map(p => p.positionId)).toEqual([
+      "large-deactivating",
+      "small-active",
+    ]);
+  });
+
+  it("breaks ties on the withdrawable amount, descending", () => {
+    const resources = {
+      ...emptyStakingResources(),
+      delegations: [
+        delegation({ positionId: "no-withdrawable", amount: new BigNumber(100) }),
+        delegation({
+          positionId: "some-withdrawable",
+          amount: new BigNumber(100),
+          withdrawableAmount: new BigNumber(7),
+        }),
+      ],
+      unbondings: [],
+    };
+
+    expect(listSolanaStakingPositions(resources).map(p => p.positionId)).toEqual([
+      "some-withdrawable",
+      "no-withdrawable",
+    ]);
+  });
 });
 
 describe("findSolanaStakingPosition", () => {
@@ -218,6 +253,17 @@ describe("stakeActions", () => {
     [unbonding({ status: "withdrawable" }), "activate"],
   ])("derives the action matching the activation state", (position, expected) => {
     expect(stakeActions(position)).toContain(expected);
+  });
+});
+
+describe("stakeActions", () => {
+  it("offers no action on a position without a stake account address", () => {
+    const { positionId: _absent, ...noId } = delegation();
+
+    expect(stakeActions(noId)).toEqual([]);
+    expect(
+      stakeActions(unbonding({ positionId: "", withdrawableAmount: new BigNumber(500) })),
+    ).toEqual([]);
   });
 });
 

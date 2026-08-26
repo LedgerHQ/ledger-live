@@ -822,7 +822,6 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   if (!errors.stakeAccAddr && stake !== undefined) {
     if (stake.canWithdraw === false) {
-      withdrawable = 0;
       errors.stakeAccAddr = new SolanaStakeNoWithdrawAuth();
     } else {
       const liveLamports = await api.getBalance(uiState.stakeAccAddr);

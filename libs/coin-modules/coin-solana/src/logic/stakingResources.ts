@@ -19,11 +19,18 @@ function isSolanaDelegation(position: SolanaStakingPosition): position is Stakin
   return "pendingRewards" in position;
 }
 
+const ZERO = new BigNumber(0);
+
 export function listSolanaStakingPositions(
   resources: StakingResources | undefined,
 ): SolanaStakingPosition[] {
   if (!resources) return [];
-  return [...resources.delegations, ...resources.unbondings];
+  return [...resources.delegations, ...resources.unbondings].sort(
+    (a, b) =>
+      b.amount.comparedTo(a.amount) ||
+      (b.withdrawableAmount ?? ZERO).comparedTo(a.withdrawableAmount ?? ZERO) ||
+      0,
+  );
 }
 
 /**
@@ -137,6 +144,8 @@ export function solanaStakesToStakingResources(
 }
 
 export function stakeActions(position: SolanaStakingPosition): StakeAction[] {
+  if (!position.positionId) return [];
+
   const actions: StakeAction[] = [];
 
   if ((position.withdrawableAmount ?? new BigNumber(0)).gt(0)) {
