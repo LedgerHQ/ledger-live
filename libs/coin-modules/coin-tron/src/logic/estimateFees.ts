@@ -387,11 +387,16 @@ export async function estimateTronifyFees(
     );
   }
 
+  // payCoinAmt is an unvalidated API string: a non-numeric/NaN/Infinity value would otherwise reach
+  // BigInt() as "NaN"/"Infinity" and throw an opaque SyntaxError. Fail with a clear error instead
+  // (no silent fallback, per ADR-050 Option 3).
+  const payCoinAmt = new BigNumber(quote.payCoinAmt);
+  if (!payCoinAmt.isFinite() || payCoinAmt.isNegative()) {
+    throw new Error(`Tronify returned an invalid payCoinAmt: ${quote.payCoinAmt}`);
+  }
+
   const value = BigInt(
-    new BigNumber(quote.payCoinAmt)
-      .multipliedBy(ONE_TRX)
-      .integerValue(BigNumber.ROUND_CEIL)
-      .toFixed(),
+    payCoinAmt.multipliedBy(ONE_TRX).integerValue(BigNumber.ROUND_CEIL).toFixed(),
   );
 
   // Populate a breakdown so validateIntent/resolveFeeContext doesn't fire an extra estimateFees
