@@ -3633,7 +3633,7 @@ DEPENDENCIES:
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_de7b07a5063800e710645d15640485b7/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_d906c640778180dfb8b4085aee0e9610/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_504022793f36a86da4082485cf0b596e/node_modules/expo-modules-core`)"
-  - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_9b0d557aec74c55b398b5af1b146784f/node_modules/expo-web-browser/ios`)"
+  - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_169a8f3ba1f79f3fa170dcb7950d9e60/node_modules/expo-web-browser/ios`)"
   - "fast_float (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fast_float.podspec`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/Libraries/FBLazyVector`)"
   - "fmt (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fmt.podspec`)"
@@ -3833,7 +3833,7 @@ EXTERNAL SOURCES:
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_504022793f36a86da4082485cf0b596e/node_modules/expo-modules-core"
   ExpoWebBrowser:
-    :path: "../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_9b0d557aec74c55b398b5af1b146784f/node_modules/expo-web-browser/ios"
+    :path: "../../../node_modules/.pnpm/expo-web-browser@15.0.10_react-native@0.81.6_pa_169a8f3ba1f79f3fa170dcb7950d9e60/node_modules/expo-web-browser/ios"
   fast_float:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
