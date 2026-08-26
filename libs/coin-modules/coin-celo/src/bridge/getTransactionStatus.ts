@@ -9,6 +9,7 @@ import {
   NotEnoughBalanceFees,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import { log } from "@ledgerhq/logs";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -188,8 +189,10 @@ export const getTransactionStatus: AccountBridge<
       if (blocked) {
         errors.amount = new CeloEpochProcessingActive();
       }
-    } catch {
-      // ignore — do not block on a failed probe
+    } catch (error) {
+      // Do not block on a failed probe, but log it so a wrong registry address
+      // or a decoding failure doesn't get swallowed silently.
+      log("celo/getTransactionStatus", "isBlocked probe failed", { error });
     }
   }
 
