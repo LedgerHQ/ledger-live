@@ -458,6 +458,9 @@ const aggregate = runs => {
             runs: new Set(),
             nights: new Set(),
             occurrences: 0,
+            firstTryFailures: 0,
+            laterAttemptOnly: 0,
+            neverHealed: 0,
           });
         }
         const group = groups.get(signature.key);
@@ -471,6 +474,9 @@ const aggregate = runs => {
         group.platforms.add(observation.platform);
         group.runs.add(run.runId);
         group.nights.add(run.date);
+        if (observation.firstAttemptFailed) group.firstTryFailures += 1;
+        else group.laterAttemptOnly += 1;
+        if (observation.statuses.at(-1) !== "passed") group.neverHealed += 1;
         group.occurrences += 1;
       }
     }
@@ -577,6 +583,16 @@ const renderMarkdown = report => {
     lines.push(
       `- **Nightlies affected:** ${group.runCount}/${report.runs.length} (${group.nights.join(", ")})`,
     );
+    const shape = [
+      `${group.firstTryFailures} failed on the first attempt`,
+      group.laterAttemptOnly > 0
+        ? `${group.laterAttemptOnly} failed only on a later attempt (passed first try)`
+        : null,
+      group.neverHealed > 0 ? `${group.neverHealed} never passed on the final attempt` : null,
+    ]
+      .filter(Boolean)
+      .join("; ");
+    lines.push(`- **Retry shape:** ${shape}`);
     lines.push(`- **Platforms:** ${group.platforms.join(", ")}`);
     lines.push(`- **Specs:** ${group.specs.join(", ")}`);
     lines.push(`- **Occurrences:** ${group.occurrences}`);
