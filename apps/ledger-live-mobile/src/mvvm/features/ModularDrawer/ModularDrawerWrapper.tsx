@@ -8,6 +8,7 @@ export function ModularDrawerWrapper() {
     preselectedCurrencies,
     categories,
     closeDrawer,
+    hideDrawer,
     handleAccountSelected,
     handleCurrencySelected,
     presentation,
@@ -28,6 +29,7 @@ export function ModularDrawerWrapper() {
       currencies={preselectedCurrencies}
       categories={categories}
       onClose={closeDrawer}
+      onSilentClose={hideDrawer}
       assetsConfiguration={assetsConfiguration}
       networksConfiguration={networksConfiguration}
       onAccountSelected={handleAccountSelected}
