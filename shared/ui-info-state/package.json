@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@shared/ui-queued-bottom-sheet": "workspace:*",
