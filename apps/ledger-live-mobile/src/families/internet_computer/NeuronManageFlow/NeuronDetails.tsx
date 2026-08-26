@@ -3,6 +3,7 @@ import {
   KNOWN_TOPICS,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
+  SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import {
   ageMultiplier,
@@ -92,6 +93,12 @@ export default function NeuronDetails({ navigation, route }: Props) {
   const isControlled = isDeviceControlledNeuron(neuron, principal);
   const votingPower = neuronDecidingVotingPower(neuron);
   const dissolveDelay = getNeuronDissolveDurationSeconds(neuron);
+  // The dissolve-delay screen enters whole days, the unit the NNS bounds are quoted in, so headroom
+  // of less than a day is no headroom: the entry floors to zero and cannot be submitted. Comparing
+  // seconds instead let a neuron at 730 days — twelve hours short of the two-year maximum — open a
+  // screen with nothing enterable on it.
+  const canExtendDissolveDelay =
+    BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) - dissolveDelay >= BigInt(SECONDS_IN_DAY);
   const secondsTillExpiry = neuronCanVote(neuron)
     ? getSecondsTillVotingPowerExpires(neuron)
     : undefined;
@@ -244,9 +251,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
                 : t("internetComputer.manageNeuronFlow.manage.votingPower.noDissolveDelay")
             }
             actions={controlled(
-              // At the maximum there is no legal entry left: the bridge rejects any addition that
-              // would overshoot, so offering the flow only leads to an unavoidable error.
-              dissolveDelay < BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
+              canExtendDissolveDelay,
               actions.onSetDissolveDelay,
               // Must agree with the transaction type useNeuronActions picks: only a dissolved neuron
               // sets its delay outright, every other state can only add to it.

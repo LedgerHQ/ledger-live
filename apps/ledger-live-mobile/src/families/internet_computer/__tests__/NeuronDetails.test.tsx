@@ -193,6 +193,26 @@ describe("NeuronDetails", () => {
     expect(screen.getByText("Increase dissolve delay")).toBeVisible();
   });
 
+  /*
+   * The cap is 730.5 days, so a neuron at 730 has twelve hours of headroom. That passed a comparison
+   * in seconds while the screen enters whole days and floors the room left to zero — every entry
+   * clamped to "0", which the footer refuses. The action was offered and could not be completed.
+   */
+  it("stops offering more dissolve delay with under a day of room left", () => {
+    const almostMaximum = BigInt(
+      Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY) * SECONDS_IN_DAY,
+    );
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      dissolveState: { DissolveDelaySeconds: almostMaximum },
+    });
+
+    renderDetails();
+
+    expect(almostMaximum).toBeLessThan(BigInt(NNS_MAXIMUM_DISSOLVE_DELAY));
+    expect(screen.queryByText("Increase dissolve delay")).toBeNull();
+  });
+
   // getSecondsTillVotingPowerExpires counts to the moment power reaches zero, a month after decay
   // begins. Quoting that remainder as the decay countdown overstated the deadline by a whole month.
   it("counts down to the start of decay, not to zero, while power is still full", () => {
