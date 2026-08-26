@@ -370,14 +370,69 @@ describe("StepFollowTopic", () => {
     expect(screen.getByTestId("icp-follow-topic-NodeAdmin")).toHaveTextContent("0 followees");
   });
 
-  it("records the chosen topic and moves on to its followees", async () => {
+  // The topic lives on the transaction and nowhere else: anything the step held separately could
+  // disagree with what the device is handed.
+  it("records the chosen topic on the transaction and moves on to its followees", async () => {
     const props = stepProps();
     const { user } = render(<StepFollowTopic {...props} />);
 
     await user.click(screen.getByTestId("icp-follow-topic-Governance"));
 
-    expect(props.setFollowTopic).toHaveBeenCalledWith("Governance");
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.followTopic).toBe("Governance");
     expect(props.transitionTo).toHaveBeenCalledWith("selectFollowees");
+  });
+
+  // Submitting an untouched list must be a no-op, not a wipe: `follow` replaces the whole list.
+  it("seeds the list from the neuron's existing followees for that topic", async () => {
+    const neuron = makeHealthyNeuron({
+      id: 5n,
+      followees: [{ topic: KNOWN_TOPICS.Governance, followeeIds: [9n, 8n] }],
+    });
+    const props = makeStepProps({ neurons: [neuron], selectedNeuronId: "5" });
+    const { user } = render(<StepFollowTopic {...props} />);
+
+    await user.click(screen.getByTestId("icp-follow-topic-Governance"));
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched).toMatchObject({ followTopic: "Governance", followeesIds: ["9", "8"] });
+  });
+
+  /*
+   * The regression this whole arrangement exists for. The topic used to live in flow state while the
+   * transaction was seeded once, guarded on the followee list being absent — and an empty list is
+   * present. So picking a topic, going back and picking another showed the second topic and signed
+   * the first, with the first one's followees.
+   */
+  it("re-seeds from the newly chosen topic when the topic changes", async () => {
+    const neuron = makeHealthyNeuron({
+      id: 5n,
+      followees: [
+        { topic: KNOWN_TOPICS.Governance, followeeIds: [9n] },
+        { topic: KNOWN_TOPICS.NodeAdmin, followeeIds: [7n, 6n] },
+      ],
+    });
+    const props = makeStepProps({ neurons: [neuron], selectedNeuronId: "5" });
+    const { user } = render(<StepFollowTopic {...props} />);
+
+    await user.click(screen.getByTestId("icp-follow-topic-NodeAdmin"));
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {
+      followTopic: "Governance",
+      followeesIds: ["9"],
+    });
+    expect(patched).toMatchObject({ followTopic: "NodeAdmin", followeesIds: ["7", "6"] });
+  });
+
+  // Coming back to the same topic is not a reason to throw away a list being edited.
+  it("keeps an edit in progress when the same topic is picked again", async () => {
+    const props = stepProps();
+    const { user } = render(<StepFollowTopic {...props} />);
+
+    await user.click(screen.getByTestId("icp-follow-topic-Governance"));
+
+    const base = { followTopic: "Governance", followeesIds: ["1", "2", "3"] };
+    expect(applyUpdate(props.onUpdateTransaction as jest.Mock, base)).toBe(base);
   });
 
   // NeuronManagement is the one topic the canister reserves for the controller, even though hot
@@ -403,34 +458,17 @@ describe("StepFollowTopic", () => {
 
 describe("StepSelectFollowees", () => {
   it("renders nothing until a topic has been picked", () => {
-    const { container } = render(<StepSelectFollowees {...stepProps({ followTopic: null })} />);
+    const { container } = render(
+      <StepSelectFollowees {...stepProps({ transaction: { type: "follow" } })} />,
+    );
 
     expect(container.firstChild).toBeNull();
-  });
-
-  // Submitting an untouched list must be a no-op, not a wipe: `follow` replaces the whole list.
-  it("seeds the transaction from the neuron's existing followees for that topic", () => {
-    const neuron = makeHealthyNeuron({
-      id: 5n,
-      followees: [{ topic: KNOWN_TOPICS.Governance, followeeIds: [9n, 8n] }],
-    });
-    const props = makeStepProps({
-      neurons: [neuron],
-      selectedNeuronId: "5",
-      followTopic: "Governance",
-      transaction: { type: "follow" },
-    });
-    render(<StepSelectFollowees {...props} />);
-
-    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
-    expect(patched).toMatchObject({ followTopic: "Governance", followeesIds: ["9", "8"] });
   });
 
   it("lists the followees already on the transaction and can drop one", async () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
-      followTopic: "Governance",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9", "8"] },
     });
     const { user } = render(<StepSelectFollowees {...props} />);
@@ -447,7 +485,6 @@ describe("StepSelectFollowees", () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
-      followTopic: "Governance",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
     });
     render(<StepSelectFollowees {...props} />);
@@ -459,7 +496,6 @@ describe("StepSelectFollowees", () => {
     const props = makeStepProps({
       neurons: [makeHealthyNeuron({ id: 5n, followees: [] })],
       selectedNeuronId: "5",
-      followTopic: "Governance",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
     });
     render(<StepSelectFollowees {...props} />);
@@ -472,7 +508,6 @@ describe("StepSelectFollowees", () => {
     const props = makeStepProps({
       neurons: [makeHealthyNeuron({ id: 5n, followees: [] })],
       selectedNeuronId: "5",
-      followTopic: "Governance",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
     });
     render(<StepSelectFolloweesFooter {...props} />);
@@ -484,7 +519,6 @@ describe("StepSelectFollowees", () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
-      followTopic: "Governance",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
     });
     render(<StepSelectFolloweesFooter {...props} />);

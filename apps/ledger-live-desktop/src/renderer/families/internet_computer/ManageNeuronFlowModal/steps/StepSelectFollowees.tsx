@@ -1,5 +1,5 @@
 import { KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -12,7 +12,8 @@ import type { StepProps } from "../../neuronFlow/types";
 const EMPTY_FOLLOWEES: string[] = [];
 
 /** How many followees the neuron currently has on the topic being edited. */
-const currentFolloweeCount = ({ neurons, selectedNeuronId, followTopic }: StepProps): number => {
+const currentFolloweeCount = ({ neurons, selectedNeuronId, transaction }: StepProps): number => {
+  const followTopic = transaction?.followTopic;
   if (!followTopic) return 0;
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   return (
@@ -23,12 +24,15 @@ const currentFolloweeCount = ({ neurons, selectedNeuronId, followTopic }: StepPr
 /**
  * Edits the followee list for one topic. The canister replaces the whole list per `follow` call, so
  * removing a followee means submitting the remaining ones — there is no per-followee delete call.
+ *
+ * Both the topic and the list are read straight off the transaction, which StepFollowTopic seeds:
+ * anything this step held separately could disagree with what the device is handed.
  */
 const StepSelectFollowees = (props: StepProps) => {
-  const { neurons, selectedNeuronId, followTopic, transaction, onUpdateTransaction } = props;
+  const { transaction, onUpdateTransaction } = props;
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
-  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
+  const followTopic = transaction?.followTopic;
   const currentCount = currentFolloweeCount(props);
   // Stable across renders: the `?? []` fallback would otherwise be a fresh array every time, which
   // invalidates every callback below.
@@ -36,18 +40,6 @@ const StepSelectFollowees = (props: StepProps) => {
     () => transaction?.followeesIds ?? EMPTY_FOLLOWEES,
     [transaction?.followeesIds],
   );
-
-  // Seed the transaction from the neuron's current followees for this topic, so submitting an
-  // untouched list is a no-op rather than a wipe.
-  useEffect(() => {
-    if (!followTopic || transaction?.followeesIds) return;
-    const current = neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic]);
-    onUpdateTransaction(tx => ({
-      ...tx,
-      followTopic,
-      followeesIds: current?.followeeIds.map(id => id.toString()) ?? [],
-    }));
-  }, [followTopic, neuron, onUpdateTransaction, transaction?.followeesIds]);
 
   const setFollowees = useCallback(
     (next: string[]) => onUpdateTransaction(tx => ({ ...tx, followeesIds: next })),

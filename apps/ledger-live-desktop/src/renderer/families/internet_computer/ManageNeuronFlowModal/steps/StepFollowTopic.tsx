@@ -17,7 +17,7 @@ const StepFollowTopic = ({
   account,
   neurons,
   selectedNeuronId,
-  setFollowTopic,
+  onUpdateTransaction,
   transitionTo,
 }: StepProps) => {
   const principal = useICPPrincipal(account);
@@ -28,10 +28,24 @@ const StepFollowTopic = ({
 
   const onSelect = useCallback(
     (topic: FollowTopic) => {
-      setFollowTopic(topic);
+      // The transaction is the only place the chosen topic lives, so the topic the next step shows
+      // and the one the device signs cannot drift apart. Changing topic re-seeds the list from that
+      // topic's current followees — `follow` replaces the whole list, so an untouched submission has
+      // to be a no-op rather than a wipe — while re-picking the same one keeps an edit in progress.
+      onUpdateTransaction(tx =>
+        tx.followTopic === topic
+          ? tx
+          : {
+              ...tx,
+              followTopic: topic,
+              followeesIds: (
+                neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic])?.followeeIds ?? []
+              ).map(id => id.toString()),
+            },
+      );
       transitionTo("selectFollowees");
     },
-    [setFollowTopic, transitionTo],
+    [neuron, onUpdateTransaction, transitionTo],
   );
 
   return (
