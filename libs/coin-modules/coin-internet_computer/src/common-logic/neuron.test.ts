@@ -19,6 +19,7 @@ import type { Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
+  NeuronCommandOutcome,
   NeuronsData,
   NeuronState,
   RawNeuron,
@@ -459,8 +460,8 @@ describe("applyNeuronCommand", () => {
   const command = (overrides: Record<string, unknown>) =>
     ({ neuronId: "7", ...overrides }) as unknown as Transaction;
 
-  const applyTo = (neuron: ICPNeuron, transaction: Transaction) =>
-    applyNeuronCommand([neuron], transaction, NOW)?.[0];
+  const applyTo = (neuron: ICPNeuron, transaction: Transaction, outcome?: NeuronCommandOutcome) =>
+    applyNeuronCommand([neuron], transaction, { nowSeconds: NOW, outcome })?.[0];
 
   it("turns the fixed delay into an unlock timestamp when dissolving starts", () => {
     const patched = applyTo(locked(), command({ type: "start_dissolving" }));
@@ -498,7 +499,9 @@ describe("applyNeuronCommand", () => {
     ["start_dissolving", NeuronState.Dissolving],
     ["stop_dissolving", NeuronState.Locked],
   ])("declines to apply %s from the wrong state", (type, state) => {
-    expect(applyNeuronCommand([locked({ state })], command({ type }), NOW)).toBeUndefined();
+    expect(
+      applyNeuronCommand([locked({ state })], command({ type }), { nowSeconds: NOW }),
+    ).toBeUndefined();
   });
 
   it("adds the requested seconds to the current dissolve delay", () => {
@@ -573,7 +576,9 @@ describe("applyNeuronCommand", () => {
     "declines a dissolve delay of %s that does not exceed the current one",
     dissolveDelay => {
       expect(
-        applyNeuronCommand([locked()], command({ type: "set_dissolve_delay", dissolveDelay }), NOW),
+        applyNeuronCommand([locked()], command({ type: "set_dissolve_delay", dissolveDelay }), {
+          nowSeconds: NOW,
+        }),
       ).toBeUndefined();
     },
   );
@@ -643,23 +648,62 @@ describe("applyNeuronCommand", () => {
     expect(patched?.autoStakeMaturity).toBe(true);
   });
 
-  // These four produce figures the canister computes, or a neuron whose id only it knows, so there
-  // is nothing honest to show until an explicit refresh.
-  it.each(["split_neuron", "spawn_neuron", "disburse", "stake_maturity"])(
+  // These three produce figures only the canister has, or a neuron whose id it alone assigns, so
+  // there is nothing honest to show until an explicit refresh.
+  it.each(["split_neuron", "spawn_neuron", "disburse"])(
     "leaves the snapshot alone after %s",
     type => {
-      expect(applyNeuronCommand([locked()], command({ type }), NOW)).toBeUndefined();
+      expect(
+        applyNeuronCommand([locked()], command({ type }), { nowSeconds: NOW }),
+      ).toBeUndefined();
     },
   );
+
+  describe("stake_maturity", () => {
+    const staked = command({ type: "stake_maturity", percentageToStake: 50 });
+    const withMaturity = locked({
+      maturityE8sEquivalent: 400_000_000n,
+      stakedMaturityE8sEquivalent: 100_000_000n,
+    });
+
+    // The reply states both totals, so neither is re-derived from the percentage.
+    it("takes both maturity totals from what the command reported", () => {
+      const patched = applyTo(withMaturity, staked, {
+        maturityE8s: "200000000",
+        stakedMaturityE8s: "300000000",
+      });
+
+      expect(patched?.maturityE8sEquivalent).toBe(200_000_000n);
+      expect(patched?.stakedMaturityE8sEquivalent).toBe(300_000_000n);
+    });
+
+    // Staking the whole balance reports "0", which a truthiness check would read as "not reported".
+    it("applies a reported zero rather than treating it as missing", () => {
+      const patched = applyTo(withMaturity, staked, {
+        maturityE8s: "0",
+        stakedMaturityE8s: "500000000",
+      });
+
+      expect(patched?.maturityE8sEquivalent).toBe(0n);
+      expect(patched?.stakedMaturityE8sEquivalent).toBe(500_000_000n);
+    });
+
+    // The percentage alone cannot stand in: maturity accrues, and the canister's rounding is its own.
+    it.each([
+      ["nothing was reported", undefined],
+      ["only the remaining maturity was reported", { maturityE8s: "200000000" }],
+      ["only the staked maturity was reported", { stakedMaturityE8s: "300000000" }],
+    ])("declines when %s", (_case, outcome) => {
+      expect(applyTo(withMaturity, staked, outcome)).toBeUndefined();
+    });
+  });
 
   it("leaves the other neurons in the snapshot untouched", () => {
     const other = locked({ id: 9n });
 
-    const patched = applyNeuronCommand(
-      [other, locked()],
-      command({ type: "start_dissolving" }),
-      NOW,
-    );
+    const patched = applyNeuronCommand([other, locked()], command({ type: "start_dissolving" }), {
+      nowSeconds: NOW,
+    });
 
     expect(patched?.[0]).toBe(other);
     expect(patched?.[1]?.state).toBe(NeuronState.Dissolving);
@@ -673,7 +717,7 @@ describe("applyNeuronCommand", () => {
       applyNeuronCommand(
         [locked()],
         { neuronId, type: "start_dissolving" } as unknown as Transaction,
-        NOW,
+        { nowSeconds: NOW },
       ),
     ).toBeUndefined();
   });

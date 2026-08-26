@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { KNOWN_TOPICS } from "../consts";
-import { ICPNeuron, NeuronsData, NeuronsDataRaw } from "./neuron";
+import { ICPNeuron, NeuronCommandOutcome, NeuronsData, NeuronsDataRaw } from "./neuron";
 
 type FamilyType = "internet_computer";
 
@@ -102,6 +102,8 @@ export type InternetComputerOperationExtra = {
   createdNeuronId?: string;
   // Carries a refreshed neuron snapshot back from a list_neurons operation.
   neurons?: ICPNeuron[];
+  // What the accepted manage_neuron command reported about its own result, where it reported one.
+  outcome?: NeuronCommandOutcome;
   // The governance method a neuron operation invoked (for display / operation typing).
   methodName?: string;
 };

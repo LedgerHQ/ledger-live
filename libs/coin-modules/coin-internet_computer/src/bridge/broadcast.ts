@@ -110,6 +110,8 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   // indeterminate result must not be reported as a successful broadcast: that could strand the op or
   // invite a retry that double-executes a non-idempotent command (split/spawn/disburse).
   if (!reply) throw new ICPCallUnconfirmed();
-  decodeManageNeuronReply(reply);
-  return operation;
+  // A command that computed its own result says so in the reply; carrying it lets the neuron be
+  // brought up to date from figures the canister stated, instead of ones the app guessed at.
+  const outcome = decodeManageNeuronReply(reply);
+  return outcome ? { ...operation, extra: { ...operation.extra, outcome } } : operation;
 };
