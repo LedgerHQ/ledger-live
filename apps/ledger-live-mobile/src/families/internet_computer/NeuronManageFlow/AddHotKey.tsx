@@ -1,3 +1,4 @@
+import { useICPPrincipal } from "@ledgerhq/live-common/families/internet_computer/react";
 import { BaseInput, Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { TrackScreen } from "~/analytics";
@@ -6,6 +7,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
+import CopyButton from "LLM/components/CopyButton";
 import ActionFooter from "../components/ActionFooter";
 import { useNeuronAction } from "./useNeuronAction";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
@@ -18,11 +20,15 @@ type Props = StackNavigatorProps<
 /**
  * Grants another principal hot-key access to the neuron: it may vote and set following, but cannot
  * move the stake. The bridge validates the principal, so the field is free text here.
+ *
+ * The account's own principal is shown because nothing else in the app does, which left the field
+ * asking for an identifier the user had no way to see or recognize.
  */
 export default function AddHotKey({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { transaction, updateTransaction, status, bridgePending, continueToDevice } =
+  const { account, transaction, updateTransaction, status, bridgePending, continueToDevice } =
     useNeuronAction(navigation, route);
+  const principal = useICPPrincipal(account);
 
   // Held locally so the field does not wait on a bridge round-trip; see SetDissolveDelay for why a
   // transaction-backed value loses keystrokes typed faster than the status refresh.
@@ -62,6 +68,24 @@ export default function AddHotKey({ navigation, route }: Props) {
               testID="icp-hot-key-input"
             />
           </Flex>
+          {principal ? (
+            <Flex style={{ gap: 8 }}>
+              <Text variant="small" fontWeight="semiBold" color="neutral.c70">
+                {t("internetComputer.manageNeuronFlow.addHotKey.ownPrincipal")}
+              </Text>
+              <Flex flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                <Flex flex={1}>
+                  <Text variant="body" color="neutral.c100" testID="icp-own-principal">
+                    {principal}
+                  </Text>
+                </Flex>
+                <CopyButton text={principal} size="small" type="shade" />
+              </Flex>
+              <Text variant="small" color="neutral.c70">
+                {t("internetComputer.manageNeuronFlow.addHotKey.ownPrincipalHint")}
+              </Text>
+            </Flex>
+          ) : null}
         </Flex>
       </KeyboardView>
       <ActionFooter

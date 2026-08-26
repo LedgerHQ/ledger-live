@@ -13,6 +13,12 @@ let status: { errors: Record<string, Error>; warnings: Record<string, Error> } =
 // Shaped like the coin module's error classes, whose message defaults to the class name.
 const invalidPrincipal = Object.assign(new Error("ICPInvalidHotKey"), { name: "ICPInvalidHotKey" });
 
+let principal: string | undefined = "own-principal-abc";
+
+jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
+  useICPPrincipal: () => principal,
+}));
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
     account: {},
@@ -35,6 +41,7 @@ describe("AddHotKey", () => {
   beforeEach(() => {
     transaction = { type: "add_hot_key" };
     status = { errors: {}, warnings: {} };
+    principal = "own-principal-abc";
   });
 
   // An absent hot key is not a valid principal, so the screen used to open calling the empty field
@@ -68,5 +75,22 @@ describe("AddHotKey", () => {
     renderScreen();
 
     expect(screen.getByText("Invalid principal")).toBeVisible();
+  });
+
+  // Nothing else in the app displays it, so the field was asking for an identifier the user had no
+  // way to see — and no way to tell apart from the one that grants nothing.
+  it("shows the account's own principal, so the field can be answered", () => {
+    renderScreen();
+
+    expect(screen.getByTestId("icp-own-principal")).toHaveTextContent("own-principal-abc");
+    expect(screen.getByText(/adding its own principal grants nothing/)).toBeVisible();
+  });
+
+  it("omits the row entirely when the principal is not known yet", () => {
+    principal = undefined;
+
+    renderScreen();
+
+    expect(screen.queryByTestId("icp-own-principal")).toBeNull();
   });
 });
