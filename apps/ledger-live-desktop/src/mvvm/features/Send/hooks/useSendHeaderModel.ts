@@ -81,6 +81,9 @@ export function useSendHeaderModel({
   const currentStepConfig = wizard.currentStepConfig;
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+  const isContactAddressFlowStep =
+    currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT ||
+    currentStep === SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT;
   const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
   const showRecipientInput =
     (currentStepConfig?.addressInput ?? false) && !isSelectingContactAddress;
@@ -115,10 +118,12 @@ export function useSendHeaderModel({
     return accountName || availableText || "";
   }, [accountName, availableText]);
 
-  const titleKey =
-    currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT
-      ? addNewContactHeader.titleKey
-      : (currentStepConfig?.titleKey ?? "newSendFlow.title");
+  const titleKey = resolveContactFlowTitleKey({
+    isContactAddressFlowStep,
+    isAddressPhase: Boolean(addNewContactHeader.onAddressPhaseBack),
+    addressPhaseTitleKey: addNewContactHeader.titleKey,
+    stepTitleKey: currentStepConfig?.titleKey,
+  });
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
   const title = isSelectingContactAddress
@@ -141,7 +146,7 @@ export function useSendHeaderModel({
       return;
     }
 
-    if (currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT && addNewContactHeader.onAddressPhaseBack) {
+    if (isContactAddressFlowStep && addNewContactHeader.onAddressPhaseBack) {
       addNewContactHeader.onAddressPhaseBack();
       return;
     }
@@ -181,6 +186,7 @@ export function useSendHeaderModel({
     close,
     closeScanner,
     currentStep,
+    isContactAddressFlowStep,
     isSelectingContactAddress,
     navigation,
     resetViewState,
@@ -282,4 +288,26 @@ export function useSendHeaderModel({
     transactionErrorName,
     transactionError: transactionError instanceof Error ? transactionError : undefined,
   };
+}
+
+function resolveContactFlowTitleKey({
+  isContactAddressFlowStep,
+  isAddressPhase,
+  addressPhaseTitleKey,
+  stepTitleKey,
+}: Readonly<{
+  isContactAddressFlowStep: boolean;
+  isAddressPhase: boolean;
+  addressPhaseTitleKey: string;
+  stepTitleKey: string | undefined;
+}>): string {
+  if (isContactAddressFlowStep && isAddressPhase) {
+    return addressPhaseTitleKey;
+  }
+
+  if (isContactAddressFlowStep) {
+    return stepTitleKey ?? addressPhaseTitleKey;
+  }
+
+  return stepTitleKey ?? "newSendFlow.title";
 }
