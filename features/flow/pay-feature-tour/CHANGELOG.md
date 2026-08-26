@@ -1,4 +1,4 @@
-# @features/flow-pay-card-feature-tour
+# @features/flow-pay-feature-tour
 
 ## 0.3.0
 

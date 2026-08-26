@@ -1,4 +1,4 @@
-# Pay Card Feature Tour
+# Pay Feature Tour
 
 > [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
 
@@ -15,7 +15,7 @@ imports an i18n library. The app owns the translation keys and resolves them wit
 import {
   FeatureTour,
   type FeatureTourContent,
-} from "@features/flow-pay-card-feature-tour";
+} from "@features/flow-pay-feature-tour";
 import { useTranslation } from "~/context/Locale";
 
 const { t } = useTranslation();
@@ -55,7 +55,7 @@ while the copy stays translatable. Translation keys and the app-side wiring live
 app (tracked separately in the mount ticket), keeping this package free of hardcoded strings.
 
 Visibility is derived from this flow's `payCardFeatureTour` slice (`hasSeenFeatureTour`),
-exposed through `@features/flow-pay-card-feature-tour/state`. Store, persistence and test
+exposed through `@features/flow-pay-feature-tour/state`. Store, persistence and test
 setup should import that entry so they do not load the tour UI. Dismissing the tour (Got it, close
 button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. Analytics are injected via the
 optional `onTrackScreen` / `onTrackEvent` props so the flow stays decoupled from any app analytics
@@ -82,7 +82,7 @@ suffixed file it can reach through no other path would be reported as dead.
 ## Structure
 
 ```text
-pay-card-feature-tour/
+pay-feature-tour/
 ├── package.json
 └── src/
     ├── index.ts                              # Public API (default)

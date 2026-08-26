@@ -7,7 +7,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { render, screen, waitFor, within } from "@tests/test-renderer";
-import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-card-balance/state";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";

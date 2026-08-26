@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
+import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { track } from "~/renderer/analytics/segment";
 
 export function usePayTabFeatureTour(): FeatureTourProps {

@@ -1,4 +1,4 @@
-# @features/flow-pay-card-deposit
+# @features/flow-pay-deposit
 
 ## 0.2.0
 

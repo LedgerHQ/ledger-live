@@ -1,5 +1,5 @@
 {
-  "name": "@features/flow-pay-card-balance",
+  "name": "@features/flow-pay-balance",
   "targets": {
     "build": {
       "executor": "nx:noop"

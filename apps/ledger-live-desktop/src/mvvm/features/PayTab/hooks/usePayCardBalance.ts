@@ -14,7 +14,7 @@ import {
   type BalanceData,
   type BalanceFilter,
   type BalanceLabels,
-} from "@features/flow-pay-card-balance";
+} from "@features/flow-pay-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";

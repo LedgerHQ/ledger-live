@@ -1,6 +1,6 @@
 ---
-"@features/flow-pay-card-balance": minor
-"@features/flow-pay-card-deposit": minor
+"@features/flow-pay-balance": minor
+"@features/flow-pay-deposit": minor
 "live-mobile": minor
 ---
 
