@@ -15,9 +15,6 @@ export function useBalanceViewModel({
   actionTiles,
   labels,
 }: BalanceProps): BalanceViewProps {
-  const isLoading = status === "loading";
-  const isFunded = isLoading || (status === "ready" && hasBalance);
-
   const optionIds = useMemo(() => filterOptions.map(option => option.id), [filterOptions]);
   const effectiveFilter = resolveSelection(filter, optionIds);
 
@@ -40,7 +37,7 @@ export function useBalanceViewModel({
     [effectiveFilter, filterOptions],
   );
 
-  if (!isFunded) {
+  if (!hasBalance) {
     return { displayMode: "empty", labels, actionTiles };
   }
 
@@ -48,7 +45,7 @@ export function useBalanceViewModel({
     displayMode: "funded",
     balance: stableBalance,
     formatCountervalue,
-    isLoading,
+    isLoading: status === "loading",
     labels,
     filter: effectiveFilter,
     options: filterOptions,

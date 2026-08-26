@@ -4,6 +4,7 @@ export * from "./hooks/useBalanceData";
 export * from "./logic/aggregateBalance";
 export * from "./logic/buildBalanceFilterOptions";
 export * from "./logic/buildBalanceData";
+export * from "./logic/buildStablecoinHoldings";
 export * from "./logic/resolveSelection";
 export * from "./types";
 export * from "./state";

@@ -40,6 +40,7 @@ export type BalanceFilterOption = Readonly<{
 export type Stablecoin = Readonly<{
   currency: Readonly<{ id: string; ticker: string }>;
   value: number;
+  balance: number;
 }>;
 
 /** Platform-agnostic input for {@link aggregateBalance}. */
@@ -55,13 +56,13 @@ export type PortfolioPort = Readonly<{
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
-/** Result of {@link aggregateBalance}: filtered total + status. */
+/** Result of {@link aggregateBalance}: filtered total, funded flag, and status. */
 export type BalanceAggregate = Readonly<{
   status: BalanceStatus;
   stableBalance: number;
-  filter: BalanceFilter;
-  /** Whether the user holds any stablecoin balance. Drives funded vs empty. */
+  /** Any positive crypto or countervalue holding. Drives funded vs empty. */
   hasBalance: boolean;
+  filter: BalanceFilter;
   formatCountervalue: (value: number) => FormattedValue;
 }>;
 

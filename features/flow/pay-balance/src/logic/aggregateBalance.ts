@@ -3,8 +3,7 @@ import { tickerForFilter } from "./buildBalanceFilterOptions";
 import { resolveSelection } from "./resolveSelection";
 import type { BalanceData, BalanceStatus, PortfolioPort, Stablecoin } from "../types";
 
-// Filters stablecoins by the active filter, sums their
-// countervalues and maps the loading/error flags to a single status.
+// Filters the displayed total, maps status, and whether any holding is funded.
 export function aggregateBalance({
   stablecoins,
   filter,
@@ -39,8 +38,6 @@ export function aggregateBalance({
     .filter(matchesFilter)
     .reduce((total, { value }) => total + value, 0);
 
-  const hasBalance = stablecoins.some(({ value }) => value > 0);
-
   let status: BalanceStatus = "ready";
   if (isError) {
     status = "error";
@@ -51,8 +48,8 @@ export function aggregateBalance({
   return {
     status,
     stableBalance,
+    hasBalance: stablecoins.some(item => item.value > 0 || item.balance > 0),
     filter: effectiveFilter,
-    hasBalance,
     filterOptions,
     formatCountervalue,
     onConfirmFilter,
