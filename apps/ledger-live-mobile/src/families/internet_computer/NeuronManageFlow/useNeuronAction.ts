@@ -60,6 +60,10 @@ export function useNeuronAction(navigation: Navigation, route: ActionRoute) {
   return {
     account: icpAccount,
     neuron,
+    // Exposed for the one case that cannot wait for `updateTransaction`: a screen that patches the
+    // transaction and hands it straight to the next screen needs the patched value now, not after
+    // the state settles.
+    bridge,
     transaction,
     updateTransaction,
     status: status as TransactionStatus,
