@@ -38,9 +38,23 @@ export default function ActionFooter({
   // entry is still invalid whether or not saying so yet would help.
   const blocking = errors.length > 0;
   const reported = errors.find(([field]) => field !== pristineField)?.[1];
+  // The bridge files staking notices under `warnings.staking`, a slot nothing has ever read: the
+  // generic send flow renders `warnings.amount` and `warnings.transaction` only. This is the family's
+  // own footer, so it is where a notice raised on every stake and every top-up can reach the user.
+  const staking = status.warnings.staking;
 
   return (
     <Flex p={6} style={{ gap: 12 }}>
+      {staking ? (
+        <Flex style={{ gap: 4 }}>
+          <Text variant="body" fontWeight="semiBold" color="warning.c70">
+            <TranslatedError error={staking} />
+          </Text>
+          <Text variant="small" color="warning.c70">
+            <TranslatedError error={staking} field="description" />
+          </Text>
+        </Flex>
+      ) : null}
       {reported ? (
         <Flex style={{ gap: 4 }}>
           {/* Translated rather than `error.message`: every ICP error class defaults its message to

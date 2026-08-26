@@ -7,10 +7,14 @@ import ActionFooter from "../components/ActionFooter";
 const makeError = (name: string, fields: Record<string, unknown> = {}) =>
   Object.assign(new Error(name), { name, ...fields });
 
-const renderFooter = (errors: Record<string, Error>, pristineField?: "amount" | "transaction") =>
+const renderFooter = (
+  errors: Record<string, Error>,
+  pristineField?: "amount" | "transaction",
+  warnings: Record<string, Error> = {},
+) =>
   render(
     <ActionFooter
-      status={{ errors, warnings: {} } as never}
+      status={{ errors, warnings } as never}
       bridgePending={false}
       onContinue={jest.fn()}
       pristineField={pristineField}
@@ -74,6 +78,42 @@ describe("ActionFooter", () => {
   it("reports the error once the field has an entry to fault", () => {
     renderFooter({ amount: makeError("NotEnoughTransferAmount") });
 
+    expect(screen.getByText("Amount too small")).toBeVisible();
+  });
+});
+
+/*
+ * getTransactionStatus has always filed these under `warnings.staking`, and nothing read that slot:
+ * the generic send flow renders `warnings.amount` and `warnings.transaction` only. So a notice raised
+ * on every stake and every top-up reached no one.
+ */
+describe("ActionFooter staking notices", () => {
+  it("shows the notice the bridge files under the staking slot", () => {
+    renderFooter({}, undefined, { staking: makeError("ICPCreateNeuronWarning") });
+
+    expect(screen.getByText("This locks your ICP in a new neuron")).toBeVisible();
+    expect(screen.getByText(/shortest dissolve delay/)).toBeVisible();
+  });
+
+  it("shows the top-up notice too", () => {
+    renderFooter({}, undefined, { staking: makeError("ICPIncreaseStakeWarning") });
+
+    expect(screen.getByText("This adds to a locked stake")).toBeVisible();
+  });
+
+  // A notice is not a fault: the stake is a legitimate action and the amount is valid.
+  it("does not block Continue", () => {
+    renderFooter({}, undefined, { staking: makeError("ICPCreateNeuronWarning") });
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+
+  it("shows the notice alongside an error, which is a different field", () => {
+    renderFooter({ amount: makeError("NotEnoughTransferAmount") }, undefined, {
+      staking: makeError("ICPCreateNeuronWarning"),
+    });
+
+    expect(screen.getByText("This locks your ICP in a new neuron")).toBeVisible();
     expect(screen.getByText("Amount too small")).toBeVisible();
   });
 });
