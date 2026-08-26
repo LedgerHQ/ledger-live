@@ -24,6 +24,7 @@ import {
   MAINNET_INDEX_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
+import { redactPrincipals } from "../common-logic/redact";
 import { ICPCallRejected, ICPGovernanceRejected } from "../errors";
 import { getAgent } from "../network/agent";
 import {
@@ -259,7 +260,7 @@ const terminalReply = async (
     const rejectBuf = lookupResultToBuffer(
       cert.lookup(["request_status", requestId, "reject_message"]),
     );
-    const reason = rejectBuf ? new TextDecoder().decode(rejectBuf) : "";
+    const reason = redactPrincipals(rejectBuf ? new TextDecoder().decode(rejectBuf) : "");
     throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
   }
   return status === "replied"
@@ -364,8 +365,9 @@ export const decodeManageNeuronReply = (reply: ArrayBuffer): void => {
   const command = fromNullable(decoded.command);
   if (command && "Error" in command && command.Error) {
     // Named rather than a bare Error: `errors.<name>` is how the apps translate this, and the
-    // canister's own text rides along as `reason` for the copy to quote.
-    const reason = command.Error.error_message ?? "";
+    // canister's own text rides along as `reason` for the copy to quote — minus the caller, which
+    // several of these messages name and which the error carries into crash reporting.
+    const reason = redactPrincipals(command.Error.error_message ?? "");
     throw new ICPGovernanceRejected(reason || "ICPGovernanceRejected", { reason });
   }
 };
