@@ -18,7 +18,7 @@ const teamCoinIntegration = {
     desc: "A4 indexer base URL for pre-prod. No trailing network segment.",
   },
   A4_URL_PRD: {
-    def: "https://explorers.api.vault.ledger.com/a4",
+    def: "https://explorers.api.live.ledger.com/a4",
     parser: stringParser,
     desc: "A4 indexer base URL for production. No trailing network segment.",
   },
