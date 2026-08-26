@@ -37,9 +37,14 @@ export default function IncreaseStake({ navigation, route }: Props) {
   useEffect(() => {
     if (!transaction) return;
     let cancelled = false;
-    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
-      if (!cancelled) setMaxSpendable(estimate);
-    });
+    bridge
+      .estimateMaxSpendable({ account, transaction })
+      .then(estimate => {
+        if (!cancelled) setMaxSpendable(estimate);
+      })
+      // The figure is a hint beside the input and the bridge validates the amount regardless, so a
+      // failed estimate just leaves the hint unrendered rather than faulting the screen.
+      .catch((error: Error) => console.warn("[ICP] max spendable estimate failed", error));
     return () => {
       cancelled = true;
     };
