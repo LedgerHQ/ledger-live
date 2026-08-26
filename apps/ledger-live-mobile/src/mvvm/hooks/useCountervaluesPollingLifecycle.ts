@@ -18,6 +18,33 @@ function getNetworkStatus(state: NetInfoState): NetworkStatus {
   return "unknown";
 }
 
+function createNetworkChangeHandler(
+  getAppState: () => AppStateStatus | null,
+  poll: () => void,
+): (state: NetInfoState) => void {
+  let previousNetworkStatus: NetworkStatus | null = null;
+  let isFirstNetworkUpdate = true;
+
+  return state => {
+    const networkStatus = getNetworkStatus(state);
+
+    if (isFirstNetworkUpdate) {
+      isFirstNetworkUpdate = false;
+      previousNetworkStatus = networkStatus;
+      return;
+    }
+
+    if (networkStatus === "unknown") return;
+
+    const wasOffline = previousNetworkStatus === "offline";
+    previousNetworkStatus = networkStatus;
+
+    if (wasOffline && networkStatus === "online" && getAppState() === "active") {
+      poll();
+    }
+  };
+}
+
 export function useCountervaluesPollingLifecycle(): void {
   const { poll, start, stop } = useCountervaluesPolling();
   const pollingActionsRef = useRef<PollingActions>({ poll, start, stop });
@@ -28,8 +55,6 @@ export function useCountervaluesPollingLifecycle(): void {
 
   useEffect(() => {
     let currentAppState = AppState.currentState;
-    let previousNetworkStatus: NetworkStatus | null = null;
-    let isFirstNetworkUpdate = true;
 
     if (currentAppState === "active") {
       pollingActionsRef.current.start();
@@ -56,24 +81,12 @@ export function useCountervaluesPollingLifecycle(): void {
       },
     );
 
-    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
-      const networkStatus = getNetworkStatus(state);
-
-      if (isFirstNetworkUpdate) {
-        isFirstNetworkUpdate = false;
-        previousNetworkStatus = networkStatus;
-        return;
-      }
-
-      if (networkStatus === "unknown") return;
-
-      const wasOffline = previousNetworkStatus === "offline";
-      previousNetworkStatus = networkStatus;
-
-      if (wasOffline && networkStatus === "online" && currentAppState === "active") {
-        pollingActionsRef.current.poll();
-      }
-    });
+    const unsubscribeNetInfo = NetInfo.addEventListener(
+      createNetworkChangeHandler(
+        () => currentAppState,
+        () => pollingActionsRef.current.poll(),
+      ),
+    );
 
     return () => {
       appStateSubscription.remove();
