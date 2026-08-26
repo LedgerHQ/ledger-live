@@ -23,11 +23,12 @@ import {
   trackDrawerCloseButtonClicked,
 } from "./utils/trackDeviceIntent";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
+type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,
   Input,
   ExtraProps,
-  InitializationInput
+  InitializationInput,
+  Result
 > & {
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
@@ -36,8 +37,8 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 
 type PreventableEvent = Pick<Event, "preventDefault">;
 
-export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
-  wrappedProps: Props<JobState, Input, ExtraProps>;
+export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps, Result = undefined> = {
+  wrappedProps: Props<JobState, Input, ExtraProps, Result>;
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
   onOpenChange: (open: boolean) => void;
@@ -73,9 +74,14 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
   };
 }
 
-export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>(
-  props: Props<JobState, Input, ExtraProps>,
-): DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> {
+export function useDeviceIntentExecutorLWDViewModel<
+  JobState,
+  Input,
+  ExtraProps,
+  Result = undefined,
+>(
+  props: Props<JobState, Input, ExtraProps, Result>,
+): DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps, Result> {
   const {
     enabled,
     sourceFlow,
