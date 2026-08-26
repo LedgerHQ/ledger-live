@@ -136,3 +136,25 @@ export class ICPInvalidPercentage extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+// The governance canister ran the command and refused it. The call reached the network, so this is
+// not a delivery failure — its `reason` field carries the canister's own text (empty if it gave none).
+export class ICPGovernanceRejected extends Error {
+  override name = "ICPGovernanceRejected";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPGovernanceRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The replica rejected the ingress message, so the call never executed. Distinct from
+// ICPGovernanceRejected: nothing ran, and from ICPCallUnconfirmed: the outcome is known.
+export class ICPCallRejected extends Error {
+  override name = "ICPCallRejected";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPCallRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}

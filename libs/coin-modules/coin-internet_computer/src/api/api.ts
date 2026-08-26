@@ -24,6 +24,7 @@ import {
   MAINNET_INDEX_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
+import { ICPCallRejected, ICPGovernanceRejected } from "../errors";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
@@ -258,9 +259,8 @@ const terminalReply = async (
     const rejectBuf = lookupResultToBuffer(
       cert.lookup(["request_status", requestId, "reject_message"]),
     );
-    throw new Error(
-      `[ICP] call rejected: ${rejectBuf ? new TextDecoder().decode(rejectBuf) : "unknown"}`,
-    );
+    const reason = rejectBuf ? new TextDecoder().decode(rejectBuf) : "";
+    throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
   }
   return status === "replied"
     ? (lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"])) ?? null)
@@ -362,7 +362,12 @@ export const decodeManageNeuronReply = (reply: ArrayBuffer): void => {
     [{ command: [] | [{ Error?: { error_message: string } }] }]
   >(func, reply);
   const command = fromNullable(decoded.command);
-  if (command && "Error" in command && command.Error) throw new Error(command.Error.error_message);
+  if (command && "Error" in command && command.Error) {
+    // Named rather than a bare Error: `errors.<name>` is how the apps translate this, and the
+    // canister's own text rides along as `reason` for the copy to quote.
+    const reason = command.Error.error_message ?? "";
+    throw new ICPGovernanceRejected(reason || "ICPGovernanceRejected", { reason });
+  }
 };
 
 /** Decode a list_neurons reply into the raw neuron snapshot. */
