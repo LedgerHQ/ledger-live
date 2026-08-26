@@ -1,9 +1,3 @@
-import { flagWith } from "../../define";
+import { flag } from "../../define";
 
-export const stableSavings = flagWith(
-  {},
-  {
-    enabled: false,
-    params: {},
-  },
-);
+export const stableSavings = flag();
