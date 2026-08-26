@@ -766,6 +766,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: "[TEST] Force failure on shard 2"
+        if: ${{ !cancelled() && matrix.shard == 2 }}
+        run: exit 1
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -1036,6 +1040,10 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+
+      - name: "[TEST] Force failure on shard 3"
+        if: ${{ !cancelled() && matrix.shard == 3 }}
+        run: exit 1
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
