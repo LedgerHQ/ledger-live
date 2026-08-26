@@ -19,12 +19,11 @@ const REACHABLE_ERRORS = [
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
   "ICPInvalidPercentage",
+  // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
+  // read. The family's own ActionFooter renders it, which is what makes them reachable.
+  "ICPCreateNeuronWarning",
+  "ICPIncreaseStakeWarning",
 ];
-
-// getTransactionStatus assigns these to `warnings.staking`, which nothing in the app reads.
-// Translating them would suggest they reach the user; they do not. Add them here once something
-// renders the slot.
-const UNRENDERED_WARNINGS = ["ICPCreateNeuronWarning", "ICPIncreaseStakeWarning"];
 
 // Through `unknown` because the block is not uniform: a few entries carry a null description, and
 // others nest an object under `list`.
@@ -38,9 +37,14 @@ describe("internet_computer error translations", () => {
     expect(errors[name]?.title).toBeTruthy();
   });
 
-  it.each(UNRENDERED_WARNINGS)("%s is deliberately left untranslated", name => {
-    expect(errors[name]).toBeUndefined();
-  });
+  // A warning whose only job is to explain a consequence is useless without one, and the generic
+  // fallback description ("Something went wrong…") is the wrong instruction for a notice.
+  it.each(["ICPCreateNeuronWarning", "ICPIncreaseStakeWarning"])(
+    "%s explains the consequence it is warning about",
+    name => {
+      expect(errors[name]?.description).toBeTruthy();
+    },
+  );
 
   // The dissolve-delay bounds are protocol seconds, but the copy quotes whole days, so the errors
   // carry both and the description has to interpolate the day count rather than the seconds.
