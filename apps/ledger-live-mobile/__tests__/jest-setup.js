@@ -353,6 +353,8 @@ jest.mock("@braze/react-native-sdk", () => ({
     logContentCardClicked: jest.fn(),
     logContentCardImpression: jest.fn(),
     requestContentCardsRefresh: jest.fn(),
+    wipeData: jest.fn(),
+    enableSDK: jest.fn(),
     getContentCards: jest.fn().mockResolvedValue([]),
     getInitialPushPayload: jest.fn(),
   },

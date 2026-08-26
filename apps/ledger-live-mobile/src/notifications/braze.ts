@@ -1,6 +1,37 @@
 import Braze from "@braze/react-native-sdk";
 import { type UserId, isDummyUserId } from "@domain/entity-client-identity";
+import {
+  runBrazeOptInTransition,
+  runBrazeOptOutTransition,
+  type BrazeIdentityLifecycleSdk,
+} from "@ledgerhq/live-common/braze/identityLifecycle";
 import { NotificationsSettings } from "../reducers/types";
+
+const mobileBrazeSdk: BrazeIdentityLifecycleSdk = {
+  wipeData: () => Braze.wipeData(),
+  enableSDK: () => Braze.enableSDK(),
+  changeUser: userId => Braze.changeUser(userId),
+  refreshContentCards: () => Braze.requestContentCardsRefresh(),
+};
+
+export const applyBrazeConsentTransition = async ({
+  isTrackedUser,
+  userId,
+}: {
+  isTrackedUser: boolean;
+  userId: UserId;
+}): Promise<void> => {
+  if (isDummyUserId(userId)) return;
+
+  if (!isTrackedUser) {
+    await runBrazeOptOutTransition(mobileBrazeSdk);
+    return;
+  }
+
+  await runBrazeOptInTransition(mobileBrazeSdk, {
+    userId: userId.exportUserIdForBraze(),
+  });
+};
 
 export type StartBrazeOptions = {
   brazeOptOutIdentityCleanup?: boolean;
