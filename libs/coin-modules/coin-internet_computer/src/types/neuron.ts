@@ -117,6 +117,30 @@ const bigIntReviver = (_key: string, value: unknown): unknown =>
     ? BigInt((value as { $bigint: string }).$bigint)
     : value;
 
+/**
+ * Neurons as a bigint-tagged JSON string — the only form that survives the `JSON.stringify` the apps
+ * persist through.
+ *
+ * Shared by the account snapshot (`NeuronsData`) and by a `list_neurons` operation's `extra`, so the
+ * two cannot drift into encoding neurons differently.
+ */
+export const serializeNeurons = (neurons: ICPNeuron[]): string =>
+  JSON.stringify(neurons, bigIntReplacer);
+
+/**
+ * The inverse. Corrupt data yields an empty list rather than throwing: neurons are a cache that the
+ * next device-signed `list_neurons` repopulates, and losing it must not fail account deserialization.
+ */
+export const deserializeNeurons = (raw: string): ICPNeuron[] => {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw, bigIntReviver);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
 /** Neurons on an ICPAccount + last-refresh timestamp (drives re-fetch). Persisted via serialize/deserialize. */
 export class NeuronsData {
   constructor(
@@ -130,24 +154,13 @@ export class NeuronsData {
 
   serialize(): NeuronsDataRaw {
     return {
-      neurons: JSON.stringify(this.fullNeurons, bigIntReplacer),
+      neurons: serializeNeurons(this.fullNeurons),
       lastUpdated: this.lastUpdatedMSecs,
     };
   }
 
   static deserialize(raw: NeuronsDataRaw): NeuronsData {
-    // Corrupt persisted neuron data must not crash account (de)serialization — fall back to an empty
-    // snapshot, which the next device-signed list_neurons refresh repopulates.
-    let fullNeurons: ICPNeuron[] = [];
-    if (raw.neurons) {
-      try {
-        const parsed = JSON.parse(raw.neurons, bigIntReviver);
-        if (Array.isArray(parsed)) fullNeurons = parsed;
-      } catch {
-        fullNeurons = [];
-      }
-    }
     const lastUpdated = Number.isFinite(raw.lastUpdated) ? raw.lastUpdated : 0;
-    return new NeuronsData(fullNeurons, lastUpdated);
+    return new NeuronsData(deserializeNeurons(raw.neurons), lastUpdated);
   }
 }
