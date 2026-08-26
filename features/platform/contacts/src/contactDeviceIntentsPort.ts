@@ -38,7 +38,6 @@ export type RenameExternalContactResult = NonNullable<Contact["deviceCredentials
 export type EditExternalAddressInput = Readonly<{
   contact: Contact;
   address: ContactAddress;
-  // TODO: rename to updatedLabel
   updatedLabel: ContactAddressLabel;
   updatedAddress: ContactAddressValue;
 }>;
