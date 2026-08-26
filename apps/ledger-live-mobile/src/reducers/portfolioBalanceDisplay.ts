@@ -5,12 +5,14 @@ export interface PortfolioBalanceDisplayState {
   displayedBalance: number;
   isLoading: boolean;
   isBalanceAvailable: boolean;
+  isCountervalueComplete: boolean;
 }
 
 export const INITIAL_STATE: PortfolioBalanceDisplayState = {
   displayedBalance: 0,
   isLoading: false,
   isBalanceAvailable: false,
+  isCountervalueComplete: false,
 };
 
 const portfolioBalanceDisplaySlice = createSlice({
@@ -21,6 +23,7 @@ const portfolioBalanceDisplaySlice = createSlice({
       state.displayedBalance = action.payload.displayedBalance;
       state.isLoading = action.payload.isLoading;
       state.isBalanceAvailable = action.payload.isBalanceAvailable;
+      state.isCountervalueComplete = action.payload.isCountervalueComplete;
     },
   },
 });

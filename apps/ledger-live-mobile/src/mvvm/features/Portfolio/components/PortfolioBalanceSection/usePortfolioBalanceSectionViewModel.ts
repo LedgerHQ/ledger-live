@@ -18,12 +18,7 @@ export const usePortfolioBalanceSectionViewModel = ({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
 
-  const {
-    portfolio,
-    balanceAvailable: rawBalanceAvailable,
-    syncPhase,
-    isCvPending,
-  } = usePortfolioBalance();
+  const { portfolio, syncPhase, isCvPending } = usePortfolioBalance();
 
   const { countervalueChange, balanceHistory } = portfolio;
   const lastItem = balanceHistory[balanceHistory.length - 1];
@@ -34,11 +29,11 @@ export const usePortfolioBalanceSectionViewModel = ({
     latestBalance,
     syncPhase,
     counterValueCurrency.ticker,
+    portfolio.countervalueComplete,
   );
 
-  // If MMKV has a cached balance from a previous session, treat it as available
-  // immediately so the cached value is shown at cold start instead of a skeleton.
-  const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
+  const isCountervalueComplete = portfolio.countervalueComplete;
+  const effectiveRawBalanceAvailable = effectiveLatestBalance !== undefined;
 
   const {
     balanceAvailable,
@@ -47,7 +42,7 @@ export const usePortfolioBalanceSectionViewModel = ({
   } = useBalanceSyncState({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
-    latestBalance: effectiveLatestBalance,
+    latestBalance: effectiveLatestBalance ?? 0,
     shouldFreezeOnSync: true,
     cvPending: isCvPending,
   });
@@ -62,7 +57,8 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
-  const isAnalyticPillVisible = state === "normal" && (balanceAvailable || effectiveIsLoading);
+  const isAnalyticPillVisible =
+    state === "normal" && isCountervalueComplete && (balanceAvailable || effectiveIsLoading);
 
   return {
     state,
@@ -70,6 +66,7 @@ export const usePortfolioBalanceSectionViewModel = ({
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,
+    isCountervalueComplete,
     isAnalyticPillVisible,
     isLoading: effectiveIsLoading,
     onToggleDiscreetMode: toggleDiscreetMode,

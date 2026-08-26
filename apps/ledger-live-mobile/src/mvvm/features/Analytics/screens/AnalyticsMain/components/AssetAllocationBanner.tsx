@@ -9,6 +9,7 @@ import { track } from "~/analytics";
 import { ANALYTICS_PAGE } from "../../../const";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AnalyticsNavigatorParamsList } from "../../../types";
+import { useAllocationsViewModel } from "./Allocations/useAllocationsViewModel";
 
 const AssetAllocationBanner: React.FC = () => {
   const { t } = useTranslation();
@@ -25,12 +26,16 @@ const AssetAllocationBanner: React.FC = () => {
     });
   }, [navigation]);
 
+  const viewModel = useAllocationsViewModel(NavigatorName.Analytics, navigateToDetailedAllocation);
+
+  if (!viewModel.isAvailable) return null;
+
   return (
     <Box lx={Container}>
       <Text typography="heading5SemiBold" lx={TextStyle}>
         {t("analyticsAllocation.allocation.title")}
       </Text>
-      <Allocations screenName={NavigatorName.Analytics} onPress={navigateToDetailedAllocation} />
+      <Allocations viewModel={viewModel} />
     </Box>
   );
 };

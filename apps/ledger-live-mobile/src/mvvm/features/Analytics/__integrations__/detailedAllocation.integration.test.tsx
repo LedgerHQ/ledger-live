@@ -52,6 +52,10 @@ describe("DetailedAllocation Integration Tests", () => {
         ...state.settings,
         counterValue: "USD",
       },
+      portfolioBalanceDisplay: {
+        ...state.portfolioBalanceDisplay,
+        isCountervalueComplete: true,
+      },
     };
   };
 
@@ -68,6 +72,10 @@ describe("DetailedAllocation Integration Tests", () => {
         ...state.settings,
         counterValue: "USD",
       },
+      portfolioBalanceDisplay: {
+        ...state.portfolioBalanceDisplay,
+        isCountervalueComplete: true,
+      },
     };
   };
 
@@ -80,6 +88,10 @@ describe("DetailedAllocation Integration Tests", () => {
     settings: {
       ...state.settings,
       counterValue: "USD",
+    },
+    portfolioBalanceDisplay: {
+      ...state.portfolioBalanceDisplay,
+      isCountervalueComplete: true,
     },
   });
 
@@ -131,7 +143,15 @@ describe("DetailedAllocation Integration Tests", () => {
       return {
         ...state,
         accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+        settings: {
+          ...state.settings,
+          counterValue: "USD",
+          blacklistedTokenIds: [usdcToken.id],
+        },
+        portfolioBalanceDisplay: {
+          ...state.portfolioBalanceDisplay,
+          isCountervalueComplete: true,
+        },
       };
     };
     const mockStateWithNonBlacklistedToken = (state: State): State => {
@@ -139,7 +159,15 @@ describe("DetailedAllocation Integration Tests", () => {
       return {
         ...state,
         accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-        settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+        settings: {
+          ...state.settings,
+          counterValue: "USD",
+          blacklistedTokenIds: [],
+        },
+        portfolioBalanceDisplay: {
+          ...state.portfolioBalanceDisplay,
+          isCountervalueComplete: true,
+        },
       };
     };
 

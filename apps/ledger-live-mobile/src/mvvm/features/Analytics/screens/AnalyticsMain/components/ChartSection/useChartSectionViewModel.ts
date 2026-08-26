@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -50,7 +50,8 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
   const countervalues = useCountervaluesState();
   const discreet = useSelector(discreetModeSelector);
   const portfolio = usePortfolioAllAccounts();
-  const { displayedBalance, isBalanceAvailable } = usePortfolioBalanceForDisplay();
+  const { displayedBalance, isBalanceAvailable, isCountervalueComplete, isLoading } =
+    usePortfolioBalanceForDisplay();
 
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
@@ -68,6 +69,12 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       }),
     [selectedTimeRange, accounts, displayedBalance, portfolio, countervalues, counterValue],
   );
+  const isTrendComplete = isCountervalueComplete && valueChange.percentage !== null;
+  const effectiveSelection = isTrendComplete ? selection : undefined;
+
+  useEffect(() => {
+    if (!isTrendComplete) setSelection(undefined);
+  }, [isTrendComplete]);
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -78,15 +85,18 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
   }, [portfolio.balanceHistory]);
 
   const series = useMemo<LineChartSeries[]>(
-    () => [
-      {
-        id: "analytics-portfolio-balance",
-        data: prices,
-        label: t("analytics.title"),
-        stroke: "",
-      },
-    ],
-    [prices, t],
+    () =>
+      isTrendComplete
+        ? [
+            {
+              id: "analytics-portfolio-balance",
+              data: prices,
+              label: t("analytics.title"),
+              stroke: "",
+            },
+          ]
+        : [],
+    [isTrendComplete, prices, t],
   );
 
   const formatValue = useMemo<LineChartValueFormatter>(
@@ -107,10 +117,10 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
   );
 
   const scrubDateLabel =
-    selection != null
-      ? dateFormatters.formatScrubHeaderDate(selection.timestamp, selectedRange)
+    effectiveSelection != null
+      ? dateFormatters.formatScrubHeaderDate(effectiveSelection.timestamp, selectedRange)
       : undefined;
-  const hoveredBalance = selection?.balance ?? null;
+  const hoveredBalance = effectiveSelection?.balance ?? null;
 
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
@@ -140,13 +150,13 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
 
   const rangePercentageValue = valueChange.percentage == null ? NaN : valueChange.percentage * 100;
   const scrubVariation = useMemo(() => {
-    if (selection == null) return undefined;
+    if (effectiveSelection == null) return undefined;
     const baselinePrice = prices[0];
     if (!Number.isFinite(baselinePrice)) return undefined;
-    return getScrubVariation(baselinePrice, selection.balance, {
+    return getScrubVariation(baselinePrice, effectiveSelection.balance, {
       percentageUnit: "percentPoints",
     });
-  }, [selection, prices]);
+  }, [effectiveSelection, prices]);
 
   const percentageValue = scrubVariation?.percentage ?? rangePercentageValue;
 
@@ -190,7 +200,11 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       showScrubberBeacons: false,
       showXAxis: false,
       showYAxis: false,
-      xAxis: buildAnalyticsChartXAxisConfig({ timestamps, selectedRange, formatDate }),
+      xAxis: buildAnalyticsChartXAxisConfig({
+        timestamps,
+        selectedRange,
+        formatDate,
+      }),
       yAxis: buildAnalyticsChartYAxisConfig(),
       points: getExtremaPointMarkers(series),
       accessibilityLabel: t("assetDetail.balanceGraph.timeframeSelector"),
@@ -216,6 +230,9 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       hoveredBalance,
       scrubDateLabel,
       isBalanceAvailable,
+      isCountervalueComplete,
+      isTrendComplete,
+      isLoading,
       percentageValue,
       variationText,
       rangeLabel,

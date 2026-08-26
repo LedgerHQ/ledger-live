@@ -54,6 +54,11 @@ describe("AnalyticsMain Integration Tests", () => {
         ...state.accounts,
         active: [btcAccount, ethAccount, adaAccount],
       },
+      portfolioBalanceDisplay: {
+        ...state.portfolioBalanceDisplay,
+        isBalanceAvailable: true,
+        isCountervalueComplete: true,
+      },
     });
   };
 

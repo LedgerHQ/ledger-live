@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import RingChart from "../../../../components/RingChart";
-import { useAllocationsViewModel } from "./useAllocationsViewModel";
+import type { useAllocationsViewModel } from "./useAllocationsViewModel";
 
 const AllocationCaption = memo(
   ({ currencyTicker, currencyColor }: { currencyTicker: string; currencyColor: string }) => {
@@ -18,17 +18,19 @@ const AllocationCaption = memo(
 );
 
 type Props = Readonly<{
-  screenName: string;
-  onPress: () => void;
+  viewModel: ReturnType<typeof useAllocationsViewModel>;
 }>;
 
-function Allocations({ screenName, onPress }: Props) {
+function Allocations({ viewModel }: Props) {
   const {
+    isAvailable,
     distributionListFormatted,
     allocationColumns,
     getCurrencyColorEnsureContrast,
     goToAnalyticsAllocations,
-  } = useAllocationsViewModel(screenName, onPress);
+  } = viewModel;
+
+  if (!isAvailable) return null;
 
   return (
     <Flex flex={1}>

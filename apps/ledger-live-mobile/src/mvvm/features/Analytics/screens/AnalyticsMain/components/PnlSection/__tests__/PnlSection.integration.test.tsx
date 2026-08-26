@@ -15,13 +15,25 @@ const withAccounts = (state: State): State => ({
   accounts: { ...state.accounts, active: [btcAccount] },
 });
 
+const withCompleteCountervalues = (state: State): State => ({
+  ...state,
+  portfolioBalanceDisplay: {
+    ...state.portfolioBalanceDisplay,
+    isCountervalueComplete: true,
+  },
+});
+
 const compose =
   (...transforms: Array<(state: State) => State>) =>
   (state: State): State =>
     transforms.reduce((acc, t) => t(acc), state);
 
 const withPnl = (enabled: boolean) =>
-  compose(withAccounts, withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } }));
+  compose(
+    withAccounts,
+    withCompleteCountervalues,
+    withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } }),
+  );
 
 const DRAWER_DESCRIPTION =
   "Your portfolio performance broken down into estimated unrealised and realised return.";
@@ -62,7 +74,9 @@ describe("PnlSection integration", () => {
 
   describe("drawer opening", () => {
     it("keeps the section mounted when the title is pressed to open the detail drawer", async () => {
-      const { user } = render(<PnlSection />, { overrideInitialState: withPnl(true) });
+      const { user } = render(<PnlSection />, {
+        overrideInitialState: withPnl(true),
+      });
 
       await user.press(screen.getByTestId(PNL_SECTION_TEST_IDS.title));
 

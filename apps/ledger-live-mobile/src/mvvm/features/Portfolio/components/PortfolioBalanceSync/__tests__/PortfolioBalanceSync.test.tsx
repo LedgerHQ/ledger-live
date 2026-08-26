@@ -8,7 +8,12 @@ import { INITIAL_STATE } from "~/reducers/portfolioBalanceDisplay";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("../../PortfolioBalanceSection/usePersistedPortfolioBalance", () => ({
-  usePersistedPortfolioBalance: (b: number) => b,
+  usePersistedPortfolioBalance: (
+    b: number,
+    _phase: SyncPhase,
+    _currency: string,
+    complete: boolean,
+  ) => (complete ? b : undefined),
 }));
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
@@ -17,6 +22,7 @@ const defaultPortfolio = {
   balanceHistory: [{ date: new Date(), value: 5000 }],
   countervalueChange: { percentage: 0, value: 0 },
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -31,6 +37,7 @@ function makeReturn(
     balanceAvailable: boolean;
     syncPhase: SyncPhase;
     isCvPending: boolean;
+    portfolio: typeof defaultPortfolio;
   }> = {},
 ) {
   return {
@@ -72,6 +79,7 @@ describe("PortfolioBalanceSync", () => {
 
     expect(state.portfolioBalanceDisplay.displayedBalance).toBe(5000);
     expect(state.portfolioBalanceDisplay.isBalanceAvailable).toBe(true);
+    expect(state.portfolioBalanceDisplay.isCountervalueComplete).toBe(true);
   });
 
   it("sets isLoading true while CVS is pending", () => {
@@ -98,7 +106,11 @@ describe("PortfolioBalanceSync", () => {
     // No cached MMKV balance (mock returns 0) and portfolio not yet available
     mockUsePortfolioBalance.mockReturnValue({
       ...makeReturn({ balanceAvailable: false, syncPhase: "syncing" }),
-      portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 0 }] },
+      portfolio: {
+        ...defaultPortfolio,
+        balanceHistory: [{ date: new Date(), value: 0 }],
+        countervalueComplete: false,
+      },
     });
 
     const { store } = render(<PortfolioBalanceSync />, {
@@ -112,5 +124,6 @@ describe("PortfolioBalanceSync", () => {
     // effectiveLatestBalance = 0 (mocked pass-through) → effectiveRawBalanceAvailable = false
     // useBalanceSyncState gates availability until sync settles
     expect(storeState.portfolioBalanceDisplay.isBalanceAvailable).toBe(false);
+    expect(storeState.portfolioBalanceDisplay.isCountervalueComplete).toBe(false);
   });
 });

@@ -5,6 +5,9 @@ export type ChartSectionHeaderViewModel = Readonly<{
   hoveredBalance: number | null;
   scrubDateLabel: string | undefined;
   isBalanceAvailable: boolean;
+  isCountervalueComplete: boolean;
+  isTrendComplete: boolean;
+  isLoading: boolean;
   percentageValue: number;
   variationText: string;
   rangeLabel: string;

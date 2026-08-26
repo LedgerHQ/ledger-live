@@ -36,6 +36,7 @@ function distributionRow(
 function mockAssetsDistribution(list: DistributionItem[]): DistributionResult {
   return {
     isAvailable: true,
+    countervalueComplete: true,
     showFirst: list.length,
     sum: list.reduce((acc, row) => acc + (row.countervalue ?? row.amount), 0),
     list,
@@ -77,6 +78,21 @@ describe("useAllocationsViewModel", () => {
     const { result } = renderHook(() => useAllocationsViewModel("Analytics", jest.fn()));
 
     expect(result.current.distributionListFormatted).toBe(list);
+    expect(result.current.isAvailable).toBe(true);
+  });
+
+  it.each([
+    { isLoading: true, countervalueComplete: true },
+    { isLoading: false, countervalueComplete: false },
+  ])("hides allocations for an incomplete distribution: %o", overrides => {
+    mockUseDistribution.mockReturnValue({
+      ...mockAssetsDistribution([distributionRow(mockBitcoinCurrency, 1, 1)]),
+      ...overrides,
+    });
+
+    const { result } = renderHook(() => useAllocationsViewModel("Analytics", jest.fn()));
+
+    expect(result.current.isAvailable).toBe(false);
   });
 
   it("should aggregate tail assets into an others row when more than four currencies are in the distribution", () => {

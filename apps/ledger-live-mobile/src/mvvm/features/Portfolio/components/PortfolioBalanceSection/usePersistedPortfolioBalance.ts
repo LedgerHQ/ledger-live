@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { mmkv } from "LLM/storage/mmkvStorageWrapper";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 
@@ -20,24 +20,21 @@ export function usePersistedPortfolioBalance(
   latestBalance: number,
   syncPhase: SyncPhase,
   currencyCode: string,
-): number {
+  countervalueComplete: boolean,
+): number | undefined {
   const key = `${PORTFOLIO_BALANCE_KEY}_${currencyCode}`;
-  const persistedRef = useRef<number>(mmkv.getNumber(key) ?? 0);
-
-  // When the countervalue currency changes at runtime, reload the cached value for the new currency.
-  const prevKeyRef = useRef(key);
-  if (prevKeyRef.current !== key) {
-    prevKeyRef.current = key;
-    persistedRef.current = mmkv.getNumber(key) ?? 0;
-  }
+  const persistedExists = mmkv.contains(key);
+  const persistedValue = mmkv.getNumber(key) ?? 0;
 
   useEffect(() => {
-    if (syncPhase === "synced") {
+    if (syncPhase === "synced" && countervalueComplete) {
       mmkv.set(key, latestBalance);
-      persistedRef.current = latestBalance;
     }
-  }, [key, syncPhase, latestBalance]);
+  }, [key, syncPhase, latestBalance, countervalueComplete]);
 
-  // Only substitute during syncing — once sync settles the real balance (even $0) is authoritative.
-  return syncPhase === "syncing" ? latestBalance || persistedRef.current : latestBalance;
+  if (countervalueComplete) return latestBalance;
+  if (syncPhase === "syncing" && persistedExists) {
+    return persistedValue;
+  }
+  return undefined;
 }

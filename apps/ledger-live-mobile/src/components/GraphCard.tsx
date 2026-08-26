@@ -56,6 +56,8 @@ function GraphCard({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { countervalueChange, balanceHistory } = portfolio;
+  const countervalueTrendComplete =
+    portfolio.countervalueComplete && countervalueChange.percentage !== null;
 
   const unit = counterValueCurrency.units[0];
 
@@ -76,7 +78,7 @@ function GraphCard({
   const mapGraphValue = useCallback((d: Item) => d.value || 0, []);
 
   const range = portfolio.range;
-  const isAvailable = portfolio.balanceAvailable;
+  const isAvailable = portfolio.balanceAvailable && countervalueTrendComplete;
 
   const rangesLabels = timeRangeItems.map(({ label }) => label);
 
@@ -128,7 +130,11 @@ function GraphCard({
                   <TransactionsPendingConfirmationWarningAllAccounts />
                 </Flex>
                 <Flex flexDirection={"row"}>
-                  {!balanceHistory ? (
+                  {!countervalueTrendComplete ? (
+                    <Text variant="large" fontWeight="semiBold" color="neutral.c70">
+                      -
+                    </Text>
+                  ) : !balanceHistory ? (
                     <>
                       <SmallPlaceholder mt="12px" />
                     </>
@@ -162,7 +168,7 @@ function GraphCard({
           </Flex>
         </Animated.View>
       </Flex>
-      {!hideGraph && (
+      {!hideGraph && countervalueTrendComplete && (
         <GraphSection
           readOnlyModeEnabled={readOnlyModeEnabled}
           onTouchEndGraph={onTouchEndGraph}

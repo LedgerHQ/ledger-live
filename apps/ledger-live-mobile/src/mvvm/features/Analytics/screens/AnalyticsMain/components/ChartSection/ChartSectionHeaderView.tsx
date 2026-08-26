@@ -15,7 +15,9 @@ export function ChartSectionHeaderView({ viewModel }: Props) {
   const {
     hoveredBalance,
     scrubDateLabel,
-    isBalanceAvailable,
+    isCountervalueComplete,
+    isTrendComplete,
+    isLoading,
     percentageValue,
     variationText,
     rangeLabel,
@@ -34,7 +36,7 @@ export function ChartSectionHeaderView({ viewModel }: Props) {
         {t("portfolio.totalBalance")}
       </Text>
       <AnalyticsBalanceDisplay hoveredValue={hoveredBalance} animate={!isScrubbing} />
-      {isBalanceAvailable && (
+      {isTrendComplete ? (
         <TrendSection
           percentage={percentageValue}
           formattedChange={variationText}
@@ -43,6 +45,10 @@ export function ChartSectionHeaderView({ viewModel }: Props) {
           trendSize="sm"
           showTrend={!discreet}
         />
+      ) : isLoading ? null : (
+        <Text typography="body2" lx={{ color: "muted" }} testID={CHART_SECTION_TEST_IDS.trend}>
+          -
+        </Text>
       )}
     </Box>
   );

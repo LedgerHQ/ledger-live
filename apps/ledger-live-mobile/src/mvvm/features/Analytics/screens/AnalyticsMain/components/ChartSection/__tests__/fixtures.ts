@@ -7,6 +7,7 @@ export const portfolioWithHistory = {
   ],
   countervalueChange: { percentage: 0.2, value: 200 },
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -22,6 +23,7 @@ export const chartSectionInitialState = (state: import("~/reducers/types").State
     ...portfolioBalanceDisplayInitialState,
     displayedBalance: 1200,
     isBalanceAvailable: true,
+    isCountervalueComplete: true,
     isLoading: false,
   },
   settings: {

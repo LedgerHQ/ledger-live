@@ -33,6 +33,7 @@ export const PortfolioBalanceSectionView = ({
   countervalueChange,
   unit,
   isBalanceAvailable,
+  isCountervalueComplete,
   isAnalyticPillVisible,
   isLoading,
   onToggleDiscreetMode,
@@ -54,7 +55,8 @@ export const PortfolioBalanceSectionView = ({
     if (state === "noSigner" || state === "noAccounts") {
       return `portfolio-balance-${state}`;
     }
-    return isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading";
+    if (isCountervalueComplete) return "portfolio-balance-normal";
+    return isLoading ? "portfolio-balance-loading" : "portfolio-balance-unavailable-state";
   };
 
   const renderAnalyticPill = () => {
@@ -84,7 +86,7 @@ export const PortfolioBalanceSectionView = ({
       <>
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
-            {isBalanceAvailable ? (
+            {isCountervalueComplete || (isLoading && isBalanceAvailable) ? (
               <AmountDisplay
                 key={unit.code}
                 value={balance}
@@ -94,11 +96,19 @@ export const PortfolioBalanceSectionView = ({
                 loading={isLoading}
                 testID="portfolio-balance-amount"
               />
-            ) : (
+            ) : isLoading ? (
               <Skeleton
                 testID="portfolio-placeholder-balance"
                 lx={{ height: "s48", width: "s256" }}
               />
+            ) : (
+              <Text
+                typography="heading1SemiBold"
+                lx={{ color: "base" }}
+                testID="portfolio-balance-unavailable"
+              >
+                -
+              </Text>
             )}
             {discreet && <DiscreetModeIcon />}
           </Box>

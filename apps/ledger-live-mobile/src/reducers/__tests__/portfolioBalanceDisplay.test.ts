@@ -11,21 +11,36 @@ describe("portfolioBalanceDisplay reducer", () => {
   });
 
   it("setPortfolioBalanceDisplay updates all fields", () => {
-    const payload = { displayedBalance: 42000, isLoading: true, isBalanceAvailable: true };
+    const payload = {
+      displayedBalance: 42000,
+      isLoading: true,
+      isBalanceAvailable: true,
+      isCountervalueComplete: true,
+    };
     const state = reducer(INITIAL_STATE, setPortfolioBalanceDisplay(payload));
 
     expect(state).toEqual(payload);
   });
 
   it("setPortfolioBalanceDisplay with isLoading false and balance unavailable", () => {
-    const payload = { displayedBalance: 0, isLoading: false, isBalanceAvailable: false };
+    const payload = {
+      displayedBalance: 0,
+      isLoading: false,
+      isBalanceAvailable: false,
+      isCountervalueComplete: false,
+    };
     const state = reducer(INITIAL_STATE, setPortfolioBalanceDisplay(payload));
 
     expect(state).toEqual(payload);
   });
 
   it("does not mutate initial state", () => {
-    const payload = { displayedBalance: 999, isLoading: false, isBalanceAvailable: true };
+    const payload = {
+      displayedBalance: 999,
+      isLoading: false,
+      isBalanceAvailable: true,
+      isCountervalueComplete: true,
+    };
     reducer(INITIAL_STATE, setPortfolioBalanceDisplay(payload));
 
     expect(INITIAL_STATE.displayedBalance).toBe(0);
@@ -39,6 +54,7 @@ describe("selectPortfolioBalanceDisplay", () => {
         displayedBalance: 12345,
         isLoading: false,
         isBalanceAvailable: true,
+        isCountervalueComplete: true,
       },
     } as unknown as State;
 
@@ -46,6 +62,7 @@ describe("selectPortfolioBalanceDisplay", () => {
       displayedBalance: 12345,
       isLoading: false,
       isBalanceAvailable: true,
+      isCountervalueComplete: true,
     });
   });
 

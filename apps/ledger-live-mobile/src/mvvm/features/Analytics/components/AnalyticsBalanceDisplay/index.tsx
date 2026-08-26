@@ -1,5 +1,5 @@
 import React from "react";
-import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useAnalyticsBalanceDisplayViewModel } from "./useAnalyticsBalanceDisplayViewModel";
 
 type Props = {
@@ -18,10 +18,28 @@ type Props = {
  * suppressed because a historical value is already resolved.
  */
 export function AnalyticsBalanceDisplay({ hoveredValue, animate = true }: Readonly<Props>) {
-  const { value, formatter, discreet, isHovering, isLoading, isBalanceAvailable } =
-    useAnalyticsBalanceDisplayViewModel({ hoveredValue });
+  const {
+    value,
+    formatter,
+    discreet,
+    isHovering,
+    isLoading,
+    isBalanceAvailable,
+    isCountervalueComplete,
+  } = useAnalyticsBalanceDisplayViewModel({ hoveredValue });
 
-  if (!isBalanceAvailable) {
+  if (!isCountervalueComplete && !(isLoading && isBalanceAvailable)) {
+    if (!isLoading) {
+      return (
+        <Text
+          typography="heading1SemiBold"
+          lx={{ color: "base" }}
+          testID="analytics-balance-unavailable"
+        >
+          -
+        </Text>
+      );
+    }
     return <Skeleton testID="analytics-balance-skeleton" lx={{ height: "s48", width: "s256" }} />;
   }
 

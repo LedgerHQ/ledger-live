@@ -9,6 +9,7 @@ let store: Record<string, unknown> = {};
 
 let getNumberSpy: jest.SpyInstance;
 let setSpy: jest.SpyInstance;
+let containsSpy: jest.SpyInstance;
 
 beforeEach(() => {
   store = {};
@@ -16,6 +17,7 @@ beforeEach(() => {
     const v = store[k];
     return typeof v === "number" ? v : undefined;
   });
+  containsSpy = jest.spyOn(mmkv, "contains").mockImplementation((k: string) => k in store);
   setSpy = jest.spyOn(mmkv, "set").mockImplementation((k: string, v: unknown) => {
     store[k] = v;
   });
@@ -24,35 +26,52 @@ beforeEach(() => {
 afterEach(() => {
   getNumberSpy.mockRestore();
   setSpy.mockRestore();
+  containsSpy.mockRestore();
 });
 
 describe("usePersistedPortfolioBalance", () => {
   it("returns latestBalance when non-zero", () => {
-    const { result } = renderHook(() => usePersistedPortfolioBalance(1500, "synced", CURRENCY));
+    const { result } = renderHook(() =>
+      usePersistedPortfolioBalance(1500, "synced", CURRENCY, true),
+    );
     expect(result.current).toBe(1500);
   });
 
-  it("falls back to MMKV cache when latestBalance is 0 during syncing", () => {
+  it("falls back to a complete MMKV cache while the live balance is incomplete during syncing", () => {
     store[KEY] = 3000;
-    const { result } = renderHook(() => usePersistedPortfolioBalance(0, "syncing", CURRENCY));
+    const { result } = renderHook(() =>
+      usePersistedPortfolioBalance(1500, "syncing", CURRENCY, false),
+    );
     expect(result.current).toBe(3000);
   });
 
-  it("returns 0 when latestBalance is 0 and no cache exists", () => {
-    const { result } = renderHook(() => usePersistedPortfolioBalance(0, "syncing", CURRENCY));
-    expect(result.current).toBe(0);
+  it("returns undefined when the live balance is incomplete and no cache exists", () => {
+    const { result } = renderHook(() =>
+      usePersistedPortfolioBalance(1500, "syncing", CURRENCY, false),
+    );
+    expect(result.current).toBeUndefined();
   });
 
-  it("returns 0 after sync completes even if cache has a stale non-zero value", () => {
+  it("does not restore a cached value after an incomplete sync settles", () => {
     store[KEY] = 3000;
-    const { result } = renderHook(() => usePersistedPortfolioBalance(0, "synced", CURRENCY));
+    const { result } = renderHook(() =>
+      usePersistedPortfolioBalance(1500, "synced", CURRENCY, false),
+    );
+    expect(result.current).toBeUndefined();
+  });
+
+  it("recognizes a cached zero as a valid complete value", () => {
+    store[KEY] = 0;
+    const { result } = renderHook(() =>
+      usePersistedPortfolioBalance(1500, "syncing", CURRENCY, false),
+    );
     expect(result.current).toBe(0);
   });
 
   it("persists balance on synced, including zero (authoritative empty portfolio)", () => {
     const { rerender } = renderHook(
       ({ balance, phase }: { balance: number; phase: SyncPhase }) =>
-        usePersistedPortfolioBalance(balance, phase, CURRENCY),
+        usePersistedPortfolioBalance(balance, phase, CURRENCY, true),
       { initialProps: { balance: 2500, phase: "syncing" as SyncPhase } },
     );
 
@@ -66,16 +85,22 @@ describe("usePersistedPortfolioBalance", () => {
     expect(store[KEY]).toBe(0);
   });
 
-  it("does not persist when syncPhase is failed", () => {
+  it("does not persist an incomplete balance", () => {
     store[KEY] = 3000;
     const { rerender } = renderHook(
-      ({ balance, phase }: { balance: number; phase: SyncPhase }) =>
-        usePersistedPortfolioBalance(balance, phase, CURRENCY),
-      { initialProps: { balance: 3000, phase: "syncing" as SyncPhase } },
+      ({ balance, phase, complete }: { balance: number; phase: SyncPhase; complete: boolean }) =>
+        usePersistedPortfolioBalance(balance, phase, CURRENCY, complete),
+      {
+        initialProps: {
+          balance: 3000,
+          phase: "syncing" as SyncPhase,
+          complete: false,
+        },
+      },
     );
 
-    act(() => rerender({ balance: 1234, phase: "failed" }));
-    expect(store[KEY]).toBe(3000); // stale cache untouched
+    act(() => rerender({ balance: 1234, phase: "synced", complete: false }));
+    expect(store[KEY]).toBe(3000);
   });
 
   it("reloads cached value from MMKV when currency switches", () => {
@@ -83,7 +108,8 @@ describe("usePersistedPortfolioBalance", () => {
     store[`portfolioLastKnownBalance_EUR`] = 900;
 
     const { result, rerender } = renderHook(
-      ({ currency }: { currency: string }) => usePersistedPortfolioBalance(0, "syncing", currency),
+      ({ currency }: { currency: string }) =>
+        usePersistedPortfolioBalance(0, "syncing", currency, false),
       { initialProps: { currency: "USD" } },
     );
 

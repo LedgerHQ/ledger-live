@@ -26,6 +26,8 @@ export function useAllocationsViewModel(screenName: string, onPress: () => void)
   const { theme } = useLumenTheme();
   const canvasColor = theme.colors.bg.canvas;
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const isAvailable =
+    !distribution.isLoading && distribution.isAvailable && distribution.countervalueComplete;
 
   const getCurrencyColorEnsureContrast = useCallback(
     (currency: ColorableCurrency) => ensureContrast(getCurrencyColor(currency), canvasColor),
@@ -96,6 +98,7 @@ export function useAllocationsViewModel(screenName: string, onPress: () => void)
   );
 
   return {
+    isAvailable,
     distributionListFormatted,
     allocationColumns,
     getCurrencyColorEnsureContrast,

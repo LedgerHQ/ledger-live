@@ -31,6 +31,8 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.header.hoveredBalance).toBeNull();
     expect(result.current.header.scrubDateLabel).toBeUndefined();
     expect(result.current.header.isBalanceAvailable).toBe(true);
+    expect(result.current.header.isCountervalueComplete).toBe(true);
+    expect(result.current.header.isTrendComplete).toBe(true);
     expect(result.current.chart.showScrubberTooltip).toBe(false);
   });
 
@@ -59,7 +61,9 @@ describe("useChartSectionViewModel", () => {
     });
 
     expect(store.getState().settings.selectedTimeRange).toBe("month");
-    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", { timeframe: "month" });
+    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", {
+      timeframe: "month",
+    });
   });
 
   it("formats chart tooltip and variation values from smallest-unit countervalues", () => {
@@ -89,6 +93,9 @@ describe("useChartSectionViewModel", () => {
     });
 
     expect(result.current.header.percentageValue).toBeNaN();
+    expect(result.current.header.isCountervalueComplete).toBe(true);
+    expect(result.current.header.isTrendComplete).toBe(false);
+    expect(result.current.chart.series).toEqual([]);
   });
 
   it("masks the chart tooltip value when discreet mode is enabled", () => {
@@ -144,5 +151,25 @@ describe("useChartSectionViewModel", () => {
     });
 
     expect(result.current.chart).toBe(chartBeforeScrub);
+  });
+
+  it("clears a scrub selection across an incomplete then recovered trend", () => {
+    const { result, rerender } = renderHook(() => useChartSectionViewModel(), {
+      overrideInitialState: chartSectionInitialState,
+    });
+
+    act(() => result.current.chart.onScrubberPositionChange?.(0));
+    expect(result.current.header.hoveredBalance).toBe(1000);
+
+    mockUsePortfolioAllAccounts.mockReturnValue({
+      ...portfolioWithHistory,
+      countervalueChange: { percentage: null, value: 0 },
+    });
+    rerender();
+    expect(result.current.header.hoveredBalance).toBeNull();
+
+    mockUsePortfolioAllAccounts.mockReturnValue(portfolioWithHistory);
+    rerender();
+    expect(result.current.header.hoveredBalance).toBeNull();
   });
 });

@@ -27,9 +27,11 @@ export function ChartSectionView({ viewModel }: Props) {
   return (
     <Box lx={containerStyle} testID={CHART_SECTION_TEST_IDS.root}>
       <ChartSectionHeaderView viewModel={header} />
-      <Box lx={chartContainerStyle}>
-        <ChartSectionChart {...chart} />
-      </Box>
+      {header.isTrendComplete && (
+        <Box lx={chartContainerStyle}>
+          <ChartSectionChart {...chart} />
+        </Box>
+      )}
     </Box>
   );
 }

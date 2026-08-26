@@ -5,7 +5,12 @@ import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("../usePersistedPortfolioBalance", () => ({
-  usePersistedPortfolioBalance: (b: number) => b,
+  usePersistedPortfolioBalance: (
+    b: number,
+    _phase: SyncPhase,
+    _currency: string,
+    complete: boolean,
+  ) => (complete ? b : undefined),
 }));
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
@@ -14,6 +19,7 @@ const defaultPortfolio = {
   balanceHistory: [{ date: new Date(), value: 1000 }],
   countervalueChange: { percentage: 0, value: 0 },
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -64,14 +70,20 @@ describe("usePortfolioBalanceSectionViewModel", () => {
   describe("state", () => {
     it("returns noSigner when readOnly, regardless of showAssets", () => {
       const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({ showAssets: false, isReadOnlyMode: true }),
+        usePortfolioBalanceSectionViewModel({
+          showAssets: false,
+          isReadOnlyMode: true,
+        }),
       );
       expect(result.current.state).toBe("noSigner");
     });
 
     it("returns noAccounts when showAssets is false", () => {
       const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({ showAssets: false, isReadOnlyMode: false }),
+        usePortfolioBalanceSectionViewModel({
+          showAssets: false,
+          isReadOnlyMode: false,
+        }),
       );
       expect(result.current.state).toBe("noAccounts");
     });
@@ -100,7 +112,10 @@ describe("usePortfolioBalanceSectionViewModel", () => {
     it("freezes while CVS is pending (iCvPending=true) and releases once CVS settles", () => {
       mockUsePortfolioBalance.mockReturnValue(
         makeReturn({
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
+          portfolio: {
+            ...defaultPortfolio,
+            balanceHistory: [{ date: new Date(), value: 1500 }],
+          },
         }),
       );
 
@@ -114,7 +129,10 @@ describe("usePortfolioBalanceSectionViewModel", () => {
         makeReturn({
           syncPhase: "syncing",
           isCvPending: true,
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
+          portfolio: {
+            ...defaultPortfolio,
+            balanceHistory: [{ date: new Date(), value: 2000 }],
+          },
         }),
       );
       rerender({});
@@ -127,6 +145,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       const emptyPortfolio = {
         ...defaultPortfolio,
         balanceHistory: [{ date: new Date(), value: 0 }],
+        countervalueComplete: false,
       };
 
       mockUsePortfolioBalance.mockReturnValue(
@@ -155,7 +174,11 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.isBalanceAvailable).toBe(false);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({ balanceAvailable: true, syncPhase: "synced", portfolio: emptyPortfolio }),
+        makeReturn({
+          balanceAvailable: true,
+          syncPhase: "synced",
+          portfolio: { ...emptyPortfolio, countervalueComplete: true },
+        }),
       );
       rerender({});
       expect(result.current.isBalanceAvailable).toBe(true);
@@ -172,5 +195,20 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       // so effectiveRawBalanceAvailable = true and balanceAvailable starts as true.
       expect(result.current.isBalanceAvailable).toBe(true);
     });
+  });
+
+  it("marks a settled partial valuation as incomplete without keeping it loading", () => {
+    mockUsePortfolioBalance.mockReturnValue(
+      makeReturn({
+        syncPhase: "synced",
+        portfolio: { ...defaultPortfolio, countervalueComplete: false },
+      }),
+    );
+
+    const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
+
+    expect(result.current.isCountervalueComplete).toBe(false);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isAnalyticPillVisible).toBe(false);
   });
 });

@@ -14,6 +14,7 @@ export interface PortfolioBalanceSectionViewProps {
   readonly countervalueChange: ValueChange;
   readonly unit: Unit;
   readonly isBalanceAvailable: boolean;
+  readonly isCountervalueComplete: boolean;
   readonly isAnalyticPillVisible: boolean;
   readonly isLoading: boolean;
   readonly onToggleDiscreetMode: () => void;

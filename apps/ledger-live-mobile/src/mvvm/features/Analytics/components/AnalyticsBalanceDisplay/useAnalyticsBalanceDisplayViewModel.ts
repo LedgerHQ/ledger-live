@@ -18,13 +18,15 @@ export type AnalyticsBalanceDisplayViewModel = {
   isHovering: boolean;
   isLoading: boolean;
   isBalanceAvailable: boolean;
+  isCountervalueComplete: boolean;
 };
 
 export function useAnalyticsBalanceDisplayViewModel({
   hoveredValue,
 }: Params): AnalyticsBalanceDisplayViewModel {
   const { locale } = useLocale();
-  const { displayedBalance, isLoading, isBalanceAvailable, unit } = usePortfolioBalanceForDisplay();
+  const { displayedBalance, isLoading, isBalanceAvailable, isCountervalueComplete, unit } =
+    usePortfolioBalanceForDisplay();
   const discreet = useSelector(discreetModeSelector);
 
   const formatter = useCallback(
@@ -46,5 +48,6 @@ export function useAnalyticsBalanceDisplayViewModel({
     isHovering,
     isLoading,
     isBalanceAvailable,
+    isCountervalueComplete,
   };
 }

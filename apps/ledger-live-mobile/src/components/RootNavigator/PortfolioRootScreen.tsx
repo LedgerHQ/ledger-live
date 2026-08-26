@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
-import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
 import { Portfolio, ReadOnlyPortfolio } from "LLM/features/Portfolio";
 import { useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const/navigation";
@@ -32,7 +31,6 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
-      <PortfolioBalanceSync />
       <Box flexGrow={1} bg={backgroundColor}>
         <WalletTabBackgroundGradient />
         <PortfolioComponent navigation={navigation} route={route} />

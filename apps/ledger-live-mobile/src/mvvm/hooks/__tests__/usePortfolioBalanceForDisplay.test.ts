@@ -10,6 +10,7 @@ describe("usePortfolioBalanceForDisplay", () => {
     expect(result.current.displayedBalance).toBe(0);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isBalanceAvailable).toBe(false);
+    expect(result.current.isCountervalueComplete).toBe(false);
   });
 
   it("reflects displayedBalance from the slice", () => {
@@ -20,12 +21,14 @@ describe("usePortfolioBalanceForDisplay", () => {
           ...portfolioBalanceDisplayInitialState,
           displayedBalance: 98765,
           isBalanceAvailable: true,
+          isCountervalueComplete: true,
         },
       }),
     });
 
     expect(result.current.displayedBalance).toBe(98765);
     expect(result.current.isBalanceAvailable).toBe(true);
+    expect(result.current.isCountervalueComplete).toBe(true);
   });
 
   it("reflects isLoading from the slice", () => {

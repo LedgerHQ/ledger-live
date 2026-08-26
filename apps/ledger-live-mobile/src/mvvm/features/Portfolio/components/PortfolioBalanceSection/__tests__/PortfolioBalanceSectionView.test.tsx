@@ -27,6 +27,7 @@ const baseProps: PortfolioBalanceSectionViewProps = {
   countervalueChange: { percentage: 1.5, value: 150 },
   unit: usd.units[0],
   isBalanceAvailable: true,
+  isCountervalueComplete: true,
   isAnalyticPillVisible: true,
   isLoading: false,
   onToggleDiscreetMode: jest.fn(),
@@ -73,11 +74,16 @@ describe("PortfolioBalanceSectionView", () => {
   });
 
   describe("loading states", () => {
-    it("should use loading testID and hide analytics pill when balance is not available", () => {
-      renderView({ isBalanceAvailable: false, isAnalyticPillVisible: false });
+    it("should show unavailable after loading settles with an incomplete countervalue", () => {
+      renderView({
+        isBalanceAvailable: false,
+        isCountervalueComplete: false,
+        isAnalyticPillVisible: false,
+      });
 
-      expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
-      expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
+      expect(screen.getByTestId("portfolio-balance-unavailable-state")).toBeVisible();
+      expect(screen.getByTestId("portfolio-balance-unavailable")).toHaveTextContent("-");
+      expect(screen.queryByTestId("portfolio-placeholder-balance")).toBeNull();
       expect(screen.queryByTestId("portfolio-balance-amount")).toBeNull();
       expect(screen.queryByTestId("portfolio-balance-normal")).toBeNull();
       expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
@@ -86,14 +92,15 @@ describe("PortfolioBalanceSectionView", () => {
     it("should show skeleton when balance is not available and loading", () => {
       renderView({
         isBalanceAvailable: false,
-        isAnalyticPillVisible: true,
+        isCountervalueComplete: false,
+        isAnalyticPillVisible: false,
         isLoading: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
       expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
       expect(screen.queryByTestId("portfolio-balance-amount")).toBeNull();
-      expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
     });
 
     it("should show shimmer on amount when balance is available and loading", () => {

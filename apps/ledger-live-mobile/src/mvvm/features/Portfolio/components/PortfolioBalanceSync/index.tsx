@@ -24,12 +24,7 @@ export function PortfolioBalanceSync(): null {
   const dispatch = useDispatch();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
-  const {
-    portfolio,
-    balanceAvailable: rawBalanceAvailable,
-    syncPhase,
-    isCvPending,
-  } = usePortfolioBalance();
+  const { portfolio, syncPhase, isCvPending } = usePortfolioBalance();
 
   const lastItem = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
   const latestBalance = lastItem?.value ?? 0;
@@ -38,14 +33,16 @@ export function PortfolioBalanceSync(): null {
     latestBalance,
     syncPhase,
     counterValueCurrency.ticker,
+    portfolio.countervalueComplete,
   );
 
-  const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
+  const isCountervalueComplete = portfolio.countervalueComplete;
+  const effectiveRawBalanceAvailable = effectiveLatestBalance !== undefined;
 
   const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
-    latestBalance: effectiveLatestBalance,
+    latestBalance: effectiveLatestBalance ?? 0,
     shouldFreezeOnSync: true,
     cvPending: isCvPending,
   });
@@ -56,9 +53,10 @@ export function PortfolioBalanceSync(): null {
         displayedBalance,
         isLoading,
         isBalanceAvailable: balanceAvailable,
+        isCountervalueComplete,
       }),
     );
-  }, [displayedBalance, isLoading, balanceAvailable, dispatch]);
+  }, [displayedBalance, isLoading, balanceAvailable, isCountervalueComplete, dispatch]);
 
   return null;
 }

@@ -10,14 +10,16 @@ import { PnlCard } from "LLM/features/Pnl/components/PnlCard";
 import { PnlDetailDrawer } from "LLM/features/Pnl/components/PnlDetailDrawer";
 import { PNL_SECTION_TEST_IDS } from "./testIds";
 import { usePnlSectionViewModel } from "./usePnlSectionViewModel";
+import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
 
 export { PNL_SECTION_TEST_IDS };
 
 export default function PnlSection() {
+  const { isCountervalueComplete } = usePortfolioBalanceForDisplay();
   const { shouldDisplayPnl, title, unrealised, realised, openDrawer, drawer } =
     usePnlSectionViewModel();
 
-  if (!shouldDisplayPnl) return null;
+  if (!shouldDisplayPnl || !isCountervalueComplete) return null;
 
   return (
     <Box lx={{ gap: "s12", paddingHorizontal: "s16" }} testID={PNL_SECTION_TEST_IDS.root}>

@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LumenTextStyle, LumenViewStyle, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useDetailedAllocationViewModel } from "./hooks/useDetailedAllocationViewModel";
 import { TrackScreen } from "~/analytics";
@@ -15,7 +15,7 @@ import RingChart from "../../components/RingChart";
 const size = normalize(200);
 
 function DetailedAllocation() {
-  const { list } = useDetailedAllocationViewModel();
+  const { list, isCountervalueComplete, isLoading } = useDetailedAllocationViewModel();
   const { t } = useTranslation();
 
   const styles = useStyleSheet(
@@ -34,24 +34,38 @@ function DetailedAllocation() {
   return (
     <SafeAreaView isFlex edges={["bottom"]}>
       <Box lx={Container}>
-        <Box lx={BoxContainer}>
-          <RingChart size={size} data={list} />
-          <Box lx={RingChartContainer} pointerEvents="none">
+        {isLoading ? (
+          <Box lx={{ flex: 1, justifyContent: "center" }} testID="allocation-loading">
+            <Spinner size={32} />
+          </Box>
+        ) : isCountervalueComplete ? (
+          <>
+            <Box lx={BoxContainer}>
+              <RingChart size={size} data={list} />
+              <Box lx={RingChartContainer} pointerEvents="none">
+                <Text typography="heading1" lx={Heading}>
+                  {list.length}
+                </Text>
+                <Text typography="body1" lx={Body}>
+                  {t("distribution.assets", { count: list.length })}
+                </Text>
+              </Box>
+            </Box>
+            <FlatList
+              data={list}
+              renderItem={renderItem}
+              keyExtractor={item => item.currency.id}
+              style={styles.flatList}
+              contentContainerStyle={styles.flatListContent}
+            />
+          </>
+        ) : (
+          <Box lx={{ flex: 1, justifyContent: "center" }} testID="allocation-unavailable">
             <Text typography="heading1" lx={Heading}>
-              {list.length}
-            </Text>
-            <Text typography="body1" lx={Body}>
-              {t("distribution.assets", { count: list.length })}
+              -
             </Text>
           </Box>
-        </Box>
-        <FlatList
-          data={list}
-          renderItem={renderItem}
-          keyExtractor={item => item.currency.id}
-          style={styles.flatList}
-          contentContainerStyle={styles.flatListContent}
-        />
+        )}
         <TrackScreen category="Analytics" name="Allocation" />
       </Box>
     </SafeAreaView>
