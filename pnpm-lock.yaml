@@ -6965,10 +6965,6 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/platform/device-action-content:
-    dependencies:
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../../shared/env
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
@@ -7018,6 +7014,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.64.0
+      prop-types:
+        specifier: 15.8.1
+        version: 15.8.1
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7026,7 +7025,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       react-lottie:
         specifier: 1.2.10
-        version: 1.2.10(react@19.1.4)
+        version: 1.2.10(prop-types@15.8.1)(react@19.1.4)
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
@@ -72609,12 +72608,6 @@ snapshots:
       react: 19.1.4
     optionalDependencies:
       prop-types: 15.8.1
-
-  react-lottie@1.2.10(react@19.1.4):
-    dependencies:
-      babel-runtime: 6.26.0
-      lottie-web: 5.12.2
-      react: 19.1.4
 
   react-markdown@4.3.1(react@19.1.4):
     dependencies:

@@ -1,6 +1,18 @@
 import React from "react";
 import Lottie, { LottieProps } from "react-lottie";
-import { getEnv } from "@shared/env";
+
+// Read straight from the environment rather than through `@shared/env`: that pulls in the legacy
+// `@ledgerhq/live-env`, which only resolves once `libs/` has been built, so any package testing a
+// component that renders this one would fail to run. Playwright passes PLAYWRIGHT_RUN into the
+// app's process env (see apps/ledger-live-desktop/tests/fixtures/common.ts).
+// Read off globalThis so this stays typed without pulling Node globals into a web UI package.
+function isPlaywrightRun(): boolean {
+  const { process } = globalThis as {
+    process?: { env?: Record<string, string | undefined> };
+  };
+
+  return !!process?.env?.PLAYWRIGHT_RUN;
+}
 
 export type AnimationProps = Readonly<{
   animation: unknown;
@@ -19,7 +31,7 @@ export function Animation({
   height = "auto",
   rendererSettings = { preserveAspectRatio: "xMidYMin" },
 }: AnimationProps): React.JSX.Element | null {
-  const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
+  const isPlaywright = isPlaywrightRun();
 
   if (!animation) return null;
 

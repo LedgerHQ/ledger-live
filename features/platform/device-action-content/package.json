@@ -23,9 +23,6 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
   },
-  "dependencies": {
-    "@shared/env": "workspace:*"
-  },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
@@ -33,6 +30,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "lottie-react-native": "7.3.6",
     "react-lottie": "1.2.10",
+    "prop-types": "15.8.1",
     "react-native-config": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -49,6 +47,9 @@
       "optional": true
     },
     "react-lottie": {
+      "optional": true
+    },
+    "prop-types": {
       "optional": true
     },
     "react-native-config": {
@@ -72,6 +73,7 @@
     "jest-environment-jsdom": "catalog:",
     "lottie-react-native": "7.3.6",
     "oxfmt": "catalog:",
+    "prop-types": "15.8.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-lottie": "1.2.10",
