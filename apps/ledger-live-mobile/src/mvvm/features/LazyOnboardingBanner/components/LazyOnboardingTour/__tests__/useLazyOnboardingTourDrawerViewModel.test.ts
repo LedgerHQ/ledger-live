@@ -5,7 +5,7 @@ import {
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
   LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
   LAZY_ONBOARDING_SOURCE_FLOW,
-} from "../../analyticsConstants";
+} from "../../../analyticsConstants";
 import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "../const";
 import {
   __resetLazyOnboardingTourControllerForTests,
