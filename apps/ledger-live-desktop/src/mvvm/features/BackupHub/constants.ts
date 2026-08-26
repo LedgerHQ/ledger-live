@@ -1,5 +1,10 @@
 export const BACKUP_HUB_TRACKING_PAGE_NAME = "Backup hub";
 
+/** Touchscreen Upgrade Program page when the Recovery Key upsell CTA is shown. */
+export const BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME = "Backups";
+
+export const BACKUP_HUB_UPSELL_TRACKING_BUTTON = "upgrade";
+
 export const BACKUP_HUB_TRACKING_BUTTON = {
   back: "Back",
   recover: "Ledger Recover",
