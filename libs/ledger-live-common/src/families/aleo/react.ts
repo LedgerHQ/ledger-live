@@ -28,7 +28,14 @@ import {
   patchAccountWithViewKey,
   sumPrivateRecords,
 } from "./utils";
-import type { AleoAccount, AleoTokenAccount, AleoUnspentRecord, SigningStrategy } from "./types";
+import type {
+  AleoAccount,
+  AleoTokenAccount,
+  AleoUnspentRecord,
+  AleoValidator,
+  SigningStrategy,
+} from "./types";
+import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
 
@@ -569,3 +576,48 @@ export const useAleoPrivateSync = ({
 
   return { isSyncing, progress, error, start, stop };
 };
+
+const lastSeenValidators: Record<string, AleoValidator[]> = {};
+
+export interface UseAleoValidatorsResult {
+  validators: AleoValidator[];
+  loading: boolean;
+  error: Error | null;
+}
+
+export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsResult {
+  const currencyId = currency.id;
+  const [validators, setValidators] = useState<AleoValidator[]>(() => [
+    ...(lastSeenValidators[currencyId] ?? []),
+  ]);
+  const [loading, setLoading] = useState(() => lastSeenValidators[currencyId] === undefined);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const seed = lastSeenValidators[currencyId];
+    setValidators([...(seed ?? [])]);
+    setLoading(seed === undefined);
+    setError(null);
+
+    getValidators(currencyId)
+      .then(next => {
+        if (cancelled) return;
+        lastSeenValidators[currencyId] = next;
+        setValidators([...next]);
+        setLoading(false);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        setError(err);
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currencyId]);
+
+  return { validators, loading, error };
+}
