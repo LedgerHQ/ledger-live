@@ -427,6 +427,52 @@ describe("useSendHeaderModel", () => {
       expect(goToStep).not.toHaveBeenCalled();
       expect(close).not.toHaveBeenCalled();
     });
+
+    it("shows the select contact title before the address phase", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
+        currentStepConfig: {
+          titleKey: "newSendFlow.addContact.selectContact",
+          showTitle: true,
+          showAvailable: false,
+        },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook();
+
+      expect(latestVM?.title).toBe("Select contact");
+    });
+
+    it("stays on add to existing contact when the address phase handles back", () => {
+      const onAddressPhaseBack = jest.fn();
+      const { goToStep, goToPreviousStep } = mockNavigation();
+      const { close } = mockActions();
+      jest.mocked(useAddNewContactHeaderState).mockReturnValue({
+        titleKey: "contacts.addAddressEntry.title",
+        onAddressPhaseBack,
+      });
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
+        currentStepConfig: {
+          titleKey: "newSendFlow.addContact.selectContact",
+          showTitle: true,
+        },
+        navigation: { goToStep, goToPreviousStep, canGoBack: () => true },
+      });
+
+      renderHook();
+
+      expect(latestVM?.title).toBe("Enter address");
+      latestVM?.handleBack();
+
+      expect(onAddressPhaseBack).toHaveBeenCalled();
+      expect(goToPreviousStep).not.toHaveBeenCalled();
+      expect(goToStep).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
+    });
   });
 
   describe("handleBack — standard navigation", () => {

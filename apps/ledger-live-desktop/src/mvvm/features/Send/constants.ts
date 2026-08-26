@@ -7,6 +7,7 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.RECENT_HISTORY,
   SEND_FLOW_STEP.ADD_CONTACT,
   SEND_FLOW_STEP.ADD_NEW_CONTACT,
+  SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
   SEND_FLOW_STEP.CUSTOM_FEES,
   SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.SIGNATURE,
@@ -42,6 +43,14 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     titleKey: "contacts.addContact",
     showAvailable: false,
     height: "fit",
+    headerDensity: "expanded",
+  },
+  [SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT]: {
+    id: SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
+    canGoBack: true,
+    floating: true,
+    titleKey: "newSendFlow.addContact.selectContact",
+    showAvailable: false,
     headerDensity: "expanded",
   },
   [SEND_FLOW_STEP.AMOUNT]: {

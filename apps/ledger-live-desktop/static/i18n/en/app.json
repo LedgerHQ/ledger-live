@@ -2597,7 +2597,8 @@
     },
     "addContact": {
       "newContact": "Add a new contact",
-      "existingContact": "Add to an existing contact"
+      "existingContact": "Add to an existing contact",
+      "selectContact": "Select contact"
     },
     "relativeDate": {
       "justNow": "Just now",
