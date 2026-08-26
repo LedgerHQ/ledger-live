@@ -15,10 +15,12 @@ import {
   useContactAddressDetailDialog,
   usePopulatedContactDetail,
 } from "@features/flow-contacts";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 
 const trackEvent = jest.fn();
 const trackPage = jest.fn();
+const deviceIntents = createMockContactDeviceIntentsPort();
 
 jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => ({ handleOpenSendFlow: jest.fn() }),
@@ -67,7 +69,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
   it("should return inactive actions when no address is selected", () => {
     const Wrapper = makeWrapper([mockMeContact()]);
     const { result } = renderHook(
-      () => useContactAddressDetailActionsAdapter(undefined, undefined, jest.fn()),
+      () => useContactAddressDetailActionsAdapter(undefined, undefined, jest.fn(), deviceIntents),
       { wrapper: Wrapper },
     );
 
@@ -90,6 +92,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
           contact.id,
           addressDetail.selection?.row.addressId,
           addressDetail.onClose,
+          deviceIntents,
         );
 
         return { addressDetail, actions };
@@ -135,6 +138,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
           contact.id,
           addressDetail.selection?.row.addressId,
           addressDetail.onClose,
+          deviceIntents,
           "ETH",
           "Ethereum",
         );

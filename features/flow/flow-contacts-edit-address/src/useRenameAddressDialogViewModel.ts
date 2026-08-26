@@ -25,6 +25,7 @@ export function useRenameAddressDialogViewModel({
   isRequestedOpen,
   isEditSessionActive = isRequestedOpen,
   onCloseRequest,
+  onSaveStart,
   onSaveSuccess,
   requestSaveApproval,
 }: UseRenameAddressDialogViewModelOptionsWithValidation): RenameAddressDialogViewModel {
@@ -71,6 +72,12 @@ export function useRenameAddressDialogViewModel({
         return;
       }
 
+      /**
+       * Dismiss the dialog before save(): the Device Intent Executor takes over the device
+       * interaction UI.
+       */
+      onCloseRequest();
+      onSaveStart?.();
       await save();
       const addressChanged =
         addressEntry.status === "valid" &&
@@ -82,7 +89,6 @@ export function useRenameAddressDialogViewModel({
         labelChanged: draftLabel.trim() !== currentLabel.trim(),
         addressChanged,
       });
-      onCloseRequest();
     } catch {
       return;
     } finally {
@@ -97,6 +103,7 @@ export function useRenameAddressDialogViewModel({
     isConfirmEnabled,
     isSaving,
     onCloseRequest,
+    onSaveStart,
     onSaveSuccess,
     requestSaveApproval,
     save,

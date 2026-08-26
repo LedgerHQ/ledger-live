@@ -57,6 +57,8 @@ export type UseRenameAddressDialogViewModelOptions = Omit<
     isRequestedOpen: boolean;
     isEditSessionActive?: boolean;
     onCloseRequest: () => void;
+    /** Called once the save is committed, before its outcome is known. */
+    onSaveStart?: () => void;
     onSaveSuccess?: (payload: ContactAddressEditSavePayload) => void;
     requestSaveApproval?: () => Promise<boolean>;
   }>;

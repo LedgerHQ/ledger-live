@@ -11,6 +11,7 @@ import {
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
 import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
@@ -34,10 +35,11 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
 export function useContactDetailEditDeleteAdapter(
   contactId: ContactId,
   onDeleteSuccess: () => void,
+  deviceIntents: ContactDeviceIntentsPort,
 ): ContactDetailEditDeleteFlowProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsEditDeletePorts();
+  const ports = useContactsEditDeletePorts(deviceIntents);
   const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
     contactId,
     ports,

@@ -77,10 +77,8 @@ export function useContactAddressDetailActionsFlowBindings({
     isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,
     requestSaveApproval: flow.requestSaveApproval,
-    onSaveSuccess: payload => {
-      onEditAddressSaved?.(payload);
-      onCloseAddressDetail?.();
-    },
+    onSaveStart: onCloseAddressDetail,
+    onSaveSuccess: onEditAddressSaved,
   });
 
   return { flow, renameViewModel };

@@ -7,7 +7,10 @@ import {
   contactsSlice,
 } from "@domain/entity-contact";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
-import type { ContactDeviceIntentsPort } from "../contactDeviceIntentsPort";
+import {
+  createMockContactDeviceIntentsPort,
+  type ContactDeviceIntentsPort,
+} from "../contactDeviceIntentsPort";
 import { createContactAddressEditPort } from "./createContactAddressEditPort";
 
 function makeStore(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
@@ -23,7 +26,7 @@ describe("createContactAddressEditPort", () => {
     const address = contact.addresses[0]!;
     const store = makeStore([contact]);
     const device = { ...address.device, hmacRest: "updated-proof" };
-    const editExternalAddressScope = jest.fn().mockResolvedValue(device);
+    const editExternalAddress = jest.fn().mockResolvedValue(device);
     const label = ContactAddressLabelSchema.parse("Treasury");
     const updatedAddressValue = ContactAddressValueSchema.parse(
       "0x2ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
@@ -31,7 +34,7 @@ describe("createContactAddressEditPort", () => {
     const port = createContactAddressEditPort({
       dispatch: store.dispatch,
       getState: store.getState,
-      deviceIntents: { editExternalAddressScope } as unknown as ContactDeviceIntentsPort,
+      deviceIntents: { editExternalAddress } as unknown as ContactDeviceIntentsPort,
     });
 
     const updatedAddress = await port.updateAddress({
@@ -41,10 +44,10 @@ describe("createContactAddressEditPort", () => {
       address: updatedAddressValue,
     });
 
-    expect(editExternalAddressScope).toHaveBeenCalledWith({
+    expect(editExternalAddress).toHaveBeenCalledWith({
       contact,
       address,
-      label,
+      updatedLabel: label,
       updatedAddress: updatedAddressValue,
     });
     expect(updatedAddress).toEqual({
@@ -61,6 +64,7 @@ describe("createContactAddressEditPort", () => {
     const port = createContactAddressEditPort({
       dispatch: store.dispatch,
       getState: store.getState,
+      deviceIntents: createMockContactDeviceIntentsPort(),
     });
 
     await expect(

@@ -25,6 +25,7 @@ import type {
 } from "@features/flow-contacts-edit-address";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
@@ -58,12 +59,13 @@ export function useContactAddressDetailActionsAdapter(
   contactId: ContactId | undefined,
   addressId: ContactAddressId | undefined,
   onCloseAddressDetail: () => void,
+  deviceIntents: ContactDeviceIntentsPort,
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsDialogProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsAddressDetailActionsPorts();
+  const ports = useContactsAddressDetailActionsPorts(deviceIntents);
   const addressValidation = useContactsAddressValidationAdapter();
   const openSendFlow = useOpenSendFlow();
   const isSelectionActive = contactId !== undefined && addressId !== undefined;

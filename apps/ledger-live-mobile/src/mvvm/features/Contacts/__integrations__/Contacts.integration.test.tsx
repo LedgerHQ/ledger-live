@@ -32,6 +32,9 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
+// Device intents resolve without a device so these tests cover the calling flows only.
+// The executor wiring is covered by Contacts.deviceIntents.integration.test.tsx.
+jest.mock("@features/platform-contacts/device");
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
     validateAddress: async ({ address }: { address: string }) => ({

@@ -8,8 +8,10 @@ import {
 } from "@features/platform-device-intent";
 import {
   registerExternalAddressIntentPlatformDefinition,
+  type ContactIntentResult,
   type RegisterExternalAddressIntentInput,
   type RegisterExternalAddressJobState,
+  type RegisterExternalAddressResult,
 } from "@features/platform-contacts/device/intents";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
@@ -44,7 +46,8 @@ type ContactsExecutorProps = DeviceIntentExecutorProps<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
   undefined,
-  InitializationInput
+  InitializationInput,
+  ContactIntentResult<RegisterExternalAddressResult>
 > & {
   sourceFlow: SourceFlow;
 };
