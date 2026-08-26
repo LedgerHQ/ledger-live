@@ -3,96 +3,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
-import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
-import DebugConnectivity, {
-  connectivityHeaderOptions,
-} from "~/screens/Settings/Debug/Connectivity";
-import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
-import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
-import DebugDebugging from "~/screens/Settings/Debug/Debugging";
-import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
-import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
-import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
-import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
-import DebugFeatures from "~/screens/Settings/Debug/Features";
-import DebugFetchCustomImage, {
-  debugFetchCustomImageHeaderOptions,
-} from "~/screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
-import DebugGenerators from "~/screens/Settings/Debug/Generators";
-import DebugContentCards from "~/screens/Settings/Debug/ContentCards";
-import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
-import DebugInformation from "~/screens/Settings/Debug/Information";
-import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
-import DebugPerformance from "~/screens/Settings/Debug/Performance";
-import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
-import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
-import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
-import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
-import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
-import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
-import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
-import DebugPlayground from "~/screens/Settings/Debug/Playground";
-import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
-import DebugSettings from "~/screens/Settings/Debug";
-import DebugAnalyticsConsentQA from "~/screens/Settings/Debug/AnalyticsConsentQA";
-import DebugNotificationsPromptQA from "~/screens/Settings/Debug/NotificationsPromptQA";
-import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
-import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
-import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
-import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
-import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
-import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
-import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
-import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
-import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
-import DebugDeviceIntentExecutorContactsValidation from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ContactsValidationScreen";
-import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
-import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
-import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
-import Settings from "~/screens/Settings";
-import AccountsSettings from "~/screens/Settings/Accounts";
-import AboutSettings from "~/screens/Settings/About";
-import Resources from "~/screens/Settings/Resources";
-import GeneralSettings from "~/screens/Settings/General";
-import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
-import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
-import NotificationsSettings from "~/screens/Settings/Notifications";
-import HelpSettings from "~/screens/Settings/Help";
-import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-  ExchangeDeveloperMode,
-} from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import HelpButton from "~/screens/Settings/HelpButton";
-import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
-import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
-import GenerateMockAccountsByType from "~/screens/Settings/Debug/Generators/GenerateMockAccountsByType";
+import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
-import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
-import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
-import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import {
-  EmptyScreen,
-  MainTestScreen,
-  TestScreenWithDrawerForcingToBeOpened,
-  TestScreenWithDrawerRequestingToBeOpened,
-} from "LLM/components/QueuedDrawer/TestScreens";
-import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
-import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
-import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
-import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
-import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
-import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
-import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
-import Q2WalletV4TourScreenDebug from "LLM/features/Q2WalletV4Tour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -111,7 +26,7 @@ export default function SettingsNavigator() {
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.SettingsScreen}
-        component={Settings}
+        getComponent={() => require("~/screens/Settings").default}
         options={{
           title: t("settings.header"),
           headerRight: () => <HelpButton />,
@@ -119,14 +34,14 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.CountervalueSettings}
-        component={CountervalueSettings}
+        getComponent={() => require("~/screens/Settings/General/CountervalueSettings").default}
         options={{
           title: t("settings.display.counterValue"),
         }}
       />
       <Stack.Screen
         name={ScreenName.GeneralSettings}
-        component={GeneralSettings}
+        getComponent={() => require("~/screens/Settings/General").default}
         layout={unmountOnBlur}
         options={{
           title: t("settings.display.title"),
@@ -134,7 +49,7 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.AnalyticsPreferencesSettings}
-        component={AnalyticsPreferencesSettings}
+        getComponent={() => require("~/screens/Settings/AnalyticsPreferencesSettings").default}
         options={{
           title: "",
           headerStyle: {
@@ -144,40 +59,42 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.AccountsSettings}
-        component={AccountsSettings}
+        getComponent={() => require("~/screens/Settings/Accounts").default}
         options={{
           title: t("settings.accounts.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.AboutSettings}
-        component={AboutSettings}
+        getComponent={() => require("~/screens/Settings/About").default}
         options={{
           title: t("settings.about.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.NotificationsSettings}
-        component={NotificationsSettings}
+        getComponent={() => require("~/screens/Settings/Notifications").default}
         options={{
           title: t("settings.notifications.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.HelpSettings}
-        component={HelpSettings}
+        getComponent={() => require("~/screens/Settings/Help").default}
         options={{
           title: t("settings.help.header"),
         }}
       />
       <Stack.Screen
         name={ScreenName.Resources}
-        component={Resources}
+        getComponent={() => require("~/screens/Settings/Resources").default}
         options={{ title: t("settings.resources") }}
       />
       <Stack.Screen
         name={ScreenName.CryptoAssetsSettings}
-        component={CurrenciesList}
+        getComponent={() =>
+          require("~/screens/Settings/CryptoAssets/Currencies/CurrenciesList").default
+        }
         options={{ title: t("settings.accounts.cryptoAssets.header") }}
       />
       <Stack.Screen
@@ -192,7 +109,9 @@ export default function SettingsNavigator() {
 
       <Stack.Screen
         name={ScreenName.EditCurrencyUnits}
-        component={EditCurrencyUnits}
+        getComponent={() =>
+          require("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits").default
+        }
         options={{
           title: t("account.settings.accountUnits.title"),
         }}
@@ -200,376 +119,414 @@ export default function SettingsNavigator() {
 
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
-        component={ExperimentalSettings}
+        getComponent={() => require("~/screens/Settings/Experimental").default}
         options={{
           title: t("settings.experimental.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.DeveloperSettings}
-        component={DeveloperSettings}
+        getComponent={() => require("~/screens/Settings/Developer").default}
         options={{
           title: t("settings.developer.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.DeveloperCustomManifest}
-        component={DeveloperCustomManifest}
+        getComponent={() => require("~/screens/Settings/Developer").DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
-          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
         name={ScreenName.ExchangeDeveloperMode}
-        component={ExchangeDeveloperMode}
+        getComponent={() => require("~/screens/Settings/Developer").ExchangeDeveloperMode}
         options={{
           title: t("settings.developer.exchangeDeveloperMode.title"),
-          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
         name={ScreenName.CustomCALRefInput}
-        component={CustomCALRefInput}
+        getComponent={() => require("~/screens/Settings/Developer/CustomCALRefInput").default}
         options={{
           title: t("settings.developer.customCALRef.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugSettings}
-        component={DebugSettings}
+        getComponent={() => require("~/screens/Settings/Debug").default}
         options={{
           title: "Debug",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugAnalyticsConsentQA}
-        component={DebugAnalyticsConsentQA}
+        getComponent={() => require("~/screens/Settings/Debug/AnalyticsConsentQA").default}
         options={{
           title: "Analytics consent QA",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugNotificationsPromptQA}
-        component={DebugNotificationsPromptQA}
+        getComponent={() => require("~/screens/Settings/Debug/NotificationsPromptQA").default}
         options={{
           title: "Notifications prompt — QA",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugNetwork}
-        component={DebugNetwork}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Network").default}
         options={{
           title: "Network",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugConfiguration}
-        component={DebugConfiguration}
+        getComponent={() => require("~/screens/Settings/Debug/Configuration").default}
         options={{
           title: "Configuration",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDebugging}
-        component={DebugDebugging}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging").default}
         options={{
           title: "Debugging",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugInformation}
-        component={DebugInformation}
+        getComponent={() => require("~/screens/Settings/Debug/Information").default}
         options={{
           title: "Information",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugGenerators}
-        component={DebugGenerators}
+        getComponent={() => require("~/screens/Settings/Debug/Generators").default}
         options={{
           title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugContentCards}
-        component={DebugContentCards}
+        getComponent={() => require("~/screens/Settings/Debug/ContentCards").default}
         options={{
           title: t("settings.debug.contentCards.title"),
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugConnectivity}
-        component={DebugConnectivity}
-        options={connectivityHeaderOptions}
+        getComponent={() => require("~/screens/Settings/Debug/Connectivity").default}
+        options={() => require("~/screens/Settings/Debug/Connectivity").connectivityHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}
-        component={DebugFeatures}
+        getComponent={() => require("~/screens/Settings/Debug/Features").default}
         options={{
           title: "Features",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutor}
-        component={DebugDeviceIntentExecutor}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor").default
+        }
         options={{
           title: "Device Intent Executor",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorContent}
-        component={DebugDeviceActionContentScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen")
+            .default
+        }
         options={{
           title: "DIE Device Action Content",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorInfoState}
-        component={DebugInfoStateScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen").default
+        }
         options={{
           title: "DIE Info State",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorConnectDevice}
-        component={DebugConnectDeviceScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen")
+            .default
+        }
         options={{
           title: "DIE Connect Device",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorContactsValidation}
-        component={DebugDeviceIntentExecutorContactsValidation}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/ContactsValidationScreen")
+            .default
+        }
         options={{
           title: "DIE Contacts validation",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorInitialization}
-        component={DebugDeviceIntentExecutorInitialization}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen")
+            .default
+        }
         options={{
           title: "DIE Initialization",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorInitializerStates}
-        component={DebugInitializerStatesScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen")
+            .default
+        }
         options={{
           title: "DIE Initializer States",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorOrchestration}
-        component={DebugDeviceIntentExecutorOrchestration}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen")
+            .default
+        }
         options={{
           title: "DIE Orchestration",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatureFlags}
-        component={DebugFeatureFlags}
+        getComponent={() => require("~/screens/FeatureFlagsSettings").default}
         options={{
           title: "Feature Flags",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugLargeScreenUpsell}
-        component={DebugLargeScreenUpsell}
+        getComponent={() => require("LLM/features/LargeScreenUpsell/Debug").default}
         options={{
           title: "Large-screen upsell",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugInstallSetOfApps}
-        component={DebugInstallSetOfApps}
+        getComponent={() => require("~/screens/Settings/Debug/Features/InstallSetOfApps").default}
         options={{
           title: "Install set of apps",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugMockGenerateAccounts}
-        component={GenerateMockAccountSelectScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect")
+            .GenerateMockAccountSelectScreen
+        }
         options={{
           title: "Generate mock accounts",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugMockGenerateAccountsByType}
-        component={GenerateMockAccountsByType}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Generators/GenerateMockAccountsByType").default
+        }
         options={{
           title: "Generate accounts by type",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugPlayground}
-        component={DebugPlayground}
+        getComponent={() => require("~/screens/Settings/Debug/Playground").default}
         options={{
           title: "Playground",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugWallet40}
-        component={DebugWallet40}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Wallet40").default}
         options={{
           title: "Wallet 4.0",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugContacts}
-        component={DebugContacts}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Contacts").default}
         options={{
           title: "Contacts",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugDevTools}
-        component={DebugDevTools}
+        getComponent={() => require("LLM/features/DevTools/screens/DevToolsScreen").default}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugBluetoothAndLocationServices}
-        component={DebugBluetoothAndLocationServices}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices").default
+        }
         options={{
           title: "Bluetooth and location services",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugStorageMigration}
-        component={DebugStorageMigration}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Debugging/StorageMigration").DebugStorageMigration
+        }
         options={{
           title: "Storage migration",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugSwap}
-        component={DebugSwap}
+        getComponent={() => require("~/screens/Settings/Debug/Features/Swap").default}
         options={{
           title: "Swap",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugBLEDevicePairing}
-        component={BleEDevicePairingScreen}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/BleDevicePairingScreen").default
+        }
         options={{
           title: "Debug Ble Pairing Flow",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugCommandSender}
-        component={DebugCommandSender}
+        getComponent={() => require("~/screens/Settings/Debug/Connectivity/CommandSender").default}
         options={{
           title: "Command Sender",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugCrash}
-        component={DebugCrash}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Crashes").default}
         options={{
           title: "Errors and crashes",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugStore}
-        component={DebugStore}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Store").default}
         options={{
           title: "Application state",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugEnv}
-        component={DebugEnv}
+        getComponent={() => require("~/screens/Settings/Debug/Configuration/DebugEnv").default}
         options={{
           title: "Environment Variables",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugHttpTransport}
-        component={DebugHttpTransport}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Connectivity/DebugHttpTransport").default
+        }
         options={{
           title: "HTTP Transport",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugLogs}
-        component={DebugLogs}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/Logs").default}
         options={{
           title: "Logs",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugLottie}
-        component={DebugLottie}
+        getComponent={() => require("~/screens/Settings/Debug/Features/Lottie").default}
         options={{
           title: "Debug Lottie",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugVideos}
-        component={DebugVideos}
+        getComponent={() => require("~/screens/Settings/Debug/Features/Videos").default}
         options={{
           title: "Debug Videos",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugTooltip}
-        component={TooltipDemo}
+        getComponent={() => require("~/screens/Settings/Debug/Features/TooltipDemo").default}
         options={{
           title: "Debug Tooltip",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
-        component={DebugFetchCustomImage}
-        options={debugFetchCustomImageHeaderOptions}
+        getComponent={() => require("~/screens/Settings/Debug/Features/FetchCustomImage").default}
+        options={() =>
+          require("~/screens/Settings/Debug/Features/FetchCustomImage")
+            .debugFetchCustomImageHeaderOptions
+        }
       />
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
-        component={DebugFirmwareUpdate}
+        getComponent={() => require("~/screens/Settings/Debug/Features/FirmwareUpdate").default}
         options={{
           title: "Debug Firmware update",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}
-        component={DebugCustomImageGraphics}
+        getComponent={() =>
+          require("~/screens/Settings/Debug/Features/CustomImageGraphics").default
+        }
         options={{
           title: "Custom image graphics",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugSnackbars}
-        component={DebugSnackbars}
+        getComponent={() => require("~/screens/Settings/Debug/Features/Snackbars").default}
         options={{
           title: "Debug snackbars",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugTransactionsAlerts}
-        component={DebugTransactionsAlerts}
+        getComponent={() => require("~/screens/Settings/Debug/Features/TransactionsAlerts").default}
         options={{
           title: "Debug transactions alerts",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugTermsOfUse}
-        component={DebugTermsOfUse}
+        getComponent={() => require("~/screens/Settings/Debug/Features/TermsOfUse").default}
         options={{
           title: "Debug Terms of Use",
         }}
       />
       <Stack.Screen
         name={ScreenName.BenchmarkQRStream}
-        component={DebugBenchmarkQRStream}
+        getComponent={() => require("~/screens/Settings/Debug/Broken/BenchmarkQRStream").default}
         options={{
           title: "Benchmark QRStream",
         }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingLanguage}
-        component={OnboardingStepLanguage}
+        getComponent={() => require("~/screens/Onboarding/steps/language").default}
         options={{
           presentation: "transparentModal",
           animation: "slide_from_bottom",
@@ -579,54 +536,64 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
-        component={PostOnboardingDebugScreen}
+        getComponent={() => require("~/screens/PostOnboarding/PostOnboardingDebugScreen").default}
       />
-      <Stack.Screen name={ScreenName.DebugCameraPermissions} component={CameraPermissions} />
+      <Stack.Screen
+        name={ScreenName.DebugCameraPermissions}
+        getComponent={() => require("~/screens/Settings/Debug/Debugging/CameraPermissions").default}
+      />
       <Stack.Screen
         name={ScreenName.DebugPerformance}
-        component={DebugPerformance}
+        getComponent={() => require("~/screens/Settings/Debug/Performance").default}
         options={{
           title: "Performance",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawers}
-        component={MainTestScreen}
+        getComponent={() => require("LLM/components/QueuedDrawer/TestScreens").MainTestScreen}
         options={{
           title: "QueuedDrawers",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawerScreen0}
-        component={EmptyScreen}
+        getComponent={() => require("LLM/components/QueuedDrawer/TestScreens").EmptyScreen}
         options={{
           title: "Empty screen",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawerScreen1}
-        component={TestScreenWithDrawerRequestingToBeOpened}
+        getComponent={() =>
+          require("LLM/components/QueuedDrawer/TestScreens")
+            .TestScreenWithDrawerRequestingToBeOpened
+        }
         options={{
           title: "QueuedDrawers (Auto open)",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawerScreen2}
-        component={TestScreenWithDrawerForcingToBeOpened}
+        getComponent={() =>
+          require("LLM/components/QueuedDrawer/TestScreens").TestScreenWithDrawerForcingToBeOpened
+        }
         options={{
           title: "QueuedDrawers (Auto force open)",
         }}
       />
       <Stack.Screen
         name={ScreenName.LargeMoverLandingPage}
-        component={LargeMoverLandingPage}
+        getComponent={() =>
+          require("LLM/features/LandingPages/screens/LargeMoverLandingPage").LargeMoverLandingPage
+        }
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugSwipe}
-        component={SwiperScreenDebug}
+        getComponent={() => require("~/screens/Settings/Debug/Features/SwiperScreenDebug").default}
         options={{
           title: "Swiper Screen Debug",
         }}
@@ -634,28 +601,28 @@ export default function SettingsNavigator() {
 
       <Stack.Screen
         name={ScreenName.DebugModularAssetDrawer}
-        component={ModularDrawerScreenDebug}
+        getComponent={() => require("LLM/features/ModularDrawer/Debug").default}
         options={{
           title: "ModularAssetDrawer Screen Debug",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugWalletV4Tour}
-        component={WalletV4TourScreenDebug}
+        getComponent={() => require("LLM/features/WalletV4Tour/Debug").default}
         options={{
           title: "Wallet V4 Tour",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugProductTour}
-        component={ProductTourScreenDebug}
+        getComponent={() => require("LLM/features/ProductTour/Debug").default}
         options={{
           title: "Product Tour",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQ2WalletV4Tour}
-        component={Q2WalletV4TourScreenDebug}
+        getComponent={() => require("LLM/features/Q2WalletV4Tour/Debug").default}
         options={{
           title: "Q2 Wallet V4 Tour",
         }}

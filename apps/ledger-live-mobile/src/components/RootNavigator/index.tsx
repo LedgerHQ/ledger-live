@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import BaseNavigator from "./BaseNavigator";
-import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
@@ -25,11 +24,17 @@ export default function RootNavigator() {
           }}
         >
           {goToOnboarding ? (
-            <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
+            <Stack.Screen
+              name={NavigatorName.BaseOnboarding}
+              getComponent={() => require("./BaseOnboardingNavigator").default}
+            />
           ) : null}
           <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
           {hasCompletedOnboarding ? (
-            <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
+            <Stack.Screen
+              name={NavigatorName.BaseOnboarding}
+              getComponent={() => require("./BaseOnboardingNavigator").default}
+            />
           ) : null}
         </Stack.Navigator>
       </AnalyticsContextProvider>
