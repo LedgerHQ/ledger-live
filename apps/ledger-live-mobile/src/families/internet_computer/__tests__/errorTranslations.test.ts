@@ -18,6 +18,9 @@ const REACHABLE_ERRORS = [
   "ICPSplitNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
+  "ICPNeuronsNotRead",
+  "ICPGovernanceRejected",
+  "ICPCallRejected",
   "ICPInvalidPercentage",
   // getTransactionStatus assigns these to `warnings.staking`, a slot the generic send flow does not
   // read. The family's own ActionFooter renders it, which is what makes them reachable.
@@ -52,4 +55,19 @@ describe("internet_computer error translations", () => {
     expect(errors.ICPDissolveDelayLTMin?.description).toContain("{{minDays}}");
     expect(errors.ICPDissolveDelayGTMax?.description).toContain("{{maxDays}}");
   });
+
+  // A read that returned nothing changed nothing, and the copy has to say so: reusing
+  // ICPCallUnconfirmed here would tell the user a refresh "may or may not have taken effect".
+  it("tells the user a failed neuron read left them unchanged", () => {
+    expect(errors.ICPNeuronsNotRead?.description).toMatch(/unchanged/);
+  });
+
+  // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
+  // only part of the message that says what actually went wrong.
+  it.each(["ICPGovernanceRejected", "ICPCallRejected"])(
+    "%s passes the network's own wording through",
+    name => {
+      expect(errors[name]?.description).toContain("{{reason}}");
+    },
+  );
 });
