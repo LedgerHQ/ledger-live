@@ -1,5 +1,5 @@
 import { ContactError, parseContactAddressLabel } from "@domain/entity-contact";
-import type { ContactAddressEditPort } from "../../Detail/model/ports";
+import type { ContactAddressEditPort } from "@features/platform-contacts";
 import { createRenameAddressViewModel } from "./viewModel";
 import type { RenameAddressController } from "../types";
 
