@@ -20,7 +20,6 @@ export function DeviceActionContent({
   banner,
   testID,
 }: DeviceActionContentProps) {
-  // Called unconditionally: `theme ?? useThemeVariant()` would short-circuit the hook away.
   const providerTheme = useThemeVariant();
   const resolvedTheme = theme ?? providerTheme;
   const animationSource =
