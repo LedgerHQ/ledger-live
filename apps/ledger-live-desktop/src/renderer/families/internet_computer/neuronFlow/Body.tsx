@@ -130,14 +130,16 @@ const Body = ({
       }
       // A manage_neuron reply carries no snapshot — reading one back needs another device signature.
       // Replaying the command the canister just accepted keeps the card from still showing the state
-      // the action was meant to change.
+      // the action was meant to change, and where the reply stated its own result that is used.
       if (!transaction) return;
       setRefreshed(current => {
         const base = current ?? {
           neurons: account.neurons.fullNeurons,
           lastUpdatedMSecs: account.neurons.lastUpdatedMSecs,
         };
-        const patched = applyNeuronCommand(base.neurons, transaction);
+        const patched = applyNeuronCommand(base.neurons, transaction, {
+          outcome: operation.extra.outcome,
+        });
         return patched ? { ...base, neurons: patched } : current;
       });
     },

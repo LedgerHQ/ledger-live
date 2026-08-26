@@ -14,6 +14,19 @@ export type NeuronDissolveState =
   | { DissolveDelaySeconds: bigint }
   | { WhenDissolvedTimestampSeconds: bigint };
 
+/**
+ * What a `manage_neuron` reply reported about the command it just ran, for the commands whose result
+ * the canister computes rather than the caller.
+ *
+ * Decimal strings, as everything else on an operation's `extra` is — that record is serialized, and
+ * bigint has no JSON form.
+ */
+export type NeuronCommandOutcome = {
+  /** StakeMaturity: the neuron's maturity totals after the split, both reported by the canister. */
+  maturityE8s?: string;
+  stakedMaturityE8s?: string;
+};
+
 // `topic` is the NNS Topic id (see KNOWN_TOPICS).
 export type Followee = {
   topic: number;

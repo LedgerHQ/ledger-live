@@ -138,6 +138,30 @@ describe("decodeManageNeuronReply", () => {
     const reply = encodeReply("manage_neuron", { command: [] });
     expect(() => decodeManageNeuronReply(reply)).not.toThrow();
   });
+
+  // The one command in the flow that states its own result, so the neuron can be brought up to date
+  // from the canister's figures instead of the app's arithmetic.
+  it("reads the maturity totals a StakeMaturity command reports", () => {
+    const reply = encodeReply("manage_neuron", {
+      command: [
+        { StakeMaturity: { maturity_e8s: 200_000_000n, staked_maturity_e8s: 300_000_000n } },
+      ],
+    });
+
+    expect(decodeManageNeuronReply(reply)).toEqual({
+      maturityE8s: "200000000",
+      stakedMaturityE8s: "300000000",
+    });
+  });
+
+  it.each([
+    ["an empty command", []],
+    ["a command that reports nothing", [{ Configure: {} }]],
+  ])("reports no outcome for %s", (_case, command) => {
+    const reply = encodeReply("manage_neuron", { command });
+
+    expect(decodeManageNeuronReply(reply)).toBeUndefined();
+  });
 });
 
 describe("decodeListNeuronsReply", () => {

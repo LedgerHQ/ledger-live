@@ -157,9 +157,13 @@ describe("applyNeuronOperation replaying an accepted command", () => {
       dissolveState: { DissolveDelaySeconds: DELAY },
     });
 
-  const replay = (account: ICPAccount, transaction: Record<string, unknown>): ICPAccount => {
+  const replay = (
+    account: ICPAccount,
+    transaction: Record<string, unknown>,
+    operation = makeOperation(),
+  ): ICPAccount => {
     const dispatch = jest.fn();
-    applyNeuronOperation(dispatch, account, makeOperation(), transaction as unknown as Transaction);
+    applyNeuronOperation(dispatch, account, operation, transaction as unknown as Transaction);
     const [action] = dispatch.mock.calls[0];
     return action.payload.updater(account) as ICPAccount;
   };
@@ -190,6 +194,46 @@ describe("applyNeuronOperation replaying an accepted command", () => {
     const updated = replay(account, { type: "disburse", neuronId: "7" });
 
     expect(updated.neurons.fullNeurons[0].state).toBe(NeuronState.Locked);
+  });
+
+  /*
+   * stake_maturity states its own result, and this is the one place that carries it from the
+   * operation into the replay. Drop the argument and the arm silently declines instead — the neuron
+   * keeps its pre-command maturity and nothing fails, which is why it is pinned here and not only in
+   * the coin module.
+   */
+  it("moves the maturity a stake_maturity command reported", () => {
+    const account = makeICPAccount({
+      neurons: [
+        makeNeuron({
+          id: 7n,
+          maturityE8sEquivalent: 400_000_000n,
+          stakedMaturityE8sEquivalent: 0n,
+        }),
+      ],
+    });
+    const operation = makeOperation({
+      extra: { outcome: { maturityE8s: "200000000", stakedMaturityE8s: "200000000" } },
+    });
+
+    const updated = replay(
+      account,
+      { type: "stake_maturity", neuronId: "7", percentageToStake: 50 },
+      operation,
+    );
+
+    expect(updated.neurons.fullNeurons[0].maturityE8sEquivalent).toBe(200_000_000n);
+    expect(updated.neurons.fullNeurons[0].stakedMaturityE8sEquivalent).toBe(200_000_000n);
+  });
+
+  it("leaves the maturity alone when the command reported nothing", () => {
+    const account = makeICPAccount({
+      neurons: [makeNeuron({ id: 7n, maturityE8sEquivalent: 400_000_000n })],
+    });
+
+    const updated = replay(account, { type: "stake_maturity", neuronId: "7" });
+
+    expect(updated.neurons.fullNeurons[0].maturityE8sEquivalent).toBe(400_000_000n);
   });
 
   it("leaves the snapshot untouched when no transaction is supplied", () => {
