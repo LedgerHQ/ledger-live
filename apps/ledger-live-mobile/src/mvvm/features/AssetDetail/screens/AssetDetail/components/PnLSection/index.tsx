@@ -22,7 +22,12 @@ export function PnLSection({ distributionItem, isLoading }: Props) {
     return <SectionSkeleton rows={1} rowHeight="s56" />;
   }
 
-  if (!enabled || !distributionItem) return null;
+  if (
+    !enabled ||
+    !distributionItem ||
+    (distributionItem.amount > 0 && distributionItem.countervalue == null)
+  )
+    return null;
 
   return <PnLSectionContent distributionItem={distributionItem} enabled={enabled} />;
 }

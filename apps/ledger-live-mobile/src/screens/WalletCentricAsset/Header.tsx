@@ -143,7 +143,7 @@ function Header({
                 numberOfLines={1}
               >
                 {shouldUseCounterValue ? (
-                  <CounterValue currency={currency} value={currencyBalance} />
+                  <CounterValue currency={currency} value={currencyBalance} withPlaceholder />
                 ) : (
                   <CurrencyUnitValue showCode unit={currency.units[0]} value={currencyBalance} />
                 )}

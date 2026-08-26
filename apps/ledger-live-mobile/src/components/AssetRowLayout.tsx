@@ -17,6 +17,9 @@ type Props = {
   currency: Currency;
   currencyUnit?: Unit;
   countervalueChange?: ValueChange;
+  countervalue?: number;
+  countervalueUnit?: Unit;
+  countervalueUnavailable?: boolean;
   name: string;
   tag?: string | null | boolean;
   onPress?: TouchableOpacityProps["onPress"];
@@ -36,6 +39,9 @@ const AssetRowLayout = ({
   topLink,
   bottomLink,
   countervalueChange,
+  countervalue,
+  countervalueUnit,
+  countervalueUnavailable,
   tag,
 }: Props) => {
   const { colors, space } = useTheme();
@@ -81,7 +87,22 @@ const AssetRowLayout = ({
                 color="neutral.c100"
                 testID="asset-balance"
               >
-                <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
+                {countervalueUnavailable ? (
+                  "-"
+                ) : countervalue !== undefined && countervalueUnit ? (
+                  <CurrencyUnitValue
+                    unit={countervalueUnit}
+                    value={countervalue}
+                    joinFragmentsSeparator=""
+                  />
+                ) : (
+                  <CounterValue
+                    currency={currency}
+                    value={balance}
+                    joinFragmentsSeparator=""
+                    withPlaceholder
+                  />
+                )}
               </Text>
             </Flex>
           </Flex>
@@ -91,14 +112,19 @@ const AssetRowLayout = ({
                 <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
               ) : null}
             </Text>
-            {!hideDelta && countervalueChange && (
-              <Delta
-                percent
-                show0Delta={balance.toNumber() !== 0}
-                fallbackToPercentPlaceholder
-                valueChange={countervalueChange}
-              />
-            )}
+            {!hideDelta &&
+              (countervalueChange ? (
+                <Delta
+                  percent
+                  show0Delta
+                  fallbackToPercentPlaceholder
+                  valueChange={countervalueChange}
+                />
+              ) : balance.isGreaterThan(0) ? (
+                <Text variant="body" fontWeight="medium" color="neutral.c70">
+                  -
+                </Text>
+              ) : null)}
           </Flex>
         </Flex>
       </Flex>

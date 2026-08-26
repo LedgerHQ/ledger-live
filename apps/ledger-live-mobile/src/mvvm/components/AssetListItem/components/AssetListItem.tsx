@@ -59,16 +59,14 @@ const PortfolioRow = memo(({ asset, onPress, precomputed, lx, hideNetwork }: Por
       </ListItemLeading>
       <ListItemTrailing>
         <Box lx={trailingStyle}>
-          {formattedCounterValue != null && (
-            <Text
-              typography="body2SemiBold"
-              lx={{ color: "base" }}
-              testID={`assetItem-${asset.currency.name}-countervalue`}
-            >
-              {formattedCounterValue}
-            </Text>
-          )}
-          {countervalueChange && (
+          <Text
+            typography="body2SemiBold"
+            lx={{ color: "base" }}
+            testID={`assetItem-${asset.currency.name}-countervalue`}
+          >
+            {formattedCounterValue ?? "-"}
+          </Text>
+          {countervalueChange ? (
             <Delta
               valueChange={countervalueChange}
               percent
@@ -76,6 +74,10 @@ const PortfolioRow = memo(({ asset, onPress, precomputed, lx, hideNetwork }: Por
               fallbackToPercentPlaceholder
               isArrowDisplayed
             />
+          ) : (
+            <Text typography="body3" lx={{ color: "muted" }} testID="asset-trend-unavailable">
+              -
+            </Text>
           )}
         </Box>
       </ListItemTrailing>

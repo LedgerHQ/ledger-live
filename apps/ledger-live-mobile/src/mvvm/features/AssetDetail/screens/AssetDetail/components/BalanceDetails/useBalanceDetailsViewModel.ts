@@ -67,7 +67,7 @@ export function useBalanceDetailsViewModel(
 
   const counterValueUnit = counterValueCurrency.units[0];
 
-  const counterValue = hasAccounts ? (distributionItem?.countervalue ?? 0) : undefined;
+  const counterValue = hasAccounts ? distributionItem?.countervalue : undefined;
 
   const counterValueFormatter = useCallback(
     (value: number): FormattedValue =>
@@ -100,7 +100,10 @@ export function useBalanceDetailsViewModel(
           showCode: true,
           discreet,
         }),
-        formattedDeposit: formatCurrencyUnit(unit, earnDeposit, { showCode: true, discreet }),
+        formattedDeposit: formatCurrencyUnit(unit, earnDeposit, {
+          showCode: true,
+          discreet,
+        }),
       };
     }
 

@@ -8,6 +8,8 @@ import { usePortfolioForAccounts } from "~/hooks/portfolio";
 import AssetRowLayout from "~/components/AssetRowLayout";
 import { track } from "~/analytics";
 import { Asset } from "~/types/asset";
+import { useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 type Props = {
@@ -24,9 +26,16 @@ const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
   const name = currency.name;
   const unit = currency.units[0];
   const { openFromAsset } = useAssetDetailNavigation();
+  const countervalueUnit = useSelector(counterValueCurrencySelector).units[0];
 
   // TODO: implement a much lighter hook to get this simple value
-  const { countervalueChange } = usePortfolioForAccounts(asset.accounts);
+  const { countervalueChange, countervalueComplete } = usePortfolioForAccounts(asset.accounts);
+  const displayedCountervalueChange =
+    asset.amount <= 0
+      ? { value: 0, percentage: 0 }
+      : countervalueComplete && countervalueChange.percentage !== null
+        ? countervalueChange
+        : undefined;
 
   const onAssetPress = useCallback(
     (_uiEvent: GestureResponderEvent) => {
@@ -50,7 +59,7 @@ const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
    * Not a small optimisation as that component can take several milliseconds to
    * render, and it's meant to be rendered in a list.
    *  */
-  const balance = useMemo(() => BigNumber(asset.amount), [asset.amount]);
+  const balance = useMemo(() => new BigNumber(asset.amount), [asset.amount]);
 
   return (
     <AssetRowLayout
@@ -59,7 +68,10 @@ const AssetRow = ({ asset, hideDelta, topLink, bottomLink }: Props) => {
       currencyUnit={unit}
       balance={balance}
       name={name}
-      countervalueChange={countervalueChange}
+      countervalueChange={displayedCountervalueChange}
+      countervalue={asset.countervalue}
+      countervalueUnit={countervalueUnit}
+      countervalueUnavailable={"countervalue" in asset && asset.countervalue === undefined}
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}

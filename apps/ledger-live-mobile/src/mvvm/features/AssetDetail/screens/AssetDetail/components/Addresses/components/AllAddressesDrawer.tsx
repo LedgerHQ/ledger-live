@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import { ListRenderItemInfo } from "react-native";
-import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -39,7 +38,7 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
       return (
         <CryptoAddressesListItem
           account={item}
-          aggregatedCountervalue={data?.countervalue ?? new BigNumber(0)}
+          aggregatedCountervalue={data?.countervalue}
           subAccountsCount={data?.subAccountsCount ?? 0}
           onPress={handleAccountPress}
           lx={LIST_ITEM_NEGATIVE_OFFSET}

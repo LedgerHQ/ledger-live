@@ -39,7 +39,11 @@ const mockedGetCurrencyPortfolio = jest.mocked(getCurrencyPortfolio);
 const mockedGetCurrentBalanceChange = jest.mocked(getCurrentBalanceCountervalueChange);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 
-const mockState: ReturnType<typeof useCountervaluesState> = { data: {}, status: {}, cache: {} };
+const mockState: ReturnType<typeof useCountervaluesState> = {
+  data: {},
+  status: {},
+  cache: {},
+};
 
 const makePortfolio = (percentage: number | null) =>
   ({
@@ -59,12 +63,19 @@ describe("usePrecomputedAssetListData", () => {
     mockedCalculate.mockReturnValue(5000000);
     mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(0.035));
-    mockedGetCurrentBalanceChange.mockReturnValue({ value: 0, percentage: null });
+    mockedGetCurrentBalanceChange.mockReturnValue({
+      value: 0,
+      percentage: null,
+    });
   });
 
   it("should batch-compute data with a single countervalues subscription", () => {
-    const btcAccount = genAccount("btc", { currency: getCryptoCurrencyById("bitcoin") });
-    const ethAccount = genAccount("eth", { currency: getCryptoCurrencyById("ethereum") });
+    const btcAccount = genAccount("btc", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const ethAccount = genAccount("eth", {
+      currency: getCryptoCurrencyById("ethereum"),
+    });
 
     const assets: Asset[] = [
       { ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] },
@@ -80,14 +91,19 @@ describe("usePrecomputedAssetListData", () => {
     const btcData = result.current.get(bitcoin.id);
     expect(btcData).toBeDefined();
     expect(btcData?.formattedCounterValue).toBe("$50,000.00");
-    expect(btcData?.countervalueChange).toEqual({ percentage: 0.035, value: 0 });
+    expect(btcData?.countervalueChange).toEqual({
+      percentage: 0.035,
+      value: 0,
+    });
 
     const ethData = result.current.get(ethereum.id);
     expect(ethData).toBeDefined();
   });
 
   it("should always pass 'day' as the range to getCurrencyPortfolio regardless of global time range", () => {
-    const btcAccount = genAccount("btc-range", { currency: getCryptoCurrencyById("bitcoin") });
+    const btcAccount = genAccount("btc-range", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
 
     const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
 
@@ -191,8 +207,34 @@ describe("usePrecomputedAssetListData", () => {
     expect(mockedCalculate).toHaveBeenCalledTimes(1);
   });
 
+  it("preserves an explicitly unavailable aggregated countervalue", () => {
+    const btcAccount = genAccount("btc-incomplete", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const assets: Asset[] = [
+      {
+        ...createCryptoAsset(bitcoin, 100_000),
+        accounts: [btcAccount],
+        countervalue: undefined,
+      },
+    ];
+
+    const { result } = renderHook(() => usePrecomputedAssetListData(assets));
+
+    expect(mockedCalculate).not.toHaveBeenCalled();
+    expect(mockedGetCurrencyPortfolio).not.toHaveBeenCalled();
+    expect(result.current.get(bitcoin.id)).toEqual(
+      expect.objectContaining({
+        formattedCounterValue: null,
+        countervalueChange: null,
+      }),
+    );
+  });
+
   it("should pass through negative countervalueChange", () => {
-    const btcAccount = genAccount("btc-neg", { currency: getCryptoCurrencyById("bitcoin") });
+    const btcAccount = genAccount("btc-neg", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(-0.012));
 
     const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
@@ -206,7 +248,9 @@ describe("usePrecomputedAssetListData", () => {
   });
 
   it("should pass through zero countervalueChange", () => {
-    const btcAccount = genAccount("btc-zero", { currency: getCryptoCurrencyById("bitcoin") });
+    const btcAccount = genAccount("btc-zero", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(0));
 
     const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
@@ -229,9 +273,14 @@ describe("usePrecomputedAssetListData", () => {
 
   describe("1D price fallback", () => {
     it("uses the local price change for positive-balance assets when the portfolio change is unavailable", () => {
-      const btcAccount = genAccount("btc-mkt", { currency: getCryptoCurrencyById("bitcoin") });
+      const btcAccount = genAccount("btc-mkt", {
+        currency: getCryptoCurrencyById("bitcoin"),
+      });
       mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(null));
-      mockedGetCurrentBalanceChange.mockReturnValue({ value: 12, percentage: 0.012 });
+      mockedGetCurrentBalanceChange.mockReturnValue({
+        value: 12,
+        percentage: 0.012,
+      });
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
 
       const { result } = renderHook(() => usePrecomputedAssetListData(assets));
@@ -249,9 +298,14 @@ describe("usePrecomputedAssetListData", () => {
     });
 
     it("returns a zero change for zero-amount assets instead of using the local price change", () => {
-      const btcAccount = genAccount("btc-empty", { currency: getCryptoCurrencyById("bitcoin") });
+      const btcAccount = genAccount("btc-empty", {
+        currency: getCryptoCurrencyById("bitcoin"),
+      });
       mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(null));
-      mockedGetCurrentBalanceChange.mockReturnValue({ value: -12, percentage: -0.0159 });
+      mockedGetCurrentBalanceChange.mockReturnValue({
+        value: -12,
+        percentage: -0.0159,
+      });
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 0), accounts: [btcAccount] }];
 
       const { result } = renderHook(() => usePrecomputedAssetListData(assets));
@@ -264,27 +318,29 @@ describe("usePrecomputedAssetListData", () => {
       });
     });
 
-    it("returns a zero change for positive-amount assets with a zero countervalue", () => {
+    it("returns an unavailable change for positive-amount assets with a zero countervalue", () => {
       const btcAccount = genAccount("btc-zero-countervalue", {
         currency: getCryptoCurrencyById("bitcoin"),
       });
       mockedCalculate.mockReturnValue(0);
       mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(null));
-      mockedGetCurrentBalanceChange.mockReturnValue({ value: -12, percentage: -0.0159 });
+      mockedGetCurrentBalanceChange.mockReturnValue({
+        value: -12,
+        percentage: -0.0159,
+      });
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 1), accounts: [btcAccount] }];
 
       const { result } = renderHook(() => usePrecomputedAssetListData(assets));
 
       expect(mockedGetCurrencyPortfolio).not.toHaveBeenCalled();
       expect(mockedGetCurrentBalanceChange).not.toHaveBeenCalled();
-      expect(result.current.get(bitcoin.id)?.countervalueChange).toEqual({
-        value: 0,
-        percentage: 0,
-      });
+      expect(result.current.get(bitcoin.id)?.countervalueChange).toBeNull();
     });
 
     it("keeps the portfolio change when it is available", () => {
-      const btcAccount = genAccount("btc-held", { currency: getCryptoCurrencyById("bitcoin") });
+      const btcAccount = genAccount("btc-held", {
+        currency: getCryptoCurrencyById("bitcoin"),
+      });
       mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(0.035));
       const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
 

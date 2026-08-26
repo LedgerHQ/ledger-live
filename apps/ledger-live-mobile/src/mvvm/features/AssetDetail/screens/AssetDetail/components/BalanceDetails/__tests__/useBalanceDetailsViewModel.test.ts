@@ -96,6 +96,21 @@ describe("useBalanceDetailsViewModel", () => {
     expect(result.current.formattedTotalBalance.length).toBeGreaterThan(0);
   });
 
+  it("keeps the fiat total unavailable when the distribution has no countervalue", () => {
+    const btcAccount = genAccount("bitcoin-missing-rate", {
+      currency: mockBtcCryptoCurrency,
+      operationsSize: 0,
+    });
+    btcAccount.balance = new BigNumber(1_000_000_000);
+    const item = buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]);
+    item.countervalue = undefined;
+
+    const { result } = renderHook(() => useBalanceDetailsViewModel(mockBtcCryptoCurrency, item));
+
+    expect(result.current.counterValue).toBeUndefined();
+    expect(result.current.formattedTotalBalance.length).toBeGreaterThan(0);
+  });
+
   it("sums balances across sibling networks via the aggregated distributionItem", () => {
     const algorandCurrency = getCryptoCurrencyById("algorand");
     const usdtEthToken: TokenCurrency = {
@@ -339,7 +354,9 @@ describe("useBalanceDetailsViewModel", () => {
 
       act(() => result.current.onTransferPress());
 
-      expect(mockOpenDrawer).toHaveBeenCalledWith({ sourceScreenName: "Asset Detail" });
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+      });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "transfer",
         currency: "bitcoin",

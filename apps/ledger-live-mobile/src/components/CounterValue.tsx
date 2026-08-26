@@ -101,13 +101,18 @@ export default function CounterValue({
     [currency, counterValueCurrency, valueProp, date],
   );
   const countervalue = useCalculate(param);
+  const resolvedCountervalue = param.value === 0 ? 0 : countervalue;
 
-  if (typeof countervalue !== "number") {
+  if (typeof resolvedCountervalue !== "number") {
     return withPlaceholder ? <NoCountervaluePlaceholder /> : null;
   }
 
   const inner = (
-    <CurrencyUnitValue {...props} unit={counterValueCurrency.units[0]} value={countervalue} />
+    <CurrencyUnitValue
+      {...props}
+      unit={counterValueCurrency.units[0]}
+      value={resolvedCountervalue}
+    />
   );
 
   if (Wrapper) {

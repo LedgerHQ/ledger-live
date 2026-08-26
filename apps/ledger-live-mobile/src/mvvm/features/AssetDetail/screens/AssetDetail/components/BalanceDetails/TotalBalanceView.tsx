@@ -29,13 +29,21 @@ export function TotalBalanceView({
         <Text typography="body3" lx={{ color: "muted" }}>
           {t("assetDetail.balanceDetails.totalBalance")}
         </Text>
-        {counterValue != null && (
+        {counterValue != null ? (
           <AmountDisplay
             value={counterValue}
             formatter={counterValueFormatter}
             hidden={discreet}
             size="sm"
           />
+        ) : (
+          <Text
+            typography="heading3SemiBold"
+            lx={{ color: "base" }}
+            testID="asset-total-unavailable"
+          >
+            -
+          </Text>
         )}
         <Text
           typography="body3"
