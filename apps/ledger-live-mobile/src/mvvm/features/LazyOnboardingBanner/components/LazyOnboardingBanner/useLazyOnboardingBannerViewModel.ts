@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Linking } from "react-native";
 import {
   buildLazyOnboardingBannerLink,
@@ -6,17 +6,43 @@ import {
   type LazyOnboardingBannerViewProps,
 } from "@features/flow-lazy-onboarding-banner";
 import { useTranslation } from "~/context/Locale";
+import { useSelector } from "~/context/hooks";
+import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
+import { buildLazyOnboardingSharedAnalyticsProps } from "../../analyticsConstants";
 import { lazyOnboardingTourController } from "../LazyOnboardingTour/lazyOnboardingTourController";
 import { useLazyOnboardingBannerState } from "../../hooks/useLazyOnboardingBannerState";
-import { trackLazyOnboardingBannerDismissed, trackLazyOnboardingBannerPressed } from "./analytics";
+import {
+  trackLazyOnboardingBannerDismissed,
+  trackLazyOnboardingBannerPressed,
+  trackLazyOnboardingBannerShown,
+} from "./analytics";
 
 export function useLazyOnboardingBannerViewModel(): LazyOnboardingBannerViewProps {
   const { t } = useTranslation();
   const { isShown, link, mode, dismiss } = useLazyOnboardingBannerState();
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
   const shopLink = buildLazyOnboardingBannerLink(link, "mobile");
 
+  const sharedAnalyticsProps = useMemo(
+    () =>
+      isShown
+        ? buildLazyOnboardingSharedAnalyticsProps(mode, personalizedRecommendationsEnabled)
+        : null,
+    [isShown, mode, personalizedRecommendationsEnabled],
+  );
+
+  useEffect(() => {
+    if (!sharedAnalyticsProps) {
+      return;
+    }
+
+    trackLazyOnboardingBannerShown(sharedAnalyticsProps);
+  }, [sharedAnalyticsProps]);
+
   const onPress = useCallback(() => {
-    trackLazyOnboardingBannerPressed();
+    trackLazyOnboardingBannerPressed(mode, personalizedRecommendationsEnabled);
     const action = resolveLazyOnboardingBannerTapAction(mode);
 
     if (action === "open_feature_intro_tour") {
@@ -25,7 +51,7 @@ export function useLazyOnboardingBannerViewModel(): LazyOnboardingBannerViewProp
     }
 
     void Linking.openURL(shopLink);
-  }, [mode, shopLink]);
+  }, [mode, personalizedRecommendationsEnabled, shopLink]);
 
   const onClose = useCallback(() => {
     trackLazyOnboardingBannerDismissed();

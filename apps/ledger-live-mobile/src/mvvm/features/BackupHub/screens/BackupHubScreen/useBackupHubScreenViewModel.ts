@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Linking, type ImageSourcePropType } from "react-native";
 import { getNanoOnlyDeviceModel } from "@features/flow-large-screen-upsell/utils/getNanoOnlyDeviceModel";
 import { isLargeScreenUpsellBannerEnabled } from "@features/flow-large-screen-upsell/utils/isLargeScreenUpsellBannerEnabled";
@@ -15,7 +15,7 @@ import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellNanoDeviceModelId,
 } from "LLM/features/LargeScreenUpsell/analytics";
-import { track } from "~/analytics";
+import { screen, track } from "~/analytics";
 import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -31,6 +31,8 @@ import { getBackupBucket } from "../../utils/getBackupBucket";
 import {
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+  BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
   BACKUP_HUB_RECOVER_TRACKING_STATUS,
   BACKUP_HUB_UPSELL_FALLBACK_LINK,
@@ -93,6 +95,37 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
     );
   }, [largeScreenUpsell?.params, personalRecoOptIn]);
 
+  const upsellSharedAnalyticsProps = useMemo(
+    () =>
+      incompatibleModel
+        ? {
+            deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(
+              incompatibleModel as LargeScreenUpsellNanoDeviceModelId,
+            ),
+            personalRecoOptIn,
+            offerType: personalRecoOptIn ? ("discount" as const) : ("none" as const),
+            platform: "lwm" as const,
+          }
+        : undefined,
+    [incompatibleModel, personalRecoOptIn],
+  );
+
+  useEffect(() => {
+    if (!upsellSharedAnalyticsProps) {
+      return;
+    }
+
+    screen(
+      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      undefined,
+      {
+        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        ...upsellSharedAnalyticsProps,
+      },
+      false,
+    );
+  }, [upsellSharedAnalyticsProps]);
+
   const onRecoverPress = useCallback(() => {
     markRecoverSeen();
     track("button_clicked", {
@@ -131,29 +164,24 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
       return;
     }
 
-    const sharedProps = {
-      deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(
-        incompatibleModel as LargeScreenUpsellNanoDeviceModelId,
-      ),
-      personalRecoOptIn,
-      offerType: personalRecoOptIn ? ("discount" as const) : ("none" as const),
-      platform: "lwm" as const,
-    };
+    if (!upsellSharedAnalyticsProps) {
+      return;
+    }
 
     track("button_clicked", {
-      button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
-      page: BACKUP_HUB_TRACKING_PAGE_NAME,
-      ...sharedProps,
+      button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+      page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      ...upsellSharedAnalyticsProps,
     });
     track("deeplink_clicked", {
-      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
       deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.mobile,
       deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
       deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
-      ...sharedProps,
+      ...upsellSharedAnalyticsProps,
     });
     Linking.openURL(upsellLink);
-  }, [incompatibleModel, openShop, personalRecoOptIn, recoveryKeyUrl, upsellLink]);
+  }, [incompatibleModel, openShop, recoveryKeyUrl, upsellLink, upsellSharedAnalyticsProps]);
 
   const physicalRows = useMemo<readonly PhysicalRowData[]>(
     () => [
