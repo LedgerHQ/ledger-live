@@ -11,11 +11,17 @@ export type CalculateCountervalue = (
 export function computeBalanceSortCountervalueByAccountId(
   rows: readonly AccountLike[],
   calculateCountervalue: CalculateCountervalue,
-): Map<string, BigNumber> {
-  const map = new Map<string, BigNumber>();
+): Map<string, BigNumber | undefined> {
+  const map = new Map<string, BigNumber | undefined>();
   for (const account of rows) {
     const currency = getAccountCurrency(account);
-    map.set(account.id, calculateCountervalue(currency, account.balance) ?? new BigNumber(0));
+    const countervalue = calculateCountervalue(currency, account.balance);
+    map.set(
+      account.id,
+      account.balance.isGreaterThan(0) && countervalue == null
+        ? undefined
+        : new BigNumber(countervalue ?? 0),
+    );
   }
   return map;
 }

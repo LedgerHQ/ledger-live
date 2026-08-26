@@ -128,9 +128,7 @@ export function useCryptoDataTable({
         cell: ({ row }) => {
           const entry = aggregatedDataByAccountId?.get(row.original.id);
           return shouldDisplayAggregatedAssets && aggregatedDataByAccountId ? (
-            <AggregatedAccountValueCell
-              aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-            />
+            <AggregatedAccountValueCell aggregatedCountervalue={entry?.countervalue} />
           ) : (
             <AccountValueCell account={row.original} />
           );

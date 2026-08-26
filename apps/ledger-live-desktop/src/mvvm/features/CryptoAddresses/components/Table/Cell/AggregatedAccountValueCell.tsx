@@ -10,7 +10,7 @@ import {
 } from "~/renderer/reducers/settings";
 
 type AggregatedAccountValueCellProps = {
-  readonly aggregatedCountervalue: BigNumber;
+  readonly aggregatedCountervalue?: BigNumber;
 };
 
 export function AggregatedAccountValueCell({
@@ -20,11 +20,13 @@ export function AggregatedAccountValueCell({
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
 
-  const formattedValue = formatCurrencyUnit(counterValueCurrency.units[0], aggregatedCountervalue, {
-    showCode: true,
-    locale,
-    discreet,
-  });
+  const formattedValue = aggregatedCountervalue != null
+    ? formatCurrencyUnit(counterValueCurrency.units[0], aggregatedCountervalue, {
+        showCode: true,
+        locale,
+        discreet,
+      })
+    : "-";
 
   return (
     <TableCellItem align="end">

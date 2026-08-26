@@ -18,11 +18,14 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
 import { ColumnDef } from "@tanstack/react-table";
 import { PriceCell } from "../components/Cells/PriceCell";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
-import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { TrendCell } from "../components/Cells/TrendCell";
 import { TruncatedText } from "LLD/components/TruncatedText";
 import { sanitizeAssetNameForTestId } from "../utils/assetTableHelpers";
@@ -38,6 +41,8 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const emptyFiatValue = useMemo(
     () => formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(0), { showCode: true }),
@@ -103,6 +108,14 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
           const assetValueTestId = sanitizeAssetNameForTestId(
             `${row.original.currency.name}-${row.original.currency.id}`,
           );
+          const formattedValue =
+            row.original.value == null
+              ? "-"
+              : formatCurrencyUnit(
+                  counterValueCurrency.units[0],
+                  new BigNumber(row.original.value),
+                  { showCode: true, locale, discreet },
+                );
           return row.original.isPlaceholder ? (
             <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
               <TableCellItem align="end">
@@ -113,7 +126,11 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
             </div>
           ) : (
             <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
-              <CounterValueCell currency={row.original.currency} balance={row.original.balance} />
+              <TableCellItem align="end">
+                <TableCellContent>
+                  <TableCellContentTitle>{formattedValue}</TableCellContentTitle>
+                </TableCellContent>
+              </TableCellItem>
             </div>
           );
         },
@@ -152,7 +169,15 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         },
       },
     ],
-    [t, emptyFiatValue, showTrendColumnTooltip, shouldDisplayAggregatedAssets],
+    [
+      t,
+      emptyFiatValue,
+      showTrendColumnTooltip,
+      shouldDisplayAggregatedAssets,
+      counterValueCurrency,
+      locale,
+      discreet,
+    ],
   );
 
   const table = useLumenDataTable({

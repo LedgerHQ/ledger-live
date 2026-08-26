@@ -65,11 +65,16 @@ describe("useAllCurrencyTrends", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseCountervaluesState.mockReturnValue(mockCountervaluesState);
-    mockedGetCurrentBalanceCountervalueChange.mockReturnValue({ value: 0, percentage: null });
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValue({
+      value: 0,
+      percentage: null,
+    });
   });
 
   it("should compute trends for all real items with one shared countervalues subscription", () => {
-    const bitcoinAccount = genAccount("btc-trend", { currency: getCryptoCurrencyById("bitcoin") });
+    const bitcoinAccount = genAccount("btc-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
     const ethereumAccount = genAccount("eth-trend", {
       currency: getCryptoCurrencyById("ethereum"),
     });
@@ -102,7 +107,9 @@ describe("useAllCurrencyTrends", () => {
     mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(-5.67));
 
     const range = "week" as const;
-    const { result } = renderHook(() => useAllCurrencyTrends(items, range), { initialState });
+    const { result } = renderHook(() => useAllCurrencyTrends(items, range), {
+      initialState,
+    });
 
     expect(mockedUseCountervaluesState).toHaveBeenCalledTimes(1);
     expect(mockedGetCurrencyPortfolio).toHaveBeenCalledTimes(2);
@@ -133,7 +140,10 @@ describe("useAllCurrencyTrends", () => {
     });
 
     mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(undefined));
-    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({ value: 0, percentage: null });
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({
+      value: 0,
+      percentage: null,
+    });
 
     const { result } = renderHook(
       () =>
@@ -160,7 +170,10 @@ describe("useAllCurrencyTrends", () => {
     const bitcoinAccounts = [bitcoinAccount];
 
     mockedGetCurrencyPortfolio.mockReturnValueOnce(makePortfolio(undefined));
-    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({ value: 42, percentage: 3.21 });
+    mockedGetCurrentBalanceCountervalueChange.mockReturnValueOnce({
+      value: 42,
+      percentage: 3.21,
+    });
 
     const range = "day" as const;
     const { result } = renderHook(
@@ -187,7 +200,7 @@ describe("useAllCurrencyTrends", () => {
     expect(result.current.get(BITCOIN_ASSET.currency.id)).toBe(3.21);
   });
 
-  it("should return zero trend for zero-value assets without using the balance fallback", () => {
+  it("should return unavailable trend for positive-balance assets with a missing value", () => {
     const bitcoinAccount = genAccount("btc-zero-value-trend", {
       currency: getCryptoCurrencyById("bitcoin"),
     });
@@ -199,6 +212,31 @@ describe("useAllCurrencyTrends", () => {
             makeAssetItem({
               accounts: [bitcoinAccount],
               balance: 100,
+              value: undefined,
+            }),
+          ],
+          "day",
+        ),
+      { initialState },
+    );
+
+    expect(mockedGetCurrencyPortfolio).not.toHaveBeenCalled();
+    expect(mockedGetCurrentBalanceCountervalueChange).not.toHaveBeenCalled();
+    expect(result.current.get(BITCOIN_ASSET.currency.id)).toBeNull();
+  });
+
+  it("should return zero trend for zero-balance assets", () => {
+    const bitcoinAccount = genAccount("btc-zero-balance-trend", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+
+    const { result } = renderHook(
+      () =>
+        useAllCurrencyTrends(
+          [
+            makeAssetItem({
+              accounts: [bitcoinAccount],
+              balance: 0,
               value: 0,
             }),
           ],

@@ -31,30 +31,37 @@ describe("useTotalBalanceViewModel", () => {
 
   it("exposes the translated total balance label", () => {
     const { result } = renderHook(
-      () => useTotalBalanceViewModel(buildDistributionItem({ currency: btc })),
+      () => useTotalBalanceViewModel(buildDistributionItem({ currency: btc, countervalue: 0 })),
       { initialState },
     );
 
     expect(result.current.totalBalanceLabel).toBe("Total balance");
   });
 
-  it("formats countervalue 0 when countervalue is undefined", () => {
-    renderHook(() => useTotalBalanceViewModel(buildDistributionItem({ countervalue: undefined })), {
-      initialState,
-    });
-
-    expect(mockedFormatCurrencyUnitFragment).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ toString: expect.any(Function) }),
-      expect.objectContaining({ locale: "en-US", showCode: true }),
+  it("does not format a missing countervalue as zero", () => {
+    const { result } = renderHook(
+      () => useTotalBalanceViewModel(buildDistributionItem({ countervalue: undefined })),
+      { initialState },
     );
-    expect(mockedFormatCurrencyUnitFragment.mock.calls[0][1].toString()).toBe("0");
+
+    expect(mockedFormatCurrencyUnitFragment).not.toHaveBeenCalled();
+    expect(result.current.fiatAvailable).toBe(false);
+    expect(result.current.fiatAriaLabel).toBe("-");
   });
 
   it("forwards locale, discreet and full precision options in the fragment formatter", () => {
-    renderHook(() => useTotalBalanceViewModel(buildDistributionItem({ currency: btc })), {
-      initialState: { settings: { counterValue: "USD", locale: "de-DE", discreetMode: true } },
-    });
+    renderHook(
+      () => useTotalBalanceViewModel(buildDistributionItem({ currency: btc, countervalue: 0 })),
+      {
+        initialState: {
+          settings: {
+            counterValue: "USD",
+            locale: "de-DE",
+            discreetMode: true,
+          },
+        },
+      },
+    );
 
     expect(mockedFormatCurrencyUnitFragment).toHaveBeenCalledWith(
       expect.anything(),
@@ -70,16 +77,27 @@ describe("useTotalBalanceViewModel", () => {
   });
 
   it("uses the total balance label as fiat aria label when discreet mode is enabled", () => {
-    const { result } = renderHook(() => useTotalBalanceViewModel(buildDistributionItem()), {
-      initialState: { settings: { counterValue: "USD", locale: "en-US", discreetMode: true } },
-    });
+    const { result } = renderHook(
+      () => useTotalBalanceViewModel(buildDistributionItem({ countervalue: 0 })),
+      {
+        initialState: {
+          settings: {
+            counterValue: "USD",
+            locale: "en-US",
+            discreetMode: true,
+          },
+        },
+      },
+    );
 
     expect(result.current.fiatAriaLabel).toBe("Total balance");
   });
 
   it("exposes amount and crypto unit from the distribution item", () => {
     const item = buildDistributionItem({ amount: 15_000_000, currency: btc });
-    const { result } = renderHook(() => useTotalBalanceViewModel(item), { initialState });
+    const { result } = renderHook(() => useTotalBalanceViewModel(item), {
+      initialState,
+    });
 
     expect(result.current.amount).toBe(15_000_000);
     expect(result.current.cryptoUnit).toBe(btc.units[0]);

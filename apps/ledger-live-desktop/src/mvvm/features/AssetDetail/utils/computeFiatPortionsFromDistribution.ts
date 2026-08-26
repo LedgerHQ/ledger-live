@@ -5,16 +5,28 @@ export function computeFiatPortionsFromDistribution(
   distributionItem: Pick<DistributionItem, "amount" | "countervalue">,
   availableBalance: BigNumber,
   earnDeposit: BigNumber,
-): { availableFiat: BigNumber; earnDepositFiat: BigNumber } {
-  const totalFiat = distributionItem.countervalue ?? 0;
+): {
+  availableFiat: BigNumber | undefined;
+  earnDepositFiat: BigNumber | undefined;
+} {
+  const totalFiat = distributionItem.countervalue;
+  if (totalFiat == null) {
+    return { availableFiat: undefined, earnDepositFiat: undefined };
+  }
   if (totalFiat === 0) {
-    return { availableFiat: new BigNumber(0), earnDepositFiat: new BigNumber(0) };
+    return {
+      availableFiat: new BigNumber(0),
+      earnDepositFiat: new BigNumber(0),
+    };
   }
 
   const totalCrypto = new BigNumber(distributionItem.amount ?? 0);
   const denominator = totalCrypto.gt(0) ? totalCrypto : availableBalance.plus(earnDeposit);
   if (denominator.isZero()) {
-    return { availableFiat: new BigNumber(0), earnDepositFiat: new BigNumber(0) };
+    return {
+      availableFiat: new BigNumber(0),
+      earnDepositFiat: new BigNumber(0),
+    };
   }
 
   const totalFiatBn = new BigNumber(totalFiat);

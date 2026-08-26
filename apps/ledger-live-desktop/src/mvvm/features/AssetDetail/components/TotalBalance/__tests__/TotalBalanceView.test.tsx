@@ -5,6 +5,7 @@ import { TotalBalanceView } from "../TotalBalanceView";
 const baseProps = {
   totalBalanceLabel: "Total balance",
   fiatAriaLabel: "$ 1234.56",
+  fiatAvailable: true,
   prefixSymbol: "$",
   suffixSymbol: null,
   hasDecimals: true,
@@ -39,5 +40,14 @@ describe("TotalBalanceView", () => {
     expect(fiatBalance).toHaveTextContent("***");
     expect(fiatBalance).not.toHaveTextContent("1234");
     expect(fiatBalance).toHaveAttribute("aria-label", "Total balance");
+  });
+
+  it("renders an unavailable placeholder while preserving the crypto balance", () => {
+    render(
+      <TotalBalanceView {...baseProps} fiatAvailable={false} cryptoBalance={<span>1 BTC</span>} />,
+    );
+
+    expect(screen.getByTestId("asset-detail-fiat-balance")).toHaveTextContent("-");
+    expect(screen.getByText("1 BTC")).toBeVisible();
   });
 });

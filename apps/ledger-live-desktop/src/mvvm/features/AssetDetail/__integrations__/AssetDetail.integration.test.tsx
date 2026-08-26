@@ -283,6 +283,26 @@ describe("AssetDetail integration", () => {
       },
     );
 
+    it("shows an unavailable portfolio value without hiding market data", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-missing-countervalue", { currency: btc });
+      const item = buildDistributionItem({
+        accounts: [account],
+        amount: 100_000_000,
+        countervalue: undefined,
+      });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("asset-detail-total-balance")).toBeVisible();
+        expect(screen.getByTestId("asset-detail-fiat-balance")).toHaveTextContent("-");
+        expectMarketView();
+      });
+      await waitForMarketPriceSectionShowsQuote();
+    });
+
     it("hides the staking section when the asset is not stakeable", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());

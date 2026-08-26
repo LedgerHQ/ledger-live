@@ -10,4 +10,10 @@ describe("AggregatedAccountValueCell", () => {
     expect(screen.getByText(/1,000\.00/)).toBeVisible();
     expect(screen.queryByText(/asset/)).not.toBeInTheDocument();
   });
+
+  it("renders an unavailable placeholder when the aggregated countervalue is missing", () => {
+    render(<AggregatedAccountValueCell aggregatedCountervalue={undefined} />);
+
+    expect(screen.getByText("-")).toBeVisible();
+  });
 });

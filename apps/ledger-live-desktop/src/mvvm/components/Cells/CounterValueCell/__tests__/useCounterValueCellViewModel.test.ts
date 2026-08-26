@@ -91,6 +91,21 @@ describe("useCounterValueCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).not.toHaveBeenCalled();
   });
 
+  it("formats a real zero even when no rate is available", () => {
+    mockedUseCalculate.mockReturnValue(undefined);
+
+    const { result } = renderHook(() => useCounterValueCellViewModel(mockCurrency, 0), {
+      initialState,
+    });
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      expect.anything(),
+      new BigNumber(0),
+      expect.objectContaining({ showCode: true }),
+    );
+    expect(result.current.formattedCounterValue).toBe("$50,000.00");
+  });
+
   it("should return '-' when counterValue is null", () => {
     mockedUseCalculate.mockReturnValue(null);
 

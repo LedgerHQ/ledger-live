@@ -171,6 +171,31 @@ describe("useStakingSectionViewModel", () => {
     }
   });
 
+  it("shows unavailable fiat balances when an earn deposit exists without a countervalue", () => {
+    mockGetCanStakeCurrency.mockReturnValue(true);
+    const account = genAccount("staking-btc-missing-countervalue", {
+      currency: btc,
+    });
+    account.balance = new BigNumber(10);
+    account.spendableBalance = new BigNumber(0);
+    const item = buildDistributionItem({
+      currency: btc,
+      accounts: [account],
+      amount: 10,
+      countervalue: undefined,
+    });
+
+    const { result } = renderHook(() => useStakingSectionViewModel(item), {
+      initialState: defaultSettingsState,
+    });
+
+    expect(result.current.state).toEqual({
+      type: "staked",
+      formattedAvailable: "-",
+      formattedDeposit: "-",
+    });
+  });
+
   it("masks staked balances when discreet mode is enabled", () => {
     mockGetCanStakeCurrency.mockReturnValue(true);
     const account = genAccount("staking-btc-discreet", { currency: btc });
@@ -214,7 +239,7 @@ describe("useStakingSectionViewModel", () => {
       new BigNumber(10),
       new BigNumber(6),
     );
-    expect(earnDepositFiat.toNumber()).toBe(60_000);
+    expect(earnDepositFiat?.toNumber()).toBe(60_000);
 
     const { result } = renderHook(() => useStakingSectionViewModel(item), {
       initialState: defaultSettingsState,

@@ -27,14 +27,15 @@ export function useCounterValueCellViewModel(
     disableRounding: true,
     date: options?.date,
   });
+  const resolvedCounterValue = numericValue === 0 ? 0 : counterValue;
 
-  if (typeof counterValue !== "number") {
+  if (typeof resolvedCounterValue !== "number") {
     return { formattedCounterValue: "-" };
   }
 
   const formattedCounterValue = formatCurrencyUnit(
     counterValueCurrency.units[0],
-    new BigNumber(counterValue),
+    new BigNumber(resolvedCounterValue),
     { showCode: true, alwaysShowSign: options?.alwaysShowSign, locale, discreet },
   );
 

@@ -64,14 +64,20 @@ export function useStakingSectionViewModel(distributionItem: DistributionItem) {
       );
       return {
         type: "staked",
-        formattedAvailable: formatFiatBalanceForDisplay(fiatUnit, availableFiat, {
-          locale,
-          discreet,
-        }),
-        formattedDeposit: formatFiatBalanceForDisplay(fiatUnit, earnDepositFiat, {
-          locale,
-          discreet,
-        }),
+        formattedAvailable:
+          availableFiat == null
+            ? "-"
+            : formatFiatBalanceForDisplay(fiatUnit, availableFiat, {
+                locale,
+                discreet,
+              }),
+        formattedDeposit:
+          earnDepositFiat == null
+            ? "-"
+            : formatFiatBalanceForDisplay(fiatUnit, earnDepositFiat, {
+                locale,
+                discreet,
+              }),
       };
     };
 

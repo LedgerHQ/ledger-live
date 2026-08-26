@@ -30,9 +30,17 @@ describe("computeBalanceSortCountervalueByAccountId", () => {
     expect(map.get(b.id)?.toString()).toBe("500");
   });
 
-  it("defaults to zero when countervalue is not available", () => {
+  it("preserves an unavailable countervalue for a positive balance", () => {
     calculateCountervalue.mockReturnValueOnce(null);
     const account = withBalance(BTC_ACCOUNT, new BigNumber(100));
+    const map = computeBalanceSortCountervalueByAccountId([account], calculateCountervalue);
+    expect(map.has(account.id)).toBe(true);
+    expect(map.get(account.id)).toBeUndefined();
+  });
+
+  it("keeps a true zero when a zero balance has no countervalue", () => {
+    calculateCountervalue.mockReturnValueOnce(null);
+    const account = withBalance(BTC_ACCOUNT, new BigNumber(0));
     const map = computeBalanceSortCountervalueByAccountId([account], calculateCountervalue);
     expect(map.get(account.id)?.toString()).toBe("0");
   });

@@ -3,6 +3,7 @@ import React from "react";
 export type TotalBalanceViewProps = Readonly<{
   totalBalanceLabel: string;
   fiatAriaLabel: string;
+  fiatAvailable: boolean;
   prefixSymbol: string | null;
   suffixSymbol: string | null;
   hasDecimals: boolean;
@@ -15,6 +16,7 @@ export type TotalBalanceViewProps = Readonly<{
 export function TotalBalanceView({
   totalBalanceLabel,
   fiatAriaLabel,
+  fiatAvailable,
   prefixSymbol,
   suffixSymbol,
   hasDecimals,
@@ -33,15 +35,21 @@ export function TotalBalanceView({
           data-testid="asset-detail-fiat-balance"
           aria-label={fiatAriaLabel}
         >
-          {prefixSymbol ? <span className="me-4">{prefixSymbol}</span> : null}
-          <span>{integerPart}</span>
-          {hasDecimals ? (
+          {fiatAvailable ? (
             <>
-              <span>{decimalSeparator}</span>
-              <span>{decimalPart}</span>
+              {prefixSymbol ? <span className="me-4">{prefixSymbol}</span> : null}
+              <span>{integerPart}</span>
+              {hasDecimals ? (
+                <>
+                  <span>{decimalSeparator}</span>
+                  <span>{decimalPart}</span>
+                </>
+              ) : null}
+              {suffixSymbol ? <span className="ms-4">{suffixSymbol}</span> : null}
             </>
-          ) : null}
-          {suffixSymbol ? <span className="ms-4">{suffixSymbol}</span> : null}
+          ) : (
+            "-"
+          )}
         </span>
         <span className="body-2 select-none text-muted" aria-hidden>
           /

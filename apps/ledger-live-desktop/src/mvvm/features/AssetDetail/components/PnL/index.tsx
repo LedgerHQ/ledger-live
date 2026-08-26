@@ -19,7 +19,12 @@ export function PnLSection({ distributionItem, isLoading }: PnLSectionProps) {
     );
   }
 
-  if (!distributionItem) return null;
+  if (
+    !distributionItem ||
+    (distributionItem.amount > 0 && distributionItem.countervalue == null)
+  ) {
+    return null;
+  }
 
   return <PnLSectionComponent distributionItem={distributionItem} />;
 }

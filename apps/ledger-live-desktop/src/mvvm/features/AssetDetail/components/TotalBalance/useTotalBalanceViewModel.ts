@@ -20,10 +20,12 @@ export function useTotalBalanceViewModel(distributionItem: DistributionItem) {
   const fiatUnit = fiatCurrency.units[0];
   const { currency: assetCurrency, amount, countervalue: totalCountervalue } = distributionItem;
   const cryptoUnit = assetCurrency.units[0];
-  const fiatValue = totalCountervalue ?? 0;
+  const fiatAvailable = totalCountervalue != null;
 
   const fiatParts = useMemo(() => {
-    const fragment = formatCurrencyUnitFragment(fiatUnit, new BigNumber(fiatValue), {
+    if (!fiatAvailable) return undefined;
+
+    const fragment = formatCurrencyUnitFragment(fiatUnit, new BigNumber(totalCountervalue), {
       locale,
       discreet,
       showCode: true,
@@ -31,17 +33,25 @@ export function useTotalBalanceViewModel(distributionItem: DistributionItem) {
       showAllDigits: true,
     });
     return parseCurrencyUnitFragment(fragment);
-  }, [discreet, fiatUnit, fiatValue, locale]);
+  }, [discreet, fiatAvailable, fiatUnit, locale, totalCountervalue]);
 
   const totalBalanceLabel = t("assetDetails.totalBalance");
-  const fiatAriaLabel = discreet
-    ? totalBalanceLabel
-    : formatFiatBalanceForDisplay(fiatUnit, fiatValue, { locale });
+  const fiatAriaLabel = !fiatAvailable
+    ? "-"
+    : discreet
+      ? totalBalanceLabel
+      : formatFiatBalanceForDisplay(fiatUnit, totalCountervalue, { locale });
 
   return {
     totalBalanceLabel,
     fiatAriaLabel,
-    ...fiatParts,
+    fiatAvailable,
+    prefixSymbol: fiatParts?.prefixSymbol ?? null,
+    suffixSymbol: fiatParts?.suffixSymbol ?? null,
+    hasDecimals: fiatParts?.hasDecimals ?? false,
+    integerPart: fiatParts?.integerPart ?? "",
+    decimalSeparator: fiatParts?.decimalSeparator ?? "",
+    decimalPart: fiatParts?.decimalPart,
     amount,
     cryptoUnit,
   };

@@ -31,8 +31,12 @@ export function useAllCurrencyTrends(
         map.set(item.currency.id, null);
         continue;
       }
-      if (item.value <= 0) {
+      if (item.balance <= 0) {
         map.set(item.currency.id, 0);
+        continue;
+      }
+      if (item.value == null) {
+        map.set(item.currency.id, null);
         continue;
       }
       const accounts = item.accounts as AccountLike[];
