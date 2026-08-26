@@ -144,14 +144,15 @@ export function useContactAddressDetailActionsAdapter(
   });
   const { onClose: closeRenameViewModel } = renameViewModel;
   const { editUiState } = flow;
+  // Closing the edit sheet returns to the address detail it was opened from, the same way
+  // cancelling the delete confirmation does. The selection is kept so that sheet has an address.
   const onCloseRename = useCallback(() => {
     if (editUiState !== "edit-open") {
       return;
     }
 
     closeRenameViewModel();
-    onCloseAddressDetail();
-  }, [closeRenameViewModel, editUiState, onCloseAddressDetail]);
+  }, [closeRenameViewModel, editUiState]);
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();

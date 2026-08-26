@@ -25,7 +25,10 @@ export function ContactDetailScreen(): React.JSX.Element | null {
       {viewModel.addAddressFlowState.status !== "closed" ? (
         <ContactsAddAddressFlowDrawer {...viewModel.addAddressFlowProps} />
       ) : null}
-      <ContactAddressDetailDialogSheet {...viewModel.addressDetailDialog} />
+      <ContactAddressDetailDialogSheet
+        {...viewModel.addressDetailDialog}
+        isActionSheetOpen={viewModel.isAddressDetailActionSheetOpen}
+      />
       <ContactAddressDetailActionsSheets
         deleteSheet={viewModel.addressDetailActions.deleteSheet}
         renameSheet={viewModel.addressDetailActions.renameSheet}

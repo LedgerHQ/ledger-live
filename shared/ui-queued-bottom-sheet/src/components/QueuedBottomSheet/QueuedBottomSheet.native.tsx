@@ -7,6 +7,9 @@ import { BottomSheetBackgroundContext } from "../../contexts/BottomSheetBackgrou
 import { useQueuedBottomSheet } from "../../internals/useQueuedBottomSheet";
 import type { QueuedBottomSheetProps } from "./types";
 
+// Default "switch" only minimizes the outgoing sheet. Lumen forwards this to gorhom.
+const replaceStackBehavior = { stackBehavior: "replace" } as const;
+
 export function QueuedBottomSheet({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -34,7 +37,7 @@ export function QueuedBottomSheet({
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
-    handleCloseAnimationStart,
+    handleAnimate,
     onBack: hookOnBack,
     enablePanDownToClose: computedEnablePanDownToClose,
     backgroundContextValue,
@@ -52,6 +55,7 @@ export function QueuedBottomSheet({
 
   return (
     <BottomSheet
+      {...replaceStackBehavior}
       ref={bottomSheetRef}
       testID={testID}
       snapPoints={enableDynamicSizing ? null : snapPoints}
@@ -64,7 +68,7 @@ export function QueuedBottomSheet({
       hideHandle={hideHandle}
       onBack={hasBackButton ? hookOnBack : undefined}
       onHeaderClosePressed={handleHeaderClosePressed}
-      onAnimate={handleCloseAnimationStart}
+      onAnimate={handleAnimate}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areBottomSheetsLocked ? "none" : "close"}
       onBackdropPress={handleBackdropPress}
