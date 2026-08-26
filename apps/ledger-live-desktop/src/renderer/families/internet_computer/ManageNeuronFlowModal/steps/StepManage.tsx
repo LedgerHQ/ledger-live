@@ -21,12 +21,14 @@ import {
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import {
   getNeuronState,
+  useCanTopUpNeuron,
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import { NeuronDetailRow, NeuronSection } from "../../components/NeuronDetails";
@@ -51,6 +53,8 @@ const StepManage = ({
   onChangeTransaction,
   transitionTo,
   setLastAction,
+  resetAttempt,
+  setSelectedNeuronId,
 }: StepProps) => {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
@@ -66,9 +70,31 @@ const StepManage = ({
     onChangeTransaction,
     transitionTo,
     setLastAction,
+    resetAttempt,
   });
+  const canTopUp = useCanTopUpNeuron(account, neuron);
 
-  if (!neuron) return null;
+  // Clears the stale id on the way out, so the step cannot be re-entered on a neuron that is gone.
+  const backToList = useCallback(() => {
+    setSelectedNeuronId(null);
+    transitionTo("listNeuron");
+  }, [setSelectedNeuronId, transitionTo]);
+
+  // Disburse and a refresh both drop a neuron from the snapshot while this step may still name it.
+  // Rendering nothing left the stepper sitting on an empty Manage body with no way to read what had
+  // happened, so say so and offer the list.
+  if (!neuron) {
+    return (
+      <Box flow={3} px={4} alignItems="center">
+        <Text ff="Inter|Regular" fontSize={4} color="neutral.c70">
+          <Trans i18nKey="internetComputer.manageNeuronFlow.manage.missingNeuron" />
+        </Text>
+        <Button primary onClick={backToList} data-testid="icp-manage-missing-back-button">
+          <Trans i18nKey="internetComputer.manageNeuronFlow.confirmation.backToNeurons" />
+        </Button>
+      </Box>
+    );
+  }
 
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);
@@ -158,8 +184,10 @@ const StepManage = ({
           actions={
             // A top-up is a ledger transfer with no minimum, so the only bound is covering the fee.
             // Without spendable ICP every amount comes back as NotEnoughBalance, which makes the
-            // whole flow a dead end rather than a correctable mistake.
-            isControlled && account.spendableBalance.gt(ICP_FEES)
+            // whole flow a dead end rather than a correctable mistake. The same is true without a
+            // recoverable stake nonce, which the transfer has to reuse and only this account's own
+            // history holds.
+            isControlled && canTopUp && account.spendableBalance.gt(ICP_FEES)
               ? [
                   {
                     label: t("internetComputer.manageNeuronFlow.manage.votingPower.increaseStake"),

@@ -13,7 +13,7 @@ import type { StepId, StepProps } from "./types";
 
 type Params = Pick<
   StepProps,
-  "account" | "onChangeTransaction" | "transitionTo" | "setLastAction"
+  "account" | "onChangeTransaction" | "transitionTo" | "setLastAction" | "resetAttempt"
 > & {
   /** Absent when the selected neuron is gone: the caller still has to run the hook unconditionally. */
   neuron: ICPNeuron | undefined;
@@ -33,6 +33,7 @@ export function useNeuronActions({
   onChangeTransaction,
   transitionTo,
   setLastAction,
+  resetAttempt,
 }: Params) {
   const dispatch = useDispatch();
   const bridge = useAccountBridge<Transaction>(account);
@@ -42,12 +43,15 @@ export function useNeuronActions({
   // steps then only patch their own field, so none of them has to know how to build a transaction.
   const start = useCallback(
     (step: StepId, type: ICPTransactionType, patch: Partial<Transaction> = {}) => {
+      // A new action must not inherit the last one's outcome: the modal stays open across actions, so
+      // without this the confirmation step still holds the previous success.
+      resetAttempt();
       const transaction = bridge.createTransaction(account);
       onChangeTransaction(bridge.updateTransaction(transaction, { ...patch, type, neuronId }));
       setLastAction(type);
       transitionTo(step);
     },
-    [account, bridge, neuronId, onChangeTransaction, setLastAction, transitionTo],
+    [account, bridge, neuronId, onChangeTransaction, resetAttempt, setLastAction, transitionTo],
   );
 
   // Operations that need nothing from the user go straight to the device.

@@ -1,8 +1,10 @@
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { applyNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type {
   ICPAccount,
+  ICPNeuron,
   ICPTransactionType,
   InternetComputerOperation,
   Transaction,
@@ -18,6 +20,16 @@ import logger from "~/renderer/logger";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { applyNeuronOperation } from "../common";
 import type { FollowTopic, Step, StepId, StepProps } from "./types";
+
+/**
+ * Steps with no transaction in flight, where the skip that protects one is not wanted.
+ *
+ * The account this flow shows is a frozen payload, so a sync cannot disturb it — while the account
+ * page behind very much needs one. `listNeuron` is the first step the modal opens on, which is how a
+ * balance debited by a stake gets picked up: the send flow hands over through `onConfirmationHandler`
+ * and so never renders its own confirmation step, the only place it would have synced from.
+ */
+const SYNC_SAFE_STEPS = new Set<StepId>(["listNeuron", "confirmation"]);
 
 export type Data = {
   account: ICPAccount;
@@ -77,16 +89,24 @@ const Body = ({
   );
   const [followTopic, setFollowTopic] = useState<FollowTopic | null>(null);
 
-  // A signed list_neurons returns a fresher snapshot than the account carries until the next sync
-  // folds it in, so prefer it while the flow is open.
-  const neurons = optimisticOperation?.extra.neurons ?? account.neurons.fullNeurons;
-  const lastUpdatedMSecs = optimisticOperation?.extra.neurons
-    ? optimisticOperation.date.getTime()
-    : account.neurons.lastUpdatedMSecs;
+  // What the flow has learned since it opened, if anything. `account` is the payload the modal was
+  // opened with and is never re-read from the store, so a refresh performed here has to be held —
+  // but as an override rather than a copy, so a modal reopened with a fresher payload still shows it.
+  const [refreshed, setRefreshed] = useState<{
+    neurons: readonly ICPNeuron[];
+    lastUpdatedMSecs: number;
+  } | null>(null);
+
+  const neurons = refreshed?.neurons ?? account.neurons.fullNeurons;
+  // Only a canister read moves this. An optimistically patched neuron is not a fresh snapshot, and
+  // "Last synced" must not claim that it is.
+  const lastUpdatedMSecs = refreshed?.lastUpdatedMSecs ?? account.neurons.lastUpdatedMSecs;
 
   const handleOpenModal = useMemo(() => bindActionCreators(openModal, dispatch), [dispatch]);
 
-  const handleRetry = useCallback(() => {
+  // Success and failure are the two outcomes of one attempt, so both are discarded together —
+  // otherwise the confirmation step shows an earlier success beside a new failure.
+  const resetAttempt = useCallback(() => {
     setTransactionError(null);
     setOptimisticOperation(null);
     setSigned(false);
@@ -94,16 +114,35 @@ const Body = ({
 
   const handleTransactionError = useCallback((error: Error) => {
     if (error?.name !== "UserRefusedOnDevice") logger.critical(error);
+    setOptimisticOperation(null);
     setTransactionError(error);
   }, []);
 
   const handleOperationBroadcasted = useCallback(
     (operation: InternetComputerOperation) => {
-      applyNeuronOperation(dispatch, account, operation);
+      applyNeuronOperation(dispatch, account, operation, transaction ?? undefined);
       setOptimisticOperation(operation);
       setTransactionError(null);
+
+      const snapshot = operation.extra.neurons;
+      if (snapshot) {
+        setRefreshed({ neurons: snapshot, lastUpdatedMSecs: operation.date.getTime() });
+        return;
+      }
+      // A manage_neuron reply carries no snapshot — reading one back needs another device signature.
+      // Replaying the command the canister just accepted keeps the card from still showing the state
+      // the action was meant to change.
+      if (!transaction) return;
+      setRefreshed(current => {
+        const base = current ?? {
+          neurons: account.neurons.fullNeurons,
+          lastUpdatedMSecs: account.neurons.lastUpdatedMSecs,
+        };
+        const patched = applyNeuronCommand(base.neurons, transaction);
+        return patched ? { ...base, neurons: patched } : current;
+      });
     },
-    [account, dispatch],
+    [account, dispatch, transaction],
   );
 
   const handleStepChange = useCallback((step: Step) => onChangeStepId(step.id), [onChangeStepId]);
@@ -148,7 +187,7 @@ const Body = ({
     onUpdateTransaction: updateTransaction,
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
-    onRetry: handleRetry,
+    resetAttempt,
     onStepChange: handleStepChange,
     setSigned,
     neurons,
@@ -165,7 +204,7 @@ const Body = ({
 
   return (
     <Stepper {...stepperProps}>
-      <SyncSkipUnderPriority priority={100} />
+      {SYNC_SAFE_STEPS.has(stepId) ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event={trackEvent} />
     </Stepper>
   );
