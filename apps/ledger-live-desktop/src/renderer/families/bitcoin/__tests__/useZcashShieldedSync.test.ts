@@ -122,7 +122,7 @@ describe("useZcashShieldedSync", () => {
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
-  it("does not report a stopped state when there is no tracked subscription to actually stop", () => {
+  it("still reports a stopped state when the running sync was never tracked here (started by the automatic wallet sync, not this hook)", () => {
     const account = buildAccount({ syncState: "running" });
 
     const { result, store } = renderHook(() => useZcashShieldedSync(account), {
@@ -133,7 +133,17 @@ describe("useZcashShieldedSync", () => {
       result.current.stopShieldedSync();
     });
 
-    expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
+    // The Stop button only renders while syncState is "running", so reaching this point
+    // means a real sync is running -- whether or not this hook's own startShieldedSync is
+    // the one that started it -- and clicking Stop must always take effect.
+    expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+      {
+        syncState: "stopped",
+        progress: 0,
+        lastSyncError: null,
+      },
+    );
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
@@ -203,8 +213,35 @@ describe("useZcashShieldedSync", () => {
     expect(unsubscribe).toHaveBeenCalledTimes(1);
     expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
       expect.objectContaining({ id: account.id }),
-      { syncState: "stopped", progress: 0 },
+      { syncState: "stopped", progress: 0, lastSyncError: null },
     );
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  it("clears a prior lastSyncError when the user stops, so the automatic wallet sync does not retry it", () => {
+    const account = buildAccount({ syncState: "running", lastSyncError: "engine down" });
+    const unsubscribe = jest.fn();
+
+    const { result } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: {
+        shieldedSyncSubscriptions: [{ accountId: account.id, subscription: { unsubscribe } }],
+      },
+    });
+
+    act(() => {
+      result.current.stopShieldedSync();
+    });
+
+    // A stale lastSyncError left over from before this stop would make coin-zcash's
+    // buildExtraSyncObservable treat this "stopped" as error-driven and eligible for the
+    // automatic wallet sync to retry it on its next tick -- exactly what stopping should prevent.
+    expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+      {
+        syncState: "stopped",
+        progress: 0,
+        lastSyncError: null,
+      },
+    );
   });
 });
