@@ -3,7 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
 /**
- * The Pay tab (`/card-new-wallet`).
+ * The Pay tab (`/paytab`).
  *
  * The balance hero renders one of two mutually exclusive states, and the action tiles live **only**
  * in the funded one: `hasBalance` is `stablecoins.some(({ value }) => value > 0)`, so a portfolio

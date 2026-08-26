@@ -71,7 +71,7 @@ export const FF_LWD_WALLET_40_Q2 = {
       earnUpselling: true,
       earnSimulator: true,
       finishOnboardingWidget: true,
-      assetDiscoverability: false,
+      assetDiscoverability: true,
     },
   },
 } satisfies OptionalFeatureMap;
