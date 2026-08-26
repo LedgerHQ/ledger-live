@@ -112,7 +112,38 @@ const RETRY_STEP: Partial<Record<ICPTransactionType, StepId>> = {
   // Back to the followee list rather than the topic picker: the topic is already chosen and the list
   // it holds is what a retry is likely to be correcting.
   follow: "selectFollowees",
+  // Started from the neuron list, which has no neuron selected and so no manage step to return to.
+  list_neurons: "device",
 };
+
+/**
+ * Errors that say the command did not take effect: the canister refused it, or the replica refused
+ * the message before the canister saw it. Nothing ran, so re-signing repeats nothing.
+ *
+ * A subset of DELIVERED_ERRORS — an accepted call that went unanswered also reached the network, but
+ * says nothing about whether it executed.
+ */
+const NOTHING_EXECUTED = new Set(["ICPGovernanceRejected", "ICPCallRejected"]);
+
+/**
+ * Commands a second execution leaves in the same state as the first, so re-signing one is safe even
+ * when the first may already have run.
+ *
+ * The dissolve-delay commands are the counter-example and the reason this is a whitelist: both land
+ * on the canister's `increase_dissolve_delay`, which *adds* to the delay the neuron already has, so
+ * a second one that executes doubles the change. Split, spawn, disburse and stake_maturity each
+ * move funds or mint a neuron, and are equally not repeatable.
+ */
+const IDEMPOTENT_COMMANDS = new Set<ICPTransactionType>([
+  "list_neurons",
+  "refresh_voting_power",
+  "start_dissolving",
+  "stop_dissolving",
+  "add_hot_key",
+  "remove_hot_key",
+  "auto_stake_maturity",
+  "follow",
+]);
 
 export const StepConfirmationFooter = ({
   error,
@@ -120,6 +151,7 @@ export const StepConfirmationFooter = ({
   resetAttempt,
   optimisticOperation,
   lastAction,
+  signed,
   transitionTo,
 }: StepProps) => {
   const retryStep = (lastAction && RETRY_STEP[lastAction]) ?? "manageAction";
@@ -129,15 +161,30 @@ export const StepConfirmationFooter = ({
     transitionTo(retryStep);
   }, [resetAttempt, retryStep, transitionTo]);
 
-  // Back to the list rather than closing: the point of the flow is managing several neurons.
-  const onBackToList = useCallback(() => transitionTo("listNeuron"), [transitionTo]);
+  // Back to the list rather than closing: the point of the flow is managing several neurons. The
+  // attempt is discarded on the way out, because both list steps render an error in place of the
+  // list — leaving one set would send the user straight back to this failure.
+  const onBackToList = useCallback(() => {
+    resetAttempt();
+    transitionTo("listNeuron");
+  }, [resetAttempt, transitionTo]);
 
   const succeeded = !!optimisticOperation && !error;
-  // The call was accepted but never answered, so whether it ran is unknown and its own copy says to
-  // sync before trying again. Re-signing the same transaction would contradict that — and for an
-  // additive command like increase_dissolve_delay, a second one that lands applies twice. Send the
-  // user to the list instead, which is where Refresh neurons is.
-  const outcomeUnknown = error?.name === "ICPCallUnconfirmed";
+  /*
+   * Three ways a retry is safe: the signature never left the device, so nothing was sent; the network
+   * answered that the command did not run; or running it twice makes no difference.
+   *
+   * Everything else is a request that may already be executing, and a retry cannot be a redelivery —
+   * the expiry is minted when the call is built, so re-signing produces a new request id and the IC's
+   * own de-duplication no longer covers it. Both copies can then take effect, which for an additive
+   * command like increase_dissolve_delay means the change applies twice. Those send the user to the
+   * list instead, where Refresh neurons establishes what actually happened.
+   */
+  const canRetry =
+    !!error &&
+    (!signed ||
+      NOTHING_EXECUTED.has(error.name) ||
+      (!!lastAction && IDEMPOTENT_COMMANDS.has(lastAction)));
 
   return (
     <Box horizontal justifyContent="flex-end" width="100%">
@@ -145,12 +192,12 @@ export const StepConfirmationFooter = ({
         <Trans i18nKey="common.close" />
       </Button>
       {/* Mirrors the body's branch, so a success action never sits beside Retry. */}
-      {succeeded || outcomeUnknown ? (
+      {succeeded || (!!error && !canRetry) ? (
         <Button primary ml={2} onClick={onBackToList} data-testid="icp-back-to-neurons-button">
           <Trans i18nKey="internetComputer.manageNeuronFlow.confirmation.backToNeurons" />
         </Button>
       ) : null}
-      {error && !outcomeUnknown ? <RetryButton ml={2} primary onClick={onRetryClick} /> : null}
+      {canRetry ? <RetryButton ml={2} primary onClick={onRetryClick} /> : null}
     </Box>
   );
 };
