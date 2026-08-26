@@ -43,6 +43,7 @@ import {
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
   migrateLegacyCryptoCounterValue,
+  INITIAL_STATE as INITIAL_SETTINGS_STATE,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -115,7 +116,7 @@ async function init() {
   expectOperatingSystemSupportStatus();
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
-    each(spectronData.localStorage, (value, key) => {
+    each(spectronData?.localStorage, (value, key) => {
       global.localStorage.setItem(key, value);
     });
     const envs = getLocalStorageEnvs();
@@ -178,7 +179,7 @@ async function init() {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
-  const initialSettings = (await getKey("app", "settings")) || {};
+  const initialSettings = (await getKey("app", "settings")) || INITIAL_SETTINGS_STATE;
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
@@ -237,11 +238,10 @@ async function init() {
     }),
   );
   const accountData = await getKey("app", "accounts", []);
-  if (accountData) {
-    dispatch(initAccounts(accountData));
-  } else {
-    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
+  if (accountData.status === "encrypted") {
     store.dispatch(lock());
+  } else {
+    dispatch(initAccounts(accountData.data ?? []));
   }
 
   const persistedCoinConfigOverrides = await getKey("app", "coinConfigOverrides");
@@ -332,12 +332,12 @@ async function init() {
   backfillOnboardingDate(store);
 
   const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
-  if (largeScreenUpsellModalState !== undefined) {
+  if (largeScreenUpsellModalState !== null && typeof largeScreenUpsellModalState !== "undefined") {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
   }
 
   const payCardState = await getKey("app", "payCard");
-  if (payCardState !== undefined) {
+  if (payCardState !== null && typeof payCardState !== "undefined") {
     store.dispatch(restorePayCardFeatureTour(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
   }

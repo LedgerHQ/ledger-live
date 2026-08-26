@@ -12,6 +12,7 @@ import {
 import type { AppDispatch } from "~/state-manager/configureStore";
 import { getKey } from "~/renderer/storage";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { v4 as uuidv4 } from "uuid";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
@@ -50,11 +51,14 @@ export const injectMockAccounts = async (
   accounts: [Account, AccountUserData][],
   replaceExisting = false,
 ) => {
-  const accountData = replaceExisting ? [] : await getKey("app", "accounts", []);
+  const storedAccounts = await getKey("app", "accounts", []);
+  if (storedAccounts.status === "encrypted") {
+    throw new PasswordIncorrectError("app accounts seems to still be encrypted");
+  }
+  const accountData = replaceExisting ? [] : (storedAccounts.data ?? []);
   const store = window.ledger.store;
 
-  const newAccountData = accountData?.concat(accounts);
-  (store.dispatch as AppDispatch)(initAccounts(newAccountData || []));
+  (store.dispatch as AppDispatch)(initAccounts(accountData.concat(accounts)));
 };
 
 export const generateRandomAccounts = (count: number): [Account, AccountUserData][] => {

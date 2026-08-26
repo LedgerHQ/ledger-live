@@ -1,8 +1,14 @@
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import type { UnknownAction } from "redux";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import { initAccounts } from "./accounts";
+import { getKey } from "~/renderer/storage";
+import { fetchAccounts, initAccounts } from "./accounts";
+
+jest.mock("~/renderer/storage", () => ({
+  getKey: jest.fn(),
+}));
 
 function fakeTuple(
   id: string,
@@ -124,5 +130,42 @@ describe("initAccounts", () => {
       "accountNames/initFromUserData",
       "starredAccounts/initStarredFromIds",
     ]);
+  });
+});
+
+describe("fetchAccounts", () => {
+  const dispatch = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should initialize persisted accounts", async () => {
+    jest.mocked(getKey).mockResolvedValue({
+      status: "available",
+      data: [fakeTuple("btc-1", "bitcoin")],
+    });
+
+    await fetchAccounts()(dispatch, jest.fn(), undefined);
+
+    expect(getKey).toHaveBeenCalledWith("app", "accounts", []);
+    expect(dispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should initialize an empty account list when storage is empty", async () => {
+    jest.mocked(getKey).mockResolvedValue({ status: "available", data: null });
+
+    await fetchAccounts()(dispatch, jest.fn(), undefined);
+
+    expect(dispatch).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should reject when persisted accounts are encrypted", async () => {
+    jest.mocked(getKey).mockResolvedValue({ status: "encrypted" });
+
+    await expect(fetchAccounts()(dispatch, jest.fn(), undefined)).rejects.toBeInstanceOf(
+      PasswordIncorrectError,
+    );
+    expect(dispatch).not.toHaveBeenCalled();
   });
 });

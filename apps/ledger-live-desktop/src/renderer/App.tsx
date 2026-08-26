@@ -42,12 +42,16 @@ const reloadApp = (event: KeyboardEvent) => {
 
 type Props = {
   store: Store<State>;
-  initialCountervalues: CounterValuesStateRaw;
+  initialCountervalues: CounterValuesStateRaw | undefined;
 };
 
 const queryClient = new QueryClient();
 
-const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
+const InnerApp = ({
+  initialCountervalues,
+}: {
+  initialCountervalues: CounterValuesStateRaw | undefined;
+}) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useBraze();

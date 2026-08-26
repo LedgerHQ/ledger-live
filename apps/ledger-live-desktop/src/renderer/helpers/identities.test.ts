@@ -8,7 +8,10 @@ jest.mock("~/renderer/storage", () => ({
   getKey: jest.fn(),
 }));
 
-const mockGetKey = jest.mocked(getKey);
+type GetKeyMock = (...args: Parameters<typeof getKey>) => Promise<unknown>;
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockGetKey = jest.mocked(getKey) as jest.MockedFunction<GetKeyMock>;
 
 function createMockStore(): ReduxStore {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- minimal state for identities tests
