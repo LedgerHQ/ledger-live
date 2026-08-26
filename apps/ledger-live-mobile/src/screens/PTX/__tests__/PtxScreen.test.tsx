@@ -9,7 +9,9 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { ScreenName } from "~/const";
 import { PtxScreen } from "../index";
 
-type WebPTXPlayerProps = React.ComponentProps<typeof import("~/components/WebPTXPlayer").WebPTXPlayer>;
+type WebPTXPlayerProps = React.ComponentProps<
+  typeof import("~/components/WebPTXPlayer").WebPTXPlayer
+>;
 
 const capturedProps: { current: WebPTXPlayerProps | undefined } = { current: undefined };
 const mockGoBack = jest.fn();
