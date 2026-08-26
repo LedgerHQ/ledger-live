@@ -2,11 +2,11 @@ import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import SelectDevice from "~/screens/SelectDevice";
+import { stepHeaderOptions } from "../stepHeader";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import Amount from "./Amount";
 import ConnectDevice from "./ConnectDevice";
@@ -15,24 +15,12 @@ import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
 import type { InternetComputerStakingFlowParamList } from "./types";
 
-const totalSteps = "3";
-
 function StakingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-
-  const step = (title: string, currentStep?: string) => ({
-    headerTitle: () => (
-      <StepHeader
-        title={title}
-        subtitle={
-          currentStep ? t("send.stepperHeader.stepRange", { currentStep, totalSteps }) : undefined
-        }
-      />
-    ),
-  });
+  const step = (title: string, currentStep?: string) => stepHeaderOptions(t, title, currentStep);
 
   return (
     <Stack.Navigator

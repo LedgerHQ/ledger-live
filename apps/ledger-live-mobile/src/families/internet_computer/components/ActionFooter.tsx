@@ -4,7 +4,7 @@ import React from "react";
 import TranslatedError from "~/components/TranslatedError";
 import { useTranslation } from "~/context/Locale";
 
-type Props = {
+type Props = Readonly<{
   status: TransactionStatus;
   bridgePending: boolean;
   onContinue: () => void;
@@ -19,7 +19,7 @@ type Props = {
    * no amount of typing in this field will fix it. Continue stays disabled either way.
    */
   pristineField?: "amount" | "transaction";
-};
+}>;
 
 /**
  * Footer shared by every screen that collects input before signing. Continue is gated on the
