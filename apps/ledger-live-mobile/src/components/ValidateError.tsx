@@ -16,10 +16,13 @@ import { LedgerError } from "~/types/error";
 type Props = {
   error: LedgerError;
   onClose: () => void;
+  /** Omit to withhold Retry: a flow whose attempt must not be repeated has nothing to offer here. */
   onRetry?: () => void;
+  /** Rendered where Retry would be, for a flow that offers a different way forward instead. */
+  primaryButton?: React.ReactNode;
 };
 
-function ValidateError({ error, onClose, onRetry }: Props) {
+function ValidateError({ error, onClose, onRetry, primaryButton }: Props) {
   const navigation = useNavigation<BaseNavigation>();
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -64,13 +67,16 @@ function ValidateError({ error, onClose, onRetry }: Props) {
         ) : (
           <>
             <GenericErrorView error={error} hasExportLogButton={!managerAppName} />
-            <Button
-              event={managerAppName ? "SendErrorOpenManager" : "SendErrorRetry"}
-              title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
-              type="primary"
-              containerStyle={styles.button}
-              onPress={onPress}
-            />
+            {managerAppName || onRetry ? (
+              <Button
+                event={managerAppName ? "SendErrorOpenManager" : "SendErrorRetry"}
+                title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
+                type="primary"
+                containerStyle={styles.button}
+                onPress={onPress}
+              />
+            ) : null}
+            {primaryButton}
             <Button
               event="SendErrorClose"
               title={t("common.close")}

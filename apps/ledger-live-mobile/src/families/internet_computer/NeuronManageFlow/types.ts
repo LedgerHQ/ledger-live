@@ -70,5 +70,7 @@ export type InternetComputerNeuronManageFlowParamList = {
   [ScreenName.InternetComputerNeuronValidationError]: NeuronSigningRoute & {
     deviceId?: string;
     error: Error;
+    // Whether the device produced a signature: a request that was never sent is always safe to retry.
+    signed?: boolean;
   };
 };
