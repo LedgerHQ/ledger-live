@@ -64,8 +64,10 @@ function AssetCentricGraphCard({
   const { colors } = useTheme();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { countervalueChange, balanceHistory } = assetPortfolio;
+  const countervalueTrendComplete =
+    assetPortfolio.countervalueComplete && countervalueChange.percentage !== null;
 
-  const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
+  const currencyUnitValue = balanceHistory.at(-1);
 
   const unit = counterValueCurrency.units[0];
 
@@ -78,8 +80,17 @@ function AssetCentricGraphCard({
     if (accountsEmpty) {
       return { value: 0, countervalue: 0 };
     }
-    return { value: currencyBalance, countervalue: currencyUnitValue.value };
-  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue]);
+    return {
+      value: currencyBalance,
+      countervalue: assetPortfolio.countervalueComplete ? currencyUnitValue?.value : undefined,
+    };
+  }, [
+    hoveredItem,
+    accountsEmpty,
+    currencyBalance,
+    currencyUnitValue,
+    assetPortfolio.countervalueComplete,
+  ]);
 
   const items = [
     {
@@ -106,7 +117,7 @@ function AssetCentricGraphCard({
   const mapCounterValue = useCallback((d: Item) => d.value || 0, []);
 
   const range = assetPortfolio.range;
-  const isAvailable = assetPortfolio.balanceAvailable;
+  const isAvailable = assetPortfolio.balanceAvailable && countervalueTrendComplete;
 
   const rangesLabels = timeRangeItems.map(({ label }) => label);
 
@@ -149,7 +160,7 @@ function AssetCentricGraphCard({
             <CurrencyIcon size={32} currency={currency} />
             <Flex alignItems="center">
               <Flex>
-                {!balanceHistory ? (
+                {!assetPortfolio.balanceAvailable ? (
                   <BigPlaceholder mt="8px" />
                 ) : (
                   <Flex alignItems="center">
@@ -159,8 +170,9 @@ function AssetCentricGraphCard({
                       color={"neutral.c80"}
                       mt={3}
                       minHeight={25}
+                      testID="asset-graph-countervalue"
                     >
-                      {items[1].value ? (
+                      {items[1].value !== undefined ? (
                         <CurrencyUnitValue {...items[1]} />
                       ) : (
                         <NoCountervaluePlaceholder />
@@ -186,8 +198,12 @@ function AssetCentricGraphCard({
                 <TransactionsPendingConfirmationWarningAllAccounts />
               </Flex>
               <Flex flexDirection={"row"}>
-                {!balanceHistory ? (
+                {!assetPortfolio.balanceAvailable ? (
                   <SmallPlaceholder mt={4} />
+                ) : !countervalueTrendComplete ? (
+                  <Text color="neutral.c70" testID="asset-graph-trend-unavailable">
+                    -
+                  </Text>
                 ) : (
                   <Flex flexDirection="row" alignItems="center">
                     {hoveredItem && hoveredItem.date ? (
@@ -213,7 +229,7 @@ function AssetCentricGraphCard({
           </Flex>
         </Animated.View>
       </Flex>
-      {accountsEmpty ? null : (
+      {accountsEmpty || !countervalueTrendComplete ? null : (
         <>
           {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
             <GraphPlaceholder />

@@ -90,4 +90,17 @@ describe("CryptoAddressesListItem", () => {
 
     expect(screen.getByTestId("assets-count")).toHaveTextContent("4 assets");
   });
+
+  it("shows unavailable when the aggregated countervalue is incomplete", () => {
+    render(
+      <CryptoAddressesListItem
+        account={mockAccount}
+        aggregatedCountervalue={undefined}
+        subAccountsCount={0}
+        onPress={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("-")).toBeVisible();
+  });
 });

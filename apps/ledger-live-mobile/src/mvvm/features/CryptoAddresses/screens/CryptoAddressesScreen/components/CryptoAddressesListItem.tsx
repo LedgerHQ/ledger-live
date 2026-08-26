@@ -21,7 +21,7 @@ import { useTranslation } from "~/context/Locale";
 
 type Props = Readonly<{
   account: Account;
-  aggregatedCountervalue: BigNumber;
+  aggregatedCountervalue?: BigNumber;
   subAccountsCount: number;
   onPress: (account: Account) => void;
   lx?: LumenViewStyle;
@@ -41,11 +41,13 @@ export default function CryptoAddressesListItem({
 
   const handlePress = useCallback(() => onPress(account), [account, onPress]);
 
-  const formattedBalance = formatCurrencyUnit(
-    counterValueCurrency.units[0],
-    aggregatedCountervalue,
-    { showCode: true, locale, discreet },
-  );
+  const formattedBalance = aggregatedCountervalue
+    ? formatCurrencyUnit(counterValueCurrency.units[0], aggregatedCountervalue, {
+        showCode: true,
+        locale,
+        discreet,
+      })
+    : "-";
 
   const displayedAssetsCount = subAccountsCount + 1;
 

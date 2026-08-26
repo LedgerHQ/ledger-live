@@ -59,9 +59,10 @@ describe("AssetListItem", () => {
       expect(screen.getByText("$45.00")).toBeVisible();
     });
 
-    it("should not render the counter value when null", () => {
+    it("should render a placeholder when the counter value is null", () => {
       renderView({ formattedCounterValue: null });
       expect(screen.queryByText("$45.00")).toBeNull();
+      expect(screen.getByTestId("assetItem-Bitcoin-countervalue")).toHaveTextContent("-");
     });
 
     it("should render the delta for a positive change", () => {
@@ -74,9 +75,10 @@ describe("AssetListItem", () => {
       expect(screen.getByText(/1\.20%/)).toBeVisible();
     });
 
-    it("should not render the delta when countervalueChange is null", () => {
+    it("should render a placeholder when countervalueChange is null", () => {
       renderView({ countervalueChange: null });
       expect(screen.queryByText(/%/)).toBeNull();
+      expect(screen.getByTestId("asset-trend-unavailable")).toHaveTextContent("-");
     });
 
     it("renders the 1D price fallback through the delta when it is supplied as the change", () => {

@@ -55,7 +55,12 @@ const makeItem = (name: string, id: string, type: "CryptoCurrency" | "TokenCurre
 describe("useCategorizedAssetsFromPortfolio", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseDistribution.mockReturnValue({ isAvailable: true, list: [], isLoading: false });
+    mockUseDistribution.mockReturnValue({
+      isAvailable: true,
+      countervalueComplete: true,
+      list: [],
+      isLoading: false,
+    });
     mockUseStablecoinTickers.mockReturnValue({
       tickers: new Set<string>(),
       isLoading: false,
@@ -73,9 +78,14 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     it("removes blacklisted CryptoCurrency parents from cryptos", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
       const eth = makeItem("Ethereum", "ethereum", "CryptoCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, eth], stablecoins: [] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [btc, eth],
+        stablecoins: [],
+      });
 
-      const { result } = renderCategorized({ blacklistedTokenIds: ["ethereum"] });
+      const { result } = renderCategorized({
+        blacklistedTokenIds: ["ethereum"],
+      });
 
       expect(result.current.categorizedAssets.cryptos).toHaveLength(1);
       expect(result.current.categorizedAssets.cryptos[0].currency.id).toBe("bitcoin");
@@ -84,9 +94,14 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     it("removes blacklisted TokenCurrency entries from stablecoins", () => {
       const usdc = makeItem("USDC", "usdc-token", "TokenCurrency");
       const usdt = makeItem("USDT", "usdt-token", "TokenCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [], stablecoins: [usdc, usdt] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [],
+        stablecoins: [usdc, usdt],
+      });
 
-      const { result } = renderCategorized({ blacklistedTokenIds: ["usdc-token"] });
+      const { result } = renderCategorized({
+        blacklistedTokenIds: ["usdc-token"],
+      });
 
       expect(result.current.categorizedAssets.stablecoins).toHaveLength(1);
       expect(result.current.categorizedAssets.stablecoins[0].currency.id).toBe("usdt-token");
@@ -95,7 +110,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     it("keeps cryptos and stablecoins when no token is blacklisted", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
       const usdc = makeItem("USDC", "usdc-token", "TokenCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc], stablecoins: [usdc] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [btc],
+        stablecoins: [usdc],
+      });
 
       const { result } = renderCategorized();
 
@@ -111,7 +129,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     it("moves held stocks out of cryptos by DADA currency id", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
       const aapl = makeItem("Apple xStock", "aapl-x", "TokenCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, aapl], stablecoins: [] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [btc, aapl],
+        stablecoins: [],
+      });
       mockUseStockAssetIds.mockReturnValue({
         ids: new Set(["aapl-x"]),
         isLoading: false,
@@ -126,7 +147,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
     it("does not miscategorize a crypto whose ticker collides with a stock symbol", () => {
       const ton = makeItem("Toncoin", "ton", "CryptoCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [ton], stablecoins: [] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [ton],
+        stablecoins: [],
+      });
       mockUseStockAssetIds.mockReturnValue({
         ids: new Set(["some-tokenized-stock"]),
         isLoading: false,
@@ -141,7 +165,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
     it("leaves cryptos untouched and stocks empty when no id matches", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc], stablecoins: [] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [btc],
+        stablecoins: [],
+      });
 
       const { result } = renderCategorized();
 
@@ -152,7 +179,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     it("keeps stocks under cryptos when assetDiscoverability is off", () => {
       const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
       const aapl = makeItem("Apple xStock", "aapl-x", "TokenCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, aapl], stablecoins: [] });
+      mockUseCategorizedAssets.mockReturnValue({
+        cryptos: [btc, aapl],
+        stablecoins: [],
+      });
       mockUseStockAssetIds.mockReturnValue({
         ids: new Set(["aapl-x"]),
         isLoading: false,
@@ -171,7 +201,12 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
   describe("loading state", () => {
     it("reports loading when distribution is loading", () => {
-      mockUseDistribution.mockReturnValue({ isAvailable: true, list: [], isLoading: true });
+      mockUseDistribution.mockReturnValue({
+        isAvailable: true,
+        countervalueComplete: true,
+        list: [],
+        isLoading: true,
+      });
 
       const { result } = renderCategorized();
 

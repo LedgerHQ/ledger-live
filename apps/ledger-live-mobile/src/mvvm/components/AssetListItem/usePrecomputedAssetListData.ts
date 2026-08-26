@@ -51,8 +51,11 @@ function getCounterValue(
     return 0;
   }
 
-  if (asset.countervalue !== undefined) {
-    return asset.countervalue;
+  // Aggregated assets deliberately expose an explicit `undefined` when one of
+  // their positive-balance networks has no current rate. Do not recompute a
+  // partial value from the representative currency in that case.
+  if ("countervalue" in asset) {
+    return asset.countervalue ?? null;
   }
 
   const cv = calculate(cvState, {
@@ -82,9 +85,10 @@ function getCountervalueChange(
   currentCounterValue: number | null,
 ): ValueChange | null {
   if (asset.isPlaceholder || asset.accounts.length === 0) return null;
-  if (asset.amount <= 0 || (currentCounterValue != null && currentCounterValue <= 0)) {
+  if (asset.amount <= 0) {
     return { value: 0, percentage: 0 };
   }
+  if (currentCounterValue == null || currentCounterValue <= 0) return null;
 
   const { countervalueChange } = getCurrencyPortfolio(
     asset.accounts,
@@ -109,7 +113,11 @@ function getCountervalueChange(
 
 function computeAssetItemData(asset: Asset, state: SharedState): AssetListItemViewModelResult {
   const balance = BigNumber(asset.amount);
-  const fmtOpts: FmtOpts = { locale: state.locale, showCode: true, discreet: state.discreet };
+  const fmtOpts: FmtOpts = {
+    locale: state.locale,
+    showCode: true,
+    discreet: state.discreet,
+  };
 
   const unit = asset.currency.units?.[0];
   const formattedBalance = unit ? formatCurrencyUnit(unit, balance, fmtOpts) : "";
