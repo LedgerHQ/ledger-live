@@ -13,6 +13,7 @@ export function RequestReceiveView({
   visibleActions,
   addressParts,
   qrPayload,
+  cardRef,
   onClose,
   onShare,
   onCopy,
@@ -47,6 +48,7 @@ export function RequestReceiveView({
           networkIcon={networkIcon}
           addressParts={addressParts}
           qrPayload={qrPayload}
+          cardRef={cardRef}
         />
       </Box>
       <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
