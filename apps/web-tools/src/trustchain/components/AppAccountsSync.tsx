@@ -282,13 +282,11 @@ export default function AppAccountsSync({
   const handleCreateContact = useCallback(
     (draftName: string) => {
       const result = createContact(contactsRef.current, draftName);
-      if (result.contact === null) {
-        return result;
+      if (result.contact !== null) {
+        const contacts = [...contactsRef.current, result.contact];
+        contactsRef.current = contacts;
+        setState(s => ({ ...s, walletState: { ...s.walletState, contacts } }));
       }
-
-      const contacts = [...contactsRef.current, result.contact];
-      contactsRef.current = contacts;
-      setState(s => ({ ...s, walletState: { ...s.walletState, contacts } }));
       return result;
     },
     [setState],

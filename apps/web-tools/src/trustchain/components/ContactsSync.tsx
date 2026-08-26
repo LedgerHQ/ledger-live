@@ -39,13 +39,12 @@ const errorMessageByName: Record<ContactNameValidationErrorName, string> = {
   DuplicateContactNameError: "A contact with this name already exists.",
 };
 
-export function ContactsSync({
-  contacts,
-  onCreate,
-}: {
+type ContactsSyncProps = Readonly<{
   contacts: readonly Contact[];
   onCreate: (_: string) => ContactCreationResult;
-}) {
+}>;
+
+export function ContactsSync({ contacts, onCreate }: ContactsSyncProps) {
   const [draftName, setDraftName] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
@@ -102,12 +101,9 @@ export function ContactsSync({
         </Button>
       </form>
       {feedback ? (
-        <p
-          className={hasError ? "mt-8 text-error body-2" : "mt-8 text-success body-2"}
-          role="status"
-        >
+        <output className={hasError ? "mt-8 text-error body-2" : "mt-8 text-success body-2"}>
           {feedback}
-        </p>
+        </output>
       ) : null}
     </section>
   );
