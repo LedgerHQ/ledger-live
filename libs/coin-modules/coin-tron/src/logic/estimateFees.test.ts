@@ -668,6 +668,12 @@ describe("estimateTronifyFees", () => {
     );
   });
 
+  it("should throw when Tronify returns a non-numeric payCoinAmt", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "not-a-number" });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(/invalid payCoinAmt/);
+  });
+
   it("should propagate TronifyApiError from getEnergyRentQuote without silent fallback", async () => {
     const apiError = Object.assign(new Error("quota exceeded"), {
       name: "TronifyApiError",
