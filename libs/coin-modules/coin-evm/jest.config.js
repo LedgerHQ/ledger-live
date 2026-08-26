@@ -22,17 +22,10 @@ module.exports = {
       },
     ],
   },
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "jest-expect-message",
-    "dotenv/config",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
+  setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
   ],
 };
