@@ -9,6 +9,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
+import Skeleton from "~/components/Skeleton";
 import ValidatorIcon from "../shared/ValidatorIcon";
 
 type Props = {
@@ -42,14 +43,16 @@ export default function DelegationRow({
       </View>
       <View style={styles.nameWrapper}>
         <View style={styles.row}>
-          <Text
-            fontWeight="semiBold"
-            numberOfLines={1}
-            ellipsizeMode="middle"
-            style={{ marginRight: 5 }}
-          >
-            {enrichedDelegation.validator.name}
-          </Text>
+          <Skeleton loading={enrichedDelegation.loading} style={styles.nameSkeleton}>
+            <Text
+              fontWeight="semiBold"
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={{ marginRight: 5 }}
+            >
+              {enrichedDelegation.validator.name}
+            </Text>
+          </Skeleton>
         </View>
         <View style={styles.row}>
           <Text style={styles.seeMore} color="live">
@@ -102,6 +105,11 @@ const styles = StyleSheet.create({
   nameWrapper: {
     flex: 1,
     marginRight: 8,
+  },
+  nameSkeleton: {
+    width: 100,
+    height: 16,
+    borderRadius: 4,
   },
   rightWrapper: {
     alignItems: "flex-end",

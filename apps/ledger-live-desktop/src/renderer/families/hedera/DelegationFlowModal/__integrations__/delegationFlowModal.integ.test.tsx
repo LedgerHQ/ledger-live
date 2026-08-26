@@ -13,8 +13,8 @@ import {
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
 
-jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
+jest.mock("@ledgerhq/live-common/families/hedera/react", () => {
+  const mockValidators = [
     {
       id: "0",
       name: "Hedera Node 0",
@@ -27,9 +27,18 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       overstaked: false,
       isLedgerNode: true,
     },
-  ]),
-  useHederaEnrichedDelegation: jest.fn(() => null),
-}));
+  ];
+
+  return {
+    hederaQueries: {
+      validatorsList: () => ({
+        queryKey: ["mock-hedera-validators"],
+        queryFn: () => Promise.resolve(mockValidators),
+      }),
+    },
+    useHederaEnrichedDelegation: jest.fn(() => null),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/hw/actions/app", () => ({
   ...jest.requireActual("@ledgerhq/live-common/hw/actions/app"),

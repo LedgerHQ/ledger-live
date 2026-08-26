@@ -31,9 +31,9 @@ import { validateMemo } from "../logic/validateMemo";
 import {
   getCurrencyToUSDRate,
   checkAccountTokenAssociationStatus,
+  getHederaValidators,
   safeParseAccountId,
 } from "../network/utils";
-import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
   HederaAccount,
   Transaction,
@@ -283,22 +283,33 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
 
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { validators } = getCurrentHederaPreloadData(account.currency);
-  const estimatedFees = await estimateFees({
-    operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
-    currencyId: account.currency.id,
-  });
+
+  // undelegating and claiming rewards don't have to be blocked when the fetch fails
+  const needsValidators =
+    transaction.mode === HEDERA_TRANSACTION_MODES.Delegate ||
+    transaction.mode === HEDERA_TRANSACTION_MODES.Redelegate;
+
+  const [validators, estimatedFees] = await Promise.all([
+    needsValidators
+      ? getHederaValidators(account.currency.id).catch((error: Error) => error)
+      : undefined,
+    estimateFees({
+      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+      currencyId: account.currency.id,
+    }),
+  ]);
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees.tinybars);
+
+  if (validators instanceof Error) {
+    errors.validators = validators;
+  }
 
   if (!validateMemo(transaction.memo)) {
     errors.transaction = new HederaMemoExceededSizeError();
   }
 
-  if (
-    transaction.mode === HEDERA_TRANSACTION_MODES.Delegate ||
-    transaction.mode === HEDERA_TRANSACTION_MODES.Redelegate
-  ) {
+  if (Array.isArray(validators)) {
     if (typeof transaction.properties?.stakingNodeId === "number") {
       const isValid = validators.some(validator => {
         return validator.id === String(transaction.properties?.stakingNodeId);

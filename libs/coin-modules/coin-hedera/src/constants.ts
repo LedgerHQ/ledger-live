@@ -36,6 +36,8 @@ export enum HEDERA_OPERATION_TYPES {
 
 export const HEDERA_DUMMY_ADDRESS = "0.0.163372";
 
+export const HEDERA_VALIDATORS_CACHE_MINUTES = 15;
+
 export const TINYBAR_SCALE = 8;
 
 // old value moved from https://github.com/LedgerHQ/ledger-live/blob/8447b68b7c6f1e7ccd4aa9db4da0e6c8de36a88e/libs/coin-modules/coin-hedera/src/bridge/utils.ts#L77

@@ -12,16 +12,6 @@ import {
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
-
-// Mock preloadData module before importing
-jest.mock("../preload-data", () => ({
-  ...jest.requireActual("../preload-data"),
-  getCurrentHederaPreloadData: jest.fn(),
-}));
-
-import * as preloadData from "../preload-data";
-
-const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedEnrichedERC20Transfer } from "../test/fixtures/common.fixture";
@@ -32,14 +22,8 @@ import {
 import { getMockedMirrorTransaction } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedValidator } from "../test/fixtures/validator.fixture";
-import type {
-  HederaAccount,
-  HederaMemo,
-  HederaPreloadData,
-  HederaTxData,
-  HederaValidator,
-  Transaction,
-} from "../types";
+import type { HederaMirrorNode } from "../types/mirror";
+import type { HederaMemo, HederaTxData, HederaValidator, Transaction } from "../types";
 import {
   serializeSignature,
   deserializeSignature,
@@ -63,7 +47,6 @@ import {
   isStakingTransaction,
   extractCompanyFromNodeDescription,
   sortValidators,
-  getValidatorFromAccount,
   getDefaultValidator,
   getDelegationStatus,
   filterValidatorBySearchTerm,
@@ -82,7 +65,20 @@ import {
   resolveConfig,
   base64ToUrlSafeBase64,
   getHederaTransactionBodyBytes,
+  mapMirrorNodesToValidators,
 } from "./utils";
+
+const mockedNode = (overrides?: Partial<HederaMirrorNode>): HederaMirrorNode => ({
+  node_id: 0,
+  node_account_id: "0.0.3",
+  description: "Hedera | 0 | Hosted by Hedera",
+  min_stake: 1000,
+  max_stake: 100000,
+  stake: 50000,
+  stake_rewarded: 30000,
+  reward_rate_start: 0,
+  ...overrides,
+});
 
 jest.mock("../config");
 jest.mock("../network/api");
@@ -382,11 +378,15 @@ describe("logic utils", () => {
   describe("isTokenAssociateTransaction", () => {
     it("returns correct value based on tx.properties", () => {
       expect(
-        isTokenAssociateTransaction({ mode: HEDERA_TRANSACTION_MODES.TokenAssociate } as any),
+        isTokenAssociateTransaction({
+          mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        } as any),
       ).toBe(true);
-      expect(isTokenAssociateTransaction({ mode: HEDERA_TRANSACTION_MODES.Send } as any)).toBe(
-        false,
-      );
+      expect(
+        isTokenAssociateTransaction({
+          mode: HEDERA_TRANSACTION_MODES.Send,
+        } as any),
+      ).toBe(false);
       expect(isTokenAssociateTransaction({} as any)).toBe(false);
     });
   });
@@ -413,7 +413,9 @@ describe("logic utils", () => {
     it("should return false if token is already associated (token account exists)", () => {
       const mockedTokenCurrency = getMockedHTSTokenCurrency();
       const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
-      const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
+      const mockedAccount = getMockedAccount({
+        subAccounts: [mockedTokenAccount],
+      });
 
       expect(isTokenAssociationRequired(mockedAccount, mockedTokenCurrency)).toBe(false);
     });
@@ -477,11 +479,15 @@ describe("logic utils", () => {
   describe("sendRecipientCanNext", () => {
     it("handles association warnings", () => {
       expect(sendRecipientCanNext({ warnings: {} } as any)).toBe(true);
-      expect(sendRecipientCanNext({ warnings: { missingAssociation: new Error() } } as any)).toBe(
-        false,
-      );
       expect(
-        sendRecipientCanNext({ warnings: { unverifiedAssociation: new Error() } } as any),
+        sendRecipientCanNext({
+          warnings: { missingAssociation: new Error() },
+        } as any),
+      ).toBe(false);
+      expect(
+        sendRecipientCanNext({
+          warnings: { unverifiedAssociation: new Error() },
+        } as any),
       ).toBe(false);
     });
   });
@@ -683,11 +689,22 @@ describe("logic utils", () => {
 
   describe("isStakingTransaction", () => {
     it("returns correct value based on tx.mode", () => {
-      const stakingDelegateTx = { mode: HEDERA_TRANSACTION_MODES.Delegate } as Transaction;
-      const stakingUndelegateTx = { mode: HEDERA_TRANSACTION_MODES.Undelegate } as Transaction;
-      const stakingRedelegateTx = { mode: HEDERA_TRANSACTION_MODES.Redelegate } as Transaction;
-      const stakingClaimRewardsTx = { mode: HEDERA_TRANSACTION_MODES.ClaimRewards } as Transaction;
-      const transferTx = { recipient: "", amount: new BigNumber(1) } as Transaction;
+      const stakingDelegateTx = {
+        mode: HEDERA_TRANSACTION_MODES.Delegate,
+      } as Transaction;
+      const stakingUndelegateTx = {
+        mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      } as Transaction;
+      const stakingRedelegateTx = {
+        mode: HEDERA_TRANSACTION_MODES.Redelegate,
+      } as Transaction;
+      const stakingClaimRewardsTx = {
+        mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      } as Transaction;
+      const transferTx = {
+        recipient: "",
+        amount: new BigNumber(1),
+      } as Transaction;
       const emptyTx = {} as Transaction;
 
       expect(isStakingTransaction(stakingDelegateTx)).toBe(true);
@@ -729,32 +746,61 @@ describe("logic utils", () => {
     });
   });
 
-  describe("getValidatorFromAccount", () => {
-    const mockValidator = { id: "1" };
-    const mockPreload = { validators: [mockValidator] } as HederaPreloadData;
+  describe("mapMirrorNodesToValidators", () => {
+    it("maps mirror nodes to validators", () => {
+      const [validator] = mapMirrorNodesToValidators([mockedNode()], "1");
 
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
+      expect(validator).toMatchObject({
+        id: "0",
+        address: "0.0.3",
+        minStake: new BigNumber(1000),
+        maxStake: new BigNumber(100000),
+        activeStake: new BigNumber(30000),
+        overstaked: false,
+        isLedgerNode: false,
+      });
     });
 
-    it("returns validator matching delegation nodeId", () => {
-      const mockAccount = {
-        currency: "hedera",
-        hederaResources: { delegation: { nodeId: 1 } },
-      } as unknown as HederaAccount;
+    it("sets isLedgerNode for the configured node id and clears it otherwise", () => {
+      const validators = mapMirrorNodesToValidators(
+        [mockedNode({ node_id: 0 }), mockedNode({ node_id: 1, node_account_id: "0.0.4" })],
+        "1",
+      );
 
-      expect(getValidatorFromAccount(mockAccount)).toEqual(mockValidator);
+      expect(validators.find(v => v.id === "0")?.isLedgerNode).toBe(false);
+      expect(validators.find(v => v.id === "1")?.isLedgerNode).toBe(true);
     });
 
-    it("returns null if no delegation", () => {
-      const mockAccount = {
-        currency: "hedera",
-        hederaResources: {},
-      } as unknown as HederaAccount;
+    it("sets activeStakePercentage to 0 when maxStake is 0", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [mockedNode({ max_stake: 0, stake_rewarded: 0 })],
+        "1",
+      );
 
-      expect(getValidatorFromAccount(mockAccount)).toBeNull();
+      expect(validator.activeStakePercentage).toEqual(new BigNumber(0));
+    });
+
+    it("rounds activeStakePercentage up (ROUND_CEIL)", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [mockedNode({ max_stake: 300, stake_rewarded: 100 })],
+        "1",
+      );
+
+      // 100 / 300 * 100 = 33.33... -> rounds up to 34
+      expect(validator.activeStakePercentage).toEqual(new BigNumber(34));
+    });
+
+    it("marks validator as overstaked when activeStake >= maxStake", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [mockedNode({ max_stake: 1000, stake_rewarded: 2000 })],
+        "1",
+      );
+
+      expect(validator.overstaked).toBe(true);
+    });
+
+    it("returns an empty array for an empty node list", () => {
+      expect(mapMirrorNodesToValidators([], "1")).toEqual([]);
     });
   });
 
@@ -776,8 +822,14 @@ describe("logic utils", () => {
   });
 
   describe("getDelegationStatus", () => {
-    const mockValidator = { address: "0.0.3", overstaked: false } as HederaValidator;
-    const mockOverstakedValidator = { address: "0.0.3", overstaked: true } as HederaValidator;
+    const mockValidator = {
+      address: "0.0.3",
+      overstaked: false,
+    } as HederaValidator;
+    const mockOverstakedValidator = {
+      address: "0.0.3",
+      overstaked: true,
+    } as HederaValidator;
 
     it("returns inactive if validator or validator's address is missing", () => {
       expect(getDelegationStatus(null)).toBe("inactive");
@@ -824,7 +876,10 @@ describe("logic utils", () => {
     });
 
     it("should handle validator without checksum", () => {
-      const validatorWithoutChecksum = { ...mockValidator, addressChecksum: null };
+      const validatorWithoutChecksum = {
+        ...mockValidator,
+        addressChecksum: null,
+      };
       expect(filterValidatorBySearchTerm(validatorWithoutChecksum, "0.0.456")).toBe(true);
       expect(filterValidatorBySearchTerm(validatorWithoutChecksum, "abcde")).toBe(false);
     });
@@ -944,9 +999,13 @@ describe("logic utils", () => {
 
   describe("mergeTransactionsFromDifferentSources", () => {
     it("should merge mirror transactions and erc20 transfers", () => {
-      const mockMirrorTx = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
       const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
-        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: "2000.000000000",
+        }),
       });
 
       const result = mergeTransactionsFromDifferentSources({
@@ -1012,10 +1071,16 @@ describe("logic utils", () => {
     });
 
     it("should sort transactions in descending order by consensus timestamp", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
       const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
-        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: "2000.000000000",
+        }),
       });
 
       const result = mergeTransactionsFromDifferentSources({
@@ -1040,10 +1105,16 @@ describe("logic utils", () => {
     });
 
     it("should sort transactions in ascending order by consensus timestamp", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
       const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
-        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: "2000.000000000",
+        }),
       });
 
       const result = mergeTransactionsFromDifferentSources({
@@ -1068,9 +1139,15 @@ describe("logic utils", () => {
     });
 
     it("should maintain nanosecond precision when sorting", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000001" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000003" });
-      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000002" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000003",
+      });
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000002",
+      });
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
@@ -1229,10 +1306,18 @@ describe("logic utils", () => {
     });
 
     it("should apply limit when fetchAllPages is false", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
-      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
-      const mockMirrorTx4 = getMockedMirrorTransaction({ consensus_timestamp: "4000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "2000.000000000",
+      });
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
+      const mockMirrorTx4 = getMockedMirrorTransaction({
+        consensus_timestamp: "4000.000000000",
+      });
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3, mockMirrorTx4],
@@ -1255,9 +1340,15 @@ describe("logic utils", () => {
     });
 
     it("should not apply limit when fetchAllPages is true", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
-      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "2000.000000000",
+      });
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
@@ -1281,9 +1372,15 @@ describe("logic utils", () => {
     });
 
     it("should set nextCursor to last transaction timestamp in desc order", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
-      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "2000.000000000",
+      });
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
@@ -1298,9 +1395,15 @@ describe("logic utils", () => {
     });
 
     it("should set nextCursor to last transaction timestamp in asc order", () => {
-      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
-      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
-      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "2000.000000000",
+      });
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+      });
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
@@ -1441,7 +1544,9 @@ describe("logic utils", () => {
 
     it("throws invariant when bodyBytes are missing", () => {
       const mockTx = {
-        _signedTransactions: { get: jest.fn().mockReturnValue({ bodyBytes: undefined }) },
+        _signedTransactions: {
+          get: jest.fn().mockReturnValue({ bodyBytes: undefined }),
+        },
       };
       expect(() => getHederaTransactionBodyBytes(mockTx as never)).toThrow(
         "hedera: tx body bytes are missing",

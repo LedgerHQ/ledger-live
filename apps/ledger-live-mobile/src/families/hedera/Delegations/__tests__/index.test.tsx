@@ -190,6 +190,29 @@ describe("HederaDelegations", () => {
       });
     });
 
+    it("disables every drawer action while the validators query is loading", () => {
+      const account = buildAccount();
+
+      mockUseHederaEnrichedDelegation.mockReturnValue({
+        ...mockEnrichedDelegation,
+        loading: true,
+      } as never);
+
+      render(<HederaDelegations account={account} />, {
+        overrideInitialState: s => ({
+          ...s,
+          accounts: { ...s.accounts, active: [account] },
+        }),
+      });
+
+      // the validator name is behind a skeleton while loading, so open the drawer via "See more"
+      fireEvent.press(screen.getByText("See more"));
+
+      for (const testId of ["drawer-action-0", "drawer-action-1", "drawer-action-2"]) {
+        expect(screen.getByTestId(testId)).toBeDisabled();
+      }
+    });
+
     it("navigates to HederaRedelegationFlow with correct params when Redelegate is pressed", () => {
       const account = buildAccount();
       render(<HederaDelegations account={account} />, {

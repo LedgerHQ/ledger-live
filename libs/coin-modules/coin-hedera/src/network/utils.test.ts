@@ -18,6 +18,7 @@ import {
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import hederaCoinConfig from "../config";
 import type { HederaMirrorCoinTransfer, HederaMirrorTransaction } from "../types";
+import type { HederaMirrorNode } from "../types/mirror";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
@@ -28,10 +29,23 @@ import {
   createTransactionId,
   enrichERC20Transfers,
   getERC20BalancesForAccountV2,
+  getHederaValidators,
   parseTransfers,
   safeParseAccountId,
   toEVMAddress,
 } from "./utils";
+
+const mockedNode = (overrides?: Partial<HederaMirrorNode>): HederaMirrorNode => ({
+  node_id: 0,
+  node_account_id: "0.0.3",
+  description: "Hedera | 0 | Hosted by Hedera",
+  min_stake: 1000,
+  max_stake: 100000,
+  stake: 50000,
+  stake_rewarded: 30000,
+  reward_rate_start: 0,
+  ...overrides,
+});
 
 jest.mock("./api");
 jest.mock("./hgraph");
@@ -461,6 +475,51 @@ describe("network utils", () => {
       expect(result).toEqual([]);
       expect(apiClient.getContractCallResult).not.toHaveBeenCalled();
       expect(apiClient.findTransactionByContractCallV2).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("getHederaValidators", () => {
+    const mockGetNodes = jest.mocked(apiClient.getNodes);
+
+    beforeAll(() => {
+      hederaCoinConfig.setCoinConfig(() => getMockedConfig({ ledgerNodeId: 0 }));
+    });
+
+    beforeEach(() => {
+      getHederaValidators.reset();
+      jest.clearAllMocks();
+      mockGetNodes.mockResolvedValue({ nodes: [mockedNode()], nextCursor: null });
+    });
+
+    it("calls getNodes with fetchAllPages=true and maps the result", async () => {
+      const validators = await getHederaValidators(mockCurrency.id);
+
+      expect(mockGetNodes).toHaveBeenCalledWith({
+        configOrCurrencyId: mockCurrency.id,
+        fetchAllPages: true,
+      });
+      expect(validators).toHaveLength(1);
+      expect(validators[0]).toMatchObject({ id: "0", isLedgerNode: true });
+    });
+
+    it("hits the network once for two consecutive calls, and again after clear()", async () => {
+      await getHederaValidators(mockCurrency.id);
+      await getHederaValidators(mockCurrency.id);
+
+      expect(mockGetNodes).toHaveBeenCalledTimes(1);
+
+      getHederaValidators.clear(mockCurrency.id);
+      await getHederaValidators(mockCurrency.id);
+
+      expect(mockGetNodes).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not cache a failed fetch, so the next call retries", async () => {
+      mockGetNodes.mockRejectedValueOnce(new Error("network unavailable"));
+
+      await expect(getHederaValidators(mockCurrency.id)).rejects.toThrow("network unavailable");
+      await expect(getHederaValidators(mockCurrency.id)).resolves.toHaveLength(1);
+      expect(mockGetNodes).toHaveBeenCalledTimes(2);
     });
   });
 

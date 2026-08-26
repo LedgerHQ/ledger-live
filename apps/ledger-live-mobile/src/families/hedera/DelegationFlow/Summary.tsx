@@ -1,4 +1,5 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -7,7 +8,7 @@ import {
   getDefaultValidator,
   isStakingTransaction,
 } from "@ledgerhq/live-common/families/hedera/utils";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
@@ -46,7 +47,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account.type === "Account", "account type must be Account");
 
   const bridge: AccountBridge<Transaction> = useAccountBridge(account);
-  const validators = useHederaValidators(account.currency);
+  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
+  const validators = queryValidators.data ?? [];
   const defaultValidator = getDefaultValidator(validators);
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
@@ -152,6 +154,13 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
             account={account}
           />
         </View>
+        {queryValidators.isLoadingError && (
+          <View style={styles.fetchError}>
+            <Text color="error.c50" textAlign="center">
+              <TranslatedError error={queryValidators.error} />
+            </Text>
+          </View>
+        )}
         <View style={styles.alert}>
           <Alert
             type="primary"
@@ -362,6 +371,9 @@ const styles = StyleSheet.create({
   },
   alert: {
     marginBottom: 16,
+  },
+  fetchError: {
+    marginBottom: 12,
   },
   validatorSelection: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
@@ -6,8 +6,9 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { Account, Operation } from "@ledgerhq/types-live";
+import { useQuery } from "@tanstack/react-query";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
@@ -92,7 +93,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const validators = useHederaValidators(account.currency);
+  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
+  const validators = useMemo(() => queryValidators.data ?? [], [queryValidators.data]);
   const bridge = useAccountBridge<Transaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(bridge, () => {
@@ -112,6 +114,26 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         transaction,
       };
     });
+
+  // Validators load asynchronously, so on mount the lazy initializer above runs before any
+  // are available and stores stakingNodeId: null. Once the fetch resolves, backfill the
+  // default here, unless the user already picked a validator in the meantime.
+  useEffect(() => {
+    if (transaction?.mode !== HEDERA_TRANSACTION_MODES.Delegate) return;
+
+    const hasSelectedValidator = typeof transaction.properties?.stakingNodeId === "number";
+    if (hasSelectedValidator || validators.length === 0) return;
+
+    const defaultValidator = getDefaultValidator(validators);
+    if (!defaultValidator) return;
+
+    updateTransaction(tx =>
+      bridge.updateTransaction(tx, {
+        mode: HEDERA_TRANSACTION_MODES.Delegate,
+        properties: { stakingNodeId: Number(defaultValidator.id) },
+      }),
+    );
+  }, [validators, transaction, updateTransaction, bridge]);
 
   const handleStepChange = useCallback(
     (e: St) => {
