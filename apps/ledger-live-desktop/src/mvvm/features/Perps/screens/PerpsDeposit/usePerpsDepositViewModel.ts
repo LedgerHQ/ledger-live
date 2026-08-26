@@ -198,8 +198,7 @@ export function usePerpsDepositViewModel(
 
   const exceedsBalance = submitError !== null;
   const missingAccount = !depositAccount && depositAmount > 0;
-  // Without a ceiling there is nothing to check the amount against, so the form
-  // waits for the price rather than quoting an amount it cannot vouch for.
+ 
   const isFormComplete =
     depositAmount > 0 && Boolean(depositAccount) && submitError === null && maxAmount !== null;
 
