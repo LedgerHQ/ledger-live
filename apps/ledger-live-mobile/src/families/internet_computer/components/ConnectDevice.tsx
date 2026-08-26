@@ -104,6 +104,9 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
             stepNavigation.replace(route.name.replace("ConnectDevice", "ValidationError"), {
               ...route.params,
               error,
+              // A refusal on device sent nothing; anything the broadcast threw did. Whether the
+              // command may already have executed is what decides if a retry is offered.
+              signed: !payload.transactionSignError,
             });
           }
         })();
