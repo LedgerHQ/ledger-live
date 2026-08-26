@@ -554,6 +554,10 @@ describe("estimateFees", () => {
   });
 
   it("should not call getEnergyRentQuote when invoked directly (no feeOption routing)", async () => {
+    // no free resources → full standard burn applies
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+
     const result = await estimateFees(mockConfig, sendTrc20);
 
     expect(result.value).toBe(STANDARD_BURN);
@@ -637,7 +641,7 @@ describe("estimateTronifyFees", () => {
   it("should compute savings as originalValue - value", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
-    expect(result.originalValue).toBeDefined();
+    expect(result.originalValue).toBe(STANDARD_BURN);
     const originalValue = result.originalValue as bigint;
     expect(result.savings).toBe(originalValue - result.value);
   });
@@ -710,7 +714,7 @@ describe("estimateTronifyFees", () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
-    expect(result.value).toBeDefined();
+    expect(result.value).toBe(TRONIFY_VALUE);
   });
 
   it("should pass energyNeeded=0 to getEnergyRentQuote when the amount-guard short-circuits the simulation", async () => {
