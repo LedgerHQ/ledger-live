@@ -36,7 +36,7 @@ const renderScreen = () =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       navigation={{} as any}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      route={{ params: { followTopic: "Governance" } } as any}
+      route={{ params: {} } as any}
     />,
   );
 
@@ -47,33 +47,14 @@ describe("Followees", () => {
     updateTransaction.mockClear();
   });
 
-  // The canister replaces the whole list per `follow` call, so an unseeded submit would clear every
-  // followee the neuron already had rather than leaving them untouched.
-  it("seeds the list from the followees the neuron already has on this topic", () => {
-    neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE, followeeIds: [42n, 99n] }] });
+  // The topic names the list being edited, and it is read off the transaction the device will sign
+  // rather than held here, so the two cannot disagree.
+  it("names the topic the transaction carries", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [] };
 
     renderScreen();
 
-    expect(transaction.followeesIds).toEqual(["42", "99"]);
-    expect(transaction.followTopic).toBe("Governance");
-  });
-
-  it("ignores followees the neuron holds on other topics", () => {
-    neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE + 1, followeeIds: [42n] }] });
-
-    renderScreen();
-
-    expect(transaction.followeesIds).toEqual([]);
-  });
-
-  // Reseeding would silently undo the edit the user just made.
-  it("leaves an already-edited list alone", () => {
-    transaction = { type: "follow", followTopic: "Governance", followeesIds: ["7"] };
-
-    renderScreen();
-
-    expect(updateTransaction).not.toHaveBeenCalled();
-    expect(transaction.followeesIds).toEqual(["7"]);
+    expect(screen.getByText(/Governance/)).toBeVisible();
   });
 
   it("keeps only the digits of the entry, since a neuron id is numeric", () => {
@@ -112,5 +93,53 @@ describe("Followees", () => {
     renderScreen();
 
     expect(screen.getByText(/will not vote on this topic/)).toBeVisible();
+  });
+});
+
+/*
+ * Submitting an empty list is how a topic is cleared, since the canister replaces the whole list per
+ * call. Worth allowing, but it is destructive, and the neutral empty-state copy read like a no-op.
+ */
+describe("Followees clearing a topic", () => {
+  beforeEach(() => {
+    updateTransaction.mockClear();
+  });
+
+  it("says an empty list will stop the neuron following, when it currently follows someone", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [] };
+    neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE, followeeIds: [42n, 99n] }] });
+
+    renderScreen();
+
+    expect(screen.getByText(/stops this neuron following anyone on Governance/)).toBeVisible();
+    expect(screen.queryByText(/will not vote on this topic/)).toBeNull();
+  });
+
+  it("allows that clearing submission", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [] };
+    neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE, followeeIds: [42n] }] });
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+
+  // An empty list over an empty list is a device confirmation that changes nothing.
+  it("refuses a submission that would clear nothing", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [] };
+    neuron = makeHealthyNeuron({ followees: [] });
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it("counts only the followees on the topic being edited", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [] };
+    neuron = makeHealthyNeuron({ followees: [{ topic: GOVERNANCE + 1, followeeIds: [42n] }] });
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 });

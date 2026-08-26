@@ -221,7 +221,8 @@
         "neuronId": "Neuron ID to follow",
         "add": "Add",
         "remove": "Remove",
-        "empty": "No followees yet. Your neuron will not vote on this topic."
+        "empty": "No followees yet. Your neuron will not vote on this topic.",
+        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}."
       }
     },
     "refreshVotingPowerFlow": {

@@ -24,7 +24,7 @@ const TOPICS = Object.keys(KNOWN_TOPICS) as Topic[];
 /** Picks the governance topic whose followees the next screen edits. */
 export default function FollowTopic({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, neuron, transaction } = useNeuronAction(navigation, route);
+  const { account, neuron, transaction, bridge } = useNeuronAction(navigation, route);
   const principal = useICPPrincipal(account);
 
   // Following is a voting action a hot key may take — except on NeuronManagement, which the
@@ -32,13 +32,28 @@ export default function FollowTopic({ navigation, route }: Props) {
   const isControlled = !!neuron && isDeviceControlledNeuron(neuron, principal);
 
   const onSelect = useCallback(
-    (followTopic: Topic) =>
+    (followTopic: Topic) => {
+      const current = transaction ?? route.params.transaction;
+      // The transaction is the only place the chosen topic lives, so the topic the next screen shows
+      // and the one the device signs cannot drift apart. Changing topic re-seeds the list from that
+      // topic's current followees — `follow` replaces the whole list, so an untouched submission has
+      // to be a no-op rather than a wipe — while re-picking the same one keeps an edit in progress.
+      const next =
+        current.followTopic === followTopic
+          ? current
+          : bridge.updateTransaction(current, {
+              followTopic,
+              followeesIds: (
+                neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])?.followeeIds ??
+                []
+              ).map(id => id.toString()),
+            });
       navigation.navigate(ScreenName.InternetComputerNeuronFollowees, {
         ...route.params,
-        transaction: transaction ?? route.params.transaction,
-        followTopic,
-      }),
-    [navigation, route.params, transaction],
+        transaction: next,
+      });
+    },
+    [bridge, navigation, neuron, route.params, transaction],
   );
 
   return (

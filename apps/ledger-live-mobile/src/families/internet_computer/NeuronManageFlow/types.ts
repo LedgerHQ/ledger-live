@@ -50,7 +50,7 @@ export type InternetComputerNeuronManageFlowParamList = {
   [ScreenName.InternetComputerNeuronSplit]: NeuronActionRoute;
   [ScreenName.InternetComputerNeuronAddHotKey]: NeuronActionRoute;
   [ScreenName.InternetComputerNeuronFollowTopic]: NeuronActionRoute;
-  [ScreenName.InternetComputerNeuronFollowees]: NeuronActionRoute & { followTopic: FollowTopic };
+  [ScreenName.InternetComputerNeuronFollowees]: NeuronActionRoute;
   [ScreenName.InternetComputerNeuronRefreshVotingPower]: {
     accountId: string;
     parentId?: string;

@@ -1,6 +1,6 @@
 import { KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
 import { BaseInput, Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -22,13 +22,20 @@ const EMPTY_FOLLOWEES: string[] = [];
 /**
  * Edits the followee list for one topic. The canister replaces the whole list per `follow` call, so
  * removing a followee means submitting the remaining ones — there is no per-followee delete call.
+ *
+ * Both the topic and the list are read straight off the transaction, which FollowTopic seeds:
+ * anything this screen held separately could disagree with what the device is handed.
  */
 export default function Followees({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
-  const { followTopic } = route.params;
   const { neuron, transaction, updateTransaction, status, bridgePending, continueToDevice } =
     useNeuronAction(navigation, route);
+  const followTopic = transaction?.followTopic;
+  // How many followees the neuron currently has on the topic being edited.
+  const currentCount = followTopic
+    ? (neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])?.followeeIds.length ?? 0)
+    : 0;
 
   // Stable across renders: the `?? []` fallback would otherwise be a fresh array every time, which
   // invalidates every callback below.
@@ -36,18 +43,6 @@ export default function Followees({ navigation, route }: Props) {
     () => transaction?.followeesIds ?? EMPTY_FOLLOWEES,
     [transaction?.followeesIds],
   );
-
-  // Seed the transaction from the neuron's current followees for this topic, so submitting an
-  // untouched list is a no-op rather than a wipe.
-  useEffect(() => {
-    if (transaction?.followeesIds) return;
-    const current = neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic]);
-    updateTransaction(tx => ({
-      ...tx,
-      followTopic,
-      followeesIds: current?.followeeIds.map(id => id.toString()) ?? [],
-    }));
-  }, [followTopic, neuron, transaction?.followeesIds, updateTransaction]);
 
   const setFollowees = useCallback(
     (next: string[]) => updateTransaction(tx => ({ ...tx, followeesIds: next })),
@@ -99,8 +94,16 @@ export default function Followees({ navigation, route }: Props) {
             </Button>
           </Flex>
           {followeesIds.length === 0 ? (
-            <Text variant="small" color="neutral.c70">
-              {t("internetComputer.manageNeuronFlow.selectFollowees.empty")}
+            /* The canister replaces the whole list per call, so submitting an empty one is how a
+               topic is cleared. That is a legitimate action but a destructive one, and the neutral
+               empty-state copy read like a no-op. */
+            <Text variant="small" color={currentCount > 0 ? "warning.c70" : "neutral.c70"}>
+              {currentCount > 0
+                ? t("internetComputer.manageNeuronFlow.selectFollowees.clearsFollowing", {
+                    topic: followTopic,
+                    count: currentCount,
+                  })
+                : t("internetComputer.manageNeuronFlow.selectFollowees.empty")}
             </Text>
           ) : (
             followeesIds.map(id => (
@@ -122,7 +125,9 @@ export default function Followees({ navigation, route }: Props) {
         status={status}
         bridgePending={bridgePending}
         onContinue={continueToDevice}
-        canContinue={!!transaction?.followTopic}
+        // Submitting an empty list clears the topic, which is worth allowing but not worth signing
+        // for when there is nothing to clear: empty over empty changes nothing.
+        canContinue={!!followTopic && (followeesIds.length > 0 || currentCount > 0)}
       />
     </SafeAreaView>
   );
