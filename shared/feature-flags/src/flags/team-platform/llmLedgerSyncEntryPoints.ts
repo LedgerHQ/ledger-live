@@ -8,6 +8,7 @@ export const llmLedgerSyncEntryPoints = flagWith(
     settings: z.boolean(),
     onboarding: z.boolean(),
     postOnboarding: z.boolean(),
+    sendFlow: z.boolean(),
   },
   {
     enabled: false,
@@ -17,6 +18,7 @@ export const llmLedgerSyncEntryPoints = flagWith(
       settings: true,
       onboarding: true,
       postOnboarding: true,
+      sendFlow: true,
     },
   },
 );

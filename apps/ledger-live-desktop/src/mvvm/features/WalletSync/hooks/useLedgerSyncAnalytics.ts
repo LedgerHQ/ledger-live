@@ -40,6 +40,8 @@ export enum AnalyticsPage {
   OnboardingSync = "OnboardingSync",
   PostOnboarding = "PostOnboarding",
   Settings = "Settings",
+
+  SendFlow = "SendFlow",
 }
 
 export type AnalyticsFlow = "Ledger Sync";
