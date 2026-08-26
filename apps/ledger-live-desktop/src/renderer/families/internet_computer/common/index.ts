@@ -62,9 +62,10 @@ export const applyNeuronOperation = (
       ) as ICPAccount;
       const snapshot = operation.extra.neurons;
       if (!snapshot) {
+        const outcome = operation.extra.outcome;
         const patched = transaction
           ? applyNeuronCommand(next.neurons.fullNeurons, transaction, {
-              outcome: operation.extra.outcome,
+              ...(outcome !== undefined && { outcome }),
             })
           : undefined;
         if (!patched) return next;

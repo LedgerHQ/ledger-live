@@ -461,7 +461,10 @@ describe("applyNeuronCommand", () => {
     ({ neuronId: "7", ...overrides }) as unknown as Transaction;
 
   const applyTo = (neuron: ICPNeuron, transaction: Transaction, outcome?: NeuronCommandOutcome) =>
-    applyNeuronCommand([neuron], transaction, { nowSeconds: NOW, outcome })?.[0];
+    applyNeuronCommand([neuron], transaction, {
+      nowSeconds: NOW,
+      ...(outcome !== undefined && { outcome }),
+    })?.[0];
 
   it("turns the fixed delay into an unlock timestamp when dissolving starts", () => {
     const patched = applyTo(locked(), command({ type: "start_dissolving" }));
