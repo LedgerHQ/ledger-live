@@ -42,6 +42,10 @@ export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
 
+export const PayCardFreezeResponseSchema = z.object({
+  success: z.boolean(),
+});
+
 export const PayCardStatusResponseSchema = z.object({
   id: z.string().min(1),
   holderName: z.string().min(1),

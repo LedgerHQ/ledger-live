@@ -1,5 +1,6 @@
 import {
   PayCardErrorResponseSchema,
+  PayCardFreezeResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
@@ -70,6 +71,12 @@ describe("PayCardOrderResponseSchema", () => {
 
   it("rejects a success flag that is not a boolean", () => {
     expect(() => PayCardOrderResponseSchema.parse({ success: "yes" })).toThrow();
+  });
+});
+
+describe("PayCardFreezeResponseSchema", () => {
+  it("reads the documented freeze response", () => {
+    expect(PayCardFreezeResponseSchema.parse({ success: true })).toEqual({ success: true });
   });
 });
 
