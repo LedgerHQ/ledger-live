@@ -1,7 +1,9 @@
+import type { Principal } from "@dfinity/principal";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { MAX_MEMO_VALUE } from "../consts";
+import { getNeuronStakeSubAccountIdentifier } from "../logic/buildNeuronTransaction";
 import { ICPTransactionType, InternetComputerOperation } from "../types";
 
 // Whole-string byte sequence: even number of hex digits, >= 3 bytes (preserving the prior 6-hex
@@ -38,21 +40,45 @@ const METHOD_LABELS: Record<ICPTransactionType, string> = {
 export const methodToString = (type: ICPTransactionType): string =>
   METHOD_LABELS[type] ?? "Unknown";
 
+/**
+ * Whether a transfer is this controller's own initial neuron stake, judged from the transfer alone.
+ *
+ * The neuron's subaccount is a hash of the controller and the stake nonce, and that nonce is the
+ * transfer's memo — so a stake can be recognized without knowing the neuron. That matters because
+ * the neuron snapshot only arrives with a device-signed `list_neurons`: until then background sync
+ * had nothing to match against and relabelled a settled stake as a plain send.
+ *
+ * Top-ups carry memo 0 and so are not derivable this way; they still need the snapshot.
+ */
+const isOwnStakeTransfer = (
+  op: InternetComputerOperation,
+  controller: Principal | undefined,
+): boolean => {
+  const memo = op.extra?.memo;
+  if (!controller || !memo || memo === "0" || !op.recipients[0]) return false;
+  try {
+    return getNeuronStakeSubAccountIdentifier(controller, BigInt(memo)) === op.recipients[0];
+  } catch {
+    // Non-numeric memo — not a stake nonce.
+    return false;
+  }
+};
+
 // Retype outgoing transfers whose recipient is one of the account's neuron accounts: a memo'd
 // transfer is the initial stake (STAKE_NEURON), an unmemo'd one is a top-up (TOP_UP_NEURON).
 export const reassignOperationType = (
   operations: InternetComputerOperation[],
   neuronAddresses: string[],
+  controller?: Principal,
 ): InternetComputerOperation[] => {
   const neuronAddressSet = new Set(neuronAddresses);
   return operations.map(op => {
-    if (op.type === "OUT" && neuronAddressSet.has(op.recipients[0])) {
-      const type: OperationType = new BigNumber(op.extra?.memo ?? "0").gt(0)
-        ? "STAKE_NEURON"
-        : "TOP_UP_NEURON";
-      return { ...op, id: encodeOperationId(op.accountId, op.hash, type), type };
-    }
-    return op;
+    if (op.type !== "OUT") return op;
+    if (!neuronAddressSet.has(op.recipients[0]) && !isOwnStakeTransfer(op, controller)) return op;
+    const type: OperationType = new BigNumber(op.extra?.memo ?? "0").gt(0)
+      ? "STAKE_NEURON"
+      : "TOP_UP_NEURON";
+    return { ...op, id: encodeOperationId(op.accountId, op.hash, type), type };
   });
 };
 
