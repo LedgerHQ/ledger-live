@@ -9,7 +9,7 @@ import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
 import { normalizeEpochTimestamp, reassignOperationType } from "../../common-logic/utils";
 import { ICP_FEES } from "../../consts";
-import { deriveAddressFromPubkey } from "../../logic/crypto";
+import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "../../logic/crypto";
 import { hashTransaction } from "../../logic/hashTransaction";
 import {
   ICPAccount,
@@ -78,6 +78,9 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
     operations: reassignOperationType(
       flatMap<TransactionWithId, InternetComputerOperation>(txns, mapTxToOps(accountId, address)),
       neuronAddresses,
+      // Lets a stake be recognized from its own memo, so a settled staking transfer is not relabelled
+      // a plain send for as long as the snapshot is empty.
+      derivePrincipalFromPubkey(publicKey),
     ),
     blockHeight: blockHeight.toNumber(),
     operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
