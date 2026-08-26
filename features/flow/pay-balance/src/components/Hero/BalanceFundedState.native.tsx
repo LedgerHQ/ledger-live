@@ -1,7 +1,5 @@
 import React from "react";
 import { AmountDisplay, Box } from "@ledgerhq/lumen-ui-rnative";
-import { ActionTiles } from "../ActionTiles";
-import type { ActionTilesProps } from "../ActionTiles";
 import type { FormattedValue, BalanceFilterOption } from "../../types";
 import { BalanceFilterSelect } from "../Filter/BalanceFilterSelect.native";
 
@@ -9,7 +7,6 @@ type BalanceFundedStateProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
   isLoading: boolean;
-  actionTiles?: ActionTilesProps;
   allStablecoinsLabel: string;
   selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
@@ -22,7 +19,6 @@ export function BalanceFundedState({
   allStablecoinsLabel,
   selectedOption,
   onOpenFilter,
-  actionTiles,
 }: BalanceFundedStateProps) {
   return (
     <Box
@@ -41,9 +37,6 @@ export function BalanceFundedState({
         selectedOption={selectedOption}
         onOpenFilter={onOpenFilter}
       />
-      <Box lx={{ marginTop: "s40", alignItems: "center", justifyContent: "center" }}>
-        {actionTiles && <ActionTiles {...actionTiles} />}
-      </Box>
     </Box>
   );
 }

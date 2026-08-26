@@ -19,9 +19,15 @@ function buildProps(overrides: Partial<BalanceProps> = {}): BalanceProps {
 
 describe("useBalanceViewModel", () => {
   it("should be empty when the user has no balance", () => {
-    const { result } = renderHook(() => useBalanceViewModel(buildProps({ hasBalance: false })));
+    const actionTiles = { page: "Pay", tiles: [] };
+    const { result } = renderHook(() =>
+      useBalanceViewModel(buildProps({ hasBalance: false, actionTiles })),
+    );
 
-    expect(result.current.displayMode).toBe("empty");
+    expect(result.current).toMatchObject({
+      displayMode: "empty",
+      actionTiles,
+    });
   });
 
   it("should be funded when the user has balance and is ready", () => {

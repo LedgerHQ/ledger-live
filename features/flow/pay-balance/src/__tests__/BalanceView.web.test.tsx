@@ -2,7 +2,7 @@ import React from "react";
 import { screen } from "@testing-library/react";
 import { BalanceView } from "../components/Hero/BalanceView.web";
 import type { BalanceViewProps } from "../types";
-import { formatCountervalue, labels, options } from "./fixtures";
+import { depositActionTiles, formatCountervalue, labels, options } from "./fixtures";
 import { renderWithStyle } from "./renderWithStyle.web";
 
 function fundedProps(overrides: Partial<BalanceViewProps> = {}): BalanceViewProps {
@@ -38,6 +38,18 @@ describe("BalanceView (Web)", () => {
     renderView({ displayMode: "empty", labels });
 
     expect(screen.queryByTestId("pay-card-balance-funded-state")).not.toBeInTheDocument();
+  });
+
+  it("should render action tiles when empty", () => {
+    renderView({ displayMode: "empty", labels, actionTiles: depositActionTiles });
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
+  });
+
+  it("should render action tiles when funded", () => {
+    renderView(fundedProps({ actionTiles: depositActionTiles }));
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
   });
 
   it("should render the funded balance and pill when funded", () => {

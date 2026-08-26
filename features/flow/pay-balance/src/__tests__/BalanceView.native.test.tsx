@@ -3,7 +3,13 @@ import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
 import type { BalanceViewProps } from "../types";
 import { BalanceView } from "../components/Hero/BalanceView.native";
-import { emptyLabels, filterLabels, formatCountervalue, options } from "./fixtures";
+import {
+  depositActionTiles,
+  emptyLabels,
+  filterLabels,
+  formatCountervalue,
+  options,
+} from "./fixtures";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
@@ -60,5 +66,17 @@ describe("BalanceView (Native)", () => {
 
     expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();
     expect(screen.queryByTestId("pay-card-balance-empty-state")).toBeNull();
+  });
+
+  it("should render action tiles when empty", () => {
+    renderView({ displayMode: "empty", labels: emptyLabels, actionTiles: depositActionTiles });
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
+  });
+
+  it("should render action tiles when funded", () => {
+    renderView({ ...fundedProps(), actionTiles: depositActionTiles });
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
   });
 });

@@ -1,7 +1,5 @@
 import React from "react";
 import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
-import { ActionTiles } from "../ActionTiles";
-import type { ActionTilesProps } from "../ActionTiles";
 import type { FormattedValue, BalanceFilterOption } from "../../types";
 import { BalanceFilterPill } from "../Filter/BalanceFilterPill";
 
@@ -12,7 +10,6 @@ type BalanceFundedStateProps = Readonly<{
   allStablecoinsLabel: string;
   selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
-  actionTiles?: ActionTilesProps;
 }>;
 
 export function BalanceFundedState({
@@ -22,7 +19,6 @@ export function BalanceFundedState({
   allStablecoinsLabel,
   selectedOption,
   onOpenFilter,
-  actionTiles,
 }: BalanceFundedStateProps) {
   return (
     <div className="flex flex-col gap-24" data-testid="pay-card-balance-funded-state">
@@ -39,7 +35,6 @@ export function BalanceFundedState({
           onClick={onOpenFilter}
         />
       </div>
-      {actionTiles && <ActionTiles {...actionTiles} />}
     </div>
   );
 }

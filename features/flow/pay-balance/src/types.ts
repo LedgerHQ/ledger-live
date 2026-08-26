@@ -84,6 +84,7 @@ export type BalanceViewProps =
   | Readonly<{
       displayMode: "empty";
       labels: BalanceEmptyLabels;
+      actionTiles?: ActionTilesProps;
     }>
   | Readonly<{
       displayMode: "funded";

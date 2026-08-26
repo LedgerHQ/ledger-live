@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { BalanceFundedState } from "../components/Hero/BalanceFundedState.native";
-import { depositActionTiles, fundedStateProps } from "./fixtures";
+import { fundedStateProps } from "./fixtures";
 
 describe("BalanceFundedState (Native)", () => {
   it("should render the funded balance and the filter select", () => {
@@ -20,11 +20,5 @@ describe("BalanceFundedState (Native)", () => {
     await user.press(screen.getByTestId("pay-card-balance-filter-pill"));
 
     expect(onOpenFilter).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render the action tiles when provided", () => {
-    render(<BalanceFundedState {...fundedStateProps} actionTiles={depositActionTiles} />);
-
-    expect(screen.getByTestId("action-tile-deposit")).toBeTruthy();
   });
 });

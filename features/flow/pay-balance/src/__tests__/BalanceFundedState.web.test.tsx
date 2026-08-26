@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import { BalanceFundedState } from "../components/Hero/BalanceFundedState.web";
-import { depositActionTiles, fundedStateProps, usdcOption } from "./fixtures";
+import { fundedStateProps, usdcOption } from "./fixtures";
 import { renderWithStyle } from "./renderWithStyle.web";
 
 describe("BalanceFundedState (Web)", () => {
@@ -26,11 +26,5 @@ describe("BalanceFundedState (Web)", () => {
     await screen.getByTestId("pay-card-balance-filter-pill").click();
 
     expect(onOpenFilter).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render the action tiles when provided", () => {
-    renderWithStyle(<BalanceFundedState {...fundedStateProps} actionTiles={depositActionTiles} />);
-
-    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
   });
 });

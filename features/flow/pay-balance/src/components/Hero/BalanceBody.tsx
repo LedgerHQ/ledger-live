@@ -5,7 +5,7 @@ import { BalanceFundedState } from "./BalanceFundedState";
 import { BalanceFilterPicker } from "../Filter/BalanceFilterPicker";
 
 export function BalanceBody(props: BalanceViewProps) {
-  if (props.displayMode !== "funded") {
+  if (props.displayMode === "empty") {
     return <BalanceEmptyState labels={props.labels} />;
   }
 
@@ -18,7 +18,6 @@ export function BalanceBody(props: BalanceViewProps) {
         allStablecoinsLabel={props.labels.allStablecoins}
         selectedOption={props.selectedOption}
         onOpenFilter={props.onOpenFilter}
-        actionTiles={props.actionTiles}
       />
       <BalanceFilterPicker
         isOpen={props.isFilterOpen}
