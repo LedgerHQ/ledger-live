@@ -1,9 +1,17 @@
 import type { Job } from "@features/platform-device-intent";
 import {
-  mockDeviceContactGroupCredentials,
-  mockExternalAddressDeviceContext,
-} from "@domain/entity-contact/schema.mock";
-import { concat, ignoreElements, of, tap, timer } from "rxjs";
+  bufferToHexaString,
+  DeviceActionStatus,
+  hexaStringToBuffer,
+  UserInteractionRequired,
+} from "@ledgerhq/device-management-kit";
+import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
+import type {
+  RegisterExternalAddressDAError,
+  RegisterExternalAddressDAOutput,
+  RegisterExternalAddressDAState,
+} from "@ledgerhq/device-contacts-kit/api/app-binder/RegisterExternalAddressDeviceActionTypes.js";
+import { Observable } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../resultReporter";
 import type {
   RegisterExternalAddressIntentInput,
@@ -11,36 +19,167 @@ import type {
   RegisterExternalAddressResult,
 } from "./types";
 
-// Temporary deterministic stub until the ContactsManager integration lands.
-export const registerExternalAddressIntentJob: Job<
-  RegisterExternalAddressJobState,
-  RegisterExternalAddressIntentInput,
-  ContactIntentResult<RegisterExternalAddressResult>
-> = ({ input, onResult }) => {
-  const reporter = createContactIntentResultReporter(onResult);
-  const deviceContactGroupCredentials = mockDeviceContactGroupCredentials();
-  const externalAddressDeviceContext = mockExternalAddressDeviceContext();
-  const result: RegisterExternalAddressResult = {
-    mode: input.existingContactGroup === undefined ? "newContactGroup" : "existingContactGroup",
+export class RegisterExternalAddressInputError extends Error {
+  override name = "RegisterExternalAddressInputError" as const;
+}
+
+function toDeviceActionError(error: RegisterExternalAddressDAError): Error {
+  if (error instanceof Error) return error;
+  const tag = (error as { _tag?: unknown })._tag;
+  return new Error(typeof tag === "string" ? tag : "Register external address failed");
+}
+
+function toIdentifier(address: string): Uint8Array {
+  const identifier = hexaStringToBuffer(address);
+  if (identifier === null) {
+    throw new RegisterExternalAddressInputError(
+      `address ${JSON.stringify(address)} is not valid hex`,
+    );
+  }
+  return identifier;
+}
+
+function toChainId(chainId: string | number): bigint {
+  try {
+    return BigInt(chainId);
+  } catch {
+    throw new RegisterExternalAddressInputError(
+      `chainId ${JSON.stringify(chainId)} is not an integer`,
+    );
+  }
+}
+
+function toExistingContactGroup(
+  existingContactGroup: RegisterExternalAddressIntentInput["existingContactGroup"],
+): { groupHandle: Uint8Array; hmacProof: Uint8Array } | undefined {
+  if (existingContactGroup === undefined) return undefined;
+
+  const groupHandle = hexaStringToBuffer(existingContactGroup.groupHandle);
+  const hmacProof = hexaStringToBuffer(existingContactGroup.hmacProof);
+  if (groupHandle === null || hmacProof === null) {
+    throw new RegisterExternalAddressInputError("existingContactGroup is not valid hex");
+  }
+  return { groupHandle, hmacProof };
+}
+
+function toResult(
+  input: RegisterExternalAddressIntentInput,
+  output: RegisterExternalAddressDAOutput,
+): RegisterExternalAddressResult {
+  return {
+    mode: output.mode,
+    // Echo the caller's own representations, not the kit's, so the persisted
+    // record stays in Ledger Wallet's own conventions (family taxonomy,
+    // chainId representation) rather than the kit's wire-level ones.
     contactName: input.contactName,
     scope: input.scope,
     address: input.address,
     blockchainFamily: input.blockchainFamily,
     chainId: input.chainId,
-    groupHandle:
-      input.existingContactGroup?.groupHandle ?? deviceContactGroupCredentials.groupHandle,
-    hmacProof: input.existingContactGroup?.hmacProof ?? deviceContactGroupCredentials.hmacProof,
-    hmacRest: externalAddressDeviceContext.hmacRest,
+    groupHandle: bufferToHexaString(output.groupHandle),
+    hmacProof: bufferToHexaString(output.hmacProof),
+    hmacRest: bufferToHexaString(output.hmacRest),
   };
+}
 
-  return concat(
-    of({ type: "pending" } as const),
-    of({ type: "awaiting-device-confirmation" } as const),
-    timer(2_000).pipe(ignoreElements()),
-    of({ type: "completed" } as const).pipe(
-      tap(() => {
-        reporter.report({ type: "success", result });
-      }),
-    ),
-  ).pipe(reporter.cancelOnUnsubscribe());
+/**
+ * Register an external address on the device via the Contacts kit's
+ * `ContactsManager.registerExternalAddress()`.
+ *
+ * DIE Phase 2 already opened the coin app and enforced the version floor
+ * (see `getContactsAppMinVersion`), so this always passes `skipOpenApp: true`
+ * — the kit's own version guard still runs regardless.
+ */
+export const registerExternalAddressIntentJob: Job<
+  RegisterExternalAddressJobState,
+  RegisterExternalAddressIntentInput,
+  ContactIntentResult<RegisterExternalAddressResult>
+> = ({ deviceConnectionResult, deviceExtractedContext, input, onResult }) => {
+  const reporter = createContactIntentResultReporter(onResult);
+
+  return new Observable<RegisterExternalAddressJobState>(subscriber => {
+    let identifier: Uint8Array;
+    let chainId: bigint;
+    let existingContactGroup: { groupHandle: Uint8Array; hmacProof: Uint8Array } | undefined;
+    try {
+      identifier = toIdentifier(input.address);
+      chainId = toChainId(input.chainId);
+      existingContactGroup = toExistingContactGroup(input.existingContactGroup);
+    } catch (error) {
+      const typedError =
+        error instanceof Error ? error : new RegisterExternalAddressInputError(String(error));
+      reporter.report({ type: "failure", error: typedError });
+      subscriber.next({ type: "failed", error: typedError });
+      subscriber.complete();
+      return undefined;
+    }
+
+    const contactsManager = new ContactsManagerBuilder({
+      dmk: deviceConnectionResult.dmk,
+      sessionId: deviceConnectionResult.sessionId,
+      appName: deviceExtractedContext.currentAppName,
+    }).build();
+
+    const { observable, cancel } = contactsManager.registerExternalAddress({
+      contactName: input.contactName,
+      scope: input.scope,
+      identifier,
+      // The kit's family table is keyed by the lowercased coin-app name
+      // (e.g. "ethereum"), distinct from Ledger Wallet's own family
+      // grouping (e.g. "evm") carried in `input.blockchainFamily`.
+      blockchainFamily: deviceExtractedContext.currentAppName.toLowerCase(),
+      chainId,
+      existingContactGroup,
+      skipOpenApp: true,
+    });
+
+    const subscription = observable.subscribe({
+      next: (state: RegisterExternalAddressDAState) => {
+        switch (state.status) {
+          case DeviceActionStatus.NotStarted:
+          case DeviceActionStatus.Pending:
+            subscriber.next(
+              state.status === DeviceActionStatus.Pending &&
+                state.intermediateValue.requiredUserInteraction ===
+                  UserInteractionRequired.RegisterWallet
+                ? { type: "awaiting-device-confirmation" }
+                : { type: "pending" },
+            );
+            return;
+          case DeviceActionStatus.Completed: {
+            const result = toResult(input, state.output);
+            reporter.report({ type: "success", result });
+            subscriber.next({ type: "completed" });
+            subscriber.complete();
+            return;
+          }
+          case DeviceActionStatus.Stopped: {
+            const error = new Error("Register external address was stopped");
+            reporter.report({ type: "failure", error });
+            subscriber.next({ type: "failed", error });
+            subscriber.complete();
+            return;
+          }
+          case DeviceActionStatus.Error: {
+            const error = toDeviceActionError(state.error);
+            reporter.report({ type: "failure", error });
+            subscriber.next({ type: "failed", error });
+            subscriber.complete();
+            return;
+          }
+        }
+      },
+      error: (error: unknown) => {
+        const typedError =
+          error instanceof Error ? error : new Error("Register external address failed");
+        reporter.report({ type: "failure", error: typedError });
+        subscriber.error(typedError);
+      },
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      cancel();
+    };
+  }).pipe(reporter.cancelOnUnsubscribe());
 };
