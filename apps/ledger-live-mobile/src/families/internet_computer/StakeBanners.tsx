@@ -28,7 +28,7 @@ const target = (state: ActiveBannerState) => {
   ] as const;
 };
 
-type Props = { account: ICPAccount; state: ActiveBannerState };
+type Props = Readonly<{ account: ICPAccount; state: ActiveBannerState }>;
 
 /**
  * The account-page prompt for whatever is keeping the account from earning: no neuron yet, a stale
