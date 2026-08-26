@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { EMPTY } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 import {
@@ -241,6 +242,71 @@ describe("useContactsIntentsOrchestrator", () => {
     unmount();
 
     // THEN
+    await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
+  });
+});
+
+describe("useContactsIntentsOrchestrator initializerConfig", () => {
+  it("GIVEN no injected live-config floor WHEN an intent is active THEN it still enforces the Contacts floor", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+
+    // WHEN
+    const dieProps = getActiveDieProps(result.current);
+    const getMinVersion = dieProps.initializerConfig?.dependencies?.getMinVersion;
+
+    // THEN
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBeDefined();
+
+    act(() => dieProps.onUserCancel());
+    await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
+  });
+
+  it("GIVEN an injected live-config floor lower than the Contacts floor WHEN an intent is active THEN it enforces the Contacts floor", async () => {
+    // GIVEN
+    const { result } = renderHook(() =>
+      useContactsIntentsOrchestrator({ intents, getLiveConfigMinVersion: () => "0.0.1" }),
+    );
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+
+    // WHEN
+    const dieProps = getActiveDieProps(result.current);
+    const getMinVersion = dieProps.initializerConfig?.dependencies?.getMinVersion;
+    const contactsFloor = getMinVersion?.("Ethereum", DeviceModelId.STAX);
+
+    // THEN
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBe(contactsFloor);
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).not.toBe("0.0.1");
+
+    act(() => dieProps.onUserCancel());
+    await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
+  });
+
+  it("GIVEN an injected live-config floor higher than the Contacts floor WHEN an intent is active THEN it enforces the live-config floor", async () => {
+    // GIVEN
+    const { result } = renderHook(() =>
+      useContactsIntentsOrchestrator({ intents, getLiveConfigMinVersion: () => "999.0.0" }),
+    );
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+
+    // WHEN
+    const dieProps = getActiveDieProps(result.current);
+    const getMinVersion = dieProps.initializerConfig?.dependencies?.getMinVersion;
+
+    // THEN
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBe("999.0.0");
+
+    act(() => dieProps.onUserCancel());
     await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
   });
 });

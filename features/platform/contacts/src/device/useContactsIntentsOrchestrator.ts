@@ -10,6 +10,7 @@ import type {
   EditExternalAddressInput,
   EditExternalAddressResult,
 } from "../contactDeviceIntentsPort";
+import { composeContactsGetMinVersion, type ContactsGetMinVersion } from "./contactsMinVersion";
 import { ContactDeviceIntentCancelledError, ContactDeviceIntentMissingResultError } from "./errors";
 import { createEditExternalAddressOperation } from "./operations/editExternalAddress";
 import { createRegisterExternalAddressOperation } from "./operations/registerExternalAddress";
@@ -51,12 +52,26 @@ export type UseContactsIntentsOrchestratorParams = Readonly<{
    * assert orchestration without running the real jobs.
    */
   intents: ContactsIntentPlatformDefinitions;
+
+  /**
+   * The host's app-global version floor (e.g. `getMinVersion` from
+   * `libs/ledger-live-common/src/apps/support.ts`). Composed here with the
+   * Contacts kit's own floor into the per-flow floor DIE Phase 2
+   * (`ensureAppReadyUseCase`) enforces, via `initializerConfig`.
+   */
+  getLiveConfigMinVersion?: ContactsGetMinVersion;
 }>;
 
 export function useContactsIntentsOrchestrator({
   intents,
+  getLiveConfigMinVersion,
 }: UseContactsIntentsOrchestratorParams): ContactsIntentsOrchestrator {
   const [activeIntent, setActiveIntent] = useState<ActiveIntent>();
+
+  const getMinVersion = useMemo(
+    () => composeContactsGetMinVersion(getLiveConfigMinVersion),
+    [getLiveConfigMinVersion],
+  );
 
   const execute = useCallback(
     <
@@ -154,8 +169,9 @@ export function useContactsIntentsOrchestrator({
       onExecutorStateChanged: () => undefined,
       onUserCancel: cancel,
       cancelIntentRequestId: undefined,
+      initializerConfig: { dependencies: { getMinVersion } },
     };
-  }, [activeIntent, cancel]);
+  }, [activeIntent, cancel, getMinVersion]);
 
   return { deviceIntents, dieProps };
 }
