@@ -21,6 +21,7 @@
     "postinstall": "pnpm run nx:write-cache-config",
     "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
     "lint:structure": "nx run-many -t lint:structure",
+    "lint:coin-api-guardrails": "eslint --no-eslintrc -c libs/coin-modules/.eslintrc.guardrails.js --rulesdir libs/coin-modules/eslint-rules --quiet \"libs/coin-modules/**/src/api/**/*.ts\"",
     "bump": "changeset version",
     "clean": "git clean -fdX",
     "changelog": "changeset add",
