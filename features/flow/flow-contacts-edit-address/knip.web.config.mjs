@@ -3,5 +3,5 @@ import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 export default createDualPlatformKnipConfig({
   packagePath: "features/flow/flow-contacts-edit-address",
   platform: "web",
-  entry: ["src/web.ts", "src/ContactsRenameAddressDialog.web.tsx"],
+  entry: ["src/index.ts"],
 });

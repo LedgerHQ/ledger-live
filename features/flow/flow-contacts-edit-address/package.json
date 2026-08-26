@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "description": "Shared Edit address flow for Desktop and Mobile",
-  "main": "src/web.ts",
+  "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
     ".": {
       "react-native": "./src/index.native.ts",
-      "default": "./src/web.ts"
+      "default": "./src/index.ts"
     },
-    "./native": "./src/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
