@@ -25,7 +25,7 @@ describe("DeviceActionContent", () => {
     jest.clearAllMocks();
   });
 
-  it("converts the legacy DeviceModelId and resolves the current app theme", () => {
+  it("converts the legacy DeviceModelId and leaves the theme to the platform package", () => {
     render(
       <DeviceActionContent
         title="Continue on device"
@@ -41,12 +41,11 @@ describe("DeviceActionContent", () => {
         deviceName: "Ledger Flex CDA1",
         deviceModelId: "europa",
         action: "continue",
-        theme: "dark",
       }),
     );
   });
 
-  it("uses the explicit theme override when provided", () => {
+  it("forwards an explicit theme override", () => {
     render(
       <DeviceActionContent
         deviceName="Ledger Flex CDA1"

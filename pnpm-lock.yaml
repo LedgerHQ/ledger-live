@@ -6965,6 +6965,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/platform/device-action-content:
+    dependencies:
+      '@features/platform-style':
+        specifier: workspace:^
+        version: link:../style
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
@@ -7035,6 +7039,9 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
+      styled-components:
+        specifier: 'catalog:'
+        version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

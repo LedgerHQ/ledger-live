@@ -25,7 +25,7 @@ describe("DeviceActionContent", () => {
     jest.clearAllMocks();
   });
 
-  it("GIVEN a supported device model WHEN rendered THEN it converts the model id and resolves the current app theme", () => {
+  it("GIVEN a supported device model WHEN rendered THEN it converts the model id and leaves the theme to the platform package", () => {
     // GIVEN / WHEN
     render(
       <DeviceActionContent
@@ -43,12 +43,11 @@ describe("DeviceActionContent", () => {
         deviceName: "Ledger Flex CDA1",
         deviceModelId: "europa",
         action: "continue",
-        theme: "dark",
       }),
     );
   });
 
-  it("GIVEN an explicit theme override WHEN rendered THEN it uses the override instead of the app theme", () => {
+  it("GIVEN an explicit theme override WHEN rendered THEN it forwards the override", () => {
     // GIVEN / WHEN
     render(
       <DeviceActionContent

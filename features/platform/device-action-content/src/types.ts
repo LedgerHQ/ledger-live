@@ -41,8 +41,11 @@ export type DeviceActionContentProps = Readonly<{
   /** Device-side action used to select the animation state. */
   action: DeviceActionContentAction;
 
-  /** Current app theme, used to select the light or dark animation asset. */
-  theme: DeviceActionAnimationTheme;
+  /**
+   * Overrides the light/dark animation asset selection. Defaults to the variant of the mounted
+   * style provider, so callers don't have to thread the app theme through.
+   */
+  theme?: DeviceActionAnimationTheme;
 
   /** Optional banner rendered below the title and description. */
   banner?: DeviceActionContentBanner;

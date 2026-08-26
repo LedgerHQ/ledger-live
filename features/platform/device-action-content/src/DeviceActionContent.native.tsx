@@ -1,5 +1,6 @@
 import React from "react";
 import { Banner, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useThemeVariant } from "@features/platform-style/hooks";
 import { Animation } from "./Animation.native";
 import { getDeviceActionAnimation } from "./getDeviceActionAnimation.native";
 import type { DeviceActionContentProps } from "./types";
@@ -19,10 +20,13 @@ export function DeviceActionContent({
   banner,
   testID,
 }: DeviceActionContentProps) {
+  // Called unconditionally: `theme ?? useThemeVariant()` would short-circuit the hook away.
+  const providerTheme = useThemeVariant();
+  const resolvedTheme = theme ?? providerTheme;
   const animationSource =
     deviceModelId === null
       ? undefined
-      : getDeviceActionAnimation({ action, modelId: deviceModelId, theme });
+      : getDeviceActionAnimation({ action, modelId: deviceModelId, theme: resolvedTheme });
 
   return (
     <Box lx={rootStyle} testID={testID}>

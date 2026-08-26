@@ -22,8 +22,12 @@ This package never imports `DeviceModelId` from `@ledgerhq/types-devices` — th
 [docs/ddd-monorepo-architecture.md](../../../docs/ddd-monorepo-architecture.md)). Callers convert
 their `DeviceModelId` with `toDeviceActionModelId` before passing it in.
 
-`theme` is a required prop — this package never reaches for ambient app theme context, so the
-caller resolves and passes the current light/dark theme explicitly.
+The light/dark asset is picked from the style provider both apps already mount, via
+`useThemeVariant` from [`@features/platform-style`](../style). Callers don't thread the app theme
+through, so the component can be dropped into deeply nested `features/` trees. `theme` stays
+available as an override (the dev-tool playgrounds use it to preview both variants), and with no
+provider mounted it falls back to the light asset rather than throwing, so the component stays
+renderable in isolation.
 
 ## Usage
 
@@ -36,6 +40,5 @@ import { DeviceActionContent, toDeviceActionModelId } from "@features/platform-d
   deviceName="Ledger Flex CDA1"
   deviceModelId={toDeviceActionModelId(deviceModelId)}
   action="power-and-unlock"
-  theme="dark"
 />
 ```

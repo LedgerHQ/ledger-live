@@ -31,7 +31,8 @@
     "lottie-react-native": "7.3.6",
     "react-lottie": "1.2.10",
     "prop-types": "15.8.1",
-    "react-native-config": "catalog:"
+    "react-native-config": "catalog:",
+    "styled-components": ">=6"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -57,9 +58,9 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -80,6 +81,10 @@
     "react-native": "catalog:",
     "react-native-config": "catalog:",
     "react-test-renderer": "catalog:",
+    "styled-components": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@features/platform-style": "workspace:^"
   }
 }

@@ -4,32 +4,17 @@ import {
   DeviceActionContent as PlatformDeviceActionContent,
   toDeviceActionModelId,
 } from "@features/platform-device-action-content";
-import { useTheme as useStyledTheme } from "styled-components/native";
-import type {
-  DeviceActionAnimationTheme,
-  DeviceActionContentProps,
-  SupportedDeviceActionModelId,
-} from "./types";
+import type { DeviceActionContentProps, SupportedDeviceActionModelId } from "./types";
 
 /**
- * Mobile adapter for `@features/platform-device-action-content`: resolves the current app
- * theme and converts the legacy `DeviceModelId` enum, so consumers keep passing today's props.
+ * Mobile adapter for `@features/platform-device-action-content`: converts the legacy
+ * `DeviceModelId` enum so consumers keep passing today's props. The platform package resolves the
+ * light/dark variant itself from the mounted style provider.
  */
-export function DeviceActionContent({ deviceModelId, theme, ...props }: DeviceActionContentProps) {
-  const styledTheme = useStyledTheme();
-  const resolvedTheme = theme ?? getStyledAnimationTheme(styledTheme);
-
+export function DeviceActionContent({ deviceModelId, ...props }: DeviceActionContentProps) {
   return (
-    <PlatformDeviceActionContent
-      {...props}
-      deviceModelId={toDeviceActionModelId(deviceModelId)}
-      theme={resolvedTheme}
-    />
+    <PlatformDeviceActionContent {...props} deviceModelId={toDeviceActionModelId(deviceModelId)} />
   );
-}
-
-function getStyledAnimationTheme(styledTheme: { theme?: string }): DeviceActionAnimationTheme {
-  return styledTheme.theme === "dark" ? "dark" : "light";
 }
 
 export const supportedDeviceActionModelIds: SupportedDeviceActionModelId[] = Object.values(

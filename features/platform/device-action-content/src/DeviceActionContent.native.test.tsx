@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { ThemeContext } from "styled-components/native";
 import * as animationModule from "./getDeviceActionAnimation.native";
 import { DeviceActionContent } from "./DeviceActionContent.native";
 
@@ -87,6 +88,40 @@ describe("DeviceActionContent (native)", () => {
     expect(screen.queryByText("Continue on device")).toBeNull();
     expect(screen.queryByText("Keep the device connected")).toBeNull();
     expect(screen.getByText("Ledger Apex CDA1")).toBeTruthy();
+  });
+
+  it("resolves the animation from the mounted provider when no theme prop is given", () => {
+    render(
+      <ThemeContext.Provider value={{ theme: "dark" } as never}>
+        <DeviceActionContent
+          deviceName="Ledger Flex CDA1"
+          deviceModelId="europa"
+          action="continue"
+        />
+      </ThemeContext.Provider>,
+    );
+
+    expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
+      action: "continue",
+      modelId: "europa",
+      theme: "dark",
+    });
+  });
+
+  it("renders without a provider, defaulting to the light asset", () => {
+    render(
+      <DeviceActionContent
+        deviceName="Ledger Flex CDA1"
+        deviceModelId="europa"
+        action="continue"
+      />,
+    );
+
+    expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
+      action: "continue",
+      modelId: "europa",
+      theme: "light",
+    });
   });
 
   it("resolves the animation using the given theme", () => {
