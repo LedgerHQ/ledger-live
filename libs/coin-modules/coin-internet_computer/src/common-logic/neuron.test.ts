@@ -2,6 +2,7 @@ import { Principal } from "@dfinity/principal";
 import {
   E8S_PER_ICP,
   ICP_FEES,
+  KNOWN_TOPICS,
   LAST_SYNC_THRESHOLD_IN_DAYS,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
@@ -14,6 +15,7 @@ import {
   SECONDS_IN_YEAR,
   SECONDS_IN_7_DAYS,
 } from "../consts";
+import type { Transaction } from "../types/common";
 import {
   ICPNeuron,
   ListNeuronsResponse,
@@ -23,6 +25,7 @@ import {
 } from "../types/neuron";
 import {
   ageMultiplier,
+  applyNeuronCommand,
   bonusMultiplier,
   dissolveDelayMultiplier,
   getBannerState,
@@ -437,5 +440,241 @@ describe("secondsToDuration", () => {
   it("clamps negatives to zero and keeps precision for bigint input", () => {
     expect(secondsToDuration(-5)).toMatchObject({ years: 0, seconds: 0 });
     expect(secondsToDuration(BigInt(SECONDS_IN_YEAR) * 1_000n)).toMatchObject({ years: 1_000 });
+  });
+});
+
+describe("applyNeuronCommand", () => {
+  const NOW = 1_800_000_000;
+  const DELAY = BigInt(SECONDS_IN_YEAR);
+
+  const locked = (overrides: Partial<ICPNeuron> = {}): ICPNeuron =>
+    baseNeuron({
+      id: 7n,
+      state: NeuronState.Locked,
+      dissolveDelaySeconds: DELAY,
+      dissolveState: { DissolveDelaySeconds: DELAY },
+      ...overrides,
+    });
+
+  const command = (overrides: Record<string, unknown>) =>
+    ({ neuronId: "7", ...overrides }) as unknown as Transaction;
+
+  const applyTo = (neuron: ICPNeuron, transaction: Transaction) =>
+    applyNeuronCommand([neuron], transaction, NOW)?.[0];
+
+  it("turns the fixed delay into an unlock timestamp when dissolving starts", () => {
+    const patched = applyTo(locked(), command({ type: "start_dissolving" }));
+
+    expect(patched?.state).toBe(NeuronState.Dissolving);
+    expect(patched?.dissolveState).toEqual({
+      WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY,
+    });
+  });
+
+  // The canister parks aging_since at u64::MAX while dissolving, so the age bonus stops accruing.
+  // Reporting the old age would keep quoting voting power the neuron no longer earns.
+  it("drops the accrued age when dissolving starts", () => {
+    const patched = applyTo(locked(), command({ type: "start_dissolving" }));
+
+    expect(patched?.ageSeconds).toBe(0n);
+  });
+
+  it("turns the remaining countdown back into a fixed delay when dissolving stops", () => {
+    const dissolving = locked({
+      state: NeuronState.Dissolving,
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY },
+    });
+
+    const patched = applyTo(dissolving, command({ type: "stop_dissolving" }));
+
+    expect(patched?.state).toBe(NeuronState.Locked);
+    expect(patched?.dissolveState).toEqual({ DissolveDelaySeconds: DELAY });
+    expect(patched?.dissolveDelaySeconds).toBe(DELAY);
+  });
+
+  // Guards against replaying a command the canister would have refused: the local state says the
+  // neuron is not in the state the command requires, so the snapshot must not be edited.
+  it.each([
+    ["start_dissolving", NeuronState.Dissolving],
+    ["stop_dissolving", NeuronState.Locked],
+  ])("declines to apply %s from the wrong state", (type, state) => {
+    expect(applyNeuronCommand([locked({ state })], command({ type }), NOW)).toBeUndefined();
+  });
+
+  it("adds the requested seconds to the current dissolve delay", () => {
+    const patched = applyTo(
+      locked(),
+      command({ type: "increase_dissolve_delay", additionalDissolveDelay: String(SECONDS_IN_DAY) }),
+    );
+
+    expect(patched?.dissolveDelaySeconds).toBe(DELAY + BigInt(SECONDS_IN_DAY));
+  });
+
+  it("clamps an increase to the protocol maximum", () => {
+    const patched = applyTo(
+      locked(),
+      command({
+        type: "increase_dissolve_delay",
+        additionalDissolveDelay: String(NNS_MAXIMUM_DISSOLVE_DELAY),
+      }),
+    );
+
+    expect(patched?.dissolveDelaySeconds).toBe(BigInt(NNS_MAXIMUM_DISSOLVE_DELAY));
+  });
+
+  // Verified against dfinity/ic `neuron/dissolve_state_and_age.rs`: while the neuron is still
+  // dissolving the unlock timestamp moves out and it does not re-lock, so the state must not change.
+  it("pushes out the unlock timestamp of a neuron that is still dissolving", () => {
+    const dissolving = locked({
+      state: NeuronState.Dissolving,
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY },
+    });
+
+    const patched = applyTo(
+      dissolving,
+      command({ type: "increase_dissolve_delay", additionalDissolveDelay: String(SECONDS_IN_DAY) }),
+    );
+
+    expect(patched?.state).toBe(NeuronState.Dissolving);
+    expect(patched?.dissolveState).toEqual({
+      WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY + BigInt(SECONDS_IN_DAY),
+    });
+  });
+
+  // The canister's own comment: "This neuron is dissolved. Set it to non-dissolving." Its remaining
+  // delay is zero, so the whole requested delay is the delta, and aging restarts.
+  it("re-locks a dissolved neuron at the delay it was given", () => {
+    const dissolved = locked({ state: NeuronState.Dissolved, dissolveState: undefined });
+
+    const patched = applyTo(
+      dissolved,
+      command({ type: "set_dissolve_delay", dissolveDelay: String(SECONDS_IN_YEAR) }),
+    );
+
+    expect(patched?.state).toBe(NeuronState.Locked);
+    expect(patched?.dissolveState).toEqual({ DissolveDelaySeconds: BigInt(SECONDS_IN_YEAR) });
+    expect(patched?.ageSeconds).toBe(0n);
+  });
+
+  // Increasing a locked neuron's delay does not touch aging_since_timestamp_seconds, so the age
+  // bonus it has already earned survives. Resetting it would understate its voting power.
+  it("keeps the accrued age when a locked neuron's delay grows", () => {
+    const patched = applyTo(
+      locked(),
+      command({ type: "increase_dissolve_delay", additionalDissolveDelay: String(SECONDS_IN_DAY) }),
+    );
+
+    expect(patched?.ageSeconds).toBe(BigInt(SECONDS_IN_FOUR_YEARS));
+  });
+
+  // The canister refuses a target at or below the current delay rather than treating it as a no-op,
+  // so there is no state to replay.
+  it.each([String(SECONDS_IN_YEAR), String(SECONDS_IN_DAY)])(
+    "declines a dissolve delay of %s that does not exceed the current one",
+    dissolveDelay => {
+      expect(
+        applyNeuronCommand([locked()], command({ type: "set_dissolve_delay", dissolveDelay }), NOW),
+      ).toBeUndefined();
+    },
+  );
+
+  it("appends and removes hot keys", () => {
+    const added = applyTo(locked(), command({ type: "add_hot_key", hotKeyToAdd: "aaaaa-aa" }));
+    expect(added?.hotKeys).toEqual(["aaaaa-aa"]);
+
+    const removed = applyTo(
+      locked({ hotKeys: ["aaaaa-aa", "bbbbb-bb"] }),
+      command({ type: "remove_hot_key", hotKeyToRemove: "aaaaa-aa" }),
+    );
+    expect(removed?.hotKeys).toEqual(["bbbbb-bb"]);
+  });
+
+  it("replaces only the followed topic's list", () => {
+    const neuron = locked({
+      followees: [
+        { topic: KNOWN_TOPICS.Governance, followeeIds: [1n] },
+        { topic: KNOWN_TOPICS.ExchangeRate, followeeIds: [2n] },
+      ],
+    });
+
+    const patched = applyTo(
+      neuron,
+      command({ type: "follow", followTopic: "Governance", followeesIds: ["3", "4"] }),
+    );
+
+    expect(patched?.followees).toEqual([
+      { topic: KNOWN_TOPICS.ExchangeRate, followeeIds: [2n] },
+      { topic: KNOWN_TOPICS.Governance, followeeIds: [3n, 4n] },
+    ]);
+  });
+
+  // An empty list is how the canister clears a topic, so leaving an entry behind would show the
+  // neuron as still following nobody in particular rather than as not following.
+  it("drops the topic entirely when the list is submitted empty", () => {
+    const neuron = locked({ followees: [{ topic: KNOWN_TOPICS.Governance, followeeIds: [1n] }] });
+
+    const patched = applyTo(
+      neuron,
+      command({ type: "follow", followTopic: "Governance", followeesIds: [] }),
+    );
+
+    expect(patched?.followees).toEqual([]);
+  });
+
+  it("restores the decayed voting power when following is confirmed", () => {
+    const decayed = locked({
+      votingPowerRefreshedTimestampSeconds: 1n,
+      decidingVotingPower: 0n,
+      potentialVotingPower: 500n,
+    });
+
+    const patched = applyTo(decayed, command({ type: "refresh_voting_power" }));
+
+    expect(patched?.votingPowerRefreshedTimestampSeconds).toBe(BigInt(NOW));
+    expect(patched?.decidingVotingPower).toBe(500n);
+  });
+
+  it("carries the auto-stake setting over", () => {
+    const patched = applyTo(
+      locked(),
+      command({ type: "auto_stake_maturity", autoStakeMaturity: true }),
+    );
+
+    expect(patched?.autoStakeMaturity).toBe(true);
+  });
+
+  // These four produce figures the canister computes, or a neuron whose id only it knows, so there
+  // is nothing honest to show until an explicit refresh.
+  it.each(["split_neuron", "spawn_neuron", "disburse", "stake_maturity"])(
+    "leaves the snapshot alone after %s",
+    type => {
+      expect(applyNeuronCommand([locked()], command({ type }), NOW)).toBeUndefined();
+    },
+  );
+
+  it("leaves the other neurons in the snapshot untouched", () => {
+    const other = locked({ id: 9n });
+
+    const patched = applyNeuronCommand(
+      [other, locked()],
+      command({ type: "start_dissolving" }),
+      NOW,
+    );
+
+    expect(patched?.[0]).toBe(other);
+    expect(patched?.[1]?.state).toBe(NeuronState.Dissolving);
+  });
+
+  it.each([
+    ["the neuron is absent from the snapshot", "404"],
+    ["no neuron is targeted", undefined],
+  ])("declines when %s", (_case, neuronId) => {
+    expect(
+      applyNeuronCommand(
+        [locked()],
+        { neuronId, type: "start_dissolving" } as unknown as Transaction,
+        NOW,
+      ),
+    ).toBeUndefined();
   });
 });
