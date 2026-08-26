@@ -322,6 +322,10 @@ apps/ledger-live-mobile/src/mvvm/features/Borrow/                               
 apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Perps/                                       @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Perps/                                        @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/PerpsEntryPoint/        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioPerpsEntryPoint/ @ledgerhq/ptx
 
 # wallet-cli
 apps/wallet-cli/                                                              @ledgerhq/agentic-core
