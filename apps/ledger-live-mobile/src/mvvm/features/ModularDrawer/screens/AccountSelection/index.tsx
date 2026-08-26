@@ -16,10 +16,17 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
+import type { TFunction } from "i18next";
 import {
   getPerpsUiUseCase,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+
+type DescribeHeaderParams = {
+  isPerpsReceive: boolean;
+  hasAccounts: boolean;
+  network: string;
+};
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
@@ -31,6 +38,16 @@ export type AccountSelectionStepProps = {
 const HEADER_HEIGHT = 64;
 const ROW_HEIGHT = 80;
 const MARGIN_BOTTOM = HEADER_HEIGHT + ROW_HEIGHT;
+
+function describeHeader(
+  t: TFunction,
+  { isPerpsReceive, hasAccounts, network }: DescribeHeaderParams,
+): string | undefined {
+  if (isPerpsReceive && hasAccounts) return t("modularDrawer.selectAccountPerpsDescription");
+  if (isPerpsReceive) return t("modularDrawer.selectAccountPerpsEmptyDescription");
+  if (!hasAccounts) return t("modularDrawer.emptyAccounts", { network });
+  return undefined;
+}
 
 const AccountSelectionContent = ({
   asset,
@@ -78,22 +95,11 @@ const AccountSelectionContent = ({
     ? t("modularDrawer.selectAccountPerpsTitle")
     : t("modularDrawer.selectAccount");
 
-  const hasAccounts = detailedAccounts.length > 0;
-
-  const emptyAccountsDescription = hasAccounts
-    ? undefined
-    : t("modularDrawer.emptyAccounts", { network: asset.name });
-
-  const perpsDescription = isPerpsReceive
-    ? t(
-        hasAccounts
-          ? "modularDrawer.selectAccountPerpsDescription"
-          : "modularDrawer.selectAccountPerpsEmptyDescription",
-      )
-    : undefined;
-
-  // Perps spells out its own empty state, so it wins over the generic "no account" copy.
-  const headerDescription = perpsDescription ?? emptyAccountsDescription;
+  const headerDescription = describeHeader(t, {
+    isPerpsReceive,
+    hasAccounts: detailedAccounts.length > 0,
+    network: asset.name,
+  });
 
   return (
     <>
