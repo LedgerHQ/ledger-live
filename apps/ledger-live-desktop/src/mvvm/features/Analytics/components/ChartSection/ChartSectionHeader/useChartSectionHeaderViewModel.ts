@@ -21,6 +21,7 @@ import type { ChartSectionHeaderViewModel } from "./types";
 
 export function useChartSectionHeaderViewModel({
   balanceInfo,
+  countervalueTrendComplete,
   scrubSelection,
   chartPrices,
   isLoading,
@@ -79,6 +80,8 @@ export function useChartSectionHeaderViewModel({
     totalBalanceLabel: t("assetDetails.totalBalance"),
     balance,
     balanceAvailable: balanceInfo.isAvailable,
+    countervalueComplete: balanceInfo.countervalueComplete,
+    countervalueTrendComplete,
     isLoading: isLoading && !isScrubbing,
     balanceFormatter,
     discreet,

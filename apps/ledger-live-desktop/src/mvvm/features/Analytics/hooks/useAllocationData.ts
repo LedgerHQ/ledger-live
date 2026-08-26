@@ -52,5 +52,11 @@ export function useAllocationData(): AllocationViewProps {
     [navigate],
   );
 
-  return { items, hasMore, showMore, onItemClick };
+  return {
+    items,
+    countervalueComplete: distribution.countervalueComplete,
+    hasMore,
+    showMore,
+    onItemClick,
+  };
 }

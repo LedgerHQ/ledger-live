@@ -4,6 +4,7 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 export interface BalanceViewProps {
   readonly balance: number;
   readonly balanceAvailable: boolean;
+  readonly countervalueComplete: boolean;
   readonly formatter: (value: number) => FormattedValue;
   readonly discreet: boolean;
   readonly valueChange: ValueChange;

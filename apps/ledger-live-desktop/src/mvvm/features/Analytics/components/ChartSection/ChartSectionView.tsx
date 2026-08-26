@@ -22,7 +22,7 @@ export function ChartSectionView({ viewModel }: ChartSectionViewProps) {
   return (
     <div className="flex flex-col gap-24" data-testid="analytics-chart-section">
       <ChartSectionHeader {...header} />
-      <ChartSectionChart {...chart} />
+      {chart ? <ChartSectionChart {...chart} /> : null}
     </div>
   );
 }

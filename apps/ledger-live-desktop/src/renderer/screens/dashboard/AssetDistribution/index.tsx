@@ -73,7 +73,12 @@ export default function AssetDistribution() {
         <Header />
         <div ref={cardRef}>
           {subList.map(item => (
-            <Row key={item.currency.id} item={item} isVisible={isVisible} />
+            <Row
+              key={item.currency.id}
+              item={item}
+              isVisible={isVisible}
+              distributionAvailable={distribution.countervalueComplete}
+            />
           ))}
         </div>
         {!almostAll && (

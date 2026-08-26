@@ -21,6 +21,7 @@ import { DistributionItem } from "@ledgerhq/types-live";
 type Props = {
   item: DistributionItem;
   isVisible: boolean;
+  distributionAvailable?: boolean;
 };
 
 const Wrapper = styled.div`
@@ -118,7 +119,11 @@ const Value = styled.div`
 
   ${valueResponsiveStyles}
 `;
-const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => {
+const Row = ({
+  item: { currency, amount, distribution },
+  isVisible,
+  distributionAvailable = true,
+}: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
@@ -148,12 +153,14 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       </PriceSection>
       <Distribution>
         <Text ff="Inter" color="neutral.c100" fontSize={3}>
-          {`${percentageWording}%`}
+          {distributionAvailable ? `${percentageWording}%` : "-"}
         </Text>
-        <Bar
-          progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
-          progressColor={color}
-        />
+        {distributionAvailable ? (
+          <Bar
+            progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
+            progressColor={color}
+          />
+        ) : null}
       </Distribution>
       <Amount>
         <Ellipsis>

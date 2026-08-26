@@ -29,11 +29,11 @@ describe("useChartSectionViewModel", () => {
   it("builds chart series from portfolio balance history and maps the selected range", () => {
     const { result } = renderChartSectionViewModel();
 
-    expect(result.current.chart.series[0].data).toEqual([1000, 1200]);
-    expect(result.current.chart.selectedRange).toBe("1w");
-    expect(result.current.header.balanceInfo).toBe(mockPortfolioBalanceInfo);
+    expect(result.current.chart?.series[0].data).toEqual([1000, 1200]);
+    expect(result.current.chart?.selectedRange).toBe("1w");
+    expect(result.current.header.balanceInfo).toEqual(mockPortfolioBalanceInfo);
     expect(result.current.header.scrubSelection).toBeUndefined();
-    expect(result.current.chart.showScrubberTooltip).toBe(false);
+    expect(result.current.chart?.showScrubberTooltip).toBe(false);
   });
 
   it("uses balanceInfo availability for the chart loading state", () => {
@@ -47,18 +47,20 @@ describe("useChartSectionViewModel", () => {
       { initialState: chartSectionInitialState },
     );
 
-    expect(result.current.chart.isLoading).toBe(true);
+    expect(result.current.chart?.isLoading).toBe(true);
   });
 
   it("dispatches the portfolio range and tracks when the chart range changes", () => {
     const { result, store } = renderChartSectionViewModel();
 
     act(() => {
-      result.current.chart.onRangeChange("1m");
+      result.current.chart?.onRangeChange("1m");
     });
 
     expect(store.getState().settings.selectedTimeRange).toBe("month");
-    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", { timeframe: "month" });
+    expect(mockTrack).toHaveBeenCalledWith("timeframe_clicked", {
+      timeframe: "month",
+    });
   });
 
   it("masks the chart tooltip value when discreet mode is enabled", () => {
@@ -71,19 +73,22 @@ describe("useChartSectionViewModel", () => {
         }),
       {
         initialState: {
-          settings: { ...chartSectionInitialState.settings, discreetMode: true },
+          settings: {
+            ...chartSectionInitialState.settings,
+            discreetMode: true,
+          },
         },
       },
     );
 
-    expect(result.current.chart.formatValue?.(1000)).toBe("$***");
+    expect(result.current.chart?.formatValue?.(1000)).toBe("$***");
   });
 
   it("updates scrub selection when scrubbing the chart", () => {
     const { result } = renderChartSectionViewModel();
 
     act(() => {
-      result.current.chart.onScrubberPositionChange?.(0);
+      result.current.chart?.onScrubberPositionChange?.(0);
     });
     expect(result.current.header.scrubSelection).toEqual({
       balance: 1000,
@@ -91,7 +96,7 @@ describe("useChartSectionViewModel", () => {
     });
 
     act(() => {
-      result.current.chart.onScrubberPositionChange?.(undefined);
+      result.current.chart?.onScrubberPositionChange?.(undefined);
     });
     expect(result.current.header.scrubSelection).toBeUndefined();
   });
@@ -102,9 +107,71 @@ describe("useChartSectionViewModel", () => {
     const chartBeforeScrub = result.current.chart;
 
     act(() => {
-      result.current.chart.onScrubberPositionChange?.(0);
+      result.current.chart?.onScrubberPositionChange?.(0);
     });
 
     expect(result.current.chart).toBe(chartBeforeScrub);
+  });
+
+  it("clears a scrub selection across an incomplete then recovered trend", () => {
+    const { result, rerender } = renderHook(
+      ({ portfolio }) =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio,
+          isLoading: false,
+        }),
+      {
+        initialProps: { portfolio: portfolioWithHistory },
+        initialState: chartSectionInitialState,
+      },
+    );
+
+    act(() => result.current.chart?.onScrubberPositionChange?.(0));
+    expect(result.current.header.scrubSelection).toBeDefined();
+
+    rerender({
+      portfolio: {
+        ...portfolioWithHistory,
+        countervalueChange: { value: 0, percentage: null },
+      },
+    });
+    expect(result.current.header.scrubSelection).toBeUndefined();
+
+    rerender({ portfolio: portfolioWithHistory });
+    expect(result.current.header.scrubSelection).toBeUndefined();
+  });
+
+  it("does not expose a chart after a settled incomplete countervalue calculation", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio: { ...portfolioWithHistory, countervalueComplete: false },
+          isLoading: false,
+        }),
+      { initialState: chartSectionInitialState },
+    );
+
+    expect(result.current.chart).toBeUndefined();
+    expect(result.current.header.balanceInfo.countervalueComplete).toBe(false);
+  });
+
+  it("keeps the current balance complete but hides a chart with incomplete history", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          portfolio: {
+            ...portfolioWithHistory,
+            countervalueChange: { percentage: null, value: 0 },
+          },
+          isLoading: false,
+        }),
+      { initialState: chartSectionInitialState },
+    );
+
+    expect(result.current.chart).toBeUndefined();
+    expect(result.current.header.balanceInfo.countervalueComplete).toBe(true);
   });
 });

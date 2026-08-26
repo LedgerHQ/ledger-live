@@ -10,6 +10,7 @@ export type AllocationTableItem = {
 
 export type AllocationViewProps = {
   readonly items: AllocationTableItem[];
+  readonly countervalueComplete: boolean;
   readonly hasMore: boolean;
   readonly showMore: () => void;
   readonly onItemClick: (item: AllocationTableItem) => void;

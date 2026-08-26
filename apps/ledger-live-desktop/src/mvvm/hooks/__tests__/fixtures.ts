@@ -30,12 +30,21 @@ export const mockCounterValue = {
   type: "FiatCurrency" as const,
   ticker: "USD",
   name: "US Dollar",
-  units: [{ name: "US Dollar", code: "$", magnitude: 2, showAllDigits: true, prefixCode: true }],
+  units: [
+    {
+      name: "US Dollar",
+      code: "$",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 };
 
 export const defaultPortfolio: Portfolio = {
   balanceHistory: [],
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -49,6 +58,7 @@ export const defaultPortfolio: Portfolio = {
 export const mockPortfolioBalanceInfo = {
   totalBalance: 9000,
   isAvailable: true,
+  countervalueComplete: true,
   valueChange: { percentage: 12.34, value: 567 },
 };
 

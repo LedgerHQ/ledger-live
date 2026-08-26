@@ -3,10 +3,14 @@ import { PnLSection as SharedPnLSection } from "LLD/features/PnL/components/PnLS
 import { PnlSubHeader } from "../PnlSubHeader";
 import { usePortfolioPnlViewModel } from "./usePortfolioPnlViewModel";
 
-export function PnLSection() {
+export function PnLSection({
+  countervalueComplete = true,
+}: {
+  readonly countervalueComplete?: boolean;
+}) {
   const viewModel = usePortfolioPnlViewModel();
 
-  if (!viewModel.shouldDisplayPnl) return null;
+  if (!countervalueComplete || !viewModel.shouldDisplayPnl) return null;
 
   return (
     <div className="flex flex-col gap-12">

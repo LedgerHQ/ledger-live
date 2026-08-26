@@ -15,6 +15,7 @@ export function makeAllocationViewProps(
 ): AllocationViewProps {
   return {
     items: allocationItems,
+    countervalueComplete: true,
     hasMore: false,
     showMore: jest.fn(),
     onItemClick: jest.fn(),

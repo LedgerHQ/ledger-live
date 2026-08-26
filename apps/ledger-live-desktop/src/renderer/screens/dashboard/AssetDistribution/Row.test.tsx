@@ -61,6 +61,16 @@ describe("AssetDistribution Row", () => {
     expect(screen.getByText("45.67%")).toBeVisible();
   });
 
+  it("should hide partial allocation when the distribution is incomplete", () => {
+    render(
+      <Row item={makeItem({ distribution: 0.4567 })} isVisible distributionAvailable={false} />,
+    );
+
+    expect(screen.getByText("-")).toBeVisible();
+    expect(screen.queryByText("45.67%")).not.toBeInTheDocument();
+    expect(screen.getByTestId("asset-countervalue")).toBeVisible();
+  });
+
   it("should render the currency name", () => {
     render(<Row item={makeItem()} isVisible={false} />);
 

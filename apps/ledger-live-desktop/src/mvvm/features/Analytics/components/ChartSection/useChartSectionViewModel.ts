@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import type { Portfolio } from "@ledgerhq/types-live";
@@ -53,6 +53,18 @@ export function useChartSectionViewModel({
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
   const [scrubSelection, setScrubSelection] = useState<ScrubSelection | undefined>(undefined);
+  const countervalueComplete = balanceInfo.countervalueComplete && portfolio.countervalueComplete;
+  const countervalueTrendComplete =
+    countervalueComplete && portfolio.countervalueChange.percentage !== null;
+  const effectiveScrubSelection = countervalueTrendComplete ? scrubSelection : undefined;
+
+  useEffect(() => {
+    if (!countervalueTrendComplete) setScrubSelection(undefined);
+  }, [countervalueTrendComplete]);
+  const displayBalanceInfo = useMemo(
+    () => ({ ...balanceInfo, countervalueComplete }),
+    [balanceInfo, countervalueComplete],
+  );
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -63,15 +75,18 @@ export function useChartSectionViewModel({
   }, [portfolio.balanceHistory]);
 
   const series = useMemo<LineChartSeries[]>(
-    () => [
-      {
-        id: "analytics-portfolio-balance",
-        data: prices,
-        label: t("dashboard.header"),
-        stroke: "",
-      },
-    ],
-    [prices, t],
+    () =>
+      countervalueTrendComplete
+        ? [
+            {
+              id: "analytics-portfolio-balance",
+              data: prices,
+              label: t("dashboard.header"),
+              stroke: "",
+            },
+          ]
+        : [],
+    [countervalueTrendComplete, prices, t],
   );
 
   const rangePercentageValue =
@@ -121,8 +136,10 @@ export function useChartSectionViewModel({
     [dispatch, selectedTimeRange],
   );
 
-  const chart = useMemo(
-    (): LineChartProps => ({
+  const chart = useMemo((): LineChartProps | undefined => {
+    if (balanceInfo.isAvailable && !countervalueTrendComplete) return undefined;
+
+    return {
       series,
       selectedRange,
       onRangeChange,
@@ -138,25 +155,26 @@ export function useChartSectionViewModel({
       yAxis,
       points,
       ranges: ANALYTICS_CHART_RANGES,
-    }),
-    [
-      series,
-      selectedRange,
-      onRangeChange,
-      rangePercentageValue,
-      balanceInfo.isAvailable,
-      formatValue,
-      onScrubberPositionChange,
-      xAxis,
-      yAxis,
-      points,
-    ],
-  );
+    };
+  }, [
+    series,
+    selectedRange,
+    onRangeChange,
+    rangePercentageValue,
+    balanceInfo.isAvailable,
+    countervalueTrendComplete,
+    formatValue,
+    onScrubberPositionChange,
+    xAxis,
+    yAxis,
+    points,
+  ]);
 
   return {
     header: {
-      balanceInfo,
-      scrubSelection,
+      balanceInfo: displayBalanceInfo,
+      countervalueTrendComplete,
+      scrubSelection: effectiveScrubSelection,
       chartPrices: prices,
       isLoading,
     },

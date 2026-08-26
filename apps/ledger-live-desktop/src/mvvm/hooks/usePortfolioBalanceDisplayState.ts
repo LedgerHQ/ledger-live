@@ -12,6 +12,7 @@ export interface UsePortfolioBalanceDisplayStateOptions {
 export interface PortfolioBalanceInfo {
   readonly totalBalance: number;
   readonly isAvailable: boolean;
+  readonly countervalueComplete: boolean;
   readonly valueChange: ValueChange;
 }
 
@@ -20,6 +21,7 @@ export interface PortfolioBalanceDisplayState {
   readonly counterValue: Currency;
   readonly displayedBalance: number;
   readonly balanceAvailable: boolean;
+  readonly countervalueComplete: boolean;
   readonly isLoading: boolean;
   readonly isColdStart: boolean;
   readonly isCvPending: boolean;
@@ -52,13 +54,15 @@ export function usePortfolioBalanceDisplayState(
   });
 
   const valueChange = portfolio.countervalueChange;
+  const countervalueComplete = portfolio.countervalueComplete;
   const balanceInfo = useMemo(
     () => ({
       totalBalance: displayedBalance,
       isAvailable: balanceAvailable,
+      countervalueComplete,
       valueChange,
     }),
-    [displayedBalance, balanceAvailable, valueChange],
+    [displayedBalance, balanceAvailable, countervalueComplete, valueChange],
   );
 
   return useMemo(
@@ -67,6 +71,7 @@ export function usePortfolioBalanceDisplayState(
       counterValue,
       displayedBalance,
       balanceAvailable,
+      countervalueComplete,
       isLoading,
       isColdStart,
       isCvPending,
@@ -79,6 +84,7 @@ export function usePortfolioBalanceDisplayState(
       counterValue,
       displayedBalance,
       balanceAvailable,
+      countervalueComplete,
       isLoading,
       isColdStart,
       isCvPending,

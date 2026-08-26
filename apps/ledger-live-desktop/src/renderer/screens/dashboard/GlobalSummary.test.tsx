@@ -26,11 +26,12 @@ jest.mock("~/renderer/components/Chart", () => ({
 
 jest.mock("~/renderer/components/BalanceInfos", () => ({
   __esModule: true,
-  default: jest.fn(({ totalBalance, isAvailable, valueChange }) => (
+  default: jest.fn(({ totalBalance, isAvailable, countervalueComplete, valueChange }) => (
     <div
       data-testid="balance-infos"
       data-total-balance={totalBalance}
       data-is-available={String(isAvailable)}
+      data-countervalue-complete={String(countervalueComplete)}
       data-value-change={valueChange.value}
       data-percentage={valueChange.percentage}
     />
@@ -93,5 +94,29 @@ describe("PortfolioBalanceSummary", () => {
     expect(screen.getByTestId("balance-infos")).toHaveAttribute("data-total-balance", "200");
     expect(screen.getByTestId("balance-infos")).toHaveAttribute("data-value-change", "2");
     expect(screen.getByTestId("balance-infos")).toHaveAttribute("data-percentage", "1");
+  });
+
+  it("should hide the chart and expose a settled incomplete valuation", () => {
+    mockUsePortfolio.mockReturnValue({
+      ...defaultPortfolio,
+      balanceAvailable: true,
+      countervalueComplete: false,
+      balanceHistory: [{ date: new Date("2026-05-21"), value: 0 }],
+    });
+
+    render(
+      <PortfolioBalanceSummary
+        counterValue={mockCounterValue}
+        chartColor="#000"
+        range="month"
+        isWallet40
+      />,
+    );
+
+    expect(screen.getByTestId("balance-infos")).toHaveAttribute(
+      "data-countervalue-complete",
+      "false",
+    );
+    expect(screen.queryByTestId("chart")).not.toBeInTheDocument();
   });
 });

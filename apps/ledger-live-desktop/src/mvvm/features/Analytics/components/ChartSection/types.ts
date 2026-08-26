@@ -5,6 +5,7 @@ export type ScrubSelection = Readonly<{ balance: number; timestamp: number }>;
 
 export type ChartSectionHeaderInput = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
+  countervalueTrendComplete: boolean;
   scrubSelection?: ScrubSelection;
   chartPrices: readonly number[];
   isLoading: boolean;
@@ -12,5 +13,5 @@ export type ChartSectionHeaderInput = Readonly<{
 
 export type ChartSectionViewModelResult = Readonly<{
   header: ChartSectionHeaderInput;
-  chart: LineChartProps;
+  chart?: LineChartProps;
 }>;

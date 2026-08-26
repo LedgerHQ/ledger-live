@@ -52,7 +52,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
         )}
       </div>
 
-      <PnLSection />
+      <PnLSection countervalueComplete={balanceInfo.countervalueComplete} />
 
       {shouldDisplayAssetSection && <AllocationSection />}
     </div>

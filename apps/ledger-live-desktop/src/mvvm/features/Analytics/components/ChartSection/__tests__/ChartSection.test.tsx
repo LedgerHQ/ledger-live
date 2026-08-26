@@ -47,4 +47,36 @@ describe("ChartSection", () => {
     expect(screen.getByTestId("analytics-balance-skeleton")).toBeVisible();
     expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
   });
+
+  it("hides the chart and shows unavailable values when countervalues are incomplete", () => {
+    render(
+      <ChartSection
+        balanceInfo={mockPortfolioBalanceInfo}
+        portfolio={{ ...portfolioWithHistory, countervalueComplete: false }}
+        isLoading={false}
+      />,
+      { initialState: chartSectionInitialState },
+    );
+
+    expect(screen.getByTestId("analytics-balance-unavailable")).toBeVisible();
+    expect(screen.queryByTestId("line-chart-range-1w")).not.toBeInTheDocument();
+  });
+
+  it("keeps the balance visible but hides an incomplete historical trend", () => {
+    render(
+      <ChartSection
+        balanceInfo={mockPortfolioBalanceInfo}
+        portfolio={{
+          ...portfolioWithHistory,
+          countervalueChange: { percentage: null, value: 0 },
+        }}
+        isLoading={false}
+      />,
+      { initialState: chartSectionInitialState },
+    );
+
+    expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
+    expect(screen.getByTestId("analytics-variation-unavailable")).toHaveTextContent("-");
+    expect(screen.queryByTestId("line-chart-range-1w")).not.toBeInTheDocument();
+  });
 });

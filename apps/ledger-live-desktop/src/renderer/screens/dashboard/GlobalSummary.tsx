@@ -57,12 +57,14 @@ export default function PortfolioBalanceSummary({
       balanceInfo ?? {
         totalBalance: portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0,
         isAvailable: portfolio.balanceAvailable,
+        countervalueComplete: portfolio.countervalueComplete,
         valueChange: portfolio.countervalueChange,
       },
     [
       balanceInfo,
       portfolio.balanceHistory,
       portfolio.balanceAvailable,
+      portfolio.countervalueComplete,
       portfolio.countervalueChange,
     ],
   );
@@ -74,6 +76,7 @@ export default function PortfolioBalanceSummary({
           counterValueId={counterValue.type !== "FiatCurrency" ? counterValue.id : undefined}
           unit={counterValue.units[0]}
           isAvailable={displayBalanceInfo.isAvailable}
+          countervalueComplete={displayBalanceInfo.countervalueComplete}
           valueChange={displayBalanceInfo.valueChange}
           totalBalance={displayBalanceInfo.totalBalance}
         />
@@ -89,7 +92,11 @@ export default function PortfolioBalanceSummary({
           overflow: "visible",
         }}
       >
-        {portfolio.balanceAvailable ? (
+        {displayBalanceInfo.isAvailable &&
+        displayBalanceInfo.countervalueComplete &&
+        portfolio.balanceAvailable &&
+        portfolio.countervalueComplete &&
+        portfolio.countervalueChange.percentage !== null ? (
           <Chart
             magnitude={counterValue.units[0].magnitude}
             color={chartColor}
@@ -102,13 +109,13 @@ export default function PortfolioBalanceSummary({
             suggestedMin={suggestedMin}
             screenName={GraphTrackingScreenName.Portfolio}
           />
-        ) : (
+        ) : !displayBalanceInfo.isAvailable || !portfolio.balanceAvailable ? (
           <PlaceholderChart
             magnitude={counterValue.units[0].magnitude}
             data={portfolio.balanceHistory}
             tickXScale={range}
           />
-        )}
+        ) : null}
       </Box>
     </>
   );

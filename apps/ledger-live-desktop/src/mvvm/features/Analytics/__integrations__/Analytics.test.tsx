@@ -30,7 +30,11 @@ const originalIntersectionObserver = window.IntersectionObserver;
 beforeEach(() => {
   window.IntersectionObserver = jest.fn(cb => {
     intersectionCallback = cb;
-    return { observe: mockObserve, disconnect: mockDisconnect, unobserve: jest.fn() };
+    return {
+      observe: mockObserve,
+      disconnect: mockDisconnect,
+      unobserve: jest.fn(),
+    };
   }) as unknown as typeof IntersectionObserver;
 });
 
@@ -117,6 +121,22 @@ describe("Analytics", () => {
     expect(screen.getByText("ETH")).toBeVisible();
   });
 
+  it("should hide the allocation section when countervalues are incomplete", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+    });
+    mockedUseAllocationData.mockReturnValue({
+      ...populatedAllocation,
+      countervalueComplete: false,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.queryByText("Asset allocation")).not.toBeInTheDocument();
+    expect(screen.queryByText("Bitcoin")).not.toBeInTheDocument();
+  });
+
   it("should render column headers in allocation table", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
@@ -150,7 +170,10 @@ describe("Analytics", () => {
       ...defaultViewModel,
       shouldDisplayAssetSection: true,
     });
-    mockedUseAllocationData.mockReturnValue({ ...populatedAllocation, hasMore: true });
+    mockedUseAllocationData.mockReturnValue({
+      ...populatedAllocation,
+      hasMore: true,
+    });
 
     render(<Analytics />);
 

@@ -4,6 +4,8 @@ export type ChartSectionHeaderViewModel = Readonly<{
   totalBalanceLabel: string;
   balance: number;
   balanceAvailable: boolean;
+  countervalueComplete: boolean;
+  countervalueTrendComplete: boolean;
   isLoading: boolean;
   balanceFormatter: (value: number) => FormattedValue;
   discreet: boolean;

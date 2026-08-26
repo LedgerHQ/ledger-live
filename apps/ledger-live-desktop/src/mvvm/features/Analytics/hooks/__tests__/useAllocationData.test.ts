@@ -29,6 +29,7 @@ function makeDistribution(
 ): AssetsDistribution {
   return {
     isAvailable: true,
+    countervalueComplete: true,
     list: items.map(i => ({
       currency: i.currency,
       amount: i.amount,
@@ -47,9 +48,24 @@ describe("useAllocationData", () => {
     mockedUseNavigate.mockReturnValue(mockNavigate);
     mockUseDistribution.mockReturnValue(
       makeDistribution([
-        { currency: bitcoin, amount: 100000, distribution: 0.6, countervalue: 60000 },
-        { currency: ethereum, amount: 50000, distribution: 0.3, countervalue: 30000 },
-        { currency: solana, amount: 10000, distribution: 0.1, countervalue: 10000 },
+        {
+          currency: bitcoin,
+          amount: 100000,
+          distribution: 0.6,
+          countervalue: 60000,
+        },
+        {
+          currency: ethereum,
+          amount: 50000,
+          distribution: 0.3,
+          countervalue: 30000,
+        },
+        {
+          currency: solana,
+          amount: 10000,
+          distribution: 0.1,
+          countervalue: 10000,
+        },
       ]),
     );
   });
@@ -70,7 +86,12 @@ describe("useAllocationData", () => {
   it("should floor distribution percentage to two decimal places", () => {
     mockUseDistribution.mockReturnValue(
       makeDistribution([
-        { currency: bitcoin, amount: 100000, distribution: 0.33339, countervalue: 33339 },
+        {
+          currency: bitcoin,
+          amount: 100000,
+          distribution: 0.33339,
+          countervalue: 33339,
+        },
       ]),
     );
 
@@ -84,6 +105,7 @@ describe("useAllocationData", () => {
   it("should default to 0 when distribution is undefined", () => {
     mockUseDistribution.mockReturnValue({
       isAvailable: true,
+      countervalueComplete: true,
       list: [
         {
           currency: bitcoin,
@@ -115,6 +137,34 @@ describe("useAllocationData", () => {
     expect(result.current.items.find(i => i.currency.id === "ethereum")).toBeUndefined();
   });
 
+  it("should expose an incomplete distribution without treating it as loading", () => {
+    mockUseDistribution.mockReturnValue({
+      ...makeDistribution([
+        {
+          currency: bitcoin,
+          amount: 100000,
+          distribution: 0,
+          countervalue: 60000,
+        },
+        {
+          currency: solana,
+          amount: 10000,
+          distribution: 0,
+          countervalue: undefined,
+        },
+      ]),
+      countervalueComplete: false,
+      sum: 0,
+    });
+
+    const { result } = renderHook(() => useAllocationData(), {
+      initialState: { settings: { ...INITIAL_STATE } },
+    });
+
+    expect(result.current.countervalueComplete).toBe(false);
+    expect(result.current.items).toHaveLength(2);
+  });
+
   it("should pass hideEmptyTokenAccount setting to useDistribution", () => {
     renderHook(() => useAllocationData(), {
       initialState: {
@@ -122,14 +172,20 @@ describe("useAllocationData", () => {
       },
     });
 
-    expect(mockUseDistribution).toHaveBeenCalledWith({ hideEmptyTokenAccount: true });
+    expect(mockUseDistribution).toHaveBeenCalledWith({
+      hideEmptyTokenAccount: true,
+    });
   });
 
   it("should show at most 6 items initially and expose hasMore when there are more", () => {
     const currencies = [bitcoin, ethereum, solana, bitcoin, ethereum, solana, bitcoin, ethereum];
     mockUseDistribution.mockReturnValue(
       makeDistribution(
-        currencies.map((c, i) => ({ currency: c, amount: 1000 * (i + 1), distribution: 0.1 })),
+        currencies.map((c, i) => ({
+          currency: c,
+          amount: 1000 * (i + 1),
+          distribution: 0.1,
+        })),
       ),
     );
 
@@ -145,7 +201,11 @@ describe("useAllocationData", () => {
     const currencies = [bitcoin, ethereum, solana, bitcoin, ethereum, solana, bitcoin, ethereum];
     mockUseDistribution.mockReturnValue(
       makeDistribution(
-        currencies.map((c, i) => ({ currency: c, amount: 1000 * (i + 1), distribution: 0.1 })),
+        currencies.map((c, i) => ({
+          currency: c,
+          amount: 1000 * (i + 1),
+          distribution: 0.1,
+        })),
       ),
     );
 

@@ -9,6 +9,7 @@ const showPlaceholder = (balanceAvailable: boolean) => !balanceAvailable;
 export const BalanceView = ({
   balance,
   balanceAvailable,
+  countervalueComplete,
   formatter,
   discreet,
   valueChange,
@@ -17,6 +18,9 @@ export const BalanceView = ({
   isLoading,
   theme,
 }: BalanceViewProps) => {
+  const countervalueTrendComplete =
+    countervalueComplete && valueChange.percentage !== null;
+
   return (
     <button
       type="button"
@@ -35,6 +39,13 @@ export const BalanceView = ({
       >
         {showPlaceholder(balanceAvailable) ? (
           <Skeleton data-testid="portfolio-placeholder-balance" className="h-48 w-256 rounded-md" />
+        ) : !countervalueComplete ? (
+          <span
+            className="heading-1-semi-bold text-base"
+            data-testid="portfolio-unavailable-balance"
+          >
+            -
+          </span>
         ) : (
           <AmountDisplay
             value={balance}
@@ -45,7 +56,14 @@ export const BalanceView = ({
             data-testid="portfolio-total-balance"
           />
         )}
-        {balanceAvailable && <Trend valueChange={valueChange} />}
+        {balanceAvailable &&
+          (countervalueTrendComplete ? (
+            <Trend valueChange={valueChange} />
+          ) : (
+            <span className="body-2 text-muted" data-testid="portfolio-unavailable-trend">
+              -
+            </span>
+          ))}
       </span>
     </button>
   );

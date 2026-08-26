@@ -4,6 +4,8 @@ import { AllocationTable } from "./AllocationTable";
 import type { AllocationViewProps } from "../../types";
 
 export const AllocationView = (props: AllocationViewProps) => {
+  if (!props.countervalueComplete) return null;
+
   return (
     <div className="flex flex-col gap-12">
       <AllocationSubheader />

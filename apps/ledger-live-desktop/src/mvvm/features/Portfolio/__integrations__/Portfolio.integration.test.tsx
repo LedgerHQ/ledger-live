@@ -143,6 +143,7 @@ const createPortfolioMock = (countervalueChange: {
 }): PortfolioType => ({
   balanceHistory: [{ date: new Date(), value: 100000 }],
   balanceAvailable: true,
+  countervalueComplete: true,
   availableAccounts: [],
   unavailableCurrencies: [],
   accounts: [],
@@ -234,6 +235,12 @@ describe("PortfolioView", () => {
     });
 
     it("should render BalanceView when user has accounts but no funds", () => {
+      mockUsePortfolioThrottled.mockReturnValue({
+        ...defaultPortfolioMock,
+        countervalueComplete: true,
+        balanceHistory: [{ date: new Date(), value: 0 }],
+      });
+
       render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [EMPTY_BTC_ACCOUNT],
@@ -242,6 +249,8 @@ describe("PortfolioView", () => {
       });
 
       expect(screen.queryByTestId("portfolio-balance")).toBeVisible();
+      expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-unavailable-balance")).not.toBeInTheDocument();
     });
 
     it("should render NoDeviceView when no device has been onboarded", () => {
@@ -357,9 +366,45 @@ describe("PortfolioView", () => {
       expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
       expect(screen.queryByTestId("portfolio-trend")).toBeNull();
     });
+
+    it("should display unavailable values after an incomplete countervalue calculation", () => {
+      mockUsePortfolioThrottled.mockReturnValue({
+        ...defaultPortfolioMock,
+        countervalueComplete: false,
+        balanceHistory: [{ date: new Date(), value: 0 }],
+        countervalueChange: { value: 0, percentage: null },
+      });
+
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: AFTER_ONBOARDING_STATE,
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-unavailable-balance")).toHaveTextContent("-");
+      expect(screen.getByTestId("portfolio-unavailable-trend")).toHaveTextContent("-");
+      expect(screen.queryByTestId("portfolio-placeholder-balance")).not.toBeInTheDocument();
+    });
   });
 
   describe("Trend", () => {
+    it("keeps the current balance visible when the historical trend is unavailable", () => {
+      mockUsePortfolioThrottled.mockReturnValue(
+        createPortfolioMock({ percentage: null, value: 0 }),
+      );
+
+      render(<PortfolioView {...defaultProps} />, {
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: AFTER_ONBOARDING_STATE,
+        },
+      });
+
+      expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
+      expect(screen.getByTestId("portfolio-unavailable-trend")).toHaveTextContent("-");
+    });
+
     it("should render Trend with positive percentage and display separator with Today label", () => {
       mockUsePortfolioThrottled.mockReturnValue(
         createPortfolioMock({ percentage: 0.0542, value: 5000 }),

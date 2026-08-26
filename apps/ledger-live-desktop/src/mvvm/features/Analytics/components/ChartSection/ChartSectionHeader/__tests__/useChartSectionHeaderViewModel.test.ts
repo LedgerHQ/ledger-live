@@ -14,6 +14,7 @@ describe("useChartSectionHeaderViewModel", () => {
             ...mockPortfolioBalanceInfo,
             valueChange: { percentage: 0.1234, value: 567 },
           },
+          countervalueTrendComplete: true,
           chartPrices,
           isLoading: false,
         }),
@@ -25,6 +26,7 @@ describe("useChartSectionHeaderViewModel", () => {
     expect(result.current.rangeLabel).toBe("1 week");
     expect(result.current.scrubDateLabel).toBeUndefined();
     expect(result.current.percentageValue).toBe(12.34);
+    expect(result.current.countervalueTrendComplete).toBe(true);
   });
 
   it("formats the variation from a smallest-atom countervalue without a x100 shift", () => {
@@ -35,6 +37,7 @@ describe("useChartSectionHeaderViewModel", () => {
             ...mockPortfolioBalanceInfo,
             valueChange: { percentage: 0.1, value: 1300 },
           },
+          countervalueTrendComplete: true,
           chartPrices,
           isLoading: false,
         }),
@@ -49,6 +52,7 @@ describe("useChartSectionHeaderViewModel", () => {
       () =>
         useChartSectionHeaderViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
+          countervalueTrendComplete: true,
           scrubSelection: {
             balance: 1000,
             timestamp: portfolioWithHistory.balanceHistory[0].date.getTime(),
@@ -72,6 +76,7 @@ describe("useChartSectionHeaderViewModel", () => {
       () =>
         useChartSectionHeaderViewModel({
           balanceInfo: mockPortfolioBalanceInfo,
+          countervalueTrendComplete: true,
           chartPrices,
           isLoading: true,
         }),
@@ -79,5 +84,24 @@ describe("useChartSectionHeaderViewModel", () => {
     );
 
     expect(result.current.isLoading).toBe(true);
+  });
+
+  it("marks only the trend incomplete when its historical percentage is unavailable", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionHeaderViewModel({
+          balanceInfo: {
+            ...mockPortfolioBalanceInfo,
+            valueChange: { percentage: null, value: 0 },
+          },
+          countervalueTrendComplete: false,
+          chartPrices,
+          isLoading: false,
+        }),
+      { initialState: chartSectionHeaderInitialState },
+    );
+
+    expect(result.current.countervalueComplete).toBe(true);
+    expect(result.current.countervalueTrendComplete).toBe(false);
   });
 });

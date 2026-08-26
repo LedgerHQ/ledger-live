@@ -12,6 +12,8 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
     totalBalanceLabel,
     balance,
     balanceAvailable,
+    countervalueComplete,
+    countervalueTrendComplete,
     isLoading,
     balanceFormatter,
     discreet,
@@ -30,26 +32,40 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
       </span>
       <div className="flex items-end gap-12">
         {balanceAvailable ? (
-          <AmountDisplay
-            value={balance}
-            formatter={balanceFormatter}
-            hidden={discreet}
-            loading={isLoading}
-            animate={!isScrubbing}
-            data-testid="analytics-balance-amount"
-          />
+          countervalueComplete ? (
+            <AmountDisplay
+              value={balance}
+              formatter={balanceFormatter}
+              hidden={discreet}
+              loading={isLoading}
+              animate={!isScrubbing}
+              data-testid="analytics-balance-amount"
+            />
+          ) : (
+            <span
+              className="heading-1-semi-bold text-base"
+              data-testid="analytics-balance-unavailable"
+            >
+              -
+            </span>
+          )
         ) : (
           <Skeleton className="h-48 w-256 rounded-md" data-testid="analytics-balance-skeleton" />
         )}
-        {balanceAvailable && (
-          <ChartSectionHeaderVariation
-            percentageValue={percentageValue}
-            discreet={discreet}
-            variationText={variationText}
-            timeLabel={scrubDateLabel ?? rangeLabel}
-            isScrubbing={isScrubbing}
-          />
-        )}
+        {balanceAvailable &&
+          (countervalueTrendComplete ? (
+            <ChartSectionHeaderVariation
+              percentageValue={percentageValue}
+              discreet={discreet}
+              variationText={variationText}
+              timeLabel={scrubDateLabel ?? rangeLabel}
+              isScrubbing={isScrubbing}
+            />
+          ) : (
+            <span className="body-2 text-muted" data-testid="analytics-variation-unavailable">
+              -
+            </span>
+          ))}
       </div>
     </div>
   );

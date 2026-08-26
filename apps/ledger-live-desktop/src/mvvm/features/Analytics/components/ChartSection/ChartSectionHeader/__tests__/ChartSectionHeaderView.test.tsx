@@ -8,6 +8,8 @@ const baseViewModel: ChartSectionHeaderViewModel = {
   totalBalanceLabel: "Total balance",
   balance: mockPortfolioBalanceInfo.totalBalance,
   balanceAvailable: true,
+  countervalueComplete: true,
+  countervalueTrendComplete: true,
   isLoading: false,
   balanceFormatter: value => ({
     currencyText: "$",
@@ -40,5 +42,32 @@ describe("ChartSectionHeaderView", () => {
 
     expect(screen.getByTestId("analytics-balance-skeleton")).toBeVisible();
     expect(screen.queryByTestId("analytics-balance-trend")).not.toBeInTheDocument();
+  });
+
+  it("shows unavailable values instead of a skeleton when countervalues are incomplete", () => {
+    render(
+      <ChartSectionHeaderView
+        viewModel={{
+          ...baseViewModel,
+          countervalueComplete: false,
+          countervalueTrendComplete: false,
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("analytics-balance-unavailable")).toHaveTextContent("-");
+    expect(screen.getByTestId("analytics-variation-unavailable")).toHaveTextContent("-");
+    expect(screen.queryByTestId("analytics-balance-skeleton")).not.toBeInTheDocument();
+  });
+
+  it("keeps the current balance visible when only the trend is incomplete", () => {
+    render(
+      <ChartSectionHeaderView
+        viewModel={{ ...baseViewModel, countervalueTrendComplete: false }}
+      />,
+    );
+
+    expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
+    expect(screen.getByTestId("analytics-variation-unavailable")).toHaveTextContent("-");
   });
 });

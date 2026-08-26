@@ -24,11 +24,13 @@ type BalanceSinceProps = {
   valueChange: ValueChange;
   totalBalance: number;
   isAvailable: boolean;
+  countervalueComplete?: boolean;
 };
 type BalanceTotalProps = {
   children?: React.ReactNode;
   unit?: Unit;
   isAvailable: boolean;
+  countervalueComplete?: boolean;
   totalBalance: number;
   showCryptoEvenIfNotAvailable?: boolean;
   account?: AccountLike;
@@ -41,8 +43,23 @@ type Props = {
   unit: Unit;
   counterValueId?: string;
 } & BalanceSinceProps;
-export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
+export function BalanceDiff({
+  valueChange,
+  unit,
+  isAvailable,
+  countervalueComplete = true,
+  ...boxProps
+}: Props) {
   if (!isAvailable) return null;
+  if (!countervalueComplete) {
+    return (
+      <Box horizontal {...boxProps}>
+        <Text color="neutral.c100" data-testid="balance-diff-unavailable">
+          -
+        </Text>
+      </Box>
+    );
+  }
   return (
     <Box horizontal {...boxProps}>
       <Box
@@ -87,6 +104,7 @@ export function BalanceTotal({
   unit,
   totalBalance,
   isAvailable,
+  countervalueComplete = true,
   showCryptoEvenIfNotAvailable,
   children = null,
   withTransactionsPendingConfirmationWarning,
@@ -100,6 +118,10 @@ export function BalanceTotal({
         <Box horizontal>
           {!isAvailable && !showCryptoEvenIfNotAvailable ? (
             <PlaceholderLine width={150} />
+          ) : !countervalueComplete ? (
+            <span className="heading-1-semi-bold text-base" data-testid="total-balance-unavailable">
+              -
+            </span>
           ) : (
             <FormattedVal
               inline
@@ -126,6 +148,7 @@ export default function BalanceInfos({
   totalBalance,
   valueChange,
   isAvailable,
+  countervalueComplete = true,
   unit,
   counterValueId,
 }: Props) {
@@ -193,6 +216,7 @@ export default function BalanceInfos({
           withTransactionsPendingConfirmationWarning
           unit={unit}
           isAvailable={isAvailable}
+          countervalueComplete={countervalueComplete}
           totalBalance={totalBalance}
         />
 
@@ -223,6 +247,7 @@ export default function BalanceInfos({
         valueChange={valueChange}
         unit={unit}
         isAvailable={isAvailable}
+        countervalueComplete={countervalueComplete && valueChange.percentage !== null}
       />
     </Box>
   );
