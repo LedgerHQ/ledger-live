@@ -9,6 +9,15 @@ describe("skill retrieve — human", () => {
     expect(stdout).toContain("# wallet-cli");
   });
 
+  it("rewrites monorepo-only run instructions to the standalone form", async () => {
+    const { stdout, exitCode, stderr } = await runCli(["skill", "retrieve", "ledger-wallet-cli"]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(stdout).not.toContain("pnpm --silent wallet-cli start");
+    expect(stdout).toContain(
+      "Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`",
+    );
+  });
+
   it("defaults to the sole embedded skill when no name is given", async () => {
     const { stdout, exitCode, stderr } = await runCli(["skill", "retrieve"]);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
