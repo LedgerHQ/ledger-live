@@ -1,5 +1,27 @@
 export type AleoTransactionType = "public" | "private";
 
+export type AleoCommitteeMember = [
+  stakeMicrocredits: number,
+  isOpen: boolean,
+  commissionPercent: number,
+];
+
+export interface AleoCommitteeResponse {
+  id?: string;
+  starting_round?: number;
+  members: Record<string, AleoCommitteeMember>;
+  total_stake?: number;
+}
+
+/** Address -> display name. Not every committee member is listed. */
+export type AleoValidatorMetadataResponse = Record<string, string>;
+
+/**
+ * Total circulating supply, a bare JSON scalar. Unlike every other amount in this
+ * API it is denominated in **credits**, not microcredits.
+ */
+export type AleoTotalSupplyResponse = number | string;
+
 export type AleoTransitionValue =
   | {
       id: string;

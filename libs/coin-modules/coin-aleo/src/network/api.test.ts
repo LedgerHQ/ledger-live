@@ -1255,4 +1255,34 @@ describe("apiClient", () => {
       );
     });
   });
+
+  describe("staking endpoints", () => {
+    const endpoints = [
+      ["getCommittee", "committee/latest", { members: {}, total_stake: 0 }],
+      ["getValidatorMetadata", "committee/validator-metadata", {}],
+      ["getTotalSupply", "latest/totalSupply", 2_056_277_710],
+    ] as const;
+
+    it.each(endpoints)("%s targets mainnet when configured for it", async (method, path, body) => {
+      jest.mocked(network).mockResolvedValue({ data: body, status: 200 });
+
+      await expect(apiClient[method](mockConfig)).resolves.toEqual(body);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `https://node.example.com/v2/mainnet/${path}`,
+      });
+    });
+
+    it.each(endpoints)("%s targets testnet when configured for it", async (method, path, body) => {
+      jest.mocked(network).mockResolvedValue({ data: body, status: 200 });
+
+      await expect(apiClient[method](testnetConfig)).resolves.toEqual(body);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `https://node.example.com/v2/testnet/${path}`,
+      });
+    });
+  });
 });
