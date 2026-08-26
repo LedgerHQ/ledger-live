@@ -84,7 +84,11 @@ const StepStakeMaturity = ({
 // Gated on the range rather than on mere presence: the bridge rejects 0 too, but its error has no
 // translation, so the banner would read "ICPInvalidPercentage".
 export const StepStakeMaturityFooter = (props: StepProps) => (
-  <SubmitFooter {...props} canContinue={isInRange(props.transaction?.percentageToStake ?? "")} />
+  <SubmitFooter
+    {...props}
+    canContinue={isInRange(props.transaction?.percentageToStake ?? "")}
+    hasInput={!!props.transaction?.percentageToStake}
+  />
 );
 
 export default StepStakeMaturity;
