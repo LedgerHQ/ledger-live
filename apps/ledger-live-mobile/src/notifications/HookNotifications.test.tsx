@@ -289,6 +289,84 @@ describe("HookNotifications", () => {
     }
   });
 
+  it("should apply the latest consent when it flips back while opt-out is in flight", async () => {
+    let completeFirstTransition: () => void = () => {};
+    mockedApplyBrazeConsentTransition.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeFirstTransition = resolve;
+        }),
+    );
+    mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
+    const { rerender } = render(<HookNotifications />);
+
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    rerender(<HookNotifications />);
+
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
+      isTrackedUser: false,
+      userId: REAL_USER_ID,
+    });
+
+    mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
+    rerender(<HookNotifications />);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
+    mockedUpdateUserPreferences.mockClear();
+
+    await act(async () => {
+      completeFirstTransition();
+    });
+
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(2);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith({
+      isTrackedUser: true,
+      userId: REAL_USER_ID,
+    });
+    expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, true, {
+      brazeOptOutIdentityCleanup: true,
+    });
+  });
+
+  it("should apply the latest consent when it flips back while opt-in is in flight", async () => {
+    let completeFirstTransition: () => void = () => {};
+    mockedApplyBrazeConsentTransition.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeFirstTransition = resolve;
+        }),
+    );
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    const { rerender } = render(<HookNotifications />);
+
+    mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
+    rerender(<HookNotifications />);
+
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
+      isTrackedUser: true,
+      userId: REAL_USER_ID,
+    });
+
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    rerender(<HookNotifications />);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
+    mockedUpdateUserPreferences.mockClear();
+
+    await act(async () => {
+      completeFirstTransition();
+    });
+
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(2);
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith({
+      isTrackedUser: false,
+      userId: REAL_USER_ID,
+    });
+    expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, false, {
+      brazeOptOutIdentityCleanup: true,
+    });
+  });
+
   it("should write notification preferences directly once a transition has settled", async () => {
     const updatedNotifications = { ...defaultNotifications, topGainersLosers: false };
     mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });

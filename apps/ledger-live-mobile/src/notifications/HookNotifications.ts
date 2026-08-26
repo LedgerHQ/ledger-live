@@ -87,6 +87,10 @@ const HookNotifications = () => {
         if (didTransitionSucceed) {
           lastSyncedIdentityRef.current = currentIdentity;
           retryCountRef.current = 0;
+          if (!identitiesMatch(currentIdentity, targetIdentityRef.current)) {
+            syncBrazeIdentityRef.current();
+            return;
+          }
           setSyncedEpoch(epoch => epoch + 1);
           return;
         }
