@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { mevProtectionSelector } from "~/reducers/settings";
+import { lastConnectedDeviceSelector, mevProtectionSelector } from "~/reducers/settings";
 import { broadcastLogger } from "~/datadog";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -30,7 +30,8 @@ export function useSignatureDeviceActionViewModel() {
   const txStatus = state.transaction.status;
 
   const mevProtected = useSelector(mevProtectionSelector);
-  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(lastConnectedDevice ?? null);
   const isSigningCompletedRef = useRef(false);
 
   const action = useTransactionDeviceAction();
