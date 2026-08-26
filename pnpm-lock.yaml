@@ -4116,6 +4116,9 @@ importers:
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.2.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4591,6 +4594,9 @@ importers:
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.2.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7359,6 +7365,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -8284,6 +8293,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -8357,6 +8369,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8952,6 +8967,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -9198,6 +9216,9 @@ importers:
       '@ledgerhq/hw-app-polkadot':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-polkadot
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -9307,6 +9328,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -9656,6 +9680,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -11318,6 +11345,9 @@ importers:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11391,6 +11421,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.1
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@rspack/cli':
         specifier: 'catalog:'
         version: 2.1.10(@rspack/core@2.1.10)
@@ -11446,6 +11479,9 @@ importers:
         specifier: 4.2.0
         version: 4.2.0
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -12388,6 +12424,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/env
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12431,6 +12470,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/env
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12540,6 +12582,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../live-dmk-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../wallet-framework-test-setup
@@ -12669,6 +12714,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12712,6 +12760,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12782,6 +12833,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12831,6 +12885,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos-http
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12926,6 +12983,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13002,6 +13062,9 @@ importers:
       '@ethersproject/units':
         specifier: ^5.7.0
         version: 5.7.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13103,6 +13166,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13161,6 +13227,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13207,6 +13276,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13253,6 +13325,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13296,6 +13371,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13336,6 +13414,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13379,6 +13460,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13422,6 +13506,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../hw-transport-node-speculos
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13462,6 +13549,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13554,6 +13644,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13591,6 +13684,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13634,6 +13730,9 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13671,6 +13770,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13942,6 +14044,9 @@ importers:
         specifier: 'catalog:'
         version: 4.17.21
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14577,6 +14682,9 @@ importers:
         specifier: ^7.14.1
         version: 7.18.3
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -15250,6 +15358,9 @@ importers:
       '@bitcoinerlab/secp256k1':
         specifier: 1.2.0
         version: 1.2.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16176,6 +16287,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../wallet-framework-test-setup

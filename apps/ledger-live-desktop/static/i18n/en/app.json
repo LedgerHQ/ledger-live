@@ -9146,7 +9146,8 @@
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Private (Sapling)",
       "shieldedOrchardTx": "🛡 Private (Orchard)",
-      "shieldedIronwoodTx": "🛡 Private (Ironwood)"
+      "shieldedIronwoodTx": "🛡 Private (Ironwood)",
+      "memo": "Memo"
     }
   },
   "aleo": {

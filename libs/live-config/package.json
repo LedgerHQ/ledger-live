@@ -32,14 +32,15 @@
     "lodash": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "semver": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "semver": "catalog:"
   },
   "typesVersions": {
     "*": {
