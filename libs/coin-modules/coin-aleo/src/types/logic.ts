@@ -53,13 +53,12 @@ export type AleoAccountInfo = {
 export type AleoValidator = {
   address: string;
   name?: string;
-  stake: number;
+  stakeMicrocredits: number;
   isOpen: boolean;
-  commission: number;
+  commissionPercent: number;
   /**
-   * Estimated net yearly rate, as a fraction (0.07 = 7%) — note `commission`
-   * above is a percent. Absent when it could not be derived; `0` is a real
-   * value meaning "earns nothing" and is not the same as absent.
+   * Estimated net yearly rate as a fraction (0.07 = 7%). Absent when it could not be
+   * derived; `0` is a real value meaning "earns nothing".
    */
   estimatedYearlyRewardsRate?: number;
 };

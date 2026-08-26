@@ -35,7 +35,7 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MIN_BOND_AMOUNT,
-  MIN_STAKE_AMOUNT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
@@ -381,17 +381,21 @@ async function handleTransferTransaction({
   } else if (
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
     calculatedAmount.amount.gt(0) &&
-    // A delegator must have at least MIN_STAKE_AMOUNT bonded in total. Validate the
+    // A delegator must clear MIN_DELEGATOR_STAKE_MICROCREDITS in total. Validate the
     // projected total stake (already-bonded balance + this bond amount), so top-ups
-    // on an existing >= MIN_STAKE_AMOUNT position are allowed.
+    // on an existing position that already clears it are allowed.
     (account.aleoResources?.bondedBalance ?? new BigNumber(0))
       .plus(calculatedAmount.amount)
-      .lt(MIN_STAKE_AMOUNT)
+      .lt(MIN_DELEGATOR_STAKE_MICROCREDITS)
   ) {
     errors.amount = new AleoStakeAmountTooLow(undefined, {
-      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_STAKE_AMOUNT), {
-        showCode: true,
-      }),
+      minAmount: formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS),
+        {
+          showCode: true,
+        },
+      ),
     });
   }
 

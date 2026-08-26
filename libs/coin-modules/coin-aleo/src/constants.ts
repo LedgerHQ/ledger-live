@@ -110,16 +110,15 @@ export const SINGLE_CALL_SIGNING_TIME = 12500;
 // 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
 export const MIN_BOND_AMOUNT = 1_000_000;
 
-// Minimum total amount (in microcredits) a delegator must have bonded to a
-// validator: 10,000 ALEO. Enforced against the projected total stake
-// (already-bonded balance + this bond amount), so top-ups on an existing
-// >= 10,000 ALEO position only need to satisfy MIN_BOND_AMOUNT.
-export const MIN_STAKE_AMOUNT = 10_000 * 1_000_000;
-
 // 1 ALEO credit = 1_000_000 microcredits. The committee endpoint reports stake in
 // microcredits while `latest/totalSupply` reports credits, so the two must be put on
 // the same scale before they are divided.
 export const MICROCREDITS_PER_CREDIT = 1_000_000;
+
+// Below this bonded total the protocol pays a delegator nothing at all: 10,000 ALEO.
+// Enforced against the projected total stake (already-bonded balance + this bond
+// amount), so top-ups on an existing position only need to satisfy MIN_BOND_AMOUNT.
+export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
 
 // Annual issuance as a fraction of total supply. Follows from snarkVM's
 // `block_reward_v2 = floor(0.05 * S * I / S_Y) + CR/3 + TX_F`

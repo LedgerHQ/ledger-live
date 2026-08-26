@@ -2,8 +2,7 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { apiClient } from "../network/api";
-import { resolveConfig } from "./utils";
-import { estimateNetRate, parseTotalSupply } from "./stakingRate";
+import { estimateNetRate, isRecord, parseTotalSupply, resolveConfig } from "./utils";
 import type {
   AleoCommitteeMember,
   AleoCommitteeResponse,
@@ -11,12 +10,9 @@ import type {
 } from "../types/api";
 import type { AleoValidator } from "../types";
 
-// Validator/committee membership changes infrequently relative to how often
-// getValidators is called (every debounced BOND_PUBLIC status recompute, plus
-// every validator-picker modal mount), so a short cache avoids redundant
-// network calls without noticeably staling the data shown to the user.
-// One entry per network, with headroom for testnet alongside mainnet.
-const VALIDATORS_CACHE = minutes(5, 20);
+// Short enough that a validator that has just closed is not offered for long.
+// One entry per network: mainnet, with headroom for testnet alongside it.
+const VALIDATORS_CACHE = minutes(5, 2);
 
 // Defensive runtime guards for untrusted JSON coming from the committee API.
 // coin-aleo does not depend on a schema-validation library, so we mirror the
@@ -31,19 +27,17 @@ function isValidCommitteeMember(value: unknown): value is AleoCommitteeMember {
   );
 }
 
-export function isValidCommitteeResponse(value: unknown): value is AleoCommitteeResponse {
-  if (typeof value !== "object" || value === null) return false;
-  const { members } = value as { members?: unknown };
-  if (members === undefined) return true;
-  if (typeof members !== "object" || members === null) return false;
+function isValidCommitteeResponse(value: unknown): value is AleoCommitteeResponse {
+  if (!isRecord(value)) return false;
+  // The protocol always has a committee, so absent `members` is an error envelope
+  // rather than an empty list — accepting it would cache emptiness for a whole TTL.
+  if (!isRecord(value.members)) return false;
 
-  return Object.values(members).every(isValidCommitteeMember);
+  return Object.values(value.members).every(isValidCommitteeMember);
 }
 
-export function isValidValidatorMetadataResponse(
-  value: unknown,
-): value is AleoValidatorMetadataResponse {
-  if (typeof value !== "object" || value === null) return false;
+function isValidValidatorMetadataResponse(value: unknown): value is AleoValidatorMetadataResponse {
+  if (!isRecord(value)) return false;
 
   return Object.values(value).every(entry => typeof entry === "string");
 }
@@ -88,24 +82,24 @@ export const getValidators = makeLRUCache(
       });
     }
 
-    return Object.entries(committee.members ?? {})
-      .map(([address, [stake, isOpen, commission]]) => {
+    return Object.entries(committee.members)
+      .map(([address, [stakeMicrocredits, isOpen, commissionPercent]]) => {
         const rate =
           totalSupplyCredits === null || totalStakeMicrocredits === null
             ? null
             : estimateNetRate({
                 totalSupplyCredits,
                 totalStakeMicrocredits,
-                validatorStakeMicrocredits: new BigNumber(stake),
-                commissionPercent: new BigNumber(commission),
+                validatorStakeMicrocredits: new BigNumber(stakeMicrocredits),
+                commissionPercent: new BigNumber(commissionPercent),
               });
 
         return {
           address,
           name: safeMetadata[address],
-          stake,
+          stakeMicrocredits,
           isOpen,
-          commission,
+          commissionPercent,
           // Omit the key entirely rather than setting it to undefined: the field is
           // optional and the package runs with exactOptionalPropertyTypes.
           ...(rate !== null && { estimatedYearlyRewardsRate: rate.toNumber() }),
@@ -116,7 +110,7 @@ export const getValidators = makeLRUCache(
           return left.isOpen ? -1 : 1;
         }
 
-        return right.stake - left.stake;
+        return right.stakeMicrocredits - left.stakeMicrocredits;
       });
   },
   currencyId => currencyId,

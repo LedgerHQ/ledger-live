@@ -13,6 +13,7 @@ const CLOSED_HIGH_STAKE = "aleo1closed_high";
 // Supply equal to the staked total makes the gross rate exactly the inflation rate
 // (0.05 * S / S), so each expectation below stays readable.
 const TOTAL_SUPPLY_CREDITS = 100;
+const GROSS_RATE = 0.05;
 const committee: AleoCommitteeResponse = {
   total_stake: 100 * 1_000_000,
   members: {
@@ -22,14 +23,14 @@ const committee: AleoCommitteeResponse = {
   },
 };
 
-describe("getValidators", () => {
-  let currencyIdCounter = 0;
-  // getValidators is LRU-cached by currency id, so every test needs a fresh key or it
-  // would be served the previous test's result.
-  const freshCurrencyId = () => `aleo_test_${currencyIdCounter++}`;
+const CURRENCY_ID = "aleo";
 
+describe("getValidators", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // getValidators is LRU-cached by currency id, so without a reset every test
+    // after the first would be served the previous test's result.
+    getValidators.reset();
     coinConfig.setCoinConfig(() => getMockedConfig("mainnet"));
 
     jest.mocked(apiClient.getCommittee).mockResolvedValue(committee);
@@ -40,7 +41,7 @@ describe("getValidators", () => {
   });
 
   it("orders open validators first, then by descending stake", async () => {
-    const validators = await getValidators(freshCurrencyId());
+    const validators = await getValidators(CURRENCY_ID);
 
     expect(validators.map(v => v.address)).toEqual([
       OPEN_HIGH_STAKE,
@@ -50,26 +51,25 @@ describe("getValidators", () => {
   });
 
   it("resolves names where metadata has one and leaves the rest unnamed", async () => {
-    const validators = await getValidators(freshCurrencyId());
+    const validators = await getValidators(CURRENCY_ID);
 
     expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.name).toBe("High Stake Validator");
     expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.name).toBeUndefined();
   });
 
-  it("derives the net rate from commission", async () => {
-    const validators = await getValidators(freshCurrencyId());
+  it("keeps the whole gross rate at zero commission and half of it at 50%", async () => {
+    const validators = await getValidators(CURRENCY_ID);
 
-    // Gross is 5%; a 0% commission keeps all of it, a 50% commission keeps half.
     expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.estimatedYearlyRewardsRate).toBe(
-      0.05,
+      GROSS_RATE,
     );
     expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.estimatedYearlyRewardsRate).toBe(
-      0.025,
+      GROSS_RATE / 2,
     );
   });
 
-  it("reports a zero rate for a validator over the 25% concentration cap", async () => {
-    const validators = await getValidators(freshCurrencyId());
+  it("reports a zero rate over the 25% concentration cap, even at zero commission", async () => {
+    const validators = await getValidators(CURRENCY_ID);
 
     // 50 of 100 credits staked — earns nothing despite charging no commission.
     expect(validators.find(v => v.address === CLOSED_HIGH_STAKE)?.estimatedYearlyRewardsRate).toBe(
@@ -78,7 +78,7 @@ describe("getValidators", () => {
   });
 
   it("fetches committee, names and supply concurrently", async () => {
-    await getValidators(freshCurrencyId());
+    await getValidators(CURRENCY_ID);
 
     expect(apiClient.getCommittee).toHaveBeenCalledTimes(1);
     expect(apiClient.getValidatorMetadata).toHaveBeenCalledTimes(1);
@@ -89,7 +89,7 @@ describe("getValidators", () => {
     it("still returns a usable list when the names fetch fails", async () => {
       jest.mocked(apiClient.getValidatorMetadata).mockRejectedValue(new Error("boom"));
 
-      const validators = await getValidators(freshCurrencyId());
+      const validators = await getValidators(CURRENCY_ID);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.name === undefined)).toBe(true);
@@ -100,7 +100,7 @@ describe("getValidators", () => {
         .mocked(apiClient.getValidatorMetadata)
         .mockResolvedValue({ [OPEN_HIGH_STAKE]: 42 } as never);
 
-      const validators = await getValidators(freshCurrencyId());
+      const validators = await getValidators(CURRENCY_ID);
 
       expect(validators.every(v => v.name === undefined)).toBe(true);
     });
@@ -108,24 +108,28 @@ describe("getValidators", () => {
     it("omits the rate — rather than reporting zero — when the supply fetch fails", async () => {
       jest.mocked(apiClient.getTotalSupply).mockRejectedValue(new Error("boom"));
 
-      const validators = await getValidators(freshCurrencyId());
+      const validators = await getValidators(CURRENCY_ID);
 
       expect(validators).toHaveLength(3);
       expect(validators.every(v => v.estimatedYearlyRewardsRate === undefined)).toBe(true);
     });
 
     it("omits the rate when the committee reports no total stake", async () => {
-      jest.mocked(apiClient.getCommittee).mockResolvedValue({ members: committee.members ?? {} });
+      jest.mocked(apiClient.getCommittee).mockResolvedValue({ members: committee.members });
 
-      const validators = await getValidators(freshCurrencyId());
+      const validators = await getValidators(CURRENCY_ID);
 
       expect(validators.every(v => v.estimatedYearlyRewardsRate === undefined)).toBe(true);
     });
 
-    it("throws on a malformed committee rather than building half a list", async () => {
-      jest.mocked(apiClient.getCommittee).mockResolvedValue({ members: { bad: [1, 2] } } as never);
+    it.each([
+      ["a malformed member tuple", { members: { bad: [1, 2] } }],
+      ["no members at all", {}],
+      ["an error envelope", { error: "upstream unavailable" }],
+    ])("throws on %s rather than caching an empty list", async (_label, response) => {
+      jest.mocked(apiClient.getCommittee).mockResolvedValue(response as never);
 
-      await expect(getValidators(freshCurrencyId())).rejects.toThrow("invalid committee response");
+      await expect(getValidators(CURRENCY_ID)).rejects.toThrow("invalid committee response");
     });
   });
 });

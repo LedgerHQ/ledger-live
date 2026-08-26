@@ -1,24 +1,26 @@
 export type AleoTransactionType = "public" | "private";
 
-// Tuple shape returned by the committee endpoint for each validator:
-// [stake (in microcredits), isOpen, commission]
-export type AleoCommitteeMember = [number, boolean, number];
+export type AleoCommitteeMember = [
+  stakeMicrocredits: number,
+  isOpen: boolean,
+  commissionPercent: number,
+];
 
 export interface AleoCommitteeResponse {
   id?: string;
   starting_round?: number;
-  members?: Record<string, AleoCommitteeMember>;
+  members: Record<string, AleoCommitteeMember>;
   total_stake?: number;
 }
 
-// Maps a validator address to its human-readable name.
+/** Address -> display name. Not every committee member is listed. */
 export type AleoValidatorMetadataResponse = Record<string, string>;
 
 /**
- * Total circulating supply, served as a bare JSON scalar.
+ * Total circulating supply, a bare JSON scalar. Unlike every other amount in this
+ * API it is denominated in **credits**, not microcredits — convert before combining
+ * it with `AleoCommitteeResponse.total_stake`.
  *
- * Unlike every other amount in this API it is denominated in **credits**, not
- * microcredits — convert before combining it with `AleoCommitteeResponse.total_stake`.
  * Typed as a union because the endpoint is not guaranteed to keep serving a JSON
  * number; `parseTotalSupply` accepts either form and rejects anything else.
  */

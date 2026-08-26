@@ -6,7 +6,7 @@ export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
 export { getStakingPosition } from "./getStakingPosition";
 export { getValidators } from "./getValidators";
-export { estimateGrossRate, estimateNetRate, parseTotalSupply } from "./stakingRate";
+export { estimateGrossRate, estimateNetRate, parseTotalSupply } from "./utils";
 export { lastBlock } from "./lastBlock";
 export { register } from "./register";
 export { validateIntent } from "./validateIntent";

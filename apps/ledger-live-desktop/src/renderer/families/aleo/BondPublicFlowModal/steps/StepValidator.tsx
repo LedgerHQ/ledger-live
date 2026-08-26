@@ -1,8 +1,9 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -23,57 +24,29 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import { Transaction, AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
-import { getValidators } from "@ledgerhq/live-common/families/aleo/logic";
+import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 
-function useAleoValidators(search: string, currencyId: string) {
-  const [validators, setValidators] = useState<AleoValidator[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchFailed, setFetchFailed] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    setIsLoading(true);
-    setFetchFailed(false);
-    getValidators(currencyId)
-      .then(validators => {
-        if (!cancelled) {
-          setValidators(validators);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setValidators([]);
-          setFetchFailed(true);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [currencyId]);
+function useSearchedAleoValidators(search: string, currency: CryptoCurrency) {
+  const { validators, loading, error } = useAleoValidators(currency);
 
   return useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
+    // An error with a stale list still shows the list; only an empty one is a failure.
+    const fetchFailed = error !== null && validators.length === 0;
 
     if (!normalizedSearch) {
-      return { validators, isLoading, fetchFailed };
+      return { validators, isLoading: loading, fetchFailed };
     }
 
     return {
       fetchFailed,
-      isLoading,
+      isLoading: loading,
       validators: validators.filter(validator => {
         const name = validator.name?.toLowerCase() ?? "";
         return validator.address.includes(normalizedSearch) || name.includes(normalizedSearch);
       }),
     };
-  }, [fetchFailed, isLoading, search, validators]);
+  }, [error, loading, search, validators]);
 }
 
 export default function StepValidator({
@@ -92,7 +65,10 @@ export default function StepValidator({
   const explorerView = getDefaultExplorerView(account.currency);
 
   const recipient = transaction.recipient || "";
-  const { validators, isLoading, fetchFailed } = useAleoValidators(search, account.currency.id);
+  const { validators, isLoading, fetchFailed } = useSearchedAleoValidators(
+    search,
+    account.currency,
+  );
 
   const setValidator = useCallback(
     (address: string) =>
@@ -129,7 +105,7 @@ export default function StepValidator({
           subtitle={
             <Text ff="Inter|Medium" fontSize={2} color="neutral.c70">
               <Trans i18nKey="aleo.bond.flow.steps.validator.commission" />{" "}
-              {`${validator.commission}%`}
+              {`${validator.commissionPercent}%`}
             </Text>
           }
           unit={unit}
@@ -139,7 +115,9 @@ export default function StepValidator({
             <Box horizontal alignItems="center">
               <Box flexDirection="column" alignItems="flex-end">
                 <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
-                  {formatCurrencyUnit(unit, new BigNumber(validator.stake), { showCode: true })}
+                  {formatCurrencyUnit(unit, new BigNumber(validator.stakeMicrocredits), {
+                    showCode: true,
+                  })}
                 </Text>
                 {!validator.isOpen ? (
                   <Text ff="Inter|SemiBold" color="warning" fontSize={2}>

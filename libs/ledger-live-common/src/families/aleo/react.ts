@@ -28,7 +28,14 @@ import {
   patchAccountWithViewKey,
   sumPrivateRecords,
 } from "./utils";
-import type { AleoAccount, AleoTokenAccount, AleoUnspentRecord, SigningStrategy } from "./types";
+import type {
+  AleoAccount,
+  AleoTokenAccount,
+  AleoUnspentRecord,
+  AleoValidator,
+  SigningStrategy,
+} from "./types";
+import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
 
@@ -569,3 +576,74 @@ export const useAleoPrivateSync = ({
 
   return { isSyncing, progress, error, start, stop };
 };
+
+/**
+ * Last-known committee per currency, so a remount paints instantly instead of flashing
+ * an empty picker. Never expires: past the coin module's cache TTL this is what the user
+ * sees until the refetch lands, and while offline for as long as it keeps failing.
+ *
+ * Always spread into state, never handed out by reference: getValidators is LRU-cached on
+ * the promise, so every caller within the TTL shares one array and a picker sorting it in
+ * place would reorder it for every other screen.
+ */
+const lastSeenValidators: Record<string, AleoValidator[]> = {};
+
+export interface UseAleoValidatorsResult {
+  /** Open validators first, then by descending stake — the order a picker wants. */
+  validators: AleoValidator[];
+  /** True only while a fetch with nothing to show in the meantime is in flight. */
+  loading: boolean;
+  /** Set when the fetch failed; `validators` then holds the stale list, if any. */
+  error: Error | null;
+}
+
+/**
+ * The Aleo validator committee for `currency`'s network, fetched on demand and
+ * LRU-cached in the coin module. Shared by Desktop and Mobile so the bond flow's
+ * validator picker is not built twice.
+ *
+ * Deliberately not `CurrencyBridge.preload`/`hydrate`: that mechanism is deprecated in
+ * this repo and Polkadot, the closest staking analogue, has already migrated off it.
+ *
+ * Every `estimatedYearlyRewardsRate` is a lower bound — label it an estimate wherever
+ * it surfaces.
+ */
+export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsResult {
+  const currencyId = currency.id;
+  const [validators, setValidators] = useState<AleoValidator[]>(() => [
+    ...(lastSeenValidators[currencyId] ?? []),
+  ]);
+  const [loading, setLoading] = useState(() => lastSeenValidators[currencyId] === undefined);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    // Re-seed so switching currency on a reused component instance never shows the
+    // previous network's committee.
+    const seed = lastSeenValidators[currencyId];
+    setValidators([...(seed ?? [])]);
+    setLoading(seed === undefined);
+    setError(null);
+
+    getValidators(currencyId)
+      .then(next => {
+        if (cancelled) return;
+        lastSeenValidators[currencyId] = next;
+        setValidators([...next]);
+        setLoading(false);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        // Leave whatever is on screen: offline degrades to stale, not to empty.
+        setError(err);
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currencyId]);
+
+  return { validators, loading, error };
+}

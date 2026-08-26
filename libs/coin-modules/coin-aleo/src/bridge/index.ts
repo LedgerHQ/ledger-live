@@ -35,7 +35,6 @@ import {
 } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildSignOperation } from "./signOperation";
-import { getPreloadStrategy, preload, hydrate } from "./preload";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -45,10 +44,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
     getAddressFn: getAddress,
   });
 
+  // No preload/hydrate: that mechanism is deprecated. The validator committee is
+  // loaded lazily by useAleoValidators, on top of the getValidators LRU cache.
   return {
-    getPreloadStrategy,
-    preload,
-    hydrate,
     scanAccounts,
   };
 }

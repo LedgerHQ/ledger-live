@@ -1259,23 +1259,29 @@ describe("apiClient", () => {
   // The bond flow reads validators from whichever network the coin config names, so
   // each of these must build its URL from `networkType` rather than a hardcoded network.
   describe("staking endpoints", () => {
-    it.each([
+    const endpoints = [
       ["getCommittee", "committee/latest", { members: {}, total_stake: 0 }],
       ["getValidatorMetadata", "committee/validator-metadata", {}],
       ["getTotalSupply", "latest/totalSupply", 2_056_277_710],
-    ] as const)("%s targets the configured network", async (method, path, mockResponse) => {
-      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+    ] as const;
 
-      await expect(apiClient[method](mockConfig)).resolves.toEqual(mockResponse);
+    it.each(endpoints)("%s targets mainnet when configured for it", async (method, path, body) => {
+      jest.mocked(network).mockResolvedValue({ data: body, status: 200 });
+
+      await expect(apiClient[method](mockConfig)).resolves.toEqual(body);
+      expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
         url: `https://node.example.com/v2/mainnet/${path}`,
       });
+    });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+    it.each(endpoints)("%s targets testnet when configured for it", async (method, path, body) => {
+      jest.mocked(network).mockResolvedValue({ data: body, status: 200 });
 
-      await apiClient[method](testnetConfig);
-      expect(network).toHaveBeenLastCalledWith({
+      await expect(apiClient[method](testnetConfig)).resolves.toEqual(body);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
         method: "GET",
         url: `https://node.example.com/v2/testnet/${path}`,
       });
