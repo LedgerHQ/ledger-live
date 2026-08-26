@@ -28,6 +28,7 @@ import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/Network
 import Box from "~/renderer/components/Box";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import { buildEarnGoToURL } from "./buildEarnGoToURL";
+import { useDashboardReset } from "./useDashboardReset";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxEarnLiveApp.params?.manifest_id;
@@ -57,6 +58,7 @@ const Earn = () => {
   });
 
   useDeepLinkListener();
+  const { resetKey, onWebviewStateChange } = useDashboardReset();
 
   const stakePrograms = useVersionedStakePrograms();
   const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
@@ -129,6 +131,7 @@ const Earn = () => {
   return (
     <Box grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
       <WebPlatformPlayer
+        key={resetKey}
         config={{
           topBarConfig: {
             shouldDisplayName: false,
@@ -139,6 +142,7 @@ const Earn = () => {
         }}
         manifest={manifest}
         inputs={inputs}
+        onStateChange={onWebviewStateChange}
       />
     </Box>
   );

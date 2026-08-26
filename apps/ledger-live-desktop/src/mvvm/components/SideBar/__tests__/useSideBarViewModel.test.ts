@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
+import { EARN_GO_TO_DASHBOARD_EVENT } from "~/renderer/screens/earn/constants";
 import * as segment from "~/renderer/analytics/segment";
 import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
@@ -350,6 +351,40 @@ describe("useSideBarViewModel", () => {
           type: SCROLL_TO_TOP_EVENT,
         }),
       );
+      dispatchEventSpy.mockRestore();
+    });
+
+    it("should dispatch EARN_GO_TO_DASHBOARD_EVENT when clicking Earn while already on earn", () => {
+      const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
+      const { result } = renderHook(() => useSideBarViewModel(), {
+        initialState: defaultInitialState,
+        minimal: false,
+        initialRoute: SIDEBAR_VALUE_TO_PATH.earn,
+      });
+
+      act(() => result.current.handleActiveChange("earn"));
+
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: EARN_GO_TO_DASHBOARD_EVENT,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+      dispatchEventSpy.mockRestore();
+    });
+
+    it("should not dispatch EARN_GO_TO_DASHBOARD_EVENT when clicking Earn from another screen", () => {
+      const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
+      const { result } = renderViewModel();
+
+      act(() => result.current.handleActiveChange("earn"));
+
+      expect(dispatchEventSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: EARN_GO_TO_DASHBOARD_EVENT,
+        }),
+      );
+      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.earn);
       dispatchEventSpy.mockRestore();
     });
   });

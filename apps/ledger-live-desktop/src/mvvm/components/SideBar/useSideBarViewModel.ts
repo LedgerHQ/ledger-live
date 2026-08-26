@@ -27,6 +27,7 @@ import {
   getAccountsSidebarPath,
 } from "./utils";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
+import { EARN_GO_TO_DASHBOARD_EVENT } from "~/renderer/screens/earn/constants";
 import type { SideBarViewModel } from "./types";
 
 const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
@@ -224,6 +225,11 @@ export function useSideBarViewModel(): SideBarViewModel {
     globalThis.dispatchEvent(new CustomEvent(SCROLL_TO_TOP_EVENT));
   }, []);
 
+  /** Notifies the Earn screen to send its live app back to the dashboard (user clicked Earn while already on /earn). */
+  const handleEarnGoToDashboard = useCallback(() => {
+    globalThis.dispatchEvent(new CustomEvent(EARN_GO_TO_DASHBOARD_EVENT));
+  }, []);
+
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig.params.path);
@@ -310,6 +316,9 @@ export function useSideBarViewModel(): SideBarViewModel {
         if (value === "home" && location.pathname === SIDEBAR_VALUE_TO_PATH.home) {
           handleScrollToTop();
         }
+        if (value === "earn" && location.pathname === SIDEBAR_VALUE_TO_PATH.earn) {
+          handleEarnGoToDashboard();
+        }
         const path = value === "accounts" ? accountsSidebarPath : SIDEBAR_VALUE_TO_PATH[value];
         push(path);
         trackEntry(SIDEBAR_VALUE_TO_TRACK_ENTRY[value]);
@@ -319,6 +328,7 @@ export function useSideBarViewModel(): SideBarViewModel {
       handleClickRefer,
       handleClickRecover,
       handleScrollToTop,
+      handleEarnGoToDashboard,
       push,
       trackEntry,
       location.pathname,
