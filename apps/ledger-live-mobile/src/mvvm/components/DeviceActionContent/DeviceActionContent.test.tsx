@@ -76,4 +76,16 @@ describe("DeviceActionContent", () => {
     );
     expect(supportedDeviceActionModelIds).not.toContain(DeviceModelId.blue);
   });
+
+  // The platform package can't import DeviceModelId (legacy libs/ is forbidden in features/), so
+  // its DeviceActionModelId union is hand-written. This is the only layer that sees both: it
+  // fails if a device model is added to the enum without teaching the package about it, which
+  // would otherwise silently render no animation.
+  it("fails loudly when a supported model is missing from the platform union", () => {
+    expect(
+      supportedDeviceActionModelIds.filter(
+        modelId => platformModule.toDeviceActionModelId(modelId) === null,
+      ),
+    ).toEqual([]);
+  });
 });
