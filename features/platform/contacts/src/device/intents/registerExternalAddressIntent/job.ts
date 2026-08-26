@@ -2,11 +2,14 @@ import type { Job } from "@features/platform-device-intent";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
 import type {
-  RegisterExternalAddressDAError,
   RegisterExternalAddressDAOutput,
   RegisterExternalAddressDAState,
 } from "@ledgerhq/device-contacts-kit/api/app-binder/RegisterExternalAddressDeviceActionTypes.js";
 import { Observable } from "rxjs";
+import {
+  mapDeviceActionErrorToFailureJobState,
+  mapDmkErrorToError,
+} from "../../contactsDeviceActionFailure";
 import {
   mapBytesToGroupHandle,
   mapBytesToProof,
@@ -21,12 +24,6 @@ import type {
   RegisterExternalAddressJobState,
   RegisterExternalAddressResult,
 } from "./types";
-
-function mapDeviceActionErrorToError(error: RegisterExternalAddressDAError): Error {
-  if (error instanceof Error) return error;
-  const tag = (error as { _tag?: unknown })._tag;
-  return new Error(typeof tag === "string" ? tag : "Register external address failed");
-}
 
 function mapExistingContactGroupToBytes(
   existingContactGroup: RegisterExternalAddressIntentInput["existingContactGroup"],
@@ -83,9 +80,12 @@ export const registerExternalAddressIntentJob: Job<
       chainId = mapChainIdToBigInt(input.chainId);
       existingContactGroup = mapExistingContactGroupToBytes(input.existingContactGroup);
     } catch (error) {
-      const typedError = error instanceof Error ? error : new Error(String(error));
-      reporter.report({ type: "failure", error: typedError });
-      subscriber.next({ type: "failed", error: typedError });
+      const jobState: RegisterExternalAddressJobState = {
+        type: "invalid-input",
+        error: mapDmkErrorToError(error),
+      };
+      reporter.report({ type: "failure", error: jobState.error });
+      subscriber.next(jobState);
       subscriber.complete();
       return undefined;
     }
@@ -130,26 +130,31 @@ export const registerExternalAddressIntentJob: Job<
             return;
           }
           case DeviceActionStatus.Stopped: {
-            const error = new Error("Register external address was stopped");
-            reporter.report({ type: "failure", error });
-            subscriber.next({ type: "failed", error });
+            const jobState: RegisterExternalAddressJobState = {
+              type: "failed",
+              error: new Error("Register external address was stopped"),
+            };
+            reporter.report({ type: "failure", error: jobState.error });
+            subscriber.next(jobState);
             subscriber.complete();
             return;
           }
           case DeviceActionStatus.Error: {
-            const error = mapDeviceActionErrorToError(state.error);
-            reporter.report({ type: "failure", error });
-            subscriber.next({ type: "failed", error });
+            const jobState = mapDeviceActionErrorToFailureJobState(state.error);
+            reporter.report({ type: "failure", error: jobState.error });
+            subscriber.next(jobState);
             subscriber.complete();
             return;
           }
         }
       },
       error: (error: unknown) => {
-        const typedError =
-          error instanceof Error ? error : new Error("Register external address failed");
-        reporter.report({ type: "failure", error: typedError });
-        subscriber.error(typedError);
+        const jobState: RegisterExternalAddressJobState = {
+          type: "failed",
+          error: mapDmkErrorToError(error),
+        };
+        reporter.report({ type: "failure", error: jobState.error });
+        subscriber.error(jobState.error);
       },
     });
 

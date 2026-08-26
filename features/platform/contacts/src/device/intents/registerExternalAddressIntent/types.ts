@@ -3,6 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactDeviceIntentFailureJobState } from "../../contactsDeviceActionFailure";
 import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
@@ -36,7 +37,7 @@ export type RegisterExternalAddressJobState =
   | { readonly type: "pending" }
   | { readonly type: "awaiting-device-confirmation" }
   | { readonly type: "completed" }
-  | { readonly type: "failed"; readonly error: Error };
+  | ContactDeviceIntentFailureJobState;
 
 export type RegisterExternalAddressIntentDefinition = IntentDefinition<
   RegisterExternalAddressJobState,

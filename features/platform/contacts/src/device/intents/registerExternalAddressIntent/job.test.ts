@@ -163,7 +163,7 @@ describe("registerExternalAddressIntentJob", () => {
     expect(job.states).toContainEqual({ type: "pending" });
   });
 
-  it("GIVEN a typed device error WHEN the device action errors THEN it reports failure", () => {
+  it("GIVEN a version-too-low device error WHEN the device action errors THEN it reports app-version-too-low", () => {
     // GIVEN
     const job = startJob();
     const error = { _tag: "ContactsVersionRequirementError" };
@@ -177,8 +177,114 @@ describe("registerExternalAddressIntentJob", () => {
       error: expect.objectContaining({ message: "ContactsVersionRequirementError" }),
     });
     expect(job.states).toContainEqual({
-      type: "failed",
+      type: "app-version-too-low",
       error: expect.objectContaining({ message: "ContactsVersionRequirementError" }),
+    });
+  });
+
+  it("GIVEN a validation device error WHEN the device action errors THEN it reports invalid-input", () => {
+    // GIVEN
+    const job = startJob();
+    const error = { _tag: "ContactsValidationError", message: "scope too long" };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "invalid-input",
+      error: expect.objectContaining({ message: "scope too long" }),
+    });
+  });
+
+  it("GIVEN status word 0x6a80 WHEN the device action errors THEN it reports device-rejected", () => {
+    // GIVEN
+    const job = startJob();
+    const error = {
+      _tag: "ContactsCommandError",
+      errorCode: "6a80",
+      message: "SWO_INCORRECT_DATA",
+    };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "device-rejected",
+      error: expect.objectContaining({ message: "SWO_INCORRECT_DATA" }),
+    });
+  });
+
+  it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
+    // GIVEN
+    const job = startJob();
+    const error = {
+      _tag: "ContactsCommandError",
+      errorCode: "6982",
+      message: "SWO_SECURITY_CONDITION_NOT_SATISFIED",
+    };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "existing-group-verification-failed",
+      error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+    });
+  });
+
+  it("GIVEN status word 0x6984 WHEN the device action errors THEN it reports unsupported-operation", () => {
+    // GIVEN
+    const job = startJob();
+    const error = {
+      _tag: "ContactsCommandError",
+      errorCode: "6984",
+      message: "SWO_CONDITIONS_NOT_SATISFIED",
+    };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "unsupported-operation",
+      error: expect.objectContaining({ message: "SWO_CONDITIONS_NOT_SATISFIED" }),
+    });
+  });
+
+  it("GIVEN an unrecognized status word WHEN the device action errors THEN it reports device-error", () => {
+    // GIVEN
+    const job = startJob();
+    const error = {
+      _tag: "ContactsCommandError",
+      errorCode: "6b00",
+      message: "SWO_WRONG_PARAMETER_VALUE",
+    };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "device-error",
+      error: expect.objectContaining({ message: "SWO_WRONG_PARAMETER_VALUE" }),
+    });
+  });
+
+  it("GIVEN an untagged device error WHEN the device action errors THEN it reports device-error", () => {
+    // GIVEN
+    const job = startJob();
+    const error = { _tag: "UnknownDAError" };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.states).toContainEqual({
+      type: "device-error",
+      error: expect.objectContaining({ message: "UnknownDAError" }),
     });
   });
 
@@ -192,7 +298,7 @@ describe("registerExternalAddressIntentJob", () => {
     // THEN
     expect(job.registerExternalAddress).not.toHaveBeenCalled();
     expect(job.onResult).toHaveBeenCalledWith({ type: "failure", error: expect.any(Error) });
-    expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
+    expect(job.states).toContainEqual({ type: "invalid-input", error: expect.any(Error) });
     expect(job.isCompleted()).toBe(true);
   });
 
@@ -221,6 +327,7 @@ describe("registerExternalAddressIntentJob", () => {
     // THEN
     expect(job.registerExternalAddress).not.toHaveBeenCalled();
     expect(job.onResult).toHaveBeenCalledWith({ type: "failure", error: expect.any(Error) });
+    expect(job.states).toContainEqual({ type: "invalid-input", error: expect.any(Error) });
   });
 
   it("GIVEN an invalid existing contact group WHEN starting THEN it fails immediately without calling the kit", () => {
@@ -236,6 +343,7 @@ describe("registerExternalAddressIntentJob", () => {
     // THEN
     expect(job.registerExternalAddress).not.toHaveBeenCalled();
     expect(job.onResult).toHaveBeenCalledWith({ type: "failure", error: expect.any(Error) });
+    expect(job.states).toContainEqual({ type: "invalid-input", error: expect.any(Error) });
   });
 
   it("GIVEN the device action is stopped WHEN reported THEN it reports failure", () => {
