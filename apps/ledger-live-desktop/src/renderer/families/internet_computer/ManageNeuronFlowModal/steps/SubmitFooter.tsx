@@ -8,6 +8,13 @@ import type { StepProps } from "../../neuronFlow/types";
 type Props = Pick<StepProps, "status" | "bridgePending" | "onClose" | "transitionTo"> & {
   /** Extra condition beyond the bridge's own validation, for input the bridge cannot see yet. */
   canContinue?: boolean;
+  /**
+   * Whether the user has entered anything yet. The bridge validates an empty field as invalid, so
+   * without this every input step opens with a red banner before the user has typed a character.
+   * Kept separate from `canContinue`: an entry that is present but out of range must still explain
+   * itself, and that is exactly the case where the two differ.
+   */
+  hasInput?: boolean;
 };
 
 /**
@@ -20,13 +27,14 @@ const SubmitFooter = ({
   onClose,
   transitionTo,
   canContinue = true,
+  hasInput = true,
 }: Props) => {
   const errors = Object.values(status.errors);
   const blocking = errors.length > 0;
 
   return (
     <Box grow>
-      {blocking ? <ErrorBanner error={errors[0]} /> : null}
+      {blocking && hasInput ? <ErrorBanner error={errors[0]} /> : null}
       <Box horizontal justifyContent="flex-end">
         <Button onClick={onClose}>
           <Trans i18nKey="common.cancel" />

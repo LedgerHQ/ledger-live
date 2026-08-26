@@ -121,7 +121,7 @@ export const StepSetDissolveDelayFooter = (props: StepProps) => {
       ? transaction.additionalDissolveDelay
       : transaction?.dissolveDelay;
 
-  return <SubmitFooter {...props} canContinue={isPositive(entered ?? "")} />;
+  return <SubmitFooter {...props} canContinue={isPositive(entered ?? "")} hasInput={!!entered} />;
 };
 
 export default StepSetDissolveDelay;
