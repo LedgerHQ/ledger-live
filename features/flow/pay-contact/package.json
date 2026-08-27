@@ -28,10 +28,11 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-contact"
   },
   "dependencies": {
+    "@domain/entity-contact": "workspace:*",
+    "@features/flow-contacts-add-contact": "workspace:^",
     "@features/platform-contacts": "workspace:^"
   },
   "devDependencies": {
-    "@domain/entity-contact": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@reduxjs/toolkit": "catalog:",

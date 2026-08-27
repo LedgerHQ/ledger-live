@@ -1,18 +1,27 @@
 import React from "react";
-import { screen } from "@testing-library/react";
-import { mockMeContact } from "@domain/entity-contact/schema.mock";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import { Contacts } from "../Contacts.web";
-import { renderWithContacts } from "./shared";
+import { makeAddContactProps, makeContactsStore, renderWithContacts } from "./shared";
 import type { ContactsProps } from "../../../types";
 
 const emptyState: ContactsProps["emptyState"] = {
   info: "You don’t have contact yet",
   addContactLabel: "Add contact",
-  onAddContact: jest.fn(),
 };
 
-function renderContacts(contacts: Parameters<typeof renderWithContacts>[0]) {
-  return renderWithContacts(contacts, <Contacts title="Pay contact" emptyState={emptyState} />);
+function renderContacts(
+  contacts: Parameters<typeof renderWithContacts>[0],
+  addContact = makeAddContactProps(),
+  store?: Parameters<typeof renderWithContacts>[2],
+) {
+  return renderWithContacts(
+    contacts,
+    <Contacts title="Pay contact" emptyState={emptyState} addContact={addContact} />,
+    store,
+  );
 }
 
 describe("Contacts (Web)", () => {
@@ -22,5 +31,57 @@ describe("Contacts (Web)", () => {
     expect(screen.getByTestId("pay-contacts-empty-state")).toBeVisible();
     expect(screen.getByText("You don’t have contact yet")).toBeVisible();
     expect(screen.queryByTestId("contacts-table")).not.toBeInTheDocument();
+  });
+
+  it("should open the add-contact dialog from the empty-state CTA", async () => {
+    const user = userEvent.setup();
+    renderContacts([mockMeContact()]);
+
+    expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("pay-contacts-add-contact"));
+
+    expect(screen.getByTestId("contacts-add-contact-dialog")).toBeVisible();
+  });
+
+  it("should not open the dialog when the injected gate refuses", async () => {
+    const user = userEvent.setup();
+    const onRequestAddContact = jest.fn();
+    renderContacts([mockMeContact()], makeAddContactProps({ onRequestAddContact }));
+
+    await user.click(screen.getByTestId("pay-contacts-add-contact"));
+
+    expect(onRequestAddContact).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should save a contact from the dialog and persist it to the store", async () => {
+    const user = userEvent.setup();
+    const store = makeContactsStore([mockMeContact()]);
+    const addContact = makeAddContactProps({
+      contactCreation: createContactCreationPort({
+        dispatch: store.dispatch,
+        generateId: () => "coinbase-1",
+      }),
+    });
+    renderContacts([mockMeContact()], addContact, store);
+
+    await user.click(screen.getByTestId("pay-contacts-add-contact"));
+    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Coinbase 1");
+
+    const save = screen.getByTestId("contacts-add-contact-save");
+    await waitFor(() => expect(save).toBeEnabled());
+    await user.click(save);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+    });
+    expect(store.getState().contacts.contacts.some(c => c.name === "Coinbase 1")).toBe(true);
+  });
+
+  it("should not render the empty state when a saved contact exists", () => {
+    renderContacts([mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })]);
+
+    expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
   });
 });

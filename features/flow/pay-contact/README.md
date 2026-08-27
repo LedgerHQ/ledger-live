@@ -3,21 +3,27 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change. Web only for now.
 
-Pay-tab contacts section: a title and an empty state with an **Add contact** CTA.
+Pay-tab contacts section: a title, an empty state with an **Add contact** CTA, and the shared Add
+contact dialog from `@features/flow-contacts-add-contact`.
 
-The package reads the contacts and derives the empty state itself. The host injects the copy and the
-`onAddContact` handler.
+The package reads the contacts, derives the empty state, and owns the dialog. The host injects the
+copy, the Add contact `labels`, a `ContactCreationPort`, optional analytics `callbacks` /
+`onSaveSuccess`, and `onRequestAddContact` — a gate (e.g. Ledger Sync) the CTA runs before opening.
 
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
 
-<Contacts title={title} emptyState={{ info, addContactLabel, onAddContact }} />;
+<Contacts
+  title={title}
+  emptyState={{ info, addContactLabel }}
+  addContact={{ labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
+/>;
 ```
 
-Desktop's `usePayTabContacts` is the reference adapter. Hosts must render `Contacts` under a Redux
-`Provider` with the `contactsSlice` reducer.
+Desktop's `usePayTabContacts` is the reference adapter: it builds the labels and creation port,
+reuses the Contacts analytics callbacks, and gates the CTA through the Ledger Sync mutation guard.
+The Ledger Sync activation UI stays app-owned and is mounted next to `Contacts` by the Pay tab.
 
-The add-contact dialog and the Ledger Sync gate behind the CTA land in a follow-up; until then the
-host passes a no-op `onAddContact`.
+Hosts must render `Contacts` under a Redux `Provider` with the `contactsSlice` reducer.
 
-Do not mount this package on Mobile yet. Native views land in LIVE-36500.
+Web only. The native barrel exposes types only; native views land in LIVE-36500.
