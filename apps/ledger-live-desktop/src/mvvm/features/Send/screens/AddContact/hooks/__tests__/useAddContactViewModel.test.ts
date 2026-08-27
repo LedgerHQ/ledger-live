@@ -25,4 +25,12 @@ describe("useAddContactViewModel", () => {
 
     expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.ADD_NEW_CONTACT);
   });
+
+  it("should open the add to existing contact step", () => {
+    const { result } = renderHook(() => useAddContactViewModel());
+
+    result.current.onAddToExistingContact?.();
+
+    expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT);
+  });
 });

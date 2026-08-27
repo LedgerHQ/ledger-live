@@ -68,6 +68,16 @@ type RenderForAccountOptions = Readonly<{
   contacts?: State["contacts"]["contacts"];
 }>;
 
+jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
+  useContactsAddressValidationAdapter: () => ({
+    validateAddress: async ({ address }: { address: string }) => ({
+      status: "valid",
+      resolvedAddress: address,
+      isDomain: false,
+    }),
+  }),
+}));
+
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const actual = jest.requireActual("LLM/components/DeviceIntentExecutor");
   const ReactModule = jest.requireActual("react");
@@ -197,6 +207,37 @@ describe("Send flow integration tests", () => {
     await flushTimers();
 
     expect(await screen.findByRole("button", { name: "Add contact" })).toBeEnabled();
+  });
+
+  it("should add a new contact from the recipient card and return to recipient after review", async () => {
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
+
+    await user.paste(
+      await screen.findByPlaceholderText("Enter address, ENS or contact"),
+      VALID_ETHEREUM_RECIPIENT,
+    );
+    await flushTimers();
+    await user.press(await screen.findByRole("button", { name: "Add contact" }));
+
+    const nameInput = await screen.findByTestId("contacts-add-contact-name-input");
+    await user.type(nameInput, "Benoit");
+    await user.press(await screen.findByTestId("contacts-add-contact-save"));
+    await flushTimers();
+
+    expect(await screen.findByText("Name address")).toBeVisible();
+    expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-add-address-name-continue"));
+
+    expect(await screen.findByText("Review address")).toBeVisible();
+    expect(await screen.findByTestId("contacts-add-address-review-continue")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-add-address-review-continue"));
+    await flushTimers();
+
+    expect(await screen.findByPlaceholderText("Enter address, ENS or contact")).toBeVisible();
+    expect(await screen.findByText("Benoit")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Add contact" })).toBeNull();
+    expect(screen.queryByTestId("contacts-add-address-review")).toBeNull();
+    expect(screen.queryByTestId("contacts-add-contact-name-input")).toBeNull();
   });
 
   it("should show network contacts and advance when selecting a contact with one address", async () => {
