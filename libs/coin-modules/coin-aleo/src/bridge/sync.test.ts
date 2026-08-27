@@ -6,7 +6,7 @@ import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { getPublicBalance } from "../logic/getPublicBalance";
-import { getStakingPosition, lastBlock } from "../logic";
+import { lastBlock } from "../logic";
 import { listOperations } from "./listOperations";
 import {
   getMockedCurrency,
@@ -27,7 +27,12 @@ import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  getStakingPosition,
+  patchPublicOperations,
+} from "../network/utils";
 import { listPrivateOperations } from "./listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -49,6 +54,7 @@ jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   accessProvableApi: jest.fn(),
   fetchAllOwnedRecords: jest.fn(),
+  getStakingPosition: jest.fn(),
   patchPublicOperations: jest.fn(),
 }));
 jest.mock("./listOperations");
@@ -133,6 +139,7 @@ describe("sync.ts", () => {
       bondedValidator: null,
       unbondingBalance: new BigNumber(0),
       unbondingHeight: null,
+      withdrawalAddress: null,
     });
 
     mockListOperations.mockResolvedValue({
