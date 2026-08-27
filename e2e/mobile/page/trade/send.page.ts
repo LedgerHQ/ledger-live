@@ -5,7 +5,6 @@ export default class SendPage {
   baseLink = "send";
   summaryAmountId = "send-summary-amount";
   summaryMemoTagId = "summary-memo-tag";
-  validationEnsId = "device-validation-domain";
   recipientContinueEnabledButtonId = "enabled-recipient-continue-button";
   recipientContinueDisabledButtonId = "disabled-recipient-continue-button";
   amountContinueEnabledButtonId = "enabled-amount-continue-button";
@@ -236,12 +235,6 @@ export default class SendPage {
     if (await IsIdVisible(this.highFeeConfirmButtonID)) {
       await tapById(this.highFeeConfirmButtonID);
     }
-  }
-
-  @Step("Expect ENS name in device validation screen {{{0}}}")
-  async expectValidationEnsName(ensName: string) {
-    const elem = getElementById(this.validationEnsId);
-    await detoxExpect(elem).toHaveText(ensName);
   }
 
   @Step("Choose fee strategy {{{0}}}")

@@ -8,13 +8,10 @@ export default class OnboardingStepsPage {
   setupLedger = "onboarding-setupLedger";
   accessWallet = "onboarding-accessWallet";
   currentSelectedLanguageId = "current-selected-language";
-  languageSelectButtonId = "language-select-button";
-  languageSelectDrawerTitleId = "language-select-drawer-title";
   deviceCardBaseId = "onboarding-device-selection";
   scrollListContainerId = "onboarding-view-scroll-list-container";
   welcomeProgressBarId = "welcome-progress-bar";
 
-  languageSelectElementId = (language: string) => `language-select-${language}`;
   deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
   deviceCardTitleId = (title: string) => `${this.deviceCardId(title)}-title`;
 
@@ -52,13 +49,6 @@ export default class OnboardingStepsPage {
   async expectCurrentSelectedLanguageToBe(language: string): Promise<void> {
     const text = await getTextOfElement(this.currentSelectedLanguageId);
     jestExpect(text).toContain(language);
-  }
-
-  @Step("Select language {{{0}}}")
-  async selectLanguage(language: string): Promise<void> {
-    await tapById(this.languageSelectButtonId);
-    await waitForElementById(this.languageSelectDrawerTitleId);
-    await tapById(this.languageSelectElementId(language.toLowerCase()));
   }
 
   @Step("Select starting option {{{0}}}")

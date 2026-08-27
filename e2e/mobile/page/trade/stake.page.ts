@@ -10,8 +10,6 @@ export default class StakePage {
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
 
-  madSearchBarId = "modular-drawer-search-input";
-
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;
   delegationSummaryValidator = (currencyId: string) =>
@@ -131,11 +129,5 @@ export default class StakePage {
   async celoVoteSummaryContinue() {
     await waitForElementById(this.celoVoteSummaryContinueId);
     await tapById(this.celoVoteSummaryContinueId);
-  }
-
-  @Step("Verify choose asset page is visible")
-  async verifyChooseAssetPage() {
-    await waitForElementById(this.madSearchBarId);
-    await detoxExpect(getElementById(this.madSearchBarId)).toBeVisible();
   }
 }
