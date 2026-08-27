@@ -34,6 +34,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     hasSession: jest.fn(async () => false),
     persistSession: jest.fn(async () => undefined),
     clearSession: jest.fn(async () => undefined),
+    forgetUser: jest.fn(),
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
     setSignedIn: jest.fn(),
@@ -327,6 +328,28 @@ describe("cardLoginMachine failures", () => {
     await settledAt(actor, "idle");
     expect(ports.clearSession).toHaveBeenCalledTimes(1);
     expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("forgets the cached user when a 401 ends the session", async () => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () => Promise.reject({ status: 401 })),
+    });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "idle");
+    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the cached user when the attempt is cleared without ending the session", async () => {
+    const ports = stubPorts();
+
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.forgetUser).not.toHaveBeenCalled();
   });
 
   it("does not bounce back to authenticated after a 401 on a resumed session", async () => {
