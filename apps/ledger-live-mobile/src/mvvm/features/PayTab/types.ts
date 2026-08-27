@@ -1,3 +1,4 @@
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
 
 export type PayTabNavigatorParamList = {
@@ -9,5 +10,6 @@ export type PayTabNavigatorParamList = {
   [ScreenName.PayTabRequestReceive]: {
     accountId: string;
     parentId?: string;
+    currency: CryptoOrTokenCurrency;
   };
 };

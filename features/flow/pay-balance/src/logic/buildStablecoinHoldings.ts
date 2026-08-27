@@ -26,8 +26,10 @@ export function buildStablecoinHoldings({
   isLoadingStablecoinTickers,
 }: BuildStablecoinHoldingsParams): StablecoinItem[] {
   const blacklist = new Set(blacklistedTokenIds ?? []);
-  const catalogRows = catalog.filter(row => !blacklist.has(row.currency.id));
-  // Catalog classified at least one holding. That list is the source of truth.
+  const catalogRows = catalog.filter(
+    row => !blacklist.has(row.currency.id) && (row.balance > 0 || row.value > 0),
+  );
+  // Catalog classified at least one funded holding. That list is the source of truth.
   if (catalogRows.length > 0) return catalogRows;
 
   // Catalog empty: still loading or failed. Infer from accounts.

@@ -6,7 +6,7 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import { render, screen, waitFor, within } from "@tests/test-renderer";
+import { render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
@@ -18,6 +18,7 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
@@ -25,6 +26,7 @@ import type { State } from "~/reducers/types";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
+import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
@@ -99,6 +101,7 @@ const DADA_URLS = [
 type RenderPayTabOptions = Readonly<{
   hasSeenFeatureTour?: boolean;
   holdsUsdc?: boolean;
+  holdsEmptyUsdc?: boolean;
   holdsUni?: boolean;
   cryptoOnly?: boolean;
 }>;
@@ -117,6 +120,14 @@ function withUsdcHoldings(state: State): State {
         ),
       },
     },
+  };
+}
+
+function withEmptyUsdcHoldings(state: State): State {
+  const emptyUsdc = makeEmptyTokenAccount(payTabEthAccount, usdc);
+  return {
+    ...state,
+    accounts: { active: [{ ...payTabEthAccount, subAccounts: [emptyUsdc] }] },
   };
 }
 
@@ -169,35 +180,67 @@ function holdDada() {
   return () => release();
 }
 
+function mockFullAssetCatalog() {
+  server.use(...DADA_URLS.map(url => http.get(url, () => HttpResponse.json(mockData))));
+}
+
 function renderPayTab({
   hasSeenFeatureTour = true,
   holdsUsdc = false,
+  holdsEmptyUsdc = false,
   holdsUni = false,
   cryptoOnly = false,
 }: RenderPayTabOptions = {}) {
   return render(
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
-      <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
-    </Stack.Navigator>,
+    <>
+      <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+        <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
+        <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
+      </Stack.Navigator>
+      <ModularDrawerWrapper />
+    </>,
     {
-      overrideInitialState: state => {
-        const next: State = {
-          ...state,
-          payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
-        };
-        if (holdsUsdc) return withUsdcHoldings(next);
-        if (holdsUni) return withUniHoldings(next);
-        if (cryptoOnly) return withCryptoOnly(next);
-        return next;
-      },
+      overrideInitialState: withFlagOverrides(
+        {
+          llmModularDrawer: {
+            enabled: true,
+            params: { enableModularization: true, searchDebounceTime: 0 },
+          },
+        },
+        state => {
+          const next: State = {
+            ...state,
+            payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
+          };
+          if (holdsUsdc) return withUsdcHoldings(next);
+          if (holdsEmptyUsdc) return withEmptyUsdcHoldings(next);
+          if (holdsUni) return withUniHoldings(next);
+          if (cryptoOnly) return withCryptoOnly(next);
+          return next;
+        },
+      ),
     },
   );
 }
 
+async function selectUsdcOnEthereum(user: Awaited<ReturnType<typeof renderPayTab>>["user"]) {
+  await user.press(await screen.findByTestId("action-tile-request"));
+  await user.press(await screen.findByTestId("asset-item-USDC"));
+  expect(await screen.findByText(/select network/i)).toBeVisible();
+  await user.press(await screen.findByTestId("network-item-Ethereum"));
+  expect(await screen.findByText(/select account/i)).toBeVisible();
+  await user.press(await screen.findByTestId("account-item"));
+}
+
 const RequestStack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
-function renderRequestReceive() {
+function renderRequestReceive(
+  params: PayTabNavigatorParamList[typeof ScreenName.PayTabRequestReceive] = {
+    accountId: payTabEthAccount.id,
+    parentId: payTabEthAccount.id,
+    currency: usdc,
+  },
+) {
   return render(
     <RequestStack.Navigator
       screenOptions={{ headerShown: false, animation: "none" }}
@@ -206,10 +249,7 @@ function renderRequestReceive() {
       <RequestStack.Screen
         name={ScreenName.PayTabRequestReceive}
         component={PayTabRequestReceiveScreen}
-        initialParams={{
-          accountId: payTabUsdcAccount.id,
-          parentId: payTabEthAccount.id,
-        }}
+        initialParams={params}
       />
     </RequestStack.Navigator>,
     { overrideInitialState: withUsdcHoldings },
@@ -271,6 +311,13 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("pay-card-balance-funded-state")).toBeVisible();
       expect(screen.queryByTestId("pay-card-balance-empty-state")).toBeNull();
+    });
+
+    it("should render the empty hero when the user holds USDC with a zero balance", async () => {
+      renderPayTab({ holdsEmptyUsdc: true });
+
+      expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
+      expect(screen.queryByTestId("pay-card-balance-funded-state")).toBeNull();
     });
 
     it("should render the empty hero when accounts hold only crypto", async () => {
@@ -483,6 +530,17 @@ describe("PayTab integration", () => {
       });
     });
 
+    it("should open the request screen after selecting USDC on Ethereum", async () => {
+      mockFullAssetCatalog();
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await selectUsdcOnEthereum(user);
+
+      expect(await screen.findByText("Request USD Coin")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
+    });
+
     it("should render the request receive card for the selected account", async () => {
       renderRequestReceive();
 
@@ -505,6 +563,26 @@ describe("PayTab integration", () => {
           failOnCancel: false,
         });
       });
+    });
+
+    it("should render an error when the account is missing", () => {
+      renderRequestReceive({
+        accountId: "missing-account",
+        currency: usdc,
+      });
+
+      expect(screen.getByTestId("generic-error-modal")).toBeVisible();
+      expect(screen.queryByTestId("pay-card-request-receive-qr-code")).toBeNull();
+    });
+
+    it("should show the parent address when the selected token is not yet a sub-account", async () => {
+      mockFullAssetCatalog();
+      const { user } = renderPayTab({ cryptoOnly: true });
+
+      await selectUsdcOnEthereum(user);
+
+      expect(await screen.findByText("Request USD Coin")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
     });
   });
 });

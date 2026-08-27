@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { deriveRequestReceiveData } from "../deriveRequestReceiveData";
 
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -20,7 +20,7 @@ describe("deriveRequestReceiveData", () => {
   it("should map a native account to matching asset and network primitives", () => {
     const account = genAccount("pay-request-native", { currency: ethereum });
 
-    expect(deriveRequestReceiveData(account)).toEqual({
+    expect(deriveRequestReceiveData(account, ethereum)).toEqual({
       address: account.freshAddress,
       asset: { name: "Ethereum", ticker: "ETH" },
       network: "Ethereum",
@@ -29,11 +29,10 @@ describe("deriveRequestReceiveData", () => {
     });
   });
 
-  it("should keep the token identity while sourcing the address and network from the parent", () => {
-    const parentAccount = genAccount("pay-request-parent", { currency: ethereum });
-    const account = genTokenAccount(0, parentAccount, usdc);
+  it("should keep token copy when the looked-up account is the parent", () => {
+    const parentAccount = genAccount("pay-request-parent-only", { currency: ethereum });
 
-    expect(deriveRequestReceiveData(account, parentAccount)).toEqual({
+    expect(deriveRequestReceiveData(parentAccount, usdc)).toEqual({
       address: parentAccount.freshAddress,
       asset: { name: "USD Coin", ticker: "USDC" },
       network: "Ethereum",
@@ -44,5 +43,17 @@ describe("deriveRequestReceiveData", () => {
       },
       networkIcon: { ledgerId: "ethereum", ticker: "ETH" },
     });
+  });
+
+  it("should use the canton party id when freshAddress is empty", () => {
+    const canton = getCryptoCurrencyById("canton_network");
+    const account = {
+      ...genAccount("pay-request-canton", { currency: canton }),
+      derivationMode: "canton" as const,
+      freshAddress: "",
+      xpub: "canton-party-id",
+    };
+
+    expect(deriveRequestReceiveData(account, canton).address).toBe("canton-party-id");
   });
 });
