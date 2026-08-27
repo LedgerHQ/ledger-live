@@ -1,3 +1,5 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -32,6 +34,9 @@ jest.mock("../logic/listOperations");
 
 describe("createApi", () => {
   const api = createApi("aleo");
+  // The consumer path: the resolver wraps the module, and the wrapper is what answers for the
+  // capabilities Aleo has none of.
+  const resolved = withDefaults(createApi("aleo"));
   const mockConfig = getMockedConfig("testnet");
   const context: AleoContext = {
     config: async () => mockConfig,
@@ -39,6 +44,24 @@ describe("createApi", () => {
   };
   const mockedBroadcast = jest.mocked(broadcast);
   const mockedCombine = jest.mocked(combine);
+
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(api, context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "validateIntent",
+      ],
+      inconsistent: [],
+    });
+  });
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
@@ -72,19 +95,40 @@ describe("createApi", () => {
     });
   });
 
-  it("should return an API object with coin module api methods", () => {
+  it("declares every method the chain supports", () => {
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);
     expect(api.getBalance).toBeInstanceOf(Function);
-    expect(api.getBlock).toBeInstanceOf(Function);
-    expect(api.getBlockInfo).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
     expect(api.getAccountInfo).toBeInstanceOf(Function);
     expect(api.register).toBeInstanceOf(Function);
+    expect(api.validateAddress).toBeInstanceOf(Function);
+  });
+
+  it("omits the capabilities the chain has none of", () => {
+    for (const method of [
+      "call",
+      "craftRawTransaction",
+      "getBlock",
+      "getBlockInfo",
+      "getStakes",
+      "getRewards",
+      "getValidators",
+      "validateIntent",
+      "getNextSequence",
+    ] as const) {
+      expect(api).not.toHaveProperty(method);
+    }
+
+    // What Aleo does implement keeps its real implementation through the resolver.
+    expect(resolved.supports("register")).toBe(true);
+    expect(resolved.supports("getAccountInfo")).toBe(true);
+    expect(resolved.supports("validateAddress")).toBe(true);
+    expect(resolved.supports("getStakes")).toBe(false);
   });
 
   describe("getAccountInfo", () => {
@@ -100,7 +144,7 @@ describe("createApi", () => {
       mockedGetAccountInfo.mockResolvedValue(accountInfo);
       const enrolledContext: AleoContext = { ...context, provableId: "scan-uuid-123" };
 
-      const result = await api.getAccountInfo!(enrolledContext, "aleo1test");
+      const result = await api.getAccountInfo(enrolledContext, "aleo1test");
 
       expect(mockedGetAccountInfo).toHaveBeenCalledTimes(1);
       expect(mockedGetAccountInfo).toHaveBeenCalledWith(mockConfig, "scan-uuid-123");
@@ -108,7 +152,7 @@ describe("createApi", () => {
     });
 
     it("returns { type: 'none' } and makes no scanner call when no provableId is on the context", async () => {
-      const result = await api.getAccountInfo!(context, "aleo1test");
+      const result = await api.getAccountInfo(context, "aleo1test");
 
       expect(result).toEqual({ type: "none" });
       expect(mockedGetAccountInfo).not.toHaveBeenCalled();
@@ -117,7 +161,7 @@ describe("createApi", () => {
     it("returns { type: 'none' } when provableId is present but empty", async () => {
       const emptyContext: AleoContext = { ...context, provableId: "" };
 
-      const result = await api.getAccountInfo!(emptyContext, "aleo1test");
+      const result = await api.getAccountInfo(emptyContext, "aleo1test");
 
       expect(result).toEqual({ type: "none" });
       expect(mockedGetAccountInfo).not.toHaveBeenCalled();
@@ -322,14 +366,6 @@ describe("createApi", () => {
     });
   });
 
-  describe("craftRawTransaction", () => {
-    it("should throw unsupported error", () => {
-      expect(() =>
-        api.craftRawTransaction(context, "transaction", "sender", "publicKey", BigInt(1)),
-      ).toThrow("craftRawTransaction is not supported");
-    });
-  });
-
   describe("estimateFees", () => {
     it("should call estimateFees and return fee estimation", async () => {
       const txIntent = createMockTransactionIntent();
@@ -361,44 +397,6 @@ describe("createApi", () => {
       ).rejects.toMatchObject({
         name: "InvalidParameterError",
       });
-    });
-  });
-
-  describe("getBlock", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.getBlock(context, 123)).toThrow("getBlock is not supported");
-    });
-  });
-
-  describe("getBlockInfo", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.getBlockInfo(context, 123)).toThrow("getBlockInfo is not supported");
-    });
-  });
-
-  describe("getRewards", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.getRewards(context, "aleo1test")).toThrow("getRewards is not supported");
-    });
-  });
-
-  describe("getNextSequence", () => {
-    it("should throw unsupported error", async () => {
-      expect(() => api.getNextSequence(context, "aleo1test")).toThrow(
-        "getNextSequence is not supported",
-      );
-    });
-  });
-
-  describe("getStakes", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.getStakes(context, "aleo1test")).toThrow("getStakes is not supported");
-    });
-  });
-
-  describe("getValidators", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
     });
   });
 
@@ -455,16 +453,6 @@ describe("createApi", () => {
         viewKey: "AViewKey1test",
       });
       expect(result).toBe(page);
-    });
-  });
-
-  describe("validateIntent", () => {
-    it("should throw unsupported error", async () => {
-      const txIntent = createMockTransactionIntent();
-
-      expect(() => api.validateIntent(context, txIntent, [])).toThrow(
-        "validateIntent is not supported",
-      );
     });
   });
 
