@@ -783,6 +783,7 @@
     "src/families/near/coinModuleApi.ts",
     "src/families/near/config.ts",
     "src/families/polkadot/config.ts",
+    "src/families/solana/accountRawAssign.ts",
     "src/families/solana/bridge/api.ts",
     "src/families/solana/coinModuleApi.ts",
     "src/families/solana/config.ts",
