@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft, Search } from "@ledgerhq/lumen-ui-react/symbols";
-import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
-import { InfoState } from "LLD/components/InfoState";
-import type { InfoStatePreset, InfoStateProps } from "LLD/components/InfoState/types";
+import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
+import type { InfoStatePreset, InfoStateProps } from "@shared/ui-info-state";
 
 const presetOptions: InfoStatePreset[] = [
   "illustration",

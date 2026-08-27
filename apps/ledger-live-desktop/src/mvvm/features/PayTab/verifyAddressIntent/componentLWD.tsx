@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Spot } from "@ledgerhq/lumen-ui-react";
 import { ShieldLock } from "@ledgerhq/lumen-ui-react/symbols";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 type Props = Readonly<{
   jobState: VerifyAddressIntentJobState | undefined;
