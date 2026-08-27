@@ -34,5 +34,3 @@ export function DevTools({ config = [], footer, screenOptions }: DevToolsProps) 
     </BottomSheetModalProvider>
   );
 }
-
-export default DevTools;

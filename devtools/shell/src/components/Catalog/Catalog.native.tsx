@@ -28,5 +28,3 @@ export function Catalog({ items }: CatalogProps) {
     </ScrollView>
   );
 }
-
-export default Catalog;

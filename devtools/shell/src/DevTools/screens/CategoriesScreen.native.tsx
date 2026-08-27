@@ -17,5 +17,3 @@ export function CategoriesScreen(props: CategoriesScreenProps) {
     </Box>
   );
 }
-
-export default CategoriesScreen;

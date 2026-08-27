@@ -22,5 +22,3 @@ export function WarningBanner() {
     </Box>
   );
 }
-
-export default WarningBanner;

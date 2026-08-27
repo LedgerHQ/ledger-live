@@ -1,4 +1,5 @@
-import { useToolsFromConfig, useDevToolsStorage } from "../hooks";
+import { useToolsFromConfig } from "../hooks";
+import { useDevToolsStorage } from "../hooks/useDevToolsStorage";
 import type { Category, DevToolsConfig, Tool, ToolId } from "@devtools/registry";
 import type { ReactNode } from "react";
 

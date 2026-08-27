@@ -25,7 +25,8 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.ts -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.ts -W devtools/shell --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@devtools/registry": "workspace:*"
