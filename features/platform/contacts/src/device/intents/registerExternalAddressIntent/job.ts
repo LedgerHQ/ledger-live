@@ -5,7 +5,19 @@ import type {
   RegisterExternalAddressDAOutput,
   RegisterExternalAddressDAState,
 } from "@ledgerhq/device-contacts-kit/api/app-binder/RegisterExternalAddressDeviceActionTypes.js";
-import { Observable } from "rxjs";
+import {
+  catchError,
+  defer,
+  map,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  takeWhile,
+  tap,
+  throwError,
+} from "rxjs";
 import {
   mapDeviceActionErrorToFailureJobState,
   mapDmkErrorToError,
@@ -56,13 +68,76 @@ function mapDeviceActionOutputToResult(
   };
 }
 
+type Outcome = Readonly<{
+  jobState: RegisterExternalAddressJobState;
+  /** Terminal outcomes complete the job.*/
+  terminal: boolean;
+  /** Settles the port promise. Absent while the job is still running. */
+  report?: ContactIntentResult<RegisterExternalAddressResult>;
+}>;
+
+/**
+ * Builds the mapper for one job run. Everything that varies — the caller's
+ * input, the connected device, the replay handle — is captured once here, so
+ * every branch of the device action lands in one place and the pipeline below
+ * stays free of conditionals.
+ */
+function createOutcomeMapper(
+  params: Readonly<{
+    input: RegisterExternalAddressIntentInput;
+    awaitingConfirmation: RegisterExternalAddressJobState;
+    retry: () => void;
+  }>,
+): (state: RegisterExternalAddressDAState) => Outcome {
+  return state => {
+    switch (state.status) {
+      case DeviceActionStatus.NotStarted:
+        return { jobState: { type: "pending" }, terminal: false };
+
+      case DeviceActionStatus.Pending:
+        return {
+          jobState:
+            state.intermediateValue.requiredUserInteraction ===
+            UserInteractionRequired.RegisterWallet
+              ? params.awaitingConfirmation
+              : { type: "pending" },
+          terminal: false,
+        };
+
+      case DeviceActionStatus.Completed: {
+        const result = mapDeviceActionOutputToResult(params.input, state.output);
+        return {
+          jobState: { type: "completed" },
+          terminal: true,
+          report: { type: "success", result },
+        };
+      }
+
+      case DeviceActionStatus.Stopped: {
+        const error = new Error("Register external address was stopped");
+        return {
+          jobState: { type: "failed", error },
+          terminal: true,
+          report: { type: "failure", error },
+        };
+      }
+
+      case DeviceActionStatus.Error: {
+        const jobState = mapDeviceActionErrorToFailureJobState(state.error);
+
+        // A rejection is the one failure the user can undo, so it stays open and
+        // carries the replay handle instead of settling the port promise.
+        return jobState.type === "device-rejected"
+          ? { jobState: { ...jobState, retry: params.retry }, terminal: false }
+          : { jobState, terminal: true, report: { type: "failure", error: jobState.error } };
+      }
+    }
+  };
+}
+
 /**
  * Register an external address on the device via the Contacts kit's
  * `ContactsManager.registerExternalAddress()`.
- *
- * DIE Phase 2 already opened the coin app and enforced the version floor
- * (see `getContactsAppMinVersion`), so this always passes `skipOpenApp: true`
- * — the kit's own version guard still runs regardless.
  */
 export const registerExternalAddressIntentJob: Job<
   RegisterExternalAddressJobState,
@@ -70,24 +145,36 @@ export const registerExternalAddressIntentJob: Job<
   ContactIntentResult<RegisterExternalAddressResult>
 > = ({ deviceConnectionResult, deviceExtractedContext, input, onResult }) => {
   const reporter = createContactIntentResultReporter(onResult);
+  const retries = new Subject<void>();
+  const retry = () => retries.next();
 
-  return new Observable<RegisterExternalAddressJobState>(subscriber => {
-    let identifier: Uint8Array;
-    let chainId: bigint;
-    let existingContactGroup: { groupHandle: Uint8Array; hmacProof: Uint8Array } | undefined;
+  const awaitingConfirmation: RegisterExternalAddressJobState = {
+    type: "awaiting-device-confirmation",
+    deviceModelId: deviceConnectionResult.connectedDevice.modelId,
+    deviceName: deviceConnectionResult.compatDeviceName,
+  };
+
+  const toOutcome = createOutcomeMapper({ input, awaitingConfirmation, retry });
+
+  return defer(() => {
+    let deviceActionInput;
     try {
-      identifier = mapIdentifierToBytes(input.address);
-      chainId = mapChainIdToBigInt(input.chainId);
-      existingContactGroup = mapExistingContactGroupToBytes(input.existingContactGroup);
-    } catch (error) {
-      const jobState: RegisterExternalAddressJobState = {
-        type: "invalid-input",
-        error: mapDmkErrorToError(error),
+      deviceActionInput = {
+        contactName: input.contactName,
+        scope: input.scope,
+        identifier: mapIdentifierToBytes(input.address),
+        // The kit's family table is keyed by the lowercased coin-app name
+        // (e.g. "ethereum"), distinct from Ledger Wallet's own family
+        // grouping (e.g. "evm") carried in `input.blockchainFamily`.
+        blockchainFamily: deviceExtractedContext.currentAppName.toLowerCase(),
+        chainId: mapChainIdToBigInt(input.chainId),
+        existingContactGroup: mapExistingContactGroupToBytes(input.existingContactGroup),
+        skipOpenApp: true,
       };
-      reporter.report({ type: "failure", error: jobState.error });
-      subscriber.next(jobState);
-      subscriber.complete();
-      return undefined;
+    } catch (error) {
+      const failure = { type: "invalid-input", error: mapDmkErrorToError(error) } as const;
+      reporter.report({ type: "failure", error: failure.error });
+      return of<RegisterExternalAddressJobState>(failure);
     }
 
     const contactsManager = new ContactsManagerBuilder({
@@ -96,75 +183,31 @@ export const registerExternalAddressIntentJob: Job<
       appName: deviceExtractedContext.currentAppName,
     }).build();
 
-    const { observable, cancel } = contactsManager.registerExternalAddress({
-      contactName: input.contactName,
-      scope: input.scope,
-      identifier,
-      // The kit's family table is keyed by the lowercased coin-app name
-      // (e.g. "ethereum"), distinct from Ledger Wallet's own family
-      // grouping (e.g. "evm") carried in `input.blockchainFamily`.
-      blockchainFamily: deviceExtractedContext.currentAppName.toLowerCase(),
-      chainId,
-      existingContactGroup,
-      skipOpenApp: true,
+    /** Pairs the kit's `cancel` with unsubscription, so teardown is one concern. */
+    const deviceAction = new Observable<RegisterExternalAddressDAState>(subscriber => {
+      const { observable, cancel } = contactsManager.registerExternalAddress(deviceActionInput);
+      const subscription = observable.subscribe(subscriber);
+
+      return () => {
+        subscription.unsubscribe();
+        cancel();
+      };
     });
 
-    const subscription = observable.subscribe({
-      next: (state: RegisterExternalAddressDAState) => {
-        switch (state.status) {
-          case DeviceActionStatus.NotStarted:
-          case DeviceActionStatus.Pending:
-            subscriber.next(
-              state.status === DeviceActionStatus.Pending &&
-                state.intermediateValue.requiredUserInteraction ===
-                  UserInteractionRequired.RegisterWallet
-                ? {
-                    type: "awaiting-device-confirmation",
-                    deviceModelId: deviceConnectionResult.connectedDevice.modelId,
-                    deviceName: deviceConnectionResult.compatDeviceName,
-                  }
-                : { type: "pending" },
-            );
-            return;
-          case DeviceActionStatus.Completed: {
-            const result = mapDeviceActionOutputToResult(input, state.output);
-            reporter.report({ type: "success", result });
-            subscriber.next({ type: "completed" });
-            subscriber.complete();
-            return;
-          }
-          case DeviceActionStatus.Stopped: {
-            const jobState: RegisterExternalAddressJobState = {
-              type: "failed",
-              error: new Error("Register external address was stopped"),
-            };
-            reporter.report({ type: "failure", error: jobState.error });
-            subscriber.next(jobState);
-            subscriber.complete();
-            return;
-          }
-          case DeviceActionStatus.Error: {
-            const jobState = mapDeviceActionErrorToFailureJobState(state.error);
-            reporter.report({ type: "failure", error: jobState.error });
-            subscriber.next(jobState);
-            subscriber.complete();
-            return;
-          }
-        }
-      },
-      error: (error: unknown) => {
-        const jobState: RegisterExternalAddressJobState = {
-          type: "failed",
-          error: mapDmkErrorToError(error),
-        };
-        reporter.report({ type: "failure", error: jobState.error });
-        subscriber.error(jobState.error);
-      },
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      cancel();
-    };
+    return retries.pipe(
+      startWith(undefined),
+      // switchMap tears down the superseded attempt before starting the next,
+      // so replaying on retry needs no run bookkeeping of its own.
+      switchMap(() => deviceAction),
+      map(toOutcome),
+      tap(outcome => outcome.report && reporter.report(outcome.report)),
+      takeWhile(outcome => !outcome.terminal, true),
+      map(({ jobState }) => jobState),
+      catchError((error: unknown) => {
+        const mapped = mapDmkErrorToError(error);
+        reporter.report({ type: "failure", error: mapped });
+        return throwError(() => mapped);
+      }),
+    );
   }).pipe(reporter.cancelOnUnsubscribe());
 };

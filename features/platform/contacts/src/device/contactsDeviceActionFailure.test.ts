@@ -74,7 +74,7 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
     ["6a80", "device-rejected"],
     ["6982", "existing-group-verification-failed"],
     ["6984", "unsupported-operation"],
-    ["6b00", "device-error"],
+    ["6b00", "failed"],
   ])(
     "GIVEN a ContactsCommandError with status word %s WHEN mapping THEN it returns %s",
     (errorCode, type) => {
@@ -89,11 +89,11 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
     },
   );
 
-  it("GIVEN an unrecognized DmkError WHEN mapping THEN it returns device-error", () => {
+  it("GIVEN an unrecognized DmkError WHEN mapping THEN it returns failed", () => {
     // WHEN
     const result = mapDeviceActionErrorToFailureJobState({ _tag: "UnknownDAError" });
 
     // THEN
-    expect(result.type).toBe("device-error");
+    expect(result.type).toBe("failed");
   });
 });

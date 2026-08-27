@@ -75,26 +75,43 @@ function startJob(input: RegisterExternalAddressIntentInput = INPUT) {
   };
 }
 
+const COMPLETION = {
+  status: DeviceActionStatus.Completed,
+  output: {
+    mode: "newContactGroup",
+    contactName: "Alice",
+    scope: "Mainnet",
+    identifier: new Uint8Array([0xab, 0xc0]),
+    blockchainFamily: "ethereum",
+    chainId: 1n,
+    groupHandle: new Uint8Array([0x01, 0x02]),
+    hmacProof: new Uint8Array([0x03, 0x04]),
+    hmacRest: new Uint8Array([0x05, 0x06]),
+  },
+};
+
+const REJECTION = {
+  status: DeviceActionStatus.Error,
+  error: {
+    _tag: "ContactsCommandError",
+    errorCode: "6a80",
+    message: "SWO_INCORRECT_DATA",
+  },
+};
+
+function lastRejection(job: ReturnType<typeof startJob>) {
+  const state = [...job.states].reverse().find(s => s.type === "device-rejected");
+  if (state === undefined) throw new Error("Expected the job to have reported a rejection");
+  return state;
+}
+
 describe("registerExternalAddressIntentJob", () => {
   it("GIVEN a new contact group WHEN the device completes THEN it reports success with hex-encoded proofs", () => {
     // GIVEN
     const job = startJob();
 
     // WHEN
-    job.emit({
-      status: DeviceActionStatus.Completed,
-      output: {
-        mode: "newContactGroup",
-        contactName: "Alice",
-        scope: "Mainnet",
-        identifier: new Uint8Array([0xab, 0xc0]),
-        blockchainFamily: "ethereum",
-        chainId: 1n,
-        groupHandle: new Uint8Array([0x01, 0x02]),
-        hmacProof: new Uint8Array([0x03, 0x04]),
-        hmacRest: new Uint8Array([0x05, 0x06]),
-      },
-    });
+    job.emit(COMPLETION);
 
     // THEN
     expect(job.states).toContainEqual({ type: "completed" });
@@ -157,6 +174,17 @@ describe("registerExternalAddressIntentJob", () => {
     });
   });
 
+  it("GIVEN the device action has not started yet WHEN reported THEN it reports pending", () => {
+    // GIVEN
+    const job = startJob();
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.NotStarted });
+
+    // THEN
+    expect(job.states).toContainEqual({ type: "pending" });
+  });
+
   it("GIVEN an unrelated pending interaction WHEN pending THEN it reports pending", () => {
     // GIVEN
     const job = startJob();
@@ -208,19 +236,73 @@ describe("registerExternalAddressIntentJob", () => {
   it("GIVEN status word 0x6a80 WHEN the device action errors THEN it reports device-rejected", () => {
     // GIVEN
     const job = startJob();
-    const error = {
-      _tag: "ContactsCommandError",
-      errorCode: "6a80",
-      message: "SWO_INCORRECT_DATA",
-    };
 
     // WHEN
-    job.emit({ status: DeviceActionStatus.Error, error });
+    job.emit(REJECTION);
 
     // THEN
     expect(job.states).toContainEqual({
       type: "device-rejected",
       error: expect.objectContaining({ message: "SWO_INCORRECT_DATA" }),
+      retry: expect.any(Function),
+    });
+  });
+
+  it("GIVEN a rejection WHEN it is reported THEN the job stays open so the user can retry", () => {
+    // GIVEN
+    const job = startJob();
+
+    // WHEN
+    job.emit(REJECTION);
+
+    // THEN
+    expect(job.isCompleted()).toBe(false);
+    expect(job.onResult).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN a rejection WHEN the user retries THEN it replays the device action", () => {
+    // GIVEN
+    const job = startJob();
+    job.emit(REJECTION);
+
+    // WHEN
+    lastRejection(job).retry?.();
+
+    // THEN
+    expect(job.registerExternalAddress).toHaveBeenCalledTimes(2);
+    expect(job.cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a retried rejection WHEN the device confirms THEN it reports success and completes", () => {
+    // GIVEN
+    const job = startJob();
+    job.emit(REJECTION);
+    lastRejection(job).retry?.();
+
+    // WHEN
+    job.emit(COMPLETION);
+
+    // THEN
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "success",
+      result: expect.objectContaining({ mode: "newContactGroup", contactName: "Alice" }),
+    });
+    expect(job.states).toContainEqual({ type: "completed" });
+    expect(job.isCompleted()).toBe(true);
+  });
+
+  it("GIVEN a rejection WHEN the user gives up instead THEN it settles as a cancellation", () => {
+    // GIVEN
+    const job = startJob();
+    job.emit(REJECTION);
+
+    // WHEN
+    job.subscription.unsubscribe();
+
+    // THEN
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "failure",
+      error: expect.any(ContactDeviceIntentCancelledError),
     });
   });
 
@@ -262,7 +344,7 @@ describe("registerExternalAddressIntentJob", () => {
     });
   });
 
-  it("GIVEN an unrecognized status word WHEN the device action errors THEN it reports device-error", () => {
+  it("GIVEN an unrecognized status word WHEN the device action errors THEN it reports failed", () => {
     // GIVEN
     const job = startJob();
     const error = {
@@ -276,12 +358,12 @@ describe("registerExternalAddressIntentJob", () => {
 
     // THEN
     expect(job.states).toContainEqual({
-      type: "device-error",
+      type: "failed",
       error: expect.objectContaining({ message: "SWO_WRONG_PARAMETER_VALUE" }),
     });
   });
 
-  it("GIVEN an untagged device error WHEN the device action errors THEN it reports device-error", () => {
+  it("GIVEN an untagged device error WHEN the device action errors THEN it reports failed", () => {
     // GIVEN
     const job = startJob();
     const error = { _tag: "UnknownDAError" };
@@ -291,7 +373,7 @@ describe("registerExternalAddressIntentJob", () => {
 
     // THEN
     expect(job.states).toContainEqual({
-      type: "device-error",
+      type: "failed",
       error: expect.objectContaining({ message: "UnknownDAError" }),
     });
   });
