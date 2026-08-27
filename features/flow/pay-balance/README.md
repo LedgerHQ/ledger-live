@@ -2,13 +2,13 @@
 
 > [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
 
-Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Renders two states:
+Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Chrome follows
+the held-stablecoin list:
 
-- **funded** — the aggregated stable balance formatted as a countervalue. While `status` is
-  `"loading"` this state renders its amount skeleton, so the empty placeholder never flashes before
-  the balance resolves.
-- **empty** — a placeholder title and description, no balance. Used when the balance is zero or
-  `status` is `"error"`.
+- **funded** — the list has a positive crypto or countervalue amount. While `status` is
+  `"loading"` this state keeps the funded chrome and skeletons the amount.
+- **empty** — the list has no positive amount. Loading and catalog errors do not switch
+  this to funded.
 
 Action tiles render in both modes, as a sibling of the hero so they do not remount when
 empty and funded swap.
@@ -120,9 +120,10 @@ pay-balance/
     ├── hooks/
     │   └── useBalanceData.ts                 # Host-facing data hook
     ├── logic/                                # Platform-agnostic logic (no suffix)
-    │   ├── aggregateBalance.ts               # Filter + sum + status mapping
+    │   ├── aggregateBalance.ts               # Filter + sum + funded flag + status
     │   ├── buildBalanceFilterOptions.ts      # Filter option rows
     │   ├── buildBalanceData.ts               # build + aggregate + reset decision
+    │   ├── buildStablecoinHoldings.ts        # Catalog rows, else held accounts
     │   └── resolveSelection.ts               # Heal a stale persisted filter
     ├── state/                                # UI-free Redux slice (`./state` export)
     ├── types.ts                              # Component + port contracts

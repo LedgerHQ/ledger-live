@@ -47,14 +47,23 @@ function buildPort(overrides: Partial<PortfolioPort> = {}): PortfolioPort {
   };
 }
 
-const usdc = { currency: { id: "ethereum/erc20/usdc", ticker: "USDC" }, value: 1000 };
-const usdt = { currency: { id: "ethereum/erc20/usdt", ticker: "USDT" }, value: 250.5 };
+const usdc = {
+  currency: { id: "ethereum/erc20/usdc", ticker: "USDC" },
+  value: 1000,
+  balance: 1_000_000,
+};
+const usdt = {
+  currency: { id: "ethereum/erc20/usdt", ticker: "USDT" },
+  value: 250.5,
+  balance: 250_500,
+};
 
 describe("aggregateBalance", () => {
   it("should sum every stablecoin countervalue when the filter is all", () => {
     const data = aggregateBalance(buildPort({ stablecoins: [usdc, usdt] }));
 
     expect(data.stableBalance).toBe(1250.5);
+    expect(data.hasBalance).toBe(true);
     expect(data.status).toBe("ready");
     expect(data.filter).toBe("all");
   });
@@ -99,16 +108,48 @@ describe("aggregateBalance", () => {
     expect(data.status).toBe("error");
   });
 
+  it("should report a balance when a holding has a crypto amount and no countervalue", () => {
+    const data = aggregateBalance(
+      buildPort({
+        stablecoins: [
+          { currency: { id: "ethereum/erc20/usdc", ticker: "USDC" }, value: 0, balance: 1_000_000 },
+        ],
+      }),
+    );
+
+    expect(data.hasBalance).toBe(true);
+    expect(data.stableBalance).toBe(0);
+  });
+
+  it("should stay empty when every holding is zero", () => {
+    const data = aggregateBalance(
+      buildPort({
+        stablecoins: [
+          { currency: { id: "ethereum/erc20/usdc", ticker: "USDC" }, value: 0, balance: 0 },
+        ],
+      }),
+    );
+
+    expect(data.hasBalance).toBe(false);
+  });
+
+  it("should keep hasBalance from all holdings, not the active filter", () => {
+    const data = aggregateBalance(
+      buildPort({
+        stablecoins: [usdc, { ...usdt, value: 0, balance: 0 }],
+        filter: "ethereum/erc20/usdt",
+        filterOptions: filterOptionsWithStablecoins,
+      }),
+    );
+
+    expect(data.stableBalance).toBe(0);
+    expect(data.hasBalance).toBe(true);
+  });
+
   it("should forward the countervalue formatter untouched", () => {
     const data = aggregateBalance(buildPort());
 
     expect(data.formatCountervalue).toBe(formatCountervalue);
-  });
-
-  it("should report hasBalance when any stablecoin has a positive value", () => {
-    const data = aggregateBalance(buildPort({ stablecoins: [usdc] }));
-
-    expect(data.hasBalance).toBe(true);
   });
 
   it("should forward filterOptions and onConfirmFilter", () => {

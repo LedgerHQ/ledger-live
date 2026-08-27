@@ -97,10 +97,23 @@ describe("buildBalanceData", () => {
     expect(shouldResetFilter).toBe(false);
   });
 
-  it("should report no balance when the user holds no stablecoins", () => {
-    const { data } = build();
+  it("should report a balance when a held stablecoin has a crypto amount and no countervalue", () => {
+    const { data } = build({
+      stablecoins: [
+        {
+          currency: {
+            id: "ethereum/erc20/usd__coin",
+            name: "USD Coin",
+            ticker: "USDC",
+            units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+          },
+          balance: 1_000_000,
+          value: 0,
+        },
+      ],
+    });
 
-    expect(data.hasBalance).toBe(false);
+    expect(data.hasBalance).toBe(true);
   });
 
   it("should always expose the all option first, followed by the defaults", () => {

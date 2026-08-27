@@ -43,17 +43,43 @@ describe("useBalanceViewModel", () => {
     });
   });
 
-  it("should be funded and loading while data loads", () => {
+  it("should keep funded chrome and skeleton the amount while funded data loads", () => {
+    const { result } = renderHook(() =>
+      useBalanceViewModel(
+        buildProps({ status: "loading", hasBalance: true, stableBalance: 1250.5 }),
+      ),
+    );
+
+    expect(result.current).toMatchObject({
+      displayMode: "funded",
+      balance: 1250.5,
+      isLoading: true,
+    });
+  });
+
+  it("should stay empty while data loads if the user has no balance", () => {
     const { result } = renderHook(() =>
       useBalanceViewModel(buildProps({ status: "loading", hasBalance: false })),
     );
 
-    expect(result.current).toMatchObject({ displayMode: "funded", isLoading: true });
+    expect(result.current.displayMode).toBe("empty");
   });
 
-  it("should be empty on error", () => {
+  it("should stay funded on error if the user has a balance", () => {
     const { result } = renderHook(() =>
-      useBalanceViewModel(buildProps({ status: "error", hasBalance: true })),
+      useBalanceViewModel(buildProps({ status: "error", hasBalance: true, stableBalance: 1250.5 })),
+    );
+
+    expect(result.current).toMatchObject({
+      displayMode: "funded",
+      balance: 1250.5,
+      isLoading: false,
+    });
+  });
+
+  it("should stay empty on error if the user has no balance", () => {
+    const { result } = renderHook(() =>
+      useBalanceViewModel(buildProps({ status: "error", hasBalance: false })),
     );
 
     expect(result.current.displayMode).toBe("empty");
