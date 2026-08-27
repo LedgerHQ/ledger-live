@@ -3,7 +3,7 @@ import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen } = props;
 
   return (
