@@ -18,12 +18,10 @@ const VERIFYING: VerifyAddressIntentJobState = {
 function startJob(expectedAddress = EXPECTED_ADDRESS) {
   const subject = new Subject<VerifyAddressDeviceState>();
   const cancel = jest.fn();
-  const startAddressVerification = jest.fn(
-    (): VerifyAddressDeviceAction => ({
-      observable: subject.asObservable(),
-      cancel,
-    }),
-  );
+  const startAddressVerification = jest.fn((): VerifyAddressDeviceAction => ({
+    observable: subject.asObservable(),
+    cancel,
+  }));
   const states: VerifyAddressIntentJobState[] = [];
   let error: unknown;
   let completed = false;
