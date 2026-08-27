@@ -14,9 +14,6 @@ export class MarketPage extends AppPage {
   private readonly coinPageContainer = this.page
     .getByTestId("market-coin-page-container")
     .or(this.page.getByTestId("asset-detail-header"));
-  private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
-  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
-
   private readonly buyButton = (ticker: string) =>
     this.coinRow(ticker).getByTestId(`market-${ticker}-buy-button-icon`);
   private swapButton = (ticker: string) =>
@@ -142,18 +139,6 @@ export class MarketPage extends AppPage {
     }
   }
 
-  @step("Click on swap button on asset")
-  async clickOnSwapButtonOnAsset() {
-    // Legacy exposes a swap CTA to click; AssetDetail mounts the embedded swap rail (nothing to click).
-    await this.swapButtonOnAsset
-      .or(this.embeddedSwapContainer)
-      .first()
-      .waitFor({ state: "visible" });
-    if (await this.swapButtonOnAsset.isVisible()) {
-      await this.swapButtonOnAsset.click();
-    }
-  }
-
   @step("Click on stake button for $0")
   async stakeButtonClick(ticker: string) {
     const button = this.stakeButton(ticker.toLowerCase());
@@ -218,10 +203,5 @@ export class MarketPage extends AppPage {
   @step("Expect category tab $0 to be selected")
   async expectCategorySelected(value: string) {
     await expect(this.categoryTab(value)).toHaveAttribute("aria-checked", "true");
-  }
-
-  @step("Select category tab $0")
-  async selectCategory(value: string) {
-    await this.categoryTab(value).click();
   }
 }

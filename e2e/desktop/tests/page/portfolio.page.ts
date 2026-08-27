@@ -10,10 +10,6 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
 export class PortfolioPage extends AppPage {
-  private readonly buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
-  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
-  private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
-  private readonly chart = this.page.getByTestId("chart-container");
   private readonly operationList = this.page.locator("#operation-list");
   private readonly historyButton = this.page.getByTestId("topbar-action-button-history");
   private readonly historyTable = this.page.getByTestId("history-table");
@@ -90,41 +86,6 @@ export class PortfolioPage extends AppPage {
     await this.addAccountCta.click();
   }
 
-  @step("Check 'Buy/Sell' button visibility")
-  async checkBuySellButtonVisibility() {
-    await this.checkVisibility(this.buySellEntryButton);
-  }
-
-  @step("Click on 'Buy/Sell' button")
-  async clickBuySellButton() {
-    await this.buySellEntryButton.click();
-  }
-
-  @step("Check embedded swap container visibility")
-  async checkEmbeddedSwapContainerVisibility() {
-    await this.checkVisibility(this.embeddedSwapContainer);
-  }
-
-  @step("Check 'Stake' button visibility")
-  async checkStakeButtonVisibility() {
-    await this.checkVisibility(this.stakeEntryButton);
-  }
-
-  @step("Check chart visibility")
-  async checkChartVisibility() {
-    await this.checkVisibility(this.chart);
-  }
-
-  @step("Click stake button")
-  async startStakeFlow() {
-    await this.stakeEntryButton.click();
-  }
-
-  @step("Expect choose asset to be visible")
-  async expectChooseAssetToBeVisible() {
-    await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
-  }
-
   private async openHistoryPage() {
     await this.historyButton.click();
     await this.checkVisibility(this.historyTable);
@@ -177,7 +138,7 @@ export class PortfolioPage extends AppPage {
   }
 
   @step("Expect operation row to be visible")
-  async expectOperationRowToBeVisible() {
+  private async expectOperationRowToBeVisible() {
     if (await isOperationsListEnabled(this.page)) {
       await this.openHistoryPage();
       await this.checkVisibility(this.historyOperationRows.first());

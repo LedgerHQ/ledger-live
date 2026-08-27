@@ -95,7 +95,7 @@ export class AccountsPage extends AppPage {
   }
 
   @step("Verify token is not visible in parent account")
-  async verifyTokenNotVisible(childCurrency: Currency) {
+  private async verifyTokenNotVisible(childCurrency: Currency) {
     await expect(this.tokenRow(childCurrency)).not.toBeVisible();
   }
 
@@ -187,7 +187,7 @@ export class AccountsPage extends AppPage {
     await expect(visibleAccountsList).not.toHaveCount(0);
   }
 
-  async getAccountsName() {
+  private async getAccountsName() {
     const visibleAccountsList = await this.getVisibleAccountsList();
     const accountElements = await visibleAccountsList.all();
     const testIdPrefix = await this.getAccountRowTestIdPrefix();

@@ -41,7 +41,7 @@ export class MarketBannerPage extends AppPage {
   }
 
   @step("Get first asset tile")
-  async getFirstAssetTile() {
+  private async getFirstAssetTile() {
     const firstAsset = this.page.locator("[data-testid^='market-banner-asset-']").first();
     await expect(firstAsset).toBeVisible();
     return firstAsset;

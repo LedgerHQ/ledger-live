@@ -15,7 +15,7 @@ export class ModularScanAccountsDrawer extends Drawer {
   private viewKeyConfirmationStep = this.page.getByTestId("view-key-confirmation-step");
 
   @step("Click Confirm button on scan accounts drawer")
-  async clickConfirmButton() {
+  private async clickConfirmButton() {
     await this.confirmButton.click();
   }
 
@@ -30,7 +30,7 @@ export class ModularScanAccountsDrawer extends Drawer {
   }
 
   @step("Click Share view key button on scan accounts drawer")
-  async clickShareViewKeyButton() {
+  private async clickShareViewKeyButton() {
     await this.shareViewKeyButton.click();
   }
 
