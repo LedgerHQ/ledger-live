@@ -1,4 +1,24 @@
 {
+  "internetComputer" : {
+    "stakeBanner" : {
+      "stakeICP" : {
+        "title" : "ICP 스테이킹",
+        "description" : "ICP를 스테이킹하고 거버넌스에 참여해 보상을 받으세요.",
+        "cta" : "ICP 스테이킹"
+      }
+    },
+    "headerManageActions" : {
+      "manageNeurons" : {
+        "title" : "뉴런 관리"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalance" : "스테이킹 수량",
+      "stakedBalanceTooltip" : "현재 뉴런에 스테이킹된 ICP 토큰의 총 수량입니다. 스테이킹된 ICP는 투표 보상을 받으며, 거버넌스에 사용될 수 있습니다.",
+      "totalMaturity" : "총 누적 보상",
+      "totalMaturityTooltip" : "스테이킹으로 누적된 총 보상에는 스테이킹된 보상과 유동 누적 보상이 모두 포함됩니다. 이렇게 누적된 보상은 리스테이킹하거나 Liquid ICP로 전환할 수 있습니다."
+    }
+  },
   "buyCurrency" : {
     "buyCTA" : "{{ currencyNameOrTicker }} 매수"
   },
@@ -752,7 +772,17 @@
       "title" : "최소 스테이킹 수량: 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+      "title" : "전체 수량을 언스테이킹하거나 최소 1 SUI를 스테이킹 상태로 남겨두세요."
+    },
+    "SuiStakeNotFound" : {
+      "title" : "스테이킹 상세 정보를 확인할 수 없습니다. 계정을 다시 동기화한 후 다시 시도해 주세요"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "입력한 수량이 선택한 스테이킹 금액을 초과합니다."
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "SUI 앱을 업데이트하세요",
+      "description" : "현재 Ledger Sui 앱으로는 SUI 송금 트랜잭션에 서명할 수 없습니다. Ledger 장치에서 SUI 앱을 업데이트하고 다시 시도하세요."
     },
     "PasswordIncorrect" : {
       "title" : "잘못된 패스워드",
@@ -1489,6 +1519,25 @@
     "confirm" : "정말 로그아웃하시겠습니까?",
     "disclaimer" : "휴대폰에서 모든 계정 데이터가 삭제됩니다.",
     "action" : "로그아웃"
+  },
+  "appLock" : {
+    "field" : {
+      "label" : "패스워드를 입력하세요",
+      "reveal" : "패스워드 표시",
+      "hide" : "패스워드 숨기기",
+      "minLength" : "최소 6자 이상이어야 합니다"
+    },
+    "setupPassword" : {
+      "title" : "패스워드를 입력하세요",
+      "description" : "앱을 열 때마다 이 패스워드가 필요합니다. 분실할 경우, 앱을 재설치하고 지갑을 복구하세요.",
+      "cta" : "계속"
+    },
+    "confirmPassword" : {
+      "title" : "패스워드 확인",
+      "description" : "앱을 열 때마다 이 패스워드가 필요합니다. 분실할 경우, 앱을 재설치하고 지갑을 복구하세요.",
+      "mismatch" : "패스워드가 일치하지 않습니다",
+      "cta" : "확인"
+    }
   },
   "auth" : {
     "failed" : {
@@ -4499,10 +4548,13 @@
       },
       "placeholder" : "주소 또는 ENS를 입력하세요",
       "placeholderNoENS" : "주소 입력",
+      "placeholderWithContacts" : "주소, ENS 또는 연락처를 입력하세요",
+      "placeholderNoEnsWithContacts" : "주소 또는 연락처를 입력하세요",
       "pasteFromClipboard" : {
         "title" : "클립보드에서 붙여넣기",
         "cta" : "붙여넣기"
       },
+      "contactsWillAppear" : "연락처가 여기에 표시됩니다",
       "editRecipientAccessibilityLabel" : "수령인 변경",
       "sendTo" : "{{address}}로 보내기",
       "addressMatched" : "주소 일치함",
@@ -4510,6 +4562,10 @@
       "account" : "계정",
       "alreadyUsed" : "이미 사용됨 · {{date}}",
       "notInRecentHistory" : "최근 거래 내역에 없음",
+      "addressBookUnsupported" : {
+        "title" : "{{family}} 주소는 아직 지원되지 않습니다",
+        "description" : "아직 연락처에 {{family}} 주소를 추가할 수 없습니다. 지속적으로 지원 자산을 추가해 나갈 예정입니다."
+      },
       "relativeDate" : {
         "justNow" : "방금 전",
         "minutesAgo_one" : "1분 전",
@@ -5051,8 +5107,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "장치가 잠겨 있습니다",
-        "description" : "계속하려면 장치 잠금을 해제하세요."
+        "title" : "Ledger 장치를 잠금 해제한 후 아래에서 '다시 시도'를 선택하세요"
       },
       "unlockDevice" : {
         "title" : "{{productName}} 잠금 해제"
@@ -5064,16 +5119,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "장치 연결 해제됨",
-        "description" : "Ledger 장치 연결이 해제되었습니다. 장치의 전원이 켜져 있는지, 블루투스 연결 범위 내에 있거나 케이블이 올바르게 연결되어 있는지 확인해 주세요."
+        "title" : "Ledger 장치 연결이 해제되었습니다",
+        "description" : "장치의 전원이 켜져 있는지, 블루투스 연결 범위 내에 있거나 케이블이 올바르게 연결되어 있는지 확인해 주세요."
       },
       "intentError" : {
         "title" : "알 수 없는 오류",
-        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+        "description" : "다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
       },
       "invalidOperation" : {
-        "title" : "잘못된 상태",
-        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+        "title" : "오류 발생",
+        "description" : "다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
       }
     },
     "initialization" : {
@@ -5089,42 +5144,42 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "장치에서 작업이 거부되었습니다."
+          "title" : "Ledger 장치에서 작업이 거부되었습니다"
         },
         "deviceBusy" : {
-          "title" : "Ledger 장치에서 작업 대기 중",
-          "description" : "작업을 완료한 다음 다시 시도를 선택하세요."
+          "title" : "Ledger 장치에서 확인이 필요합니다.",
+          "description" : "장치에서 작업을 완료한 후, 아래 “다시 시도”를 선택하세요."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "귀하의 Ledger 장치는 아직 사용 준비가 되지 않았습니다",
-          "description" : "먼저 {{productName}} 장치 설정이 필요합니다. 장치를 설정하는 과정을 안내해드리겠습니다."
+          "title" : "Ledger 장치 설정이 필요합니다",
+          "description" : "계속하려면 장치 설정을 완료하세요."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS 업데이트 필요"
         },
         "unsupportedApplication" : {
           "title" : "지원되지 않는 기능",
-          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+          "description" : "이 작업에 필요한 앱이 사용 중인 Ledger 장치에서 지원되지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
         },
         "unsupportedFeature" : {
           "title" : "지원되지 않는 기능",
-          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+          "description" : "이 작업에 필요한 앱이 사용 중인 Ledger 장치에서 지원되지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
         },
         "wrongDeviceForAccount" : {
-          "title" : "잘못된 비밀 복구 문구",
-          "description" : "현재 Ledger 장치의 복구 문구가 선택한 계정과 일치하지 않습니다. 올바른 장치를 연결했는지 확인해 주세요."
+          "title" : "이 계정 설정에 사용한 것과 동일한 Ledger 장치를 사용해 주세요",
+          "description" : "선택한 암호화폐 계정과 연결된 비밀 복구 문구로 설정된 Ledger 장치가 아닙니다."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "장치의 저장 공간이 부족합니다",
-          "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요."
+          "title" : "일부 앱을 제거하여 Ledger 장치 메모리를 확보하세요",
+          "description" : "장치에 사용 가능한 메모리가 부족합니다."
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledger 열기",
         "goToMyLedger" : "My Ledger로 이동",
-        "setupDevice" : "장치 설정",
+        "setupDevice" : "Ledger 장치 설정",
         "updateLedgerOs" : "Ledger OS 업데이트",
         "cancelOperation" : "작업 취소",
         "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
@@ -5138,7 +5193,7 @@
       },
       "states" : {
         "connecting" : {
-          "title" : "로딩중"
+          "title" : "Ledger 장치 연결 중"
         },
         "connectionError" : {
           "errors" : {
@@ -5158,7 +5213,7 @@
             },
             "unknown" : {
               "title" : "페어링 실패",
-              "description" : "다시 시도하거나 아래에 있는 블루투스 문제 해결 관련 글을 읽어보세요.",
+              "description" : "다시 시도하거나 아래의 Bluetooth 문제 해결 관련 글에서 자세한 정보를 확인하세요.",
               "tip" : "장치가 잠금 해제되어 있는지 확인하세요.",
               "cta" : {
                 "retry" : "다시 시도하세요",
@@ -5173,24 +5228,29 @@
         "discoveryError" : {
           "errors" : {
             "bluetoothPermissionDeniedPromptable" : {
-              "title" : "블루투스 액세스 허용",
-              "description" : "블루투스가 주변 Ledger 장치를 스캔하도록 허용합니다.",
+              "title" : "블루투스로 Ledger 장치 연결",
+              "description" : "Ledger Wallet에서 주변 Ledger 장치를 찾아 페어링하려면 Bluetooth가 필요합니다. Bluetooth로 공유되는 데이터는 없습니다.",
               "cta" : {
-                "retry" : "허용",
+                "retry" : "Bluetooth 허용",
                 "ignore" : "USB로 계속하기"
               }
             },
             "bluetoothPermissionDeniedManualSettings" : {
-              "title" : "블루투스 액세스 허용",
-              "description" : "블루투스 권한이 필요합니다. 설정 -> 앱 -> Ledger Wallet -> 권한 -> 주변 장치로 이동한 다음 권한을 허용하고 다시 돌아와 주세요.",
+              "title" : "스마트폰 설정에서 Bluetooth 활성화",
+              "description" : "Ledger Wallet에서 Ledger 장치를 찾으려면 Bluetooth 권한이 필요합니다.\n\n설정 -> 앱 -> Ledger Wallet -> 권한 -> 주변 장치로 이동한 다음 권한을 허용하고 다시 돌아오세요.",
               "cta" : {
                 "retry" : "활성화 완료, 다시 시도하세요",
                 "ignore" : "USB로 계속하기"
               }
             },
             "bluetoothPermissionUnauthorizedManualSettings" : {
-              "title" : "블루투스 액세스 허용",
-              "description" : "Ledger Wallet에서 장치를 찾으려면 블루투스 권한이 필요합니다. 설정에서 활성화하세요.",
+              "title" : "스마트폰 설정에서 Bluetooth 활성화",
+              "description" : {
+                "platform" : {
+                  "ios" : "Ledger Wallet에서 장치를 찾으려면 블루투스 권한이 필요합니다. 설정 → Ledger Wallet을 실행합니다. Bluetooth를 켠 다음 아래 버튼을 눌러주세요.",
+                  "android" : "Ledger Wallet에서 Ledger 장치를 찾으려면 Bluetooth 권한이 필요합니다.\n\n설정 → 앱 → Ledger Wallet → Bluetooth로 이동한 다음 다시 돌아오세요."
+                }
+              },
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5204,16 +5264,16 @@
               }
             },
             "bluetoothDisabledPromptable" : {
-              "title" : "블루투스 활성화",
-              "description" : "블루투스가 꺼져 있습니다. Ledger 장치를 찾으려면 블루투스를 활성화하세요.",
+              "title" : "스마트폰에서 Bluetooth 활성화",
+              "description" : "주변 Ledger 장치를 검색하려면 활성화해 주세요.",
               "cta" : {
-                "retry" : "블루투스 활성화",
+                "retry" : "Bluetooth 활성화",
                 "ignore" : "USB로 계속하기"
               }
             },
             "bluetoothDisabledManualAction" : {
-              "title" : "블루투스 활성화",
-              "description" : "블루투스가 꺼져 있습니다. 설정 → 블루투스에서 기능을 활성화 후 다시 돌아오세요.",
+              "title" : "스마트폰에서 Bluetooth 활성화",
+              "description" : "Bluetooth를 활성화한 후 돌아와서 다시 시도해 주세요. 설정 → Bluetooth를 실행합니다. Bluetooth 기능을 켠 다음 아래 버튼을 선택하세요",
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5246,47 +5306,47 @@
               }
             },
             "locationPermissionDeniedPromptable" : {
-              "title" : "위치 정보 액세스 허용",
-              "description" : "안드로이드에서 블루투스 장치를 검색하려면 위치 정보 액세스 권한이 필요합니다.",
+              "title" : "안드로이드에서 Bluetooth 장치를 검색하려면 위치 기능을 활성화해야 합니다.",
+              "description" : "Ledger는 사용자의 위치 정보에 접근하거나 이를 저장하지 않습니다.",
               "cta" : {
-                "retry" : "허용",
+                "retry" : "활성화",
                 "ignore" : "USB로 계속하기"
               }
             },
             "locationPermissionDeniedManualSettings" : {
-              "title" : "위치 정보 액세스 허용",
-              "description" : "블루투스 장치를 스캔하려면 위치 액세스 권한이 필요합니다. 설정 → 앱 → Ledger Wallet → 권한 → 위치로 이동한 다음 돌아오세요.",
+              "title" : "설정에서 위치 기능 활성화",
+              "description" : "안드로이드에서 주변 Bluetooth 장치를 검색하려면 이 권한이 필요합니다. 설정 → 앱 → Ledger Wallet → 권한 → 위치로 이동하세요. \"허용\"으로 설정한 다음, 아래 버튼을 선택하세요. Ledger는 사용자의 위치 정보에 접근하거나 이를 저장하지 않습니다.",
               "cta" : {
                 "retry" : "활성화 완료, 다시 시도하세요",
                 "ignore" : "USB로 계속하기"
               }
             },
             "locationDisabledPromptable" : {
-              "title" : "위치 서비스 켜기",
-              "description" : "위치 서비스 기능이 꺼져 있습니다. 블루투스 장치를 검색하려면 전원을 켜주세요.",
+              "title" : "Bluetooth 장치를 검색하려면 위치 기능을 활성화하세요",
+              "description" : "안드로이드에서 주변 Bluetooth 장치를 검색하려면 이 권한이 필요합니다. Ledger는 사용자의 위치 정보에 접근하거나 이를 저장하지 않습니다.",
               "cta" : {
-                "retry" : "위치 서비스 켜기",
+                "retry" : "위치 기능 활성화",
                 "ignore" : "USB로 계속하기"
               }
             },
             "locationDisabledManualAction" : {
-              "title" : "위치 서비스 켜기",
-              "description" : "위치 서비스 기능이 꺼져 있습니다. 설정 → 위치에서 켜고 다시 돌아오세요.",
+              "title" : "주변 Bluetooth 장치를 검색하려면 위치 정보가 필요합니다",
+              "description" : "설정 → 위치로 이동합니다. 위치 토글 버튼을 켠 다음, 여기로 돌아와 아래 버튼을 선택하세요. Ledger는 사용자의 위치 정보를 절대 액세스하거나 저장하지 않습니다.",
               "cta" : {
-                "retry" : "위치 서비스 활성화 완료, 다시 시도",
+                "retry" : "활성화 완료, 다시 시도하기",
                 "ignore" : "USB로 계속하기"
               }
             },
             "locationServicePermissionMissing" : {
-              "title" : "위치 정보 액세스 허용",
-              "description" : "위치 정보 액세스 권한이 없습니다. 다시 시도하려면 아래를 탭하세요.",
+              "title" : "위치 권한을 확인할 수 없습니다",
+              "description" : "안드로이드에서 주변 Bluetooth 장치를 검색하려면 이 권한이 필요합니다. “다시 시도”를 선택하세요. 보통 이 방법으로 해결됩니다. 그렇지 않은 경우 설정 → 앱 → Ledger Wallet → 권한 → 위치에서 설정을 확인하세요. Ledger는 사용자의 위치 정보에 접근하거나 이를 저장하지 않습니다.",
               "cta" : {
                 "retry" : "다시 시도하세요",
                 "ignore" : "USB로 계속하기"
               }
             },
             "unknown" : {
-              "title" : "문제가 발생했습니다",
+              "title" : "Bluetooth 스캐닝 실패",
               "description" : "블루투스 스캔을 시작할 수 없습니다. 다시 시도하거나 Ledger 지원 부서로 문의하세요.",
               "cta" : {
                 "retry" : "다시 시도하세요"
@@ -5299,7 +5359,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledger 장치가 필요합니다",
-          "description" : "계속하려면 사이너를 설정하거나 연결하세요.",
+          "description" : "계속하려면 Ledger 장치를 설정하거나 연결하세요.",
           "connectLedgerDevice" : "Ledger 장치 연결하기",
           "noLedgerDevice" : "Ledger 장치가 없습니다"
         },
@@ -7645,7 +7705,7 @@
         "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
       },
       "staked" : {
-        "title" : "스테이킹 잔액",
+        "title" : "스테이킹 수량",
         "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
       },
       "pending" : {
@@ -7858,7 +7918,7 @@
         "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
       },
       "staked" : {
-        "title" : "스테이킹 잔액",
+        "title" : "스테이킹 수량",
         "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
       },
       "pending" : {
@@ -9520,8 +9580,29 @@
     }
   },
   "lazyOnboardingBanner" : {
-    "title" : "Ledger 장치 살펴보기",
-    "description" : "최신 Ledger 제품과 액세서리를 살펴보세요"
+    "title" : "수백만 사용자가 Ledger를 선택하는 이유",
+    "description" : "어떤 거래든 완벽하게 보호받을 수 있으니까"
+  },
+  "lazyOnboardingTour" : {
+    "buyCta" : "Ledger 장치 구매하기",
+    "slides" : {
+      "whoControls" : {
+        "title" : "내 암호화폐, 정말 안전한가요?",
+        "subtitle" : "거래소 위탁 보관도, 온라인 소프트웨어 지갑도 탈취의 위험에서 완벽하게 자유로울 수 없습니다."
+      },
+      "takeBackControl" : {
+        "title" : "온전한 권한 확보",
+        "subtitle" : "Ledger 장치는 자산에 대한 액세스 권한을 오프라인 환경에 안전하게 격리하여, 해커의 위협으로부터 완벽히 보호합니다."
+      },
+      "nothingMoves" : {
+        "title" : "모든 거래를 직접 확인하고 승인",
+        "subtitle" : "모든 트랜잭션이 해킹이 불가능한 보안 화면에 표시되며, 오직 사용자의 승인을 거쳐야만 처리됩니다."
+      },
+      "startToday" : {
+        "title" : "진정한 셀프 커스터디의 시작",
+        "subtitle" : "완벽한 보안과 자산에 대한 온전한 권한을 보장하는 Ledger 장치로 암호화폐를 안전하게 관리하세요."
+      }
+    }
   },
   "marketBanner" : {
     "title" : "마켓",
@@ -9601,13 +9682,16 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
+    "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
+    "selectAccountPerpsDescription" : "무기한 선물에 자산을 예치하려면 Hyperliquid 계정이 필요합니다. 계속하려면 계정을 추가하세요.",
+    "selectDepositCurrencyTitle" : "입금할 자산 선택",
+    "selectDepositCurrencyDescription" : "지원되는 모든 자산을 사용할 수 있습니다. 필요한 경우 자동으로 스왑됩니다.",
     "searchPlaceholder" : "이름 또는 주소로 검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount_one" : "{{count}}개 계정",
     "accountCount_other" : "{{count}}개 계정",
     "emptyAccounts" : "아직 {{network}} 계정이 없습니다. 계속하려면 계정을 추가하세요",
     "addAccount" : "계정 추가",
-    "perpetualsBanner" : "현재 아비트럼 체인에서는 USDC만 지원됩니다.",
     "errors" : {
       "title" : "연결에 실패했습니다",
       "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",
@@ -9739,7 +9823,7 @@
         },
         "dualValidator" : {
           "title" : "이중 검증인 보안(Dual-validator security)",
-          "body" : "트랜잭션을 처리하려면 Ledger와 Klin 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
+          "body" : "트랜잭션을 처리하려면 Ledger와 Kiln 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
         },
         "tokenLiability" : {
           "title" : "표준 토큰 관련 책임(Standard token liability) ⚠️",
@@ -9965,6 +10049,63 @@
     "card" : "카드",
     "paytab" : "결제"
   },
+  "payTab" : {
+    "featureTour" : {
+      "title" : "결제 및 송금 받기",
+      "description" : "스테이블코인으로 암호화폐와 실생활 결제의 경계를 허물어 보세요.",
+      "cta" : "확인",
+      "rows" : {
+        "global" : {
+          "title" : "전 세계 어디서나 결제 및 송금 받기",
+          "description" : "저렴한 네트워크 수수료 혜택"
+        },
+        "volatility" : {
+          "title" : "가격 변동성 최소화",
+          "description" : "스테이블코인은 법정화폐를 기반으로 합니다."
+        },
+        "card" : {
+          "title" : "카드로 결제하고 1% 캐시백 받기",
+          "description" : "USDC, USDT, BTC, ETH 등 다양한 자산 결제를 지원합니다"
+        }
+      }
+    },
+    "balance" : {
+      "emptyTitle" : "자유로운 결제와 송금",
+      "emptyDescription" : "우선 지갑으로 스테이블코인을 입금하세요.",
+      "filter" : {
+        "allStablecoins" : "모든 스테이블코인",
+        "dialogTitle" : "자산별 잔액 보기",
+        "dialogDescription" : "스테이블코인을 사용하여 저렴한 수수료와 최소한의 가격 변동성으로 전 세계 어디서나 자유롭게 결제하세요.",
+        "dialogBanner" : "다른 모든 자산은 홈 화면에서 관리하세요",
+        "confirm" : "확인"
+      }
+    },
+    "actions" : {
+      "deposit" : "스테이블코인 추가",
+      "request" : "요청"
+    },
+    "deposit" : {
+      "title" : "스테이블코인 추가",
+      "options" : {
+        "bankTransfer" : {
+          "title" : "은행 이체",
+          "description" : "USD 또는 EUR를 송금하여 스테이블코인을 수령합니다."
+        },
+        "swap" : {
+          "title" : "암호화폐 스왑",
+          "description" : "보유한 암호화폐를 스테이블코인으로 스왑합니다."
+        },
+        "receive" : {
+          "title" : "암호화폐 주소",
+          "description" : "다른 지갑에서 스테이블코인을 가져옵니다."
+        },
+        "buy" : {
+          "title" : "구매(매수)",
+          "description" : "신용카드로 스테이블코인을 구매합니다."
+        }
+      }
+    }
+  },
   "syncIndicator" : {
     "accessibilityLabel" : {
       "error" : "동기화 오류",
@@ -10032,7 +10173,8 @@
       },
       "recoveryKey" : {
         "title" : "Ledger Recovery Key",
-        "description" : "PIN으로 보호되는 스마트 카드"
+        "description" : "PIN으로 보호되는 스마트 카드",
+        "incompatible" : "사용 중인 장치와 호환되지 않습니다"
       },
       "secretRecoveryPhrase" : {
         "title" : "24 단어 메탈 스토리지",
@@ -10221,6 +10363,14 @@
       "duplicateLabel" : "해당 연락처에서 이미 사용 중인 주소 별칭입니다.",
       "labelTooLong" : "주소명이 길이 제한을 초과합니다."
     },
+    "addAddressReview" : {
+      "title" : "주소 검토",
+      "addressLabel" : "주소",
+      "currencyLabel" : "통화",
+      "networkLabel" : "네트워크",
+      "nameLabel" : "주소 별칭",
+      "continue" : "주소 확인"
+    },
     "addressCount_zero" : "0개 주소",
     "addressCount_one" : "{{count}}개 주소",
     "addressCount_other" : "{{count}}개 주소",
@@ -10235,10 +10385,10 @@
       "ledgerWalletAddresses" : "Ledger Wallet 주소",
       "myAddresses" : "내 주소",
       "emptyState" : {
-        "title" : "아직 등록된 주소가 없습니다",
+        "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
         "meTitle" : "내 주소 저장하기",
         "meDescription" : "거래소나 다른 지갑에서 사용 중인 본인의 외부 주소를 미리 저장해 두는 유용한 기능입니다. 주소를 저장해 두면 다음 번에 본인에게 전송할 때, 복잡한 주소 대신 Ledger 장치 화면에 직접 지정한 이름이 표시됩니다.",
-        "contactDescription" : "{{name}}님에게 송금하려면 지갑 주소를 저장하세요."
+        "contactDescription" : "다음번에는 이름만으로 송금할 수 있도록 상대방의 지갑 주소를 저장하세요"
       }
     },
     "addressDetail" : {
@@ -10306,7 +10456,6 @@
       "title" : "연락처 기능 소개",
       "description" : "암호화폐 주소록 — 자주 송금하는 지갑 주소를 한 곳에 저장해 보세요.",
       "primaryAction" : "연락처 기능 사용해 보기",
-      "secondaryAction" : "다음에 결정하기",
       "highlights" : {
         "saveAddresses" : {
           "title" : "한 번의 주소 저장",
