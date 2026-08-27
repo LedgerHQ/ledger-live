@@ -1,8 +1,5 @@
 import BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { log } from "@ledgerhq/logs";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
@@ -28,7 +25,6 @@ import {
 } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedTransaction as getMockedPublicTransaction,
-  getMockedEnrichedPrivateRecord,
   getMockedRecord,
   getMockedTokenDetails,
 } from "../__tests__/fixtures/api.fixture";
@@ -51,7 +47,13 @@ import {
   mockTxIntentConvertTokenPrivateToPublic,
   mockTxIntentConvertTokenPrivateToPublic2,
 } from "../__tests__/fixtures/transaction.fixture";
-import type { AleoContext, AleoOperationExtra, ProvableApi } from "../types";
+import type {
+  AleoContext,
+  AleoOperationExtra,
+  AleoPublicTransaction,
+  AleoTokenType,
+  ProvableApi,
+} from "../types";
 import {
   parseMicrocredits,
   parseAmount,
@@ -62,9 +64,8 @@ import {
   findTransferArguments,
   determineTransactionType,
   patchAccountWithViewKey,
-  toCoinFrameworkOperation,
-  toBridgeOperation,
-  toPrivateBridgeOperation,
+  toPublicOperation,
+  hasPublicAddress,
   resolveConfig,
   getTransactionType,
   buildFeeConfigurationForRootIntent,
@@ -97,7 +98,6 @@ import {
   selectPrivateRecordsForAmount,
   getEstimatedSigningTime,
   sumPrivateRecords,
-  getCalTokens,
   getMaxPrivateRecordsForAccount,
   getStrategyConfig,
   isAleoAccount,
@@ -114,8 +114,6 @@ jest.mock("@ledgerhq/logs", () => ({
 
 const mockedAleoConfig = jest.mocked(aleoConfig);
 
-const mockCurrency = getMockedCurrency();
-const mockTokenCurrency = getMockedTokenCurrency();
 const mockConfig = getMockedConfig("mainnet");
 
 const supportedPublicTransactionModes = [
@@ -404,14 +402,42 @@ describe("determineTransactionType", () => {
   );
 });
 
-describe("toCoinFrameworkOperation", () => {
+describe("hasPublicAddress", () => {
+  it("should be true when either side is set", () => {
+    expect(hasPublicAddress(getMockedPublicTransaction({ recipient_address: "" }))).toBe(true);
+    expect(hasPublicAddress(getMockedPublicTransaction({ sender_address: "" }))).toBe(true);
+  });
+
+  it("should be false when both sides are blank", () => {
+    expect(
+      hasPublicAddress(getMockedPublicTransaction({ sender_address: "", recipient_address: "" })),
+    ).toBe(false);
+  });
+
+  it("should treat a missing address like a blank one", () => {
+    // the explorer is typed to send "" but has been seen omitting the field entirely
+    const { sender_address: _, recipient_address: __, ...rawTx } = getMockedPublicTransaction();
+
+    expect(hasPublicAddress(rawTx as AleoPublicTransaction)).toBe(false);
+  });
+});
+
+const NO_TOKENS = new Map<string, AleoTokenType>();
+
+describe("toPublicOperation", () => {
   const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+  const otherAddress = "aleo1test123address456";
 
   it("should set type to IN when address is the recipient", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.type).toBe("IN");
   });
@@ -419,23 +445,65 @@ describe("toCoinFrameworkOperation", () => {
   it("should set type to OUT when address is the sender", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, senderAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.type).toBe("OUT");
   });
 
-  it("should set type to NONE when program_id is not CREDITS", () => {
-    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
+  it("should set type to NONE when address is neither sender nor recipient", () => {
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: otherAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.type).toBe("NONE");
+  });
+
+  it("should map a token program to the standard the registry reports", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: new Map([["custom.aleo", "arc20"]]),
+    });
+
+    expect(result.asset).toEqual({ type: "arc20", assetReference: "custom.aleo" });
+    expect(result.type).toBe("IN");
+  });
+
+  it("should map a program missing from the registry to an unknown asset", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
+
+    expect(result.asset).toEqual({ type: "unknown", assetReference: "custom.aleo" });
   });
 
   it("should map core fields from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.id).toBe(rawTx.transaction_id);
     expect(result.senders).toEqual([rawTx.sender_address]);
@@ -450,7 +518,12 @@ describe("toCoinFrameworkOperation", () => {
   it("should derive fees and blockHash from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.tx.fees).toBe(BigInt(rawTx.fee));
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
@@ -460,7 +533,12 @@ describe("toCoinFrameworkOperation", () => {
     const amountU128 = "123456789012345678901234567890";
     const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.value).toBe(BigInt(amountU128));
   });
@@ -468,7 +546,12 @@ describe("toCoinFrameworkOperation", () => {
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.tx.failed).toBe(true);
   });
@@ -476,125 +559,131 @@ describe("toCoinFrameworkOperation", () => {
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: recipientAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
     expect(result.details).toMatchObject({
       functionId: rawTx.function_id,
       ledgerOpType: "IN",
     });
   });
-});
 
-describe("toBridgeOperation", () => {
-  const ledgerAccountId = "js:2:aleo:aleo1test:";
-  const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
-  const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
-
-  beforeEach(() => {
-    jest.mocked(log).mockClear();
-  });
-
-  it("should produce an operation with encoded id and accountId", () => {
-    const rawTx = getMockedPublicTransaction();
-    const expectedId = encodeOperationId(ledgerAccountId, rawTx.transaction_id, "IN");
-
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-
-    expect(result.id).toBe(expectedId);
-    expect(result.accountId).toBe(ledgerAccountId);
-  });
-
-  it("should derive all operation fields from rawTx", () => {
-    const rawTx = getMockedPublicTransaction();
-
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-
-    expect(result.hash).toBe(rawTx.transaction_id);
-    expect(result.type).toBe("IN");
-    expect(result.value).toEqual(new BigNumber(rawTx.amount));
-    expect(result.fee).toEqual(new BigNumber(rawTx.fee));
-    expect(result.senders).toEqual([rawTx.sender_address]);
-    expect(result.recipients).toEqual([rawTx.recipient_address]);
-    expect(result.blockHeight).toBe(rawTx.block_number);
-    expect(result.blockHash).toBe(rawTx.block_hash);
-    expect(result.hasFailed).toBe(false);
-  });
-
-  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
-    const amountU128 = "123456789012345678901234567890";
-    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
-
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-
-    expect(result.value).toEqual(new BigNumber(amountU128));
-  });
-
-  it("should generate different ids for different account ids", () => {
-    const rawTx = getMockedPublicTransaction();
-    const otherId = "js:2:aleo:aleo1other:";
-
-    const result1 = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-    const result2 = toBridgeOperation(otherId, rawTx, recipientAddress);
-
-    expect(result1.id).not.toBe(result2.id);
-    expect(result1.accountId).toBe(ledgerAccountId);
-    expect(result2.accountId).toBe(otherId);
-  });
-
-  it("should set type to OUT when address is the sender", () => {
-    const rawTx = getMockedPublicTransaction();
-
-    const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
-
-    expect(result.type).toBe("OUT");
-    expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
-  });
-
-  it("should attach programId when the transaction is a token transfer", () => {
+  it("should fill a blank recipient with the account address when it owns a record", () => {
     const rawTx = getMockedPublicTransaction({
-      program_id: "usdcx_stablecoin.aleo",
+      function_id: "transfer_public_to_private",
+      recipient_address: "",
     });
 
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress, true);
-
-    expect(result.extra.programId).toBe("usdcx_stablecoin.aleo");
-  });
-
-  it.each([
-    ["NaN amount", { amount: NaN as number }],
-    ["negative amount", { amount: -1 }],
-  ])("should log invalid raw transaction details for %s", (_label, amountOverride) => {
-    const rawTx = getMockedPublicTransaction(amountOverride);
-
-    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-
-    expect(log).toHaveBeenCalledWith(
-      "aleo/toBridgeOperation",
-      `Invalid raw transaction details for ${recipientAddress}`,
+    const result = toPublicOperation({
       rawTx,
-    );
-    expect(result.value).toEqual(new BigNumber(rawTx.amount));
+      address: senderAddress,
+      hasOwnedRecord: true,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
+
+    expect(result.recipients).toEqual([senderAddress]);
+    // sender wins: the balance the transfer left is still the public one
+    expect(result.type).toBe("OUT");
   });
 
-  it("should log a zero amount apart from invalid details for transfer functions", () => {
-    const rawTx = getMockedPublicTransaction({ amount: 0, function_id: "transfer_private" });
+  it("should fill a blank sender with the account address when it owns a record", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_private_to_public",
+      sender_address: "",
+    });
 
-    toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
-
-    expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith(
-      "aleo/toBridgeOperation",
-      `Zero value transaction for ${recipientAddress}`,
+    const result = toPublicOperation({
       rawTx,
-    );
+      address: recipientAddress,
+      hasOwnedRecord: true,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
+
+    expect(result.senders).toEqual([recipientAddress]);
+    expect(result.type).toBe("OUT");
   });
 
-  it("should not log when amount is valid", () => {
-    const rawTx = getMockedPublicTransaction();
+  it("should leave blank addresses alone when no record is owned", () => {
+    const rawTx = getMockedPublicTransaction({ recipient_address: "" });
 
-    toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
 
-    expect(log).not.toHaveBeenCalled();
+    expect(result.recipients).toEqual([""]);
+  });
+
+  it("should set type to IN for a self-transfer, as the classic bridge does", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: senderAddress,
+      recipient_address: senderAddress,
+    });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
+
+    expect(result.type).toBe("IN");
+  });
+
+  it("should keep a self shield OUT, since the explorer blanked the recipient", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: senderAddress,
+      recipient_address: "",
+      function_id: "transfer_public_to_private",
+    });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: true,
+      tokenTypeByProgramName: NO_TOKENS,
+    });
+
+    expect(result.type).toBe("OUT");
+    expect(result.recipients).toEqual([senderAddress]);
+  });
+
+  it("should use the resolved shield recipient when the explorer blanked it", () => {
+    const rawTx = getMockedPublicTransaction({
+      recipient_address: "",
+      function_id: "transfer_public_to_private",
+    });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+      resolvedRecipient: recipientAddress,
+    });
+
+    expect(result.recipients).toEqual([recipientAddress]);
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should prefer the explorer's recipient over a resolved one", () => {
+    const rawTx = getMockedPublicTransaction({ recipient_address: recipientAddress });
+
+    const result = toPublicOperation({
+      rawTx,
+      address: senderAddress,
+      hasOwnedRecord: false,
+      tokenTypeByProgramName: NO_TOKENS,
+      resolvedRecipient: "aleo1someoneelse",
+    });
+
+    expect(result.recipients).toEqual([recipientAddress]);
   });
 });
 
@@ -968,131 +1057,6 @@ describe("getOperationTransactionType", () => {
     ["public", "unknown_type" as any],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getOperationTransactionType(transactionType)).toBe(expected);
-  });
-});
-
-describe("toPrivateBridgeOperation", () => {
-  const mockLedgerAccountId =
-    "js:2:aleo:aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px::";
-  const mockRecipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
-  const mockSenderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
-
-  it("should return an IN operation when recipient matches address", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      recipient: mockRecipientAddress,
-      sender: mockSenderAddress,
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.type).toBe("IN");
-    expect(result.senders).toEqual([mockSenderAddress]);
-    expect(result.recipients).toEqual([mockRecipientAddress]);
-  });
-
-  it("should return an OUT operation when sender matches address", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      sender: mockSenderAddress,
-      recipient: mockRecipientAddress,
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockSenderAddress);
-
-    expect(result.type).toBe("OUT");
-    expect(result.senders).toEqual([mockSenderAddress]);
-    expect(result.recipients).toEqual([mockRecipientAddress]);
-  });
-
-  it("should encode operation id using ledgerAccountId, transaction_id and type", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      recipient: mockRecipientAddress,
-    });
-    const expectedId = encodeOperationId(
-      mockLedgerAccountId,
-      enriched.rawRecord.transaction_id.trim(),
-      "IN",
-    );
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.id).toBe(expectedId);
-    expect(result.accountId).toBe(mockLedgerAccountId);
-  });
-
-  it("should trim whitespace from transaction_id when building hash and id", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      rawRecord: { transaction_id: "  tx-with-spaces  " },
-      recipient: mockRecipientAddress,
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.hash).toBe("tx-with-spaces");
-    expect(result.id).toContain("tx-with-spaces");
-  });
-
-  it("should set fee from details.fee_value", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      details: { fee_value: 9999 },
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.fee).toEqual(new BigNumber(9999));
-  });
-
-  it("should set blockHash from details.block_hash", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      details: { block_hash: "ab1testhash", fee_value: 1000 },
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.blockHash).toBe("ab1testhash");
-  });
-
-  it("should set date from block_timestamp multiplied by 1000", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      rawRecord: { block_timestamp: 1704067200 },
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.date).toEqual(new Date(1704067200 * 1000));
-  });
-
-  it("should set extra.transactionType to private", () => {
-    const enriched = getMockedEnrichedPrivateRecord();
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.extra).toMatchObject({ transactionType: "private" });
-  });
-
-  it("should set extra.functionId from rawRecord.function_name", () => {
-    const enriched = getMockedEnrichedPrivateRecord({
-      rawRecord: { function_name: "transfer_private" },
-    });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.extra).toMatchObject({ functionId: "transfer_private" });
-  });
-
-  it("should set hasFailed to false", () => {
-    const enriched = getMockedEnrichedPrivateRecord();
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.hasFailed).toBe(false);
-  });
-
-  it("should set value from enriched.value", () => {
-    const enriched = getMockedEnrichedPrivateRecord({ value: new BigNumber(42000000) });
-
-    const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
-
-    expect(result.value).toEqual(new BigNumber(42000000));
   });
 });
 
@@ -2739,32 +2703,6 @@ describe("isAleoAccount", () => {
       token: { ...getMockedTokenCurrency(), parentCurrencyId: "unregistered_currency_id" },
     });
     expect(isAleoAccount(unknownTokenAccount)).toBe(false);
-  });
-});
-
-describe("getCalTokens", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
-        if (programName === MOCK_TOKEN_PROGRAM_ID) {
-          return mockTokenCurrency;
-        }
-        return undefined;
-      }),
-      getTokensSyncHash: async () => "",
-    });
-  });
-
-  it("should resolve known program names from CAL and omit unknown ones", async () => {
-    const result = await getCalTokens({
-      currencyId: mockCurrency.id,
-      programNames: [MOCK_TOKEN_PROGRAM_ID, "unknown_token.aleo", MOCK_TOKEN_PROGRAM_ID],
-    });
-
-    expect(result.size).toBe(1);
-    expect(result.get(MOCK_TOKEN_PROGRAM_ID)).toEqual(mockTokenCurrency);
   });
 });
 

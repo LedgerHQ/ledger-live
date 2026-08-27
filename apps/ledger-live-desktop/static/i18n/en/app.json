@@ -901,6 +901,9 @@
         "confirm": "Confirm"
       }
     },
+    "card": {
+      "balanceLabel": "Balance"
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request",
@@ -924,6 +927,38 @@
         "buy": {
           "title": "Buy",
           "description": "Buy stablecoins with credit card."
+        }
+      }
+    },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "saveDialogTitle": "Save request card",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      },
+      "verifyAddress": {
+        "introTitle": "Verify your address",
+        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
+        "verifyCta": "Verify address",
+        "successTitle": "Address displayed on the device's Secure Screen",
+        "nextStepsLabel": "Next steps",
+        "nextStepShare": "Share your address via your desired app",
+        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "gotItCta": "Got it",
+        "device": {
+          "cancelledTitle": "Address verification cancelled",
+          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
+          "mismatchTitle": "Addresses don't match",
+          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
+          "unsupportedTitle": "Verification not available",
+          "unsupportedDescription": "This device app can't display the address for on-device verification.",
+          "retryCta": "Show address again",
+          "closeCta": "Close"
         }
       }
     }
@@ -2530,6 +2565,8 @@
     },
     "placeholder": "Enter address or ENS",
     "placeholderNoENS": "Enter address",
+    "placeholderWithContacts": "Enter address, ENS or contact",
+    "placeholderNoEnsWithContacts": "Enter address or contact",
     "recent": "Recent",
     "myAccounts": "My accounts",
     "sendTo": "Send to {{address}}",
@@ -6546,7 +6583,7 @@
           },
           "dualValidator": {
             "title": "Dual-validator security",
-            "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+            "body": "Transactions require co-signing from both Ledger and Kiln. Neither can act on your behalf alone."
           },
           "tokenLiability": {
             "title": "Standard token liability ⚠️",
@@ -7263,6 +7300,9 @@
     "ZcashSaplingRecipientNotSupported": {
       "title": "Sending to Sapling addresses is not supported"
     },
+    "ZcashAmountBelowDustThreshold": {
+      "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7902,10 +7942,20 @@
       "title": "Minimum amount is 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft": {
-      "title": "At least 1 SUI should be left in stake"
+      "title": "Unstake the full amount, or leave at least 1 SUI staked"
+    },
+    "SuiStakeNotFound": {
+      "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
+    "SuiUnstakeExceedsStake": {
+      "title": "Amount exceeds the selected stake"
     },
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
+    },
+    "SuiAddressBalanceAppUpdateRequired": {
+      "title": "Update your Sui app",
+      "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
     },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
@@ -8668,6 +8718,11 @@
       "title": "More security. More control",
       "description": "Learn more about security features.",
       "cta": "Learn more"
+    },
+    "profile": {
+      "title": "Upgrade your Device",
+      "description": "Bigger screen, better security. Enjoy {{discount}}%.",
+      "cta": "Explore"
     }
   },
   "largeScreenUpsellModal": {
@@ -8680,6 +8735,12 @@
       "title": "Spot scams before signing",
       "subtitle": "Learn more about advanced security features that enable real-time threat detection.",
       "cta": "Learn more"
+    },
+    "recoverTrigger": {
+      "title": "Want peace-of-mind recovery?",
+      "subtitle": "While your Nano S is perfectly secure, it isn't compatible with Ledger Recover. Upgrade to a newer model to unlock secure, ID-based wallet backup.",
+      "cta": "Learn more",
+      "dismiss": "Not now"
     }
   },
   "modularAssetDrawer": {
@@ -8783,7 +8844,8 @@
     "title": "Home",
     "today": "Today",
     "carousel": {
-      "title": "For you"
+      "title": "For you",
+      "closeAll": "Close all"
     },
     "addAccountCta": "Add crypto account",
     "noBalanceTitle": "Start by funding your wallet",
@@ -8966,7 +9028,7 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
       "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds",
-      "privateBalanceMaturing": "{{spendable}} spendable · {{maturing}} maturing"
+      "privateBalanceMaturing": "Private balance: {{spendable}} spendable · {{maturing}} maturing"
     },
     "shielded": {
       "send": {
@@ -8999,6 +9061,10 @@
             "message": "Private balance is not synchronized",
             "cta": "Resume sync"
           },
+          "failed": {
+            "message": "Private balance sync failed",
+            "cta": "Resume sync"
+          },
           "running": {
             "message": "Private balance is synchronizing ({{progress}}%)",
             "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
@@ -9021,7 +9087,8 @@
         "stopSync": "Stop sync",
         "upToDate": "Up to date",
         "lastSync": "Last sync: {{date}}",
-        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
+        "syncFailed": "Private balance sync failed"
       },
       "datepicker": {
         "label": "Birthday height",
@@ -9404,6 +9471,10 @@
     },
     "addAddressReview": {
       "title": "Review address",
+      "addressLabel": "Address",
+      "currencyLabel": "Currency",
+      "networkLabel": "Network",
+      "nameLabel": "Address name",
       "continue": "Confirm address",
       "successTitle": "Address saved",
       "close": "Close"
@@ -9429,7 +9500,7 @@
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
         "meDescription": "Save your wallet addresses to receive crypto by name next time.",
-        "contactDescription": "Save their wallet addresses to send to them by name next time."
+        "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
     "addressDetail": {
@@ -9484,6 +9555,7 @@
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+      "activate": "Turn on Ledger Sync",
       "dismiss": "Got it"
     },
     "featureIntroduction": {
@@ -9573,8 +9645,7 @@
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
-        "title": "Device is locked",
-        "description": "Unlock your device to continue."
+        "title": "Unlock your Ledger device and then select Retry below"
       },
       "unlockDevice": {
         "title": "Unlock your {{productName}}"
@@ -9586,16 +9657,16 @@
     },
     "errors": {
       "connectionError": {
-        "title": "Device disconnected",
-        "description": "Your Ledger is no longer connected. Make sure it's powered on and plugged in."
+        "title": "Ledger Device disconnected",
+        "description": "Make sure it's powered on and plugged in."
       },
       "intentError": {
         "title": "Unknown error",
-        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+        "description": "Try again or contact Ledger support if the issue continues."
       },
       "invalidOperation": {
-        "title": "Invalid state",
-        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+        "title": "An error occurred",
+        "description": "Try again or contact Ledger Support if the issue continues."
       }
     },
     "initialization": {
@@ -9611,43 +9682,43 @@
       },
       "retryable": {
         "userRefused": {
-          "title": "Operation rejected on device"
+          "title": "Operation rejected on Ledger device"
         },
         "deviceBusy": {
-          "title": "Action pending on your Ledger device",
-          "description": "Complete it and then select Retry."
+          "title": "Action needed on your Ledger device",
+          "description": "Finish the action on your device, then select “Retry” below."
         }
       },
       "blocking": {
         "deviceNotOnboarded": {
-          "title": "Your Ledger is not ready to use yet",
-          "description": "You need to set up your {{productName}} first. We will guide you through the device setup process."
+          "title": "Your Ledger device needs to be set up",
+          "description": "Set it up to continue."
         },
         "unsupportedFirmwareVersion": {
           "title": "Ledger OS update required"
         },
         "unsupportedApplication": {
           "title": "Unsupported feature",
-          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "unsupportedFeature": {
           "title": "Unsupported feature",
-          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "wrongDeviceForAccount": {
-          "title": "Wrong Secret Recovery Phrase",
-          "description": "This Ledger isn't set up with the recovery phrase linked to the selected account. Check that you're using the correct device."
+          "title": "Use the Ledger device you originally set up this account with",
+          "description": "This Ledger isn't set up with the Secret Recovery Phrase linked to the selected crypto account."
         },
         "deviceOutOfStorageSpace": {
-          "title": "Not enough device memory",
-          "description": "Your device doesn't have enough memory. Please uninstall apps and try again.",
+          "title": "Uninstall some apps to free up Ledger device memory",
+          "description": "Your device doesn't have enough memory.",
           "apps": "Apps to manage: {{appNames}}"
         }
       },
       "cta": {
         "openMyLedger": "Open My Ledger",
         "goToMyLedger": "Go to My Ledger",
-        "setupDevice": "Set up device",
+        "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
         "contactLedgerSupport": "Contact Ledger support"
@@ -9664,7 +9735,7 @@
           "title": "Loading"
         },
         "connecting": {
-          "title": "Loading"
+          "title": "Connecting to your Ledger device"
         },
         "connectionError": {
           "errors": {
@@ -9696,9 +9767,9 @@
         },
         "noKnownDevice": {
           "title": "Ledger device required",
-          "description": "To continue, set up or connect your signer.",
+          "description": "To continue, set up or connect your Ledger device.",
           "connectLedgerDevice": "Connect Ledger device",
-          "noLedgerDevice": "I don't have a Ledger device"
+          "noLedgerDevice": "I don’t have a Ledger device"
         },
         "waitingForSelectedDevice": {
           "title": "Power on and unlock your {{productName}}"

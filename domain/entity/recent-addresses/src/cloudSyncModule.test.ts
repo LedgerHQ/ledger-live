@@ -1,6 +1,17 @@
+import { z } from "zod";
+import { createAggregator, type CloudSyncDataManager } from "@shared/cloud-sync-module";
 import { recentAddressesSyncModule, RecentAddressesDistantSchema } from "./cloudSyncModule";
 import type { RecentAddressesState } from "./schema";
 import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
+
+type Names = Record<string, string>;
+/** a healthy neighbour, to prove a quarantine stays confined to its own module */
+const namesModule: CloudSyncDataManager<Names, Names, z.ZodType<Names>, Names> = {
+  schema: z.record(z.string(), z.string()),
+  diffLocalToDistant: local => ({ hasChanges: false, nextState: local }),
+  resolveIncrementalUpdate: async () => ({ hasChanges: false }),
+  applyUpdate: local => local,
+};
 
 describeCloudSyncModuleContract("recentAddressesSyncModule contract", recentAddressesSyncModule, {
   emptyLocalState: {},
@@ -16,36 +27,42 @@ describe("RecentAddressesDistantSchema", () => {
     expect(RecentAddressesDistantSchema.parse(input)).toEqual(input);
   });
 
-  it("filters out invalid entries, keeps valid ones", () => {
+  it("rejects a slice holding an invalid entry rather than dropping it", () => {
     const input = {
       bitcoin: [{ address: "bc1q", index: 0 }, "invalid", null, { address: "bc1b", index: 1 }],
     };
-    const parsed = RecentAddressesDistantSchema.parse(input);
-    expect(parsed.bitcoin).toHaveLength(2);
-    expect(parsed.bitcoin[0].address).toBe("bc1q");
-    expect(parsed.bitcoin[1].address).toBe("bc1b");
+    expect(RecentAddressesDistantSchema.safeParse(input).success).toBe(false);
   });
 
-  it("handles corrupted nested address format", () => {
+  it("rejects the corrupted nested address format instead of repairing it", () => {
     const input = {
       bitcoin: [{ address: { address: "bc1q", lastUsed: 500 }, index: 0, lastUsed: 600 }],
     };
-    const parsed = RecentAddressesDistantSchema.parse(input);
-    expect(parsed.bitcoin[0].address).toBe("bc1q");
-    expect(parsed.bitcoin[0].lastUsed).toBe(500);
+    expect(RecentAddressesDistantSchema.safeParse(input).success).toBe(false);
   });
+});
 
-  it("handles corrupted nested address format with ensName", () => {
-    const input = {
-      bitcoin: [
-        {
-          address: { address: "bc1q", lastUsed: 500, ensName: "wallet.eth" },
-          index: 0,
-        },
-      ],
+describe("a corrupted distant slice quarantines the module", () => {
+  it("preserves the slice verbatim and reports it, leaving healthy modules alone", () => {
+    const onModuleError = jest.fn();
+    const aggregator = createAggregator(
+      { recentAddresses: recentAddressesSyncModule, names: namesModule },
+      { onModuleError },
+    );
+    const corrupted = {
+      recentAddresses: { bitcoin: [{ address: { address: "bc1q" }, index: 0 }] },
+      names: { "account-1": "from another instance" },
     };
-    const parsed = RecentAddressesDistantSchema.parse(input);
-    expect(parsed.bitcoin[0].address).toBe("bc1q");
+
+    const { nextState } = aggregator.diffLocalToDistant(
+      { recentAddresses: { bitcoin: [addr("bc1local")] }, names: {} },
+      corrupted,
+    );
+
+    expect(nextState.recentAddresses).toEqual(corrupted.recentAddresses);
+    expect(onModuleError).toHaveBeenCalledTimes(1);
+    expect(onModuleError.mock.calls[0][0]).toBe("recentAddresses");
+    expect(nextState.names).toEqual({});
   });
 });
 

@@ -2,7 +2,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { act, render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
-import { getEnv, setEnv } from "@shared/env";
 import DelegationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
@@ -26,6 +25,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       activeStake: new BigNumber(0),
       activeStakePercentage: new BigNumber(0),
       overstaked: false,
+      isLedgerNode: true,
     },
   ]),
   useHederaEnrichedDelegation: jest.fn(() => null),
@@ -48,17 +48,11 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getCurrencyBridge: () => require("../../__mocks__/bridge.mock").resolvedCurrencyBridge,
 }));
 
-let prevLedgerNodeId: number;
 beforeEach(async () => {
-  prevLedgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  // id "0" matches the first mocked validator so getDefaultValidator pre-selects it,
-  // enabling the Continue button on the Validator step without user interaction.
-  setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 0);
   await setupHederaModalTest();
 });
 
 afterEach(() => {
-  setEnv("HEDERA_STAKING_LEDGER_NODE_ID", prevLedgerNodeId);
   cleanupHederaModalTest();
 });
 

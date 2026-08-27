@@ -177,42 +177,38 @@ describe("useNetworkFees", () => {
     expect(result.current.networkFeesInfo).toBeNull();
   });
 
-  it("exposes the TRON fee explanation derived from the status breakdown", () => {
-    const tron = getCryptoCurrencyById("tron");
-    const sufficient = renderHook(() =>
+  it("explains TRON fees as sufficient when the estimated fee is zero", () => {
+    const { result } = renderHook(() =>
       useNetworkFees(
         buildParams({
-          account: { currency: tron },
-          transaction: { family: "tron" },
-          status: {
-            energyRequired: new BigNumber(0),
-            energyAvailable: new BigNumber(0),
-            bandwidthRequired: new BigNumber(270),
-            bandwidthAvailable: new BigNumber(1500),
+          account: { currency: getCryptoCurrencyById("tron") },
+          transaction: {
+            family: "tron",
+            feeParameters: { energyRequired: "0", bandwidthRequired: "270" },
           },
+          status: { estimatedFees: new BigNumber(0) },
         }),
       ),
     );
-    expect(sufficient.result.current.networkFeesInfo?.translationKey).toBe("tronFees.sufficient");
 
-    const insufficient = renderHook(() =>
+    expect(result.current.networkFeesInfo?.translationKey).toBe("tronFees.sufficient");
+  });
+
+  it("explains TRON fees as insufficient when the estimated fee is non-zero", () => {
+    const { result } = renderHook(() =>
       useNetworkFees(
         buildParams({
-          account: { currency: tron },
-          transaction: { family: "tron" },
-          status: {
-            estimatedFees: new BigNumber(13_740_900),
-            energyRequired: new BigNumber(65000),
-            energyAvailable: new BigNumber(0),
-            bandwidthRequired: new BigNumber(270),
-            bandwidthAvailable: new BigNumber(1500),
+          account: { currency: getCryptoCurrencyById("tron") },
+          transaction: {
+            family: "tron",
+            feeParameters: { energyRequired: "65000", bandwidthRequired: "270" },
           },
+          status: { estimatedFees: new BigNumber(13_740_900) },
         }),
       ),
     );
-    expect(insufficient.result.current.networkFeesInfo?.translationKey).toBe(
-      "tronFees.insufficient",
-    );
+
+    expect(result.current.networkFeesInfo?.translationKey).toBe("tronFees.insufficient");
   });
 
   it("maps fee strategy options with translated labels and combined sublabels", () => {

@@ -7,6 +7,7 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   buildTransactionPatchFromURIScheme,
@@ -16,10 +17,14 @@ import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext"
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
-  getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
   SEND_ADDRESS_FORMAT_OPTIONS,
 } from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { useContactsFeature } from "@features/platform-contacts";
+import { selectContacts } from "@domain/entity-contact";
+import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
 
@@ -38,6 +43,7 @@ export type SendHeaderViewModel = {
     clear: () => void;
   };
   formattedAddress: string;
+  recipientContact: RecipientHeaderContact | undefined;
   recipientPlaceholder: string;
   handleBackPress: () => void;
   handleClose: () => void;
@@ -47,6 +53,18 @@ export type SendHeaderViewModel = {
   handleQrCodeClick: () => void;
 };
 
+function getRecipientPlaceholderKey({
+  supportsDomain,
+  canSearchContacts,
+}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
+  if (canSearchContacts) {
+    return supportsDomain
+      ? "send.newSendFlow.placeholderWithContacts"
+      : "send.newSendFlow.placeholderNoEnsWithContacts";
+  }
+  return supportsDomain ? "send.newSendFlow.placeholder" : "send.newSendFlow.placeholderNoENS";
+}
+
 export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const { t } = useTranslation();
@@ -54,6 +72,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const contacts = useSelector(selectContacts);
 
   const accountName = useMaybeAccountName(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
@@ -91,15 +111,32 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     return { address } as const;
   }, [state.transaction.transaction?.recipient]);
 
+  const recipientHeader = useMemo(
+    () =>
+      getRecipientHeaderPresentation({
+        recipient: recipientFromTransaction,
+        contacts,
+        currencyId: state.account.currency?.id,
+        isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
+      }),
+    [
+      contacts,
+      isAmountStep,
+      isContactsFeatureEnabled,
+      recipientFromTransaction,
+      state.account.currency?.id,
+    ],
+  );
+
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
       return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return getRecipientDisplayValue(recipientFromTransaction);
+      return recipientHeader.label;
     }
     return "";
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, recipientFromTransaction]);
+  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
   const handleBackPress = useCallback(() => {
     if (canGoBack) {
@@ -129,7 +166,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       setRecipientSearchValue(prefillValue);
     }
 
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate(ScreenName.SendFlowRecipient);
+    }
   }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
   const handleScannedURI = useCallback(
@@ -166,9 +207,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     state.transaction.transaction,
   ]);
 
-  const recipientPlaceholder = uiConfig.recipientSupportsDomain
-    ? t("send.newSendFlow.placeholder")
-    : t("send.newSendFlow.placeholderNoENS");
+  const canSearchContacts =
+    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+  const recipientPlaceholder = t(
+    getRecipientPlaceholderKey({
+      supportsDomain: uiConfig.recipientSupportsDomain,
+      canSearchContacts,
+    }),
+  );
 
   return {
     title,
@@ -181,6 +227,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     showRecipientInput,
     recipientSearch,
     formattedAddress,
+    recipientContact: recipientHeader.contact,
     recipientPlaceholder,
     handleBackPress,
     handleClose,

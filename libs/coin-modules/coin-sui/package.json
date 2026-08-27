@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -163,7 +163,8 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@mysten/signers": "1.0.1",
-    "@mysten/sui": "2.9.0",
+    "@mysten/sui": "2.23.1",
+    "@protobuf-ts/grpcweb-transport": "2.11.1",
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
     "lodash": "catalog:",

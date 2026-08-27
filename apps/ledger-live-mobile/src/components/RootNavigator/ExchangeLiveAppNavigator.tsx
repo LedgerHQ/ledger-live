@@ -35,6 +35,7 @@ const createExchangeScreen =
       referrer,
       mode,
       returnToPreviousScreenOnClose,
+      goBackOnAccountRequestCancel,
     } = props.route.params || {};
     const resolvedCurrency = currency
       ? findCryptoCurrencyByKeyword(currency)?.id
@@ -57,6 +58,7 @@ const createExchangeScreen =
             platform: platform || defaultPlatform,
             referrer: referrer,
             mode,
+            goBackOnAccountRequestCancel,
           },
         }}
       />

@@ -1,6 +1,6 @@
 {
   "name": "@shared/cloud-sync",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Cloud sync transport layer: CloudSyncSDK with native fetch and WebSocket transport",
   "main": "src/index.ts",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

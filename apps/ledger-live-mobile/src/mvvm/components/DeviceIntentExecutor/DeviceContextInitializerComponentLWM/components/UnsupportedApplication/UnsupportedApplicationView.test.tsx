@@ -18,7 +18,7 @@ describe("UnsupportedApplicationView", () => {
     expect(screen.getByText("Unsupported feature")).toBeVisible();
     expect(
       screen.getByText(
-        "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details.",
+        "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details.",
       ),
     ).toBeVisible();
     expect(screen.getByText("Contact Ledger support")).toBeVisible();

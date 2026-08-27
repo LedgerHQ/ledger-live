@@ -1,11 +1,15 @@
 ---
-name: "[CI] - Worflow Files Check - PR"
+name: "[CI] - Workflow Files Check - PR"
 
 on:
   pull_request:
     branches:
       - develop
     types: [opened, labeled, unlabeled, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   check-sync:
@@ -14,133 +18,183 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Check for bypass label
-        id: bypass-check
-        env:
-          PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
-        run: |
-          if echo "$PR_LABELS_JSON" | jq -r '.[]' | grep -Fxq "skip-sync-check"; then
-            echo "should_skip=true" >> $GITHUB_OUTPUT
-            echo "⚠️  Workflow synchronization check bypassed via PR label: skip-sync-check"
-          else
-            echo "should_skip=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Analyze workflow synchronization
-        id: analyze
-        if: steps.bypass-check.outputs.should_skip == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          CHECK_FOLDER=".github/workflows/"
-
-          echo "🔍 Checking synchronization against base ($BASE_SHA)..."
-
-          # Files this PR intentionally changed in the monitored folder
-          PR_CHANGED=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER/files" \
-            --paginate --jq '.[].filename' 2>/dev/null | grep "^$CHECK_FOLDER" || true)
-
-          # Files develop changed since this PR branched: reverse the comparison so
-          # the 3-dot diff walks from the merge base to the develop tip (not to HEAD)
-          DEVELOP_DRIFT=$(gh api "repos/$REPOSITORY/compare/$HEAD_SHA...$BASE_SHA" \
-            --jq '.files[].filename' 2>/dev/null | grep "^$CHECK_FOLDER" || true)
-
-          # All workflow files that differ: union of PR changes and develop drift
-          DRIFTED=$(printf '%s\n%s\n' "$PR_CHANGED" "$DEVELOP_DRIFT" | sort -u | grep -v '^$' || true)
-
-          if [ -z "$DRIFTED" ]; then
-            echo "workflows_changed=false" >> $GITHUB_OUTPUT
-            echo "can_proceed=true" >> $GITHUB_OUTPUT
-            echo "changed_files=" >> $GITHUB_OUTPUT
-            echo "✅ No workflow files differ from base - perfectly synchronized"
-            exit 0
-          fi
-
-          echo "workflows_changed=true" >> $GITHUB_OUTPUT
-          DRIFTED_COMMA=$(echo "$DRIFTED" | tr '\n' ',' | sed 's/,$//')
-          echo "changed_files=$DRIFTED_COMMA" >> $GITHUB_OUTPUT
-          echo "📝 Workflow files that differ from base:"
-          echo "$DRIFTED"
-
-          if [ -n "$PR_CHANGED" ]; then
-            echo "ℹ️  Files intentionally changed in this PR:"
-            echo "$PR_CHANGED"
-          fi
-
-          # Unintentional drift = develop's changes the PR didn't also update
-          UNINTENTIONAL=$(comm -23 <(echo "$DEVELOP_DRIFT" | sort) <(echo "$PR_CHANGED" | sort) | grep -v '^$' || true)
-          UNINTENTIONAL_COMMA=$(echo "$UNINTENTIONAL" | tr '\n' ',' | sed 's/,$//')
-          echo "unintentional_files=$UNINTENTIONAL_COMMA" >> $GITHUB_OUTPUT
-
-          if [ -z "$UNINTENTIONAL" ]; then
-            echo "can_proceed=true" >> $GITHUB_OUTPUT
-            echo "✅ All workflow file changes are intentional in this PR"
-          else
-            echo "can_proceed=false" >> $GITHUB_OUTPUT
-            echo "❌ Unintentional workflow drift detected - rebase required:"
-            echo "$UNINTENTIONAL"
-          fi
-
-      - name: Create or update PR comment with results
-        if: steps.analyze.outputs.workflows_changed == 'true' && steps.bypass-check.outputs.should_skip == 'false'
+      - name: Check workflow synchronization
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const canProceed = '${{ steps.analyze.outputs.can_proceed }}' === 'true';
-            const changedFiles = canProceed
-              ? '${{ steps.analyze.outputs.changed_files }}'.split(',').filter(f => f.length > 0)
-              : '${{ steps.analyze.outputs.unintentional_files }}'.split(',').filter(f => f.length > 0);
+            // Workflows that gate a PR *and* are resolved from the PR head, so a stale
+            // branch runs a stale copy. Everything else under .github/workflows/ runs
+            // develop's copy regardless - reusables are always called @develop - and so
+            // cannot go stale here. Keep in step with the required checks on develop.
+            const MONITORED = new Set([
+              '.github/workflows/build-and-test-pr.yml',
+              '.github/workflows/danger.yml',
+            ]);
 
-            const status = canProceed ? 'ℹ️ Info' : '❌ Action Required';
-            const filesList = changedFiles.map(f => `- \`${f}\``).join('\n');
+            const BYPASS_LABEL = 'skip-sync-check';
+            const MARKER = '<!-- sync-check-comment -->';
 
-            const body = `## ${status}: Monitored Files Changed
+            const { owner, repo } = context.repo;
+            const pull_number = context.issue.number;
+            const pr = context.payload.pull_request;
+            const bullets = files => files.map(file => `  - ${file}`).join('\n');
 
-            The following workflow files differ from the base branch:
+            // ---------------------------------------------------------------
+            // Comment upkeep
+            // ---------------------------------------------------------------
 
-            ${filesList}
+            const findComment = async () => {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: pull_number,
+                per_page: 100,
+              });
+              return comments.find(comment => (comment.body || '').includes(MARKER));
+            };
 
-            ${canProceed ?
-              '**Note**: These files were intentionally changed in this PR. This is informational only.' :
-              `**Action Required**: Please rebase your branch against \`develop\` to ensure consistency:\n\n\`\`\`bash\ngit rebase origin/develop\n\`\`\`\n\n`
+            // Every exit path calls this or upsertComment, so a rebase that clears the
+            // drift also clears the message an earlier run left behind. Comment writes
+            // never decide the verdict: a fork PR's token is read-only and will 403.
+            const clearComment = async () => {
+              const existing = await findComment();
+              if (!existing) {
+                core.info('Nothing to report and no existing comment.');
+                return;
+              }
+              try {
+                await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
+                core.info(`Removed the stale sync-check comment (#${existing.id}).`);
+                return;
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info(`Comment #${existing.id} was already removed.`);
+                  return;
+                }
+                core.warning(`Could not delete comment #${existing.id}: ${error.message}`);
+              }
+              try {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body: [
+                    '## ✅ Resolved: workflow files are back in sync with `develop`',
+                    '',
+                    MARKER,
+                  ].join('\n'),
+                });
+              } catch (error) {
+                core.warning(`Could not rewrite comment #${existing.id}: ${error.message}`);
+              }
+            };
+
+            const upsertComment = async (blocking, files) => {
+              const body = [
+                `## ${blocking ? '❌ Action Required' : 'ℹ️ Info'}: Monitored Files Changed`,
+                '',
+                'The following monitored workflow files differ from the base branch:',
+                '',
+                ...files.map(file => `- \`${file}\``),
+                '',
+                blocking
+                  ? '**Action Required**: Please rebase your branch against `develop` to ensure consistency:\n\n```bash\ngit rebase origin/develop\n```'
+                  : '**Note**: These files were intentionally changed in this PR. This is informational only.',
+                '',
+                MARKER,
+              ].join('\n');
+
+              try {
+                const existing = await findComment();
+                if (existing) {
+                  await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+                } else {
+                  await github.rest.issues.createComment({ owner, repo, issue_number: pull_number, body });
+                }
+              } catch (error) {
+                core.warning(`Could not post the sync-check comment: ${error.message}`);
+              }
+            };
+
+            // ---------------------------------------------------------------
+            // Analysis
+            // ---------------------------------------------------------------
+
+            if ((pr.labels || []).some(label => label.name === BYPASS_LABEL)) {
+              core.info(`⚠️ Workflow synchronization check bypassed via PR label: ${BYPASS_LABEL}`);
+              await clearComment();
+              return;
             }
 
-            <!-- sync-check-comment -->`;
+            core.info(`🔍 Checking synchronization against base (${pr.base.sha})...`);
 
-            const comments = await github.rest.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+            const isMonitored = file => MONITORED.has(file);
+
+            // Monitored workflows this PR changed on purpose
+            const prFiles = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100,
+            });
+            const prChanged = new Set(prFiles.map(file => file.filename).filter(isMonitored));
+
+            // Monitored workflows develop changed since this PR branched. `files` on a
+            // compare is capped at 300 and does not paginate, and this repo moves ~2000
+            // files in 4 days, so take only the merge base from it and diff each
+            // monitored path by blob SHA.
+            const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+              owner,
+              repo,
+              basehead: `${pr.head.sha}...${pr.base.sha}`,
             });
 
-            const existingComment = comments.data.find(comment =>
-              comment.body.includes('<!-- sync-check-comment -->')
-            );
+            const blobAt = async (path, ref) => {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path, ref });
+                return data.sha;
+              } catch (error) {
+                if (error.status === 404) return null;
+                throw error;
+              }
+            };
 
-            if (existingComment) {
-              await github.rest.issues.updateComment({
-                comment_id: existingComment.id,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-              });
+            const developDrift = new Set();
+            for (const path of MONITORED) {
+              const [atMergeBase, atBase] = await Promise.all([
+                blobAt(path, comparison.merge_base_commit.sha),
+                blobAt(path, pr.base.sha),
+              ]);
+              if (atMergeBase !== atBase) developDrift.add(path);
             }
 
-      - name: Fail if unintentional drift detected
-        if: steps.analyze.outputs.can_proceed == 'false' && steps.bypass-check.outputs.should_skip == 'false'
-        run: |
-          echo "::notice::💡 To resolve this issue, rebase your branch: git rebase origin/develop"
-          echo "::error::Workflow files have drifted from develop. Please rebase: git rebase origin/develop"
-          exit 1
+            const changed = [...new Set([...prChanged, ...developDrift])].sort();
+            if (!changed.length) {
+              core.info('✅ No monitored workflow files differ from base - perfectly synchronized');
+              await clearComment();
+              return;
+            }
+
+            core.info('📝 Monitored workflows that differ from base:');
+            core.info(bullets(changed));
+
+            if (prChanged.size) {
+              core.info('ℹ️ Files intentionally changed in this PR:');
+              core.info(bullets([...prChanged].sort()));
+            }
+
+            // Unintentional drift = develop's changes the PR didn't also update
+            const unintentional = [...developDrift].filter(file => !prChanged.has(file)).sort();
+
+            await upsertComment(unintentional.length > 0, unintentional.length ? unintentional : changed);
+
+            if (!unintentional.length) {
+              core.info('✅ All monitored workflow changes are intentional in this PR');
+              return;
+            }
+
+            core.info('❌ Unintentional workflow drift detected - rebase required:');
+            core.info(bullets(unintentional));
+            core.notice('💡 To resolve this issue, rebase your branch: git rebase origin/develop');
+            core.setFailed('Workflow files have drifted from develop. Please rebase: git rebase origin/develop');

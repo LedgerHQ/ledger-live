@@ -15,6 +15,8 @@ export interface EnvTypes {
   APTOS_ENABLE_STAKING: boolean;
   API_FILECOIN_ENDPOINT: string;
   API_STACKS_ENDPOINT: string;
+  API_STACKS_NETWORK: string;
+  API_STACKS_SKIP_FEE_ESTIMATE: boolean;
   API_KASPA_ENDPOINT: string;
   API_VECHAIN_THOREST: string;
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: string;
@@ -107,10 +109,6 @@ export interface EnvTypes {
   NODE_BOILERPLATE: string;
   SKIP_ONBOARDING: boolean;
   ANALYTICS_CONSOLE: boolean;
-  HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID: string;
-  HEDERA_STAKING_REWARD_ACCOUNT_ID: string;
-  HEDERA_STAKING_LEDGER_NODE_ID: number;
-  HEDERA_TOKEN_ASSOCIATION_MIN_USD: number;
   API_HEDERA_MIRROR: string;
   API_HEDERA_MIRROR_TESTNET: string;
   API_HEDERA_HGRAPH: string;
@@ -130,6 +128,8 @@ export interface EnvTypes {
   API_SUI_NODE_PROXY: string;
   API_SUI_GRAPHQL_PROXY: string;
   API_SUI_TESTNET_GRAPHQL_PROXY: string;
+  API_SUI_GRPC_PROXY: string;
+  API_SUI_TESTNET_GRPC_PROXY: string;
   SUI_ENABLE_TOKENS: boolean;
   CANTON_API_KEY: string;
   CANTON_NODE_ID_OVERRIDE: string;
@@ -215,12 +215,12 @@ export type EnvName = keyof EnvTypes;
 export type EnvValue<K extends EnvName = EnvName> = EnvTypes[K];
 
 export const intParser = (v: any): number | undefined => {
-  const n = parseInt(v, 10);
+  const n = Number.parseInt(v, 10);
   if (!Number.isNaN(n)) return n;
 };
 
 export const floatParser = (v: any): number | undefined => {
-  const n = parseFloat(v);
+  const n = Number.parseFloat(v);
   if (!Number.isNaN(n)) return n;
 };
 

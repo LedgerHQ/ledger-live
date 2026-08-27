@@ -4,9 +4,13 @@ import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet
 import { getMainAccount } from "../../../account/index";
 import { signMessageExec } from "../../../hw/signMessage/index";
 import type { Result } from "../../../hw/signMessage/types";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Observable, of, throwError } from "rxjs";
 import { signMessageIntentJob } from "../job";
 import type { SignMessageIntentInput, SignMessageIntentJobState } from "../types";
@@ -28,10 +32,11 @@ const result: Result = { signature: "0xsignature" };
 const deviceConnectionResult: DeviceConnectionResult = {
   dmk: null as unknown as DeviceConnectionResult["dmk"],
   sessionId: "session-1",
-  connectedDevice: null as unknown as DeviceConnectionResult["connectedDevice"],
+  connectedDevice: {
+    modelId: DMKDeviceModelId.NANO_X,
+  } as DeviceConnectionResult["connectedDevice"],
   compatDeviceId: "device-1",
   compatDeviceName: "Device 1",
-  compatDeviceModelId: DeviceModelId.nanoX,
   compatDeviceWired: true,
 };
 

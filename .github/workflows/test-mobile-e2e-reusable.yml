@@ -92,6 +92,11 @@ on:
         required: false
         type: boolean
         default: false
+      emulator_diagnostics:
+        description: "Capture host diagnostics and crash backtraces when an emulator dies"
+        required: false
+        type: boolean
+        default: false
       feature_flags:
         description: "Choose a feature flag set for the run"
         required: false
@@ -676,8 +681,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -857,12 +862,14 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy 3.x and dependencies
+      - name: Install scrcpy dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+
+      - name: Install scrcpy 3.x
         timeout-minutes: 10
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
-
           # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
           # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
           SCRCPY_VERSION="3.3.4"
@@ -921,7 +928,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -958,6 +965,23 @@ jobs:
           export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
           nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
+        shell: bash
+
+      # QAA-1497: an emulator can vanish mid-run, after which every later spec fails with
+      # a misleading assertion error. Record the moment it happens plus the host-side
+      # evidence our artifacts cannot otherwise show.
+      - name: Watch Android emulator liveness (background)
+        run: |
+          export ARTIFACTS_DIR="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          export WATCH_STOP_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+          # Detecting the loss is always on: it is one adb call per poll and it stops a
+          # dead device masquerading as four unrelated assertion timeouts. The host
+          # forensics behind it are opt-in, because their questions are answered.
+          export WATCH_DIAGNOSTICS="${{ inputs.emulator_diagnostics && '1' || '' }}"
+          rm -f "$WATCH_STOP_FILE"
+          nohup bash tools/scripts/watch-android-emulators-ci.sh \
+            >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
+          echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
 
       - name: Setup Speculos image and Coin Apps
@@ -1025,6 +1049,102 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+
+      - name: Stop emulator watchdog
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Everything after this point is teardown; a serial going away now is expected.
+          touch "${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+
+      - name: Report emulator wedges and deaths
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          WEDGES="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-wedges.log"
+          if [ -s "$WEDGES" ]; then
+            {
+              echo "### ⚠️ An emulator wedged during this shard"
+              echo "Frozen RSS + idle process state: the device was lost before any test noticed."
+              echo '```'
+              cat "$WEDGES"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          DEATHS="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-deaths.log"
+          if [ -s "$DEATHS" ]; then
+            {
+              echo "### ❌ Emulator died during this shard"
+              echo '```'
+              cat "$DEATHS"
+              echo '```'
+              echo "Test failures after this point are not meaningful - see QAA-1497."
+            } >> "$GITHUB_STEP_SUMMARY"
+            while read -r line; do
+              echo "::error title=Emulator died (QAA-1497)::$line"
+            done < "$DEATHS"
+          else
+            echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Backtraces for the qemu SIGSEGVs; must run after the tests because the ~1 GB
+      # dump is still being written when the device drops off adb.
+      # See: https://ledgerhq.atlassian.net/browse/QAA-1497
+      - name: Extract emulator crash backtraces
+        if: always() && inputs.emulator_diagnostics
+        continue-on-error: true
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          OUT="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces"
+          mkdir -p "$OUT"
+          command -v coredumpctl >/dev/null || { echo "coredumpctl unavailable"; exit 0; }
+
+          coredumpctl list --no-pager >"${OUT}/coredumpctl-list.txt" 2>&1 || true
+          # The TIME column spans four fields ("Wed 2026-08-19 15:01:53 UTC"), so the PID
+          # is not $2. Anchor on the signal name instead of a fixed column, and take only
+          # the rows whose core is still present - a "missing" one has nothing to read.
+          PIDS="$(awk '/qemu-system/ && /present/ {
+                         for (i = 1; i <= NF; i++) if ($i ~ /^SIG/) { print $(i-3); break }
+                       }' "${OUT}/coredumpctl-list.txt" | tail -4)"
+          if [ -z "$PIDS" ]; then
+            echo "No qemu core dumps with a present COREFILE; falling back to newest by name."
+            coredumpctl info qemu-system-x86_64-headless >"${OUT}/core-newest-info.txt" 2>&1 || true
+            sed -n '1,80p' "${OUT}/core-newest-info.txt" 2>/dev/null || true
+            exit 0
+          fi
+          echo "qemu cores to inspect: $PIDS"
+
+          for pid in $PIDS; do
+            echo "::group::backtrace for qemu pid ${pid}"
+            # `info` already prints a stack trace when symbols resolve, and is far
+            # cheaper than loading a 1 GB core into gdb.
+            coredumpctl info "$pid" >"${OUT}/core-${pid}-info.txt" 2>&1 || true
+            # coredumpctl's own trace resolves to "n/a (n/a + 0x0)": the emulator ships
+            # stripped .so files with no build-id, so it cannot even map the fault
+            # address to a module. gdb loads the core against the real objects and will
+            # at least name the library and offset, which is what identifies the path.
+            if command -v gdb >/dev/null; then
+              timeout 300 coredumpctl debug "$pid" \
+                --debugger=gdb \
+                --debugger-arguments="-batch -ex 'bt' -ex 'info sharedlibrary' -ex quit" \
+                >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+              sed -n '1,40p' "${OUT}/core-${pid}-gdb.txt" 2>/dev/null || true
+            fi
+            sed -n '1,80p' "${OUT}/core-${pid}-info.txt" 2>/dev/null || true
+            echo "::endgroup::"
+          done
+
+          {
+            echo "### 💥 qemu crash backtraces"
+            echo "Signal and faulting frame per core, if symbols resolved:"
+            echo '```'
+            grep -hE 'Signal:|Command Line:|^ *#[0-9]' "${OUT}"/core-*-info.txt 2>/dev/null | head -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stop resource usage sampler
         if: always()

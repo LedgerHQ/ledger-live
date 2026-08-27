@@ -2,6 +2,13 @@ name: "[Mobile] - Code Check - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-unit-tests:
+        description: "Skip the unit test job. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+
     outputs:
       coverage_generated:
         value: ${{ jobs.unit-tests.outputs.coverage_generated }}
@@ -74,10 +81,10 @@ jobs:
           ruby-version: 3.3.0
 
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
 
       - name: Run format check
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
         run: pnpm exec nx run live-mobile:format:check
 
       - name: Run linter
@@ -95,6 +102,7 @@ jobs:
 
   unit-tests:
     name: "Mobile Unit Tests"
+    if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
@@ -130,7 +138,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
+        run: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
 
       - name: Build dependencies
         run: pnpm exec nx run live-mobile:build-lib-deps

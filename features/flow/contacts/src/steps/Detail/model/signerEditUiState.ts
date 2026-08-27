@@ -5,7 +5,7 @@ export function resolveEditUiStateOnSignerMismatch(): SignerEditUiState {
 }
 
 export function resolveEditUiStateOnSignerMismatchCancel(): SignerEditUiState {
-  return "closed";
+  return "edit-open";
 }
 
 export function resolveEditUiStateOnConnectDifferentDevice(): SignerEditUiState {

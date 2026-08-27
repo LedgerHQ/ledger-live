@@ -17,12 +17,10 @@ function addDependencies(
     ignoreExisting = false,
     filterOnPkg = null,
     silent = false,
-  } = {}
+  } = {},
 ) {
   return (pkg, context) => {
-    if (
-      filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter
-    ) {
+    if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
       if (filterOnPkg && !filterOnPkg(pkg)) {
         return;
       }
@@ -46,16 +44,13 @@ function addDependencies(
               console.log(
                 `${bold("[!]", 33)} ${field(depKey)} | ${field(key, {
                   length: 0,
-                })} already declares ${dep}@${pkg[kind][dep]} (${kind})`
+                })} already declares ${dep}@${pkg[kind][dep]} (${kind})`,
               );
             return;
           }
         }
 
-        !silent &&
-          console.log(
-            `${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`
-          );
+        !silent && console.log(`${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`);
 
         if (kind === "peerDependencies") {
           pkg.peerDependenciesMeta = {
@@ -75,21 +70,13 @@ function addDependencies(
   };
 }
 
-function removeDependencies(
-  filter,
-  dependencies,
-  { kind = "dependencies" } = {}
-) {
+function removeDependencies(filter, dependencies, { kind = "dependencies" } = {}) {
   return (pkg, context) => {
     const key = `${pkg.name}@${pkg.version}`;
-    if (
-      filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter
-    ) {
-      dependencies.forEach((dependency) => {
+    if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
+      dependencies.forEach(dependency => {
         if (pkg[kind][dependency]) {
-          console.log(
-            `${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (${kind})`
-          );
+          console.log(`${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (${kind})`);
           delete pkg[kind][dependency];
         }
         if (
@@ -98,9 +85,7 @@ function removeDependencies(
           pkg.peerDependenciesMeta[dependency]
         ) {
           console.log(
-            `${bold("[-]", 31)} ${field(dependency)} | ${field(
-              key
-            )} (peerDependenciesMeta)`
+            `${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (peerDependenciesMeta)`,
           );
           delete pkg.peerDependenciesMeta[dependency];
         }
@@ -110,7 +95,7 @@ function removeDependencies(
 }
 
 function process(fns, pkg, context) {
-  fns.forEach((fn) => fn(pkg, context));
+  fns.forEach(fn => fn(pkg, context));
 }
 
 function addDevDependencies(filter, dependencies, options = {}) {

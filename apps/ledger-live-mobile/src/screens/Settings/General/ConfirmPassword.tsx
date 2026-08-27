@@ -10,7 +10,7 @@ import { setPrivacy } from "~/actions/settings";
 import PasswordForm from "./PasswordForm";
 import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
 import { ScreenName } from "~/const";
-import type { PasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
+import type { LegacyPasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
   StackNavigatorNavigation,
@@ -18,7 +18,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<PasswordAddFlowParamList, ScreenName.ConfirmPassword>,
+  StackNavigatorProps<LegacyPasswordAddFlowParamList, ScreenName.ConfirmPassword>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 

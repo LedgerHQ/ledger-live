@@ -51,6 +51,11 @@ jest.mock("../utils", () => ({
   cleanedOperation: (...a: any[]) => cleanedOperationMock(...a),
 }));
 
+const getAccountRawAssignHooksMock = jest.fn(async () => ({}) as Record<string, unknown>);
+jest.mock("../accountRawAssign", () => ({
+  getAccountRawAssignHooks: (...a: any[]) => getAccountRawAssignHooksMock(...(a as [])),
+}));
+
 const inferSubOperationsMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
@@ -137,6 +142,140 @@ describe("genericGetAccountShape", () => {
       );
 
       expect((result as any).readiness).toBeUndefined();
+    });
+  });
+
+  describe("vanished tokens", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const heldAsset = {
+      type: "token",
+      assetReference: "0xheld",
+      assetOwner: "addr1",
+      name: "Held",
+    };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 100n, locked: 0n },
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    function callWithSubAccountToken(): Promise<unknown> {
+      const getShape = genericGetAccountShape(network, currency.id);
+      return getShape(
+        {
+          address: "addr1",
+          initialAccount: { subAccounts: [{ token: { id: "tok1" } }], pendingOperations: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    }
+
+    it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it("includes a zero-value entry for a token that vanished from the fresh balance response", async () => {
+      const vanishedAsset = {
+        type: "token",
+        assetReference: "0xvanished",
+        assetOwner: "addr1",
+        name: "Vanished",
+      };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+        { asset: vanishedAsset, value: 0n },
+      ]);
+    });
+
+    it("does not duplicate a still-held token, matching assetReference case-insensitively", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => ({ ...heldAsset, assetReference: "0xHELD" }),
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it.each([
+      ["getAssetFromToken returns undefined", undefined],
+      ["the returned asset is native-shaped (no assetReference key)", { type: "native" }],
+      [
+        "the returned asset has an empty assetReference",
+        { type: "token", assetReference: "", assetOwner: "addr1", name: "Empty" },
+      ],
+    ])("skips a subAccount token when %s", async (_label, returnedAsset) => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => returnedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it("still injects a vanished-token entry when the fresh response has no tokens at all (the account's only token got fully swept)", async () => {
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 100n, locked: 0n }]);
+      const vanishedAsset = {
+        type: "token",
+        assetReference: "0xvanished",
+        assetOwner: "addr1",
+        name: "Vanished",
+      };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: vanishedAsset, value: 0n },
+      ]);
+    });
+
+    it("does not fail the whole sync when getAssetFromToken throws for a sub-account", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => {
+          throw new Error("boom");
+        },
+      }));
+
+      await expect(callWithSubAccountToken()).resolves.toBeDefined();
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
     });
   });
 
@@ -497,6 +636,47 @@ describe("genericGetAccountShape", () => {
       expect(operation?.type).toBe("FEES");
     });
 
+    test("hands the family's fromOperationExtraRaw to every adapted operation", async () => {
+      // The fresh-sync half of the operation-extra contract: without the reviver here the family bag
+      // survives only as the JSON-safe strings the coin module emitted, and a restored operation and a
+      // freshly-synced one carry different shapes.
+      const fromOperationExtraRaw = jest.fn();
+      getAccountRawAssignHooksMock.mockResolvedValueOnce({ fromOperationExtraRaw });
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({
+        items: [{ hash: "tx-revive", type: "OUT", tx: { failed: false } }],
+      });
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      buildSubAccountsMock.mockReturnValue([]);
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: 1,
+        extra: {},
+      }));
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        {
+          address: `${currency.id}_addr_revive`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(getAccountRawAssignHooksMock).toHaveBeenCalledWith(network);
+      expect(adaptCoreOperationToLiveOperationMock).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ hash: "tx-revive" }),
+        fromOperationExtraRaw,
+      );
+    });
+
     test("buildOneParentOpPerHash: token-only hash produces one synthetic FEES parent with subOperations", async () => {
       const txHash = "pure-erc20-hash";
       const tokenOpFromList = { hash: txHash, type: "OUT", height: 20, tx: { failed: false } };
@@ -573,6 +753,88 @@ describe("genericGetAccountShape", () => {
       expect(topOp?.type).toBe("FEES");
       expect(topOp?.value?.toFixed()).toBe("21000");
       expect(topOp?.fee?.toFixed()).toBe("21000");
+      expect(topOp?.subOperations).toHaveLength(1);
+      expect(topOp?.subOperations?.[0]?.type).toBe("OUT");
+      expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");
+    });
+
+    test("buildOneParentOpPerHash: token-only hash with a zero fee produces a NONE parent, not a 0-fee FEES row", async () => {
+      const txHash = "gasless-erc20-hash";
+      const tokenOpFromList = { hash: txHash, type: "OUT", height: 20, tx: { failed: false } };
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [tokenOpFromList] });
+      lastBlockMock.mockResolvedValue({ height: 100 });
+
+      // Account is the fee payer, but the fee is zero (energy/bandwidth fully covered).
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        blockHash: "0xblock",
+        fee: new BigNumber(0),
+        value: new BigNumber("8000000"),
+        senders: ["0xabc"],
+        recipients: ["0xdef"],
+        date: new Date("2024-01-15"),
+        extra: {
+          assetReference: "0xusdc",
+          assetOwner: "accId",
+          feePayer: `${currency.id}_addr_gasless_token`,
+        },
+      }));
+
+      buildSubAccountsMock.mockReturnValue([
+        {
+          id: `${currency.id}_tokenAcc1`,
+          type: "TokenAccount",
+          operations: [
+            {
+              hash: txHash,
+              type: "OUT",
+              accountId: `${currency.id}_tokenAcc1`,
+              id: `accId_${txHash}_OUT`,
+              value: new BigNumber("8000000"),
+              fee: new BigNumber(0),
+            },
+          ],
+        },
+      ]);
+      inferSubOperationsMock.mockImplementation((hash: string) =>
+        hash === txHash
+          ? [
+              {
+                hash: txHash,
+                type: "OUT",
+                accountId: `${currency.id}_tokenAcc1`,
+                id: `accId_${txHash}_OUT`,
+                value: new BigNumber("8000000"),
+                fee: new BigNumber(0),
+              },
+            ]
+          : [],
+      );
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr_gasless_token`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations).toHaveLength(1);
+      const topOp = result.operations?.[0];
+      expect(topOp?.hash).toBe(txHash);
+      expect(topOp?.type).toBe("NONE");
+      expect(topOp?.value?.toFixed()).toBe("0");
+      // The token leg still hangs off the (now hidden) parent.
       expect(topOp?.subOperations).toHaveLength(1);
       expect(topOp?.subOperations?.[0]?.type).toBe("OUT");
       expect(topOp?.subOperations?.[0]?.value?.toFixed()).toBe("8000000");

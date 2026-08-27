@@ -13,6 +13,8 @@ jest.mock("../hooks/useCryptoAddressesViewModel");
 const mockedUseCryptoAddressesViewModel = jest.mocked(useCryptoAddressesViewModel);
 
 const baseViewModel: CryptoAddressesViewModel = {
+  showBackButton: false,
+  navigateBack: jest.fn(),
   searchValue: "",
   setSearchValue: jest.fn(),
   emptyTableMessage: "",
@@ -67,5 +69,23 @@ describe("CryptoAddresses (Crypto page)", () => {
 
     expect(onAccountClick).toHaveBeenCalledTimes(1);
     expect(onAccountClick).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
+  });
+
+  it("should render and invoke the back button when opened from Contacts", async () => {
+    const navigateBack = jest.fn();
+    mockedUseCryptoAddressesViewModel.mockReturnValue({
+      ...baseViewModel,
+      showBackButton: true,
+      navigateBack,
+    });
+
+    const { user } = render(<CryptoAddresses />);
+    const backButton = within(screen.getByTestId("page-header")).getByRole("button");
+
+    expect(backButton).toBeVisible();
+
+    await user.click(backButton);
+
+    expect(navigateBack).toHaveBeenCalledTimes(1);
   });
 });

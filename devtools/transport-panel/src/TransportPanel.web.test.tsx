@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import { mockTransportPanelProps } from "jest/mocks/transport";
-import { TransportPanel } from "./TransportPanel.web";
+import { TransportPanel } from "./TransportPanel";
 
 describe("TransportPanel", () => {
   it("renders the current connection status from transport state", () => {

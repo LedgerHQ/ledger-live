@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router";
-import { useContactsFeature } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
 import { ContactsView } from "./ContactsView";
 import { useAddContactDialogAdapter } from "./useAddContactDialogAdapter";
 import { useContactsViewModel } from "./useContactsViewModel";
@@ -10,7 +10,7 @@ function ContactsScreen() {
   const addContactDialog = useAddContactDialogAdapter(pageViewModel.onClearSearch);
   const viewModel = {
     ...pageViewModel,
-    onAddContact: addContactDialog.onOpen,
+    onAddContact: () => pageViewModel.onRequestAddContact(addContactDialog.onOpen),
     addContactDialog,
   };
 

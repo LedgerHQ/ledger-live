@@ -30,9 +30,11 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import MainNavigationPage from "./wallet/mainNavigation.page";
 import MyWalletPage from "./wallet/myWallet.page";
+import ContactsPage from "./wallet/contacts.page";
 import OperationPage from "./wallet/operation.page";
 import TopBarSearchPage from "./wallet/topBarSearch.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
+import BorrowPage from "./trade/borrow.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
@@ -55,7 +57,7 @@ export const getUserdataPath = (userdata: string) => {
 const lazyInit = <T>(PageClass: new () => T) => {
   let instance: T | null = null;
   return () => {
-    if (!instance) instance = new PageClass();
+    instance ??= new PageClass();
     return instance;
   };
 };
@@ -91,8 +93,10 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private mainNavigationPageInstance = lazyInit(MainNavigationPage);
   private myWalletPageInstance = lazyInit(MyWalletPage);
+  private contactsPageInstance = lazyInit(ContactsPage);
   private operationPageInstance = lazyInit(OperationPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
+  private readonly borrowPageInstance = lazyInit(BorrowPage);
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
@@ -235,6 +239,10 @@ export class Application {
     return this.myWalletPageInstance();
   }
 
+  public get contacts() {
+    return this.contactsPageInstance();
+  }
+
   public get operation() {
     return this.operationPageInstance();
   }
@@ -257,6 +265,10 @@ export class Application {
 
   public get earnV2Dashboard() {
     return this.earnV2DashboardPageInstance();
+  }
+
+  public get borrow() {
+    return this.borrowPageInstance();
   }
 
   public get modularDrawer() {

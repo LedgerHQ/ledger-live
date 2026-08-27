@@ -4,8 +4,8 @@
 >
 > **Status: UNSTABLE** — In active development as part of the DDD migration.
 
-Contacts domain selectors, display helpers, React hooks, Device Intent ports, and shared
-analytics building blocks used by flow packages.
+Contacts domain selectors, display helpers, feature configuration, React hooks, Device Intent
+ports, address-entry primitives, and shared analytics building blocks used by flow packages.
 
 ## Exports
 
@@ -15,10 +15,50 @@ analytics building blocks used by flow packages.
 - `identityFormatMeDisplayName()` and `resolveMeContactDisplayName()`: resolve the shared display
   name rules used by Contacts List and Detail.
 - `ContactAvatar`: renders the Me profile image when `isMe` is set, otherwise a deterministic
-  color and Unicode initial. The root entry resolves the Web implementation; the `native` entry
-  resolves the React Native implementation.
+  color and Unicode initial. Import it from the package root; the consumer's platform
+  configuration resolves the target implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
 - `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
 - Contacts analytics building blocks: `ContactsGlobalProperties`,
   `buildContactsGlobalProperties()`, and `resolveContactsCurrencyAnalytics()` for shared global
   event properties and currency resolution.
+- `useContactsFeature()` and related resolvers: expose the Contacts feature configuration for both
+  applications and Contacts leaf flows.
+- `resolveEligibleAddressCurrencyIds()`: resolves configured Contacts families to production
+  network identifiers.
+- `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
+  operation, including device credentials for external contacts.
+- `ContactNameInput`: a cross-platform primitive resolved from the package root and shared by Add
+  and Edit contact without coupling their leaf flows.
+- `ContactNameDisclaimer`: a Web-only primitive shared by the Add and Edit contact dialogs.
+  Contact-name validation and its length limit are owned by `@domain/entity-contact`.
+- Address-entry primitives: validation types, entry-state transitions, presentation resolution,
+  and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
+  their respective leaf flows.
+
+## Device Intent Executor scaffold
+
+The Contacts DIE contracts are deliberately isolated from the package root:
+
+```ts
+import {
+  createIntent,
+} from "@features/platform-device-intent";
+import {
+  registerExternalAddressIntentPlatformDefinition,
+} from "@features/platform-contacts/device/intents";
+```
+
+The subpath exports the seven ADR intents: external-address registration, external-contact rename,
+identifier edit, scope edit, combined external-address edit, Ledger-account registration, and
+Ledger-account rename. Each intent lives in its own directory with `types.ts`, `job.ts`, a shared
+`intentDefinition.ts` that binds `./component`, and matching `component.web.tsx` /
+`component.native.tsx` files.
+Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
+`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking
+DMK or `@ledgerhq/device-contacts-kit`.
+
+The combined edit intentionally emits an identifier `partial-result` before the scope confirmation
+when both fields change. This preserves the ADR's non-atomic recovery contract: a consumer must
+persist that intermediate result before the scope step completes. Real ContactsManager adapters and
+application-flow wiring are deferred to their dedicated work.

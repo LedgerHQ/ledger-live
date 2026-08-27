@@ -1,5 +1,7 @@
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { AssetCategory } from "@domain/api-aggregated-assets";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
@@ -16,17 +18,19 @@ import { useOpenBuySell } from "LLM/features/Buy";
 const DEPOSIT_PAGE = "Pay";
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
+const DEPOSIT_CATEGORIES: AssetCategory[] = [AssetCategory.Stablecoins];
+
 export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
-  stablecoinCurrencyIds: string[],
 ): UsePayTabDepositOptions {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
-    currencyIds: stablecoinCurrencyIds,
+    categories: DEPOSIT_CATEGORIES,
     sourceScreenName: DEPOSIT_PAGE,
     fromMenu: true,
   });
@@ -78,5 +82,12 @@ export function usePayTabDepositOptions(
     },
   };
 
-  return useDepositOptionsAdapter({ labels, page: DEPOSIT_PAGE, onSelect, onTrackEvent });
+  const { open, depositOptions } = useDepositOptionsAdapter({
+    labels,
+    page: DEPOSIT_PAGE,
+    onSelect,
+    onTrackEvent,
+  });
+
+  return { open, depositOptions: { ...depositOptions, bottomInset } };
 }

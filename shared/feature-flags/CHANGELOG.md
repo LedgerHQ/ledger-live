@@ -1,5 +1,117 @@
 # @shared/feature-flags
 
+## 0.20.0
+
+### Minor Changes
+
+- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+- [#20834](https://github.com/LedgerHQ/ledger-live/pull/20834) [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a My Wallet Profile LNS upsell banner gated by `largeScreenUpsell.banners.profile` (LIVE-35481). Require `utmContent` on `buildLargeScreenUpsellCtaLink` and export `LARGE_SCREEN_UPSELL_UTM`.
+
+- [#20925](https://github.com/LedgerHQ/ledger-live/pull/20925) [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Gate Recover Nano S intercept and Backup Hub Recovery Key warning with `largeScreenUpsell.params.banners["recover-page-block-nano-s-only"]` and `banners["backup-hub-recovery-key-text-warning"]`.
+
+- [#20996](https://github.com/LedgerHQ/ledger-live/pull/20996) [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d) Thanks [@CremaFR](https://github.com/CremaFR)! - Forward the `llmWalletApiDeviceIntentSign` assignment to the swap live app on mobile as `llmWalletApiDeviceIntentSignVariant` (the `variantId`) and `llmWalletApiDeviceIntentSignEnabled` (the flag state). Resolve that per manifest through `useDeviceIntentSignAssignment`, which also backs the Wallet API UI hook. Report both attributes on Mixpanel via `getRemoteABTestingAttributes`.
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+- [#20834](https://github.com/LedgerHQ/ledger-live/pull/20834) [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a My Wallet Profile LNS upsell banner gated by `largeScreenUpsell.banners.profile` (LIVE-35481). Require `utmContent` on `buildLargeScreenUpsellCtaLink` and export `LARGE_SCREEN_UPSELL_UTM`.
+
+- [#20925](https://github.com/LedgerHQ/ledger-live/pull/20925) [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Gate Recover Nano S intercept and Backup Hub Recovery Key warning with `largeScreenUpsell.params.banners["recover-page-block-nano-s-only"]` and `banners["backup-hub-recovery-key-text-warning"]`.
+
+- [#20996](https://github.com/LedgerHQ/ledger-live/pull/20996) [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d) Thanks [@CremaFR](https://github.com/CremaFR)! - Forward the `llmWalletApiDeviceIntentSign` assignment to the swap live app on mobile as `llmWalletApiDeviceIntentSignVariant` (the `variantId`) and `llmWalletApiDeviceIntentSignEnabled` (the flag state). Resolve that per manifest through `useDeviceIntentSignAssignment`, which also backs the Wallet API UI hook. Report both attributes on Mixpanel via `getRemoteABTestingAttributes`.
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
 ## 0.19.0
 
 ### Minor Changes
@@ -425,43 +537,5 @@
 - [#18402](https://github.com/LedgerHQ/ledger-live/pull/18402) [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove welcomeScreenVideoCarousel feature flag (always enabled)
 
 - [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
-
-## 0.11.0-next.1
-
-### Minor Changes
-
-- [#18642](https://github.com/LedgerHQ/ledger-live/pull/18642) [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
-
-## 0.11.0-next.0
-
-### Minor Changes
-
-- [#18237](https://github.com/LedgerHQ/ledger-live/pull/18237) [`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate `@ledgerhq/live-common`'s internal feature-flag consumers off its React `featureFlags` Context module and `@ledgerhq/types-live` feature types, onto the Redux-backed `@shared/feature-flags` / `@features/platform-feature-flags` packages, and remove the `featureFlags` module along with the apps' now-inert `FeatureFlagsContextBridge`. Remaining external React consumers (both apps) are repointed to `@features/platform-feature-flags`; `@ledgerhq/live-dmk-desktop` receives its `ldmkTransport` flag via a prop instead of depending on the feature-flags package; non-React imperative reads use an injected getter or the relocated `live-common/firebase/featureFlags` reader. Adds the platform-specific `formatToFirebaseFeatureId` / `formatDefaultFeatures` to `@features/platform-feature-flags` and the generic `isValidFeatureId` to `@shared/feature-flags`. No behavioral change — resolved flag values are identical.
-
-- [#18298](https://github.com/LedgerHQ/ledger-live/pull/18298) [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Extract `quickActionsCtasVariant` out of the `feature_lwm_wallet_40` feature flag into a dedicated `feature_lwm_quick_actions_ctas_variant` flag so the A/B test can run independently from other Wallet 4.0 parameters
-
-- [#18402](https://github.com/LedgerHQ/ledger-live/pull/18402) [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove welcomeScreenVideoCarousel feature flag (always enabled)
-
-- [#17997](https://github.com/LedgerHQ/ledger-live/pull/17997) [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356) Thanks [@Justkant](https://github.com/Justkant)! - Harden custom deeplink opening behind platform feature flags.
-
-## 0.10.0
-
-### Minor Changes
-
-- [#18027](https://github.com/LedgerHQ/ledger-live/pull/18027) [`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add notification drawer prompt target contracts
-
-- [#18045](https://github.com/LedgerHQ/ledger-live/pull/18045) [`36f16ea`](https://github.com/LedgerHQ/ledger-live/commit/36f16eae5fcf22706f5ed2dff4094178fc8d9ef8) Thanks [@ysitbon](https://github.com/ysitbon)! - Add a Redux-backed `remoteFlagsReady` boot-readiness signal: a `remoteFlagsReady` state field (initial `false`), an idempotent `setRemoteFlagsReady` reducer, and a `selectRemoteFlagsReady` selector. The middleware dispatches the signal once after the first remote-flag fetch settles — success or failure. The field is transient and never persisted, so it re-arms every session.
-
-- [#18174](https://github.com/LedgerHQ/ledger-live/pull/18174) [`7584ec2`](https://github.com/LedgerHQ/ledger-live/commit/7584ec2f10a173a768365befce8fcbd0baa4df87) Thanks [@ysitbon](https://github.com/ysitbon)! - Apply feature-flag language filtering. The feature-flags middleware now injects the current app language into `meta.resolutionConfig.appLanguage` on every `featureFlags/*` action — read from app state via an optional `getAppLanguage` selector — and re-resolves all flags when it changes, so `languages_whitelisted` / `languages_blacklisted` constraints take effect.
-
-- [#18204](https://github.com/LedgerHQ/ledger-live/pull/18204) [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `lwmBackupHub` / `lwdBackupHub` Engagement feature flags (default disabled) for the Recover Backup Hub initiative, and reserve CODEOWNERS ownership of the upcoming BackupHub MVVM folders.
-
-- [#18163](https://github.com/LedgerHQ/ledger-live/pull/18163) [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Make Recover URI templating actually replace `protectId`, drop unused `protectServicesDesktop` / `protectServicesMobile` params, and replace `compatibleDevices` with a hardcoded Nano S exclusion in `isRecoverDisplayed`.
-
-  `useReplacedURI` previously only rewrote the placeholders `protect-simu`, `protect-local-dev` and `protect-staging`, so any URI hard-coded with `protect-prod` (e.g. the values shipped to PROD via Firebase Remote Config) was never re-templated when `protectId` changed. Switching the active Recover environment therefore required a manual find-and-replace across every URI in the feature flag. The regex now matches any `protect-<env>` segment, which is a no-op when `protectId` already equals that segment and a true substitution otherwise.
-
-  `compatibleDevices` is replaced by a hardcoded check in `isRecoverDisplayed` — Nano S is the only device that does not support Recover and the rule is not expected to change. Dropping the array from the schema keeps the FF lean and removes the need to update Remote Config when a new device is supported.
-
-  Also remove keys that have no consumer in either app — `isNew`, `ledgerliveStorageState`, `onboardingCompleted.alreadySubscribedURI`, and the entire `onboardingRestore` block on desktop; `ledgerliveStorageState`, `restoreInfoDrawer.manualStepsURI`, `managerStatesData.NEW.learnMoreURI` and `managerStatesData.NEW.alreadySubscribedURI` on mobile. `usePostOnboardingURI` is narrowed to `Feature_ProtectServicesMobile` since it is only called from the mobile app. Unknown keys still in Firebase are silently stripped by Zod, so this is forward-compatible with existing Remote Config payloads.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

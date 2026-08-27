@@ -28,10 +28,12 @@ export type UseContactDetailEditDeleteFlowViewModelResult = ReturnType<
     canDelete: boolean;
     contactName: string;
     editUiState: ContactDetailEditUiState;
+    isEditSessionActive: boolean;
     isActionsMenuOpen: boolean;
     isDeleting: boolean;
     onEditPress: () => void;
     onDeletePress: () => void;
+    requestSaveApproval: () => Promise<boolean>;
     onSignerConfirm: () => Promise<void>;
     onSignerCancel: () => void;
     onSignerMismatchCancel: () => void;
@@ -58,7 +60,9 @@ export function useContactDetailEditDeleteFlowViewModel({
   } = useContactDetailActionsViewModel(contactId, ports);
   const {
     editUiState,
-    openSignerDialog,
+    isEditSessionActive,
+    requestSignerApproval,
+    grantSignerApproval,
     openSignerMismatchDialog,
     openEditDialog,
     onSignerCancel: closeSignerOnCancel,
@@ -73,20 +77,19 @@ export function useContactDetailEditDeleteFlowViewModel({
 
   const onEditPress = useCallback(() => {
     setIsActionsMenuOpen(false);
-
-    if (isSignerRequiredForEdit) {
-      openSignerDialog();
-      return;
-    }
-
     openEditDialog();
-  }, [isSignerRequiredForEdit, openEditDialog, openSignerDialog]);
+  }, [openEditDialog]);
+
+  const requestSaveApproval = useCallback(
+    () => (isSignerRequiredForEdit ? requestSignerApproval() : Promise.resolve(true)),
+    [isSignerRequiredForEdit, requestSignerApproval],
+  );
 
   const onSignerConfirm = useCallback(async () => {
     const validationLookup = editIntent?.signerValidationLookup;
 
     if (validationLookup === undefined) {
-      openEditDialog();
+      grantSignerApproval();
       return;
     }
 
@@ -101,10 +104,10 @@ export function useContactDetailEditDeleteFlowViewModel({
       return;
     }
 
-    openEditDialog();
+    grantSignerApproval();
   }, [
     editIntent?.signerValidationLookup,
-    openEditDialog,
+    grantSignerApproval,
     openSignerMismatchDialog,
     ports.signerValidation,
   ]);
@@ -159,10 +162,12 @@ export function useContactDetailEditDeleteFlowViewModel({
     canDelete,
     contactName,
     editUiState,
+    isEditSessionActive,
     isActionsMenuOpen,
     isDeleting,
     onEditPress,
     onDeletePress,
+    requestSaveApproval,
     onSignerConfirm,
     onSignerCancel,
     onSignerMismatchCancel,

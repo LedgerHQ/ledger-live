@@ -25,6 +25,8 @@ import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { BackConfig, BackToInternalDomain } from "./BackToLwButton";
 import { handleBackToLwEntryPoint } from "./handleBackToLwEntryPoint";
+import Config from "react-native-config";
+import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
 
 export type { BackConfig } from "./BackToLwButton";
 
@@ -85,6 +87,10 @@ export const WebPTXPlayer = ({
           const manifestId = url.searchParams.get("goToManifest");
 
           if (manifestId && goToURL) {
+            // e2e asserts the handoff contract on this URL instead of driving into
+            // the partner's own page. See ptxHandoffStore.
+            if (Config.DETOX) ptxHandoffStore.set(url.href);
+
             const searchParams = url.searchParams;
             const flowName = searchParams.get("flowName") || "";
             const lastScreen = searchParams.get("lastScreen") || flowName;

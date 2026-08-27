@@ -1,4 +1,9 @@
-import { isFullscreenOverlayRoute, isWallet40Page, shouldDisplayRightPanel } from "../utils";
+import {
+  getRightPanelVariant,
+  isFullscreenOverlayRoute,
+  isWallet40Page,
+  shouldDisplayRightPanel,
+} from "../utils";
 
 describe("Page utils", () => {
   describe("isFullscreenOverlayRoute", () => {
@@ -107,6 +112,26 @@ describe("Page utils", () => {
           false,
         );
       });
+    });
+  });
+
+  describe("getRightPanelVariant", () => {
+    it("returns 'card' on the Pay tab", () => {
+      expect(getRightPanelVariant("/paytab")).toBe("card");
+    });
+
+    it("returns 'swap' on swap-enabled routes", () => {
+      expect(getRightPanelVariant("/")).toBe("swap");
+      expect(getRightPanelVariant("/analytics")).toBe("swap");
+      expect(getRightPanelVariant("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(
+        "swap",
+      );
+    });
+
+    it("returns undefined on routes without a right panel", () => {
+      expect(getRightPanelVariant("/market")).toBeUndefined();
+      expect(getRightPanelVariant("/asset/btc")).toBeUndefined();
+      expect(getRightPanelVariant("/accounts")).toBeUndefined();
     });
   });
 });

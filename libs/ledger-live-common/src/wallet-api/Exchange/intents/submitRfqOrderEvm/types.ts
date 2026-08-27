@@ -1,4 +1,4 @@
-import type { IntentDefinition } from "@ledgerhq/device-intent";
+import type { IntentDefinition } from "@features/platform-device-intent";
 
 /**
  * Terminal RFQ status reported by the swap-api `/swap/status` endpoint.

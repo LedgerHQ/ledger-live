@@ -1,7 +1,7 @@
 export default {
   testEnvironment: "node",
   testRegex: ".test.ts$",
-  setupFilesAfterEnv: ["./src/index.ts"],
+  setupFilesAfterEnv: ["./src/index.ts", "@ledgerhq/test-quarantine/jest-retries"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
@@ -17,5 +17,6 @@ export default {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

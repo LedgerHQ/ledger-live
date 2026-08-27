@@ -128,7 +128,7 @@ export class AccountsPage extends AppPage {
     await expect(visibleAccountsList).toHaveCount(count, { timeout });
   }
 
-  private async getReduxAccountIds(): Promise<string[]> {
+  async getReduxAccountIds(): Promise<string[]> {
     return this.page.evaluate(() => {
       const store = globalThis.window.__STORE__;
       if (!store?.getState) return [];

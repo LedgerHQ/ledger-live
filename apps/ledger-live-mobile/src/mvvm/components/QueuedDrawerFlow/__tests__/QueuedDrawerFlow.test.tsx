@@ -103,6 +103,41 @@ describe("QueuedDrawerFlow", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it("should remount the previous screen when navigating back", () => {
+    const onClose = jest.fn();
+    const onAssetScreenMount = jest.fn();
+    function AssetScreen() {
+      React.useEffect(onAssetScreenMount, []);
+      return <Text>Asset screen</Text>;
+    }
+    const transitionScreens = {
+      ...screens,
+      asset: {
+        ...screens.asset,
+        content: <AssetScreen />,
+      },
+    } satisfies Parameters<typeof QueuedDrawerFlow<TestStep>>[0]["screens"];
+    const { rerender } = render(
+      <QueuedDrawerFlow currentStep="asset" isOpen onClose={onClose} screens={transitionScreens} />,
+    );
+
+    rerender(
+      <QueuedDrawerFlow
+        currentStep="address"
+        isOpen
+        onClose={onClose}
+        screens={transitionScreens}
+      />,
+    );
+    rerender(
+      <QueuedDrawerFlow currentStep="asset" isOpen onClose={onClose} screens={transitionScreens} />,
+    );
+
+    expect(screen.getByText("Asset screen")).toBeVisible();
+    expect(screen.queryByText("Address screen")).toBeNull();
+    expect(onAssetScreenMount).toHaveBeenCalledTimes(2);
+  });
+
   it("should hide the back button when no back handler is provided", () => {
     render(<QueuedDrawerFlow currentStep="address" isOpen onClose={jest.fn()} screens={screens} />);
 

@@ -52,6 +52,7 @@ so they stay **linked** (📹) to their Confluence page — the behaviour and it
 | Adding accounts is propagated to other members. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4895866941) | `__tests__/modules/accounts.test.ts`, QA |
 | Removing an account is propagated to other members. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896849973) | `accounts.test.ts`, QA |
 | Renaming an account is propagated to other members. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896161884) | `__tests__/modules/accountNames.test.ts`, QA |
+| Creating, updating, or removing Contacts is propagated to other members and restored after an app restart. | — | `domain/entity/contact/src/cloudSync/module.test.ts`, `walletSyncComposition.test.ts`, QA |
 | Wallet Sync recovers after being removed; history reconciliates. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4895965222) | QA |
 | Wallet Sync works even when Ledger Wallet doesn't support a received account (unsupported currency, sync issues): the account is queued, not lost. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896161894) | `accounts.test.ts` (nonImportedAccountInfos) |
 | Wallet Sync preserves non-imported accounts and restores them when available (backoff retry). | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896620635) | `accounts.test.ts`; see [accounts module](./05-wallet-sync-data-manager.md#the-accounts-module) |

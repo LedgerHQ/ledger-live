@@ -7,14 +7,12 @@ import {
   ContactsEditSignerMismatchDialog,
   ContactsView as ContactsFlowView,
   ContactsRenameAddressDialog,
-  ContactsRenameContactDialog,
   type ContactAddressDetailDialogProps,
+  type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
-import {
-  ContactsAddContactDialog,
-  type ContactsAddContactDialogProps,
-} from "@features/flow-contacts-add-contact";
+import { ContactsAddContactDialog } from "./components/ContactsAddContactDialog";
+import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import {
   ContactsAddAddressFlowDialog,
   type ContactsAddAddressFlowDialogProps,
@@ -24,7 +22,7 @@ import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditD
 
 export type ContactsViewProps = ContactsFlowViewProps &
   Readonly<{
-    addContactDialog: ContactsAddContactDialogProps;
+    addContactDialog: AddContactAppAdapterResult;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
     editDeleteDialogs: ContactDetailEditDeleteDialogProps;

@@ -2,8 +2,8 @@
  * Defines the status of a pagination item.
  */
 export enum ItemStatus {
-  "active",
-  "nearby",
-  "far",
-  "none",
+  active,
+  nearby,
+  far,
+  none,
 }

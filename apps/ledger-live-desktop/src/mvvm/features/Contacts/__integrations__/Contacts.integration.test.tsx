@@ -2,7 +2,7 @@ import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { resolveEligibleAddressCurrencyIds } from "@features/flow-contacts";
+import { resolveEligibleAddressCurrencyIds } from "@features/platform-contacts";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,
@@ -19,6 +19,8 @@ import {
   waitFor,
 } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
+import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/useContactsViewModel";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
@@ -29,6 +31,7 @@ const mockNavigate = jest.fn();
 const mockClose = jest.fn();
 const mockValidateAddress = jest.fn();
 const mockOpenSendFlow = jest.fn();
+const mockOpenActivationDrawer = jest.fn();
 const meContactId = mockMeContact().id;
 const savedContactId = mockContact({ id: "contact-ada" }).id;
 
@@ -40,6 +43,17 @@ jest.mock("react-router", () => ({
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => mockOpenSendFlow,
 }));
+
+jest.mock("LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer", () => ({
+  useActivationDrawer: jest.fn(),
+}));
+
+jest.mock("LLD/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
+  useContactsLedgerSyncStatus: jest.fn(),
+}));
+
+const mockedUseActivationDrawer = jest.mocked(useActivationDrawer);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -154,6 +168,11 @@ function ContactsViewModelProbe({
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
+    mockedUseActivationDrawer.mockReturnValue({
+      openDrawer: mockOpenActivationDrawer,
+      closeDrawer: jest.fn(),
+    });
     mockValidateAddress.mockResolvedValue(true);
     jest.mocked(isAddressSanctioned).mockResolvedValue(false);
   });
@@ -284,22 +303,31 @@ describe("Contacts integration", () => {
 
     const input = screen.getByTestId("contacts-add-contact-name-input");
 
-    await user.type(input, "Ada1");
+    await user.type(input, "Coinbase 1");
 
-    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
-
-    fireEvent.change(input, { target: { value: "Ada" } });
-
-    expect(screen.queryByText("Special characters are not allowed.")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
 
     await user.click(screen.getByTestId("contacts-add-contact-save"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
-      expect(screen.getByText("Ada")).toBeVisible();
+      expect(screen.getByText("Coinbase 1")).toBeVisible();
     });
+  });
+
+  it("should open Ledger Sync activation instead of adding a contact while sync is inactive", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+
+    expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    expect(mockOpenActivationDrawer).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("should block a duplicate contact name and allow a unique replacement", async () => {
@@ -339,6 +367,8 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-contact")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 
   it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {
@@ -401,19 +431,19 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
     expect(screen.getByText("No saved addresses for Ada")).toBeVisible();
     expect(
-      screen.getByText("Save their wallet addresses to send to them by name next time."),
+      screen.getByText("Save their wallet addresses to send to them by name next time"),
     ).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
   });
 
-  it("should open MAD from the real Add Address CTA with the eligible network ids", async () => {
+  it("should open MAD from the real Add Address CTA with the eligible selectable network ids", async () => {
     const { store, user } = renderContactsScreen();
 
     await user.click(screen.getByTestId("contacts-me-row"));
     await user.click(screen.getByTestId("contacts-detail-add-address"));
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
-    expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual(
+    expect(store.getState().modularDialog.dialogParams?.selectableNetworkIds).toEqual(
       resolveEligibleAddressCurrencyIds(["evm"]),
     );
     expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");
@@ -519,9 +549,7 @@ describe("Contacts integration", () => {
     expect(screen.getByRole("dialog")).toBe(dialog);
     expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
 
-    await user.click(
-      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Go back" }));
     expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
 
@@ -558,9 +586,7 @@ describe("Contacts integration", () => {
     });
 
     await screen.findByTestId("contacts-add-address-input");
-    await user.click(
-      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Go back" }));
 
     await waitFor(() => {
       expect(store.getState().modularDialog.isOpen).toBe(true);
@@ -662,6 +688,24 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       "selectingCurrency:contact-me",
     );
+  });
+
+  it("should keep the Add Address session closed while Ledger Sync is inactive", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
   });
 
   it("should expose the Add Address session started for a saved contact", async () => {
@@ -842,7 +886,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
     expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
 
-    fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {
+    fireEvent.change(screen.getByTestId("contacts-rename-contact-name-input"), {
       target: { value: "Alice" },
     });
 
@@ -857,18 +901,32 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should open the signer dialog before renaming a contact with addresses", async () => {
+  it("should ask for the signer only after saving a contact with addresses", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
     await user.click(screen.getByTestId("contacts-detail-edit-action"));
 
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
+    expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+
+    const nameInput = screen.getByTestId("contacts-rename-contact-name-input");
+    await user.clear(nameInput);
+    await user.type(nameInput, "Benjamin");
+    await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
 
     await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
-    expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Benjamin");
+    });
   });
 
   it("should delete a saved contact and return to the Me detail pane", async () => {
@@ -898,6 +956,7 @@ describe("Contacts integration", () => {
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
       currencyIds: ["ethereum"],
       recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      skipRecipientStep: true,
     });
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
   });
@@ -938,7 +997,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeInTheDocument();
   });
 
-  it("should open the rename address dialog after signer confirmation", async () => {
+  it("should open the rename address dialog without asking for the signer first", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
@@ -948,15 +1007,11 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
-      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-edit-address-input")).toHaveValue(
+        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      );
     });
   });
 
@@ -967,7 +1022,6 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
 
     await user.click(screen.getByTestId("contacts-address-detail-edit"));
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
@@ -979,11 +1033,59 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
 
     await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toHaveTextContent(
         "Main ETH",
       );
+    });
+  });
+
+  it("should update an address value and close the edit dialog", async () => {
+    const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+
+    fireEvent.change(screen.getByTestId("contacts-edit-address-input"), {
+      target: { value: newAddress },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-confirm")).not.toBeDisabled();
+    });
+
+    await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toHaveTextContent(newAddress);
     });
   });
 });

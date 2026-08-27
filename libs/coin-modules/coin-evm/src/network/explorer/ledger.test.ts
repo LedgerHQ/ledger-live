@@ -1,9 +1,8 @@
 import { AssertionError, fail } from "assert";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import eip55 from "eip55";
-import { getCoinConfig } from "../../config";
+import { DEFAULT_LEDGER_EXPLORER_URI, getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import {
   coinOperation1,
@@ -120,19 +119,45 @@ describe("EVM Family", () => {
         expect(response).toEqual([coinOperation1, coinOperation2, coinOperation3]);
       });
 
-      it("should use the right header", async () => {
-        const oldEnv = getEnv("LEDGER_CLIENT_VERSION");
-        setEnv("LEDGER_CLIENT_VERSION", "TEST");
+      it("should hit the configured explorer", async () => {
+        const spy = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
+        await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerUri: "https://explorer.test",
+          clientVersion: "lld/1.2.3",
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 1,
+        });
+
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            url: "https://explorer.test/blockchain/v4/eth/address/0xkvn/txs",
+            headers: { "X-Ledger-Client-Version": "lld/1.2.3" },
+          }),
+        );
+      });
+
+      it("falls back to the default explorer and no header when both are omitted", async () => {
         const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
           return { data: { data: [] } };
         });
-        await LEDGER_API.fetchPaginatedOpsWithRetries({} as any, null);
 
-        setEnv("LEDGER_CLIENT_VERSION", oldEnv);
+        // The call shape callers used before the settings became parameters.
+        await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 1,
+        });
+
+        expect(spy).toHaveBeenCalledWith(
+          expect.not.objectContaining({ headers: expect.anything() }),
+        );
         expect(spy).toHaveBeenCalledWith(
           expect.objectContaining({
-            headers: { "X-Ledger-Client-Version": "TEST" },
+            url: `${DEFAULT_LEDGER_EXPLORER_URI}/blockchain/v4/eth/address/0xkvn/txs`,
           }),
         );
       });

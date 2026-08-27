@@ -3,7 +3,7 @@
 //
 // The host app resolves the `zcashShielded` feature flag itself -- remote config,
 // env override and the developer drawer's override folded in -- and mirrors it
-// here, the way `setSuiGraphqlEnabled` / `setCosmosLdmkEnabled` are wired: a coin
+// here, the way `setSuiTransport` / `setCosmosLdmkEnabled` are wired: a coin
 // module cannot read React feature flags. The mirror lives in live-common rather
 // than in the coin module because `bridge/impl.ts` reads it, and shared bridge
 // code may not import coin-specific packages at runtime (enforced by

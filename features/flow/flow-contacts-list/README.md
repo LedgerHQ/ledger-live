@@ -18,8 +18,11 @@ orchestrator when the complete Contacts aggregate is needed.
 ## Public API
 
 Use `@features/flow-contacts-list` when a consumer only needs a contact list. The package root
-resolves to the relevant Web or React Native implementation. Consumers must not import files under
-`src/` or use the internal Native entry point used by `@features/flow-contacts` for type-safe
-orchestration.
+resolves to the relevant Web or React Native implementation. `ContactsCompactList` renders a
+consumer-provided ordered set of contacts without search, sections, headers, empty states, or
+navigation. Consumers provide its labels, optional maximum, and selection callback.
+
+Consumers must not import files under `src/` or use the internal Native entry point used by
+`@features/flow-contacts` for type-safe orchestration.
 
 For the complete Contacts aggregate, use `ContactsView` from `@features/flow-contacts` instead.

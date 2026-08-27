@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.53.0",
+  "version": "0.54.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -106,6 +106,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@rsbuild/core": "catalog:",
     "@rsbuild/plugin-node-polyfill": "catalog:",
     "@rsbuild/plugin-react": "catalog:",

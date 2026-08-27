@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import { TronWeb, providers, utils } from "tronweb";
@@ -365,6 +366,20 @@ export function getTronResources(
     tronPower,
     lastWithdrawnRewardDate,
   };
+}
+
+/**
+ * Matches on asset type first so a TRC10 balance can never satisfy a TRC20 lookup even if their
+ * references collide.
+ */
+export function findBalance(asset: AssetInfo, balances: Balance[]): Balance | undefined {
+  if (!("assetReference" in asset)) return undefined;
+  return balances.find(
+    b =>
+      b.asset.type === asset.type &&
+      "assetReference" in b.asset &&
+      b.asset.assetReference === asset.assetReference,
+  );
 }
 
 export function feesToNumber(customFees?: bigint): number | undefined {

@@ -24,6 +24,10 @@ on:
         required: true
       NX_KEY:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
       SEED_QAA_B2C:
         required: true
       SLACK_LIVE_CI_BOT_TOKEN:
@@ -227,6 +231,9 @@ jobs:
 
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
+        env:
+          FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+          FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
 
@@ -263,10 +270,11 @@ jobs:
         with:
           name: images
           path: images-linux.json
-      - name: Upload playwright test results [On Failure]
+      - name: Upload playwright test results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: failure() && !cancelled()
+        if: ${{ !cancelled() }}
         with:
+          if-no-files-found: ignore
           name: playwright-results-linux
           path: |
             apps/ledger-live-desktop/tests/artifacts/test-results

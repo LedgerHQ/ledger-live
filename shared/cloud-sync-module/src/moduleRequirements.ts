@@ -1,5 +1,5 @@
-import type { ZodType } from "zod";
-import type { CloudSyncDataManager } from "./cloudSyncModule";
+import { z, type ZodType } from "zod";
+import { createAggregator, type CloudSyncDataManager } from "./cloudSyncModule";
 
 type Fixtures<LocalState, DistantState> = {
   /** A local state with no meaningful data (e.g. empty map/array/object) */
@@ -13,20 +13,41 @@ type Fixtures<LocalState, DistantState> = {
 /** UTF-8 byte length, without Buffer or TextEncoder so consumers need no node/dom types */
 function utf8ByteLength(value: string): number {
   let bytes = 0;
-  for (let i = 0; i < value.length; i++) {
-    const code = value.charCodeAt(i);
+  // iterating the string yields whole code points, so a surrogate pair counts once
+  for (const char of value) {
+    const code = char.codePointAt(0) ?? 0;
     if (code < 0x80) {
       bytes += 1;
     } else if (code < 0x800) {
       bytes += 2;
-    } else if (code >= 0xd800 && code <= 0xdbff) {
-      bytes += 4;
-      i++; // surrogate pair encodes as a single 4-byte sequence
-    } else {
+    } else if (code < 0x10000) {
       bytes += 3;
+    } else {
+      bytes += 4;
     }
   }
   return bytes;
+}
+
+/** the module under test plus a healthy neighbour, to prove failures do not cascade */
+function composeWithNeighbour<
+  LocalState,
+  Update,
+  DistantState,
+  Schema extends ZodType<DistantState>,
+>(module: CloudSyncDataManager<LocalState, Update, Schema, DistantState>) {
+  const quarantined: string[] = [];
+  const neighbour: CloudSyncDataManager<string[], string[], ZodType<string[]>, string[]> = {
+    schema: z.array(z.string()),
+    diffLocalToDistant: local => ({ hasChanges: local.length > 0, nextState: local }),
+    resolveIncrementalUpdate: async () => ({ hasChanges: false }),
+    applyUpdate: (_local, update) => update,
+  };
+  const aggregator = createAggregator(
+    { subject: module, neighbour },
+    { onModuleError: key => quarantined.push(key) },
+  );
+  return { aggregator, quarantined };
 }
 
 /**
@@ -43,12 +64,13 @@ function utf8ByteLength(value: string): number {
  * - convergence: applying an incoming update makes the local state in sync with that distant state
  * - nextState is JSON-serializable and under 1MB
  * - diffLocalToDistant and applyUpdate complete within 5ms each (pure in-memory ops)
+ * - composed in an aggregator, arbitrary garbage as incomingState never breaks the sync
  */
 export function describeCloudSyncModuleContract<
   LocalState,
   Update,
-  Schema extends ZodType<DistantState>,
   DistantState,
+  Schema extends ZodType<DistantState>,
 >(
   label: string,
   module: CloudSyncDataManager<LocalState, Update, Schema, DistantState>,
@@ -152,6 +174,69 @@ export function describeCloudSyncModuleContract<
         }
         expect((Date.now() - t0) / 100).toBeLessThan(5);
       }
+    });
+
+    describe("composed in an aggregator, tolerates arbitrary garbage as incomingState", () => {
+      // isolation is the aggregator's job, so this checks the module composes safely in one
+      const garbageValues: [label: string, value: unknown][] = [
+        ["null", null],
+        ["undefined", undefined],
+        ["0", 0],
+        ["-1", -1],
+        ["NaN", Number.NaN],
+        ["Infinity", Number.POSITIVE_INFINITY],
+        ["empty string", ""],
+        ["string", "garbage"],
+        ["true", true],
+        ["false", false],
+        ["empty array", []],
+        ["empty object", {}],
+        ["array of null", [null]],
+        ["array of foreign objects", [{ nope: true }]],
+        ["object with unexpected key", { unexpected: "key" }],
+        ["deeply nested object", { nested: { deep: [1, "2", null, { deeper: true }] } }],
+        ["__proto__ payload", JSON.parse('{"__proto__": {"polluted": true}}')],
+      ];
+
+      it.each(garbageValues)(
+        "resolveIncrementalUpdate(%s) resolves without breaking the sync",
+        async (_label, garbage) => {
+          for (const localState of [fixtures.emptyLocalState, fixtures.nonEmptyLocalState]) {
+            const { aggregator } = composeWithNeighbour(module);
+            const local = { subject: localState, neighbour: ["n"] };
+            const result = await aggregator.resolveIncrementalUpdate(local, null, {
+              subject: garbage,
+              neighbour: ["n"],
+            });
+            expect(typeof result.hasChanges).toBe("boolean");
+            if (result.hasChanges) {
+              expect(() => aggregator.applyUpdate(local, result.update)).not.toThrow();
+            }
+          }
+        },
+      );
+
+      it.each(garbageValues)(
+        "diffLocalToDistant(%s) keeps a serializable nextState and never deletes the slice",
+        (_label, garbage) => {
+          for (const localState of [fixtures.emptyLocalState, fixtures.nonEmptyLocalState]) {
+            const { aggregator, quarantined } = composeWithNeighbour(module);
+            const distant = { subject: garbage, neighbour: ["n"] };
+            const result = aggregator.diffLocalToDistant(
+              { subject: localState, neighbour: ["n"] },
+              distant,
+            );
+            expect(typeof result.hasChanges).toBe("boolean");
+            expect(() => JSON.stringify(result.nextState)).not.toThrow();
+            // a healthy neighbour must keep syncing whatever the subject did
+            expect(result.nextState.neighbour).toEqual(["n"]);
+            // quarantine must never become deletion
+            if (quarantined.includes("subject")) {
+              expect((result.nextState as Record<string, unknown>).subject).toEqual(garbage);
+            }
+          }
+        },
+      );
     });
 
     if (fixtures.matchingDistantState !== undefined) {

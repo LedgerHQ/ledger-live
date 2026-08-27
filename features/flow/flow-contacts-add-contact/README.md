@@ -8,5 +8,10 @@ navigation, and native drawer hosting.
 
 ## Public API
 
-The package exposes the Add contact view models, Web dialog, Native drawer, and shared name-input
-primitives consumed by the Rename contact flow.
+The package exposes the container-free Add contact content and view model for Web and Native.
+Consumers own the dialog, drawer, bottom sheet, positioning, cancellation, and reset behavior. The
+successful creation callback receives the created `Contact`.
+
+Shared contact-name presentation primitives are provided by `@features/platform-contacts` so Add
+and Edit contact remain independent leaf flows. The contact-name validation contract, including its
+length limit, is owned by `@domain/entity-contact`.

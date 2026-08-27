@@ -294,8 +294,7 @@ function TopWalletFields({
           Category ID
         </Text>
         <Text typography="body2" lx={{ color: "muted" }}>
-          {values.categoryId} - shared by both Top wallet formats, like prod's "alwayson". Not
-          editable here.
+          {values.categoryId} - stable for this format. Cards with the same ID share a category.
         </Text>
       </Box>
       {isCarousel ? (

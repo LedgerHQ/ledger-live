@@ -11,6 +11,7 @@ type TooltipProps = {
 let capturedOnOpenChange: ((value: boolean) => void) | undefined;
 
 jest.mock("@ledgerhq/lumen-ui-react", () => ({
+  ...jest.requireActual("@ledgerhq/lumen-ui-react"),
   Tooltip: ({ open, onOpenChange, children }: TooltipProps) => {
     capturedOnOpenChange = onOpenChange;
     return (

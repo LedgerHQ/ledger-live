@@ -11,11 +11,11 @@ const labels: ContactDetailLabels = {
   addAddress: "Add address",
   addYourAddress: "Add your address",
   emptyMeTitle: "Save your own addresses",
-  emptyContactTitle: () => "No address yet",
+  emptyContactTitle: name => `No saved addresses for ${name}`,
   emptyMeDescription: "Save external addresses for Me.",
-  emptyContactDescription: name => `Save wallet address to send to ${name}`,
+  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
   ledgerWalletAddresses: "Ledger Wallet addresses",
-  myAddresses: "My addresses",
+  formatMeDisplayName: name => `${name} (Me)`,
   formatAddressCount: count => `${count} address`,
 };
 
@@ -39,13 +39,19 @@ describe("ContactDetailPage", () => {
     render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByText("My addresses")).toBeVisible();
+    expect(screen.getByText("Me")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add your address");
     expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
       "Ledger Wallet addresses",
     );
     expect(screen.getByText("Save your own addresses")).toBeVisible();
     expect(screen.getByText("Save external addresses for Me.")).toBeVisible();
+  });
+
+  it("should render a custom Me display name with the Me suffix", () => {
+    render(<ContactDetailView {...meDetailProps} contact={mockMeContact({ name: "Maxime" })} />);
+
+    expect(screen.getByText("Maxime (Me)")).toBeVisible();
   });
 
   it("should render a saved contact empty state", () => {
@@ -60,8 +66,10 @@ describe("ContactDetailPage", () => {
     expect(screen.getByText("Benoit")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
     expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
-    expect(screen.getByText("No address yet")).toBeVisible();
-    expect(screen.getByText("Save wallet address to send to Benoit")).toBeVisible();
+    expect(screen.getByText("No saved addresses for Benoit")).toBeVisible();
+    expect(
+      screen.getByText("Save their wallet addresses to send to them by name next time"),
+    ).toBeVisible();
   });
 
   it("should keep the shared detail defaults without Mobile-specific props", () => {

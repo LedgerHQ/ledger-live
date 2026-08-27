@@ -12,7 +12,13 @@ import {
   ContentCardsType,
   LocationContentCard,
 } from "~/types/dynamicContent";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { useDynamicContent } from "../useDynamicContent";
+import { trackContentCard } from "../../utils/trackContentCard";
+
+jest.mock("../../utils/trackContentCard", () => ({
+  trackContentCard: jest.fn(),
+}));
 
 jest.mock("@braze/web-sdk", () => ({
   ...require("tests/mocks/brazeWebSdk").getBrazeWebSdkJestMock(),
@@ -20,6 +26,7 @@ jest.mock("@braze/web-sdk", () => ({
 }));
 
 const logCardDismissal = jest.mocked(braze.logCardDismissal);
+const mockTrackContentCard = jest.mocked(trackContentCard);
 
 const CATEGORY: CategoryContentCard = {
   id: "category-1",
@@ -136,6 +143,37 @@ describe("useDynamicContent", () => {
 
     expect(logCardDismissal).not.toHaveBeenCalled();
     expect(store.getState().settings.dismissedContentCards["child-a"]).toEqual(expect.any(Number));
+  });
+
+  it("should track content card analytics when the user is tracked", () => {
+    const { result } = renderDynamicContent();
+
+    act(() => {
+      result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "child-a",
+        contentcard: "Card child-a",
+      });
+    });
+
+    expect(mockTrackContentCard).toHaveBeenCalledWith(
+      ContentCardEvent.Clicked,
+      expect.objectContaining({
+        campaign: "child-a",
+      }),
+    );
+  });
+
+  it("should not track content card analytics when the user opted out", () => {
+    const { result } = renderDynamicContent(undefined, optedOutUser);
+
+    act(() => {
+      result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "child-a",
+        contentcard: "Card child-a",
+      });
+    });
+
+    expect(mockTrackContentCard).not.toHaveBeenCalled();
   });
 
   it("should never send debug cards from the braze dev tools to braze", () => {

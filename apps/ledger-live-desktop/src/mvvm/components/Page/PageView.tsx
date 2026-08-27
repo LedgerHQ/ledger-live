@@ -15,7 +15,7 @@ type PageViewProps = PageViewModelResult & {
 export const PageView = memo(function PageView({
   children,
   pageScrollerRef,
-  shouldRenderRightPanel,
+  rightPanelVariant,
   pageTestId,
 }: PageViewProps) {
   return (
@@ -24,7 +24,7 @@ export const PageView = memo(function PageView({
 
       <Wallet40Layout
         scrollerRef={pageScrollerRef}
-        rightPanel={shouldRenderRightPanel ? <RightPanel /> : undefined}
+        rightPanel={rightPanelVariant ? <RightPanel variant={rightPanelVariant} /> : undefined}
       >
         {children}
       </Wallet40Layout>

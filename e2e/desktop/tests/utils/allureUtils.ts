@@ -27,7 +27,6 @@ async function attachIfExists(
 
 export async function runCliStep<T>(label: string, fn: () => Promise<T>): Promise<T> {
   return allure.step(`CLI: ${label}`, async () => {
-    const start = Date.now();
     const httpTrace: string[] = [];
     const prevNetworkLogs = getEnv("ENABLE_NETWORK_LOGS");
     setEnv("ENABLE_NETWORK_LOGS", true);
@@ -39,10 +38,10 @@ export async function runCliStep<T>(label: string, fn: () => Promise<T>): Promis
     });
     try {
       const result = await fn();
-      await reportCliOutcome(label, "result", start, () => redactSecrets(result), httpTrace);
+      await reportCliOutcome(label, "result", () => redactSecrets(result), httpTrace);
       return result;
     } catch (error) {
-      await reportCliOutcome(label, "FAILED", start, () => serializeCliError(error), httpTrace);
+      await reportCliOutcome(label, "FAILED", () => serializeCliError(error), httpTrace);
       throw error;
     } finally {
       try {
@@ -78,17 +77,18 @@ function redactSecrets(value: unknown): unknown {
 }
 
 // reporting must never flip the command's pass/fail outcome, so payload building runs here too
+// Attached to the report only: printing here floods the console when specs run in parallel.
 async function reportCliOutcome(
   label: string,
   status: string,
-  start: number,
   buildPayload: () => unknown,
   httpTrace: string[],
 ) {
   try {
     const payload = buildPayload();
-    console.log(`CLI ${label} — ${status}: `, payload);
-    const title = `CLI ${label} — ${status} (${Date.now() - start}ms)`;
+    // No timing in the title — Allure records the step duration separately, and a stable
+    // title lets repeated commands group under one name (QAA-1433).
+    const title = `CLI ${label} — ${status}`;
     if (typeof payload === "string") {
       await allure.attachment(title, payload, "text/plain");
     } else {
@@ -193,7 +193,7 @@ export async function captureArtifacts(
   appCollector?: PageLogCollector,
 ) {
   const screenshot = await page.screenshot();
-  await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
+  await testInfo.attach("App Screenshot", { body: screenshot, contentType: "image/png" });
 
   if (takeSpeculosScreenshot) {
     await attachSpeculosScreenshots(testInfo);
@@ -242,7 +242,7 @@ export async function captureArtifacts(
   }
 
   if (appCollector) {
-    await testInfo.attach("Ledger Wallet Network Logs", {
+    await testInfo.attach("App Network Logs", {
       body: Buffer.from(appCollector.getFormattedNetworkLogs()),
       contentType: "application/json",
     });

@@ -1,8 +1,11 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import type { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
-import { EvmConfigInfo } from "../../config";
+import {
+  DEFAULT_EIP1559_BASE_FEE_MULTIPLIER,
+  DEFAULT_LEDGER_EXPLORER_URI,
+  EvmConfigInfo,
+} from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 import { GasOptions } from "../../types";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
@@ -57,9 +60,10 @@ export const getGasOptions = async ({
   // We use the eip1559 display parameter only if requested AND the currency supports it
   const useEIP1559 = options?.useEIP1559 && gasTrackerConfig.compatibilty.eip1559;
 
+  const explorerUri = config.ledgerExplorerUri ?? DEFAULT_LEDGER_EXPLORER_URI;
   const { low, medium, high, next_base } = await network({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
+    url: `${explorerUri}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
       useEIP1559 ? "?display=eip1559" : ""
     }`,
   }).then(({ data }) => ({
@@ -73,7 +77,8 @@ export const getGasOptions = async ({
     next_base: new BigNumber(data.next_base).integerValue(),
   }));
 
-  const EIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
+  const EIP1559_BASE_FEE_MULTIPLIER =
+    config.eip1559BaseFeeMultiplier ?? DEFAULT_EIP1559_BASE_FEE_MULTIPLIER;
 
   /**
    * Since our use of BigNumber implies only using integers, we need to round up to

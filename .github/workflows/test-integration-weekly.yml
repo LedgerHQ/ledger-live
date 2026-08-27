@@ -48,7 +48,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i --filter="live-common..." --filter="ledger-live"
+        run: pnpm i --frozen-lockfile --filter="live-common..." --filter="ledger-live"
       - name: Build
         run: pnpm exec nx run @ledgerhq/live-common:build
       - name: Test

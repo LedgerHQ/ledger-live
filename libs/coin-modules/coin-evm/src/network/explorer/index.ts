@@ -15,6 +15,7 @@ export const getExplorerApi = (config: EvmConfigInfo, currencyId: string): Explo
     case "teloscan":
     case "klaytnfinder":
     case "corescan":
+    case "cronos":
       return config.explorer.noCache
         ? etherscanLikeApi.explorerApiNoCache
         : etherscanLikeApi.explorerApi;

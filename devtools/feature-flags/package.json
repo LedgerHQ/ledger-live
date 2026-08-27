@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
-    "coverage:native": "jest --config jest.native.config.js --coverage"
+    "coverage:native": "jest --config jest.native.config.js --coverage",
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^"

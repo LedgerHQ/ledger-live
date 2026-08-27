@@ -1,6 +1,6 @@
 import type { ContactId } from "@domain/entity-contact";
+import { useRenameContactDialogViewModel } from "@features/flow-contacts-edit-contact";
 import type { ContactDetailActionsPorts } from "../model/ports";
-import { useRenameContactDialogViewModel } from "../../EditContact/useRenameContactDialogViewModel";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 
 export type UseContactDetailEditDeleteFlowBindingsOptions = Readonly<{
@@ -24,8 +24,10 @@ export function useContactDetailEditDeleteFlowBindings({
     currentName: flow.contactName,
     editPort: ports.edit,
     isRequestedOpen: flow.editUiState === "edit-open",
+    isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,
     onSaveSuccess: () => undefined,
+    requestSaveApproval: flow.requestSaveApproval,
   });
 
   return { flow, renameViewModel };

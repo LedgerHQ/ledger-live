@@ -2,6 +2,13 @@ name: "[CI] - Additional Tests - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-ci-sast:
+        description: "Skip workflow-file SAST. Set at the merge gate, which has no pull request to diff against."
+        type: boolean
+        required: false
+        default: false
+
   workflow_dispatch:
     inputs:
       ref:
@@ -38,6 +45,7 @@ jobs:
 
   changes:
     name: Detect Workflow File Changes
+    if: ${{ !inputs.skip-ci-sast }}
     runs-on: ubuntu-24.04
     outputs:
       workflow-files: ${{ steps.filter.outputs.workflow-files }}

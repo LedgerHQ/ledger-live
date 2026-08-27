@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.20.3",
+  "version": "1.20.4",
   "private": true,
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",

@@ -39,7 +39,10 @@ const config: PlaywrightTestConfig = {
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
   workers: "60%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
-  retries: 0, // We explicitly want to disable retries to be strict about avoiding flaky tests. (see https://github.com/LedgerHQ/ledger-live/pull/4918)
+  // One CI retry so a flake is observable at all — without a second attempt it is
+  // indistinguishable from a plain failure. Local stays strict and immediate.
+  retries: process.env.CI ? 1 : 0,
+  failOnFlakyTests: false,
   reporter: process.env.CI
     ? [
         ["html", { open: "never", outputFolder: "artifacts/html-report" }],
@@ -47,6 +50,7 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
         ["./utils/customJsonReporter.ts"],
+        ["@ledgerhq/test-quarantine/playwright"],
       ]
     : [["allure-playwright"]],
 };

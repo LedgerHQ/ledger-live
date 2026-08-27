@@ -13,6 +13,9 @@ type DeviceIntentSignFlagOverride = {
 };
 
 const mockNavigate = jest.fn();
+const mockGoBack = jest.fn();
+const mockCanGoBack = jest.fn().mockReturnValue(true);
+const mockOpenDrawer = jest.fn();
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -28,12 +31,15 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
 }));
 
 jest.mock("LLM/features/ModularDrawer", () => ({
-  useModularDrawerController: jest.fn(() => ({ openDrawer: jest.fn() })),
+  useModularDrawerController: jest.fn(() => ({ openDrawer: mockOpenDrawer })),
 }));
 
 jest.mock("@react-navigation/native", () => {
   const actual = jest.requireActual("@react-navigation/native");
-  return { ...actual, useNavigation: () => ({ navigate: mockNavigate }) };
+  return {
+    ...actual,
+    useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack, canGoBack: mockCanGoBack }),
+  };
 });
 
 jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
@@ -291,5 +297,54 @@ describe("useUiHook - message.sign device-intent branching", () => {
       expect.objectContaining({ account, message, onSuccess, onError, onCancel }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+});
+
+describe("useUiHook - account.request cancel navigation", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockCanGoBack.mockReturnValue(true);
+  });
+
+  function invokeAccountRequest(goBackOnAccountRequestCancel?: boolean) {
+    const onSuccess = jest.fn();
+    const onCancel = jest.fn();
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+        goBackOnAccountRequestCancel,
+      }),
+    );
+    result.current["account.request"]!({
+      currencyIds: ["ethereum"],
+      onSuccess,
+      onCancel,
+      areCurrenciesFiltered: false,
+    });
+    const drawerCallArgs = mockOpenDrawer.mock.calls[0]?.[0];
+    return { onSuccess, onCancel, drawerCallArgs };
+  }
+
+  it("calls goBack when goBackOnAccountRequestCancel is true and user cancels", () => {
+    const { drawerCallArgs } = invokeAccountRequest(true);
+    drawerCallArgs.onCancel();
+    expect(mockGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call goBack when goBackOnAccountRequestCancel is not set and user cancels", () => {
+    const { drawerCallArgs } = invokeAccountRequest();
+    drawerCallArgs.onCancel();
+    expect(mockGoBack).not.toHaveBeenCalled();
+  });
+
+  it("does not call goBack after an account was already selected", () => {
+    const { drawerCallArgs, onSuccess } = invokeAccountRequest(true);
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    drawerCallArgs.onAccountSelected({ id: "acc-1" } as AccountLike, undefined);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    drawerCallArgs.onCancel();
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,17 @@
 # @features/flow-pay-card-deposit
 
+## 0.3.0
+
+### Minor Changes
+
+- [#21014](https://github.com/LedgerHQ/ledger-live/pull/21014) [`e1c2a4b`](https://github.com/LedgerHQ/ledger-live/commit/e1c2a4bf3cabe5f58f8b3f8f226dfc90a0ab0296) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Pay tab bottom sheets so the filter opens expanded and deposit options stay fully visible
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#21014](https://github.com/LedgerHQ/ledger-live/pull/21014) [`e1c2a4b`](https://github.com/LedgerHQ/ledger-live/commit/e1c2a4bf3cabe5f58f8b3f8f226dfc90a0ab0296) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Pay tab bottom sheets so the filter opens expanded and deposit options stay fully visible
+
 ## 0.2.0
 
 ### Minor Changes

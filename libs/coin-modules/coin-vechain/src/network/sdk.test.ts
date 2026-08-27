@@ -27,24 +27,20 @@ const mockTransaction: VechainSDKTransaction = {
 
 const mockGetTransferLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
 const mockGetEventLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
-const mockGetAccount = jest.fn(
-  async (): Promise<{ data: AccountResponse }> => ({ data: mockAccount }),
-);
+const mockGetAccount = jest.fn(async (): Promise<{ data: AccountResponse }> => ({
+  data: mockAccount,
+}));
 const mockGetLastBlockCount = jest.fn(
   async (): Promise<{ data: { number: number; id: string } }> => ({
     data: { number: LAST_BLOCK_COUNT, id: "abcdefghiklmnopqrstuvwxyz" },
   }),
 );
-const mockGetFees = jest.fn(
-  async (): Promise<{ data: { paid?: string } }> => ({
-    data: { paid: "42" },
-  }),
-);
-const mockSubmit = jest.fn(
-  async (): Promise<{ data: { id?: string } }> => ({
-    data: { id: "123" },
-  }),
-);
+const mockGetFees = jest.fn(async (): Promise<{ data: { paid?: string } }> => ({
+  data: { paid: "42" },
+}));
+const mockSubmit = jest.fn(async (): Promise<{ data: { id?: string } }> => ({
+  data: { id: "123" },
+}));
 
 jest.mock("../common-logic", () => ({
   mapTokenTransfersToOperations: jest.fn(() => [{}]),

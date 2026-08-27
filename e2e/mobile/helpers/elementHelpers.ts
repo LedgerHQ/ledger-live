@@ -50,6 +50,7 @@ export type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
   checkVisibility?: boolean;
+  visibilityPercentage?: number;
 };
 
 export const NativeElementHelpers = {
@@ -91,7 +92,7 @@ export const NativeElementHelpers = {
     const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
     const checkVisibility = options?.checkVisibility ?? true;
     const waitCondition = checkVisibility
-      ? waitFor(nativeElement).toBeVisible()
+      ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
       : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
       return waitCondition.withTimeout(timeout);
@@ -126,6 +127,11 @@ export const NativeElementHelpers = {
     options?: WaitForElementOptions,
   ) {
     return NativeElementHelpers.waitForElement(element(by.id(id)), timeout, options);
+  },
+
+  /** Detox's default is 75%, which a sliding bottom sheet satisfies before it settles. */
+  async waitForFullyVisibleById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+    return NativeElementHelpers.waitForElementById(id, timeout, { visibilityPercentage: 100 });
   },
 
   async waitForElementByText(

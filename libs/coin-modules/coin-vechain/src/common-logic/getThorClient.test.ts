@@ -21,9 +21,7 @@ describe("getThorClient", () => {
   });
 
   it("should create a ThorClient instance with the configured node url", () => {
-    const mockClient = {
-      /* mock ThorClient properties */
-    };
+    const mockClient = {/* mock ThorClient properties */};
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
     const result = getThorClient(config);

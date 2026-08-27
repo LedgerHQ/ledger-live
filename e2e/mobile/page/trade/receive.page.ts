@@ -30,13 +30,13 @@ export default class ReceivePage {
     await openDeeplink(this.baseLink);
   }
 
-  @Step("Receive via deeplink")
+  @Step("Receive via deeplink {{{0}}}")
   async receiveViaDeeplink(currencyLong?: string): Promise<void> {
     const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
-  @Step("Select currency in receive list")
+  @Step("Select currency in receive list {{{0}}}")
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
     if (!(await IsIdVisible(id))) {
@@ -45,7 +45,7 @@ export default class ReceivePage {
     await tapById(id);
   }
 
-  @Step("Select currency in receive list")
+  @Step("Select currency in receive list {{{0}}}")
   async selectCurrencyByType(currencyType: TokenType): Promise<void> {
     const id = this.currencyNameIdByRegex(currencyType.toLowerCase());
     if (!(await IsIdVisible(id))) {
@@ -54,13 +54,13 @@ export default class ReceivePage {
     await tapById(id);
   }
 
-  @Step("Select network")
+  @Step("Select network {{{0}}}")
   async selectNetwork(networkId: string): Promise<void> {
     const id = this.currencyNameId(networkId);
     await tapById(id);
   }
 
-  @Step("Select network in list if needed")
+  @Step("Select network in list if needed {{{0}}}")
   async selectNetworkIfAsked(networkId: string): Promise<void> {
     const id = this.networkBasedStep2HeaderTitleId;
     if (await IsIdVisible(id)) {
@@ -98,7 +98,7 @@ export default class ReceivePage {
     await tapById(this.noVerifyValidateButton);
   }
 
-  @Step("Expect receive page header")
+  @Step("Expect receive page header {{{0}}} for {{{1}}}")
   private async expectReceivePageHeader(tickerName: string, accountName: string): Promise<void> {
     const titleID = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameID = this.accountNameReceiveId(accountName);
@@ -109,7 +109,7 @@ export default class ReceivePage {
     await detoxExpect(getElementById(accountNameID)).toBeVisible();
   }
 
-  @Step("Expect account receive page is displayed")
+  @Step("Expect account receive page is displayed for {{{1}}} ({{{0}}})")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
     const qrCodeContainerID = this.receiveQrCodeContainerId(accountName);
 
@@ -118,7 +118,7 @@ export default class ReceivePage {
     await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
   }
 
-  @Step("Expect receive warning page is displayed")
+  @Step("Expect receive warning page is displayed for {{{1}}} ({{{0}}})")
   async expectReceiveWarningPageIsDisplayed(
     tickerName: string,
     accountName: string,
@@ -126,12 +126,12 @@ export default class ReceivePage {
     await this.expectReceivePageHeader(tickerName, accountName);
   }
 
-  @Step("Verify address")
+  @Step("Verify address {{{0}}}")
   async verifyAddress(address: string): Promise<void> {
     await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
-  @Step("Expect given address is displayed on receive page")
+  @Step("Expect given address is displayed on receive page {{{0}}}")
   async expectAddressIsCorrect(address: string): Promise<void> {
     await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
@@ -149,7 +149,7 @@ export default class ReceivePage {
     );
   }
 
-  @Step("Expect receive network warning message for $0")
+  @Step("Expect receive network warning message for {{{0}}}")
   async expectSendCurrencyTokensWarningMessage(expectedWarningMessage: string): Promise<void> {
     await scrollToId(this.receiveNetworkWarningId, this.receivePageScrollViewId);
     await detoxExpect(getElementById(this.receiveNetworkWarningId)).toBeVisible();
@@ -172,7 +172,7 @@ export default class ReceivePage {
     );
   }
 
-  @Step("Select receive funds option")
+  @Step("Select receive funds option {{{0}}}")
   async selectReceiveFundsOption(receiveFundsOption: ReceiveFundsOptionsType): Promise<void> {
     await waitForElementById(this.receiveFundsOptionId(receiveFundsOption));
     await tapById(this.receiveFundsOptionId(receiveFundsOption));

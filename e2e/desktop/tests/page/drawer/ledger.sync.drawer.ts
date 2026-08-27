@@ -3,14 +3,6 @@ import { expect } from "@playwright/test";
 import { Drawer } from "../../component/drawer.component";
 
 export class LedgerSyncDrawer extends Drawer {
-  private continueButton = this.page.getByRole("button", { name: "continue" });
-  private readonly alreadyTurnedOnButton = this.page.getByRole("button", {
-    name: "I already turned it on",
-  });
-  private walletSyncConnectDeviceButton = this.page.getByTestId(
-    "walletSync-synchronize-connectDevice",
-  );
-  private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
   private deleteSyncButton = this.page.getByText("Delete sync");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Yes, delete" });
   private backupDeletionSuccessTextId = this.page.getByTestId(
@@ -22,39 +14,39 @@ export class LedgerSyncDrawer extends Drawer {
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
   private readonly cliMember = this.page.getByTestId("walletSync-manage-instance-CLI");
   private readonly removeCLI = this.cliMember.getByText("Remove");
-  private readonly synchronizationSuccessText = this.page.getByText(
-    /From now on, your portfolio|Sync successful!/,
+  private readonly activateTitle = this.page.getByTestId("walletsync-activate-title");
+  private readonly turnOnLedgerSyncButton = this.page.getByTestId("walletsync-activate-cta");
+  private readonly connectDeviceButton = this.page.getByTestId(
+    "walletSync-synchronize-connectDevice",
   );
-
-  @step("Synchronize accounts")
-  async syncAccounts() {
-    await this.expectSyncAccountsButtonExist();
-
-    if (await this.walletSyncConnectDeviceButton.isVisible()) {
-      await this.walletSyncConnectDeviceButton.click();
-      return;
-    }
-
-    if (await this.continueButton.isVisible()) {
-      await this.continueButton.click();
-    } else if (await this.alreadyTurnedOnButton.isVisible()) {
-      await this.alreadyTurnedOnButton.click();
-    } else {
-      throw new Error("No Ledger Sync entry-point button is visible.");
-    }
-
-    await expect(this.walletSyncConnectDeviceButton).toBeVisible();
-    await this.walletSyncConnectDeviceButton.click();
-  }
-
-  @step("Close the Ledger Sync drawer")
-  async closeLedgerSync() {
-    await expect(this.closeLedgerSyncButton).toBeVisible();
-    await this.closeLedgerSyncButton.click();
-  }
+  private readonly activateSuccessTitle = this.page.getByTestId(
+    "walletsync-activate-success-title",
+  );
 
   async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
+  }
+
+  @step("Expect activation screen to be visible")
+  async expectActivationScreenVisible() {
+    await expect(this.activateTitle).toBeVisible();
+    await expect(this.turnOnLedgerSyncButton).toBeVisible();
+  }
+
+  @step("Click 'Turn on Ledger Sync'")
+  async clickTurnOnLedgerSync() {
+    await this.turnOnLedgerSyncButton.click();
+  }
+
+  @step("Click 'Use your Ledger' to sync with device")
+  async clickConnectDevice() {
+    await this.connectDeviceButton.waitFor({ state: "visible" });
+    await this.connectDeviceButton.click();
+  }
+
+  @step("Expect activation success screen")
+  async expectActivationSuccess() {
+    await expect(this.activateSuccessTitle).toContainText("Sync complete");
   }
 
   @step("Check if Ledger Sync management drawer is visible")
@@ -79,23 +71,6 @@ export class LedgerSyncDrawer extends Drawer {
   async destroyTrustchain() {
     await this.deleteSync();
     await this.confirmBackupDeletion();
-  }
-
-  /** Entry-step controls only; connect-device appears after advancing past these. */
-  @step("Check if Ledger Sync entry controls exist")
-  async expectSyncAccountsButtonExist() {
-    await expect
-      .poll(async () => {
-        const hasContinue = await this.continueButton.isVisible();
-        const hasAlreadyTurnedOn = await this.alreadyTurnedOnButton.isVisible();
-        return hasContinue || hasAlreadyTurnedOn;
-      })
-      .toBe(true);
-  }
-
-  @step("Check if synchronization was successful")
-  async expectSynchronizationSuccess() {
-    await expect(this.synchronizationSuccessText).toBeVisible();
   }
 
   @step("Check if the backup deletion was successful")

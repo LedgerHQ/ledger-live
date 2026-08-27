@@ -18,11 +18,10 @@ const StepDelegation = (props: StepProps) => {
   invariant(multiversxResources, "multiversxResources required");
   const bridge = useAccountBridge<Transaction>(account);
   const onSelectValidator = (recipient: string) =>
-    onUpdateTransaction(
-      (transaction: Transaction): Transaction =>
-        bridge.updateTransaction(transaction, {
-          recipient,
-        }),
+    onUpdateTransaction((transaction: Transaction): Transaction =>
+      bridge.updateTransaction(transaction, {
+        recipient,
+      }),
     );
   return (
     <Box flow={1}>

@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Check formatting
       id: format-check
-      if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+      if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
       run: pnpm exec nx run-many -t format:check --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
       shell: bash
       env:

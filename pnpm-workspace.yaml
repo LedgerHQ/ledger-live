@@ -22,14 +22,14 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.4.0
+  "@ledgerhq/context-module": 2.4.1
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-management-kit": 1.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
   "@ledgerhq/device-signer-kit-ethereum": 1.16.0
   "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
-  "@ledgerhq/device-signer-kit-solana": 1.12.0
+  "@ledgerhq/device-signer-kit-solana": 1.12.1
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-signer-kit-icp": 0.2.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
@@ -39,19 +39,19 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.17.0
-  "@ledgerhq/lumen-design-core": 0.1.24
-  "@ledgerhq/lumen-ui-react": 0.1.51
-  "@ledgerhq/lumen-ui-rnative": 0.1.54
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.31
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.30
-  "@ledgerhq/lumen-utils-shared": "0.1.7"
+  "@ledgerhq/lumen-design-core": 0.1.26
+  "@ledgerhq/lumen-ui-react": 0.1.55
+  "@ledgerhq/lumen-ui-rnative": 0.1.58
+  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.36
+  "@ledgerhq/lumen-ui-react-visualization": 0.1.36
+  "@ledgerhq/lumen-utils-shared": 0.1.11
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34
   "@ledgerhq/wallet-api-core": 2.0.0
   "@ledgerhq/wallet-api-server": 3.4.3
   "@ledgerhq/wallet-api-simulator": 2.3.3
-  "@ledgerhq/zcash-utils": 2.1.1
+  "@ledgerhq/zcash-utils": 2.2.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -84,6 +84,7 @@ catalog:
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.2.0
+  "@jest/test-result": 30.2.0
   "@reduxjs/toolkit": 2.11.2
   "@rsbuild/core": 2.0.9
   "@rsbuild/plugin-node-polyfill": 1.4.5
@@ -176,6 +177,7 @@ catalog:
   react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
+  react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.0
   react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
@@ -216,13 +218,13 @@ catalog:
   playwright: 1.60.0
   allure-playwright: 3.9.0
   allure-js-commons: 3.9.0
-  oxlint: 1.51.0
-  oxfmt: 0.36.0
+  oxlint: 1.79.0
+  oxfmt: 0.64.0
   # Modules published by coin-modules
   "@ledgerhq/coin-hypercore": 2.0.0
-  "@ledgerhq/coin-module-framework": 8.0.0
-  "@ledgerhq/coin-stellar": 9.0.0
-  "@ledgerhq/coin-tezos": 10.0.0
+  "@ledgerhq/coin-module-framework": 8.1.0
+  "@ledgerhq/coin-stellar": 9.3.0
+  "@ledgerhq/coin-tezos": 10.1.1
   "@ledgerhq/coin-xrp": 10.0.0
   detox: 20.51.3
 

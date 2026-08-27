@@ -52,9 +52,9 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature } from "@features/platform-feature-flags";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 export function useWebView(
   {
@@ -140,6 +140,7 @@ export function useWebView(
     requestDeviceIntentSign: setDeviceIntentSignRequest,
     requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
     onPublicKeyUnavailable: setPublicKeyUnavailableError,
+    goBackOnAccountRequestCancel: inputs?.goBackOnAccountRequestCancel === "true",
   });
 
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -516,6 +517,8 @@ export interface Props {
    * to the SignMessage stack.
    */
   requestDeviceIntentSignMessage: (request: WalletApiDeviceIntentSignMessageRequest) => void;
+  /** Opt-in: navigate back when account.request is cancelled (0-accounts Exchange flow only). */
+  goBackOnAccountRequestCancel?: boolean;
 }
 
 export function useUiHook({
@@ -524,20 +527,15 @@ export function useUiHook({
   onPublicKeyUnavailable,
   requestDeviceIntentSign,
   requestDeviceIntentSignMessage,
+  goBackOnAccountRequestCancel,
 }: Props): UiHook {
   const navigation = useNavigation();
+  // flips to false after first onSuccess so currency-change cancels don't trigger goBack
+  const shouldGoBackOnCancelRef = useRef(!!goBackOnAccountRequestCancel);
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
-  const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
-  const enabledManifestIds = useMemo(
-    () => new Set(deviceIntentSignFlag?.params?.enabledManifestIds ?? []),
-    [deviceIntentSignFlag?.params?.enabledManifestIds],
-  );
-  // The device-intent sign flow is opt-in per live-app: only enabled when the flag is on
-  // and the current manifest id is in the configured allowlist.
-  const deviceIntentSignEnabled =
-    (deviceIntentSignFlag?.enabled ?? false) && enabledManifestIds.has(manifest.id);
+  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -551,6 +549,7 @@ export function useUiHook({
       "account.request": async ({
         currencyIds,
         onSuccess,
+        onCancel,
         areCurrenciesFiltered,
         useCase,
         uiUseCase,
@@ -567,8 +566,14 @@ export function useUiHook({
           source: source,
           flow: flow,
           enableAccountSelection: true,
-          onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
-            onSuccess(account, parentAccount),
+          onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) => {
+            shouldGoBackOnCancelRef.current = false;
+            onSuccess(account, parentAccount);
+          },
+          onCancel: () => {
+            onCancel?.();
+            if (shouldGoBackOnCancelRef.current && navigation.canGoBack()) navigation.goBack();
+          },
           currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
           areCurrenciesFiltered,
           useCase,

@@ -56,16 +56,15 @@ describe("TronGrid", () => {
   describe("craftStandardTransaction", () => {
     it("handles errors correctly", async () => {
       await expect(
-        craftStandardTransaction(
-          mockConfig,
-          "wrong token address",
-          "wrong recipient address",
-          "wrong sender address",
-          BigNumber(-1),
-          false,
-          "wrong memo",
-          -1,
-        ),
+        craftStandardTransaction(mockConfig, {
+          tokenAddress: "wrong token address",
+          recipientAddress: "wrong recipient address",
+          senderAddress: "wrong sender address",
+          amount: BigNumber(-1),
+          isTransferAsset: false,
+          memo: "wrong memo",
+          expiration: -1,
+        }),
       ).rejects.toThrow("INVALID hex String");
     });
   });

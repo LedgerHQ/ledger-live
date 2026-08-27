@@ -8,6 +8,7 @@ export function DepositOptionsView({
   isOpen,
   title,
   options,
+  bottomInset = 0,
   onClose,
   onSelectOption,
 }: DepositOptionsViewProps) {
@@ -19,11 +20,18 @@ export function DepositOptionsView({
       testID="pay-card-deposit-sheet"
     >
       {isOpen ? (
-        <BottomSheetView style={{ paddingHorizontal: 0 }}>
+        <BottomSheetView
+          style={{ paddingHorizontal: 0, paddingBottom: bottomInset + 24 }}
+          testID="pay-card-deposit-sheet-content"
+        >
           <BottomSheetHeader spacing density="expanded" title={title} />
 
           <Box
-            lx={{ flexDirection: "column", gap: "s8", paddingBottom: "s16" }}
+            lx={{
+              flexDirection: "column",
+              gap: "s8",
+              marginHorizontal: "s8",
+            }}
             testID="pay-card-deposit-options"
           >
             {options.map(option => (

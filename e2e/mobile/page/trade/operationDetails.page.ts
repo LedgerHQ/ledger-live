@@ -38,12 +38,12 @@ export default class OperationDetailsPage {
     await waitForElementById(this.titleId);
   }
 
-  @Step("Check account details")
+  @Step("Check account details {{{0}}}")
   async checkAccount(account: string) {
     await detoxExpect(this.account()).toHaveText(account);
   }
 
-  @Step("Check recipient details")
+  @Step("Check recipient details {{{0.accountName}}}")
   async checkRecipientAddress(recipient: Account) {
     await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
@@ -56,48 +56,48 @@ export default class OperationDetailsPage {
     }
   }
 
-  @Step("Check recipient as provider")
+  @Step("Check recipient as provider {{{0}}}")
   async checkRecipientAsProvider(recipientAddress: string) {
     await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
     await detoxExpect(recipientElement).toHaveText(recipientAddress);
   }
 
-  @Step("Check delegated provider")
+  @Step("Check delegated provider {{{0}}}")
   async checkProvider(provider: string) {
     await scrollToId(this.providerId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.providerId)).toHaveText(provider);
   }
 
-  @Step("Check delegated amount")
+  @Step("Check delegated amount {{{0}}}")
   async checkDelegatedAmount(amount: string) {
     await scrollToId(this.delegatedAmountId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.delegatedAmountId)).toHaveText(amount);
   }
 
-  @Step("Check sender")
+  @Step("Check sender {{{0}}}")
   async checkSender(sender: string) {
     await scrollToId(this.senderId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.senderId)).toHaveText(sender);
   }
 
-  @Step("Check Fees")
+  @Step("Check Fees {{{0}}}")
   async checkFees(fees: string) {
     await scrollToId(this.feesId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.feesId)).toHaveText(fees);
   }
 
-  @Step("Check transaction type")
+  @Step("Check transaction type {{{0}}}")
   async checkTransactionType(type: keyof typeof this.operationsType) {
     await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
   }
 
-  @Step("Check transaction title $0")
+  @Step("Check transaction title {{{0}}}")
   async checkTransactionTitle(title: string) {
     await detoxExpect(getElementById(this.titleId)).toHaveText(title);
   }
 
-  @Step("Check CELO validator group in operation details")
+  @Step("Check CELO validator group in operation details {{{0}}}")
   async checkCeloValidatorGroup(validatorGroup: string) {
     await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.celoValidatorGroupId)).toHaveText(validatorGroup);
@@ -117,7 +117,7 @@ export default class OperationDetailsPage {
     if (operationType) await this.checkTransactionType(operationType);
   }
 
-  @Step("Check that transaction details are displayed")
+  @Step("Check that transaction details are displayed {{{0}}}")
   async checkTransactionDetailsVisibility(accountName?: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
@@ -130,7 +130,7 @@ export default class OperationDetailsPage {
     await detoxExpect(this.date()).toBeVisible();
   }
 
-  @Step("Expect operation amount ticker")
+  @Step("Expect operation amount ticker {{{0}}}")
   async expectOperationAmountTicker(ticker: string) {
     await this.waitForOperationDetails();
     const amountText = await getTextOfElement(this.operationDetailsAmount);

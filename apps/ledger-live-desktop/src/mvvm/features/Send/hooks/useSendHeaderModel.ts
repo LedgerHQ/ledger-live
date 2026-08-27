@@ -1,12 +1,15 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "i18next";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import {
-  getRecipientDisplayValue,
-  getRecipientSearchPrefillValue,
-} from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { useContactsFeature } from "@features/platform-contacts";
+import { selectContacts } from "@domain/entity-contact";
+import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import {
   SendFlowBusinessContext,
@@ -33,6 +36,8 @@ type UseSendHeaderModelResult = Readonly<{
   handleQrCodeClick: () => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
+  recipientContact: RecipientHeaderContact | undefined;
+  recipientPlaceholder: string;
   showBackButton: boolean;
   showRecipientInput: boolean;
   showMemoControls: boolean;
@@ -40,6 +45,18 @@ type UseSendHeaderModelResult = Readonly<{
   transactionErrorName: string | undefined;
   transactionError: Error | undefined;
 }>;
+
+function getRecipientPlaceholderKey({
+  supportsDomain,
+  canSearchContacts,
+}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
+  if (canSearchContacts) {
+    return supportsDomain
+      ? "newSendFlow.placeholderWithContacts"
+      : "newSendFlow.placeholderNoEnsWithContacts";
+  }
+  return supportsDomain ? "newSendFlow.placeholder" : "newSendFlow.placeholderNoENS";
+}
 
 export function useSendHeaderModel({
   availableText,
@@ -49,6 +66,8 @@ export function useSendHeaderModel({
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
@@ -129,11 +148,22 @@ export function useSendHeaderModel({
     }
   }, [backTarget, close, closeScanner, currentStep, navigation, resetViewState, transaction]);
 
+  const recipientHeader = useMemo(
+    () =>
+      getRecipientHeaderPresentation({
+        recipient: state.recipient,
+        contacts,
+        currencyId: state.account.currency?.id,
+        isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
+      }),
+    [contacts, isAmountStep, isContactsFeatureEnabled, state.account.currency?.id, state.recipient],
+  );
+
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
+    if (isAmountStep) return recipientHeader.label;
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
+  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;
@@ -185,6 +215,15 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const canSearchContacts =
+    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+  const recipientPlaceholder = t(
+    getRecipientPlaceholderKey({
+      supportsDomain: uiConfig.recipientSupportsDomain,
+      canSearchContacts,
+    }),
+  );
+
   return {
     addressInputValue,
     descriptionText,
@@ -194,6 +233,8 @@ export function useSendHeaderModel({
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen: showScanner,
+    recipientContact: recipientHeader.contact,
+    recipientPlaceholder,
     showBackButton,
     showMemoControls,
     showRecipientInput,

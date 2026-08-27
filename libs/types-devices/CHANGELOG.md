@@ -134,16 +134,4 @@
 
 - [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Rename QRCodeDevices by DevicesWithTouchScreen
 
-## 6.25.1
-
-### Patch Changes
-
-- [#7204](https://github.com/LedgerHQ/ledger-live/pull/7204) [`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix scanning QR code cannot show all devices with grand screen issue.
-
-## 6.25.1-next.0
-
-### Patch Changes
-
-- [#7204](https://github.com/LedgerHQ/ledger-live/pull/7204) [`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix scanning QR code cannot show all devices with grand screen issue.
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

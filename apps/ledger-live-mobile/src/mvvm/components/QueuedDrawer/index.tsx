@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -88,7 +88,15 @@ const QueuedDrawerNative = ({
   const backdropOpacity = useSharedValue(0);
   const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // useAnimatedStyle only writes its initial value into the shadow tree, so while the drawer is
+  // open the tree still holds translateY 1000. A commit outside Reanimated's commit hook
+  // re-applies it and the sheet snaps off-screen for good, since the open animation is long
+  // finished. Mirroring the resting position here, declared after the animated style, makes
+  // such a commit settle on open instead.
+  const [isOpenDeclared, setIsOpenDeclared] = useState(false);
+
   const openAnim = useCallback(() => {
+    setIsOpenDeclared(true);
     translateY.value = withTiming(0, {
       duration: ANIMATION_DURATION,
       easing: Easing.out(Easing.cubic),
@@ -98,6 +106,8 @@ const QueuedDrawerNative = ({
 
   const closeAnim = useCallback(
     (after?: () => void) => {
+      setIsOpenDeclared(false);
+
       // Cancel any pending callback from a previous closeAnim call
       if (closeAnimTimeoutRef.current) {
         clearTimeout(closeAnimTimeoutRef.current);
@@ -240,12 +250,15 @@ const QueuedDrawerNative = ({
               backgroundColor: colors.constant.overlay,
             }}
           >
-            <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
+            <Animated.View
+              style={[{ flex: 1 }, backdropAnimatedStyle, { opacity: isOpenDeclared ? 1 : 0 }]}
+            />
           </Pressable>
 
           <Animated.View
             style={[
               containerAnimatedStyle,
+              { transform: [{ translateY: isOpenDeclared ? 0 : 1000 }] },
               {
                 width: "100%",
                 maxHeight: "95%",

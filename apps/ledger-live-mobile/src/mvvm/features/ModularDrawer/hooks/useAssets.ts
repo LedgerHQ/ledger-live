@@ -6,11 +6,15 @@ import VersionNumber from "react-native-version-number";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import { useSelector } from "~/context/hooks";
+import { modularDrawerFlowSelector } from "~/reducers/modularDrawer";
 import useEnv from "@features/platform-env";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 
 interface AssetsProps {
   currencyIds?: string[];
   networkIds?: readonly string[];
+  categories?: AssetCategory[];
   searchedValue?: string;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
@@ -19,11 +23,13 @@ interface AssetsProps {
 export function useAssets({
   currencyIds,
   networkIds,
+  categories,
   searchedValue,
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
-  const isAcceptedCurrency = useAcceptedCurrency();
+  const flow = useSelector(modularDrawerFlowSelector);
+  const isAcceptedCurrency = useAcceptedCurrency({ flow });
   const modularDrawerFeature = useFeature("llmModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
   const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;
@@ -33,10 +39,13 @@ export function useAssets({
     [modularDrawerFeature?.params?.backendEnvironment],
   );
 
+  const resolvedCategories = categories?.length ? categories : undefined;
+
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
     networkIds: resolvedNetworkIds,
+    categories: resolvedCategories,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,

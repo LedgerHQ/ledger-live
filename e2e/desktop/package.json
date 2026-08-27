@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.37.1",
+  "version": "0.38.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",
@@ -18,14 +18,10 @@
     "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
-    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-e2e-shared": "workspace:^",
-    "@shared/cloud-sync": "workspace:^",
-    "@features/platform-wallet-sync": "workspace:^",
-    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
     "@playwright/test": "catalog:",

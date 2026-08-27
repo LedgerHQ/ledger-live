@@ -1,7 +1,7 @@
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "~/live-common-setup-base";
-import { app, ipcMain, powerSaveBlocker, shell } from "electron";
+import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
 import updater from "./updater";
@@ -76,6 +76,24 @@ ipcMain.handle(
       if (!path.canceled && path.filePath && csv) {
         await fs.writeFile(path.filePath, csv);
         return true;
+      }
+    } catch {
+      // ignore
+    }
+    return false;
+  },
+);
+
+ipcMain.handle(
+  "save-png",
+  async (_event, dialogOptions: Electron.SaveDialogOptions, base64: string): Promise<boolean> => {
+    try {
+      if (base64) {
+        const result = await dialog.showSaveDialog(dialogOptions);
+        if (!result.canceled && result.filePath) {
+          await fs.writeFile(result.filePath, Buffer.from(base64, "base64"));
+          return true;
+        }
       }
     } catch {
       // ignore

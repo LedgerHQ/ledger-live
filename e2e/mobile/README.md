@@ -97,6 +97,9 @@ pnpm test:android <testFileName>         # single file
 
 ### 6. Full Documentation
 
+To write a new spec or page object, follow
+[Adding or updating a mobile E2E test](docs/add-or-update-e2e.md).
+
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 
@@ -144,6 +147,30 @@ myFeature.spec.ts
 # This test will be skipped:
 myFeature.skip.spec.ts
 ```
+
+### Before committing a test change
+
+CI runs on a slower, software-rendered emulator, so a wait that is only just long enough passes
+locally and fails there. Run the spec you touched under degraded conditions first:
+
+```bash
+# from e2e/mobile/ — pass the spec you changed
+scripts/flake-check.sh myWallet
+```
+
+It throttles the emulator network, starves the guest CPU, then runs the spec 5 times and reports how
+many passed. Read the verdict it prints: a failure in some runs but not all means a wait is too tight,
+and the fix is the wait rather than a retry. If every test fails, or a run ends before any test
+executes, that is a build or setup problem — rebuild and re-run before reading anything into it.
+`scripts/flake-check.sh --help` lists the knobs (`--runs`, `--load`, `--network`, `--gpu`).
+
+The default `--load 4` is tuned for native flows. A spec whose assertions land inside a WebView live
+app (buy/sell) needs `--load 2` or `3` instead: the guest has 2 vCPUs, so 4 busy loops leave the app
+about a third of the CPU and its own 60s web-element waits expire. Measured on
+`navigateToBuyFromPortfolioPage_BTC`: 78s at `--load 0`, 66-73s at `--load 2`, and a deterministic
+failure at `--load 4`. Below that threshold load is indistinguishable from run-to-run noise, so
+raise it until runs slow down, and treat a spec that fails *every* run as a hard limit rather than a
+flake.
 
 ### Notes
 

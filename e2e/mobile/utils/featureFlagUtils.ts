@@ -43,6 +43,21 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_BORROW_ENABLED = {
+  ...FF_LWM_WALLET_40_Q2,
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: { manifest_id: "borrow" },
+  },
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40?.params,
+      pnl: true,
+    },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies OptionalFeatureMap;
@@ -78,6 +93,7 @@ export const getMergedFeatureFlags = ({
     onboardingWidget: {
       enabled: true,
     },
+    largeScreenUpsell: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {

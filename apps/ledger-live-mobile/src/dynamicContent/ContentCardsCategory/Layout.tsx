@@ -33,6 +33,29 @@ import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
 import HeroCard from "~/contentCards/cards/hero";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
+import {
+  trackHardwareCarouselDeviceClick,
+  trackHardwareCarouselCardDismiss,
+  type HardwareCarouselDevice,
+  type HardwareCarouselSharedAnalyticsProps,
+} from "~/dynamicContent/hardwareCarousel/analytics";
+
+function extractDeviceType(title?: string): HardwareCarouselDevice | null {
+  if (!title) return null;
+
+  const titleLower = title.toLowerCase();
+  if (titleLower.includes("gen5") || titleLower.includes("gen 5")) {
+    return "ledger gen5";
+  }
+  if (titleLower.includes("flex")) {
+    return "ledger flex";
+  }
+  if (titleLower.includes("stax")) {
+    return "ledger stax";
+  }
+
+  return null;
+}
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -73,11 +96,12 @@ type LayoutProps = {
   category: CategoryContentCard;
   cards: BrazeContentCard[];
   leadingSlide?: React.ReactNode;
+  hardwareCarouselSharedProps?: HardwareCarouselSharedAnalyticsProps;
 };
 
 type LayoutCardItemProps = ContentCardProps & { widthFactor?: number };
 
-const Layout = ({ category, cards, leadingSlide }: LayoutProps) => {
+const Layout = ({ category, cards, leadingSlide, hardwareCarouselSharedProps }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
   const isTopWallet = category.location === ContentCardLocation.TopWallet;
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
@@ -92,6 +116,13 @@ const Layout = ({ category, cards, leadingSlide }: LayoutProps) => {
     : contentCardsType.contentCardComponent;
 
   const onCardClick = async (card: AnyContentCard, displayedPosition: number) => {
+    if (hardwareCarouselSharedProps) {
+      const deviceType = extractDeviceType(card.title);
+      if (deviceType) {
+        trackHardwareCarouselDeviceClick(deviceType, hardwareCarouselSharedProps);
+      }
+    }
+
     await trackContentCardEvent(ContentCardEvent.Clicked, {
       ...buildContentCardTrackingProperties({
         cardExtras: card.extras,
@@ -115,6 +146,10 @@ const Layout = ({ category, cards, leadingSlide }: LayoutProps) => {
   };
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition: number) => {
+    if (hardwareCarouselSharedProps) {
+      trackHardwareCarouselCardDismiss(hardwareCarouselSharedProps);
+    }
+
     trackContentCardEvent(ContentCardEvent.Dismissed, {
       ...buildContentCardTrackingProperties({
         cardExtras: card.extras,

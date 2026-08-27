@@ -89,6 +89,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/casper/bridge/mock").then(m => m.default),
+    loadSigner: () => import("../families/casper/signer").then(m => m.default),
   },
   {
     family: "celo",
@@ -343,6 +344,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-stacks/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-stacks/deviceTransactionConfig").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/stacks/coinModuleApi").then(m => m.createLocalStacksApi),
+    loadBridgeApi: () => import("../families/stacks/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/stacks/signer").then(m => m.default),
   },
   {
     family: "stellar",
@@ -392,11 +397,15 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["tron"],
     loadSetup: () => import("../families/tron/setup"),
     loadLocalApi: () => import("../families/tron/coinModuleApi").then(m => m.createLocalTronApi),
-    loadTransaction: () => import("@ledgerhq/coin-tron/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/tron/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-tron/deviceTransactionConfig").then(m => m.default),
+      import("../families/tron/deviceTransactionConfig").then(m => m.default),
+    loadWalletApiAdapter: () => import("../families/tron/walletApiAdapter").then(m => m.default),
+    loadPlatformAdapter: () => import("../families/tron/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/tron/bridge/mock").then(m => m.default),
+    loadSigner: () => import("../families/tron/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/tron/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/tron/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
   },
   {
@@ -439,5 +448,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/zcash/bridgeExtensions").then(m => m.default),
   },
 ];

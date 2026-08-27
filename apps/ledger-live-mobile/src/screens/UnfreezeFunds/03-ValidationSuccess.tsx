@@ -24,7 +24,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const transaction = route.params.transaction;
-  const resource = (transaction as TronTransaction).resource || "";
+  const resource = (transaction as TronTransaction).familySpecificData?.resource ?? undefined;
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -56,7 +56,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
           <Trans
             i18nKey="unfreeze.validation.info"
             values={{
-              resource: resource.toLowerCase(),
+              resource: resource?.toLowerCase() ?? "",
             }}
           />
         }

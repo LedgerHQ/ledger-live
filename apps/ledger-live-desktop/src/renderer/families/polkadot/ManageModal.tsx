@@ -3,7 +3,10 @@ import invariant from "invariant";
 import { useDispatch } from "LLD/hooks/redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import {
+  usePolkadotStakingProgress,
+  usePolkadotMinimumBondBalance,
+} from "@ledgerhq/live-common/families/polkadot/react";
 import {
   canNominate,
   canBond,
@@ -107,7 +110,8 @@ export type Props = {
 
 const ManageModal = ({ account, source, ...rest }: Props) => {
   const dispatch = useDispatch();
-  const { staking } = usePolkadotPreloadData();
+  const staking = usePolkadotStakingProgress(account.currency);
+  const minimumBondBalance = usePolkadotMinimumBondBalance(account.currency);
   const { polkadotResources } = account;
   invariant(polkadotResources, "polkadot account expected");
   const { unlockedBalance, nominations } = polkadotResources;
@@ -126,7 +130,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   );
 
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
-  const accountCanNominate = canNominate(account);
+  const accountCanNominate = canNominate(account, minimumBondBalance);
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && accountCanNominate;

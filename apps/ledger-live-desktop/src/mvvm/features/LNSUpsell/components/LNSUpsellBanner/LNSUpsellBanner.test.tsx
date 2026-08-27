@@ -3,7 +3,6 @@
  */
 
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
-import { t } from "i18next";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
@@ -44,17 +43,17 @@ describe("LNSUpsellBanner", () => {
   ] as const)("on the $page page", ({ location, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should not render if the location param is disabled on the feature flag", () => {
       renderBanner({ ffLocationEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should not render if the tracking CTA is disabled on the feature flag", () => {
       renderBanner({ ffCtaEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX])(
@@ -64,7 +63,7 @@ describe("LNSUpsellBanner", () => {
           devicesModelList: [deviceModelId],
           onboardingDate: daysAgoIso(1),
         });
-        expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+        expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
       },
     );
 
@@ -78,7 +77,7 @@ describe("LNSUpsellBanner", () => {
           devicesModelList: [deviceModelId],
           onboardingDate: daysAgoIso(30),
         });
-        fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+        fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
         expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "Level up wallet",
@@ -91,19 +90,19 @@ describe("LNSUpsellBanner", () => {
 
     it("should not render if the user's Nano model is outside the audience", () => {
       renderBanner({ audienceModels: { nanoS: false, nanoSP: true, nanoX: true } });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should not render if the user also owns a large-screen device", () => {
       renderBanner({ devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax] });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should not render when a longer-cooldown nano is still in cooldown", () => {
       renderBanner({
         devicesModelList: [DeviceModelId.nanoS, DeviceModelId.nanoX],
       });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should render the longest-cooldown nano once that cooldown has elapsed", () => {
@@ -111,7 +110,7 @@ describe("LNSUpsellBanner", () => {
         devicesModelList: [DeviceModelId.nanoS, DeviceModelId.nanoX],
         onboardingDate: daysAgoIso(30),
       });
-      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+      fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
@@ -123,17 +122,17 @@ describe("LNSUpsellBanner", () => {
 
     it("should not render if the user has no devices", () => {
       renderBanner({ devicesModelList: [] });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should not render if the user (opted in) is targeted by a higher tier upsell campaign", () => {
       renderBanner({ targetedByHighTierUpsell: true });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
     it("should track click on the cta", () => {
       renderBanner({});
-      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+      fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
@@ -149,12 +148,8 @@ describe("LNSUpsellBanner", () => {
     it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true });
 
-      expect(screen.getByText(t(`lnsUpsell.opted_in.title`))).toBeVisible();
-      expect(
-        screen.getByText(
-          t(`lnsUpsell.opted_in.description`, { discount: DEFAULT_DISCOUNT_PERCENT }),
-        ),
-      ).toBeVisible();
+      expect(screen.getByText("See more. Sign safer")).toBeVisible();
+      expect(screen.getByText(`Upgrade and get ${DEFAULT_DISCOUNT_PERCENT}% off.`)).toBeVisible();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 
@@ -171,13 +166,13 @@ describe("LNSUpsellBanner", () => {
     it("should render opted-out MediaBanner copy when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true, isOptIn: false });
 
-      expect(screen.getByText(t(`lnsUpsell.opted_out.title`))).toBeVisible();
-      expect(screen.getByText(t(`lnsUpsell.opted_out.description`))).toBeVisible();
+      expect(screen.getByText("More security. More control")).toBeVisible();
+      expect(screen.getByText("Learn more about security features.")).toBeVisible();
     });
 
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
-      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
+      fireEvent.click(screen.getByText("Learn more"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
@@ -192,7 +187,7 @@ describe("LNSUpsellBanner", () => {
 
     it("should render for opted out users regardless of content cards state", () => {
       renderBanner({ isOptIn: false, targetedByHighTierUpsell: true });
-      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
+      fireEvent.click(screen.getByText("Learn more"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");

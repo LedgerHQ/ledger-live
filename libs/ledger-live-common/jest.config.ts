@@ -68,6 +68,7 @@ const reporters = [
       reportedFilePath: "absolute",
     },
   ],
+  "@ledgerhq/test-quarantine/jest",
 ];
 if (process.env.CI) {
   reporters.push("github-actions");
@@ -83,6 +84,7 @@ const defaultConfig = {
   setupFilesAfterEnv: [
     "@ledgerhq/wallet-framework-test-setup",
     "<rootDir>/src/__tests__/test-helpers/setup-registry.ts",
+    "@ledgerhq/test-quarantine/jest-retries",
   ],
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers", "src/wallet-api/SmartWebsocket.ts"], // Type issue with event in SmartWebsocket.ts breaking coverage report
   modulePathIgnorePatterns: [

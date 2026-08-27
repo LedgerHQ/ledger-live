@@ -23,6 +23,6 @@ describe("ConnectingState", () => {
     render(<ConnectingState state={state} />, { wrapper: DeviceIntentTrackingTestWrapper });
 
     // THEN
-    expect(screen.getByText("Loading")).toBeVisible();
+    expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
   });
 });

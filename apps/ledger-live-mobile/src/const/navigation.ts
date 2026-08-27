@@ -51,6 +51,7 @@ export enum ScreenName {
   DebugDeviceIntentExecutorContent = "DebugDeviceIntentExecutorContent",
   DebugDeviceIntentExecutorInfoState = "DebugDeviceIntentExecutorInfoState",
   DebugDeviceIntentExecutorConnectDevice = "DebugDeviceIntentExecutorConnectDevice",
+  DebugDeviceIntentExecutorContactsValidation = "DebugDeviceIntentExecutorContactsValidation",
   DebugDeviceIntentExecutorInitialization = "DebugDeviceIntentExecutorInitialization",
   DebugDeviceIntentExecutorInitializerStates = "DebugDeviceIntentExecutorInitializerStates",
   DebugDeviceIntentExecutorOrchestration = "DebugDeviceIntentExecutorOrchestration",
@@ -351,6 +352,9 @@ export enum ScreenName {
 
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
+  // ICP staking — entry screens reserved by LIVE-29097; the full flows land with LIVE-29098
+  InternetComputerStakingStarted = "InternetComputerStakingStarted",
+  InternetComputerNeuronList = "InternetComputerNeuronList",
 
   // ton
   TonEditComment = "TonEditComment",
@@ -723,6 +727,10 @@ export enum NavigatorName {
   TezosDelegationFlow = "TezosDelegationFlow",
   TezosStakeFlow = "TezosStakeFlow",
   TezosUnstakeFlow = "TezosUnstakeFlow",
+
+  // Internet Computer
+  InternetComputerStakingFlow = "InternetComputerStakingFlow",
+  InternetComputerNeuronManageFlow = "InternetComputerNeuronManageFlow",
 
   // Evm
   EvmEditTransaction = "EvmEditTransaction",

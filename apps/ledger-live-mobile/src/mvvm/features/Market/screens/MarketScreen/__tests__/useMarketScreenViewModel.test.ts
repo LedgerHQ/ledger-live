@@ -176,13 +176,10 @@ describe("useMarketScreenViewModel", () => {
 
     const { result } = renderHook(
       () => useMarketScreenViewModel(),
-      withAssetDiscoverability(
-        true,
-        (state: State): State => ({
-          ...state,
-          settings: { ...state.settings, starredMarketCoins },
-        }),
-      ),
+      withAssetDiscoverability(true, (state: State): State => ({
+        ...state,
+        settings: { ...state.settings, starredMarketCoins },
+      })),
     );
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
@@ -227,13 +224,10 @@ describe("useMarketScreenViewModel", () => {
 
     const { result } = renderHook(
       () => useMarketScreenViewModel(),
-      withAssetDiscoverability(
-        true,
-        (state: State): State => ({
-          ...state,
-          marketListConfig: { ...state.marketListConfig, sorting: "losers", timeframe: "7D" },
-        }),
-      ),
+      withAssetDiscoverability(true, (state: State): State => ({
+        ...state,
+        marketListConfig: { ...state.marketListConfig, sorting: "losers", timeframe: "7D" },
+      })),
     );
 
     expect(result.current.pageTracking).toEqual({

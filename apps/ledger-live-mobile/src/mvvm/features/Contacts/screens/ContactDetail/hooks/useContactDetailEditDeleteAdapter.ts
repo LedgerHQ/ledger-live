@@ -3,15 +3,21 @@ import {
   type ContactsDeleteContactDrawerProps,
   type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
-  type ContactsRenameContactDrawerProps,
   type ContactDetailActionsLabels,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
   createContactDetailEditDeleteUiState,
   resolveContactDetailEditDeleteLabels,
+  useContactDetailEditDeleteAnalytics,
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
 import { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
+import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 
 export type ContactDetailEditDeleteFlowProps = Readonly<{
   actionsMenu: Readonly<{
@@ -35,6 +41,7 @@ export function useContactDetailEditDeleteAdapter(
   onDeleteSuccess: () => void,
 ): ContactDetailEditDeleteFlowProps {
   const { t } = useTranslation();
+  const analytics = useContactsAnalytics();
   const ports = useContactsEditDeletePorts();
   const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
     contactId,
@@ -54,11 +61,25 @@ export function useContactDetailEditDeleteAdapter(
     () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
     [flow, labels, renameViewModel],
   );
+  const { onEdit } = useContactDetailEditDeleteAnalytics(
+    analytics,
+    {
+      onEditPress: flow.onEditPress,
+      onDeletePress: flow.onDeletePress,
+      openDelete: flow.openDelete,
+    },
+    uiState.signerMismatch.isOpen,
+  );
   const pendingDeleteRef = useRef(false);
   const onDelete = useCallback(() => {
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
+      button: CONTACTS_TRACKING_BUTTON.deleteContact,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+    });
     pendingDeleteRef.current = true;
     flow.onDeletePress();
-  }, [flow]);
+  }, [analytics, flow]);
   const onActionsMenuHidden = useCallback(() => {
     if (!pendingDeleteRef.current) {
       return;
@@ -74,7 +95,7 @@ export function useContactDetailEditDeleteAdapter(
       isOpen: flow.isActionsMenuOpen,
       canDelete: flow.canDelete,
       labels: labels.actions,
-      onEdit: flow.onEditPress,
+      onEdit,
       onDelete,
       onClose: flow.onCloseActionsMenu,
       onHidden: onActionsMenuHidden,

@@ -34,6 +34,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountUnit, useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { mergeTronFamilySpecificData } from "~/families/tron/familySpecificData";
 
 const infoModalData = [
   {
@@ -79,7 +80,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
       const transaction = bridge.updateTransaction(t, {
         mode: "freeze",
-        resource: "BANDWIDTH",
+        familySpecificData: mergeTronFamilySpecificData(t, { resource: "BANDWIDTH" }),
       });
 
       return { account, transaction };
@@ -100,7 +101,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
     [t],
   );
 
-  const resource = (transaction as Transaction)?.resource || "";
+  const tronTransaction = transaction as Transaction | undefined;
+  const resource = tronTransaction?.familySpecificData?.resource ?? undefined;
   const resourceIndex = useMemo(
     () => options.findIndex(option => option.value === resource),
     [options, resource],
@@ -167,14 +169,16 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   const onChangeResource = useCallback(
     (optionIndex: number) => {
-      if (!transaction) return;
+      if (!tronTransaction) return;
       setTransaction(
-        bridge.updateTransaction(transaction, {
-          resource: options[optionIndex].value,
+        bridge.updateTransaction(tronTransaction, {
+          familySpecificData: mergeTronFamilySpecificData(tronTransaction, {
+            resource: options[optionIndex].value,
+          }),
         }),
       );
     },
-    [setTransaction, bridge, transaction, options],
+    [setTransaction, bridge, tronTransaction, options],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */

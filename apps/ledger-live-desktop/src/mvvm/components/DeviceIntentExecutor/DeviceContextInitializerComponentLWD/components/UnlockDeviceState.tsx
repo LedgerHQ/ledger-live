@@ -8,6 +8,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { UnlockDevice } from "../../components/DeviceGenericStates/UnlockDevice";
 import type { BaseInitializerStateProps } from "../types";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 type UnlockDeviceStateProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: DeviceInteractionRequiredType.UnlockDevice }>
@@ -16,6 +17,7 @@ type UnlockDeviceStateProps = BaseInitializerStateProps<
 export function UnlockDeviceState({ device }: UnlockDeviceStateProps) {
   return (
     <>
+      <DeviceBlocker />
       <OverrideDeviceIntentExecutorHeader>
         <div className="h-48" aria-hidden />
       </OverrideDeviceIntentExecutorHeader>

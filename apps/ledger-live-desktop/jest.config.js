@@ -43,7 +43,7 @@ const moduleNameMapper = {
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
   "^@ledgerhq/lumen-ui-react/symbols$":
-    "<rootDir>/node_modules/@ledgerhq/lumen-ui-react/dist/lib/Symbols/index.js",
+    "<rootDir>/node_modules/@ledgerhq/lumen-ui-react/dist/lib/Components/symbols/index.js",
   "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",
@@ -136,6 +136,7 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   silent: false,
   verbose: true,
@@ -148,11 +149,19 @@ module.exports = {
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
       testMatch: ["**/src/**/*.test.(ts|tsx)"],
+      setupFilesAfterEnv: [
+        ...commonConfig.setupFilesAfterEnv,
+        "@ledgerhq/test-quarantine/jest-retries",
+      ],
     },
     {
       ...commonConfig,
       displayName: "dom",
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
+      setupFilesAfterEnv: [
+        ...commonConfig.setupFilesAfterEnv,
+        "@ledgerhq/test-quarantine/jest-retries",
+      ],
     },
   ],
 };

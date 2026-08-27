@@ -17,7 +17,7 @@ const mockAccount = makeMockTezosAccount("tezos-stake-integ");
 // The stake flow completes a notification prompt on flow exit; stub the context so the
 // navigator doesn't need the real provider tree.
 jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
+  useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
 jest.mock("LLM/hooks/useAccountScreen", () => ({

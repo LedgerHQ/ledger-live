@@ -1,4 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useModularDrawerController } from "../useModularDrawerController";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -44,6 +45,26 @@ describe("useModularDrawerController", () => {
     expect(state.presentation).toBe("drawer");
   });
 
+  it("should store asset categories and reset them on close", () => {
+    const { result, store } = renderHook(() => useModularDrawerController());
+
+    act(() => {
+      result.current.openDrawer({
+        flow: "receive_flow",
+        source: "test_source",
+        categories: [AssetCategory.Stablecoins],
+      });
+    });
+
+    expect(store.getState().modularDrawer.categories).toEqual([AssetCategory.Stablecoins]);
+
+    act(() => {
+      result.current.closeDrawer();
+    });
+
+    expect(store.getState().modularDrawer.categories).toBeUndefined();
+  });
+
   it("should close the drawer when closeDrawer is called", () => {
     const { result, store } = renderHook(() => useModularDrawerController());
 
@@ -56,6 +77,87 @@ describe("useModularDrawerController", () => {
     });
 
     expect(store.getState().modularDrawer.isOpen).toBe(false);
+  });
+
+  describe("onCancel callback", () => {
+    it("should invoke onCancel when closeDrawer is called", () => {
+      const onCancel = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({ flow: "test_flow", source: "test_source", onCancel });
+      });
+
+      act(() => {
+        result.current.closeDrawer();
+      });
+
+      expect(onCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not invoke onCancel when a new drawer replaces the current one", () => {
+      const firstCancel = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          onCancel: firstCancel,
+        });
+      });
+
+      act(() => {
+        result.current.openDrawer({ flow: "other_flow", source: "test_source" });
+      });
+
+      expect(firstCancel).not.toHaveBeenCalled();
+    });
+
+    it("should not invoke onCancel when handleAccountSelected is used", () => {
+      const onCancel = jest.fn();
+      const onAccountSelected = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          onCancel,
+          onAccountSelected,
+        });
+      });
+
+      act(() => {
+        result.current.handleAccountSelected(mockAccount);
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(onAccountSelected).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not invoke onCancel when handleCurrencySelected is used", () => {
+      const onCancel = jest.fn();
+      const onCurrencySelected = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          completionMode: "currency",
+          onCancel,
+          onCurrencySelected,
+        });
+      });
+
+      act(() => {
+        result.current.handleCurrencySelected(mockEthCryptoCurrency);
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(onCurrencySelected).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("handleAccountSelected", () => {
@@ -132,13 +234,18 @@ describe("useModularDrawerController", () => {
           presentation: "embedded",
           enableAccountSelection: true,
           onCurrencySelected: jest.fn(),
+          selectableNetworkIds: [mockEthCryptoCurrency.id],
         });
       });
 
       expect(store.getState().modularDrawer.presentation).toBe("embedded");
       expect(store.getState().modularDrawer.enableAccountSelection).toBe(false);
       expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
+      expect(store.getState().modularDrawer.selectableNetworkIds).toEqual([
+        mockEthCryptoCurrency.id,
+      ]);
       expect(result.current.presentation).toBe("embedded");
+      expect(result.current.selectableNetworkIds).toEqual([mockEthCryptoCurrency.id]);
     });
 
     it("should restore drawer presentation when embedded selection is replaced", () => {
@@ -178,6 +285,7 @@ describe("useModularDrawerController", () => {
         callbackId: undefined,
         completionMode: undefined,
         presentation: "drawer",
+        selectableNetworkIds: undefined,
         step: "Asset",
       });
     });

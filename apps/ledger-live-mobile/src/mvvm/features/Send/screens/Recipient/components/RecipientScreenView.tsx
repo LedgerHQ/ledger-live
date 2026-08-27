@@ -8,6 +8,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
 
@@ -23,14 +24,14 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     showMatched,
     shouldShowErrorBanner,
     keyboardBehavior,
-    handleMatchedAddress,
+    addressMatchedSectionViewModel,
   } = viewModel;
   const {
     isLoading,
     showInitialState,
+    showContactsList,
     showEmptyContactsState,
-    result,
-    searchValue,
+    contactsOnNetwork,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -39,10 +40,10 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     showAddressValidationError,
     bridgeRecipientError,
     bridgeRecipientWarning,
-    isAddressComplete,
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
+    handleContactSelect,
   } = recipient;
 
   return (
@@ -63,18 +64,16 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
 
           {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
 
-          {showMemo && <MemoControls vm={memo} />}
-
-          {showMatched && (
-            <AddressMatchedSection
-              searchResult={result}
-              searchValue={searchValue}
-              onSelect={handleMatchedAddress}
-              isSanctioned={showSanctionedBanner}
-              isAddressComplete={isAddressComplete}
-              hasBridgeError={showBridgeRecipientError}
+          {showInitialState && showContactsList && (
+            <RecipientContactsList
+              contacts={contactsOnNetwork}
+              onContactSelect={handleContactSelect}
             />
           )}
+
+          {showMemo && <MemoControls vm={memo} />}
+
+          {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 
           {showAddressValidationError && (
             <AddressValidationError error={addressValidationErrorType} />

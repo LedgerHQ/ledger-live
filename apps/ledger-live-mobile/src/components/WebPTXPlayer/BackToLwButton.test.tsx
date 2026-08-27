@@ -169,4 +169,57 @@ describe("BackToInternalDomain", () => {
 
     expect(mockedTrack).not.toHaveBeenCalled();
   });
+
+  it("should pass mode from flow-name storage to handleBackToLwEntryPoint", async () => {
+    mockedStorage.getString.mockImplementation((key: string): Promise<string | null> => {
+      const data: Record<string, string> = {
+        "manifest-id": "provider-123",
+        "last-screen": "compare_providers",
+        "flow-name": "sell",
+      };
+      return Promise.resolve(data[key] ?? null);
+    });
+
+    const { user } = render(
+      <BackToInternalDomain
+        config={{
+          screen: ScreenName.ExchangeSell,
+        }}
+      />,
+    );
+
+    await user.press(screen.getByText("Back"));
+
+    expect(mockedHandleBackToLwEntryPoint).toHaveBeenCalledWith(
+      { navigate: mockNavigate },
+      ScreenName.ExchangeSell,
+      { referrer: "isExternal", mode: "sell" },
+    );
+  });
+
+  it("should not pass mode when flow-name is absent from storage", async () => {
+    mockedStorage.getString.mockImplementation((key: string): Promise<string | null> => {
+      const data: Record<string, string> = {
+        "manifest-id": "provider-123",
+        "last-screen": "compare_providers",
+      };
+      return Promise.resolve(data[key] ?? null);
+    });
+
+    const { user } = render(
+      <BackToInternalDomain
+        config={{
+          screen: ScreenName.ExchangeSell,
+        }}
+      />,
+    );
+
+    await user.press(screen.getByText("Back"));
+
+    expect(mockedHandleBackToLwEntryPoint).toHaveBeenCalledWith(
+      { navigate: mockNavigate },
+      ScreenName.ExchangeSell,
+      { referrer: "isExternal" },
+    );
+  });
 });

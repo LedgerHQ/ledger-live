@@ -1,10 +1,10 @@
 import React from "react";
 import { ContactDetailView } from "@features/flow-contacts";
-import { TrackScreen } from "~/analytics";
 import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlowDrawer";
 import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDetailActionsSheets";
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
+import { ContactsLedgerSyncIntroductionSheet } from "LLM/features/Contacts/components/ContactsLedgerSyncIntroductionSheet";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
@@ -21,7 +21,6 @@ export function ContactDetailScreen(): React.JSX.Element | null {
 
   return (
     <>
-      <TrackScreen category="Contacts" />
       <ContactDetailView {...viewModel.pageProps} />
       {viewModel.addAddressFlowState.status !== "closed" ? (
         <ContactsAddAddressFlowDrawer {...viewModel.addAddressFlowProps} />
@@ -34,6 +33,10 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         signerMismatchSheet={viewModel.addressDetailActions.signerMismatchSheet}
       />
       <ContactDetailEditDeleteSheets {...viewModel.editDeleteFlow} />
+      <ContactsLedgerSyncIntroductionSheet
+        {...viewModel.ledgerSyncIntroduction}
+        {...viewModel.ledgerSyncIntroductionContent}
+      />
     </>
   );
 }

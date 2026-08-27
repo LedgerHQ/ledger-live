@@ -4,16 +4,15 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import {
   NavigationProp,
   NavigationState,
-  StackActions,
+  type NavigatorScreenParams,
   useNavigation,
 } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import BigNumber from "bignumber.js";
 import { useCallback } from "react";
 import { Dispatch } from "redux";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { SwapSubScreensNavigatorParamList } from "~/components/RootNavigator/types/SwapSubScreensNavigator";
 import { WebviewProps } from "~/components/Web3AppWebview/types";
-import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { sendSwapLiveAppReady } from "~/e2e/bridge/client";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
@@ -21,17 +20,11 @@ import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import type { SwapHistoryParams } from "../../types";
+import { openSwapSubScreens, type SwapBaseNavigation } from "../../navigation/openSwapSubScreens";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
 };
-
-/** Navigation typed with {@link BASE_NAVIGATOR_ID} so `getParent(BASE_NAVIGATOR_ID)` is type-safe. */
-type SwapBaseNavigation = NativeStackNavigationProp<
-  BaseNavigatorStackParamList,
-  keyof BaseNavigatorStackParamList,
-  typeof BASE_NAVIGATOR_ID
->;
 
 export function useSwapCustomHandlers(
   manifest: WebviewProps["manifest"],
@@ -59,24 +52,10 @@ export function useSwapCustomHandlers(
         sponsored: exchangeParams.sponsored,
       };
 
-      // React Navigation v7 pushes a new screen even if one already exists lower
-      // in the stack. Dispatching replace to BaseNavigator gives SwapSubScreensNavigator
-      // a clean [SwapPendingOperation] stack with no SwapLoading beneath it, so
-      // any back gesture returns to SwapTab instead of revealing SwapLoading.
-      const baseNavigation = navigation.getParent(BASE_NAVIGATOR_ID);
-      if (baseNavigation) {
-        baseNavigation.dispatch(
-          StackActions.replace(NavigatorName.SwapSubScreens, {
-            screen: ScreenName.SwapPendingOperation,
-            params,
-          }),
-        );
-      } else {
-        navigation.navigate(NavigatorName.SwapSubScreens, {
-          screen: ScreenName.SwapPendingOperation,
-          params,
-        });
-      }
+      openSwapSubScreens({
+        navigation,
+        target: { screen: ScreenName.SwapPendingOperation, params },
+      });
 
       // Remount the webview to its initial URL while the user reads the success
       // screen so they see a clean swap form when they navigate back to SwapTab.
@@ -106,15 +85,19 @@ export function useSwapCustomHandlers(
 
   const navigateToSwapHistory = useCallback(
     ({ params }: { params?: SwapHistoryParams } = {}) => {
-      navigation.navigate(NavigatorName.SwapSubScreens, {
+      // Annotated so `screen` keeps its literal type: in an unannotated object literal
+      // TypeScript widens the enum member to `ScreenName`, which no longer satisfies
+      // the navigator's screen/params pairing.
+      const historyScreen: NavigatorScreenParams<SwapSubScreensNavigatorParamList> = {
         screen: ScreenName.SwapHistory,
         ...(params?.swapId ? { params: { swapId: params.swapId } } : {}),
-      });
+      };
 
-      // Remount the webview while the History screen is on top so that pressing
-      // "<" (which pops back to SwapTab) lands on a clean swap form instead of
-      // the multi-step success screen still mounted underneath. Mirrors
-      // navigateToSwapPendingOperation. See LIVE-34563.
+      openSwapSubScreens({ navigation, target: historyScreen });
+
+      // The live app stays mounted underneath on the page it redirected from, so remount
+      // it to its initial URL. The Swap tab is already blurred here, hence the reset is
+      // re-asserted on focus by useSwapLiveAppState.
       resetWebview();
     },
     [navigation, resetWebview],

@@ -9,8 +9,11 @@ import type {
   AleoRecordScannerStatusResponse,
   AleoPublicTransactionDetailsResponse,
   AleoPrivateRecord,
+  AleoExactTransitionCursor,
 } from "./api";
 import type { AleoDecryptedRecordResponse } from "./sdk";
+
+export type AleoRegistration = { type: "aleo"; provableId: string };
 
 export interface AleoUnspentRecord extends AleoPrivateRecord {
   microcredits: string;
@@ -44,6 +47,12 @@ export type AleoAccountInfo = {
   percentage: number;
   startHeight: number;
   scannedHeight: number;
+};
+
+/** `<maxBlockHeight>:<blockNumber>:<transitionId>` — the pinned ceiling, then the row to resume after. */
+export type OperationsCursor = {
+  maxBlockHeight: number;
+  resumeFrom: AleoExactTransitionCursor;
 };
 
 export type RecordPickingStrategy = "manual" | "auto";

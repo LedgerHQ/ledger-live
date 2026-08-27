@@ -42,8 +42,9 @@ export default {
         reportedFilePath: "absolute",
       },
     ],
+    "@ledgerhq/test-quarantine/jest",
   ],
-  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
+  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts", "@ledgerhq/test-quarantine/jest-retries"],
   // Jest 20 is more strict about unhandled rejections
   // This allows tests to handle expected errors without failing
   detectOpenHandles: false,

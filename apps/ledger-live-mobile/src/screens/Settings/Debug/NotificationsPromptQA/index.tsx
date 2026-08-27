@@ -4,7 +4,7 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   type NotificationsPromptAfterActionSource,
-  useNotificationsContext,
+  useNotificationsPrompt,
   useNotificationsData,
 } from "LLM/features/NotificationsPrompt";
 import { useNotificationsPromptDrawerScheduler } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptDrawerScheduler";
@@ -47,7 +47,7 @@ export default function DebugNotificationsPromptQA() {
   const { permissionStatus } = useNotificationsPermission();
   const { pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore } =
     useNotificationsData();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const { openDrawer } = useNotificationsPromptDrawerScheduler();
 
   const globalPushNotificationsDismissals = useMemo(

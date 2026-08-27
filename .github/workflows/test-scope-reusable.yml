@@ -21,6 +21,11 @@ on:
         description: "Ref to check out. Defaults to github.sha."
         type: string
         required: false
+      skip-coverage:
+        description: "Skip coverage and run codechecks only. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
 
     outputs:
       coverage_generated:
@@ -82,7 +87,7 @@ jobs:
       - name: Install dependencies
         env:
           SCOPE: ${{ inputs.scope }}
-        run: pnpm i --filter="{./$SCOPE/**}..."
+        run: pnpm i --frozen-lockfile --filter="{./$SCOPE/**}..."
         shell: bash
 
       - name: Run extra targets
@@ -94,6 +99,7 @@ jobs:
         shell: bash
 
       - name: Run coverage
+        if: ${{ !inputs.skip-coverage }}
         env:
           SCOPE: ${{ inputs.scope }}
         run: |
@@ -105,6 +111,7 @@ jobs:
         shell: bash
 
       - name: Process coverage files
+        if: ${{ !inputs.skip-coverage }}
         id: process-coverage
         env:
           SCOPE: ${{ inputs.scope }}
@@ -132,7 +139,7 @@ jobs:
           parallel: "4"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && !inputs.skip-coverage }}
         id: generate_coverage
         with:
           name: coverage-${{ inputs.scope }}

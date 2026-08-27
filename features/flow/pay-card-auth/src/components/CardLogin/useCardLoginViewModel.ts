@@ -1,60 +1,83 @@
-import { useCallback, useState } from "react";
-import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
-import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
-import type { CardLoginProps, CardLoginViewProps } from "./types";
+import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useMachine } from "@xstate/react";
+import type { SnapshotFrom } from "xstate";
+import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
+import type { PayCardLoginErrorKind } from "../../state/errors";
+import { cardLoginMachine } from "../../state/machine";
+import { selectIsSignedIn } from "../../state/selectors";
+import type { CardLoginViewModel, CardLoginViewModelParams } from "./types";
 
-const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
-  clientId: "",
-  redirectUri: "",
-  state: "",
-  codeChallenge: "",
+type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
+
+/** Hardcoded English until the Pay tab gets its copy keys. */
+const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
+  pkce_failed: "Login could not start. Please try again.",
+  browser_open_failed: "The login page could not open. Please try again.",
+  missing_attempt: "This login is no longer valid. Please log in again.",
+  exchange_failed: "Login could not be completed. Please try again.",
+  persist_failed: "Your session could not be saved. Please try again.",
+  fetch_user_failed: "Your card could not be loaded. Please try again.",
 };
 
-function getSecureHostedLoginUrl(loginUrl: string): string {
-  const url = new URL(loginUrl);
-  if (url.protocol !== "https:") {
-    throw new Error("Unable to start login");
+/**
+ * Turns one machine snapshot into the view props. It is a pure function so the mapping can be read,
+ * and tested, without a React tree.
+ */
+export function mapSnapshotToViewModel(
+  value: CardLoginStateValue,
+  errorKind: PayCardLoginErrorKind | null,
+  onLoginPress: () => void,
+): CardLoginViewModel {
+  // The card holder is signed in, so there is no login left to offer. `CardLogout` holds the screen.
+  if (value === "ready") {
+    return null;
   }
-  return url.toString();
-}
-
-// An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
-function getLoginErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return "Unable to start login";
-}
-
-export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): CardLoginViewProps {
-  const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
-    useInitiateAuthorizeMutation();
-  const [isOpeningHostedLogin, setIsOpeningHostedLogin] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const onLoginPress = useCallback(() => {
-    setErrorMessage(null);
-
-    void (async () => {
-      setIsOpeningHostedLogin(true);
-      try {
-        const { url } = await initiateAuthorize(PLACEHOLDER_AUTHORIZE_REQUEST).unwrap();
-        await openHostedLogin(getSecureHostedLoginUrl(url));
-      } catch (error) {
-        setErrorMessage(getLoginErrorMessage(error));
-      } finally {
-        setIsOpeningHostedLogin(false);
-      }
-    })();
-  }, [openHostedLogin, initiateAuthorize]);
 
   return {
     title: "Card",
     description: "Log in to access your Ledger Card",
     loginLabel: "Login",
-    isLoading: isInitiateAuthorizeLoading || isOpeningHostedLogin,
-    errorMessage,
+    isLoading: value !== "idle" && value !== "error",
+    errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
     onLoginPress,
   };
+}
+
+export function useCardLoginViewModel({
+  openHostedLogin,
+  oauthConfig,
+  callback,
+}: CardLoginViewModelParams): CardLoginViewModel {
+  const dispatch = useDispatch<CardLoginDispatch>();
+  const isSignedIn = useSelector(selectIsSignedIn);
+
+  const ports = useMemo(
+    () => createCardLoginPorts({ dispatch, openHostedLogin }),
+    [dispatch, openHostedLogin],
+  );
+
+  const [snapshot, send] = useMachine(cardLoginMachine, {
+    input: { ports, oauthConfig, callback },
+  });
+
+  useEffect(() => {
+    // A redirect that arrives while the screen is already open. The machine ignores it unless it is
+    // waiting for one, so a repeat is harmless: the first callback wins.
+    if (callback) {
+      send({ type: "CALLBACK_RECEIVED", code: callback.code });
+    }
+  }, [callback, send]);
+
+  useEffect(() => {
+    // `CardLogout` ended the session. `ready` raises the flag on entry, so a lowered flag while the
+    // machine still reads `ready` can only come from there, and this puts the login back on offer.
+    if (!isSignedIn && snapshot.value === "ready") {
+      send({ type: "SESSION_ENDED" });
+    }
+  }, [isSignedIn, snapshot.value, send]);
+
+  const onLoginPress = useCallback(() => send({ type: "LOGIN" }), [send]);
+
+  return mapSnapshotToViewModel(snapshot.value, snapshot.context.errorKind, onLoginPress);
 }

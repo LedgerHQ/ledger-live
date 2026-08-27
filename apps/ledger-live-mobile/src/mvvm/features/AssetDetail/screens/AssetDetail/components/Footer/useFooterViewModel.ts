@@ -84,11 +84,13 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
 
   const { handleOpenBuySell } = useOpenBuySell({
     currency,
+    currencyIds: ledgerIds,
     sourceScreenName: "Asset Detail",
   });
 
   const { handleOpenSwap } = useOpenSwap({
     currency,
+    currencyIds: ledgerIds,
     sourceScreenName: "Asset Detail",
   });
 

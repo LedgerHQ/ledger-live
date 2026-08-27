@@ -6,7 +6,7 @@ import {
   resolveAddAddressWebFlowStep,
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-address";
 import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({
@@ -15,6 +15,7 @@ export function ContactsAddAddressFlowDialog({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
+  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -39,10 +40,11 @@ export function ContactsAddAddressFlowDialog({
             modularDialog.content
           ) : (
             <ContactsAddAddressFlowContent
-              completionLabels={reviewLabels}
+              completionLabels={completionLabels}
               entryLabels={entryLabels}
               sanctionedAddressBanner={sanctionedAddressBanner}
               nameLabels={nameLabels}
+              reviewLabels={reviewLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
               onClose={onClose}

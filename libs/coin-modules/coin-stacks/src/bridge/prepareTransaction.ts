@@ -1,17 +1,18 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getEnv } from "@ledgerhq/live-env";
 import { AccountBridge } from "@ledgerhq/types-live";
 import {
   AddressVersion,
-  TransactionVersion,
-  estimateTransaction,
   estimateTransactionByteLength,
+  fetchFeeEstimateTransaction,
+  serializePayload,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { c32address } from "c32check";
 import invariant from "invariant";
-import { StacksNetwork } from "../network/api";
+import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
-import { validateAddress } from "./utils/addresses";
+import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
@@ -29,11 +30,8 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { network } = transaction;
-    const networkConfig = StacksNetwork[network] || StacksNetwork["mainnet"];
     const addressVersion =
-      networkConfig.version === TransactionVersion.Mainnet
-        ? AddressVersion.MainnetSingleSig
-        : AddressVersion.TestnetSingleSig;
+      network === "mainnet" ? AddressVersion.MainnetSingleSig : AddressVersion.TestnetSingleSig;
 
     // Check if this is a token transaction
     const subAccount = getSubAccount(account, transaction);
@@ -43,13 +41,23 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    const [fee] = await estimateTransaction(
-      tx.payload,
-      estimateTransactionByteLength(tx),
-      networkConfig,
-    );
+    // Explicit opt-in only (coin-tester devnet, whose fee estimator has no historical data yet
+    // for this payload shape): `transaction.fee` alone can't gate this, since `onStatus` feeds
+    // this function's own `patch.fee` back as the next call's `transaction.fee` -- keying off its
+    // mere presence would freeze the fee at the first estimate for every real user.
+    if (getEnv("API_STACKS_SKIP_FEE_ESTIMATE") && transaction.fee && transaction.fee.gt(0)) {
+      patch.fee = transaction.fee;
+    } else {
+      // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
+      const [fee] = await fetchFeeEstimateTransaction({
+        payload: serializePayload(tx.payload),
+        estimatedLength: estimateTransactionByteLength(tx),
+        network,
+        client: { baseUrl: getStacksBaseUrl() },
+      });
 
-    patch.fee = new BigNumber(fee.fee);
+      patch.fee = new BigNumber(fee.fee);
+    }
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 
     // For token transfers and useAllAmount

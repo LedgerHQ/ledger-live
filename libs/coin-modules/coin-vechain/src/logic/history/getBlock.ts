@@ -28,15 +28,13 @@ export async function getBlock(context: VechainContext, height: number): Promise
 
 function toBlockTransaction(tx: ApiResponseBlockTransaction): BlockTransaction {
   const operations: BlockOperation[] = tx.outputs.flatMap(output =>
-    output.transfers.map(
-      (transfer): BlockOperation => ({
-        type: "transfer",
-        address: transfer.recipient,
-        peer: transfer.sender,
-        asset: { type: "native" },
-        amount: BigInt(transfer.amount || "0"),
-      }),
-    ),
+    output.transfers.map((transfer): BlockOperation => ({
+      type: "transfer",
+      address: transfer.recipient,
+      peer: transfer.sender,
+      asset: { type: "native" },
+      amount: BigInt(transfer.amount || "0"),
+    })),
   );
 
   return {

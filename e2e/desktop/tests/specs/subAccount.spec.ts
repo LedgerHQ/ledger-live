@@ -26,6 +26,7 @@ const subAccounts: Array<{
   xrayTicket1: string;
   xrayTicket2: string;
   notPreSeeded?: boolean;
+  teamOwner?: Team;
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
@@ -41,6 +42,7 @@ const subAccounts: Array<{
     account: TokenAccount.ALGO_USDT_1,
     xrayTicket1: "B2CQA-2575",
     xrayTicket2: "B2CQA-2581",
+    teamOwner: Team.BST,
   },
   {
     account: TokenAccount.TRX_USDT,
@@ -61,6 +63,7 @@ const subAccounts: Array<{
     account: TokenAccount.SUI_USDC_1,
     xrayTicket1: "B2CQA-3904",
     xrayTicket2: "B2CQA-3905",
+    teamOwner: Team.BST,
   },
   {
     account: TokenAccount.SOL_GIGA_1,
@@ -75,6 +78,7 @@ const subAccountReceive: Array<{
   xrayTicket: string;
   shouldSelectTokenOnReceiveFlow?: boolean;
   shouldSelectReceiveCryptoOption?: boolean;
+  teamOwner?: Team;
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
@@ -85,7 +89,7 @@ const subAccountReceive: Array<{
   { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
   { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
+  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906", teamOwner: Team.BST },
 ];
 
 const shouldSkipLNS = (account: TokenAccount): boolean => {
@@ -96,7 +100,7 @@ const shouldSkipLNS = (account: TokenAccount): boolean => {
 for (const token of subAccounts) {
   test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
@@ -148,7 +152,7 @@ for (const token of subAccounts) {
 for (const token of subAccountReceive) {
   test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
     });
@@ -197,7 +201,7 @@ for (const token of subAccountReceive) {
 for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) {
   test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
     });
 
@@ -324,6 +328,7 @@ const transactionsAddressInvalid = [
     recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
     xrayTicket: "B2CQA-2702",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
@@ -360,7 +365,7 @@ const transactionsAddressInvalid = [
 for (const transaction of transactionsAddressInvalid) {
   test.describe("Send - token", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [

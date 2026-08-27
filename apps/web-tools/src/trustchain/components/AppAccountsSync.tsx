@@ -106,11 +106,16 @@ export default function AppAccountsSync({
 
   const walletsync = useMemo(
     () =>
-      createAggregator({
-        accounts: accountsSyncModule,
-        accountNames: accountNamesSyncModule,
-        recentAddresses: recentAddressesSyncModule,
-      }),
+      createAggregator(
+        {
+          accounts: accountsSyncModule,
+          accountNames: accountNamesSyncModule,
+          recentAddresses: recentAddressesSyncModule,
+        },
+        // warn, not error: a quarantine is recoverable, and this devtool is where a corrupted
+        // slice is most likely to be inspected, so it should stay visible in the console
+        { onModuleError: (_key, error) => console.warn(error.message) },
+      ),
     [accountsSyncModule],
   );
 
@@ -183,12 +188,11 @@ export default function AppAccountsSync({
       new CloudSyncSDK({
         apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").cloudSyncApiBaseUrl,
         slug: liveSlug,
-        schema: walletsync.schema,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [walletsync, trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   const [visualPending, setVisualPending] = useState(true);

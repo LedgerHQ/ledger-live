@@ -1,4 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { usePayTabDepositOptions } from "../usePayTabDepositOptions";
@@ -27,10 +28,8 @@ jest.mock("LLM/features/Buy", () => ({
   useOpenBuySell: jest.fn(() => ({ handleOpenBuySell: mockHandleOpenBuySell })),
 }));
 
-const STABLECOIN_IDS = ["ethereum/erc20/usd__coin", "ethereum/erc20/usd_tether__erc20_"];
-
 function render(onTrackEvent = jest.fn()) {
-  return renderHook(() => usePayTabDepositOptions(onTrackEvent, STABLECOIN_IDS));
+  return renderHook(() => usePayTabDepositOptions(onTrackEvent));
 }
 
 describe("usePayTabDepositOptions", () => {
@@ -96,11 +95,11 @@ describe("usePayTabDepositOptions", () => {
     expect(mockHandleOpenBuySell).toHaveBeenCalledWith("buy");
   });
 
-  it("configures the receive drawer with the stablecoin filter", () => {
+  it("configures the receive drawer filtered to the stablecoin category", () => {
     render();
 
     expect(useOpenReceiveDrawer).toHaveBeenCalledWith({
-      currencyIds: STABLECOIN_IDS,
+      categories: [AssetCategory.Stablecoins],
       sourceScreenName: "Pay",
       fromMenu: true,
     });

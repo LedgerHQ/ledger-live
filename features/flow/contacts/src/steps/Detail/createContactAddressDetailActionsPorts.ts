@@ -25,7 +25,7 @@ export function createContactAddressDetailActionsPorts({
 }: ContactAddressDetailActionsPortsDeps): ContactAddressDetailActionsDataPorts {
   return {
     edit: {
-      renameAddressLabel: async ({ contactId, addressId, label }) => {
+      updateAddress: async ({ contactId, addressId, label, address }) => {
         const currentAddress = selectContactAddressById(getState(), contactId, addressId);
 
         if (currentAddress === undefined) {
@@ -40,6 +40,7 @@ export function createContactAddressDetailActionsPorts({
           contact: currentContact,
           address: currentAddress,
           label: parsedLabel,
+          updatedAddress: address,
         });
 
         dispatch(
@@ -48,6 +49,7 @@ export function createContactAddressDetailActionsPorts({
             address: {
               ...currentAddress,
               label: parsedLabel,
+              address,
               device,
             },
           }),

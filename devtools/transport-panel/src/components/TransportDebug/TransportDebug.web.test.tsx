@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import { mockTransportPanelProps, mockTransport } from "jest/mocks/transport";
-import { TransportDebug } from "./TransportDebug.web";
+import { TransportDebug } from "./TransportDebug";
 
 describe("TransportDebug", () => {
   it("renders the dialog when open", () => {

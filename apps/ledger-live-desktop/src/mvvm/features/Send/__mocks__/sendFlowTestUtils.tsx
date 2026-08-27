@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Contact } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SendWorkflow } from "../index";
@@ -23,6 +24,8 @@ export type MockTransactionStatus = {
 let mockBridgeRecipientValidation = { errors: {}, warnings: {}, isLoading: false };
 let mockDeviceActionResult: unknown = null;
 let mockScannedCode = "";
+let mockContacts: readonly Contact[] = [];
+let mockContactsFeatureEnabled = false;
 
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
@@ -139,12 +142,18 @@ export const setMockScannedCode = (code: string) => {
   mockScannedCode = code;
 };
 
+export const setMockContacts = (contacts: readonly Contact[], isEnabled = true) => {
+  mockContacts = contacts;
+  mockContactsFeatureEnabled = isEnabled;
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
   setMockDeviceActionResult(null);
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
   setMockScannedCode("");
+  setMockContacts([], false);
 };
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
@@ -241,6 +250,16 @@ jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientVa
   useBridgeRecipientValidation: jest.fn(() => mockBridgeRecipientValidation),
 }));
 
+jest.mock("@features/platform-contacts", () => ({
+  ...jest.requireActual("@features/platform-contacts"),
+  useContacts: () => mockContacts,
+  useContactsFeature: () => ({
+    isEnabled: mockContactsFeatureEnabled,
+    showNewBadge: false,
+    eligibleAddressFamilies: ["evm"],
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/account/index");
   return {
@@ -332,8 +351,11 @@ export const createBitcoinAccount = (overrides?: Partial<Account>): Account => {
   };
 };
 
-export const renderSendFlow = (account: Account) =>
-  render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account }} />, {
+export const renderSendFlow = (
+  account: Account,
+  params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
+) =>
+  render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
       accounts: [account],
       settings: {

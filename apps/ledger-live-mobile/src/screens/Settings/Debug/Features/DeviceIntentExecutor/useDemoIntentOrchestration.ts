@@ -4,7 +4,7 @@ import {
   type DeviceIntentExecutorProps,
   type DeviceConnectionParams,
   type ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 import type {
   AnyDemoJobState,

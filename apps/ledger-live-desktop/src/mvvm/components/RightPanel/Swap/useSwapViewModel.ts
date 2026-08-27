@@ -1,0 +1,95 @@
+import { useMemo } from "react";
+import {
+  resolveDistributionItem,
+  type MarketStateSlice,
+} from "@ledgerhq/asset-aggregation/assetDistribution/index";
+import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useDistribution } from "~/renderer/actions/general";
+import { decodeRouteParam } from "LLD/features/AssetDetail/utils/decodeRouteParam";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
+import type { SwapViewModel } from "./types";
+
+const ASSET_PATH_PREFIX = "/asset/";
+const WEBVIEW_KEY_PLACEHOLDER = "none";
+
+const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
+  [assetId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
+
+export const DEFAULT_SWAP_VIEW_MODEL: SwapViewModel = {
+  initialSwapState: undefined,
+  webviewKey: buildSwapWebViewKey(),
+};
+
+export const getSwapRouteAssetId = (pathname: string): string | undefined => {
+  if (!pathname.startsWith(ASSET_PATH_PREFIX)) return undefined;
+  const routeAssetId = pathname.slice(ASSET_PATH_PREFIX.length);
+  return routeAssetId || undefined;
+};
+
+interface UseSwapViewModelParams {
+  readonly pathname: string;
+  readonly routeAssetId: string;
+  readonly marketState?: MarketStateSlice;
+}
+
+export const useSwapRouteCurrency = (
+  routeAssetId: string | undefined,
+  marketState?: MarketStateSlice,
+) => {
+  const distribution = useDistribution({ groupBy: "asset" });
+  return useMemo(() => {
+    if (!routeAssetId) return undefined;
+    const decodedAssetId = decodeRouteParam(routeAssetId).toLowerCase();
+    const fallbackId = (marketState?.ledgerIds?.[0] ?? decodedAssetId).toLowerCase();
+    // Prefer portfolio distribution (optionally widened by market-state), then fall back to the crypto currency registry.
+    return (
+      resolveDistributionItem({ routeAssetId, decodedAssetId, marketState, distribution })
+        ?.currency ?? findCryptoCurrencyById(fallbackId)
+    );
+  }, [routeAssetId, marketState, distribution]);
+};
+
+export const useSwapViewModel = ({
+  pathname,
+  routeAssetId,
+  marketState,
+}: UseSwapViewModelParams): SwapViewModel => {
+  const allAccounts = useSelector(accountsSelector);
+
+  const currency = useSwapRouteCurrency(routeAssetId, marketState);
+  const decodedRouteAssetId = decodeRouteParam(routeAssetId).toLowerCase();
+
+  const initialSwapState = useMemo(() => {
+    if (!currency) return undefined;
+
+    const availableAccounts = getAvailableAccountsById(currency.id, flattenAccounts(allAccounts));
+    const preselectedAccount = availableAccounts[0];
+    if (!preselectedAccount) return undefined;
+
+    const parentAccount = isTokenAccount(preselectedAccount)
+      ? allAccounts.find(a => a.id === preselectedAccount.parentId)
+      : undefined;
+
+    return buildSwapNavigationState({
+      defaultCurrency: currency,
+      fromPath: pathname,
+      account: preselectedAccount,
+      parentAccount,
+    });
+  }, [currency, pathname, allAccounts]);
+
+  const webviewKey = useMemo(
+    () =>
+      buildSwapWebViewKey(decodedRouteAssetId || currency?.id, initialSwapState?.defaultAccountId),
+    [decodedRouteAssetId, currency?.id, initialSwapState?.defaultAccountId],
+  );
+
+  return {
+    initialSwapState,
+    webviewKey,
+  };
+};

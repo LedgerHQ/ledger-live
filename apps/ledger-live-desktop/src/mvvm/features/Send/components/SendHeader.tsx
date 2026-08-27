@@ -13,6 +13,7 @@ import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
 import { AddressDisclaimer } from "./AddressDisclaimer";
+import { RecipientHeaderPrefix } from "./RecipientHeaderPrefix";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
@@ -55,6 +56,8 @@ export function SendHeader() {
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen,
+    recipientContact,
+    recipientPlaceholder,
     showBackButton,
     showMemoControls,
     showRecipientInput,
@@ -75,8 +78,13 @@ export function SendHeader() {
             <AddressInput
               className="w-full"
               value={addressInputValue}
+              readOnly
               hideClearButton
-              prefix={t("newSendFlow.to")}
+              prefix={
+                <RecipientHeaderPrefix contact={recipientContact}>
+                  {t("newSendFlow.to")}
+                </RecipientHeaderPrefix>
+              }
               suffix={<AddressDisclaimer />}
             />
             {/* Stops short of the trailing info icon so the disclaimer stays hoverable. */}
@@ -95,7 +103,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="mb-12 px-24"
+          className="-mt-12 mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus
@@ -104,11 +112,7 @@ export function SendHeader() {
           onChange={e => handleRecipientInputChange(e.target.value)}
           onClear={recipientSearch.clear}
           onQrCodeClick={handleQrCodeClick}
-          placeholder={
-            uiConfig.recipientSupportsDomain
-              ? t("newSendFlow.placeholder")
-              : t("newSendFlow.placeholderNoENS")
-          }
+          placeholder={recipientPlaceholder}
         />
         {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
         {showMemoControls && currencyId ? (
@@ -154,8 +158,9 @@ export function SendHeader() {
     showRecipientInput,
     isAmountStep,
     addressInputValue,
+    recipientContact,
+    recipientPlaceholder,
     recipientSearch,
-    uiConfig.recipientSupportsDomain,
     uiConfig.memoMaxLength,
     uiConfig.memoType,
     uiConfig.memoMaxValue,

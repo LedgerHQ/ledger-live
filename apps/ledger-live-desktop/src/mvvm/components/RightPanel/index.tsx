@@ -1,43 +1,26 @@
 import React from "react";
-import { useLocation } from "react-router";
-import { isMarketCurrencyData } from "@ledgerhq/asset-detail";
-import type { MarketStateSlice } from "@ledgerhq/asset-aggregation/assetDistribution/index";
-import { RightPanelView } from "./RightPanelView";
-import {
-  DEFAULT_RIGHT_PANEL_VIEW_MODEL,
-  getRightPanelRouteAssetId,
-  useRightPanelViewModel,
-} from "./useRightPanelViewModel";
+import { Card } from "./Card";
+import { Swap } from "./Swap";
+import type { RightPanelVariant } from "LLD/components/Page/utils";
 
-interface AssetRightPanelProps {
-  readonly pathname: string;
-  readonly routeAssetId: string;
-  readonly marketState?: MarketStateSlice;
-}
-
-const AssetRightPanel = ({ pathname, routeAssetId, marketState }: AssetRightPanelProps) => {
-  const viewModel = useRightPanelViewModel({ pathname, routeAssetId, marketState });
-  return <RightPanelView viewModel={viewModel} />;
+const RIGHT_PANEL_BY_VARIANT: Record<RightPanelVariant, React.ComponentType> = {
+  swap: Swap,
+  card: Card,
 };
 
+interface RightPanelProps {
+  readonly variant: RightPanelVariant;
+}
+
 /**
- * RightPanel component - Sidebar panel on the right side of the app
- * Displays the SwapWebView when enabled on supported pages (Portfolio, Market, Analytics)
+ * RightPanel - Sidebar panel on the right side of the app.
+ * Renders the content matching the resolved variant (Swap console or Pay Card).
  *
- * Note: Visibility is controlled by PageView.
+ * Note: Visibility and variant selection are controlled by PageView / usePageViewModel.
  */
-const RightPanel = () => {
-  const { pathname, state } = useLocation();
-  const routeAssetId = getRightPanelRouteAssetId(pathname);
-  const marketState = isMarketCurrencyData(state) ? state : undefined;
-
-  if (!routeAssetId) {
-    return <RightPanelView viewModel={DEFAULT_RIGHT_PANEL_VIEW_MODEL} />;
-  }
-
-  return (
-    <AssetRightPanel pathname={pathname} routeAssetId={routeAssetId} marketState={marketState} />
-  );
+const RightPanel = ({ variant }: RightPanelProps) => {
+  const Content = RIGHT_PANEL_BY_VARIANT[variant];
+  return <Content />;
 };
 
 export default RightPanel;

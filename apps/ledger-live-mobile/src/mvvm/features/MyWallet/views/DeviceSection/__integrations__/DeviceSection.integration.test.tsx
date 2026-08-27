@@ -1,6 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@tests/test-renderer";
+import { render, screen, fireEvent, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/devices";
+import type { State } from "~/reducers/types";
 import { DeviceSectionView } from "../DeviceSectionView";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 
@@ -34,12 +35,28 @@ const mockOnDeviceActionError = jest.fn();
 
 const mockManagerAction = { useHook: jest.fn(), mapResult: jest.fn() } as const;
 
+const withNanoProfileUpsell = withFlagOverrides(
+  { largeScreenUpsell: { enabled: true } },
+  (state: State): State => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      personalizedRecommendationsEnabled: true,
+      knownDeviceModelIds: {
+        ...state.settings.knownDeviceModelIds,
+        [DeviceModelId.nanoS]: true,
+      },
+    },
+  }),
+);
+
 const renderView = (
   devices: readonly DeviceSectionDevice[],
   overrides: Partial<{
     deviceToRemove: DeviceSectionDevice | null;
     isRemoveDrawerOpen: boolean;
   }> = {},
+  overrideInitialState?: (state: State) => State,
 ) =>
   render(
     <DeviceSectionView
@@ -59,6 +76,7 @@ const renderView = (
       onDeviceActionClose={mockOnDeviceActionClose}
       onDeviceActionError={mockOnDeviceActionError}
     />,
+    overrideInitialState ? { overrideInitialState } : undefined,
   );
 
 describe("DeviceSection", () => {
@@ -182,6 +200,40 @@ describe("DeviceSection", () => {
       expect(screen.getByTestId("my-wallet-device-item-device-1-menu")).toBeVisible();
       expect(screen.getByTestId("my-wallet-device-item-device-2-menu")).toBeVisible();
       expect(screen.getByTestId("my-wallet-device-item-device-3-menu")).toBeVisible();
+    });
+  });
+
+  describe("profile upsell banner", () => {
+    it("should hide the banner when the user has no nano", () => {
+      renderView([mockDevices[0]]);
+
+      expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
+      expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    });
+
+    it("should render the banner after discovered devices for a nano owner", () => {
+      renderView([mockDevices[0]], {}, withNanoProfileUpsell);
+
+      expect(screen.getByText("Flex Pro")).toBeVisible();
+      expect(screen.getByText("Upgrade my Ledger")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+
+      const tree = JSON.stringify(screen.toJSON());
+      expect(tree.indexOf("Flex Pro")).toBeLessThan(tree.indexOf("Upgrade my Ledger"));
+      expect(tree.indexOf("Upgrade my Ledger")).toBeLessThan(
+        tree.indexOf("Explore all Ledger devices"),
+      );
+    });
+
+    it("should render the banner after the add-device CTA when there are no paired devices", () => {
+      renderView([], {}, withNanoProfileUpsell);
+
+      expect(screen.getByTestId("my-wallet-device-section-add-device")).toBeVisible();
+      expect(screen.getByText("Upgrade my Ledger")).toBeVisible();
+      expect(screen.queryByTestId("my-wallet-device-section-explore")).toBeNull();
+
+      const tree = JSON.stringify(screen.toJSON());
+      expect(tree.indexOf("Add a Ledger device")).toBeLessThan(tree.indexOf("Upgrade my Ledger"));
     });
   });
 });

@@ -1,9 +1,13 @@
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
+import {
+  estimateTransactionByteLength,
+  fetchFeeEstimateTransaction,
+  serializePayload,
+} from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { STACKS_DUMMY_ADDRESS } from "../constants";
-import { StacksNetwork } from "../network/api";
+import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { getAccountInfo } from "./utils/account";
@@ -40,15 +44,13 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   // Create transaction using the shared utility function
   const tx = await createStacksTransaction(dummyTx, address, xpub, subAccount || undefined);
 
-  // Get network configuration
-  const network = StacksNetwork[dummyTx.network] || StacksNetwork.mainnet;
-
-  // Estimate fee
-  const [feeEst] = await estimateTransaction(
-    tx.payload,
-    estimateTransactionByteLength(tx),
-    network,
-  );
+  // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
+  const [feeEst] = await fetchFeeEstimateTransaction({
+    payload: serializePayload(tx.payload),
+    estimatedLength: estimateTransactionByteLength(tx),
+    network: dummyTx.network,
+    client: { baseUrl: getStacksBaseUrl() },
+  });
 
   // Calculate maximum spendable balance by subtracting fee
   const diff = spendableBalance.minus(new BigNumber(feeEst.fee));

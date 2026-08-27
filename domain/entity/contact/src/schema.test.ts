@@ -4,6 +4,7 @@ import {
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  CONTACT_NAME_MAX_LENGTH,
   ContactNameInputSchema,
   ContactNameSchema,
   ContactSchema,
@@ -46,18 +47,29 @@ describe("ContactSchema", () => {
     expect(() => ContactSchema.parse(mockContact({ name: "   " }))).toThrow();
   });
 
-  it("accepts international contact names", () => {
+  it("accepts international contact names with numbers", () => {
     expect(ContactNameInputSchema.parse(" E\u0301lodie ")).toBe("Élodie");
     expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
+    expect(ContactNameSchema.parse("Coinbase 1")).toBe("Coinbase 1");
+    expect(ContactNameSchema.parse("Web3")).toBe("Web3");
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
     expect(ContactNameSchema.parse("مريم")).toBe("مريم");
   });
 
   it("rejects unsupported contact name characters", () => {
     expect(() => ContactNameSchema.parse("\u0301")).toThrow();
-    expect(() => ContactNameSchema.parse("Olive2")).toThrow();
+    expect(() => ContactNameSchema.parse("1Password")).toThrow();
+    expect(() => ContactNameSchema.parse("@Olive")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive@2")).toThrow();
     expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
     expect(() => ContactNameSchema.parse("Olive@")).toThrow();
+  });
+
+  it("rejects contact names longer than the domain limit", () => {
+    expect(ContactNameSchema.parse("a".repeat(CONTACT_NAME_MAX_LENGTH))).toHaveLength(
+      CONTACT_NAME_MAX_LENGTH,
+    );
+    expect(() => ContactNameSchema.parse("a".repeat(CONTACT_NAME_MAX_LENGTH + 1))).toThrow();
   });
 });
 

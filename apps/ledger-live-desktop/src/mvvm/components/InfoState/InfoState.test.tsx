@@ -66,6 +66,21 @@ describe("InfoState", () => {
     expect(onSecondaryPress).toHaveBeenCalledTimes(1);
   });
 
+  it("GIVEN an InfoState with custom content WHEN it is rendered THEN the content is displayed", () => {
+    // GIVEN / WHEN
+    render(
+      <InfoState
+        preset="spot"
+        spotProps={{ icon: Search }}
+        title="State title"
+        content={<div data-testid="info-state-content">Custom content</div>}
+      />,
+    );
+
+    // THEN
+    expect(screen.getByTestId("info-state-content")).toBeVisible();
+  });
+
   it("GIVEN an InfoState with no optional props WHEN it is rendered THEN it does not display title, description, banner or actions", () => {
     // GIVEN / WHEN
     render(<InfoState preset="info" testID="info-state" />);
@@ -143,6 +158,21 @@ describe("InfoState", () => {
       expect(cleanup).toHaveBeenCalledTimes(1);
     },
   );
+
+  it("GIVEN the spot preset with a background tone WHEN the InfoState mounts THEN it requests that tone", () => {
+    // GIVEN
+    const requestBackgroundTone = jest.fn(() => jest.fn());
+
+    // WHEN
+    render(
+      <DialogBackgroundContext.Provider value={{ requestBackgroundTone }}>
+        <InfoState preset="spot" spotProps={{ icon: Search, size: 72 }} backgroundTone="info" />
+      </DialogBackgroundContext.Provider>,
+    );
+
+    // THEN
+    expect(requestBackgroundTone).toHaveBeenCalledWith("info");
+  });
 
   it.each(["illustration", "spot", "text"] as const)(
     "GIVEN the non-status %s preset inside a DialogBackgroundContext provider WHEN the InfoState renders THEN it does not request a background tone",

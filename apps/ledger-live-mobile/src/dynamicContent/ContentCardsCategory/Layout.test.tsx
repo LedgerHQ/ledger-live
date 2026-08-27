@@ -13,9 +13,17 @@ import {
 } from "~/dynamicContent/types";
 import useDynamicContent from "../useDynamicContent";
 import Layout from "./Layout";
+import {
+  trackHardwareCarouselDeviceClick,
+  trackHardwareCarouselCardDismiss,
+} from "~/dynamicContent/hardwareCarousel/analytics";
 
 jest.mock("../useDynamicContent");
 jest.mock("@features/platform-feature-flags");
+jest.mock("~/dynamicContent/hardwareCarousel/analytics", () => ({
+  trackHardwareCarouselDeviceClick: jest.fn(),
+  trackHardwareCarouselCardDismiss: jest.fn(),
+}));
 jest.mock("LLM/features/DynamicContent/components/LogContentCardWrapper", () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -199,5 +207,145 @@ describe("ContentCardsCategory Layout", () => {
     expect(screen.getByTestId("mock-carousel")).toBeVisible();
     expect(screen.getByTestId("upsell-leading")).toBeVisible();
     expect(screen.getByTestId("carousel-item-count")).toHaveTextContent("1");
+  });
+
+  describe("hardware carousel tracking", () => {
+    const mockHardwareCarouselProps = {
+      deviceModel: "lnx" as const,
+      personalRecoOptIn: true,
+      offerType: "discount" as const,
+      platform: "lwm" as const,
+    };
+
+    it("should track Flex device click when hardware carousel props are provided", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Flex" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).toHaveBeenCalledWith(
+        "ledger flex",
+        mockHardwareCarouselProps,
+      );
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Ledger Flex",
+        contentcard: "Ledger Flex",
+      });
+    });
+
+    it("should track Stax device click when title contains stax", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Stax" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).toHaveBeenCalledWith(
+        "ledger stax",
+        mockHardwareCarouselProps,
+      );
+    });
+
+    it("should track Gen5 device click when title contains gen5", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Gen5" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).toHaveBeenCalledWith(
+        "ledger gen5",
+        mockHardwareCarouselProps,
+      );
+    });
+
+    it("should track Gen5 device click when title contains 'gen 5' with space", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Gen 5" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).toHaveBeenCalledWith(
+        "ledger gen5",
+        mockHardwareCarouselProps,
+      );
+    });
+
+    it("should not track device click when title does not match any device", async () => {
+      const card = createBrazeActionCard({ title: "Other Device" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).not.toHaveBeenCalled();
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Other Device",
+        contentcard: "Other Device",
+      });
+    });
+
+    it("should track card dismiss when hardware carousel props are provided", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Stax" });
+      const { user } = render(
+        <Layout
+          category={topWalletCategory}
+          cards={[card]}
+          hardwareCarouselSharedProps={mockHardwareCarouselProps}
+        />,
+      );
+
+      await user.press(screen.getByTestId("card-dismiss"));
+
+      expect(trackHardwareCarouselCardDismiss).toHaveBeenCalledWith(mockHardwareCarouselProps);
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Dismissed, {
+        ...expectedTrackingBase,
+        title: "Ledger Stax",
+        contentcard: "Ledger Stax",
+      });
+    });
+
+    it("should not track hardware carousel events without props", async () => {
+      const card = createBrazeActionCard({ title: "Ledger Flex" });
+      const { user } = render(<Layout category={topWalletCategory} cards={[card]} />);
+
+      await user.press(screen.getByTestId("card-click"));
+
+      expect(trackHardwareCarouselDeviceClick).not.toHaveBeenCalled();
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Ledger Flex",
+        contentcard: "Ledger Flex",
+      });
+    });
   });
 });

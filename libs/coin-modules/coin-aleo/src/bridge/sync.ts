@@ -15,7 +15,7 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { lastBlock, listOperations } from "../logic";
+import { lastBlock } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
   extractViewKey,
@@ -23,8 +23,9 @@ import {
   isRecordScannerReady,
   splitPrivateAndPublicOperations,
   resolveConfig,
-  getCalTokens,
 } from "../logic/utils";
+import { listOperations } from "./listOperations";
+import { getCalTokens } from "./utils";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
 import {
@@ -42,7 +43,7 @@ import type {
   AleoPrivateRecord,
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
-import { listPrivateOperations } from "../logic/listPrivateOperations";
+import { listPrivateOperations } from "./listPrivateOperations";
 import {
   attachPrivateTokenOpsToParent,
   buildSubAccountsFromPrivateRecords,
@@ -111,7 +112,6 @@ export async function performPublicSync(
     currencyId: currency.id,
     address,
     ledgerAccountId,
-    mode: "bridge",
     options: {
       minHeight: 0,
       order: "asc",

@@ -1,0 +1,39 @@
+{
+  "name": "@features/platform-verify-address-intent",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Cross-platform Device Intent that verifies a receive address on the device Secure Screen",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent"
+  },
+  "dependencies": {
+    "@features/platform-device-intent": "workspace:^"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:"
+  }
+}

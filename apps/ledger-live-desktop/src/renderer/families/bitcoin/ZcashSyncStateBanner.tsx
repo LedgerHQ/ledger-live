@@ -36,6 +36,25 @@ const ZcashSyncStateBanner = ({ account, sender }: Props) => {
   const progress = privateInfo?.progress ?? 0;
   const estimatedTimeRemaining = privateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 };
 
+  if (syncState === "stopped" && privateInfo?.lastSyncError) {
+    return (
+      <Alert type="error" mt={4} data-testid="zcash-sync-banner-failed">
+        <Box horizontal alignItems="center" justifyContent="space-between">
+          <Text>
+            <Trans i18nKey="zcash.shielded.send.syncBanner.failed.message" />
+          </Text>
+          <ButtonV3
+            variant="main"
+            onClick={startShieldedSync}
+            buttonTestId="zcash-resume-sync-button"
+          >
+            <Trans i18nKey="zcash.shielded.send.syncBanner.failed.cta" />
+          </ButtonV3>
+        </Box>
+      </Alert>
+    );
+  }
+
   if (syncState === "stopped" || syncState === "disabled") {
     return (
       <Alert type="warning" mt={4} data-testid="zcash-sync-banner-stopped">

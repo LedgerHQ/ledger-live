@@ -1,6 +1,6 @@
 import { lastValueFrom, Subject, toArray } from "rxjs";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { EIP712Message } from "@ledgerhq/types-live";
 
 // `@ledgerhq/device-signer-kit-ethereum` lazily loads

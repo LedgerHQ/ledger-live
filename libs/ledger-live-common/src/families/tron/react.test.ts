@@ -10,7 +10,9 @@ import {
   getNextRewardDate,
   formatVotes,
   getUnfreezeData,
+  useVoteNames,
 } from "./react";
+import { accountNamesCache } from "@ledgerhq/coin-tron/network";
 import {
   __NEXT_REWARD_DATE__,
   __LAST_VOTING_DATE__,
@@ -37,10 +39,17 @@ const superRepresentatives = [
   },
 ];
 
+const accountNames: Record<string, string> = {
+  TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH: "Binance Staking",
+};
+
 jest.mock("@ledgerhq/coin-tron/network", () => {
   return {
     getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
       return Promise.resolve(superRepresentatives);
+    }),
+    accountNamesCache: jest.fn().mockImplementation((_config, address: string) => {
+      return Promise.resolve(accountNames[address]);
     }),
   };
 });
@@ -89,6 +98,22 @@ test("Tron get last voting date - getLastVotedDate - Expect to get last voted da
   expect(getLastVotedDate(mockAccountNoVote)).toStrictEqual(null);
 });
 
+test("Tron get last voting date - getLastVotedDate - falls back to the newest VOTE operation", () => {
+  // The generic coin framework's account-shape hook cannot populate `lastVotedDate` — it receives an
+  // address, not the transaction list — so the operations are the only surviving source.
+  const lastVote = new Date("2026-01-02T03:04:05.000Z");
+  const account = {
+    ...mockAccountNoVote,
+    operations: [
+      { type: "OUT", date: new Date("2026-02-01T00:00:00.000Z") },
+      { type: "VOTE", date: lastVote },
+      { type: "VOTE", date: new Date("2025-01-01T00:00:00.000Z") },
+    ],
+  } as unknown as typeof mockAccountNoVote;
+
+  expect(getLastVotedDate(account)).toStrictEqual(lastVote);
+});
+
 test("Tron get next reward date - getNextRewardDate - Expect to get next reward date", () => {
   expect(getNextRewardDate(mockAccount)).toStrictEqual(
     __NEXT_REWARD_DATE__.valueOf() + 24 * 60 * 60 * 1000,
@@ -112,6 +137,63 @@ const __FORMATTED_VOTES__ = superRepresentatives.slice(0, 2).map(validator => ({
 test("Tron format votes - formatVotes - Expect to get formatted votes", () => {
   expect(formatVotes(undefined, superRepresentatives as any[])).toStrictEqual([]);
   expect(formatVotes(__VOTES__, superRepresentatives as any[])).toStrictEqual(__FORMATTED_VOTES__);
+});
+
+describe("Tron vote names - useVoteNames", () => {
+  const named = {
+    name: "Binance Staking",
+    address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+    voteCount: 3,
+  };
+  const nameless = { name: null, address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 3 };
+
+  beforeEach(() => {
+    jest.mocked(accountNamesCache).mockClear();
+  });
+
+  it("resolves the name a just-submitted vote arrives without", async () => {
+    const { result } = renderHook(() => useVoteNames([nameless]));
+
+    expect(result.current).toEqual([nameless]);
+    await act(async () => {});
+
+    expect(result.current).toEqual([{ ...nameless, name: "Binance Staking" }]);
+    expect(accountNamesCache).toHaveBeenCalledWith(expect.anything(), nameless.address);
+  });
+
+  it("leaves a synced vote alone, so the common case costs no request", async () => {
+    const votes = [named];
+    const { result } = renderHook(() => useVoteNames(votes));
+    await act(async () => {});
+
+    // Same reference, not merely equal: a new array here would re-render the details screen on
+    // every sync.
+    expect(result.current).toBe(votes);
+    expect(accountNamesCache).not.toHaveBeenCalled();
+  });
+
+  it("only looks up the votes that are missing a name", async () => {
+    const other = { name: null, address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 1 };
+    const { result } = renderHook(() => useVoteNames([named, other]));
+    await act(async () => {});
+
+    expect(accountNamesCache).toHaveBeenCalledTimes(1);
+    expect(accountNamesCache).toHaveBeenCalledWith(expect.anything(), other.address);
+    // The second address has no name on chain, so it is left exactly as it arrived.
+    expect(result.current).toEqual([named, other]);
+  });
+
+  it.each([
+    ["undefined", undefined],
+    ["null", null],
+    ["an empty list", []],
+  ])("passes %s straight through", async (_label, votes) => {
+    const { result } = renderHook(() => useVoteNames(votes));
+    await act(async () => {});
+
+    expect(result.current).toBe(votes);
+    expect(accountNamesCache).not.toHaveBeenCalled();
+  });
 });
 
 test("Tron unfreeze - get unfreeze data - Expect to retrieve unfreeze data from account", () => {

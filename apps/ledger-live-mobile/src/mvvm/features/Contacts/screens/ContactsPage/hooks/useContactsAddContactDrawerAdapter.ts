@@ -3,23 +3,22 @@ import { v4 as uuid } from "uuid";
 import {
   addContact,
   contact,
+  type Contact,
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
-import {
-  type ContactCreationPort,
-  type ContactsAddContactDrawerLabels,
-  type ContactsAddContactDrawerProps,
-  useAddContactDrawerViewModel,
-} from "@features/flow-contacts-add-contact";
+import { type AddContactAppAdapterResult, useAddContactAppAdapter } from "@features/flow-contacts";
+import type { ContactCreationPort } from "@features/flow-contacts-add-contact";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 
 export function useContactsAddContactDrawerAdapter(
-  onSaveSuccess: () => void,
-): ContactsAddContactDrawerProps {
+  onSaveSuccess: (contact: Contact) => void,
+): AddContactAppAdapterResult {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const analytics = useContactsAnalytics();
   const contactCreation = useMemo<ContactCreationPort>(
     () => ({
       createContact: async ({ name }) => {
@@ -37,11 +36,7 @@ export function useContactsAddContactDrawerAdapter(
     }),
     [dispatch],
   );
-  const drawerViewModel = useAddContactDrawerViewModel({
-    contactCreation,
-    onSaveSuccess,
-  });
-  const labels = useMemo<ContactsAddContactDrawerLabels>(
+  const labels = useMemo(
     () => ({
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
@@ -55,8 +50,10 @@ export function useContactsAddContactDrawerAdapter(
     [t],
   );
 
-  return {
-    ...drawerViewModel,
+  return useAddContactAppAdapter({
+    analytics,
+    contactCreation,
+    onSaveSuccess,
     labels,
-  };
+  });
 }

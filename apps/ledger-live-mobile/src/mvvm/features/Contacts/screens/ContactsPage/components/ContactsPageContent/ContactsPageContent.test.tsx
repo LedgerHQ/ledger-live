@@ -11,7 +11,7 @@ function createViewModel({
   onDismiss = jest.fn(),
   onActivate = jest.fn(),
 }: {
-  ledgerSyncStatus?: "ready" | "checking" | "inactive";
+  ledgerSyncStatus?: "ready" | "checking" | "inactive" | "unavailable";
   isIntroductionOpen?: boolean;
   isFeatureIntroductionOpen?: boolean;
   onDismiss?: jest.Mock;
@@ -40,6 +40,7 @@ function createViewModel({
     onSearchQueryChange: jest.fn(),
     onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
+    onRequestAddContact: jest.fn(),
     ledgerSyncStatus,
     featureIntroduction: isFeatureIntroductionOpen
       ? {
@@ -85,6 +86,7 @@ function createViewModel({
       onClose: jest.fn(),
       onDraftNameChange: jest.fn(),
       onConfirm: jest.fn(),
+      reset: jest.fn(),
     },
   };
 }

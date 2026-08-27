@@ -21,7 +21,6 @@
   ],
   "exclude": [
     "src/api/subscan.ts",
-    "src/api/websocket.ts",
-    "src/test/bridgeDatasetTest.ts"
+    "src/api/websocket.ts"
   ]
 }

@@ -10,7 +10,8 @@ export type CasperGetAddrResponse = {
   errorMessage: string;
   returnCode: number;
   publicKey: Buffer;
-  Address: any;
+  /** Algorithm-tagged hex. Empty on device apps that only return the public key. */
+  Address: string;
 };
 
 export interface CasperSigner {

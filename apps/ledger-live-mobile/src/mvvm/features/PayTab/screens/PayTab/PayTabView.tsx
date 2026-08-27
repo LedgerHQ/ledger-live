@@ -1,5 +1,10 @@
 import React from "react";
-import { CardLogin, type OpenHostedLogin } from "@features/flow-pay-card-auth";
+import {
+  CardLogin,
+  CardLogout,
+  type CardLoginOauthConfig,
+  type PayCardAuthCallback,
+} from "@features/flow-pay-card-auth";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import {
   Balance,
@@ -8,27 +13,32 @@ import {
   type BalanceLabels,
 } from "@features/flow-pay-card-balance";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
+import { RequestReceive, type RequestReceiveProps } from "@features/flow-pay-card-request";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
-  readonly openHostedLogin: OpenHostedLogin;
+  readonly oauthConfig: CardLoginOauthConfig;
+  readonly callback: PayCardAuthCallback | null;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
   readonly depositOptions: DepositOptionsProps;
+  readonly requestReceive: RequestReceiveProps;
 };
 
 export function PayTabView({
   top,
-  openHostedLogin,
+  oauthConfig,
+  callback,
   featureTour,
   balance,
   balanceLabels,
   actionTiles,
   depositOptions,
+  requestReceive,
 }: PayTabViewProps) {
   return (
     <Box
@@ -39,7 +49,9 @@ export function PayTabView({
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
-      <CardLogin openHostedLogin={openHostedLogin} />
+      <RequestReceive {...requestReceive} />
+      <CardLogin oauthConfig={oauthConfig} callback={callback} />
+      <CardLogout />
       <FeatureTour {...featureTour} />
     </Box>
   );

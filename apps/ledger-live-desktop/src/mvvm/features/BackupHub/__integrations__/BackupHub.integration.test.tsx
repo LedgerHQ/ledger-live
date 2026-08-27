@@ -1,5 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
   LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
@@ -15,13 +16,15 @@ import { setRecoverState } from "~/renderer/reducers/recoverState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+  BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
 
@@ -59,6 +62,7 @@ const backupHubState = withFlagOverrides({
     params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
   },
   lwdBackupHub: { enabled: true },
+  largeScreenUpsell: { enabled: true },
 });
 
 const NANO_UPSELL_DEVICE_MODEL = {
@@ -207,7 +211,10 @@ describe("BackupHub", () => {
 
     await user.click(screen.getByTestId("backup-hub-recover-row"));
 
-    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH, {
+      state: { from: expect.objectContaining({ pathname: "/" }) },
+    });
     await waitFor(() => expect(screen.queryByTestId("backup-hub")).not.toBeInTheDocument());
   });
 
@@ -256,10 +263,83 @@ describe("BackupHub", () => {
     expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
   });
 
+  it("keeps the Recovery Key row unchanged when backup-hub-recovery-key-text-warning is off", async () => {
+    const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+    if (!defaultParams) {
+      throw new Error("Expected large-screen upsell default params");
+    }
+
+    const utils = render(<ContextMenu />, {
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
+        },
+        lwdBackupHub: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            ...defaultParams,
+            banners: {
+              ...defaultParams.banners,
+              "backup-hub-recovery-key-text-warning": false,
+            },
+          },
+        },
+      }),
+    });
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId: DeviceModelId.nanoS }));
+
+    await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+    await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+    await screen.findByTestId("backup-hub");
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
+  it("keeps the Recovery Key row unchanged when the large-screen upsell campaign is off", async () => {
+    const utils = render(<ContextMenu />, {
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
+        },
+        lwdBackupHub: { enabled: true },
+        largeScreenUpsell: { enabled: false },
+      }),
+    });
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId: DeviceModelId.nanoS }));
+
+    await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+    await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+    await screen.findByTestId("backup-hub");
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
   it("uses the last-seen nano for Recovery Key upsell analytics when several nanos are known", async () => {
     const { user } = await openHubWithDevices(
       [DeviceModelId.nanoS, DeviceModelId.nanoX],
       DeviceModelId.nanoX,
+    );
+
+    const upsellAnalyticsProps = {
+      deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
+      personalRecoOptIn: false,
+      offerType: "none",
+      platform: "lwd",
+    };
+    expect(trackPage).toHaveBeenCalledWith(
+      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      undefined,
+      {
+        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        ...upsellAnalyticsProps,
+      },
+      true,
+      false,
     );
 
     await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
@@ -267,7 +347,8 @@ describe("BackupHub", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
       }),
     );
@@ -299,13 +380,23 @@ describe("BackupHub", () => {
         offerType: "none",
         platform: "lwd",
       };
+      expect(trackPage).toHaveBeenCalledWith(
+        BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        undefined,
+        {
+          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          ...upsellAnalyticsProps,
+        },
+        true,
+        false,
+      );
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         ...upsellAnalyticsProps,
       });
       expect(track).toHaveBeenCalledWith("deeplink_clicked", {
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
         deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
         deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,

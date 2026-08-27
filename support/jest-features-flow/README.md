@@ -12,6 +12,10 @@ Shared jest configuration for `features/flow/*` packages.
 
 Both projects transpile TS/TSX with `@swc/jest`.
 
+The Native project resolves the `react-native` conditional export for workspace `@features/*`
+packages only. This keeps flow package imports platform-correct without changing each consumer's
+Jest config, while third-party Node dependencies retain their default resolution.
+
 ## Lumen handling
 
 The Lumen barrels and subpaths (`@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`)
@@ -21,6 +25,10 @@ transforming them and installing every peer, this package redirects them (via
 a component that renders its children. Native `Banner` and `Button` expose their visible
 description, actions, and labels, while web tooltip primitives and `InteractiveIcon` retain their
 accessible test shape.
+
+The Web `Avatar` boundary renders `fallbackText` and exposes fallback color and size through
+`data-*` attributes for consumer tests. It deliberately does not reproduce Lumen's color-selection
+rules.
 
 As a result:
 

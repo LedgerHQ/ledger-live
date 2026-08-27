@@ -4,53 +4,40 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
+import { getAccountsForCurrencies, resolveCurrencyIds } from "../Exchange";
 
 const ASSET_DETAIL_SOURCE_SCREEN_NAME = "Asset Detail";
 
 type UseOpenBuySellProps = {
   currency?: CryptoOrTokenCurrency;
+  /**
+   * When non-empty, takes priority over `currency` so a multi-network asset
+   * (e.g. ETH on Ethereum + Base + Arbitrum) opens the network-selection step.
+   */
+  currencyIds?: string[];
   sourceScreenName: string;
 };
 
-type AccountWithParent = {
-  account: AccountLike;
-  parentAccount?: Account;
-};
-
-function getAccountsForCurrency(
-  flattenedAccounts: AccountLike[],
-  shallowAccounts: Account[],
-  currency: CryptoOrTokenCurrency,
-): AccountWithParent[] {
-  return flattenedAccounts
-    .filter(account => {
-      const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return currencyId === currency.id && !isAccountEmpty(account);
-    })
-    .map(account => {
-      const parentId = isTokenAccount(account) ? account.parentId : undefined;
-      const parent = parentId ? shallowAccounts.find(a => a.id === parentId) : undefined;
-      const parentAccount = parent && isAccount(parent) ? parent : undefined;
-      return { account, parentAccount };
-    });
-}
-
-export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellProps) {
+export function useOpenBuySell({ currency, currencyIds, sourceScreenName }: UseOpenBuySellProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
 
+  const resolvedCurrencyIds = useMemo(
+    () => resolveCurrencyIds(currency, currencyIds),
+    [currency, currencyIds],
+  );
+
   const accountsForCurrency = useMemo(() => {
-    if (!currency) return [];
-    return getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency);
-  }, [currency, flattenedAccounts, shallowAccounts]);
+    if (!resolvedCurrencyIds.length) return [];
+    return getAccountsForCurrencies(flattenedAccounts, shallowAccounts, resolvedCurrencyIds);
+  }, [resolvedCurrencyIds, flattenedAccounts, shallowAccounts]);
 
   const navigateToBuySell = useCallback(
     (mode: "buy" | "sell", account?: AccountLike, parentAccount?: Account) => {
@@ -58,16 +45,18 @@ export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellPro
       const parentId = isTokenAccount(account)
         ? (parentAccount?.id ?? account.parentId)
         : undefined;
+      const defaultCurrencyId = account ? getAccountCurrency(account).id : currency?.id;
 
       navigation.navigate(NavigatorName.Exchange, {
         screen: mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
         params: {
-          defaultCurrencyId: currency?.id,
+          defaultCurrencyId,
           ...(defaultAccountId && { defaultAccountId }),
           ...(parentId && { parentId }),
           ...(sourceScreenName === ASSET_DETAIL_SOURCE_SCREEN_NAME && {
             returnToPreviousScreenOnClose: true,
           }),
+          ...(!account && { goBackOnAccountRequestCancel: true }),
         },
       });
     },
@@ -77,20 +66,26 @@ export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellPro
   const openAccountSelectionDrawer = useCallback(
     (mode: "buy" | "sell") => {
       openDrawer({
-        currencies: currency ? [currency.id] : [],
+        currencies: resolvedCurrencyIds,
         flow: mode,
         source: sourceScreenName,
-        areCurrenciesFiltered: !!currency,
+        areCurrenciesFiltered: resolvedCurrencyIds.length > 0,
         enableAccountSelection: true,
         onAccountSelected: (account, parentAccount) =>
           navigateToBuySell(mode, account, parentAccount),
       });
     },
-    [currency, openDrawer, sourceScreenName, navigateToBuySell],
+    [resolvedCurrencyIds, openDrawer, sourceScreenName, navigateToBuySell],
   );
 
   const handleOpenBuySell = useCallback(
     (mode: "buy" | "sell") => {
+      // Multi-network assets always open the drawer so the user can pick network → account.
+      if (resolvedCurrencyIds.length > 1) {
+        openAccountSelectionDrawer(mode);
+        return;
+      }
+
       const accountCount = accountsForCurrency.length;
 
       if (accountCount === 0) {
@@ -106,7 +101,12 @@ export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellPro
 
       openAccountSelectionDrawer(mode);
     },
-    [accountsForCurrency, navigateToBuySell, openAccountSelectionDrawer],
+    [
+      resolvedCurrencyIds.length,
+      accountsForCurrency,
+      navigateToBuySell,
+      openAccountSelectionDrawer,
+    ],
   );
 
   return { handleOpenBuySell };

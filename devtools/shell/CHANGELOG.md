@@ -1,5 +1,27 @@
 # @devtools/shell
 
+## 0.9.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4), [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4)]:
+  - @devtools/registry@0.4.0
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4), [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4)]:
+  - @devtools/registry@0.4.0-next.0
+
 ## 0.8.1
 
 ### Patch Changes
@@ -179,26 +201,5 @@
 
 - Updated dependencies []:
   - @devtools/registry@0.1.3
-
-## 0.3.3-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.3-next.1
-
-## 0.3.3-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.3-next.0
-
-## 0.3.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

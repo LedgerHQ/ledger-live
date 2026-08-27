@@ -10,6 +10,7 @@ import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "./useRecipientScreenView";
 
 export type UseRecipientScreenContentViewModelProps = Readonly<{
@@ -80,6 +81,18 @@ export function useRecipientScreenContentViewModel({
     [trackingProperties, handleAddressSelect],
   );
 
+  const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
+    searchResult: recipient.result,
+    searchValue: recipient.searchValue,
+    onSelect: handleMatchedAddress,
+    isSanctioned: recipient.showSanctionedBanner,
+    isAddressComplete: recipient.isAddressComplete,
+    hasBridgeError: recipient.showBridgeRecipientError,
+    isContactsFeatureEnabled: recipient.isContactsFeatureEnabled,
+    hasAddressBook: recipient.hasAddressBook,
+    addressBookFamilyName: recipient.addressBookFamilyName,
+  });
+
   useEffect(() => {
     if (showMemo) {
       track("send_modal", { ...trackingProperties, name: "step memo" });
@@ -117,7 +130,7 @@ export function useRecipientScreenContentViewModel({
     showMatched,
     shouldShowErrorBanner,
     keyboardBehavior,
-    handleMatchedAddress,
+    addressMatchedSectionViewModel,
   };
 }
 

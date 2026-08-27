@@ -1,7 +1,7 @@
 import {
   CONTACTS_FEATURE_FLAG_KEYS,
   DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
-} from "@features/flow-contacts";
+} from "@features/platform-contacts";
 
 export { DEFAULT_ELIGIBLE_ADDRESS_FAMILIES };
 

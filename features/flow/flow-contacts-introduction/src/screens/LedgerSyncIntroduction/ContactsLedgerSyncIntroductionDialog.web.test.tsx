@@ -24,4 +24,24 @@ describe("ContactsLedgerSyncIntroductionDialog", () => {
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
+
+  it("should call the activation action when it is provided", async () => {
+    const onActivate = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <ContactsLedgerSyncIntroductionDialog
+        open
+        description="Ledger Sync keeps contacts up to date."
+        activateLabel="Turn on Ledger Sync"
+        dismissLabel="Not now"
+        onActivate={onActivate}
+        onDismiss={jest.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    expect(onActivate).toHaveBeenCalledTimes(1);
+  });
 });

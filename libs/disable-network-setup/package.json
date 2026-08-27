@@ -17,6 +17,7 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "axios": "catalog:",

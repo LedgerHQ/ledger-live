@@ -1,4 +1,24 @@
 {
+  "internetComputer" : {
+    "stakeBanner" : {
+      "stakeICP" : {
+        "title" : "质押 ICP",
+        "description" : "质押 ICP 并通过参与其治理获得奖励。",
+        "cta" : "质押 ICP"
+      }
+    },
+    "headerManageActions" : {
+      "manageNeurons" : {
+        "title" : "管理神经元"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalance" : "已质押余额",
+      "stakedBalanceTooltip" : "当前在神经元中质押的 ICP 代币总额。质押的 ICP 可获得投票奖励，且可用于治理。",
+      "totalMaturity" : "总成熟度",
+      "totalMaturityTooltip" : "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。"
+    }
+  },
   "buyCurrency" : {
     "buyCTA" : "买入 {{ currencyNameOrTicker }}"
   },
@@ -492,7 +512,7 @@
       "title" : "网络费用超过数额的10%"
     },
     "RecipientIsNewAccount" : {
-      "title" : "This address has never received funds, activating it costs a higher network fee"
+      "title" : "该地址从未接收过资金，激活该地址需要支付更高的网络费用"
     },
     "FeeTooLow" : {
       "title" : "费用过低，无法被网络接受。请增加费用"
@@ -752,7 +772,17 @@
       "title" : "最低数额为 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "应保留至少 1 SUI 的质押余额"
+      "title" : "解除质押全部数额，或保留至少 1 SUI 处于质押状态"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "质押详情不可用。请重新同步您的账户并重试"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "数额超过所选质押"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "更新您的 Sui 应用程序",
+      "description" : "您的 Ledger Sui 应用程序无法签署来自您 SUI 地址余额的转账。在您的 Ledger 设备上更新 Sui 应用程序并重试。"
     },
     "PasswordIncorrect" : {
       "title" : "密码错误",
@@ -1489,6 +1519,25 @@
     "confirm" : "您确定要退出吗？",
     "disclaimer" : "您手机上的所有账户数据都将被删除。",
     "action" : "退出"
+  },
+  "appLock" : {
+    "field" : {
+      "label" : "输入密码",
+      "reveal" : "显示密码",
+      "hide" : "隐藏密码",
+      "minLength" : "必须至少为 6 个字符"
+    },
+    "setupPassword" : {
+      "title" : "输入密码",
+      "description" : "每次打开该应用程序时，您都需要此密码。若您遗失密码，请重新安装该应用程序并恢复您的钱包。",
+      "cta" : "继续"
+    },
+    "confirmPassword" : {
+      "title" : "确认密码",
+      "description" : "每次打开该应用程序时，您都需要此密码。若您遗失密码，请重新安装该应用程序并恢复您的钱包。",
+      "mismatch" : "密码不匹配",
+      "cta" : "确认"
+    }
   },
   "auth" : {
     "failed" : {
@@ -4499,10 +4548,13 @@
       },
       "placeholder" : "请输入地址或 ENS",
       "placeholderNoENS" : "输入地址",
+      "placeholderWithContacts" : "输入地址、ENS 或联系人",
+      "placeholderNoEnsWithContacts" : "输入地址或联系人",
       "pasteFromClipboard" : {
         "title" : "从剪贴板粘贴",
         "cta" : "粘贴"
       },
+      "contactsWillAppear" : "联系人将在此处显示",
       "editRecipientAccessibilityLabel" : "编辑接收方",
       "sendTo" : "发送到 {{address}}",
       "addressMatched" : "已匹配地址",
@@ -4510,6 +4562,10 @@
       "account" : "账户",
       "alreadyUsed" : "已使用 · {{date}}",
       "notInRecentHistory" : "不在您的近期历史记录中",
+      "addressBookUnsupported" : {
+        "title" : "暂不支持 {{family}}",
+        "description" : "您目前还无法将 {{family}} 地址添加到您的联系人中。我们将不断添加更多加密货币。"
+      },
       "relativeDate" : {
         "justNow" : "刚刚",
         "minutesAgo_one" : "1 分钟前",
@@ -5051,8 +5107,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "设备已锁定",
-        "description" : "解锁您的设备以继续。"
+        "title" : "解锁您的 Ledger 设备，然后选择下方的“重试”"
       },
       "unlockDevice" : {
         "title" : "解锁您的 {{productName}}"
@@ -5064,16 +5119,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "设备已断开",
-        "description" : "您的 Ledger 设备已断开连接。请确保设备已开机，并处于蓝牙连接范围内，或已通过数据线连接。"
+        "title" : "Ledger 设备已断开",
+        "description" : "请确保设备已开机，并处于蓝牙连接范围内，或已通过数据线连接。"
       },
       "intentError" : {
         "title" : "未知错误",
-        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "description" : "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       },
       "invalidOperation" : {
-        "title" : "无效状态",
-        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "title" : "发生了错误",
+        "description" : "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       }
     },
     "initialization" : {
@@ -5089,42 +5144,42 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "设备拒绝了操作"
+          "title" : "Ledger 设备拒绝了操作"
         },
         "deviceBusy" : {
-          "title" : "您的 Ledger 设备上有待处理的操作",
-          "description" : "完成此操作，然后选择重试。"
+          "title" : "请在您的 Ledger 设备上完成操作",
+          "description" : "在您的设备上完成该操作，然后选择下面的“重试”。"
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "您的 Ledger 设备尚未准备就绪",
-          "description" : "您需要先设置 {{productName}}。 我们将引导您完成设备设置流程"
+          "title" : "您的 Ledger 设备需要进行设置",
+          "description" : "请进行设置以继续。"
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS 需要更新"
         },
         "unsupportedApplication" : {
           "title" : "功能不受支持",
-          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description" : "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "unsupportedFeature" : {
           "title" : "功能不受支持",
-          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description" : "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "wrongDeviceForAccount" : {
-          "title" : "秘密恢复短语错误",
-          "description" : "此 Ledger 设备未设置与所选账户关联的恢复短语。检查您是否使用了正确的设备。"
+          "title" : "请使用您最初设置此账户时所用的 Ledger 设备",
+          "description" : "此 Ledger 设备未设置与所选加密货币账户关联的秘密恢复短语。"
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "设备内存不足",
-          "description" : "您的设备内存不足。请卸载应用程序并重试。"
+          "title" : "卸载一些应用程序以释放 Ledger 设备内存",
+          "description" : "您的设备内存不足。"
         }
       },
       "cta" : {
         "openMyLedger" : "打开“我的 Ledger”",
         "goToMyLedger" : "前往 My Ledger（我的 Ledger）",
-        "setupDevice" : "设置设备",
+        "setupDevice" : "设置 Ledger 设备",
         "updateLedgerOs" : "更新 Ledger OS",
         "cancelOperation" : "取消操作",
         "contactLedgerSupport" : "联系 Ledger 客服"
@@ -5138,7 +5193,7 @@
       },
       "states" : {
         "connecting" : {
-          "title" : "Loading（加载中）"
+          "title" : "正在连接您的 Ledger 设备"
         },
         "connectionError" : {
           "errors" : {
@@ -5158,7 +5213,7 @@
             },
             "unknown" : {
               "title" : "配对不成功",
-              "description" : "请重试，或阅读下面的蓝牙故障排除文章。",
+              "description" : "请重试，或阅读下方的蓝牙故障排除文章以获取更多指导。",
               "tip" : "确保您的设备已解锁。",
               "cta" : {
                 "retry" : "请重试",
@@ -5173,24 +5228,29 @@
         "discoveryError" : {
           "errors" : {
             "bluetoothPermissionDeniedPromptable" : {
-              "title" : "允许蓝牙访问",
-              "description" : "允许蓝牙扫描附近的 Ledger 设备。",
+              "title" : "通过蓝牙连接您的 Ledger 设备",
+              "description" : "Ledger Wallet 需要蓝牙来查找并配对附近的 Ledger 设备。不会通过蓝牙共享任何数据。",
               "cta" : {
-                "retry" : "允许",
+                "retry" : "允许蓝牙",
                 "ignore" : "继续使用 USB"
               }
             },
             "bluetoothPermissionDeniedManualSettings" : {
-              "title" : "允许蓝牙访问",
-              "description" : "需要蓝牙权限。前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Nearby devices（附近设备），然后返回。",
+              "title" : "在您手机的设置中启用蓝牙",
+              "description" : "Ledger Wallet 需要蓝牙权限来查找您的 Ledger 设备。\n\n前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Nearby devices（附近设备），然后返回。",
               "cta" : {
                 "retry" : "我已启用，重新尝试",
-                "ignore" : "继续使用 USB"
+                "ignore" : "改用 USB 继续"
               }
             },
             "bluetoothPermissionUnauthorizedManualSettings" : {
-              "title" : "允许蓝牙访问",
-              "description" : "Ledger Wallet 需要蓝牙权限来查找您的设备。在 Settings（设置）中将其启用。",
+              "title" : "在您手机的设置中启用蓝牙",
+              "description" : {
+                "platform" : {
+                  "ios" : "Ledger Wallet 需要蓝牙权限来查找您的设备。打开设置 → Ledger Wallet。开启蓝牙，然后点击下方的按钮。",
+                  "android" : "Ledger Wallet 需要蓝牙权限来查找您的 Ledger 设备。\n\n前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Bluetooth（蓝牙），然后返回。"
+                }
+              },
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5198,22 +5258,22 @@
                   },
                   "android" : {
                     "retry" : "我已启用，重新尝试",
-                    "ignore" : "继续使用 USB"
+                    "ignore" : "改用 USB 继续"
                   }
                 }
               }
             },
             "bluetoothDisabledPromptable" : {
-              "title" : "启用蓝牙",
-              "description" : "蓝牙已关闭。启用蓝牙以查找您的 Ledger 设备。",
+              "title" : "在您手机上启用蓝牙",
+              "description" : "启用以扫描附近的 Ledger 设备。",
               "cta" : {
                 "retry" : "启用蓝牙",
-                "ignore" : "继续使用 USB"
+                "ignore" : "改用 USB 继续"
               }
             },
             "bluetoothDisabledManualAction" : {
-              "title" : "启用蓝牙",
-              "description" : "蓝牙已关闭。在 Settings（设置） → Bluetooth（蓝牙）中将其开启，然后返回。",
+              "title" : "在您手机上启用蓝牙",
+              "description" : "请启用蓝牙，然后返回重试。打开 Settings（设置）→ Bluetooth（蓝牙）。将蓝牙切换至开启状态，然后选择下方的按钮。",
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5221,7 +5281,7 @@
                   },
                   "android" : {
                     "retry" : "我启用了蓝牙，重新尝试",
-                    "ignore" : "继续使用 USB"
+                    "ignore" : "改用 USB 继续"
                   }
                 }
               }
@@ -5246,47 +5306,47 @@
               }
             },
             "locationPermissionDeniedPromptable" : {
-              "title" : "允许访问位置",
-              "description" : "Android 需要定位权限来扫描蓝牙设备。",
+              "title" : "Android 需要启用定位来扫描蓝牙设备",
+              "description" : "Ledger 不会获取或存储您的位置信息。",
               "cta" : {
-                "retry" : "允许",
-                "ignore" : "继续使用 USB"
+                "retry" : "启用",
+                "ignore" : "改用 USB 继续"
               }
             },
             "locationPermissionDeniedManualSettings" : {
-              "title" : "允许访问位置",
-              "description" : "扫描蓝牙设备需要定位权限。前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Location（定位），然后返回。",
+              "title" : "在 Settings（设置）中启用定位",
+              "description" : "Android 需要此权限来扫描附近的蓝牙设备。前往 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Location（定位）。设置为 \"Allow\"（允许），然后选择下方的按钮。Ledger 不会获取或存储您的位置信息。",
               "cta" : {
                 "retry" : "我已启用，重新尝试",
-                "ignore" : "继续使用 USB"
+                "ignore" : "改用 USB 继续"
               }
             },
             "locationDisabledPromptable" : {
-              "title" : "开启定位",
-              "description" : "定位服务已关闭。将其开启以扫描蓝牙设备。",
+              "title" : "启用定位以扫描蓝牙设备",
+              "description" : "Android 需要此权限来扫描附近的蓝牙设备。Ledger 不会获取或存储您的位置信息。",
               "cta" : {
-                "retry" : "开启定位",
-                "ignore" : "继续使用 USB"
+                "retry" : "启用定位",
+                "ignore" : "改用 USB 继续"
               }
             },
             "locationDisabledManualAction" : {
-              "title" : "开启定位",
-              "description" : "定位服务已关闭。在 Settings（设置）→ Location（定位）中将其开启，然后返回。",
+              "title" : "扫描附近的蓝牙设备需要开启定位",
+              "description" : "打开 Settings（设置）→ Location（位置）。开启定位，然后返回此处并选择下方按钮。Ledger 绝不会访问或存储您的位置。",
               "cta" : {
-                "retry" : "我已启用位置，重新尝试",
-                "ignore" : "继续使用 USB"
+                "retry" : "我已启用，重新尝试",
+                "ignore" : "改用 USB 继续"
               }
             },
             "locationServicePermissionMissing" : {
-              "title" : "允许访问位置",
-              "description" : "定位权限似乎缺失。点按下方重试。",
+              "title" : "无法确认定位权限",
+              "description" : "Android 需要此权限来扫描附近的蓝牙设备。选择 “Try again” （重试），这通常可以解决该问题。如果仍未解决，请检查 Settings（设置）→ Apps（应用程序）→ Ledger Wallet → Permissions（权限）→ Location（定位）。Ledger 不会获取或存储您的位置信息。",
               "cta" : {
                 "retry" : "请重试",
-                "ignore" : "继续使用 USB"
+                "ignore" : "改用 USB 继续"
               }
             },
             "unknown" : {
-              "title" : "出错了",
+              "title" : "蓝牙扫描不成功",
               "description" : "无法启动蓝牙扫描。请重试或联系 Ledger 客服。",
               "cta" : {
                 "retry" : "请重试"
@@ -5299,7 +5359,7 @@
         },
         "noKnownDevice" : {
           "title" : "需要 Ledger 设备",
-          "description" : "要继续，请设置或连接您的签署设备。",
+          "description" : "要继续，请设置或连接您的 Ledger 设备。",
           "connectLedgerDevice" : "连接 Ledger 设备",
           "noLedgerDevice" : "我没有 Ledger 设备"
         },
@@ -9520,8 +9580,29 @@
     }
   },
   "lazyOnboardingBanner" : {
-    "title" : "探索 Ledger 设备",
-    "description" : "浏览我们最新的产品和配件"
+    "title" : "为何数百万用户选择 Ledger？",
+    "description" : "为了在每次交易时都安心无忧。"
+  },
+  "lazyOnboardingTour" : {
+    "buyCta" : "购买 Ledger 设备",
+    "slides" : {
+      "whoControls" : {
+        "title" : "您的加密货币安全吗？",
+        "subtitle" : "交易所持有您的资产。软件钱包让您的密钥处于联网状态。两者都会让您面临安全风险。"
+      },
+      "takeBackControl" : {
+        "title" : "收回控制权",
+        "subtitle" : "Ledger 设备可将您的加密货币访问权限保持在离线状态，远离黑客，并完全由您掌控。"
+      },
+      "nothingMoves" : {
+        "title" : "您亲自批准每一项操作",
+        "subtitle" : "每笔交易都会显示在防黑客的安全屏幕上，供您批准。"
+      },
+      "startToday" : {
+        "title" : "自主保管，由此开始",
+        "subtitle" : "借助 Ledger 设备的安全性与掌控力，管理您的加密货币。"
+      }
+    }
   },
   "marketBanner" : {
     "title" : "市场",
@@ -9601,13 +9682,16 @@
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
+    "selectAccountPerpsTitle" : "选择 Hyperliquid 账户",
+    "selectAccountPerpsDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectDepositCurrencyTitle" : "选择要存入的资产",
+    "selectDepositCurrencyDescription" : "任何支持的资产均可。必要时，该资产将自动互换。",
     "searchPlaceholder" : "按名称或地址搜索",
     "emptyAssetList" : "未找到资产",
     "accountCount_one" : "{{count}} 个账户",
     "accountCount_other" : "{{count}} 个账户",
     "emptyAccounts" : "您还没有 {{network}} 账户。请添加一个账户后继续",
     "addAccount" : "添加账户",
-    "perpetualsBanner" : "目前仅支持 Arbitrum 链上的 USDC。",
     "errors" : {
       "title" : "连接失败",
       "backend" : "我们这边出错了。请稍后重试",
@@ -9965,6 +10049,63 @@
     "card" : "卡",
     "paytab" : "付款"
   },
+  "payTab" : {
+    "featureTour" : {
+      "title" : "支付与收款",
+      "description" : "稳定币弥合了加密货币与现实生活支出之间的差距",
+      "cta" : "知道了",
+      "rows" : {
+        "global" : {
+          "title" : "全球支付与收款",
+          "description" : "享低网络费用"
+        },
+        "volatility" : {
+          "title" : "极低的波动性",
+          "description" : "稳定币基于法币"
+        },
+        "card" : {
+          "title" : "用卡消费即可获得 1% 返现",
+          "description" : "使用 USDC、USDT、BTC、ETH 及更多币种进行支付"
+        }
+      }
+    },
+    "balance" : {
+      "emptyTitle" : "支付与收款",
+      "emptyDescription" : "首先向您的钱包存入稳定币",
+      "filter" : {
+        "allStablecoins" : "所有稳定币",
+        "dialogTitle" : "筛选余额",
+        "dialogDescription" : "使用稳定币在全球范围内支付，费用低，波动性极小。",
+        "dialogBanner" : "在您的首页管理所有其他资产",
+        "confirm" : "确认"
+      }
+    },
+    "actions" : {
+      "deposit" : "添加稳定币",
+      "request" : "请求"
+    },
+    "deposit" : {
+      "title" : "添加稳定币",
+      "options" : {
+        "bankTransfer" : {
+          "title" : "银行转账",
+          "description" : "转账美元或欧元以接收稳定币。"
+        },
+        "swap" : {
+          "title" : "从加密货币互换",
+          "description" : "将您的加密货币互换为稳定币。"
+        },
+        "receive" : {
+          "title" : "加密货币地址",
+          "description" : "从另一个钱包接收稳定币。"
+        },
+        "buy" : {
+          "title" : "买入",
+          "description" : "使用信用卡买入稳定币。"
+        }
+      }
+    }
+  },
   "syncIndicator" : {
     "accessibilityLabel" : {
       "error" : "同步错误",
@@ -10032,7 +10173,8 @@
       },
       "recoveryKey" : {
         "title" : "Ledger Recovery Key 恢复钥匙",
-        "description" : "一张受 PIN 识别码保护的智能卡。"
+        "description" : "一张受 PIN 识别码保护的智能卡。",
+        "incompatible" : "与您的设备不兼容"
       },
       "secretRecoveryPhrase" : {
         "title" : "24 个助记词金属存储",
@@ -10221,6 +10363,14 @@
       "duplicateLabel" : "此地址名称已用于此联系人。",
       "labelTooLong" : "此地址名称过长。"
     },
+    "addAddressReview" : {
+      "title" : "核对地址",
+      "addressLabel" : "地址",
+      "currencyLabel" : "货币",
+      "networkLabel" : "网络",
+      "nameLabel" : "地址名称",
+      "continue" : "确认地址"
+    },
     "addressCount_zero" : "0 个地址",
     "addressCount_one" : "{{count}} 个地址",
     "addressCount_other" : "{{count}} 个地址",
@@ -10235,10 +10385,10 @@
       "ledgerWalletAddresses" : "Ledger Wallet 地址",
       "myAddresses" : "我的地址",
       "emptyState" : {
-        "title" : "暂无地址",
+        "contactTitle" : "{{name}} 还没有已保存的地址",
         "meTitle" : "保存您自己的地址",
         "meDescription" : "保存您在交易所或其他钱包中拥有的外部地址。下次您向自己发送时，您的 Ledger 设备将显示您选择的名称。",
-        "contactDescription" : "保存钱包地址以向 {{name}} 发送"
+        "contactDescription" : "保存对方的钱包地址，下次即可按名称向其发送"
       }
     },
     "addressDetail" : {
@@ -10306,7 +10456,6 @@
       "title" : "推出「联系人」功能",
       "description" : "您的加密货币地址簿——将常用的转账钱包地址集中保存在一处。",
       "primaryAction" : "试用联系人",
-      "secondaryAction" : "以后再说",
       "highlights" : {
         "saveAddresses" : {
           "title" : "地址只需保存一次",

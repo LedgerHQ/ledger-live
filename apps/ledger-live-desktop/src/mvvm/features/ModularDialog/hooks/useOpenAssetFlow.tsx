@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { GlobalModalData } from "~/renderer/modals/types";
+import { GlobalModalData, ModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
@@ -25,12 +26,14 @@ function selectCurrencyDialog(
   currencyIds?: string[],
   onClose?: () => void,
   dialogConfiguration?: EnhancedModularDrawerConfiguration,
+  categories?: readonly AssetCategory[],
 ): void {
   const filteredCurrencies = currencyIds ?? [];
 
   dispatch(
     openDialog({
       currencies: filteredCurrencies,
+      categories,
       areCurrenciesFiltered: filteredCurrencies.length > 0,
       onAssetSelected,
       dialogConfiguration: dialogConfiguration ?? {
@@ -42,10 +45,11 @@ function selectCurrencyDialog(
   );
 }
 
-export function useOpenAssetFlow(
+export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof GlobalModalData>(
   modularDrawerVisibleParams: ModularDrawerVisibleParams,
   source: string,
-  modalNameToReopen?: keyof GlobalModalData,
+  modalNameToReopen?: Name,
+  extraModalData?: Omit<NonNullable<GlobalModalData[Name]>, "account" | "parentAccount">,
 ) {
   const dispatch = useDispatch();
   const { trackModularDialogEvent } = useModularDialogAnalytics();
@@ -78,7 +82,15 @@ export function useOpenAssetFlow(
       const onFlowFinishedWithModalReopen = (account: AccountLike, parentAccount?: Account) => {
         setDrawer();
         if (modalNameToReopen) {
-          dispatch(openModal(modalNameToReopen, { account, parentAccount }));
+          // openModal's payload creator collapses ModalData[Name] to `never` for a generic
+          // Name, so we assert the merged payload back to the modal's data type.
+          dispatch(
+            openModal(modalNameToReopen, {
+              ...extraModalData,
+              account,
+              parentAccount,
+            } as ModalData[Name]),
+          );
         }
       };
 
@@ -91,11 +103,15 @@ export function useOpenAssetFlow(
         { closeButtonComponent: CloseButton, onRequestClose: onClose },
       );
     },
-    [dispatch, modalNameToReopen, source, trackModularDialogEvent],
+    [dispatch, extraModalData, modalNameToReopen, source, trackModularDialogEvent],
   );
 
   const openAssetFlow = useCallback(
-    (dialogConfiguration?: EnhancedModularDrawerConfiguration, currencyIds?: string[]) => {
+    (
+      dialogConfiguration?: EnhancedModularDrawerConfiguration,
+      currencyIds?: string[],
+      categories?: readonly AssetCategory[],
+    ) => {
       dispatch(setFlowValue(modularDrawerVisibleParams.location));
       dispatch(setSourceValue(source));
       selectCurrencyDialog(
@@ -104,6 +120,7 @@ export function useOpenAssetFlow(
         currencyIds,
         handleClose,
         dialogConfiguration,
+        categories,
       );
     },
     [dispatch, handleClose, modularDrawerVisibleParams, openAddAccountFlow, source],

@@ -22,10 +22,6 @@
     "dist",
     "coverage",
     "scripts",
-    "react",
-    "native",
-    "reactLegacy",
-    "nativeLegacy",
     "examples"
   ],
   "categories": {
@@ -69,7 +65,6 @@
     "import/no-named-as-default": "off",
 
     "react/display-name": "off",
-    "react/prop-types": "off",
     "react/jsx-key": "warn",
 
     "react-hooks/rules-of-hooks": "error",

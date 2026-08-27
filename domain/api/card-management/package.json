@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-card-management",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain API client for Card Management: RTK Query endpoints injected into the shared cardApi service",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

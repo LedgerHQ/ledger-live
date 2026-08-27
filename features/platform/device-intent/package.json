@@ -1,0 +1,51 @@
+{
+  "name": "@features/platform-device-intent",
+  "version": "5.1.0",
+  "private": true,
+  "description": "Cross-platform Device Intent Executor",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/DeviceIntentExecutor.tsx",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/device-intent"
+  },
+  "dependencies": {
+    "@ledgerhq/logs": "catalog:",
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "react": ">=19.0.0",
+    "rxjs": "catalog:",
+    "xstate": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/uuid": "^9.0.0",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:",
+    "xstate": "catalog:"
+  }
+}

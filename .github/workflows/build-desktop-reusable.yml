@@ -2,6 +2,17 @@ name: "[Desktop] - Build - Called"
 
 on:
   workflow_call:
+    inputs:
+      linux-only:
+        description: "Build Linux only, skipping the Windows and macOS matrix entries."
+        type: boolean
+        required: false
+        default: false
+      skip-artifact-upload:
+        description: "Skip uploading the built app and bundle metafiles. Set at the merge gate, where the Report job does not run and nothing consumes them."
+        type: boolean
+        required: false
+        default: false
     secrets:
       AWS_ACCOUNT_ID_PROD:
         required: true
@@ -48,12 +59,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config:
-          [
-            { name: "Linux", os: "ledger-live-linux-8CPU-32RAM", image: "linux-x86_64.AppImage", output-name: "linux" },
-            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
-            { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
-          ]
+        config: >-
+          ${{ fromJSON(inputs.linux-only
+          && '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"}]'
+          || '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 20
@@ -105,6 +114,7 @@ jobs:
         run: pnpm exec nx run ledger-live-desktop:build
 
       - name: Upload ${{ matrix.config.name }} app
+        if: ${{ !inputs.skip-artifact-upload }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
@@ -112,10 +122,25 @@ jobs:
 
       - name: Upload bundle metafiles
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && !inputs.skip-artifact-upload }}
         with:
           name: ${{ matrix.config.output-name }}-js-bundle-metafiles
           path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
+
+      - name: Validate electron-builder.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
+
+      - name: Validate electron-builder-nightly.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder-nightly.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
+
+      - name: Validate electron-builder-pre.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder-pre.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
 
       - name: Push status
         id: status

@@ -17,14 +17,18 @@ export const ContactAddressIdSchema = NonEmptyStringSchema;
 export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 const ContactNamePattern =
-  /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
+  /^\p{L}[\p{L}\p{Mn}\p{Mc}\p{Nd}]*(?:[\p{Zs}'\u2019-][\p{L}\p{Nd}][\p{L}\p{Mn}\p{Mc}\p{Nd}]*)*$/u;
 const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
 
+export const CONTACT_NAME_MAX_LENGTH = 32;
 export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;
 
 export const ContactNameSchema = z
   .string()
   .min(1, { error: () => new InvalidContactNameError().name })
+  .max(CONTACT_NAME_MAX_LENGTH, {
+    error: () => new InvalidContactNameError().name,
+  })
   .regex(ContactNamePattern, {
     error: () => new InvalidContactNameError().name,
   })

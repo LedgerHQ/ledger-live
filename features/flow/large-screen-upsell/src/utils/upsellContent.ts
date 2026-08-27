@@ -1,4 +1,4 @@
-import { LARGE_SCREEN_UPSELL_MODAL_UTM_CONTENT, buildLargeScreenUpsellCtaLink } from "./upsellCta";
+import { LARGE_SCREEN_UPSELL_UTM, buildLargeScreenUpsellCtaLink } from "./upsellCta";
 
 export type LargeScreenUpsellVariant = "opted_in" | "opted_out";
 
@@ -39,7 +39,7 @@ export function buildLargeScreenUpsellContent({
   const primaryButtonLink = buildLargeScreenUpsellCtaLink(
     variant === "opted_in" ? optedInLink : optedOutLink,
     medium,
-    LARGE_SCREEN_UPSELL_MODAL_UTM_CONTENT,
+    LARGE_SCREEN_UPSELL_UTM.content.app_start_modal,
   );
 
   const titleKey =

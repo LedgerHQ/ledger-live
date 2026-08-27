@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-aggregated-assets",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "App-facing assets-data runtime: hooks over the DADA API, cache selectors, asset discovery and currency selection",
   "main": "src/index.ts",
@@ -31,6 +31,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

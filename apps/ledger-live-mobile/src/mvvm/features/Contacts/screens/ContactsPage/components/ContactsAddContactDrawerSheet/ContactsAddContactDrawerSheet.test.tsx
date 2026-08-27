@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Platform } from "react-native";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsAddContactDrawerProps } from "@features/flow-contacts-add-contact";
+import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { ContactsAddContactDrawerSheet } from ".";
 
@@ -15,8 +15,8 @@ jest.mock("~/logic/keyboardVisible", () => ({
 }));
 
 function createViewModel(
-  overrides: Partial<ContactsAddContactDrawerProps> = {},
-): ContactsAddContactDrawerProps {
+  overrides: Partial<AddContactAppAdapterResult> = {},
+): AddContactAppAdapterResult {
   return {
     isOpen: true,
     isConfirmEnabled: false,
@@ -38,7 +38,8 @@ function createViewModel(
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftNameChange: jest.fn(),
-    onConfirm: jest.fn(),
+    onConfirm: jest.fn(async () => undefined),
+    reset: jest.fn(),
     ...overrides,
   };
 }
@@ -99,7 +100,7 @@ describe("ContactsAddContactDrawerSheet", () => {
   it("should render the shared validation error and disable confirmation", () => {
     render(
       <ContactsAddContactDrawerSheet
-        {...createViewModel({ draftName: "Ada1", invalidNameError: "InvalidContactNameError" })}
+        {...createViewModel({ draftName: "Ada@1", invalidNameError: "InvalidContactNameError" })}
       />,
     );
 

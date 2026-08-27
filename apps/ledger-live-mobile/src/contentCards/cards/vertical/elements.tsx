@@ -275,12 +275,7 @@ export const Button = ({
   const alignSelf = descriptionAlign === "center" ? "center" : "flex-start";
 
   return (
-    <SystemButton
-      {...ButtonStyles[size]}
-      type="main"
-      style={(ButtonStyles[size], { alignSelf })}
-      onPress={action}
-    >
+    <SystemButton {...ButtonStyles[size]} type="main" style={{ alignSelf }} onPress={action}>
       <Text color="neutral.c00" {...ButtonlabelStyles[size]}>
         {label}
       </Text>

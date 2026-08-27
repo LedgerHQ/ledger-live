@@ -57,6 +57,7 @@ jest.mock("LLM/features/Send/hooks/useNewSendFlowFeature", () => ({
 }));
 
 const ethereum = getCryptoCurrencyById("ethereum");
+const hypercore = getCryptoCurrencyById("hypercore");
 const polygon = getCryptoCurrencyById("polygon");
 const usdc = { parentCurrencyId: ethereum.id } as unknown as TokenCurrency;
 const usdtEth = {
@@ -164,6 +165,29 @@ describe("SelectAccount — notEmptyAccounts filter via bridge", () => {
 
     expect(screen.queryByTestId(`account-${FUNDED_ETH.id}`)).not.toBeNull();
     expect(screen.queryByTestId(`account-${FUNDED_TOKEN.id}`)).not.toBeNull();
+  });
+});
+
+describe("SelectAccount — families without transfer support", () => {
+  it("hides an account whose family cannot send, in the send flow (hypercore)", () => {
+    const HYPERCORE = genAccount("sa-hypercore", {
+      currency: hypercore,
+      operationsSize: 5,
+      subAccountsCount: 0,
+    });
+
+    render(
+      <SelectAccount
+        // oxlint-disable-next-line typescript/no-explicit-any
+        navigation={makeNavigation() as any}
+        // oxlint-disable-next-line typescript/no-explicit-any
+        route={makeRoute({ next: ScreenName.SendSelectRecipient }) as any}
+      />,
+      { overrideInitialState: withAccounts([FUNDED_ETH, HYPERCORE]) },
+    );
+
+    expect(screen.queryByTestId(`account-${HYPERCORE.id}`)).toBeNull();
+    expect(screen.queryByTestId(`account-${FUNDED_ETH.id}`)).not.toBeNull();
   });
 });
 

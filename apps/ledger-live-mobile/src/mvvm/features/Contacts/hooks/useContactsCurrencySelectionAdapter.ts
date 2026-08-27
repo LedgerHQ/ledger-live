@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { AddAddressCurrencySelection } from "@features/flow-contacts";
+import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-address";
 import { ScreenName } from "~/const";
 import {
   type ModularDrawerFlowProps,
@@ -9,6 +9,11 @@ import {
 } from "LLM/features/ModularDrawer";
 
 const FLOW = "contacts_add_address";
+
+const CONTACTS_CURRENCY_SELECTION_CONFIGURATION = {
+  assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+  networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+} as const;
 
 type UseContactsCurrencySelectionAdapterOptions = Readonly<{
   isOpen: boolean;
@@ -43,12 +48,10 @@ export function useContactsCurrencySelectionAdapter({
   const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
     areCurrenciesFiltered,
-    assetsConfiguration,
     closeDrawer,
     handleAccountSelected,
     handleCurrencySelected,
     isOpen: isModularDrawerOpen,
-    networksConfiguration,
     openDrawer,
     preselectedCurrencies,
     uiUseCase,
@@ -91,13 +94,13 @@ export function useContactsCurrencySelectionAdapter({
 
     selectionStartedRef.current = true;
     openDrawer({
-      currencies: [...networkIds],
-      areCurrenciesFiltered: true,
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       completionMode: "currency",
       enableAccountSelection: false,
       flow: FLOW,
       presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
+      selectableNetworkIds: [...networkIds],
       onCurrencySelected: completeSelection,
     });
   }, [completeSelection, isOpen, networkIds, openDrawer]);
@@ -105,24 +108,23 @@ export function useContactsCurrencySelectionAdapter({
   const flowProps = useMemo<Omit<ModularDrawerFlowProps, "children">>(
     () => ({
       areCurrenciesFiltered,
-      assetsConfiguration,
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       currencies: preselectedCurrencies,
       isOpen: isModularDrawerOpen,
-      networksConfiguration,
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
       uiUseCase,
       useCase,
+      selectableNetworkIds: networkIds,
     }),
     [
       areCurrenciesFiltered,
-      assetsConfiguration,
       closeDrawer,
       handleAccountSelected,
       handleCurrencySelected,
       isModularDrawerOpen,
-      networksConfiguration,
+      networkIds,
       preselectedCurrencies,
       uiUseCase,
       useCase,

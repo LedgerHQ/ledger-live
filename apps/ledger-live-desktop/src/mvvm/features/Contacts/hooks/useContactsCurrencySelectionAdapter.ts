@@ -3,12 +3,18 @@ import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type {
   AddAddressCurrencySelection,
   ContactsCurrencySelectionPort,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-address";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   type OpenCurrencyFlow,
   useOpenCurrencyFlow,
 } from "../../ModularDialog/hooks/useOpenCurrencyFlow";
+
+const CONTACTS_CURRENCY_SELECTION_CONFIGURATION: EnhancedModularDrawerConfiguration = {
+  assets: { leftElement: "undefined", rightElement: "undefined" },
+  networks: { leftElement: "undefined", rightElement: "undefined" },
+};
 
 function resolveContactCurrencySelection(
   currency: CryptoOrTokenCurrency | null,
@@ -28,7 +34,10 @@ function createCurrencySelectionPort(
   return {
     selectCurrency: async networkIds =>
       resolveContactCurrencySelection(
-        await openCurrencyFlow(networkIds, { presentation: "embedded" }),
+        await openCurrencyFlow(networkIds, {
+          dialogConfiguration: CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
+          presentation: "embedded",
+        }),
       ),
   };
 }

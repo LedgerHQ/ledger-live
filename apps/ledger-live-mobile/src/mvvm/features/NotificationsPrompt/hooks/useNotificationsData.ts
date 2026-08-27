@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
+import {
+  notificationsSelector,
+  trackingEnabledSelector,
+  INITIAL_STATE as settingsInitialState,
+} from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import { setNotificationsDataOfUser } from "~/actions/notifications";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
@@ -12,6 +16,7 @@ import { buildOptOutUserData } from "../utils/buildOptOutUserData";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { updateIdentify } from "~/analytics";
 import { updateUserPreferences } from "~/notifications/braze";
+import { useFeature } from "@features/platform-feature-flags";
 
 const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
   "areNotificationsAllowed",
@@ -24,6 +29,8 @@ const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
 
 export const useNotificationsData = () => {
   const notifications = useSelector(notificationsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
   const dispatch = useDispatch();
 
@@ -56,8 +63,10 @@ export const useNotificationsData = () => {
     };
 
     dispatch(setNotifications(updatedNotifications));
-    updateUserPreferences(updatedNotifications);
-  }, [dispatch, notifications]);
+    updateUserPreferences(updatedNotifications, isTrackedUser, {
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+    });
+  }, [brazeOptOutIdentityCleanup?.enabled, dispatch, isTrackedUser, notifications]);
 
   const markUserAsOptOut = useCallback(
     (promptTarget?: NotificationPromptTarget) => {
@@ -115,18 +124,6 @@ export const useNotificationsData = () => {
         return;
       }
       const isAuthorized = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
-      // Handle legacy users who opted out before the new drawer system
-      const hasLegacyOptOutData =
-        storedUserData?.alreadyDelayedToLater || storedUserData?.dateOfNextAllowedRequest;
-      if (hasLegacyOptOutData) {
-        if (isAuthorized && notifications.areNotificationsAllowed) {
-          // User is already opted in; prevent re-prompting the opt-in drawer
-          return markUserAsOptIn();
-        }
-        // User is opted out; mark them for reprompting after the configured delay
-        return markUserAsOptOut();
-      }
-
       const hasOptedOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
       if (hasOptedOut) {
         // User previously opted out → check if they've fully re-enabled notifications

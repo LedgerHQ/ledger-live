@@ -1,6 +1,6 @@
 import React from "react";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
-import { AddressQrCode } from "@shared/qr-code";
+import { QrCode } from "@shared/ui-qr-code";
 import type { ContactAddressIconProps } from "../../model/resolveContactAddressIcon";
 
 const QR_ICON_SIZE = 48;
@@ -15,7 +15,7 @@ export function ContactAddressDetailQrCode({
   iconProps,
 }: ContactAddressDetailQrCodeProps): React.JSX.Element {
   return (
-    <AddressQrCode
+    <QrCode
       value={address}
       testID="contacts-address-detail-qr-code"
       centerContent={

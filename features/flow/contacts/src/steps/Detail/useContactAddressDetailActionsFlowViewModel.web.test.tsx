@@ -24,7 +24,7 @@ function createPorts(
 ): ContactAddressDetailActionsPorts {
   return {
     edit: {
-      renameAddressLabel: jest.fn().mockResolvedValue(mockContactAddress()),
+      updateAddress: jest.fn().mockResolvedValue(mockContactAddress()),
     },
     deletion: {
       deleteAddress: jest.fn().mockResolvedValue(undefined),
@@ -46,7 +46,7 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
 }
 
 describe("useContactAddressDetailActionsFlowViewModel", () => {
-  it("should open the signer dialog before editing an address", () => {
+  it("should open the edit dialog before asking for the signer", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -62,32 +62,42 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
+  it("should ask for the signer when the save is confirmed", async () => {
+    const contact = mockContactWithAddress();
+    const address = contact.addresses[0]!;
+    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactAddressDetailActionsFlowViewModel({
+          contactId: contact.id,
+          addressId: address.id,
+          ports: createPorts(),
+        }),
+      { wrapper: Wrapper },
+    );
+    const onApproval = jest.fn();
+    let approval!: Promise<boolean>;
+
+    act(() => {
+      result.current.onEditPress();
+      approval = result.current.requestSaveApproval();
+      void approval.then(onApproval);
     });
 
     expect(result.current.editUiState).toBe("signer-open");
-  });
+    expect(onApproval).not.toHaveBeenCalled();
 
-  it("should open edit state after signer confirmation", async () => {
-    const contact = mockContactWithAddress();
-    const address = contact.addresses[0]!;
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () =>
-        useContactAddressDetailActionsFlowViewModel({
-          contactId: contact.id,
-          addressId: address.id,
-          ports: createPorts(),
-        }),
-      { wrapper: Wrapper },
-    );
-
-    act(() => {
-      result.current.onEditPress();
-    });
     await act(async () => {
       await result.current.onSignerConfirm();
+      await approval;
     });
 
+    expect(onApproval).toHaveBeenCalledWith(true);
     expect(result.current.editUiState).toBe("edit-open");
   });
 
@@ -107,6 +117,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
     await act(async () => {
       await result.current.onSignerConfirm();
@@ -140,6 +151,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
 
     expect(result.current.editUiState).toBe("signer-open");
@@ -170,6 +182,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
     await act(async () => {
       await result.current.onSignerConfirm();
@@ -313,6 +326,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
 
     expect(result.current.editUiState).toBe("signer-open");

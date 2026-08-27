@@ -1,22 +1,21 @@
 import type { DialogBackgroundTone } from "LLD/contexts/DialogBackgroundContext";
 import type { InfoStateProps } from "../types";
 
-export function getInfoStateDialogTone(
-  preset: InfoStateProps["preset"],
-): DialogBackgroundTone | undefined {
-  switch (preset) {
+export function getInfoStateDialogTone(props: InfoStateProps): DialogBackgroundTone | undefined {
+  switch (props.preset) {
     case "error":
       return "error";
     case "info":
       return "info";
     case "success":
       return "success";
-    case "illustration":
     case "spot":
+      return props.backgroundTone;
+    case "illustration":
     case "text":
       return undefined;
     default:
-      return assertNever(preset);
+      return assertNever(props);
   }
 }
 

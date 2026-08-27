@@ -14,7 +14,7 @@ export class SettingsPage extends AppPage {
 
   private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
   private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
-  private readonly turnOnLedgerSyncButton = this.page.getByTestId("button-turn-on-ledger-sync");
+  private readonly walletSyncRow = this.page.getByTestId("setting-walletSync");
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -117,6 +117,11 @@ export class SettingsPage extends AppPage {
     await this.hideEmptyTokenAccountsToggle.click();
   }
 
+  @step("Click 'Sync' to open Ledger Sync activation drawer")
+  async clickSyncLedgerSync() {
+    await this.syncWalletSyncButton.click();
+  }
+
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
     await this.manageWalletSyncButton.click();
@@ -127,15 +132,9 @@ export class SettingsPage extends AppPage {
     await expect(this.manageWalletSyncButton.or(this.syncWalletSyncButton)).toBeVisible();
   }
 
-  @step("Enable Wallet Sync")
-  async enableWalletSync() {
-    if (await this.turnOnLedgerSyncButton.isVisible()) {
-      await this.turnOnLedgerSyncButton.click();
-    } else if (await this.syncWalletSyncButton.isVisible()) {
-      await this.syncWalletSyncButton.click();
-    } else {
-      await this.manageWalletSyncButton.click();
-    }
+  @step("Expect Ledger Sync settings row to be visible")
+  async expectLedgerSyncSettingsRow() {
+    await expect(this.walletSyncRow).toBeVisible();
   }
 
   @step("Clear cache")

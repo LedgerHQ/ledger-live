@@ -27,11 +27,13 @@ export type UseContactAddressDetailActionsFlowViewModelResult = Readonly<{
   canEdit: boolean;
   canDelete: boolean;
   editUiState: ReturnType<typeof useContactEditSignerUiState>["editUiState"];
+  isEditSessionActive: boolean;
   isDeleting: boolean;
   deleteLifecycle: ReturnType<typeof useContactAddressDetailActionsViewModel>["deleteLifecycle"];
   onSendPress: () => void;
   onEditPress: () => void;
   onDeletePress: () => void;
+  requestSaveApproval: () => Promise<boolean>;
   onSignerConfirm: () => Promise<void>;
   onSignerCancel: () => void;
   onSignerMismatchCancel: () => void;
@@ -61,7 +63,9 @@ export function useContactAddressDetailActionsFlowViewModel({
   } = useContactAddressDetailActionsViewModel(contactId, resolvedAddressId, ports);
   const {
     editUiState,
-    openSignerDialog,
+    isEditSessionActive,
+    requestSignerApproval,
+    grantSignerApproval,
     openSignerMismatchDialog,
     openEditDialog,
     onSignerCancel: closeSignerOnCancel,
@@ -89,13 +93,13 @@ export function useContactAddressDetailActionsFlowViewModel({
       return;
     }
 
-    if (isSignerRequiredForEdit) {
-      openSignerDialog();
-      return;
-    }
-
     openEditDialog();
-  }, [editIntent, isSignerRequiredForEdit, openEditDialog, openSignerDialog]);
+  }, [editIntent, openEditDialog]);
+
+  const requestSaveApproval = useCallback(
+    () => (isSignerRequiredForEdit ? requestSignerApproval() : Promise.resolve(true)),
+    [isSignerRequiredForEdit, requestSignerApproval],
+  );
 
   const onSignerConfirm = useCallback(async () => {
     if (editIntent === undefined) {
@@ -116,8 +120,8 @@ export function useContactAddressDetailActionsFlowViewModel({
       return;
     }
 
-    openEditDialog();
-  }, [editIntent, openEditDialog, openSignerMismatchDialog, ports.signerValidation]);
+    grantSignerApproval();
+  }, [editIntent, grantSignerApproval, openSignerMismatchDialog, ports.signerValidation]);
 
   const onSignerCancel = useCallback(() => {
     closeSignerOnCancel();
@@ -171,11 +175,13 @@ export function useContactAddressDetailActionsFlowViewModel({
     canEdit,
     canDelete,
     editUiState,
+    isEditSessionActive,
     isDeleting,
     deleteLifecycle,
     onSendPress,
     onEditPress,
     onDeletePress,
+    requestSaveApproval,
     onSignerConfirm,
     onSignerCancel,
     onSignerMismatchCancel,

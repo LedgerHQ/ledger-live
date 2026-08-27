@@ -400,12 +400,10 @@ async function postToUtility(msg: UtilityInboundMessage): Promise<void> {
 function registerHandlers(): void {
   const { ipcMain } = getElectron();
 
-  ipcMain.handle<GetChainTipArgs, number>(
-    ZCASH_IPC.getChainTip,
-    (_event, args): Promise<number> =>
-      state.resolvers.chainTip.register(args.requestId, () =>
-        postToUtility({ type: "get-chain-tip", args }),
-      ),
+  ipcMain.handle<GetChainTipArgs, number>(ZCASH_IPC.getChainTip, (_event, args): Promise<number> =>
+    state.resolvers.chainTip.register(args.requestId, () =>
+      postToUtility({ type: "get-chain-tip", args }),
+    ),
   );
 
   ipcMain.handle<FindBlockHeightArgs, number>(

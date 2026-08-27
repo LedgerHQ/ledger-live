@@ -34,6 +34,15 @@ export type LiveDataCommandOptions = {
   readonly currency?: string;
 };
 
+/**
+ * Tag a CLI command with a stable, human-readable name so Allure attachment titles read
+ * `CLI liveDataCommand — result` instead of `CLI cmd` / `CLI anonymous` (QAA-1433).
+ */
+function named<T extends (...args: never[]) => unknown>(name: string, cmd: T): T {
+  Object.defineProperty(cmd, "name", { value: name, configurable: true });
+  return cmd;
+}
+
 export const getAccountAddress = async (account: Account | TokenAccount): Promise<string> => {
   if (account.currency.id === Currency.HBAR.id) {
     invariant(account.address, "hedera: account address must be pre-set");
@@ -85,7 +94,7 @@ export const liveDataCommand = (
     });
   };
   cmd.canUseGeneratedUserdata = () => hasGeneratedUserdata(account);
-  return cmd;
+  return named("liveDataCommand", cmd);
 };
 
 /**
@@ -131,8 +140,8 @@ function emptyFamilyExtras(family: string): Record<string, unknown> {
  *
  * The stub is idempotent (no-op if an account with the same id already exists).
  */
-export const addEmptyAccountCommand =
-  (account: Account, options?: LiveDataCommandOptions) => async (userdataPath?: string) => {
+export const addEmptyAccountCommand = (account: Account, options?: LiveDataCommandOptions) =>
+  named("addEmptyAccountCommand", async (userdataPath?: string) => {
     if (!userdataPath) {
       throw new Error("addEmptyAccountCommand requires a userdataPath");
     }
@@ -206,7 +215,7 @@ export const addEmptyAccountCommand =
       raw.data.accounts.push({ data: stub, version: 1 });
       fs.writeFileSync(userdataPath, JSON.stringify(raw), "utf-8");
     }
-  };
+  });
 
 export const liveDataWithAddressCommand = (
   account: Account | TokenAccount,
@@ -226,7 +235,7 @@ export const liveDataWithAddressCommand = (
   };
   cmd.canUseGeneratedUserdata = () =>
     hasGeneratedUserdata(account) && !isUtxoBasedCurrency(account.currency.id);
-  return cmd;
+  return named("liveDataWithAddressCommand", cmd);
 };
 
 export const liveDataWithParentAddressCommand = (
@@ -257,14 +266,14 @@ export const liveDataWithParentAddressCommand = (
     !!accountToAssign.parentAccount &&
     hasGeneratedUserdata(accountToAssign.parentAccount) &&
     !isUtxoBasedCurrency(accountToAssign.parentAccount.currency.id);
-  return cmd;
+  return named("liveDataWithParentAddressCommand", cmd);
 };
 
 export const liveDataWithRecipientAddressCommand = (
   tx: Transaction,
   options?: LiveDataCommandOptions,
 ) => {
-  return async (userdataPath?: string) => {
+  return named("liveDataWithRecipientAddressCommand", async (userdataPath?: string) => {
     if (!applyGeneratedUserdata(tx.accountToDebit, userdataPath)) {
       await runCliLiveData({
         currency: tx.accountToDebit.currency.speculosApp.name,
@@ -283,7 +292,7 @@ export const liveDataWithRecipientAddressCommand = (
     tx.recipientAddress = address;
 
     return address;
-  };
+  });
 };
 
 export function parseTokenAllowanceCliOutput(output: string): {

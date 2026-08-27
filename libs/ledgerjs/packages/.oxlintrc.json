@@ -26,9 +26,7 @@
     "eslint/no-empty-pattern": "warn",
     "eslint/no-constant-binary-expression": "warn",
     "eslint/no-unused-expressions": "warn",
-    "eslint/arrow-parens": "off",
     "eslint/no-console": "off",
-    "eslint/linebreak-style": ["error", "unix"],
     "eslint/no-restricted-imports": [
       "error",
       {
@@ -43,6 +41,10 @@
     "unicorn/no-array-sort": "off",
     "unicorn/no-array-reverse": "off",
     "oxc/only-used-in-recursion": "off",
+    "oxc/bad-match-all-arg": "warn",
+    "eslint/no-loss-of-precision": "warn",
+    "jest/valid-expect": "warn",
+    "unicorn/no-empty-file": "warn",
     "typescript/no-explicit-any": "warn",
     "typescript/no-namespace": [
       "error",

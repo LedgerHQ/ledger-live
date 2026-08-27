@@ -30,6 +30,7 @@ jest.mock("@features/flow-pay-card-auth", () => {
   const { View } = require("react-native");
   return {
     CardLogin: () => ReactModule.createElement(View, { testID: "card-login" }),
+    CardLogout: () => ReactModule.createElement(View, { testID: "card-logout" }),
   };
 });
 
@@ -37,9 +38,12 @@ jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
   usePayStablecoins: () => mockUsePayStablecoins(),
 }));
 
+// PayTabScreen sits inside the Pay tab navigator in the app; these tests render it on its own, so
+// the route that carries the OAuth redirect has to come from here.
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+  useRoute: () => ({ params: undefined }),
 }));
 
 jest.mock("LLM/features/Receive", () => ({
@@ -283,6 +287,24 @@ describe("PayTab integration", () => {
         screen: ScreenName.ReceiveProvider,
         params: { manifestId: "noah", fromMenu: true },
       });
+    });
+  });
+
+  describe("request", () => {
+    beforeEach(() => {
+      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
+    });
+
+    it("opens the modular asset drawer for the request flow when the request tile is pressed", async () => {
+      const { user, store } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+
+      await user.press(await screen.findByTestId("action-tile-request"));
+
+      await waitFor(() => {
+        expect(store.getState().modularDrawer.isOpen).toBe(true);
+      });
+      expect(store.getState().modularDrawer.flow).toBe("request");
+      expect(store.getState().modularDrawer.source).toBe("Pay");
     });
   });
 });

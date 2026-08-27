@@ -1,6 +1,7 @@
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 
 export enum ModularDrawerStep {
   Asset = "Asset",
@@ -20,10 +21,12 @@ export type DrawerExtras = {
 
 export type DrawerBaseParams = {
   currencies?: string[];
+  categories?: AssetCategory[];
   enableAccountSelection?: boolean;
   flow?: string;
   source?: string;
   areCurrenciesFiltered?: boolean;
+  selectableNetworkIds?: string[];
   useCase?: string;
   uiUseCase?: string;
 };
@@ -43,8 +46,9 @@ type CurrencyDrawerCompletion = {
 };
 
 export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
-  (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) &
-  TExtras;
+  (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) & {
+    onCancel?: () => void;
+  } & TExtras;
 
 type AccountOrDeviceDrawerRemoteCompletion = {
   callbackId?: string;
@@ -59,8 +63,9 @@ type CurrencyDrawerRemoteCompletion = {
 };
 
 export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
-  (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) &
-  TExtras;
+  (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) & {
+    cancelCallbackId?: string;
+  } & TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (
   params?: DrawerParams<TExtras>,

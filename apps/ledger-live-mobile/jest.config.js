@@ -70,6 +70,7 @@ module.exports = {
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
+    "@ledgerhq/test-quarantine/jest-retries",
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
@@ -132,6 +133,7 @@ module.exports = {
     // string reporter's annotations would otherwise be dropped on the floor.
     ...(process.env.CI ? [["<rootDir>/scripts/jestGithubActionsReporter.js", {}]] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
@@ -142,6 +144,8 @@ module.exports = {
     "^@features/flow-contacts$": "<rootDir>/../../features/flow/contacts/src/jest.native.ts",
     "^@features/flow-contacts-introduction$":
       "<rootDir>/../../features/flow/flow-contacts-introduction/src/index.native.ts",
+    "^@features/flow-contacts-add-address$":
+      "<rootDir>/../../features/flow/flow-contacts-add-address/src/index.native.ts",
     // Map Lumen RN source entry points to a single module graph. The root
     // mapping alone is not enough: subpath imports (/symbols, /styles) must
     // target the same source tree or Jest loads duplicate @ledgerhq/lumen-ui-rnative
@@ -149,7 +153,7 @@ module.exports = {
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
     "^@ledgerhq/lumen-ui-rnative/symbols$":
-      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/lib/Symbols/index.ts",
+      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/lib/Components/symbols/index.ts",
     "^@ledgerhq/lumen-ui-rnative/styles$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/styles/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",

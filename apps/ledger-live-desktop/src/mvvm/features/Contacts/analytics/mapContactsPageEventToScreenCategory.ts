@@ -6,6 +6,7 @@ const CONTACTS_PAGE_EVENT_TO_SCREEN_CATEGORY = {
   [CONTACTS_PAGE_EVENTS.ADD_CONTACT]: { category: "Add Contact" },
   [CONTACTS_PAGE_EVENTS.CONTACT_DETAIL]: { category: "Contact detail" },
   [CONTACTS_PAGE_EVENTS.ADDRESS_DETAIL]: { category: "Contacts Address detail" },
+  [CONTACTS_PAGE_EVENTS.EDIT_ADDRESS]: { category: "Edit address" },
 } as const satisfies Record<ContactsPageEventName, Readonly<{ category: string; name?: string }>>;
 
 export function mapContactsPageEventToScreenCategory(page: ContactsPageEventName): Readonly<{

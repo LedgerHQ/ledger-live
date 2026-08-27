@@ -1,24 +1,20 @@
 import { z } from "zod";
 
-export const PayCardAuthorizeInitiateResponseSchema = z.object({
-  token: z.string().min(1),
-  url: z.string().url(),
-});
-
-/** Both grants — `authorization_code` and `refresh_token` — answer with this shape. */
+/**
+ * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
+ * carries no lifetime for the refresh token itself, only for the access token.
+ */
 export const PayCardSessionResponseSchema = z.object({
   access_token: z.string().min(1),
   expires_in: z.number().int().positive(),
   refresh_token: z.string().min(1),
-  refresh_token_expires_in: z.number().int().positive(),
 });
 
-/** Lifetimes stay the durations the backend sent: turning them into instants needs a clock. */
+/** The lifetime stays the duration the backend sent: turning it into an instant needs a clock. */
 export const PayCardSessionSchema = z.object({
   accessToken: z.string().min(1),
   expiresIn: z.number().int().positive(),
   refreshToken: z.string().min(1),
-  refreshTokenExpiresIn: z.number().int().positive(),
 });
 
 export const PayCardLogoutResponseSchema = z.object({
@@ -32,4 +28,12 @@ export const PayCardLogoutResponseSchema = z.object({
 export const PayCardUserResponseSchema = z.object({
   id: z.string().uuid(),
   verificationState: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"]),
+});
+
+/**
+ * `POST /v1/card/order` answers with nothing but this flag. The card itself only becomes observable
+ * through the card status endpoint.
+ */
+export const PayCardOrderResponseSchema = z.object({
+  success: z.boolean(),
 });

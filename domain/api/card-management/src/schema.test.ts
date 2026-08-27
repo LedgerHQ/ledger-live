@@ -1,30 +1,9 @@
 import {
-  PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
+  PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-
-describe("PayCardAuthorizeInitiateResponseSchema", () => {
-  it("accepts a hosted login URL and its token", () => {
-    expect(
-      PayCardAuthorizeInitiateResponseSchema.parse({
-        token: "jwt",
-        url: "https://card.test/login",
-      }),
-    ).toEqual({ token: "jwt", url: "https://card.test/login" });
-  });
-
-  it("rejects a malformed login URL", () => {
-    expect(() =>
-      PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt", url: "not-a-url" }),
-    ).toThrow();
-  });
-
-  it("rejects a payload missing the login URL", () => {
-    expect(() => PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt" })).toThrow();
-  });
-});
 
 describe("PayCardSessionResponseSchema", () => {
   it("accepts a token payload", () => {
@@ -32,7 +11,6 @@ describe("PayCardSessionResponseSchema", () => {
       access_token: "at_token",
       expires_in: 21600,
       refresh_token: "rt_token",
-      refresh_token_expires_in: 15897600,
     };
 
     expect(PayCardSessionResponseSchema.parse(response)).toEqual(response);
@@ -44,7 +22,6 @@ describe("PayCardSessionResponseSchema", () => {
         access_token: "at_token",
         expires_in: 0,
         refresh_token: "rt_token",
-        refresh_token_expires_in: 15897600,
       }),
     ).toThrow();
   });
@@ -79,5 +56,21 @@ describe("PayCardUserResponseSchema", () => {
         verificationState: "SOMETHING_ELSE",
       }),
     ).toThrow();
+  });
+});
+
+describe("PayCardOrderResponseSchema", () => {
+  it("keeps the success flag and drops everything else the order answers with", () => {
+    expect(
+      PayCardOrderResponseSchema.parse({
+        success: true,
+        cardId: "card-1",
+        pan: "pan-must-not-reach-the-cache",
+      }),
+    ).toEqual({ success: true });
+  });
+
+  it("rejects a success flag that is not a boolean", () => {
+    expect(() => PayCardOrderResponseSchema.parse({ success: "yes" })).toThrow();
   });
 });

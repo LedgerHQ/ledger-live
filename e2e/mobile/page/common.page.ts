@@ -19,6 +19,7 @@ export default class CommonPage {
   deviceItemRegex = /device-item-.*/;
   walletApiWebview = "wallet-api-webview";
   closeWithConfirmationButtonId = "button-close-add-account";
+  closeButtonId = "NavigationHeaderCloseButton";
   errorPage = new ErrorPage();
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
@@ -26,7 +27,7 @@ export default class CommonPage {
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
-  closeButton = () => getElementById("NavigationHeaderCloseButton");
+  closeButton = () => getElementById(this.closeButtonId);
   backButton = () => getElementById("navigation-header-back-button");
   seeAllOperationsButtonElement = () => getElementById(this.seeAllTransactionButton);
   assetScreenFlatlistElement = () => getElementById(this.assetScreenFlatlistId);
@@ -37,7 +38,7 @@ export default class CommonPage {
   accountId = (account: Account) =>
     `test-id-account-${getParentAccountName(account)}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
 
-  @Step("Perform search")
+  @Step("Perform search {{{0}}}")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text);
@@ -48,20 +49,23 @@ export default class CommonPage {
     await detoxExpect(this.searchBar()).toBeVisible();
   }
 
-  @Step("Select currency to debit")
+  @Step("Select currency to debit {{{0.accountName}}}")
   async selectAccount(account: Account) {
     const accountId = this.accountId(account);
     await waitForElementById(accountId);
     await tapByIdAndExpectToDisappear(accountId);
   }
 
-  @Step("Expect search")
+  @Step("Expect search {{{0}}}")
   async expectSearch(text: string) {
     await detoxExpect(this.searchBar()).toHaveText(text);
   }
 
   @Step("Close page")
-  async closePage() {
+  async closePage(options?: { onlyIfVisible: boolean }) {
+    if (options?.onlyIfVisible && !(await IsIdVisible(this.closeButtonId))) {
+      return;
+    }
     await tapByElement(this.closeButton());
   }
 
@@ -82,7 +86,7 @@ export default class CommonPage {
     await tapById(this.accountCardRegExp());
   }
 
-  @Step("Go to the account")
+  @Step("Go to the account {{{0}}}")
   async goToAccount(accountId: string, currencyId: string) {
     if (await isAggregatedAssetsEnabled()) {
       if (await IsIdVisible(this.accountGraphId(accountId))) {
@@ -106,12 +110,12 @@ export default class CommonPage {
     await tapById(this.closeWithConfirmationButtonId);
   }
 
-  @Step("Check number of account rows")
+  @Step("Check number of account rows {{{0}}}")
   async checkAccountRowNumber(nbr: number) {
     jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }
 
-  @Step("Get the account name at index")
+  @Step("Get the account name at index {{{0}}}")
   async getAccountName(index = 0) {
     if (await isAggregatedAssetsEnabled()) {
       if (await IsIdVisible("CryptoAddressesList")) {
@@ -126,12 +130,12 @@ export default class CommonPage {
     }
   }
 
-  @Step("Expect the account name at index")
+  @Step("Expect the account name {{{0}}}")
   async expectAccountName(accountName: string, index = 0) {
     jestExpect(await this.getAccountName(index)).toBe(accountName);
   }
 
-  @Step("Go to the account with the name")
+  @Step("Go to the account with the name {{{0}}}")
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
     const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)

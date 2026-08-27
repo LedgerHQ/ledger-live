@@ -1,11 +1,7 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import {
-  exportWalletState,
-  walletStateExportShouldDiffer,
-  walletSelector,
-} from "~/reducers/wallet";
+import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -142,10 +138,6 @@ function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () =>
   }, [flush]);
 }
 
-function walletExportSelector(state: State) {
-  return exportWalletState(walletSelector(state));
-}
-
 const getSettingsChanged = (a: State, b: State) => a.settings !== b.settings;
 const getAccountsChanged = (
   oldState: State,
@@ -176,6 +168,11 @@ const accountsDbSaveSliceSelector = createSelector(
   (state: State) => state.wallet,
   (accounts, wallet) => ({ accounts, wallet }),
 );
+const walletDbSaveSliceSelector = createSelector(
+  (state: State) => state.wallet,
+  (state: State) => state.contacts,
+  (wallet, contacts) => ({ wallet, contacts }),
+);
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
 const knownDevicesNotEquals = (a: State, b: State) => a.knownDevices !== b.knownDevices;
 
@@ -201,8 +198,6 @@ const payCardDbSaveSliceSelector = createSelector(
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
-const compareWalletState = (a: State, b: State) =>
-  walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
 const cryptoAssetsNotEquals = (a: State, b: State) =>
@@ -322,14 +317,15 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: trustchainNotEquals,
     lense: trustchainStoreSelector,
+    saveAtStart: true,
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.wallet,
+    stateSelector: walletDbSaveSliceSelector,
     save: saveWalletExportState,
     throttle: 500,
-    getChangesStats: compareWalletState,
-    lense: walletExportSelector,
+    getChangesStats: walletStateExportShouldDiffer,
+    lense: exportWalletState,
   });
 
   useDBSaveEffect({

@@ -63,7 +63,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+        run: pnpm i --frozen-lockfile -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs

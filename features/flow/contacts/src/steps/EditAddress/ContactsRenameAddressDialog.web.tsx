@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  AddressInput,
+  Banner,
   Button,
   Dialog,
   DialogBody,
@@ -9,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsRenameAddressDialogProps } from "./types";
+import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
 
 export function ContactsRenameAddressDialog({
   isOpen,
@@ -16,13 +19,20 @@ export function ContactsRenameAddressDialog({
   isSaving,
   draftLabel,
   invalidLabelError,
+  addressEntry,
   labels,
   onClose,
   onDraftLabelChange,
+  onAddressChange,
   onConfirm,
 }: ContactsRenameAddressDialogProps): React.ReactNode {
   const labelValidationError =
     invalidLabelError === null ? undefined : labels.labelValidationErrors[invalidLabelError];
+  const addressInput = useEditAddressDialogPresentation({
+    addressEntry,
+    labels: labels.addressValidation,
+    onAddressChange,
+  });
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -38,6 +48,26 @@ export function ContactsRenameAddressDialog({
       >
         <DialogHeader density="expanded" title={labels.title} onClose={onClose} />
         <DialogBody className="flex flex-col gap-32 px-24 pt-2 pb-24">
+          <AddressInput
+            autoComplete="off"
+            autoCorrect="off"
+            data-testid="contacts-edit-address-input"
+            helperText={addressInput.helperText}
+            onChange={addressInput.onChange}
+            onPaste={addressInput.onPaste}
+            placeholder={labels.addressValidation.addressPlaceholder}
+            prefix=""
+            spellCheck={false}
+            status={addressInput.inputStatus}
+            value={addressInput.value}
+          />
+          {addressInput.showEnsDisclaimer ? (
+            <Banner
+              appearance="info"
+              data-testid="contacts-edit-address-ens-disclaimer"
+              description={labels.addressValidation.ensDisclaimer}
+            />
+          ) : null}
           <TextInput
             autoComplete="off"
             autoCorrect="off"

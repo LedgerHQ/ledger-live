@@ -2,10 +2,19 @@ import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useContactsButtonViewModel } from "../useContactsButtonViewModel";
 
 const mockNavigate = jest.fn();
+const mockTrackEvent = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+}));
+
+jest.mock("../../../analytics/useContactsAnalytics", () => ({
+  useContactsAnalytics: () => ({
+    trackEvent: mockTrackEvent,
+    trackPage: jest.fn(),
+    getGlobalProperties: jest.fn(),
+  }),
 }));
 
 describe("useContactsButtonViewModel", () => {

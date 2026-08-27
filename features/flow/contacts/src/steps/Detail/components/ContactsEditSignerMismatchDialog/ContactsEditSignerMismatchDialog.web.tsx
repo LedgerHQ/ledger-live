@@ -47,7 +47,13 @@ export function ContactsEditSignerMismatchDialog({
             >
               {labels.connectDifferentDevice}
             </Button>
-            <Button appearance="gray" size="lg" isFull onClick={onCancel}>
+            <Button
+              appearance="gray"
+              size="lg"
+              isFull
+              onClick={onCancel}
+              data-testid="contacts-edit-signer-mismatch-cancel"
+            >
               {labels.cancel}
             </Button>
           </div>

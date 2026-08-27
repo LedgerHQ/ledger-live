@@ -1,17 +1,17 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { HederaCoinConfig } from "../config";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_TRANSACTION_NAMES,
   MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
+  STAKING_REWARD_ACCOUNT_ID,
 } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
+  HederaCoinConfig,
   EnrichedERC20Transfer,
   HederaMirrorToken,
   HederaMirrorTransaction,
@@ -96,7 +96,7 @@ function createStakingRewardOperation({
     type: stakingRewardType,
     value: stakingReward,
     recipients: [address],
-    senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+    senders: [STAKING_REWARD_ACCOUNT_ID],
     hash: stakingRewardHash,
     fee: new BigNumber(0),
     date: stakingRewardTimestamp,

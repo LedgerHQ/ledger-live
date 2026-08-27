@@ -41,6 +41,7 @@ const baseViewModel = {
   hasTopWalletDisplayableCards: false,
   shouldDisplayRecover: false,
   canCoexistWithBraze: false,
+  canShareBrazeCarousel: false,
   onScroll: jest.fn(),
   carouselIndex: 0,
 };
@@ -77,6 +78,7 @@ describe("PortfolioBannersSection", () => {
       hasAssets: true,
       hasTopWalletDisplayableCards: true,
       canCoexistWithBraze: true,
+      canShareBrazeCarousel: true,
     });
     renderSection({ isLNUpsellBannerShown: true, showAssets: true });
 
@@ -85,6 +87,24 @@ describe("PortfolioBannersSection", () => {
       expect.objectContaining({
         leadingSlide: expect.anything(),
       }),
+      undefined,
+    );
+  });
+
+  it("stacks the upsell above Braze content cards when the first category is not action", () => {
+    mockUseViewModel.mockReturnValue({
+      ...baseViewModel,
+      hasAssets: true,
+      hasTopWalletDisplayableCards: true,
+      canCoexistWithBraze: true,
+      canShareBrazeCarousel: false,
+    });
+    renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+
+    expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+    expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+    expect(MockContentCardsLocation).toHaveBeenCalledWith(
+      expect.not.objectContaining({ leadingSlide: expect.anything() }),
       undefined,
     );
   });

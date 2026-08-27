@@ -78,6 +78,21 @@ export interface AleoPublicTransactionDetailsResponse {
   status: string;
 }
 
+/**
+ * A bound in the explorer's per-transition stream.
+ *
+ * Omitting `transitionId` makes the bound whole-block exclusive instead — useful to open a window
+ * (`minHeight - 1` ascending, `maxBlockHeight + 1` descending), but never to resume a page: the rest
+ * of the named block would be skipped.
+ */
+export type AleoTransitionCursor = {
+  blockNumber: number;
+  transitionId?: string;
+};
+
+/** A cursor that names an exact row, so paging can resume without skipping the rest of its block. */
+export type AleoExactTransitionCursor = Required<AleoTransitionCursor>;
+
 export interface AleoPublicTransactionsResponse {
   address: string;
   transactions: AleoPublicTransaction[];
@@ -85,6 +100,7 @@ export interface AleoPublicTransactionsResponse {
     block_number: number;
     transition_id: string;
   };
+  // Presence does not prove more rows follow; only its absence proves the stream is exhausted.
   next_cursor?: {
     block_number: number;
     transition_id: string;

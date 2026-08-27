@@ -12,6 +12,7 @@ import {
   exportWalletState,
   initialState as walletInitialState,
 } from "~/renderer/reducers/wallet.core";
+import { contactsInitialState } from "@domain/entity-contact";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
@@ -164,7 +165,7 @@ type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
 const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
   accounts: [],
   trustchain: trustchainInitialState,
-  wallet: exportWalletState(walletInitialState),
+  wallet: exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
 };
 
 for (const [, keyPath] of encryptedDataPaths) {

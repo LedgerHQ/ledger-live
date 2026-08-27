@@ -1,9 +1,8 @@
 import React from "react";
 import { Platform } from "react-native";
-import {
-  ContactsAddContactDrawer,
-  type ContactsAddContactDrawerProps,
-} from "@features/flow-contacts-add-contact";
+import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
+import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -11,8 +10,9 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 export function ContactsAddContactDrawerSheet({
   isOpen,
   onClose,
-  ...drawerProps
-}: ContactsAddContactDrawerProps): React.JSX.Element {
+  onOpen: _onOpen,
+  ...contentProps
+}: AddContactAppAdapterResult): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
@@ -28,13 +28,14 @@ export function ContactsAddContactDrawerSheet({
       testID="contacts-add-contact-drawer"
       enableDynamicSizing
     >
-      <ContactsAddContactDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        bottomInset={bottomInset}
-        keyboardInset={keyboardInset}
-        {...drawerProps}
-      />
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
+        {isOpen ? (
+          <Box lx={{ gap: "s24" }}>
+            <BottomSheetHeader />
+            <ContactsAddContactContent {...contentProps} />
+          </Box>
+        ) : null}
+      </BottomSheetView>
     </QueuedBottomSheet>
   );
 }

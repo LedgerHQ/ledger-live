@@ -15,7 +15,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
 import { PolkadotAccount, PolkadotOperation } from "@ledgerhq/live-common/families/polkadot/types";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -67,7 +67,7 @@ export const OperationDetailsValidators = ({
   isTransactionField,
 }: OperationDetailsValidatorsProps) => {
   const { currency } = account;
-  const { validators: polkadotValidators } = usePolkadotPreloadData();
+  const polkadotValidators = usePolkadotValidators(currency);
   const mappedValidators = useMemo(
     () =>
       (validators || [])
@@ -113,7 +113,7 @@ export const OperationDetailsRewardFrom = ({
   account,
 }: OperationDetailsRewardFromProps) => {
   const { currency } = account;
-  const { validators: polkadotValidators } = usePolkadotPreloadData();
+  const polkadotValidators = usePolkadotValidators(currency);
   const validator = useMemo(
     () => polkadotValidators.find(v => v.address === validatorStash),
     [validatorStash, polkadotValidators],

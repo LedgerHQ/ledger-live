@@ -2,6 +2,13 @@ name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-unit-tests:
+        description: "Skip the unit test job. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+
     outputs:
       coverage_generated:
         value: ${{ jobs.test-libraries.outputs.coverage_generated }}
@@ -19,6 +26,12 @@ on:
         required: true
       NX_KEY:
         required: true
+      # Without credentials the flake reporter degrades gracefully
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
+
   workflow_dispatch:
     inputs:
       since_branch:
@@ -37,6 +50,7 @@ permissions:
 jobs:
   test-libraries:
     name: "Libraries Test"
+    if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
@@ -45,6 +59,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
@@ -73,7 +89,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="{./libs/**}..."
+        run: pnpm i --frozen-lockfile --filter="{./libs/**}..."
 
       - name: Run coverage on appropriate libraries
         run: |
@@ -188,7 +204,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install dependencies
-        run: pnpm i --filter="{./libs/**}..."
+        run: pnpm i --frozen-lockfile --filter="{./libs/**}..."
       - name: Codechecks
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
         with:
@@ -227,7 +243,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
+        run: pnpm i --frozen-lockfile --filter="!./apps/**"
       - name: run doc
         run: pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs
       - name: get diff

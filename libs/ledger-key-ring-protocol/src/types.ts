@@ -1,7 +1,6 @@
 import type { Observable } from "rxjs";
 import { z } from "zod";
 import type Transport from "@ledgerhq/hw-transport";
-import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import type { TrustchainsResponse } from "./api";
 
 /**
@@ -45,25 +44,10 @@ export type Trustchain = {
 /**
  * The Trustchain member credentials are stored on each client, with the privatekey only known by the current client.
  */
-export const MemberCredentialsSchema = z
-  .strictObject({
-    pubkey: z.hex().length(66).lowercase(),
-    privatekey: z.hex().length(64).lowercase(),
-  })
-  .refine(
-    ({ pubkey, privatekey }) => {
-      try {
-        const keyPair = crypto.keypairFromSecretKey(crypto.from_hex(privatekey));
-        return crypto.to_hex(keyPair.publicKey) === pubkey;
-      } catch {
-        return false;
-      }
-    },
-    {
-      path: ["pubkey"],
-      message: "Public key does not match private key",
-    },
-  );
+export const MemberCredentialsSchema = z.strictObject({
+  pubkey: z.hex().length(66).lowercase(),
+  privatekey: z.hex().length(64).lowercase(),
+});
 
 export type MemberCredentials = z.infer<typeof MemberCredentialsSchema>;
 

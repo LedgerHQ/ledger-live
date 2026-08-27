@@ -1,19 +1,18 @@
-import { renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@testing-library/react-native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useContactsFeature } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
-import { createMockAccount, createMockCurrency } from "./accounts";
+import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
@@ -21,9 +20,6 @@ jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts");
-jest.mock("@features/flow-contacts", () => ({
-  useContactsFeature: jest.fn(),
-}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
@@ -135,6 +131,9 @@ describe("useRecipientScreenView", () => {
 
     expect(result.current.showInitialState).toBe(true);
     expect(result.current.showEmptyContactsState).toBe(true);
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ canSearchContactsByName: true }),
+    );
   });
 
   it("does not show empty contacts state when address book is not supported", () => {
@@ -157,6 +156,9 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showEmptyContactsState).toBe(false);
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ canSearchContactsByName: false }),
+    );
   });
 
   it("does not show empty contacts state when a contact matches the network", () => {
@@ -191,7 +193,136 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showContactsList).toBe(true);
     expect(result.current.showEmptyContactsState).toBe(false);
+  });
+
+  it("only exposes saved contact addresses from the selected network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-me",
+        isMe: true,
+        name: "Me",
+        addresses: [mockContactAddress({ id: "address-me", currencyId: "ethereum" })],
+      }),
+      mockContact({
+        id: "contact-alice",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({ id: "address-eth", currencyId: "ethereum" }),
+          mockContactAddress({ id: "address-usdc", currencyId: "ethereum/erc20/usd_coin" }),
+          mockContactAddress({ id: "address-sol", currencyId: "solana" }),
+        ],
+      }),
+      mockContact({
+        id: "contact-bob",
+        name: "Bob",
+        addresses: [mockContactAddress({ id: "address-btc", currencyId: "bitcoin" })],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.contactsOnNetwork).toHaveLength(1);
+    expect(result.current.contactsOnNetwork[0]).toMatchObject({
+      id: "contact-alice",
+      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
+    });
+  });
+
+  it("advances with the address matching the current currency among network addresses", () => {
+    const onAddressSelected = jest.fn();
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({
+          id: "address-eth",
+          currencyId: "ethereum",
+          address: "0xeth",
+        }),
+        mockContactAddress({
+          id: "address-usdt",
+          currencyId: "ethereum/erc20/usdt",
+          address: "0xusdt",
+        }),
+      ],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockTokenCurrency(),
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("0xusdt", undefined);
+  });
+
+  it("advances with the sole address of a selected contact", () => {
+    const onAddressSelected = jest.fn();
+    const contact = mockContact({
+      addresses: [mockContactAddress({ address: "0x123" })],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined);
+  });
+
+  it("does not advance when several addresses remain without a currency match", () => {
+    const onAddressSelected = jest.fn();
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({
+          id: "address-eth",
+          currencyId: "ethereum",
+          address: "0xeth",
+        }),
+        mockContactAddress({
+          id: "address-usdc",
+          currencyId: "ethereum/erc20/usd_coin",
+          address: "0xusdc",
+        }),
+      ],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockTokenCurrency(),
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+
+    expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
   it("shows search results when search value is provided", () => {

@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-swap-quotes",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Domain API client for the swap quotes aggregator: RTK Query endpoint for the /quote request",
   "main": "src/index.ts",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

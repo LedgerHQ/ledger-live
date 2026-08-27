@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useNavigate } from "react-router";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useOpenAssetFlow } from "../../../ModularDialog/hooks/useOpenAssetFlow";
 import { usePayTabDepositOptions } from "../usePayTabDepositOptions";
 
@@ -21,10 +22,8 @@ jest.mock("../../../ModularDialog/hooks/useOpenAssetFlow", () => ({
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockedUseOpenAssetFlow = jest.mocked(useOpenAssetFlow);
 
-const STABLECOIN_IDS = ["ethereum/erc20/usd__coin", "ethereum/erc20/usd_tether__erc20_"];
-
 function render(onTrackEvent = jest.fn()) {
-  return renderHook(() => usePayTabDepositOptions(onTrackEvent, STABLECOIN_IDS));
+  return renderHook(() => usePayTabDepositOptions(onTrackEvent));
 }
 
 describe("usePayTabDepositOptions", () => {
@@ -94,12 +93,22 @@ describe("usePayTabDepositOptions", () => {
     });
   });
 
-  it("opens the asset flow filtered to stablecoins for receive", () => {
+  it("opens the asset flow filtered to the stablecoin category for receive", () => {
     const { result } = render();
 
     act(() => result.current.depositOptions.onSelect("receive"));
 
-    expect(mockOpenAssetFlow).toHaveBeenCalledWith(undefined, STABLECOIN_IDS);
+    expect(mockOpenAssetFlow).toHaveBeenCalledWith(undefined, undefined, [
+      AssetCategory.Stablecoins,
+    ]);
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("skips receive options when opening receive from Pay", () => {
+    render();
+
+    expect(mockedUseOpenAssetFlow).toHaveBeenCalledWith(expect.anything(), "Pay", "MODAL_RECEIVE", {
+      shouldUseReceiveOptions: false,
+    });
   });
 });

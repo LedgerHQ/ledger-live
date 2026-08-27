@@ -1,20 +1,20 @@
 import type {
   AddAddressCompletionLabels,
+  AddAddressEntryLabels,
   AddAddressFlowState,
   AddAddressInputSource,
-  ContactsAddAddressEntryLabels,
   ContactsAddAddressNameLabels,
+  ContactsAddAddressReviewLabels,
   SanctionedAddressBannerProps,
-} from "@features/flow-contacts";
-
-export type ContactsAddAddressReviewLabels = AddAddressCompletionLabels;
+} from "@features/flow-contacts-add-address";
 
 export type ContactsAddAddressFlowDialogProps = Readonly<{
   state: AddAddressFlowState;
-  entryLabels: ContactsAddAddressEntryLabels;
+  entryLabels: AddAddressEntryLabels;
   sanctionedAddressBanner: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels: ContactsAddAddressReviewLabels;
+  completionLabels: AddAddressCompletionLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
   onAddressLabelChange: (value: string) => void;

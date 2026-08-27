@@ -47,6 +47,8 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
       SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
       SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
@@ -122,6 +124,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-features:
     name: "Test Features"

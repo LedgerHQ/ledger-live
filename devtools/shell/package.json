@@ -1,6 +1,6 @@
 {
   "name": "@devtools/shell",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "private": true,
   "description": "Ledger Live DevTools — cross-platform debug component",
   "main": "src/index.ts",
@@ -24,7 +24,8 @@
     "test:watch": "jest --watch",
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
-    "coverage:native": "jest --config jest.native.config.js --coverage"
+    "coverage:native": "jest --config jest.native.config.js --coverage",
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/registry": "workspace:*"
