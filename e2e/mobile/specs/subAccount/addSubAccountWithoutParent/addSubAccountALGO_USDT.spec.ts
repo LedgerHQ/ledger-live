@@ -1,4 +1,4 @@
-import { runAddSubAccountTest } from "../subAccount";
+import { runAddSubAccountTest } from "specs/subAccount/subAccount";
 
 const testConfig = {
   asset: TokenAccount.ALGO_USDT_1,

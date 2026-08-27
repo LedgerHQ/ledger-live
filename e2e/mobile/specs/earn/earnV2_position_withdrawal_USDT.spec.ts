@@ -1,5 +1,5 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runPositionToWithdrawalTest } from "./earnV2";
+import { runPositionToWithdrawalTest } from "specs/earn/earnV2";
 
 const testConfig = {
   account: TokenAccount.ETH_USDT_1,

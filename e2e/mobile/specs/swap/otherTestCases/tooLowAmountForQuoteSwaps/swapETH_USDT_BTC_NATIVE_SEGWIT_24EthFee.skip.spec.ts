@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
+import { runTooLowAmountForQuoteSwapsTest } from "specs/swap/otherTestCases/swap.other";
 
 // Enable test when "Sponsored" program is over
 

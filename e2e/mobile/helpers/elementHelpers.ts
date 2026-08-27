@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web, log } from "detox";
-import { delay, isAndroid, isIos } from "./commonHelpers";
-import { retryUntilTimeout } from "../utils/retry";
-import { PageScroller } from "./pageScroller";
-import { checkForErrorElement } from "./errorHelpers";
+import { delay, isAndroid, isIos } from "helpers/commonHelpers";
+import { retryUntilTimeout } from "utils/retry";
+import { PageScroller } from "helpers/pageScroller";
+import { checkForErrorElement } from "helpers/errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {

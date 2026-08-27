@@ -1,5 +1,5 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidTokenAmountTest } from "../send";
+import { runSendInvalidTokenAmountTest } from "specs/send/send";
 
 const transaction = new Transaction(
   TokenAccount.SOL_GIGA_3,

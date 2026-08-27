@@ -1,4 +1,4 @@
-import { runAddSubAccountTest } from "../subAccount";
+import { runAddSubAccountTest } from "specs/subAccount/subAccount";
 import { assetAvailableNetworks } from "@ledgerhq/live-e2e-shared/data/assetsDrawer";
 
 const testConfig = {

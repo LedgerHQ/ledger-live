@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runHotStartTest } from "./earnV2";
+import { runHotStartTest } from "specs/earn/earnV2";
 
 const testConfig = {
   account: Account.NEAR_1,

@@ -10,9 +10,9 @@ import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
-import { isSpeculosRemote } from "./helpers/commonHelpers";
-import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "./utils/speculosUtils";
-import { NANO_APP_CATALOG_PATH } from "./utils/constants";
+import { isSpeculosRemote } from "helpers/commonHelpers";
+import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "utils/speculosUtils";
+import { NANO_APP_CATALOG_PATH } from "utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 

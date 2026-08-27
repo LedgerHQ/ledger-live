@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapTest } from "./swap";
+import { runSwapTest } from "specs/swap/swap";
 
 runSwapTest(
   Account.SOL_1,

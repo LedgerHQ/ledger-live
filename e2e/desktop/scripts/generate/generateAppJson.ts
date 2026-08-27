@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { resolveFromRoot, runGenerator, type GeneratorArgs } from "./shared";
+import { resolveFromRoot, runGenerator, type GeneratorArgs } from "scripts/generate/shared";
 
 type CoinGroup = {
   currency: Currency;

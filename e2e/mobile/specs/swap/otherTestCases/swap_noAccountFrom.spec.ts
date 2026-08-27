@@ -1,4 +1,4 @@
-import { runSwapWithoutAccountTest } from "./swap.other";
+import { runSwapWithoutAccountTest } from "specs/swap/otherTestCases/swap.other";
 
 const noAccountFromTestConfig = {
   account1: Account.BTC_NATIVE_SEGWIT_1,

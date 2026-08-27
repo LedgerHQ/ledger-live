@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapWithSendMaxTest } from "./swap.other";
+import { runSwapWithSendMaxTest } from "specs/swap/otherTestCases/swap.other";
 
 const swapWithSendMaxConfig = {
   fromAccount: Account.ETH_1,

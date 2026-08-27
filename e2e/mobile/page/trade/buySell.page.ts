@@ -8,9 +8,9 @@ import {
   getExpectedQueryParams,
   urlMatchesProvider,
 } from "@ledgerhq/live-e2e-shared/buySellHandoff";
-import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
-import { getPtxHandoff } from "../../bridge/server";
-import { retryUntilTimeout } from "../../utils/retry";
+import { openDeeplink, normalizeText } from "helpers/commonHelpers";
+import { getPtxHandoff } from "bridge/server";
+import { retryUntilTimeout } from "utils/retry";
 
 export default class BuySellPage {
   appContainerCssSelector = "#app-container";

@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runUserCanSelectCounterValueToDisplayAmountInLedgerLive } from "./settings";
+import { runUserCanSelectCounterValueToDisplayAmountInLedgerLive } from "specs/settings/settings";
 
 const testConfig = {
   account: Account.BTC_NATIVE_SEGWIT_1,

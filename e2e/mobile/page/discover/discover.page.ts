@@ -1,7 +1,7 @@
 import { randomInt } from "node:crypto";
 import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "helpers/commonHelpers";
 
 const discoverApps = [
   { name: "MoonPay", url: "https://www.moonpay.com/" },

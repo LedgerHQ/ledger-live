@@ -1,4 +1,4 @@
-import { runAddSubAccountTest } from "../subAccount";
+import { runAddSubAccountTest } from "specs/subAccount/subAccount";
 
 const testConfig = {
   asset: TokenAccount.ETH_LIDO,

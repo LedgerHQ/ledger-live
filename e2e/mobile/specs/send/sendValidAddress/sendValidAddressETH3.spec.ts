@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendValidAddressTest } from "../send";
+import { runSendValidAddressTest } from "specs/send/send";
 
 const transaction = new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001");
 runSendValidAddressTest(

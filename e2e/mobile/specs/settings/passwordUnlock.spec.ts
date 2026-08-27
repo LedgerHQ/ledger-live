@@ -1,4 +1,4 @@
-import { runPasswordUnlockTest } from "./settings";
+import { runPasswordUnlockTest } from "specs/settings/settings";
 
 const testConfig = {
   tmsLinks: ["B2CQA-1763"],

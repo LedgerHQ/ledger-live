@@ -1,8 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
-import { getFlags } from "../../bridge/server";
-import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
+import { openDeeplink } from "helpers/commonHelpers";
+import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "helpers/elementHelpers";
+import { getFlags } from "bridge/server";
+import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);

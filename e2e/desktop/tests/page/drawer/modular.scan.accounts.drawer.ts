@@ -1,5 +1,5 @@
-import { Drawer } from "../../component/drawer.component";
-import { step } from "../../misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class ModularScanAccountsDrawer extends Drawer {

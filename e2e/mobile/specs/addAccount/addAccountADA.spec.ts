@@ -1,5 +1,5 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { runAddAccountTest } from "./addAccount";
+import { runAddAccountTest } from "specs/addAccount/addAccount";
 
 runAddAccountTest(
   Currency.ADA,

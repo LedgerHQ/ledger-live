@@ -1,8 +1,8 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "../../utils/featureFlagUtils";
-import { getFixtureAccountId, getFixtureTokenAccountId } from "../../utils/fixtureAccounts";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+import { getFixtureAccountId, getFixtureTokenAccountId } from "utils/fixtureAccounts";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 

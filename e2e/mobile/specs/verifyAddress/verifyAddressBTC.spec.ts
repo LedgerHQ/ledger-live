@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runVerifyAddressTest } from "./verifyAddress";
+import { runVerifyAddressTest } from "specs/verifyAddress/verifyAddress";
 
 runVerifyAddressTest(
   Account.BTC_NATIVE_SEGWIT_1,

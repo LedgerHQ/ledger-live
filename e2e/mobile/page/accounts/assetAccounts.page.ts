@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
-import { isAggregatedAssetsEnabled } from "../../utils/featureFlagUtils";
+import { currencyParam, openDeeplink } from "helpers/commonHelpers";
+import { isAggregatedAssetsEnabled } from "utils/featureFlagUtils";
 
 export default class AssetAccountsPage {
   baseLink = "account";

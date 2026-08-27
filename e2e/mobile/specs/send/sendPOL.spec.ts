@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendTest } from "./send";
+import { runSendTest } from "specs/send/send";
 
 const transaction = new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW);
 runSendTest(

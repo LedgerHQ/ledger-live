@@ -1,8 +1,8 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { waitEarnReady } from "../../bridge/server";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { waitEarnReady } from "bridge/server";
+import { setTeamOwner } from "helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 import type { ApplicationOptions } from "page";

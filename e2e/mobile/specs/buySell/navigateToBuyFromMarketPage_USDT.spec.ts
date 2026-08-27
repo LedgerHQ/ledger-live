@@ -1,4 +1,4 @@
-import { runNavigateToBuyFromMarketPageTest } from "./buySell";
+import { runNavigateToBuyFromMarketPageTest } from "specs/buySell/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const usdtBuySell = {

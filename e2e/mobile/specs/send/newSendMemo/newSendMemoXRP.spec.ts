@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNewSendMemoTest } from "../newSendFlow";
-import { FF_NEW_SEND_FLOW_ENABLED } from "../../../utils/featureFlagUtils";
+import { runNewSendMemoTest } from "specs/send/newSendFlow";
+import { FF_NEW_SEND_FLOW_ENABLED } from "utils/featureFlagUtils";
 
 // XRP uses a numeric destination tag: assert numeric-only enforcement plus send with/without memo.
 runNewSendMemoTest(

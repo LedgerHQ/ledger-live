@@ -1,4 +1,4 @@
-import { runSwapNetworkFeesAboveAccountBalanceTest } from "./swap.other";
+import { runSwapNetworkFeesAboveAccountBalanceTest } from "specs/swap/otherTestCases/swap.other";
 
 // Enable test when "Sponsored" program is over
 const testConfig = {

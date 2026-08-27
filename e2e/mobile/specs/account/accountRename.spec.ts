@@ -1,8 +1,8 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { launchApp } from "../../helpers/commonHelpers";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { loadConfig } from "../../bridge/server";
+import { launchApp } from "helpers/commonHelpers";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { loadConfig } from "bridge/server";
 import { device } from "detox";
 
 setTeamOwner(Team.WALLET_XP);

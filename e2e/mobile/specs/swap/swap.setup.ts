@@ -1,4 +1,4 @@
-import { swapSetup } from "../../bridge/server";
+import { swapSetup } from "bridge/server";
 import { ApplicationOptions } from "page";
 
 export async function beforeAllFunctionSwap(options: ApplicationOptions) {

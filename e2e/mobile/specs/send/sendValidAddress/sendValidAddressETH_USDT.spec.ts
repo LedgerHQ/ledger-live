@@ -1,4 +1,4 @@
-import { runSendValidAddressTest } from "../send";
+import { runSendValidAddressTest } from "specs/send/send";
 
 const transaction = new Transaction(
   TokenAccount.ETH_USDT_1,

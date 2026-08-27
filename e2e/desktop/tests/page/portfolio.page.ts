@@ -1,9 +1,9 @@
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted } from "tests/utils/userdata";
 import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
-import { CryptoAddressesBanner } from "../component/portfolio/cryptoAddressesBanner";
+import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 

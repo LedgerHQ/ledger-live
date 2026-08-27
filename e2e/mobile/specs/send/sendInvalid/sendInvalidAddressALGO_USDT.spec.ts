@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidAddressTest } from "../send";
+import { runSendInvalidAddressTest } from "specs/send/send";
 
 const transaction = new Transaction(
   TokenAccount.ALGO_USDT_1,

@@ -1,9 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { delay, normalizeText, parseTickerAmount } from "../../helpers/commonHelpers";
-import {
-  QUICK_VISIBILITY_PROBE_TIMEOUT,
-  VISIBILITY_PROBE_TIMEOUT,
-} from "../../helpers/elementHelpers";
+import { delay, normalizeText, parseTickerAmount } from "helpers/commonHelpers";
+import { QUICK_VISIBILITY_PROBE_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "helpers/elementHelpers";
 
 type HoldingAddressExpectation = {
   accountId: string;

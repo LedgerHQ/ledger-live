@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { isAggregatedAssetsEnabled } from "./featureFlagUtils";
+import { isAggregatedAssetsEnabled } from "tests/utils/featureFlagUtils";
 
 export function doubleDecodeGoToURL(url: string): string {
   try {

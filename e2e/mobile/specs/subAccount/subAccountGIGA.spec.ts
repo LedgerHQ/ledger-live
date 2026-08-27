@@ -1,4 +1,4 @@
-import { runSendSPL } from "./subAccount";
+import { runSendSPL } from "specs/subAccount/subAccount";
 
 const transactionE2E = [
   {

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 
 export class TopBarSearch extends AppPage {
   private readonly searchInput = this.page.getByTestId("topbar-search-input");

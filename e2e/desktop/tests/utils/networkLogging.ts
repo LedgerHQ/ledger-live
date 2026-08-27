@@ -1,5 +1,5 @@
 import { Page, TestInfo } from "@playwright/test";
-import { safeAppendFile } from "./fileUtils";
+import { safeAppendFile } from "tests/utils/fileUtils";
 
 export function attachNetworkLogging(page: Page, testInfo: TestInfo) {
   const networkLogPath = testInfo.outputPath("network.log");

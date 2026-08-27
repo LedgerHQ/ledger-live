@@ -1,9 +1,9 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import CommonPage from "../common.page";
-import { retryUntilTimeout } from "../../utils/retry";
-import { checkForErrorModals } from "../../helpers/errorHelpers";
+import { openDeeplink } from "helpers/commonHelpers";
+import CommonPage from "page/common.page";
+import { retryUntilTimeout } from "utils/retry";
+import { checkForErrorModals } from "helpers/errorHelpers";
 
 // Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
 // consume the whole budget in a single attempt.

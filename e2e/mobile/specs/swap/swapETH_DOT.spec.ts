@@ -1,4 +1,4 @@
-import { runSwapTest } from "./swap";
+import { runSwapTest } from "specs/swap/swap";
 
 runSwapTest(
   Account.ETH_1,

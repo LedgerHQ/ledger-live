@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { WebElementHelpers } from "../../helpers/elementHelpers";
-import { retryUntilTimeout } from "../../utils/retry";
+import { WebElementHelpers } from "helpers/elementHelpers";
+import { retryUntilTimeout } from "utils/retry";
 
 const MODAL_DISMISS_TIMEOUT_MS = 30_000;
 const CONTINUE_READY_TIMEOUT_MS = 30_000;

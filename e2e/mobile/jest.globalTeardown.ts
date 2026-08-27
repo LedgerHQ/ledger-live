@@ -16,18 +16,18 @@ import {
   getFlags,
   loadConfig,
   setFeatureFlags,
-} from "./bridge/server";
+} from "bridge/server";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-e2e-shared";
-import { launchApp } from "./helpers/commonHelpers";
-import { getMergedFeatureFlags } from "./utils/featureFlagUtils";
+import { launchApp } from "helpers/commonHelpers";
+import { getMergedFeatureFlags } from "utils/featureFlagUtils";
 import detox from "detox/internals";
 import path from "path";
 import { glob } from "glob";
 import { log } from "detox";
 import { Subject } from "rxjs";
-import { NativeElementHelpers } from "./helpers/elementHelpers";
+import { NativeElementHelpers } from "helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { withTimeout } from "./utils/withTimeout";
+import { withTimeout } from "utils/withTimeout";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");

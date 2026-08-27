@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runIceColdStartTest } from "./earnV2";
+import { runIceColdStartTest } from "specs/earn/earnV2";
 
 const testConfig = {
   account: Account.ETH_3,

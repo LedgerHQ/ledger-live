@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidAddressTest } from "../send";
+import { runSendInvalidAddressTest } from "specs/send/send";
 
 const transaction = new Transaction(Account.HEDERA_1, Account.HEDERA_1, "1", undefined, "noTag");
 runSendInvalidAddressTest(

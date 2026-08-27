@@ -3,7 +3,7 @@ import {
   cleanupAllSpeculos,
   attachSpeculinhoLogsToAllure,
   takeSpeculosScreenshot,
-} from "./utils/speculosUtils";
+} from "utils/speculosUtils";
 import {
   attachTestExecutionConsoleToAllure,
   attachFailureLogsToAllure,
@@ -11,15 +11,15 @@ import {
   resetStderrCaptureForCurrentTest,
   installConsoleCapture,
   uninstallConsoleCapture,
-} from "./utils/loggingUtils";
-import { getLogs } from "./bridge/server";
+} from "utils/loggingUtils";
+import { getLogs } from "bridge/server";
 import { Circus } from "@jest/types";
 import {
   logMemoryUsage,
   takeAppScreenshot,
   captureNativeViewHierarchy,
   setupEnvironment,
-} from "./helpers/commonHelpers";
+} from "helpers/commonHelpers";
 import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
@@ -30,16 +30,16 @@ import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { CLI } from "./utils/cliUtils";
+import { CLI } from "utils/cliUtils";
 import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
+import { NativeElementHelpers, WebElementHelpers } from "helpers/elementHelpers";
 import expect from "expect";
-import { Application } from "./page/index";
+import { Application } from "page/index";
 import type { ServerData } from "../../apps/ledger-live-mobile/src/e2e/bridge/types";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
-import { withTimeout } from "./utils/withTimeout";
+import { withTimeout } from "utils/withTimeout";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;

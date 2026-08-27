@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runDelegateTest } from "./delegate";
+import { runDelegateTest } from "specs/delegate/delegate";
 
 const delegation = new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment");
 runDelegateTest(
