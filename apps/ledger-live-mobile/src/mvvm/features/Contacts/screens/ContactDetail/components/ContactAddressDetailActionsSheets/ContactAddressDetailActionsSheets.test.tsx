@@ -52,6 +52,7 @@ describe("ContactAddressDetailActionsSheets", () => {
   });
 
   it("should keep the edit address form above the keyboard", () => {
+    Platform.OS = "android";
     mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
 
     render(<ContactAddressDetailActionsSheets {...createProps()} />);
@@ -59,7 +60,17 @@ describe("ContactAddressDetailActionsSheets", () => {
     expect(renameSheetPaddings()).toContain(324);
   });
 
+  it("should add an extra gap above the keyboard on iOS", () => {
+    Platform.OS = "ios";
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
+
+    render(<ContactAddressDetailActionsSheets {...createProps()} />);
+
+    expect(renameSheetPaddings()).toContain(356);
+  });
+
   it("should omit the keyboard inset when native resize handles the keyboard", () => {
+    Platform.OS = "android";
     mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
     mockShouldUseKeyboardAvoidance.mockReturnValue(false);
 

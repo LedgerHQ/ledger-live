@@ -50,9 +50,10 @@ export function useContactsAddAddressFlowDrawerViewModel({
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
+  const iosKeyboardGap = 32;
   const bottomOffset =
     isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-      ? keyboardHeight
+      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
       : 0;
   const currencySelection = useContactsCurrencySelectionAdapter({
     isOpen: state.status === "selectingCurrency",
