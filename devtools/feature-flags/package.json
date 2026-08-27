@@ -18,7 +18,8 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/feature-flags/knip.web.ts -W devtools/feature-flags --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/feature-flags/knip.native.ts -W devtools/feature-flags --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^"

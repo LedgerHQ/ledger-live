@@ -1,6 +1,6 @@
 import { render } from "@support/jest-devtools/web";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { FeatureFlags } from "./FeatureFlags";
+import FeatureFlags from "./FeatureFlags";
 import type { FeatureFlagsToolProps } from "../types";
 
 const { resolved } = FEATURE_FLAGS_INITIAL_STATE;
