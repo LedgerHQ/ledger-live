@@ -18,6 +18,7 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
@@ -100,6 +101,7 @@ const DADA_URLS = [
 type RenderPayTabOptions = Readonly<{
   hasSeenFeatureTour?: boolean;
   holdsUsdc?: boolean;
+  holdsEmptyUsdc?: boolean;
   holdsUni?: boolean;
   cryptoOnly?: boolean;
 }>;
@@ -118,6 +120,14 @@ function withUsdcHoldings(state: State): State {
         ),
       },
     },
+  };
+}
+
+function withEmptyUsdcHoldings(state: State): State {
+  const emptyUsdc = makeEmptyTokenAccount(payTabEthAccount, usdc);
+  return {
+    ...state,
+    accounts: { active: [{ ...payTabEthAccount, subAccounts: [emptyUsdc] }] },
   };
 }
 
@@ -177,6 +187,7 @@ function mockFullAssetCatalog() {
 function renderPayTab({
   hasSeenFeatureTour = true,
   holdsUsdc = false,
+  holdsEmptyUsdc = false,
   holdsUni = false,
   cryptoOnly = false,
 }: RenderPayTabOptions = {}) {
@@ -202,6 +213,7 @@ function renderPayTab({
             payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
           };
           if (holdsUsdc) return withUsdcHoldings(next);
+          if (holdsEmptyUsdc) return withEmptyUsdcHoldings(next);
           if (holdsUni) return withUniHoldings(next);
           if (cryptoOnly) return withCryptoOnly(next);
           return next;
@@ -299,6 +311,13 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("pay-card-balance-funded-state")).toBeVisible();
       expect(screen.queryByTestId("pay-card-balance-empty-state")).toBeNull();
+    });
+
+    it("should render the empty hero when the user holds USDC with a zero balance", async () => {
+      renderPayTab({ holdsEmptyUsdc: true });
+
+      expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
+      expect(screen.queryByTestId("pay-card-balance-funded-state")).toBeNull();
     });
 
     it("should render the empty hero when accounts hold only crypto", async () => {

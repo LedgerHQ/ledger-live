@@ -4,6 +4,7 @@ import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stab
 import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account } from "@ledgerhq/types-live";
 import PayTab from "LLD/features/PayTab";
 import {
@@ -11,6 +12,7 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
+import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { onboardedState, tourSeenState, UNISWAP } from "./fixtures";
 
 const DADA_URLS = [
@@ -19,6 +21,11 @@ const DADA_URLS = [
 ];
 
 const ethWithoutTokens: Account = { ...ETH_ACCOUNT, subAccounts: [] };
+
+const ethWithEmptyUsdc: Account = {
+  ...ethWithoutTokens,
+  subAccounts: [makeEmptyTokenAccount(ethWithoutTokens, usdcToken)],
+};
 
 const ethWithUniswap: Account = {
   ...ethWithoutTokens,
@@ -91,6 +98,12 @@ describe("PayTab hero integration", () => {
     renderHero([ETH_ACCOUNT_WITH_USDC]);
 
     await expectFundedHero();
+  });
+
+  it("should be empty when the USDC holding has a zero balance", async () => {
+    renderHero([ethWithEmptyUsdc]);
+
+    await expectEmptyHero();
   });
 
   it("should stay empty while DADA hangs if the user holds no stablecoins", async () => {
