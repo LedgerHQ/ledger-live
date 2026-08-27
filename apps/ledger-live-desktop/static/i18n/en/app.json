@@ -904,6 +904,13 @@
     "card": {
       "balanceLabel": "Balance"
     },
+    "contacts": {
+      "title": "Pay contact",
+      "empty": {
+        "info": "You don’t have contact yet",
+        "addContact": "Add contact"
+      }
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request",
