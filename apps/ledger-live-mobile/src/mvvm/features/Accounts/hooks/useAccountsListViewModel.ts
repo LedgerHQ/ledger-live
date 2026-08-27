@@ -1,10 +1,10 @@
 import type { FlashListProps } from "@shopify/flash-list";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { flattenAccountsSelector } from "~/reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import { GestureResponderEvent } from "react-native";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -17,9 +17,9 @@ import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
-import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
 import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
+import { useWorkletRankedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 import { TrackingEvent } from "../enums";
 
 export interface Props {
@@ -46,24 +46,18 @@ const useAccountsListViewModel = ({
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
-  const allAccounts = useSelector(flattenAccountsSelector, isEqual);
+  const allAccounts = useSelector(accountsSelector);
   const walletState = useSelector(walletSelector, isEqual);
   const accounts = specificAccounts || allAccounts;
-  const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
-
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const filteredAccounts = useMemo(
-    () =>
-      orderedAccountsByValue.filter(account => {
-        if (account.type === "TokenAccount") {
-          return !excludedTokenIds.includes(account.token.id);
-        }
-        return true;
-      }),
-    [orderedAccountsByValue, excludedTokenIds],
+  const rankedAccounts = useWorkletRankedAccounts(
+    accounts,
+    excludedTokenIds,
+    countervalueState,
+    toCurrency,
+    !specificAccounts,
   );
-
-  const accountsToDisplay = filteredAccounts.slice(0, limitNumberOfAccounts);
+  const accountsToDisplay = rankedAccounts.slice(0, limitNumberOfAccounts);
 
   const pageTrackingEvent = specificAccounts
     ? TrackingEvent.AccountListSummary
