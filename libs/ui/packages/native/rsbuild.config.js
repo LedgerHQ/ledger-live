@@ -11,9 +11,6 @@ module.exports = defineConfig({
   },
   resolve: {
     alias: {
-      "expo-font": path.resolve(__dirname, ".storybook-web/expoFontStub.js"),
-      "@storybook/jest": path.resolve(__dirname, ".storybook-web/jestStub.js"),
-      "@storybook/addon-actions": path.resolve(__dirname, ".storybook-web/addonActionsStub.js"),
       "expo-asset": require.resolve("expo-asset"),
       react: require.resolve("react"),
       "react-dom": require.resolve("react-dom"),
