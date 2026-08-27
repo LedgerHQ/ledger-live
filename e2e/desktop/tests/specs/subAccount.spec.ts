@@ -249,7 +249,7 @@ const transactionE2E: Array<{
   },
   {
     tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "1", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2703",
+    xrayTicket: "B2CQA-6111",
     checkInputValidity: true,
     extraTags: ["@ethereum", "@family-evm"],
   },
