@@ -1,4 +1,4 @@
-# `ui` <br/> [![react storybook](https://img.shields.io/badge/storybook%20📚-react-61DBFB)](https://react-ui-storybook.vercel.app) [![native storybook](https://img.shields.io/badge/storybook%20📚-native-9665B7)](https://native-ui-storybook.vercel.app)
+# `ui`
 
 > [!WARNING]
 > **Status: DEPRECATED** — The whole `@ledgerhq/ui` suite is deprecated in favour of the Lumen design system. Migrate to `@ledgerhq/lumen-ui-react` (React), `@ledgerhq/lumen-ui-rnative` (React Native), or `@ledgerhq/lumen-design-core` (shared tokens).
@@ -46,7 +46,6 @@ You can use them as prefixes to set the scope and run a command for a given subm
 ```sh
 # Prefix the command you want to run with an alias like this:
 pnpm ui:react add -D package
-pnpm ui:native storybook
 pnpm ui:shared clean
 pnpm ui:icons build
 ```
