@@ -182,7 +182,7 @@ describe("AddressMatchedSection", () => {
     expect(onSelect).toHaveBeenCalledWith(address, "vitalik.eth");
   });
 
-  it("keeps add contact enabled when the address book is supported", () => {
+  it("keeps add contact enabled when the contacts feature is enabled", () => {
     render(
       <AddressMatchedSectionContainer
         result={{

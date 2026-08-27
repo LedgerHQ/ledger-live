@@ -34,11 +34,12 @@ export type {
   SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
+type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,
   Input,
   ExtraProps,
-  InitializationInput
+  InitializationInput,
+  Result
 > & {
   initializerConfig?: InitializerConfig;
   /**
@@ -65,8 +66,8 @@ const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 /**
  * LWM wrapper around `@features/platform-device-intent`'s `DeviceIntentExecutor`.
  */
-export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
-  props: Props<JobState, Input, ExtraProps>,
+export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = undefined>(
+  props: Props<JobState, Input, ExtraProps, Result>,
 ): React.ReactElement {
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();

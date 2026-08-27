@@ -117,16 +117,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
       result.current.actions.renameSheet.onClose();
     });
 
-    expect(result.current.addressDetail.isOpen).toBe(false);
-
-    act(() => {
-      result.current.addressDetail.onAddressRowPress({
-        type: "open-address-detail",
-        contactId: contact.id,
-        addressId: address.id,
-      });
-    });
-
+    expect(result.current.actions.renameSheet.isOpen).toBe(false);
     expect(result.current.addressDetail.isOpen).toBe(true);
   });
 

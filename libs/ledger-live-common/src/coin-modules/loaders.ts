@@ -239,6 +239,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-hedera/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
+    loadSigner: () => import("../families/hedera/signer").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the

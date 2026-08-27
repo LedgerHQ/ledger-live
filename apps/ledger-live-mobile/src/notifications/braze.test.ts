@@ -1,18 +1,13 @@
 import Braze from "@braze/react-native-sdk";
 import { UserId, DUMMY_USER_ID } from "@domain/entity-client-identity";
-import { start, updateUserPreferences } from "./braze";
+import { applyBrazeConsentTransition, start, updateUserPreferences } from "./braze";
 import type { NotificationsSettings } from "../reducers/types";
-
-jest.mock("@braze/react-native-sdk", () => ({
-  __esModule: true,
-  default: {
-    changeUser: jest.fn(),
-    setCustomUserAttribute: jest.fn(),
-  },
-}));
 
 const mockedChangeUser = jest.mocked(Braze.changeUser);
 const mockedSetCustomUserAttribute = jest.mocked(Braze.setCustomUserAttribute);
+const mockedWipeData = jest.mocked(Braze.wipeData);
+const mockedEnableSDK = jest.mocked(Braze.enableSDK);
+const mockedRequestContentCardsRefresh = jest.mocked(Braze.requestContentCardsRefresh);
 
 const defaultNotifications = {
   areNotificationsAllowed: true,
@@ -96,5 +91,54 @@ describe("updateUserPreferences", () => {
     expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("notificationsAllowed", true);
     expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("optInAnnouncements", true);
     expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("optInLargeMovers", false);
+  });
+});
+
+describe("applyBrazeConsentTransition", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should reset the SDK without identifying when opting out", async () => {
+    await applyBrazeConsentTransition({ isTrackedUser: false, userId: REAL_USER_ID });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(1);
+    expect(mockedEnableSDK).toHaveBeenCalledTimes(1);
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+    expect(mockedWipeData.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedEnableSDK.mock.invocationCallOrder[0],
+    );
+    expect(mockedEnableSDK.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedRequestContentCardsRefresh.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("should recover the SDK then identify with the real user id when opting in", async () => {
+    await applyBrazeConsentTransition({ isTrackedUser: true, userId: REAL_USER_ID });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(1);
+    expect(mockedEnableSDK).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(1);
+    expect(mockedWipeData.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedEnableSDK.mock.invocationCallOrder[0],
+    );
+    expect(mockedEnableSDK.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedChangeUser.mock.invocationCallOrder[0],
+    );
+    expect(mockedChangeUser.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedRequestContentCardsRefresh.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("should skip the SDK when the user id is dummy", async () => {
+    await applyBrazeConsentTransition({ isTrackedUser: true, userId: DUMMY_USER_ID });
+
+    expect(mockedWipeData).not.toHaveBeenCalled();
+    expect(mockedEnableSDK).not.toHaveBeenCalled();
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+    expect(mockedRequestContentCardsRefresh).not.toHaveBeenCalled();
   });
 });

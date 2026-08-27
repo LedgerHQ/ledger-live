@@ -1,6 +1,6 @@
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
@@ -34,12 +34,13 @@ export function useRecipientScreenView({
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("mobile");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
   const [pendingContactAddress, setPendingContactAddress] = useState<string>();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = sendFeatures.hasAddressBook(currency);
+  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,

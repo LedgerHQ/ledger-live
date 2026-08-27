@@ -31,14 +31,11 @@ import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import {
-  payCardBalanceSlice,
-  type PayCardBalanceState,
-} from "@features/flow-pay-card-balance/state";
+import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pay-balance/state";
 import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
-} from "@features/flow-pay-card-feature-tour/state";
+} from "@features/flow-pay-feature-tour/state";
 import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";

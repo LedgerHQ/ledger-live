@@ -4,7 +4,6 @@ import {
   type ContactsDeleteAddressDialogProps,
   type ContactsEditSignerDialogProps,
   type ContactsEditSignerMismatchDialogProps,
-  type ContactsRenameAddressDialogProps,
   type ContactAddressDetailDialogProps,
   type ContactAddressDetailSendIntent,
   CONTACTS_EVENT_SOURCE,
@@ -19,8 +18,11 @@ import {
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
-  type ContactAddressEditSavePayload,
 } from "@features/flow-contacts";
+import type {
+  ContactAddressEditSavePayload,
+  ContactsRenameAddressDialogProps,
+} from "@features/flow-contacts-edit-address";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";

@@ -11,12 +11,12 @@ import {
 type CurrencyOverrides = Partial<Omit<CryptoCurrency, "id">> & { id?: string };
 
 export const createMockCurrency = (overrides?: CurrencyOverrides): CryptoCurrency => {
-  const currency = getCryptoCurrencyById("bitcoin");
   const { id, ...rest } = overrides ?? {};
+  const currency = getCryptoCurrencyById(id ?? "bitcoin");
   return {
     ...currency,
-    ...(id !== undefined ? { id: CryptoCurrencyIdSchema.parse(id) } : {}),
     ...rest,
+    ...(id !== undefined ? { id: CryptoCurrencyIdSchema.parse(id) } : {}),
   };
 };
 
@@ -35,6 +35,7 @@ export const createMockTokenCurrency = (overrides?: Partial<TokenCurrency>): Tok
         magnitude: 6,
       },
     ],
+    parentCurrencyId: "ethereum",
     ...overrides,
   }) as TokenCurrency;
 

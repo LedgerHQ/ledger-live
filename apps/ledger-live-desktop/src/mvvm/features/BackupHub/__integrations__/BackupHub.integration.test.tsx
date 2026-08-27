@@ -16,13 +16,15 @@ import { setRecoverState } from "~/renderer/reducers/recoverState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+  BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
 
@@ -323,12 +325,30 @@ describe("BackupHub", () => {
       DeviceModelId.nanoX,
     );
 
+    const upsellAnalyticsProps = {
+      deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
+      personalRecoOptIn: false,
+      offerType: "none",
+      platform: "lwd",
+    };
+    expect(trackPage).toHaveBeenCalledWith(
+      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      undefined,
+      {
+        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        ...upsellAnalyticsProps,
+      },
+      true,
+      false,
+    );
+
     await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
 
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
       }),
     );
@@ -360,13 +380,23 @@ describe("BackupHub", () => {
         offerType: "none",
         platform: "lwd",
       };
+      expect(trackPage).toHaveBeenCalledWith(
+        BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        undefined,
+        {
+          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          ...upsellAnalyticsProps,
+        },
+        true,
+        false,
+      );
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         ...upsellAnalyticsProps,
       });
       expect(track).toHaveBeenCalledWith("deeplink_clicked", {
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
         deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
         deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,

@@ -7,7 +7,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { render, screen, waitFor, within } from "@tests/test-renderer";
-import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-card-balance/state";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
@@ -184,8 +184,8 @@ describe("PayTab integration", () => {
       expect(screen.getByText(EMPTY_TITLE)).toBeVisible();
       expect(screen.getByText(EMPTY_DESCRIPTION)).toBeVisible();
       expect(screen.queryByTestId("pay-card-balance-funded-state")).toBeNull();
-      expect(screen.queryByTestId("action-tile-deposit")).toBeNull();
-      expect(screen.queryByTestId("action-tile-request")).toBeNull();
+      expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
+      expect(screen.getByTestId("action-tile-request")).toBeVisible();
     });
 
     it("should render the aggregated stablecoin balance when the user holds stablecoins", async () => {

@@ -32,8 +32,8 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
-import { payCardBalancePersistedSelector } from "@features/flow-pay-card-balance/state";
-import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-card-feature-tour/state";
+import { payCardBalancePersistedSelector } from "@features/flow-pay-balance/state";
+import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-tour/state";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;

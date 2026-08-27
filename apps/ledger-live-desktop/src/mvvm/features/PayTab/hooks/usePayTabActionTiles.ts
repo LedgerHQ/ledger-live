@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { ActionTilesProps } from "@features/flow-pay-card-balance";
+import type { ActionTilesProps } from "@features/flow-pay-balance";
 
 export function usePayTabActionTiles(
   onTrackEvent: ActionTilesProps["onTrackEvent"],
