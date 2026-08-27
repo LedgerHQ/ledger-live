@@ -1,7 +1,9 @@
 import {
-  Account,
-  AccountRaw,
   Operation,
+  StakingAccount,
+  StakingAccountRaw,
+  StakingDelegation,
+  StakingUnbonding,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -276,8 +278,10 @@ export type SolanaStake = {
     | undefined;
 };
 
+export type SolanaStakingPosition = StakingDelegation | StakingUnbonding;
+
 export type SolanaStakeWithMeta = {
-  stake: SolanaStake;
+  stake: SolanaStakingPosition;
   meta: {
     validator?: {
       name?: string;
@@ -287,23 +291,11 @@ export type SolanaStakeWithMeta = {
   };
 };
 
-export type SolanaResources = {
-  stakes: SolanaStake[];
-  unstakeReserve: BigNumber;
-};
-
-export type SolanaResourcesRaw = {
-  stakes: string;
-  unstakeReserve: string;
-};
-
 export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
 
-export type SolanaAccount = Account & { solanaResources: SolanaResources };
+export type SolanaAccount = StakingAccount;
 
-export type SolanaAccountRaw = AccountRaw & {
-  solanaResources: SolanaResourcesRaw;
-};
+export type SolanaAccountRaw = StakingAccountRaw;
 
 type Base58PubKey = string;
 export type SolanaTokenAccountExtensions = {

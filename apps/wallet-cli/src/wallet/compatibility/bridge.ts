@@ -11,6 +11,7 @@ import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
 import type {
   TransactionModel as SolanaTransactionModel,
   SolanaAccount,
@@ -176,20 +177,32 @@ export class BridgeAdapter {
 
   /**
    * On-chain Solana stake accounts for the account, mapped to the serializable shape `earn
-   * positions` exposes. A full bridge sync populates `solanaResources.stakes`; we surface the
+   * positions` exposes. A full bridge sync populates `stakingResources`; we surface the
    * stake-account address + delegation + activation state so `earn withdraw --stake-account` has a
    * concrete target. Returns [] for accounts without staking resources.
    */
   async getSolanaStakes(descriptor: AccountDescriptor): Promise<EarnSolanaStake[]> {
     const account = (await this.sync(descriptor)) as SolanaAccount;
-    const stakes = account.solanaResources?.stakes ?? [];
-    return stakes.map(stake => ({
-      stakeAccount: stake.stakeAccAddr,
-      validator: stake.delegation?.voteAccAddr,
-      state: stake.activation.state,
-      stakeBalance: stake.stakeAccBalance,
-      withdrawable: stake.withdrawable,
-    }));
+    return listSolanaStakingPositions(account.stakingResources).flatMap(stake => {
+      const stakeAccount = stake.positionId;
+      // Without a stake account address there is nothing `earn withdraw --stake-account` could
+      // target, so drop the position instead of emitting an unusable empty address.
+      if (!stakeAccount) return [];
+      return [
+        {
+          stakeAccount,
+          validator: stake.validatorAddress || undefined,
+          state: solanaActivationState(stake),
+          stakeBalance: BigNumberStrSchema.parse(
+            (stake.activeAmount ?? new BigNumber(0))
+              .plus(stake.inactiveAmount ?? 0)
+              .plus(stake.lockedReserve ?? 0)
+              .toFixed(),
+          ),
+          withdrawable: BigNumberStrSchema.parse(stake.withdrawableAmount?.toFixed() ?? "0"),
+        },
+      ];
+    });
   }
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {
