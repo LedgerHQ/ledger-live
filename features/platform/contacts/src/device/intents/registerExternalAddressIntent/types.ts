@@ -1,3 +1,4 @@
+import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type {
   Intent,
   IntentDefinition,
@@ -35,7 +36,16 @@ export type RegisterExternalAddressResult = Readonly<{
 
 export type RegisterExternalAddressJobState =
   | { readonly type: "pending" }
-  | { readonly type: "awaiting-device-confirmation" }
+  /**
+   * Carries the connected device so the renderer can name the product and pick
+   * the matching animation: the executor hands intent components only the job
+   * state, so the job is what publishes the device.
+   */
+  | {
+      readonly type: "awaiting-device-confirmation";
+      readonly deviceModelId: DeviceModelId;
+      readonly deviceName: string;
+    }
   | { readonly type: "completed" }
   | ContactDeviceIntentFailureJobState;
 

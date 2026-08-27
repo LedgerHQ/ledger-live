@@ -118,7 +118,11 @@ export const registerExternalAddressIntentJob: Job<
               state.status === DeviceActionStatus.Pending &&
                 state.intermediateValue.requiredUserInteraction ===
                   UserInteractionRequired.RegisterWallet
-                ? { type: "awaiting-device-confirmation" }
+                ? {
+                    type: "awaiting-device-confirmation",
+                    deviceModelId: deviceConnectionResult.connectedDevice.modelId,
+                    deviceName: deviceConnectionResult.compatDeviceName,
+                  }
                 : { type: "pending" },
             );
             return;

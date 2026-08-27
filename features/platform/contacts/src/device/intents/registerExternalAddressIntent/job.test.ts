@@ -1,5 +1,9 @@
 import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
-import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
+import {
+  DeviceActionStatus,
+  DeviceModelId,
+  UserInteractionRequired,
+} from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
 import { ContactDeviceIntentCancelledError } from "../../errors";
 import { registerExternalAddressIntentJob } from "./job";
@@ -35,7 +39,7 @@ function startJob(input: RegisterExternalAddressIntentInput = INPUT) {
     deviceConnectionResult: {
       dmk: { id: "mock-dmk" } as never,
       sessionId: "session-1",
-      connectedDevice: {} as never,
+      connectedDevice: { modelId: DeviceModelId.STAX } as never,
       compatDeviceId: "compat-1",
       compatDeviceName: "Ledger Stax",
       compatDeviceWired: true,
@@ -146,7 +150,11 @@ describe("registerExternalAddressIntentJob", () => {
     });
 
     // THEN
-    expect(job.states).toContainEqual({ type: "awaiting-device-confirmation" });
+    expect(job.states).toContainEqual({
+      type: "awaiting-device-confirmation",
+      deviceModelId: DeviceModelId.STAX,
+      deviceName: "Ledger Stax",
+    });
   });
 
   it("GIVEN an unrelated pending interaction WHEN pending THEN it reports pending", () => {
