@@ -29,6 +29,7 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
         navigate(ScreenName.PayTabRequestReceive, {
           parentId: parentAccount?.id,
           currency: accountCurrency,
+          // Token (USDC) may not be in the wallet yet. Use the parent (ETH) id instead.
           accountId: (account.type !== "Account" && account.parentId) || account.id,
         });
       },
