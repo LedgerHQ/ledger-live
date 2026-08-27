@@ -1,10 +1,34 @@
 import { act, renderHook } from "@testing-library/react";
+import { EMPTY } from "rxjs";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
+import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 import {
   ContactDeviceIntentCancelledError,
   ContactDeviceIntentMissingResultError,
 } from "../contactDeviceIntentsPort";
+import type { ContactsIntentPlatformDefinitions } from "./types";
 import { useContactsIntentsOrchestrator } from "./useContactsIntentsOrchestrator";
+
+/**
+ * The orchestrator never runs a job or renders a component: it drives everything
+ * through the listeners the executor would call. Injecting inert definitions keeps
+ * these assertions about orchestration only, with no coupling to the contacts kit.
+ */
+const mockIntentPlatformDefinition = <JobState, Input, Result>(
+  label: string,
+): IntentPlatformDefinition<JobState, Input, undefined, Result> => ({
+  label,
+  requiresConnectedDevice: true,
+  delegateDeviceLockStateHandlingToExecutor: true,
+  job: () => EMPTY,
+  component: () => null,
+});
+
+const intents: ContactsIntentPlatformDefinitions = {
+  registerExternalAddress: mockIntentPlatformDefinition("mock register external address"),
+  renameExternalContact: mockIntentPlatformDefinition("mock rename contact"),
+  editExternalAddress: mockIntentPlatformDefinition("mock edit external address"),
+};
 
 function startRegisterExternalAddress(
   orchestrator: ReturnType<typeof useContactsIntentsOrchestrator>,
@@ -54,7 +78,7 @@ function getActiveDieProps(orchestrator: ReturnType<typeof useContactsIntentsOrc
 describe("useContactsIntentsOrchestrator", () => {
   it("GIVEN an active operation WHEN its intent reports success THEN it resolves the mapped port result", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -77,7 +101,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN an active operation WHEN its intent reports failure THEN it rejects with that failure", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -98,7 +122,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN an active operation WHEN its intent reports multiple results THEN it keeps the first result", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -122,7 +146,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN an active operation with a result WHEN its job errors THEN it preserves the result and dismisses the DIE", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -145,7 +169,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN an active operation without a result WHEN its job completes THEN it rejects the missing Result contract", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -164,7 +188,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN an active operation WHEN its observable errors THEN it rejects with the fallback error", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -184,7 +208,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN a job has not started WHEN the user cancels THEN it rejects without waiting for job unsubscription", async () => {
     // GIVEN
-    const { result } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);
@@ -205,7 +229,7 @@ describe("useContactsIntentsOrchestrator", () => {
 
   it("GIVEN a job has not started WHEN the Contacts surface unmounts THEN it rejects the active request", async () => {
     // GIVEN
-    const { result, unmount } = renderHook(() => useContactsIntentsOrchestrator());
+    const { result, unmount } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
       request = startRegisterExternalAddress(result.current);

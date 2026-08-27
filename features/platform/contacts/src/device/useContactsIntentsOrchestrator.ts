@@ -14,17 +14,13 @@ import { ContactDeviceIntentCancelledError, ContactDeviceIntentMissingResultErro
 import { createEditExternalAddressOperation } from "./operations/editExternalAddress";
 import { createRegisterExternalAddressOperation } from "./operations/registerExternalAddress";
 import { createRenameExternalContactOperation } from "./operations/renameExternalContact";
-import {
-  editExternalAddressIntentPlatformDefinition,
-  registerExternalAddressIntentPlatformDefinition,
-  renameContactIntentPlatformDefinition,
-} from "./intents";
 import type {
   ContactDeviceIntent,
   ContactDeviceIntentInput,
   ContactDeviceIntentJobState,
   ContactOperation,
   ContactsDeviceInitializationInput,
+  ContactsIntentPlatformDefinitions,
 } from "./types";
 import type { ContactsDeviceIntentExecutorProps } from "./ContactsDeviceIntentExecutorProps";
 
@@ -47,7 +43,19 @@ export type ContactsIntentsOrchestrator = Readonly<{
   dieProps: ContactsDeviceIntentExecutorProps | undefined;
 }>;
 
-export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
+export type UseContactsIntentsOrchestratorParams = Readonly<{
+  /**
+   * The platform definitions for the Contacts device operations. Each app owns
+   * its intent renderers, so it composes these from the shared
+   * `IntentDefinition`s and passes them in. Tests inject mock definitions to
+   * assert orchestration without running the real jobs.
+   */
+  intents: ContactsIntentPlatformDefinitions;
+}>;
+
+export function useContactsIntentsOrchestrator({
+  intents,
+}: UseContactsIntentsOrchestratorParams): ContactsIntentsOrchestrator {
   const [activeIntent, setActiveIntent] = useState<ActiveIntent>();
 
   const execute = useCallback(
@@ -103,29 +111,21 @@ export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
 
   const editExternalAddress = useCallback(
     async (input: EditExternalAddressInput): Promise<EditExternalAddressResult> => {
-      const operation = createEditExternalAddressOperation(
-        input,
-        editExternalAddressIntentPlatformDefinition,
-      );
+      const operation = createEditExternalAddressOperation(input, intents.editExternalAddress);
       return operation === null ? input.address.device : execute(operation);
     },
-    [execute],
+    [execute, intents.editExternalAddress],
   );
 
   const deviceIntents = useMemo<ContactDeviceIntentsPort>(
     () => ({
       registerExternalAddress: async input =>
-        execute(
-          createRegisterExternalAddressOperation(
-            input,
-            registerExternalAddressIntentPlatformDefinition,
-          ),
-        ),
+        execute(createRegisterExternalAddressOperation(input, intents.registerExternalAddress)),
       renameExternalContact: async input =>
-        execute(createRenameExternalContactOperation(input, renameContactIntentPlatformDefinition)),
+        execute(createRenameExternalContactOperation(input, intents.renameExternalContact)),
       editExternalAddress,
     }),
-    [editExternalAddress, execute],
+    [editExternalAddress, execute, intents.registerExternalAddress, intents.renameExternalContact],
   );
 
   const cancel = useCallback(() => {
