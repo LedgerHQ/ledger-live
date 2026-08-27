@@ -35,7 +35,7 @@ import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
-import type { ServerData } from "../../apps/ledger-live-mobile/src/e2e/bridge/types";
+import type { ServerData } from "~/e2e/bridge/types";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";

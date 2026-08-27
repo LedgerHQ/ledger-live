@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { ApplicationOptions } from "page";
+import { ApplicationOptions } from "@e2e/page/index";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 async function initApp(options: ApplicationOptions) {
