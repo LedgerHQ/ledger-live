@@ -1,5 +1,6 @@
 import {
   TransactionType,
+  type Transaction,
   AccountAddress,
   deserializeTransaction,
   serializeTransfer,
@@ -16,7 +17,7 @@ const PUBLIC_KEY = "aa".repeat(32);
 
 // Helper to create a valid serialized Transfer transaction
 function createSerializedTransfer(sender: string, nonce: bigint): string {
-  const tx = {
+  const tx: Transaction = {
     type: TransactionType.Transfer,
     header: {
       sender: AccountAddress.fromBase58(sender),
@@ -35,7 +36,7 @@ function createSerializedTransfer(sender: string, nonce: bigint): string {
 
 // Helper to create a valid serialized TransferWithMemo transaction
 function createSerializedTransferWithMemo(sender: string, nonce: bigint): string {
-  const tx = {
+  const tx: Transaction = {
     type: TransactionType.TransferWithMemo,
     header: {
       sender: AccountAddress.fromBase58(sender),
