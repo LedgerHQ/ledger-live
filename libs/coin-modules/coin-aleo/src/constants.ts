@@ -92,6 +92,10 @@ export const PROGRESS_THROTTLE_MIN_STEP = 5;
 // Root transition + up to 30 nested calls, within the device limit of n < 32 per signing session.
 export const MAX_SIGNATURES_PER_TRANSACTION = 31;
 
+// Minimum amount (in microcredits) required to bond/stake to a validator.
+// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
+export const MIN_BOND_AMOUNT = 1_000_000;
+
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 
@@ -106,27 +110,14 @@ export const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
 
-// Minimum amount (in microcredits) required to bond/stake to a validator.
-// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
-export const MIN_BOND_AMOUNT = 1_000_000;
-
-// 1 ALEO credit = 1_000_000 microcredits. The committee endpoint reports stake in
-// microcredits while `latest/totalSupply` reports credits, so the two must be put on
-// the same scale before they are divided.
 export const MICROCREDITS_PER_CREDIT = 1_000_000;
 
-// Below this bonded total the protocol pays a delegator nothing at all: 10,000 ALEO.
-// Enforced against the projected total stake (already-bonded balance + this bond
-// amount), so top-ups on an existing position only need to satisfy MIN_BOND_AMOUNT.
+// Below this bonded total the protocol pays a delegator nothing at all.
 export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
 
-// Annual issuance as a fraction of total supply. Follows from snarkVM's
-// `block_reward_v2 = floor(0.05 * S * I / S_Y) + CR/3 + TX_F`
-// (ledger/block/src/helpers/target.rs), whose `I / S_Y` weighting integrates to 1
-// over a year. The dropped coinbase (CR/3) and transaction-fee (TX_F) terms are why
-// the derived rate is a lower bound and must be surfaced as an estimate.
+// snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
+// rates derived from this alone are a lower bound.
 export const ANNUAL_INFLATION_RATE = 0.05;
 
-// A validator holding more than this share of the network's total stake earns no
-// rewards at all — not a reduced rate, zero.
+// A validator above this share of total stake earns zero, not a reduced rate.
 export const MAX_VALIDATOR_STAKE_SHARE = 0.25;
