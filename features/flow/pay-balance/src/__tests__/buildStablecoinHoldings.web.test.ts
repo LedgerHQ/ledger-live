@@ -108,4 +108,22 @@ describe("buildStablecoinHoldings", () => {
       }),
     ).toEqual([usdtCatalog]);
   });
+
+  it("should omit catalog rows with no positive amount", () => {
+    expect(
+      build({
+        catalog: [{ currency: USDC_CURRENCY, balance: 0, value: 0 }, usdtCatalog],
+      }),
+    ).toEqual([usdtCatalog]);
+  });
+
+  it("should fall back to held accounts when the catalog only has zero amounts", () => {
+    expect(
+      build({
+        catalog: [{ currency: USDC_CURRENCY, balance: 0, value: 0 }],
+        heldAccounts: [usdcHeld],
+        stablecoinTickers: new Set(["USDC"]),
+      }),
+    ).toEqual([{ currency: USDC_CURRENCY, balance: 1_000_000, value: 0 }]);
+  });
 });
