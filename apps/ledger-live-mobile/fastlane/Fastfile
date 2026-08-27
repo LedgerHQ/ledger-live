@@ -25,15 +25,19 @@ IPA_DIRECTORY = "#{OUTPUT_DIRECTORY}/#{PROJECT_NAME}.ipa"
 default_platform(:ios)
 package = load_json(json_path: "./package.json")
 
+# Every track CI uploads to must be listed here: Play permanently reserves each
+# version code ever uploaded. One Play edit per track, and creating them in quick
+# succession gets throttled, so keep this minimal.
+ANDROID_VERSION_CODE_TRACKS = ["internal", "production"].freeze
+
 def infer_android_version_code
-  # Checks all relevant tracks in the play console and take the highest (plus one).
-  ["Nightly", "internal", "beta", "alpha", "production", "Recover Beta"].map { |track|
+  @android_version_code ||= ANDROID_VERSION_CODE_TRACKS.map { |track|
     google_play_track_version_codes(
       package_name: "com.ledger.live",
       track: track,
       json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
     ).map(&:to_i).max
-  }.max + 1
+  }.compact.max + 1
 end
 
 def trim_version_number(version)
