@@ -59,7 +59,7 @@ export function parseSwapWallet40Route(url: string): SwapWallet40ParsedRoute {
         return {
           routeName: "quotesList",
           headerStyle: "opaque",
-          titleKey: "transfer.swap2.quotesList.title",
+          titleKey: null,
           isTransactionComplete: false,
         };
       }
