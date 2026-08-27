@@ -38,16 +38,20 @@ export const applyNeuronOperation = (
         ) as ICPAccount;
         const snapshot = operation.extra.neurons;
         if (!snapshot) {
+          // `neurons` is typed as required but is only populated by a sync or a deserialize, and a
+          // freshly added account stakes before it has either — every stake reaches this branch,
+          // since only list_neurons carries a snapshot.
+          const stored = next.neurons ?? NeuronsData.empty();
           const outcome = operation.extra.outcome;
           const patched = transaction
-            ? applyNeuronCommand(next.neurons.fullNeurons, transaction, {
+            ? applyNeuronCommand(stored.fullNeurons, transaction, {
                 ...(outcome !== undefined && { outcome }),
               })
             : undefined;
           if (!patched) return next;
           const replayed: ICPAccount = {
             ...next,
-            neurons: new NeuronsData(patched, next.neurons.lastUpdatedMSecs),
+            neurons: new NeuronsData(patched, stored.lastUpdatedMSecs),
           };
           return replayed;
         }

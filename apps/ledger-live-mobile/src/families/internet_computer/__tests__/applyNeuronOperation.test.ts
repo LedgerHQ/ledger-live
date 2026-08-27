@@ -222,6 +222,18 @@ describe("applyNeuronOperation replaying an accepted command", () => {
     expect(updated.neurons.fullNeurons[0].maturityE8sEquivalent).toBe(400_000_000n);
   });
 
+  /*
+   * `ICPAccount.neurons` is typed required but only a sync or a deserialize populates it, so a
+   * freshly added account has none — and creating a neuron is exactly what such an account does
+   * first. Every stake broadcast reaches the replay, since only list_neurons carries a snapshot.
+   */
+  it("survives an account that has never been synced", () => {
+    const account = makeICPAccount();
+    delete (account as Partial<ICPAccount>).neurons;
+
+    expect(() => replay(account, { type: "create_neuron" })).not.toThrow();
+  });
+
   it("leaves the snapshot untouched when no transaction is supplied", () => {
     const account = makeICPAccount({ neurons: [lockedNeuron()] });
 
