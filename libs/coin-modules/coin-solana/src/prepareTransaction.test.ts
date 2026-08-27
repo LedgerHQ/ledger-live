@@ -13,7 +13,8 @@ import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
-import { SolanaAccount, Transaction, TransferTransaction } from "./types";
+import { SolanaAccount, SolanaStake, Transaction, TransferTransaction } from "./types";
+import { solanaStakesToStakingResources } from "./logic/stakingResources";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -719,27 +720,28 @@ describe("testing prepareTransaction", () => {
       const STALE_WITHDRAWABLE = 161_310_212_991;
       const RENT_EXEMPT_RESERVE = 2_282_880;
 
-      const makeAccount = (overrides?: Partial<SolanaAccount>): SolanaAccount =>
-        ({
+      const makeAccount = (
+        stakeOverrides?: Partial<SolanaStake>,
+        extra?: Partial<SolanaAccount>,
+      ): SolanaAccount => {
+        const stake: SolanaStake = {
+          stakeAccAddr,
+          hasStakeAuth: true,
+          hasWithdrawAuth: true,
+          delegation: undefined,
+          stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
+          rentExemptReserve: RENT_EXEMPT_RESERVE,
+          withdrawable: STALE_WITHDRAWABLE,
+          activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
+          ...stakeOverrides,
+        };
+        return {
           currency: { units: [{ magnitude: 9 }] },
           freshAddress: senderAddress,
-          solanaResources: {
-            unstakeReserve: new BigNumber(1_000_000),
-            stakes: [
-              {
-                stakeAccAddr,
-                hasStakeAuth: true,
-                hasWithdrawAuth: true,
-                delegation: undefined,
-                stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
-                rentExemptReserve: RENT_EXEMPT_RESERVE,
-                withdrawable: STALE_WITHDRAWABLE,
-                activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
-              },
-            ],
-          },
-          ...overrides,
-        }) as unknown as SolanaAccount;
+          stakingResources: solanaStakesToStakingResources([stake], new BigNumber(1_000_000)),
+          ...extra,
+        } as unknown as SolanaAccount;
+      };
 
       it("clamps the encoded amount to the live on-chain balance when sync data is stale", async () => {
         mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
@@ -800,23 +802,7 @@ describe("testing prepareTransaction", () => {
         });
 
         const prepared = await prepareTransaction(
-          makeAccount({
-            solanaResources: {
-              unstakeReserve: new BigNumber(1_000_000),
-              stakes: [
-                {
-                  stakeAccAddr,
-                  hasStakeAuth: true,
-                  hasWithdrawAuth: false,
-                  delegation: undefined,
-                  stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
-                  rentExemptReserve: RENT_EXEMPT_RESERVE,
-                  withdrawable: STALE_WITHDRAWABLE,
-                  activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
-                },
-              ],
-            },
-          } as unknown as Partial<SolanaAccount>),
+          makeAccount({ hasWithdrawAuth: false }),
           withdrawTx,
           {
             getBalance: () => Promise.resolve(STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE),
@@ -845,7 +831,7 @@ describe("testing prepareTransaction", () => {
         {
           currency: { units: [{ magnitude: 9 }] },
           freshAddress: "Sender11111111111111111111111111111111",
-          solanaResources: { stakes: [] },
+          stakingResources: solanaStakesToStakingResources([], new BigNumber(0)),
         } as unknown as SolanaAccount,
         stakeSplitTx,
         {} as ChainAPI,

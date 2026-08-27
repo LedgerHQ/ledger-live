@@ -36,6 +36,7 @@
     "@types/ws": "^8.5.3",
     "jest": "catalog:",
     "msw": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

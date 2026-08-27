@@ -44,9 +44,15 @@ export default class BuySellPage {
     await waitForElementById(app.common.walletApiWebview, 60000, { checkVisibility: false });
   }
 
+  // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
+  // 60s flakes on that alone. Latency is tracked separately, not fixed here.
+  cryptoCurrencySelectorTimeout = 120000;
+
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
-    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await waitWebElementByTestId(this.cryptoCurrencySelector, {
+      timeout: this.cryptoCurrencySelectorTimeout,
+    });
     await detoxExpect(getWebElementsByIdAndText("", "You will pay")).toExist();
     await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
     await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("400"))).toExist();
@@ -57,7 +63,9 @@ export default class BuySellPage {
 
   @Step("Expect Sell screen to be visible")
   async expectSellScreenToBeVisible() {
-    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await waitWebElementByTestId(this.cryptoCurrencySelector, {
+      timeout: this.cryptoCurrencySelectorTimeout,
+    });
     await detoxExpect(getWebElementsByIdAndText("", "You will sell")).toExist();
     await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
     await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("25%"))).toExist();

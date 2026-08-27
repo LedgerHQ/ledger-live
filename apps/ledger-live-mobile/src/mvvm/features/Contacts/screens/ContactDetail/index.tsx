@@ -5,6 +5,7 @@ import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDe
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
 import { ContactsLedgerSyncIntroductionSheet } from "LLM/features/Contacts/components/ContactsLedgerSyncIntroductionSheet";
+import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
@@ -25,7 +26,10 @@ export function ContactDetailScreen(): React.JSX.Element | null {
       {viewModel.addAddressFlowState.status !== "closed" ? (
         <ContactsAddAddressFlowDrawer {...viewModel.addAddressFlowProps} />
       ) : null}
-      <ContactAddressDetailDialogSheet {...viewModel.addressDetailDialog} />
+      <ContactAddressDetailDialogSheet
+        {...viewModel.addressDetailDialog}
+        isActionSheetOpen={viewModel.isAddressDetailActionSheetOpen}
+      />
       <ContactAddressDetailActionsSheets
         deleteSheet={viewModel.addressDetailActions.deleteSheet}
         renameSheet={viewModel.addressDetailActions.renameSheet}
@@ -37,6 +41,9 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         {...viewModel.ledgerSyncIntroduction}
         {...viewModel.ledgerSyncIntroductionContent}
       />
+      {viewModel.dieProps === undefined ? null : (
+        <DeviceIntentExecutorLWM sourceFlow="contacts" {...viewModel.dieProps} />
+      )}
     </>
   );
 }

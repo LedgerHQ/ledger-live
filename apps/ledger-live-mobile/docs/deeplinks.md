@@ -117,6 +117,8 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
   `ledgerlive://earn?action=get-funds&currencyId=ethereum` will open buy drawer with specified currency
 
+  `ledgerlive://earn/simulate` (or `ledgerlive://earn?action=simulate`) will open the earn rewards simulator
+
 - **_paytab_** 🠒 Pay Tab (when `lwmPayTab` is on)
 
   `ledgerlive://paytab` opens the Pay tab.

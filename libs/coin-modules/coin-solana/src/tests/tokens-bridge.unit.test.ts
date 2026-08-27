@@ -24,6 +24,7 @@ import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from ".
 import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { prepareTransaction } from "../prepareTransaction";
+import { emptyStakingResources } from "../logic/stakingResources";
 import {
   SolanaAccount,
   SolanaTokenAccount,
@@ -131,7 +132,7 @@ describe("Solana tokens bridge integration tests", () => {
   const baseSolanaAccount: SolanaAccount = {
     ...baseAccount,
     freshAddress: testData.address1,
-    solanaResources: { stakes: [], unstakeReserve: BigNumber(0) },
+    stakingResources: emptyStakingResources(BigNumber(0)),
   };
   const baseTxModel: TokenTransferTransaction = {
     kind: "token.transfer",

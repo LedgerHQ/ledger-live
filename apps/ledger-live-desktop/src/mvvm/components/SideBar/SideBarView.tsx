@@ -47,6 +47,7 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
 
       <div className="min-h-0">
         <SideBar
+          ref={viewModel.navRef}
           active={viewModel.active}
           onActiveChange={viewModel.handleActiveChange}
           collapsed={viewModel.collapsed}

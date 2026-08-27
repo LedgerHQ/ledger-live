@@ -1,7 +1,11 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { stakeActions, stakeActivePercent } from "@ledgerhq/live-common/families/solana/logic";
+import {
+  solanaActivationState,
+  stakeActions,
+  stakeActivePercent,
+} from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import {
   SolanaAccount,
@@ -57,7 +61,7 @@ function Delegations({ account }: Props) {
 
   const stakesWithMeta: SolanaStakeWithMeta[] = useSolanaStakesWithMeta(
     currency,
-    mainAccount.solanaResources?.stakes ?? [],
+    mainAccount.stakingResources,
   );
 
   const unit = useAccountUnit(mainAccount);
@@ -97,11 +101,10 @@ function Delegations({ account }: Props) {
 
   const openValidatorUrl = useCallback(
     ({ stake, meta }: SolanaStakeWithMeta) => {
-      const { delegation } = stake;
       const url =
         meta.validator?.url ??
-        (delegation?.voteAccAddr &&
-          getAddressExplorer(getDefaultExplorerView(account.currency), delegation.voteAccAddr));
+        (stake.validatorAddress &&
+          getAddressExplorer(getDefaultExplorerView(account.currency), stake.validatorAddress));
       if (url) {
         Linking.openURL(url);
       }
@@ -110,8 +113,8 @@ function Delegations({ account }: Props) {
   );
 
   const formatAmount = useCallback(
-    (amount: number) =>
-      formatCurrencyUnit(unit, new BigNumber(amount), {
+    (amount: BigNumber | number) =>
+      formatCurrencyUnit(unit, BigNumber.isBigNumber(amount) ? amount : new BigNumber(amount), {
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,
@@ -141,7 +144,7 @@ function Delegations({ account }: Props) {
               style={[styles.valueText]}
               color="live"
             >
-              {meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "N/A"}
+              {meta.validator?.name || stake.validatorAddress || "N/A"}
             </Text>
           </Touchable>
         ),
@@ -156,7 +159,7 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {t(`solana.delegation.states.${stake.activation.state}`)}
+            {t(`solana.delegation.states.${solanaActivationState(stake)}`)}
           </Text>
         ),
       },
@@ -170,11 +173,11 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %
+            {stake.validatorAddress ? stakeActivePercent(stake).toFixed(2) : "0"} %
           </Text>
         ),
       },
-      ...(stake.activation.inactive > 0
+      ...((stake.inactiveAmount ?? new BigNumber(0)).gt(0)
         ? [
             {
               label: t("solana.delegation.inactiveStake"),
@@ -186,7 +189,7 @@ function Delegations({ account }: Props) {
                   style={[styles.valueText]}
                   color="live"
                 >
-                  {formatAmount(stake.activation.inactive)}
+                  {formatAmount(stake.inactiveAmount ?? new BigNumber(0))}
                 </Text>
               ),
             },
@@ -202,7 +205,7 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {formatAmount(stake.withdrawable)}
+            {formatAmount(stake.withdrawableAmount ?? new BigNumber(0))}
           </Text>
         ),
       },
@@ -291,16 +294,15 @@ function Delegations({ account }: Props) {
             imgUrl={selectedStakeWithMeta?.meta?.validator?.img}
             name={
               selectedStakeWithMeta?.meta?.validator?.name ??
-              selectedStakeWithMeta?.stake.delegation?.voteAccAddr
+              selectedStakeWithMeta?.stake.validatorAddress
             }
             size={size}
           />
         )}
         amount={
-          new BigNumber(
-            (selectedStakeWithMeta?.stake?.delegation?.stake ?? 0) ||
-              (selectedStakeWithMeta?.stake?.withdrawable ?? 0),
-          )
+          selectedStakeWithMeta?.stake.amount.gt(0)
+            ? selectedStakeWithMeta.stake.amount
+            : (selectedStakeWithMeta?.stake.withdrawableAmount ?? new BigNumber(0))
         }
         data={data}
         actions={delegationActions}
@@ -327,7 +329,7 @@ function Delegations({ account }: Props) {
           <Box mt={6}>
             {stakesWithMeta.map((stakeWithMeta, i) => (
               <View
-                key={stakeWithMeta.stake.stakeAccAddr}
+                key={stakeWithMeta.stake.positionId || i}
                 style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
               >
                 <DelegationRow
@@ -369,7 +371,7 @@ function DrawerStakeActionIcon({
 }
 
 export default function SolanaDelegations({ account }: { account: AccountLike }) {
-  if (!(account as SolanaAccount).solanaResources) return null;
+  if (!(account as SolanaAccount).stakingResources) return null;
   return <Delegations account={account as SolanaAccount} />;
 }
 

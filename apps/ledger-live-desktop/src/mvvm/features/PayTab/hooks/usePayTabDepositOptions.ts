@@ -9,7 +9,7 @@ import {
   type DepositOptionsLabels,
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
-} from "@features/flow-pay-card-deposit";
+} from "@features/flow-pay-deposit";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 
 const DEPOSIT_PAGE = "Pay";

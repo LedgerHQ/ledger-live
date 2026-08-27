@@ -5,6 +5,7 @@ import {
   setCryptoAssetsStore,
   type FrameworkCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
@@ -146,8 +147,8 @@ describe("HumanCommandOutput", () => {
             stakeAccount: "Stake222222222222222222222222222222222222222",
             validator: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
             state: "inactive",
-            stakeBalance: 2_000_000_000,
-            withdrawable: 1_997_717_120,
+            stakeBalance: BigNumberStrSchema.parse("2000000000"),
+            withdrawable: BigNumberStrSchema.parse("1997717120"),
           },
         ],
       );

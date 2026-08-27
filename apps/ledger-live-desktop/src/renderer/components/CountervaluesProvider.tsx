@@ -94,13 +94,25 @@ function useCacheManager() {
 }
 
 function usePollingManager() {
-  const { start, stop } = useCountervaluesPolling();
+  const { poll, start, stop } = useCountervaluesPolling();
   useEffect(() => {
+    const handleFocus = () => {
+      start();
+      poll();
+    };
+    const handleOnline = () => {
+      if (document.hasFocus()) {
+        poll();
+      }
+    };
+
     window.addEventListener("blur", stop);
-    window.addEventListener("focus", start);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("online", handleOnline);
     return () => {
       window.removeEventListener("blur", stop);
-      window.removeEventListener("focus", start);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("online", handleOnline);
     };
-  }, [start, stop]);
+  }, [poll, start, stop]);
 }

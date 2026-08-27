@@ -35,6 +35,7 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

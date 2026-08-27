@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Platform } from "react-native";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
-import { fireEvent, render, screen } from "@tests/test-renderer";
+import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { act, fireEvent, render, screen } from "@tests/test-renderer";
 import { ContactsAddContactDrawerSheet } from ".";
 
 const mockUseKeyboardVisible = jest.fn();
@@ -76,7 +78,16 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
     expect(screen.getByText("0/32")).toBeVisible();
     expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
-    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp("autoFocus", true);
+  });
+
+  it("should hold the name field focus back until the drawer has finished opening", () => {
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(screen.UNSAFE_getByType(ContactsAddContactContent).props.autoFocus).toBe(false);
+
+    act(() => screen.UNSAFE_getByType(QueuedBottomSheet).props.onOpened());
+
+    expect(screen.UNSAFE_getByType(ContactsAddContactContent).props.autoFocus).toBe(true);
   });
 
   it("should cap the contact name at 32 characters", async () => {

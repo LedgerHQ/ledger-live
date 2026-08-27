@@ -356,7 +356,6 @@ export type SendDescriptor = {
   };
   fees: FeeDescriptor;
   amount?: SendAmountDescriptor;
-  addressBook?: boolean;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
 };

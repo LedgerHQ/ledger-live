@@ -1,33 +1,57 @@
 import { useMemo } from "react";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useDistribution } from "~/renderer/actions/general";
 import {
   useStablecoinTickers,
   useDefaultStablecoins,
   type DefaultStablecoin,
 } from "@features/platform-aggregated-assets";
+import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import {
-  useCategorizedAssets,
-  type CategorizedAssetItem,
-} from "@ledgerhq/asset-aggregation/assetCategorization/index";
+  buildStablecoinHoldings,
+  type HeldAccount,
+  type StablecoinItem,
+} from "@features/flow-pay-balance";
 import { useSelector } from "LLD/hooks/redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
 
 export type PayStablecoins = Readonly<{
-  stablecoins: CategorizedAssetItem[];
+  stablecoins: StablecoinItem[];
   defaultStablecoins: DefaultStablecoin[];
   isLoading: boolean;
   isError: boolean;
 }>;
 
+function toHeldAccount(account: AccountLike): HeldAccount {
+  const currency = getAccountCurrency(account);
+  return {
+    type: account.type,
+    balance: account.balance.toNumber(),
+    currency: {
+      id: currency.id,
+      name: currency.name,
+      ticker: currency.ticker,
+      units: currency.units.map(unit => ({
+        name: unit.name,
+        code: unit.code,
+        magnitude: unit.magnitude,
+      })),
+    },
+  };
+}
+
 export function usePayStablecoins(): PayStablecoins {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const heldAccounts = useSelector(flattenAccountsSelector);
 
-  // Force cross-chain asset grouping so each stablecoin is a single aggregated item,
-  // independent of the aggregatedAssets wallet flag.
+  // groupBy: "asset" aggregates each ticker across chains into one row.
+  // This path does not read the aggregatedAssets wallet flag.
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -46,12 +70,25 @@ export function usePayStablecoins(): PayStablecoins {
     isError: isDefaultStablecoinsError,
   } = useDefaultStablecoins("lld", __APP_VERSION__);
 
-  const categorized = useCategorizedAssets(distribution, stablecoinTickers);
+  const { stablecoins: catalogStablecoins } = useCategorizedAssets(distribution, stablecoinTickers);
 
-  const stablecoins = useMemo(() => {
-    const blacklist = new Set(blacklistedTokenIds ?? []);
-    return categorized.stablecoins.filter(({ currency }) => !blacklist.has(currency.id));
-  }, [categorized.stablecoins, blacklistedTokenIds]);
+  const stablecoins = useMemo(
+    () =>
+      buildStablecoinHoldings({
+        catalog: catalogStablecoins,
+        heldAccounts: heldAccounts.map(toHeldAccount),
+        blacklistedTokenIds,
+        stablecoinTickers,
+        isLoadingStablecoinTickers,
+      }),
+    [
+      catalogStablecoins,
+      heldAccounts,
+      blacklistedTokenIds,
+      stablecoinTickers,
+      isLoadingStablecoinTickers,
+    ],
+  );
 
   return {
     stablecoins,

@@ -10,6 +10,10 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./hooks": {
+      "react-native": "./src/hooks/index.native.ts",
+      "default": "./src/hooks/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,

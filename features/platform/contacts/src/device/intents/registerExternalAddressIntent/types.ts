@@ -3,6 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
 type ChainId = string | number;
@@ -34,23 +35,26 @@ export type RegisterExternalAddressResult = Readonly<{
 export type RegisterExternalAddressJobState =
   | { readonly type: "pending" }
   | { readonly type: "awaiting-device-confirmation" }
-  | { readonly type: "completed"; readonly result: RegisterExternalAddressResult }
+  | { readonly type: "completed" }
   | { readonly type: "failed"; readonly error: Error };
 
 export type RegisterExternalAddressIntentDefinition = IntentDefinition<
   RegisterExternalAddressJobState,
-  RegisterExternalAddressIntentInput
+  RegisterExternalAddressIntentInput,
+  ContactIntentResult<RegisterExternalAddressResult>
 >;
 
 export type RegisterExternalAddressIntentPlatformDefinition<ExtraProps = undefined> =
   IntentPlatformDefinition<
     RegisterExternalAddressJobState,
     RegisterExternalAddressIntentInput,
-    ExtraProps
+    ExtraProps,
+    ContactIntentResult<RegisterExternalAddressResult>
   >;
 
 export type RegisterExternalAddressIntent<ExtraProps = undefined> = Intent<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
-  ExtraProps
+  ExtraProps,
+  ContactIntentResult<RegisterExternalAddressResult>
 >;

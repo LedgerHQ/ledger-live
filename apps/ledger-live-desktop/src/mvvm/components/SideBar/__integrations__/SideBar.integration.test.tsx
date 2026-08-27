@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { fireEvent, render, screen } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import SideBar from "../index";
 import { defaultInitialState, withFeatureFlags } from "../__tests__/testUtils";
@@ -317,6 +317,33 @@ describe("SideBar", () => {
       await user.click(screen.getByText("Refer a friend"));
 
       expect(mockNavigate).toHaveBeenCalledWith("/refer-a-friend");
+    });
+  });
+
+  describe("Window focus", () => {
+    it("should drop focus from the clicked item when the window loses focus", async () => {
+      const { user } = renderSideBarWithRoute("/");
+
+      const swapButton = screen.getByText("Swap").closest("button");
+      await user.click(swapButton!);
+      expect(swapButton).toHaveFocus();
+
+      fireEvent.blur(window);
+
+      expect(swapButton).not.toHaveFocus();
+    });
+
+    it("should keep focus outside the sidebar untouched when the window loses focus", () => {
+      renderSideBarWithRoute("/");
+
+      const outsideButton = document.createElement("button");
+      document.body.appendChild(outsideButton);
+      outsideButton.focus();
+
+      fireEvent.blur(window);
+
+      expect(outsideButton).toHaveFocus();
+      outsideButton.remove();
     });
   });
 

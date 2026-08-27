@@ -16,7 +16,7 @@ describe("Shape (external node)", () => {
         type: "blockscout",
         uri: "https://shapescan.xyz/api",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     const module = createApi("shape");
 

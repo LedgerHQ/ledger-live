@@ -60,7 +60,12 @@ function mockSignMessageExec(result$: Observable<Result>) {
 }
 
 function startJob() {
-  return signMessageIntentJob({ deviceConnectionResult, deviceExtractedContext, input });
+  return signMessageIntentJob({
+    deviceConnectionResult,
+    deviceExtractedContext,
+    input,
+    onResult: jest.fn(),
+  });
 }
 
 describe("signMessageIntentJob", () => {

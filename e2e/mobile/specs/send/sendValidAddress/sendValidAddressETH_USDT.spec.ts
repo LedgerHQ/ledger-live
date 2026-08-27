@@ -8,7 +8,7 @@ const transaction = new Transaction(
 );
 runSendValidAddressTest(
   transaction,
-  ["B2CQA-2703", "B2CQA-475"],
+  ["B2CQA-2703"],
   "recipient and amount",
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
   transaction.accountToDebit.currency.name,

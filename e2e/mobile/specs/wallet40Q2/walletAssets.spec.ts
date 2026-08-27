@@ -26,7 +26,6 @@ describe("Wallet assets", () => {
       speculosApp: currency.speculosApp,
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
@@ -58,7 +57,6 @@ describe("Wallet assets", () => {
       userdata: "wallet40-btc-only",
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
@@ -83,7 +81,6 @@ describe("Wallet assets", () => {
       userdata: "wallet40-many-stablecoins",
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });

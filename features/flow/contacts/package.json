@@ -28,6 +28,7 @@
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/flow-contacts-add-contact": "workspace:^",
+    "@features/flow-contacts-edit-address": "workspace:^",
     "@features/flow-contacts-edit-contact": "workspace:^",
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",

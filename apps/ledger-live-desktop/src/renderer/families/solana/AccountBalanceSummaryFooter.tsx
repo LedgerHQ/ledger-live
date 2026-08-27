@@ -10,6 +10,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";
+import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -59,14 +60,16 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   if (account.type !== "Account") return null;
 
-  const { spendableBalance: _spendableBalance, solanaResources } = account;
-  const { stakes } = solanaResources;
-  const _delegatedBalance = new BigNumber(
-    stakes.reduce((sum, s) => sum + (s.delegation?.stake ?? 0), 0),
+  const { spendableBalance: _spendableBalance, stakingResources } = account;
+  const positions = listSolanaStakingPositions(stakingResources);
+  const _delegatedBalance = positions.reduce((sum, s) => sum.plus(s.amount), new BigNumber(0));
+  const _inactiveStake = positions.reduce(
+    (sum, s) => sum.plus(s.inactiveAmount ?? 0),
+    new BigNumber(0),
   );
-  const _inactiveStake = new BigNumber(stakes.reduce((sum, s) => sum + s.activation.inactive, 0));
-  const _delegatedWithdrawableBalance = new BigNumber(
-    stakes.reduce((sum, s) => sum + s.withdrawable, 0),
+  const _delegatedWithdrawableBalance = positions.reduce(
+    (sum, s) => sum.plus(s.withdrawableAmount ?? 0),
+    new BigNumber(0),
   );
   const formatConfig = {
     disableRounding: true,

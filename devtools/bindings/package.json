@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@devtools/registry": "workspace:*",
-    "@features/flow-pay-card-feature-tour": "workspace:*",
+    "@features/flow-pay-feature-tour": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/feature-flags": "workspace:*"
   },

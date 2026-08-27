@@ -54,9 +54,14 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
     (account: Account, currency: CryptoCurrency, address: string) => {
       switch (currency.family) {
         case "solana":
-          (account as SolanaAccount).solanaResources = {
-            stakes: [],
-            unstakeReserve: new BigNumber(0),
+          (account as SolanaAccount).stakingResources = {
+            delegations: [],
+            redelegations: [],
+            unbondings: [],
+            delegatedBalance: new BigNumber(0),
+            pendingRewardsBalance: new BigNumber(0),
+            unbondingBalance: new BigNumber(0),
+            actionFeeReserve: new BigNumber(0),
           };
           break;
         case "cosmos":

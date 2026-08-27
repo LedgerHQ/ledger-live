@@ -11,8 +11,8 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { restorePayCardBalanceFilter } from "@features/flow-pay-card-balance/state";
-import { restorePayCardFeatureTour } from "@features/flow-pay-card-feature-tour/state";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -21,6 +21,7 @@ import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
+import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";

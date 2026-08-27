@@ -1,9 +1,11 @@
 import { z } from "zod";
 import {
+  PayCardErrorResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -17,6 +19,10 @@ export type PayCardLogoutResult = z.infer<typeof PayCardLogoutResponseSchema>;
 export type PayCardUser = z.infer<typeof PayCardUserResponseSchema>;
 
 export type PayCardOrderResult = z.infer<typeof PayCardOrderResponseSchema>;
+
+export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
+
+export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;

@@ -3,48 +3,86 @@ import {
   AccountRaw,
   OperationExtra,
   OperationExtraRaw,
+  StakingAccount,
   TokenAccount,
   TokenAccountRaw,
 } from "@ledgerhq/types-live";
+import {
+  assignStakingResourcesFromAccountRaw,
+  assignStakingResourcesToAccountRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import {
-  SolanaAccount,
-  SolanaAccountRaw,
   SolanaOperationExtra,
   SolanaOperationExtraRaw,
-  SolanaResources,
-  SolanaResourcesRaw,
+  SolanaStake,
   SolanaTokenAccount,
   SolanaTokenAccountRaw,
 } from "./types";
+import { solanaStakesToStakingResources } from "./logic/stakingResources";
 
-export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
-  return {
-    stakes: JSON.stringify(resources.stakes),
-    unstakeReserve: resources.unstakeReserve.toJSON(),
-  };
-}
-
-export function fromSolanaResourcesRaw(resourcesRaw: SolanaResourcesRaw): SolanaResources {
-  return {
-    stakes: JSON.parse(resourcesRaw.stakes),
-    unstakeReserve: new BigNumber(resourcesRaw.unstakeReserve),
-  };
-}
+type LegacyPersistedSolanaStakes = {
+  stakes: string;
+  unstakeReserve: string;
+};
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
-  const solanaAccount = account as SolanaAccount;
-  if (solanaAccount.solanaResources) {
-    (accountRaw as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
-      solanaAccount.solanaResources,
-    );
-  }
+  assignStakingResourcesToAccountRaw(account, accountRaw);
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const solanaResourcesRaw = (accountRaw as SolanaAccountRaw).solanaResources;
-  if (solanaResourcesRaw)
-    (account as SolanaAccount).solanaResources = fromSolanaResourcesRaw(solanaResourcesRaw);
+  assignStakingResourcesFromAccountRaw(accountRaw, account);
+  const stakingAccount = account as StakingAccount;
+  if (stakingAccount.stakingResources) return;
+
+  const legacyRaw = (accountRaw as AccountRaw & { solanaResources?: LegacyPersistedSolanaStakes })
+    .solanaResources;
+  if (!legacyRaw) return;
+
+  // This runs while hydrating a persisted account, so a corrupted or older blob must degrade to
+  // empty resources instead of throwing and blocking the account from loading at all.
+  let stakes: SolanaStake[] = [];
+  try {
+    const parsed: unknown = JSON.parse(legacyRaw.stakes);
+    if (Array.isArray(parsed)) {
+      stakes = parsed;
+    } else {
+      log("warn", "solana: ignoring malformed persisted solanaResources.stakes");
+    }
+  } catch (error) {
+    log("warn", "solana: failed to parse persisted solanaResources.stakes", {
+      error,
+    });
+  }
+
+  // The conversion reads fields like `activation.state` unguarded, so a corrupted entry would throw
+  // here. The next sync rewrites `stakingResources` from the chain anyway, so degrading to empty is
+  // enough: what matters is that the account still loads.
+  const reserve = parsePersistedUnstakeReserve(legacyRaw.unstakeReserve);
+  try {
+    stakingAccount.stakingResources = solanaStakesToStakingResources(stakes, reserve);
+  } catch (error) {
+    log("warn", "solana: failed to revive persisted solanaResources.stakes items", { error });
+    stakingAccount.stakingResources = solanaStakesToStakingResources([], reserve);
+  }
+}
+
+function parsePersistedUnstakeReserve(value: unknown): BigNumber {
+  try {
+    if (typeof value === "string" || typeof value === "number") {
+      const parsed = new BigNumber(value);
+      if (parsed.isFinite() && parsed.gte(0)) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    log("warn", "solana: failed to parse persisted solanaResources.unstakeReserve", { error });
+    return new BigNumber(0);
+  }
+
+  log("warn", "solana: ignoring malformed persisted solanaResources.unstakeReserve");
+  return new BigNumber(0);
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {

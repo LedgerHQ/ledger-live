@@ -9,8 +9,9 @@ import {
   LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
   buildLargeScreenUpsellCtaLink,
 } from "@features/flow-large-screen-upsell/utils/upsellCta";
-import { useFeature } from "@features/platform-feature-flags";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellNanoDeviceModelId,
@@ -19,8 +20,7 @@ import { screen, track } from "~/analytics";
 import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
+import { useSelector } from "~/context/hooks";
 import {
   knownDeviceModelIdsSelector,
   lastSeenDeviceSelector,
@@ -34,6 +34,7 @@ import {
   BACKUP_HUB_UPSELL_TRACKING_BUTTON,
   BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK,
   BACKUP_HUB_RECOVER_TRACKING_STATUS,
   BACKUP_HUB_UPSELL_FALLBACK_LINK,
   RECOVER_DEEPLINK_BASE,
@@ -57,8 +58,14 @@ export type BackupHubScreenViewModel = {
 };
 
 export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
-  const dispatch = useDispatch();
   const { protectId, markRecoverSeen } = useRecoverEntry();
+  const recoverServices = useFeature("protectServicesMobile");
+  const recoverOneMonthFreeLink = useCustomURI(
+    recoverServices,
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.redirectTo,
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.source,
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.campaign,
+  );
 
   const { data } = useRecoverBannerState(protectId);
   const bucket = getBackupBucket(data.subscriptionState);
@@ -146,8 +153,11 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
       );
       return;
     }
-    dispatch(openBackupHubFeatureIntro());
-  }, [bucket, protectId, markRecoverSeen, dispatch]);
+    if (!recoverOneMonthFreeLink) {
+      return;
+    }
+    Linking.openURL(recoverOneMonthFreeLink);
+  }, [bucket, protectId, markRecoverSeen, recoverOneMonthFreeLink]);
 
   const openShop = useCallback((url: string, button: string) => {
     track("button_clicked", { button, page: BACKUP_HUB_TRACKING_PAGE_NAME });

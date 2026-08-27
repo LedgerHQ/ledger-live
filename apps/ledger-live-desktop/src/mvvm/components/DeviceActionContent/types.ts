@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";
 
 /** Device-side action illustrated by the content animation. */
 export type DeviceActionContentAction = "continue" | "power-and-unlock";
-
-/** Theme variant used to select light or dark animation assets. */
-export type DeviceActionAnimationTheme = "light" | "dark";
 
 /** Lottie source returned by the device-action animation helper. */
 export type DeviceActionAnimationSource = unknown;
@@ -45,6 +43,11 @@ export type DeviceActionContentProps = Readonly<{
   /** Optional banner rendered below the title and description. */
   banner?: DeviceActionContentBanner;
 
+  /** Optional animation theme override. Defaults to the current styled theme. */
+  theme?: DeviceActionAnimationTheme;
+
   /** Optional test identifier applied to the root container. */
   testID?: string;
 }>;
+
+export type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";

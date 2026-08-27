@@ -13,6 +13,7 @@ import {
 import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useContactsAnalytics } from "../../analytics";
 
 export type ContactDetailEditDeleteDialogProps = Readonly<{
@@ -31,10 +32,11 @@ export type ContactDetailEditDeleteDialogProps = Readonly<{
 export function useContactDetailEditDeleteAdapter(
   contactId: ContactId | undefined,
   onDeleteSuccess: () => void,
+  deviceIntents: ContactDeviceIntentsPort,
 ): ContactDetailEditDeleteDialogProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsEditDeletePorts();
+  const ports = useContactsEditDeletePorts(deviceIntents);
   const resolvedContactId = contactId ?? ContactIdSchema.parse("contact-me");
   const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
     contactId: resolvedContactId,

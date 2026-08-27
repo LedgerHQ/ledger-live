@@ -1,7 +1,9 @@
 import {
+  PayCardErrorResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
+  PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -60,17 +62,63 @@ describe("PayCardUserResponseSchema", () => {
 });
 
 describe("PayCardOrderResponseSchema", () => {
-  it("keeps the success flag and drops everything else the order answers with", () => {
-    expect(
-      PayCardOrderResponseSchema.parse({
-        success: true,
-        cardId: "card-1",
-        pan: "pan-must-not-reach-the-cache",
-      }),
-    ).toEqual({ success: true });
+  it("reads the documented order response", () => {
+    expect(PayCardOrderResponseSchema.parse({ success: true })).toEqual({ success: true });
   });
 
   it("rejects a success flag that is not a boolean", () => {
     expect(() => PayCardOrderResponseSchema.parse({ success: "yes" })).toThrow();
+  });
+});
+
+describe("PayCardStatusResponseSchema", () => {
+  // The provider's own example response, field for field.
+  const cardStatus = {
+    id: "000000000050277836",
+    holderName: "JOHN DOE",
+    expiryDate: "2028/01",
+    panLast4: "1234",
+    status: "ACTIVE",
+    type: "VIRTUAL",
+    orderedAt: "2023-03-27T17:07:12.662Z",
+  };
+
+  it("reads the documented status response", () => {
+    expect(PayCardStatusResponseSchema.parse(cardStatus)).toEqual(cardStatus);
+  });
+
+  it("keeps the card id as the digit string the provider sends, not a uuid", () => {
+    expect(PayCardStatusResponseSchema.parse(cardStatus).id).toBe("000000000050277836");
+  });
+
+  it("rejects a status the wire contract does not name", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, status: "SOMETHING_ELSE" }),
+    ).toThrow();
+  });
+
+  it("rejects a card type the wire contract does not name", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardErrorResponseSchema", () => {
+  it.each([
+    [401, "Not authenticated"],
+    [403, "Not authorized"],
+    [404, "Card not found"],
+    [400, "User already has a card"],
+    [422, "type field is required"],
+    [498, "Invalid client key"],
+    [499, "Missing client key"],
+    [500, "Internal server error"],
+  ])("reads the documented %i body", (_status, message) => {
+    expect(PayCardErrorResponseSchema.parse({ message })).toEqual({ message });
+  });
+
+  it("rejects an error body with no message", () => {
+    expect(() => PayCardErrorResponseSchema.parse({})).toThrow();
   });
 });

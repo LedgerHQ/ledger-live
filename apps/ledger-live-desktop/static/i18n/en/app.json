@@ -904,6 +904,13 @@
     "card": {
       "balanceLabel": "Balance"
     },
+    "contacts": {
+      "title": "Pay contact",
+      "empty": {
+        "info": "You don’t have contact yet",
+        "addContact": "Add contact"
+      }
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request",
@@ -2576,6 +2583,7 @@
     "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
+    "selectAddress": "Select address",
     "securityInfo": {
       "title": "How to send securely?",
       "items": {
@@ -2596,7 +2604,8 @@
     },
     "addContact": {
       "newContact": "Add a new contact",
-      "existingContact": "Add to an existing contact"
+      "existingContact": "Add to an existing contact",
+      "selectContact": "Select contact"
     },
     "relativeDate": {
       "justNow": "Just now",
@@ -6821,6 +6830,10 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloEpochProcessingActive": {
+      "title": "This action is temporarily unavailable",
+      "description": "Celo is currently processing an epoch update. During this short on-chain window, staking actions such as voting, activating, revoking, locking, and unlocking are temporarily blocked by the network. Please try again once epoch processing is complete."
+    },
     "CeloGroupNotVotable": {
       "title": "This validator group cannot receive votes. It may be full or no longer eligible."
     },
@@ -9145,7 +9158,8 @@
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Private (Sapling)",
       "shieldedOrchardTx": "🛡 Private (Orchard)",
-      "shieldedIronwoodTx": "🛡 Private (Ironwood)"
+      "shieldedIronwoodTx": "🛡 Private (Ironwood)",
+      "memo": "Memo"
     }
   },
   "aleo": {

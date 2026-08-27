@@ -1,5 +1,4 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "i18next";
 import { useMemo, useCallback, useRef } from "react";
@@ -7,6 +6,7 @@ import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
@@ -22,6 +22,8 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
+import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
+import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -66,7 +68,10 @@ export function useSendHeaderModel({
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
+  const addNewContactHeader = useAddNewContactHeaderState();
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -74,7 +79,14 @@ export function useSendHeaderModel({
 
   const { navigation, currentStep } = wizard;
   const currentStepConfig = wizard.currentStepConfig;
-  const showRecipientInput = currentStepConfig?.addressInput ?? false;
+  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
+  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+  const isContactAddressFlowStep =
+    currentStep === SEND_FLOW_STEP.ADD_NEW_CONTACT ||
+    currentStep === SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT;
+  const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
+  const showRecipientInput =
+    (currentStepConfig?.addressInput ?? false) && !isSelectingContactAddress;
   const showMemoControls = Boolean(
     showRecipientInput &&
     uiConfig.hasMemo &&
@@ -97,26 +109,47 @@ export function useSendHeaderModel({
 
   const backTarget = currentStepConfig?.backTarget;
 
-  const showBackButton = navigation.canGoBack();
+  const showBackButton = isSelectingContactAddress || navigation.canGoBack();
 
   const showTitle = currentStepConfig?.showTitle !== false;
-  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
-  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
 
   const accountSummary = useMemo(() => {
     if (accountName && availableText) return `${accountName} · ${availableText}`;
     return accountName || availableText || "";
   }, [accountName, availableText]);
 
-  const titleKey = currentStepConfig?.titleKey ?? "newSendFlow.title";
+  const titleKey = resolveContactFlowTitleKey({
+    isContactAddressFlowStep,
+    isAddressPhase: Boolean(addNewContactHeader.onAddressPhaseBack),
+    addressPhaseTitleKey: addNewContactHeader.titleKey,
+    stepTitleKey: currentStepConfig?.titleKey,
+  });
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
-  const title = showTitle ? t(titleKey, { currency: currencyName }) : "";
+  const title = isSelectingContactAddress
+    ? t("newSendFlow.selectAddress")
+    : showTitle
+      ? t(titleKey, { currency: currencyName })
+      : "";
 
-  const descriptionText = showTitle && showAvailable && accountSummary ? accountSummary : "";
+  const descriptionText = isSelectingContactAddress
+    ? selectedContact.name
+    : showTitle && showAvailable && accountSummary
+      ? accountSummary
+      : "";
 
   const handleBack = useCallback(() => {
     closeScanner();
+
+    if (isSelectingContactAddress) {
+      clearSelectedContact();
+      return;
+    }
+
+    if (isContactAddressFlowStep && addNewContactHeader.onAddressPhaseBack) {
+      addNewContactHeader.onAddressPhaseBack();
+      return;
+    }
 
     // Per-step state cleanup that runs regardless of whether navigation uses backTarget
     // or goToPreviousStep, so floating steps and regular steps are treated uniformly
@@ -146,7 +179,19 @@ export function useSendHeaderModel({
     } else {
       close();
     }
-  }, [backTarget, close, closeScanner, currentStep, navigation, resetViewState, transaction]);
+  }, [
+    addNewContactHeader,
+    backTarget,
+    clearSelectedContact,
+    close,
+    closeScanner,
+    currentStep,
+    isContactAddressFlowStep,
+    isSelectingContactAddress,
+    navigation,
+    resetViewState,
+    transaction,
+  ]);
 
   const recipientHeader = useMemo(
     () =>
@@ -216,7 +261,8 @@ export function useSendHeaderModel({
   const transactionErrorName = transactionError?.name;
 
   const canSearchContacts =
-    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+    isContactsFeatureEnabled &&
+    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,
@@ -242,4 +288,26 @@ export function useSendHeaderModel({
     transactionErrorName,
     transactionError: transactionError instanceof Error ? transactionError : undefined,
   };
+}
+
+function resolveContactFlowTitleKey({
+  isContactAddressFlowStep,
+  isAddressPhase,
+  addressPhaseTitleKey,
+  stepTitleKey,
+}: Readonly<{
+  isContactAddressFlowStep: boolean;
+  isAddressPhase: boolean;
+  addressPhaseTitleKey: string;
+  stepTitleKey: string | undefined;
+}>): string {
+  if (isContactAddressFlowStep && isAddressPhase) {
+    return addressPhaseTitleKey;
+  }
+
+  if (isContactAddressFlowStep) {
+    return stepTitleKey ?? addressPhaseTitleKey;
+  }
+
+  return stepTitleKey ?? "newSendFlow.title";
 }

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import type { TextInput as NativeTextInput } from "react-native";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { Box, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { DeleteCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -8,6 +9,12 @@ type ContactNameInputProps = Readonly<{
   placeholder: string;
   errorMessage?: string;
   isEditable?: boolean;
+  /**
+   * Focuses the field whenever this turns true, rather than only on mount. Hosts inside an
+   * animating drawer can keep it false until the drawer has settled, so the keyboard does not
+   * resize the drawer while it is still opening.
+   */
+  autoFocus?: boolean;
   /** Namespaces the test ids, so each host drawer identifies its own input. */
   testIDPrefix?: string;
   onChangeText: (name: string) => void;
@@ -18,16 +25,24 @@ export function ContactNameInput({
   placeholder,
   errorMessage,
   isEditable = true,
+  autoFocus = true,
   testIDPrefix = "contacts-add-contact",
   onChangeText,
 }: ContactNameInputProps): React.JSX.Element {
   const isAtNameLengthLimit = value.length === CONTACT_NAME_MAX_LENGTH;
+  const inputRef = useRef<NativeTextInput>(null);
+
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   return (
     <Box lx={{ gap: "s8" }}>
       <TextInput
+        ref={inputRef}
         testID={`${testIDPrefix}-name-input`}
-        autoFocus
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

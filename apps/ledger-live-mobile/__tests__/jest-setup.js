@@ -179,7 +179,12 @@ NativeModules.RNKeychainManager = {
 };
 
 jest.mock("react-native-share", () => ({
-  default: jest.fn(),
+  __esModule: true,
+  default: { open: jest.fn(() => Promise.resolve({ success: true })) },
+}));
+
+jest.mock("react-native-view-shot", () => ({
+  captureRef: jest.fn(() => Promise.resolve("file://mock.png")),
 }));
 
 // Global mocks for Lottie and env config (used by LaunchScreen and other components)
@@ -348,6 +353,8 @@ jest.mock("@braze/react-native-sdk", () => ({
     logContentCardClicked: jest.fn(),
     logContentCardImpression: jest.fn(),
     requestContentCardsRefresh: jest.fn(),
+    wipeData: jest.fn(),
+    enableSDK: jest.fn(),
     getContentCards: jest.fn().mockResolvedValue([]),
     getInitialPushPayload: jest.fn(),
   },

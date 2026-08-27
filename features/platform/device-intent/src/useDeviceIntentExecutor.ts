@@ -20,16 +20,16 @@ export type { DeviceIntentExecutorHookState, IntentExecutionSnapshot } from "./d
  * @internal Test-only options for dependency injection. Not intended for
  * production use — the defaults are correct for all runtime scenarios.
  */
-type UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps> = {
+type UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps, Result> = {
   /** Overrides the state machine constructor. Inject a mock class in unit tests. */
-  StateMachineClass?: StateMachineConstructor<JobState, Input, ExtraProps>;
+  StateMachineClass?: StateMachineConstructor<JobState, Input, ExtraProps, Result>;
 };
 
-export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
-  props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>,
+export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Result = undefined>(
+  props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput, Result>,
   {
     StateMachineClass = DefaultDeviceIntentExecutorStateMachine,
-  }: UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps> = {},
+  }: UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps, Result> = {},
 ): DeviceIntentExecutorHookState<JobState, Input, ExtraProps, InitInput> | null {
   // ---- 1. Refs for props ----
 
@@ -62,7 +62,12 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
 
   // ---- 2. Internal state ----
 
-  const smRef = useRef<DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> | null>(null);
+  const smRef = useRef<DeviceIntentExecutorStateMachine<
+    JobState,
+    Input,
+    ExtraProps,
+    Result
+  > | null>(null);
   const [executorState, setExecutorState] = useState<ExecutorState>({
     type: "connectingDevice",
   });

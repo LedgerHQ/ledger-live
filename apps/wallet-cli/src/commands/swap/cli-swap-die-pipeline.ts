@@ -130,24 +130,28 @@ function launchIntent(args: {
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
+          onResult: () => {},
         });
       case "sign-permit2":
         return signPermit2EvmJob({
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
+          onResult: () => {},
         });
       case "sign-swap":
         return signSwapEvmJob({
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
+          onResult: () => {},
         });
       default:
         return broadcastEvmJob({
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
+          onResult: () => {},
         });
     }
   })();

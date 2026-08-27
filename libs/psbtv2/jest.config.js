@@ -19,7 +19,9 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
   moduleNameMapper: {
     "^@ledgerhq/live-env$": "<rootDir>/src/__mocks__/live-env.ts",
     "^@ledgerhq/(.*)$": "<rootDir>/../../libs/$1/src",

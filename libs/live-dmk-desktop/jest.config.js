@@ -11,7 +11,7 @@ module.exports = {
   },
   testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["<rootDir>/tests.setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/tests.setup.ts", "@ledgerhq/test-quarantine/jest-retries"],
   moduleNameMapper: {
     "^@ledgerhq/device-transport-kit-web-hid$":
       "<rootDir>/tests/__mocks__/device-transport-kit-web-hid.ts",
@@ -21,5 +21,6 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

@@ -112,6 +112,7 @@ export enum ScreenName {
   EditDeviceName = "EditDeviceName",
   Card = "Card",
   PayTab = "PayTab",
+  PayTabRequestReceive = "PayTabRequestReceive",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeSelectAccount = "ExchangeSelectAccount",

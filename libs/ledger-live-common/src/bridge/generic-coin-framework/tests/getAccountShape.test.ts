@@ -33,6 +33,14 @@ const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: any[]) => getBridgeApiMock(...a),
 }));
+
+// Keeps the dummy addresses below out of the real A4 indexer (LIVE-36423): the sync fires a
+// fire-and-forget registration that is *not* routed through the `../api` mock, so it reaches
+// production the moment LiveConfig holds a config — which is exactly what the suite next door does.
+jest.mock("../a4/client/registration", () => ({
+  ensureA4Registered: jest.fn(),
+  clearA4RegistrationCache: jest.fn(),
+}));
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
   getChainSpecificRules: {
@@ -287,7 +295,6 @@ describe("genericGetAccountShape", () => {
         {
           minHeight: 11,
           order: "desc",
-          cursor: "pt1",
         },
         [
           {
@@ -311,7 +318,7 @@ describe("genericGetAccountShape", () => {
             hash: "h1",
             blockHeight: 10,
             type: "OPT_IN",
-            extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+            extra: { assetReference: "ar1", assetOwner: "ow1" },
           },
         ],
       ],
@@ -349,7 +356,7 @@ describe("genericGetAccountShape", () => {
           hash: "h1",
           blockHeight: 10,
           type: "OPT_IN",
-          extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+          extra: { assetReference: "ar1", assetOwner: "ow1" },
         };
         const pendingOp = {
           hash: "h0",
@@ -439,7 +446,9 @@ describe("genericGetAccountShape", () => {
           {
             minHeight: expectedPagination.minHeight,
             order: expectedPagination.order,
-            ...("cursor" in expectedPagination ? { cursor: expectedPagination.cursor } : {}),
+            // The first page is always requested cursor-less: the resume position across syncs is
+            // `minHeight`, never a cursor read back off a stored operation's `extra`.
+            cursor: undefined,
           },
         );
 
@@ -472,6 +481,54 @@ describe("genericGetAccountShape", () => {
         });
       },
     );
+
+    test("walks every page of the module's cursor chain within one sync", async () => {
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      buildSubAccountsMock.mockReturnValue([]);
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        extra: {},
+      }));
+      mergeOpsMock.mockImplementation((oldOps, newOps) => [...newOps, ...oldOps]);
+      cleanedOperationMock.mockImplementation(operation => operation);
+      lastBlockMock.mockResolvedValue({ height: 123 });
+
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [{ hash: "p1", type: "IN", tx: { failed: false }, height: 3 }],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [{ hash: "p2", type: "IN", tx: { failed: false }, height: 2 }],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [{ hash: "p3", type: "IN", tx: { failed: false }, height: 1 }],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr3`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(3);
+      // Only the cursor moves: minHeight and order are identical on every page.
+      expect(listOperationsMock.mock.calls.map(call => call[2])).toEqual([
+        { minHeight: 0, order: "desc", cursor: undefined },
+        { minHeight: 0, order: "desc", cursor: "c1" },
+        { minHeight: 0, order: "desc", cursor: "c2" },
+      ]);
+      expect(result.operations?.map(op => op.hash)).toEqual(["p1", "p2", "p3"]);
+    });
 
     test("handles empty operations (no old ops, no new ops) and blockHeight=0", async () => {
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
@@ -550,7 +607,7 @@ describe("genericGetAccountShape", () => {
           hash: "h1",
           blockHeight: 10,
           type: "OPT_IN",
-          extra: { pagingToken: "pt1", assetReference: "ar1", assetOwner: "ow1" },
+          extra: { assetReference: "ar1", assetOwner: "ow1" },
           accountId: "accId",
           id: "accId_h1_OPT_IN",
         },
