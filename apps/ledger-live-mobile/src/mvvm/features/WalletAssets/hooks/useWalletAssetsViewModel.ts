@@ -34,8 +34,8 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
 
   const hasMore = useMemo(
     () =>
-      categorizedAssets.cryptos.length > MAX_ASSETS_TO_DISPLAY ||
-      categorizedAssets.stablecoins.length > MAX_STABLECOINS_TO_DISPLAY,
+      (categorizedAssets.cryptos?.length ?? 0) > MAX_ASSETS_TO_DISPLAY ||
+      (categorizedAssets.stablecoins?.length ?? 0) > MAX_STABLECOINS_TO_DISPLAY,
     [categorizedAssets],
   );
 

@@ -32,7 +32,7 @@ import {
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import { useFeature } from "@features/platform-feature-flags";
 import { isAccountWorkletEnabled } from "LLM/utils/perfOptimizationMode";
 import {
@@ -54,6 +54,14 @@ function comparatorFromRankedIds(ids: string[]): AccountComparator {
     (order.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (order.get(b.id) ?? Number.MAX_SAFE_INTEGER);
 }
 
+const EMPTY_DISTRIBUTION = {
+  isAvailable: false,
+  list: [],
+  showFirst: 0,
+  sum: 0,
+  isLoading: false,
+} as const;
+
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
@@ -67,26 +75,47 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
     skip: isAssetMode || workletEnabled,
     ...displayOpts,
   });
-  const asset = useAssetDistribution({
-    accounts,
-    to,
-    product: "llm",
-    version: VersionNumber.appVersion ?? "",
-    skip: !isAssetMode,
-    ...displayOpts,
-  });
   const worklet = useWorkletAssetsDistribution({
     ...displayOpts,
-    skip: isAssetMode || !workletEnabled,
+    skip: !workletEnabled,
   });
+  const workletGroups = worklet.groups ?? [];
+  const assetInput = {
+    accounts,
+    to,
+    product: "llm" as const,
+    version: VersionNumber.appVersion ?? "",
+    skip: !isAssetMode,
+    currencyIds:
+      workletEnabled && workletGroups.length > 0
+        ? workletGroups.map(group => group.currencyId)
+        : undefined,
+    ...displayOpts,
+  };
+  const asset = useAssetDistribution(assetInput);
 
   if (isAssetMode) {
-    return { ...asset.distribution, isLoading: asset.isLoading };
+    return {
+      ...EMPTY_DISTRIBUTION,
+      ...asset.distribution,
+      list: asset.distribution?.list ?? [],
+      isLoading: asset.isLoading,
+    };
   }
   if (workletEnabled) {
-    return worklet;
+    return {
+      ...EMPTY_DISTRIBUTION,
+      ...worklet,
+      list: worklet.list ?? [],
+      groups: workletGroups,
+    };
   }
-  return { ...legacy, isLoading: false };
+  return {
+    ...EMPTY_DISTRIBUTION,
+    ...legacy,
+    list: legacy.list ?? [],
+    isLoading: false,
+  };
 }
 export function useCalculateCountervalueCallback() {
   const to = useSelector(counterValueCurrencySelector);
@@ -114,6 +143,7 @@ export function useRefreshAccountsOrdering() {
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const orderAccounts = useSelector(orderAccountsSelector);
+  const walletState = useSelector(walletSelector);
   const comparator = useSortAccountsComparator();
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -122,16 +152,28 @@ export function useRefreshAccountsOrdering() {
       return;
     }
 
-    const rankOnWorklet = isAccountWorkletEnabled() && orderAccounts.startsWith("balance");
+    const rankOnWorklet = isAccountWorkletEnabled();
     if (!rankOnWorklet) {
       dispatch(reorderAccounts(comparator));
       setIsRefreshing(false);
       return;
     }
 
-    const snapshots = snapshotAccountsForRanking(accounts, countervalueState, toCurrency, true);
+    const [order, sort] = orderAccounts.split("|");
+    const snapshots = snapshotAccountsForRanking(
+      accounts,
+      countervalueState,
+      toCurrency,
+      true,
+      account => accountNameWithDefaultSelector(walletState, account),
+    );
     let cancelled = false;
-    rankAccountSnapshotsOffJs({ snapshots, excludedTokenIds }).then(result => {
+    rankAccountSnapshotsOffJs({
+      snapshots,
+      excludedTokenIds,
+      order: order === "name" ? "name" : "balance",
+      nameAsc: sort !== "desc",
+    }).then(result => {
       if (cancelled) {
         return;
       }
@@ -150,6 +192,7 @@ export function useRefreshAccountsOrdering() {
     isRefreshing,
     orderAccounts,
     toCurrency,
+    walletState,
   ]);
   return useCallback(() => {
     setIsRefreshing(true);

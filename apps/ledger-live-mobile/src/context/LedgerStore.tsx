@@ -55,7 +55,11 @@ import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
-import { preloadBaseNavigator, preloadRootNavigator } from "~/components/RootNavigator/lazyScreen";
+import {
+  preloadBaseNavigator,
+  preloadDeferredNavigators,
+  preloadRootNavigator,
+} from "~/components/RootNavigator/lazyScreen";
 import Config from "react-native-config";
 
 interface Props {
@@ -100,61 +104,29 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         if (settings.hasCompletedOnboarding || Config.SKIP_ONBOARDING) {
           preloadRootNavigator();
           preloadBaseNavigator();
+          preloadDeferredNavigators();
         }
       });
       const [
-        bleData,
-        persistedKnownDevices,
         settingsData,
         accountsData,
-        postOnboardingState,
-        largeScreenUpsellModalState,
-        marketState,
-        marketListConfigState,
-        marketBannerState,
-        payCardState,
-        trustchainStore,
-        walletStore,
-        protect,
         initialCountervalues,
-        largeMoverState,
         cryptoAssetsCache,
-        persistedIdentities,
         persistedFeatureFlags,
-        legacyUser,
-        historyState,
+        walletStore,
       ] = await Promise.all([
-        retry(getBle, MAX_RETRIES, RETRY_DELAY),
-        retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
         settingsPromise,
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
-        retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
-        retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
-        retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
-        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
-        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
-        retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
-        retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
-        retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
-        retry(getUser, MAX_RETRIES, RETRY_DELAY),
-        retry(getHistory, MAX_RETRIES, RETRY_DELAY),
-      ]).finally(() => {
-        logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
-          readTime: Date.now() - readStorageStart,
-          mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
-        });
-      });
+        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
+      ]);
 
-      store.dispatch(importBle(bleData));
-      if (persistedKnownDevices) {
-        store.dispatch(importKnownDevices(persistedKnownDevices));
-      }
+      logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
+        readTime: Date.now() - readStorageStart,
+        mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
+      });
 
       // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
       if (settingsData && typeof settingsData.counterValue === "string") {
@@ -188,54 +160,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         // This prevents blocking deeplink navigation
       }
 
-      if (postOnboardingState) {
-        store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
-      }
-
-      backfillOnboardingDate(store);
-
-      if (largeScreenUpsellModalState) {
-        store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
-      }
-
-      if (marketState) {
-        store.dispatch(importMarket(marketState));
-      }
-
-      if (marketListConfigState) {
-        store.dispatch(importMarketListConfig(marketListConfigState));
-      }
-
-      if (marketBannerState) {
-        store.dispatch(importMarketBannerState(marketBannerState));
-      }
-
-      if (payCardState) {
-        store.dispatch(restorePayCardFeatureTour(payCardState));
-        store.dispatch(restorePayCardBalanceFilter(payCardState));
-      }
-
-      store.dispatch(importTrustchainStoreState(trustchainStore));
-
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);
       }
-
-      if (protect) {
-        store.dispatch(updateProtectData(protect.data));
-        store.dispatch(updateProtectStatus(protect.protectStatus));
-      }
-
-      if (largeMoverState) {
-        store.dispatch(importLargeMoverState(largeMoverState));
-      }
-
-      if (historyState) {
-        store.dispatch(initHistory(historyState));
-      }
-
-      // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
-      await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
@@ -284,7 +211,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      void hydrateDeferredStore(store);
+      void hydrateCurrencies().finally(() => setCurrencyInitialized(true));
     } catch (error) {
       console.error(
         error instanceof Error
@@ -306,6 +234,77 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 };
 
 export default LedgerStoreProvider;
+
+async function hydrateDeferredStore(store: Store) {
+  const [
+    bleData,
+    persistedKnownDevices,
+    postOnboardingState,
+    largeScreenUpsellModalState,
+    marketState,
+    marketListConfigState,
+    marketBannerState,
+    payCardState,
+    trustchainStore,
+    protect,
+    largeMoverState,
+    persistedIdentities,
+    legacyUser,
+    historyState,
+  ] = await Promise.all([
+    retry(getBle, MAX_RETRIES, RETRY_DELAY),
+    retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
+    retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
+    retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
+    retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
+    retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
+    retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
+    retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
+    retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
+    retry(getProtect, MAX_RETRIES, RETRY_DELAY),
+    retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+    retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
+    retry(getUser, MAX_RETRIES, RETRY_DELAY),
+    retry(getHistory, MAX_RETRIES, RETRY_DELAY),
+  ]);
+
+  store.dispatch(importBle(bleData));
+  if (persistedKnownDevices) {
+    store.dispatch(importKnownDevices(persistedKnownDevices));
+  }
+  if (postOnboardingState) {
+    store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+  }
+  backfillOnboardingDate(store);
+  if (largeScreenUpsellModalState) {
+    store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
+  if (marketState) {
+    store.dispatch(importMarket(marketState));
+  }
+  if (marketListConfigState) {
+    store.dispatch(importMarketListConfig(marketListConfigState));
+  }
+  if (marketBannerState) {
+    store.dispatch(importMarketBannerState(marketBannerState));
+  }
+  if (payCardState) {
+    store.dispatch(restorePayCardFeatureTour(payCardState));
+    store.dispatch(restorePayCardBalanceFilter(payCardState));
+  }
+  store.dispatch(importTrustchainStoreState(trustchainStore));
+  if (protect) {
+    store.dispatch(updateProtectData(protect.data));
+    store.dispatch(updateProtectStatus(protect.protectStatus));
+  }
+  if (largeMoverState) {
+    store.dispatch(importLargeMoverState(largeMoverState));
+  }
+  if (historyState) {
+    store.dispatch(initHistory(historyState));
+  }
+  await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
+}
 
 async function hydrateCurrencies() {
   const totalStartTime = Date.now();

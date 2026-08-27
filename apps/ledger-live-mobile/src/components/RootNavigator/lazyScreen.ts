@@ -1,5 +1,4 @@
 import type { ComponentType } from "react";
-import { InteractionManager } from "react-native";
 import { isGetComponentEnabled } from "LLM/utils/perfOptimizationMode";
 
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -54,7 +53,7 @@ export function preloadDeferredNavigators(): void {
 export function scheduleIdleLoads(
   loaders: Array<() => void>,
   schedule: (cb: () => void) => void = cb => {
-    InteractionManager.runAfterInteractions(cb);
+    setTimeout(cb, 0);
   },
 ): void {
   let index = 0;
@@ -66,6 +65,15 @@ export function scheduleIdleLoads(
     schedule(loadNext);
   };
   schedule(loadNext);
+}
+
+export function scheduleNamedPreloads(
+  names: string[],
+  preload: (name: string) => void,
+  startMs = 250,
+  gapMs = 400,
+): ReturnType<typeof setTimeout>[] {
+  return names.map((name, index) => setTimeout(() => preload(name), startMs + index * gapMs));
 }
 
 export function preloadIdleTabNavigators(): void {

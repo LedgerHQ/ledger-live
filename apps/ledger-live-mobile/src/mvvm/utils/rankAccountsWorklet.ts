@@ -11,15 +11,15 @@ export type AccountSnapshot = {
   value: number;
   tokenId: string | null;
   currencyId: string;
-  balance: number;
-  pendingCount: number;
-  swapCount: number;
+  name?: string;
   subAccounts?: AccountSnapshot[];
 };
 
 export type RankAccountsInput = {
   snapshots: AccountSnapshot[];
   excludedTokenIds: string[];
+  order?: "balance" | "name";
+  nameAsc?: boolean;
 };
 
 export type RankedCurrencyGroup = {
@@ -30,7 +30,6 @@ export type RankedCurrencyGroup = {
 
 export type RankAccountsResult = {
   ids: string[];
-  hashes: string[];
   groups: RankedCurrencyGroup[];
 };
 
@@ -50,6 +49,7 @@ export function snapshotAccountLike(
   countervalueState: CounterValuesState,
   toCurrency: Currency,
   includeSubAccounts = true,
+  accountName?: (account: AccountLike) => string,
 ): AccountSnapshot {
   const currency = getAccountCurrency(account);
   const value =
@@ -65,9 +65,7 @@ export function snapshotAccountLike(
     value,
     tokenId: account.type === "TokenAccount" ? account.token.id : null,
     currencyId: currency.id,
-    balance: account.balance.toNumber(),
-    pendingCount: account.pendingOperations.length,
-    swapCount: account.swapHistory.length,
+    name: accountName?.(account),
   };
 
   if (
@@ -77,7 +75,7 @@ export function snapshotAccountLike(
     account.subAccounts.length > 0
   ) {
     snapshot.subAccounts = account.subAccounts.map(sub =>
-      snapshotAccountLike(sub, countervalueState, toCurrency, false),
+      snapshotAccountLike(sub, countervalueState, toCurrency, false, accountName),
     );
   }
 
@@ -97,20 +95,24 @@ export function snapshotAccountsForRanking(
   countervalueState: CounterValuesState,
   toCurrency: Currency,
   includeSubAccounts = true,
+  accountName?: (account: AccountLike) => string,
 ): AccountSnapshot[] {
   if (
     snapshotCache &&
     snapshotCache.accounts === accounts &&
     snapshotCache.countervalueState === countervalueState &&
     snapshotCache.toCurrency === toCurrency &&
-    snapshotCache.includeSubAccounts === includeSubAccounts
+    snapshotCache.includeSubAccounts === includeSubAccounts &&
+    !accountName
   ) {
     return snapshotCache.snapshots;
   }
   const snapshots = accounts.map(account =>
-    snapshotAccountLike(account, countervalueState, toCurrency, includeSubAccounts),
+    snapshotAccountLike(account, countervalueState, toCurrency, includeSubAccounts, accountName),
   );
-  snapshotCache = { accounts, countervalueState, toCurrency, includeSubAccounts, snapshots };
+  if (!accountName) {
+    snapshotCache = { accounts, countervalueState, toCurrency, includeSubAccounts, snapshots };
+  }
   return snapshots;
 }
 
@@ -129,14 +131,6 @@ export function rankAccountSnapshots(input: RankAccountsInput): RankAccountsResu
     }
   }
 
-  const hashes: string[] = [];
-  for (let i = 0; i < flat.length; i++) {
-    const account = flat[i];
-    hashes.push(
-      `${account.id}-${account.balance}-swapHistory(${account.swapCount})-pending(${account.pendingCount})`,
-    );
-  }
-
   const excluded: { [tokenId: string]: number } = {};
   const excludedTokenIds = input.excludedTokenIds;
   for (let i = 0; i < excludedTokenIds.length; i++) {
@@ -152,7 +146,14 @@ export function rankAccountSnapshots(input: RankAccountsInput): RankAccountsResu
     filtered.push(account);
   }
 
+  const nameAsc = input.nameAsc !== false;
   filtered.sort((a, b) => {
+    if (input.order === "name") {
+      const left = a.name ?? a.id;
+      const right = b.name ?? b.id;
+      const cmp = left < right ? -1 : left > right ? 1 : 0;
+      return nameAsc ? cmp : -cmp;
+    }
     const diff = b.value - a.value;
     if (diff !== 0) return diff;
     return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
@@ -178,7 +179,7 @@ export function rankAccountSnapshots(input: RankAccountsInput): RankAccountsResu
     ids.push(filtered[i].id);
   }
 
-  return { ids, hashes, groups };
+  return { ids, groups };
 }
 
 export function assetsDistributionFromRankedGroups(
@@ -244,14 +245,14 @@ export function assetsDistributionFromRankedGroups(
 }
 
 function rankingInputKey(input: RankAccountsInput): string {
-  let key = `${input.excludedTokenIds.join(",")}|`;
+  let key = `${input.order ?? "balance"}:${input.nameAsc !== false}:${input.excludedTokenIds.join(",")}|`;
   for (let i = 0; i < input.snapshots.length; i++) {
     const snapshot = input.snapshots[i];
-    key += `${snapshot.id}:${snapshot.value}:${snapshot.balance};`;
+    key += `${snapshot.id}:${snapshot.value}:${snapshot.name ?? ""};`;
     const subs = snapshot.subAccounts;
     if (subs) {
       for (let j = 0; j < subs.length; j++) {
-        key += `${subs[j].id}:${subs[j].value}:${subs[j].balance};`;
+        key += `${subs[j].id}:${subs[j].value}:${subs[j].name ?? ""};`;
       }
     }
   }
@@ -356,9 +357,6 @@ export function makeHeavyAccountSnapshots(
         value: ((i * 31 + j * 17) % 10000) + j,
         tokenId: j % 17 === 0 ? `blocked-${j}` : `token-${j % 40}`,
         currencyId: `c-${j % 12}`,
-        balance: i * 100 + j,
-        pendingCount: j % 3,
-        swapCount: j % 5,
       });
     }
     snapshots.push({
@@ -366,9 +364,6 @@ export function makeHeavyAccountSnapshots(
       value: (i * 97) % 50000,
       tokenId: null,
       currencyId: `c-${i % 12}`,
-      balance: i * 1000,
-      pendingCount: i % 4,
-      swapCount: i % 7,
       subAccounts,
     });
   }

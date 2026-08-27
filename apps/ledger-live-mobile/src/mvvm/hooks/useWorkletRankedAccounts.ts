@@ -124,11 +124,27 @@ export function useWorkletRankedAccounts(
   return { rankedAccounts, groups: ranked.groups };
 }
 
+const EMPTY_EXCLUDED_TOKEN_IDS: string[] = [];
+
+export function useWorkletFlattenedAccounts(): AccountLike[] {
+  const storeAccounts = useSelector(accountsSelector);
+  const countervalueState = useCountervaluesState();
+  const toCurrency = useSelector(counterValueCurrencySelector);
+  const { rankedAccounts } = useWorkletRankedAccounts(
+    storeAccounts,
+    EMPTY_EXCLUDED_TOKEN_IDS,
+    countervalueState,
+    toCurrency,
+    true,
+  );
+  return rankedAccounts;
+}
+
 export function useWorkletAssetsDistribution(opts: {
   showEmptyAccounts?: boolean;
   hideEmptyTokenAccount?: boolean;
   skip?: boolean;
-}): AssetsDistribution & { isLoading: boolean } {
+}): AssetsDistribution & { isLoading: boolean; groups: RankedCurrencyGroup[] } {
   const storeAccounts = useSelector(accountsSelector);
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const countervalueState = useCountervaluesState();
@@ -152,6 +168,7 @@ export function useWorkletAssetsDistribution(opts: {
         hideEmptyTokenAccount: opts.hideEmptyTokenAccount,
       }),
       isLoading: !opts.skip && groups.length === 0 && rankedAccounts.length > 0,
+      groups,
     };
   }, [groups, opts.hideEmptyTokenAccount, opts.showEmptyAccounts, opts.skip, rankedAccounts]);
 }

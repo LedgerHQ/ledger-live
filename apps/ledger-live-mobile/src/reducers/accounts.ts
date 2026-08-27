@@ -6,7 +6,6 @@ import uniq from "lodash/uniq";
 import {
   Account,
   AccountLike,
-  AccountLikeArray,
   AccountRaw,
   AccountUserData,
   TokenAccount,
@@ -14,7 +13,6 @@ import {
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import isEqual from "lodash/isEqual";
 import {
   flattenAccounts,
   getAccountCurrency,
@@ -146,12 +144,27 @@ export const accountsSelector = (s: State): Account[] => s.accounts.active;
 const accountHash = (a: AccountLike) =>
   `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})-pending(${a.pendingOperations.length})`;
 
-// TODO can we share with desktop in common?
+function accountsContentEqual(left: Account[], right: Account[]): boolean {
+  if (left === right) return true;
+  if (left.length !== right.length) return false;
+  for (let i = 0; i < left.length; i++) {
+    const a = left[i];
+    const b = right[i];
+    if (accountHash(a) !== accountHash(b)) return false;
+    const aSubs = a.subAccounts;
+    const bSubs = b.subAccounts;
+    if ((aSubs?.length ?? 0) !== (bSubs?.length ?? 0)) return false;
+    if (aSubs && bSubs) {
+      for (let j = 0; j < aSubs.length; j++) {
+        if (accountHash(aSubs[j]) !== accountHash(bSubs[j])) return false;
+      }
+    }
+  }
+  return true;
+}
+
 const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b): boolean =>
-  isEqual(
-    flattenAccounts(a as AccountLikeArray).map(accountHash),
-    flattenAccounts(b as AccountLikeArray).map(accountHash),
-  ),
+  accountsContentEqual(a as Account[], b as Account[]),
 );
 export const shallowAccountsSelector = shallowAccountsSelectorCreator(
   accountsSelector,

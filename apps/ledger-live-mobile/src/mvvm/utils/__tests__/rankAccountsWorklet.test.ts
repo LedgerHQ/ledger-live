@@ -15,9 +15,6 @@ const parent = (
   value: 0,
   tokenId: null,
   currencyId: "btc",
-  balance: 0,
-  pendingCount: 0,
-  swapCount: 0,
   ...overrides,
 });
 
@@ -75,24 +72,32 @@ describe("rankAccountSnapshots", () => {
     });
   });
 
-  it("should hash every flattened account for change detection", () => {
+  it("should sort by name when order is name", () => {
     const result = rankAccountSnapshots({
       snapshots: [
-        parent({
-          id: "eth",
-          balance: 12,
-          pendingCount: 2,
-          swapCount: 1,
-          subAccounts: [parent({ id: "usdt", tokenId: "usdt", balance: 3 })],
-        }),
+        parent({ id: "z", value: 99, name: "Zulu" }),
+        parent({ id: "a", value: 1, name: "Alpha" }),
       ],
       excludedTokenIds: [],
+      order: "name",
+      nameAsc: true,
     });
 
-    expect(result.hashes).toEqual([
-      "eth-12-swapHistory(1)-pending(2)",
-      "usdt-3-swapHistory(0)-pending(0)",
-    ]);
+    expect(result.ids).toEqual(["a", "z"]);
+  });
+
+  it("should reverse name sort when nameAsc is false", () => {
+    const result = rankAccountSnapshots({
+      snapshots: [
+        parent({ id: "z", value: 99, name: "Zulu" }),
+        parent({ id: "a", value: 1, name: "Alpha" }),
+      ],
+      excludedTokenIds: [],
+      order: "name",
+      nameAsc: false,
+    });
+
+    expect(result.ids).toEqual(["z", "a"]);
   });
 
   it("should scale the many-accounts fixture to parent plus tokens", () => {

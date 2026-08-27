@@ -31,9 +31,7 @@ import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
 import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
-import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
-import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 
 const TRACKING_EVENT = "deeplink_clicked";
 import {
@@ -52,7 +50,6 @@ import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
-import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 import { getActionFromAssetDetailDeeplinkState } from "LLM/features/AssetDetail/utils/getActionFromAssetDetailDeeplinkState";
 
@@ -70,10 +67,6 @@ const styles = StyleSheet.create({
     backgroundColor: SPLASH_SCREEN_BACKGROUND_COLOR,
   },
 });
-
-function handleStartComplete() {
-  logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
-}
 
 function isWalletConnectUrl(url: string) {
   return url.startsWith("wc:");
@@ -919,7 +912,6 @@ export const DeeplinksProvider = ({
     lwmPayTabFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
-  const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
 
   useEffect(() => {
     if (userAcceptedTerms === null) return;
@@ -937,24 +929,18 @@ export const DeeplinksProvider = ({
 
   return (
     <View style={styles.appBackground}>
-      <SplashScreenHandle
-        isNavigationReady={isReady && isNavigationContainerReady}
-        onAppReady={handleStartComplete}
-      >
-        {isReady ? (
-          <NavigationContainer
-            theme={theme}
-            linking={linking}
-            ref={navigationRef}
-            onReady={() => {
-              setIsNavigationContainerReady(true);
-              isReadyRef.current = true;
-            }}
-          >
-            {children}
-          </NavigationContainer>
-        ) : null}
-      </SplashScreenHandle>
+      {isReady ? (
+        <NavigationContainer
+          theme={theme}
+          linking={linking}
+          ref={navigationRef}
+          onReady={() => {
+            isReadyRef.current = true;
+          }}
+        >
+          {children}
+        </NavigationContainer>
+      ) : null}
     </View>
   );
 };

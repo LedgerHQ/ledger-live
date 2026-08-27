@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
 import { useDustFilteringFeature } from "@features/platform-feature-flags";
-import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
@@ -12,7 +12,8 @@ import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { track } from "~/analytics";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { shallowAccountsSelector } from "~/reducers/accounts";
+import { useWorkletFlattenedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
@@ -39,7 +40,7 @@ const OP_COUNT_INCREMENT = 50;
 export function useOperationsListViewModel(accountIds?: string[]) {
   const dispatch = useDispatch();
   const allAccounts = useSelector(shallowAccountsSelector);
-  const allFlattenedAccounts = useSelector(flattenAccountsSelector);
+  const allFlattenedAccounts = useWorkletFlattenedAccounts();
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
@@ -78,13 +79,25 @@ export function useOperationsListViewModel(accountIds?: string[]) {
 
   const accounts = useMemo(() => {
     if (!allowedIds) return allAccounts;
-    return allAccounts.filter(root => flattenAccounts([root]).some(a => allowedIds.has(a.id)));
+    return allAccounts.filter(root => {
+      if (allowedIds.has(root.id)) return true;
+      return root.subAccounts?.some(sub => allowedIds.has(sub.id)) ?? false;
+    });
   }, [allAccounts, allowedIds]);
 
-  const flattenedAccounts = useMemo(
-    () => (allowedIds ? flattenAccounts(accounts) : allFlattenedAccounts),
-    [accounts, allFlattenedAccounts, allowedIds],
-  );
+  const flattenedAccounts = useMemo(() => {
+    if (!allowedIds) return allFlattenedAccounts;
+    const next: AccountLike[] = [];
+    for (const root of accounts) {
+      next.push(root);
+      if (root.subAccounts) {
+        for (const sub of root.subAccounts) {
+          next.push(sub);
+        }
+      }
+    }
+    return next;
+  }, [accounts, allFlattenedAccounts, allowedIds]);
 
   const scopedFilter = useMemo(
     () =>

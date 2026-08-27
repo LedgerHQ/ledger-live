@@ -35,7 +35,10 @@ export function useCategorizedAssetsFromPortfolio() {
     isError: isStockIdsError,
   } = useStockAssetIds("llm", version, !shouldDisplayAssetDiscoverability);
 
-  const categorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
+  const categorizedAssets = useCategorizedAssets(
+    { ...distribution, list: distribution.list ?? [] },
+    stablecoinTickers,
+  );
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -44,14 +47,14 @@ export function useCategorizedAssetsFromPortfolio() {
     const cryptos: CategorizedAssetItem[] = [];
     const stocks: CategorizedAssetItem[] = [];
 
-    for (const item of categorizedAssets.cryptos) {
+    for (const item of categorizedAssets.cryptos ?? []) {
       if (blacklistedTokenIdsSet.has(item.currency.id)) continue;
       if (shouldDisplayAssetDiscoverability && stockAssetIds.has(item.currency.id))
         stocks.push(item);
       else cryptos.push(item);
     }
 
-    const stablecoins = categorizedAssets.stablecoins.filter(
+    const stablecoins = (categorizedAssets.stablecoins ?? []).filter(
       ({ currency }) => !blacklistedTokenIdsSet.has(currency.id),
     );
 

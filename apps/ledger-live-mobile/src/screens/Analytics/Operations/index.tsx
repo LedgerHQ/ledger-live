@@ -7,16 +7,15 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { OperationListV1 } from "./OperationsV1";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useFocusEffect } from "@react-navigation/core";
-import { useSelector } from "~/context/hooks";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useWorkletFlattenedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
 
-  const accountsFromState = useSelector(flattenAccountsSelector);
+  const accountsFromState = useWorkletFlattenedAccounts();
   const accountsFiltered = useMemo(
     () =>
       accountsIds
@@ -24,7 +23,7 @@ export function Operations({ navigation, route }: Props) {
         : accountsFromState,
     [accountsFromState, accountsIds],
   );
-  const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
+  const allAccounts: AccountLikeArray = accountsFromState;
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

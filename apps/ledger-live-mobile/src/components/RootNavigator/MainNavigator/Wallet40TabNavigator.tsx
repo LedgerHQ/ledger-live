@@ -3,6 +3,34 @@ import { NavigatorName } from "~/const";
 import PortfolioNavigator from "../PortfolioNavigator";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { MainNavigatorParamList } from "../types/MainNavigator";
+import { scheduleNamedPreloads } from "../lazyScreen";
+
+let didScheduleTabPreload = false;
+
+function scheduleSiblingTabPreload(
+  navigation: BottomTabNavigationProp<MainNavigatorParamList>,
+  isPayTabEnabled: boolean,
+): void {
+  if (didScheduleTabPreload) {
+    return;
+  }
+  if (typeof process !== "undefined" && process.env.JEST_WORKER_ID) {
+    return;
+  }
+  didScheduleTabPreload = true;
+  scheduleNamedPreloads(
+    [
+      NavigatorName.Swap,
+      NavigatorName.Earn,
+      isPayTabEnabled ? NavigatorName.PayTab : NavigatorName.CardTab,
+    ],
+    name => {
+      navigation.preload(name as keyof MainNavigatorParamList);
+    },
+  );
+}
 
 function Wallet40SwapTabHeader() {
   const { SwapWallet40Header } =
@@ -23,7 +51,15 @@ export function Wallet40TabNavigator({
 }: Readonly<Wallet40TabNavigatorProps>): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>
-      <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioNavigator} />
+      <Tab.Screen
+        name={NavigatorName.Portfolio}
+        component={PortfolioNavigator}
+        listeners={({ navigation }) => ({
+          focus: () => {
+            scheduleSiblingTabPreload(navigation, isPayTabEnabled);
+          },
+        })}
+      />
       <Tab.Screen
         name={NavigatorName.Swap}
         getComponent={() => require("../SwapNavigator").default}

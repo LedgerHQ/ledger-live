@@ -7,6 +7,7 @@ import { useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { StartupTimeMarker } from "../../StartupTimeMarker";
 import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
@@ -31,12 +32,14 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   );
 
   return (
-    <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
-      <PortfolioBalanceSync />
-      <Box flexGrow={1} bg={backgroundColor}>
-        <WalletTabBackgroundGradient />
-        <PortfolioComponent navigation={navigation} route={route} />
-      </Box>
-    </WalletTabNavigatorScrollManager>
+    <StartupTimeMarker>
+      <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
+        <PortfolioBalanceSync />
+        <Box flexGrow={1} bg={backgroundColor}>
+          <WalletTabBackgroundGradient />
+          <PortfolioComponent navigation={navigation} route={route} />
+        </Box>
+      </WalletTabNavigatorScrollManager>
+    </StartupTimeMarker>
   );
 }

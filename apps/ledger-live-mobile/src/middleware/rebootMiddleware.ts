@@ -2,6 +2,8 @@ import { Middleware } from "@reduxjs/toolkit";
 import { AppStateActionTypes } from "../actions/types";
 import { wipeCountervalues } from "../actions/countervalues";
 import SplashScreen from "react-native-splash-screen";
+import { resetNativeSplashFade } from "LLM/features/LaunchScreen/fadeNativeSplash";
+import { resetStartupTimeMarker } from "LLM/utils/startupTimeMarkerState";
 import { State } from "~/reducers/types";
 
 const isRebootAction = (action: unknown): boolean => {
@@ -17,6 +19,8 @@ export const rebootMiddleware: Middleware<object, State> = store => next => asyn
 
   if (isRebootAction(action)) {
     SplashScreen.show(); // on iOS it seems to not be exposed
+    resetNativeSplashFade();
+    resetStartupTimeMarker();
     // Dispatched in the same synchronous tick as the reboot so React batches both
     // into one commit: the RebootProvider key change unmounts the subtree before
     // any CounterValue consumer re-renders against the wiped state, which would
