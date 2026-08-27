@@ -1,5 +1,14 @@
 # @ledgerhq/asset-aggregation
 
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
+  - @ledgerhq/types-live@6.121.0
+  - @domain/api-aggregated-assets@0.4.1
+  - @ledgerhq/live-countervalues@0.24.4
+
 ## 0.13.2-next.0
 
 ### Patch Changes

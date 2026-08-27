@@ -1,5 +1,24 @@
 # @ledgerhq/coin-aleo
 
+## 2.1.0
+
+### Minor Changes
+
+- [#20883](https://github.com/LedgerHQ/ledger-live/pull/20883) [`328dd6f`](https://github.com/LedgerHQ/ledger-live/commit/328dd6f802c87d7248c9bfd95fea5b843aec162a) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops cleanup before extending framework
+
+- [#20835](https://github.com/LedgerHQ/ledger-live/pull/20835) [`e5f61ca`](https://github.com/LedgerHQ/ledger-live/commit/e5f61ca5eae1df9e9ce6abcaa7715db206a71cdf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add the `register` method to the coin-aleo framework API: it seals the account view key to the Provable record scanner and returns the `{ type: "aleo", provableId }` handle, sharing the seal-and-enroll sequence with the bridge's `accessProvableApi`.
+
+- [#20846](https://github.com/LedgerHQ/ledger-live/pull/20846) [`fc4f6e1`](https://github.com/LedgerHQ/ledger-live/commit/fc4f6e16a4fbf1f5f5a900c6c178635fb55e46fc) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement the `combine` method and wire `broadcast` in the coin-aleo framework API: `combine` validates the ordered signature list (root first, then nested calls), reads the view key off the `Context`, and returns the hex-encoded SDK authorization.
+
+- [#20941](https://github.com/LedgerHQ/ledger-live/pull/20941) [`7cb7f9f`](https://github.com/LedgerHQ/ledger-live/commit/7cb7f9fcde70585663639e0c8f8fb1c950489d3c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops framework
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @ledgerhq/types-live@6.121.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+  - @ledgerhq/live-env@3.1.0
+
 ## 2.1.0-next.0
 
 ### Minor Changes

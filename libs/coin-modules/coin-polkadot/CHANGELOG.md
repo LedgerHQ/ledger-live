@@ -1,5 +1,19 @@
 # @ledgerhq/coin-polkadot
 
+## 7.1.0
+
+### Minor Changes
+
+- [#20034](https://github.com/LedgerHQ/ledger-live/pull/20034) [`4555355`](https://github.com/LedgerHQ/ledger-live/commit/4555355dc1f4162841917325ffd539260322a54d) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Remove the deprecated `CurrencyBridge.preload`/`hydrate` from `coin-polkadot`. Polkadot validators, staking progress and minimum bond balance are now fetched on demand (with LRU caching in the network layer) instead of being eagerly preloaded at app init, which was slowing down the scan-account flow.
+
+  Also drop the mocked desktop E2E spec `tests/specs/families/polkadot.spec.ts` (with its snapshot and the `1AccountDOT` userdata it was the sole consumer of). It could only ever get validators through `hydrate`: under `MOCK` the bridge returns the mock currency bridge before `loadSetupForFamily`, so no coin config is registered and the on-demand fetch throws `MissingCoinConfig` before any HTTP request exists to intercept. The on-demand path is covered instead by `coin-polkadot/src/network/index.integ.test.ts`, and validator resolution was verified end to end in the real (non-mock) desktop app.
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
+  - @ledgerhq/types-live@6.121.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+
 ## 7.1.0-next.0
 
 ### Minor Changes

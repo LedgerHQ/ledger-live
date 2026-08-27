@@ -1,5 +1,17 @@
 # @devtools/wire
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
+  - @devtools/protocols@0.4.0
+  - @devtools/transport@0.6.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

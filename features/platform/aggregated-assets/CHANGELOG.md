@@ -1,5 +1,17 @@
 # @features/platform-aggregated-assets
 
+## 0.5.0
+
+### Minor Changes
+
+- [#20942](https://github.com/LedgerHQ/ledger-live/pull/20942) [`8c438f9`](https://github.com/LedgerHQ/ledger-live/commit/8c438f9bec55614174c6faca7ebeb77c8e64aaef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Plug the Modular Asset Drawer into the Pay tab Request and Add stablecoin actions, filtering selection to the stablecoin category so users can pick asset, network and account without over-long request URLs
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.4.1
+  - @features/platform-env@0.2.2
+
 ## 0.5.0-next.0
 
 ### Minor Changes

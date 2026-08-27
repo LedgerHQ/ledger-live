@@ -1,5 +1,30 @@
 # @ledgerhq/coin-zcash
 
+## 0.5.0
+
+### Minor Changes
+
+- [#20995](https://github.com/LedgerHQ/ledger-live/pull/20995) [`8ebdb6a`](https://github.com/LedgerHQ/ledger-live/commit/8ebdb6aff25864883e189ebc3206a9901f5798a4) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Send transparent funds without the account's UFVK. Every Zcash send required one, so a public t→t send failed at the device step with "Missing UFVK — account not yet synced" on any account that had not run the viewing-key export flow — which is a device confirmation, and which the send flow deliberately does not ask for (only the private transfer option is gated on it). Transparent funds were therefore unspendable until the user activated their private balance.
+
+  This needs `@ledgerhq/zcash-utils` 2.2.0, which the catalog now pins: earlier versions require the viewing key for every build, whatever the flow.
+
+  The shielded pools stay out of reach in exchange: a unified address carrying an Orchard receiver is now refused as a recipient when the account has no UFVK, reported on the address field instead of accepted and failed at the device step. A malformed or Sapling address keeps its own error, so the user is not sent to the export flow over a typo.
+
+  A transparent send carries no shielded bundle and reads no shielded key material: the only key it needs is the account-level transparent pubkey, which is the payload of the account xpub the account already holds. It is now read from there (`accountPubkeyFromXpub`, the counterpart of the existing `composeXpub`) and passed to the builder in place of the UFVK, whose absence no longer blocks the flow. An account that does have a UFVK keeps using it, so its code path is unchanged. Flows that spend or create shielded value still require the UFVK and now report it as a typed `ZcashShieldedKeyMissing` rather than a bare error.
+
+- [#21034](https://github.com/LedgerHQ/ledger-live/pull/21034) [`17a4154`](https://github.com/LedgerHQ/ledger-live/commit/17a415450136066be114ede1f7e591fa4ec3ee5f) Thanks [@cted-ledger](https://github.com/cted-ledger)! - [ZEC] Reject a transparent-output amount below the network's dust threshold at the Amount step instead of signing and failing at broadcast.
+
+- [#20949](https://github.com/LedgerHQ/ledger-live/pull/20949) [`a56baa8`](https://github.com/LedgerHQ/ledger-live/commit/a56baa8d0b71460066bc8173767920049aa50e37) Thanks [@pawell24](https://github.com/pawell24)! - Fold a Zcash account's shielded balance sync into the standard automatic wallet sync instead of requiring a manual trigger, and make that trigger unconditional and spam-proof. The account page's shielded balance now refreshes on launch and on the regular sync interval, the Amount step of a send refreshes it when moving on from the Recipient step, and a completed private transfer triggers a follow-up sync so the account page converges without a manual refresh. The manual "sync balance" action is now offered and enabled in every state, including once a scan has completed, and clicking it while a sync is already running no longer cancels and restarts it.
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @ledgerhq/types-live@6.121.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+  - @ledgerhq/live-env@3.1.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+  - @ledgerhq/wallet-btc@0.3.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

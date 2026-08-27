@@ -1,5 +1,11 @@
 # @features/flow-contacts-introduction
 
+## 0.3.0
+
+### Minor Changes
+
+- [#20972](https://github.com/LedgerHQ/ledger-live/pull/20972) [`4c333ad`](https://github.com/LedgerHQ/ledger-live/commit/4c333ad80187596319d6e0042af331770fc1858e) Thanks [@deepyjr](https://github.com/deepyjr)! - Centralize dual-platform Knip configuration.
+
 ## 0.3.0-next.0
 
 ### Minor Changes

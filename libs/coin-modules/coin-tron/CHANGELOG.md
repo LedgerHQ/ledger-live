@@ -1,5 +1,25 @@
 # @ledgerhq/coin-tron
 
+## 7.1.0
+
+### Minor Changes
+
+- [#21062](https://github.com/LedgerHQ/ledger-live/pull/21062) [`952af1c`](https://github.com/LedgerHQ/ledger-live/commit/952af1c44b4f7403293d3ec24c53b030c7f05781) Thanks [@ishaba](https://github.com/ishaba)! - Respect a custom fee limit passed to a TRC-20 `craftTransaction` instead of flooring it to `DEFAULT_TRC20_FEES_LIMIT` (LIVE-36391).
+
+  The generic coin framework migration started raising any override below 50M sun (and `0`) to the default, so a caller-chosen `fee_limit` was silently ignored. The value now passes straight through; the default applies only when no custom fee is provided.
+
+- [#20799](https://github.com/LedgerHQ/ledger-live/pull/20799) [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0) Thanks [@ishaba](https://github.com/ishaba)! - Migrate Tron to the generic coin framework (LIVE-34994).
+
+  Adds a per-family pending-operation `extra` to the generic framework: `OptimisticOperationDescriptor` gains an optional `extra` bag and `describeOptimisticOperation` receives the transaction it describes, with framework-reserved keys stripped so a family cannot shadow them.
+
+- [#20866](https://github.com/LedgerHQ/ledger-live/pull/20866) [`963eafc`](https://github.com/LedgerHQ/ledger-live/commit/963eafce0c9acd89f4fcfccba39f64dcde39e32f) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix getBalance returning a zero balance instead of surfacing upstream API errors
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
+  - @ledgerhq/types-live@6.121.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+
 ## 7.1.0-next.0
 
 ### Minor Changes

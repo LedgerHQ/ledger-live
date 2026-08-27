@@ -1,5 +1,19 @@
 # @devtools/registry
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+- [#20733](https://github.com/LedgerHQ/ledger-live/pull/20733) [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Rename metadata folder from `team-platform` to `platform`, remove unused `icon` field from `ToolMetadata` schema, and consolidate the add-tool guide into `README.md`
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
+  - @devtools/feature-flags@0.8.0
+  - @devtools/pay-card@0.4.0
+
 ## 0.4.0-next.0
 
 ### Minor Changes

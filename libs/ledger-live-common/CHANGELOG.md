@@ -1,5 +1,182 @@
 # @ledgerhq/live-common
 
+## 37.4.0
+
+### Minor Changes
+
+- [#20960](https://github.com/LedgerHQ/ledger-live/pull/20960) [`61b4b5f`](https://github.com/LedgerHQ/ledger-live/commit/61b4b5f293524a51f9d34c11e7113c3c923e8dbd) Thanks [@CremaFR](https://github.com/CremaFR)! - Enrich swap `CHECK_TRANSACTION_SIGNATURE` failures with privacy-safe diagnostics.
+
+  When the Exchange app rejects a partner signature with `SIGN_VERIFICATION_FAIL` (0x9d1a), the swap completion flow now re-verifies the Swap NG signature locally (secp256k1/secp256r1) and appends a stable, non-sensitive diagnostic code to the error message forwarded to `/swap/cancelled`. This distinguishes the suspected firmware R/S-to-DER edge case (leading-zero `r`/`s`) from actionable backend signing mistakes (missing JWS dot prefix, signing the raw protobuf bytes) and a genuine payload/signature mismatch. The device error stays authoritative and its title is unchanged; no payload, signature, key, address or hash is ever included in the diagnostic.
+
+- [#20814](https://github.com/LedgerHQ/ledger-live/pull/20814) [`26d8617`](https://github.com/LedgerHQ/ledger-live/commit/26d86172869e47608dd0f0e26dfbc905dafa3588) Thanks [@henri-ly](https://github.com/henri-ly)! - Remove `@ledgerhq/live-env` from coin-evm (LIVE-33362). The Ledger explorer base URL, the client-version header, the EIP-1559 base-fee multiplier and the legacy-transaction switch now arrive as `EvmConfig` fields (`ledgerExplorerUri`, `ledgerClientVersion`, `eip1559BaseFeeMultiplier`, `forceLegacyTransactions`), each falling back to the value the env used to default to, so the module runs in environments that have no live-env at all. `families/evm/config.ts` supplies the three Ledger-backend settings from the env keys, as `families/tezos/config.ts` already does, so the existing overrides keep working — including the EIP-1559 multiplier exposed in both apps' experimental settings — with per-currency and remote values taking precedence for when the backend serves them (LIVE-22454). They go only to the 8 currencies wired to Ledger's node/explorer/gasTracker, the only ones that can read them, and through a `default` getter rather than a static object, because `LEDGER_CLIENT_VERSION` is set during app boot and the multiplier is edited at runtime, both after that module is imported.
+
+  `forceLegacyTransactions` comes from `EVM_FORCE_LEGACY_TRANSACTIONS` on every currency instead, since the RPC fee path reads it too and not only the Ledger one.
+
+  `X-Ledger-Client-Version` keeps being sent explicitly rather than leaning on the `axios.defaults` header live-network installs: the two files concerned call axios directly, so that default only reaches them if some other module happened to import `live-network/network` first — which does not hold for a consumer embedding coin-evm on its own, and some Ledger backends allowlist on that header.
+
+- [#20993](https://github.com/LedgerHQ/ledger-live/pull/20993) [`2a4b4b1`](https://github.com/LedgerHQ/ledger-live/commit/2a4b4b195a6074b0197e022f7c3ad3cc51b9cf90) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Move Aptos and crypto_org account migrations out of DataModel into app-level accountModel
+
+- [#20990](https://github.com/LedgerHQ/ledger-live/pull/20990) [`bb58645`](https://github.com/LedgerHQ/ledger-live/commit/bb586459d2412e667e35bbaeb1c61b69d06aedf0) Thanks [@jeportie](https://github.com/jeportie)! - Bound the concurrency of CAL token lookups in the `currency.list` wallet-api handler. It resolved every requested token id in a single unbounded `Promise.all`, so a live app asking for hundreds of tokens fired hundreds of simultaneous requests. Measured against the real CAL API with the ids the Buy screen requests, that took 75.6s and 251 of 627 requests failed outright — and a failed lookup is silently dropped, so the returned currency list was quietly incomplete. Bounded, none fail. Note this is a correctness fix only: CAL exposes no bulk id endpoint, so the request count is fixed, and raising the bound does not make the call faster — measured on an Android emulator, going from 10 to 25 in flight took the same 624 lookups from 67.5s to 88.8s, because the connection is throughput-limited rather than latency-limited
+
+- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+- [#21044](https://github.com/LedgerHQ/ledger-live/pull/21044) [`b2a2e9e`](https://github.com/LedgerHQ/ledger-live/commit/b2a2e9ecec155c4ff3fdefa0b22e0ac2226bf830) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): search by contact name as recipient in the send
+
+- [#21016](https://github.com/LedgerHQ/ledger-live/pull/21016) [`d1ab42f`](https://github.com/LedgerHQ/ledger-live/commit/d1ab42f2b4db3cef7719d25a7b73a4cf223735dd) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Fix UTXO selection picking an immature coinbase output ahead of a mature one across a digit-count boundary (sortUtxos compared blockDaaScore lexicographically as a string instead of numerically, e.g. treating "1202" as less than "200"), fix combine() to correctly unpack and validate the JSON-encoded per-input signature array the generic-adapter signer returns, and set a synthetic zero nonce in the generic-coin-framework's default Kaspa transaction (matching the existing near/vechain/cardano pattern) so getNextSequence is never called for a UTXO chain that has no account-level sequence.
+
+- [#20799](https://github.com/LedgerHQ/ledger-live/pull/20799) [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0) Thanks [@ishaba](https://github.com/ishaba)! - Migrate Tron to the generic coin framework (LIVE-34994).
+
+  Adds a per-family pending-operation `extra` to the generic framework: `OptimisticOperationDescriptor` gains an optional `extra` bag and `describeOptimisticOperation` receives the transaction it describes, with framework-reserved keys stripped so a family cannot shadow them.
+
+- [#20952](https://github.com/LedgerHQ/ledger-live/pull/20952) [`32f3b76`](https://github.com/LedgerHQ/ledger-live/commit/32f3b7638dbe8c23fd64f60b8eb5e8dfe8f4c74a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - fix(zcash): expose only the transparent balance to live apps
+
+  Swap, buy/sell and dApps read an account's spendable balance over the wallet-api. For Zcash that reported transparent + private, so the swap form displayed — and offered as MAX — private funds a live app cannot spend. It now reports the transparent balance, the same figure as the account page's "Transparent" label.
+
+- [#20996](https://github.com/LedgerHQ/ledger-live/pull/20996) [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d) Thanks [@CremaFR](https://github.com/CremaFR)! - Forward the `llmWalletApiDeviceIntentSign` assignment to the swap live app on mobile as `llmWalletApiDeviceIntentSignVariant` (the `variantId`) and `llmWalletApiDeviceIntentSignEnabled` (the flag state). Resolve that per manifest through `useDeviceIntentSignAssignment`, which also backs the Wallet API UI hook. Report both attributes on Mixpanel via `getRemoteABTestingAttributes`.
+
+- [#20669](https://github.com/LedgerHQ/ledger-live/pull/20669) [`f7e5005`](https://github.com/LedgerHQ/ledger-live/commit/f7e5005f306b306042e3022fcb299ef499e7491a) Thanks [@YazhuEth](https://github.com/YazhuEth)! - feat(lwd): display the contact name and avatar in the send header
+
+  The Amount step now shows the matched contact instead of the truncated address, using the shared `ContactAvatar`. The Recipient card moves to the same component, so both steps render the same colour and initials.
+
+- [#20034](https://github.com/LedgerHQ/ledger-live/pull/20034) [`4555355`](https://github.com/LedgerHQ/ledger-live/commit/4555355dc1f4162841917325ffd539260322a54d) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Remove the deprecated `CurrencyBridge.preload`/`hydrate` from `coin-polkadot`. Polkadot validators, staking progress and minimum bond balance are now fetched on demand (with LRU caching in the network layer) instead of being eagerly preloaded at app init, which was slowing down the scan-account flow.
+
+  Also drop the mocked desktop E2E spec `tests/specs/families/polkadot.spec.ts` (with its snapshot and the `1AccountDOT` userdata it was the sole consumer of). It could only ever get validators through `hydrate`: under `MOCK` the bridge returns the mock currency bridge before `loadSetupForFamily`, so no coin config is registered and the on-demand fetch throws `MissingCoinConfig` before any HTTP request exists to intercept. The on-demand path is covered instead by `coin-polkadot/src/network/index.integ.test.ts`, and validator resolution was verified end to end in the real (non-mock) desktop app.
+
+- [#20977](https://github.com/LedgerHQ/ledger-live/pull/20977) [`fb4a5bc`](https://github.com/LedgerHQ/ledger-live/commit/fb4a5bc6d78301182f56572ffedbe28bc995f271) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the amount step when sending to a saved contact.
+
+- [#20901](https://github.com/LedgerHQ/ledger-live/pull/20901) [`6e1e0aa`](https://github.com/LedgerHQ/ledger-live/commit/6e1e0aa7b317b7fb5f7c73161198536232b3881e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Stop using generateAnonymousId for Braze identity
+
+- [#20879](https://github.com/LedgerHQ/ledger-live/pull/20879) [`306a681`](https://github.com/LedgerHQ/ledger-live/commit/306a6813eaabfd67dc575bb7bdfc2b52892037df) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(cronos): update explorer URL to Ledger proxy and add dedicated "cronos" explorer type that skips txlistinternal (proxy enforces a 10 000-block range limit with no reliable workaround)
+
+- [#20880](https://github.com/LedgerHQ/ledger-live/pull/20880) [`79bd143`](https://github.com/LedgerHQ/ledger-live/commit/79bd143c2b2fe9dd4036ffbf2f75b82afc6e677f) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Hide accounts that cannot send from the send pickers, and accounts that cannot receive from the receive pickers (HyperCore)
+
+- [#21046](https://github.com/LedgerHQ/ledger-live/pull/21046) [`e11eebe`](https://github.com/LedgerHQ/ledger-live/commit/e11eebedce8093322ce9dd9140be2e1f29817735) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): add network-filtered contact selection to the Send recipient step on desktop and mobile
+
+- [#20998](https://github.com/LedgerHQ/ledger-live/pull/20998) [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: move hedera envs directly to config
+
+- [#20600](https://github.com/LedgerHQ/ledger-live/pull/20600) [`a826856`](https://github.com/LedgerHQ/ledger-live/commit/a826856200049687f4b3b37f85bb588eaa4fb4a2) Thanks [@pawell24](https://github.com/pawell24)! - Add CoinModuleApi (Alpaca) support for Stacks: native STX and SIP-010 token transfers, balances, and operation history, alongside pox-5 PoX stacking (stake/unstake). The existing account bridge is unchanged.
+
+- [#20821](https://github.com/LedgerHQ/ledger-live/pull/20821) [`b3095f5`](https://github.com/LedgerHQ/ledger-live/commit/b3095f5500b76110b5ce2ed1f08aee9f346a40f3) Thanks [@pawell24](https://github.com/pawell24)! - Fix Stacks fee estimation freezing after the first quote instead of re-pricing when the amount, memo, or asset changes. Fix a fully-swept token sub-account (any generic-framework chain, not just Stacks) keeping its pre-sweep balance forever instead of ever reflecting the sweep to zero.
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
+- [#20949](https://github.com/LedgerHQ/ledger-live/pull/20949) [`a56baa8`](https://github.com/LedgerHQ/ledger-live/commit/a56baa8d0b71460066bc8173767920049aa50e37) Thanks [@pawell24](https://github.com/pawell24)! - Fold a Zcash account's shielded balance sync into the standard automatic wallet sync instead of requiring a manual trigger, and make that trigger unconditional and spam-proof. The account page's shielded balance now refreshes on launch and on the regular sync interval, the Amount step of a send refreshes it when moving on from the Recipient step, and a completed private transfer triggers a follow-up sync so the account page converges without a manual refresh. The manual "sync balance" action is now offered and enabled in every state, including once a scan has completed, and clicking it while a sync is already running no longer cancels and restarts it.
+
+- [#20955](https://github.com/LedgerHQ/ledger-live/pull/20955) [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: move hedera envs to config/constants
+
+- [#20970](https://github.com/LedgerHQ/ledger-live/pull/20970) [`9d84383`](https://github.com/LedgerHQ/ledger-live/commit/9d84383b5197f7509eaf232c9a5f12efb6fa162f) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(live-apps): reuse unchanged manifests to stop idle WalletAPI Load
+
+- [#20946](https://github.com/LedgerHQ/ledger-live/pull/20946) [`3908965`](https://github.com/LedgerHQ/ledger-live/commit/3908965e8872b6502558b669897028d39c492f7e) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add a `CoinFrameworkSigner` for Casper so the family can derive addresses and sign through the generic coin adapter. Address derivation, signature tagging and device access are now shared with the legacy bridge instead of duplicated, so the two paths cannot drift; legacy behaviour is unchanged and the adapter flag stays off.
+
+- [#20989](https://github.com/LedgerHQ/ledger-live/pull/20989) [`d7a9847`](https://github.com/LedgerHQ/ledger-live/commit/d7a9847244eeff976b10ae1aee39fadafec3d1e2) Thanks [@jeportie](https://github.com/jeportie)! - Stop treating a failed live-app catalog fetch as an empty catalog. The fetch used to swallow network errors and resolve to `[]`, which `RemoteLiveAppProvider` then stored as a successful (but empty) registry with `error: null` and did not refetch for 30 minutes — so a transient failure at startup left every live app unresolvable ("App not found") for the whole session. Errors now propagate, a failed refresh keeps the previously loaded catalog, and a failure is retried with backoff instead of waiting for the next scheduled refresh
+
+### Patch Changes
+
+- Updated dependencies [[`26d8617`](https://github.com/LedgerHQ/ledger-live/commit/26d86172869e47608dd0f0e26dfbc905dafa3588), [`8ebdb6a`](https://github.com/LedgerHQ/ledger-live/commit/8ebdb6aff25864883e189ebc3206a9901f5798a4), [`17a4154`](https://github.com/LedgerHQ/ledger-live/commit/17a415450136066be114ede1f7e591fa4ec3ee5f), [`328dd6f`](https://github.com/LedgerHQ/ledger-live/commit/328dd6f802c87d7248c9bfd95fea5b843aec162a), [`98f4802`](https://github.com/LedgerHQ/ledger-live/commit/98f48028b931c5aabf364988c53488e6124cc42e), [`952af1c`](https://github.com/LedgerHQ/ledger-live/commit/952af1c44b4f7403293d3ec24c53b030c7f05781), [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`5125ac7`](https://github.com/LedgerHQ/ledger-live/commit/5125ac7d7c27a76541835d596c122f30d04e759b), [`d1ab42f`](https://github.com/LedgerHQ/ledger-live/commit/d1ab42f2b4db3cef7719d25a7b73a4cf223735dd), [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e), [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`e5f61ca`](https://github.com/LedgerHQ/ledger-live/commit/e5f61ca5eae1df9e9ce6abcaa7715db206a71cdf), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`fc4f6e1`](https://github.com/LedgerHQ/ledger-live/commit/fc4f6e16a4fbf1f5f5a900c6c178635fb55e46fc), [`7cb7f9f`](https://github.com/LedgerHQ/ledger-live/commit/7cb7f9fcde70585663639e0c8f8fb1c950489d3c), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`8c438f9`](https://github.com/LedgerHQ/ledger-live/commit/8c438f9bec55614174c6faca7ebeb77c8e64aaef), [`4555355`](https://github.com/LedgerHQ/ledger-live/commit/4555355dc1f4162841917325ffd539260322a54d), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`306a681`](https://github.com/LedgerHQ/ledger-live/commit/306a6813eaabfd67dc575bb7bdfc2b52892037df), [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d), [`582f422`](https://github.com/LedgerHQ/ledger-live/commit/582f422ec2fbe8bb852c7a847c3ee0ff0a01ab32), [`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`f32bf30`](https://github.com/LedgerHQ/ledger-live/commit/f32bf306ae16af24a98aff16c9c2342f496b905c), [`a826856`](https://github.com/LedgerHQ/ledger-live/commit/a826856200049687f4b3b37f85bb588eaa4fb4a2), [`b3095f5`](https://github.com/LedgerHQ/ledger-live/commit/b3095f5500b76110b5ce2ed1f08aee9f346a40f3), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`83a2392`](https://github.com/LedgerHQ/ledger-live/commit/83a2392315107835cb924ee88c3f93816d4a234e), [`a56baa8`](https://github.com/LedgerHQ/ledger-live/commit/a56baa8d0b71460066bc8173767920049aa50e37), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9), [`3908965`](https://github.com/LedgerHQ/ledger-live/commit/3908965e8872b6502558b669897028d39c492f7e), [`963eafc`](https://github.com/LedgerHQ/ledger-live/commit/963eafce0c9acd89f4fcfccba39f64dcde39e32f)]:
+  - @ledgerhq/coin-evm@5.1.0
+  - @ledgerhq/coin-zcash@0.5.0
+  - @ledgerhq/coin-aleo@2.1.0
+  - @ledgerhq/coin-casper@3.1.0
+  - @ledgerhq/coin-tron@7.1.0
+  - @features/platform-device-intent@5.1.0
+  - @ledgerhq/live-signer-solana@0.21.0
+  - @shared/feature-flags@0.20.0
+  - @ledgerhq/coin-kaspa@2.1.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+  - @shared/env@0.4.0
+  - @features/platform-aggregated-assets@0.5.0
+  - @ledgerhq/coin-polkadot@7.1.0
+  - @domain/entity-recent-addresses@0.2.0
+  - @ledgerhq/coin-sui@1.1.0
+  - @ledgerhq/coin-stacks@0.29.0
+  - @ledgerhq/coin-hedera@2.1.0
+  - @ledgerhq/coin-celo@3.0.1
+  - @ledgerhq/live-signer-aleo@0.19.8
+  - @domain/api-aggregated-assets@0.4.1
+  - @domain/api-currency-token@0.5.1
+  - @domain/api-swap-quotes@0.2.2
+  - @features/platform-feature-flags@0.6.7
+  - @ledgerhq/asset-aggregation@0.13.2
+  - @ledgerhq/coin-algorand@2.0.1
+  - @ledgerhq/coin-aptos@4.0.1
+  - @ledgerhq/coin-bitcoin@0.51.2
+  - @ledgerhq/coin-canton@1.0.1
+  - @ledgerhq/coin-cardano@1.0.1
+  - @ledgerhq/coin-concordium@1.0.1
+  - @ledgerhq/coin-cosmos@1.0.1
+  - @ledgerhq/coin-filecoin@2.0.1
+  - @ledgerhq/coin-icon@0.29.2
+  - @ledgerhq/coin-internet_computer@1.29.2
+  - @ledgerhq/coin-mina@1.21.2
+  - @ledgerhq/coin-multiversx@1.0.1
+  - @ledgerhq/coin-near@1.0.1
+  - @ledgerhq/coin-solana@1.0.1
+  - @ledgerhq/coin-ton@0.37.1
+  - @ledgerhq/coin-vechain@4.0.1
+  - @ledgerhq/device-core@0.11.13
+  - @ledgerhq/domain-service@1.8.16
+  - @ledgerhq/evm-tools@1.14.1
+  - @ledgerhq/hw-app-eth@7.8.16
+  - @ledgerhq/live-countervalues@0.24.4
+  - @ledgerhq/live-countervalues-react@0.16.8
+  - @ledgerhq/live-signer-canton@0.9.17
+  - @ledgerhq/live-signer-celo@1.2.4
+  - @ledgerhq/live-signer-cosmos@0.4.7
+  - @ledgerhq/live-signer-evm@0.22.4
+  - @ledgerhq/live-signer-icp@0.1.3
+  - @ledgerhq/live-signer-zcash@0.10.0
+  - @features/platform-env@0.2.2
+  - @ledgerhq/ledger-cal-service@1.19.3
+  - @ledgerhq/ledger-trust-service@0.8.14
+  - @ledgerhq/speculos-transport@0.10.12
+  - @domain/entity-account-name@0.2.1
+  - @ledgerhq/live-currency-format@0.14.2
+  - @ledgerhq/live-signer-concordium@0.6.7
+  - @ledgerhq/wallet-btc@0.3.0
+  - @ledgerhq/hw-app-exchange@0.25.0
+
 ## 37.4.0-next.0
 
 ### Minor Changes
