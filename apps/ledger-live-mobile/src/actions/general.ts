@@ -4,11 +4,13 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
+  type AccountComparator,
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
+  useCountervaluesState,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
@@ -22,24 +24,49 @@ import { BehaviorSubject } from "rxjs";
 import { replaceAccounts, reorderAccounts } from "./accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountsSelector } from "../reducers/accounts";
-import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  counterValueCurrencySelector,
+  orderAccountsSelector,
+} from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { walletSelector } from "~/reducers/wallet";
 import { useFeature } from "@features/platform-feature-flags";
+import { isAccountWorkletEnabled } from "LLM/utils/perfOptimizationMode";
+import {
+  rankAccountSnapshotsOffJs,
+  snapshotAccountsForRanking,
+} from "LLM/utils/rankAccountsWorklet";
+import { useWorkletAssetsDistribution } from "LLM/hooks/useWorkletRankedAccounts";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
 >([]);
+
+function comparatorFromRankedIds(ids: string[]): AccountComparator {
+  const order = new Map<string, number>();
+  for (let i = 0; i < ids.length; i++) {
+    order.set(ids[i], i);
+  }
+  return (a, b) =>
+    (order.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (order.get(b.id) ?? Number.MAX_SAFE_INTEGER);
+}
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
   const { groupBy, ...displayOpts } = opts;
   const isAssetMode = groupBy === "asset";
+  const workletEnabled = isAccountWorkletEnabled();
 
-  const legacy = useLegacyDistribution({ accounts, to, skip: isAssetMode, ...displayOpts });
+  const legacy = useLegacyDistribution({
+    accounts,
+    to,
+    skip: isAssetMode || workletEnabled,
+    ...displayOpts,
+  });
   const asset = useAssetDistribution({
     accounts,
     to,
@@ -48,9 +75,16 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
     skip: !isAssetMode,
     ...displayOpts,
   });
+  const worklet = useWorkletAssetsDistribution({
+    ...displayOpts,
+    skip: isAssetMode || !workletEnabled,
+  });
 
   if (isAssetMode) {
     return { ...asset.distribution, isLoading: asset.isLoading };
+  }
+  if (workletEnabled) {
+    return worklet;
   }
   return { ...legacy, isLoading: false };
 }
@@ -75,18 +109,48 @@ export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   );
 }
 export function useRefreshAccountsOrdering() {
+  const accounts = useSelector(accountsSelector);
+  const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const countervalueState = useCountervaluesState();
+  const toCurrency = useSelector(counterValueCurrencySelector);
+  const orderAccounts = useSelector(orderAccountsSelector);
   const comparator = useSortAccountsComparator();
   const dispatch = useDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  // workaround for not reflecting the latest payload when calling refresh right after updating accounts
   useEffect(() => {
     if (!isRefreshing) {
       return;
     }
 
-    dispatch(reorderAccounts(comparator));
-    setIsRefreshing(false);
-  }, [isRefreshing, dispatch, comparator]);
+    const rankOnWorklet = isAccountWorkletEnabled() && orderAccounts.startsWith("balance");
+    if (!rankOnWorklet) {
+      dispatch(reorderAccounts(comparator));
+      setIsRefreshing(false);
+      return;
+    }
+
+    const snapshots = snapshotAccountsForRanking(accounts, countervalueState, toCurrency, true);
+    let cancelled = false;
+    rankAccountSnapshotsOffJs({ snapshots, excludedTokenIds }).then(result => {
+      if (cancelled) {
+        return;
+      }
+      dispatch(reorderAccounts(comparatorFromRankedIds(result.ids)));
+      setIsRefreshing(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    accounts,
+    comparator,
+    countervalueState,
+    dispatch,
+    excludedTokenIds,
+    isRefreshing,
+    orderAccounts,
+    toCurrency,
+  ]);
   return useCallback(() => {
     setIsRefreshing(true);
   }, []);

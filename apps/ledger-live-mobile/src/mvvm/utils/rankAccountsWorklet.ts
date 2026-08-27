@@ -3,7 +3,7 @@ import { isAccountWorkletEnabled } from "./perfOptimizationMode";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { Currency } from "@domain/entity-currency";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, AssetsDistribution, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 export type AccountSnapshot = {
@@ -84,15 +84,34 @@ export function snapshotAccountLike(
   return snapshot;
 }
 
+let snapshotCache: {
+  accounts: unknown;
+  countervalueState: unknown;
+  toCurrency: unknown;
+  includeSubAccounts: boolean;
+  snapshots: AccountSnapshot[];
+} | null = null;
+
 export function snapshotAccountsForRanking(
   accounts: Array<Account | TokenAccount | AccountLike>,
   countervalueState: CounterValuesState,
   toCurrency: Currency,
   includeSubAccounts = true,
 ): AccountSnapshot[] {
-  return accounts.map(account =>
+  if (
+    snapshotCache &&
+    snapshotCache.accounts === accounts &&
+    snapshotCache.countervalueState === countervalueState &&
+    snapshotCache.toCurrency === toCurrency &&
+    snapshotCache.includeSubAccounts === includeSubAccounts
+  ) {
+    return snapshotCache.snapshots;
+  }
+  const snapshots = accounts.map(account =>
     snapshotAccountLike(account, countervalueState, toCurrency, includeSubAccounts),
   );
+  snapshotCache = { accounts, countervalueState, toCurrency, includeSubAccounts, snapshots };
+  return snapshots;
 }
 
 export function rankAccountSnapshots(input: RankAccountsInput): RankAccountsResult {
@@ -162,6 +181,88 @@ export function rankAccountSnapshots(input: RankAccountsInput): RankAccountsResu
   return { ids, hashes, groups };
 }
 
+export function assetsDistributionFromRankedGroups(
+  groups: RankedCurrencyGroup[],
+  accountsById: Map<string, AccountLike>,
+  opts: { showEmptyAccounts?: boolean; hideEmptyTokenAccount?: boolean } = {},
+): AssetsDistribution {
+  const showEmptyAccounts = opts.showEmptyAccounts ?? false;
+  const hideEmptyTokenAccount = opts.hideEmptyTokenAccount ?? false;
+  const list: AssetsDistribution["list"] = [];
+  let sum = 0;
+
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    const groupedAccounts: AccountLike[] = [];
+    let amount = 0;
+    for (let j = 0; j < group.ids.length; j++) {
+      const account = accountsById.get(group.ids[j]);
+      if (!account) continue;
+      groupedAccounts.push(account);
+      amount += account.balance.toNumber();
+    }
+    if (groupedAccounts.length === 0) continue;
+    const currency = getAccountCurrency(groupedAccounts[0]);
+    const isEmpty = amount <= 0;
+    if (currency.type === "TokenCurrency") {
+      if (hideEmptyTokenAccount && isEmpty) continue;
+    } else if (!showEmptyAccounts && isEmpty) {
+      continue;
+    }
+    list.push({
+      currency,
+      accounts: groupedAccounts,
+      amount,
+      countervalue: group.value,
+      distribution: 0,
+    });
+    sum += group.value;
+  }
+
+  const isAvailable = sum !== 0 || showEmptyAccounts;
+  for (const item of list) {
+    item.distribution = isAvailable
+      ? sum !== 0
+        ? (item.countervalue ?? 0) / sum
+        : 1 / list.length
+      : 0;
+  }
+
+  let acc = 0;
+  let showFirstCount = 0;
+  for (; showFirstCount < 6 && showFirstCount < list.length; showFirstCount++) {
+    if (acc > 0.95) break;
+    acc += list[showFirstCount].distribution;
+  }
+
+  return {
+    isAvailable,
+    list,
+    showFirst: Math.max(6, showFirstCount),
+    sum,
+  };
+}
+
+function rankingInputKey(input: RankAccountsInput): string {
+  let key = `${input.excludedTokenIds.join(",")}|`;
+  for (let i = 0; i < input.snapshots.length; i++) {
+    const snapshot = input.snapshots[i];
+    key += `${snapshot.id}:${snapshot.value}:${snapshot.balance};`;
+    const subs = snapshot.subAccounts;
+    if (subs) {
+      for (let j = 0; j < subs.length; j++) {
+        key += `${subs[j].id}:${subs[j].value}:${subs[j].balance};`;
+      }
+    }
+  }
+  return key;
+}
+
+let cachedRankingKey = "";
+let cachedRanking: RankAccountsResult | null = null;
+let inflightRankingKey = "";
+let inflightRanking: Promise<RankAccountsResult> | null = null;
+
 export function countRankedAccountItems(snapshots: AccountSnapshot[]): number {
   let count = 0;
   for (let i = 0; i < snapshots.length; i++) {
@@ -191,30 +292,55 @@ export function rankAccountSnapshotsOffJs(
   input: RankAccountsInput,
   repeats = 1,
 ): Promise<RankAccountsResult> {
-  const runtime = getAccountWorkletRuntime();
-  if (!runtime) {
-    let result = rankAccountSnapshots(input);
-    for (let i = 1; i < repeats; i++) {
-      result = rankAccountSnapshots(input);
-    }
-    return Promise.resolve(result);
+  const cacheKey = repeats === 1 ? rankingInputKey(input) : "";
+  if (cacheKey && cachedRanking && cachedRankingKey === cacheKey) {
+    return Promise.resolve(cachedRanking);
+  }
+  if (cacheKey && inflightRanking && inflightRankingKey === cacheKey) {
+    return inflightRanking;
   }
 
-  return new Promise(resolve => {
-    scheduleOnRuntime(
-      runtime,
-      (payload: RankAccountsInput, times: number) => {
-        "worklet";
-        let result = rankAccountSnapshots(payload);
-        for (let i = 1; i < times; i++) {
-          result = rankAccountSnapshots(payload);
-        }
-        scheduleOnRN(resolve, result);
-      },
-      input,
-      repeats,
-    );
+  const runtime = getAccountWorkletRuntime();
+  const run = !runtime
+    ? Promise.resolve(
+        (() => {
+          let result = rankAccountSnapshots(input);
+          for (let i = 1; i < repeats; i++) {
+            result = rankAccountSnapshots(input);
+          }
+          return result;
+        })(),
+      )
+    : new Promise<RankAccountsResult>(resolve => {
+        scheduleOnRuntime(
+          runtime,
+          (payload: RankAccountsInput, times: number) => {
+            "worklet";
+            let result = rankAccountSnapshots(payload);
+            for (let i = 1; i < times; i++) {
+              result = rankAccountSnapshots(payload);
+            }
+            scheduleOnRN(resolve, result);
+          },
+          input,
+          repeats,
+        );
+      });
+
+  if (!cacheKey) {
+    return run;
+  }
+
+  inflightRankingKey = cacheKey;
+  inflightRanking = run.then(result => {
+    cachedRankingKey = cacheKey;
+    cachedRanking = result;
+    if (inflightRankingKey === cacheKey) {
+      inflightRanking = null;
+    }
+    return result;
   });
+  return inflightRanking;
 }
 
 export function makeHeavyAccountSnapshots(

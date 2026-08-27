@@ -50,7 +50,7 @@ const useAccountsListViewModel = ({
   const walletState = useSelector(walletSelector, isEqual);
   const accounts = specificAccounts || allAccounts;
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const rankedAccounts = useWorkletRankedAccounts(
+  const { rankedAccounts } = useWorkletRankedAccounts(
     accounts,
     excludedTokenIds,
     countervalueState,

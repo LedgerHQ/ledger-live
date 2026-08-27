@@ -1,4 +1,8 @@
+import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Account } from "@ledgerhq/types-live";
 import {
+  assetsDistributionFromRankedGroups,
   countRankedAccountItems,
   makeHeavyAccountSnapshots,
   rankAccountSnapshots,
@@ -95,5 +99,43 @@ describe("rankAccountSnapshots", () => {
     const snapshots = makeHeavyAccountSnapshots(4, 3);
     expect(countRankedAccountItems(snapshots)).toBe(16);
     expect(rankAccountSnapshots({ snapshots, excludedTokenIds: [] }).ids.length).toBeGreaterThan(0);
+  });
+});
+
+describe("assetsDistributionFromRankedGroups", () => {
+  it("should map ranked groups onto a fiat-sorted distribution list", () => {
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const btc = {
+      id: "btc-1",
+      type: "Account",
+      currency: bitcoin,
+      balance: new BigNumber(2),
+    } as Account;
+    const eth = {
+      id: "eth-1",
+      type: "Account",
+      currency: ethereum,
+      balance: new BigNumber(5),
+    } as Account;
+    const byId = new Map<string, Account>([
+      [btc.id, btc],
+      [eth.id, eth],
+    ]);
+
+    const distribution = assetsDistributionFromRankedGroups(
+      [
+        { currencyId: "bitcoin", ids: ["btc-1"], value: 80 },
+        { currencyId: "ethereum", ids: ["eth-1"], value: 20 },
+      ],
+      byId,
+      { showEmptyAccounts: true },
+    );
+
+    expect(distribution.isAvailable).toBe(true);
+    expect(distribution.sum).toBe(100);
+    expect(distribution.list.map(item => item.currency.id)).toEqual(["bitcoin", "ethereum"]);
+    expect(distribution.list[0].distribution).toBe(0.8);
+    expect(distribution.list[0].accounts).toEqual([btc]);
   });
 });
