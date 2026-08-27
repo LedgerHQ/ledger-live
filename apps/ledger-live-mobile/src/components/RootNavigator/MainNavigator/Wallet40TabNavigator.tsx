@@ -1,17 +1,19 @@
 import React from "react";
 import { NavigatorName } from "~/const";
 import PortfolioNavigator from "../PortfolioNavigator";
-import SwapNavigator from "../SwapNavigator";
-import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
-import CardLandingNavigator from "LLM/features/Card";
-import PayTabNavigator, { getPayTabScreenOptions } from "LLM/features/PayTab";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
-import { SwapWallet40Header } from "~/screens/Swap/LiveApp/components/SwapWallet40Header";
-import { resetSwapWallet40HeaderState } from "~/screens/Swap/LiveApp/navigationHandlers/wallet40/useSwapWallet40HeaderState";
 
 function Wallet40SwapTabHeader() {
+  const { SwapWallet40Header } =
+    require("~/screens/Swap/LiveApp/components/SwapWallet40Header") as typeof import("~/screens/Swap/LiveApp/components/SwapWallet40Header");
   return <SwapWallet40Header />;
+}
+
+function resetSwapWallet40HeaderStateOnTabPress() {
+  (
+    require("~/screens/Swap/LiveApp/navigationHandlers/wallet40/useSwapWallet40HeaderState") as typeof import("~/screens/Swap/LiveApp/navigationHandlers/wallet40/useSwapWallet40HeaderState")
+  ).resetSwapWallet40HeaderState();
 }
 
 export function Wallet40TabNavigator({
@@ -24,24 +26,33 @@ export function Wallet40TabNavigator({
       <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioNavigator} />
       <Tab.Screen
         name={NavigatorName.Swap}
-        component={SwapNavigator}
+        getComponent={() => require("../SwapNavigator").default}
         options={{
           header: Wallet40SwapTabHeader,
         }}
         listeners={() => ({
-          // Prevent stale opaque header state when re-entering the Swap tab.
-          tabPress: resetSwapWallet40HeaderState,
+          tabPress: resetSwapWallet40HeaderStateOnTabPress,
         })}
       />
-      <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />
+      <Tab.Screen
+        name={NavigatorName.Earn}
+        getComponent={() => require("../EarnLiveAppNavigator").default}
+      />
       {isPayTabEnabled ? (
         <Tab.Screen
           name={NavigatorName.PayTab}
-          component={PayTabNavigator}
-          options={getPayTabScreenOptions}
+          getComponent={() => require("LLM/features/PayTab").default}
+          options={props =>
+            (
+              require("LLM/features/PayTab/getPayTabScreenOptions") as typeof import("LLM/features/PayTab/getPayTabScreenOptions")
+            ).getPayTabScreenOptions(props)
+          }
         />
       ) : (
-        <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
+        <Tab.Screen
+          name={NavigatorName.CardTab}
+          getComponent={() => require("LLM/features/Card").default}
+        />
       )}
     </Tab.Navigator>
   );

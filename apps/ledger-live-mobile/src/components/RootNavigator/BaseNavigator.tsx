@@ -8,104 +8,28 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName, BASE_NAVIGATOR_ID } from "~/const";
-import * as families from "~/families";
-import OperationDetails from "~/screens/OperationDetails";
-import EditDeviceName from "~/screens/EditDeviceName";
-import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
+import type * as FamilyScreens from "~/families";
 import Main from "./MainNavigator";
-import SettingsNavigator from "./SettingsNavigator";
-import BuyDeviceNavigator from "./BuyDeviceNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import SendFundsNavigator from "./SendFundsNavigator";
-import SignMessageNavigator from "./SignMessageNavigator";
-import SignTransactionNavigator from "./SignTransactionNavigator";
-import FreezeNavigator from "./FreezeNavigator";
-import UnfreezeNavigator from "./UnfreezeNavigator";
-import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
-import { CardLiveAppNavigator } from "LLM/features/Card";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
-import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import SwapNavigator from "./SwapNavigator";
-import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
-import PerpsNavigator from "./PerpsNavigator";
-import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
-import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsOperations from "~/screens/Analytics/Operations";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Account from "~/screens/Account";
-import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import styles from "~/navigation/styles";
 import StepHeader from "../StepHeader";
-import PortfolioHistory from "~/screens/Portfolio/PortfolioHistory";
-import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "~/screens/VerifyAccount";
-import { LiveApp } from "~/screens/Platform";
-import AccountsNavigator from "./AccountsNavigator";
-import MarketNavigator from "LLM/features/Market/Navigator";
-import SendWorkflow from "LLM/features/Send";
-import {
-  BleDevicePairingFlow,
-  bleDevicePairingFlowHeaderOptions,
-} from "~/screens/BleDevicePairingFlow";
-import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
-import CustomImageNavigator from "./CustomImageNavigator";
-import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector, accountScreenSelector } from "~/reducers/accounts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getOperationTypeI18nKey } from "~/logic/operationTypeName";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
-import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
-import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "~/screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
-import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
-import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
-import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
-import LandingPagesNavigator from "./LandingPagesNavigator";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import CustomErrorNavigator from "./CustomErrorNavigator";
-import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
-import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp";
-import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
-import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
-import { useFeature } from "@features/platform-feature-flags";
-import MyLedgerNavigator from "./MyLedgerNavigator";
-import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
-import BackupHubNavigator from "LLM/features/BackupHub/Navigator";
-import DiscoverNavigator from "./DiscoverNavigator";
-import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
-import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AssetDetailNavigator from "LLM/features/AssetDetail/Navigator";
-import AssetsListNavigator from "LLM/features/Assets/Navigator";
-import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
-import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
-import FeesNavigator from "./FeesNavigator";
-import { getEarnScreenOptions, getEarnScreenOptionsFromRouteParams } from "./getEarnScreenOptions";
-import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
-import LiveAppModalScreen from "LLM/features/LiveAppModal";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { getEarnScreenOptionsFromRouteParams } from "./getEarnScreenOptions";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
@@ -170,6 +94,116 @@ function FirmwareUpdateHeaderRight() {
   return <NavigationHeaderCloseButton />;
 }
 
+// ponytail: static names so BaseNavigator does not import ~/families at startup.
+// Add new family navigator exports here. Upgrade: generate from families/index.
+const FAMILY_SCREEN_NAMES = [
+  "AlgorandEditMemo",
+  "AlgorandClaimRewardsFlow",
+  "AlgorandOptInFlow",
+  "BitcoinEditCustomFees",
+  "CardanoEditMemo",
+  "CardanoDelegationFlow",
+  "CardanoUndelegationFlow",
+  "CeloManageAssetsNavigator",
+  "CeloRegistrationFlow",
+  "CeloLockFlow",
+  "CeloUnlockFlow",
+  "CeloVoteFlow",
+  "CeloActivateFlow",
+  "CeloRevokeFlow",
+  "CeloWithdrawFlow",
+  "CosmosDelegationFlow",
+  "CosmosRedelegationFlow",
+  "CosmosUndelegationFlow",
+  "CosmosClaimRewardsFlow",
+  "CosmosFamilyEditMemo",
+  "MultiversXClaimRewardsFlow",
+  "MultiversXDelegationFlow",
+  "MultiversXUndelegationFlow",
+  "MultiversXWithdrawFlow",
+  "EvmEditGasLimit",
+  "EvmCustomFees",
+  "EvmDelegationFlow",
+  "EvmUndelegationFlow",
+  "EvmClaimRewardsFlow",
+  "EvmWithdrawFlow",
+  "HederaEditMemo",
+  "HederaAssociateTokenFlow",
+  "HederaDelegationFlow",
+  "HederaUndelegationFlow",
+  "HederaRedelegationFlow",
+  "HederaClaimRewardsFlow",
+  "InternetComputerEditMemo",
+  "InternetComputerStakingFlow",
+  "InternetComputerNeuronManageFlow",
+  "KaspaEditCustomFees",
+  "MinaEditMemo",
+  "NearStakingFlow",
+  "NearUnstakingFlow",
+  "NearWithdrawingFlow",
+  "PolkadotBondFlow",
+  "PolkadotRebondFlow",
+  "PolkadotUnbondFlow",
+  "PolkadotNominateFlow",
+  "PolkadotSimpleOperationFlow",
+  "XrpEditTag",
+  "SolanaEditMemo",
+  "SolanaDelegationFlow",
+  "StacksEditMemo",
+  "CasperEditTransferId",
+  "StellarEditMemoValue",
+  "StellarEditMemoType",
+  "StellarEditCustomFees",
+  "StellarAddAssetFlow",
+  "TezosDelegationFlow",
+  "TezosStakeFlow",
+  "TezosUnstakeFlow",
+  "TronVoteFlow",
+  "TonEditComment",
+  "SuiDelegationFlow",
+  "SuiUndelegateFlow",
+  "CantonOnboard",
+  "CantonEditMemo",
+  "ConcordiumOnboard",
+] as const satisfies ReadonlyArray<keyof typeof FamilyScreens>;
+
+type WallScreenOptions =
+  | {
+      component: React.ComponentType;
+      options: NativeStackNavigationOptions;
+    }
+  | object;
+
+function isWallActive(
+  wall: WallScreenOptions,
+): wall is { component: React.ComponentType; options: NativeStackNavigationOptions } {
+  return "component" in wall && typeof wall.component === "function";
+}
+
+function lazyOrWall({
+  name,
+  getComponent,
+  options,
+  listeners,
+  wall,
+}: {
+  name: keyof BaseNavigatorStackParamList;
+  getComponent: () => React.ComponentType;
+  options?:
+    | NativeStackNavigationOptions
+    | ((props: { route: RouteProp<BaseNavigatorStackParamList> }) => NativeStackNavigationOptions);
+  listeners?: object | ((props: { route: RouteProp<BaseNavigatorStackParamList> }) => object);
+  wall: WallScreenOptions;
+}) {
+  if (isWallActive(wall)) {
+    return <Stack.Screen name={name} component={wall.component} options={wall.options} />;
+  }
+
+  return (
+    <Stack.Screen name={name} getComponent={getComponent} options={options} listeners={listeners} />
+  );
+}
+
 export default function BaseNavigator() {
   const { t } = useTranslation();
   const route = useRoute<
@@ -193,6 +227,7 @@ export default function BaseNavigator() {
   const llmAccountListUI = useFeature("llmAccountListUI");
   const swapToEarnFlag = useFeature("swapToEarn");
   const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
 
   return (
     <>
@@ -201,50 +236,50 @@ export default function BaseNavigator() {
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.MyLedger}
-          component={MyLedgerNavigator}
+          getComponent={() => require("./MyLedgerNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.MyWallet}
-          component={MyWalletNavigator}
+          getComponent={() => require("LLM/features/MyWallet/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.BackupHub}
-          component={BackupHubNavigator}
+          getComponent={() => require("LLM/features/BackupHub/Navigator").default}
           options={{ headerShown: false }}
         />
 
         {web3hub?.enabled ? (
           <Stack.Screen
             name={NavigatorName.Web3HubTab}
-            component={Web3HubTabNavigator}
+            getComponent={() => require("LLM/features/Web3Hub/TabNavigator").default}
             options={{ headerShown: false }}
           />
         ) : (
           <Stack.Screen
             name={NavigatorName.Discover}
-            component={DiscoverNavigator}
+            getComponent={() => require("./DiscoverNavigator").default}
             options={{ headerShown: false }}
           />
         )}
         <Stack.Screen
           name={NavigatorName.BuyDevice}
-          component={BuyDeviceNavigator}
+          getComponent={() => require("./BuyDeviceNavigator").default}
           options={{
             headerShown: false,
             animation: "slide_from_bottom",
           }}
         />
-        <Stack.Screen
-          name={ScreenName.NoDeviceWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {lazyOrWall({
+          name: ScreenName.NoDeviceWallScreen,
+          getComponent: () => require("~/screens/PostBuyDeviceSetupNanoWallScreen").default,
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
+          getComponent={() => require("~/screens/PostBuyDeviceSetupNanoWallScreen").default}
           options={{
             headerShown: false,
             gestureEnabled: true,
@@ -257,7 +292,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.PostBuyDeviceScreen}
-          component={PostBuyDeviceScreen}
+          getComponent={() => require("LLM/features/Reborn/screens/PostBuySuccess").default}
           options={{
             title: t("postBuyDevice.headerTitle"),
             headerLeft: () => null,
@@ -265,62 +300,65 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Settings}
-          component={SettingsNavigator}
+          getComponent={() => require("./SettingsNavigator").default}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name={ScreenName.CurrencySettings}
-          component={CurrencySettings}
-          options={({ route }) => ({
-            title: route.params.headerTitle,
+        {lazyOrWall({
+          name: ScreenName.CurrencySettings,
+          getComponent: () =>
+            require("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings").default,
+          options: ({ route }) => ({
+            title: (route.params as { headerTitle?: string }).headerTitle,
             headerRight: () => null,
-          })}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+          }),
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={ScreenName.EditCurrencyUnits}
-          component={EditCurrencyUnits}
+          getComponent={() =>
+            require("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits").default
+          }
           options={{
             title: t("account.settings.accountUnits.title"),
           }}
         />
-        <Stack.Screen
-          name={NavigatorName.ReceiveFunds}
-          component={ReceiveFundsNavigator}
-          options={{ headerShown: false }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {lazyOrWall({
+          name: NavigatorName.ReceiveFunds,
+          getComponent: () => require("./ReceiveFundsNavigator").default,
+          options: { headerShown: false },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={NavigatorName.SendFunds}
-          component={SendFundsNavigator}
+          getComponent={() => require("./SendFundsNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.SendFlow}
-          component={SendWorkflow}
+          getComponent={() => require("LLM/features/Send").default}
           options={{ headerShown: false }}
         />
         {web3hub?.enabled ? (
           <Stack.Screen
             name={NavigatorName.Web3Hub}
-            component={Web3HubNavigator}
+            getComponent={() => require("LLM/features/Web3Hub/Navigator").default}
             options={{ headerShown: false }}
           />
         ) : null}
         <Stack.Screen
           name={ScreenName.PlatformApp}
-          component={LiveApp}
+          getComponent={() => require("~/screens/Platform").LiveApp}
           options={{ headerStyle: styles.headerNoShadow }}
         />
-        <Stack.Screen
-          name={ScreenName.Recover}
-          component={RecoverPlayer}
-          options={{ headerStyle: styles.headerNoShadow }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {lazyOrWall({
+          name: ScreenName.Recover,
+          getComponent: () => require("~/screens/Protect/Player").RecoverPlayer,
+          options: { headerStyle: styles.headerNoShadow },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={NavigatorName.SignMessage}
-          component={SignMessageNavigator}
+          getComponent={() => require("./SignMessageNavigator").default}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -333,7 +371,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SignTransaction}
-          component={SignTransactionNavigator}
+          getComponent={() => require("./SignTransactionNavigator").default}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -343,7 +381,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SignRawTransaction}
-          component={SignRawTransactionNavigator}
+          getComponent={() => require("./SignRawTransactionNavigator").default}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -353,49 +391,49 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Swap}
-          component={SwapNavigator}
+          getComponent={() => require("./SwapNavigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.SwapSubScreens}
-          component={SwapSubScreensNavigator}
+          getComponent={() => require("./SwapSubScreensNavigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.Perps}
-          component={PerpsNavigator}
+          getComponent={() => require("./PerpsNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.GlobalSearch}
-          component={GlobalSearchNavigator}
+          getComponent={() => require("LLM/features/GlobalSearch/Navigator").default}
           options={{ headerShown: false, animation: "fade" }}
         />
         <Stack.Screen
           name={NavigatorName.Freeze}
-          component={FreezeNavigator}
+          getComponent={() => require("./FreezeNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Unfreeze}
-          component={UnfreezeNavigator}
+          getComponent={() => require("./UnfreezeNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ClaimRewards}
-          component={ClaimRewardsNavigator}
+          getComponent={() => require("./ClaimRewardsNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Fees}
-          component={FeesNavigator}
+          getComponent={() => require("./FeesNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.RequestAccount}
-          component={RequestAccountNavigator}
+          getComponent={() => require("./RequestAccountNavigator").default}
           options={{
             headerShown: false,
           }}
@@ -405,7 +443,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.VerifyAccount}
-          component={VerifyAccount}
+          getComponent={() => require("~/screens/VerifyAccount").default}
           options={{
             headerLeft: () => null,
             title: t("transfer.receive.headerTitle"),
@@ -416,30 +454,33 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Card}
-          component={CardLiveAppNavigator}
+          getComponent={() =>
+            (require("LLM/features/Card") as typeof import("LLM/features/Card"))
+              .CardLiveAppNavigator
+          }
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name={NavigatorName.Exchange}
-          component={ExchangeLiveAppNavigator}
-          options={{ headerShown: false }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.PlatformExchange}
-          component={PlatformExchangeNavigator}
-          options={{ headerShown: false }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.CustomError}
-          component={CustomErrorNavigator}
-          options={{ title: "" }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {lazyOrWall({
+          name: NavigatorName.Exchange,
+          getComponent: () => require("./ExchangeLiveAppNavigator").default,
+          options: { headerShown: false },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
+        {lazyOrWall({
+          name: NavigatorName.PlatformExchange,
+          getComponent: () => require("./PlatformExchangeNavigator").default,
+          options: { headerShown: false },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
+        {lazyOrWall({
+          name: NavigatorName.CustomError,
+          getComponent: () => require("./CustomErrorNavigator").default,
+          options: { title: "" },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={ScreenName.OperationDetails}
-          component={OperationDetails}
+          getComponent={() => require("~/screens/OperationDetails").default}
           options={{
             headerTitle: OperationDetailsHeaderTitle,
             headerLeft: OperationDetailsHeaderLeft,
@@ -449,12 +490,12 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AccountSettings}
-          component={AccountSettingsNavigator}
+          getComponent={() => require("./AccountSettingsNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
-          component={EditDeviceName}
+          getComponent={() => require("~/screens/EditDeviceName").default}
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
@@ -462,17 +503,17 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.PasswordAddFlow}
-          component={PasswordAddFlowNavigator}
+          getComponent={() => require("./PasswordAddFlowNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.PasswordModifyFlow}
-          component={PasswordModifyFlowNavigator}
+          getComponent={() => require("./PasswordModifyFlowNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.AnalyticsOperations}
-          component={AnalyticsOperations}
+          getComponent={() => require("~/screens/Analytics/Operations").default}
           options={{
             title: t("analytics.operations.title"),
             headerRight: () => null,
@@ -480,18 +521,64 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.WalletSync}
-          component={WalletSyncNavigator}
+          getComponent={() => require("LLM/features/WalletSync/WalletSyncNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.LedgerSyncDeepLinkHandler}
-          component={LedgerSyncDeepLinkHandler}
+          getComponent={() =>
+            require("LLM/features/WalletSync/LedgerSyncDeepLinkHandler").LedgerSyncDeepLinkHandler
+          }
           options={{ headerShown: false }}
         />
-        {MarketNavigator({ Stack })}
+        <Stack.Screen
+          name={ScreenName.MarketList}
+          getComponent={() =>
+            shouldDisplayAssetDiscoverability
+              ? require("LLM/features/Market/screens/MarketScreen").default
+              : require("LLM/features/Market/screens/MarketList").default
+          }
+          options={() => {
+            if (shouldDisplayAssetDiscoverability) {
+              const { getStackNavigationConfigV4 } =
+                require("LLM/components/Navigation") as typeof import("LLM/components/Navigation");
+              return {
+                ...getStackNavigationConfigV4(lumenTheme),
+                title: t("market.title"),
+                headerLeft: undefined,
+                headerRight: () => null,
+              };
+            }
+            const { MarketListHeaderTitle, MarketListHeaderLeft } =
+              require("LLM/features/Market/components/MarketListHeader") as typeof import("LLM/features/Market/components/MarketListHeader");
+            return {
+              title: t("market.title"),
+              headerShown: true,
+              headerTitle: MarketListHeaderTitle,
+              headerTransparent: true,
+              headerLeft: MarketListHeaderLeft,
+              headerRight: () => null,
+            };
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.MarketCurrencySelect}
+          getComponent={() => require("LLM/features/Market/screens/MarketCurrencySelect").default}
+          options={{
+            title: t("market.filters.currency"),
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.MarketDetail}
+          getComponent={() => require("LLM/features/Market/screens/MarketDetail").default}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
-          component={PortfolioHistory}
+          getComponent={() => require("~/screens/Portfolio/PortfolioHistory").default}
           options={{
             headerTitle: t("analytics.operations.title"),
             headerRight: () => null,
@@ -499,12 +586,16 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.Account}
-          component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+          getComponent={() =>
+            readOnlyModeEnabled
+              ? require("~/screens/Account/ReadOnly/ReadOnlyAccount").default
+              : require("~/screens/Account").default
+          }
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.ScanRecipient}
-          component={ScanRecipient}
+          getComponent={() => require("~/screens/SendFunds/ScanRecipient").default}
           options={{
             ...TransparentHeaderNavigationOptions,
             title: t("send.scan.title"),
@@ -512,81 +603,88 @@ export default function BaseNavigator() {
             headerLeft: renderNullHeader,
           }}
         />
-        <Stack.Screen
-          name={NavigatorName.WalletConnect}
-          component={WalletConnectLiveAppNavigator}
-          options={{
-            headerShown: false,
-          }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {lazyOrWall({
+          name: NavigatorName.WalletConnect,
+          getComponent: () => require("./WalletConnectLiveAppNavigator").default,
+          options: { headerShown: false },
+          wall: noNanoBuyNanoWallScreenOptions,
+        })}
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
-          component={NotificationCenterNavigator}
+          getComponent={() => require("./NotificationCenterNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Accounts}
-          component={AccountsNavigator}
+          getComponent={() => require("./AccountsNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.CustomImage}
-          component={CustomImageNavigator}
+          getComponent={() => require("./CustomImageNavigator").default}
           options={{ headerShown: false }}
         />
-        {/* This is a freaking hack… */}
-        {Object.keys(families).map(name => {
-          /* eslint-disable @typescript-eslint/consistent-type-assertions */
-          const { component, options } = families[name as keyof typeof families];
+        {FAMILY_SCREEN_NAMES.map(name => {
           const screenName = name as keyof BaseNavigatorStackParamList;
-          const screenComponent = component as React.ComponentType;
-          const screenOptions = options as NativeStackNavigationOptions;
-          /* eslint-enable @typescript-eslint/consistent-type-assertions */
-
           return (
             <Stack.Screen
               key={name}
               name={screenName}
-              component={screenComponent}
-              options={screenOptions}
+              getComponent={() => {
+                const families = require("~/families") as typeof FamilyScreens;
+                return families[name].component as React.ComponentType;
+              }}
+              options={() => {
+                const families = require("~/families") as typeof FamilyScreens;
+                return (families[name] as { options?: NativeStackNavigationOptions }).options ?? {};
+              }}
             />
           );
         })}
         <Stack.Screen
           name={ScreenName.BleDevicePairingFlow}
-          component={BleDevicePairingFlow}
-          options={bleDevicePairingFlowHeaderOptions}
+          getComponent={() => require("~/screens/BleDevicePairingFlow").BleDevicePairingFlow}
+          options={() =>
+            (
+              require("~/screens/BleDevicePairingFlow") as typeof import("~/screens/BleDevicePairingFlow")
+            ).bleDevicePairingFlowHeaderOptions
+          }
         />
         <Stack.Screen
           name={NavigatorName.PostOnboarding}
           options={{ headerShown: false }}
-          component={PostOnboardingNavigator}
+          getComponent={() => require("./PostOnboardingNavigator").default}
         />
         <Stack.Screen
           name={ScreenName.DeviceConnect}
-          component={DeviceConnect}
-          options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
+          getComponent={() => require("~/screens/DeviceConnect").default}
+          options={() =>
+            (
+              require("~/screens/DeviceConnect") as typeof import("~/screens/DeviceConnect")
+            ).deviceConnectHeaderOptions(t)
+          }
           listeners={({ route }) => ({
             beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
           name={ScreenName.PerpsSign}
-          component={PerpsSign}
+          getComponent={() =>
+            require("LLM/features/Perps/screens/PerpsSign/PerpsSignScreen").default
+          }
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
-          component={RedirectToOnboardingRecoverFlowScreen}
+          getComponent={() =>
+            require("~/screens/Protect/RedirectToOnboardingRecoverFlow")
+              .RedirectToOnboardingRecoverFlowScreen
+          }
         />
         <Stack.Screen
           name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
-          // Initial header from the entry `intent` param (first paint). Once the live-app loads,
-          // `useEarnIntentFlowPresentation` becomes the live owner and overrides this imperatively
-          // via `getParent(BASE_NAVIGATOR_ID).setOptions` as the webview route changes.
+          getComponent={() => require("./EarnLiveAppNavigator").default}
           options={props =>
             getEarnScreenOptionsFromRouteParams(
               props.route?.params?.params,
@@ -598,12 +696,12 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Borrow}
-          component={BorrowLiveAppNavigator}
+          getComponent={() => require("./BorrowLiveAppNavigator").default}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
-          component={NoFundsFlowNavigator}
+          getComponent={() => require("./NoFundsFlowNavigator").default}
           options={{
             ...TransparentHeaderNavigationOptions,
             headerRight: FlowHeaderCloseButton,
@@ -612,7 +710,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.StakeFlow}
-          component={StakeFlowNavigator}
+          getComponent={() => require("./StakeFlowNavigator").default}
           options={{
             ...TransparentHeaderNavigationOptions,
             headerRight: FlowHeaderCloseButton,
@@ -622,26 +720,30 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
-          component={EditTransactionNavigator}
+          getComponent={() =>
+            require("~/families/evm/EditTransactionFlow/EditTransactionNavigator").default
+          }
         />
         <Stack.Screen
           name={NavigatorName.BitcoinEditTransaction}
           options={{ headerShown: false }}
-          component={BitcoinEditTransactionNavigator}
+          getComponent={() =>
+            require("~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator").default
+          }
         />
         <Stack.Screen
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
-          component={AnalyticsOptInPromptNavigator}
+          getComponent={() => require("./AnalyticsOptInPromptNavigator").default}
         />
         <Stack.Screen
           name={NavigatorName.LandingPages}
           options={{ headerShown: false }}
-          component={LandingPagesNavigator}
+          getComponent={() => require("./LandingPagesNavigator").default}
         />
         <Stack.Screen
           name={ScreenName.FirmwareUpdate}
-          component={FirmwareUpdateScreen}
+          getComponent={() => require("~/screens/FirmwareUpdate").default}
           options={{
             gestureEnabled: false,
             headerTitle: FirmwareUpdateHeaderTitle,
@@ -652,51 +754,51 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AddAccounts}
-          component={AddAccountsV2Navigator}
+          getComponent={() => require("LLM/features/Accounts/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
-          component={DeviceSelectionNavigator}
+          getComponent={() => require("LLM/features/DeviceSelection/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={ScreenName.DeeplinkInstallAppDeviceSelection}
-          component={DeeplinkInstallAppDeviceSelection}
+          getComponent={() => require("LLM/features/DeeplinkInstallApp").DeviceSelectionScreen}
           options={{ headerShown: false }}
         />
 
         {llmAccountListUI?.enabled && (
           <Stack.Screen
             name={NavigatorName.Assets}
-            component={AssetsListNavigator}
+            getComponent={() => require("LLM/features/Assets/Navigator").default}
             options={{ headerShown: false }}
           />
         )}
 
         <Stack.Screen
           name={NavigatorName.AssetDetail}
-          component={AssetDetailNavigator}
+          getComponent={() => require("LLM/features/AssetDetail/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.Analytics}
-          component={AnalyticsNavigator}
+          getComponent={() => require("LLM/features/Analytics/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.OperationsHistory}
-          component={OperationsHistoryNavigator}
+          getComponent={() => require("LLM/features/OperationsHistory/Navigator").default}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={ScreenName.LiveAppModal}
-          component={LiveAppModalScreen}
+          getComponent={() => require("LLM/features/LiveAppModal").default}
           options={{
             headerShown: false,
             gestureEnabled: true,
@@ -707,15 +809,6 @@ export default function BaseNavigator() {
   );
 }
 
-/**
- * Handle the onClose callback for the route
- *
- * If the route has a onClose callback, call it
- * If the route has a nested route with a onClose callback, call it
- *
- * @param route
- * The route object
- */
 function handleOnClose(route: object) {
   if (route == null || !("params" in route)) return;
   const params = route.params;
@@ -729,22 +822,10 @@ function handleOnClose(route: object) {
   }
 }
 
-/**
- * Check if the route has a onClose callback
- *
- * @param params
- * The route params
- */
 function isRouteWithCloseCallback(params: object): params is Readonly<WithCloseCallback> {
   return "onClose" in params && typeof params.onClose === "function";
 }
 
-/**
- * Check if the route has a nested route with a onClose callback
- *
- * @param params
- * The route params
- */
 function isNestedRouteWithCloseCallback(params: object): params is { params: WithCloseCallback } {
   if (!("params" in params)) return false;
   const nestedParams = params.params;

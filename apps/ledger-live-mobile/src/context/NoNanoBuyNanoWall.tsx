@@ -1,12 +1,10 @@
 import { useSelector } from "~/context/hooks";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {
   hasCompletedOnboardingSelector,
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "~/reducers/settings";
-import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 /**
@@ -33,7 +31,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
 
   if (!hasOrderedNano) {
     return {
-      component: BuyDeviceNavigator,
+      component: require("~/components/RootNavigator/BuyDeviceNavigator").default,
       options: {
         headerShown: false,
         presentation: "transparentModal",
@@ -43,7 +41,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
   }
 
   return {
-    component: PostBuyDeviceSetupNanoWallScreen,
+    component: require("~/screens/PostBuyDeviceSetupNanoWallScreen").default,
     options: {
       headerShown: false,
       presentation: "transparentModal",
