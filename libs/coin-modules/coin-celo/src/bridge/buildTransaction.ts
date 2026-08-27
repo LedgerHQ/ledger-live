@@ -7,10 +7,11 @@ import {
   getStableTokenRegistryName,
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
-import { CeloGroupNotVoted } from "../errors";
+import { CeloEpochProcessingActive, CeloGroupNotVoted } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoEstimateGas, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
+import { isEpochBlockRevert } from "../network/rpcErrors";
 import { voteSignerAccount } from "../network/sdk";
 import { getVoteNeighbors } from "../network/voteNeighbors";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
@@ -290,13 +291,25 @@ const buildTransaction = async (
       break;
   }
 
-  const estimatedGas = await celoEstimateGas({
-    from: celoTransaction.from,
-    ...(celoTransaction.to !== undefined && { to: celoTransaction.to }),
-    ...(celoTransaction.data !== undefined && { data: celoTransaction.data }),
-    ...(celoTransaction.value !== undefined && { value: BigInt(celoTransaction.value) }),
-    ...(celoTransaction.feeCurrency && { feeCurrency: celoTransaction.feeCurrency }),
-  });
+  let estimatedGas: bigint;
+  try {
+    estimatedGas = await celoEstimateGas({
+      from: celoTransaction.from,
+      ...(celoTransaction.to !== undefined && { to: celoTransaction.to }),
+      ...(celoTransaction.data !== undefined && { data: celoTransaction.data }),
+      ...(celoTransaction.value !== undefined && { value: BigInt(celoTransaction.value) }),
+      ...(celoTransaction.feeCurrency && { feeCurrency: celoTransaction.feeCurrency }),
+    });
+  } catch (error) {
+    // Safety net for the sign step: if a vote is submitted during the epoch
+    // processing window (the proactive isBlocked() check in getTransactionStatus
+    // races and lets it through), surface the friendly error instead of a raw
+    // "RPC request failed". See CeloEpochProcessingActive.
+    if (transaction.mode === "vote" && isEpochBlockRevert(error)) {
+      throw new CeloEpochProcessingActive();
+    }
+    throw error;
+  }
 
   const gas = Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString();
   const [chainId, nonce] = await Promise.all([
