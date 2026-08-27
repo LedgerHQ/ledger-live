@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
@@ -40,7 +41,7 @@ describe("API", () => {
   };
 
   beforeAll(() => {
-    module = createApi();
+    module = withDefaults(createApi());
 
     tronWeb = createTronWeb(TRONGRID_URL);
   });
