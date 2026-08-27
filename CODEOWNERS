@@ -132,6 +132,7 @@ features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 features/flow/pay-card/                                  @ledgerhq/wallet-xp
 features/flow/pay-balance/                               @ledgerhq/wallet-xp
 features/flow/pay-deposit/                               @ledgerhq/wallet-xp
+features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
 features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
 features/flow/pay-card-request/                          @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
