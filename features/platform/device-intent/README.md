@@ -903,8 +903,16 @@ file naming.
 
 #### Intents living in the DDD structure
 
-An intent owned by a `features/` package does not need the app/lib split at all.
-Contract, job, platform definition and both renderers live in one directory,
+> [!WARNING]
+> **Not ready yet — do not follow this layout.** It only holds for an intent whose
+> renderer needs nothing the app still owns, and today that excludes user-facing
+> copy: no `features/` package can resolve translations. Until Platform closes
+> that gap, use the [app/lib split](#recommended-file-organization) above, even
+> for an intent owned by a `features/` package. Soon you should be able to keep a
+> whole intent in one directory, as described below.
+
+An intent owned by a `features/` package would not need the app/lib split at all.
+Contract, job, platform definition and both renderers would live in one directory,
 because platform extension resolution picks the right component per app:
 
 ```text
@@ -921,9 +929,11 @@ features/platform/contacts/src/device/intents/registerExternalAddressIntent/
 single `IntentPlatformDefinition` covers both platforms: no base-versus-platform
 definition split, and no `.native` twin of the barrel exporting it.
 
-This is the recommended layout for intents whose job relies purely on the Device
-Management Kit and the signer kits. See
-[`@features/platform-contacts`](../contacts/README.md) for a live example.
+This will be the recommended layout for intents whose job relies purely on the
+Device Management Kit and the signer kits, once a `features/` package can own
+user-facing copy. [`@features/platform-contacts`](../contacts/README.md) used to
+be the live example; it moved its renderers into the apps and now demonstrates
+the app/lib split instead.
 
 The suffix-less import needs the package's dead-code check to run once per
 platform, otherwise knip flags every `component.web.tsx` and
@@ -934,6 +944,8 @@ twice with the matching `--tsConfig`, the same way
 
 Keep the app/lib split instead when:
 
+- **the intent's UI shows any translated copy** — this is every production
+  renderer today, and it is why the layout above is not ready;
 - **the intent depends on `@ledgerhq/live-common`** or another legacy library a
   `features/` package must not import;
 - **the intent's UI leans heavily on components that still live in the app** and
