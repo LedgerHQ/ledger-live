@@ -14,6 +14,8 @@ jest.mock("@features/flow-pay-card-details", () => ({
 
 import { Card } from "./Card";
 
+const title = "Crypto card";
+
 const oauthConfig: CardProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
@@ -29,8 +31,14 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
 });
 
 describe("Card (web)", () => {
+  it("renders the host title", () => {
+    render(<Card title={title} oauthConfig={oauthConfig} />);
+
+    expect(screen.getByText(title)).toBeVisible();
+  });
+
   it("composes the bare artwork with the auth login and logout", () => {
-    render(<Card oauthConfig={oauthConfig} />);
+    render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
@@ -40,6 +48,7 @@ describe("Card (web)", () => {
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
     render(
       <Card
+        title={title}
         oauthConfig={oauthConfig}
         formatCountervalue={formatCountervalue}
         balanceLabel="Balance"

@@ -3,6 +3,7 @@ import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-de
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
+  readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   /**
    * The OAuth redirect the app already parsed, when it has one. The app's router owns the deep link,
@@ -21,6 +22,7 @@ export type CardProps = {
 
 /** Props the presentational view renders, resolved by {@link useCardViewModel}. */
 export type CardViewProps = {
+  readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
