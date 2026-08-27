@@ -8,6 +8,10 @@ import { AppManifest } from "./types";
  *
  * Use this around any `uiHook["transaction.sign" | "message.sign" | ...]` or
  * `bridge.signOperation` invocation triggered on behalf of a live app.
+ *
+ * Two consumers read this now: the blind-signing reporter, and the earn funnel's sign stage
+ * (`bridge/impl.ts`), which uses it to attribute a signature to its live app. Changing the
+ * scope or lifetime here changes both. LIVE-36571 removes the funnel's dependency on it.
  */
 export async function withLiveAppContext<T>(
   manifest: AppManifest,
