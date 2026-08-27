@@ -3834,6 +3834,23 @@
           "entriesLabel": "Entries ({{count}})",
           "untitledEntry": "Untitled entry"
         }
+      },
+      "deviceSimulationDevTool": {
+        "title": "Device simulation (QA)",
+        "description": "Simulate device history to test Nano-user upsell surfaces without physical devices.",
+        "currentHistory": "Active QA devices: {{devices}}",
+        "resetWarning": "Reset clears the 6 QA device toggles only. Other device history entries are unchanged; real history cannot be restored without the simulation engine.",
+        "reset": "Reset device history",
+        "none": "none",
+        "deviceDesc": "Mark this device as previously connected for QA testing.",
+        "devices": {
+          "nanoS": "Nano S",
+          "nanoSP": "Nano S Plus",
+          "nanoX": "Nano X",
+          "stax": "Ledger Stax",
+          "europa": "Ledger Flex",
+          "apex": "Ledger Flex Plus"
+        }
       }
     }
   },
