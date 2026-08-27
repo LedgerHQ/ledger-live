@@ -165,6 +165,12 @@ const modularDrawerSlice = createSlice({
       state.searchValue = "";
       state.step = ModularDrawerStep.Asset;
     },
+    // Hides the drawer UI without clearing cancelCallbackId. Used when navigating
+    // away inline (e.g. add-account device flow) so the account.request stays pending
+    // and can still be cancelled via onCloseNavigation if the user abandons the flow.
+    hideModularDrawer: state => {
+      state.isOpen = false;
+    },
 
     setCallbackId: (state, action: PayloadAction<string | undefined>) => {
       state.callbackId = action.payload;
@@ -190,7 +196,7 @@ const modularDrawerSlice = createSlice({
   },
 });
 
-export const { openModularDrawer, closeModularDrawer, setSearchValue, setStep } =
+export const { openModularDrawer, closeModularDrawer, hideModularDrawer, setSearchValue, setStep } =
   modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;
