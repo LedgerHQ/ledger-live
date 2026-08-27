@@ -23,6 +23,7 @@ import type {
   AleoTokenDetails,
   AleoTransitionCursor,
   AleoExactTransitionCursor,
+  AleoStakingPosition,
 } from "../types";
 import {
   hasPublicAddress,
@@ -30,9 +31,23 @@ import {
   isParsableTransferFunction,
   parseAmount,
   parseMicrocredits,
+  toStakingPosition,
 } from "../logic/utils";
 import { register } from "../logic/register";
 import { apiClient } from "./api";
+
+export async function getStakingPosition(
+  config: AleoCoinConfig,
+  address: string,
+): Promise<AleoStakingPosition> {
+  const [bondedRaw, unbondingRaw, withdrawRaw] = await Promise.all([
+    apiClient.getBondedMapping(config, address),
+    apiClient.getUnbondingMapping(config, address),
+    apiClient.getWithdrawMapping(config, address),
+  ]);
+
+  return toStakingPosition({ bondedRaw, unbondingRaw, withdrawRaw });
+}
 
 export async function decryptRecordAmount(
   config: AleoCoinConfig,

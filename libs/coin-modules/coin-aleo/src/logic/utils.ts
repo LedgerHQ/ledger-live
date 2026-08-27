@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type {
   Account,
@@ -63,6 +64,7 @@ import type {
   AleoTokenDetails,
   AleoTokenType,
   EnrichedPrivateRecord,
+  AleoStakingPosition,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -89,6 +91,70 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
+}
+
+const VALIDATOR_FIELD_REGEX = /validator:\s*(aleo1[0-9a-z]+)/;
+const MICROCREDITS_FIELD_REGEX = /microcredits:\s*(\d+u64)/;
+const HEIGHT_FIELD_REGEX = /height:\s*(\d+)u32/;
+const ADDRESS_PLAINTEXT_REGEX = /^(aleo1[0-9a-z]+)$/;
+
+function parseBondedMapping(raw: string): { validator: string; microcredits: BigNumber } | null {
+  const validator = VALIDATOR_FIELD_REGEX.exec(raw)?.[1];
+  const microcredits = MICROCREDITS_FIELD_REGEX.exec(raw)?.[1];
+  if (!validator || !microcredits) return null;
+
+  return { validator, microcredits: parseAmount(microcredits) };
+}
+
+function parseUnbondingMapping(raw: string): { microcredits: BigNumber; height: number } | null {
+  const microcredits = MICROCREDITS_FIELD_REGEX.exec(raw)?.[1];
+  const height = HEIGHT_FIELD_REGEX.exec(raw)?.[1];
+  if (!microcredits || !height) return null;
+
+  return { microcredits: parseAmount(microcredits), height: Number(height) };
+}
+
+function parseWithdrawMapping(raw: string): string | null {
+  return ADDRESS_PLAINTEXT_REGEX.exec(normalizeAleoPlaintext(raw))?.[1] ?? null;
+}
+
+function parseStakingMapping<T>(
+  mapping: string,
+  raw: string | null,
+  parse: (raw: string) => T | null,
+): T | null {
+  // `res.data` is an unchecked cast, so treat any empty value as "no entry" rather than
+  // trusting the declared `string | null` — the node answers 200 + JSON null for that case.
+  if (!raw) return null;
+
+  const parsed = parse(raw);
+  if (parsed === null) {
+    log("aleo/stakingPosition", `unparseable ${mapping} mapping value`, { raw });
+    throw new Error(`aleo: unparseable ${mapping} mapping value`);
+  }
+
+  return parsed;
+}
+
+export function toStakingPosition({
+  bondedRaw,
+  unbondingRaw,
+  withdrawRaw,
+}: {
+  bondedRaw: string | null;
+  unbondingRaw: string | null;
+  withdrawRaw: string | null;
+}): AleoStakingPosition {
+  const bonded = parseStakingMapping("bonded", bondedRaw, parseBondedMapping);
+  const unbonding = parseStakingMapping("unbonding", unbondingRaw, parseUnbondingMapping);
+
+  return {
+    bondedBalance: bonded?.microcredits ?? new BigNumber(0),
+    bondedValidator: bonded?.validator ?? null,
+    unbondingBalance: unbonding?.microcredits ?? new BigNumber(0),
+    unbondingHeight: unbonding?.height ?? null,
+    withdrawalAddress: parseStakingMapping("withdraw", withdrawRaw, parseWithdrawMapping),
+  };
 }
 
 export function isTokenRecord(record: AleoPrivateRecord): boolean {

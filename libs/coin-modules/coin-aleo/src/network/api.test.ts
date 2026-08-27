@@ -1285,4 +1285,47 @@ describe("apiClient", () => {
       });
     });
   });
+
+  describe("staking mappings", () => {
+    const mappings = [
+      ["getBondedMapping", "bonded"],
+      ["getUnbondingMapping", "unbonding"],
+      ["getWithdrawMapping", "withdraw"],
+    ] as const;
+
+    it.each(mappings)("%s reads from the configured network", async (method, mapping) => {
+      for (const config of [mockConfig, testnetConfig]) {
+        jest.mocked(network).mockClear().mockResolvedValue({ data: null, status: 200 });
+
+        await apiClient[method](config, MOCK_ALEO_ADDRESS);
+
+        expect(network).toHaveBeenCalledTimes(1);
+        expect(network).toHaveBeenCalledWith({
+          method: "GET",
+          url: `${config.apiUrls.node}/v2/${config.networkType}/program/credits.aleo/mapping/${mapping}/${MOCK_ALEO_ADDRESS}`,
+        });
+      }
+    });
+
+    it.each(mappings)("%s passes the raw plaintext through untouched", async method => {
+      const raw = "{\n  microcredits: 111468399u64\n}";
+      jest.mocked(network).mockResolvedValue({ data: raw, status: 200 });
+
+      await expect(apiClient[method](mockConfig, MOCK_ALEO_ADDRESS)).resolves.toBe(raw);
+    });
+
+    it.each(mappings)("%s returns null for an address with no entry", async method => {
+      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
+
+      await expect(apiClient[method](mockConfig, MOCK_ALEO_ADDRESS)).resolves.toBeNull();
+    });
+
+    it.each(mappings)("%s propagates network failures", async method => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient[method](mockConfig, MOCK_ALEO_ADDRESS)).rejects.toThrow(
+        "Network error",
+      );
+    });
+  });
 });

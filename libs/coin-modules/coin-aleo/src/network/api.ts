@@ -41,6 +41,42 @@ async function getAccountBalance(config: AleoCoinConfig, address: string): Promi
   return res.data;
 }
 
+async function getBondedMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/bonded/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getUnbondingMapping(
+  config: AleoCoinConfig,
+  address: string,
+): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/unbonding/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getWithdrawMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/withdraw/${address}`,
+  });
+
+  return res.data;
+}
+
 async function getCommittee(config: AleoCoinConfig): Promise<AleoCommitteeResponse> {
   const { apiUrls, networkType } = config;
 
@@ -365,6 +401,9 @@ async function submitEncryptedDelegatedProvingRequest({
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
+  getBondedMapping,
+  getUnbondingMapping,
+  getWithdrawMapping,
   getCommittee,
   getValidatorMetadata,
   getTotalSupply,

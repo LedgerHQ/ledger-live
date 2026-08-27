@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import aleoConfig from "../config";
 import {
@@ -110,6 +111,7 @@ import {
   isTokenRecord,
   classifyAleoTokenType,
   resolvePrivacyContext,
+  toStakingPosition,
 } from "./utils";
 
 jest.mock("../config");
@@ -2964,6 +2966,118 @@ describe("staking rates", () => {
       const rate = estimateNetRate({ ...baseParams, commissionPercent: new BigNumber(-1) });
 
       expect(rate).toBeNull();
+    });
+  });
+});
+
+describe("toStakingPosition", () => {
+  const ADDRESS = "aleo1d37xxnms3sq5qxcnnh3dtvzr35xemjzas4jcytjr8uvymfetnu9salav5n";
+  const BONDED_RAW = `{\n  validator: ${ADDRESS},\n  microcredits: 39339243096u64\n}`;
+  const UNBONDING_RAW = "{\n  microcredits: 39339243096u64,\n  height: 7654321u32\n}";
+  const WITHDRAW_RAW = "aleo1g5wrxvgyvckgtuceg36eg6pf024x3p6nex05lcefz0h6576rmgrs22dr4w";
+
+  const noEntries = { bondedRaw: null, unbondingRaw: null, withdrawRaw: null };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("reads a zero position for an address that never bonded", () => {
+    // Absent is not zero on chain, but it is the honest reading here — and must not throw.
+    const position = toStakingPosition(noEntries);
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.bondedValidator).toBeNull();
+    expect(position.unbondingBalance.toString()).toBe("0");
+    expect(position.unbondingHeight).toBeNull();
+    expect(position.withdrawalAddress).toBeNull();
+  });
+
+  it("reads an empty mapping body as absent rather than unparseable", () => {
+    // The node answers 200 + JSON null today, but `res.data` is an unchecked cast — an empty
+    // body must not read as a failed parse and kill the sync for an address with no stake.
+    const position = toStakingPosition({ bondedRaw: "", unbondingRaw: "", withdrawRaw: "" });
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.withdrawalAddress).toBeNull();
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  it("parses a bonded-only address", () => {
+    const position = toStakingPosition({
+      ...noEntries,
+      bondedRaw: BONDED_RAW,
+      withdrawRaw: WITHDRAW_RAW,
+    });
+
+    expect(position.bondedBalance.toString()).toBe("39339243096");
+    expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.unbondingBalance.toString()).toBe("0");
+    expect(position.unbondingHeight).toBeNull();
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("parses a bonded-plus-unbonding address", () => {
+    const position = toStakingPosition({
+      bondedRaw: BONDED_RAW,
+      unbondingRaw: UNBONDING_RAW,
+      withdrawRaw: WITHDRAW_RAW,
+    });
+
+    expect(position.bondedBalance.toString()).toBe("39339243096");
+    expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.unbondingBalance.toString()).toBe("39339243096");
+    expect(position.unbondingHeight).toBe(7654321);
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("returns the withdrawal address even once nothing is bonded", () => {
+    const position = toStakingPosition({ ...noEntries, withdrawRaw: WITHDRAW_RAW });
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("keeps precision on a position above Number.MAX_SAFE_INTEGER", () => {
+    const huge = "9007199254740993"; // 2^53 + 1
+    const position = toStakingPosition({
+      ...noEntries,
+      bondedRaw: `{\n  validator: ${ADDRESS},\n  microcredits: ${huge}u64\n}`,
+    });
+
+    expect(position.bondedBalance.toFixed()).toBe(huge);
+  });
+
+  describe("unparseable values", () => {
+    const cases = [
+      ["bonded", { bondedRaw: "{ garbage }" }],
+      ["unbonding", { unbondingRaw: "{ garbage }" }],
+      ["withdraw", { withdrawRaw: "not-an-address" }],
+      // Half-parsed is worse than unparsed: a validator with a zero stake, or an
+      // unbonding amount with no height, would both read as a real position.
+      ["bonded", { bondedRaw: `{\n  validator: ${ADDRESS}\n}` }],
+      ["unbonding", { unbondingRaw: "{\n  microcredits: 39339243096u64\n}" }],
+    ] as const;
+
+    it.each(cases)("throws rather than reporting a zero position for %s", (mapping, mocks) => {
+      // A zero position here would silently hide a real stake, so this must be loud.
+      expect(() => toStakingPosition({ ...noEntries, ...mocks })).toThrow(
+        `aleo: unparseable ${mapping} mapping value`,
+      );
+    });
+
+    it.each(cases)("logs the raw %s value that failed to parse", (mapping, mocks) => {
+      expect(() => toStakingPosition({ ...noEntries, ...mocks })).toThrow(
+        `aleo: unparseable ${mapping} mapping value`,
+      );
+
+      // The raw value is the whole point of the log line: without it the failure is undiagnosable.
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        "aleo/stakingPosition",
+        `unparseable ${mapping} mapping value`,
+        { raw: Object.values(mocks)[0] },
+      );
     });
   });
 });
