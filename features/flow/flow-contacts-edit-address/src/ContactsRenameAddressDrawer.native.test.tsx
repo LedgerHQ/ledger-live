@@ -96,4 +96,12 @@ describe("ContactsRenameAddressDrawer", () => {
 
     expect(screen.queryByText("Edit address")).not.toBeOnTheScreen();
   });
+
+  it("should reserve room for the keyboard so the form stays above it", () => {
+    const { toJSON } = render(
+      <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8, keyboardInset: 300 })} />,
+    );
+
+    expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 332 } } });
+  });
 });

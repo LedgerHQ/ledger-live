@@ -113,6 +113,16 @@ export function useQueuedBottomSheet({
     }, DISMISS_FALLBACK_DELAY_MS);
   }, [cleanupQueue, clearDismissFallback, logBottomSheet, settleClosed]);
 
+  // Hiding the keyboard resizes the sheet container. Doing it while the sheet is already animating
+  // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
+  // mounted at the closed position. Retracting the keyboard as soon as a close begins keeps the
+  // closing layout stable.
+  const dismissKeyboard = useCallback(() => {
+    if (Keyboard.isVisible()) {
+      Keyboard.dismiss();
+    }
+  }, []);
+
   // Closing a sheet often also clears the reason the sheet queued behind it wanted to be open, so
   // by the time the queue promotes us our consumer may no longer want us. Presenting anyway leaves
   // an empty sheet on screen that swallows the next tap, so decline the promotion instead.
@@ -147,10 +157,11 @@ export function useQueuedBottomSheet({
 
     logBottomSheet("Closing drawer");
     beginDismissing();
+    dismissKeyboard();
 
     bottomSheetRef.current?.dismiss();
     onCloseRef.current?.();
-  }, [beginDismissing, bottomSheetRef, cleanupQueue, logBottomSheet]);
+  }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
   // open/close state handlers.
@@ -165,8 +176,9 @@ export function useQueuedBottomSheet({
 
   const handleUserClose = useCallback(() => {
     logBottomSheet("User initiated close");
+    dismissKeyboard();
     bottomSheetRef.current?.dismiss();
-  }, [bottomSheetRef, logBottomSheet]);
+  }, [bottomSheetRef, dismissKeyboard, logBottomSheet]);
 
   // Notifies the consumer of the explicit backdrop press before dismissing. Unlike onClose
   // (which fires for any closing reason), this reflects a real user close interaction.
@@ -181,9 +193,10 @@ export function useQueuedBottomSheet({
 
     logBottomSheet("Header close pressed");
     beginDismissing();
+    dismissKeyboard();
     onHeaderClosePressedRef.current?.();
     onCloseRef.current?.();
-  }, [beginDismissing, logBottomSheet]);
+  }, [beginDismissing, dismissKeyboard, logBottomSheet]);
 
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
@@ -206,18 +219,17 @@ export function useQueuedBottomSheet({
       if (toIndex === -1 && stateRef.current === "open") {
         logBottomSheet("Close animation started");
         beginDismissing();
+        dismissKeyboard();
         onCloseRef.current?.();
       }
     },
-    [beginDismissing, bottomSheetRef, logBottomSheet],
+    [beginDismissing, bottomSheetRef, dismissKeyboard, logBottomSheet],
   );
 
   const handleDismiss = useCallback(() => {
     logBottomSheet("BottomSheet dismissed (onDismiss)");
 
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
-    }
+    dismissKeyboard();
 
     // Fallback for dismissals that bypass the close animation (and thus handleAnimate).
     if (stateRef.current === "open") {
@@ -233,7 +245,7 @@ export function useQueuedBottomSheet({
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [logBottomSheet, settleClosed]);
+  }, [dismissKeyboard, logBottomSheet, settleClosed]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {

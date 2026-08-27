@@ -20,6 +20,7 @@ export function ContactsRenameAddressDialog({
   draftLabel,
   invalidLabelError,
   bottomInset = 0,
+  keyboardInset = 0,
   labels,
   onDraftLabelChange,
   onAddressChange,
@@ -35,7 +36,7 @@ export function ContactsRenameAddressDialog({
   });
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+    <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader density="expanded" title={labels.title} />
