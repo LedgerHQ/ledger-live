@@ -31,7 +31,11 @@ export function runNewSendFlowTokenTest(
   tags: string[],
   options?: SendTestOptions,
 ) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(
+    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("New Send Flow - Token Send", () => {
