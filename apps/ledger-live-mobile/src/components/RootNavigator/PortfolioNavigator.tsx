@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
-import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import PortfolioRootScreen from "./PortfolioRootScreen";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
+import { lazyScreen } from "./lazyScreen";
 
 const Stack = createNativeStackNavigator<PortfolioNavigatorStackParamList>();
 
@@ -24,7 +24,9 @@ export default function PortfolioNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.PortfolioAccounts}
-        component={AccountsNavigator}
+        getComponent={lazyScreen(
+          () => require("./AccountsNavigator") as typeof import("./AccountsNavigator"),
+        )}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

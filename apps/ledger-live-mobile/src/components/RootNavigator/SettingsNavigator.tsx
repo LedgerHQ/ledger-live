@@ -5,7 +5,6 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import HelpButton from "~/screens/Settings/HelpButton";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
@@ -99,7 +98,9 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.CurrencySettings}
-        component={CurrencySettings}
+        getComponent={() =>
+          require("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings").default
+        }
         options={({ route }) => ({
           title: route.params?.headerTitle,
           headerRight: undefined,
