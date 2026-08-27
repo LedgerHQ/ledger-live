@@ -4,5 +4,5 @@
     "moduleSuffixes": [".native", ""]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.web.*"]
+  "exclude": ["node_modules", "src/**/*.web.*", "src/index.ts"]
 }

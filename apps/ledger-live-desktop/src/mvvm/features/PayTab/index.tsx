@@ -1,6 +1,7 @@
 import React from "react";
 import { Balance } from "@features/flow-pay-balance";
 import { Contacts } from "@features/flow-pay-contact";
+import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -29,7 +30,7 @@ const PayTab = () => {
     request.open,
     newPayment.open,
   );
-  const contacts = usePayTabContacts();
+  const { contacts, ledgerSyncIntroduction } = usePayTabContacts();
 
   return (
     <div className="flex flex-col gap-24">
@@ -39,6 +40,7 @@ const PayTab = () => {
       <Balance {...balance} actionTiles={actionTiles} />
 
       <Contacts {...contacts} />
+      <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
 
       <DepositOptions {...deposit.depositOptions} />
       <RequestReceive {...request.requestReceive} />
