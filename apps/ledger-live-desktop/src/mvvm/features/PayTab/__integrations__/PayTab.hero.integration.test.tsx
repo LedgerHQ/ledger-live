@@ -4,7 +4,6 @@ import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stab
 import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import PayTab from "LLD/features/PayTab";
 import {
@@ -12,15 +11,7 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
-import { onboardedState, tourSeenState } from "./fixtures";
-
-jest.mock(
-  "@features/platform-device-action-content",
-  () => ({
-    getDeviceActionAnimation: jest.fn(),
-  }),
-  { virtual: true },
-);
+import { onboardedState, tourSeenState, UNISWAP } from "./fixtures";
 
 const DADA_URLS = [
   "https://dada.api.ledger-test.com/v1/assets",
@@ -29,20 +20,9 @@ const DADA_URLS = [
 
 const ethWithoutTokens: Account = { ...ETH_ACCOUNT, subAccounts: [] };
 
-const uni = TokenCurrencySchema.parse({
-  type: "TokenCurrency",
-  id: "ethereum/erc20/uniswap",
-  parentCurrencyId: ETH_ACCOUNT.currency.id,
-  contractAddress: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
-  tokenType: "erc20",
-  ticker: "UNI",
-  name: "Uniswap",
-  units: [{ name: "Uniswap", code: "UNI", magnitude: 18 }],
-});
-
-const ethWithUni: Account = {
+const ethWithUniswap: Account = {
   ...ethWithoutTokens,
-  subAccounts: [genTokenAccount(0, ethWithoutTokens, uni)],
+  subAccounts: [genTokenAccount(0, ethWithoutTokens, UNISWAP)],
 };
 
 function renderHero(accounts: Account[]) {
@@ -161,7 +141,7 @@ describe("PayTab hero integration", () => {
 
   it("should be funded while DADA hangs if the user holds UNI, then empty when it resolves", async () => {
     const release = holdDada();
-    renderHero([ethWithUni]);
+    renderHero([ethWithUniswap]);
 
     await expectFundedHero();
     release();
