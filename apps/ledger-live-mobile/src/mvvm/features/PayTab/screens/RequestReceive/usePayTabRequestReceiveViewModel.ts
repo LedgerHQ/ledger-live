@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, type ComponentRef } from "react";
+import { useCallback, useMemo, useRef, type ComponentRef } from "react";
 import type { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
@@ -22,18 +22,13 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
   const { t } = useTranslation();
   const { goBack } = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
-  const { account, parentAccount } = useAccountScreen(route);
+  const { account } = useAccountScreen(route);
+  const currency = route.params.currency;
   const cardRef = useRef<ComponentRef<typeof View>>(null);
 
-  useEffect(() => {
-    if (!account) {
-      goBack();
-    }
-  }, [account, goBack]);
-
   const data = useMemo(
-    () => (account ? deriveRequestReceiveData(account, parentAccount ?? undefined) : undefined),
-    [account, parentAccount],
+    () => (account?.type === "Account" ? deriveRequestReceiveData(account, currency) : undefined),
+    [account, currency],
   );
 
   const onClose = useCallback(() => {

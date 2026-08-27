@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { ScreenName } from "~/const";
 import type { PayTabNavigatorParamList } from "../types";
@@ -24,9 +25,11 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
       source: REQUEST_PAGE,
       enableAccountSelection: true,
       onAccountSelected: (account, parentAccount) => {
+        const accountCurrency = getAccountCurrency(account);
         navigate(ScreenName.PayTabRequestReceive, {
-          accountId: account.id,
           parentId: parentAccount?.id,
+          currency: accountCurrency,
+          accountId: (account.type !== "Account" && account.parentId) || account.id,
         });
       },
     });

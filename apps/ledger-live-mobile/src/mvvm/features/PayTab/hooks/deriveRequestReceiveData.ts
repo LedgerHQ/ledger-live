@@ -1,6 +1,7 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-card-request";
+import type { Currency } from "@domain/entity-currency";
+import { getFreshAccountAddress } from "~/utils/address";
 
 export type RequestReceiveData = Readonly<{
   address: string;
@@ -10,16 +11,11 @@ export type RequestReceiveData = Readonly<{
   networkIcon: RequestReceiveIconProps;
 }>;
 
-export function deriveRequestReceiveData(
-  account: AccountLike,
-  parentAccount?: Account,
-): RequestReceiveData {
-  const currency = getAccountCurrency(account);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const networkCurrency = mainAccount.currency;
+export function deriveRequestReceiveData(account: Account, currency: Currency): RequestReceiveData {
+  const networkCurrency = account.currency;
 
   return {
-    address: mainAccount.freshAddress,
+    address: getFreshAccountAddress(account),
     asset: { name: currency.name, ticker: currency.ticker },
     network: networkCurrency.name,
     assetIcon: {
