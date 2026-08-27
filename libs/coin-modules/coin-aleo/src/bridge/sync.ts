@@ -15,7 +15,7 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { lastBlock, getStakingPosition } from "../logic";
+import { lastBlock } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
   backfillStakingSenders,
@@ -28,7 +28,12 @@ import {
 import { listOperations } from "./listOperations";
 import { getCalTokens } from "./utils";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  getStakingPosition,
+  patchPublicOperations,
+} from "../network/utils";
 import { apiClient } from "../network/api";
 import {
   PROGRESS_AFTER_SCANNER,
