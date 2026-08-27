@@ -7,7 +7,7 @@ import { getRawTransactionType, getStakeTarget, type TransactionLike } from "./t
  * wording, the delegation target, and send-max.
  */
 export type SignContext = {
-  earnTransactionType?: EarnTransactionType;
+  earnTransactionType: EarnTransactionType;
   rawTransactionType?: string;
   validators?: string[];
   isSendMax: boolean;
@@ -37,8 +37,12 @@ export function rememberSignContext(
 ): void {
   if (!signedOperation || typeof signedOperation !== "object") return;
   const rawTransactionType = getRawTransactionType(transaction);
+  const earnTransactionType = deriveEarnTransactionType(family, rawTransactionType);
+  // Only a staking action is ever recalled, so storing anything else is churn the broadcast
+  // stage never reads — it falls back to the operation type whenever the action is absent.
+  if (!earnTransactionType) return;
   contexts.set(signedOperation, {
-    earnTransactionType: deriveEarnTransactionType(family, rawTransactionType),
+    earnTransactionType,
     rawTransactionType,
     validators: getStakeTarget(transaction),
     isSendMax: Boolean(transaction?.useAllAmount),

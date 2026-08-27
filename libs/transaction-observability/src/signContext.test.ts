@@ -48,7 +48,8 @@ describe("rememberSignContext / recallSignContext", () => {
     const signedOperation = signed({ type: "OUT" });
     rememberSignContext(signedOperation, "cosmos", { family: "cosmos", mode: "send" });
 
-    expect(recallSignContext(signedOperation)?.earnTransactionType).toBeUndefined();
+    expect(hasSignContext(signedOperation)).toBe(false);
+    expect(recallSignContext(signedOperation)).toBeUndefined();
   });
 
   it("survives a read, so a rebroadcast still correlates", () => {
