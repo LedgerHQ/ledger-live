@@ -34,7 +34,6 @@ describe("Operations history", () => {
   });
 
   it("Open transaction history from the top bar", async () => {
-    // NOSONAR typescript:S2699
     await app.mainNavigation.tapTopBarTransactionHistory();
     await app.operation.expectOperationsListVisible();
     await app.operation.expectSectionHeaderVisible();
@@ -42,7 +41,6 @@ describe("Operations history", () => {
   });
 
   it("Navigate to operation details from a transaction row", async () => {
-    // NOSONAR typescript:S2699
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.mainNavigation.tapTopBarTransactionHistory();
     await app.operation.expectOperationsListVisible();
@@ -51,7 +49,6 @@ describe("Operations history", () => {
   });
 
   it("Open transaction history from an asset page", async () => {
-    // NOSONAR typescript:S2699
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.goToAccounts(CURRENCY.name);
     await app.common.pressOnSeeAllOperationsButtonFromAssetPage();

@@ -31,7 +31,6 @@ describe("Market banner", () => {
   });
 
   it(`[${CURRENCY.testLabel}] - Market banner elements, interactions and navigation`, async () => {
-    // NOSONAR typescript:S2699
     await app.portfolio.expectMarketBannerVisible();
 
     await app.portfolio.expectFearAndGreedCardVisible();
