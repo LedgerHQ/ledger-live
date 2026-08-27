@@ -425,9 +425,12 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  // includeEmpty keeps text-less nodes in the result, so a caller can tell a missing
+  // element apart from one that rendered without text.
   async getWebElementsText(
     containerWebElement: WebElement,
     childrenCssSelector: string,
+    options: { includeEmpty?: boolean } = {},
   ): Promise<string[]> {
     const raw = await containerWebElement.runScript(
       (el: HTMLElement, sel: string) =>
@@ -439,7 +442,7 @@ export const WebElementHelpers = {
       [childrenCssSelector],
     );
     const texts: string[] = JSON.parse(raw);
-    return texts.filter(Boolean);
+    return options.includeEmpty ? texts : texts.filter(Boolean);
   },
 
   getWebElementByXpath(xpath: string, index = 0): WebElement {
