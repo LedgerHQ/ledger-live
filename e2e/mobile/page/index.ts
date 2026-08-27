@@ -12,6 +12,7 @@ import TrustchainPage from "@e2e/page/trustchain.page";
 import ManagerPage from "@e2e/page/manager/manager.page";
 import MarketPage from "@e2e/page/market/market.page";
 import OnboardingStepsPage from "@e2e/page/onboarding/onboardingSteps.page";
+import PostOnboardingHubPage from "@e2e/page/postOnboarding/postOnboardingHub.page";
 import OperationDetailsPage from "@e2e/page/trade/operationDetails.page";
 import PasswordEntryPage from "@e2e/page/passwordEntry.page";
 import PortfolioEmptyStatePage from "@e2e/page/wallet/portfolioEmptyState.page";
@@ -77,6 +78,7 @@ export class Application {
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private postOnboardingHubPageInstance = lazyInit(PostOnboardingHubPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
   private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
@@ -171,6 +173,10 @@ export class Application {
 
   public get onboarding() {
     return this.onboardingPageInstance();
+  }
+
+  public get postOnboardingHub() {
+    return this.postOnboardingHubPageInstance();
   }
 
   public get operationDetails() {

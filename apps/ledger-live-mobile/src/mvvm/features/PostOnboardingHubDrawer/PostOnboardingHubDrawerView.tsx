@@ -109,8 +109,14 @@ export function PostOnboardingHubDrawerView({
       ))}
 
       {areAllPostOnboardingActionsCompleted ? (
-        <Box lx={{ marginTop: "s24" }}>
-          <Button appearance="base" size="lg" isFull onPress={onRequestExit}>
+        <Box lx={{ marginTop: "s24" }} style={{ marginBottom: bottomInset }}>
+          <Button
+            appearance="base"
+            size="lg"
+            isFull
+            onPress={onRequestExit}
+            testID="post-onboarding-hub-complete-button"
+          >
             {t("postOnboarding.drawer.primaryLabel")}
           </Button>
         </Box>
