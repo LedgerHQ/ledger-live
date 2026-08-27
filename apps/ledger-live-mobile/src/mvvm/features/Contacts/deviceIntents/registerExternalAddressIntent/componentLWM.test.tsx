@@ -8,7 +8,7 @@ const COPY = {
   pending: "Preparing your Ledger device",
   continueOnDevice: "Continue on your Ledger Stax",
   rejected: "Operation rejected on Ledger device",
-  wrongDevice: "Wrong Ledger device",
+  wrongDevice: "Use the same Ledger device you used to add this contact",
   invalidData: "This address can't be saved",
   appVersionTooLow: "App update required",
   genericError: "Unknown error",
@@ -59,7 +59,6 @@ describe("RegisterExternalAddressComponentLWM", () => {
     ["invalid-input", COPY.invalidData],
     ["unsupported-operation", COPY.invalidData],
     ["app-version-too-low", COPY.appVersionTooLow],
-    ["device-error", COPY.genericError],
     ["failed", COPY.genericError],
   ])("should show its error screen when the job state is %s", (type, title) => {
     renderComponent(failure(type));
@@ -67,8 +66,27 @@ describe("RegisterExternalAddressComponentLWM", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
+  it("should let the user replay the device action when the rejection carries a retry", async () => {
+    const retry = jest.fn();
+    const { user } = renderComponent({
+      type: "device-rejected",
+      error: new Error("SWO_INCORRECT_DATA"),
+      retry,
+    });
+
+    await user.press(screen.getByText("Retry"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not offer a retry when the rejection carries none", () => {
+    renderComponent(failure("device-rejected"));
+
+    expect(screen.queryByText("Retry")).toBeNull();
+  });
+
   it("should hand the flow back when the user closes an error", async () => {
-    const { user, onClose } = renderComponent(failure("device-error"));
+    const { user, onClose } = renderComponent(failure("failed"));
 
     await user.press(screen.getByText("Close"));
 

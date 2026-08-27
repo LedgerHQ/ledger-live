@@ -9545,8 +9545,8 @@
       },
       "errors": {
         "wrongDevice": {
-          "title": "Wrong Ledger device",
-          "description": "This contact was saved with a different Ledger device. Connect the one you saved it with, then try again."
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
         },
         "invalidData": {
           "title": "This address can't be saved",

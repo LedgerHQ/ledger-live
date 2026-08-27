@@ -13,9 +13,11 @@ type RegisterExternalAddressComponentLWDProps = Readonly<{
 }>;
 
 /**
- * Desktop renderer for the register-external-address intent. Every failure is
- * terminal — the job completes right after emitting one — so the error states
- * only offer a way out, never a retry.
+ * Desktop renderer for the register-external-address intent.
+ *
+ * A rejection leaves the job open, so that screen can replay the device action.
+ * Every other failure is terminal — the job completes right after emitting one —
+ * so those screens only offer a way out.
  */
 export function RegisterExternalAddressComponentLWD({
   jobState,
@@ -62,25 +64,45 @@ export function RegisterExternalAddressComponentLWD({
 
     // 0x6A80 buckets user rejection together with malformed TLV, so this reads
     // as a rejection: it is the only outcome a user can actually cause.
-    case "device-rejected":
+    // The job keeps itself open here, so the retry replays the device action
+    // rather than restarting the whole Contacts flow.
+    case "device-rejected": {
+      const retry = jobState.retry;
       return (
         <InfoState
           preset="info"
           size="hug"
           title={t("deviceIntentExecutor.initialization.retryable.userRefused.title")}
           primaryCta={closeCta}
+          secondaryCta={
+            retry
+              ? {
+                  label: t("common.retry"),
+                  onPress: retry,
+                  testID: "contacts-register-external-address-retry",
+                }
+              : undefined
+          }
           testID="contacts-register-external-address-rejected"
         />
       );
+    }
 
+    // Approved design: neutral spot, and the way out is labelled Cancel rather
+    // than Close. Its "Connect a different device" CTA needs a recovery path the
+    // executor does not expose yet — LIVE-36562.
     case "existing-group-verification-failed":
       return (
         <InfoState
-          preset="error"
+          preset="info"
           size="hug"
           title={t("contacts.deviceIntents.errors.wrongDevice.title")}
           description={t("contacts.deviceIntents.errors.wrongDevice.description")}
-          primaryCta={closeCta}
+          primaryCta={{
+            label: t("common.cancel"),
+            onPress: onClose,
+            testID: "contacts-register-external-address-wrong-device-cancel",
+          }}
           testID="contacts-register-external-address-wrong-device"
         />
       );
@@ -112,7 +134,6 @@ export function RegisterExternalAddressComponentLWD({
         />
       );
 
-    case "device-error":
     case "failed":
       return (
         <InfoState
@@ -124,5 +145,11 @@ export function RegisterExternalAddressComponentLWD({
           testID="contacts-register-external-address-error"
         />
       );
+    default:
+      return assertNever(jobState);
   }
+}
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled register external address intent state: ${JSON.stringify(value)}`);
 }

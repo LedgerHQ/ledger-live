@@ -8,13 +8,14 @@ const COPY = {
   pending: "Preparing your Ledger device",
   continueOnDevice: "Continue on your Ledger Stax",
   rejected: "Operation rejected on Ledger device",
-  wrongDevice: "Wrong Ledger device",
+  wrongDevice: "Use the same Ledger device you used to add this contact",
   invalidData: "This address can't be saved",
   appVersionTooLow: "App update required",
   genericError: "Unknown error",
 } as const;
 
 const CLOSE_CTA = "contacts-register-external-address-close";
+const RETRY_CTA = "contacts-register-external-address-retry";
 
 const failure = (type: string): RegisterExternalAddressJobState =>
   ({ type, error: new Error("boom") }) as RegisterExternalAddressJobState;
@@ -61,7 +62,6 @@ describe("RegisterExternalAddressComponentLWD", () => {
     ["invalid-input", COPY.invalidData],
     ["unsupported-operation", COPY.invalidData],
     ["app-version-too-low", COPY.appVersionTooLow],
-    ["device-error", COPY.genericError],
     ["failed", COPY.genericError],
   ])("should show its error screen when the job state is %s", (type, title) => {
     renderComponent(failure(type));
@@ -69,8 +69,27 @@ describe("RegisterExternalAddressComponentLWD", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
+  it("should let the user replay the device action when the rejection carries a retry", async () => {
+    const retry = jest.fn();
+    const { user } = renderComponent({
+      type: "device-rejected",
+      error: new Error("SWO_INCORRECT_DATA"),
+      retry,
+    });
+
+    await user.click(screen.getByTestId(RETRY_CTA));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not offer a retry when the rejection carries none", () => {
+    renderComponent(failure("device-rejected"));
+
+    expect(screen.queryByTestId(RETRY_CTA)).not.toBeInTheDocument();
+  });
+
   it("should hand the flow back when the user closes an error", async () => {
-    const { user, onClose } = renderComponent(failure("device-error"));
+    const { user, onClose } = renderComponent(failure("failed"));
 
     await user.click(screen.getByTestId(CLOSE_CTA));
 
