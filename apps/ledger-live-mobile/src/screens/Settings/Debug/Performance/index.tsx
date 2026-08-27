@@ -22,13 +22,18 @@ const BENCH_REPEATS = 8;
 const MODE_ROWS: { mode: PerfOptimizationMode; title: string; desc: string }[] = [
   {
     mode: "full",
-    title: "Mode: worklet on",
-    desc: "Account ranking on a worklet runtime. Relaunch after switching.",
+    title: "Mode: full",
+    desc: "getComponent + worklet. Relaunch after switching.",
+  },
+  {
+    mode: "getcomponent",
+    title: "Mode: getComponent only",
+    desc: "getComponent on, ranking on JS. Relaunch after switching.",
   },
   {
     mode: "none",
-    title: "Mode: worklet off",
-    desc: "Account ranking on the JS thread. Relaunch after switching.",
+    title: "Mode: none",
+    desc: "Eager screens + JS ranking. Relaunch after switching.",
   },
 ];
 
@@ -37,10 +42,7 @@ function formatMs(value: number): string {
 }
 
 export default function Performance() {
-  const [mode, setMode] = useState<PerfOptimizationMode>(() => {
-    const stored = getPerfOptimizationMode();
-    return stored === "full" ? "full" : "none";
-  });
+  const [mode, setMode] = useState<PerfOptimizationMode>(getPerfOptimizationMode);
   const [startupEvents, setStartupEvents] = useState<GroupedStartupEvent[]>([]);
   const [startupTime, setStartupTime] = useState<number>();
   const [bench, setBench] = useState<RankAccountsBench | null>(null);
@@ -79,7 +81,7 @@ export default function Performance() {
     <SettingsNavigationScrollView>
       <SettingsRow
         title="App startup time"
-        desc="Time from app startup to the beeing interactive to the user (does not include pre-js initialization time in dev mode)"
+        desc="Headline is splash / App started. First paint is Home layout (Portfolio or Welcome). Dev mode excludes pre-js init."
         testID="perf-startup-time"
       >
         <Text variant="body" fontWeight="medium" color="primary.c80">
