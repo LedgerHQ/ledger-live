@@ -9,6 +9,7 @@ import {
 } from "@features/flow-pay-balance";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
@@ -33,11 +34,8 @@ export function PayTabView({
   depositOptions,
 }: PayTabViewProps) {
   return (
-    <Box
-      lx={{ flex: 1, backgroundColor: "canvas" }}
-      style={{ paddingTop: top }}
-      testID="paytab-screen"
-    >
+    <Box lx={{ flex: 1 }} style={{ paddingTop: top }} testID="paytab-screen">
+      <Wallet40Background type="pay" />
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
