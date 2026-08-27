@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-card-request";
-import type { Currency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getFreshAccountAddress } from "~/utils/address";
 
 export type RequestReceiveData = Readonly<{
@@ -11,7 +11,10 @@ export type RequestReceiveData = Readonly<{
   networkIcon: RequestReceiveIconProps;
 }>;
 
-export function deriveRequestReceiveData(account: Account, currency: Currency): RequestReceiveData {
+export function deriveRequestReceiveData(
+  account: Account,
+  currency: CryptoOrTokenCurrency,
+): RequestReceiveData {
   const networkCurrency = account.currency;
 
   return {
