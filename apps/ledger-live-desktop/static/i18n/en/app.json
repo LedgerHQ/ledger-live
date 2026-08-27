@@ -5340,6 +5340,22 @@
           "willShow": "Will show on Contacts until dismissed."
         }
       },
+      "deviceSimulationDevTool": {
+        "title": "Device simulation (QA)",
+        "description": "Simulate device history to test Nano-user upsell surfaces without physical devices.",
+        "currentHistory": "Active QA devices: {{devices}}",
+        "resetWarning": "Reset clears the simulated QA device list only. Real device history cannot be restored without the simulation engine.",
+        "reset": "Reset device history",
+        "none": "none",
+        "devices": {
+          "nanoS": "Nano S",
+          "nanoSP": "Nano S Plus",
+          "nanoX": "Nano X",
+          "stax": "Ledger Stax",
+          "europa": "Ledger Flex",
+          "apex": "Ledger Flex Plus"
+        }
+      },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
         "description": "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
