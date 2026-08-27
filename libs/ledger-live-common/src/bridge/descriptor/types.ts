@@ -22,7 +22,7 @@ export type InputFieldType = "text" | "number" | "tag" | "typed";
 export type InputDescriptor = Readonly<{
   type: InputFieldType;
   maxLength?: number;
-  maxValue?: number;
+  maxValue?: number | bigint;
   options?: readonly string[];
   defaultOption?: string;
   supportsDomain?: boolean; // Whether the field supports domain names (ENS for EVM)

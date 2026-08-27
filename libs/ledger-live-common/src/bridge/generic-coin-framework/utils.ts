@@ -528,6 +528,7 @@ type FrameworkOperationExtra = {
   internal?: boolean;
   feePayer?: string;
   stake?: { address: string; amount: BigNumber };
+  transferId?: string;
 };
 
 /**
@@ -552,6 +553,7 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     internal: true,
     feePayer: true,
     stake: true,
+    transferId: true,
   } satisfies Record<keyof FrameworkOperationExtra, true>),
 );
 
@@ -665,6 +667,10 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   const stake = buildStakeExtra(op.details?.stake);
   if (stake) {
     extra.stake = stake;
+  }
+
+  if (op.details?.transferId !== undefined) {
+    extra.transferId = op.details.transferId as string;
   }
 
   return extra;

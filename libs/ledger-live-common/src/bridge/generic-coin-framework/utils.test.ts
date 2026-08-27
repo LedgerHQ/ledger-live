@@ -1547,6 +1547,17 @@ describe("coin-framework utils", () => {
 
       expect(result.transactionSequenceNumber).toEqual(expected);
     });
+
+    it("maps details.transferId to extra.transferId", () => {
+      const op = { ...baseOp, details: { transferId: "12345" } };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect((result.extra as Record<string, unknown>).transferId).toBe("12345");
+    });
+
+    it("does not set extra.transferId when details.transferId is absent", () => {
+      const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
+      expect("transferId" in (result.extra as Record<string, unknown>)).toBe(false);
+    });
   });
 
   describe("nextSequenceWithPending", () => {

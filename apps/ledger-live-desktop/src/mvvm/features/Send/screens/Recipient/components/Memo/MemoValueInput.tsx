@@ -11,8 +11,8 @@ type MemoValueInputProps = Readonly<{
   maxLength?: number;
   /** When "tag", input is restricted to digits only (ex XRP, Casper). */
   memoType?: string;
-  /** Max numeric value when memoType is "tag" (ex XRP UINT32_MAX). */
-  memoMaxValue?: number;
+  /** Max numeric value when memoType is "tag" (ex XRP UINT32_MAX, Casper UINT64_MAX). */
+  memoMaxValue?: number | bigint;
   /** Full error for correct i18n interpolation (ex Casper maxTransferId). */
   transactionError?: Error;
   /** Fallback when transactionError is not passed (no interpolation). */

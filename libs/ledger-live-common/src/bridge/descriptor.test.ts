@@ -614,7 +614,7 @@ describe("sendFeatures", () => {
     describe("special field names", () => {
       it("should apply transferId for casper", () => {
         const result = applyMemoToTransaction("casper", "12345");
-        expect(result).toEqual({ transferId: "12345" });
+        expect(result).toEqual({ transferId: "12345", memoType: "transferId", memoValue: "12345" });
       });
 
       it("should apply numeric tag for xrp", () => {
