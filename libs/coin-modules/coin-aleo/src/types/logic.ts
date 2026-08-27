@@ -62,6 +62,14 @@ export type AleoValidator = {
   estimatedYearlyRewardsRate?: number;
 };
 
+export type AleoStakingPosition = {
+  bondedBalance: BigNumber;
+  bondedValidator: string | null;
+  unbondingBalance: BigNumber;
+  unbondingHeight: number | null;
+  withdrawalAddress: string | null;
+};
+
 /** `<maxBlockHeight>:<blockNumber>:<transitionId>` — the pinned ceiling, then the row to resume after. */
 export type OperationsCursor = {
   maxBlockHeight: number;
