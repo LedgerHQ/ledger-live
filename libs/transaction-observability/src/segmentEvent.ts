@@ -53,7 +53,9 @@ export function toSegmentTrackEvent(event: LogEvent): SegmentTrackEvent | null {
     tx_data_source: event.dataSource,
     is_testnet: event.isTestnet,
     is_send_max: event.isSendMax,
-    ...(event.manifestId ? { provider: event.manifestId } : {}),
+    // The live-app or dApp that originated the transaction. Named `manifest_id` rather than
+    // `provider` because a manifest id is the app, not the staking provider behind it.
+    ...(event.manifestId ? { manifest_id: event.manifestId } : {}),
     ...(event.validators?.length ? { validators: event.validators } : {}),
   };
 

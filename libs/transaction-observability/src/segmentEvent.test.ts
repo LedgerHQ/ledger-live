@@ -120,7 +120,7 @@ describe("toSegmentTrackEvent", () => {
     });
   });
 
-  it("exposes the manifest id as provider", () => {
+  it("exposes the manifest id as manifest_id", () => {
     const result = toSegmentTrackEvent({
       status: "success",
       stage: TransactionStage.Broadcast,
@@ -128,7 +128,7 @@ describe("toSegmentTrackEvent", () => {
       manifestId: "kiln",
     } as LogEvent);
 
-    expect(result!.properties.provider).toBe("kiln");
+    expect(result!.properties.manifest_id).toBe("kiln");
   });
 
   describe("does not emit", () => {
