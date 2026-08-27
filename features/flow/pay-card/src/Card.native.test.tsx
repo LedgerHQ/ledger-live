@@ -35,9 +35,10 @@ describe("Card (native)", () => {
   it("composes the bare artwork with the auth login and logout", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(screen.getByTestId("card-login")).toBeTruthy();
-    expect(screen.getByTestId("card-logout")).toBeTruthy();
+    expect(screen.getByText(title)).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-logout")).toBeVisible();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
@@ -50,9 +51,9 @@ describe("Card (native)", () => {
       />,
     );
 
-    expect(screen.getByTestId("card-visual")).toBeTruthy();
+    expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).toBeNull();
-    expect(screen.getByTestId("card-login")).toBeTruthy();
-    expect(screen.getByTestId("card-logout")).toBeTruthy();
+    expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-logout")).toBeVisible();
   });
 });
