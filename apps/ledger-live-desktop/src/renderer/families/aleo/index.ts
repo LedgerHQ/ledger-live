@@ -1,4 +1,5 @@
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountBodyHeader from "./AccountBodyHeader";
 import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import createSendSteps from "./createSendSteps";
@@ -11,6 +12,7 @@ import type { AleoFamily } from "./types";
 
 const family: AleoFamily = {
   AccountBalanceSummaryFooter,
+  AccountBodyHeader,
   ModularDrawerAddAccountFlowManager,
   accountHeaderManageActions,
   createSendSteps,
@@ -19,7 +21,13 @@ const family: AleoFamily = {
   StepSummaryRecipientValue,
   StepSummaryPostAlert,
   StepSummaryAdditionalRows,
-  modalsToPreload: ["MODAL_ALEO_SELF_TRANSFER"],
+  modalsToPreload: [
+    "MODAL_ALEO_SELF_TRANSFER",
+    "MODAL_ALEO_BOND_PUBLIC",
+    "MODAL_ALEO_MANAGE",
+    "MODAL_ALEO_UNBOND",
+    "MODAL_ALEO_CLAIM_UNBOND",
+  ],
 };
 
 export default family;

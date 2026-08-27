@@ -7,6 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import invariant from "invariant";
 import type {
   AleoAccount,
@@ -18,7 +19,7 @@ import type {
   AleoCoinConfig,
 } from "../types";
 import type { AleoUnspentRecord } from "../types/logic";
-import { estimateFees, validateAddress } from "../logic";
+import { estimateFees, getValidators, validateAddress } from "../logic";
 import {
   calculateAmount,
   getAvailableBalance,
@@ -33,12 +34,19 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MIN_BOND_AMOUNT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
+  TRANSACTION_TYPE,
 } from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoBondAmountTooLow,
+  AleoClosedValidator,
+  AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -220,6 +228,46 @@ async function validateRecipient({
   return null;
 }
 
+/**
+ * Bridge-level guard mirroring (and backstopping) the UI-only closed-validator
+ * check in StepValidator.tsx: it derives `isOpen` from the fetched validator
+ * list and disables the UI's Continue button, but that guard silently
+ * disappears when the validator fetch fails and the UI falls back to a
+ * free-text address input with an empty list. Re-checking here makes the
+ * bridge — not the UI — authoritative, so a closed-validator bond is
+ * rejected regardless of which UI path was used.
+ *
+ * The committee/latest response (fetched via getValidators) is the only
+ * place `isOpen` is available; there is no single-address lookup. A
+ * validator absent from the committee is not proven closed (it may be new,
+ * or the metadata fetch may be incomplete) so it is not blocked here — an
+ * invalid/unknown recipient is already caught by validateRecipient above.
+ * A network failure while fetching the committee is treated the same way:
+ * we do not hard-fail the status (that would block legitimate bonds during
+ * an outage), we simply skip this check.
+ */
+async function validateBondValidatorIsOpen({
+  account,
+  recipient,
+}: {
+  account: Account;
+  recipient: string;
+}): Promise<Error | null> {
+  try {
+    const validators = await getValidators(account.currency.id);
+    const validator = validators.find(({ address }) => address === recipient);
+
+    if (validator && !validator.isOpen) {
+      return new AleoClosedValidator();
+    }
+  } catch {
+    // Unable to determine validator status (e.g. committee endpoint down):
+    // do not block the bond on an unrelated outage.
+  }
+
+  return null;
+}
+
 function validatePublicFees({
   account,
   transaction,
@@ -266,18 +314,89 @@ async function handleTransferTransaction({
   const errors: Errors = {};
   const warnings: Warnings = {};
 
+  const isStakingSelfMode =
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer,
+    allowSelfTransfer: allowSelfTransfer || isStakingSelfMode,
   });
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (!transaction.useAllAmount && transaction.amount.lte(0)) {
+  if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    const withdrawalError = await validateRecipient({
+      account,
+      recipient: transaction.withdrawal,
+      allowSelfTransfer: true,
+    });
+    if (withdrawalError) {
+      errors.withdrawal = withdrawalError;
+    }
+
+    // Only worth checking once we know the recipient is a well-formed
+    // address; an invalid/empty recipient is already reported above.
+    if (!recipientError) {
+      const closedValidatorError = await validateBondValidatorIsOpen({
+        account,
+        recipient: transaction.recipient,
+      });
+      if (closedValidatorError) {
+        errors.recipient = closedValidatorError;
+      }
+    }
+  }
+
+  if (
+    transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC &&
+    !transaction.useAllAmount &&
+    transaction.amount.lte(0)
+  ) {
     errors.amount = new AmountRequired();
+  } else if (
+    // useAllAmount bypasses the guard above, but BOND/UNBOND have no other zero-amount
+    // check (unlike the transfer path, which reports NotEnoughBalance downstream). A
+    // resolved stake/unstake amount of 0 (e.g. balance == fee, or unbond with 0 bonded)
+    // must never validate clean.
+    transaction.useAllAmount &&
+    (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+      transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) &&
+    calculatedAmount.amount.lte(0)
+  ) {
+    errors.amount = new AmountRequired();
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    calculatedAmount.amount.lt(MIN_BOND_AMOUNT)
+  ) {
+    errors.amount = new AleoBondAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_BOND_AMOUNT), {
+        showCode: true,
+      }),
+    });
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    // A delegator must clear MIN_DELEGATOR_STAKE_MICROCREDITS in total. Validate the
+    // projected total stake (already-bonded balance + this bond amount), so top-ups
+    // on an existing position that already clears it are allowed.
+    (account.aleoResources?.bondedBalance ?? new BigNumber(0))
+      .plus(calculatedAmount.amount)
+      .lt(MIN_DELEGATOR_STAKE_MICROCREDITS)
+  ) {
+    errors.amount = new AleoStakeAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS),
+        {
+          showCode: true,
+        },
+      ),
+    });
   }
 
   if (isPrivateTransaction(transaction)) {
@@ -295,7 +414,16 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    // fee coverage is validated separately by validatePublicFees against the transparent balance
+    if (calculatedAmount.amount.gt(availableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    if (availableBalance.lte(0)) {
+      errors.amount = new AleoNoClaimableAmount();
+    }
+  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 

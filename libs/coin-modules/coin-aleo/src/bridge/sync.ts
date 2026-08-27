@@ -15,9 +15,10 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { lastBlock } from "../logic";
+import { lastBlock, getStakingPosition } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
+  backfillStakingSenders,
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
@@ -28,6 +29,7 @@ import { listOperations } from "./listOperations";
 import { getCalTokens } from "./utils";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import { apiClient } from "../network/api";
 import {
   PROGRESS_AFTER_SCANNER,
   PROGRESS_AFTER_LIST_OPS,
@@ -37,10 +39,12 @@ import {
 } from "../constants";
 import type {
   AleoAccount,
+  AleoResources,
   AleoOperation,
   AleoUnspentRecord,
   Transaction as AleoTransaction,
   AleoPrivateRecord,
+  AleoCoinConfig,
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import { listPrivateOperations } from "./listPrivateOperations";
@@ -77,9 +81,10 @@ export async function performPublicSync(
   });
   const config = resolveConfig(currency.id);
 
-  const [balances, latestBlock] = await Promise.all([
+  const [balances, latestBlock, stakingPosition] = await Promise.all([
     getPublicBalance(config, address),
     lastBlock(config),
+    getStakingPosition(config, address),
   ]);
 
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
@@ -103,7 +108,16 @@ export async function performPublicSync(
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
-  const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
+  const [oldPrivateOps, oldPublicOpsRaw] = splitPrivateAndPublicOperations(allOldOperations);
+
+  // One-time cache repair: only accounts synced before the resolveSenderAddress fallback
+  // existed can have blank-sender staking ops cached, so once backfilled there is nothing
+  // left to fix and this expensive full-list mapping can be skipped on every later sync.
+  const hasBackfilledStakingSenders =
+    initialAccount?.aleoResources?.hasBackfilledStakingSenders === true;
+  const oldPublicOps = hasBackfilledStakingSenders
+    ? (oldPublicOpsRaw as AleoOperation[])
+    : backfillStakingSenders(oldPublicOpsRaw as AleoOperation[], address);
   const lastBlockHeight =
     shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
@@ -126,9 +140,7 @@ export async function performPublicSync(
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
-  const patchedOpIds = new Set(
-    (oldPublicOps as AleoOperation[]).filter(op => op.extra?.patched).map(op => op.id),
-  );
+  const patchedOpIds = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.id));
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(
     op => !patchedOpIds.has(op.id),
@@ -144,7 +156,10 @@ export async function performPublicSync(
   const preservedPrivateOps = oldPrivateOps as AleoOperation[];
 
   const preservedPrivateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
-  const totalBalance = transparentBalance.plus(preservedPrivateBalance ?? 0);
+  const liquidBalance = transparentBalance.plus(preservedPrivateBalance ?? 0);
+  const totalBalance = liquidBalance
+    .plus(stakingPosition.bondedBalance)
+    .plus(stakingPosition.unbondingBalance);
 
   // Same reasoning as filteredLatestPublicOperations: patched token sub-account ops have
   // modified senders/recipients that differ from raw API data. sameOp detects the difference
@@ -179,24 +194,50 @@ export async function performPublicSync(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
 
+  const accountPendingOps = (initialAccount?.pendingOperations ?? []) as AleoOperation[];
+  const subAccountPendingOps = (initialAccount?.subAccounts ?? []).flatMap(
+    sa => (sa.pendingOperations ?? []) as AleoOperation[],
+  );
+  const allPendingOps = [...accountPendingOps, ...subAccountPendingOps];
+
+  // Pending op ids to evict in postSync. Threaded through the returned account
+  // shape (see AleoAccount.pendingEvictionIds) rather than a module-level side
+  // channel, so the correlation is explicit in this cycle's result and cannot
+  // leak into another sync.
+  let pendingEvictionIds: string[] = [];
+  if (allPendingOps.length > 0) {
+    const confirmedForCorrelation = [
+      ...operations,
+      ...subAccounts.flatMap(sa => sa.operations as AleoOperation[]),
+    ];
+    const evict = await collectPendingEvictions(config, confirmedForCorrelation, allPendingOps);
+    pendingEvictionIds = [...evict];
+  }
+
   return {
     type: "Account",
     id: ledgerAccountId,
     balance: totalBalance,
-    spendableBalance: totalBalance,
+    spendableBalance: liquidBalance,
     blockHeight,
     operations,
     operationsCount: operations.length,
     subAccounts,
     lastSyncDate: new Date(),
     syncHash,
+    ...(pendingEvictionIds.length > 0 && { pendingEvictionIds }),
     aleoResources: {
       transparentBalance,
       provableApi: initialAccount?.aleoResources?.provableApi ?? null,
       privateBalance: preservedPrivateBalance,
       unspentPrivateRecords: initialAccount?.aleoResources?.unspentPrivateRecords ?? null,
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
+      bondedBalance: stakingPosition.bondedBalance,
+      bondedValidator: stakingPosition.bondedValidator,
+      unbondingBalance: stakingPosition.unbondingBalance,
+      unbondingHeight: stakingPosition.unbondingHeight,
       ...(config.enableTokens && { hasMigratedPublicTokens: true }),
+      hasBackfilledStakingSenders: true,
     },
   };
 }
@@ -235,12 +276,20 @@ export function createPublicSyncObservable(
  *   freshly-fetched data rather than the previous cycle's state.
  * @param freshTransparentBalance - The transparent balance from the current
  *   public sync cycle. Used to compute the correct total balance.
+ * @param freshStakingPosition - The staking fields fetched by the current public
+ *   sync cycle. The combined-sync emission spreads the private shape last, so it
+ *   must carry the fresh staking values or it would clobber them with the stale
+ *   initialAccount ones — same reasoning as freshTransparentBalance. Also carries
+ *   hasBackfilledStakingSenders for the same reason: without it, a public sync that
+ *   just performed the one-time backfill would have that fact immediately clobbered
+ *   by the chained private step, forcing the backfill to run again every cycle.
  */
 export async function performPrivateSync({
   info,
   syncConfig: _syncConfig,
   currentPublicOps,
   freshTransparentBalance,
+  freshStakingPosition,
   onProgress,
   signal,
   publicSubAccounts,
@@ -250,6 +299,14 @@ export async function performPrivateSync({
   syncConfig: SyncConfig;
   currentPublicOps: AleoOperation[];
   freshTransparentBalance?: BigNumber;
+  freshStakingPosition?: Pick<
+    AleoResources,
+    | "bondedBalance"
+    | "bondedValidator"
+    | "unbondingBalance"
+    | "unbondingHeight"
+    | "hasBackfilledStakingSenders"
+  >;
   onProgress?: (progress: number) => void;
   signal?: AbortSignal;
   publicSubAccounts?: TokenAccount[];
@@ -474,7 +531,17 @@ export async function performPrivateSync({
   // otherwise fall back to what the account last recorded.
   const transparentBalance =
     freshTransparentBalance ?? initialAccount.aleoResources?.transparentBalance ?? new BigNumber(0);
-  const totalBalance = transparentBalance.plus(privateBalance);
+  // Prefer the staking position from the current public sync cycle; fall back to
+  // what the account last recorded. Reading only from initialAccount here would
+  // revert freshly bonded/unbonded amounts on every combined sync.
+  const staking = freshStakingPosition ?? initialAccount.aleoResources;
+  const bondedBalance = staking?.bondedBalance ?? new BigNumber(0);
+  const bondedValidator = staking?.bondedValidator ?? null;
+  const unbondingBalance = staking?.unbondingBalance ?? new BigNumber(0);
+  const unbondingHeight = staking?.unbondingHeight ?? null;
+  const hasBackfilledStakingSenders = staking?.hasBackfilledStakingSenders === true;
+  const liquidBalance = transparentBalance.plus(privateBalance);
+  const totalBalance = liquidBalance.plus(bondedBalance).plus(unbondingBalance);
 
   log("aleo/performPrivateSync", "Private sync completed", {
     ledgerAccountId,
@@ -521,7 +588,7 @@ export async function performPrivateSync({
     type: "Account",
     id: ledgerAccountId,
     balance: totalBalance,
-    spendableBalance: totalBalance,
+    spendableBalance: liquidBalance,
     blockHeight,
     operations: finalOperations,
     operationsCount: finalOperations.length,
@@ -534,6 +601,11 @@ export async function performPrivateSync({
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
+      bondedBalance,
+      bondedValidator,
+      unbondingBalance,
+      unbondingHeight,
+      hasBackfilledStakingSenders,
       ...(config.enableTokens && {
         hasMigratedPublicTokens: true,
         hasMigratedPrivateTokens: true,
@@ -549,6 +621,14 @@ export function createPrivateSyncObservable(
   freshTransparentBalance?: BigNumber,
   publicSubAccounts?: TokenAccount[],
   freshSyncHash?: string,
+  freshStakingPosition?: Pick<
+    AleoResources,
+    | "bondedBalance"
+    | "bondedValidator"
+    | "unbondingBalance"
+    | "unbondingHeight"
+    | "hasBackfilledStakingSenders"
+  >,
 ): Observable<Partial<AleoAccount>> {
   const { initialAccount } = info;
   const currencyId = info.currency.id;
@@ -581,6 +661,7 @@ export function createPrivateSyncObservable(
       currentPublicOps: publicOps,
       signal: controller.signal,
       ...(freshTransparentBalance !== undefined && { freshTransparentBalance }),
+      ...(freshStakingPosition !== undefined && { freshStakingPosition }),
       ...(onProgress !== undefined && { onProgress }),
       ...(publicSubAccounts !== undefined && { publicSubAccounts }),
       ...(freshSyncHash !== undefined && { freshSyncHash }),
@@ -684,6 +765,7 @@ export function buildSyncObservables(
               publicResult.aleoResources?.transparentBalance,
               publicResult.subAccounts,
               publicResult.syncHash,
+              publicResult.aleoResources,
             ),
           ),
         ),
@@ -726,6 +808,103 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
     });
 }
 
+// Upper bound on how many pending ops get a getTransactionById lookup per sync
+// cycle. Without a cap, a large backlog of stuck pending ops would fire one RPC
+// call per candidate on every single sync, degrading sync performance. 20 is
+// generous for the realistic backlog size while keeping worst-case per-cycle
+// network calls bounded; any excess candidates are simply retried on the next
+// sync cycle (see collectPendingEvictions below).
+const MAX_PENDING_EVICTION_LOOKUPS = 20;
+
+/**
+ * Correlates pending operations with confirmed operations via an on-chain lookup.
+ *
+ * A pending op is keyed by the broadcast/execution id; a reverted tx is listed by the
+ * indexer under a fee-derived transaction_id, so the two op ids never match and the
+ * pending op cannot be evicted by id alone. Looking the pending op's hash up via
+ * getTransactionById resolves the on-chain identity of the tx and yields two
+ * correlation keys:
+ *
+ * - the resolved transaction id (`details.id`) — for a reverted tx the node answers
+ *   the original broadcast id with the fee-derived tx (type "fee", no `execution`
+ *   field), whose id is exactly the confirmed failed op's hash;
+ * - the execution transition id — stable between broadcast and confirmed forms when
+ *   the node does return an execution.
+ *
+ * When either key points at a confirmed op with a *different* op id, the pending op
+ * is marked for eviction (the same-id case is already handled by postSync's id match).
+ *
+ * Any lookup failure / no match leaves the pending op untouched.
+ *
+ * The eviction logic is not staking-specific: a reverted plain send hits the same
+ * account-nonce/eviction problem as a reverted stake transaction, so candidates
+ * cannot be narrowed by operation/function type without regressing plain sends.
+ * Instead, the per-tx `getTransactionById` lookup — the expensive part — is only
+ * performed for pending ops that genuinely need it: those whose id doesn't already
+ * appear among confirmedOps. When a pending op's id is already present in
+ * confirmedOps, postSync's own id-match already evicts it regardless of what this
+ * function returns, so looking it up here would be a redundant network call.
+ */
+export async function collectPendingEvictions(
+  config: AleoCoinConfig,
+  confirmedOps: AleoOperation[],
+  pendingOps: AleoOperation[],
+): Promise<Set<string>> {
+  const evict = new Set<string>();
+  if (pendingOps.length === 0) return evict;
+
+  // transitionId -> confirmed op ids carrying it
+  const confirmedByTransition = new Map<string, Set<string>>();
+  // tx hash -> confirmed op ids carrying it
+  const confirmedByHash = new Map<string, Set<string>>();
+  // confirmed op ids, used to skip lookups already resolvable by id match (postSync)
+  const confirmedIds = new Set<string>();
+  for (const op of confirmedOps) {
+    confirmedIds.add(op.id);
+    const t = op.extra?.transitionId;
+    if (t) {
+      const set = confirmedByTransition.get(t) ?? new Set<string>();
+      set.add(op.id);
+      confirmedByTransition.set(t, set);
+    }
+    if (op.hash) {
+      const set = confirmedByHash.get(op.hash) ?? new Set<string>();
+      set.add(op.id);
+      confirmedByHash.set(op.hash, set);
+    }
+  }
+
+  // Only ops that are not already confirmed under the same id need the on-chain
+  // lookup — those are the ones postSync cannot already resolve by id match.
+  // Cap the number of lookups performed per sync cycle: a large backlog of
+  // stuck pending ops would otherwise fire one getTransactionById RPC per
+  // candidate on every sync, degrading sync performance. Candidates beyond
+  // the cap are simply retried on subsequent sync cycles, since sync re-runs
+  // periodically and will pick them up then.
+  const candidates = pendingOps
+    .filter(op => !!op.hash && !confirmedIds.has(op.id))
+    .slice(0, MAX_PENDING_EVICTION_LOOKUPS);
+
+  await Promise.allSettled(
+    candidates.map(async pendingOp => {
+      const details = await apiClient.getTransactionById(config, pendingOp.hash);
+      const transitionId = details.execution?.transitions?.[0]?.id;
+      const confirmedIds = new Set<string>([
+        ...(details.id ? (confirmedByHash.get(details.id) ?? []) : []),
+        ...(transitionId ? (confirmedByTransition.get(transitionId) ?? []) : []),
+      ]);
+      for (const id of confirmedIds) {
+        if (id !== pendingOp.id) {
+          evict.add(pendingOp.id);
+          break;
+        }
+      }
+    }),
+  );
+
+  return evict;
+}
+
 /**
  * Aleo doesn't have a per-account transaction nonce, so there is no natural value
  * to assign to `transactionSequenceNumber` on confirmed operations.
@@ -742,25 +921,37 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
  * the corresponding pending operation is no longer needed.
  */
 export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccount {
-  const pendingOperations = synced.pendingOperations ?? [];
-  const pendingSubOperations = (synced.subAccounts ?? []).flatMap(sa => sa.pendingOperations ?? []);
+  // Consume the transient eviction ids carried on the synced shape by
+  // performPublicSync, and strip the field so it never reaches persisted state.
+  // Only clone to strip it when it is actually present, so an unchanged account
+  // keeps its referential identity (sync stays a no-op).
+  const { pendingEvictionIds, ...rest } = synced;
+  const evict = new Set(pendingEvictionIds ?? []);
+  const account = pendingEvictionIds === undefined ? synced : (rest as AleoAccount);
+
+  const pendingOperations = account.pendingOperations ?? [];
+  const pendingSubOperations = (account.subAccounts ?? []).flatMap(
+    sa => sa.pendingOperations ?? [],
+  );
 
   if (pendingOperations.length === 0 && pendingSubOperations.length === 0) {
-    return synced;
+    return account;
   }
 
   const confirmedIds = new Set([
-    ...synced.operations.map(o => o.id),
-    ...(synced.subAccounts ?? []).flatMap(sa => sa.operations.map(o => o.id)),
+    ...account.operations.map(o => o.id),
+    ...(account.subAccounts ?? []).flatMap(sa => sa.operations.map(o => o.id)),
   ]);
 
+  const shouldDrop = (id: string) => confirmedIds.has(id) || evict.has(id);
+
   return {
-    ...synced,
-    pendingOperations: pendingOperations.filter(po => !confirmedIds.has(po.id)),
-    ...(synced.subAccounts && {
-      subAccounts: synced.subAccounts.map(sa => ({
+    ...account,
+    pendingOperations: pendingOperations.filter(po => !shouldDrop(po.id)),
+    ...(account.subAccounts && {
+      subAccounts: account.subAccounts.map(sa => ({
         ...sa,
-        pendingOperations: (sa.pendingOperations ?? []).filter(po => !confirmedIds.has(po.id)),
+        pendingOperations: (sa.pendingOperations ?? []).filter(po => !shouldDrop(po.id)),
       })),
     }),
   };

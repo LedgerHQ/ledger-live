@@ -1,11 +1,12 @@
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
 export { craftTransaction } from "./craftTransaction";
-export { estimateFees } from "./estimateFees";
+export { estimateFees, estimateFeesBN } from "./estimateFees";
 export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
+export { getStakingPosition } from "./getStakingPosition";
 export { getValidators } from "./getValidators";
-export { estimateNetRate } from "./utils";
+export { estimateGrossRate, estimateNetRate, parseTotalSupply } from "./utils";
 export { lastBlock } from "./lastBlock";
 export { register } from "./register";
 export { validateIntent } from "./validateIntent";
