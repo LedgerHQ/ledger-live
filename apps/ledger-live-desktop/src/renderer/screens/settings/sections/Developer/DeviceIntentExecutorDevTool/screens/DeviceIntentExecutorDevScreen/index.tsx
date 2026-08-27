@@ -6,13 +6,13 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorState,
 } from "@features/platform-device-intent";
-import {
-  registerExternalAddressIntentPlatformDefinition,
-  type ContactIntentResult,
-  type RegisterExternalAddressIntentInput,
-  type RegisterExternalAddressJobState,
-  type RegisterExternalAddressResult,
+import type {
+  ContactIntentResult,
+  RegisterExternalAddressIntentInput,
+  RegisterExternalAddressJobState,
+  RegisterExternalAddressResult,
 } from "@features/platform-contacts/device/intents";
+import { registerExternalAddressIntentLWDDefinition } from "LLD/features/Contacts/deviceIntents/registerExternalAddressIntent/intentLWDDefinition";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {
@@ -65,7 +65,7 @@ const CONTACTS_VALIDATION_INPUT: RegisterExternalAddressIntentInput = {
   chainId: 1,
 };
 const contactsValidationIntent = createIntent(
-  registerExternalAddressIntentPlatformDefinition,
+  registerExternalAddressIntentLWDDefinition,
   CONTACTS_VALIDATION_INPUT,
 );
 
