@@ -1,4 +1,24 @@
 {
+  "internetComputer" : {
+    "stakeBanner" : {
+      "stakeICP" : {
+        "title" : "Stakez vos ICP",
+        "description" : "Stakez des ICP et recevez des récompenses en participant à la gouvernance du réseau.",
+        "cta" : "Staker mes ICP"
+      }
+    },
+    "headerManageActions" : {
+      "manageNeurons" : {
+        "title" : "Gérez vos neurones"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalance" : "Solde de staking",
+      "stakedBalanceTooltip" : "Montant total des tokens ICP actuellement stakés dans des neurones. Les ICP mis en staking génèrent des récompenses de vote et permettent de participer à la gouvernance du réseau.",
+      "totalMaturity" : "Maturité totale",
+      "totalMaturityTooltip" : "Le total des récompenses générées par le staking, incluant à la fois les récompenses (\"maturity\") stakées et liquides. Vous pouvez soit restaker ces récompenses, soit les récupérer sous forme d’ICP liquides."
+    }
+  },
   "buyCurrency" : {
     "buyCTA" : "Acheter des {{ currencyNameOrTicker }}"
   },
@@ -752,7 +772,17 @@
       "title" : "Le montant minimal est de 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "Vous devez conserver au moins 1 SUI en staking"
+      "title" : "Déstakez le montant total, ou conservez au moins 1 SUI en staking"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "Détails du staking indisponibles. Veuillez resynchroniser votre compte et réessayer"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "Le montant dépasse le montant en staking sélectionné"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Mettez à jour votre app Sui",
+      "description" : "L’app Sui sur votre appareil Ledger ne peut pas signer de transfert pour votre adresse SUI. Veuillez la mettre à jour et réessayer."
     },
     "PasswordIncorrect" : {
       "title" : "Mot de passe incorrect",
@@ -1489,6 +1519,25 @@
     "confirm" : "Voulez-vous vraiment vous déconnecter ?",
     "disclaimer" : "Toutes les données du compte seront supprimées de votre téléphone.",
     "action" : "Se déconnecter"
+  },
+  "appLock" : {
+    "field" : {
+      "label" : "Saisissez votre mot de passe",
+      "reveal" : "Afficher le mot de passe",
+      "hide" : "Masquer le mot de passe",
+      "minLength" : "Doit contenir au moins 6 caractères"
+    },
+    "setupPassword" : {
+      "title" : "Saisir un mot de passe",
+      "description" : "Vous aurez besoin de ce mot de passe à chaque fois que vous ouvrez l’application. Si vous le perdez, réinstallez l’application et restaurez votre wallet.",
+      "cta" : "Continuer"
+    },
+    "confirmPassword" : {
+      "title" : "Confirmer le mot de passe",
+      "description" : "Vous aurez besoin de ce mot de passe à chaque fois que vous ouvrez l’application. Si vous le perdez, réinstallez l’application et restaurez votre wallet.",
+      "mismatch" : "Les mots de passe de correspondent pas.",
+      "cta" : "Confirmer"
+    }
   },
   "auth" : {
     "failed" : {
@@ -4499,10 +4548,13 @@
       },
       "placeholder" : "Entrer une adresse ou un ENS",
       "placeholderNoENS" : "Entrer l’adresse",
+      "placeholderWithContacts" : "Entrer une adresse, un ENS ou un contact",
+      "placeholderNoEnsWithContacts" : "Entrer une adresse ou un contact",
       "pasteFromClipboard" : {
         "title" : "Coller depuis le presse-papiers",
         "cta" : "Coller"
       },
+      "contactsWillAppear" : "Vos contacts apparaîtront ici.",
       "editRecipientAccessibilityLabel" : "Modifier le bénéficiaire",
       "sendTo" : "Envoyer à {{address}}",
       "addressMatched" : "Adresse correspondante",
@@ -4510,6 +4562,10 @@
       "account" : "Compte",
       "alreadyUsed" : "Déjà utilisée · {{date}}",
       "notInRecentHistory" : "Pas dans votre historique récent",
+      "addressBookUnsupported" : {
+        "title" : "{{family}} n’est pas encore pris en charge",
+        "description" : "Vous ne pouvez pas encore ajouter d’adresse {{family}} à vos contacts. Notre catalogue s’enrichit régulièrement."
+      },
       "relativeDate" : {
         "justNow" : "À l’instant",
         "minutesAgo_one" : "Il y a 1 min.",
@@ -5051,29 +5107,28 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "Appareil verrouillé",
-        "description" : "Veuillez déverrouiller votre appareil pour continuer."
+        "title" : "Déverrouillez votre appareil Ledger, puis sélectionnez Réessayer ci-dessous"
       },
       "unlockDevice" : {
         "title" : "Déverrouillez votre {{productName}}"
       },
       "continueOnDevice" : {
         "title" : "Continuez sur votre {{productName}}",
-        "description" : "Consultez les instructions sur son écran sécurisé."
+        "description" : "Consultez les instructions sur l’écran sécurisé de votre appareil."
       }
     },
     "errors" : {
       "connectionError" : {
-        "title" : "Appareil déconnecté",
-        "description" : "Votre appareil Ledger n’est plus connecté. Assurez-vous qu’il est allumé, à portée du Bluetooth ou branché."
+        "title" : "Appareil Ledger déconnecté",
+        "description" : "Assurez-vous qu’il est allumé, à portée du Bluetooth ou branché."
       },
       "intentError" : {
         "title" : "Erreur inconnue",
-        "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+        "description" : "Réessayez ou contactez l’Assistance Ledger si le problème persiste."
       },
       "invalidOperation" : {
-        "title" : "État invalide",
-        "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+        "title" : "Une erreur est survenue",
+        "description" : "Réessayez ou contactez l’Assistance Ledger si le problème persiste."
       }
     },
     "initialization" : {
@@ -5089,42 +5144,42 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "Action rejetée sur l’appareil"
+          "title" : "Opération rejetée sur votre appareil Ledger"
         },
         "deviceBusy" : {
-          "title" : "Action en attente sur votre appareil Ledger",
-          "description" : "Terminez-la et sélectionnez Réessayer."
+          "title" : "Action requise sur votre appareil Ledger",
+          "description" : "Veuillez terminer l’action sur votre appareil, puis sélectionner Réessayer ci-dessous."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Votre Ledger n’est pas encore prêt à être utilisé.",
-          "description" : "Vous devez d’abord configurer votre {{productName}}. Nous vous guiderons à chaque étape."
+          "title" : "Votre appareil Ledger doit être configuré",
+          "description" : "Configurez-le pour continuer."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Mise à jour de Ledger OS requise"
         },
         "unsupportedApplication" : {
           "title" : "Fonctionnalité non prise en charge",
-          "description" : "L’app requise pour cette opération n’est actuellement pas disponible pour votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
+          "description" : "L’app requise pour cette action n’est pas prise en charge par votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
         },
         "unsupportedFeature" : {
           "title" : "Fonctionnalité non prise en charge",
-          "description" : "L’app requise pour cette opération n’est actuellement pas disponible pour votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
+          "description" : "L’app requise pour cette action n’est pas prise en charge par votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
         },
         "wrongDeviceForAccount" : {
-          "title" : "Mauvaise phrase de récupération",
-          "description" : "Cet appareil Ledger n’est pas configuré avec la phrase de récupération associée au compte sélectionné. Vérifiez que vous utilisez le bon appareil."
+          "title" : "Utilisez l’appareil Ledger avec lequel vous avez initialement configuré ce compte",
+          "description" : "Cet appareil Ledger n’est pas configuré avec la phrase de récupération secrète associée au compte crypto sélectionné."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "Mémoire de l’appareil insuffisante",
-          "description" : "La mémoire de votre appareil est insuffisante. Veuillez désinstaller des apps, puis réessayer."
+          "title" : "Désinstallez des apps pour libérer de la mémoire sur votre appareil Ledger",
+          "description" : "La mémoire de votre appareil est insuffisante."
         }
       },
       "cta" : {
         "openMyLedger" : "Ouvrir My Ledger",
         "goToMyLedger" : "Accéder à My Ledger",
-        "setupDevice" : "Configurer un appareil",
+        "setupDevice" : "Configurer mon appareil",
         "updateLedgerOs" : "Mettre à jour Ledger OS",
         "cancelOperation" : "Annuler",
         "contactLedgerSupport" : "Contacter l’Assistance Ledger"
@@ -5138,7 +5193,7 @@
       },
       "states" : {
         "connecting" : {
-          "title" : "Chargement"
+          "title" : "Connexion à votre appareil Ledger"
         },
         "connectionError" : {
           "errors" : {
@@ -5158,7 +5213,7 @@
             },
             "unknown" : {
               "title" : "Échec de l’appairage",
-              "description" : "Réessayez ou consultez notre article de dépannage Bluetooth ci-dessous.",
+              "description" : "Réessayez ou consultez notre article de dépannage Bluetooth ci-dessous pour obtenir de l’aide.",
               "tip" : "Assurez-vous que votre appareil est déverrouillé.",
               "cta" : {
                 "retry" : "Réessayer",
@@ -5173,24 +5228,29 @@
         "discoveryError" : {
           "errors" : {
             "bluetoothPermissionDeniedPromptable" : {
-              "title" : "Autoriser l’accès au Bluetooth",
-              "description" : "Autorisez le Bluetooth à scanner les appareils Ledger à proximité.",
+              "title" : "Connectez votre appareil Ledger via Bluetooth",
+              "description" : "Ledger Wallet a besoin du Bluetooth pour détecter et s’appairer avec les appareils Ledger à proximité. Aucune donnée n’est partagée via Bluetooth.",
               "cta" : {
-                "retry" : "Autoriser",
+                "retry" : "Autoriser le Bluetooth",
                 "ignore" : "Continuer via USB"
               }
             },
             "bluetoothPermissionDeniedManualSettings" : {
-              "title" : "Autoriser l’accès au Bluetooth",
-              "description" : "Autorisation Bluetooth requise. Accédez à Paramètres → Apps → Ledger Wallet → Autorisations → Appareils à proximité, puis revenez ici.",
+              "title" : "Activez le Bluetooth dans les Paramètres de votre téléphone",
+              "description" : "Ledger Wallet a besoin de l’autorisation Bluetooth pour trouver votre appareil Ledger.\n\nAccédez à Paramètres → Apps → Ledger Wallet → Autorisations → Appareils à proximité, puis revenez ici.",
               "cta" : {
                 "retry" : "C’est fait, réessayer",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "bluetoothPermissionUnauthorizedManualSettings" : {
-              "title" : "Autoriser l’accès au Bluetooth",
-              "description" : "Ledger Wallet a besoin de l’autorisation Bluetooth pour trouver votre appareil. Activez-la dans les Paramètres.",
+              "title" : "Activez le Bluetooth dans les Paramètres de votre téléphone",
+              "description" : {
+                "platform" : {
+                  "ios" : "Ledger Wallet a besoin de l’autorisation Bluetooth pour trouver votre appareil. Ouvrez Paramètres → Ledger Wallet. Activez le Bluetooth, puis appuyez sur le bouton ci-dessous.",
+                  "android" : "Ledger Wallet a besoin de l’autorisation Bluetooth pour trouver votre appareil Ledger.\n\nAccédez à Paramètres → Apps → Ledger Wallet → Bluetooth, puis revenez ici."
+                }
+              },
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5198,22 +5258,22 @@
                   },
                   "android" : {
                     "retry" : "C’est fait, réessayer",
-                    "ignore" : "Continuer via USB"
+                    "ignore" : "Continuer plutôt via USB"
                   }
                 }
               }
             },
             "bluetoothDisabledPromptable" : {
-              "title" : "Activer le Bluetooth",
-              "description" : "Bluetooth est désactivé. Activez-le pour trouver votre appareil Ledger.",
+              "title" : "Activez le Bluetooth sur votre téléphone",
+              "description" : "Activez-le pour scanner les appareils Ledger à proximité.",
               "cta" : {
                 "retry" : "Activer le Bluetooth",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "bluetoothDisabledManualAction" : {
-              "title" : "Activer le Bluetooth",
-              "description" : "Bluetooth est désactivé. Activez-le dans Paramètres → Bluetooth, puis revenez ici.",
+              "title" : "Activez le Bluetooth sur votre téléphone",
+              "description" : "Activez le Bluetooth, puis revenez pour réessayer. Ouvrez les Paramètres → Bluetooth. Activez le commutateur Bluetooth, puis sélectionnez le bouton ci-dessous.",
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5221,7 +5281,7 @@
                   },
                   "android" : {
                     "retry" : "C’est fait, réessayer",
-                    "ignore" : "Continuer via USB"
+                    "ignore" : "Continuer plutôt via USB"
                   }
                 }
               }
@@ -5246,47 +5306,47 @@
               }
             },
             "locationPermissionDeniedPromptable" : {
-              "title" : "Autoriser l’accès à la localisation",
-              "description" : "Sur Android, l’accès à la localisation est nécessaire pour trouver les appareils via Bluetooth.",
+              "title" : "Sur Android, la localisation doit être activée pour trouver les appareils via Bluetooth.",
+              "description" : "Ledger n’accède pas à votre localisation et ne la stocke pas.",
               "cta" : {
-                "retry" : "Autoriser",
-                "ignore" : "Continuer via USB"
+                "retry" : "Activer",
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "locationPermissionDeniedManualSettings" : {
-              "title" : "Autoriser l’accès à la localisation",
-              "description" : "L’accès à la localisation est nécessaire pour trouver les appareils via Bluetooth. Accédez à Paramètres → Apps → Ledger Wallet → Autorisations → Localisation, puis revenez ici.",
+              "title" : "Activez la localisation dans les Paramètres",
+              "description" : "Android l’exige pour scanner les appareils Bluetooth à proximité. Accédez à Paramètres → Apps → Ledger Wallet → Autorisations → Localisation. Choisissez Autoriser, puis sélectionnez le bouton ci-dessous. Ledger n’accède pas à votre localisation et ne la stocke pas.",
               "cta" : {
                 "retry" : "C’est fait, réessayer",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "locationDisabledPromptable" : {
-              "title" : "Activer la localisation",
-              "description" : "La localisation est désactivée. Activez-la pour trouver des appareils via Bluetooth.",
+              "title" : "Activez la localisation pour scanner les appareils Bluetooth",
+              "description" : "Android l’exige pour scanner les appareils Bluetooth à proximité. Ledger n’accède pas à votre localisation et ne la stocke pas.",
               "cta" : {
                 "retry" : "Activer la localisation",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "locationDisabledManualAction" : {
-              "title" : "Activer la localisation",
-              "description" : "La localisation est désactivée. Activez-la depuis Paramètres → Localisation, puis revenez ici.",
+              "title" : "La localisation est nécessaire pour scanner les appareils Bluetooth à proximité",
+              "description" : "Ouvrez Paramètres → Localisation. Activez la localisation, puis revenez ici et sélectionnez le bouton ci-dessous. Ledger n’accède jamais à votre localisation et ne la stocke pas.",
               "cta" : {
                 "retry" : "C’est fait, réessayer",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "locationServicePermissionMissing" : {
-              "title" : "Autoriser l’accès à la localisation",
-              "description" : "L’accès à la localisation ne semble pas être autorisé. Appuyez ci-dessous pour réessayer.",
+              "title" : "L’autorisation d’accès à la localisation n’a pas pu être confirmée",
+              "description" : "Android l’exige pour scanner les appareils Bluetooth à proximité. Sélectionnez Réessayer : cela résout souvent le problème. Si ce n’est pas le cas, vérifiez Paramètres → Apps → Ledger Wallet → Autorisations → Localisation. Ledger n’accède pas à votre localisation et ne la stocke pas.",
               "cta" : {
                 "retry" : "Réessayer",
-                "ignore" : "Continuer via USB"
+                "ignore" : "Continuer plutôt via USB"
               }
             },
             "unknown" : {
-              "title" : "Une erreur est survenue",
+              "title" : "Échec de la recherche Bluetooth",
               "description" : "Échec du lancement de la recherche Bluetooth. Veuillez réessayer ou contacter l’Assistance Ledger.",
               "cta" : {
                 "retry" : "Réessayer"
@@ -5299,7 +5359,7 @@
         },
         "noKnownDevice" : {
           "title" : "Appareil Ledger requis",
-          "description" : "Pour continuer, configurez ou connectez votre appareil.",
+          "description" : "Pour continuer, configurez ou connectez votre appareil Ledger.",
           "connectLedgerDevice" : "Connecter un appareil Ledger",
           "noLedgerDevice" : "Je n’ai pas d’appareil Ledger"
         },
@@ -9520,8 +9580,29 @@
     }
   },
   "lazyOnboardingBanner" : {
-    "title" : "Découvrez les appareils Ledger",
-    "description" : "Explorez les derniers modèles et accessoires."
+    "title" : "Le choix de millions d’utilisateurs",
+    "description" : "Pour avoir l’esprit tranquille à chaque opération."
+  },
+  "lazyOnboardingTour" : {
+    "buyCta" : "Acheter un appareil",
+    "slides" : {
+      "whoControls" : {
+        "title" : "Vos cryptos sont-elles en sécurité ?",
+        "subtitle" : "Les plateformes gardent vos actifs. Les wallets applicatifs, vos clés en ligne. Vous êtes vulnérable."
+      },
+      "takeBackControl" : {
+        "title" : "Reprenez le contrôle",
+        "subtitle" : "Un appareil Ledger conserve l’accès à vos cryptos hors ligne, à l’abri des pirates et sous votre contrôle."
+      },
+      "nothingMoves" : {
+        "title" : "Vous validez chaque action",
+        "subtitle" : "Chaque transaction s’affiche sur l’écran sécurisé de votre appareil Ledger pour validation."
+      },
+      "startToday" : {
+        "title" : "Votre liberté financière commence ici",
+        "subtitle" : "Gérez vos cryptos avec la sécurité et le contrôle d’un appareil Ledger."
+      }
+    }
   },
   "marketBanner" : {
     "title" : "Marché",
@@ -9601,13 +9682,16 @@
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
     "selectAccount" : "Sélectionner un compte",
+    "selectAccountPerpsTitle" : "Sélectionner un compte Hyperliquid",
+    "selectAccountPerpsDescription" : "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
+    "selectDepositCurrencyTitle" : "Sélectionner l’actif à placer",
+    "selectDepositCurrencyDescription" : "Choisissez l’actif pris en charge de votre choix. Un échange automatique s’exécute si nécessaire.",
     "searchPlaceholder" : "Rechercher par nom ou adresse",
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
     "emptyAccounts" : "Vous n’avez pas encore de comptes {{network}}. Veuillez en ajouter un pour continuer.",
     "addAccount" : "Ajouter un compte",
-    "perpetualsBanner" : "Uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
       "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
@@ -9965,6 +10049,63 @@
     "card" : "Carte",
     "paytab" : "Payer"
   },
+  "payTab" : {
+    "featureTour" : {
+      "title" : "Payez et faites-vous payer",
+      "description" : "Les stablecoins intègrent vos cryptos directement dans vos dépenses de tous les jours.",
+      "cta" : "Compris",
+      "rows" : {
+        "global" : {
+          "title" : "Paiements dans le monde entier",
+          "description" : "Profitez de faibles frais de réseau."
+        },
+        "volatility" : {
+          "title" : "Volatilité minimale",
+          "description" : "Les stablecoins sont basés sur les monnaies fiduciaires."
+        },
+        "card" : {
+          "title" : "Cashback à 1% sur les dépenses par carte",
+          "description" : "Payez avec vos USDC, USDT, BTC, ETH et plus."
+        }
+      }
+    },
+    "balance" : {
+      "emptyTitle" : "Payez et faites-vous payer",
+      "emptyDescription" : "Commencez par déposer des stablecoins sur votre wallet.",
+      "filter" : {
+        "allStablecoins" : "Tous les stablecoins",
+        "dialogTitle" : "Filtrer le solde",
+        "dialogDescription" : "Payez partout dans le monde avec vos stablecoins : profitez de faibles frais et d’une volatilité minime.",
+        "dialogBanner" : "Gérez tous vos autres actifs sur votre page Accueil",
+        "confirm" : "Confirmer"
+      }
+    },
+    "actions" : {
+      "deposit" : "Ajouter un stablecoin",
+      "request" : "Demander"
+    },
+    "deposit" : {
+      "title" : "Ajouter des stablecoins",
+      "options" : {
+        "bankTransfer" : {
+          "title" : "Virement bancaire",
+          "description" : "Transférez des EUR ou des USD pour recevoir des stablecoins."
+        },
+        "swap" : {
+          "title" : "Échange crypto",
+          "description" : "Échangez vos cryptos contre des stablecoins."
+        },
+        "receive" : {
+          "title" : "Adresse crypto",
+          "description" : "Recevez des stablecoins depuis un autre wallet."
+        },
+        "buy" : {
+          "title" : "Achat",
+          "description" : "Achetez des stablecoins avec une carte bancaire."
+        }
+      }
+    }
+  },
   "syncIndicator" : {
     "accessibilityLabel" : {
       "error" : "Erreur de synchronisation",
@@ -10032,7 +10173,8 @@
       },
       "recoveryKey" : {
         "title" : "Ledger Recovery Key",
-        "description" : "Carte à puce protégée par code PIN"
+        "description" : "Carte à puce protégée par code PIN",
+        "incompatible" : "Non compatible avec votre appareil"
       },
       "secretRecoveryPhrase" : {
         "title" : "Sauvegardes en métal",
@@ -10221,6 +10363,14 @@
       "duplicateLabel" : "Ce nom est déjà utilisé pour ce contact.",
       "labelTooLong" : "Ce nom d’adresse est trop long."
     },
+    "addAddressReview" : {
+      "title" : "Vérifier l’adresse",
+      "addressLabel" : "Adresse",
+      "currencyLabel" : "Monnaie",
+      "networkLabel" : "Réseau",
+      "nameLabel" : "Nom de l’adresse",
+      "continue" : "Confirmer l’adresse"
+    },
     "addressCount_zero" : "0 adresse",
     "addressCount_one" : "{{count}} adresse",
     "addressCount_other" : "{{count}} adresses",
@@ -10235,10 +10385,10 @@
       "ledgerWalletAddresses" : "Adresses Ledger Wallet",
       "myAddresses" : "Mes adresses",
       "emptyState" : {
-        "title" : "Aucune adresse pour le moment",
+        "contactTitle" : "Aucune adresse enregistrée pour {{name}}",
         "meTitle" : "Enregistrez vos adresses",
         "meDescription" : "Enregistrez les adresses externes que vous possédez sur d’autres wallets ou des plateformes d’échange. La prochaine fois que vous effectuez un envoi vers une de vos adresses, votre appareil Ledger affichera le nom que vous avez choisi.",
-        "contactDescription" : "Enregistrez une adresse de wallet pour envoyer à {{name}}."
+        "contactDescription" : "Enregistrez des adresses de wallet pour envoyer des cryptos plus facilement grâce à un nom personnalisé."
       }
     },
     "addressDetail" : {
@@ -10306,7 +10456,6 @@
       "title" : "Découvrez les contacts",
       "description" : "Votre répertoire crypto : enregistrez les wallets vers lesquels vous transférez des actifs, en un seul endroit.",
       "primaryAction" : "Explorer",
-      "secondaryAction" : "Plus tard",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Enregistrez vos adresses",
