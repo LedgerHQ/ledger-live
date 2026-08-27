@@ -40,6 +40,7 @@ export function useCompleteLazyOnboarding() {
           },
         };
 
+      require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
       dispatch(completeOnboarding());
       dispatch(setOnboardingHasDevice(false));
       dispatch(setReadOnlyMode(true));

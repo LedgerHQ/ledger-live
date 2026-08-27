@@ -8,23 +8,10 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
-import Accounts from "~/screens/Accounts";
-import Account from "~/screens/Account";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
-import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";
-import ReadOnlyAssets from "~/screens/Portfolio/ReadOnlyAssets";
-
-import Asset from "~/screens/WalletCentricAsset";
-import ReadOnlyAsset from "~/screens/WalletCentricAsset/ReadOnly";
-import Assets from "~/screens/Assets";
-
-import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
-
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
-import AccountsList from "LLM/features/Accounts/screens/AccountsList";
-import { CryptoScreen } from "LLM/features/Crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
@@ -37,9 +24,9 @@ import {
 } from "@react-navigation/native";
 import { TrackingEvent } from "LLM/features/Accounts/enums";
 import AccountsListHeaderRight from "LLM/features/LedgerSyncEntryPoint/components/AccountsListHeaderRight";
-import { CryptoAddressesScreen } from "LLM/features/CryptoAddresses";
 import { useTranslation } from "~/context/Locale";
 import type { LumenNavBarScreenOptions } from "LLM/components/Navigation";
+import { lazyNamed, lazyScreen } from "./lazyScreen";
 
 const Stack = createNativeStackNavigator<AccountsNavigatorParamList>();
 
@@ -133,7 +120,14 @@ export default function AccountsNavigator() {
     <Stack.Navigator>
       <Stack.Screen
         name={ScreenName.Accounts}
-        component={readOnlyModeEnabled ? ReadOnlyAccounts : Accounts}
+        getComponent={
+          readOnlyModeEnabled
+            ? lazyScreen(
+                () =>
+                  require("~/screens/Accounts/ReadOnly/ReadOnlyAccounts") as typeof import("~/screens/Accounts/ReadOnly/ReadOnlyAccounts"),
+              )
+            : lazyScreen(() => require("~/screens/Accounts") as typeof import("~/screens/Accounts"))
+        }
         options={{
           ...stackNavConfig,
           headerShown: false,
@@ -141,7 +135,14 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+        getComponent={
+          readOnlyModeEnabled
+            ? lazyScreen(
+                () =>
+                  require("~/screens/Account/ReadOnly/ReadOnlyAccount") as typeof import("~/screens/Account/ReadOnly/ReadOnlyAccount"),
+              )
+            : lazyScreen(() => require("~/screens/Account") as typeof import("~/screens/Account"))
+        }
         options={{
           ...stackNavConfig,
           headerShown: false,
@@ -149,7 +150,14 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Assets}
-        component={readOnlyModeEnabled ? ReadOnlyAssets : Assets}
+        getComponent={
+          readOnlyModeEnabled
+            ? lazyScreen(
+                () =>
+                  require("~/screens/Portfolio/ReadOnlyAssets") as typeof import("~/screens/Portfolio/ReadOnlyAssets"),
+              )
+            : lazyScreen(() => require("~/screens/Assets") as typeof import("~/screens/Assets"))
+        }
         options={{
           ...stackNavConfig,
           headerShown: false,
@@ -158,7 +166,10 @@ export default function AccountsNavigator() {
       {accountListUIFF?.enabled && (
         <Stack.Screen
           name={ScreenName.AccountsList}
-          component={AccountsList}
+          getComponent={lazyScreen(
+            () =>
+              require("LLM/features/Accounts/screens/AccountsList") as typeof import("LLM/features/Accounts/screens/AccountsList"),
+          )}
           options={{
             ...stackNavConfig,
             headerTitle: "",
@@ -169,17 +180,35 @@ export default function AccountsNavigator() {
       )}
       <Stack.Screen
         name={ScreenName.CryptoAddresses}
-        component={CryptoAddressesScreen}
+        getComponent={lazyNamed(
+          () =>
+            (
+              require("LLM/features/CryptoAddresses") as typeof import("LLM/features/CryptoAddresses")
+            ).CryptoAddressesScreen,
+        )}
         options={cryptoAddressesScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.Crypto}
-        component={CryptoScreen}
+        getComponent={lazyNamed(
+          () =>
+            (require("LLM/features/Crypto") as typeof import("LLM/features/Crypto")).CryptoScreen,
+        )}
         options={getCryptoScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.Asset}
-        component={readOnlyModeEnabled ? ReadOnlyAsset : Asset}
+        getComponent={
+          readOnlyModeEnabled
+            ? lazyScreen(
+                () =>
+                  require("~/screens/WalletCentricAsset/ReadOnly") as typeof import("~/screens/WalletCentricAsset/ReadOnly"),
+              )
+            : lazyScreen(
+                () =>
+                  require("~/screens/WalletCentricAsset") as typeof import("~/screens/WalletCentricAsset"),
+              )
+        }
         options={{
           ...stackNavConfig,
           headerShown: false,

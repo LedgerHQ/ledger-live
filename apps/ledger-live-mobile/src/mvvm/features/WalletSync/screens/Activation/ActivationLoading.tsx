@@ -41,6 +41,7 @@ export function ActivationLoading({ route }: Props) {
 
   useEffect(() => {
     if (!hasCompletedOnboarding && onboardingType !== OnboardingType.setupNew) {
+      require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
       dispatch(completeOnboarding());
     }
     dispatch(setOnboardingHasDevice(true));

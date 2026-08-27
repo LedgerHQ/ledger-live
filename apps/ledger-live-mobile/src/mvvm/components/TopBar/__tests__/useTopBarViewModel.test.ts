@@ -16,6 +16,10 @@ jest.mock("@react-navigation/native", () => ({
 
 jest.mock("../hooks/useSyncIndicator");
 
+jest.mock("~/components/RootNavigator/lazyScreen", () => ({
+  preloadSettingsNavigator: jest.fn(),
+}));
+
 const mockedUseSyncIndicator = jest.mocked(useSyncIndicator);
 
 const defaultSyncState = {

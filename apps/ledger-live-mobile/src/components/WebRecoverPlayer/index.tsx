@@ -86,6 +86,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   }, [headerShown, manifest, navigation, webviewState]);
 
   const handleBypassOnboarding = useCallback(() => {
+    require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(false));
     dispatch(setHasOrderedNano(false));
