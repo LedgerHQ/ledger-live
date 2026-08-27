@@ -7,19 +7,15 @@ import type {
   Block,
   BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   StakingTransactionIntent,
   TransactionIntent,
   TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { type VechainContext, type VechainCurrencyConfig } from "../config";
 import {
@@ -39,7 +35,18 @@ import {
 // CoinModuleApi (Alpaca) factory for VET + VTHO. Each method resolves its config from
 // `context.config()` and threads it explicitly to the logic/network layers — the module never
 // seeds or reads the coin-config singleton on this path (the classic bridge still does).
-export function createApi(): CoinModuleApi<VechainCurrencyConfig> {
+//
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed:
+//   - `call`, `register` — the module implements neither.
+//   - `craftRawTransaction` — the chain takes no externally-built transaction.
+//   - `getStakes`, `getRewards`, `getValidators` — VeChain staking is not supported here.
+//   - `getNextSequence` — not applicable to VeChain's account model (replay protection uses the
+//     transaction's blockRef/nonce, not a per-account sequence).
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+export function createApi() {
   return {
     lastBlock: (context: VechainContext): Promise<BlockInfo> => lastBlock(context),
     getBlockInfo: (context: VechainContext, height: number): Promise<BlockInfo> =>
@@ -93,44 +100,5 @@ export function createApi(): CoinModuleApi<VechainCurrencyConfig> {
       address: string,
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
-    // --- Not applicable / not supported for VeChain ---
-    getNextSequence: (_context: VechainContext, _address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not applicable for Vechain");
-    },
-    craftRawTransaction: (
-      _context: VechainContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    call: (_context: VechainContext) => {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    getStakes: (
-      _context: VechainContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: (
-      _context: VechainContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators: (
-      _context: VechainContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> => {
-      throw new Error("getValidators is not supported");
-    },
-  };
+  } satisfies CoinModuleImpl<VechainCurrencyConfig>;
 }
