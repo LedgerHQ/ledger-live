@@ -7994,6 +7994,14 @@
       "title": "Amount too large for one transaction",
       "description": "Your private records can't cover this amount in a single transaction. Try a smaller amount."
     },
+    "AleoBondAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
       "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
@@ -8005,6 +8013,14 @@
     "AleoFeeRecordInsufficientBalance": {
       "title": "No private record can cover the network fee.",
       "description": "Select a different record for the transfer amount or top up your balance with additional funds."
+    },
+    "AleoNoClaimableAmount": {
+      "title": "Nothing to claim yet",
+      "description": "Your unstaked funds are not claimable yet. They unlock once the unbonding period ends."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is closed",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
     },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
@@ -9389,6 +9405,8 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
+      "stakedBalance": "Staked",
+      "stakedBalanceTooltip": "Balance that is bonded, unbonding, or ready to be claimed",
       "syncButton": {
         "startSync": "Start sync",
         "stopSync": "Stop sync",
@@ -9396,11 +9414,36 @@
         "lastSync": "Last synced: {{date}}"
       }
     },
+    "stake": {
+      "table": {
+        "header": "Staking",
+        "status": "Status",
+        "validator": "Validator",
+        "amount": "Amount",
+        "manage": "Manage"
+      },
+      "status": {
+        "staked": "Staked",
+        "unstaking": "Unstaking",
+        "claimable": "Claimable"
+      },
+      "unstake": "Unstake",
+      "claim": "Claim",
+      "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining": "~{{count}} blocks left",
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "earnRewards": "Earn rewards"
+      }
+    },
     "operations": {
       "type": {
         "public": "Public",
         "private": "Private"
       }
+    },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
     },
     "send": {
       "stepRecipient": {
@@ -9416,6 +9459,97 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      }
+    },
+    "bond": {
+      "headerAction": "Bond",
+      "flow": {
+        "title": "Bond ALEO",
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "label": "Validator address",
+            "loading": "Loading validators...",
+            "closed": "Closed",
+            "commission": "Commission"
+          },
+          "withdrawal": {
+            "title": "Withdrawal",
+            "label": "Withdrawal address",
+            "info": "On Aleo, the withdrawal address controls where the bonded funds can be claimed after they are unbonded. It defaults to your account address. Only change it if you want the funds to be claimable by another Aleo account."
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your bond could not be sent.",
+            "success": {
+              "title": "Bond sent",
+              "text": "Your bond is being processed.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "headerAction": "Staking",
+      "title": "Manage staking",
+      "bond": {
+        "title": "Bond",
+        "description": "Bond your ALEO to a validator to earn rewards."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "Unbond your bonded ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
+      }
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unbond ALEO",
+        "steps": {
+          "amount": { "title": "Amount", "availableLabel": "Bonded balance" },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unbond submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
+      }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },

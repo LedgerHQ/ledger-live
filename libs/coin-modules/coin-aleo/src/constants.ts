@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -28,6 +30,12 @@ export const TRANSACTION_TYPE = {
 } as const;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
+
+export const STAKING_OPERATION_TYPE: Record<string, OperationType> = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+};
 
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
@@ -98,14 +106,27 @@ export const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
 
+// Minimum amount (in microcredits) required to bond/stake to a validator.
+// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
+export const MIN_BOND_AMOUNT = 1_000_000;
+
+// 1 ALEO credit = 1_000_000 microcredits. The committee endpoint reports stake in
+// microcredits while `latest/totalSupply` reports credits, so the two must be put on
+// the same scale before they are divided.
 export const MICROCREDITS_PER_CREDIT = 1_000_000;
 
-// Below this bonded total the protocol pays a delegator nothing at all.
+// Below this bonded total the protocol pays a delegator nothing at all: 10,000 ALEO.
+// Enforced against the projected total stake (already-bonded balance + this bond
+// amount), so top-ups on an existing position only need to satisfy MIN_BOND_AMOUNT.
 export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
 
-// snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
-// rates derived from this alone are a lower bound.
+// Annual issuance as a fraction of total supply. Follows from snarkVM's
+// `block_reward_v2 = floor(0.05 * S * I / S_Y) + CR/3 + TX_F`
+// (ledger/block/src/helpers/target.rs), whose `I / S_Y` weighting integrates to 1
+// over a year. The dropped coinbase (CR/3) and transaction-fee (TX_F) terms are why
+// the derived rate is a lower bound and must be surfaced as an estimate.
 export const ANNUAL_INFLATION_RATE = 0.05;
 
-// A validator above this share of total stake earns zero, not a reduced rate.
+// A validator holding more than this share of the network's total stake earns no
+// rewards at all — not a reduced rate, zero.
 export const MAX_VALIDATOR_STAKE_SHARE = 0.25;

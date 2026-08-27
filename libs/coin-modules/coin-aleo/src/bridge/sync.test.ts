@@ -6,7 +6,7 @@ import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { getPublicBalance } from "../logic/getPublicBalance";
-import { lastBlock } from "../logic";
+import { getStakingPosition, lastBlock } from "../logic";
 import { listOperations } from "./listOperations";
 import {
   getMockedCurrency,
@@ -65,6 +65,7 @@ jest.mock("@ledgerhq/logs", () => ({
 const mockGetSyncHash = jest.mocked(getSyncHash);
 const mockGetPublicBalance = jest.mocked(getPublicBalance);
 const mockLastBlock = jest.mocked(lastBlock);
+const mockGetStakingPosition = jest.mocked(getStakingPosition);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
@@ -124,6 +125,14 @@ describe("sync.ts", () => {
       height: 100,
       hash: "mock-block-hash",
       time: new Date("2024-01-01"),
+    });
+
+    // Nothing bonded by default: staking-specific expectations override this per test.
+    mockGetStakingPosition.mockResolvedValue({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
     });
 
     mockListOperations.mockResolvedValue({

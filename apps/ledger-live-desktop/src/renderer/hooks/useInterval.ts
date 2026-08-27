@@ -2,7 +2,7 @@
 import { useRef, useEffect } from "react";
 import noop from "lodash/noop";
 type Callback = () => void;
-const useInterval = (callback: Callback, delay: number) => {
+const useInterval = (callback: Callback, delay: number | null) => {
   const savedCallback = useRef<Callback>(noop);
 
   // Remember the latest callback.

@@ -3,6 +3,7 @@ import type {
   Account,
   AccountRaw,
   Operation,
+  OperationRaw,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -62,6 +63,19 @@ export type Transaction = TransactionCommon & {
           feeRecordCommitment: string | null;
         };
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.BOND_PUBLIC;
+        withdrawal: string;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+        properties?: never;
+      }
   );
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -112,6 +126,19 @@ export type TransactionRaw = TransactionCommonRaw & {
           feeRecordCommitment: string | null;
         };
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.BOND_PUBLIC;
+        withdrawal: string;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+        properties?: never;
+      }
   );
 
 export type TransactionStatus = TransactionStatusCommon;
@@ -126,6 +153,11 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  hasBackfilledStakingSenders?: boolean;
+  bondedBalance?: BigNumber;
+  bondedValidator?: string | null;
+  unbondingBalance?: BigNumber;
+  unbondingHeight?: number | null;
 }
 
 export interface AleoResourcesRaw {
@@ -136,10 +168,24 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  hasBackfilledStakingSenders?: boolean;
+  bondedBalance?: string;
+  bondedValidator?: string | null;
+  unbondingBalance?: string;
+  unbondingHeight?: number | null;
 }
 
 export type AleoAccount = Account & {
   aleoResources?: AleoResources;
+  /**
+   * Transient, non-persisted list of pending operation ids that the public sync
+   * determined should be evicted (reverted txs listed under a fee-derived id, so
+   * they cannot be dropped by id match alone). It is threaded from
+   * performPublicSync through the returned account shape to postSync, which
+   * consumes and strips it. Deliberately absent from AleoAccountRaw so it is
+   * never serialized.
+   */
+  pendingEvictionIds?: string[];
 };
 
 export type AleoAccountRaw = AccountRaw & {
@@ -166,6 +212,17 @@ export type AleoOperationExtra = {
   patched?: boolean;
   // token program id for token operations (CAL lookup, sub-account routing)
   programId?: string;
+  // on-chain transition id of the tx; stable join key used to correlate a pending op
+  // (keyed by execution/broadcast id) with its confirmed listing row (keyed by transaction id)
+  transitionId?: string;
+};
+
+export type AleoOperationExtraRaw = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+  patched?: boolean;
+  programId?: string;
+  transitionId?: string;
 };
 
 export type OperationDetailsExtraField = {
@@ -174,6 +231,7 @@ export type OperationDetailsExtraField = {
 };
 
 export type AleoOperation = Operation<AleoOperationExtra>;
+export type AleoOperationRaw = OperationRaw<AleoOperationExtraRaw>;
 
 export type TransactionTransfer = Extract<
   Transaction,
@@ -182,7 +240,8 @@ export type TransactionTransfer = Extract<
       | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
       | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
       | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
-      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
+      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE
+      | typeof TRANSACTION_TYPE.BOND_PUBLIC;
   }
 >;
 
@@ -193,7 +252,9 @@ export type TransactionSelfTransfer = Extract<
       | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
       | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
-      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
+      | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
   }
 >;
 
@@ -204,7 +265,10 @@ export type TransactionPublic = Extract<
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
       | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
       | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
-      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+      | typeof TRANSACTION_TYPE.BOND_PUBLIC
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
+      | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
   }
 >;
 

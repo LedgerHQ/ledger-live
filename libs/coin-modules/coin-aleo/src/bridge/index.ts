@@ -30,6 +30,8 @@ import {
   assignToAccountRaw,
   assignToTokenAccountRaw,
   assignFromTokenAccountRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
 } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildSignOperation } from "./signOperation";
@@ -42,6 +44,8 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
     getAddressFn: getAddress,
   });
 
+  // No preload/hydrate: that mechanism is deprecated. The validator committee is
+  // loaded lazily by useAleoValidators, on top of the getValidators LRU cache.
   return {
     scanAccounts,
   };
@@ -72,6 +76,8 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignToTokenAccountRaw,
     assignFromTokenAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
     getSerializedAddressParameters,
     validateAddress,
   };
