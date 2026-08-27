@@ -14,6 +14,7 @@ import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
+  readonly cardTitle: string;
   readonly oauthConfig: CardProps["oauthConfig"];
   readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
@@ -25,6 +26,7 @@ type PayTabViewProps = {
 
 export function PayTabView({
   top,
+  cardTitle,
   oauthConfig,
   callback,
   featureTour,
@@ -40,7 +42,7 @@ export function PayTabView({
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
         <DepositOptions {...depositOptions} />
-        <Card oauthConfig={oauthConfig} callback={callback} />
+        <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />
       </Box>
     </Box>

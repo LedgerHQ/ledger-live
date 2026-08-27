@@ -10091,6 +10091,9 @@
         "confirm": "Confirm"
       }
     },
+    "card": {
+      "title": "Crypto card"
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"

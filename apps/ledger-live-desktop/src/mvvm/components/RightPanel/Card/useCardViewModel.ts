@@ -32,8 +32,9 @@ export function useCardViewModel(): CardViewModel {
   );
 
   return {
-    formatCountervalue,
+    title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
+    formatCountervalue,
     oauthConfig,
   };
 }

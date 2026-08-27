@@ -902,6 +902,7 @@
       }
     },
     "card": {
+      "title": "Crypto card",
       "balanceLabel": "Balance"
     },
     "contacts": {

@@ -11,6 +11,7 @@ const MOCK_CARD_BALANCE = 100;
  * card falls back to the bare artwork.
  */
 export function useCardViewModel({
+  title,
   oauthConfig,
   callback,
   formatCountervalue,
@@ -21,5 +22,5 @@ export function useCardViewModel({
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [formatCountervalue, balanceLabel]);
 
-  return { oauthConfig, callback, cardVisual };
+  return { title, oauthConfig, callback, cardVisual };
 }

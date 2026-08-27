@@ -15,6 +15,8 @@ jest.mock("@features/flow-pay-card-details", () => ({
 
 import { Card } from "./Card";
 
+const title = "Crypto card";
+
 const oauthConfig: CardProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
@@ -31,25 +33,27 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
 
 describe("Card (native)", () => {
   it("composes the bare artwork with the auth login and logout", () => {
-    render(<Card oauthConfig={oauthConfig} />);
+    render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(screen.getByTestId("card-login")).toBeTruthy();
-    expect(screen.getByTestId("card-logout")).toBeTruthy();
+    expect(screen.getByText(title)).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-logout")).toBeVisible();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
     render(
       <Card
+        title={title}
         oauthConfig={oauthConfig}
         formatCountervalue={formatCountervalue}
         balanceLabel="Balance"
       />,
     );
 
-    expect(screen.getByTestId("card-visual")).toBeTruthy();
+    expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).toBeNull();
-    expect(screen.getByTestId("card-login")).toBeTruthy();
-    expect(screen.getByTestId("card-logout")).toBeTruthy();
+    expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-logout")).toBeVisible();
   });
 });

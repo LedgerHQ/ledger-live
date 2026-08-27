@@ -86,6 +86,7 @@ export function usePayTabViewModel() {
 
   return {
     top,
+    cardTitle: t("payTab.card.title"),
     oauthConfig,
     callback,
     featureTour,
