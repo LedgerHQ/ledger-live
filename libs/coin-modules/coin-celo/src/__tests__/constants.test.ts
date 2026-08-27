@@ -19,6 +19,7 @@ describe("celo fee currency constants", () => {
       "CELO",
       "USDT",
       "USDC",
+      "USAT",
       "PHPm",
       "KESm",
       "ZARm",
@@ -41,11 +42,14 @@ describe("celo fee currency constants", () => {
   it("keeps adapter address distinct from token contract for 6 decimals stablecoins", () => {
     const usdc = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDC");
     const usdt = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDT");
+    const usat = FEE_CURRENCY_OPTIONS.find(option => option.name === "USAT");
 
     expect(usdc?.adapterAddress).toEqual(expect.any(String));
     expect(usdt?.adapterAddress).toEqual(expect.any(String));
+    expect(usat?.adapterAddress).toEqual(expect.any(String));
     expect(usdc?.adapterAddress).not.toEqual(usdc?.contractAddress);
     expect(usdt?.adapterAddress).not.toEqual(usdt?.contractAddress);
+    expect(usat?.adapterAddress).not.toEqual(usat?.contractAddress);
   });
 
   it("supports case-insensitive lookup by token contract address", () => {

@@ -37,7 +37,7 @@ export const CELO_STAKING_FALLBACK_GAS_LIMIT = 1_000_000n;
  * Celo's protocol allows users to pay gas in tokens other than the native CELO.
  * The on-chain allowlist is managed by `FeeCurrencyDirectory.sol`.
  *
- * Tokens with fewer than 18 decimals (USDC, USDT) use an **adapter** contract
+ * Tokens with fewer than 18 decimals (USDC, USDT, USAT) use an **adapter** contract
  * instead of the token address for `feeCurrency`. The adapter normalizes values
  * to 18 decimals so the protocol can price gas consistently. For these tokens:
  *   - `feeCurrency` on the transaction → adapter address
@@ -70,6 +70,11 @@ export const FEE_CURRENCY_OPTIONS: {
     name: "USDC",
     adapterAddress: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B",
     contractAddress: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+  },
+  {
+    name: "USAT",
+    adapterAddress: "0x0357EE22278c922e1D36cFe6b899269b161880C4",
+    contractAddress: "0xD2ab3C9A02DBBAB236BfEC45D1d755DF4267F771",
   },
   {
     name: "PHPm",
