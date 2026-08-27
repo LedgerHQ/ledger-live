@@ -495,14 +495,14 @@ platform :android do
   private_lane :upload do |options|
     if(options[:ci])
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
+        track: options[:nightly] ? 'Nightly' : "internal",
         package_name: ENV["APP_IDENTIFIER"],
         json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
         skip_upload_apk: true
       )
     else
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
+        track: options[:nightly] ? 'Nightly' : "internal",
         package_name: ENV["APP_IDENTIFIER"],
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
         skip_upload_apk: true
@@ -560,19 +560,6 @@ platform :android do
       type: "Release",
       ci: true,
       apk_and_aab: true
-    )
-  end
-
-  desc "build recover version"
-  lane :ci_recover do
-    prepare_android_internal
-    build(
-      type: "Release",
-      ci: true
-    )
-    upload(
-      recover: true,
-      ci: true
     )
   end
 
