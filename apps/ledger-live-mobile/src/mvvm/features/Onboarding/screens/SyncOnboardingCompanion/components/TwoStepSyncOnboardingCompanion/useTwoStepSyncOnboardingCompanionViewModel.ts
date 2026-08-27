@@ -63,6 +63,7 @@ export const useTwoStepSyncOnboardingCompanionViewModel = ({
   const handleOnboardingDoneState = useCallback(() => {
     dispatchRedux(setReadOnlyMode(false));
     dispatchRedux(setHasOrderedNano(false));
+    require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
     dispatchRedux(completeOnboarding());
   }, [dispatchRedux]);
 

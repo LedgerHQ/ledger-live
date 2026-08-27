@@ -112,6 +112,7 @@ export default memo(function () {
     if (!hasCompletedOnboarding) {
       dispatch(setOnboardingHasDevice(true));
     }
+    require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
     dispatch(completeOnboarding());
 
     const parentNav =

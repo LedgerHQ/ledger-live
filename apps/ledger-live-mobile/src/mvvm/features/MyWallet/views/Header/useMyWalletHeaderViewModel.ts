@@ -5,6 +5,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { preloadSettingsNavigator } from "~/components/RootNavigator/lazyScreen";
 
 export function useMyWalletHeaderViewModel() {
   const navigation =
@@ -29,6 +30,7 @@ export function useMyWalletHeaderViewModel() {
 
   const onSettingsPress = useCallback(() => {
     track("button_clicked", { button: "Settings", page: MY_WALLET_TRACKING_PAGE_NAME });
+    preloadSettingsNavigator();
     navigation.navigate(NavigatorName.Settings);
   }, [navigation]);
 

@@ -12,6 +12,7 @@ import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { preloadSettingsNavigator } from "~/components/RootNavigator/lazyScreen";
 
 const BUTTON_CLICKED_EVENT = "button_clicked";
 
@@ -108,6 +109,7 @@ export function useTopBarViewModel(
 
   const onSettingsPress = useCallback(() => {
     track(BUTTON_CLICKED_EVENT, { button: "Settings", page });
+    preloadSettingsNavigator();
     navigation.navigate(NavigatorName.Settings);
   }, [navigation, page]);
 

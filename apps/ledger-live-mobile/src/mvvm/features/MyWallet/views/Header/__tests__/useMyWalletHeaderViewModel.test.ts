@@ -20,6 +20,10 @@ jest.mock("~/dynamicContent/useDynamicContent", () => ({
   default: () => ({ notificationCards: mockNotificationCards }),
 }));
 
+jest.mock("~/components/RootNavigator/lazyScreen", () => ({
+  preloadSettingsNavigator: jest.fn(),
+}));
+
 describe("useMyWalletHeaderViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();

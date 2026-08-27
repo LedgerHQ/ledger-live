@@ -55,6 +55,8 @@ import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
+import { preloadBaseNavigator, preloadRootNavigator } from "~/components/RootNavigator/lazyScreen";
+import Config from "react-native-config";
 
 interface Props {
   onInitFinished: () => void;
@@ -93,6 +95,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     try {
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);
+      const settingsPromise = retry(getSettings, MAX_RETRIES, RETRY_DELAY);
+      void settingsPromise.then(settings => {
+        if (settings.hasCompletedOnboarding || Config.SKIP_ONBOARDING) {
+          preloadRootNavigator();
+          preloadBaseNavigator();
+        }
+      });
       const [
         bleData,
         persistedKnownDevices,
@@ -117,7 +126,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
-        retry(getSettings, MAX_RETRIES, RETRY_DELAY),
+        settingsPromise,
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),

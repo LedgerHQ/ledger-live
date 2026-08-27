@@ -4,11 +4,11 @@ import Config from "react-native-config";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import BaseNavigator from "./BaseNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
 import { useSuppressQ2TourForNewUsers } from "LLM/features/Q2WalletV4Tour/hooks/useSuppressQ2TourForNewUsers";
+import { lazyScreen } from "./lazyScreen";
 
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -24,18 +24,37 @@ export default function RootNavigator() {
           }}
         >
           {goToOnboarding ? (
-            <Stack.Screen
-              name={NavigatorName.BaseOnboarding}
-              getComponent={() => require("./BaseOnboardingNavigator").default}
-            />
-          ) : null}
-          <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
-          {hasCompletedOnboarding ? (
-            <Stack.Screen
-              name={NavigatorName.BaseOnboarding}
-              getComponent={() => require("./BaseOnboardingNavigator").default}
-            />
-          ) : null}
+            <>
+              <Stack.Screen
+                name={NavigatorName.BaseOnboarding}
+                component={
+                  (
+                    require("./BaseOnboardingNavigator") as typeof import("./BaseOnboardingNavigator")
+                  ).default
+                }
+              />
+              <Stack.Screen
+                name={NavigatorName.Base}
+                getComponent={lazyScreen(
+                  () => require("./BaseNavigator") as typeof import("./BaseNavigator"),
+                )}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name={NavigatorName.Base}
+                component={(require("./BaseNavigator") as typeof import("./BaseNavigator")).default}
+              />
+              <Stack.Screen
+                name={NavigatorName.BaseOnboarding}
+                getComponent={lazyScreen(
+                  () =>
+                    require("./BaseOnboardingNavigator") as typeof import("./BaseOnboardingNavigator"),
+                )}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </AnalyticsContextProvider>
     </StartupTimeMarker>
