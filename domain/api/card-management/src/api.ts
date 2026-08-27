@@ -1,6 +1,8 @@
 import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
+  PayCardInternalWalletsResponseSchema,
+  PayCardLinkedWalletsResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
@@ -11,6 +13,8 @@ import {
 import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
+  PayCardInternalWallet,
+  PayCardLinkedWallet,
   PayCardLogoutResult,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
@@ -93,6 +97,22 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardStatusResponseSchema,
         providesTags: ["CardStatus"],
       }),
+
+      getInternalWallets: build.query<PayCardInternalWallet[], void>({
+        query: () => ({
+          url: "/v1/wallet/internal",
+          method: "GET",
+        }),
+        responseSchema: PayCardInternalWalletsResponseSchema,
+      }),
+
+      getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
+        query: () => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "GET",
+        }),
+        responseSchema: PayCardLinkedWalletsResponseSchema,
+      }),
     }),
   });
 
@@ -105,4 +125,6 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useGetInternalWalletsQuery,
+  useGetCardLinkedWalletsQuery,
 } = cardManagementApi;
