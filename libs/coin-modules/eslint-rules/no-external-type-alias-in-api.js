@@ -1,30 +1,30 @@
 "use strict";
 
 /**
- * Dans le répertoire `api` d'un coin-module, interdit de définir un type alias
- * dont la définition ré-emballe un type IMPORTÉ (donc défini dans un autre
- * répertoire / package). Les types de `api` doivent être écrits explicitement.
+ * In a coin-module's `api` directory, forbids defining a type alias whose
+ * definition re-wraps an IMPORTED type (i.e. defined in another directory /
+ * package). Types in `api` must be written explicitly.
  *
- * Une whitelist (`allowedTypes`) permet d'autoriser certains types importés
- * comme racine d'alias (typiquement le type d'API du framework que chaque coin
- * spécialise). Un type whitelisté est autorisé avec OU sans generics, et on
- * n'inspecte pas ses arguments de type.
+ * A whitelist (`allowedTypes`) allows certain imported types as an alias root
+ * (typically the framework API type that each coin specializes). A whitelisted
+ * type is allowed WITH or WITHOUT generics, and its type arguments are not
+ * inspected.
  *
- * Interdit :
- *   import { Foo } from "../logic";        type B = Foo;           // alias nu
- *   import { Bar } from "@ledgerhq/xxx";   type B = Bar | Baz;     // union de réfs nues
- *   import { Foo } from "../logic";        type B = Partial<Foo>;  // Foo utilisé nu (Partial non whitelisté)
- *   import { Foo } from "../logic";        type B = Foo[];         // Foo utilisé nu
- *   import { Foo } from "../logic";        type B = Foo<string>;   // Foo non whitelisté
+ * Forbidden:
+ *   import { Foo } from "../logic";        type B = Foo;           // bare alias
+ *   import { Bar } from "@ledgerhq/xxx";   type B = Bar | Baz;     // union of bare refs
+ *   import { Foo } from "../logic";        type B = Partial<Foo>;  // Foo used bare (Partial not whitelisted)
+ *   import { Foo } from "../logic";        type B = Foo[];         // Foo used bare
+ *   import { Foo } from "../logic";        type B = Foo<string>;   // Foo not whitelisted
  *
- * Autorisé :
- *   type Foo = { ... };  type B = Foo;                     // A local (non importé)
- *   type B = { x: Foo };                                   // vraie forme d'objet, pas un alias nu
- *   type B = "a" | "b";                                    // union littérale, aucune référence importée
- *   type B = string | number;                             // primitifs
- *   type B = Partial<TypeLocal>;                          // wrapper d'un type local
- *   // avec allowedTypes: ["CoinModuleApi"]
- *   type B = CoinModuleApi<X, Y>;                         // type whitelisté (avec ou sans generics)
+ * Allowed:
+ *   type Foo = { ... };  type B = Foo;                     // A is local (not imported)
+ *   type B = { x: Foo };                                   // real object shape, not a bare alias
+ *   type B = "a" | "b";                                    // literal union, no imported reference
+ *   type B = string | number;                             // primitives
+ *   type B = Partial<TypeLocal>;                          // wrapper around a local type
+ *   // with allowedTypes: ["CoinModuleApi"]
+ *   type B = CoinModuleApi<X, Y>;                         // whitelisted type (with or without generics)
  */
 
 function rootTypeName(typeName) {
@@ -34,28 +34,28 @@ function rootTypeName(typeName) {
 }
 
 function typeArgs(t) {
-  // Le conteneur d'arguments de type varie selon la version du parser.
+  // The type-arguments container name varies with the parser version.
   return t.typeArguments || t.typeParameters;
 }
 
-// Trouve la 1re référence INTERDITE à un type importé dans les constructions "transparentes".
-// N'entre PAS dans les objets ({ x: A }) : ce sont de vraies définitions explicites.
-// Retourne { name, source, node } où `node` est la référence exacte à signaler.
+// Finds the 1st FORBIDDEN reference to an imported type within "transparent" constructs.
+// Does NOT descend into objects ({ x: A }): those are genuine explicit definitions.
+// Returns { name, source, node } where `node` is the exact reference to report.
 //
-// allowed: Set de noms de types whitelistés. Une racine whitelistée est autorisée
-// (avec ou sans generics) et on ne descend pas dans ses arguments.
+// allowed: Set of whitelisted type names. A whitelisted root is allowed
+// (with or without generics) and its arguments are not inspected.
 function findImportedRef(t, imported, allowed) {
   if (!t) return null;
   switch (t.type) {
     case "TSTypeReference": {
       const name = rootTypeName(t.typeName);
-      // Racine whitelistée -> autorisée, on n'inspecte pas ses arguments.
+      // Whitelisted root -> allowed, its arguments are not inspected.
       if (name && allowed.has(name)) return null;
-      // Racine importée et non whitelistée -> interdit (nu ou instancié).
+      // Imported and non-whitelisted root -> forbidden (bare or instantiated).
       if (name && imported.has(name)) {
         return { name, source: imported.get(name), node: t.typeName };
       }
-      // Racine non importée (Partial, Array, un type local...) -> on inspecte les args.
+      // Non-imported root (Partial, Array, a local type...) -> inspect the args.
       for (const p of typeArgs(t)?.params || []) {
         const hit = findImportedRef(p, imported, allowed); // Partial<A>, Array<A>...
         if (hit) return hit;
@@ -76,7 +76,7 @@ function findImportedRef(t, imported, allowed) {
     case "TSTypeOperator":
       return findImportedRef(t.typeAnnotation, imported, allowed); // (A) , keyof A , readonly A[]
     default:
-      return null; // TSTypeLiteral (objet), fonctions, primitifs... -> autorisés
+      return null; // TSTypeLiteral (object), functions, primitives... -> allowed
   }
 }
 
@@ -90,11 +90,11 @@ module.exports = {
       {
         type: "object",
         properties: {
-          // Sources à NE PAS considérer comme "ailleurs" (regex testées sur le module importé).
-          // Ex. pour tolérer les imports relatifs internes à api : { ignoreSources: ["^\\./"] }
+          // Sources NOT to consider as "elsewhere" (regexes tested on the imported module).
+          // E.g. to tolerate relative imports internal to api: { ignoreSources: ["^\\./"] }
           ignoreSources: { type: "array", items: { type: "string" } },
-          // Whitelist de noms de types autorisés comme racine d'alias
-          // (ex. ["CoinModuleApi"]). Autorisés avec ou sans generics.
+          // Whitelist of type names allowed as an alias root
+          // (e.g. ["CoinModuleApi"]). Allowed with or without generics.
           allowedTypes: { type: "array", items: { type: "string" } },
         },
         additionalProperties: false,
@@ -111,7 +111,7 @@ module.exports = {
     const isIgnored = src => ignore.some(re => re.test(src));
     const allowed = new Set(options.allowedTypes || []);
 
-    const imported = new Map(); // nom local -> source du module
+    const imported = new Map(); // local name -> module source
 
     return {
       ImportDeclaration(node) {
@@ -126,7 +126,7 @@ module.exports = {
         const hit = findImportedRef(node.typeAnnotation, imported, allowed);
         if (hit) {
           context.report({
-            node: hit.node, // pointe la référence exacte (ex. `Foo` dans `type B = Partial<Foo>`)
+            node: hit.node, // points at the exact reference (e.g. `Foo` in `type B = Partial<Foo>`)
             messageId: "noAlias",
             data: { name: hit.name, alias: node.id.name, source: hit.source },
           });

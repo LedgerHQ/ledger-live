@@ -1,30 +1,41 @@
-// Passe ESLint "guardrails" pour les coin-modules — n'existe que pour la règle
-// custom `no-external-type-alias-in-api`, qu'oxlint ne peut pas exprimer.
-// Lancée séparément d'oxlint via le script `lint:coin-api-guardrails`.
-// Voir aussi apps/ledger-live-desktop/.eslintrc.guardrails.js pour le même pattern.
+// ESLint "guardrails" pass for the coin-modules — only exists for the custom
+// rules that oxlint cannot express (`no-external-type-alias-in-api`, ...).
+// Run separately from oxlint through the `lint:coin-api-guardrails` script.
+// See also apps/ledger-live-desktop/.eslintrc.guardrails.js for the same pattern.
 
 module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: { ecmaVersion: 2022, sourceType: "module" },
-  // Empêche de désactiver la règle en inline (// eslint-disable-...).
+  // Prevents disabling the rule inline (// eslint-disable-...).
   noInlineConfig: true,
-  // Les tests ne sont pas concernés — ignorés pour éviter tout bruit.
+  // Tests are out of scope — ignored to avoid any noise.
   ignorePatterns: ["**/*.test.ts", "**/*.integ.test.ts", "**/*.spec.ts"],
   overrides: [
     {
-      // Uniquement les sources du répertoire `api` (pas les builds lib/ lib-es/).
+      // Only the sources of the `api` directory (not the lib/ lib-es/ builds).
       files: ["**/src/api/**/*.ts"],
       rules: {
         "no-external-type-alias-in-api": [
           "error",
           {
-            // Types importés autorisés comme racine d'alias (avec ou sans generics).
-            // À étendre au cas par cas. `Partial`, `Pick`, etc. ne sont PAS listés
-            // -> `type B = Partial<ImportedType>` reste interdit.
+            // Imported types allowed as an alias root (with or without generics).
+            // Extend on a case-by-case basis. `Partial`, `Pick`, etc. are NOT listed
+            // -> `type B = Partial<ImportedType>` stays forbidden.
             allowedTypes: ["CoinModuleApi", "Context", "TransactionIntent"],
-            // Pour tolérer les imports relatifs internes à api, décommente :
+            // To tolerate relative imports internal to api, uncomment:
             // ignoreSources: ["^\\./"],
+          },
+        ],
+        // Types used in the signatures of the CoinModuleApi implementation functions
+        // must be defined in `api/types.ts` (framework types stay allowed).
+        // Kept as `warn` to help the migration.
+        "coin-module-api-types-in-types-file": [
+          "warn",
+          {
+            interfaceTypes: ["CoinModuleApi"],
+            frameworkSources: ["^@ledgerhq/coin-module-framework(/|$)"],
+            localTypesSources: ["^\\./types(\\.ts)?$"],
           },
         ],
       },
