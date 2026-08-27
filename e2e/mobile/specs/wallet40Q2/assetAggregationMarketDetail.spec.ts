@@ -96,7 +96,6 @@ describe("Asset aggregation", () => {
       userdata: WALLET_40_STABLECOINS_FIXTURE,
       featureFlags: ASSET_AGGREGATION_FEATURE_FLAGS,
     });
-    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });

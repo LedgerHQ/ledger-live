@@ -4,7 +4,7 @@ import { useContactsViewModel } from "./useContactsViewModel";
 import type { ContactsProps } from "../../types";
 
 export function Contacts(props: ContactsProps) {
-  const { isEmpty } = useContactsViewModel();
+  const viewModel = useContactsViewModel(props);
 
-  return <ContactsView {...props} isEmpty={isEmpty} />;
+  return <ContactsView {...viewModel} />;
 }

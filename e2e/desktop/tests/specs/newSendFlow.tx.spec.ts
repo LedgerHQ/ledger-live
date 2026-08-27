@@ -33,7 +33,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001"),
     xrayTicket: "B2CQA-2813",
-    bugTicket: "LIVE-29554",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
@@ -47,7 +46,7 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
       "0.00001",
       Fee.MEDIUM,
     ),
-    xrayTicket: "B2CQA-3925, B2CQA-2724",
+    xrayTicket: "B2CQA-2724",
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
@@ -82,7 +81,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
@@ -143,7 +141,6 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "memoText"),
     xrayTicket: "B2CQA-6038",
-    bugTicket: "LIVE-29554",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "memo123"),

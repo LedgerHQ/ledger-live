@@ -10,7 +10,7 @@ import {
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
-import { ContactsAddContactDialog } from "./components/ContactsAddContactDialog";
+import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import {

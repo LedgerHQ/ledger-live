@@ -2,6 +2,8 @@ export * from "./model/ports";
 export * from "./model/types";
 export * from "./model/viewModel";
 export * from "./model/controller";
+export * from "./model/createContactCreationPort";
 export * from "./useAddContactViewModel";
 export * from "./useAddContactContentViewModel";
+export * from "./useAddContactDialogViewModel";
 export * from "./types";

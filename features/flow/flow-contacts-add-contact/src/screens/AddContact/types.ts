@@ -35,3 +35,25 @@ export type ContactsAddContactContentNativeProps = ContactsAddContactContentProp
     /** Lets the host drawer hold the keyboard back until it has finished opening. */
     autoFocus?: boolean;
   }>;
+
+export type AddContactDialogLifecycleCallbacks = Readonly<{
+  onOpen?: () => void;
+  onClose?: () => void;
+  onConfirm?: () => void;
+  onInvalidNameErrorDisplayed?: () => void;
+}>;
+
+export type UseAddContactDialogViewModelOptions = Readonly<{
+  contactCreation: ContactCreationPort;
+  labels: ContactsAddContactContentLabels;
+  onSaveSuccess: (contact: Contact) => void;
+  callbacks?: AddContactDialogLifecycleCallbacks;
+}>;
+
+export type AddContactDialogViewModel = AddContactContentViewModel &
+  Readonly<{
+    isOpen: boolean;
+    labels: ContactsAddContactContentLabels;
+    onOpen: () => void;
+    onClose: () => void;
+  }>;
