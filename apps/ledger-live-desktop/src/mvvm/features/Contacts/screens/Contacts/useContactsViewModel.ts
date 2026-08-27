@@ -49,6 +49,7 @@ import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
+import { contactsIntentLWDDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
@@ -85,7 +86,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWDDefinitions,
+  });
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
