@@ -3,7 +3,6 @@ import { z } from "zod";
 import os from "node:os";
 import { Session } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
-import { savePrivateKey } from "../../key-ring/keychain";
 import { getOrCreateMemberCredentials } from "../../key-ring/member-credentials";
 import { generatePasswordSalt, deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
@@ -96,11 +95,6 @@ export default defineCommand({
       );
       deviceSpin?.success("Ledger Key Ring ready");
 
-      if (passwordSalt) {
-        session.setPasswordSalt(passwordSalt);
-        session.write();
-      }
-      await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey);
       session.setTrustchain({
         rootId: trustchain.rootId,
         applicationPath: trustchain.applicationPath,

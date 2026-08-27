@@ -15,6 +15,7 @@ The wallet-cli source code itself is licensed under Apache License 2.0; see the 
 | @segment/analytics-node | 3.1.0 | MIT | Copyright © 2021 Segment |
 | bignumber.js | 9.1.2 | MIT | Copyright (c) 2023 Michael Mclaughlin |
 | debug | 4.4.3 | MIT | Copyright (c) 2014-2017 TJ Holowaychuk; Copyright (c) 2018-2021 Josh Junon |
+| fetch-cookie | 3.2.0 | Unlicense | Val (https://val.codejam.info) |
 | purify-ts | 2.1.0 | ISC | Copyright (c) 2018, Stanislav Iliev |
 | rxjs | 7.8.2 | Apache-2.0 | Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors |
 | usb | 2.17.0 | MIT | Copyright (c) 2012 Nonolith Labs, LLC |
@@ -29,7 +30,7 @@ For `rxjs` (Apache-2.0), the same Apache-2.0 v2.0 text shipped in the `LICENSE` 
 
 The packages below are inlined into `bin/wallet-cli` by the bundler, in addition to the direct dependencies listed above. They are grouped by license; full license texts are reproduced in section 4. Copyright information was resolved by reading the upstream `LICENSE` file when available, otherwise by reading the `author`/`contributors` field of the upstream `package.json`, otherwise (rare cases) by alignment with the package's homepage or repository.
 
-### MIT License (189 packages)
+### MIT License (192 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -200,6 +201,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | readable-web-to-node-stream | 3.0.4 | Copyright (c) Borewit |
 | safe-buffer | 5.2.1 | Copyright (c) Feross Aboukhadijeh |
 | scheduler | 0.26.0 | Copyright (c) Meta Platforms, Inc. and affiliates. |
+| set-cookie-parser | 2.7.2 | Copyright (c) 2015 Nathan Friedly |
 | side-channel | 1.1.0 | Copyright (c) 2019 Jordan Harband |
 | side-channel-list | 1.0.0 | Copyright (c) 2024 Jordan Harband |
 | side-channel-map | 1.0.1 | Copyright (c) 2024 Jordan Harband |
@@ -210,6 +212,8 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | three | 0.177.0 | mrdoob |
 | tinycolor2 | 1.6.0 | Copyright (c) Brian Grinstead |
 | tinypool | 2.1.0 | Copyright (c) 2020 James M Snell and the Piscina contributors |
+| tldts | 7.0.19 | Copyright (c) 2017 Thomas Parisot, 2018 Rémi Berson |
+| tldts-core | 7.0.19 | Copyright (c) 2017 Thomas Parisot, 2018 Rémi Berson |
 | token-types | 4.2.1 | Copyright (c) Borewit |
 | undici-types | 7.16.0 | Copyright (c) Matteo Collina and Undici contributors |
 | url | 0.11.4 | Copyright (c) defunctzombie |
@@ -237,7 +241,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | reflect-metadata | 0.2.2 | Copyright (c) Ron Buckton |
 | typescript | 6.0.2 | Microsoft Corp. |
 
-### BSD 3-Clause License (9 packages)
+### BSD 3-Clause License (10 packages)
 
 | Package | Version | Copyright |
 |---|---|---|
@@ -250,6 +254,7 @@ The packages below are inlined into `bin/wallet-cli` by the bundler, in addition
 | ieee754 | 1.2.1 | Copyright (c) Feross Aboukhadijeh, Romain Beauxis |
 | jpeg-js | 0.4.4 | Copyright (c) 2014, Eugene Ware |
 | qs | 6.14.1 | Copyright (c) 2014, Nathan LaFreniere and other [contributors](https://github.com/ljharb/qs/graphs/contributors) |
+| tough-cookie | 6.0.1 | Copyright (c) 2015, Salesforce.com, Inc. |
 
 ### ISC License (5 packages)
 
@@ -387,6 +392,35 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+```
+
+### Unlicense
+
+```
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
 ```
 
 ### Apache License 2.0

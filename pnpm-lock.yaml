@@ -2754,6 +2754,9 @@ importers:
       debug:
         specifier: 4.4.3
         version: 4.4.3
+      fetch-cookie:
+        specifier: 3.2.0
+        version: 3.2.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.64.0

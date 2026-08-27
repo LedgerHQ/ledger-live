@@ -38,9 +38,14 @@ const MOCK_PROVIDER_ROW = {
 };
 
 describe("quote command", () => {
+  let challengeCookie: string | null = null;
   let quoteAuthorization: string | null = null;
   const server = new MockServer([
-    ...makeAuthRoutes(),
+    ...makeAuthRoutes({
+      onChallengeRequest: request => {
+        challengeCookie = request.headers.get("cookie");
+      },
+    }),
     {
       method: "GET",
       match: /\/v1\/partners(\?|$)/,
@@ -66,6 +71,7 @@ describe("quote command", () => {
 
   let fixture: ReturnType<typeof makeSessionDir>;
   beforeEach(() => {
+    challengeCookie = null;
     quoteAuthorization = null;
     fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
   });
@@ -94,6 +100,7 @@ describe("quote command", () => {
     expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ethereum\s*→\s*bitcoin/i);
     expect(stdout).toMatch(/paraswap/i);
+    expect(challengeCookie).toBe("AUTH_SESSION_ID=wallet-cli-test");
     expect(quoteAuthorization).toBe(`Bearer ${KEYCLOAK_TOKEN}`);
   });
 

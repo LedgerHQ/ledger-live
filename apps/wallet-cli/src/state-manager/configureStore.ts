@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import makeFetchCookie from "fetch-cookie";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import { setSwapQuotesStore } from "@domain/api-swap-quotes/store";
@@ -30,7 +31,10 @@ export function createWalletCliStore() {
                   keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
                   disablePkce: true,
                 },
-                { provider: new LkrpIdentityProvider(loadWalletCliTrustchainStore) },
+                {
+                  provider: new LkrpIdentityProvider(loadWalletCliTrustchainStore),
+                  fetch: makeFetchCookie(fetch),
+                },
               ),
             }),
           },

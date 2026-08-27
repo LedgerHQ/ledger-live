@@ -1,10 +1,19 @@
 import type { LkrpIdentityProviderStore } from "@ledgerhq/ledger-key-ring-protocol";
 import { Session } from "../session/session-store";
+import { isStoredKeyPasswordProtected } from "./keychain";
 import { getOrCreateMemberCredentials } from "./member-credentials";
 import { resolveWrappingKey } from "./load-key-ring";
 
 export async function loadWalletCliTrustchainStore(): Promise<LkrpIdentityProviderStore> {
   const session = await Session.read();
+
+  if (!session.passwordSalt && isStoredKeyPasswordProtected()) {
+    throw new Error(
+      "The stored password-protected member credential cannot be unlocked because its password metadata is missing. " +
+        "Run `wallet-cli ring destroy`, then rerun `wallet-cli ring init` to create a new identity.",
+    );
+  }
+
   const wrappingKey = await resolveWrappingKey(session);
   const memberCredentials = await getOrCreateMemberCredentials({
     wrappingKey,

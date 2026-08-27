@@ -8,6 +8,7 @@ import {
   inMemoryMemberCredentialRepository,
   withInMemoryMemberCredentialRepository,
 } from "../test/helpers/in-memory-member-credential-repository";
+import { deriveWrappingKey } from "./crypto";
 import { KeychainReadError, savePrivateKey } from "./keychain";
 import { loadWalletCliTrustchainStore } from "./load-auth-trustchain-store";
 
@@ -54,6 +55,18 @@ describe("loadWalletCliTrustchainStore", () => {
 
     await expect(loadProductionTrustchainStore()).rejects.toThrow(/member credentials not found/i);
     expect(inMemoryMemberCredentialRepository.entries.size).toBe(0);
+  });
+
+  it("should report missing password metadata for a protected credential", async () => {
+    const memberCredentials = initMemberCredentials();
+    const wrappingKey = await deriveWrappingKey("test-password", "0".repeat(32));
+    await withInMemoryMemberCredentialRepository(() =>
+      savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey),
+    );
+
+    await expect(loadProductionTrustchainStore()).rejects.toThrow(
+      /password metadata is missing.*ring destroy.*ring init/i,
+    );
   });
 
   it("should isolate credentials by state profile", async () => {

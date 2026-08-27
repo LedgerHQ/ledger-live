@@ -7,12 +7,27 @@ const [CHALLENGE] = Challenge.fromBytes(crypto.from_hex(CHALLENGE_TLV));
 const LKRP_TOKEN = makeJwt({ sub: "lkrp", exp: 4102444800 });
 export const KEYCLOAK_TOKEN = makeJwt({ sub: "wallet-cli", exp: 4102444800 });
 
-export function makeAuthRoutes(): Route[] {
+type AuthRouteOptions = {
+  onChallengeRequest?: (request: Request) => void;
+};
+
+export function makeAuthRoutes({ onChallengeRequest }: AuthRouteOptions = {}): Route[] {
   return [
     {
       method: "GET",
       match: /\/protocol\/openid-connect\/auth(\?|$)/,
+      response: null,
+      status: 302,
+      headers: {
+        Location: "/auth/challenge",
+        "Set-Cookie": "AUTH_SESSION_ID=wallet-cli-test; Path=/; HttpOnly",
+      },
+    },
+    {
+      method: "GET",
+      match: "/auth/challenge",
       response: { tlv: CHALLENGE_TLV, json: CHALLENGE.toJSON() },
+      onRequest: onChallengeRequest,
     },
     {
       method: "POST",

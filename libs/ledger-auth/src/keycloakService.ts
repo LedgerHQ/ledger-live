@@ -1,15 +1,15 @@
 import { WalletAuthMissingBaseUrlError } from "./errors";
 import { parseJsonResponse } from "./http";
-import type { AuthConfig, ChallengeRequest, KeycloakService } from "./types";
+import type { AuthConfig, ChallengeRequest, FetchFn, KeycloakService } from "./types";
 
 export class HttpKeycloakService implements KeycloakService {
-  private getBaseUrl: () => string | null;
-  readonly #fetch: typeof globalThis.fetch;
+  private readonly getBaseUrl: () => string | null;
+  readonly #fetch: FetchFn;
 
   constructor(
     getBaseUrl: AuthConfig["keycloakBaseUrl"],
     private readonly realm: string,
-    fetch: typeof globalThis.fetch = globalThis.fetch,
+    fetch: FetchFn = globalThis.fetch,
   ) {
     this.getBaseUrl = typeof getBaseUrl === "string" ? () => getBaseUrl : getBaseUrl;
     this.#fetch = fetch;

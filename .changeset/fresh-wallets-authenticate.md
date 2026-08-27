@@ -1,5 +1,6 @@
 ---
 "@domain/api-swap-quotes": minor
+"@ledgerhq/ledger-auth": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/wallet-cli": minor
 ---
