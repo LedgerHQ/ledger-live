@@ -101,7 +101,7 @@ const transactionAddressValid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM),
     expectedWarningMessage: null,
     testName: "existing account",
-    xrayTicket: "B2CQA-2715, B2CQA-2716",
+    xrayTicket: "B2CQA-2715",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
@@ -181,7 +181,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTickets: ["LIVE-28070"],
     disableBroadcast: true,
   },
   {
@@ -218,7 +217,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTickets: ["LIVE-24214", "LIVE-29554"],
     disableBroadcast: true,
   },
   {
@@ -251,7 +249,7 @@ const transactionE2E = [
       "0.00001",
       Fee.MEDIUM,
     ),
-    xrayTicket: "B2CQA-3925",
+    xrayTicket: "B2CQA-2724",
     disableBroadcast: true,
   },
   {
