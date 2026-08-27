@@ -3,6 +3,7 @@ import { Animated, ImageBackground, View } from "react-native";
 import { useTheme, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import swapBackgroundDark from "~/images/liveApps/swap/MOBILE_SWAP_LW_V4_BG.webp";
 import earnBackgroundDark from "~/images/liveApps/earn/background-dark.webp";
+import cardBackgroundDark from "~/images/card/card-bg.webp";
 import wallet40BackgroundLight from "~/images/portfolio/v4-light.webp";
 
 const FADE_DISTANCE = 150;
@@ -10,17 +11,18 @@ const FADE_DISTANCE = 150;
 const darkBackgrounds = {
   swap: swapBackgroundDark,
   earn: earnBackgroundDark,
+  pay: cardBackgroundDark,
 } as const;
 
-type LiveAppBackgroundType = keyof typeof darkBackgrounds;
+type Wallet40BackgroundType = keyof typeof darkBackgrounds;
 
 type Props = {
-  type: LiveAppBackgroundType;
+  type: Wallet40BackgroundType;
   scrollY?: Animated.Value;
   fadeDistance?: number;
 };
 
-function LiveAppBackgroundComponent({ type, scrollY, fadeDistance }: Props) {
+function Wallet40BackgroundComponent({ type, scrollY, fadeDistance }: Props) {
   const { colorScheme } = useTheme();
   const styles = useStyleSheet(
     theme => ({
@@ -68,4 +70,4 @@ function LiveAppBackgroundComponent({ type, scrollY, fadeDistance }: Props) {
   );
 }
 
-export const LiveAppBackground = memo(LiveAppBackgroundComponent);
+export const Wallet40Background = memo(Wallet40BackgroundComponent);
