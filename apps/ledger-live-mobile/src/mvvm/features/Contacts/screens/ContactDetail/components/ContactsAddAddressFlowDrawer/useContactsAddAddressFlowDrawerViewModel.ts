@@ -119,6 +119,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
     currentStep: resolveDrawerStep(state.status),
     isOpen: state.status !== "closed" && state.status !== "success",
     onBack,
+    onFlowClose: onClose,
   } as const;
 }
 
