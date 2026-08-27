@@ -71,10 +71,7 @@ libs/ledger-auth/                                        @ledgerhq/platform
 libs/oxc-live-libs/                                      @ledgerhq/platform
 
 # Platform — devtools
-devtools/transport/                                      @ledgerhq/platform
-devtools/protocols/                                      @ledgerhq/platform
-devtools/wire/                                           @ledgerhq/platform
-devtools/relay/                                          @ledgerhq/platform
+devtools/                                                @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
