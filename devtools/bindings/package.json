@@ -21,8 +21,12 @@
   },
   "dependencies": {
     "@devtools/registry": "workspace:*",
+    "@devtools/cloud-sync": "workspace:*",
+    "@devtools/env": "workspace:*",
+    "@devtools/trustchain": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*"
   },
   "peerDependencies": {

@@ -3,7 +3,10 @@ import * as walletXp from "./metadata/wallet-xp";
 
 export const tools = {
   "feature-flags": platform.featureFlags,
+  env: platform.env,
   "pay-card": walletXp.payCard,
+  trustchain: platform.trustchain,
+  "cloud-sync": platform.cloudSync,
 } as const;
 
 /**
@@ -23,4 +26,7 @@ export type DevToolsConfig = Array<DevToolConfig>;
  */
 export type DevToolConfig =
   | { id: "feature-flags"; config: platform.FeatureFlagsToolProps }
-  | { id: "pay-card"; config: walletXp.PayCardToolProps };
+  | { id: "env"; config: platform.EnvDevToolProps }
+  | { id: "pay-card"; config: walletXp.PayCardToolProps }
+  | { id: "trustchain"; config: platform.TrustchainDevToolProps }
+  | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps };
