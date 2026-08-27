@@ -329,6 +329,13 @@ export async function estimateTronifyFees(
     throw new Error("Tronify fee option is only available for TRC-20 send intents");
   }
 
+  // prepareTransaction re-estimates on every change, so this can run before a recipient is entered.
+  // Guard explicitly: estimateEnergy would otherwise reach decode58Check("") and throw an opaque
+  // bs58check error instead of a clear one (no silent fallback, per ADR-050 Option 3).
+  if (!intent.recipient) {
+    throw new Error("Tronify fee estimation requires a recipient");
+  }
+
   // Single energy simulation; result feeds both the standard burn calc and the Tronify quote.
   const energyNeeded = await estimateEnergy(config, intent);
 

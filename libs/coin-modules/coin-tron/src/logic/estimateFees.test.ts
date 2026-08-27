@@ -660,6 +660,13 @@ describe("estimateTronifyFees", () => {
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
+  it("should throw when the recipient is empty", async () => {
+    await expect(estimateTronifyFees(mockConfig, { ...sendTrc20, recipient: "" })).rejects.toThrow(
+      /requires a recipient/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
   it("should throw when Tronify returns a USDT-denominated quote", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
 
