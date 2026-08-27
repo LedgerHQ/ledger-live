@@ -1,4 +1,5 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { ContactsFeatureIntroductionSheet } from "LLM/features/Contacts/screens/ContactsPage/components/ContactsFeatureIntroductionSheet";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
 import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import React from "react";
@@ -49,10 +50,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
+    featureIntroduction,
   } = recipient;
 
   return (
     <SendFlowLayout>
+      <ContactsFeatureIntroductionSheet {...featureIntroduction} />
+
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={keyboardBehavior}>
         <ScrollView
           style={{ flex: 1, marginHorizontal: -8 }}

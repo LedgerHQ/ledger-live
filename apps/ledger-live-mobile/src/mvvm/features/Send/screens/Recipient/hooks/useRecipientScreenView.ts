@@ -12,6 +12,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
+import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
 
@@ -139,6 +140,10 @@ export function useRecipientScreenView({
     [clearSelectedContact, validateContactAddress],
   );
 
+  const featureIntroduction = useContactsFeatureIntroductionViewModel({
+    isContactsEntryAvailable: isContactsFeatureEnabled && hasAddressBook,
+  });
+
   const searchState = useRecipientSearchState({
     searchValue: recipientSearch.value,
     result,
@@ -187,6 +192,7 @@ export function useRecipientScreenView({
     handleContactSelect,
     handleContactAddressSelect,
     isContactsFeatureEnabled,
+    featureIntroduction,
     ...searchState,
     showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
     showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,

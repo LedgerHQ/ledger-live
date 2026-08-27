@@ -4,6 +4,10 @@ import { cn } from "LLD/utils/cn";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Contact } from "@domain/entity-contact";
+import {
+  ContactsFeatureIntroductionDialog,
+  type ContactsFeatureIntroduction,
+} from "@features/flow-contacts-introduction";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
@@ -44,6 +48,7 @@ type RecipientAddressModalViewProps = Readonly<{
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
   addressMatchedSectionViewModel: AddressMatchedSectionViewModel;
+  featureIntroduction: ContactsFeatureIntroduction;
 }>;
 
 export function RecipientAddressModalView({
@@ -74,6 +79,7 @@ export function RecipientAddressModalView({
   hasMemoValidationError,
   hasFilledMemo,
   addressMatchedSectionViewModel,
+  featureIntroduction,
 }: RecipientAddressModalViewProps) {
   const shouldShowErrorBanner =
     !isLoading &&
@@ -92,6 +98,8 @@ export function RecipientAddressModalView({
 
   return (
     <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
+      <ContactsFeatureIntroductionDialog {...featureIntroduction} />
+
       {isLoading && !showMatched && <LoadingState />}
 
       {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
