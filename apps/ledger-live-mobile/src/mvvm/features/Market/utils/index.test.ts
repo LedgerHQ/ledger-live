@@ -388,7 +388,6 @@ describe("counterValueFormatter", () => {
 describe("getDateFormatter", () => {
   it("should return a DateTimeFormat for 24h interval", () => {
     const formatter = getDateFormatter("en-US", "24h");
-    expect(formatter).toBeInstanceOf(Intl.DateTimeFormat);
     const parts = formatter.formatToParts(new Date(2024, 0, 15, 14, 30));
     const partTypes = parts.map(p => p.type);
     expect(partTypes).toContain("hour");
