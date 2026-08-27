@@ -1,5 +1,6 @@
 import React from "react";
 import { Balance } from "@features/flow-pay-balance";
+import { Contacts } from "@features/flow-pay-contact";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -8,6 +9,7 @@ import { usePayCardBalance } from "./hooks/usePayCardBalance";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
+import { usePayTabContacts } from "./hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
 import { usePayTabNewPayment } from "./hooks/usePayTabNewPayment";
@@ -27,6 +29,7 @@ const PayTab = () => {
     request.open,
     newPayment.open,
   );
+  const contacts = usePayTabContacts();
 
   return (
     <div className="flex flex-col gap-24">
@@ -34,8 +37,12 @@ const PayTab = () => {
       {verify.phase === "intro" && <TrackPage category="Request Address Verification" />}
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
+
+      <Contacts {...contacts} />
+
       <DepositOptions {...deposit.depositOptions} />
       <RequestReceive {...request.requestReceive} />
+
       <VerifyAddress {...verify.verifyAddress} />
       {verify.deviceIntent.active && verify.deviceIntent.selection && (
         <VerifyAddressExecutorLWD

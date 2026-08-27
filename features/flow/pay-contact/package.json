@@ -27,9 +27,14 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-contact"
   },
+  "dependencies": {
+    "@features/platform-contacts": "workspace:^"
+  },
   "devDependencies": {
+    "@domain/entity-contact": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest-features-flow": "workspace:*",
@@ -53,6 +58,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -68,7 +74,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-redux": ">=9.0.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
