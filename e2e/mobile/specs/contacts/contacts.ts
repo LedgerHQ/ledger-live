@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
-import type { ApplicationOptions } from "page";
+import type { ApplicationOptions } from "@e2e/page/index";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 // Pinned: the Contacts entry point lives on My Wallet, which the Q1 preset turns off.

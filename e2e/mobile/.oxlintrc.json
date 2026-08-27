@@ -42,5 +42,13 @@
         ]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
+      }
+    }
+  ]
 }
