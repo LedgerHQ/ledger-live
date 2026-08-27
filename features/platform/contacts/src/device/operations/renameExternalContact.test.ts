@@ -1,6 +1,10 @@
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 import { ContactNameSchema } from "@domain/entity-contact";
-import { mockContact, mockContactWithAddress } from "@domain/entity-contact/schema.mock";
+import {
+  mockContact,
+  mockContactWithAddress,
+  mockDeviceContactGroupCredentials,
+} from "@domain/entity-contact/schema.mock";
 import type {
   ContactIntentResult,
   RenameContactIntentInput,
@@ -19,18 +23,6 @@ describe("createRenameExternalContactOperation", () => {
     ContactIntentResult<RenameContactResult>
   >;
 
-  it("GIVEN a contact without an address WHEN creating a rename THEN it throws", () => {
-    expect(() =>
-      createRenameExternalContactOperation(
-        {
-          contact: mockContact(),
-          name: updatedName,
-        },
-        intentDefinition,
-      ),
-    ).toThrow("A contact with device credentials and an address is required");
-  });
-
   it("GIVEN a contact without credentials WHEN creating a rename THEN it throws", () => {
     expect(() =>
       createRenameExternalContactOperation(
@@ -40,7 +32,38 @@ describe("createRenameExternalContactOperation", () => {
         },
         intentDefinition,
       ),
-    ).toThrow("A contact with device credentials and an address is required");
+    ).toThrow("A contact with device credentials is required");
+  });
+
+  it("GIVEN a credentialed contact without an address WHEN creating a rename THEN it builds the device intent", () => {
+    const addresslessContact = mockContact({
+      deviceCredentials: mockDeviceContactGroupCredentials(),
+    });
+
+    const operation = createRenameExternalContactOperation(
+      { contact: addresslessContact, name: updatedName },
+      intentDefinition,
+    );
+
+    expect(operation.intentInput).toEqual({
+      previousContactName: addresslessContact.name,
+      newContactName: updatedName,
+      groupHandle: addresslessContact.deviceCredentials?.groupHandle,
+      hmacProof: addresslessContact.deviceCredentials?.hmacProof,
+    });
+  });
+
+  it("GIVEN any contact WHEN creating a rename THEN it initializes on the dashboard, never a coin app", () => {
+    const operation = createRenameExternalContactOperation(
+      { contact, name: updatedName },
+      intentDefinition,
+    );
+
+    expect(operation.initializationInput).toEqual({
+      appName: "BOLOS",
+      dependencies: [],
+      requireLatestFirmware: false,
+    });
   });
 
   it("GIVEN a valid contact WHEN creating a rename THEN it builds the device intent", () => {

@@ -1,4 +1,11 @@
 export type ContactDeviceIntentFailureJobState =
+  /**
+   * The kit's version guard refused the device. Which version it refused
+   * depends on who serves the operation: an embedded coin app for the
+   * app-owned intents, the device OS for the dashboard-owned ones (contact
+   * rename). The kit reports both as one error, so each renderer supplies the
+   * copy that matches its own intent.
+   */
   | { readonly type: "app-version-too-low"; readonly error: Error }
   | { readonly type: "invalid-input"; readonly error: Error }
   /**

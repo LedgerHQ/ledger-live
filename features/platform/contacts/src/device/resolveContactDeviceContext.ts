@@ -18,6 +18,22 @@ export type ContactDeviceContext = Readonly<{
   initializationInput: ContactsDeviceInitializationInput;
 }>;
 
+/**
+ * Device initialization input for the Contacts operations the device OS serves
+ * from the dashboard (contact rename), rather than an embedded coin app.
+ *
+ * `BOLOS` is the dashboard's own app name, which makes DIE Phase 2 skip its
+ * open-app step: with no dependencies and no firmware floor, initialization
+ * narrows to connecting, unlocking and onboarding checks. The kit's device
+ * action then walks to the dashboard itself and enforces the minimum OS
+ * version, so there is nothing left for the host to gate on here.
+ */
+export const CONTACTS_DASHBOARD_INITIALIZATION_INPUT: ContactsDeviceInitializationInput = {
+  appName: "BOLOS",
+  dependencies: [],
+  requireLatestFirmware: false,
+};
+
 export function resolveContactDeviceContext(
   currencyId: ContactAddress["currencyId"],
 ): ContactDeviceContext {
