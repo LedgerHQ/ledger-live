@@ -20,6 +20,7 @@ export function ContactsRenameAddressDialog({
   draftLabel,
   invalidLabelError,
   bottomInset = 0,
+  keyboardInset = 0,
   labels,
   onDraftLabelChange,
   onAddressChange,
@@ -27,7 +28,9 @@ export function ContactsRenameAddressDialog({
   addressEntry,
 }: ContactsRenameAddressDrawerProps): React.JSX.Element {
   const labelValidationError =
-    invalidLabelError === null ? undefined : labels.labelValidationErrors[invalidLabelError];
+    invalidLabelError === null
+      ? undefined
+      : labels.labelValidationErrors[invalidLabelError];
   const addressInput = useEditAddressAddressEntryPresentation({
     addressEntry,
     labels: labels.addressValidation,
@@ -35,7 +38,9 @@ export function ContactsRenameAddressDialog({
   });
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+    <BottomSheetView
+      style={{ paddingBottom: bottomInset + 24 + keyboardInset }}
+    >
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader density="expanded" title={labels.title} />

@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { Platform } from "react-native";
 import {
   ContactsDeleteAddressDialog,
   ContactsEditSignerDialog,
@@ -8,6 +9,7 @@ import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-addres
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts";
+import { useKeyboardVisible } from "~/logic/keyboardVisible";
 
 type ContactAddressDetailActionsSheetsProps = Pick<
   ContactAddressDetailActionsFlowProps,
@@ -21,6 +23,10 @@ export function ContactAddressDetailActionsSheets({
   signerMismatchSheet,
 }: ContactAddressDetailActionsSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
+    eventTiming: Platform.OS === "ios" ? "will" : "did",
+  });
+  const keyboardInset = isKeyboardVisible ? keyboardHeight : 0;
   const onCloseDelete = useCallback(() => {
     deleteSheet.onCancel();
   }, [deleteSheet]);
@@ -40,7 +46,10 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-delete-address-sheet"
         enableDynamicSizing
       >
-        <ContactsDeleteAddressDialog {...deleteSheet} bottomInset={bottomInset} />
+        <ContactsDeleteAddressDialog
+          {...deleteSheet}
+          bottomInset={bottomInset}
+        />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerSheet.isOpen}
@@ -58,7 +67,10 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-edit-signer-mismatch-sheet"
         enableDynamicSizing
       >
-        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} bottomInset={bottomInset} />
+        <ContactsEditSignerMismatchDialog
+          {...signerMismatchSheet}
+          bottomInset={bottomInset}
+        />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={renameSheet.isOpen}
@@ -67,7 +79,11 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-rename-address-sheet"
         enableDynamicSizing
       >
-        <ContactsRenameAddressDialog {...renameSheet} bottomInset={bottomInset} />
+        <ContactsRenameAddressDialog
+          {...renameSheet}
+          bottomInset={bottomInset}
+          keyboardInset={keyboardInset}
+        />
       </QueuedBottomSheet>
     </>
   );

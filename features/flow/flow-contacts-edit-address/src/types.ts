@@ -33,7 +33,10 @@ export type RenameAddressDialogViewModel = RenameAddressViewModel &
     onOpen: () => void;
     onClose: () => void;
     onDraftLabelChange: (label: string) => void;
-    onAddressChange: (value: string, inputMethod: ContactsAddressInputSource) => void;
+    onAddressChange: (
+      value: string,
+      inputMethod: ContactsAddressInputSource
+    ) => void;
     onConfirm: () => Promise<void>;
   }>;
 
@@ -84,7 +87,9 @@ export type ContactsRenameAddressLabels = Readonly<{
   title: string;
   inputLabel: string;
   applyChanges: string;
-  labelValidationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
+  labelValidationErrors: Readonly<
+    Record<ContactAddressLabelValidationErrorName, string>
+  >;
   addressValidation: ContactsEditAddressValidationLabels;
 }>;
 
@@ -96,6 +101,7 @@ export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
 export type ContactsRenameAddressDrawerProps = RenameAddressDialogViewModel &
   Readonly<{
     bottomInset?: number;
+    keyboardInset?: number;
     labels: ContactsRenameAddressLabels;
   }>;
 
@@ -105,13 +111,13 @@ export type RenameAddressController = Readonly<{
     currentLabel: string,
     currentAddress: ContactAddress["address"] | undefined,
     addressEntry: ContactsAddressEntryState,
-    existingLabels: readonly ContactAddressLabel[],
+    existingLabels: readonly ContactAddressLabel[]
   ) => RenameAddressViewModel;
   save: (
     contactId: ContactId,
     addressId: ContactAddressId,
     draftLabel: string,
     addressEntry: ContactsAddressEntryState,
-    existingLabels: readonly ContactAddressLabel[],
+    existingLabels: readonly ContactAddressLabel[]
   ) => Promise<ContactAddress>;
 }>;

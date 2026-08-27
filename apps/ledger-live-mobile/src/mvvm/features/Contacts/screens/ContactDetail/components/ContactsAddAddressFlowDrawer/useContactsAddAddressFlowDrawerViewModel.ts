@@ -6,14 +6,17 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import { useTranslation } from "~/context/Locale";
-import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
+import { useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
-import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
+import type {
+  ContactsAddAddressDrawerStep,
+  ContactsAddAddressFlowDrawerProps,
+} from "./types";
 
 function resolveDrawerStep(
-  status: ContactsAddAddressFlowDrawerProps["state"]["status"],
+  status: ContactsAddAddressFlowDrawerProps["state"]["status"]
 ): ContactsAddAddressDrawerStep {
   switch (status) {
     case "closed":
@@ -50,10 +53,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
-  const bottomOffset =
-    isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-      ? keyboardHeight
-      : 0;
+  const bottomOffset = isKeyboardVisible ? keyboardHeight : 0;
   const currencySelection = useContactsCurrencySelectionAdapter({
     isOpen: state.status === "selectingCurrency",
     networkIds: eligibleNetworkIds,
@@ -68,14 +68,22 @@ export function useContactsAddAddressFlowDrawerViewModel({
             addressEntry: state.addressEntry,
             labels: {
               title: t("contacts.addAddressEntry.title"),
-              addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+              addressPlaceholder: t(
+                "contacts.addAddressEntry.addressPlaceholder"
+              ),
               confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
-              validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
+              validatingAddress: t(
+                "contacts.addAddressEntry.validatingAddress"
+              ),
               validAddress: t("contacts.addAddressEntry.validAddress"),
               invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
               domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
-              sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
-              validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+              sanctionedAddress: t(
+                "contacts.addAddressEntry.sanctionedAddress"
+              ),
+              validationUnavailable: t(
+                "contacts.addAddressEntry.validationUnavailable"
+              ),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
             },
             sanctionedAddressBanner: {
@@ -90,7 +98,8 @@ export function useContactsAddAddressFlowDrawerViewModel({
           }
         : null,
     addressNameProps:
-      state.status === "namingAddress" || state.status === "confirmationRequired"
+      state.status === "namingAddress" ||
+      state.status === "confirmationRequired"
         ? {
             addressLabel: state.addressLabel,
             labels: {
@@ -100,13 +109,13 @@ export function useContactsAddAddressFlowDrawerViewModel({
               continueToReview: t("common.continue"),
               validationErrors: {
                 [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
-                  "contacts.addAddressName.invalidLabel",
+                  "contacts.addAddressName.invalidLabel"
                 ),
                 [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
-                  "contacts.addAddressName.duplicateLabel",
+                  "contacts.addAddressName.duplicateLabel"
                 ),
                 [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(
-                  "contacts.addAddressName.labelTooLong",
+                  "contacts.addAddressName.labelTooLong"
                 ),
               },
             },
