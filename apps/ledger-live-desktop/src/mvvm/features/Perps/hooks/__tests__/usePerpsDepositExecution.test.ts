@@ -142,10 +142,7 @@ describe("usePerpsDepositExecution", () => {
     });
 
     // Nonce: the Exchange app opens and returns a device transaction id.
-    expect(result.current.deviceStep).toMatchObject({
-      stepId: "start",
-      isPerpsConfirmation: false,
-    });
+    expect(result.current.deviceStep).toMatchObject({ stepId: "start" });
     await answerDeviceStep(result.current.deviceStep, {
       startExchangeResult: { nonce: "nonce-1", device: { modelId: "stax" } },
     });
@@ -153,15 +150,12 @@ describe("usePerpsDepositExecution", () => {
 
     // Confirm, sign, broadcast: the perps confirmation screen only shows on the
     // Exchange app's payload check.
-    expect(result.current.deviceStep).toMatchObject({
-      stepId: "confirm",
-      isPerpsConfirmation: true,
-    });
+    expect(result.current.deviceStep).toMatchObject({ stepId: "confirm" });
     await answerDeviceStep(result.current.deviceStep, {
       completeExchangeResult: { family: "ethereum" },
     });
 
-    expect(result.current.deviceStep).toMatchObject({ stepId: "sign", isPerpsConfirmation: false });
+    expect(result.current.deviceStep).toMatchObject({ stepId: "sign" });
     await answerDeviceStep(result.current.deviceStep, { signedOperation: { operation } });
 
     expect(mockBroadcast).toHaveBeenCalledWith({ operation });

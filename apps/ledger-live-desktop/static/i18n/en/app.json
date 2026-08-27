@@ -9884,5 +9884,9 @@
       "amountExceedsBalance": "Insufficient balance",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
     }
+  },
+  "perpsDepositSign": {
+    "a11yTitle": "Deposit signing",
+    "terms": "By signing this transaction, I accept <termsLink>Swapkit by NEAR intent T&C</termsLink>"
   }
 }
