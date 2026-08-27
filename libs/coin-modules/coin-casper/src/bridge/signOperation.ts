@@ -1,10 +1,11 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { KeyAlgorithm, Transaction as CasperTransaction } from "casper-js-sdk";
+import { Transaction as CasperTransaction } from "casper-js-sdk";
 import { Observable } from "rxjs";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getAddress } from "../logic/validateAddress";
+import { tagSignature } from "../signer/deviceResponse";
 import { Transaction } from "../types";
 import { CasperSigner } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
@@ -56,7 +57,7 @@ export const buildSignOperation =
 
         // signature verification
         const txHash = casperTx.hash.getHash()?.toHex() ?? "";
-        const signature = Buffer.concat([Buffer.from([KeyAlgorithm.SECP256K1]), r.signatureRS]);
+        const signature = tagSignature(r.signatureRS);
 
         const operation = buildOptimisticOperation(account, transaction, txHash);
         const txJson = casperTx.toJSON();
@@ -65,7 +66,7 @@ export const buildSignOperation =
           type: "signed",
           signedOperation: {
             operation,
-            signature: Buffer.from(signature).toString("hex"),
+            signature,
             rawData: {
               tx: JSON.stringify(txJson),
             },

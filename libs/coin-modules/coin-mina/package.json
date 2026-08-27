@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.21.0",
+  "version": "1.21.1",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",
@@ -129,6 +129,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

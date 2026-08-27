@@ -2,43 +2,15 @@ import { z } from "zod";
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
 import type { RecentAddressesState } from "./schema";
 
-const CorrectAddressDistantSchema = z.object({
+const RecentAddressDistantSchema = z.object({
   address: z.string(),
   index: z.number(),
   lastUsed: z.number().optional(),
 });
 
-const CorruptedNestedAddressDistantSchema = z
-  .object({
-    address: z.object({
-      address: z.string(),
-      lastUsed: z.number().optional(),
-      ensName: z.string().optional(),
-    }),
-    index: z.number(),
-    lastUsed: z.number().optional(),
-  })
-  .transform(entry => ({
-    address: entry.address.address,
-    index: entry.index,
-    lastUsed: entry.address.lastUsed ?? entry.lastUsed,
-  }));
-
-const RecentAddressDistantSchema = z.union([
-  CorrectAddressDistantSchema,
-  CorruptedNestedAddressDistantSchema,
-]);
-
 export const RecentAddressesDistantSchema = z.record(
   z.string(),
-  z.array(z.unknown()).transform(entries =>
-    entries
-      .map(entry => {
-        const result = RecentAddressDistantSchema.safeParse(entry);
-        return result.success ? result.data : null;
-      })
-      .filter((entry): entry is z.infer<typeof CorrectAddressDistantSchema> => entry !== null),
-  ),
+  z.array(RecentAddressDistantSchema),
 );
 
 type DistantRecentAddressesState = z.infer<typeof RecentAddressesDistantSchema>;

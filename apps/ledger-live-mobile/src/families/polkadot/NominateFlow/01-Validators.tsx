@@ -112,10 +112,10 @@ function NominateSelectValidator({ navigation, route }: Props) {
         .map(nomination => nomination.address),
     [polkadotResources.nominations],
   );
-  const preloaded = usePolkadotPreloadData();
+  const preloaded = usePolkadotPreloadData(mainAccount.currency);
   const { staking, validators: polkadotValidators } = preloaded;
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
-  const hasMinBondBalance = hasMinimumBondBalance(mainAccount);
+  const hasMinBondBalance = hasMinimumBondBalance(mainAccount, minimumBondBalance);
   const unit = useAccountUnit(mainAccount);
 
   const minBondBalance = formatCurrencyUnit(unit, minimumBondBalance, {

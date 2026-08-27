@@ -1,107 +1,25 @@
 import React from "react";
-import { Banner, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useTheme as useStyledTheme } from "styled-components/native";
-import Animation from "~/components/Animation";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
-  getDeviceActionAnimation,
-  getDeviceActionAnimationStyle,
-} from "./getDeviceActionAnimation";
-import type { DeviceActionAnimationTheme, DeviceActionContentProps } from "./types";
+  DeviceActionContent as PlatformDeviceActionContent,
+  toDeviceActionModelId,
+} from "@features/platform-device-action-content";
+import type { DeviceActionContentProps, SupportedDeviceActionModelId } from "./types";
 
 /**
- * Shared mobile layout for device-side actions with animation, copy, and banner.
+ * Mobile adapter for `@features/platform-device-action-content`: converts the legacy
+ * `DeviceModelId` enum so consumers keep passing today's props. The platform package resolves the
+ * light/dark variant itself from the mounted style provider.
  */
-export function DeviceActionContent({
-  title,
-  description,
-  deviceName,
-  deviceModelId,
-  action,
-  banner,
-  theme,
-  testID,
-}: DeviceActionContentProps) {
-  const styledTheme = useStyledTheme();
-  const resolvedTheme = theme ?? getStyledAnimationTheme(styledTheme);
-  const animationSource = getDeviceActionAnimation({
-    action,
-    modelId: deviceModelId,
-    theme: resolvedTheme,
-  });
-
+export function DeviceActionContent({ deviceModelId, ...props }: DeviceActionContentProps) {
   return (
-    <Box lx={rootStyle} testID={testID}>
-      <Box lx={deviceSectionStyle}>
-        {animationSource ? (
-          <Animation
-            source={animationSource}
-            style={getDeviceActionAnimationStyle(deviceModelId)}
-            testID={testID ? `${testID}-animation` : undefined}
-          />
-        ) : null}
-        {deviceName ? <Tag size="md" appearance="gray" label={deviceName} /> : null}
-      </Box>
-
-      {title || description ? (
-        <Box lx={contentSectionStyle}>
-          {title ? (
-            <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-              {title}
-            </Text>
-          ) : null}
-          {description ? (
-            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-              {description}
-            </Text>
-          ) : null}
-        </Box>
-      ) : null}
-
-      {banner ? (
-        <Box lx={bannerSectionStyle}>
-          <Banner
-            appearance={banner.appearance ?? "info"}
-            title={banner.title}
-            description={banner.description}
-          />
-        </Box>
-      ) : null}
-    </Box>
+    <PlatformDeviceActionContent {...props} deviceModelId={toDeviceActionModelId(deviceModelId)} />
   );
 }
 
-const rootStyle = {
-  alignItems: "center",
-  gap: "s32",
-  overflow: "hidden",
-  paddingBottom: "s16",
-  width: "full",
-} as const;
-
-const deviceSectionStyle = {
-  alignItems: "center",
-  gap: "s16",
-  width: "full",
-} as const;
-
-const contentSectionStyle = {
-  alignItems: "center",
-  gap: "s8",
-  width: "full",
-} as const;
-
-const bannerSectionStyle = {
-  width: "full",
-} as const;
-
-function getStyledAnimationTheme(styledTheme: { theme?: string }): DeviceActionAnimationTheme {
-  return styledTheme.theme === "dark" ? "dark" : "light";
-}
-
-export {
-  getDeviceActionAnimation,
-  supportedDeviceActionModelIds,
-} from "./getDeviceActionAnimation";
+export const supportedDeviceActionModelIds: SupportedDeviceActionModelId[] = Object.values(
+  DeviceModelId,
+).filter((modelId): modelId is SupportedDeviceActionModelId => modelId !== DeviceModelId.blue);
 
 export type {
   DeviceActionAnimationSource,

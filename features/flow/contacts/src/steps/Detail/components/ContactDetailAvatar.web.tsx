@@ -1,6 +1,6 @@
 import React from "react";
 import type { Contact } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts/web";
+import { ContactAvatar } from "@features/platform-contacts";
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;

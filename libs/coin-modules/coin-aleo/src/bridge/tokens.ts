@@ -11,7 +11,7 @@ import {
   PRIVATE_TRANSFER_FUNCTIONS,
   SEMI_PUBLIC_TOKEN_FUNCTIONS,
 } from "../constants";
-import { parseAmount } from "../logic/utils";
+import { parseAmount, toBlockDate } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { decryptRecordAmount, getTokenOutDetails } from "../network/utils";
 import type {
@@ -442,7 +442,7 @@ export function buildPrivateTokenOp(
     blockHeight: record.block_height,
     blockHash: "",
     accountId: tokenAccountId,
-    date: new Date(Number(record.block_timestamp) * 1000),
+    date: toBlockDate(record.block_timestamp),
     extra: {
       functionId: record.function_name,
       transactionType: "private",
@@ -787,7 +787,7 @@ export async function buildSubAccountsFromPrivateRecords({
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
 
     if (!existingSubAccountIds.has(tokenAccountId)) {
-      const recordDate = new Date(Number(record.block_timestamp) * 1000);
+      const recordDate = toBlockDate(record.block_timestamp);
       const existingMeta = newSubAccountMeta.get(tokenAccountId);
       if (!existingMeta || recordDate < existingMeta.creationDate) {
         newSubAccountMeta.set(tokenAccountId, { token: tokenCurrency, creationDate: recordDate });

@@ -23,6 +23,7 @@ export function ContactsEditSignerMismatchDialog({
       }}
       confirmAppearance="base"
       confirmTestID="contacts-edit-signer-mismatch-connect"
+      cancelTestID="contacts-edit-signer-mismatch-cancel"
       onConfirm={onConnectDifferentDevice}
       onCancel={onCancel}
     />

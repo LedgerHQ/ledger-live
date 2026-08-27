@@ -72,7 +72,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
+        run: pnpm i --frozen-lockfile --filter="!./apps/**"
 
       - name: Build
         run: pnpm exec nx run-many -t build --projects=tag:type:coin-module

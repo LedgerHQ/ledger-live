@@ -1,4 +1,4 @@
-import { renderWithNavigation, screen, userEvent } from "jest/screens.native";
+import { renderWithNavigation, screen, userEvent } from "jest/screens";
 
 import { DevTools } from "./DevTools";
 import { mockDevToolsConfig } from "jest/test-utils";

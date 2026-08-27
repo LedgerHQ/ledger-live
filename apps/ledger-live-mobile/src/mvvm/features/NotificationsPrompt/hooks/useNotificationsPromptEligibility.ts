@@ -8,7 +8,7 @@ import {
   shouldPromptOptInDrawerAfterAction,
 } from "../utils/notificationsPromptEngine";
 
-type UseNotificationsPromptParams = {
+type UseNotificationsPromptEligibilityParams = {
   permissionStatus:
     | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
     | null
@@ -23,7 +23,7 @@ export const useNotificationsPromptEligibility = ({
   areNotificationsAllowed,
   transactionsAlertsCategory,
   pushNotificationsDataOfUser,
-}: UseNotificationsPromptParams) => {
+}: UseNotificationsPromptEligibilityParams) => {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
   const repromptSchedule = featureBrazePushNotifications?.params?.reprompt_schedule;
 

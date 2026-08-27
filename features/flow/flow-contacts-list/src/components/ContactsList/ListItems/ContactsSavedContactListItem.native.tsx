@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAvatar } from "@features/platform-contacts/native";
+import { ContactAvatar } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsSavedContactListItemProps = Readonly<{
@@ -30,8 +30,12 @@ export function ContactsSavedContactListItem({
       <ListItemLeading>
         <ContactAvatar contactId={contact.contactId} name={contact.name} size="md" />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
-          <ListItemDescription>{addressCountLabel}</ListItemDescription>
+          <ListItemTitle testID={`contacts-saved-contact-${contact.contactId}-name`}>
+            {contact.name}
+          </ListItemTitle>
+          <ListItemDescription testID={`contacts-saved-contact-${contact.contactId}-address-count`}>
+            {addressCountLabel}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>

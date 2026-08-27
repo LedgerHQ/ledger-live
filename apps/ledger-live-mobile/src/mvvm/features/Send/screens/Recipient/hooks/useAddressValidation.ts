@@ -17,7 +17,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
-import { useBatchMaybeAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
@@ -44,6 +44,7 @@ type UseAddressValidationProps = Readonly<{
   transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain?: boolean;
+  canSearchContactsByName?: boolean;
   /** Debounce before bridge validation. Pass 0 for one-shot values (e.g. clipboard). */
   debounceMs?: number;
 }>;
@@ -62,6 +63,7 @@ export function useAddressValidation({
   transaction,
   currentAccountId,
   recipientSupportsDomain = false,
+  canSearchContactsByName = false,
   debounceMs,
 }: UseAddressValidationProps): UseAddressValidationResult {
   const [validationState, setValidationState] = useState<{
@@ -91,16 +93,33 @@ export function useAddressValidation({
     return null;
   }, [domainServiceResponse, recipientSupportsDomain]);
 
-  // Use resolved address for bridge validation (ENS resolved address or original searchValue)
-  const addressForBridgeValidation = useMemo(() => {
-    return ensResolution?.address ?? searchValue;
-  }, [ensResolution?.address, searchValue]);
-
   const mainAccount = useMemo(
     () => (account ? getMainAccount(account, parentAccount) : null),
     [account, parentAccount],
   );
   const sanctionCurrency = currency.type === "TokenCurrency" ? mainAccount?.currency : currency;
+
+  const matchedContact = useMemo(() => {
+    if (!searchValue || !sanctionCurrency) {
+      return undefined;
+    }
+
+    return findMatchedContact(contacts, searchValue, currency.id, ensResolution?.address, {
+      matchName: canSearchContactsByName && !domainIsLoading,
+    });
+  }, [
+    canSearchContactsByName,
+    contacts,
+    currency.id,
+    domainIsLoading,
+    ensResolution?.address,
+    sanctionCurrency,
+    searchValue,
+  ]);
+
+  const addressForBridgeValidation = useMemo(() => {
+    return matchedContact?.address ?? ensResolution?.address ?? searchValue;
+  }, [ensResolution?.address, matchedContact?.address, searchValue]);
   const validationKey = `${sanctionCurrency?.id ?? ""}:${addressForBridgeValidation}`;
 
   // Bridge validation for recipient/sender errors and warnings
@@ -112,7 +131,7 @@ export function useAddressValidation({
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&
-      (!recipientSupportsDomain || ensResolution || !domainIsLoading),
+      (matchedContact || !recipientSupportsDomain || ensResolution || !domainIsLoading),
     ),
     debounceMs,
   });
@@ -155,9 +174,6 @@ export function useAddressValidation({
     });
   }, [currency, userAccountsForCurrency]);
 
-  // Get account names for all user accounts to enable search by name
-  const accountNames = useBatchMaybeAccountName(userAccountsForCurrency);
-
   const matchedRecentAddress = useMemo(() => {
     if (!searchValue) return undefined;
     const normalizedSearch = searchValue.toLowerCase();
@@ -170,50 +186,29 @@ export function useAddressValidation({
   }, [searchValue, recentAddresses]);
 
   const matchedLedgerAccounts = useMemo(() => {
-    if (!searchValue) return [];
-    const normalizedSearch = searchValue.toLowerCase();
-    return userAccountsForCurrency.filter((acc, index) => {
-      const name = accountNames[index];
-      return (
-        acc.freshAddress.toLowerCase().includes(normalizedSearch) ||
-        name?.toLowerCase().includes(normalizedSearch)
-      );
-    });
-  }, [searchValue, userAccountsForCurrency, accountNames]);
+    if (!canMatchValidatedRecipient) return [];
 
-  const currentAccountName = useMaybeAccountName(mainAccount);
+    const normalizedRecipientAddress = addressForBridgeValidation.toLowerCase();
+    return userAccountsForCurrency.filter(
+      acc => acc.freshAddress.toLowerCase() === normalizedRecipientAddress,
+    );
+  }, [canMatchValidatedRecipient, userAccountsForCurrency, addressForBridgeValidation]);
 
   const currentAccountMatch = useMemo(() => {
-    if (!searchValue || !account) return null;
+    if (!canMatchValidatedRecipient || !account || !mainAccount) return null;
 
-    if (!mainAccount) return null;
-
-    const addressToCheck = ensResolution?.address ?? searchValue;
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
+    const addressMatches =
+      addressForBridgeValidation.toLowerCase() === mainAccount.freshAddress.toLowerCase();
 
-    const normalizedSearch = searchValue.toLowerCase();
-    const addressMatches = addressToCheck.toLowerCase() === mainAccount.freshAddress.toLowerCase();
-    const nameMatches = currentAccountName?.toLowerCase().includes(normalizedSearch) ?? false;
-
-    if (
-      (addressMatches || nameMatches) &&
-      (selfTransferPolicy === "free" || selfTransferPolicy === "warning")
-    ) {
+    if (addressMatches && (selfTransferPolicy === "free" || selfTransferPolicy === "warning")) {
       return mainAccount;
     }
 
     return null;
-  }, [searchValue, account, mainAccount, currency, ensResolution?.address, currentAccountName]);
+  }, [canMatchValidatedRecipient, account, mainAccount, currency, addressForBridgeValidation]);
 
   const matchedLedgerAccount = currentAccountMatch ?? matchedLedgerAccounts[0];
-
-  const matchedContact = useMemo(() => {
-    if (!canMatchValidatedRecipient || !sanctionCurrency) {
-      return undefined;
-    }
-
-    return findMatchedContact(contacts, searchValue, sanctionCurrency.id, ensResolution?.address);
-  }, [canMatchValidatedRecipient, sanctionCurrency, contacts, searchValue, ensResolution?.address]);
 
   const { formattedBalance, formattedCounterValue } =
     useFormattedAccountBalance(matchedLedgerAccount);
@@ -228,7 +223,7 @@ export function useAddressValidation({
     setValidationState({ status: "loading", error: null, isSanctioned: false });
 
     try {
-      const addressToCheck = ensResolution?.address ?? searchValue;
+      const addressToCheck = matchedContact?.address ?? ensResolution?.address ?? searchValue;
 
       if (sanctionCurrency) {
         const sanctioned = await isAddressSanctioned(sanctionCurrency, addressToCheck);
@@ -263,7 +258,7 @@ export function useAddressValidation({
         isSanctioned: false,
       });
     }
-  }, [searchValue, ensResolution, sanctionCurrency]);
+  }, [searchValue, matchedContact?.address, ensResolution, sanctionCurrency]);
 
   // Revalidate when the effective address changes, including after ENS resolution.
   if (validationKey !== lastValidationKeyRef.current) {
@@ -323,7 +318,8 @@ export function useAddressValidation({
     return {
       status: validationState.status,
       error: validationState.error,
-      resolvedAddress: matchedLedgerAccount?.freshAddress ?? ensResolution?.address,
+      resolvedAddress:
+        matchedLedgerAccount?.freshAddress ?? matchedContact?.address ?? ensResolution?.address,
       ensName: ensResolution?.domain,
       isLedgerAccount: allMatchedAccounts.length > 0,
       accountName,
@@ -362,7 +358,7 @@ export function useAddressValidation({
     result,
     isLoading:
       validationState.status === "loading" ||
-      domainIsLoading ||
+      (domainIsLoading && !matchedContact) ||
       (bridgeValidation.isLoading && bridgeValidation.status === null),
     validateAddress,
   };

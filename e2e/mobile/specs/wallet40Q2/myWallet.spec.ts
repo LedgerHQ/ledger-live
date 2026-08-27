@@ -26,26 +26,26 @@ describe("My Wallet", () => {
 
   it("Open My Wallet from portfolio and earn", async () => {
     await app.mainNavigation.expectPortfolioPageVisible();
-    await app.myWallet.openFromTopBar();
+    await app.mainNavigation.openMyWallet();
     await app.myWallet.tapHeaderBack();
 
     await app.mainNavigation.expectPortfolioPageVisible();
 
     await app.mainNavigation.tapWallet40Tab("earn");
     await app.mainNavigation.expectEarnPageVisible();
-    await app.myWallet.openFromTopBar();
+    await app.mainNavigation.openMyWallet();
   });
 
   it("Access help from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.myWallet.openFromTopBar();
+    await app.mainNavigation.openMyWallet();
     await app.myWallet.tapHelp();
     await app.myWallet.expectHelpScreenVisible();
   });
 
   it("Access settings from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.myWallet.openFromTopBar();
+    await app.mainNavigation.openMyWallet();
     await app.myWallet.tapHeaderSettings();
     await app.myWallet.expectSettingsScreenVisible();
   });

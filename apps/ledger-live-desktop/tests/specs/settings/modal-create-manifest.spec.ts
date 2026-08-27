@@ -19,16 +19,17 @@ test("Settings", async ({ page }) => {
   });
 
   await test.step("open modal local manifest form creation", async () => {
-    await settingsPage.openLocalManifestFormButton.waitFor({ state: "visible" });
+    await settingsPage.openLocalManifestFormButton.waitFor({
+      state: "visible",
+    });
     await settingsPage.openLocalManifestFormButton.click();
     await settingsPage.createLocalManifestButton.waitFor({ state: "visible" });
   });
 
   await test.step("create local manifest", async () => {
+    await expect(settingsPage.createLocalManifestButton).toBeEnabled({ timeout: 60000 });
     await settingsPage.createLocalManifestButton.click();
-    await expect(
-      page.getByText("ReplaceAppName").or(page.locator('input[value="ReplaceAppName"]')),
-    ).toBeVisible({ timeout: 60000 });
+    await expect(page.getByText("ReplaceAppName", { exact: true })).toBeVisible({ timeout: 60000 });
   });
 
   await test.step("export the local manifest", async () => {

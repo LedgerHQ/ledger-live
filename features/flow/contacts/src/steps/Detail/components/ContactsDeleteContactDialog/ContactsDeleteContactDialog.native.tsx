@@ -21,6 +21,7 @@ export function ContactsDeleteContactDialog({
       confirmLoading={isDeleting}
       confirmDisabled={isDeleting}
       confirmTestID="contacts-delete-contact-confirm"
+      contentTestID="contacts-delete-contact-content"
       onConfirm={() => void onConfirm()}
       onCancel={onCancel}
     />

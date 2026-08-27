@@ -1,5 +1,4 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
-import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -354,7 +353,7 @@ async function getFeeData(
   transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
 ): Promise<FeeData> {
   const block = await api.getBlock("latest");
-  const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+  const currencySupports1559 = config.forceLegacyTransactions
     ? false
     : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 

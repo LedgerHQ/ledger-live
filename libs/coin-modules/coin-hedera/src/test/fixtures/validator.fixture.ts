@@ -12,6 +12,7 @@ export const getMockedValidator = (overrides?: Partial<HederaValidator>): Hedera
     activeStake: new BigNumber(0),
     activeStakePercentage: new BigNumber(0),
     overstaked: false,
+    isLedgerNode: false,
     ...overrides,
   };
 };

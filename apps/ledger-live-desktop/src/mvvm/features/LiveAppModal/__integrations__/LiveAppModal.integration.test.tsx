@@ -37,7 +37,8 @@ const mockWebviewProps = jest.fn();
 jest.mock("~/renderer/components/Web3AppWebview", () => ({
   Web3AppWebview: (props: Record<string, unknown>) => {
     mockWebviewProps(props);
-    return <div data-testid="web3-app-webview" />;
+    // A real <webview> so focus handling sees the same element type it does in the app.
+    return <webview data-testid="web3-app-webview" />;
   },
 }));
 
@@ -179,6 +180,44 @@ describe("LiveAppModal Integration", () => {
           ethDepositCohort: expect.any(String),
         }),
       );
+    });
+  });
+
+  // An embedded live app cannot claim keyboard focus back on its own, so the modal
+  // has to hand it to the app it was opened from — never to its own dying guest.
+  describe("focus handoff on close", () => {
+    let hostWebview: HTMLElement;
+
+    beforeEach(() => {
+      hostWebview = document.createElement("webview");
+      document.body.appendChild(hostWebview);
+    });
+
+    afterEach(() => {
+      hostWebview.remove();
+    });
+
+    it("should focus the live app behind the modal, not the modal's own webview", async () => {
+      const hostFocus = jest.spyOn(hostWebview, "focus");
+      const { store } = render(<LiveAppModal />);
+
+      act(() => {
+        store.dispatch(setLiveAppModal(baseParams));
+      });
+      await waitFor(() => {
+        expect(screen.getByRole("dialog")).toBeVisible();
+      });
+      const modalWebview = screen.getByTestId("web3-app-webview");
+      const modalWebviewFocus = jest.spyOn(modalWebview, "focus");
+
+      act(() => {
+        store.dispatch(setLiveAppModal(null));
+      });
+
+      await waitFor(() => {
+        expect(hostFocus).toHaveBeenCalled();
+      });
+      expect(modalWebviewFocus).not.toHaveBeenCalled();
     });
   });
 

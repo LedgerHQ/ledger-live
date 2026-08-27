@@ -108,7 +108,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
         type: "ledger",
         explorerId: "matic",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_polygon: {

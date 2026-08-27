@@ -1,6 +1,6 @@
 {
   "name": "@shared/api-services",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "One endpoint-less RTK Query api per backend service: base query, cache tags and extraArgument contract. Use-case packages inject their endpoints into these.",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -35,6 +36,7 @@
     "jest": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

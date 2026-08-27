@@ -25,20 +25,21 @@ import type {
   SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
+type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,
   Input,
   ExtraProps,
-  InitializationInput
+  InitializationInput,
+  Result
 > & {
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
   analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
-export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> = {
+export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps, Result = undefined> = {
   sourceFlow: SourceFlow;
-  wrappedProps: Props<JobState, Input, ExtraProps>;
+  wrappedProps: Props<JobState, Input, ExtraProps, Result>;
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
   /**
@@ -69,9 +70,14 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
   };
 }
 
-export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>(
-  props: Props<JobState, Input, ExtraProps>,
-): DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> {
+export function useDeviceIntentExecutorLWMViewModel<
+  JobState,
+  Input,
+  ExtraProps,
+  Result = undefined,
+>(
+  props: Props<JobState, Input, ExtraProps, Result>,
+): DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps, Result> {
   const {
     enabled,
     sourceFlow,

@@ -178,7 +178,7 @@ function applyFilter(
 
   const orderedPixelsNColors = [];
   // Raw data -> by column, from right to left, from top to bottom
-  for (let x = width; x--; ) {
+  for (let x = width; x--;) {
     for (let y = 0; y < height; y++) {
       orderedPixelsNColors.push(pixelsNColors[y][x]);
     }

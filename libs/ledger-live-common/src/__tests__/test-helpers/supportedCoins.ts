@@ -15,13 +15,11 @@ export function supportOnlyForTest(ids: string[]): void {
   }
   resetCoinModulesForTests();
   registerCoinModules(
-    Object.entries(byFamily).map(
-      ([family, supportedCoins]): CoinModuleLoader => ({
-        family,
-        supportedCoins,
-        loadSetup: notCallableInTests,
-        loadTransaction: notCallableInTests,
-      }),
-    ),
+    Object.entries(byFamily).map(([family, supportedCoins]): CoinModuleLoader => ({
+      family,
+      supportedCoins,
+      loadSetup: notCallableInTests,
+      loadTransaction: notCallableInTests,
+    })),
   );
 }

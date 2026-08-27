@@ -1,17 +1,18 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "rules": {
     "binaries": "off",
-    "classMembers": "off",
+    "catalog": "off",
+    "catalogReferences": "off",
     "dependencies": "error",
     "devDependencies": "off",
-    "optionalPeerDependencies": "off",
     "duplicates": "error",
     "enumMembers": "warn",
     "exports": "warn",
     "files": "error",
     "nsExports": "off",
     "nsTypes": "off",
+    "optionalPeerDependencies": "off",
     "types": "warn",
     "unlisted": "off",
     "unresolved": "off"
@@ -81,6 +82,7 @@
         "@react-native/gradle-plugin",
         "buffer",
         "expo-crypto",
+        "expo-document-picker",
         "expo-file-system",
         "expo-image-loader",
         "expo-modules-autolinking",
@@ -96,6 +98,9 @@
     },
     "./libs/live-wallet": {
       "entry": ["src/walletSyncComposition.ts", "src/accounts/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-kaspa": {
+      "ignore": ["miner/miner.js"]
     }
   }
 }

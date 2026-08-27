@@ -81,7 +81,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
 
       - name: Run format check
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
@@ -138,7 +138,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
+        run: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
 
       - name: Build dependencies
         run: pnpm exec nx run live-mobile:build-lib-deps

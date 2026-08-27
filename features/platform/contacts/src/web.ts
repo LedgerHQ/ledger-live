@@ -6,4 +6,6 @@ export * from "./utils/resolveMeContactDisplayName";
 export * from "./contactDeviceIntentsPort";
 export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
-export * from "./components/ContactAvatar/ContactAvatar.web";
+export * from "./components/ContactAvatar";
+export * from "./components/ContactNameInput";
+export * from "./components/ContactNameDisclaimer";

@@ -8,23 +8,14 @@ import type { PayCardAuthorizeAttempt } from "./types";
 const CODE_VERIFIER_BYTE_LENGTH = 32;
 
 /**
- * OAuth state has no fixed standard length. Encoding 16 random bytes as unpadded base64url gives
- * 22 characters and 128 bits of entropy, safely above the backend's 8-character minimum.
- */
-const STATE_BYTE_LENGTH = 16;
-
-/**
- * Builds one login attempt: a CSRF `state` plus a PKCE pair.
+ * Builds one login attempt: a PKCE pair.
  *
- * Both halves are minted here so an attempt is always internally consistent — the `state` the
- * callback must echo and the verifier the token exchange must present belong to the same login. Only
- * the challenge is spent on the authorize initiation.
+ * The challenge travels on the authorize URL and the verifier stays on disk. The provider ties the
+ * code it issues to that challenge, so only this attempt can exchange it. That binding is what makes
+ * a separate CSRF value unnecessary.
  */
 export async function createAuthorizeAttempt(): Promise<PayCardAuthorizeAttempt> {
-  const [state, codeVerifier] = await Promise.all([
-    createRandomBase64Url(STATE_BYTE_LENGTH),
-    createRandomBase64Url(CODE_VERIFIER_BYTE_LENGTH),
-  ]);
+  const codeVerifier = await createRandomBase64Url(CODE_VERIFIER_BYTE_LENGTH);
 
-  return { state, codeVerifier, codeChallenge: await sha256Base64Url(codeVerifier) };
+  return { codeVerifier, codeChallenge: await sha256Base64Url(codeVerifier) };
 }

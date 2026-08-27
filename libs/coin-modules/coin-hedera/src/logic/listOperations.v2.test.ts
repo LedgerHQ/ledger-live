@@ -2,8 +2,8 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
-import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
+import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import * as networkUtils from "../network/utils";
@@ -839,7 +839,7 @@ describe("listOperationsV2", () => {
         hash: utils.createStakingRewardOperationHash(mockTransaction.transaction_hash ?? ""),
         value: new BigNumber(1000000),
         fee: new BigNumber(0),
-        senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+        senders: [STAKING_REWARD_ACCOUNT_ID],
         recipients: [mockMirrorAccount.account],
       },
       {

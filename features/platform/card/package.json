@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-card",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Cross-flow Card runtime: in-memory Card session and the Bearer/refresh accessors the app injects into the shared cardApi service",
   "main": "src/index.ts",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

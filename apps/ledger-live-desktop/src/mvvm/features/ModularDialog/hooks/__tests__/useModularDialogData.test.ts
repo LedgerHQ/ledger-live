@@ -1,4 +1,5 @@
 import { useAssetsData } from "@features/platform-aggregated-assets";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { renderHook, waitFor } from "tests/testSetup";
@@ -139,6 +140,29 @@ describe("useModularDialogData filters", () => {
       expect.objectContaining({
         currencyIds: ["bitcoin"],
         areCurrenciesFiltered: true,
+      }),
+    );
+  });
+
+  it("should forward category filtering to the assets query", () => {
+    renderHook(() => useModularDialogData(), {
+      initialState: {
+        modularDialog: {
+          searchedValue: undefined,
+          isDebuggingDuplicates: false,
+          flow: "",
+          source: "",
+          isOpen: true,
+          dialogParams: {
+            categories: [AssetCategory.Stablecoins],
+          },
+        },
+      },
+    });
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        categories: [AssetCategory.Stablecoins],
       }),
     );
   });

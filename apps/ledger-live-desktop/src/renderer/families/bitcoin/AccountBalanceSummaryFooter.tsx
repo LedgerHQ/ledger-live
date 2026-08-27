@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -22,10 +22,6 @@ import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types"
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 import {
-  ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
-  ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
-} from "@ledgerhq/coin-zcash/constants";
-import {
   getPrivateBalance,
   getTransparentBalance,
 } from "@ledgerhq/coin-zcash/logic/account/balance";
@@ -35,7 +31,6 @@ import {
   hasMaturingIronwoodNotes,
 } from "@ledgerhq/coin-zcash/logic/account/spendability";
 import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
-import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
 const Container = styled(Box).attrs(() => ({
@@ -147,7 +142,7 @@ const ActionButton = ({
       );
     case "complete":
       return (
-        <ActionButtonElement buttonTestId="up-to-date-button" disabled>
+        <ActionButtonElement buttonTestId="up-to-date-button">
           <Text>{t("zcash.shielded.state.upToDate")}</Text>
         </ActionButtonElement>
       );
@@ -248,17 +243,13 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const progress = privateInfo?.progress ?? 0;
   const estimatedTimeRemaining = privateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 };
 
-  const shieldedSubscriptions = useSelector(selectShieldedSubscriptions);
-
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { saveSyncState, startShieldedSync, stopShieldedSync } = useZcashShieldedSync(
-    account as ZcashAccount,
-  );
+  const { startShieldedSync, stopShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
 
   const updateSyncState = () => {
     if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
@@ -286,21 +277,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         // Start sync from the last known block
         startShieldedSync();
         break;
+      case "complete":
+        startShieldedSync();
+        break;
     }
   };
-
-  // Check if sync is outdated
-  const outdatedSyncCheck = useCallback(() => {
-    const now = new Date().getTime();
-    if (
-      privateInfo?.lastSyncTimestamp &&
-      now - privateInfo.lastSyncTimestamp > 1000 * 60 * ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES
-    ) {
-      saveSyncState({
-        syncState: "outdated",
-      });
-    }
-  }, [privateInfo?.lastSyncTimestamp, saveSyncState]);
 
   // Check if private balance has been activated
   useEffect(() => {
@@ -308,27 +289,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       startShieldedSync();
     }
   }, [previousSyncState, syncState, startShieldedSync]);
-
-  // Check if sync is outdated (every 5 seconds)
-  useEffect(() => {
-    if (syncState === "complete") {
-      outdatedSyncCheck();
-      const interval = setInterval(() => outdatedSyncCheck(), ZCASH_CHECK_OUTDATED_SYNC_INTERVAL);
-      return () => {
-        if (interval) clearInterval(interval);
-      };
-    }
-  }, [syncState, outdatedSyncCheck]);
-
-  // Check on mount if there is a subscription for this account, if not update the sync state to "stopped"
-  useEffect(() => {
-    const hasShieldedSubscription = shieldedSubscriptions.some(s => s.accountId === account.id);
-    const justEnteredRunning = syncState === "running" && previousSyncState !== "running";
-
-    if (syncState === "running" && !hasShieldedSubscription && !justEnteredRunning) {
-      stopShieldedSync();
-    }
-  }, [account.id, previousSyncState, shieldedSubscriptions, syncState, stopShieldedSync]);
 
   if (
     account.type !== "Account" ||
@@ -459,6 +419,15 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
                 values={{ spendable: spendableBalanceLabel, maturing: maturingAmountLabel }}
               />
             </Discreet>
+          </WarningBannerText>
+        </WarningWrapper>
+      ) : null}
+
+      {syncState === "stopped" && privateInfo?.lastSyncError ? (
+        <WarningWrapper>
+          <TriangleWarning size={16} />
+          <WarningBannerText data-testid="zcash-sync-failed-warning">
+            <Trans i18nKey="zcash.shielded.state.syncFailed" />
           </WarningBannerText>
         </WarningWrapper>
       ) : null}

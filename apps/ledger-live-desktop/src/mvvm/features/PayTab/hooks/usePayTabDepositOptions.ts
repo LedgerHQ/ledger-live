@@ -2,22 +2,24 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
   type DepositOptionsLabels,
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
-} from "@features/flow-pay-card-deposit";
+} from "@features/flow-pay-deposit";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 
 const DEPOSIT_PAGE = "Pay";
+
+const DEPOSIT_CATEGORIES = [AssetCategory.Stablecoins] as const;
 
 export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
-  stablecoinCurrencyIds: string[],
 ): UsePayTabDepositOptions {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -42,11 +44,11 @@ export function usePayTabDepositOptions(
           navigate("/exchange", { state: { mode: "buy", returnTo: "/paytab" } });
           break;
         case "receive":
-          openAssetFlow(undefined, stablecoinCurrencyIds);
+          openAssetFlow(undefined, undefined, DEPOSIT_CATEGORIES);
           break;
       }
     },
-    [navigate, openAssetFlow, stablecoinCurrencyIds],
+    [navigate, openAssetFlow],
   );
 
   const labels: DepositOptionsLabels = {

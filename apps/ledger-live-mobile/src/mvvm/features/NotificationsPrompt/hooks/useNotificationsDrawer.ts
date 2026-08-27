@@ -1,5 +1,4 @@
-import { useCallback, useRef } from "react";
-import { InteractionManager } from "react-native";
+import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { useFeature } from "@features/platform-feature-flags";
@@ -16,9 +15,7 @@ import {
   notificationsDrawerSource,
   notificationsModalOpenSelector,
 } from "~/reducers/notifications";
-import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { notificationsSelector, trackingEnabledSelector } from "~/reducers/settings";
-import { type NotificationsState } from "~/reducers/types";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { resolveDrawerPromptTargetForAnalytics } from "../new/notificationsPromptAnalytics";
 import { isTransactionsAlertsPromptTarget } from "../utils/getNotificationsPromptCopy";
@@ -30,8 +27,6 @@ type UseNotificationsDrawerParams = {
     | undefined;
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
   nextRepromptDelay: { days?: number; hours?: number; minutes?: number } | null;
-  shouldPromptOptInDrawerAfterAction: () => boolean;
-  checkIsInactive: (lastActionAt?: number) => boolean;
   markUserAsOptIn: () => void;
   markUserAsOptOut: (promptTarget?: NotificationPromptTarget) => void;
   enableAppNotifications: () => void;
@@ -45,178 +40,20 @@ export const useNotificationsDrawer = ({
   permissionStatus,
   pushNotificationsDataOfUser,
   nextRepromptDelay,
-  shouldPromptOptInDrawerAfterAction,
-  checkIsInactive,
   markUserAsOptIn,
   markUserAsOptOut,
   enableAppNotifications,
   requestPushNotificationsPermission,
   updateUserLastInactiveTime,
 }: UseNotificationsDrawerParams) => {
-  const featureBrazePushNotifications = useFeature("brazePushNotifications");
-  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
-  const actionEvents = featureBrazePushNotifications?.params?.action_events;
-
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
-  const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const drawerSource = useSelector(notificationsDrawerSource);
   const drawerPromptTarget = useSelector(notificationsDrawerPromptTarget);
   const notifications = useSelector(notificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
 
   const dispatch = useDispatch();
-  const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const openDrawer = useCallback(
-    (drawerSource: Exclude<NotificationsState["drawerSource"], undefined>, timer = 0) => {
-      if (eventTimeoutRef.current) {
-        clearTimeout(eventTimeoutRef.current);
-        eventTimeoutRef.current = null;
-      }
-
-      eventTimeoutRef.current = setTimeout(() => {
-        dispatch(setNotificationsModalOpen(true));
-        dispatch(setNotificationsDrawerSource(drawerSource));
-      }, timer);
-    },
-    [dispatch],
-  );
-
-  const tryTriggerPushNotificationDrawerAfterInactivity = useCallback(
-    (
-      data:
-        | {
-            status: "success";
-            storedUserData: DataOfUser | null;
-            osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
-            areAppNotificationsEnabled: boolean;
-          }
-        | {
-            status: "error";
-            reason: string;
-          },
-    ) => {
-      if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen) {
-        return;
-      }
-      if (data.status === "error") {
-        return;
-      }
-
-      const isOptOut =
-        data.osPermissionStatus !== AuthorizationStatus.AUTHORIZED ||
-        !data.areAppNotificationsEnabled;
-      if (!isOptOut) {
-        return;
-      }
-
-      const isInactive = checkIsInactive(data.storedUserData?.lastActionAt);
-      if (isInactive) {
-        openDrawer("inactivity", 1000);
-      }
-    },
-    [featureBrazePushNotifications?.enabled, isRatingsModalOpen, openDrawer, checkIsInactive],
-  );
-
-  const tryTriggerPushNotificationDrawerAfterAction = useCallback(
-    (actionSource: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">) => {
-      if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen || !actionEvents) {
-        return;
-      }
-
-      const shouldPrompt = shouldPromptOptInDrawerAfterAction();
-
-      track("attempt_to_trigger_push_notification_drawer_after_action", {
-        action: actionSource,
-        shouldPrompt,
-        repromptDelay: nextRepromptDelay,
-        dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
-        drawerPromptTarget: shouldPrompt
-          ? resolveDrawerPromptTargetForAnalytics(undefined)
-          : undefined,
-      });
-
-      if (!shouldPrompt) {
-        return;
-      }
-
-      const openDrawerCallback = (...args: Parameters<typeof openDrawer>) => {
-        InteractionManager.runAfterInteractions(() => openDrawer(...args));
-      };
-
-      switch (actionSource) {
-        case "onboarding": {
-          const onboardingParams = actionEvents?.complete_onboarding;
-          if (!onboardingParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("onboarding", onboardingParams?.timer);
-          break;
-        }
-        case "add_favorite_coin": {
-          const addFavoriteCoinParams = actionEvents?.add_favorite_coin;
-          if (!addFavoriteCoinParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("add_favorite_coin", addFavoriteCoinParams?.timer);
-          break;
-        }
-        case "send": {
-          const sendParams = actionEvents?.send;
-          if (!sendParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("send", sendParams?.timer);
-          break;
-        }
-        case "dapp_complete": {
-          const dAppCompleteParams = actionEvents?.dapp_complete;
-          if (!dAppCompleteParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("dapp_complete", dAppCompleteParams?.timer);
-          break;
-        }
-        case "receive": {
-          const receiveParams = actionEvents?.receive;
-          if (!receiveParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("receive", receiveParams?.timer);
-          break;
-        }
-        case "swap": {
-          const swapParams = actionEvents?.swap;
-          if (!swapParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("swap", swapParams?.timer);
-          break;
-        }
-        case "stake": {
-          const stakeParams = actionEvents?.stake;
-          if (!stakeParams?.enabled) {
-            return;
-          }
-          openDrawerCallback("stake", stakeParams?.timer);
-          break;
-        }
-        default: {
-          console.error(`Unknown action source: ${actionSource}`);
-          break;
-        }
-      }
-    },
-    [
-      featureBrazePushNotifications?.enabled,
-      isRatingsModalOpen,
-      actionEvents,
-      shouldPromptOptInDrawerAfterAction,
-      openDrawer,
-      nextRepromptDelay,
-      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length,
-    ],
-  );
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
@@ -349,11 +186,8 @@ export const useNotificationsDrawer = ({
     isPushNotificationsModalOpen,
     drawerSource,
     drawerPromptTarget,
-    eventTimeoutRef,
-    tryTriggerPushNotificationDrawerAfterAction,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
-    tryTriggerPushNotificationDrawerAfterInactivity,
   };
 };

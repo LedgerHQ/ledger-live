@@ -189,6 +189,7 @@ describe("hedera/react", () => {
           activeStake: validator.activeStake,
           activeStakePercentage: validator.activeStakePercentage,
           overstaked: validator.overstaked,
+          isLedgerNode: validator.isLedgerNode,
         },
       });
     });
@@ -219,6 +220,7 @@ describe("hedera/react", () => {
           activeStake: new BigNumber(0),
           activeStakePercentage: new BigNumber(0),
           overstaked: false,
+          isLedgerNode: false,
         },
       });
     });

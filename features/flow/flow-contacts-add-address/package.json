@@ -21,13 +21,14 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-address/knip.web.config.mjs -W features/flow/flow-contacts-add-address --tsConfig tsconfig.web.json --isolate-workspaces && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-address/knip.native.config.mjs -W features/flow/flow-contacts-add-address --tsConfig tsconfig.native.json --isolate-workspaces"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-address/knip.web.config.mjs -W features/flow/flow-contacts-add-address --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-address/knip.native.config.mjs -W features/flow/flow-contacts-add-address --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
-    "@features/platform-contacts": "workspace:^"
+    "@features/platform-contacts": "workspace:^",
+    "uuid": "^9.0.0"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -57,6 +58,7 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

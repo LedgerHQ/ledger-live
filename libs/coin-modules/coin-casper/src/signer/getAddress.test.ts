@@ -19,7 +19,8 @@ describe("getAddress resolver", () => {
   const mockCurrency = getCryptoCurrencyById("casper");
   const mockDerivationMode = "casper_wallet";
   const mockPubKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-  const mockDerivedAddress = "02cafe0123456789abcdef";
+  const mockDeviceAddress = "02CAFE0123456789ABCDEF";
+  const mockDerivedAddress = "02beef0123456789abcdef";
 
   let mockSigner: CasperSigner;
   let mockSignerContext: SignerContext<CasperSigner>;
@@ -29,10 +30,7 @@ describe("getAddress resolver", () => {
     errorMessage: "",
     returnCode: 0x9000,
     publicKey: Buffer.from(mockPubKey, "hex"),
-    Address: {
-      toString: jest.fn().mockReturnValue(includeAddress ? "02CAFE0123456789ABCDEF" : ""),
-      length: includeAddress ? 1 : 0,
-    },
+    Address: includeAddress ? mockDeviceAddress : "",
   });
 
   beforeEach(() => {
@@ -78,7 +76,7 @@ describe("getAddress resolver", () => {
 
     expect(result).toEqual({
       path: mockPath,
-      address: mockDerivedAddress,
+      address: mockDeviceAddress.toLowerCase(),
       publicKey: mockPubKey,
     });
   });
@@ -98,7 +96,7 @@ describe("getAddress resolver", () => {
 
     expect(result).toEqual({
       path: mockPath,
-      address: mockDerivedAddress,
+      address: mockDeviceAddress.toLowerCase(),
       publicKey: mockPubKey,
     });
   });

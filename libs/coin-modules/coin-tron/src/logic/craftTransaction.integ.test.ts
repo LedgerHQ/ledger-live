@@ -123,7 +123,7 @@ describe("Testing craftTransaction function", () => {
     );
   });
 
-  it("should raise a 0 fee estimate to the fee-limit ceiling for a TRC20 transaction", async () => {
+  it("should pass a 0 custom fee straight through for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -165,10 +165,12 @@ describe("Testing craftTransaction function", () => {
         }),
       }),
     );
-    expect(decodeResult.raw_data.fee_limit).toBe(DEFAULT_TRC20_FEES_LIMIT);
+    // A `0` cap serialises to no `fee_limit` field: protobuf omits zero scalars and the decoder
+    // (`utils.ts`) only surfaces `fee_limit` when `getFeeLimit()` is truthy.
+    expect(decodeResult.raw_data.fee_limit).toBeUndefined();
   });
 
-  it("should raise a fee estimate below the ceiling for a TRC20 transaction", async () => {
+  it("should pass a custom fee below the default straight through for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -195,7 +197,7 @@ describe("Testing craftTransaction function", () => {
     expect(decodeResult).toEqual(
       expect.objectContaining({
         raw_data: expect.objectContaining({
-          fee_limit: DEFAULT_TRC20_FEES_LIMIT,
+          fee_limit: 99,
         }),
       }),
     );

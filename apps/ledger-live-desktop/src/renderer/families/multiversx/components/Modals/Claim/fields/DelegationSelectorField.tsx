@@ -113,12 +113,11 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
       if (!delegation) {
         return;
       }
-      onUpdateTransaction(
-        (transaction: Transaction): Transaction =>
-          bridge.updateTransaction(transaction, {
-            recipient: delegation.contract,
-            amount: BigNumber(delegation.claimableRewards),
-          }),
+      onUpdateTransaction((transaction: Transaction): Transaction =>
+        bridge.updateTransaction(transaction, {
+          recipient: delegation.contract,
+          amount: BigNumber(delegation.claimableRewards),
+        }),
       );
     }
   }, [options, bridge, transaction, onUpdateTransaction]);

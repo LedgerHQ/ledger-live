@@ -161,7 +161,7 @@ describe("RecoverTriggerModal", () => {
     const { user } = renderModal();
 
     await waitFor(() => expect(screen.getByRole("dialog")).toBeVisible());
-    await user.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+    await user.click(screen.getByLabelText("Close"));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(track).toHaveBeenCalledWith("button_clicked", {

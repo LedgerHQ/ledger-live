@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import { shouldShowHardwareCarouselCloseAll } from "~/dynamicContent/hardwareCarousel/shouldShowHardwareCarouselCloseAll";
+import { useHardwareCarouselPageTracking } from "~/dynamicContent/hardwareCarousel/useHardwareCarouselPageTracking";
 import { CategoryContentCard, BrazeContentCard } from "../types";
 import Header from "./Header";
 import Layout from "./Layout";
@@ -13,13 +14,16 @@ type Props = {
 };
 
 const ContentCardsCategory = ({ category, categoryContentCards, leadingSlide }: Props) => {
+  const isHardwareCarousel = shouldShowHardwareCarouselCloseAll(category);
+  const hardwareCarouselSharedProps = useHardwareCarouselPageTracking(isHardwareCarousel);
+
   const closeAllCardIds = useMemo(() => {
-    if (!shouldShowHardwareCarouselCloseAll(category)) {
+    if (!isHardwareCarousel) {
       return undefined;
     }
 
     return categoryContentCards.map(card => card.id);
-  }, [category, categoryContentCards]);
+  }, [isHardwareCarousel, categoryContentCards]);
 
   return (
     <LogContentCardWrapper id={category.id} location={category.location}>
@@ -32,7 +36,12 @@ const ContentCardsCategory = ({ category, categoryContentCards, leadingSlide }: 
           centered={category.centeredText}
           closeAllCardIds={closeAllCardIds}
         />
-        <Layout category={category} cards={categoryContentCards} leadingSlide={leadingSlide} />
+        <Layout
+          category={category}
+          cards={categoryContentCards}
+          leadingSlide={leadingSlide}
+          hardwareCarouselSharedProps={isHardwareCarousel ? hardwareCarouselSharedProps : undefined}
+        />
       </Box>
     </LogContentCardWrapper>
   );

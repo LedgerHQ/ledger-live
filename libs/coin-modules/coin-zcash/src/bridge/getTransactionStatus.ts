@@ -3,10 +3,13 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { ZcashAmountBelowDustThreshold } from "../types/errors";
 import {
   computeAmountError,
   computeRecipientError,
+  hasShieldedKey,
   isTransparentInputTransfer,
+  isTransparentOutputDust,
   resolveTransparentUtxos,
 } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
@@ -14,8 +17,9 @@ import { getSpendableIronwoodBalance } from "../logic/account/spendability";
 
 /**
  * Transaction status for a transparent-input (Public→*) send: the recipient
- * class differs per flow (u1 for →shielded, t1/t3 for →transparent) but both
- * are covered by `computeRecipientError`.
+ * class differs per flow (u1 for →shielded, t1/t3 for →transparent) and both are
+ * covered by `computeRecipientError` -- which also rejects a shielded recipient
+ * when the account has no UFVK to build the shielded bundle with.
  */
 function getTransparentInputStatus(
   account: ZcashAccount,
@@ -33,13 +37,15 @@ function getTransparentInputStatus(
   const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = tx.amount.plus(fee);
 
-  const recipientError = computeRecipientError(tx.recipient, currencyName);
+  const recipientError = computeRecipientError(tx.recipient, currencyName, hasShieldedKey(account));
   if (recipientError) errors.recipient = recipientError;
 
   if (tx.amount.lte(0) && !tx.useAllAmount) {
     errors.amount = new Error("Amount must be positive");
   } else if (totalSpent.gt(transparentBalance)) {
     errors.amount = new NotEnoughBalance();
+  } else if (tx.transferType === "transparent" && isTransparentOutputDust(tx.amount)) {
+    errors.amount = new ZcashAmountBelowDustThreshold();
   }
 
   return {
@@ -84,11 +90,24 @@ export const getTransactionStatus: AccountBridge<
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 
-  const recipientError = computeRecipientError(transaction.recipient, account.currency.name);
+  const recipientError = computeRecipientError(
+    transaction.recipient,
+    account.currency.name,
+    hasShieldedKey(account),
+  );
   if (recipientError) errors.recipient = recipientError;
 
   const amountError = computeAmountError(transaction, totalSpent, poolBalance);
-  if (amountError) errors.amount = amountError;
+  if (amountError) {
+    errors.amount = amountError;
+  } else if (
+    transaction.transferType === "shielded-to-transparent" &&
+    isTransparentOutputDust(transaction.amount)
+  ) {
+    // A shielded-to-transparent (z->t) recipient is also a transparent
+    // output, so it needs the same dust check as a t->t send.
+    errors.amount = new ZcashAmountBelowDustThreshold();
+  }
 
   return {
     errors,

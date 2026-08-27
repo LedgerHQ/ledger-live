@@ -1,0 +1,32 @@
+{
+  "name": "@shared/password-verifier",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Password verifier record and its constant-time comparison",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W shared/password-verifier"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
+  }
+}

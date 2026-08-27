@@ -68,7 +68,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:

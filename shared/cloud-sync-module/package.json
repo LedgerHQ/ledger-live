@@ -22,11 +22,13 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-icp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Ledger Hardware Wallet Internet Computer Application API",
   "keywords": [
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

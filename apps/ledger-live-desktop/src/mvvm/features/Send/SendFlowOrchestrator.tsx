@@ -3,8 +3,12 @@ import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import type { SendFlowStep, SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import {
+  canSkipRecipientStep,
+  SEND_FLOW_STEP,
+  type SendFlowStep,
+  type SendFlowInitParams,
+} from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig as DesktopSendStepConfig } from "./types";
 import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
 
@@ -27,9 +31,11 @@ export function SendFlowOrchestrator({
   const flowConfig = useMemo(
     () => ({
       ...SEND_FLOW_CONFIG,
-      initialStep: SEND_FLOW_STEP.RECIPIENT,
+      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
+        ? SEND_FLOW_STEP.AMOUNT
+        : SEND_FLOW_STEP.RECIPIENT,
     }),
-    [],
+    [businessContext.uiConfig, initParams],
   );
 
   return (

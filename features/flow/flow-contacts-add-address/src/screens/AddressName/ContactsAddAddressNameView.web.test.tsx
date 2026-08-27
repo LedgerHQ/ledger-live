@@ -3,22 +3,17 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressLabelSchema,
-  ContactAddressValueSchema,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import { ContactsAddAddressNameView } from "./ContactsAddAddressNameView";
 import type { ContactsAddAddressNameViewProps } from "./types";
 
-const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
-  "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-);
-
 function createProps(
   overrides: Partial<ContactsAddAddressNameViewProps> = {},
 ): ContactsAddAddressNameViewProps {
   return {
-    address: RESOLVED_ADDRESS,
+    address: "0xabc",
     addressLabel: {
       status: "valid",
       value: "Ethereum",
@@ -38,6 +33,7 @@ function createProps(
         [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "This address name is too long.",
       },
     },
+    showConfirmedAddress: false,
     isContinueEnabled: true,
     onAddressLabelChange: jest.fn(),
     onContinue: jest.fn(),
@@ -46,17 +42,15 @@ function createProps(
 }
 
 describe("ContactsAddAddressNameView", () => {
-  it("should render the address details and forward input actions", () => {
+  it("should render only the name input with disclaimer and forward actions", () => {
     const onAddressLabelChange = jest.fn();
     const onContinue = jest.fn();
 
     render(<ContactsAddAddressNameView {...createProps({ onAddressLabelChange, onContinue })} />);
 
-    expect(screen.getByTestId("contacts-add-address-confirmed-input")).toHaveAttribute(
-      "value",
-      RESOLVED_ADDRESS,
-    );
+    expect(screen.queryByTestId("contacts-add-address-confirmed-input")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Ethereum");
+    expect(screen.getByTestId("contacts-add-address-name-disclaimer")).toBeInTheDocument();
 
     fireEvent.change(screen.getByTestId("contacts-add-address-name-input"), {
       target: { value: "Exchange" },
@@ -88,5 +82,12 @@ describe("ContactsAddAddressNameView", () => {
       "Special characters are not allowed.",
     );
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeDisabled();
+  });
+
+  it("should preserve the confirmed address UI for the MAD path", () => {
+    render(<ContactsAddAddressNameView {...createProps({ showConfirmedAddress: true })} />);
+
+    expect(screen.getByTestId("contacts-add-address-confirmed-input")).toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-address-name-disclaimer")).not.toBeInTheDocument();
   });
 });

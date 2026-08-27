@@ -1,5 +1,27 @@
 export type AleoTransactionType = "public" | "private";
 
+export type AleoCommitteeMember = [
+  stakeMicrocredits: number,
+  isOpen: boolean,
+  commissionPercent: number,
+];
+
+export interface AleoCommitteeResponse {
+  id?: string;
+  starting_round?: number;
+  members: Record<string, AleoCommitteeMember>;
+  total_stake?: number;
+}
+
+/** Address -> display name. Not every committee member is listed. */
+export type AleoValidatorMetadataResponse = Record<string, string>;
+
+/**
+ * Total circulating supply, a bare JSON scalar. Unlike every other amount in this
+ * API it is denominated in **credits**, not microcredits.
+ */
+export type AleoTotalSupplyResponse = number | string;
+
 export type AleoTransitionValue =
   | {
       id: string;
@@ -78,6 +100,21 @@ export interface AleoPublicTransactionDetailsResponse {
   status: string;
 }
 
+/**
+ * A bound in the explorer's per-transition stream.
+ *
+ * Omitting `transitionId` makes the bound whole-block exclusive instead — useful to open a window
+ * (`minHeight - 1` ascending, `maxBlockHeight + 1` descending), but never to resume a page: the rest
+ * of the named block would be skipped.
+ */
+export type AleoTransitionCursor = {
+  blockNumber: number;
+  transitionId?: string;
+};
+
+/** A cursor that names an exact row, so paging can resume without skipping the rest of its block. */
+export type AleoExactTransitionCursor = Required<AleoTransitionCursor>;
+
 export interface AleoPublicTransactionsResponse {
   address: string;
   transactions: AleoPublicTransaction[];
@@ -85,6 +122,7 @@ export interface AleoPublicTransactionsResponse {
     block_number: number;
     transition_id: string;
   };
+  // Presence does not prove more rows follow; only its absence proves the stream is exhausted.
   next_cursor?: {
     block_number: number;
     transition_id: string;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.119.0",
+  "version": "6.120.0",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
@@ -25,6 +25,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

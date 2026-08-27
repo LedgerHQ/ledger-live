@@ -1,15 +1,16 @@
 import React from "react";
 import {
-  ListItem,
-  ListItemLeading,
-  ListItemContent,
-  ListItemTitle,
-  ListItemTrailing,
-  ListItemDescription,
+  Card,
+  CardContent,
+  CardContentDescription,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+  CardTrailing,
   Spot,
   Tag,
 } from "@ledgerhq/lumen-ui-react";
-import { BookOpen, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronRight, Contact } from "@ledgerhq/lumen-ui-react/symbols";
 
 export type ContactsButtonProps = {
   title: string;
@@ -25,25 +26,27 @@ export function ContactsButton({
   onClick,
 }: Readonly<ContactsButtonProps>) {
   return (
-    <ListItem onClick={onClick} className="bg-surface" data-testid="my-wallet-contacts-button">
-      <ListItemLeading>
-        <Spot icon={BookOpen} appearance="icon" />
-        <ListItemContent>
-          <ListItemTitle>{title}</ListItemTitle>
-          <ListItemDescription>{description}</ListItemDescription>
-        </ListItemContent>
-      </ListItemLeading>
-      <ListItemTrailing>
-        {newBadgeLabel ? (
-          <Tag
-            label={newBadgeLabel}
-            appearance="accent"
-            size="md"
-            data-testid="contacts-button-new-badge"
-          />
-        ) : null}
-        <ChevronRight size={24} />
-      </ListItemTrailing>
-    </ListItem>
+    <Card type="interactive" onClick={onClick} data-testid="my-wallet-contacts-button">
+      <CardHeader>
+        <CardLeading>
+          <Spot icon={Contact} appearance="icon" />
+          <CardContent>
+            <CardContentTitle>{title}</CardContentTitle>
+            <CardContentDescription>{description}</CardContentDescription>
+          </CardContent>
+        </CardLeading>
+        <CardTrailing>
+          {newBadgeLabel ? (
+            <Tag
+              label={newBadgeLabel}
+              appearance="accent"
+              size="md"
+              data-testid="contacts-button-new-badge"
+            />
+          ) : null}
+          <ChevronRight size={24} />
+        </CardTrailing>
+      </CardHeader>
+    </Card>
   );
 }

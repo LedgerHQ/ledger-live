@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import hederaCoinConfig from "../config";
 import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
@@ -10,16 +11,10 @@ import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { EstimateFeesResult } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
-
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn((key: string) => {
-    if (key === "HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID") return "0.0.98";
-    return "";
-  }),
-}));
 
 jest.mock("../logic/estimateFees");
 
@@ -42,6 +37,10 @@ describe("prepareTransaction", () => {
     amount: new BigNumber(100),
     totalSpent: new BigNumber(100),
   };
+
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig({ claimRewardsRecipient: "0.0.98" }));
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();

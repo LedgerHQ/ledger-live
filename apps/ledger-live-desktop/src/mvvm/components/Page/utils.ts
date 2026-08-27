@@ -1,5 +1,5 @@
 // =============================================================================
-// Types
+// Wallet 4.0 layout
 // =============================================================================
 
 export interface IsWallet40PageOptions {
@@ -10,10 +10,6 @@ interface ConditionalPrefix {
   readonly prefix: string;
   readonly isEnabled: (options: IsWallet40PageOptions) => boolean;
 }
-
-// =============================================================================
-// Wallet 4.0 layout
-// =============================================================================
 
 /**
  * Pages that use the Wallet 4.0 experience:
@@ -79,13 +75,25 @@ export const isFullscreenOverlayRoute = (pathname: string): boolean =>
   isRecoverPlayerRoute(pathname) || isPerpsWebviewRoute(pathname);
 
 // =============================================================================
-// Right panel (swap sidebar)
+// Right panel (swap sidebar / Pay card)
 // =============================================================================
 
+export type RightPanelVariant = "swap" | "card";
+
+interface RightPanelVariantMatcher {
+  readonly variant: RightPanelVariant;
+  readonly matches: (pathname: string, options: IsWallet40PageOptions) => boolean;
+}
+
 /**
- * Pages that display the right panel (swap sidebar).
+ * Pages that display the swap sidebar in the right panel.
  */
 const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics"]);
+
+/**
+ * Pages that display the Pay Card container in the right panel.
+ */
+const CARD_RIGHT_PANEL_PAGES = new Set<string>(["/paytab"]);
 
 const isAggregatedAssetDetailPath = (pathname: string): boolean =>
   pathname === "/asset" || pathname.startsWith("/asset/");
@@ -103,6 +111,21 @@ export const shouldDisplayRightPanel = (
   }
   return false;
 };
+
+const RIGHT_PANEL_VARIANT_MATCHERS: readonly RightPanelVariantMatcher[] = [
+  { variant: "card", matches: pathname => CARD_RIGHT_PANEL_PAGES.has(pathname) },
+  { variant: "swap", matches: (pathname, options) => shouldDisplayRightPanel(pathname, options) },
+];
+
+/**
+ * Resolve which right-panel content a route should show.
+ * Visibility gating (feature flags, swap availability) is applied by usePageViewModel.
+ */
+export const getRightPanelVariant = (
+  pathname: string,
+  options: IsWallet40PageOptions = {},
+): RightPanelVariant | undefined =>
+  RIGHT_PANEL_VARIANT_MATCHERS.find(matcher => matcher.matches(pathname, options))?.variant;
 
 // =============================================================================
 // Page testid

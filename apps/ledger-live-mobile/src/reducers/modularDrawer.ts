@@ -9,11 +9,14 @@ import {
 } from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 
 export interface ModularDrawerState {
   isOpen: boolean;
   preselectedCurrencies: string[];
+  categories?: AssetCategory[];
   callbackId?: string;
+  cancelCallbackId?: string;
   enableAccountSelection?: boolean;
   completionMode?: ModularDrawerCompletionMode;
   presentation: ModularDrawerPresentation;
@@ -32,7 +35,9 @@ export interface ModularDrawerState {
 export const INITIAL_STATE: ModularDrawerState = {
   isOpen: false,
   preselectedCurrencies: [],
+  categories: undefined,
   callbackId: undefined,
+  cancelCallbackId: undefined,
   enableAccountSelection: false,
   completionMode: undefined,
   presentation: "drawer",
@@ -79,7 +84,9 @@ const modularDrawerSlice = createSlice({
       state.searchValue = "";
       const {
         currencies,
+        categories,
         callbackId,
+        cancelCallbackId,
         enableAccountSelection,
         completionMode,
         presentation,
@@ -98,7 +105,9 @@ const modularDrawerSlice = createSlice({
       if (currencies !== undefined) {
         state.preselectedCurrencies = currencies;
       }
+      state.categories = categories;
       state.callbackId = callbackId;
+      state.cancelCallbackId = cancelCallbackId;
       state.completionMode = completionMode;
       state.presentation = completionMode === "currency" ? (presentation ?? "drawer") : "drawer";
       if (isEmbeddedCurrency) {
@@ -139,7 +148,9 @@ const modularDrawerSlice = createSlice({
     closeModularDrawer: state => {
       state.isOpen = false;
       state.preselectedCurrencies = [];
+      state.categories = undefined;
       state.callbackId = undefined;
+      state.cancelCallbackId = undefined;
       state.enableAccountSelection = false;
       state.completionMode = undefined;
       state.presentation = "drawer";

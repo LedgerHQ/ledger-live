@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-altcoins-sentiment",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "Domain API client for altcoins sentiment (CMC Altcoin Season Index): RTK Query endpoint typed on @domain/entity-altcoins-sentiment",
   "main": "src/index.ts",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

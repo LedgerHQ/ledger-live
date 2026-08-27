@@ -124,18 +124,6 @@ export const useNotificationsData = () => {
         return;
       }
       const isAuthorized = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
-      // Handle legacy users who opted out before the new drawer system
-      const hasLegacyOptOutData =
-        storedUserData?.alreadyDelayedToLater || storedUserData?.dateOfNextAllowedRequest;
-      if (hasLegacyOptOutData) {
-        if (isAuthorized && notifications.areNotificationsAllowed) {
-          // User is already opted in; prevent re-prompting the opt-in drawer
-          return markUserAsOptIn();
-        }
-        // User is opted out; mark them for reprompting after the configured delay
-        return markUserAsOptOut();
-      }
-
       const hasOptedOut = storedUserData?.dismissedOptInDrawerAtList !== undefined;
       if (hasOptedOut) {
         // User previously opted out → check if they've fully re-enabled notifications

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-currency",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "description": "Currency union types (Currency, CryptoOrTokenCurrency) composed from the currency entity packages",
   "main": "src/index.ts",
@@ -24,6 +24,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

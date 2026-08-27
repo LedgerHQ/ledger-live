@@ -4,13 +4,12 @@ import { useCardLoginViewModel } from "./useCardLoginViewModel";
 import { openHostedLoginInSecureBrowser } from "./openHostedLogin.native";
 import type { CardLoginProps } from "./types";
 
-export function CardLogin({ oauthConfig }: CardLoginProps) {
-  return (
-    <CardLoginView
-      {...useCardLoginViewModel({
-        openHostedLogin: openHostedLoginInSecureBrowser,
-        oauthConfig,
-      })}
-    />
-  );
+export function CardLogin({ oauthConfig, callback }: CardLoginProps) {
+  const login = useCardLoginViewModel({
+    openHostedLogin: openHostedLoginInSecureBrowser,
+    oauthConfig,
+    callback,
+  });
+
+  return login ? <CardLoginView {...login} /> : null;
 }

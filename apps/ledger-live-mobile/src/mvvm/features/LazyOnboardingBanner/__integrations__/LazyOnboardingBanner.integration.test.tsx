@@ -3,8 +3,16 @@ import { Linking } from "react-native";
 import { resetLazyOnboardingBannerSession } from "@features/flow-lazy-onboarding-banner/testing";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { track } from "~/analytics";
+import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
+import {
+  LAZY_ONBOARDING_BANNER_BUTTON,
+  LAZY_ONBOARDING_BANNER_PAGE,
+  LAZY_ONBOARDING_BANNER_PAGE_NAME,
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+  LAZY_ONBOARDING_SOURCE_FLOW,
+} from "../analyticsConstants";
 import {
   __resetLazyOnboardingTourControllerForTests,
   LazyOnboardingTourPortfolioMount,
@@ -86,6 +94,14 @@ async function openTourFromBanner(user: Awaited<ReturnType<typeof renderBanner>>
   expect(await screen.findByText(SLIDE_TITLES[0])).toBeVisible();
 }
 
+const lazyOnboardingBannerAnalyticsProps = {
+  hasConnectedDevice: false as const,
+  deviceModel: "none" as const,
+  personalRecoOptIn: false,
+  offerType: "none" as const,
+  platform: "lwm" as const,
+};
+
 describe("LazyOnboardingBanner", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -99,11 +115,24 @@ describe("LazyOnboardingBanner", () => {
     expect(screen.getByText("Why millions choose Ledger?")).toBeVisible();
     expect(screen.getByText("To have peace of mind every time they transact.")).toBeVisible();
 
+    expect(analyticsScreen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_BANNER_PAGE,
+      undefined,
+      {
+        name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
+        ...lazyOnboardingBannerAnalyticsProps,
+        abLazyBannerFlow: "shop direct",
+      },
+      false,
+    );
+
     await user.press(screen.getByTestId("lazy-onboarding-banner"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Product tour lazy onboarding",
-      page: "Wallet",
+      button: LAZY_ONBOARDING_BANNER_BUTTON,
+      page: LAZY_ONBOARDING_BANNER_PAGE,
+      ...lazyOnboardingBannerAnalyticsProps,
+      abLazyBannerFlow: "shop direct",
     });
     expect(Linking.openURL).toHaveBeenCalledTimes(1);
     const openedUrl = new URL(jest.mocked(Linking.openURL).mock.calls[0][0]);
@@ -129,7 +158,37 @@ describe("LazyOnboardingBanner", () => {
 
   it("should open the tour instead of the shop in feature_intro mode", async () => {
     const { user } = renderBanner({ mode: "feature_intro", withTourMount: true });
+
+    expect(analyticsScreen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_BANNER_PAGE,
+      undefined,
+      {
+        name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
+        ...lazyOnboardingBannerAnalyticsProps,
+        abLazyBannerFlow: "feature intro",
+      },
+      false,
+    );
+
     await openTourFromBanner(user);
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: LAZY_ONBOARDING_BANNER_BUTTON,
+      page: LAZY_ONBOARDING_BANNER_PAGE,
+      ...lazyOnboardingBannerAnalyticsProps,
+      abLazyBannerFlow: "feature intro",
+    });
+    expect(analyticsScreen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+      undefined,
+      {
+        name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+        sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
+        ...lazyOnboardingBannerAnalyticsProps,
+        abLazyBannerFlow: "feature intro",
+      },
+      false,
+    );
     expect(Linking.openURL).not.toHaveBeenCalled();
   });
 
@@ -239,7 +298,8 @@ describe("LazyOnboardingTour", () => {
         button: "Continue",
         page: LAZY_ONBOARDING_TOUR_PAGE,
         card: 1,
-        mode: "feature_intro",
+        abLazyBannerFlow: "feature intro",
+        platform: "lwm",
       }),
     );
   });

@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -18,6 +19,7 @@ import {
   waitFor,
   setMockBridgeRecipientValidation,
   setMockScannedCode,
+  setMockContacts,
   setMockStatus,
   setMockStatusResolver,
   setMockTransaction,
@@ -34,6 +36,168 @@ describe("Send Flow Integration", () => {
   });
 
   describe("Recipient step", () => {
+    it("should start on amount when opened from a contact", async () => {
+      renderSendFlow(ethereumAccount, {
+        recipient: VALID_EVM_RECIPIENT,
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-amount-input")).toBeVisible();
+    });
+
+    it("should keep the recipient step when a direct recipient is empty", async () => {
+      renderSendFlow(ethereumAccount, {
+        recipient: "   ",
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
+    it("shows only contacts with addresses on the recipient network and advances directly for one address", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-vincent",
+          name: "Vincent",
+          addresses: [
+            mockContactAddress({
+              id: "address-vincent-eth",
+              currencyId: "ethereum",
+              label: "Ethereum Main",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+        mockContact({
+          id: "contact-solana",
+          name: "Solana contact",
+          addresses: [
+            mockContactAddress({
+              id: "address-solana",
+              currencyId: "solana",
+              label: "Solana",
+              address: "SolanaAddress123",
+            }),
+          ],
+        }),
+      ]);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("contacts-compact-row-contact-vincent")).toBeVisible();
+      expect(screen.queryByText("Solana contact")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
+    it("opens address selection when a contact has several addresses on the recipient network", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-benoit",
+          name: "Benoit",
+          addresses: [
+            mockContactAddress({
+              id: "address-benoit-main",
+              currencyId: "ethereum",
+              label: "Ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+            mockContactAddress({
+              id: "address-benoit-coinbase",
+              currencyId: "ethereum",
+              label: "Ethereum Coinbase",
+              address: "0x1234567890123456789012345678901234567890",
+            }),
+          ],
+        }),
+      ]);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      await user.click(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+
+      expect(await screen.findByTestId("send-recipient-contact-address-selection")).toBeVisible();
+      expect(screen.getAllByText("Select address")).toHaveLength(2);
+      expect(screen.getAllByText("Benoit")).toHaveLength(2);
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+
+      await user.click(
+        screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"),
+      );
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
+    it("requires choosing an address when searching for a contact with several network addresses", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-benoit",
+          name: "Benoit",
+          addresses: [
+            mockContactAddress({
+              id: "address-benoit-main",
+              currencyId: "ethereum",
+              label: "Ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+            mockContactAddress({
+              id: "address-benoit-coinbase",
+              currencyId: "ethereum",
+              label: "Ethereum Coinbase",
+              address: "0x1234567890123456789012345678901234567890",
+            }),
+          ],
+        }),
+      ]);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      await user.type(await screen.findByTestId("send-recipient-input"), "Benoit");
+
+      expect(await screen.findByTestId("contacts-compact-row-contact-benoit")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-card")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-matched-address-button")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-compact-row-contact-benoit"));
+      expect(await screen.findByTestId("send-recipient-contact-address-selection")).toBeVisible();
+
+      await user.click(
+        screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"),
+      );
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-card")).not.toBeInTheDocument();
+    });
+
+    it("should add a new contact from the recipient card and return to recipient after review", async () => {
+      setMockContacts([], true);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      await user.type(await screen.findByTestId("send-recipient-input"), VALID_EVM_RECIPIENT);
+      await user.click(await screen.findByTestId("send-recipient-card-add-contact"));
+
+      expect(await screen.findByTestId("send-add-contact-step")).toBeVisible();
+      await user.click(screen.getByTestId("send-add-contact-new"));
+
+      expect(await screen.findByTestId("send-add-new-contact-step")).toBeVisible();
+      const nameInput = screen.getByTestId("contacts-add-contact-name-input");
+      await user.type(nameInput, "Benoit");
+      await user.click(screen.getByTestId("contacts-add-contact-save"));
+
+      expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-add-new-contact-step")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-add-address-name-continue"));
+
+      expect(await screen.findByTestId("contacts-add-address-review")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-add-address-review-continue"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("contacts-add-address-review")).not.toBeInTheDocument();
+    });
+
     it("should show the collapsable security card collapsed by default and expand on click", async () => {
       const { user } = renderSendFlow(ethereumAccount);
 

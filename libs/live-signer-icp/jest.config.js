@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup", "@ledgerhq/test-quarantine/jest-retries"],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
@@ -18,5 +18,6 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

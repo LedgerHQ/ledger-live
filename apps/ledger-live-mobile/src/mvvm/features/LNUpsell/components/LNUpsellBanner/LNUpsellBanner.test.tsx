@@ -66,13 +66,16 @@ describe("LNUpsellBanner", () => {
       renderBanner({ ctaLink: "  https://example.com/trimmedCta  " });
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
 
-      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/trimmedCta");
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/trimmedCta",
-        page,
-      });
+      const trimmedUrl = new URL(String(jest.mocked(Linking.openURL).mock.calls[0][0]));
+      expect(trimmedUrl.origin + trimmedUrl.pathname).toBe("https://example.com/trimmedCta");
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "upgrade",
+          deviceModel: "lns",
+        }),
+      );
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
     });
 
     it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX])(
@@ -98,12 +101,14 @@ describe("LNUpsellBanner", () => {
         });
         fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
 
-        expect(track).toHaveBeenCalledWith("button_clicked", {
-          button: "Level up wallet",
-          deviceModel: analyticsValue,
-          link: "https://example.com/optInCta",
-          page,
-        });
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          expect.objectContaining({
+            button: "upgrade",
+            deviceModel: analyticsValue,
+          }),
+        );
+        expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
       },
     );
 
@@ -134,14 +139,17 @@ describe("LNUpsellBanner", () => {
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
-      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optInCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optInCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(Linking.openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optInCta");
+      expect(track).toHaveBeenCalledTimes(2);
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "upgrade",
+          deviceModel: "lns",
+        }),
+      );
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
     });
 
     it("should render Lumen MediaBanner and track press when lwmWallet40 brazePlacement is on", () => {
@@ -149,13 +157,16 @@ describe("LNUpsellBanner", () => {
       fireEvent.press(screen.getByTestId("lns-upsell-media-banner"));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
-      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optInCta");
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optInCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(Linking.openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optInCta");
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "upgrade",
+          deviceModel: "lns",
+        }),
+      );
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
     });
 
     it("should render the banner for opted out users", () => {
@@ -163,14 +174,17 @@ describe("LNUpsellBanner", () => {
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
-      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optOutCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(Linking.openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optOutCta");
+      expect(track).toHaveBeenCalledTimes(2);
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "upgrade",
+          deviceModel: "lns",
+        }),
+      );
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
     });
 
     it("should render for opted out users regardless of content cards state", () => {
@@ -178,14 +192,17 @@ describe("LNUpsellBanner", () => {
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(Linking.openURL).toHaveBeenCalledTimes(1);
-      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optOutCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(Linking.openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optOutCta");
+      expect(track).toHaveBeenCalledTimes(2);
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "upgrade",
+          deviceModel: "lns",
+        }),
+      );
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", expect.any(Object));
     });
   });
 

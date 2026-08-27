@@ -67,7 +67,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: Install dependencies
-        run: pnpm i -D -F "ledger-live" --ignore-scripts
+        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
 
       - name: Checkout rollback branch
         run: |

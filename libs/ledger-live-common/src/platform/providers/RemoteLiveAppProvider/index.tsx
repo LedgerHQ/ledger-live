@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, createContext, useMemo, useState, useCallback } from "react";
+import isEqual from "lodash/isEqual";
 import { LiveAppRegistry } from "./types";
 import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
@@ -20,18 +21,28 @@ const initialParams: FilterParams = {
   branches: ["stable", "soon"],
 };
 
+// A failed catalog fetch leaves every live app unresolvable ("App not found"),
+// so it must not wait for the next scheduled refresh (30 min in the apps) to be
+// retried. Typical cause: the device has no usable network yet at startup.
+const RETRY_BASE_DELAY_MS = 2000;
+const RETRY_MAX_DELAY_MS = 30000;
+// ~90s of recovery window, then fall back to the regular refresh cadence so an
+// offline device does not keep polling for the whole session.
+const MAX_CONSECUTIVE_RETRIES = 6;
+
 type LiveAppContextType = {
   state: Loadable<LiveAppRegistry>;
   provider: string;
   setProvider: React.Dispatch<React.SetStateAction<string>>;
-  updateManifests: () => Promise<void>;
+  /** Resolves to `true` when the catalog was loaded, `false` when the fetch failed. */
+  updateManifests: () => Promise<boolean>;
 };
 
 export const liveAppContext = createContext<LiveAppContextType>({
   state: initialState,
   provider: initialProvider,
   setProvider: () => {},
-  updateManifests: () => Promise.resolve(),
+  updateManifests: () => Promise.resolve(false),
 });
 
 type FetchLiveAppCatalogPrams = {
@@ -48,6 +59,23 @@ type LiveAppProviderProps = {
   parameters: FetchLiveAppCatalogPrams;
   updateFrequency: number;
 };
+
+function preserveManifestReferences(
+  manifests: LiveAppManifest[],
+  previousManifestsById: LiveAppRegistry["liveAppById"] | undefined,
+): LiveAppManifest[] {
+  return manifests.map(manifest => {
+    const previousManifest = previousManifestsById?.[manifest.id];
+    return previousManifest && isEqual(previousManifest, manifest) ? previousManifest : manifest;
+  });
+}
+
+function indexManifests(manifests: LiveAppManifest[]): LiveAppRegistry["liveAppById"] {
+  return manifests.reduce<LiveAppRegistry["liveAppById"]>((accumulator, manifest) => {
+    accumulator[manifest.id] = manifest;
+    return accumulator;
+  }, Object.create(null));
+}
 
 export function useRemoteLiveAppManifest(appId?: string): LiveAppManifest | undefined {
   const liveAppRegistry = useContext(liveAppContext).state;
@@ -108,7 +136,7 @@ export function RemoteLiveAppProvider({
 
   const providerURL = provider === "production" ? envProviderURL : provider;
 
-  const updateManifests = useCallback(async () => {
+  const updateManifests = useCallback(async (): Promise<boolean> => {
     setState(currentState => ({
       ...currentState,
       isLoading: true,
@@ -141,32 +169,40 @@ export function RemoteLiveAppProvider({
         (e): { manifests: null; fetchError: unknown } => ({ manifests: null, fetchError: e }),
       );
 
-    if (!isMounted()) return;
+    if (!isMounted()) return false;
 
     if (result.manifests === null) {
+      // Keep any previously loaded catalog: a failed refresh must not wipe it.
       setState(currentState => ({
         ...currentState,
         isLoading: false,
         error: result.fetchError,
       }));
+      return false;
     } else {
       const { allManifests, catalogManifests } = result.manifests;
-      setState(() => ({
-        isLoading: false,
-        value: {
-          liveAppByIndex: allManifests,
-          liveAppFiltered: catalogManifests,
-          liveAppFilteredById: catalogManifests.reduce((acc, liveAppManifest) => {
-            acc[liveAppManifest.id] = liveAppManifest;
-            return acc;
-          }, {}),
-          liveAppById: allManifests.reduce((acc, liveAppManifest) => {
-            acc[liveAppManifest.id] = liveAppManifest;
-            return acc;
-          }, {}),
-        },
-        error: null,
-      }));
+      setState(currentState => {
+        const stableAllManifests = preserveManifestReferences(
+          allManifests,
+          currentState.value?.liveAppById,
+        );
+        const stableCatalogManifests = preserveManifestReferences(
+          catalogManifests,
+          currentState.value?.liveAppFilteredById,
+        );
+
+        return {
+          isLoading: false,
+          value: {
+            liveAppByIndex: stableAllManifests,
+            liveAppFiltered: stableCatalogManifests,
+            liveAppFilteredById: indexManifests(stableCatalogManifests),
+            liveAppById: indexManifests(stableAllManifests),
+          },
+          error: null,
+        };
+      });
+      return true;
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [allowDebugApps, allowExperimentalApps, providerURL, lang, isMounted]);
@@ -182,12 +218,35 @@ export function RemoteLiveAppProvider({
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateManifests();
-    }, updateFrequency);
-    updateManifests();
+    let cancelled = false;
+    let retryTimeout: ReturnType<typeof setTimeout> | undefined;
+    let failedAttempts = 0;
+
+    const run = async () => {
+      // The periodic interval and a pending retry both call this. Without dropping the
+      // pending one first, an interval tick that lands mid-backoff leaves the old timer
+      // scheduled and starts a second retry chain alongside it.
+      clearTimeout(retryTimeout);
+      retryTimeout = undefined;
+
+      const succeeded = await updateManifests();
+      if (cancelled) return;
+      if (succeeded) {
+        failedAttempts = 0;
+        return;
+      }
+      if (failedAttempts >= MAX_CONSECUTIVE_RETRIES) return;
+      const delay = Math.min(RETRY_BASE_DELAY_MS * 2 ** failedAttempts, RETRY_MAX_DELAY_MS);
+      failedAttempts += 1;
+      retryTimeout = setTimeout(run, delay);
+    };
+
+    const interval = setInterval(run, updateFrequency);
+    run();
     return () => {
+      cancelled = true;
       clearInterval(interval);
+      clearTimeout(retryTimeout);
     };
   }, [updateFrequency, updateManifests]);
 

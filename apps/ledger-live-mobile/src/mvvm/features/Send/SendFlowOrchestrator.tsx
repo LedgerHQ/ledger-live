@@ -2,12 +2,14 @@ import React, { useMemo, useCallback } from "react";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   SEND_FLOW_STEP,
+  canSkipRecipientStep,
   type SendFlowStep,
   type SendFlowInitParams,
 } from "@ledgerhq/live-common/flows/send/types";
 
 import { FlowStackNavigator } from "../FlowWizard/FlowStackNavigator";
 import { SendFlowProvider } from "./context/SendFlowContext";
+import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
 import { SendSignatureProvider, useSendSignature } from "./context/SendSignatureContext";
 import { SignatureOverlayHost } from "./components/SignatureOverlayHost";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
@@ -66,22 +68,26 @@ export function SendFlowOrchestrator({
   const configuredFlowConfig = useMemo(
     () => ({
       ...flowConfig,
-      initialStep: SEND_FLOW_STEP.RECIPIENT,
+      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
+        ? SEND_FLOW_STEP.AMOUNT
+        : SEND_FLOW_STEP.RECIPIENT,
     }),
-    [flowConfig],
+    [businessContext.uiConfig, flowConfig, initParams],
   );
 
   return (
     <SendFlowProvider value={businessContext} onClose={onClose}>
-      <SendSignatureProvider>
-        <SendFlowNavigator
-          stepRegistry={stepRegistry}
-          flowConfig={configuredFlowConfig}
-          onClose={onClose}
-        />
-        <SignatureOverlayHost />
-        {children}
-      </SendSignatureProvider>
+      <RecipientContactSelectionProvider>
+        <SendSignatureProvider>
+          <SendFlowNavigator
+            stepRegistry={stepRegistry}
+            flowConfig={configuredFlowConfig}
+            onClose={onClose}
+          />
+          <SignatureOverlayHost />
+          {children}
+        </SendSignatureProvider>
+      </RecipientContactSelectionProvider>
     </SendFlowProvider>
   );
 }

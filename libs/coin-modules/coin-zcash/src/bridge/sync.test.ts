@@ -6,7 +6,7 @@ import {
   getSessionReservedNullifiers,
   _resetReservationsForTest,
 } from "./note-reservation";
-import type { ZcashAccount } from "../types/bridge";
+import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import type { BtcOperation } from "../types/bridge";
 
@@ -403,6 +403,34 @@ describe("postSync", () => {
     const synced = postSync(account([], []), account([], [optimistic]));
 
     expect(synced.pendingOperations).toEqual([optimistic]);
+  });
+
+  // ── memo propagation ─────────────────────────────────────────────────
+
+  it("copies the optimistic memo to a confirmed operation that has none", () => {
+    const confirmed = operation({ extra: {} as ZcashOperationExtra });
+    const optimistic = operation({
+      id: "op-pending",
+      extra: { zcashShielded: true, memo: "shielded memo" } as ZcashOperationExtra,
+    });
+
+    const synced = postSync(account([], []), account([confirmed], [optimistic]));
+
+    expect((synced.operations[0].extra as ZcashOperationExtra).memo).toBe("shielded memo");
+  });
+
+  it("preserves a memo already present on the confirmed operation", () => {
+    const confirmed = operation({
+      extra: { zcashShielded: true, memo: "decoded by LWD" } as ZcashOperationExtra,
+    });
+    const optimistic = operation({
+      id: "op-pending",
+      extra: { zcashShielded: true, memo: "signed memo" } as ZcashOperationExtra,
+    });
+
+    const synced = postSync(account([], []), account([confirmed], [optimistic]));
+
+    expect((synced.operations[0].extra as ZcashOperationExtra).memo).toBe("decoded by LWD");
   });
 
   // The notes a shielded send spends are released on the same evidence that

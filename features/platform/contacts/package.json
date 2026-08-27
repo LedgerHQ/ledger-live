@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -13,6 +13,7 @@
     },
     "./native": "./src/index.native.ts",
     "./web": "./src/web.ts",
+    "./device/intents": "./src/device/intents/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -23,14 +24,16 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
-    "@shared/feature-flags": "workspace:^"
+    "@shared/feature-flags": "workspace:^",
+    "@features/platform-device-intent": "workspace:*",
+    "rxjs": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

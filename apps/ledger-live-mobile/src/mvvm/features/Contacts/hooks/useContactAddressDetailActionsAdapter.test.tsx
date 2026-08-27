@@ -108,19 +108,16 @@ describe("useContactAddressDetailActionsAdapter", () => {
     expect(result.current.addressDetail.isOpen).toBe(true);
 
     act(() => {
+      result.current.actions.addressDetailDialog.onEdit?.();
+    });
+
+    expect(result.current.actions.renameSheet.isOpen).toBe(true);
+
+    act(() => {
       result.current.actions.renameSheet.onClose();
     });
 
-    expect(result.current.addressDetail.isOpen).toBe(false);
-
-    act(() => {
-      result.current.addressDetail.onAddressRowPress({
-        type: "open-address-detail",
-        contactId: contact.id,
-        addressId: address.id,
-      });
-    });
-
+    expect(result.current.actions.renameSheet.isOpen).toBe(false);
     expect(result.current.addressDetail.isOpen).toBe(true);
   });
 
@@ -159,11 +156,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
       result.current.actions.addressDetailDialog.onEdit?.();
     });
 
-    expect(result.current.actions.signerSheet.isOpen).toBe(true);
-
-    await act(async () => {
-      await result.current.actions.signerSheet.onConfirm();
-    });
+    expect(result.current.actions.signerSheet.isOpen).toBe(false);
 
     await waitFor(() => {
       expect(result.current.actions.renameSheet.isOpen).toBe(true);
@@ -179,8 +172,10 @@ describe("useContactAddressDetailActionsAdapter", () => {
       result.current.actions.renameSheet.onDraftLabelChange("Main ETH");
     });
 
-    await act(async () => {
-      await result.current.actions.renameSheet.onConfirm();
+    let confirmed!: Promise<void>;
+
+    act(() => {
+      confirmed = result.current.actions.renameSheet.onConfirm();
     });
 
     expect(trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
@@ -191,5 +186,16 @@ describe("useContactAddressDetailActionsAdapter", () => {
       network: "Ethereum",
       flow: CONTACTS_FLOW.CONTACTS,
     });
+
+    await waitFor(() => {
+      expect(result.current.actions.signerSheet.isOpen).toBe(true);
+    });
+
+    await act(async () => {
+      await result.current.actions.signerSheet.onConfirm();
+      await confirmed;
+    });
+
+    expect(trackPage).toHaveBeenCalledTimes(1);
   });
 });

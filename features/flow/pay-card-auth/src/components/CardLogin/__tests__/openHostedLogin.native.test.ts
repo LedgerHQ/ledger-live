@@ -9,7 +9,7 @@ const mockedOpenAuthSessionAsync = jest.mocked(openAuthSessionAsync);
 
 const loginUrl =
   "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
-const redirectUri = "ledgerlive://paytab";
+const deepLink = "ledgerlive://paytab";
 
 describe("openHostedLoginInSecureBrowser", () => {
   beforeEach(() => {
@@ -17,21 +17,37 @@ describe("openHostedLoginInSecureBrowser", () => {
   });
 
   it("should open the exact hosted login URL in the secure auth browser", async () => {
-    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: redirectUri });
+    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: deepLink });
 
-    await openHostedLoginInSecureBrowser(loginUrl, redirectUri);
+    await openHostedLoginInSecureBrowser(loginUrl, deepLink);
 
-    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, redirectUri);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, deepLink);
   });
 
-  it.each(["cancel", "dismiss", "locked"] as const)(
-    "should not fail when the session ends with %s",
+  it("should report the redirect the session ended on", async () => {
+    const callbackUrl = `${deepLink}?code=auth-code&state=state-value`;
+    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: callbackUrl });
+
+    await expect(openHostedLoginInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
+      type: "success",
+      url: callbackUrl,
+    });
+  });
+
+  // The whole non-success half of `WebBrowserAuthSessionResult`. `openAuthSessionAsync` never answers
+  // `opened`: Android races the deep link against a browser wait, and the Android polyfill turns that
+  // internal `opened` into the wait itself, then answers `dismiss`. The type still permits the value,
+  // because `WebBrowserResult` also serves `openBrowserAsync`, so the mapping covers it.
+  it.each(["cancel", "dismiss", "opened", "locked"] as const)(
+    "should report a dismissal when the session ends with %s",
     async type => {
       mockedOpenAuthSessionAsync.mockResolvedValue({
         type,
       } as Awaited<ReturnType<typeof openAuthSessionAsync>>);
 
-      await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toBeUndefined();
+      await expect(openHostedLoginInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
+        type: "dismissed",
+      });
     },
   );
 });

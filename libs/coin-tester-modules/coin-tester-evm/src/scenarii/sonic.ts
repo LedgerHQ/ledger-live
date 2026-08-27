@@ -96,7 +96,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
         noCache: true,
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_sonic: {

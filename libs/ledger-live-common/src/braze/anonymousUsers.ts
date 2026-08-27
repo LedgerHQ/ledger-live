@@ -4,6 +4,10 @@ const MILLISECONDS_IN_A_MONTH = 30 * 24 * 60 * 60 * 1000;
 export const getBrazeCampaignCutoff = (now: Date) =>
   now.getTime() - NUMBER_OF_MONTHS * MILLISECONDS_IN_A_MONTH;
 
+/**
+ * @deprecated Not for Braze identity (`changeUser` / `external_id`).
+ * Campaign expiry helpers in this module do not use it.
+ */
 export const generateAnonymousId = () => {
   return "anonymous_id_" + (Math.floor(Math.random() * 20) + 1);
 };

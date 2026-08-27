@@ -17,6 +17,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
+import { PAY_TAB_DEEP_LINK_PATH } from "./deeplinks/payTabDeepLink";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { lightTheme, darkTheme, Theme } from "../colors";
@@ -477,6 +478,8 @@ export const DeeplinksProvider = ({
                                * * @params ?currencyId: string
                                * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
                                *
+                               * ie: "ledgerlive://earn/simulate" will open the earn rewards simulator
+                               *
                                */
                               [ScreenName.Earn]: "earn",
                             },
@@ -513,7 +516,7 @@ export const DeeplinksProvider = ({
                              */
                             [NavigatorName.PayTab]: {
                               screens: {
-                                [ScreenName.PayTab]: "paytab",
+                                [ScreenName.PayTab]: PAY_TAB_DEEP_LINK_PATH,
                               },
                             },
                           }),
@@ -786,12 +789,15 @@ export const DeeplinksProvider = ({
                 searchParams.get("cryptoAssetId") || undefined,
                 searchParams.get("accountId") || undefined,
               );
-              // Handle deposit deeplink on earnLiveAppNavigator
-              // Creating own search params for deposit deeplink
               url.pathname = "";
               url.searchParams.set("action", "deposit");
               url.searchParams.set("cryptoAssetId", validatedModal.cryptoAssetId ?? "");
               url.searchParams.set("accountId", validatedModal.accountId ?? "");
+              return getStateFromPath(url.href?.split("://")[1], config);
+            }
+            if (pathname === "/simulate") {
+              url.pathname = "";
+              url.searchParams.set("action", "simulate");
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }

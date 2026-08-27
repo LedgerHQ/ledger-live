@@ -1,7 +1,8 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
-import { render, screen, waitFor } from "tests/testSetup";
+import { act, render, screen, waitFor } from "tests/testSetup";
+import { closeDialog } from "~/renderer/reducers/modularDialog";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
@@ -26,6 +27,7 @@ import {
   mockOnAccountSelected,
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+import ModularDialogRoot from "../ModularDialogRoot";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
@@ -51,7 +53,7 @@ const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 // Helper to get the back button from DialogHeader (uses aria-label since DialogHeader doesn't expose test-id)
 const getBackButton = () => {
-  return screen.getByLabelText("components.dialogHeader.goBackAriaLabel");
+  return screen.getByLabelText("Go back");
 };
 
 beforeEach(() => {
@@ -270,7 +272,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     });
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument();
   });
 
   it("should not display back button on AccountSelection step if only one currency", async () => {
@@ -282,7 +284,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     });
 
     await waitFor(() => expect(screen.getAllByText(/select network/i)[0]).toBeVisible());
-    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument();
   });
 
   it("should not re trigger page tracking on asset search", async () => {
@@ -569,5 +571,63 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     const description = screen.queryByText(/you don't have ethereum accounts yet/i);
     expect(description).not.toBeInTheDocument();
+  });
+
+  // A live app that opened this dialog cannot claim keyboard focus back on its
+  // own, so closing has to hand it to the guest.
+  describe("focus handoff on close", () => {
+    let hostWebview: HTMLElement;
+
+    beforeEach(() => {
+      hostWebview = document.createElement("webview");
+      document.body.appendChild(hostWebview);
+    });
+
+    afterEach(() => {
+      hostWebview.remove();
+    });
+
+    it("should focus the live app webview when the account picker closes", async () => {
+      const hostFocus = jest.spyOn(hostWebview, "focus");
+      const { user } = render(<ModularDialogRoot />, {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDialog: defaultModularDialogState,
+        },
+      });
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      await user.click(screen.getByLabelText("Close"));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+      await waitFor(() => expect(hostFocus).toHaveBeenCalled());
+    });
+
+    // The caller closes the dialog once it has the account, so the success path
+    // has to hand focus back the same way the cancel path does.
+    it("should focus the live app webview after an account was selected", async () => {
+      const hostFocus = jest.spyOn(hostWebview, "focus");
+      const { user, store } = render(<ModularDialogRoot />, {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDialog: defaultModularDialogState,
+        },
+      });
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      await user.click(screen.getByText(/ethereum/i));
+      await user.click(screen.getByText(/ethereum/i));
+      await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
+      await user.click(screen.getByText(/ethereum 2/i));
+      expect(mockOnAccountSelected).toHaveBeenCalledWith(ETH_ACCOUNT);
+
+      act(() => {
+        store.dispatch(closeDialog());
+      });
+
+      await waitFor(() => expect(hostFocus).toHaveBeenCalled());
+    });
   });
 });

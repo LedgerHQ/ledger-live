@@ -36,6 +36,7 @@ import {
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,
@@ -287,6 +288,32 @@ export type useWalletAPIServerOptions = {
   customHandlers?: WalletAPICustomHandlers;
 };
 
+/**
+ * Max parallel CAL token lookups in the `currency.list` handler.
+ *
+ * CAL exposes no bulk id endpoint - verified: `?id=a,b,c` returns an empty array with
+ * no error and `?id=a&id=b` is rejected 400 - so a live app asking for hundreds of
+ * tokens means hundreds of requests. The Buy screen currently asks for 736 of them.
+ *
+ * The bound exists for correctness. Unbounded, the connection pool is exhausted and a
+ * large share of the lookups fail; a failed lookup returns null and is dropped silently
+ * below, so unbounded fan-out yields a quietly incomplete currency list. Measured with
+ * the real ids against the real CAL API: unbounded = 75.6s with 251 of 627 failing;
+ * bounded = none failing.
+ *
+ * It is NOT a way to make the call fast, and raising it makes things worse. Measured
+ * on an Android emulator with the same 624 lookups:
+ *
+ *   bound 10 -> 67.5s, mean 747ms per request,  9.24 req/s
+ *   bound 25 -> 88.8s, mean 2369ms per request, 7.03 req/s
+ *
+ * The pipe is throughput-limited, not latency-limited: the extra concurrency bought
+ * nothing but queueing and cost 24% of the throughput. Whatever the ceiling is, more
+ * parallelism does not raise it. The only lever that moves this number is asking for
+ * fewer tokens - see QAA-1497.
+ */
+export const TOKEN_LOOKUP_CONCURRENCY = 10;
+
 export function useWalletAPIServer({
   accountNames,
   manifest,
@@ -372,7 +399,7 @@ export function useWalletAPIServer({
   );
   useEffect(() => {
     tracking.load(manifest);
-  }, [tracking, manifest]);
+  }, [tracking, manifest.id]);
 
   // TODO: refactor each handler into its own logic function for clarity
   useEffect(() => {
@@ -443,14 +470,19 @@ export function useWalletAPIServer({
         includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
       }
 
-      // 6. Fetch specific tokens by ID if any
+      // 6. Fetch specific tokens by ID if any.
+      // One request per token — CAL has no bulk id lookup — and the Buy screen asks for
+      // 736. See TOKEN_LOOKUP_CONCURRENCY for why this is bounded and why at that value.
       const specificTokens: WalletAPICurrency[] = [];
       if (specificTokenIds.size > 0) {
-        const tokenPromises = [...specificTokenIds].map(async tokenId => {
-          const token = await getCryptoAssetsStore().findTokenById(tokenId);
-          return token ? currencyToWalletAPICurrency(token) : null;
-        });
-        const resolvedTokens = await Promise.all(tokenPromises);
+        const resolvedTokens = await promiseAllBatched(
+          TOKEN_LOOKUP_CONCURRENCY,
+          [...specificTokenIds],
+          async tokenId => {
+            const token = await getCryptoAssetsStore().findTokenById(tokenId);
+            return token ? currencyToWalletAPICurrency(token) : null;
+          },
+        );
         specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
       }
 

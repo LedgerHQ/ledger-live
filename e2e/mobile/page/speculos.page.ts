@@ -25,17 +25,17 @@ function isSwap(value: SwapType | Account): value is SwapType {
 }
 
 export default class SpeculosPage {
-  @Step("Verify receive address correctness on device")
+  @Step("Verify receive address correctness on device {{{1}}}")
   async expectValidAddressDevice(account: AccountType, addressDisplayed: string) {
     await expectValidAddressDevice(account, addressDisplayed);
   }
 
-  @Step("Sign Send Transaction on Speculos")
+  @Step("Sign Send Transaction on Speculos {{{0.amount}}}")
   async signSendTransaction(tx: TransactionType) {
     await signSendTransaction(tx);
   }
 
-  @Step("Sign Delegation Transaction on Speculos")
+  @Step("Sign Delegation Transaction on Speculos {{{0.amount}}} to {{{0.provider}}}")
   async signDelegationTransaction(delegation: DelegateType) {
     await signDelegationTransaction(delegation);
   }
@@ -55,12 +55,12 @@ export default class SpeculosPage {
     await activateExpertMode();
   }
 
-  @Step("Verify amounts and accept swap")
+  @Step("Verify amounts and accept swap {{{1}}}")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
-  @Step("Verify amounts and accept swap for different seed")
+  @Step("Verify amounts {{{1}}} and accept swap for different seed")
   async verifyAmountsAndAcceptSwapForDifferentSeed(
     swap: SwapType,
     amount: string,
@@ -69,7 +69,7 @@ export default class SpeculosPage {
     await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 
-  @Step("Verify amounts and reject swap")
+  @Step("Verify amounts and reject swap {{{1}}}")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await verifyAmountsAndRejectSwap(swap, amount);
   }

@@ -1,17 +1,12 @@
-export type OpenHostedLogin = (loginUrl: string, redirectUri: string) => Promise<void> | void;
-
-/**
- * Per-app OAuth client configuration. It reaches the flow as a prop because the values are the app's
- * to know: the client id comes from its environment, and the redirect URI is the one it has
- * whitelisted with the provider.
- */
-export type CardLoginOauthConfig = {
-  readonly clientId: string;
-  readonly redirectUri: string;
-};
+import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
 
 export type CardLoginProps = {
   readonly oauthConfig: CardLoginOauthConfig;
+  /**
+   * The redirect the app received, when it has one. The app's router owns the deep link, so it hands
+   * the flow the `code` and `state` it already parsed.
+   */
+  readonly callback?: PayCardAuthCallback | null;
 };
 
 export type CardLoginViewModelParams = CardLoginProps & {
@@ -22,7 +17,14 @@ export type CardLoginViewProps = {
   readonly title: string;
   readonly description: string;
   readonly loginLabel: string;
+  /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
   readonly onLoginPress: () => void;
 };
+
+/**
+ * `null` once the card holder is signed in, because the login has nothing left to offer then.
+ * `CardLogout` takes over at that point, and it reads the same flag to know it.
+ */
+export type CardLoginViewModel = CardLoginViewProps | null;

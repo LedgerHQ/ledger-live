@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { AddressParts } from "./utils/splitAddress";
 
 export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
@@ -76,9 +77,11 @@ export type RequestReceiveAsset = Readonly<{
 }>;
 
 export type RequestActionCallbacks = Readonly<{
-  onShare: (address: string) => void;
+  /** Optional: mobile-only tile. Desktop does not surface Share. */
+  onShare?: (address: string) => void;
   onCopy: (address: string) => void;
-  onSave: (address: string) => void;
+  /** Optional: desktop-only tile. Mobile does not surface Save. */
+  onSave?: (address: string) => void;
   onVerify: (address: string) => void;
 }>;
 
@@ -138,6 +141,11 @@ type RequestReceiveShell = Readonly<{
   networkIcon?: RequestReceiveIconProps;
   /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
   visibleActions: readonly RequestReceiveActionId[];
+  /**
+   * Native only: attached to the shareable card so the host can capture it as an image. Left
+   * opaque here because the web build must not depend on `react-native` types.
+   */
+  cardRef?: RefObject<unknown>;
   onClose: () => void;
 }>;
 
@@ -146,5 +154,5 @@ export type RequestReceiveProps = RequestReceiveViewModelParams & RequestReceive
 export type RequestReceiveViewProps = RequestReceiveShell &
   Pick<
     RequestReceiveViewModel,
-    "address" | "addressParts" | "onShare" | "onCopy" | "onSave" | "onVerify"
+    "address" | "addressParts" | "qrPayload" | "onShare" | "onCopy" | "onSave" | "onVerify"
   >;

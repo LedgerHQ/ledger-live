@@ -57,7 +57,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i -F "live-cli*..." -F "ledger-live"
+        run: pnpm i --frozen-lockfile -F "live-cli*..." -F "ledger-live"
       - name: build cli
         run: pnpm exec nx run @ledgerhq/live-cli:build
       - name: format check cli

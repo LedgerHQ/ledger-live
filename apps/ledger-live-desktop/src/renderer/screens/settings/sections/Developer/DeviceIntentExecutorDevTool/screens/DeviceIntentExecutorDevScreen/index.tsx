@@ -6,6 +6,11 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorState,
 } from "@features/platform-device-intent";
+import {
+  registerExternalAddressIntentPlatformDefinition,
+  type RegisterExternalAddressIntentInput,
+  type RegisterExternalAddressJobState,
+} from "@features/platform-contacts/device/intents";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {
@@ -23,7 +28,7 @@ import type {
 import { DEMO_INTENT_DEFS } from "../../intents/registry";
 import { useDemoIntentOrchestration } from "../../useDemoIntentOrchestration";
 
-type PlaygroundMode = "orchestration" | "initialization";
+type PlaygroundMode = "orchestration" | "initialization" | "contacts";
 
 type InitializationExecutorProps = DeviceIntentExecutorProps<
   InitializationEchoIntentJobState,
@@ -35,11 +40,31 @@ type InitializationExecutorProps = DeviceIntentExecutorProps<
   sourceFlow: SourceFlow;
 };
 
+type ContactsExecutorProps = DeviceIntentExecutorProps<
+  RegisterExternalAddressJobState,
+  RegisterExternalAddressIntentInput,
+  undefined,
+  InitializationInput
+> & {
+  sourceFlow: SourceFlow;
+};
+
 const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
 const initializationIntent = createIntent(initializationEchoIntentLWDDefinition, undefined);
+const CONTACTS_VALIDATION_INPUT: RegisterExternalAddressIntentInput = {
+  contactName: "DIE validation",
+  scope: "Ethereum",
+  address: "0x1111111111111111111111111111111111111111",
+  blockchainFamily: "evm",
+  chainId: 1,
+};
+const contactsValidationIntent = createIntent(
+  registerExternalAddressIntentPlatformDefinition,
+  CONTACTS_VALIDATION_INPUT,
+);
 
 export default function DeviceIntentExecutorDevScreen() {
   const navigate = useNavigate();
@@ -85,10 +110,21 @@ export default function DeviceIntentExecutorDevScreen() {
               selected={mode === "initialization"}
               onPress={() => setMode("initialization")}
             />
+            <ChoiceButton
+              label="Contacts validation"
+              selected={mode === "contacts"}
+              onPress={() => setMode("contacts")}
+            />
           </SettingSection>
         </section>
 
-        {mode === "orchestration" ? <OrchestrationMode /> : <InitializationMode />}
+        {mode === "orchestration" ? (
+          <OrchestrationMode />
+        ) : mode === "initialization" ? (
+          <InitializationMode />
+        ) : (
+          <ContactsValidationMode />
+        )}
       </main>
     </div>
   );
@@ -264,6 +300,93 @@ function InitializationMode() {
 
         <Button appearance={enabled ? "red" : "base"} size="lg" onClick={enabled ? stop : start}>
           {enabled ? "Stop initialization" : "Start initialization"}
+        </Button>
+      </section>
+
+      {enabled ? <DeviceIntentExecutorLWD {...executorProps} /> : null}
+    </>
+  );
+}
+
+function ContactsValidationMode() {
+  const [enabled, setEnabled] = useState(false);
+  const [executorState, setExecutorState] = useState<ExecutorState | null>(null);
+  const [latestJobState, setLatestJobState] = useState<RegisterExternalAddressJobState | null>(
+    null,
+  );
+  const [jobCompleted, setJobCompleted] = useState(false);
+  const [jobError, setJobError] = useState<unknown>(null);
+
+  const resetRunState = useCallback(() => {
+    setExecutorState(null);
+    setLatestJobState(null);
+    setJobCompleted(false);
+    setJobError(null);
+  }, []);
+
+  const handleUserCancel = useCallback(() => {
+    setEnabled(false);
+    setExecutorState(null);
+  }, []);
+
+  const executorProps = useMemo<ContactsExecutorProps>(
+    () => ({
+      enabled: true,
+      sourceFlow: "debug",
+      deviceConnectionParams: DEFAULT_CONNECTION_PARAMS,
+      deviceInitializationInput: {
+        appName: "BOLOS",
+        dependencies: [],
+        requireLatestFirmware: false,
+      },
+      intent: contactsValidationIntent,
+      intentComponentExtraProps: undefined,
+      onExecutorStateChanged: setExecutorState,
+      onIntentJobStateChanged: setLatestJobState,
+      onIntentJobComplete: () => {
+        setJobCompleted(true);
+      },
+      onIntentJobError: (error: unknown) => {
+        setJobError(error);
+      },
+      cancelIntentRequestId: undefined,
+      onUserCancel: handleUserCancel,
+    }),
+    [handleUserCancel],
+  );
+
+  const start = useCallback(() => {
+    resetRunState();
+    setEnabled(true);
+  }, [resetRunState]);
+
+  const stop = useCallback(() => {
+    setEnabled(false);
+    setExecutorState(null);
+  }, []);
+
+  return (
+    <>
+      <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
+        <h2 className="body-2-semi-bold text-base">Contacts validation</h2>
+        <p className="body-2 text-muted">
+          Runs the Contacts register-external-address intent with deterministic development input.
+        </p>
+
+        <StateCard>
+          <StateRow label="Executor" value={executorState?.type ?? "-"} />
+          <StateRow
+            label="Job state"
+            value={latestJobState ? JSON.stringify(latestJobState) : "-"}
+          />
+          <StateRow label="Job completed" value={jobCompleted ? "YES" : "no"} />
+          <StateRow label="Job error" value={formatError(jobError)} />
+        </StateCard>
+
+        <RawDetails title="Intent input" value={contactsValidationIntent.input} />
+
+        <Button appearance={enabled ? "red" : "base"} size="lg" onClick={enabled ? stop : start}>
+          {enabled ? "Stop Contacts validation" : "Start Contacts validation"}
         </Button>
       </section>
 

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({ useFlowWizard: jest.fn() }));
@@ -20,11 +21,20 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
-  useContactsFeature: jest.fn(() => ({ isEnabled: false })),
+  useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: ["evm"] })),
 }));
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   decodeURIScheme: jest.fn(),
+}));
+jest.mock("../../context/RecipientContactSelectionContext", () => ({
+  useRecipientContactSelection: jest.fn(),
+}));
+jest.mock("../../context/AddNewContactHeaderContext", () => ({
+  useAddNewContactHeaderState: jest.fn(() => ({
+    titleKey: "contacts.addContact",
+    onAddressPhaseBack: null,
+  })),
 }));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
@@ -35,6 +45,8 @@ import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
 import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
+import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
+import { useAddNewContactHeaderState } from "../../context/AddNewContactHeaderContext";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -87,7 +99,7 @@ const mockActions = (overrides?: { updateTransaction?: jest.Mock }) => {
 
 const mockData = (
   state: unknown,
-  uiConfig = { hasMemo: false },
+  uiConfig: Record<string, unknown> = { hasMemo: false },
   recipientSearch = { value: "" },
 ) => {
   const search = { ...recipientSearch, setValue: jest.fn(), clear: jest.fn() };
@@ -125,6 +137,15 @@ beforeEach(() => {
     transaction: { status: {} },
   });
   (useMaybeAccountName as jest.Mock).mockReturnValue("Base 1");
+  jest.mocked(useRecipientContactSelection).mockReturnValue({
+    selectedContact: undefined,
+    selectContact: jest.fn(),
+    clearSelectedContact: jest.fn(),
+  });
+  jest.mocked(useAddNewContactHeaderState).mockReturnValue({
+    titleKey: "contacts.addContact",
+    onAddressPhaseBack: null,
+  });
 });
 
 afterEach(() => {
@@ -166,6 +187,109 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.title).toBe("Send ETH");
       expect(latestVM?.descriptionText).toBe("$5,969.83");
     });
+
+    it("shows the contact address selection header and returns to the recipient list", () => {
+      const clearSelectedContact = jest.fn();
+      jest.mocked(useRecipientContactSelection).mockReturnValue({
+        selectedContact: mockContact({ name: "Benoit" }),
+        selectContact: jest.fn(),
+        clearSelectedContact,
+      });
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => false },
+      });
+
+      renderHook("$5,969.83");
+
+      expect(latestVM?.title).toBe("Select address");
+      expect(latestVM?.descriptionText).toBe("Benoit");
+      expect(latestVM?.showRecipientInput).toBe(false);
+      expect(latestVM?.showBackButton).toBe(true);
+
+      act(() => latestVM?.handleBack());
+      expect(clearSelectedContact).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("recipient input placeholder", () => {
+    const renderOnRecipientStep = ({
+      supportsDomain,
+      isContactsFeatureEnabled,
+      eligibleAddressFamilies = ["evm"],
+    }: {
+      supportsDomain: boolean;
+      isContactsFeatureEnabled: boolean;
+      eligibleAddressFamilies?: string[];
+    }) => {
+      (useContactsFeature as jest.Mock).mockReturnValue({
+        isEnabled: isContactsFeatureEnabled,
+        eligibleAddressFamilies,
+      });
+      mockActions();
+      mockData(
+        {
+          account: {
+            currency: {
+              type: "CryptoCurrency",
+              ticker: "ETH",
+              id: "ethereum",
+              family: "evm",
+            },
+            account: {},
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        { hasMemo: false, recipientSupportsDomain: supportsDomain },
+      );
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook();
+    };
+
+    it("mentions contacts and ENS when the network supports both", () => {
+      renderOnRecipientStep({
+        supportsDomain: true,
+        isContactsFeatureEnabled: true,
+      });
+
+      expect(latestVM?.recipientPlaceholder).toBe("Enter address, ENS or contact");
+    });
+
+    it("mentions contacts only when the network has no ENS support", () => {
+      renderOnRecipientStep({
+        supportsDomain: false,
+        isContactsFeatureEnabled: true,
+      });
+
+      expect(latestVM?.recipientPlaceholder).toBe("Enter address or contact");
+    });
+
+    it("keeps the default placeholder when the currency family is not eligible", () => {
+      renderOnRecipientStep({
+        supportsDomain: true,
+        isContactsFeatureEnabled: true,
+        eligibleAddressFamilies: ["bitcoin"],
+      });
+
+      expect(latestVM?.recipientPlaceholder).toBe("Enter address or ENS");
+    });
+
+    it("keeps the default placeholder when the contacts feature is disabled", () => {
+      renderOnRecipientStep({
+        supportsDomain: false,
+        isContactsFeatureEnabled: false,
+      });
+
+      expect(latestVM?.recipientPlaceholder).toBe("Enter address");
+    });
   });
 
   describe("recipient address input value on amount step", () => {
@@ -181,7 +305,10 @@ describe("useSendHeaderModel", () => {
       mockNavigation();
       mockActions();
       mockData({
-        account: { currency: { ticker: "ETH", id: "ethereum" }, account: {} },
+        account: {
+          currency: { type: "CryptoCurrency", ticker: "ETH", id: "ethereum", family: "evm" },
+          account: {},
+        },
         recipient: { address: ADDRESS },
         transaction: { status: {} },
       });
@@ -190,7 +317,10 @@ describe("useSendHeaderModel", () => {
     };
 
     it("shows the contact name when the recipient is a contact", () => {
-      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: true });
+      (useContactsFeature as jest.Mock).mockReturnValue({
+        isEnabled: true,
+        eligibleAddressFamilies: ["evm"],
+      });
       jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
 
       renderOnAmountStep();
@@ -203,7 +333,10 @@ describe("useSendHeaderModel", () => {
     });
 
     it("shows the formatted address when the recipient is not a contact", () => {
-      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: true });
+      (useContactsFeature as jest.Mock).mockReturnValue({
+        isEnabled: true,
+        eligibleAddressFamilies: ["evm"],
+      });
       jest.mocked(useSelector).mockReturnValue([] as never);
 
       renderOnAmountStep();
@@ -213,7 +346,10 @@ describe("useSendHeaderModel", () => {
     });
 
     it("shows the formatted address when the contacts feature is disabled", () => {
-      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: false });
+      (useContactsFeature as jest.Mock).mockReturnValue({
+        isEnabled: false,
+        eligibleAddressFamilies: ["evm"],
+      });
       jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
 
       renderOnAmountStep();
@@ -265,6 +401,31 @@ describe("useSendHeaderModel", () => {
         utxoStrategy: { strategy: 0, excludeUTXOs: [] },
       });
       expect(goToPreviousStep).toHaveBeenCalled();
+    });
+
+    it("stays on add new contact when the address phase handles back", () => {
+      const onAddressPhaseBack = jest.fn();
+      const { goToStep, goToPreviousStep } = mockNavigation();
+      const { close } = mockActions();
+      jest.mocked(useAddNewContactHeaderState).mockReturnValue({
+        titleKey: "contacts.addAddressEntry.title",
+        onAddressPhaseBack,
+      });
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.ADD_NEW_CONTACT,
+        currentStepConfig: { titleKey: "contacts.addContact", showTitle: true },
+        navigation: { goToStep, goToPreviousStep, canGoBack: () => true },
+      });
+
+      renderHook();
+
+      expect(latestVM?.title).toBe("Enter address");
+      latestVM?.handleBack();
+
+      expect(onAddressPhaseBack).toHaveBeenCalled();
+      expect(goToPreviousStep).not.toHaveBeenCalled();
+      expect(goToStep).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
     });
   });
 

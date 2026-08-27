@@ -4,12 +4,9 @@ import {
   type ContactsDeleteAddressDrawerProps,
   type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
-  type ContactsRenameAddressDrawerProps,
   type ContactAddressDetailDialogNativeProps,
-  type ContactAddressEditSavePayload,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
-  CONTACTS_PAGE_EVENTS,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
@@ -17,11 +14,16 @@ import {
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
+  useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
+import type {
+  ContactAddressEditSavePayload,
+  ContactsRenameAddressDrawerProps,
+} from "@features/flow-contacts-edit-address";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import {
@@ -67,8 +69,6 @@ export function useContactAddressDetailActionsAdapter(
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts();
   const addressValidation = useContactsAddressValidationAdapter();
-  const hasTrackedEditAddressPage = useRef(false);
-  const hasTrackedSignerMismatch = useRef(false);
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
@@ -126,6 +126,7 @@ export function useContactAddressDetailActionsAdapter(
       handleOpenSendFlow({
         currencyIds: [intent.currencyId],
         recipient: intent.address,
+        skipRecipientStep: true,
       });
       onCloseAddressDetail();
     },
@@ -142,10 +143,16 @@ export function useContactAddressDetailActionsAdapter(
     onEditAddressSaved,
   });
   const { onClose: closeRenameViewModel } = renameViewModel;
+  const { editUiState } = flow;
+  // Closing the edit sheet returns to the address detail it was opened from, the same way
+  // cancelling the delete confirmation does. The selection is kept so that sheet has an address.
   const onCloseRename = useCallback(() => {
+    if (editUiState !== "edit-open") {
+      return;
+    }
+
     closeRenameViewModel();
-    onCloseAddressDetail();
-  }, [closeRenameViewModel, onCloseAddressDetail]);
+  }, [closeRenameViewModel, editUiState]);
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();
@@ -166,39 +173,13 @@ export function useContactAddressDetailActionsAdapter(
     await renameViewModel.onConfirm();
   }, [analytics, asset, network, renameViewModel]);
 
-  useEffect(() => {
-    if (!renameViewModel.isOpen) {
-      hasTrackedEditAddressPage.current = false;
-      return;
-    }
-
-    if (hasTrackedEditAddressPage.current || asset === undefined || network === undefined) {
-      return;
-    }
-
-    hasTrackedEditAddressPage.current = true;
-    analytics.trackPage(CONTACTS_PAGE_EVENTS.EDIT_ADDRESS, {
-      source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
-      network,
-      asset,
-    });
-  }, [analytics, asset, network, renameViewModel.isOpen]);
-
-  useEffect(() => {
-    if (flow.editUiState === "signer-mismatch" && !hasTrackedSignerMismatch.current) {
-      hasTrackedSignerMismatch.current = true;
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.ERROR_DISPLAYED, {
-        source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
-        page: CONTACTS_PAGE_PROPERTY.EDIT_ADDRESS,
-        errorType: "signer_mismatch",
-      });
-      return;
-    }
-
-    if (flow.editUiState !== "signer-mismatch") {
-      hasTrackedSignerMismatch.current = false;
-    }
-  }, [analytics, flow.editUiState]);
+  useContactAddressEditAnalytics(analytics, {
+    isEditSessionActive: flow.isEditSessionActive,
+    isRenameOpen: renameViewModel.isOpen,
+    isSignerMismatchOpen: flow.editUiState === "signer-mismatch",
+    asset,
+    network,
+  });
 
   if (!isSelectionActive) {
     return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));

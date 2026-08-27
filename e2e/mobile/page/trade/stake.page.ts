@@ -29,27 +29,27 @@ export default class StakePage {
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
 
-  @Step("Select currency")
+  @Step("Select currency {{{0}}}")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
     await waitForElementById(id);
     await tapById(id);
   }
 
-  @Step("Click on start delegation button")
+  @Step("Click on start delegation button {{{0}}}")
   async delegationStart(currencyId: string) {
     await tapById(this.delegationStartId(currencyId));
     await waitForElementById(this.delegationSummaryValidatorId(currencyId));
   }
 
-  @Step("Dismiss delegation start page if displayed")
+  @Step("Dismiss delegation start page if displayed {{{0}}}")
   async dismissDelegationStart(currencyId: string) {
     if (await IsIdVisible(this.delegationStartId(currencyId))) {
       await this.delegationStart(currencyId);
     }
   }
 
-  @Step("Set delegated amount")
+  @Step("Set delegated amount {{{1}}} for {{{0}}}")
   async setAmount(currencyId: string, amount: string) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
@@ -58,19 +58,19 @@ export default class StakePage {
     await waitForElementById(this.delegationAmountContinueId(currencyId)); // Issue with RN75 : QAA-370
   }
 
-  @Step("Set delegated amount percent")
+  @Step("Set delegated amount percent {{{1}}} for {{{0}}}")
   async setAmountPercent(currencyId: string, delegatedPercent: 25 | 50 | 75 | 100) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegatedRatioId(currencyId, delegatedPercent));
   }
 
-  @Step("Expect provider in summary")
+  @Step("Expect provider {{{1}}} in summary")
   async expectProvider(currencyId: string, provider: string) {
     jestExpect(await this.delegationSummaryValidator(currencyId)).toContain(provider);
   }
 
-  @Step("Select new provider")
+  @Step("Select new provider {{{1}}}")
   async selectValidator(currencyId: string, provider: string) {
     const ticker = provider.split(" - ")[0];
     await tapById(this.delegationSummaryValidatorId(currencyId));
@@ -79,19 +79,19 @@ export default class StakePage {
     await tapById(this.providerRow(ticker));
   }
 
-  @Step("Verify fees visible in summary")
+  @Step("Verify fees visible in summary {{{0}}}")
   async verifyFeesVisible(currencyId: string) {
     await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
   }
 
-  @Step("Get fees displayed in summary")
+  @Step("Get fees displayed in summary {{{0}}}")
   async getDisplayedFees(currencyId: string) {
     const fees = await getTextOfElement(this.delegationFees(currencyId));
     invariant(fees, "Fees empty in summary");
     return fees;
   }
 
-  @Step("Validate the amount entered")
+  @Step("Validate the amount entered {{{0}}}")
   async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
     if (currencyId !== Currency.CELO.id) {
@@ -99,14 +99,14 @@ export default class StakePage {
     }
   }
 
-  @Step("Click on continue button in summary")
+  @Step("Click on continue button in summary {{{0}}}")
   async summaryContinue(currencyId: string): Promise<void> {
     const id = this.summaryContinueButtonId(currencyId);
     await waitForElementById(id);
     await tapById(id);
   }
 
-  @Step("Set Celo lock amount")
+  @Step("Set Celo lock amount {{{0}}}")
   async setCeloLockAmount(amount: string) {
     await typeTextById(this.celoLockAmountInput, amount);
   }
@@ -116,7 +116,7 @@ export default class StakePage {
     await tapById(this.celoVoteAmountId);
   }
 
-  @Step("Set CELO vote amount")
+  @Step("Set CELO vote amount {{{0}}}")
   async setCeloVoteAmount(amount: string) {
     await waitForElementById(this.celoVoteAmountInputId);
     await typeTextById(this.celoVoteAmountInputId, amount);

@@ -1,14 +1,13 @@
 import { screen, track } from "~/analytics";
+import {
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+  LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+  LAZY_ONBOARDING_SOURCE_FLOW,
+  type LazyOnboardingSharedAnalyticsProps,
+} from "../../analyticsConstants";
 import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "./const";
 
-export type LazyOnboardingTourSharedAnalyticsProps = Readonly<{
-  hasConnectedDevice: false;
-  personalRecoOptIn: boolean;
-  offerType: "none";
-  platform: "llm";
-  source: "lazy onboarding";
-  mode: "feature_intro";
-}>;
+export type LazyOnboardingTourSharedAnalyticsProps = LazyOnboardingSharedAnalyticsProps;
 
 /** Convert 0-based slide index to 1-based analytics card. */
 const toCard = (slideIndex: number) => slideIndex + 1;
@@ -21,11 +20,16 @@ export const trackLazyOnboardingTourOpened = (
     return false;
   }
 
-  screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
-    name: "lazy onboarding tour",
-    card: 1,
-    ...sharedProps,
-  });
+  screen(
+    LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+    undefined,
+    {
+      name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
+      sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
+      ...sharedProps,
+    },
+    false,
+  );
 
   return true;
 };

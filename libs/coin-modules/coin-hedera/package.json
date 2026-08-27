@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.42.0",
+  "version": "2.0.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -107,6 +107,7 @@
     "@domain/entity-currency-crypto": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

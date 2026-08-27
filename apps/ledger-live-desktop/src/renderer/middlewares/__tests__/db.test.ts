@@ -45,13 +45,13 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
-jest.mock("@features/flow-pay-card-balance/state", () => ({
+jest.mock("@features/flow-pay-balance/state", () => ({
   payCardBalancePersistedSelector: (state: FakeState) => ({
     balanceFilter: state.payCardBalance.balanceFilter,
   }),
 }));
 
-jest.mock("@features/flow-pay-card-feature-tour/state", () => ({
+jest.mock("@features/flow-pay-feature-tour/state", () => ({
   payCardFeatureTourPersistedSelector: (state: FakeState) => ({
     hasSeenFeatureTour: state.payCardFeatureTour.hasSeenFeatureTour,
   }),

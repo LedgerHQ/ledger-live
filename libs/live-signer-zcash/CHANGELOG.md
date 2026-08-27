@@ -1,5 +1,21 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.10.0
+
+### Minor Changes
+
+- [#20368](https://github.com/LedgerHQ/ledger-live/pull/20368) [`8a93a70`](https://github.com/LedgerHQ/ledger-live/commit/8a93a701d631bd18b6c5125f77588802c0325b4c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report a real error when the coin being spent came from a V6 (NU6.3 / Ironwood) transaction and the installed Zcash app cannot read one.
+
+  The signer kit fails such a send before any APDU is exchanged, and its error reached Ledger Live as `new Error(details._tag)` — the whole diagnosis being `ZcashAppCommandError`, a tag a dozen unrelated causes share. It now rejects with `UnsupportedV6SourceTransaction`, carrying the kit's own message, which names the app version installed on the device. The kit error is matched on its error code or its tag, so a rename of either one on its own still reaches the mapping. Signing is untouched: the app rejected such a transaction before and after, producing no signature — only the reported error differs.
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#20368](https://github.com/LedgerHQ/ledger-live/pull/20368) [`8a93a70`](https://github.com/LedgerHQ/ledger-live/commit/8a93a701d631bd18b6c5125f77588802c0325b4c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report a real error when the coin being spent came from a V6 (NU6.3 / Ironwood) transaction and the installed Zcash app cannot read one.
+
+  The signer kit fails such a send before any APDU is exchanged, and its error reached Ledger Live as `new Error(details._tag)` — the whole diagnosis being `ZcashAppCommandError`, a tag a dozen unrelated causes share. It now rejects with `UnsupportedV6SourceTransaction`, carrying the kit's own message, which names the app version installed on the device. The kit error is matched on its error code or its tag, so a rename of either one on its own still reaches the mapping. Signing is untouched: the app rejected such a transaction before and after, producing no signature — only the reported error differs.
+
 ## 0.9.0
 
 ### Minor Changes

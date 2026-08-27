@@ -9,10 +9,12 @@ import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/u
 import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector } from "~/reducers/modularDrawer";
 import useEnv from "@features/platform-env";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 
 interface AssetsProps {
   currencyIds?: string[];
   networkIds?: readonly string[];
+  categories?: AssetCategory[];
   searchedValue?: string;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
@@ -21,6 +23,7 @@ interface AssetsProps {
 export function useAssets({
   currencyIds,
   networkIds,
+  categories,
   searchedValue,
   useCase,
   areCurrenciesFiltered,
@@ -36,10 +39,13 @@ export function useAssets({
     [modularDrawerFeature?.params?.backendEnvironment],
   );
 
+  const resolvedCategories = categories?.length ? categories : undefined;
+
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
     networkIds: resolvedNetworkIds,
+    categories: resolvedCategories,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,

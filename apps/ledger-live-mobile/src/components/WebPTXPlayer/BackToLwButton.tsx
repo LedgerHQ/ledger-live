@@ -58,6 +58,7 @@ export function BackToInternalDomain({ config }: BackToInternalDomainProps) {
 
     handleBackToLwEntryPoint(navigation, screen, {
       referrer: "isExternal",
+      ...(flowName && { mode: flowName }),
     });
   };
 

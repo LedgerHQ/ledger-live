@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Linking } from "react-native";
 import { buildLazyOnboardingBannerLink } from "@features/flow-lazy-onboarding-banner";
+import { buildLazyOnboardingSharedAnalyticsProps } from "../../analyticsConstants";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
@@ -47,14 +48,8 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
   const shopLink = buildLazyOnboardingBannerLink(link, "mobile");
 
   const sharedAnalyticsProps = useMemo(
-    (): LazyOnboardingTourSharedAnalyticsProps => ({
-      hasConnectedDevice: false,
-      personalRecoOptIn: personalizedRecommendationsEnabled,
-      offerType: "none",
-      platform: "llm",
-      source: "lazy onboarding",
-      mode: "feature_intro",
-    }),
+    (): LazyOnboardingTourSharedAnalyticsProps =>
+      buildLazyOnboardingSharedAnalyticsProps("feature_intro", personalizedRecommendationsEnabled),
     [personalizedRecommendationsEnabled],
   );
 

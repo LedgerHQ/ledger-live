@@ -780,6 +780,10 @@
     "SuiUnstakeExceedsStake": {
       "title": "Amount exceeds the selected stake"
     },
+    "SuiAddressBalanceAppUpdateRequired": {
+      "title": "Update your Sui app",
+      "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
+    },
     "PasswordIncorrect": {
       "title": "Incorrect password",
       "description": "Please try again."
@@ -1515,6 +1519,25 @@
     "confirm": "Are you sure you want to sign out?",
     "disclaimer": "All account data will be removed from your phone.",
     "action": "Sign me out"
+  },
+  "appLock": {
+    "field": {
+      "label": "Enter password",
+      "reveal": "Show password",
+      "hide": "Hide password",
+      "minLength": "Must be at least 6 characters"
+    },
+    "setupPassword": {
+      "title": "Enter password",
+      "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
+      "cta": "Continue"
+    },
+    "confirmPassword": {
+      "title": "Confirm password",
+      "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
+      "mismatch": "Passwords don't match",
+      "cta": "Confirm"
+    }
   },
   "auth": {
     "failed": {
@@ -4516,6 +4539,7 @@
   "send": {
     "newSendFlow": {
       "title": "Send {{currency}}",
+      "selectAddress": "Select address",
       "available": "Available {{amount}}",
       "to": "To:",
       "addressDisclaimer": {
@@ -4525,6 +4549,8 @@
       },
       "placeholder": "Enter address or ENS",
       "placeholderNoENS": "Enter address",
+      "placeholderWithContacts": "Enter address, ENS or contact",
+      "placeholderNoEnsWithContacts": "Enter address or contact",
       "pasteFromClipboard": {
         "title": "Paste from clipboard",
         "cta": "Paste"
@@ -4537,6 +4563,10 @@
       "account": "Account",
       "alreadyUsed": "Already used · {{date}}",
       "notInRecentHistory": "Not in your recent history",
+      "addressBookUnsupported": {
+        "title": "{{family}} isn't supported yet",
+        "description": "You can't add a {{family}} address to your contacts yet. We're adding more cryptos over time."
+      },
       "relativeDate": {
         "justNow": "Just now",
         "minutesAgo_one": "1 min ago",
@@ -9800,7 +9830,7 @@
         },
         "dualValidator": {
           "title": "Dual-validator security",
-          "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+          "body": "Transactions require co-signing from both Ledger and Kiln. Neither can act on your behalf alone."
         },
         "tokenLiability": {
           "title": "Standard token liability ⚠️",
@@ -10060,6 +10090,17 @@
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
+    },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      }
     },
     "deposit": {
       "title": "Add stablecoins",
@@ -10344,6 +10385,14 @@
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
       "labelTooLong": "This address name is too long."
+    },
+    "addAddressReview": {
+      "title": "Review address",
+      "addressLabel": "Address",
+      "currencyLabel": "Currency",
+      "networkLabel": "Network",
+      "nameLabel": "Address name",
+      "continue": "Confirm address"
     },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",

@@ -20,9 +20,11 @@ import {
 } from "@features/flow-contacts";
 import type { AddAddressContact } from "@features/flow-contacts-add-address";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
+import { CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY } from "LLD/features/CryptoAddresses/utils/cryptoAddressesLocationState";
 
 export function useContactDetailPaneAdapter(
   onAddAddress: (contact: AddAddressContact) => void,
@@ -94,7 +96,10 @@ export function useContactDetailPaneAdapter(
     [t],
   );
   const onLedgerWalletAccountsPress = useCallback(() => {
-    navigate("/cryptos");
+    navigate(
+      "/cryptos",
+      buildNavigationBackState(CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY, "/contacts"),
+    );
   }, [navigate]);
   const openContact = useCallback(
     (contactId: ContactId) => {

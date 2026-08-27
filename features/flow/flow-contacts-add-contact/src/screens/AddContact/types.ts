@@ -1,25 +1,23 @@
-import type { ContactNameValidationErrorName } from "@domain/entity-contact";
+import type { Contact, ContactNameValidationErrorName } from "@domain/entity-contact";
 import type { ContactCreationPort } from "./model/ports";
 
-export type AddContactDrawerViewModel = Readonly<{
-  isOpen: boolean;
+export type AddContactContentViewModel = Readonly<{
   isConfirmEnabled: boolean;
   isSaving: boolean;
   draftName: string;
   avatarInitial: string;
   invalidNameError: ContactNameValidationErrorName | null;
-  onOpen: () => void;
-  onClose: () => void;
   onDraftNameChange: (name: string) => void;
-  onConfirm: () => Promise<void>;
+  onConfirm: () => Promise<Contact | undefined>;
+  reset: () => void;
 }>;
 
-export type UseAddContactDrawerViewModelOptions = Readonly<{
+export type UseAddContactContentViewModelOptions = Readonly<{
   contactCreation: ContactCreationPort;
-  onSaveSuccess: () => void;
+  onSaveSuccess: (contact: Contact) => void;
 }>;
 
-export type ContactsAddContactDrawerLabels = Readonly<{
+export type ContactsAddContactContentLabels = Readonly<{
   title: string;
   namePlaceholder: string;
   namingDisclaimer: string;
@@ -27,16 +25,7 @@ export type ContactsAddContactDrawerLabels = Readonly<{
   nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
 }>;
 
-export type ContactsAddContactDrawerProps = AddContactDrawerViewModel &
+export type ContactsAddContactContentProps = AddContactContentViewModel &
   Readonly<{
-    bottomInset?: number;
-    keyboardInset?: number;
-    labels: ContactsAddContactDrawerLabels;
-  }>;
-
-export type ContactsAddContactDialogLabels = ContactsAddContactDrawerLabels;
-
-export type ContactsAddContactDialogProps = AddContactDrawerViewModel &
-  Readonly<{
-    labels: ContactsAddContactDialogLabels;
+    labels: ContactsAddContactContentLabels;
   }>;

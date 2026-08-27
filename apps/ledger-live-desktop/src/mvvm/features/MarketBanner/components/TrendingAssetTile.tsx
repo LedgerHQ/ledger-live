@@ -37,7 +37,7 @@ const TrendingAssetTileComponent = ({ item, onNavigate }: TrendingAssetTileProps
       <Spot size={40} appearance="icon" icon={renderIcon} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
-        <PerformanceIndicator value={item} />
+        <PerformanceIndicator item={item} />
       </TileContent>
     </Tile>
   );

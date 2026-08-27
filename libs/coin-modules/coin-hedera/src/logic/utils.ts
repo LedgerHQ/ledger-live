@@ -7,13 +7,12 @@ import {
   TransactionId,
 } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import type { ExplorerView, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import coinConfig, { type HederaCoinConfig } from "../config";
+import coinConfig from "../config";
 import {
   HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
@@ -26,6 +25,7 @@ import {
 } from "../constants";
 import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
+  HederaCoinConfig,
   EnrichedERC20Transfer,
   HederaAccount,
   HederaMemo,
@@ -363,13 +363,10 @@ export const extractCompanyFromNodeDescription = (description: string): string =
 };
 
 export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
-  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  const ledgerValidatorId = typeof ledgerNodeId === "number" ? String(ledgerNodeId) : null;
-
   // sort validators by active stake in DESC order, with Ledger node first if it exists
   return [...validators].sort((a, b) => {
-    if (a.id === ledgerValidatorId) return -1;
-    if (b.id === ledgerValidatorId) return 1;
+    if (a.isLedgerNode) return -1;
+    if (b.isLedgerNode) return 1;
 
     return b.activeStake.toNumber() - a.activeStake.toNumber();
   });
@@ -405,9 +402,7 @@ export const getValidatorFromAccount = (account: HederaAccount): HederaValidator
 };
 
 export const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
-  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-
-  return validators.find(v => v.id === String(ledgerNodeId)) ?? null;
+  return validators.find(v => v.isLedgerNode) ?? null;
 };
 
 export const getDelegationStatus = (

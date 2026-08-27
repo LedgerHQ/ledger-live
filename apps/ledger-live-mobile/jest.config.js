@@ -70,6 +70,7 @@ module.exports = {
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
+    "@ledgerhq/test-quarantine/jest-retries",
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
@@ -132,6 +133,7 @@ module.exports = {
     // string reporter's annotations would otherwise be dropped on the floor.
     ...(process.env.CI ? [["<rootDir>/scripts/jestGithubActionsReporter.js", {}]] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {

@@ -5,8 +5,8 @@ import {
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-  ContactsRenameContactDrawer,
 } from "@features/flow-contacts";
+import { ContactsRenameContactDrawer } from "@features/flow-contacts-edit-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -28,11 +28,7 @@ export function ContactDetailEditDeleteSheets({
   const keyboardInset = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
     ? keyboardHeight
     : 0;
-  const {
-    onClose: onCloseActionsMenuFromMenu,
-    onHidden: onActionsMenuHidden,
-    ...actionsMenuProps
-  } = actionsMenu;
+  const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
   const onCloseActionsMenu = useCallback(() => {
     onCloseActionsMenuFromMenu();
   }, [onCloseActionsMenuFromMenu]);
@@ -51,7 +47,6 @@ export function ContactDetailEditDeleteSheets({
       <QueuedBottomSheet
         isRequestingToBeOpened={actionsMenu.isOpen}
         onClose={onCloseActionsMenu}
-        onModalHide={onActionsMenuHidden}
         testID="contacts-detail-actions-sheet"
         enableDynamicSizing
       >
@@ -59,6 +54,7 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={renameDrawer.isOpen}
+        isForcingToBeOpened={renameDrawer.isOpen}
         onClose={renameDrawer.onClose}
         testID="contacts-rename-contact-sheet"
         enableDynamicSizing
@@ -71,6 +67,7 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={deleteDrawer.isOpen}
+        isForcingToBeOpened={deleteDrawer.isOpen}
         onClose={onCloseDelete}
         testID="contacts-delete-contact-sheet"
         enableDynamicSizing
@@ -79,6 +76,7 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerDrawer.isOpen}
+        isForcingToBeOpened={signerDrawer.isOpen}
         onClose={onCloseSigner}
         testID="contacts-edit-signer-sheet"
         enableDynamicSizing

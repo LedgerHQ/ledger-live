@@ -21,6 +21,7 @@ import { getBalance as getAccountBalance } from "../logic/getBalance";
 import { listOperations } from "../logic/listOperations";
 import { estimateFees } from "../logic/estimateFees";
 import { validateIntent } from "../logic/validateIntent";
+import { validateAddress } from "../bridge/validateAddress";
 import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 
 // The caller builds the {@link CasperContext} (config + logger) and passes it to each method (ADR-019).
@@ -83,16 +84,10 @@ export function createApi(): CoinModuleApi<CasperConfig, CasperMemo> {
     estimateFees,
     validateIntent: async (_context, intent, balances, options) =>
       validateIntent(intent, balances, options?.customFees),
-    getNextSequence(_context: CasperContext, _address: string): Promise<bigint> {
-      throw new Error("getNextSequence is not supported");
-    },
-    validateAddress(
-      _context: CasperContext,
-      _address: string,
-      _parameters: unknown,
-    ): Promise<boolean> {
-      throw new Error("validateAddress is not supported");
-    },
+    // Casper uses (transaction hash + TTL) for replay protection rather than a
+    // per-account nonce, so getNextSequence has no meaningful value here.
+    getNextSequence: async (_context: CasperContext, _address: string) => 0n,
+    validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData(_context: CasperContext, _intent: TransactionIntent<CasperMemo>) {
       throw new Error("craftTransactionData is not supported");
     },

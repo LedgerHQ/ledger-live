@@ -37,7 +37,8 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { DistantState, trustchainLifecycle } from "./walletSync";
+import { trustchainLifecycle } from "./walletSync";
+import type { DistantDocument } from "@shared/cloud-sync-module";
 import { Loading } from "./Loading";
 import { State } from "./types";
 
@@ -100,7 +101,7 @@ const App = () => {
   }, [setAccountsSync]);
 
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
-  const [wssdkHandledData, setWssdkHandledData] = useState<DistantState | null>(null);
+  const [wssdkHandledData, setWssdkHandledData] = useState<DistantDocument | null>(null);
 
   const version = state.walletState.walletSyncState.version || wssdkHandledVersion;
   const data = state.walletState.walletSyncState.data || wssdkHandledData;

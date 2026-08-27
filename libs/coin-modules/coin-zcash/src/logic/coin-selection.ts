@@ -26,6 +26,11 @@ const DUST_THRESHOLD = ZIP317_MARGINAL_FEE;
 /** Maximum fee iteration rounds before giving up. */
 const MAX_ITERATIONS = 5;
 
+/** Minimum non-dust value (zatoshis) for a transparent output: the network
+ * rejects a smaller one at broadcast, so the wallet must refuse it up front
+ * instead of signing first. Same value for both transparent address kinds. */
+export const TRANSPARENT_OUTPUT_DUST_THRESHOLD = 54;
+
 /**
  * ZIP-317 fee in zatoshis for a per-pool action layout. Mirror of
  * `zip317_fee(n_spends, n_orchard_outputs, n_transparent_inputs,

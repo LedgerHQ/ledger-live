@@ -10,6 +10,10 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./hooks": {
+      "react-native": "./src/hooks/index.native.ts",
+      "default": "./src/hooks/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -31,6 +35,7 @@
     "styled-components": ">=6"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

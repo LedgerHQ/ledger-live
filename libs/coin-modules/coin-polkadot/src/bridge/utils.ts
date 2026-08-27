@@ -1,7 +1,6 @@
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { PolkadotAccount, Transaction } from "../types";
-import { getCurrentPolkadotPreloadData } from "./state";
+import type { PolkadotAccount, PolkadotStakingProgress, Transaction } from "../types";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10_000_000_000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1_000_000_000); // Polkadot recommended Existential Deposit error margin
@@ -82,8 +81,10 @@ export const getMinimumAmountToBond = (
  *
  * @param {PolkadotAccount} a
  */
-export const hasMinimumBondBalance = (account: PolkadotAccount): boolean => {
-  const { minimumBondBalance } = getCurrentPolkadotPreloadData();
+export const hasMinimumBondBalance = (
+  account: PolkadotAccount,
+  minimumBondBalance: BigNumber | string = "0",
+): boolean => {
   return (
     !account.polkadotResources ||
     account.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
@@ -132,8 +133,11 @@ export const canUnbond = (a: PolkadotAccount): boolean => {
 /**
  * Returns true if an account can nominate
  */
-export const canNominate = (account: PolkadotAccount): boolean => {
-  return isController(account) && hasMinimumBondBalance(account);
+export const canNominate = (
+  account: PolkadotAccount,
+  minimumBondBalance: BigNumber | string = "0",
+): boolean => {
+  return isController(account) && hasMinimumBondBalance(account, minimumBondBalance);
 };
 
 /**
@@ -143,8 +147,7 @@ export const canNominate = (account: PolkadotAccount): boolean => {
  */
 export const isFirstBond = (a: PolkadotAccount): boolean => !isStash(a);
 
-export const isElectionOpen = (): boolean => {
-  const { staking } = getCurrentPolkadotPreloadData();
+export const isElectionOpen = (staking?: PolkadotStakingProgress): boolean => {
   return staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
 };
 

@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAvatar } from "@features/platform-contacts/native";
+import { ContactAvatar } from "@features/platform-contacts";
 import type { ContactsCompactListProps } from "../../types";
 import {
   getCompactContactAddressDescription,

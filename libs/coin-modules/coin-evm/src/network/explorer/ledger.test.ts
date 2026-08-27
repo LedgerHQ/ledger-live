@@ -1,9 +1,8 @@
 import { AssertionError, fail } from "assert";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import eip55 from "eip55";
-import { getCoinConfig } from "../../config";
+import { DEFAULT_LEDGER_EXPLORER_URI, getCoinConfig, NftStandard } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import {
   coinOperation1,
@@ -32,7 +31,7 @@ describe("EVM Family", () => {
               type: "ledger",
               explorerId: "eth",
             },
-            showNfts: true,
+            supportedTokens: ["erc721", "erc1155"],
           },
         };
       });
@@ -120,25 +119,55 @@ describe("EVM Family", () => {
         expect(response).toEqual([coinOperation1, coinOperation2, coinOperation3]);
       });
 
-      it("should use the right header", async () => {
-        const oldEnv = getEnv("LEDGER_CLIENT_VERSION");
-        setEnv("LEDGER_CLIENT_VERSION", "TEST");
+      it("should hit the configured explorer", async () => {
+        const spy = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
+        await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerUri: "https://explorer.test",
+          clientVersion: "lld/1.2.3",
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 1,
+        });
+
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            url: "https://explorer.test/blockchain/v4/eth/address/0xkvn/txs",
+            headers: { "X-Ledger-Client-Version": "lld/1.2.3" },
+          }),
+        );
+      });
+
+      it("falls back to the default explorer and no header when both are omitted", async () => {
         const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
           return { data: { data: [] } };
         });
-        await LEDGER_API.fetchPaginatedOpsWithRetries({} as any, null);
 
-        setEnv("LEDGER_CLIENT_VERSION", oldEnv);
+        // The call shape callers used before the settings became parameters.
+        await LEDGER_API.fetchPaginatedOpsWithRetries({
+          explorerId: "eth",
+          address: "0xkvn",
+          fromBlock: 0,
+          batchSize: 1,
+        });
+
+        expect(spy).toHaveBeenCalledWith(
+          expect.not.objectContaining({ headers: expect.anything() }),
+        );
         expect(spy).toHaveBeenCalledWith(
           expect.objectContaining({
-            headers: { "X-Ledger-Client-Version": "TEST" },
+            url: `${DEFAULT_LEDGER_EXPLORER_URI}/blockchain/v4/eth/address/0xkvn/txs`,
           }),
         );
       });
     });
 
     describe("getOperations", () => {
+      beforeEach(() => {
+        process.env.NFT_CURRENCIES = JSON.stringify([]);
+      });
+
       it("should throw if the explorer is misconfigured", async () => {
         mockGetConfig.mockImplementationOnce((): any => {
           return {
@@ -178,7 +207,7 @@ describe("EVM Family", () => {
             status: { type: "active" },
             node: { type: "ledger", explorerId: "matic" },
             explorer: { type: "ledger", explorerId: "matic", batchSize: configuredBatchSize },
-            showNfts: true,
+            supportedTokens: ["erc721", "erc1155"],
           },
         }));
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
@@ -198,6 +227,8 @@ describe("EVM Family", () => {
       });
 
       it("should return the different operation types", async () => {
+        process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
         }));
@@ -414,7 +445,6 @@ describe("EVM Family", () => {
                   type: "ledger",
                   explorerId: "eth",
                 },
-                showNfts: false,
               },
             };
           });
@@ -435,6 +465,63 @@ describe("EVM Family", () => {
         });
       });
 
+      describe("supportedTokens atomicity", () => {
+        beforeEach(() => {
+          jest.resetAllMocks();
+
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
+          }));
+
+          process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+        });
+
+        afterAll(() => {
+          process.env.NFT_CURRENCIES = JSON.stringify([]);
+        });
+
+        const mockConfigWithTokens = (supportedTokens: NftStandard[]) =>
+          mockGetConfig.mockImplementation((): any => ({
+            info: {
+              explorer: { type: "ledger", explorerId: "eth" },
+              supportedTokens,
+            },
+          }));
+
+        const fetchNftAssetTypes = async () => {
+          const response = await LEDGER_API.getOperations(
+            getCoinConfig("ethereum").info,
+            "ethereum",
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            0,
+          );
+
+          return new Set(response.lastNftOperations.map(op => op.asset.type));
+        };
+
+        // The fixtures carry both an ERC721 transfer (coinOperation2) and ERC1155 transfers
+        // (coinOperation3), so each standard can be asserted independently.
+        it("surfaces only ERC721 operations when only erc721 is supported", async () => {
+          mockConfigWithTokens(["erc721"]);
+          expect(await fetchNftAssetTypes()).toEqual(new Set(["erc721"]));
+        });
+
+        it("surfaces only ERC1155 operations when only erc1155 is supported", async () => {
+          mockConfigWithTokens(["erc1155"]);
+          expect(await fetchNftAssetTypes()).toEqual(new Set(["erc1155"]));
+        });
+
+        it("surfaces both standards when both are supported", async () => {
+          mockConfigWithTokens(["erc721", "erc1155"]);
+          expect(await fetchNftAssetTypes()).toEqual(new Set(["erc721", "erc1155"]));
+        });
+
+        it("surfaces no NFT operations when supportedTokens is empty", async () => {
+          mockConfigWithTokens([]);
+          expect(await fetchNftAssetTypes()).toEqual(new Set());
+        });
+      });
+
       describe("nativeContracts filter", () => {
         // coinOperation1.transfer_events[0].contract — the only ERC20 event in the fixtures.
         const FIXTURE_CONTRACT = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
@@ -443,7 +530,7 @@ describe("EVM Family", () => {
           mockGetConfig.mockImplementation((): any => ({
             info: {
               explorer: { type: "ledger", explorerId: "eth" },
-              showNfts: true,
+              supportedTokens: ["erc721", "erc1155"],
               ...info,
             },
           }));

@@ -1,5 +1,4 @@
 import { AssertionError } from "assert";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
@@ -10,24 +9,16 @@ import { getGasOptions } from "./ledger";
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
+const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;
+
 const ledgerGasTrackerConfig = {
   node: { type: "ledger", explorerId: "eth" },
   gasTracker: { type: "ledger", explorerId: "eth" },
+  eip1559BaseFeeMultiplier: TEST_EIP1559_BASE_FEE_MULTIPLIER,
 } as unknown as EvmConfigInfo;
-
-const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;
 
 describe("EVM Family", () => {
   describe("network/gasTracker/index.ts", () => {
-    const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
-
-    beforeAll(() => {
-      setEnv("EIP1559_BASE_FEE_MULTIPLIER", TEST_EIP1559_BASE_FEE_MULTIPLIER);
-    });
-    afterAll(() => {
-      setEnv("EIP1559_BASE_FEE_MULTIPLIER", originalEIP1559_BASE_FEE_MULTIPLIER);
-    });
-
     beforeEach(() => {
       const gastrackerBarometerMock: any = new Promise((resolve, _) => {
         resolve({
@@ -78,9 +69,7 @@ describe("EVM Family", () => {
           expect(gasOptions).toEqual(expectedGasOptions);
         });
 
-        it("should return integer values when EIP1559_BASE_FEE_MULTIPLIER is a float", async () => {
-          setEnv("EIP1559_BASE_FEE_MULTIPLIER", 1.5);
-
+        it("should return integer values when eip1559BaseFeeMultiplier is a float", async () => {
           mockedNetwork.mockReset();
 
           const gastrackerBarometerMock: any = new Promise((resolve, _) => {
@@ -98,7 +87,7 @@ describe("EVM Family", () => {
 
           const gasOptions: GasOptions = await getGasOptions({
             currencyId: "ethereum",
-            config: ledgerGasTrackerConfig,
+            config: { ...ledgerGasTrackerConfig, eip1559BaseFeeMultiplier: 1.5 },
             options: {
               useEIP1559: true,
             },
@@ -111,8 +100,6 @@ describe("EVM Family", () => {
               true,
             );
           });
-
-          setEnv("EIP1559_BASE_FEE_MULTIPLIER", TEST_EIP1559_BASE_FEE_MULTIPLIER);
         });
 
         it("should return interger values when API return floats", async () => {

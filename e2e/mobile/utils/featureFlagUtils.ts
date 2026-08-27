@@ -43,6 +43,26 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_BORROW_ENABLED = {
+  ...FF_LWM_WALLET_40_Q2,
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: { manifest_id: "borrow" },
+  },
+  largeScreenUpsell: { enabled: false },
+  // Note: Prevent usage of DIE, which is not Speculos ready yet. The device-intent drawer bypasses
+  // the SignTransaction screens, so it also ignores the SWAP_DISABLE_APPS_INSTALL bypass swapSetup
+  // installs; leaving this to Firebase would make signing non-deterministic.
+  llmWalletApiDeviceIntentSign: { enabled: false },
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40?.params,
+      pnl: true,
+    },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies OptionalFeatureMap;
@@ -78,6 +98,7 @@ export const getMergedFeatureFlags = ({
     onboardingWidget: {
       enabled: true,
     },
+    largeScreenUpsell: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {

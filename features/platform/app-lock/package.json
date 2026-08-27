@@ -1,0 +1,35 @@
+{
+  "name": "@features/platform-app-lock",
+  "version": "0.1.0",
+  "private": true,
+  "description": "App lock protection state: schemas, types and selectors shared by the flows that read it",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-lock"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "react-native-keychain": "catalog:",
+    "typescript": "catalog:"
+  }
+}

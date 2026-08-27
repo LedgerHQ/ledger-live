@@ -275,3 +275,111 @@ test.describe("Ledger Sync - delete backup", () => {
     },
   );
 });
+
+function unactivatedFeatureFlags() {
+  return {
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+    featureFlags: {
+      lldWalletSync: {
+        enabled: true,
+        params: {
+          environment: ledgerSyncEnvironment,
+          watchConfig: {
+            pollingInterval: 2_000,
+            initialTimeout: 500,
+          },
+          learnMoreLink: "",
+        },
+      },
+      lldLedgerSyncEntryPoints: {
+        enabled: true,
+        params: { settings: true },
+      },
+      lwdLedgerSyncOptimisation: { enabled: true },
+    },
+  };
+}
+
+test.describe("Ledger Sync - entry point in settings", () => {
+  test.use(unactivatedFeatureFlags());
+
+  test(
+    "[WXP][Ledger Sync] A wallet sync entry point should exist in the settings",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2292",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+    },
+  );
+});
+
+test.describe("Ledger Sync - activation flow no backup activated", () => {
+  test.use(unactivatedFeatureFlags());
+
+  test(
+    "[WXP][Ledger Sync] Activation Flow - No Backup Activated",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2293",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.settings.clickSyncLedgerSync();
+      await app.ledgerSync.expectActivationScreenVisible();
+    },
+  );
+});
+
+test.describe("Ledger Sync - activation flow backup activated", () => {
+  setupSeed();
+  destroyTrustchainAfterAll();
+
+  test.use({ ...unactivatedFeatureFlags(), speculosApp: AppInfos.LS });
+
+  test(
+    "[WXP][Ledger Sync] Activation Flow - Backup Activated",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2294",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.settings.clickSyncLedgerSync();
+      await app.ledgerSync.expectActivationScreenVisible();
+
+      await app.ledgerSync.clickTurnOnLedgerSync();
+      await app.ledgerSync.clickConnectDevice();
+      await app.speculos.activateLedgerSync();
+      await app.ledgerSync.expectActivationSuccess();
+
+      await app.drawer.closeDrawer();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
+      await app.drawer.closeDrawer();
+    },
+  );
+});

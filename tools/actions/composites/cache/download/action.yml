@@ -70,4 +70,4 @@ runs:
       shell: bash
       if: steps.download-cache.outcome == 'success'
       run: |
-          rm -f /tmp/cache.tzst
+        rm -f /tmp/cache.tzst

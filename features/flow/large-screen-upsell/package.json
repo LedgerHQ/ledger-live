@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-large-screen-upsell",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Large-screen upsell decision engine, feature-scoped modal state, and portable modal UI",
   "main": "src/index.ts",
@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./utils/getNanoOnlyDeviceModel": "./src/utils/getNanoOnlyDeviceModel.ts",
+    "./utils/isLargeScreenUpsellBannerEnabled": "./src/utils/isLargeScreenUpsellBannerEnabled.ts",
     "./utils/upsellCta": "./src/utils/upsellCta.ts",
     "./schema.mock": "./src/state/schema.mock.ts",
     "./package.json": "./package.json"
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

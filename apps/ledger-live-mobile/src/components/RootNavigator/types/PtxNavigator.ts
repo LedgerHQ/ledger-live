@@ -17,6 +17,7 @@ type ExchangeParams = CommonParams & {
   defaultTicker?: string;
   mode?: "offRamp" | "onRamp";
   returnToPreviousScreenOnClose?: boolean;
+  goBackOnAccountRequestCancel?: boolean;
 };
 
 export type PtxNavigatorParamList = {

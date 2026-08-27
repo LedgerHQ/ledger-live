@@ -2,6 +2,8 @@
 // docs/new-library.md's `src/errors.ts` guidance. Errors that already exist for
 // every coin come from @ledgerhq/ledger-wallet-framework/errors instead.
 
+import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
+
 export class ZcashSaplingRecipientNotSupported extends Error {
   constructor(message = "Sapling recipients are not supported") {
     super(message);
@@ -13,6 +15,22 @@ export class ZcashSignerNotSupported extends Error {
   constructor(message = "Signer does not support Zcash PCZT signing") {
     super(message);
     this.name = "ZcashSignerNotSupported";
+  }
+}
+
+/**
+ * Raised when a send that spends or creates shielded value is attempted on an
+ * account whose UFVK has not been exported from the device yet. The shielded
+ * pools are unreadable without it, so no such transaction can be built. A
+ * transparent send is unaffected -- it needs no viewing key (see
+ * `bridge/signOperation`'s `resolveAccountKey`).
+ */
+export class ZcashShieldedKeyMissing extends Error {
+  constructor(
+    message = "Activate your private balance first: this transfer needs the viewing key from your device",
+  ) {
+    super(message);
+    this.name = "ZcashShieldedKeyMissing";
   }
 }
 
@@ -41,6 +59,19 @@ export class ZcashUtxoNotInAccount extends Error {
       this.txid = extra.txid;
       this.vout = extra.vout;
     }
+  }
+}
+
+/** Raised when a transparent output's amount is below the network's
+ * minimum non-dust value -- signing would succeed but broadcast would fail. */
+export class ZcashAmountBelowDustThreshold extends Error {
+  minimumZatoshis = TRANSPARENT_OUTPUT_DUST_THRESHOLD;
+
+  constructor(
+    message = `Amount is too small to be broadcast (minimum ${TRANSPARENT_OUTPUT_DUST_THRESHOLD} zatoshis)`,
+  ) {
+    super(message);
+    this.name = "ZcashAmountBelowDustThreshold";
   }
 }
 

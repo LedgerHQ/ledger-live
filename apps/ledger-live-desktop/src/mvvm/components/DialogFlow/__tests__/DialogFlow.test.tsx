@@ -83,8 +83,8 @@ describe("DialogFlow", () => {
       <TestDialogFlow currentStep="second" onBack={onBack} onClose={onClose} />,
     );
 
-    await user.click(screen.getByLabelText("components.dialogHeader.goBackAriaLabel"));
-    await user.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+    await user.click(screen.getByLabelText("Go back"));
+    await user.click(screen.getByLabelText("Close"));
 
     expect(onBack).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);

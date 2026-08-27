@@ -1,10 +1,11 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { QrCode } from "@shared/ui-qr-code";
 import { RequestReceiveAddress } from "./RequestReceiveAddress.web";
 import type { RequestReceiveIconProps } from "../../types";
 import type { AddressParts } from "../../utils/splitAddress";
 
-const ASSET_ICON_SIZE = 48;
+const QR_CENTER_ICON_SIZE = 48;
 const NETWORK_ICON_SIZE = 20;
 
 type RequestReceiveSummaryProps = Readonly<{
@@ -13,6 +14,7 @@ type RequestReceiveSummaryProps = Readonly<{
   assetIcon: RequestReceiveIconProps;
   networkIcon?: RequestReceiveIconProps;
   addressParts: AddressParts;
+  qrPayload: string;
 }>;
 
 export function RequestReceiveSummary({
@@ -21,9 +23,13 @@ export function RequestReceiveSummary({
   assetIcon,
   networkIcon,
   addressParts,
+  qrPayload,
 }: RequestReceiveSummaryProps) {
   return (
-    <div className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl">
+    <div
+      className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl"
+      data-testid="pay-card-request-receive-card"
+    >
       <div className="flex flex-col items-center gap-8">
         <span className="heading-3-semi-bold text-base">{title}</span>
         <div
@@ -42,14 +48,19 @@ export function RequestReceiveSummary({
           <span className="body-2 text-muted">{networkLabel}</span>
         </div>
       </div>
-
-      <div className="flex flex-col items-center gap-8">
-        <CryptoIcon
-          ledgerId={assetIcon.ledgerId}
-          ticker={assetIcon.ticker}
-          size={ASSET_ICON_SIZE}
-          shape="circle"
-        />
+      <QrCode
+        value={qrPayload}
+        testID="pay-card-request-receive-qr-code"
+        centerContent={
+          <CryptoIcon
+            ledgerId={assetIcon.ledgerId}
+            ticker={assetIcon.ticker}
+            size={QR_CENTER_ICON_SIZE}
+            shape="circle"
+          />
+        }
+      />
+      <div className="flex flex-col items-center">
         <RequestReceiveAddress addressParts={addressParts} />
       </div>
     </div>

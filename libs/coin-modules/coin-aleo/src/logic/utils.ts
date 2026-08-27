@@ -9,6 +9,7 @@ import type {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import type {
+  AssetInfo,
   Operation as CoinFrameworkOperation,
   MemoNotSupported,
   TransactionIntent,
@@ -21,11 +22,15 @@ import {
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
+  ANNUAL_INFLATION_RATE,
   BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
   EXPLORER_TRANSFER_TYPES,
   FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MAX_VALIDATOR_STAKE_SHARE,
+  MICROCREDITS_PER_CREDIT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
@@ -57,9 +62,14 @@ import type {
   AleoContext,
   AleoTokenDetails,
   AleoTokenType,
+  EnrichedPrivateRecord,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export function normalizeAleoPlaintext(v: string): string {
   return v.trim().replace(/\.(private|public|constant)$/, "");
@@ -188,8 +198,17 @@ export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumbe
   return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
 }
 
+export function hasPublicAddress(rawTx: AleoPublicTransaction): boolean {
+  return Boolean(rawTx.sender_address || rawTx.recipient_address);
+}
+
+/** Explorer and scanner both timestamp blocks in seconds. */
+export function toBlockDate(blockTimestamp: string | number): Date {
+  return new Date(Number(blockTimestamp) * 1000);
+}
+
 export function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
-  const date = new Date(Number(rawTx.block_timestamp) * 1000);
+  const date = toBlockDate(rawTx.block_timestamp);
   const hasFailed = rawTx.transaction_status !== "Accepted";
   let type: OperationType = "NONE";
   const fee = rawTx.fee;
@@ -204,36 +223,130 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
-export const toCoinFrameworkOperation = (
+/**
+ * A program is only a token of a given standard because the token registry says so — nothing in the
+ * program id tells them apart, so a program the registry does not list stays "unknown".
+ */
+function toOperationAsset(
+  programId: string,
+  tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>,
+): AssetInfo {
+  return programId === PROGRAM_ID.CREDITS
+    ? { type: "native" }
+    : { type: tokenTypeByProgramName.get(programId) ?? "unknown", assetReference: programId };
+}
+
+/**
+ * `sender`/`recipient` are the addresses after a blank side was substituted with the account's own;
+ * `rawTx` still shows which sides the explorer actually published.
+ *
+ * A token transfer is typed IN/OUT here, where `parseTransactionFields` (still used by the classic
+ * bridge) returns NONE: the framework operation carries the program as its asset, so there is
+ * nothing left for NONE to guard.
+ */
+function resolveOperationType(
   rawTx: AleoPublicTransaction,
   address: string,
-): CoinFrameworkOperation => {
-  const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    rawTx,
-    address,
-  );
+  sender: string,
+  recipient: string,
+): OperationType {
+  if (rawTx.sender_address === address && rawTx.recipient_address === address) return "IN";
+  if (sender === address) return "OUT";
+  if (recipient === address) return "IN";
+
+  return "NONE";
+}
+
+/**
+ * The account's own view of a public transaction, merged with what its private records reveal.
+ *
+ * `hasOwnedRecord` means a record the account owns shares this transaction, so an address the
+ * explorer left blank is the account's own private side.
+ *
+ * `resolvedRecipient` is the third-party recipient of a shield read back from the transition inputs
+ * (see resolveThirdPartyShieldRecipients) — the explorer blanks it and no owned record can stand in
+ * for it.
+ */
+export const toPublicOperation = ({
+  rawTx,
+  address,
+  hasOwnedRecord,
+  tokenTypeByProgramName,
+  resolvedRecipient,
+}: {
+  rawTx: AleoPublicTransaction;
+  address: string;
+  hasOwnedRecord: boolean;
+  tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
+  resolvedRecipient?: string;
+}): CoinFrameworkOperation => {
+  const hash = rawTx.transaction_id.trim();
+  const date = toBlockDate(rawTx.block_timestamp);
+  const sender = !rawTx.sender_address && hasOwnedRecord ? address : rawTx.sender_address;
+  const recipient =
+    !rawTx.recipient_address && hasOwnedRecord
+      ? address
+      : rawTx.recipient_address || (resolvedRecipient ?? "");
+  const type = resolveOperationType(rawTx, address, sender, recipient);
+
   return {
-    id: rawTx.transaction_id,
+    id: hash,
     type,
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
+    senders: [sender],
+    recipients: [recipient],
     value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
-    asset: { type: "native" },
+    asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
     details: {
       functionId: rawTx.function_id,
-      transactionType,
+      transactionType: determineTransactionType(rawTx.function_id, type),
       ledgerOpType: type,
     },
     tx: {
-      hash: rawTx.transaction_id,
-      fees: BigInt(fee.toFixed(0)),
-      date: date,
+      hash,
+      fees: BigInt(new BigNumber(rawTx.fee).toFixed(0)),
+      date,
       block: {
-        hash: blockHash,
+        hash: rawTx.block_hash,
         height: rawTx.block_number,
         time: date,
       },
-      failed: hasFailed ?? false,
+      failed: rawTx.transaction_status !== "Accepted",
+    },
+  };
+};
+
+export const toPrivateOperation = (
+  enrichedRecord: EnrichedPrivateRecord,
+  address: string,
+  tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>,
+): CoinFrameworkOperation => {
+  const { rawRecord, details } = enrichedRecord;
+  const hash = rawRecord.transaction_id.trim();
+  const date = toBlockDate(rawRecord.block_timestamp);
+  const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
+
+  return {
+    id: hash,
+    type,
+    senders: [enrichedRecord.sender],
+    recipients: [enrichedRecord.recipient],
+    value: BigInt(enrichedRecord.value.toFixed(0)),
+    asset: toOperationAsset(rawRecord.program_name, tokenTypeByProgramName),
+    details: {
+      functionId: rawRecord.function_name,
+      transactionType: "private",
+      ledgerOpType: type,
+    },
+    tx: {
+      hash,
+      fees: BigInt(new BigNumber(details.fee_value).toFixed(0)),
+      date,
+      block: {
+        hash: details.block_hash,
+        height: rawRecord.block_height,
+        time: date,
+      },
+      failed: details.status !== "Accepted",
     },
   };
 };
@@ -492,12 +605,7 @@ export function findBestRecordForFee({
 
 function isPrivateOperation(operation: Operation): boolean {
   const { extra } = operation;
-  return (
-    typeof extra === "object" &&
-    extra !== null &&
-    "transactionType" in extra &&
-    extra.transactionType === "private"
-  );
+  return isRecord(extra) && "transactionType" in extra && extra.transactionType === "private";
 }
 
 export function splitPrivateAndPublicOperations(
@@ -1134,14 +1242,21 @@ export function isAleoAmountPlaintext(v: string): boolean {
 }
 
 /**
+ * Ledger's batching wrappers suffix the wrapped function with the record count
+ * (transfer_private_2, transfer_public_to_private_4), so an exact name match misses them.
+ */
+export function stripBatcherSuffix(functionName: string): string {
+  return functionName.replace(/_\d+$/, "");
+}
+
+/**
  * Whether a transition's (recipient, amount) arguments can be located by scanning for the first
- * address-shaped argument. Ledger's batching wrappers suffix the function with the record count
- * (transfer_private_4) but keep the wrapped function's argument order.
+ * address-shaped argument. A batching wrapper keeps the wrapped function's argument order.
  *
  * Excludes transfer_from_*, whose first address argument is the sender, not the recipient.
  */
 export function isParsableTransferFunction(functionName: string): boolean {
-  return PRIVATE_TRANSFER_FUNCTIONS.has(functionName.replace(/_\d+$/, ""));
+  return PRIVATE_TRANSFER_FUNCTIONS.has(stripBatcherSuffix(functionName));
 }
 
 /**
@@ -1181,4 +1296,72 @@ export function findTransferArguments(plaintexts: (string | null)[]): {
   }
 
   return null;
+}
+
+/** `latest/totalSupply` is untrusted JSON: a bare scalar, in **credits**. */
+export function parseTotalSupply(value: unknown): BigNumber | null {
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  const parsed = new BigNumber(value);
+
+  return parsed.isFinite() && parsed.isGreaterThan(0) ? parsed : null;
+}
+
+/**
+ * The network-wide gross staking rate before any validator commission, as a fraction
+ * (0.078 = 7.8%), or null when the inputs cannot yield one.
+ *
+ * Derived from the delegator's `block_reward * stake / total_stake` share in snarkVM
+ * (synthesizer/src/vm/helpers/rewards.rs).
+ */
+export function estimateGrossRate(
+  totalSupplyCredits: BigNumber,
+  totalStakeMicrocredits: BigNumber,
+): BigNumber | null {
+  if (!totalSupplyCredits.isFinite() || totalSupplyCredits.isLessThanOrEqualTo(0)) return null;
+  if (!totalStakeMicrocredits.isFinite() || totalStakeMicrocredits.isLessThanOrEqualTo(0)) {
+    return null;
+  }
+
+  const totalStakeCredits = totalStakeMicrocredits.dividedBy(MICROCREDITS_PER_CREDIT);
+
+  return totalSupplyCredits.multipliedBy(ANNUAL_INFLATION_RATE).dividedBy(totalStakeCredits);
+}
+
+/**
+ * What a delegator can expect from one validator: the gross network rate less that
+ * validator's commission, as a fraction (0.07 = 7%). A **lower bound** — every surface
+ * showing it must label it an estimate.
+ *
+ * Null means "cannot be derived", zero means "earns nothing"; not interchangeable.
+ */
+export function estimateNetRate({
+  totalSupplyCredits,
+  totalStakeMicrocredits,
+  validatorStakeMicrocredits,
+  commissionPercent,
+  delegatorStakeMicrocredits,
+}: {
+  totalSupplyCredits: BigNumber;
+  totalStakeMicrocredits: BigNumber;
+  validatorStakeMicrocredits: BigNumber;
+  commissionPercent: BigNumber;
+  /** The delegator's own position. Omit for the generic rate a picker shows. */
+  delegatorStakeMicrocredits?: BigNumber;
+}): BigNumber | null {
+  const grossRate = estimateGrossRate(totalSupplyCredits, totalStakeMicrocredits);
+  if (grossRate === null) return null;
+
+  if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
+
+  const validatorOverConcentrated = validatorStakeMicrocredits
+    .dividedBy(totalStakeMicrocredits)
+    .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE);
+  const delegatorBelowMinimum =
+    delegatorStakeMicrocredits !== undefined &&
+    delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+  if (validatorOverConcentrated || delegatorBelowMinimum) return new BigNumber(0);
+
+  const keptShare = BigNumber.maximum(new BigNumber(1).minus(commissionPercent.dividedBy(100)), 0);
+
+  return grossRate.multipliedBy(keptShare);
 }

@@ -41,7 +41,7 @@ export default class EvmStakePage {
     return firstValidatorRowId;
   }
 
-  @Step("Set delegation amount to {amount}")
+  @Step("Set delegation amount to {{{0}}}")
   async setAmount(amount: string) {
     await waitForElementById(this.amountInputId);
     await typeTextById(this.amountInputId, amount);
@@ -65,7 +65,7 @@ export default class EvmStakePage {
     await tapById(this.amountContinueButtonId);
   }
 
-  @Step("Set amount and continue once fees are ready")
+  @Step("Set amount and continue once fees are ready {{{0}}}")
   async setAmountAndContinue(amount: string) {
     await this.setAmount(amount);
     await this.waitForAmountContinueEnabled();

@@ -3,6 +3,10 @@ import { useCallback, useMemo } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 
 import {
+  LARGE_SCREEN_UPSELL_UTM,
+  buildLargeScreenUpsellCtaLink,
+} from "@features/flow-large-screen-upsell";
+import {
   buildContentCardTrackingProperties,
   ContentCardEvent,
   type ContentCardInteractionEvent,
@@ -13,9 +17,25 @@ import { openURL } from "~/renderer/linking";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { useDynamicContent } from "../../hooks/useDynamicContent";
+import {
+  trackHardwareCarouselCardDismiss,
+  trackHardwareCarouselDeviceClick,
+  type HardwareCarouselSharedAnalyticsProps,
+} from "../../hardwareCarousel/analytics";
+import { extractHardwareCarouselDevice } from "../../hardwareCarousel/extractHardwareCarouselDevice";
 import { shouldShowHardwareCarouselCloseAll } from "../../hardwareCarousel/shouldShowHardwareCarouselCloseAll";
 import { getRenderableSmallSquareSlides } from "../../utils/getRenderableSmallSquareSlides";
 import type { SmallSquareContentCard } from "../../utils/mapSmallSquareContentCard";
+
+const WEB_PROTOCOLS = new Set(["http:", "https:"]);
+
+function isWebLink(link: string): boolean {
+  try {
+    return WEB_PROTOCOLS.has(new URL(link).protocol);
+  } catch {
+    return false;
+  }
+}
 
 function openContentCardLink(link: string, navigate: NavigateFunction): void {
   if (link.startsWith("ledger-live:")) {
@@ -29,6 +49,18 @@ function openContentCardLink(link: string, navigate: NavigateFunction): void {
   openURL(link);
 }
 
+function resolveHardwareCarouselCardLink(link: string): string {
+  if (!isWebLink(link)) {
+    return link;
+  }
+
+  return buildLargeScreenUpsellCtaLink(
+    link,
+    "desktop",
+    LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
+  );
+}
+
 export type MappedCategorySlide = {
   card: SmallSquareContentCard;
   displayedPosition: number;
@@ -38,6 +70,7 @@ export type UseContentCardsCategoryViewModelArgs = Readonly<{
   category: CategoryContentCard;
   categoryContentCards: BrazeCard[];
   leadingSlide?: React.ReactNode;
+  hardwareCarouselSharedProps?: HardwareCarouselSharedAnalyticsProps;
 }>;
 
 export type UseContentCardsCategoryViewModelResult = Readonly<{
@@ -58,6 +91,7 @@ export function useContentCardsCategoryViewModel({
   category,
   categoryContentCards,
   leadingSlide,
+  hardwareCarouselSharedProps,
 }: UseContentCardsCategoryViewModelArgs): UseContentCardsCategoryViewModelResult {
   const navigate = useNavigate();
   const { dismissCard, logClickCard, trackContentCardEvent } = useDynamicContent();
@@ -119,20 +153,37 @@ export function useContentCardsCategoryViewModel({
       if (!card.link) {
         return;
       }
+
+      if (hardwareCarouselSharedProps) {
+        const deviceType = extractHardwareCarouselDevice(card.title);
+        if (deviceType) {
+          trackHardwareCarouselDeviceClick(deviceType, hardwareCarouselSharedProps);
+        }
+      }
+
       trackCategoryEvent(ContentCardEvent.Clicked, card, displayedPosition);
       logClickCard(card.id);
-      openContentCardLink(card.link, navigate);
+      openContentCardLink(
+        shouldShowHardwareCarouselCloseAll(category)
+          ? resolveHardwareCarouselCardLink(card.link)
+          : card.link,
+        navigate,
+      );
     },
-    [logClickCard, navigate, trackCategoryEvent],
+    [category, hardwareCarouselSharedProps, logClickCard, navigate, trackCategoryEvent],
   );
 
   const onCardDismiss = useCallback(
     (card: SmallSquareContentCard, displayedPosition: number) => {
       if (dismissCard(card.id)) {
+        if (hardwareCarouselSharedProps) {
+          trackHardwareCarouselCardDismiss(hardwareCarouselSharedProps);
+        }
+
         trackCategoryEvent(ContentCardEvent.Dismissed, card, displayedPosition);
       }
     },
-    [dismissCard, trackCategoryEvent],
+    [dismissCard, hardwareCarouselSharedProps, trackCategoryEvent],
   );
 
   return {

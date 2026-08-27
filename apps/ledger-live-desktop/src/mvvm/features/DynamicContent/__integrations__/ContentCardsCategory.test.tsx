@@ -3,9 +3,11 @@ import React from "react";
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { logCardDismissal, logContentCardClick, ClassicCard } from "@braze/web-sdk";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { fireEvent, render, screen } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
+import { openURL } from "~/renderer/linking";
 import {
   CategoryContentCard,
   ContentCardsLayout,
@@ -38,6 +40,7 @@ jest.mock("@braze/web-sdk", () => {
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 jest.mock("~/renderer/linking", () => ({
@@ -103,7 +106,10 @@ const hardwareCarouselState = {
     localCategoriesCards: [CATEGORY],
     localCategoryChildCards: CHILD_CARDS,
   },
-  settings: trackedUserSettings,
+  settings: {
+    ...trackedUserSettings,
+    devicesModelList: [DeviceModelId.nanoX],
+  },
 };
 
 beforeEach(() => {
@@ -210,9 +216,100 @@ describe("ContentCardsLocation", () => {
       expect.objectContaining({
         campaign: "child-flex",
         contentcard: "Nano Case",
+        location: LocationContentCard.Portfolio,
       }),
     );
     expect(logContentCardClick).toHaveBeenCalled();
+    expect(openURL).toHaveBeenCalledTimes(1);
+
+    const openedUrl = new URL(jest.mocked(openURL).mock.calls[0]![0] as string);
+    expect(openedUrl.origin + openedUrl.pathname).toBe("https://shop.ledger.com/products");
+    expect(openedUrl.searchParams.get("utm_source")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.desktop,
+    );
+    expect(openedUrl.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM.medium);
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM.campaign);
+    expect(openedUrl.searchParams.get("utm_content")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
+    );
+  });
+
+  test("tracks hardware carousel page impression when the category is shown", async () => {
+    render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    await screen.findByText("Discover our devices");
+
+    expect(trackPage).toHaveBeenCalledWith(
+      "carousel hardware",
+      undefined,
+      {
+        name: "carousel hardware",
+        deviceModel: "lnx",
+        personalRecoOptIn: true,
+        offerType: "discount",
+        platform: "lwd",
+      },
+      true,
+      false,
+    );
+  });
+
+  test("tracks hardware carousel device click when a device card is clicked", async () => {
+    render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    fireEvent.click(await screen.findByText("Ledger Flex™"));
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "ledger flex",
+        page: "carousel hardware",
+        deviceModel: "lnx",
+        platform: "lwd",
+      }),
+    );
+  });
+
+  test("tracks Gen5 device click for Nano Pod carousel titles", async () => {
+    render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    fireEvent.click(await screen.findByText("Nano Pod"));
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "ledger gen5",
+        page: "carousel hardware",
+        deviceModel: "lnx",
+        platform: "lwd",
+      }),
+    );
+  });
+
+  test("tracks hardware carousel card dismiss when a child card is dismissed", async () => {
+    const { user } = render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    await screen.findByText("Nano Pod");
+    const closeButtons = screen.getAllByTestId("small-square-card-close");
+    await user.click(closeButtons[0]);
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        page: "carousel hardware",
+        deviceModel: "lnx",
+        platform: "lwd",
+      }),
+    );
   });
 
   test("renders the close all link for dismissable hardware carousel categories", async () => {
@@ -248,11 +345,11 @@ describe("ContentCardsLocation", () => {
       "button_clicked",
       expect.objectContaining({
         button: "close all",
-        page: "hardware carousel",
+        page: "carousel hardware",
         deviceModel: "lnx",
         personalRecoOptIn: true,
         offerType: "discount",
-        platform: "lld",
+        platform: "lwd",
       }),
     );
     expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Dismissed, expect.anything());

@@ -1,5 +1,36 @@
 # @ledgerhq/wallet-pnl
 
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8), [`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad), [`030fc67`](https://github.com/LedgerHQ/ledger-live/commit/030fc677db03e8a411d3d33d2fa88e1ab04df80b), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`b6da6b1`](https://github.com/LedgerHQ/ledger-live/commit/b6da6b1b1c98d022f30985c6103c239bffd0c7df), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`a20805c`](https://github.com/LedgerHQ/ledger-live/commit/a20805cebd95f2f620d394c4d7598ec93506c83e), [`030b427`](https://github.com/LedgerHQ/ledger-live/commit/030b42707768af3f9c98a15fc6751f1d64b36fe6)]:
+  - @ledgerhq/types-live@6.120.0
+  - @ledgerhq/ledger-wallet-framework@3.0.0
+  - @domain/entity-currency-token@0.5.0
+  - @ledgerhq/live-countervalues@0.24.3
+  - @domain/entity-currency@0.4.1
+
+## 0.7.7-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
+  - @ledgerhq/types-live@6.120.0-next.1
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+  - @ledgerhq/live-countervalues@0.24.3-next.1
+
+## 0.7.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad), [`030fc67`](https://github.com/LedgerHQ/ledger-live/commit/030fc677db03e8a411d3d33d2fa88e1ab04df80b), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`b6da6b1`](https://github.com/LedgerHQ/ledger-live/commit/b6da6b1b1c98d022f30985c6103c239bffd0c7df), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`a20805c`](https://github.com/LedgerHQ/ledger-live/commit/a20805cebd95f2f620d394c4d7598ec93506c83e), [`030b427`](https://github.com/LedgerHQ/ledger-live/commit/030b42707768af3f9c98a15fc6751f1d64b36fe6)]:
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.0
+  - @ledgerhq/types-live@6.120.0-next.0
+  - @domain/entity-currency-token@0.5.0-next.0
+  - @ledgerhq/live-countervalues@0.24.3-next.0
+  - @domain/entity-currency@0.4.1-next.0
+
 ## 0.7.6
 
 ### Patch Changes
@@ -248,78 +279,4 @@
   - @ledgerhq/ledger-wallet-framework@2.0.0
   - @ledgerhq/live-countervalues@0.18.6
 
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#17909](https://github.com/LedgerHQ/ledger-live/pull/17909) [`93f9bc7`](https://github.com/LedgerHQ/ledger-live/commit/93f9bc770e28977ce1d6b4b920b565d43b645518) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add PnL section to the mobile Asset Detail screen (Unrealised return + Average entry price cards, opens a detail drawer). Extracts a shared `usePnlViewModelBase` + builders under `mvvm/features/Pnl` so the Analytics (portfolio) and Asset Detail (asset) consumers share the same logic, and exposes `trendFromSign` / `PnlTrend` from `@ledgerhq/wallet-pnl` so mobile and desktop derive trends from the same primitive.
-
-### Patch Changes
-
-- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274)]:
-  - @ledgerhq/types-live@6.110.0-next.0
-  - @ledgerhq/cryptoassets@13.50.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.0.0-next.0
-  - @ledgerhq/live-countervalues@0.18.6-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#17451](https://github.com/LedgerHQ/ledger-live/pull/17451) [`d15fc5d`](https://github.com/LedgerHQ/ledger-live/commit/d15fc5dcabab2de8e4441568997234bfb31863a4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add an asset-level PnL section to the Asset Detail screen (an Unrealised return card and an Average entry price card, with a Total/Unrealised/Realised breakdown dialog). Backed by a new `computeAssetGroupPnL` aggregator and `useAssetGroupPnL` hook in `@ledgerhq/wallet-pnl`.
-
-### Patch Changes
-
-- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
-  - @ledgerhq/cryptoassets@13.49.0
-  - @ledgerhq/types-cryptoassets@7.37.0
-  - @ledgerhq/types-live@6.109.0
-  - @ledgerhq/ledger-wallet-framework@1.6.0
-  - @ledgerhq/live-countervalues@0.18.5
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#17451](https://github.com/LedgerHQ/ledger-live/pull/17451) [`d15fc5d`](https://github.com/LedgerHQ/ledger-live/commit/d15fc5dcabab2de8e4441568997234bfb31863a4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add an asset-level PnL section to the Asset Detail screen (an Unrealised return card and an Average entry price card, with a Total/Unrealised/Realised breakdown dialog). Backed by a new `computeAssetGroupPnL` aggregator and `useAssetGroupPnL` hook in `@ledgerhq/wallet-pnl`.
-
-### Patch Changes
-
-- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`ef47541`](https://github.com/LedgerHQ/ledger-live/commit/ef47541f67995474a82446c416e0825623b5d063), [`a04a4c0`](https://github.com/LedgerHQ/ledger-live/commit/a04a4c0a8bbee5140f685836014409e98af33d02), [`9b75461`](https://github.com/LedgerHQ/ledger-live/commit/9b754610e67e4d31d3d49b566ba1590194265c6f), [`822bc92`](https://github.com/LedgerHQ/ledger-live/commit/822bc92945248ddd31304aa7ca90854c849d217f), [`62ec3e5`](https://github.com/LedgerHQ/ledger-live/commit/62ec3e5917ceee80c0384eea6ee0901faa58b08a), [`9ccd154`](https://github.com/LedgerHQ/ledger-live/commit/9ccd1540f6ea912107d9651fa9b66ffd12948111), [`603f343`](https://github.com/LedgerHQ/ledger-live/commit/603f343d64c9b69a5708b419eb7ebfe7cec94554), [`a61f904`](https://github.com/LedgerHQ/ledger-live/commit/a61f90478795bff6956d2a9083ec47d44e6e9a46), [`5de991c`](https://github.com/LedgerHQ/ledger-live/commit/5de991c8686f473d2323b9c6536c53b7badf5f3d)]:
-  - @ledgerhq/cryptoassets@13.49.0-next.0
-  - @ledgerhq/types-cryptoassets@7.37.0-next.0
-  - @ledgerhq/types-live@6.109.0-next.0
-  - @ledgerhq/ledger-wallet-framework@1.6.0-next.0
-  - @ledgerhq/live-countervalues@0.18.5-next.0
-
-## 0.2.0
-
-### Minor Changes
-
-- [#17343](https://github.com/LedgerHQ/ledger-live/pull/17343) [`f753ec7`](https://github.com/LedgerHQ/ledger-live/commit/f753ec7f73a870fc4b9f24d213f399773bc50600) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `@ledgerhq/wallet-pnl`: average cost basis PnL (per-asset and portfolio), operation classification, countervalue-backed cost basis cache.
-
-- [#17384](https://github.com/LedgerHQ/ledger-live/pull/17384) [`fb2b211`](https://github.com/LedgerHQ/ledger-live/commit/fb2b21133ad208d79c5088fc1f6d1b015f874178) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Expose scenario builders via the new `@ledgerhq/wallet-pnl/scenarios` subpath (Hodler, Staker, Trader, SingleTrade, MultiAsset)
-
-### Patch Changes
-
-- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
-  - @ledgerhq/types-live@6.108.0
-  - @ledgerhq/ledger-wallet-framework@1.5.0
-  - @ledgerhq/cryptoassets@13.48.0
-  - @ledgerhq/live-countervalues@0.18.4
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#17343](https://github.com/LedgerHQ/ledger-live/pull/17343) [`f753ec7`](https://github.com/LedgerHQ/ledger-live/commit/f753ec7f73a870fc4b9f24d213f399773bc50600) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `@ledgerhq/wallet-pnl`: average cost basis PnL (per-asset and portfolio), operation classification, countervalue-backed cost basis cache.
-
-- [#17384](https://github.com/LedgerHQ/ledger-live/pull/17384) [`fb2b211`](https://github.com/LedgerHQ/ledger-live/commit/fb2b21133ad208d79c5088fc1f6d1b015f874178) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Expose scenario builders via the new `@ledgerhq/wallet-pnl/scenarios` subpath (Hodler, Staker, Trader, SingleTrade, MultiAsset)
-
-### Patch Changes
-
-- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
-  - @ledgerhq/types-live@6.108.0-next.0
-  - @ledgerhq/ledger-wallet-framework@1.5.0-next.0
-  - @ledgerhq/cryptoassets@13.48.0-next.0
-  - @ledgerhq/live-countervalues@0.18.4-next.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -116,17 +116,6 @@ export class LiveAppWebview {
   }
 
   async checkDevToolsClosed() {
-    const all = this.electronApp.windows();
-    const titles = await Promise.all(all.map(page => page.title().catch(() => "")));
-    const devToolsIndex = titles.findIndex(title => title === "DevTools");
-    const devtools = devToolsIndex !== -1 ? all[devToolsIndex] : undefined;
-
-    if (devtools) {
-      await devtools.waitForEvent("close", {
-        timeout: this.defaultWebViewTimeout,
-      });
-    }
-
     await expect
       .poll(
         async () => {

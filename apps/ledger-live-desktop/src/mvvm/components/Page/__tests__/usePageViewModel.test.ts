@@ -1,11 +1,11 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useLocation } from "react-router";
-import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
+import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
 import { SCROLL_TO_TOP_EVENT } from "../constants";
 import { usePageViewModel } from "../usePageViewModel";
 
-jest.mock("LLD/components/RightPanel/useRightPanelSwapAvailability", () => ({
-  useRightPanelSwapAvailability: jest.fn(() => true),
+jest.mock("LLD/components/RightPanel/Swap/useSwapAvailability", () => ({
+  useSwapAvailability: jest.fn(() => true),
 }));
 
 jest.mock("react-router", () => ({
@@ -14,7 +14,7 @@ jest.mock("react-router", () => ({
 }));
 
 const mockedUseLocation = jest.mocked(useLocation);
-const mockedUseRightPanelSwapAvailability = jest.mocked(useRightPanelSwapAvailability);
+const mockedUseSwapAvailability = jest.mocked(useSwapAvailability);
 const createLocation = (pathname: string) => ({
   pathname,
   search: "",
@@ -31,7 +31,7 @@ const wallet40WithRightPanelFlags = {
 describe("usePageViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseRightPanelSwapAvailability.mockImplementation(
+    mockedUseSwapAvailability.mockImplementation(
       pathname => pathname === "/analytics" || pathname.startsWith("/asset/"),
     );
   });
@@ -43,11 +43,40 @@ describe("usePageViewModel", () => {
     });
 
     expect(result.current.shouldRenderRightPanel).toBe(true);
+    expect(result.current.rightPanelVariant).toBe("swap");
 
     mockedUseLocation.mockReturnValue(createLocation("/market"));
     rerender();
 
     expect(result.current.shouldRenderRightPanel).toBe(false);
+    expect(result.current.rightPanelVariant).toBeUndefined();
+  });
+
+  it("shows the card right panel on /paytab when lwdPayTab is enabled, regardless of swap flags", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/paytab"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true },
+        ptxSwapLiveAppOnPortfolio: { enabled: false },
+        lwdPayTab: { enabled: true },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(true);
+    expect(result.current.rightPanelVariant).toBe("card");
+  });
+
+  it("hides the card right panel on /paytab when lwdPayTab is disabled", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/paytab"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true },
+        lwdPayTab: { enabled: false },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(false);
+    expect(result.current.rightPanelVariant).toBeUndefined();
   });
 
   it("shows the right panel on aggregated asset detail routes when swap and aggregated assets are enabled", () => {

@@ -127,6 +127,21 @@ jobs:
           name: ${{ matrix.config.output-name }}-js-bundle-metafiles
           path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
+      - name: Validate electron-builder.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
+
+      - name: Validate electron-builder-nightly.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder-nightly.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
+
+      - name: Validate electron-builder-pre.yml
+        if: ${{ matrix.config.name == 'Linux' && !cancelled() }}
+        working-directory: apps/ledger-live-desktop
+        run: npx electron-builder --linux --dir --config electron-builder-pre.yml -c.directories.output=${{ runner.temp }}/eb-configcheck --publish never
+
       - name: Push status
         id: status
         shell: bash

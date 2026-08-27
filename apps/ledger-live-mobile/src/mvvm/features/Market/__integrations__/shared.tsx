@@ -7,20 +7,23 @@ import { ScreenName } from "~/const";
 import MarketList from "../screens/MarketList";
 import MarketDetail from "../screens/MarketDetail";
 import MarketCurrencySelect from "../screens/MarketCurrencySelect";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 const StackWalletTab = createNativeStackNavigator<MarketNavigatorStackParamList>();
 
 export function MarketPages() {
   return (
-    <WalletTabNavigatorScrollManager>
-      <StackWalletTab.Navigator initialRouteName={ScreenName.MarketList}>
-        <StackWalletTab.Screen name={ScreenName.MarketList} component={MarketList} />
-        <StackWalletTab.Screen name={ScreenName.MarketDetail} component={MarketDetail} />
-        <StackWalletTab.Screen
-          name={ScreenName.MarketCurrencySelect}
-          component={MarketCurrencySelect}
-        />
-      </StackWalletTab.Navigator>
-    </WalletTabNavigatorScrollManager>
+    <NotificationsPromptProvider>
+      <WalletTabNavigatorScrollManager>
+        <StackWalletTab.Navigator initialRouteName={ScreenName.MarketList}>
+          <StackWalletTab.Screen name={ScreenName.MarketList} component={MarketList} />
+          <StackWalletTab.Screen name={ScreenName.MarketDetail} component={MarketDetail} />
+          <StackWalletTab.Screen
+            name={ScreenName.MarketCurrencySelect}
+            component={MarketCurrencySelect}
+          />
+        </StackWalletTab.Navigator>
+      </WalletTabNavigatorScrollManager>
+    </NotificationsPromptProvider>
   );
 }

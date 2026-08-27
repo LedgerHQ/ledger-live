@@ -17,6 +17,7 @@ import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import MarketList from "LLM/features/Market/screens/MarketList";
 import AssetDetailNavigator from "../Navigator";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 import {
@@ -85,18 +86,20 @@ function AssetDetailTestNavigator({
   params?: NavigatorParams;
 } = {}) {
   return (
-    <Stack.Navigator id={BASE_NAVIGATOR_ID}>
-      <Stack.Screen
-        name={NavigatorName.AssetDetail}
-        component={AssetDetailNavigator}
-        initialParams={{
-          screen: ScreenName.AssetDetail,
-          params,
-        }}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name={ScreenName.MarketList} component={MarketList} />
-    </Stack.Navigator>
+    <NotificationsPromptProvider>
+      <Stack.Navigator id={BASE_NAVIGATOR_ID}>
+        <Stack.Screen
+          name={NavigatorName.AssetDetail}
+          component={AssetDetailNavigator}
+          initialParams={{
+            screen: ScreenName.AssetDetail,
+            params,
+          }}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name={ScreenName.MarketList} component={MarketList} />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>
   );
 }
 

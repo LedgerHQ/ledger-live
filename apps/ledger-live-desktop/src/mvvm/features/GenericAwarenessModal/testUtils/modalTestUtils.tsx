@@ -46,8 +46,7 @@ export const advanceCarouselSlide = async (user: UserEvent, slideTitle: string) 
   fireEvent(screen.getByText(slideTitle), slideOutAnimationStart);
 };
 
-export const getGenericAwarenessModalHeaderCloseButton = () =>
-  screen.getByLabelText("components.dialogHeader.closeAriaLabel");
+export const getGenericAwarenessModalHeaderCloseButton = () => screen.getByLabelText("Close");
 
 export const renderOpenAwarenessModalView = (
   contentCard: GenericAwarenessModalContentCard,
@@ -86,6 +85,8 @@ export const advanceCarouselToLastSlide = async (user: UserEvent) => {
 
   await waitFor(() => {
     expect(screen.getByText("Ethereum & beyond")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+    expect(screen.getByTestId("generic-awareness-modal-continue-button")).toHaveTextContent(
+      "Close",
+    );
   });
 };

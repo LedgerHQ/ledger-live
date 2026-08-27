@@ -10,7 +10,7 @@ function ContactsScreen() {
   const addContactDialog = useAddContactDialogAdapter(pageViewModel.onClearSearch);
   const viewModel = {
     ...pageViewModel,
-    onAddContact: addContactDialog.onOpen,
+    onAddContact: () => pageViewModel.onRequestAddContact(addContactDialog.onOpen),
     addContactDialog,
   };
 

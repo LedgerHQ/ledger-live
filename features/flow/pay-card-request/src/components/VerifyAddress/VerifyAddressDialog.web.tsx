@@ -52,11 +52,15 @@ export function VerifyAddressDialog({
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-full bg-gradient-muted"
+        />
         <DialogHeader density="compact" onClose={onClose} />
         <DialogBody className="flex flex-col gap-24" data-testid={contentTestId}>
           <div className="flex flex-col items-center gap-12 text-center">
             <Spot appearance="icon" icon={icon} size={56} />
-            <h2 className="heading-3-semi-bold text-base">{title}</h2>
+            <h2 className="heading-4-semi-bold text-base">{title}</h2>
             {description ? <p className="body-2 text-muted">{description}</p> : null}
           </div>
           {children}

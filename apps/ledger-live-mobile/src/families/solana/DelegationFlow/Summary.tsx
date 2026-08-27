@@ -77,16 +77,23 @@ export default function DelegationSummary({ navigation, route }: Props) {
     () => ({
       account,
       parentAccount,
-      transaction: tx({
-        delegationAction,
-        defaultValidator: validators[0],
-        amount: route.params.amount,
-        chosenValidator,
-      }),
+      transaction:
+        validators.length > 0
+          ? tx({
+              delegationAction,
+              defaultValidator: validators[0],
+              amount: route.params.amount,
+              chosenValidator,
+            })
+          : route.params.transaction,
     }),
   );
 
   useEffect(() => {
+    if (validators.length === 0) {
+      return;
+    }
+
     setTransaction(
       tx({
         delegationAction,

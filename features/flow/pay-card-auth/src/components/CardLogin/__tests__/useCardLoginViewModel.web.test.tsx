@@ -1,131 +1,50 @@
-import { act, renderHook, waitFor } from "@testing-library/react";
-import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
-import { createAuthorizeAttempt } from "../../../state/authorizeAttempt";
-import { useCardLoginViewModel } from "../useCardLoginViewModel";
+import { mapSnapshotToViewModel } from "../useCardLoginViewModel";
 
-jest.mock("@domain/api-card-management", () => ({
-  useInitiateAuthorizeMutation: jest.fn(),
-}));
+const onLoginPress = jest.fn();
 
-jest.mock("../../../state/authorizeAttempt", () => ({
-  createAuthorizeAttempt: jest.fn(),
-}));
+describe("mapSnapshotToViewModel", () => {
+  it.each(["idle", "error"] as const)("offers the login action in %s", value => {
+    const login = mapSnapshotToViewModel(value, null, onLoginPress);
 
-const mockedUseInitiateAuthorizeMutation = jest.mocked(useInitiateAuthorizeMutation);
-const mockedCreateAuthorizeAttempt = jest.mocked(createAuthorizeAttempt);
-const initiateAuthorize = jest.fn();
-const unwrap = jest.fn();
-
-const attempt = {
-  state: "state-value",
-  codeVerifier: "verifier-value",
-  codeChallenge: "challenge-value",
-};
-
-const oauthConfig = { clientId: "client-id", redirectUri: "ledgerlive://paytab" };
-
-function authorizeResponse(url: string) {
-  return { url };
-}
-
-describe("useCardLoginViewModel", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    initiateAuthorize.mockReturnValue({ unwrap });
-    mockedCreateAuthorizeAttempt.mockResolvedValue(attempt);
-    mockedUseInitiateAuthorizeMutation.mockReturnValue([
-      initiateAuthorize,
-      { isLoading: false },
-    ] as unknown as ReturnType<typeof useInitiateAuthorizeMutation>);
+    expect(login?.isLoading).toBe(false);
+    expect(login?.loginLabel).toBe("Login");
   });
 
-  it("should forward the hosted login URL", async () => {
-    const openHostedLogin = jest.fn().mockResolvedValue(undefined);
-    // Query parameters must survive verbatim: the hosted UI reads the opaque request value and the
-    // redirect back into the app from them.
-    const url =
-      "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
-    unwrap.mockResolvedValue(authorizeResponse(url));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauthConfig }));
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(initiateAuthorize).toHaveBeenCalledWith({
-        clientId: oauthConfig.clientId,
-        redirectUri: oauthConfig.redirectUri,
-        state: attempt.state,
-        codeChallenge: attempt.codeChallenge,
-      });
-      expect(openHostedLogin).toHaveBeenCalledWith(url, oauthConfig.redirectUri);
-    });
+  it.each([
+    "hydrating",
+    "preparingAttempt",
+    "awaitingHostedLogin",
+    "validatingCallback",
+    "exchangingCode",
+    "persistingSession",
+    "authenticated",
+    "fetchingUser",
+    "clearingAttempt",
+  ] as const)("shows work in progress in %s", value => {
+    expect(mapSnapshotToViewModel(value, null, onLoginPress)?.isLoading).toBe(true);
   });
 
-  it("should show nothing once the browser closes", async () => {
-    const openHostedLogin = jest.fn().mockResolvedValue(undefined);
-    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauthConfig }));
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.errorMessage).toBeNull();
-    });
+  it("offers nothing once the card holder is signed in", () => {
+    // `CardLogout` holds the screen from here, and it reads the same flag to know it.
+    expect(mapSnapshotToViewModel("ready", null, onLoginPress)).toBeNull();
   });
 
-  it("should not open the hosted login when the initiation fails", async () => {
-    const openHostedLogin = jest.fn();
-    unwrap.mockRejectedValue({ status: 422 });
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauthConfig }));
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.errorMessage).toBe("Unable to start login");
-      expect(openHostedLogin).not.toHaveBeenCalled();
-    });
+  it("shows no message while there is no error", () => {
+    expect(mapSnapshotToViewModel("idle", null, onLoginPress)?.errorMessage).toBeNull();
   });
 
-  it("should expose an error when opening the hosted login fails", async () => {
-    const openHostedLogin = jest.fn().mockRejectedValue(new Error("Browser unavailable"));
-    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauthConfig }));
+  it.each([
+    "pkce_failed",
+    "browser_open_failed",
+    "missing_attempt",
+    "exchange_failed",
+    "persist_failed",
+    "fetch_user_failed",
+  ] as const)("shows a message for %s", errorKind => {
+    const login = mapSnapshotToViewModel("error", errorKind, onLoginPress);
 
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.errorMessage).toBe("Browser unavailable");
-      expect(result.current.isLoading).toBe(false);
-    });
-  });
-
-  it("should not surface internal RTK error text", async () => {
-    const openHostedLogin = jest.fn();
-    unwrap.mockRejectedValue({
-      status: "CUSTOM_ERROR",
-      error: "payCardApiExtra not configured in store extraArgument",
-    });
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauthConfig }));
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.errorMessage).toBe("Unable to start login");
-      expect(openHostedLogin).not.toHaveBeenCalled();
-    });
-  });
-
-  it("should reflect the authorize initiation loading state", () => {
-    mockedUseInitiateAuthorizeMutation.mockReturnValue([
-      initiateAuthorize,
-      { isLoading: true },
-    ] as unknown as ReturnType<typeof useInitiateAuthorizeMutation>);
-
-    const { result } = renderHook(() =>
-      useCardLoginViewModel({ openHostedLogin: jest.fn(), oauthConfig }),
-    );
-
-    expect(result.current.isLoading).toBe(true);
+    expect(login?.errorMessage).toMatch(/\.$/);
+    // The copy is ours, never the backend's or RTK's.
+    expect(login?.errorMessage).not.toContain(errorKind);
   });
 });

@@ -65,11 +65,26 @@ function createProps(
       onChangeText: jest.fn(),
       onContinue: jest.fn(),
     },
+    addressReviewProps: {
+      address,
+      currency: "Ethereum",
+      network: "Ethereum",
+      name: "Ethereum",
+      labels: {
+        title: "Review address",
+        addressLabel: "Address",
+        currencyLabel: "Currency",
+        networkLabel: "Network",
+        nameLabel: "Address name",
+        continue: "Confirm address",
+      },
+      onContinue: jest.fn(),
+    },
   };
 }
 
 describe("ContactsAddAddressFlowContent", () => {
-  it("should render the address and name content with their actions", () => {
+  it("should render each step and call its action", () => {
     const addressProps = createProps("address");
     const { rerender } = render(<ContactsAddAddressFlowContent {...addressProps} />);
 
@@ -81,5 +96,12 @@ describe("ContactsAddAddressFlowContent", () => {
 
     fireEvent.press(screen.getByTestId("contacts-add-address-name-continue"));
     expect(nameProps.addressNameProps?.onContinue).toHaveBeenCalledTimes(1);
+
+    const reviewProps = createProps("review");
+    rerender(<ContactsAddAddressFlowContent {...reviewProps} />);
+
+    expect(screen.getByText(address)).toBeVisible();
+    fireEvent.press(screen.getByTestId("contacts-add-address-review-continue"));
+    expect(reviewProps.addressReviewProps?.onContinue).toHaveBeenCalledTimes(1);
   });
 });

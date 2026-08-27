@@ -11,9 +11,11 @@ import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from
 import type { SignerContext } from "../types/signer";
 import {
   ZcashNotesNotYetSpendable,
+  ZcashShieldedKeyMissing,
   ZcashSignerNotSupported,
   ZcashSigningCancelled,
 } from "../types/errors";
+import { accountPubkeyFromXpub } from "../signer/xpub";
 import { assertCanSend } from "../logic/engineClient";
 import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
@@ -46,6 +48,37 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
 function isNotePositionPastAnchor(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return message.includes("compute_ironwood_witnesses") && message.includes("anchor_total_leaves");
+}
+
+/**
+ * A shielded bundle can only be built from the account's shielded keys, so the
+ * UFVK is mandatory there -- and it only reaches the wallet through the export
+ * flow, which the user has to confirm on the device.
+ */
+function requireUfvk(ufvk: string | undefined): string {
+  if (!ufvk) throw new ZcashShieldedKeyMissing();
+  return ufvk;
+}
+
+/**
+ * The account key material a transparent send needs, in whichever form the
+ * account can supply: the UFVK when it has one, otherwise the account's
+ * transparent pubkey read off its xpub.
+ *
+ * Both forms describe the same account and derive the same change address and
+ * signing paths; the UFVK is preferred when present so that an account which has
+ * one keeps a single code path across all its flows.
+ */
+function resolveAccountKey(
+  account: ZcashAccount,
+  ufvk: string | undefined,
+): { ufvk: string } | { transparentAccountPubkey: string } {
+  // Truthiness, like `requireUfvk`: an empty viewing key is no key.
+  if (ufvk) return { ufvk };
+  // Every synced account is built from its xpub, so this is an invariant
+  // violation rather than a state the user can reach or resolve.
+  if (!account.xpub) throw new Error("Missing xpub -- cannot derive the account's transparent key");
+  return { transparentAccountPubkey: accountPubkeyFromXpub(account.xpub) };
 }
 
 /**
@@ -85,8 +118,18 @@ export const buildSignOperation =
       };
 
       (async () => {
-        const ufvk = account.privateInfo?.ufvk;
-        if (!ufvk) throw new Error("Missing UFVK -- account not yet synced");
+        const useIronwood = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType);
+        // Absent until the user exports it from the device, so only the flows
+        // that genuinely read shielded key material may depend on it: a
+        // transparent send identifies its account by the xpub instead, and stays
+        // available to an account that holds nothing but public funds.
+        //
+        // An account can carry an empty string rather than null, which is why the
+        // shielded scan gates on its length too (`sync.ts`'s `ufvkIsPresent`).
+        // Normalising here keeps the two readers below agreeing on what
+        // "present" means: without it a transparent send would forward `ufvk: ""`
+        // to the builder and fail decoding a viewing key it never needed.
+        const ufvk = account.privateInfo?.ufvk || undefined;
         if (!transaction.selectedNotes)
           throw new Error("Missing selectedNotes -- run prepareTransaction first");
         if (transaction.zcashFee === undefined)
@@ -100,7 +143,6 @@ export const buildSignOperation =
         if (bailIfCancelled()) return;
 
         const plan = {
-          ufvk,
           accountIndex,
           feeZat: transaction.zcashFee.toFixed(0),
           spends: mapSpends(transaction.selectedNotes),
@@ -108,13 +150,12 @@ export const buildSignOperation =
           outputs: mapOutputs(transaction),
         };
 
-        const useIronwood = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType);
         const buildResult = useIronwood
-          ? await craftIronwoodTransaction(plan).catch(err => {
+          ? await craftIronwoodTransaction({ ...plan, ufvk: requireUfvk(ufvk) }).catch(err => {
               if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
               throw err;
             })
-          : await craftTransaction(plan);
+          : await craftTransaction({ ...plan, ...resolveAccountKey(account, ufvk) });
 
         const { pcztTransaction } = buildResult;
 
@@ -184,6 +225,7 @@ export const buildSignOperation =
               inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`),
               inputRefs,
             }),
+            ...(transaction.memo && { memo: transaction.memo }),
           } satisfies ZcashOperationExtra,
         };
 

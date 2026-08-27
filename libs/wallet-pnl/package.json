@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-pnl",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Ledger Live wallet-pnl module – per-asset and portfolio Profit & Loss using Average Cost Basis (ACB)",
   "keywords": [
     "Ledger"
@@ -37,6 +37,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

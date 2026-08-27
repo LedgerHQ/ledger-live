@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import type { LiveAppModalParams } from "~/renderer/reducers/liveAppModal";
+import { useRestoreFocusOnDialogClose } from "LLD/hooks/useRestoreFocusOnDialogClose";
 import useLiveAppModalContentViewModel, {
   type ExtraInputs,
 } from "./useLiveAppModalContentViewModel";
@@ -61,11 +62,13 @@ const EarnLiveAppModalContent = ({
 };
 
 const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModalViewProps) => {
+  const focusLifecycle = useRestoreFocusOnDialogClose();
+
   if (!isOpen || !params) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
-      <DialogContent>
+      <DialogContent {...focusLifecycle}>
         {params.useCase === "earn" ? (
           <EarnLiveAppModalContent params={params} onClose={onClose} />
         ) : (

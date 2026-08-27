@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "private": true,
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
@@ -37,6 +37,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

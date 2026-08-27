@@ -5,7 +5,6 @@ import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { getMinimumSellAmount } from "@ledgerhq/live-e2e-shared/buySell";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -99,6 +98,10 @@ export async function runNavigateToBuyFromMarketPageTest(
       await app.market.expectMarketRowTitle(buySell.crypto.currency);
       await app.market.openAssetPage(buySell.crypto.currency);
       await app.market.tapOnMarketQuickActionButton("buy");
+      await app.modularDrawer.selectNetworkIfAsked(
+        app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
+      );
+      await app.modularDrawer.selectFirstAccountIfAsked();
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
@@ -129,6 +132,10 @@ export async function runNavigateToBuyFromAssetPageTest(
         buySell.crypto.currency.id,
       );
       await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
+      await app.modularDrawer.selectNetworkIfAsked(
+        app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
+      );
+      await app.modularDrawer.selectFirstAccountIfAsked();
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
@@ -154,9 +161,8 @@ export async function runSellFlowTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Sell`, async () => {
-      const amount = await getMinimumSellAmount(buySell.crypto.currency.id);
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleSellFlow({ ...buySell, amount }, paymentMethod, provider);
+      await app.buySell.handleSellFlow(buySell, paymentMethod, provider);
     });
   });
 }

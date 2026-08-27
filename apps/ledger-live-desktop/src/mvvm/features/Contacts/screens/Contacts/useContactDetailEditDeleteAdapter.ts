@@ -3,7 +3,6 @@ import {
   type ContactsDeleteContactDialogProps,
   type ContactsEditSignerDialogProps,
   type ContactsEditSignerMismatchDialogProps,
-  type ContactsRenameContactDialogProps,
   type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
   resolveContactDetailEditDeleteLabels,
@@ -11,6 +10,7 @@ import {
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useContactsAnalytics } from "../../analytics";

@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
+    "@shared/ui-qr-code": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {

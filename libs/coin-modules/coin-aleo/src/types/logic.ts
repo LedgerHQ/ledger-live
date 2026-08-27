@@ -9,6 +9,7 @@ import type {
   AleoRecordScannerStatusResponse,
   AleoPublicTransactionDetailsResponse,
   AleoPrivateRecord,
+  AleoExactTransitionCursor,
 } from "./api";
 import type { AleoDecryptedRecordResponse } from "./sdk";
 
@@ -46,6 +47,25 @@ export type AleoAccountInfo = {
   percentage: number;
   startHeight: number;
   scannedHeight: number;
+};
+
+export type AleoValidator = {
+  address: string;
+  name?: string;
+  stakeMicrocredits: number;
+  isOpen: boolean;
+  commissionPercent: number;
+  /**
+   * Estimated net yearly rate as a fraction (0.07 = 7%). Absent when it could not be
+   * derived; `0` is a real value meaning "earns nothing".
+   */
+  estimatedYearlyRewardsRate?: number;
+};
+
+/** `<maxBlockHeight>:<blockNumber>:<transitionId>` — the pinned ceiling, then the row to resume after. */
+export type OperationsCursor = {
+  maxBlockHeight: number;
+  resumeFrom: AleoExactTransitionCursor;
 };
 
 export type RecordPickingStrategy = "manual" | "auto";

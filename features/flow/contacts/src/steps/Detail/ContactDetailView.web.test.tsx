@@ -1,5 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
@@ -61,8 +62,8 @@ describe("ContactDetailView", () => {
     ).toBeInTheDocument();
   });
 
-  it("should truncate a long saved contact name within the detail header", () => {
-    const name = "Z".repeat(64);
+  it("should preserve the saved contact name truncation styles", () => {
+    const name = "Z".repeat(CONTACT_NAME_MAX_LENGTH);
 
     render(
       <ContactDetailView

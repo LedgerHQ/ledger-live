@@ -57,6 +57,7 @@ export function SendHeader() {
     handleScanPicked,
     isScannerOpen,
     recipientContact,
+    recipientPlaceholder,
     showBackButton,
     showMemoControls,
     showRecipientInput,
@@ -102,7 +103,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="mb-12 px-24"
+          className="-mt-12 mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus
@@ -111,11 +112,7 @@ export function SendHeader() {
           onChange={e => handleRecipientInputChange(e.target.value)}
           onClear={recipientSearch.clear}
           onQrCodeClick={handleQrCodeClick}
-          placeholder={
-            uiConfig.recipientSupportsDomain
-              ? t("newSendFlow.placeholder")
-              : t("newSendFlow.placeholderNoENS")
-          }
+          placeholder={recipientPlaceholder}
         />
         {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
         {showMemoControls && currencyId ? (
@@ -162,8 +159,8 @@ export function SendHeader() {
     isAmountStep,
     addressInputValue,
     recipientContact,
+    recipientPlaceholder,
     recipientSearch,
-    uiConfig.recipientSupportsDomain,
     uiConfig.memoMaxLength,
     uiConfig.memoType,
     uiConfig.memoMaxValue,
@@ -195,7 +192,7 @@ export function SendHeader() {
     <div className="flex flex-col">
       <div data-testid="send-dialog-header">
         <DialogHeader
-          density="compact"
+          density={wizard.currentStepConfig?.headerDensity ?? "compact"}
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}

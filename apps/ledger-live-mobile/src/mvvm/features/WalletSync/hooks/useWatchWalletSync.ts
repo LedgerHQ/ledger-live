@@ -9,13 +9,14 @@ import {
   makeLocalIncrementalUpdate,
 } from "@features/platform-wallet-sync";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
+import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
 import { setNonImportedAccounts } from "@ledgerhq/live-wallet/accounts";
 import {
   createWalletsync,
-  parseDistantState,
+  type CloudSyncModuleQuarantined,
   type Walletsync,
-  type WalletSyncDistantState,
+  type DistantDocument,
   type WalletSyncLocalState,
 } from "@ledgerhq/live-wallet/walletSyncComposition";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -39,26 +40,29 @@ import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import logger from "~/logger";
 
-type Schema = Walletsync["schema"];
-type DistantState = WalletSyncDistantState;
+type DistantState = DistantDocument;
 type LocalState = WalletSyncLocalState;
+
+function onModuleError(_moduleKey: string, error: CloudSyncModuleQuarantined) {
+  logger.critical(error);
+}
 
 function useWalletsync(): Walletsync {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   return useMemo(
-    () => createWalletsync({ getAccountBridge, bridgeCache, blacklistedTokenIds }),
+    () =>
+      createWalletsync({ getAccountBridge, bridgeCache, blacklistedTokenIds }, { onModuleError }),
     [blacklistedTokenIds],
   );
 }
 
-function makeLatestWalletStateSelector(walletsync: Walletsync) {
-  return (s: State): { data: DistantState | null; version: number } => {
-    const ws = walletSelector(s).walletSync.walletSyncState;
-    return {
-      data: parseDistantState(walletsync, ws.data),
-      version: ws.version,
-    };
+function latestWalletStateSelector(s: State): { data: DistantState | null; version: number } {
+  const ws = walletSelector(s).walletSync.walletSyncState;
+  return {
+    data: ws.data,
+    version: ws.version,
   };
 }
 
@@ -69,6 +73,7 @@ function localStateSelector(state: State) {
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
+    contacts: selectContacts(state),
     recentAddresses: state.wallet.recentAddresses,
   };
 }
@@ -83,12 +88,13 @@ async function save(
   if (newLocalState) {
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
     dispatch(bulkSetAccountNames(newLocalState.accountNames));
+    dispatch(setContacts(newLocalState.contacts));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
     dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
   }
 }
 
-export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
+export function useCloudSyncSDK(): CloudSyncSDK<DistantState> {
   const featureWalletSync = useFeature("llmWalletSync");
   const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
@@ -104,8 +110,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
       makeSaveNewUpdate({
         walletsync,
         getState,
-        latestDistantStateSelector: s =>
-          parseDistantState(walletsync, latestDistantStateSelector(s)),
+        latestDistantStateSelector,
         latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
@@ -118,12 +123,11 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
       new CloudSyncSDK({
         apiBaseUrl: cloudSyncApiBaseUrl,
         slug: liveSlug,
-        schema: walletsync.schema,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [cloudSyncApiBaseUrl, walletsync.schema, trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   return cloudSyncSDK;
@@ -185,7 +189,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
     const localIncrementUpdate = makeLocalIncrementalUpdate({
       walletsync,
       getState,
-      latestWalletStateSelector: makeLatestWalletStateSelector(walletsync),
+      latestWalletStateSelector,
       localStateSelector,
       saveUpdate,
     });
@@ -200,7 +204,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
       setVisualPending,
       getState,
       localStateSelector,
-      latestDistantStateSelector: s => parseDistantState(walletsync, latestDistantStateSelector(s)),
+      latestDistantStateSelector,
       onError: e => setWalletSyncError(e && e instanceof Error ? e : new Error(String(e))),
       onStartPolling: () => setWalletSyncError(null),
       onTrustchainRefreshNeeded,

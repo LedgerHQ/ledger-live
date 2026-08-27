@@ -7,8 +7,14 @@ import {
 } from "../trustchain-types";
 import { getCloudSyncApi } from "./api";
 import { Observable } from "rxjs";
-import { z, ZodType } from "zod";
 import { Cipher, makeCipher } from "./cipher";
+
+export class CloudSyncInvalidPayload extends Error {
+  override name = "CloudSyncInvalidPayload";
+  constructor(context: string) {
+    super(`CloudSyncSDK ${context}: payload must be an object`);
+  }
+}
 
 export type UpdateEvent<Data> =
   | { type: "new-data"; data: Data; version: number }
@@ -25,12 +31,17 @@ export interface CloudSyncSDKInterface<Data> {
   ): Observable<number>;
 }
 
+/** only the envelope: validating the whole document here would let one bad slice break every module */
+function assertPayloadObject(data: unknown, context: string): void {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new CloudSyncInvalidPayload(context);
+  }
+}
+
 export class CloudSyncSDK<
-  Schema extends ZodType,
-  Data = z.infer<Schema>,
+  Data extends Record<string, unknown> = Record<string, unknown>,
 > implements CloudSyncSDKInterface<Data> {
   private readonly slug: string;
-  private readonly schema: Schema;
   private readonly trustchainSdk: TrustchainSDK;
   private readonly getCurrentVersion: () => number | undefined;
   private readonly saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
@@ -40,20 +51,17 @@ export class CloudSyncSDK<
   constructor({
     apiBaseUrl,
     slug,
-    schema,
     trustchainSdk,
     getCurrentVersion,
     saveNewUpdate,
   }: {
     apiBaseUrl: string;
     slug: string;
-    schema: Schema;
     trustchainSdk: TrustchainSDK;
     getCurrentVersion: () => number | undefined;
     saveNewUpdate: (event: UpdateEvent<Data>) => Promise<void>;
   }) {
     this.slug = slug;
-    this.schema = schema;
     this.trustchainSdk = trustchainSdk;
     this.getCurrentVersion = getCurrentVersion;
     this.saveNewUpdate = saveNewUpdate;
@@ -69,9 +77,8 @@ export class CloudSyncSDK<
     memberCredentials: MemberCredentials,
     data: Data,
   ): Promise<void> {
-    this.schema.parse(data);
-    const validated = data;
-    const base64 = await this.cipher.encrypt(trustchain, validated);
+    assertPayloadObject(data, "push");
+    const base64 = await this.cipher.encrypt(trustchain, data);
     const version = (this.getCurrentVersion() || 0) + 1;
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
       this.api.uploadData(jwt, this.slug, version, base64, trustchain),
@@ -102,10 +109,9 @@ export class CloudSyncSDK<
         break;
       case "out-of-sync": {
         const json = await this.cipher.decrypt(trustchain, response.payload);
-        this.schema.parse(json);
-        const validated = json;
+        assertPayloadObject(json, "pull");
         const version = response.version;
-        await this.saveNewUpdate({ type: "new-data", data: validated, version });
+        await this.saveNewUpdate({ type: "new-data", data: json, version });
         break;
       }
     }

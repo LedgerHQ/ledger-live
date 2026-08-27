@@ -12,7 +12,6 @@ import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
-import { type HederaCoinConfig, type HederaContext } from "../config";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_OPERATION_TYPES,
@@ -40,7 +39,13 @@ import {
 } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
-import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
+import type {
+  EstimateFeesParams,
+  HederaMemo,
+  HederaTxData,
+  HederaCoinConfig,
+  HederaContext,
+} from "../types";
 
 // The `currencyId` selector is captured here; the caller builds the {@link HederaContext} (config +
 // logger) and passes it to each method. Each method resolves the coin configuration from the context

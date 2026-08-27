@@ -1,0 +1,8 @@
+{
+  "name": "@shared/password-verifier",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

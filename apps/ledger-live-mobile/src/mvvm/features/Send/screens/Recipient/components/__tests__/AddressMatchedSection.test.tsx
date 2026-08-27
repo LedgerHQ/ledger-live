@@ -4,6 +4,8 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import { AddressMatchedSection } from "../AddressMatchedSection";
 import { useAddressMatchedSectionViewModel } from "../../hooks/useAddressMatchedSectionViewModel";
 
+const mockPresentBottomSheet = jest.fn();
+
 jest.mock("@features/platform-feature-flags", () => ({
   useFeature: () => ({ enabled: false }),
 }));
@@ -19,10 +21,10 @@ jest.mock("~/context/hooks", () => ({
   useSelector: () => "en",
 }));
 
-jest.mock("@features/platform-contacts/native", () => ({
-  ContactAvatar: ({ name, testID }: { name: string; testID?: string }) => {
+jest.mock("@features/platform-contacts", () => ({
+  ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
     const RN = jest.requireActual<typeof import("react-native")>("react-native");
-    return <RN.Text testID={testID}>{name}</RN.Text>;
+    return <RN.Text testID={testId}>{name}</RN.Text>;
   },
 }));
 
@@ -36,6 +38,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   return {
     Banner: Container,
     BottomSheet: Container,
+    BottomSheetContent: Container,
     BottomSheetHeader: () => null,
     BottomSheetView: Container,
     Box: Container,
@@ -83,7 +86,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     SubheaderRow: Container,
     SubheaderTitle: Label,
     Text: Label,
-    useBottomSheetRef: () => ({ current: { present: jest.fn() } }),
+    useBottomSheetRef: () => ({ current: { present: mockPresentBottomSheet } }),
   };
 });
 
@@ -116,10 +119,14 @@ const searchResult: AddressSearchResult = {
 function AddressMatchedSectionContainer({
   result,
   isContactsFeatureEnabled = false,
+  hasAddressBook = true,
+  addressBookFamilyName = "Ethereum",
   onSelect = jest.fn(),
 }: Readonly<{
   result: AddressSearchResult;
   isContactsFeatureEnabled?: boolean;
+  hasAddressBook?: boolean;
+  addressBookFamilyName?: string;
   onSelect?: (address: string, ensName?: string) => void;
 }>) {
   const viewModel = useAddressMatchedSectionViewModel({
@@ -128,12 +135,18 @@ function AddressMatchedSectionContainer({
     onSelect,
     isAddressComplete: true,
     isContactsFeatureEnabled,
+    hasAddressBook,
+    addressBookFamilyName,
   });
 
   return <AddressMatchedSection viewModel={viewModel} />;
 }
 
 describe("AddressMatchedSection", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("shows a valid unmatched address selected by the shared presentation", () => {
     render(<AddressMatchedSectionContainer result={searchResult} />);
 
@@ -169,7 +182,7 @@ describe("AddressMatchedSection", () => {
     expect(onSelect).toHaveBeenCalledWith(address, "vitalik.eth");
   });
 
-  it("keeps add contact enabled as a no-op on the recipient card", () => {
+  it("keeps add contact enabled when the contacts feature is enabled", () => {
     render(
       <AddressMatchedSectionContainer
         result={{
@@ -183,5 +196,34 @@ describe("AddressMatchedSection", () => {
 
     expect(screen.getByTestId("send-recipient-card-add-contact")).toBeEnabled();
     expect(screen.getByTestId("send-recipient-card-send")).toBeEnabled();
+  });
+
+  it("opens the unsupported address book sheet from the disabled add contact button", () => {
+    render(
+      <AddressMatchedSectionContainer
+        result={{
+          ...searchResult,
+          status: "valid",
+          resolvedAddress: address,
+        }}
+        isContactsFeatureEnabled
+        hasAddressBook={false}
+        addressBookFamilyName="Solana"
+      />,
+    );
+
+    expect(
+      screen.getByTestId("send-recipient-card-add-contact", { includeHiddenElements: true }),
+    ).toBeDisabled();
+
+    fireEvent.press(screen.getByTestId("send-recipient-card-add-contact-unsupported-trigger"));
+
+    expect(mockPresentBottomSheet).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByText('send.newSendFlow.addressBookUnsupported.title {"family":"Solana"}'),
+    ).toBeVisible();
+    expect(
+      screen.getByText('send.newSendFlow.addressBookUnsupported.description {"family":"Solana"}'),
+    ).toBeVisible();
   });
 });

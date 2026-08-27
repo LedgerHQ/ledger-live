@@ -92,6 +92,11 @@ on:
         required: false
         type: boolean
         default: false
+      emulator_diagnostics:
+        description: "Capture host diagnostics and crash backtraces when an emulator dies"
+        required: false
+        type: boolean
+        default: false
       feature_flags:
         description: "Choose a feature flag set for the run"
         required: false
@@ -420,7 +425,12 @@ jobs:
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          # QAA-1509: this cache carries /usr/local/lib/android/sdk/emulator/, so the
+          # emulator binary every shard runs is whichever one sdkmanager installed the
+          # last time this key changed -- the setup job is skipped while the object
+          # exists. Bump the trailing version to force a rebuild onto a current
+          # emulator; the one pinned since AVD_API went to 36 segfaults mid-run.
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9" >> $GITHUB_OUTPUT
 
       - name: Prepare test filter
         id: test-filter
@@ -676,8 +686,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -923,7 +933,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -960,6 +970,23 @@ jobs:
           export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
           nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
+        shell: bash
+
+      # QAA-1497: an emulator can vanish mid-run, after which every later spec fails with
+      # a misleading assertion error. Record the moment it happens plus the host-side
+      # evidence our artifacts cannot otherwise show.
+      - name: Watch Android emulator liveness (background)
+        run: |
+          export ARTIFACTS_DIR="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          export WATCH_STOP_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+          # Detecting the loss is always on: it is one adb call per poll and it stops a
+          # dead device masquerading as four unrelated assertion timeouts. The host
+          # forensics behind it are opt-in, because their questions are answered.
+          export WATCH_DIAGNOSTICS="${{ inputs.emulator_diagnostics && '1' || '' }}"
+          rm -f "$WATCH_STOP_FILE"
+          nohup bash tools/scripts/watch-android-emulators-ci.sh \
+            >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
+          echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
 
       - name: Setup Speculos image and Coin Apps
@@ -1027,6 +1054,129 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+
+      - name: Stop emulator watchdog
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Everything after this point is teardown; a serial going away now is expected.
+          touch "${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+
+      - name: Report emulator wedges and deaths
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          WEDGES="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-wedges.log"
+          if [ -s "$WEDGES" ]; then
+            {
+              echo "### ⚠️ An emulator wedged during this shard"
+              echo "Frozen RSS + idle process state: the device was lost before any test noticed."
+              echo '```'
+              cat "$WEDGES"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          DEATHS="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-deaths.log"
+          WATCHLOG="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log"
+          CORES="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces/coredumpctl-list.txt"
+          if [ -s "$DEATHS" ]; then
+            LOST="$(awk '{print $2}' "$DEATHS" | sort -u | tr '\n' ' ')"
+            # Same default as the boot/watch scripts, which is what actually ran.
+            TOTAL="$(wc -w <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}" | tr -d ' ')"
+            {
+              echo "### ❌ Emulator died during this shard"
+              echo "**Lost:** \`${LOST}\`  |  **Devices affected:** $(awk '{print $2}' "$DEATHS" | sort -u | wc -l | tr -d ' ') of ${TOTAL}"
+              echo
+              echo '```'
+              cat "$DEATHS"
+              echo '```'
+              # The watchdog only writes here after a loss survives several polls with no
+              # stop file, so this is a real mid-run death and not the shard's teardown.
+              if [ -s "$CORES" ] && grep -qi SIGSEGV "$CORES"; then
+                echo "**Coredumps:** SIGSEGV recorded - qemu crashed (QAA-1509)."
+              elif [ -s "$CORES" ]; then
+                echo "**Coredumps:** none recorded, so the device was lost without a qemu crash."
+              else
+                echo "_Re-run with \`emulator_diagnostics: true\` for coredumps and host forensics._"
+              fi
+              echo
+              echo "Test failures after this point are not meaningful - see QAA-1497."
+              if [ -s "$WATCHLOG" ]; then
+                echo
+                echo "<details><summary>Watchdog log (last 20 lines)</summary>"
+                echo
+                echo '```'
+                tail -20 "$WATCHLOG"
+                echo '```'
+                echo
+                echo "</details>"
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+            while read -r line; do
+              echo "::error title=Emulator died (QAA-1497)::$line"
+            done < "$DEATHS"
+          else
+            echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Backtraces for the qemu SIGSEGVs; must run after the tests because the ~1 GB
+      # dump is still being written when the device drops off adb.
+      # See: https://ledgerhq.atlassian.net/browse/QAA-1497
+      - name: Extract emulator crash backtraces
+        if: always() && inputs.emulator_diagnostics
+        continue-on-error: true
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          OUT="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces"
+          mkdir -p "$OUT"
+          command -v coredumpctl >/dev/null || { echo "coredumpctl unavailable"; exit 0; }
+
+          coredumpctl list --no-pager >"${OUT}/coredumpctl-list.txt" 2>&1 || true
+          # The TIME column spans four fields ("Wed 2026-08-19 15:01:53 UTC"), so the PID
+          # is not $2. Anchor on the signal name instead of a fixed column, and take only
+          # the rows whose core is still present - a "missing" one has nothing to read.
+          PIDS="$(awk '/qemu-system/ && /present/ {
+                         for (i = 1; i <= NF; i++) if ($i ~ /^SIG/) { print $(i-3); break }
+                       }' "${OUT}/coredumpctl-list.txt" | tail -4)"
+          if [ -z "$PIDS" ]; then
+            echo "No qemu core dumps with a present COREFILE; falling back to newest by name."
+            coredumpctl info qemu-system-x86_64-headless >"${OUT}/core-newest-info.txt" 2>&1 || true
+            sed -n '1,80p' "${OUT}/core-newest-info.txt" 2>/dev/null || true
+            exit 0
+          fi
+          echo "qemu cores to inspect: $PIDS"
+
+          for pid in $PIDS; do
+            echo "::group::backtrace for qemu pid ${pid}"
+            # `info` already prints a stack trace when symbols resolve, and is far
+            # cheaper than loading a 1 GB core into gdb.
+            coredumpctl info "$pid" >"${OUT}/core-${pid}-info.txt" 2>&1 || true
+            # coredumpctl's own trace resolves to "n/a (n/a + 0x0)": the emulator ships
+            # stripped .so files with no build-id, so it cannot even map the fault
+            # address to a module. gdb loads the core against the real objects and will
+            # at least name the library and offset, which is what identifies the path.
+            if command -v gdb >/dev/null; then
+              timeout 300 coredumpctl debug "$pid" \
+                --debugger=gdb \
+                --debugger-arguments="-batch -ex 'bt' -ex 'info sharedlibrary' -ex quit" \
+                >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+              sed -n '1,40p' "${OUT}/core-${pid}-gdb.txt" 2>/dev/null || true
+            fi
+            sed -n '1,80p' "${OUT}/core-${pid}-info.txt" 2>/dev/null || true
+            echo "::endgroup::"
+          done
+
+          {
+            echo "### 💥 qemu crash backtraces"
+            echo "Signal and faulting frame per core, if symbols resolved:"
+            echo '```'
+            grep -hE 'Signal:|Command Line:|^ *#[0-9]' "${OUT}"/core-*-info.txt 2>/dev/null | head -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stop resource usage sampler
         if: always()

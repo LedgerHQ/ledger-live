@@ -11,8 +11,8 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { restorePayCardBalanceFilter } from "@features/flow-pay-card-balance/state";
-import { restorePayCardFeatureTour } from "@features/flow-pay-card-feature-tour/state";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";

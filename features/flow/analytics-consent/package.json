@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-analytics-consent",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Analytics consent decision engine: policy version major/minor semantics",
   "main": "src/index.ts",
@@ -26,6 +26,7 @@
     "react": ">=19.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

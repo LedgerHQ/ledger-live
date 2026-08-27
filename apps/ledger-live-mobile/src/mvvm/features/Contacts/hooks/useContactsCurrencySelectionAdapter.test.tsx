@@ -23,6 +23,7 @@ function mockModularDrawerController(
   mockedUseModularDrawerController.mockReturnValue({
     areCurrenciesFiltered: undefined,
     assetsConfiguration: undefined,
+    categories: undefined,
     closeDrawer,
     completionMode: "currency",
     enableAccountSelection: false,

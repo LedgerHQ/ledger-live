@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -119,6 +119,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
