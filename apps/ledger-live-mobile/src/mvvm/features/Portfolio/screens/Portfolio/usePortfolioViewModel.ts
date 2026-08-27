@@ -1,22 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
-import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSharedValue } from "react-native-reanimated";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { track } from "~/analytics";
-import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePortfolioSyncState } from "LLM/hooks/usePortfolioBalance";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
+import { useWorkletRankedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 import {
-  flattenAccountsSelector,
+  accountsSelector,
   hasNonTokenAccountsSelector,
   hasTokenAccountsNotBlacklistedSelector,
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
+import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { useLNUpsellBannerState } from "LLM/features/LNUpsell";
@@ -64,7 +67,17 @@ const usePortfolioViewModel = (navigation: {
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
-  const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
+  const homeReady = useAfterFirstHomeLayout();
+  const allAccounts = useSelector(accountsSelector);
+  const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const countervalueState = useCountervaluesState();
+  const toCurrency = useSelector(counterValueCurrencySelector);
+  const { rankedAccounts } = useWorkletRankedAccounts(
+    homeReady ? allAccounts : [],
+    excludedTokenIds,
+    countervalueState,
+    toCurrency,
+  );
   const isFocused = useIsFocused();
   const { backgroundColor } = useWallet40Theme();
 
@@ -101,7 +114,7 @@ const usePortfolioViewModel = (navigation: {
 
   useEffect(() => {
     if (!llmDatadog?.enabled) return;
-    const topChains = allAccounts.reduce<string[]>((acc, account) => {
+    const topChains = rankedAccounts.reduce<string[]>((acc, account) => {
       const currencyName = getAccountCurrency(account).name.toLowerCase();
       if (TOP_CHAINS.includes(currencyName)) acc.push(getAccountCurrency(account).name);
       return acc;
@@ -113,7 +126,7 @@ const usePortfolioViewModel = (navigation: {
       Date.now(),
     );
     ddAddViewLoadingTime();
-  }, [allAccounts, llmDatadog?.enabled]);
+  }, [llmDatadog?.enabled, rankedAccounts]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);
   const hasNonTokenAccounts = useSelector(hasNonTokenAccountsSelector);
@@ -138,7 +151,7 @@ const usePortfolioViewModel = (navigation: {
 
   const isLNUpsellBannerShown = useLNUpsellBannerState("wallet").isShown;
 
-  const { syncPhase } = usePortfolioBalance();
+  const { syncPhase } = usePortfolioSyncState();
   const isSyncError = syncPhase === "failed";
 
   const shouldAddBottomPaddingForLegacyAssets =

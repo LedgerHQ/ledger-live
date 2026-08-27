@@ -6,6 +6,7 @@ import {
   accountsSelector,
   accountsCountSelector,
   hasNoAccountsSelector,
+  shallowAccountsSelector,
   useAreAccountsEmpty,
 } from "../accounts";
 import type { State } from "../types";
@@ -50,6 +51,37 @@ describe("accountsSelector / accountsCountSelector / hasNoAccountsSelector", () 
   it("hasNoAccountsSelector returns true when there are no accounts", () => {
     const state = { accounts: { active: [] } } as unknown as State;
     expect(hasNoAccountsSelector(state)).toBe(true);
+  });
+});
+
+describe("shallowAccountsSelector", () => {
+  it("returns the same array when account hashes are unchanged", () => {
+    const first = shallowAccountsSelector({
+      accounts: { active: [BTC_FUNDED, ETH_EMPTY] },
+    } as unknown as State);
+    const second = shallowAccountsSelector({
+      accounts: { active: [BTC_FUNDED, ETH_EMPTY] },
+    } as unknown as State);
+
+    expect(second).toBe(first);
+  });
+
+  it("returns a new array when a pending-operation hash changes", () => {
+    const first = shallowAccountsSelector({
+      accounts: { active: [BTC_FUNDED] },
+    } as unknown as State);
+    const second = shallowAccountsSelector({
+      accounts: {
+        active: [
+          {
+            ...BTC_FUNDED,
+            pendingOperations: [...BTC_FUNDED.pendingOperations, BTC_FUNDED.operations[0]],
+          },
+        ],
+      },
+    } as unknown as State);
+
+    expect(second).not.toBe(first);
   });
 });
 

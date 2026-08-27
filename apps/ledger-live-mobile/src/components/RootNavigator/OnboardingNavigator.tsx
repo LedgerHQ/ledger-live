@@ -9,44 +9,16 @@ import { Theme } from "@ledgerhq/native-ui/styles/theme";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import OnboardingWelcome from "LLM/features/WelcomePage";
-import OnboardingLanguage from "~/screens/Onboarding/steps/language";
-import OnboardingTerms from "~/screens/Onboarding/steps/terms";
-import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
-import OnboardingUseCase from "~/screens/Onboarding/steps/useCaseSelection";
-import OnboardingNewDeviceInfo from "~/screens/Onboarding/steps/newDeviceInfo";
-import OnboardingNewDevice from "~/screens/Onboarding/steps/setupDevice";
-import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase";
-import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
-
-import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
-import OnboardingPairNew from "~/screens/Onboarding/steps/PairNew";
-import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
-import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
-import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
 import NavigationModalContainer from "../NavigationModalContainer";
-import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
-import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
-import OnboardingGeneralInformation from "~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
-import OnboardingBluetoothInformation from "~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
-import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
-import OnboardingProtectFlow from "~/screens/Onboarding/steps/protectFlow";
-
 import {
   OnboardingNavigatorParamList,
   OnboardingPreQuizModalNavigatorParamList,
 } from "./types/OnboardingNavigator";
 import { StackNavigatorProps } from "./types/helpers";
-import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
-import OnboardingSecureYourCrypto from "~/screens/Onboarding/OnboardingSecureYourCrypto";
-import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
-import LandingPagesNavigator from "./LandingPagesNavigator";
-import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
-import NotificationsOptIn from "LLM/features/NotificationsOptIn";
+import { lazyScreen } from "./lazyScreen";
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -56,10 +28,13 @@ function OnboardingPreQuizModalNavigator(
   props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingPreQuiz>,
 ) {
   const options: Partial<NativeStackNavigationOptions> = {
-    header: props => (
-      // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
+    header: headerProps => (
       <Flex bg="constant.purple">
-        <NavigationHeader {...props} hideBack containerProps={{ backgroundColor: "transparent" }} />
+        <NavigationHeader
+          {...headerProps}
+          hideBack
+          containerProps={{ backgroundColor: "transparent" }}
+        />
       </Flex>
     ),
     headerStyle: {},
@@ -71,9 +46,11 @@ function OnboardingPreQuizModalNavigator(
       <OnboardingPreQuizModalStack.Navigator>
         <OnboardingPreQuizModalStack.Screen
           name={ScreenName.OnboardingPreQuizModal}
-          component={OnboardingPreQuizModal}
+          getComponent={lazyScreen(
+            () =>
+              require("~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal"),
+          )}
           options={{ title: "", ...options }}
-          // initialParams={props.route.params}
         />
       </OnboardingPreQuizModalStack.Navigator>
     </NavigationModalContainer>
@@ -108,7 +85,10 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
-        component={PostWelcomeSelection}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/postWelcomeSelection") as typeof import("~/screens/Onboarding/steps/postWelcomeSelection"),
+        )}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -116,12 +96,18 @@ export default function OnboardingNavigator() {
       />
       <Stack.Screen
         name={ScreenName.OnboardingNotificationsOptIn}
-        component={NotificationsOptIn}
+        getComponent={lazyScreen(
+          () =>
+            require("LLM/features/NotificationsOptIn") as typeof import("LLM/features/NotificationsOptIn"),
+        )}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingWelcomeBack}
-        component={AccessExistingWallet}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/accessExistingWallet") as typeof import("~/screens/Onboarding/steps/accessExistingWallet"),
+        )}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -129,16 +115,28 @@ export default function OnboardingNavigator() {
       />
       <Stack.Screen
         name={ScreenName.OnboardingLanguage}
-        component={OnboardingLanguage}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/language") as typeof import("~/screens/Onboarding/steps/language"),
+        )}
         options={{
           ...infoModalOptions({ theme }),
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
       />
-      <Stack.Screen name={ScreenName.OnboardingTermsOfUse} component={OnboardingTerms} />
+      <Stack.Screen
+        name={ScreenName.OnboardingTermsOfUse}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/terms") as typeof import("~/screens/Onboarding/steps/terms"),
+        )}
+      />
       <Stack.Screen
         name={ScreenName.OnboardingDeviceSelection}
-        component={OnboardingDeviceSelection}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/deviceSelection") as typeof import("~/screens/Onboarding/steps/deviceSelection"),
+        )}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -146,7 +144,10 @@ export default function OnboardingNavigator() {
       />
       <Stack.Screen
         name={ScreenName.OnboardingBleDevicePairingFlow}
-        component={OnboardingBleDevicePairingFlow}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/BleDevicePairingFlow") as typeof import("~/screens/Onboarding/steps/BleDevicePairingFlow"),
+        )}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -154,7 +155,10 @@ export default function OnboardingNavigator() {
       />
       <Stack.Screen
         name={ScreenName.OnboardingUseCase}
-        component={OnboardingUseCase}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/useCaseSelection") as typeof import("~/screens/Onboarding/steps/useCaseSelection"),
+        )}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -167,68 +171,136 @@ export default function OnboardingNavigator() {
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalSetupNewDevice}
-        component={OnboardingNewDeviceInfo}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/newDeviceInfo") as typeof import("~/screens/Onboarding/steps/newDeviceInfo"),
+        )}
       />
       <Stack.Screen
         name={ScreenName.OnboardingSetupDeviceInformation}
-        component={OnboardingSetupDeviceInformation}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode"),
+        )}
         options={infoModalOptions({ theme })}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalSetupSecureRecovery}
-        component={OnboardingSetupDeviceRecoveryPhrase}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase"),
+        )}
         options={infoModalOptions({ theme })}
       />
       <Stack.Screen
         name={ScreenName.OnboardingGeneralInformation}
-        component={OnboardingGeneralInformation}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation"),
+        )}
         options={infoModalOptions({ theme })}
       />
       <Stack.Screen
         name={ScreenName.OnboardingBluetoothInformation}
-        component={OnboardingBluetoothInformation}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection"),
+        )}
         options={infoModalOptions({ theme })}
       />
       <Stack.Screen
         name={ScreenName.OnboardingProtectionConnectionInformation}
-        component={ProtectConnectionInformationModal}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal") as typeof import("~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal"),
+        )}
         options={infoModalOptions({ theme })}
       />
-      <Stack.Screen name={ScreenName.OnboardingSetNewDevice} component={OnboardingNewDevice} />
-
+      <Stack.Screen
+        name={ScreenName.OnboardingSetNewDevice}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/setupDevice") as typeof import("~/screens/Onboarding/steps/setupDevice"),
+        )}
+      />
       <Stack.Screen
         name={ScreenName.OnboardingRecoveryPhrase}
-        component={OnboardingRecoveryPhrase}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/recoveryPhrase") as typeof import("~/screens/Onboarding/steps/recoveryPhrase"),
+        )}
       />
-
       <Stack.Screen
         name={ScreenName.OnboardingInfoModal}
-        component={OnboardingInfoModal}
+        getComponent={lazyScreen(
+          () =>
+            require("../OnboardingStepperView/OnboardingInfoModal") as typeof import("../OnboardingStepperView/OnboardingInfoModal"),
+        )}
         options={{ animation: "slide_from_bottom" }}
       />
-
-      <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
-
-      <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
-
-      <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
-
-      <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
-
-      <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+      <Stack.Screen
+        name={ScreenName.OnboardingPairNew}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/PairNew") as typeof import("~/screens/Onboarding/steps/PairNew"),
+        )}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingProtectFlow}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/steps/protectFlow") as typeof import("~/screens/Onboarding/steps/protectFlow"),
+        )}
+      />
+      <Stack.Screen
+        name={NavigatorName.PasswordAddFlow}
+        getComponent={lazyScreen(
+          () =>
+            require("./PasswordAddFlowNavigator") as typeof import("./PasswordAddFlowNavigator"),
+        )}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingQuiz}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/OnboardingQuiz") as typeof import("~/screens/Onboarding/OnboardingQuiz"),
+        )}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingQuizFinal}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/OnboardingQuizFinal") as typeof import("~/screens/Onboarding/OnboardingQuizFinal"),
+        )}
+      />
       <Stack.Screen
         name={ScreenName.OnboardingSecureYourCrypto}
-        component={OnboardingSecureYourCrypto}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/OnboardingSecureYourCrypto") as typeof import("~/screens/Onboarding/OnboardingSecureYourCrypto"),
+        )}
       />
-
-      <Stack.Screen name={ScreenName.OnboardingFundSuccess} component={OnboardingFundSuccess} />
-
+      <Stack.Screen
+        name={ScreenName.OnboardingFundSuccess}
+        getComponent={lazyScreen(
+          () =>
+            require("~/screens/Onboarding/OnboardingFundSuccess") as typeof import("~/screens/Onboarding/OnboardingFundSuccess"),
+        )}
+      />
       <Stack.Screen
         name={NavigatorName.AnalyticsOptInPrompt}
         options={{ headerShown: false }}
-        component={AnalyticsOptInPromptNavigator}
+        getComponent={lazyScreen(
+          () =>
+            require("./AnalyticsOptInPromptNavigator") as typeof import("./AnalyticsOptInPromptNavigator"),
+        )}
       />
-      <Stack.Screen name={NavigatorName.LandingPages} component={LandingPagesNavigator} />
+      <Stack.Screen
+        name={NavigatorName.LandingPages}
+        getComponent={lazyScreen(
+          () => require("./LandingPagesNavigator") as typeof import("./LandingPagesNavigator"),
+        )}
+      />
     </Stack.Navigator>
   );
 }

@@ -16,7 +16,7 @@ import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
-import { flattenAccountsSelector } from "~/reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -31,7 +31,12 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
-  const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
+  const parentAccounts = useSelector(accountsSelector, shallowEqual);
+  const accountsLength = useMemo(
+    () =>
+      parentAccounts.reduce((count, account) => count + 1 + (account.subAccounts?.length ?? 0), 0),
+    [parentAccounts],
+  );
   const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
   const [selectedTab, setSelectedTab] = useState<TabListType>(initialSelectedTab);
   const lastDispatchedTab = useRef<TabListType>(initialSelectedTab);
@@ -138,7 +143,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           initialTab={initialSelectedTab}
           showAssets={showAssets}
           assetsLength={filteredAssets.length}
-          accountsLength={allAccounts.length}
+          accountsLength={accountsLength}
           maxItemsToDisplay={maxItemsToDisplay}
         />
       ) : (

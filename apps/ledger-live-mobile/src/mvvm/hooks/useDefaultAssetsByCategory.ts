@@ -39,8 +39,9 @@ export function useDefaultAssetsByCategory(
 
     const cryptos: Asset[] = [];
     const stablecoins: Asset[] = [];
+    const metaCurrencyIds = assetsData.currenciesOrder?.metaCurrencyIds ?? [];
 
-    for (const id of assetsData.currenciesOrder.metaCurrencyIds) {
+    for (const id of metaCurrencyIds) {
       if (cryptos.length >= maxCryptos && stablecoins.length >= maxStablecoins) break;
 
       const currency = selectCurrencyForMetaId(id, assetsData);

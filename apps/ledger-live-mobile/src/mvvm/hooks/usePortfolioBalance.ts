@@ -20,50 +20,35 @@ import {
 import { track } from "~/analytics";
 import { useSyncSources } from "./useSyncSources";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
+import { useAfterFirstHomeLayout } from "./useAfterFirstHomeLayout";
 
 const DEFAULT_RANGE = "day" as const;
 
-/**
- * Single source of truth for portfolio balance and the sync lifecycle.
- *
- * Mobile equivalent of desktop's usePortfolioBalance.
- * Consumed independently by the TopBar (useSyncIndicator), the Balance section,
- * and the PortfolioRefreshStatus. All instances stay in sync because they read
- * the same Redux state and BridgeSync context.
- */
-export function usePortfolioBalance() {
+export function usePortfolioSyncState() {
   const dispatch = useDispatch();
   const { isConnected, isInternetReachable } = useNetInfo();
-
   const hasAccounts = !useSelector(hasNoAccountsSelector);
-  const portfolio = usePortfolioAllAccounts({ range: DEFAULT_RANGE });
-
   const syncSources = useSyncSources();
   const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);
   const hasCompletedInitialSync = useSelector(selectHasCompletedInitialSync);
-
-  const balanceAvailable = portfolio.balanceAvailable;
-  const isColdStart = hasAccounts && !balanceAvailable;
-  const isInitialLoading = hasAccounts && !hasCompletedInitialSync;
+  const isColdStart = hasAccounts && !hasCompletedInitialSync;
   const isManualRefreshLoading = useManualRefresh(
     syncSources.stablePending,
     lastUserSyncClickTimestamp,
   );
-  const isBalanceLoading = isColdStart || isInitialLoading || isManualRefreshLoading;
+  const isBalanceLoading = isColdStart || isManualRefreshLoading;
 
   const prevStablePendingRef = useRef(false);
   useEffect(() => {
     const wasPending = prevStablePendingRef.current;
     prevStablePendingRef.current = syncSources.stablePending;
-
-    if (hasCompletedInitialSync) return;
-
-    const transitioned = wasPending && !syncSources.stablePending;
-    const alreadySettled = !syncSources.stablePending && balanceAvailable;
-    if (transitioned || alreadySettled) {
+    if (hasCompletedInitialSync) {
+      return;
+    }
+    if (wasPending && !syncSources.stablePending) {
       dispatch(setHasCompletedInitialSync(true));
     }
-  }, [syncSources.stablePending, hasCompletedInitialSync, balanceAvailable, dispatch]);
+  }, [dispatch, hasCompletedInitialSync, syncSources.stablePending]);
 
   const accountsWithUpToDateCheck = useSelector(accountsWithUpToDateCheckSelector);
   const { allAccounts, accountsWithError, areAllAccountsUpToDate } =
@@ -83,8 +68,6 @@ export function usePortfolioBalance() {
     hasAccountDegradation ||
     syncSources.hasWalletSyncError ||
     isOffline;
-
-  // When offline with no specific bridge errors, every account is impacted
   const accountsImpactedByError =
     isOffline && accountsWithError.length === 0 ? allAccounts : accountsWithError;
   const errorCurrencyIds = useMemo(
@@ -105,7 +88,6 @@ export function usePortfolioBalance() {
     syncSources.stablePending,
     hasAnySyncError,
   );
-
   const { triggerRefresh } = syncSources;
   const syncPhaseRef = useRef(syncPhase);
   syncPhaseRef.current = syncPhase;
@@ -120,14 +102,11 @@ export function usePortfolioBalance() {
   }, [dispatch, triggerRefresh]);
 
   return {
-    portfolio,
-    balanceAvailable,
     syncPhase,
     isBalanceLoading,
     isColdStart,
     isManualRefreshLoading,
     isBridgeSyncPending: syncSources.stablePending,
-    /** True while countervalues are being fetched within a user-triggered sync. */
     isCvPending: syncPhase === "syncing" && syncSources.cvPending,
     allAccounts,
     accountsWithError,
@@ -138,5 +117,17 @@ export function usePortfolioBalance() {
     hasAccounts,
     handleSync,
     triggerRefresh,
+  };
+}
+
+export function usePortfolioBalance() {
+  const homeReady = useAfterFirstHomeLayout();
+  const sync = usePortfolioSyncState();
+  const portfolio = usePortfolioAllAccounts({ range: DEFAULT_RANGE, skip: !homeReady });
+  return {
+    ...sync,
+    portfolio,
+    balanceAvailable: portfolio.balanceAvailable,
+    isColdStart: sync.hasAccounts && !portfolio.balanceAvailable,
   };
 }

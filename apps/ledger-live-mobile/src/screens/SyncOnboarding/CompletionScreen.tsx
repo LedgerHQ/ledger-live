@@ -83,6 +83,7 @@ const CompletionScreen = ({ route }: Props) => {
   );
 
   useEffect(() => {
+    require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
     if (!hasCompletedOnboarding) {
       dispatch(setOnboardingHasDevice(true));
     }

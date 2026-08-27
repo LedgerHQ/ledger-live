@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
@@ -70,6 +71,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
+  const homeReady = useAfterFirstHomeLayout();
 
   const progressViewOffset = getProgressViewOffset(Platform.OS);
 
@@ -123,11 +125,13 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       </Box>,
     );
 
-    sections.push(
-      <Box key="marketBanner" px={6}>
-        <MarketBanner />
-      </Box>,
-    );
+    if (homeReady) {
+      sections.push(
+        <Box key="marketBanner" px={6}>
+          <MarketBanner />
+        </Box>,
+      );
+    }
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
@@ -150,7 +154,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
     }
 
-    if (!shouldDisplayOperationsList) {
+    if (homeReady && !shouldDisplayOperationsList) {
       sections.push(<PortfolioOperationsSection key="operations" />);
     }
 
@@ -168,6 +172,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     backgroundColor,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    homeReady,
   ]);
 
   return (

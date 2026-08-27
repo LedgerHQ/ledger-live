@@ -4,7 +4,8 @@ import { fetchCurrencyAll } from "../../api/v5";
 import { FETCH_CURRENCIES_TIMEOUT_MS } from "./constants";
 import { useFilteredProviders } from "./useFilteredProviders";
 
-export function useFetchCurrencyAll() {
+export function useFetchCurrencyAll(options?: { enabled?: boolean }) {
+  const enabled = options?.enabled ?? true;
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
   const { providers, error } = useFilteredProviders();
 
@@ -15,7 +16,7 @@ export function useFetchCurrencyAll() {
       providers,
     },
     staleTimeout: FETCH_CURRENCIES_TIMEOUT_MS,
-    enabled: !error && providers.length > 0,
+    enabled: enabled && !error && providers.length > 0,
   });
   return {
     ...rest,

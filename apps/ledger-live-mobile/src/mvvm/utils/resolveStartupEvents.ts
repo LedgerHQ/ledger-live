@@ -9,6 +9,8 @@ export const STARTUP_EVENTS = {
   CURRENCY_HYDRATED: "Currency hydrated",
   APP_STARTED: "App started",
   NAV_READY: "Splash screen faded",
+  FIRST_PAINT: "First paint",
+  TTI: "TTI",
 } as const;
 
 const NOT_LOGGED_EVENTS = new Set<string>([

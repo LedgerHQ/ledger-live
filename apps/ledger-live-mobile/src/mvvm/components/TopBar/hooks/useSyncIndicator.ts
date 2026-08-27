@@ -1,10 +1,10 @@
 import { useTranslation } from "~/context/Locale";
-import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePortfolioSyncState } from "LLM/hooks/usePortfolioBalance";
 
 export function useSyncIndicator() {
   const { t } = useTranslation();
   const { hasAccounts, syncPhase, listOfErrorAccountNames, errorCurrencyIds } =
-    usePortfolioBalance();
+    usePortfolioSyncState();
 
   const isError = syncPhase === "failed";
   const isPending = syncPhase === "syncing";

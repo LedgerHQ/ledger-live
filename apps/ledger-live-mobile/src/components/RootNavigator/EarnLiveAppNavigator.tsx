@@ -6,11 +6,10 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo, useRef } from "react";
-import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useWorkletFlattenedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 import { EarnScreen } from "~/screens/PTX/Earn";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { EarnMenuBottomSheet } from "~/screens/PTX/Earn/EarnMenuBottomSheet";
@@ -38,7 +37,7 @@ export const Earn = (props: NavigationProps) => {
   const paramCurrencyId = props.route.params?.currencyId;
   const paramCryptoAssetId = props.route.params?.cryptoAssetId;
   const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
-  const accounts = useSelector(flattenAccountsSelector);
+  const accounts = useWorkletFlattenedAccounts();
   const route = useRoute();
 
   const openStakingDrawer = useStakingDrawer({

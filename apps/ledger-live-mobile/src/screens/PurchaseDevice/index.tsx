@@ -53,6 +53,7 @@ const PurchaseDevice = () => {
     (data: PurchaseMessage) => {
       if (data.type === "ledgerLiveOrderSuccess") {
         dispatch(setReadOnlyMode(true));
+        require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
         dispatch(completeOnboarding());
       }
     },

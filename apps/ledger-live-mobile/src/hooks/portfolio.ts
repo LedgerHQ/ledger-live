@@ -29,28 +29,34 @@ export function useBalanceHistoryWithCountervalue({
   });
 }
 
+const EMPTY_PORTFOLIO_ACCOUNTS: AccountLike[] = [];
+
 export function usePortfolioAllAccounts(
-  options?: GetPortfolioOptionsType & { range?: PortfolioRange },
+  options?: GetPortfolioOptionsType & { range?: PortfolioRange; skip?: boolean },
 ) {
+  const { range, skip, ...portfolioOptions } = options ?? {};
   const to = useSelector(counterValueCurrencySelector);
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const globalRange = useSelector(selectedTimeRangeSelector);
 
   const hasBlacklistedAssets = blacklistedTokenIds.length > 0;
-  const visibleAccounts = useMemo(
-    () =>
-      hasBlacklistedAssets
-        ? filterAccountsExcludingBlacklisted(accounts, blacklistedTokenIds)
-        : accounts,
-    [accounts, blacklistedTokenIds, hasBlacklistedAssets],
-  );
+  const visibleAccounts = useMemo(() => {
+    if (skip) {
+      return EMPTY_PORTFOLIO_ACCOUNTS;
+    }
+    return hasBlacklistedAssets
+      ? filterAccountsExcludingBlacklisted(accounts, blacklistedTokenIds)
+      : accounts;
+  }, [accounts, blacklistedTokenIds, hasBlacklistedAssets, skip]);
 
   return usePortfolioThrottled({
     accounts: visibleAccounts,
-    range: options?.range ?? globalRange,
+    range: range ?? globalRange,
     to,
-    options: hasBlacklistedAssets ? { ...options, flattenSourceAccounts: false } : options,
+    options: hasBlacklistedAssets
+      ? { ...portfolioOptions, flattenSourceAccounts: false }
+      : portfolioOptions,
   });
 }
 

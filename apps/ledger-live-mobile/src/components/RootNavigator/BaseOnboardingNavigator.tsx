@@ -3,19 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
-import EditDeviceName from "~/screens/EditDeviceName";
-import OnboardingNavigator from "./OnboardingNavigator";
-import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
-import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
+import { lazyNamed, lazyScreen } from "./lazyScreen";
 
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
@@ -32,54 +22,93 @@ export default function BaseOnboardingNavigator() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name={NavigatorName.Onboarding} component={OnboardingNavigator} />
-      <Stack.Screen name={NavigatorName.SyncOnboarding} component={SyncOnboardingNavigator} />
+      <Stack.Screen
+        name={NavigatorName.Onboarding}
+        getComponent={lazyScreen(
+          () => require("./OnboardingNavigator") as typeof import("./OnboardingNavigator"),
+        )}
+      />
+      <Stack.Screen
+        name={NavigatorName.SyncOnboarding}
+        getComponent={lazyNamed(
+          () =>
+            (require("./SyncOnboardingNavigator") as typeof import("./SyncOnboardingNavigator"))
+              .SyncOnboardingNavigator,
+        )}
+      />
       <Stack.Screen
         name={NavigatorName.BuyDevice}
-        component={BuyDeviceNavigator}
+        getComponent={lazyScreen(
+          () => require("./BuyDeviceNavigator") as typeof import("./BuyDeviceNavigator"),
+        )}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={NavigatorName.ReceiveFunds}
-        component={ReceiveFundsNavigator}
+        getComponent={lazyScreen(
+          () => require("./ReceiveFundsNavigator") as typeof import("./ReceiveFundsNavigator"),
+        )}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={NavigatorName.AccountSettings}
-        component={AccountSettingsNavigator}
+        getComponent={lazyScreen(
+          () =>
+            require("./AccountSettingsNavigator") as typeof import("./AccountSettingsNavigator"),
+        )}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.AddAccounts}
-        component={AddAccountsV2Navigator}
+        getComponent={lazyScreen(
+          () =>
+            require("LLM/features/Accounts/Navigator") as typeof import("LLM/features/Accounts/Navigator"),
+        )}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.DeviceSelection}
-        component={DeviceSelectionNavigator}
+        getComponent={lazyScreen(
+          () =>
+            require("LLM/features/DeviceSelection/Navigator") as typeof import("LLM/features/DeviceSelection/Navigator"),
+        )}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.EditDeviceName}
-        component={EditDeviceName}
+        getComponent={lazyScreen(
+          () => require("~/screens/EditDeviceName") as typeof import("~/screens/EditDeviceName"),
+        )}
         options={{
           title: t("EditDeviceName.title"),
           headerLeft: () => null,
           headerShown: true,
         }}
       />
-      <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
+      <Stack.Screen
+        name={NavigatorName.PasswordAddFlow}
+        getComponent={lazyScreen(
+          () =>
+            require("./PasswordAddFlowNavigator") as typeof import("./PasswordAddFlowNavigator"),
+        )}
+      />
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
-        component={PasswordModifyFlowNavigator}
+        getComponent={lazyScreen(
+          () =>
+            require("./PasswordModifyFlowNavigator") as typeof import("./PasswordModifyFlowNavigator"),
+        )}
       />
       <Stack.Screen
         name={NavigatorName.WalletSync}
-        component={WalletSyncNavigator}
+        getComponent={lazyScreen(
+          () =>
+            require("LLM/features/WalletSync/WalletSyncNavigator") as typeof import("LLM/features/WalletSync/WalletSyncNavigator"),
+        )}
         options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack.Navigator>

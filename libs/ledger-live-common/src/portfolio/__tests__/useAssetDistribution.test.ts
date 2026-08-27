@@ -125,4 +125,12 @@ describe("useAssetDistribution", () => {
 
     expect(mockUseChunkedAssetsData).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
+
+  it("uses provided currencyIds instead of walking accounts", () => {
+    renderHook(() => useAssetDistribution({ ...baseOpts, currencyIds: ["bitcoin"] }));
+
+    expect(mockUseChunkedAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({ currencyIds: ["bitcoin"], skip: false }),
+    );
+  });
 });

@@ -10,8 +10,10 @@ import VersionNumber from "react-native-version-number";
 import { useDistribution } from "~/actions/general";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
 
 export function useCategorizedAssetsFromPortfolio() {
+  const homeReady = useAfterFirstHomeLayout();
   const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
     useWalletFeaturesConfig("mobile");
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -27,15 +29,18 @@ export function useCategorizedAssetsFromPortfolio() {
     tickers: stablecoinTickers,
     isLoading: isLoadingStablecoinTickers,
     isError: isStablecoinTickersError,
-  } = useStablecoinTickers("llm", version);
+  } = useStablecoinTickers("llm", version, !homeReady);
 
   const {
     ids: stockAssetIds,
     isLoading: isLoadingStockIds,
     isError: isStockIdsError,
-  } = useStockAssetIds("llm", version, !shouldDisplayAssetDiscoverability);
+  } = useStockAssetIds("llm", version, !shouldDisplayAssetDiscoverability || !homeReady);
 
-  const categorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
+  const categorizedAssets = useCategorizedAssets(
+    { ...distribution, list: distribution.list ?? [] },
+    stablecoinTickers,
+  );
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -44,14 +49,14 @@ export function useCategorizedAssetsFromPortfolio() {
     const cryptos: CategorizedAssetItem[] = [];
     const stocks: CategorizedAssetItem[] = [];
 
-    for (const item of categorizedAssets.cryptos) {
+    for (const item of categorizedAssets.cryptos ?? []) {
       if (blacklistedTokenIdsSet.has(item.currency.id)) continue;
       if (shouldDisplayAssetDiscoverability && stockAssetIds.has(item.currency.id))
         stocks.push(item);
       else cryptos.push(item);
     }
 
-    const stablecoins = categorizedAssets.stablecoins.filter(
+    const stablecoins = (categorizedAssets.stablecoins ?? []).filter(
       ({ currency }) => !blacklistedTokenIdsSet.has(currency.id),
     );
 

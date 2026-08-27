@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Operation, DailyOperationsSection } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
@@ -22,10 +22,18 @@ export function OperationsHistoryList({
   goToAnalyticsOperations,
 }: ViewProps) {
   const { t } = useTranslation();
+  const flattenedAccounts = useMemo(() => flattenAccounts(accounts), [accounts]);
+  const accountsById = useMemo(() => {
+    const byId = new Map<string, (typeof flattenedAccounts)[number]>();
+    for (const account of flattenedAccounts) {
+      byId.set(account.id, account);
+    }
+    return byId;
+  }, [flattenedAccounts]);
+  const hasMultipleAccounts = flattenedAccounts.length > 1;
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
-      const flattenedAccounts = flattenAccounts(accounts);
-      const account = flattenedAccounts.find(a => a.id === item.accountId);
+      const account = accountsById.get(item.accountId);
 
       if (!account) return null;
 
@@ -33,13 +41,13 @@ export function OperationsHistoryList({
         <OperationRowContainer
           operation={item}
           account={account}
-          multipleAccounts={flattenedAccounts.length > 1}
+          multipleAccounts={hasMultipleAccounts}
           isLast={section.data.length - 1 === index}
           testID={`operation-row-${item.id}`}
         />
       );
     },
-    [accounts],
+    [accountsById, hasMultipleAccounts],
   );
 
   if (!sections) return null;

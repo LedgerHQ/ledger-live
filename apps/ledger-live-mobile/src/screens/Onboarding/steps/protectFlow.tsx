@@ -60,6 +60,7 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
   );
 
   const onFinish = useCallback(() => {
+    require("~/components/RootNavigator/lazyScreen").preloadBaseNavigator();
     dispatch(completeOnboarding());
 
     if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {

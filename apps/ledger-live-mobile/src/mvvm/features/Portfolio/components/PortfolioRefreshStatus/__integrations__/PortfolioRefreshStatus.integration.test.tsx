@@ -44,15 +44,15 @@ import { State } from "~/reducers/types";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 
-const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
+const mockUsePortfolioSyncState = jest.mocked(usePortfolioBalanceModule.usePortfolioSyncState);
 
 const FIXED_NOW = new Date("2025-08-15T12:00:00Z").getTime();
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function mockSync(syncPhase: SyncPhase, isManualRefreshLoading = false) {
-  mockUsePortfolioBalance.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
-    typeof mockUsePortfolioBalance
+  mockUsePortfolioSyncState.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
+    typeof mockUsePortfolioSyncState
   >);
 }
 

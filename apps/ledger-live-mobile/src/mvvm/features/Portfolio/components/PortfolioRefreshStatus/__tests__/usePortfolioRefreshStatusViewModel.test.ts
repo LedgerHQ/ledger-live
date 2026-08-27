@@ -8,11 +8,11 @@ import {
 
 jest.mock("LLM/hooks/usePortfolioBalance");
 
-const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
+const mockUsePortfolioSyncState = jest.mocked(usePortfolioBalanceModule.usePortfolioSyncState);
 
 function mockSync(syncPhase: SyncPhase, isManualRefreshLoading = false) {
-  mockUsePortfolioBalance.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
-    typeof mockUsePortfolioBalance
+  mockUsePortfolioSyncState.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
+    typeof mockUsePortfolioSyncState
   >);
 }
 
