@@ -42,6 +42,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(TEST_ADDRESS) },
@@ -93,6 +94,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(TEST_RECIPIENT) },
@@ -128,6 +130,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -174,8 +177,9 @@ describe("listOperations", () => {
     }));
     mockGetSignaturesForAddress.mockResolvedValue(sigs);
 
-    const txs = sigs.map(() => ({
+    const txs = sigs.map(sig => ({
       transaction: {
+        signatures: [sig.signature],
         message: {
           accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
           recentBlockhash: TEST_BLOCKHASH,
@@ -198,6 +202,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -223,6 +228,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig-low"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -233,6 +239,7 @@ describe("listOperations", () => {
       },
       {
         transaction: {
+          signatures: ["sig-high"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -259,8 +266,9 @@ describe("listOperations", () => {
     }));
     mockGetSignaturesForAddress.mockResolvedValue(sigs);
 
-    const txs = sigs.map(() => ({
+    const txs = sigs.map(sig => ({
       transaction: {
+        signatures: [sig.signature],
         message: {
           accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
           recentBlockhash: TEST_BLOCKHASH,
@@ -286,6 +294,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -305,14 +314,15 @@ describe("listOperations", () => {
   it("should skip transactions with null meta", async () => {
     const blockTime = 1700000000;
     mockGetSignaturesForAddress.mockResolvedValue([
-      { signature: "sig1", slot: 100, blockTime, err: null },
-      { signature: "sig2", slot: 101, blockTime, err: null },
+      { signature: "sig1", slot: 101, blockTime, err: null },
+      { signature: "sig2", slot: 100, blockTime, err: null },
     ]);
 
     mockGetParsedTransactions.mockResolvedValue([
       null,
       {
         transaction: {
+          signatures: ["sig2"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -339,6 +349,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(OTHER_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -363,6 +374,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(TEST_RECIPIENT) },
@@ -397,6 +409,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(TEST_ADDRESS) },
@@ -432,6 +445,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(THIRD_ADDRESS) },
@@ -467,6 +481,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [
               { pubkey: new PublicKey(TEST_ADDRESS) },
@@ -500,6 +515,7 @@ describe("listOperations", () => {
     mockGetParsedTransactions.mockResolvedValue([
       {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -523,6 +539,109 @@ describe("listOperations", () => {
     ).rejects.toThrow("RPC error");
   });
 
+  it("should match each signature with its own transaction when the RPC batch is reordered", async () => {
+    const blockTime = 1700000000;
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 101, blockTime, err: null },
+      { signature: "sig2", slot: 100, blockTime, err: null },
+    ]);
+
+    const txSig1 = {
+      transaction: {
+        signatures: ["sig1"],
+        message: {
+          accountKeys: [
+            { pubkey: new PublicKey(TEST_ADDRESS) },
+            { pubkey: new PublicKey(TEST_RECIPIENT) },
+          ],
+          recentBlockhash: TEST_BLOCKHASH,
+          instructions: [],
+        },
+      },
+      meta: {
+        fee: 5000,
+        preBalances: [1_000_000_000, 0],
+        postBalances: [899_995_000, 100_000_000],
+      },
+    };
+    const txSig2 = {
+      transaction: {
+        signatures: ["sig2"],
+        message: {
+          accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+          recentBlockhash: TEST_BLOCKHASH,
+          instructions: [],
+        },
+      },
+      meta: {
+        fee: 5000,
+        preBalances: [1_000_000_000],
+        postBalances: [1_672_400_000],
+      },
+    };
+
+    // JSON-RPC batch responses are not order-guaranteed: return them swapped.
+    mockGetParsedTransactions.mockResolvedValue([txSig2, txSig1]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(2);
+    expect(result.items[0]).toMatchObject({
+      tx: expect.objectContaining({ hash: "sig1" }),
+      type: "OUT",
+      value: 100_000_000n,
+    });
+    expect(result.items[1]).toMatchObject({
+      tx: expect.objectContaining({ hash: "sig2" }),
+      type: "IN",
+      value: 672_405_000n,
+    });
+  });
+
+  it("should skip signatures missing from the parsed transactions batch", async () => {
+    const blockTime = 1700000000;
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 101, blockTime, err: null },
+      { signature: "sig2", slot: 100, blockTime, err: null },
+    ]);
+
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig2"],
+          message: {
+            accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: { fee: 5000, preBalances: [1_000_000], postBalances: [995_000] },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].tx.hash).toBe("sig2");
+  });
+
+  it("should keep the cursor when a full page yields no operation", async () => {
+    const blockTime = 1700000000;
+    const sigs = Array.from({ length: 100 }, (_, i) => ({
+      signature: `sig-${i}`,
+      slot: 200 - i,
+      blockTime,
+      err: null,
+    }));
+    mockGetSignaturesForAddress.mockResolvedValue(sigs);
+    mockGetParsedTransactions.mockResolvedValue(sigs.map(() => null));
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toEqual([]);
+    expect(result.next).toBe("sig-99");
+  });
+
   it("should throw when order is asc", async () => {
     await expect(listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
       "ascending order is not supported",
@@ -539,10 +658,16 @@ describe("listOperations", () => {
 
     function makeStakingTx(
       instructions: object[],
-      { preBalance = 10_000_000_000, postBalance = 7_000_000_000, fee = 5000 } = {},
+      {
+        preBalance = 10_000_000_000,
+        postBalance = 7_000_000_000,
+        fee = 5000,
+        signature = "sig1",
+      } = {},
     ) {
       return {
         transaction: {
+          signatures: [signature],
           message: {
             accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
             recentBlockhash: TEST_BLOCKHASH,
@@ -563,11 +688,14 @@ describe("listOperations", () => {
         { signature: "sig-delegate-create", slot: 100, blockTime, err: null },
       ]);
       mockGetParsedTransactions.mockResolvedValue([
-        makeStakingTx([
-          makeParsedIx("system", "createAccountWithSeed"),
-          makeParsedIx("stake", "initialize"),
-          makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
-        ]),
+        makeStakingTx(
+          [
+            makeParsedIx("system", "createAccountWithSeed"),
+            makeParsedIx("stake", "initialize"),
+            makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
+          ],
+          { signature: "sig-delegate-create" },
+        ),
       ]);
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
@@ -588,6 +716,7 @@ describe("listOperations", () => {
       ]);
       mockGetParsedTransactions.mockResolvedValue([
         makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })], {
+          signature: "sig-delegate-solo",
           preBalance: 5_000_000_000,
           postBalance: 4_999_995_000,
         }),
@@ -611,6 +740,7 @@ describe("listOperations", () => {
       ]);
       mockGetParsedTransactions.mockResolvedValue([
         makeStakingTx([makeParsedIx("stake", "deactivate")], {
+          signature: "sig-undelegate",
           preBalance: 5_000_000_000,
           postBalance: 4_999_995_000,
         }),
@@ -639,7 +769,12 @@ describe("listOperations", () => {
               lamports: withdrawLamports,
             }),
           ],
-          { preBalance: 5_000_000_000, postBalance: 6_999_995_000, fee: 5000 },
+          {
+            signature: "sig-withdraw",
+            preBalance: 5_000_000_000,
+            postBalance: 6_999_995_000,
+            fee: 5000,
+          },
         ),
       ]);
 
@@ -660,11 +795,14 @@ describe("listOperations", () => {
         { signature: "sig-delegate-create2", slot: 100, blockTime, err: null },
       ]);
       mockGetParsedTransactions.mockResolvedValue([
-        makeStakingTx([
-          makeParsedIx("system", "createAccount"),
-          makeParsedIx("stake", "initialize"),
-          makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
-        ]),
+        makeStakingTx(
+          [
+            makeParsedIx("system", "createAccount"),
+            makeParsedIx("stake", "initialize"),
+            makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
+          ],
+          { signature: "sig-delegate-create2" },
+        ),
       ]);
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
@@ -679,7 +817,9 @@ describe("listOperations", () => {
         { signature: "sig-delegate", slot: 100, blockTime, err: null },
       ]);
       mockGetParsedTransactions.mockResolvedValue([
-        makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })]),
+        makeStakingTx([makeParsedIx("stake", "delegate", { voteAccount: VOTE_ACCOUNT })], {
+          signature: "sig-delegate",
+        }),
       ]);
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
@@ -694,7 +834,9 @@ describe("listOperations", () => {
         { signature: "sig-undelegate", slot: 100, blockTime, err: null },
       ]);
       mockGetParsedTransactions.mockResolvedValue([
-        makeStakingTx([makeParsedIx("stake", "deactivate")]),
+        makeStakingTx([makeParsedIx("stake", "deactivate")], {
+          signature: "sig-undelegate",
+        }),
       ]);
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
@@ -709,12 +851,15 @@ describe("listOperations", () => {
         { signature: "sig-withdraw", slot: 100, blockTime, err: null },
       ]);
       mockGetParsedTransactions.mockResolvedValue([
-        makeStakingTx([
-          makeParsedIx("stake", "withdraw", {
-            stakeAccount: STAKE_ACCOUNT,
-            lamports: 1_000_000_000,
-          }),
-        ]),
+        makeStakingTx(
+          [
+            makeParsedIx("stake", "withdraw", {
+              stakeAccount: STAKE_ACCOUNT,
+              lamports: 1_000_000_000,
+            }),
+          ],
+          { signature: "sig-withdraw" },
+        ),
       ]);
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
@@ -731,6 +876,7 @@ describe("listOperations", () => {
       mockGetParsedTransactions.mockResolvedValue([
         {
           transaction: {
+            signatures: ["sig-out"],
             message: {
               accountKeys: [
                 { pubkey: new PublicKey(TEST_ADDRESS) },
@@ -767,6 +913,7 @@ describe("listOperations", () => {
     ) {
       return {
         transaction: {
+          signatures: ["sig1"],
           message: {
             accountKeys: accountKeys.map(k => ({ pubkey: new PublicKey(k) })),
             recentBlockhash: TEST_BLOCKHASH,
@@ -831,7 +978,11 @@ describe("listOperations", () => {
               mint: USDC_MINT,
               owner: TEST_ADDRESS, // Solana records the WALLET as owner, never the ATA
               programId: TOKEN_PROGRAM_ID_STR,
-              uiTokenAmount: { amount: "3576636", decimals: 6, uiAmount: 3.576636 },
+              uiTokenAmount: {
+                amount: "3576636",
+                decimals: 6,
+                uiAmount: 3.576636,
+              },
             },
           ],
           [
@@ -840,7 +991,11 @@ describe("listOperations", () => {
               mint: USDC_MINT,
               owner: TEST_ADDRESS,
               programId: TOKEN_PROGRAM_ID_STR,
-              uiTokenAmount: { amount: "5112194", decimals: 6, uiAmount: 5.112194 },
+              uiTokenAmount: {
+                amount: "5112194",
+                decimals: 6,
+                uiAmount: 5.112194,
+              },
             },
           ],
           [TEST_ADDRESS, TOKEN_ACCOUNT], // ATA is accountKeys[1]
@@ -848,7 +1003,10 @@ describe("listOperations", () => {
       ]);
 
       // Query by the token-account address, not the wallet.
-      const result = await listOperations(api, TOKEN_ACCOUNT, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TOKEN_ACCOUNT, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
