@@ -1,7 +1,7 @@
 import { generateContactName } from "@ledgerhq/live-e2e-shared/contacts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 import type { ApplicationOptions } from "page";
 import type { OptionalFeatureMap } from "@shared/feature-flags";

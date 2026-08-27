@@ -1,4 +1,4 @@
-import { runSwapNumberFormatLocaleTest } from "specs/swap/otherTestCases/swapNumberFormatLocale";
+import { runSwapNumberFormatLocaleTest } from "@e2e/specs/swap/otherTestCases/swapNumberFormatLocale";
 
 runSwapNumberFormatLocaleTest(
   ["B2CQA-4014"],

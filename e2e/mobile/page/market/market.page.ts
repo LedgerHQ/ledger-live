@@ -1,7 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "helpers/commonHelpers";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
 
-import { isAssetDiscoverabilityEnabled, isAggregatedAssetsEnabled } from "utils/featureFlagUtils";
+import {
+  isAssetDiscoverabilityEnabled,
+  isAggregatedAssetsEnabled,
+} from "@e2e/utils/featureFlagUtils";
 
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 

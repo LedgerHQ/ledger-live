@@ -1,7 +1,7 @@
 import { device } from "detox";
-import { describeIfNotNanoS } from "helpers/commonHelpers";
+import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];

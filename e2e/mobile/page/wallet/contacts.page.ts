@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import ContactDetailPage from "page/wallet/contactDetail.page";
+import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
 const DEFAULT_ME_CONTACT_NAME = "Me";
 

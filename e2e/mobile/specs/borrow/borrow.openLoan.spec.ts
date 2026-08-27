@@ -1,11 +1,11 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { swapSetup } from "bridge/server";
+import { swapSetup } from "@e2e/bridge/server";
 import { DEFAULT_LOAN, resetLoanState } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
-import { BroadcastFlow, shouldRunBroadcastFlow } from "helpers/broadcastRotation";
-import { NANO_APP_CATALOG_PATH } from "utils/constants";
-import { FF_BORROW_ENABLED } from "utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
+import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
+import { FF_BORROW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const loanAccount = Account.ETH_4;
 const COLLATERAL_SYMBOL = "wBTC";

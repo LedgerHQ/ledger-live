@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isIos } from "helpers/commonHelpers";
+import { isIos } from "@e2e/helpers/commonHelpers";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";

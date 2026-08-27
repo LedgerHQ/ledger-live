@@ -1,11 +1,11 @@
-import { close as closeBridge, findFreePort, init as initBridge } from "bridge/server";
+import { close as closeBridge, findFreePort, init as initBridge } from "@e2e/bridge/server";
 import { getEnv, setEnv } from "@shared/env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { readFile } from "fs/promises";
-import { NANO_APP_CATALOG_PATH } from "utils/constants";
+import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 const BASE_DEEPLINK = "ledgerlive://";

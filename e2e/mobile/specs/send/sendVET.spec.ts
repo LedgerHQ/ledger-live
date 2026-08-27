@@ -1,4 +1,4 @@
-import { runSendTest } from "specs/send/send";
+import { runSendTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(Account.VET_1, Account.VET_2, "0.1");
 runSendTest(

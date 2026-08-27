@@ -1,4 +1,4 @@
-import { runUserCanExportLogsTest } from "specs/settings/settings";
+import { runUserCanExportLogsTest } from "@e2e/specs/settings/settings";
 
 const testConfig = {
   tmsLinks: ["B2CQA-2074"],
