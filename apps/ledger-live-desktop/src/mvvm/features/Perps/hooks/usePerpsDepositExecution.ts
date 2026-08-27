@@ -47,7 +47,6 @@ export type PerpsDepositDeviceStep =
   | {
       kind: "device";
       stepId: "start" | "confirm" | "sign";
-      isPerpsConfirmation: boolean;
       withDeviceAction: <T>(
         render: <R, H extends States, P>(binding: {
           action: Action<R, H, P>;
@@ -137,7 +136,6 @@ export function usePerpsDepositExecution(
       const completeResult = await runDeviceStep<CompleteResult>(onResult => ({
         kind: "device",
         stepId: "confirm",
-        isPerpsConfirmation: true,
         withDeviceAction: render =>
           render({
             action: completeAction,
@@ -162,7 +160,6 @@ export function usePerpsDepositExecution(
       const signResult = await runDeviceStep<SignResult>(onResult => ({
         kind: "device",
         stepId: "sign",
-        isPerpsConfirmation: false,
         withDeviceAction: render =>
           render({
             action: signAction,
@@ -239,7 +236,6 @@ export function usePerpsDepositExecution(
               void runDeviceStep<StartResult>(onResult => ({
                 kind: "device",
                 stepId: "start",
-                isPerpsConfirmation: false,
                 withDeviceAction: render =>
                   render({
                     action: startAction,
