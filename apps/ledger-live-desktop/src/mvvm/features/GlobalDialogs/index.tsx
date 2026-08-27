@@ -14,6 +14,9 @@ const PerpsReviewRoot = lazy(
 const PerpsDepositSignRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsDepositSign/PerpsDepositSignDialog"),
 );
+const PerpsTransactionSignedRoot = lazy(
+  () => import("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog"),
+);
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(
@@ -46,6 +49,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PerpsDepositSignRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PerpsTransactionSignedRoot />
     </Suspense>
     <ActionConfirmationDialog />
     <Suspense fallback={null}>

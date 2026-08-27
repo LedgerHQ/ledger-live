@@ -29,6 +29,7 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import type { States } from "~/renderer/components/DeviceAction";
+import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "~/renderer/analytics/segment";
 import { isUserRefusal } from "../utils/isUserRefusal";
@@ -213,6 +214,8 @@ export function usePerpsDepositExecution(
       setWalletApiIdForAccountId(receiverAccount.id);
 
       const depositCurrency = getAccountCurrency(depositAccount);
+      const receiveCurrency = getAccountCurrency(receiverAccount);
+      const mainFromAccount = getMainAccount(depositAccount, fromParentAccount);
 
       let signed: Awaited<ReturnType<typeof confirmSignAndBroadcast>> | undefined;
 
@@ -266,6 +269,13 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
+      openPerpsTransactionSigned({
+        operationId: signed.operation.id,
+        accountId: mainFromAccount.id,
+        receiveCurrencyTicker: receiveCurrency.ticker,
+        swapId: signed.swapId,
+        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+      });
       onDone();
     } catch (e) {
       if (isUserRefusal(e)) {

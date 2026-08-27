@@ -9,6 +9,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({
   executeSwap: (deps: unknown, params: unknown) => mockExecuteSwap(deps, params),
 }));
 
+const mockOpenPerpsTransactionSigned = jest.fn();
+jest.mock("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog", () => ({
+  openPerpsTransactionSigned: (data: unknown) => mockOpenPerpsTransactionSigned(data),
+}));
+
 const mockBroadcast = jest.fn();
 jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
   useBroadcast: () => mockBroadcast,
@@ -178,6 +183,13 @@ describe("usePerpsDepositExecution", () => {
 
     expect(mockBroadcast).toHaveBeenCalledWith({ operation });
     expect(onSwapSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
+    expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
+      operationId: "operation-1",
+      accountId: "funding-1",
+      receiveCurrencyTicker: "ETH",
+      swapId: "swap-1",
+      provider: "swapkit_hyperliquid",
+    });
     expect(onDone).toHaveBeenCalled();
   });
 
@@ -190,6 +202,7 @@ describe("usePerpsDepositExecution", () => {
       kind: "error",
       error: new Error("signature failed"),
     });
+    expect(mockOpenPerpsTransactionSigned).not.toHaveBeenCalled();
     expect(onDone).not.toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
   });
