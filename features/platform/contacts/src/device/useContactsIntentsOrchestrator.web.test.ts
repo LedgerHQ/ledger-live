@@ -28,6 +28,8 @@ const intents: ContactsIntentPlatformDefinitions = {
   registerExternalAddress: mockIntentPlatformDefinition("mock register external address"),
   renameExternalContact: mockIntentPlatformDefinition("mock rename contact"),
   editExternalAddress: mockIntentPlatformDefinition("mock edit external address"),
+  registerLedgerAccount: mockIntentPlatformDefinition("mock register Ledger account"),
+  renameLedgerAccount: mockIntentPlatformDefinition("mock rename Ledger account"),
 };
 
 function startRegisterExternalAddress(
