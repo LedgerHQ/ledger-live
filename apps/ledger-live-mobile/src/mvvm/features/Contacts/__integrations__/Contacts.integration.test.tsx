@@ -823,6 +823,45 @@ describe("Contacts integration", () => {
     });
   });
 
+  it.each(["address", "name"] as const)("should close Add Address from the %s step", async step => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: savedContactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag, state => ({
+        ...state,
+        contacts: { contacts: [mockMeContact(), contact] },
+      })),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+    await user.press(screen.getByTestId("contacts-address-entry-select-currency"));
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+
+    if (step === "name") {
+      await user.type(addressInput, SCANNED_ADDRESS);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
+      });
+
+      await user.press(screen.getByTestId("contacts-add-address-confirm"));
+      expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+    } else {
+      expect(addressInput).toBeVisible();
+    }
+
+    const closeButton = screen.getByTestId("bottom-sheet-header-close-button");
+    expect(closeButton).toBeVisible();
+
+    await user.press(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+      expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    });
+  });
+
   it("should keep the currency selector usable when searching for a network", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
