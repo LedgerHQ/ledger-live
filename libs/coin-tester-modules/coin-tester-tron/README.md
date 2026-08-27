@@ -30,7 +30,7 @@ order:
 | 3 | Send max LTT (TRC10) | subAccount drained to 0 |
 | 4 | Send 1 USDT (TRC20) | `fee > 0` (no frozen energy → TRX is burned for the TVM call). Uses a bit-for-bit copy of mainnet USDT (`TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t`). |
 | 5 | Send max USDT (TRC20) | subAccount drained to 0 |
-| 6 | Send 5 TRX with a memo | characterisation only — the memo is dropped before crafting, so `extra.memo` is absent and no `memoFee` is charged (see the comment on that row) |
+| 6 | Send 5 TRX with a memo | the memo survives the round-trip — it is crafted into `raw_data.data`, broadcast, and decoded back onto `extra.memo` (LIVE-35735). `fee == 0` here because the devnet does not charge TIP-387's `memoFee` (`getMemoFee` is 0 on `tronbox/tre`) and the memo still fits the free bandwidth quota |
 | 7 | Send 1 USDT with a custom fee limit | `0 < fee <= CUSTOM_FEE_LIMIT_SUN`, subAccount balance delta matches |
 | 8 | Freeze 50 TRX for BANDWIDTH | `tronResources.frozen.bandwidth` grows by exactly the frozen amount; op type `FREEZE`, no native value |
 | 9 | Vote 1 for the devnet witness | `tronResources.votes` contains the witness; op type `VOTE` |

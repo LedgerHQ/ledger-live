@@ -12,7 +12,12 @@ import { decode58Check } from "../network/format";
 import type { AccountTronAPI, ChainParameters } from "../network/types";
 import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo, TronMemo, TronTxData } from "../types";
-import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
+import {
+  ACTIVATION_FEES,
+  MEMO_FEE_PESSIMISTIC,
+  STANDARD_FEES_NATIVE,
+  STANDARD_FEES_TRC_20,
+} from "./constants";
 import { getBalance } from "./getBalance";
 import { findBalance } from "./utils";
 
@@ -36,15 +41,30 @@ export type TronResourceBreakdown = {
   energyEstimated: boolean;
 };
 
+// UTF-8 byte length of a memo that will land in `raw_data.data`. A memo only reaches the chain on a
+// native or TRC-10 send (`craftSend` rejects it for TRC-20), so it is zero everywhere else. The
+// `kind === "memo"` guard mirrors `craftSend` exactly: pricing a memo the crafter would drop would
+// over-quote it.
+const memoByteLength = (intent: TronIntent): number => {
+  if (intent.type !== "send" || intent.asset.type === "trc20") return 0;
+  const memo =
+    "memo" in intent && intent.memo?.type === "string" && intent.memo.kind === "memo"
+      ? intent.memo.value
+      : "";
+  return memo ? Buffer.byteLength(memo, "utf8") : 0;
+};
+
 // Byte sizes of the fully signed transaction (raw_data + signature + protobuf wrapping).
 // craftTransaction's raw_data_hex alone would underestimate by ~50%: it excludes the signature and
 // the outer envelope.
 export const estimatedTxSize = (intent: TronIntent): number => {
   switch (intent.type) {
     case "send":
-      if (intent.asset.type === "trc10") return 285; // TransferAssetContract
+      // A memo rides in `raw_data.data`, so it grows the serialized size (and thus any bandwidth burn)
+      // by its byte length; the few-byte protobuf field overhead is negligible against these estimates.
+      if (intent.asset.type === "trc10") return 285 + memoByteLength(intent); // TransferAssetContract
       if (intent.asset.type === "trc20") return 350; // TriggerSmartContract
-      return 270; // TransferContract
+      return 270 + memoByteLength(intent); // TransferContract
     case "freeze":
     case "unfreeze":
     case "claimReward":
@@ -177,12 +197,14 @@ const computeActivationFee = (
 };
 
 // Pessimistic fallback when on-chain estimation fails — over-estimates rather than failing.
-// Native/TRC10 worst case: activation fee (recipient inactive) + standard bandwidth burn.
+// Native/TRC10 worst case: activation fee (recipient inactive) + standard bandwidth burn, plus the
+// memo fee when a memo is present (its live value is unknowable here, so assume the 1 TRX mainnet one).
 const fallbackFee = (intent: TronIntent): bigint => {
   if (isTrc20Send(intent)) {
     return BigInt(STANDARD_FEES_TRC_20.toString());
   }
-  return BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).toString());
+  const memoFee = memoByteLength(intent) > 0 ? MEMO_FEE_PESSIMISTIC : new BigNumber(0);
+  return BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).plus(memoFee).toString());
 };
 
 const isTrc20Send = (intent: TronIntent): boolean =>
@@ -241,9 +263,16 @@ export async function estimateFees(
       return withBreakdown(BigInt(STANDARD_FEES_TRC_20.toString()), breakdown);
     }
 
+    // A memo burns a flat, chain-configured fee on top of bandwidth (TIP-387), charged independently of
+    // the bandwidth burn. java-tron charges it whenever `raw_data.data` is non-empty regardless of
+    // contract type (`Manager#consumeMemoFee`), so native and TRC-10 both pay it; 0 on pre-TIP-387 chains.
+    const memoFee =
+      memoByteLength(transactionIntent) > 0 ? new BigNumber(chainParams.memoFee) : new BigNumber(0);
+
     const total = computeBandwidthFee(size, networkInfo, chainParams)
       .plus(computeEnergyFee(energyRequired.toNumber(), networkInfo, chainParams))
-      .plus(computeActivationFee(transactionIntent, recipientAccount, chainParams));
+      .plus(computeActivationFee(transactionIntent, recipientAccount, chainParams))
+      .plus(memoFee);
 
     return withBreakdown(BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()), breakdown);
   } catch (err) {

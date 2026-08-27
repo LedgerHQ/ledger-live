@@ -61,6 +61,16 @@ describe("fromTrongridTxInfoToOperation", () => {
     });
   });
 
+  it("carries a decoded memo onto details.memo so it round-trips into extra.memo", () => {
+    const result = fromTrongridTxInfoToOperation(
+      { ...mockTrongridTxInfo, memo: "ledger-e2e" },
+      mockBlock,
+      mockUserAddress,
+    );
+
+    expect(result.details).toMatchObject({ memo: "ledger-e2e" });
+  });
+
   it("should return IN operation type when the user address is the recipient", () => {
     const txInfo = {
       ...mockTrongridTxInfo,

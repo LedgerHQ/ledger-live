@@ -93,7 +93,6 @@ describe("getCoinModuleApi", () => {
   // need the currency id (evm, cardano) forward it, the rest take no arguments.
   const testCases = [
     { network: "xrp", module: xrpModule, label: "XRP", params: [] as unknown[] },
-    { network: "stellar", module: stellarModule, label: "Stellar", params: [] as unknown[] },
     { network: "tron", module: tronModule, label: "Tron", params: [] as unknown[] },
     { network: "canton", module: cantonModule, label: "Canton", params: [] as unknown[] },
     {
@@ -117,6 +116,16 @@ describe("getCoinModuleApi", () => {
       expect(result).toEqual(mockApiInstance);
       expect(module.createApi).toHaveBeenCalledWith(...params);
     });
+  });
+
+  // Stellar wraps its local api to translate the framework memo union onto coin-stellar's flat
+  // memo shape (LIVE-35735), so it does not pass the base api through verbatim like the others.
+  it('should return a memo-adapting Stellar API for network "stellar" and kind "local"', async () => {
+    const result = await getCoinModuleApi("stellar", "local");
+    expect(stellarModule.createApi).toHaveBeenCalledWith();
+    expect(result).toMatchObject(mockApiInstance);
+    expect(typeof (result as { craftTransaction: unknown }).craftTransaction).toBe("function");
+    expect(typeof (result as { validateIntent: unknown }).validateIntent).toBe("function");
   });
 
   it("should return network API for kind !== 'local'", async () => {

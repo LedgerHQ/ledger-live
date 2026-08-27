@@ -93,15 +93,13 @@ function makeTransactions(): Tx[] {
       expect(latestOp.type).toBe("OUT");
       expect(latestOp.recipients).toContain(recipient.address);
 
-      // CHARACTERISATION TEST — pins a known defect, not an endorsement: shared `transactionToIntent`
-      // emits a pre-Memo-union shape — `{ type: memoType, value }`, with no `kind`; coin-tron's
-      // `craftSend` requires `kind === "memo"`, so the memo is silently dropped and never reaches the
-      // chain. When fixed upstream THIS ASSERTION FAILS — that is the point: flip it to assert the
-      // memo survives. A dropped memo also means TRON's 1 TRX `memoFee` is never charged, so once it
-      // lands this row's fee expectation must account for it. `craftSend`'s memo branch is the
-      // receiving half of that fix — unreachable from the app until then, not dead code.
+      // The memo survives end-to-end (LIVE-35735): shared `transactionToIntent` emits the framework's
+      // `StringMemo`, `craftSend` writes it into `raw_data.data`, and sync decodes it back onto `extra.memo`.
       const extra = latestOp.extra as { memo?: string };
-      expect(extra.memo).toBeUndefined();
+      expect(extra.memo).toBe("ledger-e2e");
+      // TIP-387's memo fee is a chain parameter left at its 0 default on the devnet, and a native send
+      // fits the free bandwidth quota — so the memo costs nothing here, and `estimateFees` reads the
+      // same 0 from the chain, keeping estimate and actual in agreement.
       expect(latestOp.fee).toStrictEqual(new BigNumber(0));
     },
   };
