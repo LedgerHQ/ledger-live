@@ -11,7 +11,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
-import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePortfolioSyncState } from "LLM/hooks/usePortfolioBalance";
 import { preloadSettingsNavigator } from "~/components/RootNavigator/lazyScreen";
 
 const BUTTON_CLICKED_EVENT = "button_clicked";
@@ -35,7 +35,7 @@ export function useTopBarViewModel(
     syncAccessibilityLabel,
     errorCurrencyIds,
   } = useSyncIndicator();
-  const { triggerRefresh, isBridgeSyncPending } = usePortfolioBalance();
+  const { triggerRefresh, isBridgeSyncPending } = usePortfolioSyncState();
 
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
   const openSyncDrawer = useCallback(() => {

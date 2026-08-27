@@ -1,35 +1,38 @@
 import React from "react";
-import { NavigatorName } from "~/const";
-import PortfolioNavigator from "../PortfolioNavigator";
-import { Tab } from "./tabNavigator";
-import type { Wallet40TabNavigatorProps } from "./types";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import type { MainNavigatorParamList } from "../types/MainNavigator";
+import { NavigatorName } from "~/const";
+import { afterFirstHomeLayout } from "LLM/utils/startupTimeMarkerState";
+import { isGetComponentEnabled } from "LLM/utils/perfOptimizationMode";
+import PortfolioNavigator from "../PortfolioNavigator";
 import { scheduleNamedPreloads } from "../lazyScreen";
+import { Tab } from "./tabNavigator";
+import type { MainNavigatorParamList } from "../types/MainNavigator";
+import type { Wallet40TabNavigatorProps } from "./types";
 
-let didScheduleTabPreload = false;
+let tabScreensPreloaded = false;
 
-function scheduleSiblingTabPreload(
+function preloadSiblingTabs(
   navigation: BottomTabNavigationProp<MainNavigatorParamList>,
   isPayTabEnabled: boolean,
-): void {
-  if (didScheduleTabPreload) {
+) {
+  if (tabScreensPreloaded || !isGetComponentEnabled()) {
     return;
   }
-  if (typeof process !== "undefined" && process.env.JEST_WORKER_ID) {
-    return;
-  }
-  didScheduleTabPreload = true;
-  scheduleNamedPreloads(
-    [
-      NavigatorName.Swap,
-      NavigatorName.Earn,
-      isPayTabEnabled ? NavigatorName.PayTab : NavigatorName.CardTab,
-    ],
-    name => {
-      navigation.preload(name as keyof MainNavigatorParamList);
-    },
-  );
+  tabScreensPreloaded = true;
+  afterFirstHomeLayout(() => {
+    scheduleNamedPreloads(
+      [
+        NavigatorName.Swap,
+        NavigatorName.Earn,
+        isPayTabEnabled ? NavigatorName.PayTab : NavigatorName.CardTab,
+      ],
+      name => {
+        navigation.preload(name as keyof MainNavigatorParamList);
+      },
+      700,
+      450,
+    );
+  });
 }
 
 function Wallet40SwapTabHeader() {
@@ -55,9 +58,7 @@ export function Wallet40TabNavigator({
         name={NavigatorName.Portfolio}
         component={PortfolioNavigator}
         listeners={({ navigation }) => ({
-          focus: () => {
-            scheduleSiblingTabPreload(navigation, isPayTabEnabled);
-          },
+          focus: () => preloadSiblingTabs(navigation, isPayTabEnabled),
         })}
       />
       <Tab.Screen

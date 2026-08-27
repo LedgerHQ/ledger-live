@@ -40,6 +40,8 @@ import {
   snapshotAccountsForRanking,
 } from "LLM/utils/rankAccountsWorklet";
 import { useWorkletAssetsDistribution } from "LLM/hooks/useWorkletRankedAccounts";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
+import type { Account } from "@ledgerhq/types-live";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
@@ -54,13 +56,35 @@ function comparatorFromRankedIds(ids: string[]): AccountComparator {
     (order.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (order.get(b.id) ?? Number.MAX_SAFE_INTEGER);
 }
 
-const EMPTY_DISTRIBUTION = {
+const EMPTY_DISTRIBUTION: DistributionResult = {
   isAvailable: false,
   list: [],
   showFirst: 0,
   sum: 0,
   isLoading: false,
-} as const;
+};
+
+function collectCurrencyIds(accounts: Account[]): string[] {
+  const ids: string[] = [];
+  const seen: Record<string, 1> = {};
+  for (const account of accounts) {
+    const currencyId = account.currency.id;
+    if (!seen[currencyId]) {
+      seen[currencyId] = 1;
+      ids.push(currencyId);
+    }
+    const subs = account.subAccounts;
+    if (!subs) continue;
+    for (const sub of subs) {
+      const tokenId = sub.token.id;
+      if (!seen[tokenId]) {
+        seen[tokenId] = 1;
+        ids.push(tokenId);
+      }
+    }
+  }
+  return ids;
+}
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
@@ -68,6 +92,7 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
   const { groupBy, ...displayOpts } = opts;
   const isAssetMode = groupBy === "asset";
   const workletEnabled = isAccountWorkletEnabled();
+  const homeReady = useAfterFirstHomeLayout();
 
   const legacy = useLegacyDistribution({
     accounts,
@@ -77,23 +102,22 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
   });
   const worklet = useWorkletAssetsDistribution({
     ...displayOpts,
-    skip: !workletEnabled,
+    skip: !workletEnabled || isAssetMode,
   });
-  const workletGroups = worklet.groups ?? [];
   const assetInput = {
     accounts,
     to,
     product: "llm" as const,
     version: VersionNumber.appVersion ?? "",
-    skip: !isAssetMode,
-    currencyIds:
-      workletEnabled && workletGroups.length > 0
-        ? workletGroups.map(group => group.currencyId)
-        : undefined,
+    skip: !isAssetMode || !homeReady,
+    currencyIds: isAssetMode ? collectCurrencyIds(accounts) : undefined,
     ...displayOpts,
   };
   const asset = useAssetDistribution(assetInput);
 
+  if (isAssetMode && !homeReady) {
+    return { ...EMPTY_DISTRIBUTION, isLoading: true };
+  }
   if (isAssetMode) {
     return {
       ...EMPTY_DISTRIBUTION,
@@ -107,7 +131,6 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
       ...EMPTY_DISTRIBUTION,
       ...worklet,
       list: worklet.list ?? [],
-      groups: workletGroups,
     };
   }
   return {

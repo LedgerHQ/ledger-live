@@ -10,7 +10,8 @@ import type { Features } from "@shared/feature-flags";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { track } from "~/analytics";
-import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePortfolioSyncState } from "LLM/hooks/usePortfolioBalance";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
 import { useWorkletRankedAccounts } from "LLM/hooks/useWorkletRankedAccounts";
 import {
   accountsSelector,
@@ -66,12 +67,13 @@ const usePortfolioViewModel = (navigation: {
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
+  const homeReady = useAfterFirstHomeLayout();
   const allAccounts = useSelector(accountsSelector);
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const { rankedAccounts } = useWorkletRankedAccounts(
-    allAccounts,
+    homeReady ? allAccounts : [],
     excludedTokenIds,
     countervalueState,
     toCurrency,
@@ -149,7 +151,7 @@ const usePortfolioViewModel = (navigation: {
 
   const isLNUpsellBannerShown = useLNUpsellBannerState("wallet").isShown;
 
-  const { syncPhase } = usePortfolioBalance();
+  const { syncPhase } = usePortfolioSyncState();
   const isSyncError = syncPhase === "failed";
 
   const shouldAddBottomPaddingForLegacyAssets =

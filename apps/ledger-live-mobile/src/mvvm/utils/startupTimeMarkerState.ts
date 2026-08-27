@@ -12,8 +12,13 @@ export function afterFirstHomeLayout(cb: () => void): () => void {
   };
 }
 
+export function hasFirstHomeLayout(): boolean {
+  return painted;
+}
+
 export function resetStartupTimeMarker(): void {
   painted = false;
+  afterHomeLayoutListeners.clear();
 }
 
 export function consumeFirstHomeLayout(): boolean {

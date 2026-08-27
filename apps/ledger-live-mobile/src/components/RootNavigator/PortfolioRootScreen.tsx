@@ -8,6 +8,8 @@ import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { useAfterFirstHomeLayout } from "LLM/hooks/useAfterFirstHomeLayout";
 import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
@@ -25,6 +27,7 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
   const { backgroundColor } = useWallet40Theme();
+  const homeReady = useAfterFirstHomeLayout();
 
   const PortfolioComponent = useMemo(
     () => (readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio),
@@ -33,6 +36,7 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
 
   return (
     <StartupTimeMarker>
+      {homeReady ? null : <SyncSkipUnderPriority priority={99} />}
       <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>
         <PortfolioBalanceSync />
         <Box flexGrow={1} bg={backgroundColor}>

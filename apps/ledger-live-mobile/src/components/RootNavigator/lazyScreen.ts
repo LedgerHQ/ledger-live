@@ -32,6 +32,7 @@ export function preloadRootNavigator(): void {
 
 export function preloadSettingsNavigator(): void {
   void (require("./SettingsNavigator") as typeof import("./SettingsNavigator"));
+  void (require("~/screens/Settings") as typeof import("~/screens/Settings"));
 }
 
 export function preloadDeferredNavigators(): void {
@@ -83,13 +84,26 @@ export function preloadIdleTabNavigators(): void {
   if (typeof process !== "undefined" && process.env.JEST_WORKER_ID) {
     return;
   }
-  scheduleIdleLoads([
-    () => void (require("./SwapNavigator") as typeof import("./SwapNavigator")),
-    () => void (require("./EarnLiveAppNavigator") as typeof import("./EarnLiveAppNavigator")),
-    () => void (require("LLM/features/PayTab") as typeof import("LLM/features/PayTab")),
-    () => void (require("LLM/features/Card") as typeof import("LLM/features/Card")),
-    () => void (require("./AccountsNavigator") as typeof import("./AccountsNavigator")),
-    () => void (require("./DiscoverNavigator") as typeof import("./DiscoverNavigator")),
-    () => void (require("./MyLedgerNavigator") as typeof import("./MyLedgerNavigator")),
-  ]);
+  scheduleIdleLoads(
+    [
+      () => void (require("./SettingsNavigator") as typeof import("./SettingsNavigator")),
+      () => void (require("~/screens/Settings") as typeof import("~/screens/Settings")),
+      () => void (require("./AccountsNavigator") as typeof import("./AccountsNavigator")),
+      () => void (require("~/screens/Accounts") as typeof import("~/screens/Accounts")),
+      () => void (require("~/screens/Account") as typeof import("~/screens/Account")),
+      () => void (require("./SendFundsNavigator") as typeof import("./SendFundsNavigator")),
+      () => void (require("./DiscoverNavigator") as typeof import("./DiscoverNavigator")),
+      () => void (require("./MyLedgerNavigator") as typeof import("./MyLedgerNavigator")),
+    ],
+    cb => setTimeout(cb, 80),
+  );
+  scheduleIdleLoads(
+    [
+      () => void (require("./SwapNavigator") as typeof import("./SwapNavigator")),
+      () => void (require("./EarnLiveAppNavigator") as typeof import("./EarnLiveAppNavigator")),
+      () => void (require("LLM/features/PayTab") as typeof import("LLM/features/PayTab")),
+      () => void (require("LLM/features/Card") as typeof import("LLM/features/Card")),
+    ],
+    cb => setTimeout(cb, 400),
+  );
 }

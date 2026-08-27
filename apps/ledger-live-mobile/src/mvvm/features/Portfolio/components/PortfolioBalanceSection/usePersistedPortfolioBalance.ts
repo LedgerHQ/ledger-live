@@ -38,6 +38,8 @@ export function usePersistedPortfolioBalance(
     }
   }, [key, syncPhase, latestBalance]);
 
-  // Only substitute during syncing — once sync settles the real balance (even $0) is authoritative.
+  if (syncPhase !== "synced" && latestBalance === 0 && persistedRef.current > 0) {
+    return persistedRef.current;
+  }
   return syncPhase === "syncing" ? latestBalance || persistedRef.current : latestBalance;
 }

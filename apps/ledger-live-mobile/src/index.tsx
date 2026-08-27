@@ -55,10 +55,6 @@ import StyleProvider from "./StyleProvider";
 
 import { setOsTheme, setIsOnboardingFlow, setIsPostOnboardingFlow } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
-import {
-  useFetchCurrencyAll,
-  useFetchCurrencyFrom,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
 import { updateIdentify } from "./analytics";
@@ -236,8 +232,6 @@ function App() {
 
   useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
   useTrackFundsReceived();
-  useFetchCurrencyAll();
-  useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
   useAutoFinishPostOnboarding();
 

@@ -56,9 +56,10 @@ export function PortfolioBalanceSync(): null {
         displayedBalance,
         isLoading,
         isBalanceAvailable: balanceAvailable,
+        countervalueChange: portfolio.countervalueChange,
       }),
     );
-  }, [displayedBalance, isLoading, balanceAvailable, dispatch]);
+  }, [balanceAvailable, dispatch, displayedBalance, isLoading, portfolio.countervalueChange]);
 
   return null;
 }

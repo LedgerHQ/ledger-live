@@ -12,7 +12,7 @@ import { selectPortfolioBalanceDisplay } from "~/reducers/portfolioBalanceDispla
  */
 export function usePortfolioBalanceForDisplay() {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const { displayedBalance, isLoading, isBalanceAvailable } = useSelector(
+  const { displayedBalance, isLoading, isBalanceAvailable, countervalueChange } = useSelector(
     selectPortfolioBalanceDisplay,
   );
 
@@ -20,6 +20,7 @@ export function usePortfolioBalanceForDisplay() {
     displayedBalance,
     isLoading,
     isBalanceAvailable,
+    countervalueChange,
     unit: counterValueCurrency.units[0],
   };
 }

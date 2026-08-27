@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { selectLastOfflineRefreshAttemptTimestamp } from "~/reducers/portfolioRefresh";
-import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePortfolioSyncState } from "LLM/hooks/usePortfolioBalance";
 
 export const REFRESH_STATUS_VISIBLE_DURATION_MS = 3_000;
 
@@ -21,7 +21,7 @@ interface UsePortfolioRefreshStatusViewModelResult {
 export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusViewModelResult => {
   const { t } = useTranslation();
   const lastOfflineRefreshAttemptTimestamp = useSelector(selectLastOfflineRefreshAttemptTimestamp);
-  const { syncPhase, isManualRefreshLoading } = usePortfolioBalance();
+  const { syncPhase, isManualRefreshLoading } = usePortfolioSyncState();
 
   // Stays true for the entire sync cycle once the user triggers a refresh;
   // reset when sync leaves "syncing" (either "synced" or "failed"). Never set at cold start.

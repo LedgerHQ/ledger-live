@@ -1,6 +1,7 @@
 import {
   afterFirstHomeLayout,
   consumeFirstHomeLayout,
+  hasFirstHomeLayout,
   resetStartupTimeMarker,
 } from "../startupTimeMarkerState";
 
@@ -23,5 +24,14 @@ describe("startupTimeMarkerState", () => {
     expect(consumeFirstHomeLayout()).toBe(true);
     expect(cb).toHaveBeenCalledTimes(1);
     expect(consumeFirstHomeLayout()).toBe(false);
+    expect(hasFirstHomeLayout()).toBe(true);
+  });
+
+  it("should drop queued listeners on reset", () => {
+    const cb = jest.fn();
+    afterFirstHomeLayout(cb);
+    resetStartupTimeMarker();
+    expect(consumeFirstHomeLayout()).toBe(true);
+    expect(cb).not.toHaveBeenCalled();
   });
 });
