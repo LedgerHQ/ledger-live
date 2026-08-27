@@ -51,12 +51,15 @@ import {
 } from "@features/platform-contacts/device/intents";
 ```
 
-The subpath exports the seven ADR intents: external-address registration, external-contact rename,
-identifier edit, scope edit, combined external-address edit, Ledger-account registration, and
-Ledger-account rename. Each intent lives in its own directory with `types.ts`, `job.ts` and a
-component-less `intentDefinition.ts`. Their current RxJS jobs are deterministic scaffolds: they emit
-`pending`, `awaiting-device-confirmation`, then a persistence-friendly `completed` result without
-invoking DMK or `@ledgerhq/device-contacts-kit`.
+The subpath exports five intents covering the seven ADR operations: external-address registration,
+external-contact rename, external-address edit, Ledger-account registration and Ledger-account
+rename. The edit intent covers three ADR operations on its own — identifier edit, scope edit, and
+both at once — through its `EditExternalAddressStep`.
+
+Each intent lives in its own directory with `types.ts`, `job.ts` and a component-less
+`intentDefinition.ts`. Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
+`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking DMK
+or `@ledgerhq/device-contacts-kit`.
 
 The renderers are app-owned, because a `features/` package cannot resolve translations today. Each
 app keeps them under `src/mvvm/features/Contacts/deviceIntents/<intent>/`, composes each shared

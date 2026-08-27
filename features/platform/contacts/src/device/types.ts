@@ -46,7 +46,7 @@ export type ContactDeviceIntent = Intent<
 >;
 
 /**
- * The platform definitions for the seven ADR Contacts intents. Each app owns its
+ * The platform definitions for the five Contacts device intents. Each app owns its
  * renderers, so it builds these from the shared `IntentDefinition`s and injects
  * them into {@link useContactsIntentsOrchestrator}.
  *
