@@ -1632,15 +1632,15 @@ describe("coin-framework utils", () => {
     });
 
     it("never lets the family shadow a framework-owned extra", () => {
-      // Including `pagingToken`, which the framework only reads and never writes here. The reviver
-      // spreads its input, so this also pins the strip as running after it.
+      // Including `memo`, which the framework writes only when the coin module supplies one. The
+      // reviver spreads its input, so this also pins the strip as running after it.
       const operation = adaptCoreOperationToLiveOperation(
         "accountId",
         {
           ...coreOperation,
           details: {
             ledgerOpType: "FREEZE",
-            familyExtra: { ledgerOpType: "HIJACKED", internal: true, pagingToken: "hijacked" },
+            familyExtra: { ledgerOpType: "HIJACKED", internal: true, memo: "hijacked" },
           },
         },
         extraRaw => ({ ...(extraRaw as Record<string, unknown>) }),
@@ -1649,7 +1649,7 @@ describe("coin-framework utils", () => {
 
       expect(extra.ledgerOpType).toBe("FREEZE");
       expect(extra.internal).toBeUndefined();
-      expect(extra.pagingToken).toBeUndefined();
+      expect(extra.memo).toBeUndefined();
     });
 
     it("leaves the framework's own keys alone when the coin module sends no family bag", () => {
