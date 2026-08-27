@@ -5,7 +5,7 @@ import { setEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   act,
@@ -218,6 +218,7 @@ describe("Send flow integration tests", () => {
     );
     await flushTimers();
     await user.press(await screen.findByRole("button", { name: "Add contact" }));
+    await user.press(await screen.findByTestId("send-add-contact-new"));
 
     const nameInput = await screen.findByTestId("contacts-add-contact-name-input");
     await user.type(nameInput, "Benoit");
@@ -238,6 +239,47 @@ describe("Send flow integration tests", () => {
     expect(screen.queryByRole("button", { name: "Add contact" })).toBeNull();
     expect(screen.queryByTestId("contacts-add-address-review")).toBeNull();
     expect(screen.queryByTestId("contacts-add-contact-name-input")).toBeNull();
+  });
+
+  it("should add the recipient to an existing contact and return to recipient after review", async () => {
+    const ada = mockContact({
+      id: "contact-ada",
+      name: "Ada",
+      addresses: [],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [mockMeContact(), ada] },
+    );
+
+    await user.paste(
+      await screen.findByPlaceholderText("Enter address, ENS or contact"),
+      VALID_ETHEREUM_RECIPIENT,
+    );
+    await flushTimers();
+    await user.press(await screen.findByRole("button", { name: "Add contact" }));
+    await user.press(await screen.findByTestId("send-add-contact-existing"));
+
+    expect(await screen.findByTestId("send-add-to-existing-contact-step")).toBeVisible();
+    expect(await screen.findByText("Select contact")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await flushTimers();
+
+    expect(await screen.findByText("Name address")).toBeVisible();
+    expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+    expect(screen.queryByTestId("send-add-to-existing-contact-step")).toBeNull();
+    await user.press(await screen.findByTestId("contacts-add-address-name-continue"));
+
+    expect(await screen.findByText("Review address")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-add-address-review-continue"));
+    await flushTimers();
+
+    expect(await screen.findByPlaceholderText("Enter address, ENS or contact")).toBeVisible();
+    expect(await screen.findByText("Ada")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Add contact" })).toBeNull();
+    expect(screen.queryByTestId("contacts-add-address-review")).toBeNull();
+    expect(screen.queryByTestId("send-add-to-existing-contact-step")).toBeNull();
   });
 
   it("should show network contacts and advance when selecting a contact with one address", async () => {

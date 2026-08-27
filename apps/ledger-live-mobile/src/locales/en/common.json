@@ -4559,6 +4559,11 @@
         "title": "Paste from clipboard",
         "cta": "Paste"
       },
+      "addContact": {
+        "newContact": "Add a new contact",
+        "existingContact": "Add to an existing contact",
+        "selectContact": "Select contact"
+      },
       "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "sendTo": "Send to {{address}}",

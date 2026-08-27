@@ -13,7 +13,7 @@ import type {
   QueuedDrawerFlowScreen,
 } from "LLM/components/QueuedDrawerFlow";
 import { useTranslation } from "~/context/Locale";
-import type { AddNewContactAddressPhase } from "./useAddNewContactViewModel";
+import type { SendPrefillAddAddressPhase } from "LLM/features/Send/hooks/useSendPrefillAddAddressFlow";
 
 const LOCKED_STEP_OPTIONS = {
   hasBackButton: true,
@@ -24,7 +24,7 @@ const LOCKED_STEP_OPTIONS = {
 } as const satisfies QueuedDrawerFlowOptions;
 
 type UseAddNewContactAddressScreensOptions = Readonly<{
-  addressPhase: AddNewContactAddressPhase | null;
+  addressPhase: SendPrefillAddAddressPhase | null;
   bottomOffset: number;
 }>;
 
