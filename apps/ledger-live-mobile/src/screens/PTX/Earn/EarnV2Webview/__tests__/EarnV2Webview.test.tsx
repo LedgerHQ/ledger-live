@@ -40,9 +40,9 @@ jest.mock("../../EarnWebview", () => {
   };
 });
 
-jest.mock("LLM/components/LiveAppBackground", () => {
+jest.mock("LLM/components/Wallet40Background", () => {
   const { View } = require("react-native");
-  return { LiveAppBackground: () => <View testID="live-app-background" /> };
+  return { Wallet40Background: () => <View testID="wallet40-background" /> };
 });
 
 const STUB_MANIFEST: LiveAppManifest = {
@@ -74,37 +74,37 @@ describe("EarnV2Webview", () => {
     mockSetOptions.mockClear();
   });
 
-  it("renders LiveAppBackground when ptxEarnUi is v2", () => {
+  it("renders Wallet40Background when ptxEarnUi is v2", () => {
     render(<EarnV2Webview manifest={STUB_MANIFEST} appManifestNotFoundError={ERROR} />, {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v2" } },
       }),
     });
 
-    expect(screen.getByTestId("live-app-background")).toBeTruthy();
+    expect(screen.getByTestId("wallet40-background")).toBeTruthy();
   });
 
-  it("renders LiveAppBackground when ptxEarnUi is v3 (minimum v2 check)", () => {
+  it("renders Wallet40Background when ptxEarnUi is v3 (minimum v2 check)", () => {
     render(<EarnV2Webview manifest={STUB_MANIFEST} appManifestNotFoundError={ERROR} />, {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v3" } },
       }),
     });
 
-    expect(screen.getByTestId("live-app-background")).toBeTruthy();
+    expect(screen.getByTestId("wallet40-background")).toBeTruthy();
   });
 
-  it("does not render LiveAppBackground when ptxEarnUi is v1", () => {
+  it("does not render Wallet40Background when ptxEarnUi is v1", () => {
     render(<EarnV2Webview manifest={STUB_MANIFEST} appManifestNotFoundError={ERROR} />, {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v1" } },
       }),
     });
 
-    expect(screen.queryByTestId("live-app-background")).toBeNull();
+    expect(screen.queryByTestId("wallet40-background")).toBeNull();
   });
 
-  it("does not render LiveAppBackground when hideMainNavigator is true", () => {
+  it("does not render Wallet40Background when hideMainNavigator is true", () => {
     render(
       <EarnV2Webview manifest={STUB_MANIFEST} appManifestNotFoundError={ERROR} hideMainNavigator />,
       {
@@ -114,10 +114,10 @@ describe("EarnV2Webview", () => {
       },
     );
 
-    expect(screen.queryByTestId("live-app-background")).toBeNull();
+    expect(screen.queryByTestId("wallet40-background")).toBeNull();
   });
 
-  it("keeps LiveAppBackground hidden while the webview is on a deposit URL", () => {
+  it("keeps Wallet40Background hidden while the webview is on a deposit URL", () => {
     mockWebviewUrl = "https://earn.test/v2/android/deposit?intent=deposit&uiVersion=v4";
 
     render(
@@ -129,10 +129,10 @@ describe("EarnV2Webview", () => {
       },
     );
 
-    expect(screen.queryByTestId("live-app-background")).toBeNull();
+    expect(screen.queryByTestId("wallet40-background")).toBeNull();
   });
 
-  it("restores LiveAppBackground when the webview navigates back to the dashboard despite a stale deposit intent", () => {
+  it("restores Wallet40Background when the webview navigates back to the dashboard despite a stale deposit intent", () => {
     mockWebviewUrl = "https://earn.test/v2/android/homescreen?uiVersion=v4";
 
     render(
@@ -144,7 +144,7 @@ describe("EarnV2Webview", () => {
       },
     );
 
-    expect(screen.getByTestId("live-app-background")).toBeTruthy();
+    expect(screen.getByTestId("wallet40-background")).toBeTruthy();
   });
 
   it("returns to the Earn dashboard tab when the intent flow webview navigates out of the intent route", () => {
@@ -236,7 +236,7 @@ describe("EarnV2Webview", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("keeps LiveAppBackground hidden while the webview URL is still unknown (intent flow first paint)", () => {
+  it("keeps Wallet40Background hidden while the webview URL is still unknown (intent flow first paint)", () => {
     mockWebviewUrl = "";
 
     render(
@@ -248,7 +248,7 @@ describe("EarnV2Webview", () => {
       },
     );
 
-    expect(screen.queryByTestId("live-app-background")).toBeNull();
+    expect(screen.queryByTestId("wallet40-background")).toBeNull();
   });
 
   it.each(["about:blank", "data:text/html,<html></html>"])(
@@ -273,7 +273,7 @@ describe("EarnV2Webview", () => {
       );
 
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(screen.queryByTestId("live-app-background")).toBeNull();
+      expect(screen.queryByTestId("wallet40-background")).toBeNull();
     },
   );
 
