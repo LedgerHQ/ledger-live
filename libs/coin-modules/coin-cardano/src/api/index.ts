@@ -1,17 +1,15 @@
 import type {
   Balance,
   BalanceOptions,
-  Block,
   BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
   Stake,
   StringMemo,
   TransactionIntent,
@@ -37,23 +35,22 @@ import { validateIntent } from "../logic/validateIntent";
 
 type CardanoContext = Context<CardanoCoinConfig>;
 
-export function createApi(currencyId: string): CoinModuleApi<CardanoCoinConfig, StringMemo> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed:
+//   - `call`, `register`      — the module implements neither.
+//   - `craftRawTransaction`   — the module takes no externally-built transaction.
+//   - `getBlock`, `getBlockInfo` — no per-height block lookup is implemented.
+//   - `getRewards`            — no reward-distribution listing is implemented (staking positions
+//                               are still reported by `getStakes`).
+//   - `getNextSequence`       — Cardano is UTXO-based: no per-account sequence/nonce to advance.
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+export function createApi(currencyId: string) {
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
     lastBlock: (_context: CardanoContext): Promise<BlockInfo> => lastBlock(currency),
-    getBlockInfo: (_context: CardanoContext, _height: number): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getBlock: (_context: CardanoContext, _height: number): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
     // cursor ignored: Cardano returns every pool in one page (see getValidators).
     getValidators: (
       _context: CardanoContext,
@@ -74,28 +71,12 @@ export function createApi(currencyId: string): CoinModuleApi<CardanoCoinConfig, 
       address: string,
       options?: { cursor?: Cursor },
     ): Promise<Page<Stake>> => getStakes(currency, address, options?.cursor),
-    getRewards: (
-      _context: CardanoContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
     craftTransaction: (
       _context: CardanoContext,
       transactionIntent: TransactionIntent<StringMemo>,
       options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> =>
       craftTransaction(currency, transactionIntent, options?.customFees),
-    craftRawTransaction: (
-      _context: CardanoContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
     estimateFees: (
       _context: CardanoContext,
       transactionIntent: TransactionIntent<StringMemo>,
@@ -120,15 +101,11 @@ export function createApi(currencyId: string): CoinModuleApi<CardanoCoinConfig, 
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> =>
       validateIntent(currency, transactionIntent, balances, options?.customFees),
-    // Cardano is UTXO-based: no per-account sequence/nonce to advance.
-    getNextSequence: (_context: CardanoContext, _address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not applicable for Cardano");
-    },
     validateAddress: (_context: CardanoContext, ...args: Parameters<typeof validateAddress>) =>
       validateAddress(...args),
     craftTransactionData: (
       _context: CardanoContext,
       ...args: Parameters<typeof craftTransactionData>
     ) => craftTransactionData(...args),
-  };
+  } satisfies CoinModuleImpl<CardanoCoinConfig, StringMemo>;
 }
