@@ -1,11 +1,13 @@
 import React, { Suspense, lazy } from "react";
 import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
-import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
-import PerpsDepositRoot from "LLD/features/Perps/screens/PerpsDeposit/PerpsDepositDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
 import { PrefillAddAddressFlowRoot } from "LLD/features/Contacts";
 
+const PerpsSignRoot = lazy(() => import("LLD/features/Perps/screens/PerpsSign/PerpsSignDialog"));
+const PerpsDepositRoot = lazy(
+  () => import("LLD/features/Perps/screens/PerpsDeposit/PerpsDepositDialog"),
+);
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(
@@ -27,8 +29,12 @@ const GlobalDialogs = () => (
       <SendFlowRoot />
     </Suspense>
     <PrefillAddAddressFlowRoot />
-    <PerpsSignRoot />
-    <PerpsDepositRoot />
+    <Suspense fallback={null}>
+      <PerpsSignRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PerpsDepositRoot />
+    </Suspense>
     <ActionConfirmationDialog />
     <Suspense fallback={null}>
       <ReleaseNotes />
