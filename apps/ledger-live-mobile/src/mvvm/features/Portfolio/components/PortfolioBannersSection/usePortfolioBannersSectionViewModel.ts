@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import type { LazyOnboardingBannerViewProps } from "@features/flow-lazy-onboarding-banner";
 import { useLazyOnboardingBannerViewModel } from "LLM/features/LazyOnboardingBanner";
-import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
+import { useTopWalletContentCardsPlacement } from "~/dynamicContent/useTopWalletContentCardsPlacement";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayRecoverBanner";
 
@@ -20,6 +20,7 @@ interface PortfolioBannersSectionViewModelResult {
   readonly shouldDisplayRecover: boolean;
   /** LN upsell exclusive over Recover/onboarding; coexist only with Braze TopWallet cards. */
   readonly canCoexistWithBraze: boolean;
+  readonly canShareBrazeCarousel: boolean;
   readonly onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   readonly carouselIndex: number;
 }
@@ -28,7 +29,8 @@ export const usePortfolioBannersSectionViewModel = ({
   showAssets,
   isLNUpsellBannerShown,
 }: PortfolioBannersSectionViewModelParams): PortfolioBannersSectionViewModelResult => {
-  const hasTopWalletDisplayableCards = useTopWalletHasDisplayableContentCards();
+  const { hasDisplayableCards: hasTopWalletDisplayableCards, canHostLeadingSlide } =
+    useTopWalletContentCardsPlacement();
   const shouldShowOnboardingWidget = useOnboardingWidgetVisibility();
   const lazyOnboardingBanner = useLazyOnboardingBannerViewModel();
   const shouldDisplayRecover = useShouldDisplayRecoverBanner();
@@ -42,6 +44,8 @@ export const usePortfolioBannersSectionViewModel = ({
     !shouldShowOnboardingWidget &&
     !shouldDisplayRecover &&
     hasTopWalletDisplayableCards;
+
+  const canShareBrazeCarousel = canCoexistWithBraze && canHostLeadingSlide;
 
   let contentCardsPaddingTop: PortfolioBannersSectionViewModelResult["contentCardsPaddingTop"];
   if (hasTopWalletDisplayableCards) {
@@ -65,6 +69,7 @@ export const usePortfolioBannersSectionViewModel = ({
     hasTopWalletDisplayableCards,
     shouldDisplayRecover,
     canCoexistWithBraze,
+    canShareBrazeCarousel,
     onScroll,
     carouselIndex,
   };
