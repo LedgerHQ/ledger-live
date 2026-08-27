@@ -4,7 +4,10 @@ import { act, renderHook } from "@testing-library/react-native";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
+
+const deviceIntents = createMockContactDeviceIntentsPort();
 
 jest.mock("../../../analytics/useContactsAnalytics", () => ({
   useContactsAnalytics: () => ({
@@ -29,9 +32,12 @@ describe("useContactDetailEditDeleteAdapter", () => {
   it("should open the delete confirmation on press, without any sheet lifecycle callback", () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeWrapper([contact]);
-    const { result } = renderHook(() => useContactDetailEditDeleteAdapter(contact.id, jest.fn()), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(
+      () => useContactDetailEditDeleteAdapter(contact.id, jest.fn(), deviceIntents),
+      {
+        wrapper: Wrapper,
+      },
+    );
 
     act(() => {
       result.current.onOpenActionsMenu();
@@ -49,9 +55,12 @@ describe("useContactDetailEditDeleteAdapter", () => {
   it("should reopen the delete confirmation after cancelling it", () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeWrapper([contact]);
-    const { result } = renderHook(() => useContactDetailEditDeleteAdapter(contact.id, jest.fn()), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(
+      () => useContactDetailEditDeleteAdapter(contact.id, jest.fn(), deviceIntents),
+      {
+        wrapper: Wrapper,
+      },
+    );
 
     act(() => {
       result.current.onOpenActionsMenu();

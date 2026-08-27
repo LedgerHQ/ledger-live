@@ -19,7 +19,6 @@ import {
   createContactsSearchViewModel,
   type ContactAddressDetailDialogProps,
   type ContactsListViewLabels,
-  type ContactsViewProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -46,11 +45,8 @@ import {
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
-import {
-  createMockContactDeviceIntentsPort,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
@@ -58,13 +54,14 @@ import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurr
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import type { ContactsViewProps } from "./ContactsView";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
-export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
+export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "addContactDialog"> &
   Readonly<{
     addAddressFlowState: AddAddressFlowState;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
@@ -88,7 +85,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
@@ -138,40 +135,52 @@ export function useContactsViewModel(): ContactsPageViewModel {
     if (selectedContact === undefined) {
       return;
     }
-    const signedAddress = await deviceIntents.registerExternalAddress({
-      contact: selectedContact,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-    });
+    try {
+      const signedAddress = await deviceIntents.registerExternalAddress({
+        contact: selectedContact,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+      });
 
-    const address = contactAddress({
-      id: `address-${uuid()}`,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-      device: signedAddress.addressDeviceContext,
-    });
+      const address = contactAddress({
+        id: `address-${uuid()}`,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+        device: signedAddress.addressDeviceContext,
+      });
 
-    dispatch(
-      addAddress({
-        contactId: addAddressFlowState.selectedContactId,
-        address,
-        deviceCredentials: signedAddress.deviceCredentials,
-      }),
-    );
+      dispatch(
+        addAddress({
+          contactId: addAddressFlowState.selectedContactId,
+          address,
+          deviceCredentials: signedAddress.deviceCredentials,
+        }),
+      );
 
-    analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
-      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
-      network,
-      asset,
-      inputMethod,
-      isEns: inputMethod === "ens",
-      flow: CONTACTS_FLOW.CONTACTS,
-    });
+      analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+        source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+        network,
+        asset,
+        inputMethod,
+        isEns: inputMethod === "ens",
+        flow: CONTACTS_FLOW.CONTACTS,
+      });
 
-    continueFromReview();
-  }, [addAddressFlowState, analytics, contacts, continueFromReview, deviceIntents, dispatch]);
+      continueFromReview();
+    } catch {
+      closeAddAddress();
+    }
+  }, [
+    addAddressFlowState,
+    analytics,
+    closeAddAddress,
+    contacts,
+    continueFromReview,
+    deviceIntents,
+    dispatch,
+  ]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -329,7 +338,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailActionsDialogs,
     onOpenMe,
     onOpenContact,
-  } = useContactDetailPaneAdapter(onAddAddress);
+  } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
   const preference = useContactsFeatureIntroductionPreference();
   const featureIntroductionState = useContactsFeatureIntroductionState({
     isContactsEntryAvailable: true,
@@ -438,6 +447,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onOpenContact,
     detail,
     ledgerSyncStatus,
+    dieProps,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
       title: t("contacts.featureIntroduction.title"),

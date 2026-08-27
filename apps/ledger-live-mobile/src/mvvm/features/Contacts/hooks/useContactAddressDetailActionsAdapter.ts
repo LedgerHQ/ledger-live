@@ -22,6 +22,7 @@ import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDrawerProps,
 } from "@features/flow-contacts-edit-address";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
@@ -62,12 +63,13 @@ export function useContactAddressDetailActionsAdapter(
   contactId: ContactId | undefined,
   addressId: ContactAddressId | undefined,
   onCloseAddressDetail: () => void,
+  deviceIntents: ContactDeviceIntentsPort,
   asset?: string,
   network?: string,
 ): ContactAddressDetailActionsFlowProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsAddressDetailActionsPorts();
+  const ports = useContactsAddressDetailActionsPorts(deviceIntents);
   const addressValidation = useContactsAddressValidationAdapter();
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: ScreenName.MyWalletContactDetail,

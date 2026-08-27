@@ -11,7 +11,7 @@ import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
 type ContactAddressDetailActionsPortsDeps = Readonly<{
   dispatch: (action: { type: string }) => void;
   getState: () => Parameters<typeof selectContactAddressById>[0];
-  deviceIntents?: ContactDeviceIntentsPort;
+  deviceIntents: ContactDeviceIntentsPort;
 }>;
 
 export function createContactAddressDetailActionsPorts({

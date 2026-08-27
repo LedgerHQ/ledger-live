@@ -33,11 +33,14 @@ import {
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
 import {
-  createMockContactDeviceIntentsPort,
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
 } from "@features/platform-contacts";
+import {
+  useContactsIntentsOrchestrator,
+  type ContactsDeviceIntentExecutorProps,
+} from "@features/platform-contacts/device";
 import {
   resolveContactsCurrencyAnalytics,
   useContactsAnalytics,
@@ -74,6 +77,7 @@ type ContactDetailScreenViewModel =
         ContactsLedgerSyncIntroductionContentProps,
         "title" | "activateLabel" | "onActivate"
       >;
+      dieProps: ContactsDeviceIntentExecutorProps | undefined;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -95,7 +99,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
@@ -336,11 +340,16 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [navigation]);
   const addressDetailAsset = selection?.network?.networkTicker;
   const addressDetailNetwork = selection?.network?.networkName;
-  const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
+  const editDeleteFlow = useContactDetailEditDeleteAdapter(
+    route.params.contactId,
+    onDeleteSuccess,
+    deviceIntents,
+  );
   const addressDetailActions = useContactAddressDetailActionsAdapter(
     route.params.contactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
+    deviceIntents,
     addressDetailAsset,
     addressDetailNetwork,
   );
@@ -471,5 +480,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       onActivate: onActivateLedgerSync,
     },
+    dieProps,
   };
 }

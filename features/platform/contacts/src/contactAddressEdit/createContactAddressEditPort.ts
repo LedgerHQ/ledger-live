@@ -5,22 +5,19 @@ import {
   selectContactById,
   updateAddress as updateAddressAction,
 } from "@domain/entity-contact";
-import {
-  createMockContactDeviceIntentsPort,
-  type ContactDeviceIntentsPort,
-} from "../contactDeviceIntentsPort";
+import type { ContactDeviceIntentsPort } from "../contactDeviceIntentsPort";
 import type { ContactAddressEditPort } from "./ports";
 
 type CreateContactAddressEditPortDependencies = Readonly<{
   dispatch: (action: { type: string }) => void;
   getState: () => Parameters<typeof selectContactAddressById>[0];
-  deviceIntents?: ContactDeviceIntentsPort;
+  deviceIntents: ContactDeviceIntentsPort;
 }>;
 
 export function createContactAddressEditPort({
   dispatch,
   getState,
-  deviceIntents = createMockContactDeviceIntentsPort(),
+  deviceIntents,
 }: CreateContactAddressEditPortDependencies): ContactAddressEditPort {
   return {
     updateAddress: async ({ contactId, addressId, label, address }) => {
@@ -35,10 +32,10 @@ export function createContactAddressEditPort({
       }
 
       const parsedLabel = parseContactAddressLabel(label);
-      const device = await deviceIntents.editExternalAddressScope({
+      const device = await deviceIntents.editExternalAddress({
         contact: currentContact,
         address: currentAddress,
-        label: parsedLabel,
+        updatedLabel: parsedLabel,
         updatedAddress: address,
       });
 
