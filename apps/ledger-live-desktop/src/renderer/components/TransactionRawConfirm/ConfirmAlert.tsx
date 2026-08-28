@@ -10,7 +10,7 @@ const ConfirmAlert = (_props: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Alert type="primary" mb={26}>
+    <Alert type="primary" mb={26} data-testid="device-signature-notice">
       <Trans
         i18nKey={"TransactionConfirm.doubleCheck"}
         values={{
