@@ -24,6 +24,7 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 import type { Subscription } from "rxjs";
+import { waitFor } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -64,18 +65,19 @@ describe("segment identify overlay (LIVE-35849)", () => {
     await startAnalytics(createStoreWithAnalytics(true));
 
     expect(mockIdentify).toHaveBeenCalled();
-    expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]);
+    await waitFor(() => expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]));
   });
 
   it("should log [Identify] after updateIdentify when tracking is on and the client is ready", async () => {
     await startAnalytics(createStoreWithAnalytics(true));
+    await waitFor(() => expect(logged.length).toBeGreaterThan(0));
     mockIdentify.mockClear();
     logged.length = 0;
 
     await updateIdentify();
 
     expect(mockIdentify).toHaveBeenCalledTimes(1);
-    expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]);
+    await waitFor(() => expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]));
   });
 
   it("should not log [Identify] when tracking is off and identify does not run", async () => {
@@ -97,6 +99,27 @@ describe("segment identify overlay (LIVE-35849)", () => {
     await updateIdentify({ force: true });
 
     expect(mockIdentify).toHaveBeenCalled();
-    expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]);
+    await waitFor(() => expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]));
+  });
+
+  it("should log [Identify] with failed when the Segment identify promise rejects", async () => {
+    await startAnalytics(createStoreWithAnalytics(true));
+    await waitFor(() => expect(logged.length).toBeGreaterThan(0));
+    mockIdentify.mockClear();
+    logged.length = 0;
+    mockIdentify.mockRejectedValueOnce(new Error("sdk down"));
+
+    await updateIdentify();
+
+    expect(mockIdentify).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(logged).toEqual([
+        expect.objectContaining({
+          eventName: "[Identify]",
+          eventProperties: { userIdPresent: expect.any(Boolean), failed: true },
+          eventPropertiesWithoutExtra: { userIdPresent: expect.any(Boolean), failed: true },
+        }),
+      ]),
+    );
   });
 });
