@@ -47,6 +47,14 @@ describe("AccountBalanceSummaryFooter", () => {
     expect(screen.getByText(mockValidators[0].address)).toBeInTheDocument();
   });
 
+  it("falls back to a dash when the delegate metadata is missing", () => {
+    const account = createDelegatingMinaAccount(null);
+
+    render(<AccountBalanceSummaryFooter account={account} />);
+
+    expect(screen.getAllByText("-")).toHaveLength(2);
+  });
+
   it("renders nothing when account type is not Account", () => {
     const account = createDelegatingMinaAccount();
     (account as unknown as { type: string }).type = "TokenAccount";

@@ -8,8 +8,15 @@ import {
   mockValidators,
 } from "../../__tests__/testUtils";
 import { track } from "~/renderer/analytics/segment";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("~/renderer/analytics/segment");
+
+jest.mock("~/renderer/drawers/Provider", () => ({
+  __esModule: true,
+  ...jest.requireActual("~/renderer/drawers/Provider"),
+  setDrawer: jest.fn(),
+}));
 
 jest.mock("~/renderer/analytics/TrackPage", () => {
   return function MockTrackPage() {
@@ -140,6 +147,35 @@ describe("StepConfirmationFooter", () => {
     expect(screen.getByTestId("modal-close-button")).toBeInTheDocument();
     expect(screen.getByText("Close")).toBeInTheDocument();
     expect(screen.getByText("View details")).toBeInTheDocument();
+  });
+
+  it("closes the modal and opens the operation drawer from the view-details button", async () => {
+    const operation = createMockOperation();
+    const props = createMockStepProps({ optimisticOperation: operation });
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByText("View details"));
+
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+    expect(setDrawer).toHaveBeenCalledWith(expect.anything(), {
+      operationId: operation.id,
+      accountId: props.account?.id,
+    });
+  });
+
+  it("targets the first sub-operation when the broadcasted operation has some", async () => {
+    const subOperation = createMockOperation({ id: "mina-sub-op-1" });
+    const props = createMockStepProps({
+      optimisticOperation: createMockOperation({ subOperations: [subOperation] }),
+    });
+    const { user } = render(<StepConfirmationFooter {...props} />);
+
+    await user.click(screen.getByText("View details"));
+
+    expect(setDrawer).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ operationId: subOperation.id }),
+    );
   });
 
   it("renders retry button when there is an error", () => {
