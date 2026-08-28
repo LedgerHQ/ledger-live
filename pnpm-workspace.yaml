@@ -222,7 +222,7 @@ catalog:
   oxlint: 1.79.0
   oxfmt: 0.64.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-hypercore": 2.0.0
+  "@ledgerhq/coin-hypercore": 2.0.1
   "@ledgerhq/coin-module-framework": 8.2.0
   "@ledgerhq/coin-stellar": 9.3.0
   "@ledgerhq/coin-tezos": 10.1.1
