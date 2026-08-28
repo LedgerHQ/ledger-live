@@ -38,14 +38,10 @@ export function EditExternalAddressComponentLWD({
     />
   );
 
-  // The executor mounts this component before the job emits its first state.
   if (jobState === undefined) return pending;
 
   switch (jobState.type) {
     case "pending":
-    // `partial-result` sits between two approved steps, and `completed` is
-    // terminal: the orchestrator resolves its promise and drops the executor on
-    // the next tick, so hold the spinner until it unmounts.
     case "partial-result":
     case "completed":
       return pending;
@@ -59,9 +55,6 @@ export function EditExternalAddressComponentLWD({
         />
       );
 
-    // The device serves identifier and scope edits as separate commands and the
-    // kit only ships the identifier one so far, so a label change is refused
-    // before any device interaction rather than half-applied — DSDK-1380.
     case "scope-edit-unsupported":
       return (
         <InfoState
@@ -74,10 +67,6 @@ export function EditExternalAddressComponentLWD({
         />
       );
 
-    // 0x6A80 buckets user rejection together with malformed TLV, so this reads
-    // as a rejection: it is the only outcome a user can actually cause.
-    // The job keeps itself open here, so the retry replays the device action
-    // rather than restarting the whole Contacts flow.
     case "device-rejected": {
       const retry = jobState.retry;
       return (
@@ -100,10 +89,6 @@ export function EditExternalAddressComponentLWD({
       );
     }
 
-    // An edit always replays the entry's existing proofs, so a proof mismatch
-    // here means the address belongs to another device.
-    // Its "Connect a different device" CTA needs a recovery path the executor
-    // does not expose yet — LIVE-36562.
     case "existing-group-verification-failed":
       return (
         <InfoState
@@ -133,8 +118,6 @@ export function EditExternalAddressComponentLWD({
         />
       );
 
-    // DIE Phase 2 gates on the version floor, so this only lands if the kit's
-    // own guard disagrees with what the executor accepted.
     case "app-version-too-low":
       return (
         <InfoState
