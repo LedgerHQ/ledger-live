@@ -9,7 +9,6 @@ import {
   type CardSessionRenewalConfig,
   type StoredCardSession,
 } from "../types";
-import { describeRenewalFailure } from "./renewalFailure";
 import {
   forgetCardAuthorizationGrant,
   forgetReceivedCardSessions,
@@ -197,13 +196,10 @@ export function createCardSession(store: CardSessionStore) {
         .dispatch(cardManagementApi.endpoints.refreshSession.initiate(undefined, { track: false }))
         .unwrap();
       handle = receipt.sessionHandle;
-    } catch (error) {
-      // Every answer but a new session ends the session. The status is traced, not read: nothing
-      // classifies a renewal failure any more. See "Renewal" in the README.
-      traceCard(
-        "renewal",
-        `the grant answered ${describeRenewalFailure(error)} → the session ends`,
-      );
+    } catch {
+      // Every answer but a new session ends the session, so nothing here reads the error. The
+      // `[card api]` line above this one in the trace carries the status. See the README.
+      traceCard("renewal", "the grant failed → the session ends");
       return endIfCurrent(capturedGeneration);
     }
 

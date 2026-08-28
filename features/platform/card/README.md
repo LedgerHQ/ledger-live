@@ -125,8 +125,8 @@ session and sends the user to the login screen.
 | a new login or a logout got in first | kept — it belongs to somebody else |
 | the app never installed the renewal | kept — no request was made |
 
-Nothing reads a status, and nothing reads a body. `describeRenewalFailure` names the status for the
-development trace, and that is the only place a renewal answer is looked at.
+Nothing reads a status, and nothing reads a body. The renewal never inspects the error it caught: it
+is one `catch` with no argument.
 
 **This is a deliberate trade.** The alternative reads the OAuth2 error code (RFC 6749) and keeps the
 session for every answer that does not name a dead grant: a 5xx, a proxy error page, a lost
@@ -161,11 +161,11 @@ a development build traces two lines that a release build never prints (see `tra
 
 ```
 [card api] POST https://…/v1/auth/oauth2/token → 500 {"message":"Internal server error"}
-[card renewal] the grant answered 500 → the session ends
+[card renewal] the grant failed → the session ends
 ```
 
-The first is every Card answer, with each credential field replaced. The second is the outcome. They
-are the only record of why a session ended.
+The first is every Card answer, with each credential field replaced, and it carries the status. The
+second is the outcome. They are the only record of why a session ended.
 
 ## Credentials never travel through redux
 
