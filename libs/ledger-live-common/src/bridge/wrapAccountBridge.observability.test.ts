@@ -10,11 +10,14 @@ jest.mock("../coin-modules/registry", () => ({
 }));
 
 import { wrapAccountBridge } from "./impl";
+import { withLiveAppContext } from "../wallet-api/blindSigningContext";
+import type { AppManifest } from "../wallet-api/types";
 import {
   setTransactionObserver,
   resetTransactionObservers,
   ErrorCategory,
   TransactionStage,
+  toSegmentTrackEvent,
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
@@ -167,6 +170,72 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     });
     // Signing never completed, so there is no payload to report.
     expect(events[0]).not.toHaveProperty("txPayload");
+  });
+
+  describe("sign-stage attribution from the live-app context", () => {
+    // `withLiveAppContext` holds the manifest for the whole signing call, so the seam can name
+    // the origin at a stage that has no `broadcastConfig`.
+    const manifest = (id: string) => ({ id }) as AppManifest;
+
+    const signFailure = async (): Promise<void> => {
+      const error = Object.assign(new Error(""), { name: "UserRefusedOnDevice" });
+      const bridge = makeBridge({
+        signOperation: jest.fn().mockReturnValue(throwError(() => error)),
+      });
+      const wrapped = await wrapAccountBridge(bridge, "cardano");
+      await expect(
+        lastValueFrom(
+          wrapped.signOperation({
+            account,
+            transaction: { family: "cardano", mode: "delegate" } as never,
+            deviceId: "device",
+          }),
+        ),
+      ).rejects.toBe(error);
+    };
+
+    test("reports the manifest that started the signature", async () => {
+      await withLiveAppContext(manifest("lido"), signFailure);
+
+      expect(events[0]).toMatchObject({ stage: TransactionStage.Sign, manifestId: "lido" });
+    });
+
+    test("reports no manifest for a native in-app signature", async () => {
+      await signFailure();
+
+      expect(events[0]).toMatchObject({ stage: TransactionStage.Sign });
+      expect(events[0].manifestId).toBeUndefined();
+    });
+
+    // The reason this PR exists: the Earn live-app skip keys on the manifest, so without one it
+    // could never fire at the sign stage and every device rejection was counted twice.
+    test("an Earn live-app sign failure maps to no Segment event", async () => {
+      await withLiveAppContext(manifest("earn"), signFailure);
+
+      expect(events[0].manifestId).toBe("earn");
+      expect(toSegmentTrackEvent(events[0])).toBeNull();
+    });
+
+    test("the same failure outside the Earn app still maps to an event", async () => {
+      await withLiveAppContext(manifest("lido"), signFailure);
+
+      expect(toSegmentTrackEvent(events[0])).toMatchObject({
+        event: "earn_transaction_failed",
+        properties: expect.objectContaining({ manifest_id: "lido" }),
+      });
+    });
+
+    // The context is a singleton restored around an await, not an AsyncLocalStorage. Pin the
+    // restore, because attribution silently follows whatever it holds. See LIVE-36571.
+    test("a nested context restores the outer manifest", async () => {
+      await withLiveAppContext(manifest("outer"), async () => {
+        await withLiveAppContext(manifest("inner"), signFailure);
+        await signFailure();
+      });
+      await signFailure();
+
+      expect(events.map(e => e.manifestId)).toEqual(["inner", "outer", undefined]);
+    });
   });
 
   // Solana is the case that only works because of correlation: its stake actions become a

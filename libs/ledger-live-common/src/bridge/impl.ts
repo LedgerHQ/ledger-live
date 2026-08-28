@@ -27,6 +27,7 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { isZcashShieldedEnabled } from "./zcashRouting";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import {
@@ -220,6 +221,25 @@ function attributeBroadcastSource(source?: TransactionSource): {
   }
 }
 
+/**
+ * The live-app or dApp that started this signature, when there is one.
+ *
+ * `broadcastConfig` does not exist at the sign stage, so the route is otherwise unknown until
+ * broadcast — which leaves the Earn live-app skip in `toSegmentTrackEvent` unable to fire, and
+ * double-counts its sign-stage failures. `withLiveAppContext` already scopes the manifest id
+ * around every wallet-api and dApp signing call, so reading it here attributes the stage
+ * without changing the bridge signature. That matters: mobile's legacy wallet-api path never
+ * forwards the manifest to the device action, so an argument would not cover every route.
+ *
+ * The store is a singleton set and restored around an `await`, not an `AsyncLocalStorage`, so
+ * two overlapping signatures would misattribute the second. Device signing serialises — one
+ * device, one prompt — so that holds today. LIVE-36571 replaces this by passing the source
+ * explicitly. Note the singleton now has two consumers, this and the blind-signing reporter.
+ */
+function currentLiveAppManifestId(): string | undefined {
+  return liveBlindSigningReporter.getContext().liveAppContext ?? undefined;
+}
+
 // Exported for unit testing the transaction-observability seam.
 export async function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
@@ -246,8 +266,9 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
      * the funnel cares about, and abandoning the prompt is an unsubscribe rather than an
      * error, so the device-action layer reports that instead.
      *
-     * The rich transaction is available (hence the exact action and the validators) but
-     * `broadcastConfig` is not, so the originating route is unknown until broadcast.
+     * The rich transaction is available (hence the exact action and the validators).
+     * `broadcastConfig` is not, so the route *type* stays unknown until broadcast — but the
+     * originating manifest comes from the live-app context, see below.
      */
     signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
       bridge.signOperation(arg0).pipe(
@@ -268,7 +289,9 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
               buildSignCommonEvent({
                 account: arg0.account,
                 mainAccount: arg0.account,
+                // The manifest names the origin; the route type still needs `broadcastConfig`.
                 pathway: TransactionPathway.Unknown,
+                manifestId: currentLiveAppManifestId(),
                 transaction: arg0.transaction,
               }),
               { stage: TransactionStage.Sign, error },
