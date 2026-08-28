@@ -330,6 +330,22 @@ describe("cardLoginMachine failures", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
   });
 
+  it("keeps the session when a 401 says only that the renewal could not run", async () => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () =>
+        // What the base query answers when the token endpoint gave a 5xx or never replied.
+        Promise.reject({ status: 401, data: { message: "card_renewal_unavailable" } }),
+      ),
+    });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "error");
+    expect(actor.getSnapshot().context.errorKind).toBe("fetch_user_failed");
+    expect(ports.clearSession).not.toHaveBeenCalled();
+  });
+
   it("forgets the cached user when a 401 ends the session", async () => {
     const ports = stubPorts({
       hasSession: jest.fn(async () => true),

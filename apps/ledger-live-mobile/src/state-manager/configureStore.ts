@@ -33,8 +33,10 @@ import {
 import {
   configureCardSessionRenewal,
   getCardRefreshToken,
-  getCardSessionToken,
+  readCardSession,
+  receiveCardSession,
   refreshCardSession,
+  takeCardAuthorizationGrant,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
@@ -48,7 +50,9 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  // Card actions carry OAuth2 credentials, and DevTools serializes every action it is given.
+  // Sanitizes what the browser DevTools extension is given. It is not the Card guarantee: Rozenite
+  // below relays the same actions and takes no sanitizer, so no Card action may carry a credential
+  // in the first place. See the enhancer at the bottom of this store.
   devTools: Config.DEBUG_RNDEBUGGER ? { actionSanitizer: redactCardApiAction } : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
@@ -71,8 +75,10 @@ export const store = configureStore({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-              getCardSessionToken,
+              readCardSession,
               getCardRefreshToken,
+              takeCardAuthorizationGrant,
+              receiveCardSession,
               refreshCardSession,
             }),
             ...pushDevicesApiExtra({
@@ -131,6 +137,11 @@ export const store = configureStore({
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
+    // `rozeniteDevToolsEnhancer` relays every action over a socket to the DevTools panel, and its
+    // options carry `maxAge` and nothing else: it cannot be given an `actionSanitizer`, and an
+    // enhancer cannot redact what an inner enhancer receives. So Card credentials are kept out of
+    // the actions themselves — see `@features/platform-card`'s session hand-off — rather than
+    // stripped on the way to a panel.
     // Type assertion needed due to Redux version compatibility types between v4 and v5
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
@@ -145,8 +156,15 @@ export type AppDispatch = typeof store.dispatch;
 configureCardSessionRenewal({
   dispatch: store.dispatch,
   onCardSessionEnded: () => {
-    store.dispatch(cardApi.util.resetApiState());
+    // Published first, and synchronously: no request is waiting on it, and every screen outside
+    // the login machine reads this flag to decide whether it belongs on screen.
     store.dispatch(setSignedIn(false));
+    // Deferred, because `resetApiState` aborts every running query — including the request whose
+    // 401 started this renewal. An aborted request resolves from the uninitialized substate, so
+    // its `unwrap()` would answer `undefined` instead of throwing the 401 the base query is about
+    // to return, and the login machine would read that as a signed-in user. A macrotask is late
+    // enough for the answer to reach its caller first.
+    setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
   },
 });
 

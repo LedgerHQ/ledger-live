@@ -1,12 +1,18 @@
 import { cardManagementApi } from "@domain/api-card-management";
-import type { CardSessionRefreshResult } from "@shared/api-services";
-import type {
-  CardSessionRenewalConfig,
-  CardSessionRenewalError,
-  StoredCardSession,
+import type { CardSessionRefreshResult, CardSessionSnapshot } from "@shared/api-services";
+import {
+  CardSessionNotStoredError,
+  type CardSessionRenewalConfig,
+  type CardSessionRenewalError,
+  type StoredCardSession,
 } from "../types";
-import { isRenewedSession, isTerminalRenewalFailure, sanitizeRenewalError } from "./renewalFailure";
-import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
+import { isTerminalRenewalFailure, sanitizeRenewalError } from "./renewalFailure";
+import {
+  forgetCardAuthorizationGrant,
+  forgetReceivedCardSessions,
+  takeCardSession,
+} from "../sessionHandoff";
+import { CARD_LEGACY_SESSION_KEYS, CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
 
 /**
  * Builds the session accessors over one store. The platform picks the store; everything else about a
@@ -39,16 +45,28 @@ export function createCardSession(store: CardSessionStore) {
   let isCleared = false;
 
   /**
-   * Bumped on every `set` and `clear`, synchronously, at call time.
+   * Bumped on every `set` and `clear`, synchronously, at call time. This is the session's identity.
    *
    * `takeTurn` orders operations by the moment they were dispatched, not by what their callers meant.
-   * So a renewal that starts before a logout, and whose write lands after the clear, would bring the
-   * session back to life. The counter is the intent the queue cannot express: a renewal reads it
+   * So a renewal that starts before a logout, and whose write lands after the clear, would restore a
+   * session the user ended. The counter is the intent the queue cannot express: a renewal reads it
    * before it starts, and its write compares it again before it stores anything.
+   *
+   * The base query reads it too, as the `epoch` of {@link CardSessionSnapshot}. It sends the epoch
+   * back with its renewal request, so a request that outlived its session neither renews the new one
+   * nor clears it.
    */
   let generation = 0;
 
-  /** The one renewal every concurrent caller shares. */
+  /**
+   * The generation whose session terminal cleanup has already ended.
+   *
+   * A request still holding that generation asked about a session this package knows is finished, so
+   * it is told so, rather than being told its session was merely replaced.
+   */
+  let endedGeneration: number | null = null;
+
+  /** The one renewal every concurrent caller shares. Always belongs to the current generation. */
   let inFlight: Promise<CardSessionRefreshResult> | null = null;
 
   /** The terminal cleanup in progress, so concurrent terminal outcomes run it once. */
@@ -102,6 +120,11 @@ export function createCardSession(store: CardSessionStore) {
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
+
+    // The one path that can take a key an earlier build left behind. See `CARD_LEGACY_SESSION_KEYS`.
+    for (const key of CARD_LEGACY_SESSION_KEYS) {
+      await store.remove(key).catch(() => undefined);
+    }
   }
 
   async function readAccessToken(): Promise<string | null> {
@@ -138,10 +161,6 @@ export function createCardSession(store: CardSessionStore) {
   }
 
   function renewSession(): Promise<CardSessionRefreshResult> {
-    if (inFlight) {
-      return inFlight;
-    }
-
     const capturedGeneration = generation;
     // Deferred by one microtask, so `inFlight` is set before any of the attempt runs. Otherwise an
     // attempt that ends the session synchronously would clear a field this line then re-assigns.
@@ -165,66 +184,69 @@ export function createCardSession(store: CardSessionStore) {
       return unavailable({ message: "card session renewal is not configured" });
     }
 
-    let refreshToken: string | null;
+    let handle: string;
     try {
-      refreshToken = await store.read(CARD_SESSION_KEYS.refreshToken);
-    } catch (error) {
-      // A read that failed says nothing about the session.
-      return unavailable(sanitizeRenewalError(error));
-    }
-
-    if (!refreshToken) {
-      return endAndReportSessionEnded();
-    }
-
-    let session: StoredCardSession;
-    try {
-      // The endpoint takes no argument: it reads the refresh token off the api's `extra`, so no
-      // token becomes a mutation argument. `track: false` keeps the answer out of the store.
-      session = await renewal
+      // The grant takes no argument and answers with no token: it reads the refresh token off the
+      // api's `extra` — the only read of that key in a renewal — and hands the new session over
+      // through `receiveCardSession`. `track: false` keeps the receipt out of the store.
+      const receipt = await renewal
         .dispatch(cardManagementApi.endpoints.refreshSession.initiate(undefined, { track: false }))
         .unwrap();
+      handle = receipt.sessionHandle;
     } catch (error) {
       if (isTerminalRenewalFailure(error)) {
-        return endAndReportSessionEnded();
+        return endIfCurrent(capturedGeneration);
       }
       return unavailable(sanitizeRenewalError(error));
     }
 
-    // Nonterminal: the session may still be good, and the request that triggered this already has
-    // its 401 answer. A token that really is dead answers 401 again on the next request.
-    if (!isRenewedSession(session)) {
+    const session = takeCardSession(handle);
+    if (!session) {
+      // Nonterminal, and it should not happen: the grant succeeded, so only the hand-off was lost.
+      // The session may still be good, and the request that triggered this already has its answer.
       return unavailable({ message: "the renewal answered with no session" });
     }
 
     let outcome: "written" | "stale";
     try {
       outcome = await takeTurn(() => writeSession(session, capturedGeneration));
-    } catch (error) {
-      // A renewed session that cannot be stored is worse than none: the old token is already spent.
-      void error;
-      return endAndReportSessionEnded();
+    } catch {
+      // A renewed session that cannot be stored leaves nothing to use: Baanx rotates the refresh
+      // token on every grant, so the provider no longer accepts the previous one.
+      return endIfCurrent(capturedGeneration);
     }
 
-    if (outcome === "written") {
-      return { kind: "refreshed", accessToken: session.accessToken };
-    }
-
-    // A clear or a login overtook this renewal. Queue behind it, then report what it left behind.
-    const current = await takeTurn(readSession);
-    return current
-      ? { kind: "refreshed", accessToken: current.accessToken }
-      : { kind: "session-ended" };
+    // "stale" means a clear or a login replaced the session while the grant was in flight. The new
+    // token belongs to that session, not to the request that asked for this renewal.
+    return outcome === "written"
+      ? { kind: "refreshed", accessToken: session.accessToken }
+      : { kind: "session-replaced" };
   }
 
   function unavailable(error: CardSessionRenewalError): CardSessionRefreshResult {
     return { kind: "unavailable", error };
   }
 
-  async function endAndReportSessionEnded(): Promise<CardSessionRefreshResult> {
-    // `session-ended` reports cleanup that has already finished, not cleanup about to start.
-    await endCardSession();
-    return { kind: "session-ended" };
+  /**
+   * Ends the session, but only the one this renewal started from.
+   *
+   * A terminal answer for an old session says nothing about the one a new login has just stored.
+   * Without the test, a 400 `invalid_grant` for the user who just left would wipe the keychain of
+   * the user who just arrived.
+   *
+   * The test and the `++generation` inside `clear()` are both synchronous, so nothing can replace
+   * the session between them.
+   */
+  function endIfCurrent(capturedGeneration: number): Promise<CardSessionRefreshResult> {
+    if (capturedGeneration === generation) {
+      return endCardSession().then(() => ({ kind: "session-ended" }) as const);
+    }
+
+    return Promise.resolve(
+      capturedGeneration === endedGeneration
+        ? ({ kind: "session-ended" } as const)
+        : ({ kind: "session-replaced" } as const),
+    );
   }
 
   /** Idempotent, coalesced, and it attempts every step even when one of them fails. */
@@ -235,6 +257,10 @@ export function createCardSession(store: CardSessionStore) {
     if (ending) {
       return ending;
     }
+
+    // Recorded before `clear()` bumps it, so a request still holding this generation is told the
+    // session ended rather than that it was replaced.
+    endedGeneration = generation;
 
     const run = (async () => {
       await clear();
@@ -259,15 +285,23 @@ export function createCardSession(store: CardSessionStore) {
 
   /* ---------------------------------------------------------------- surface */
 
-  const set = (session: StoredCardSession): Promise<void> => {
+  const set = async (session: StoredCardSession): Promise<void> => {
     const captured = ++generation;
     invalidateRenewal();
-    return takeTurn(() => writeSession(session, captured)).then(() => undefined);
+
+    const outcome = await takeTurn(() => writeSession(session, captured));
+    if (outcome === "stale") {
+      // Nothing was stored. Reported as success, this would send the login machine on to its next
+      // request with no Bearer to send, and the user into a loop instead of onto the login screen.
+      throw new CardSessionNotStoredError();
+    }
   };
 
   const clear = (): Promise<void> => {
     ++generation;
     invalidateRenewal();
+    forgetCardAuthorizationGrant();
+    forgetReceivedCardSessions();
     return takeTurn(removeSession);
   };
 
@@ -278,6 +312,9 @@ export function createCardSession(store: CardSessionStore) {
    */
   const get = (): Promise<StoredCardSession | null> => takeTurn(readSession);
 
+  /** True when a session is on disk. Rejects when the store could not be read. */
+  const getCardSessionToken = (): Promise<string | null> => readAccessToken();
+
   /**
    * The reader `cardApiExtra` gets. It reads, and nothing else: a session is renewed only after the
    * provider has refused one.
@@ -285,10 +322,16 @@ export function createCardSession(store: CardSessionStore) {
    * It never waits for a turn: the access token is one key, and one key cannot disagree with itself.
    * During a `set` it answers the previous token, which stays valid until the new one lands. The
    * request path must not queue behind a login.
+   *
+   * The epoch is read first, so it can only name the session the token came from or an older one.
+   * Older is the safe side: the base query then replays nothing and clears nothing.
    */
-  const getCardSessionToken = (): Promise<string | null> => readAccessToken();
+  const readCardSession = async (): Promise<CardSessionSnapshot> => {
+    const epoch = generation;
+    return { token: await readAccessToken(), epoch };
+  };
 
-  /** The reader the renewal endpoint gets. It reads the other key, and never renews. */
+  /** The reader the renewal grant gets. It reads the other key, and never renews. */
   async function getCardRefreshToken(): Promise<string | null> {
     return isCleared ? null : store.read(CARD_SESSION_KEYS.refreshToken);
   }
@@ -296,33 +339,47 @@ export function createCardSession(store: CardSessionStore) {
   /**
    * The one entry point, called by the base query after the provider answered 401.
    *
-   * Concurrent callers share one attempt. A request can only reach this once, because the base query
-   * replays at most once and does not renew again on the replay's answer.
+   * `epoch` is the generation the request was sent with. A request that outlived its session gets
+   * `session-replaced`, and the base query then reports the original 401 without ending anything.
+   *
+   * Concurrent callers of the same session share one attempt. A request can only reach this once,
+   * because the base query replays at most once and does not renew again on the replay's answer.
    */
-  async function refreshCardSession(): Promise<CardSessionRefreshResult> {
+  async function refreshCardSession(epoch: number): Promise<CardSessionRefreshResult> {
+    if (epoch !== generation) {
+      return epoch === endedGeneration ? { kind: "session-ended" } : { kind: "session-replaced" };
+    }
+
     if (isCleared) {
       return { kind: "session-ended" };
     }
-    if (inFlight) {
-      return inFlight;
-    }
-    return renewSession();
+
+    return inFlight ?? renewSession();
   }
 
   /**
-   * Installs the renewal. Called once, after the store exists.
+   * Installs the renewal. Called once per store, after the store exists, and answers with the call
+   * that uninstalls it again. A second install replaces the first: one process serves one session,
+   * so the newest store is the one a renewal must reach.
    *
    * The mutation it dispatches MUST bypass Bearer injection and the 401 renewal
    * (`extraOptions.authenticated: false`). A renewal that went through the authenticated path would
    * answer 401, renew again, and loop.
    */
-  const configureCardSessionRenewal = (config: CardSessionRenewalConfig): void => {
+  const configureCardSessionRenewal = (config: CardSessionRenewalConfig): (() => void) => {
     renewal = config;
+
+    return () => {
+      if (renewal === config) {
+        renewal = null;
+      }
+    };
   };
 
   return {
     cardSession: { set, get, clear },
     getCardSessionToken,
+    readCardSession,
     getCardRefreshToken,
     refreshCardSession,
     configureCardSessionRenewal,

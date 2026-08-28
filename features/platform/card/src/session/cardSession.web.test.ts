@@ -1,4 +1,9 @@
-import { cardSession, getCardSessionToken, getCardRefreshToken } from "./cardSession.web";
+import {
+  cardSession,
+  getCardSessionToken,
+  getCardRefreshToken,
+  readCardSession,
+} from "./cardSession.web";
 
 const session = { accessToken: "at_token", refreshToken: "rt_token" };
 
@@ -28,5 +33,14 @@ describe("cardSession.web", () => {
 
     await expect(getCardSessionToken()).resolves.toBeNull();
     await expect(getCardRefreshToken()).resolves.toBeNull();
+  });
+
+  it("serves the base query the token and the epoch of the session it came from", async () => {
+    await cardSession.set(session);
+
+    await expect(readCardSession()).resolves.toEqual({
+      token: "at_token",
+      epoch: expect.any(Number),
+    });
   });
 });

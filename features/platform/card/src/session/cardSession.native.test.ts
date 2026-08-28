@@ -1,4 +1,9 @@
-import { cardSession, getCardSessionToken, getCardRefreshToken } from "./cardSession.native";
+import {
+  cardSession,
+  getCardSessionToken,
+  getCardRefreshToken,
+  readCardSession,
+} from "./cardSession.native";
 
 /**
  * A keychain of one entry per `service`, which is how the native store uses the library. It keeps
@@ -54,5 +59,14 @@ describe("cardSession.native", () => {
 
     await expect(getCardSessionToken()).resolves.toBeNull();
     await expect(getCardRefreshToken()).resolves.toBeNull();
+  });
+
+  it("serves the base query the token and the epoch of the session it came from", async () => {
+    await cardSession.set(session);
+
+    await expect(readCardSession()).resolves.toEqual({
+      token: "at_token",
+      epoch: expect.any(Number),
+    });
   });
 });

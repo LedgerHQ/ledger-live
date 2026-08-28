@@ -1,8 +1,5 @@
-import type {
-  PayCardAuthorizationCodeRequest,
-  PayCardSession,
-  PayCardUser,
-} from "@domain/api-card-management";
+import type { PayCardAuthorizationCodeRequest, PayCardUser } from "@domain/api-card-management";
+import type { StoredCardSession } from "@features/platform-card";
 import type { PayCardLoginErrorKind } from "./errors";
 
 /* --- The login attempt, and what the provider sends back ------------------------------------- */
@@ -84,11 +81,14 @@ export type CardLoginPorts = Readonly<{
   clearAttempt: () => Promise<void>;
   /** True when a Card session is already on disk. */
   hasSession: () => Promise<boolean>;
-  persistSession: (session: PayCardSession) => Promise<void>;
+  persistSession: (session: StoredCardSession) => Promise<void>;
   clearSession: () => Promise<void>;
   /** Removes the cached Card user, so no other screen shows whoever just left. */
   forgetUser: () => void;
-  exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
+  /** Answers with the session the grant produced. No token travels through redux to get here. */
+  exchangeAuthorizationCode: (
+    request: PayCardAuthorizationCodeRequest,
+  ) => Promise<StoredCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;
   /**
@@ -134,7 +134,7 @@ export type CardLoginContext = {
   oauthConfig: CardLoginOauthConfig;
   callback: PayCardAuthCallback | null;
   loginUrl: string | null;
-  session: PayCardSession | null;
+  session: StoredCardSession | null;
   errorKind: PayCardLoginErrorKind | null;
   /** Set when the session on disk turned out to be dead, so the wipe takes it as well. */
   clearSession: boolean;

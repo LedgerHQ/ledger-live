@@ -1,4 +1,7 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import type { CardSessionRenewalError } from "@shared/api-services";
+
+export type { CardSessionRenewalError };
 
 /**
  * One session, as the store holds it.
@@ -9,12 +12,6 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 export type StoredCardSession = Readonly<{
   accessToken: string;
   refreshToken: string;
-}>;
-
-/** A renewal failure, reduced to what a caller may see. Never a response body. */
-export type CardSessionRenewalError = Readonly<{
-  status?: number | string;
-  message: string;
 }>;
 
 export type CardRenewalDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
@@ -30,3 +27,11 @@ export type CardSessionRenewalConfig = Readonly<{
   dispatch: CardRenewalDispatch;
   onCardSessionEnded: () => void;
 }>;
+
+/** Thrown by `cardSession.set` when a logout or a newer login replaced the session first. */
+export class CardSessionNotStoredError extends Error {
+  constructor() {
+    super("The Card session was replaced before it could be stored");
+    this.name = "CardSessionNotStoredError";
+  }
+}

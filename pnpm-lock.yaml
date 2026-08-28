@@ -6719,6 +6719,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -7660,9 +7663,6 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../../domain/api/card-management
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -7676,6 +7676,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

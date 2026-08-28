@@ -8,15 +8,14 @@ description: Read this before adding or editing an endpoint in `domain/api/card-
 Every endpoint is a declaration. Four keys, always in this order:
 
 ```typescript
-refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
-  query: ({ refreshToken }) => ({
-    url: "/v1/auth/oauth/token",
-    method: "POST",
-    body: { grant_type: "refresh_token", refresh_token: refreshToken },
+someEndpoint: build.query<Canonical, Request>({
+  query: request => ({
+    url: "/v1/some/path",
+    method: "GET",
   }),
-  rawResponseSchema: PayCardSessionResponseSchema, // the wire shape
-  transformResponse: transformPayCardSessionResponse, // wire -> canonical
-  responseSchema: PayCardSessionSchema, // what callers receive
+  rawResponseSchema: SomeWireSchema, // the wire shape
+  transformResponse: transformSome, // wire -> canonical
+  responseSchema: SomeSchema, // what callers receive
 });
 ```
 
@@ -35,17 +34,42 @@ answer. If a caller needs one of its own request values afterwards, it already h
 
 ## Never use `queryFn`
 
-`queryFn` is the escape hatch for endpoints that are not one HTTP call. It is not one here, and it
+`queryFn` is the escape hatch for endpoints that are not one HTTP call. Almost none here is, and it
 costs more than it looks:
 
 - **RTK Query skips `transformResponse` for a `queryFn` endpoint.** `getTransformCallbackForEndpoint`
   in `buildThunks` is guarded by `endpointDefinition.query &&`. The mapper is silently ignored, so the
-  mapping moves inside the function, by hand.
+  mapping moves inside the function, by hand. (`rawResponseSchema` still runs, but it validates what
+  the function returns, not the wire body, so a `queryFn` that maps by hand must parse by hand too.)
 - The `baseQuery` result is `unknown`, so the body needs a cast or a manual `safeParse`.
 - Every one brings its own `if (response.error) return { error: response.error }`.
 
 Three lines of declaration become twenty of plumbing, and the endpoint stops reading like its
 neighbours.
+
+### The one exception: the two OAuth2 grants
+
+`exchangeAuthorizationCode` and `refreshSession` are `queryFn`s, and they must stay that way.
+
+RTK Query dispatches an action for every phase of a request. `meta.arg.originalArgs` rides on the
+pending action, and the answer rides on the fulfilled one. The desktop redux logger writes both into
+the file users attach to a support ticket, in production, and the mobile DevTools relay sends both
+over a socket and accepts no sanitizer. A grant handles two credentials, so neither may be an
+argument and neither may be an answer.
+
+So each grant:
+
+- takes its credential off `api.extra` — `takeCardAuthorizationGrant()` or `getCardRefreshToken()`;
+- validates the wire body with `PayCardSessionResponseSchema.safeParse` and maps it with
+  `transformPayCardSessionResponse`, because `transformResponse` does not run here;
+- hands the session to `receiveCardSession()` and answers with `{ sessionHandle }`, which
+  `responseSchema: PayCardSessionReceiptSchema` validates.
+
+Neither grant has a generated hook. A renewal is the base query's decision, and the code exchange
+belongs to the login machine, which fills the hand-off slot before it dispatches.
+
+Do not add a third `queryFn` for any other reason. If a new endpoint handles a credential, follow
+this shape; if it does not, use `query`.
 
 ## Where configuration comes from
 
@@ -74,8 +98,8 @@ Use it to map, never to staple a request value back onto the answer.
 
 ## Checklist
 
-- [ ] `query`, not `queryFn`
-- [ ] No `as` and no `try`/`catch` in `api.ts`
+- [ ] `query`, not `queryFn` — unless the endpoint handles a credential, and then follow the grants
+- [ ] No `as` in `api.ts`, and no `try`/`catch` outside a grant's read of `api.extra`
 - [ ] Wire shape validated by a schema in `schema.ts`
 - [ ] Mapping in `transforms.ts`, with a test
 - [ ] Nothing the base query already sends is repeated in the endpoint

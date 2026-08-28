@@ -281,44 +281,59 @@ describe("mobile store", () => {
   });
 
   describe("card session renewal", () => {
+    let fetchSpy: jest.SpyInstance | undefined;
+
+    // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
+    // rewritten environment into every test after it.
+    afterEach(async () => {
+      fetchSpy?.mockRestore();
+      fetchSpy = undefined;
+      const { cardSession } = require("@features/platform-card");
+      await cardSession.clear();
+    });
+
     it("hands the Card api every session accessor it needs", () => {
       const { store } = require("./configureStore");
       const extra = readCardExtra(store);
 
-      expect(typeof extra.getCardSessionToken).toBe("function");
+      expect(typeof extra.readCardSession).toBe("function");
       expect(typeof extra.getCardRefreshToken).toBe("function");
+      expect(typeof extra.takeCardAuthorizationGrant).toBe("function");
+      expect(typeof extra.receiveCardSession).toBe("function");
       expect(typeof extra.refreshCardSession).toBe("function");
     });
 
     it("publishes signed-out and drops the session when a renewal ends it", async () => {
       const { setEnv } = require("@shared/env") as typeof import("@shared/env");
       setEnv("CARD_API_URL", "http://card.test");
-      // The provider rejects the grant. That is terminal, so this store's own callback must run.
-      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+      // The provider rejects the grant, and names the reason the way RFC 6749 does. That is
+      // terminal, so this store's own callback must run.
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
         async () =>
-          new Response(JSON.stringify({ message: "invalid_grant" }), {
+          new Response(JSON.stringify({ error: "invalid_grant" }), {
             status: 400,
             headers: { "content-type": "application/json" },
           }),
       );
 
       const { store } = require("./configureStore");
-      const { cardSession } = require("@features/platform-card");
       const { setSignedIn, selectIsSignedIn } = require("@features/flow-pay-card-auth/state");
+      const { cardSession } = require("@features/platform-card");
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
       store.dispatch(setSignedIn(true));
 
-      await expect(extra.refreshCardSession()).resolves.toEqual({ kind: "session-ended" });
+      const { epoch } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
+      // The Card cache is emptied one macrotask later, so the request whose 401 started the
+      // renewal is not aborted before it can answer. This suite runs on fake timers.
+      jest.runOnlyPendingTimers();
       expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(extra.getCardSessionToken()).resolves.toBeNull();
+      await expect(extra.readCardSession()).resolves.toMatchObject({ token: null });
       await expect(extra.getCardRefreshToken()).resolves.toBeNull();
-
-      await cardSession.clear();
-      fetchSpy.mockRestore();
     });
   });
 });

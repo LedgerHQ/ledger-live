@@ -2,7 +2,7 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/ledger-auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
@@ -210,7 +210,15 @@ describe("customCreateStore", () => {
   });
 
   describe("card session renewal", () => {
+    const cardApiUrl = getEnv("CARD_API_URL");
+    let fetchSpy: jest.SpyInstance | undefined;
+
+    // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
+    // rewritten environment into every test after it.
     afterEach(async () => {
+      fetchSpy?.mockRestore();
+      fetchSpy = undefined;
+      setEnv("CARD_API_URL", cardApiUrl);
       await cardSession.clear();
     });
 
@@ -218,8 +226,10 @@ describe("customCreateStore", () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      expect(typeof extra.getCardSessionToken).toBe("function");
+      expect(typeof extra.readCardSession).toBe("function");
       expect(typeof extra.getCardRefreshToken).toBe("function");
+      expect(typeof extra.takeCardAuthorizationGrant).toBe("function");
+      expect(typeof extra.receiveCardSession).toBe("function");
       expect(typeof extra.refreshCardSession).toBe("function");
     });
 
@@ -227,18 +237,22 @@ describe("customCreateStore", () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
 
-      await expect(extra.getCardSessionToken()).resolves.toBe("at_token");
+      await expect(extra.readCardSession()).resolves.toEqual({
+        token: "at_token",
+        epoch: expect.any(Number),
+      });
       await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
     });
 
     it("publishes signed-out and drops the session when a renewal ends it", async () => {
       setEnv("CARD_API_URL", "http://card.test");
-      // The provider rejects the grant. That is terminal, so this store's own callback must run.
-      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+      // The provider rejects the grant, and names the reason the way RFC 6749 does. That is
+      // terminal, so this store's own callback must run.
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
         async () =>
-          new Response(JSON.stringify({ message: "invalid_grant" }), {
+          new Response(JSON.stringify({ error: "invalid_grant" }), {
             status: 400,
             headers: { "content-type": "application/json" },
           }),
@@ -247,17 +261,41 @@ describe("customCreateStore", () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
       store.dispatch(setSignedIn(true));
 
-      await expect(extra.refreshCardSession()).resolves.toEqual({ kind: "session-ended" });
+      const { epoch } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
+      // The Card cache is emptied one macrotask later, so the request whose 401 started the
+      // renewal is not aborted before it can answer.
+      await new Promise(resolve => setTimeout(resolve, 0));
       expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(extra.getCardSessionToken()).resolves.toBeNull();
+      await expect(extra.readCardSession()).resolves.toMatchObject({ token: null });
       await expect(extra.getCardRefreshToken()).resolves.toBeNull();
+    });
 
-      fetchSpy.mockRestore();
+    it("keeps the session when the token endpoint fails for a nonterminal reason", async () => {
+      setEnv("CARD_API_URL", "http://card.test");
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => new Response("", { status: 503 }));
+
+      const store = customCreateStore({ fetchRemoteFlags: null });
+      const extra = readCardExtra(store);
+
+      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
+      store.dispatch(setSignedIn(true));
+
+      const { epoch } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(epoch)).resolves.toMatchObject({
+        kind: "unavailable",
+      });
+
+      // A network failure does not end a session.
+      expect(selectIsSignedIn(store.getState())).toBe(true);
+      await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
     });
   });
 });

@@ -1,4 +1,4 @@
-import type { PayCardSession } from "@domain/api-card-management";
+import type { StoredCardSession } from "@features/platform-card";
 import { fromPromise } from "xstate";
 import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { parseCallbackUrl } from "./callbackUrl";
@@ -96,7 +96,7 @@ export const exchangeAuthorizationCode = fromPromise(
 );
 
 export const persistSession = fromPromise(
-  async ({ input }: { input: { ports: CardLoginPorts; session: PayCardSession | null } }) => {
+  async ({ input }: { input: { ports: CardLoginPorts; session: StoredCardSession | null } }) => {
     if (!input.session) {
       throw new MissingLoginStateError("session");
     }
