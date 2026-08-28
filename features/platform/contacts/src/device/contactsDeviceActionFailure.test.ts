@@ -70,6 +70,22 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
     expect(result.type).toBe("invalid-input");
   });
 
+  // Refusing on the device yields 0x5501 from the kit's global error table, not
+  // a ContactsCommandError -- so it has to be recognised by its own tag or it
+  // falls through to the generic `failed` screen.
+  it("GIVEN an ActionRefusedError WHEN mapping THEN it returns device-rejected", () => {
+    // WHEN
+    const result = mapDeviceActionErrorToFailureJobState({
+      _tag: "ActionRefusedError",
+      errorCode: "5501",
+      message: "Action refused on device.",
+    });
+
+    // THEN
+    expect(result.type).toBe("device-rejected");
+    expect(result.error.message).toBe("Action refused on device.");
+  });
+
   it.each([
     ["6a80", "device-rejected"],
     ["6982", "existing-group-verification-failed"],

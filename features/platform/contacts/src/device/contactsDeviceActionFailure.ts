@@ -9,8 +9,17 @@ export type ContactDeviceIntentFailureJobState =
   | { readonly type: "app-version-too-low"; readonly error: Error }
   | { readonly type: "invalid-input"; readonly error: Error }
   /**
-   * 0x6A80 (SWO_INCORRECT_DATA): malformed TLV, invalid group handle, or user
-   * rejection — one bucket, by firmware design.
+   * The user refused the prompt on the device. Which status word carries that
+   * depends on who served the prompt, so both map here:
+   *
+   * - 0x5501 (`ActionRefusedError`), from the kit's *global* error table — the
+   *   dashboard-owned operations, i.e. contact rename.
+   * - 0x6A80 (SWO_INCORRECT_DATA), from the Contacts *app* error table — the
+   *   app-owned operations, i.e. register and edit an external address. The app
+   *   buckets malformed TLV and an invalid group handle under that same status
+   *   word, so a refusal cannot be told apart from bad data there.
+   *
+   * The kit documents neither; both are confirmed against a device.
    */
   | { readonly type: "device-rejected"; readonly error: Error; readonly retry?: () => void }
   /** 0x6982 (SWO_SECURITY_CONDITION_NOT_SATISFIED): HMAC_PROOF/HMAC_REST verification failed — only reachable when replaying an existing group. */
@@ -55,6 +64,12 @@ export function mapDeviceActionErrorToFailureJobState(
   }
   if (tag === "ContactsValidationError") {
     return { type: "invalid-input", error: mappedError };
+  }
+  // 0x5501, from the DMK's own GLOBAL_ERRORS table rather than the Contacts
+  // app's: refusing the prompt is a device-level outcome, so it arrives tagged
+  // by the kit's global handler and never reaches the app error table below.
+  if (tag === "ActionRefusedError") {
+    return { type: "device-rejected", error: mappedError };
   }
   if (tag === "ContactsCommandError") {
     const errorCode = (error as { errorCode?: unknown }).errorCode;
