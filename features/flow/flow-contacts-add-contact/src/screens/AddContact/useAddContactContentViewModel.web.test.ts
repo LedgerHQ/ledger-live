@@ -1,8 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
-import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import {
+  contact,
+  CONTACT_NAME_MAX_LENGTH,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { useContacts } from "@features/platform-contacts";
-import { CONTACT_NAME_MAX_LENGTH } from "../../components/ContactNameInput/constants";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactContentViewModel } from "./useAddContactContentViewModel";
 

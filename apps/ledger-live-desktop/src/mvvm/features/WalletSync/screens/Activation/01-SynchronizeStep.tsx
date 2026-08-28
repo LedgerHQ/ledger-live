@@ -66,7 +66,12 @@ export default function SynchronizeStep({
           </LogoWrapper>
         </Flex>
 
-        <Text fontSize={24} variant="h4Inter" textAlign="center">
+        <Text
+          fontSize={24}
+          variant="h4Inter"
+          textAlign="center"
+          data-testid="walletsync-activate-title"
+        >
           {t("walletSync.activate.titleModal")}
         </Text>
         <Text fontSize={14} variant="body" color="neutral.c70" textAlign="center">
@@ -78,7 +83,12 @@ export default function SynchronizeStep({
         </Text>
       </Flex>
       <Flex justifyContent="center" width="100%">
-        <ButtonV3 variant="main" width="100%" onClick={goToCreateBackup}>
+        <ButtonV3
+          variant="main"
+          width="100%"
+          onClick={goToCreateBackup}
+          buttonTestId="walletsync-activate-cta"
+        >
           <Text variant="body" color="neutral.c00" fontSize={14} flexShrink={1}>
             {t("walletSync.activate.ctaModal")}
           </Text>

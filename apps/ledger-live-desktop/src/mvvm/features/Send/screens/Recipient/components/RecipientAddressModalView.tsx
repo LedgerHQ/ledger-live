@@ -2,6 +2,8 @@ import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { Contact } from "@domain/entity-contact";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
@@ -11,11 +13,21 @@ import { LoadingState } from "./LoadingState";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
+import { RecipientContactsList } from "./RecipientContactsList";
+import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
 
 type RecipientAddressModalViewProps = Readonly<{
   isLoading: boolean;
   showInitialState: boolean;
+  showContactsList: boolean;
+  showContactSearchResult: boolean;
   showEmptyContactsState: boolean;
+  contactsOnNetwork: readonly Contact[];
+  contactSearchResult: Contact | undefined;
+  selectedContact: Contact | undefined;
+  network: CryptoCurrency;
+  handleContactSelect: (contact: Contact) => void;
+  handleContactAddressSelect: (address: string) => void;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;
@@ -37,7 +49,15 @@ type RecipientAddressModalViewProps = Readonly<{
 export function RecipientAddressModalView({
   isLoading,
   showInitialState,
+  showContactsList,
+  showContactSearchResult,
   showEmptyContactsState,
+  contactsOnNetwork,
+  contactSearchResult,
+  selectedContact,
+  network,
+  handleContactSelect,
+  handleContactAddressSelect,
   showMatchedAddress,
   showAddressValidationError,
   showEmptyState,
@@ -72,15 +92,30 @@ export function RecipientAddressModalView({
 
   return (
     <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
-      {isLoading && !showMatched && (
-        <div className="flex flex-1 items-center">
-          <LoadingState />
-        </div>
-      )}
+      {isLoading && !showMatched && <LoadingState />}
 
       {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
 
-      {showInitialState && !showEmptyContactsState && <RecipientIntroCard />}
+      {showInitialState && showContactsList && (
+        <RecipientContactsList contacts={contactsOnNetwork} onContactSelect={handleContactSelect} />
+      )}
+
+      {showContactSearchResult && contactSearchResult && (
+        <RecipientContactsList
+          contacts={[contactSearchResult]}
+          onContactSelect={handleContactSelect}
+        />
+      )}
+
+      {showInitialState && !showEmptyContactsState && !showContactsList && <RecipientIntroCard />}
+
+      {selectedContact && (
+        <RecipientContactAddressSelection
+          contact={selectedContact}
+          network={network}
+          onAddressSelect={handleContactAddressSelect}
+        />
+      )}
 
       {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 

@@ -383,6 +383,16 @@ describe("currency.list handler — token lookup concurrency", () => {
     expect(peakInFlight).toBeGreaterThan(1);
     expect(peakInFlight).toBeLessThanOrEqual(TOKEN_LOOKUP_CONCURRENCY);
   });
+
+  it("should omit failed token lookups instead of rejecting currency.list", async () => {
+    jest.mocked(getCryptoAssetsStore).mockReturnValue({
+      findTokenById: jest.fn().mockRejectedValue(new Error("bad json")),
+    } as never);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+
+    await expect(getHandler()({ currencyIds: ["ethereum/erc20/usd__coin"] })).resolves.toEqual([]);
+  });
 });
 
 describe("account.request handler", () => {

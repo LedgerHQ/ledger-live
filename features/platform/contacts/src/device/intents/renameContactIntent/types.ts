@@ -3,6 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactIntentResult } from "../resultReporter";
 
 type GroupHandle = string;
 type Proof = string;
@@ -24,19 +25,26 @@ export type RenameContactResult = Readonly<{
 export type RenameContactJobState =
   | { readonly type: "pending" }
   | { readonly type: "awaiting-device-confirmation" }
-  | { readonly type: "completed"; readonly result: RenameContactResult }
+  | { readonly type: "completed" }
   | { readonly type: "failed"; readonly error: Error };
 
 export type RenameContactIntentDefinition = IntentDefinition<
   RenameContactJobState,
-  RenameContactIntentInput
+  RenameContactIntentInput,
+  ContactIntentResult<RenameContactResult>
 >;
 
 export type RenameContactIntentPlatformDefinition<ExtraProps = undefined> =
-  IntentPlatformDefinition<RenameContactJobState, RenameContactIntentInput, ExtraProps>;
+  IntentPlatformDefinition<
+    RenameContactJobState,
+    RenameContactIntentInput,
+    ExtraProps,
+    ContactIntentResult<RenameContactResult>
+  >;
 
 export type RenameContactIntent<ExtraProps = undefined> = Intent<
   RenameContactJobState,
   RenameContactIntentInput,
-  ExtraProps
+  ExtraProps,
+  ContactIntentResult<RenameContactResult>
 >;

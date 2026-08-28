@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { isQ2WithAggregatedAssets } from "../../utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { isQ2WithAggregatedAssets } from "@e2e/utils/featureFlagUtils";
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 setTeamOwner(Team.WALLET_XP);

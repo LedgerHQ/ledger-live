@@ -1,4 +1,4 @@
-import { runLedgerSyncRenameAccountTest } from "./ledgerSync";
+import { runLedgerSyncRenameAccountTest } from "@e2e/specs/ledgerSync/ledgerSync";
 
 runLedgerSyncRenameAccountTest(
   ["B2CQA-2302"],

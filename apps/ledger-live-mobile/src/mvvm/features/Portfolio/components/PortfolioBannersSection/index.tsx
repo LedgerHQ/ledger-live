@@ -116,6 +116,7 @@ export const PortfolioBannersSection = ({
     contentCardsPaddingTop,
     hasAssets,
     canCoexistWithBraze,
+    canShareBrazeCarousel,
     onScroll,
     carouselIndex,
   } = usePortfolioBannersSectionViewModel({
@@ -123,7 +124,7 @@ export const PortfolioBannersSection = ({
     isLNUpsellBannerShown,
   });
 
-  const upsellLeadingSlide = isLNUpsellBannerShown ? (
+  const upsellLeadingSlide = canShareBrazeCarousel ? (
     <LNUpsellBanner location="wallet" />
   ) : undefined;
 
@@ -154,6 +155,11 @@ export const PortfolioBannersSection = ({
           {showRecover && (
             <PaddedBanner>
               <RecoverBanner paddingHorizontal="s0" />
+            </PaddedBanner>
+          )}
+          {isLNUpsellBannerShown && !canShareBrazeCarousel && (
+            <PaddedBanner>
+              <LNUpsellBanner location="wallet" />
             </PaddedBanner>
           )}
           <Box lx={contentCardsPaddingTop ? { paddingTop: contentCardsPaddingTop } : undefined}>

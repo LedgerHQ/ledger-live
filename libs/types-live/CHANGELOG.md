@@ -1,5 +1,113 @@
 # @ledgerhq/types-live
 
+## 6.121.0
+
+### Minor Changes
+
+- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+- [#20782](https://github.com/LedgerHQ/ledger-live/pull/20782) [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708) Thanks [@shazzzam](https://github.com/shazzzam)! - Surface ICP neuron staking entry points on mobile: Stake and Manage Neurons account-header actions,
+  gated behind the new `llmIcpStaking` feature flag. The StakingFlow and NeuronManageFlow navigators
+  are registered as stubs and their screens land separately.
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
+## 6.121.0-next.0
+
+### Minor Changes
+
+- [#20887](https://github.com/LedgerHQ/ledger-live/pull/20887) [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+- [#20782](https://github.com/LedgerHQ/ledger-live/pull/20782) [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708) Thanks [@shazzzam](https://github.com/shazzzam)! - Surface ICP neuron staking entry points on mobile: Stake and Manage Neurons account-header actions,
+  gated behind the new `llmIcpStaking` feature flag. The StakingFlow and NeuronManageFlow navigators
+  are registered as stubs and their screens land separately.
+
+- [#20650](https://github.com/LedgerHQ/ledger-live/pull/20650) [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add a gRPC-web transport to the Sui coin module
+
+  - `coin-sui` gains a third transport on `sui.rpc.v2` over gRPC-web, covering every capability from
+    checkpoints to device signing.
+  - New tri-state `suiTransport` feature flag (`json` | `grpc` | `graphql`), defaulting to `json`,
+    replaces the boolean `suiGraphqlTransport`, which is removed. An unrecognised value resolves to
+    `json`.
+  - New env vars `API_SUI_GRPC_PROXY` and `API_SUI_TESTNET_GRPC_PROXY`. `@mysten/sui` 2.9.0 → 2.23.1.
+  - Operation `blockHash` carries the real checkpoint digest on gRPC.
+  - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
+    newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
+    what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+  - Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+    `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+    and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+    cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
+  - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
+    back with only the transactions that arrived after it. Such an account now re-reads its history,
+    which is also how one truncated by the bug above recovers. Token operations count as history: they
+    live in the subaccounts, so a token-only account is no longer treated as empty.
+  - Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+    read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+    the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
+  - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
+    account sync (`getOperations`) as well as paging (`getListOperations`).
+  - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
+    ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+    whose transactions were all filtered out now resumes from the page's own boundary instead of
+    reporting the end of history.
+  - Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+    a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
+  - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
+    from the oldest.
+  - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
+    `Headers` instance.
+  - Fix: GraphQL resolved the latest checkpoint in two queries, so the second could answer null. It is
+    now one query.
+  - A checkpoint missing its `digest` or `timestamp` now raises on both GraphQL and gRPC, instead of
+    reporting a block with an empty hash and a 1970 timestamp.
+  - Known limitation: `getListOperations` resumes from a synthesised `timestamp:digest` cursor, so
+    within one checkpoint a sibling whose digest sorts earlier can be skipped, and a checkpoint holding
+    more than one page is stepped over rather than resumed inside. Account sync is unaffected: it
+    resumes from the server's own watermark cursor.
+
 ## 6.120.0
 
 ### Minor Changes
@@ -371,88 +479,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/client-ids@0.10.3-next.0
-
-## 6.111.0
-
-### Minor Changes
-
-- [#18027](https://github.com/LedgerHQ/ledger-live/pull/18027) [`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add notification drawer prompt target contracts
-
-- [#17907](https://github.com/LedgerHQ/ledger-live/pull/17907) [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b) Thanks [@deepyjr](https://github.com/deepyjr)! - Add assetDiscoverability param to lwmWallet40 and expose shouldDisplayAssetDiscoverability in usePortfolioViewModel and MainAppLayout
-
-- [#18204](https://github.com/LedgerHQ/ledger-live/pull/18204) [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `lwmBackupHub` / `lwdBackupHub` Engagement feature flags (default disabled) for the Recover Backup Hub initiative, and reserve CODEOWNERS ownership of the upcoming BackupHub MVVM folders.
-
-- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
-
-- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
-
-- [#18163](https://github.com/LedgerHQ/ledger-live/pull/18163) [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Make Recover URI templating actually replace `protectId`, drop unused `protectServicesDesktop` / `protectServicesMobile` params, and replace `compatibleDevices` with a hardcoded Nano S exclusion in `isRecoverDisplayed`.
-
-  `useReplacedURI` previously only rewrote the placeholders `protect-simu`, `protect-local-dev` and `protect-staging`, so any URI hard-coded with `protect-prod` (e.g. the values shipped to PROD via Firebase Remote Config) was never re-templated when `protectId` changed. Switching the active Recover environment therefore required a manual find-and-replace across every URI in the feature flag. The regex now matches any `protect-<env>` segment, which is a no-op when `protectId` already equals that segment and a true substitution otherwise.
-
-  `compatibleDevices` is replaced by a hardcoded check in `isRecoverDisplayed` — Nano S is the only device that does not support Recover and the rule is not expected to change. Dropping the array from the schema keeps the FF lean and removes the need to update Remote Config when a new device is supported.
-
-  Also remove keys that have no consumer in either app — `isNew`, `ledgerliveStorageState`, `onboardingCompleted.alreadySubscribedURI`, and the entire `onboardingRestore` block on desktop; `ledgerliveStorageState`, `restoreInfoDrawer.manualStepsURI`, `managerStatesData.NEW.learnMoreURI` and `managerStatesData.NEW.alreadySubscribedURI` on mobile. `usePostOnboardingURI` is narrowed to `Feature_ProtectServicesMobile` since it is only called from the mobile app. Unknown keys still in Firebase are silently stripped by Zod, so this is forward-compatible with existing Remote Config payloads.
-
-- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
-
-- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
-
-- [#17932](https://github.com/LedgerHQ/ledger-live/pull/17932) [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add `earnUpselling` and `earnSimulator` as Wallet 4.0 feature flag params, expose them in the Wallet 4.0 analytics attributes, and surface them in the desktop and mobile developer settings toggles.
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/client-ids@0.10.2
-
-## 6.111.0-next.0
-
-### Minor Changes
-
-- [#18027](https://github.com/LedgerHQ/ledger-live/pull/18027) [`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add notification drawer prompt target contracts
-
-- [#17907](https://github.com/LedgerHQ/ledger-live/pull/17907) [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b) Thanks [@deepyjr](https://github.com/deepyjr)! - Add assetDiscoverability param to lwmWallet40 and expose shouldDisplayAssetDiscoverability in usePortfolioViewModel and MainAppLayout
-
-- [#18204](https://github.com/LedgerHQ/ledger-live/pull/18204) [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add `lwmBackupHub` / `lwdBackupHub` Engagement feature flags (default disabled) for the Recover Backup Hub initiative, and reserve CODEOWNERS ownership of the upcoming BackupHub MVVM folders.
-
-- [#17990](https://github.com/LedgerHQ/ledger-live/pull/17990) [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwdWallet40` into a standalone `onboardingWidget` feature flag.
-
-- [#17927](https://github.com/LedgerHQ/ledger-live/pull/17927) [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): represent validator token as string
-
-- [#18163](https://github.com/LedgerHQ/ledger-live/pull/18163) [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Make Recover URI templating actually replace `protectId`, drop unused `protectServicesDesktop` / `protectServicesMobile` params, and replace `compatibleDevices` with a hardcoded Nano S exclusion in `isRecoverDisplayed`.
-
-  `useReplacedURI` previously only rewrote the placeholders `protect-simu`, `protect-local-dev` and `protect-staging`, so any URI hard-coded with `protect-prod` (e.g. the values shipped to PROD via Firebase Remote Config) was never re-templated when `protectId` changed. Switching the active Recover environment therefore required a manual find-and-replace across every URI in the feature flag. The regex now matches any `protect-<env>` segment, which is a no-op when `protectId` already equals that segment and a true substitution otherwise.
-
-  `compatibleDevices` is replaced by a hardcoded check in `isRecoverDisplayed` — Nano S is the only device that does not support Recover and the rule is not expected to change. Dropping the array from the schema keeps the FF lean and removes the need to update Remote Config when a new device is supported.
-
-  Also remove keys that have no consumer in either app — `isNew`, `ledgerliveStorageState`, `onboardingCompleted.alreadySubscribedURI`, and the entire `onboardingRestore` block on desktop; `ledgerliveStorageState`, `restoreInfoDrawer.manualStepsURI`, `managerStatesData.NEW.learnMoreURI` and `managerStatesData.NEW.alreadySubscribedURI` on mobile. `usePostOnboardingURI` is narrowed to `Feature_ProtectServicesMobile` since it is only called from the mobile app. Unknown keys still in Firebase are silently stripped by Zod, so this is forward-compatible with existing Remote Config payloads.
-
-- [#18064](https://github.com/LedgerHQ/ledger-live/pull/18064) [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Split EVM staking operations into per-chain modules and thread an optional validator id (`valId`) through the staking transaction/intent so chains that key operations by a numeric id (e.g. Monad) are supported alongside address-keyed chains (Sei, Celo)
-
-- [#18229](https://github.com/LedgerHQ/ledger-live/pull/18229) [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): fetch missing validator names
-
-- [#17932](https://github.com/LedgerHQ/ledger-live/pull/17932) [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add `earnUpselling` and `earnSimulator` as Wallet 4.0 feature flag params, expose them in the Wallet 4.0 analytics attributes, and surface them in the desktop and mobile developer settings toggles.
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/client-ids@0.10.2-next.0
-
-## 6.110.0
-
-### Minor Changes
-
-- [#17897](https://github.com/LedgerHQ/ledger-live/pull/17897) [`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690) Thanks [@sarneijim](https://github.com/sarneijim)! - Extract onboarding widget control from `lwmWallet40` into a standalone `onboardingWidget` feature flag.
-
-- [#17648](https://github.com/LedgerHQ/ledger-live/pull/17648) [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Arc and Arc Testnet (Circle's USDC-native EVM L1, chainIds 5042 and 5042002)
-
-- [#17837](https://github.com/LedgerHQ/ledger-live/pull/17837) [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: lwm - lwd feature flag for counterfeit warning
-
-- [#17630](https://github.com/LedgerHQ/ledger-live/pull/17630) [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274) Thanks [@sarneijim](https://github.com/sarneijim)! - Add post-onboarding `discoverWallet` action that opens the LWM Product Tour (`tickProductTourDeeplink` + navigate to Portfolio), aligned with `ProductTourPortfolioMount` / `ledgerlive://product-tour`.
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/client-ids@0.10.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

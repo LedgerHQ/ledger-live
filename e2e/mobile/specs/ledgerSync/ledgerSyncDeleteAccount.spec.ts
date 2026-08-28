@@ -1,4 +1,4 @@
-import { runLedgerSyncDeleteAccountTest } from "./ledgerSync";
+import { runLedgerSyncDeleteAccountTest } from "@e2e/specs/ledgerSync/ledgerSync";
 
 runLedgerSyncDeleteAccountTest(
   ["B2CQA-2300"],

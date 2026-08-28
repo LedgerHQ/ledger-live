@@ -5,7 +5,7 @@ import {
   type EnsureAppReadyState,
   useDeviceIntentTracking,
 } from "@ledgerhq/live-dmk-shared";
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import {
   CONNECT_APP_BUTTON,

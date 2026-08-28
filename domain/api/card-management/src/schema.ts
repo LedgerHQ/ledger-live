@@ -1,29 +1,20 @@
 import { z } from "zod";
 
 /**
- * `mode=api` also answers with a `token`, the JWT of the programmatic flow — `POST /v1/auth/login`
- * then `POST /v1/auth/oauth/authorize`. The hosted UI needs none of it, so zod drops it here rather
- * than parking a short-lived credential in the cache.
+ * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
+ * carries no lifetime for the refresh token itself, only for the access token.
  */
-export const PayCardAuthorizeInitiateResponseSchema = z.object({
-  /** Handed straight to a browser, so no other scheme is accepted. */
-  url: z.string().url().startsWith("https://"),
-});
-
-/** Both grants — `authorization_code` and `refresh_token` — answer with this shape. */
 export const PayCardSessionResponseSchema = z.object({
   access_token: z.string().min(1),
   expires_in: z.number().int().positive(),
   refresh_token: z.string().min(1),
-  refresh_token_expires_in: z.number().int().positive(),
 });
 
-/** Lifetimes stay the durations the backend sent: turning them into instants needs a clock. */
+/** The lifetime stays the duration the backend sent: turning it into an instant needs a clock. */
 export const PayCardSessionSchema = z.object({
   accessToken: z.string().min(1),
   expiresIn: z.number().int().positive(),
   refreshToken: z.string().min(1),
-  refreshTokenExpiresIn: z.number().int().positive(),
 });
 
 export const PayCardLogoutResponseSchema = z.object({
@@ -39,6 +30,10 @@ export const PayCardUserResponseSchema = z.object({
   verificationState: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"]),
 });
 
+export const PayCardErrorResponseSchema = z.object({
+  message: z.string(),
+});
+
 /**
  * `POST /v1/card/order` answers with nothing but this flag. The card itself only becomes observable
  * through the card status endpoint.
@@ -46,3 +41,34 @@ export const PayCardUserResponseSchema = z.object({
 export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
+
+export const PayCardStatusResponseSchema = z.object({
+  id: z.string().min(1),
+  holderName: z.string().min(1),
+  /** `YYYY/MM`, as the provider formats it. */
+  expiryDate: z.string().min(1),
+  panLast4: z.string().min(1),
+  status: z.enum(["ACTIVE", "FROZEN", "BLOCKED"]),
+  type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
+  orderedAt: z.string().min(1),
+});
+
+export const PayCardInternalWalletSchema = z.object({
+  id: z.string().min(1),
+  balance: z.string().min(1),
+  currency: z.string().min(1),
+  address: z.string().min(1),
+  addressMemo: z.string().min(1).nullable(),
+});
+
+export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);
+
+export const PayCardLinkedWalletSchema = z.object({
+  id: z.string().min(1),
+  address: z.string().min(1),
+  currency: z.string().min(1),
+  network: z.string().min(1),
+  priority: z.number().finite(),
+});
+
+export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);

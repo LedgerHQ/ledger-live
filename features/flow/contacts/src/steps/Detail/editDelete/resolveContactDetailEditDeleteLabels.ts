@@ -3,7 +3,7 @@ import {
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
 import type { ContactsDeleteContactDialogLabels } from "../components/ContactsDeleteContactDialog/types";
-import type { ContactsRenameContactLabels } from "../../EditContact/types";
+import type { ContactsRenameContactLabels } from "@features/flow-contacts-edit-contact";
 import type { ContactDetailActionsLabels } from "../types";
 import { resolveContactEditSignerActionLabels } from "../model/resolveContactEditSignerActionLabels";
 

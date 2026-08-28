@@ -13,10 +13,8 @@ type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 /** Hardcoded English until the Pay tab gets its copy keys. */
 const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
   pkce_failed: "Login could not start. Please try again.",
-  initiate_failed: "Login could not start. Please try again.",
   browser_open_failed: "The login page could not open. Please try again.",
   missing_attempt: "This login is no longer valid. Please log in again.",
-  state_mismatch: "This login could not be verified. Please log in again.",
   exchange_failed: "Login could not be completed. Please try again.",
   persist_failed: "Your session could not be saved. Please try again.",
   fetch_user_failed: "Your card could not be loaded. Please try again.",
@@ -67,7 +65,7 @@ export function useCardLoginViewModel({
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
     if (callback) {
-      send({ type: "CALLBACK_RECEIVED", code: callback.code, state: callback.state });
+      send({ type: "CALLBACK_RECEIVED", code: callback.code });
     }
   }, [callback, send]);
 

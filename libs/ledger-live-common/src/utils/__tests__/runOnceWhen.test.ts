@@ -58,14 +58,15 @@ describe("runOnceWhen function", () => {
 
     runOnceWhen(conditionFunc, callback, 5000);
 
-    // Fast-forward until all timers have been executed
-    jest.advanceTimersByTime(6000);
+    // Advance past maxWaitTimeMS so the timeout clears the interval.
+    jest.advanceTimersByTime(5001);
+    const callsAtCutoff = conditionFunc.mock.calls.length;
 
+    // Even if the condition becomes true, no further checks should happen.
     conditionFunc.mockReturnValue(true);
+    jest.advanceTimersByTime(500);
 
-    // Number of times conditionFunc gets called should be
-    expect(conditionFunc).toHaveBeenCalledTimes(5000 / 100);
-
+    expect(conditionFunc).toHaveBeenCalledTimes(callsAtCutoff);
     expect(callback).not.toHaveBeenCalled();
   });
 });

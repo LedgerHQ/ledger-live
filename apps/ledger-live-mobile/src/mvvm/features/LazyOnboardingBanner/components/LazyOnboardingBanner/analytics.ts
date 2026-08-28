@@ -1,9 +1,33 @@
-import { track } from "~/analytics";
+import type { LazyOnboardingBannerMode } from "@features/flow-lazy-onboarding-banner";
+import { screen, track } from "~/analytics";
+import {
+  buildLazyOnboardingSharedAnalyticsProps,
+  LAZY_ONBOARDING_BANNER_BUTTON,
+  LAZY_ONBOARDING_BANNER_PAGE,
+  LAZY_ONBOARDING_BANNER_PAGE_NAME,
+  type LazyOnboardingSharedAnalyticsProps,
+} from "../../analyticsConstants";
 
-export const trackLazyOnboardingBannerPressed = () => {
+export const trackLazyOnboardingBannerShown = (sharedProps: LazyOnboardingSharedAnalyticsProps) => {
+  screen(
+    LAZY_ONBOARDING_BANNER_PAGE,
+    undefined,
+    {
+      name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
+      ...sharedProps,
+    },
+    false,
+  );
+};
+
+export const trackLazyOnboardingBannerPressed = (
+  mode: LazyOnboardingBannerMode,
+  personalRecoOptIn: boolean,
+) => {
   track("button_clicked", {
-    button: "Product tour lazy onboarding",
-    page: "Wallet",
+    button: LAZY_ONBOARDING_BANNER_BUTTON,
+    page: LAZY_ONBOARDING_BANNER_PAGE,
+    ...buildLazyOnboardingSharedAnalyticsProps(mode, personalRecoOptIn),
   });
 };
 

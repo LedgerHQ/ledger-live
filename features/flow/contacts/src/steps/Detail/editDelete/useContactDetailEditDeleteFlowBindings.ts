@@ -1,6 +1,6 @@
 import type { ContactId } from "@domain/entity-contact";
+import { useRenameContactDialogViewModel } from "@features/flow-contacts-edit-contact";
 import type { ContactDetailActionsPorts } from "../model/ports";
-import { useRenameContactDialogViewModel } from "../../EditContact/useRenameContactDialogViewModel";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 
 export type UseContactDetailEditDeleteFlowBindingsOptions = Readonly<{

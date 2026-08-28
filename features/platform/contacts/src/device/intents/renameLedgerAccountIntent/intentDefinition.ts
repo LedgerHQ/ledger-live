@@ -1,12 +1,9 @@
-import { RenameLedgerAccountComponent } from "./component";
 import { renameLedgerAccountIntentJob } from "./job";
-import type { RenameLedgerAccountIntentPlatformDefinition } from "./types";
+import type { RenameLedgerAccountIntentDefinition } from "./types";
 
-export const renameLedgerAccountIntentPlatformDefinition: RenameLedgerAccountIntentPlatformDefinition =
-  {
-    label: "Rename Ledger account",
-    requiresConnectedDevice: true,
-    delegateDeviceLockStateHandlingToExecutor: true,
-    job: renameLedgerAccountIntentJob,
-    component: RenameLedgerAccountComponent,
-  };
+export const renameLedgerAccountIntentDefinition: RenameLedgerAccountIntentDefinition = {
+  label: "Rename Ledger account",
+  requiresConnectedDevice: true,
+  delegateDeviceLockStateHandlingToExecutor: true,
+  job: renameLedgerAccountIntentJob,
+};

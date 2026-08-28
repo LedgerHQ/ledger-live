@@ -1,5 +1,33 @@
 # @devtools/registry
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+- [#20733](https://github.com/LedgerHQ/ledger-live/pull/20733) [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Rename metadata folder from `team-platform` to `platform`, remove unused `icon` field from `ToolMetadata` schema, and consolidate the add-tool guide into `README.md`
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
+  - @devtools/feature-flags@0.8.0
+  - @devtools/pay-card@0.4.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
+
+- [#20733](https://github.com/LedgerHQ/ledger-live/pull/20733) [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Rename metadata folder from `team-platform` to `platform`, remove unused `icon` field from `ToolMetadata` schema, and consolidate the add-tool guide into `README.md`
+
+### Patch Changes
+
+- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4)]:
+  - @devtools/feature-flags@0.8.0-next.0
+  - @devtools/pay-card@0.4.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes
@@ -159,26 +187,5 @@
 
 - Updated dependencies [[`fc60d9e`](https://github.com/LedgerHQ/ledger-live/commit/fc60d9e91ef2e77434a101a1dc2d558afa0aa4ae), [`59e5b2c`](https://github.com/LedgerHQ/ledger-live/commit/59e5b2c933040d58ac896d7f971eabf834e81edf)]:
   - @devtools/feature-flags@0.5.0
-
-## 0.1.3-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.5.0-next.1
-
-## 0.1.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`fc60d9e`](https://github.com/LedgerHQ/ledger-live/commit/fc60d9e91ef2e77434a101a1dc2d558afa0aa4ae), [`59e5b2c`](https://github.com/LedgerHQ/ledger-live/commit/59e5b2c933040d58ac896d7f971eabf834e81edf)]:
-  - @devtools/feature-flags@0.5.0-next.0
-
-## 0.1.2
-
-### Patch Changes
-
-- Updated dependencies [[`c5f0a61`](https://github.com/LedgerHQ/ledger-live/commit/c5f0a61c63858227287e4ae7c48f19868eba8b24)]:
-  - @devtools/feature-flags@0.4.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

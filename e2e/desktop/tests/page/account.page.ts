@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export class AccountPage extends AppPage {

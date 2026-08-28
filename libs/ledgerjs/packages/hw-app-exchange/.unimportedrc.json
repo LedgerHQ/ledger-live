@@ -11,7 +11,9 @@
     "src/Exchange.integ.test.ts",
     "src/Exchange.test.ts",
     "src/ReturnCode.test.ts",
+    "src/FundUtils.test.ts",
     "src/SellUtils.test.ts",
-    "src/SwapUtils.test.ts"
+    "src/SwapUtils.test.ts",
+    "src/generate-protocol.d.ts"
   ]
 }

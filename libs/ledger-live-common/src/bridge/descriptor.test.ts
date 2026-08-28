@@ -60,7 +60,6 @@ describe("getDescriptor", () => {
     const descriptor = getDescriptor(currency);
     expect(descriptor).toMatchObject({
       send: {
-        addressBook: true,
         inputs: { recipientSupportsDomain: true },
         fees: {
           hasPresets: true,
@@ -656,20 +655,6 @@ describe("sendFeatures", () => {
 
   it("should return impossible as default self transfer policy", () => {
     expect(sendFeatures.getSelfTransferPolicy(undefined)).toBe("impossible");
-  });
-
-  it.each([
-    ["ethereum", true],
-    ["tron", false],
-    ["bitcoin", false],
-    ["solana", false],
-  ])("should get address book support for %s", (currencyId, expected) => {
-    const currency = getCryptoCurrencyById(currencyId);
-    expect(sendFeatures.hasAddressBook(currency)).toBe(expected);
-  });
-
-  it("should return false for address book support when currency is undefined", () => {
-    expect(sendFeatures.hasAddressBook(undefined)).toBe(false);
   });
 
   it.each([

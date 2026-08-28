@@ -22,7 +22,6 @@ describe("EVM Api (Arc Testnet)", () => {
       type: "blockscout",
       uri: "https://proxyblockscout.api.live.ledger.com/5042002/api",
     },
-    showNfts: false,
     nativeContracts: [ARC_USDC_NATIVE_CONTRACT],
   };
   beforeAll(async () => {

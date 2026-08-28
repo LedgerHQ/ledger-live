@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-pay-card-deposit",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

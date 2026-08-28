@@ -23,19 +23,16 @@ describe("createAuthorizeAttempt", () => {
     expect(mockedSha256Base64Url).toHaveBeenCalledTimes(1);
   });
 
-  it("draws the verifier and the state from separate random values", async () => {
-    const { state, codeVerifier } = await createAuthorizeAttempt();
+  it("draws one random value, and only the verifier", async () => {
+    await createAuthorizeAttempt();
 
-    expect(state).not.toBe(codeVerifier);
-    expect(mockedCreateRandomBase64Url).toHaveBeenCalledTimes(2);
+    expect(mockedCreateRandomBase64Url).toHaveBeenCalledTimes(1);
   });
 
-  // 32 bytes give the 43 base64url characters RFC 7636 sets as the minimum verifier length; the
-  // 16-byte state is far past the 8 characters the backend requires.
-  it("asks for enough entropy for both values", async () => {
+  // 32 bytes give the 43 base64url characters RFC 7636 sets as the minimum verifier length.
+  it("asks for enough entropy for the verifier", async () => {
     await createAuthorizeAttempt();
 
     expect(mockedCreateRandomBase64Url).toHaveBeenCalledWith(32);
-    expect(mockedCreateRandomBase64Url).toHaveBeenCalledWith(16);
   });
 });

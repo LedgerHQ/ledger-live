@@ -3,7 +3,7 @@ import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { openModularDrawer, closeModularDrawer } from "~/reducers/modularDrawer";
+import { openModularDrawer, closeModularDrawer, hideModularDrawer } from "~/reducers/modularDrawer";
 import type { State } from "~/reducers/types";
 import { DrawerParams, DrawerRemoteParams } from "../types";
 import { useCallbackRegistry } from "./useCallbackRegistry";
@@ -145,6 +145,13 @@ export const useModularDrawerController = () => {
     executeCancelCallback,
   ]);
 
+  // Hides the drawer UI without firing the cancel callback. Use this when
+  // navigating away inline (e.g. to device selection for add-account) so that
+  // account.request stays pending until the user either completes or abandons.
+  const hideDrawer = useCallback(() => {
+    dispatch(hideModularDrawer());
+  }, [dispatch]);
+
   const handleAccountSelected = useCallback(
     (account: AccountLike, parentAccount?: AccountLike) => {
       if (cancelCallbackId) {
@@ -201,6 +208,7 @@ export const useModularDrawerController = () => {
     selectableNetworkIds,
     openDrawer,
     closeDrawer,
+    hideDrawer,
     handleAccountSelected,
     handleCurrencySelected,
   };

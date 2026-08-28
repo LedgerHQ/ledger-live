@@ -139,31 +139,33 @@ describe("DataModel", () => {
     expect(migratedAptosAccountRaw.id).toBeDefined();
   });
 
-  describe("test for shownNfts true", () => {
-    beforeAll(() => {
-      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
-        showNfts: true,
-      });
-    });
+  describe("evm NFT operation stripping is driven by supportedTokens", () => {
+    // evmAccount has two operations; op_evm_002 carries `nftOperations`. The migration keeps it
+    // only when NFTs are active for the currency, i.e. when a supported NFT standard is present.
+    const setSupportedTokens = (supportedTokens: ("erc721" | "erc1155")[]) => {
+      (getCurrencyConfiguration as jest.Mock).mockReturnValue({ supportedTokens });
+    };
 
-    test("evm account", async () => {
+    const decodeEvmOperations = async () => {
       const data = await createDataModel(schema).decode(evmAccount);
-      const account = data.at(0) as Account;
-      expect(account.id).toBeDefined();
-    });
-  });
+      return (data.at(0) as Account).operations;
+    };
 
-  describe("test for shownNfts false", () => {
-    beforeAll(() => {
-      (getCurrencyConfiguration as jest.Mock).mockReturnValue({
-        showNfts: false,
-      });
-    });
+    it.each([[["erc721"]], [["erc1155"]], [["erc721", "erc1155"]]] as [("erc721" | "erc1155")[]][])(
+      "keeps NFT-bearing operations when supportedTokens is %j",
+      async supportedTokens => {
+        setSupportedTokens(supportedTokens);
+        const operations = await decodeEvmOperations();
+        expect(operations).toHaveLength(2);
+        expect(operations.some(op => "nftOperations" in op)).toBe(true);
+      },
+    );
 
-    test("evm account", async () => {
-      const data = await createDataModel(schema).decode(evmAccount);
-      const account = data.at(0) as Account;
-      expect(account.id).toBeDefined();
+    it("strips NFT-bearing operations when supportedTokens is empty", async () => {
+      setSupportedTokens([]);
+      const operations = await decodeEvmOperations();
+      expect(operations).toHaveLength(1);
+      expect(operations.some(op => "nftOperations" in op)).toBe(false);
     });
   });
 });

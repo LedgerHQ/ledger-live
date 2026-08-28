@@ -1,15 +1,12 @@
 import type { ReactNode } from "react";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { LottieViewProps } from "lottie-react-native";
+import type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";
 
 /** Device-side action illustrated by the content animation. */
 export type DeviceActionContentAction = "continue" | "power-and-unlock";
 
-/** Theme variant used to select light or dark animation assets. */
-export type DeviceActionAnimationTheme = "light" | "dark";
-
 /** Lottie source returned by the device-action animation helper. */
-export type DeviceActionAnimationSource = LottieViewProps["source"] | undefined;
+export type DeviceActionAnimationSource = unknown;
 
 /** Device models supported by DeviceActionContent animations. */
 export type SupportedDeviceActionModelId = Exclude<DeviceModelId, DeviceModelId.blue>;
@@ -52,3 +49,5 @@ export type DeviceActionContentProps = Readonly<{
   /** Optional test identifier applied to the root container. */
   testID?: string;
 }>;
+
+export type { DeviceActionAnimationTheme } from "@features/platform-device-action-content";

@@ -103,7 +103,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="mb-12 px-24"
+          className="-mt-12 mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus
@@ -192,7 +192,7 @@ export function SendHeader() {
     <div className="flex flex-col">
       <div data-testid="send-dialog-header">
         <DialogHeader
-          density="compact"
+          density={wizard.currentStepConfig?.headerDensity ?? "compact"}
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}

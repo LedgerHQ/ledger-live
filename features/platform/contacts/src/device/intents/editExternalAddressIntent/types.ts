@@ -3,6 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
 type ChainId = string | number;
@@ -26,7 +27,6 @@ export type EditExternalAddressIntentInput = Readonly<{
 }>;
 
 export type EditExternalAddressResult = Readonly<{
-  appliedStep: EditExternalAddressStep;
   contactName: string;
   scope: string;
   address: ContactIdentifier;
@@ -40,12 +40,8 @@ export type EditExternalAddressResult = Readonly<{
 export type EditExternalAddressJobState =
   | { readonly type: "pending" }
   | { readonly type: "awaiting-device-confirmation"; readonly step: EditExternalAddressStep }
-  | { readonly type: "partial-result"; readonly result: EditExternalAddressResult }
-  | {
-      readonly type: "completed";
-      readonly appliedSteps: readonly EditExternalAddressStep[];
-      readonly result: EditExternalAddressResult;
-    }
+  | { readonly type: "partial-result" }
+  | { readonly type: "completed" }
   | {
       readonly type: "failed";
       readonly failedStep?: EditExternalAddressStep;
@@ -54,14 +50,21 @@ export type EditExternalAddressJobState =
 
 export type EditExternalAddressIntentDefinition = IntentDefinition<
   EditExternalAddressJobState,
-  EditExternalAddressIntentInput
+  EditExternalAddressIntentInput,
+  ContactIntentResult<EditExternalAddressResult>
 >;
 
 export type EditExternalAddressIntentPlatformDefinition<ExtraProps = undefined> =
-  IntentPlatformDefinition<EditExternalAddressJobState, EditExternalAddressIntentInput, ExtraProps>;
+  IntentPlatformDefinition<
+    EditExternalAddressJobState,
+    EditExternalAddressIntentInput,
+    ExtraProps,
+    ContactIntentResult<EditExternalAddressResult>
+  >;
 
 export type EditExternalAddressIntent<ExtraProps = undefined> = Intent<
   EditExternalAddressJobState,
   EditExternalAddressIntentInput,
-  ExtraProps
+  ExtraProps,
+  ContactIntentResult<EditExternalAddressResult>
 >;

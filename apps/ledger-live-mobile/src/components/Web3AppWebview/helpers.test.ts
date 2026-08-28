@@ -303,10 +303,12 @@ describe("useUiHook - message.sign device-intent branching", () => {
 describe("useUiHook - account.request cancel navigation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCanGoBack.mockReturnValue(true);
   });
 
-  function invokeAccountRequest(goBackOnAccountRequestCancel?: boolean) {
+  function invokeAccountRequest(opts?: {
+    onAccountRequestCancel?: () => void;
+    onAccountRequestSuccess?: () => void;
+  }) {
     const onSuccess = jest.fn();
     const onCancel = jest.fn();
     const { result } = renderHook(() =>
@@ -314,7 +316,7 @@ describe("useUiHook - account.request cancel navigation", () => {
         manifest: mockManifest,
         requestDeviceIntentSign: jest.fn(),
         requestDeviceIntentSignMessage: jest.fn(),
-        goBackOnAccountRequestCancel,
+        ...opts,
       }),
     );
     result.current["account.request"]!({
@@ -327,24 +329,24 @@ describe("useUiHook - account.request cancel navigation", () => {
     return { onSuccess, onCancel, drawerCallArgs };
   }
 
-  it("calls goBack when goBackOnAccountRequestCancel is true and user cancels", () => {
-    const { drawerCallArgs } = invokeAccountRequest(true);
+  it("calls onAccountRequestCancel when user cancels", () => {
+    const onAccountRequestCancel = jest.fn();
+    const { drawerCallArgs } = invokeAccountRequest({ onAccountRequestCancel });
     drawerCallArgs.onCancel();
-    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(onAccountRequestCancel).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call goBack when goBackOnAccountRequestCancel is not set and user cancels", () => {
+  it("does not throw when no onAccountRequestCancel is provided and user cancels", () => {
     const { drawerCallArgs } = invokeAccountRequest();
-    drawerCallArgs.onCancel();
-    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(() => drawerCallArgs.onCancel()).not.toThrow();
   });
 
-  it("does not call goBack after an account was already selected", () => {
-    const { drawerCallArgs, onSuccess } = invokeAccountRequest(true);
+  it("calls onAccountRequestSuccess when account is selected", () => {
+    const onAccountRequestSuccess = jest.fn();
+    const { drawerCallArgs, onSuccess } = invokeAccountRequest({ onAccountRequestSuccess });
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     drawerCallArgs.onAccountSelected({ id: "acc-1" } as AccountLike, undefined);
+    expect(onAccountRequestSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
-    drawerCallArgs.onCancel();
-    expect(mockGoBack).not.toHaveBeenCalled();
   });
 });

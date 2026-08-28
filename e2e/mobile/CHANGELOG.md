@@ -1,5 +1,65 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.36.0
+
+### Minor Changes
+
+- [#20991](https://github.com/LedgerHQ/ledger-live/pull/20991) [`3bea41d`](https://github.com/LedgerHQ/ledger-live/commit/3bea41dcb6a5ef8d26547be31dee94bc42448e46) Thanks [@jeportie](https://github.com/jeportie)! - Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what
+  `e2e/desktop` already does. The app records the `WebPTXPlayer` handoff URL in a
+  `Config.DETOX`-guarded store and exposes it over the e2e bridge as `getPtxHandoff`, so the
+  specs verify the provider and query parameters without ever loading Transak's or MoonPay's
+  site — removing a dependency on a third party's uptime, and the ~70s per test spent waiting
+  on it. Parsing lives in `libs/live-e2e-shared/src/buySellHandoff.ts` and handles the
+  double-encoded URL that made `new URL()` throw, plus provider aliases such as Mercuryo's
+  `mrcr`. Also fixes the sell flow asserting a minimum amount the flow never types, since it
+  taps the 75% button, and makes the "Buy and sell query parameters" test actually assert
+  query parameters.
+
+- [#20964](https://github.com/LedgerHQ/ledger-live/pull/20964) [`183706d`](https://github.com/LedgerHQ/ledger-live/commit/183706d1664336ef9798e3bebc06551803fe00bd) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Disable the large-screen upsell modal in E2E defaults so "Spot scams before signing" cannot cover Wallet 4.0 navigation.
+
+- [#20992](https://github.com/LedgerHQ/ledger-live/pull/20992) [`4fc5ef0`](https://github.com/LedgerHQ/ledger-live/commit/4fc5ef09554a541cbf6a497f227df4373bb06470) Thanks [@jeportie](https://github.com/jeportie)! - Record `fetch` traffic in the e2e network log alongside axios, so RTK Query — and therefore
+  every CAL token lookup — is no longer invisible in CI artifacts, and attach a per-host
+  summary with peak concurrency so a fan-out is legible without reading several hundred
+  entries. Query strings, fragments and any `user:pass@` userinfo are stripped before a URL is
+  recorded, and no bodies or headers are captured.
+
+- [#20959](https://github.com/LedgerHQ/ledger-live/pull/20959) [`6bbb468`](https://github.com/LedgerHQ/ledger-live/commit/6bbb4682ec313ea2d4b8fba2261a05e84386ba7d) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add the Borrow cold-start E2E test to the Ledger Wallet Mobile suite (B2CQA-6062): the portfolio
+  entry point opens the Borrow live app and shows the "Introducing Crypto Loan" modal. Broadcasts
+  nothing and runs on an isolated seed, so it needs no device and is safe to run in parallel.
+  Verified on Android and iOS. The portfolio entry point taps the card that was scrolled into view
+  rather than the CTA nested inside it — both share the same `onPress`, but only the card is
+  guaranteed on screen after the scroll.
+
+## 0.36.0-next.0
+
+### Minor Changes
+
+- [#20991](https://github.com/LedgerHQ/ledger-live/pull/20991) [`3bea41d`](https://github.com/LedgerHQ/ledger-live/commit/3bea41dcb6a5ef8d26547be31dee94bc42448e46) Thanks [@jeportie](https://github.com/jeportie)! - Assert the mobile Buy/Sell handoff instead of the partner's checkout page, matching what
+  `e2e/desktop` already does. The app records the `WebPTXPlayer` handoff URL in a
+  `Config.DETOX`-guarded store and exposes it over the e2e bridge as `getPtxHandoff`, so the
+  specs verify the provider and query parameters without ever loading Transak's or MoonPay's
+  site — removing a dependency on a third party's uptime, and the ~70s per test spent waiting
+  on it. Parsing lives in `libs/live-e2e-shared/src/buySellHandoff.ts` and handles the
+  double-encoded URL that made `new URL()` throw, plus provider aliases such as Mercuryo's
+  `mrcr`. Also fixes the sell flow asserting a minimum amount the flow never types, since it
+  taps the 75% button, and makes the "Buy and sell query parameters" test actually assert
+  query parameters.
+
+- [#20964](https://github.com/LedgerHQ/ledger-live/pull/20964) [`183706d`](https://github.com/LedgerHQ/ledger-live/commit/183706d1664336ef9798e3bebc06551803fe00bd) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Disable the large-screen upsell modal in E2E defaults so "Spot scams before signing" cannot cover Wallet 4.0 navigation.
+
+- [#20992](https://github.com/LedgerHQ/ledger-live/pull/20992) [`4fc5ef0`](https://github.com/LedgerHQ/ledger-live/commit/4fc5ef09554a541cbf6a497f227df4373bb06470) Thanks [@jeportie](https://github.com/jeportie)! - Record `fetch` traffic in the e2e network log alongside axios, so RTK Query — and therefore
+  every CAL token lookup — is no longer invisible in CI artifacts, and attach a per-host
+  summary with peak concurrency so a fan-out is legible without reading several hundred
+  entries. Query strings, fragments and any `user:pass@` userinfo are stripped before a URL is
+  recorded, and no bodies or headers are captured.
+
+- [#20959](https://github.com/LedgerHQ/ledger-live/pull/20959) [`6bbb468`](https://github.com/LedgerHQ/ledger-live/commit/6bbb4682ec313ea2d4b8fba2261a05e84386ba7d) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add the Borrow cold-start E2E test to the Ledger Wallet Mobile suite (B2CQA-6062): the portfolio
+  entry point opens the Borrow live app and shows the "Introducing Crypto Loan" modal. Broadcasts
+  nothing and runs on an isolated seed, so it needs no device and is safe to run in parallel.
+  Verified on Android and iOS. The portfolio entry point taps the card that was scrolled into view
+  rather than the CTA nested inside it — both share the same `onPress`, but only the card is
+  guaranteed on screen after the scroll.
+
 ## 0.35.0
 
 ### Minor Changes
@@ -249,21 +309,5 @@
 - [#18149](https://github.com/LedgerHQ/ledger-live/pull/18149) [`7ee8538`](https://github.com/LedgerHQ/ledger-live/commit/7ee8538247a0d48c587354f04c05fff4e69bb3b4) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Declare `@babel/plugin-transform-dynamic-import` and `@babel/plugin-transform-modules-commonjs` as explicit devDependencies. They were referenced by `babel.config.js` since #18119 but resolved via pnpm hoist luck, causing `Cannot find module '@babel/plugin-transform-dynamic-import'` on jest globalSetup.
 
 - [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
-
-## 0.25.0
-
-### Minor Changes
-
-- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
-
-- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
-
-## 0.25.0-next.0
-
-### Minor Changes
-
-- [#17775](https://github.com/LedgerHQ/ledger-live/pull/17775) [`1d39f17`](https://github.com/LedgerHQ/ledger-live/commit/1d39f1747ce2004248e7df36901fccb6c5d79654) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Defer pending operation account updates until after broadcast success navigation transitions complete
-
-- [#17802](https://github.com/LedgerHQ/ledger-live/pull/17802) [`b61e421`](https://github.com/LedgerHQ/ledger-live/commit/b61e42102019c04ee5d7df1aca22e30ba4a69e7d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add `E2E_FEATURE_FLAGS_JSON` env override for Mobile E2E feature flags, exposed as a `feature_flags_json` input on the Mobile E2E workflow (parity with Desktop).
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

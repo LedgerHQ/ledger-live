@@ -218,6 +218,10 @@ export const DEBUG_CARD_PREFIX = "debug-local-content-card";
 export const DEBUG_CATEGORY_PREFIX = "debug-local-category";
 const DEBUG_GAM_PREFIX = "debug-local-gam";
 const TOP_WALLET_CATEGORY_ID = "alwayson";
+const TOP_WALLET_HARDWARE_CATEGORY_ID = `${DEBUG_CATEGORY_PREFIX}-top-wallet-hardware`;
+const TOP_WALLET_HERO_CAROUSEL_CATEGORY_ID = `${DEBUG_CATEGORY_PREFIX}-top-wallet-hero-carousel`;
+const TOP_WALLET_HERO_CATEGORY_ID = `${DEBUG_CATEGORY_PREFIX}-top-wallet-hero`;
+const TOP_WALLET_HARDWARE_ORDER = "1";
 const DEBUG_PRESET_LINK = "ledgerlive://market";
 const LEDGER_IMAGE_URLS = [
   "https://ledger-wp-website-s3-prd.ledger.com/uploads/2026/04/card1.webp",
@@ -310,7 +314,8 @@ export function buildPresetCardBuilderValues(
         type: ContentCardsType.smallSquare,
         layout: ContentCardsLayout.carousel,
         id: `${DEBUG_CARD_PREFIX}-top-wallet-hardware-${timestamp}`,
-        categoryId: TOP_WALLET_CATEGORY_ID,
+        categoryId: TOP_WALLET_HARDWARE_CATEGORY_ID,
+        order: TOP_WALLET_HARDWARE_ORDER,
         categoryTitle: "",
         title: HARDWARE_CAROUSEL_PRODUCTS[0],
         description: "",
@@ -324,7 +329,7 @@ export function buildPresetCardBuilderValues(
         type: ContentCardsType.hero,
         layout: ContentCardsLayout.carousel,
         id: `${DEBUG_CARD_PREFIX}-top-wallet-hero-carousel-${timestamp}`,
-        categoryId: TOP_WALLET_CATEGORY_ID,
+        categoryId: TOP_WALLET_HERO_CAROUSEL_CATEGORY_ID,
         categoryTitle: "",
         title: "Touchscreen offers",
         description: "",
@@ -408,7 +413,7 @@ export function buildPresetCardBuilderValues(
       return withPresetTrackingDefaults("topWalletHero", {
         ...base,
         id: `${DEBUG_CARD_PREFIX}-top-wallet-hero-${timestamp}`,
-        categoryId: TOP_WALLET_CATEGORY_ID,
+        categoryId: TOP_WALLET_HERO_CATEGORY_ID,
         title: "Portfolio banner",
         description: "Local top-wallet hero content card.",
       });

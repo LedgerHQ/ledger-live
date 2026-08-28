@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -13,6 +13,7 @@
     },
     "./native": "./src/index.native.ts",
     "./web": "./src/web.ts",
+    "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
     "./package.json": "./package.json"
   },

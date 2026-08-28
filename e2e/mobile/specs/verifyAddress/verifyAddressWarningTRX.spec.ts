@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runVerifyAddressWarningTest } from "./verifyAddressWarning";
+import { runVerifyAddressWarningTest } from "@e2e/specs/verifyAddress/verifyAddressWarning";
 
 runVerifyAddressWarningTest(
   Account.TRX_1,

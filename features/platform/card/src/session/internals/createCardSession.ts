@@ -36,13 +36,7 @@ export function createCardSession(store: CardSessionStore) {
       // The access token is written last, because it is the only key the request path reads.
       const coldWriteResults = await Promise.allSettled([
         store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
-        store.write(
-          CARD_SESSION_KEYS.lifetimes,
-          JSON.stringify({
-            expiresIn: session.expiresIn,
-            refreshTokenExpiresIn: session.refreshTokenExpiresIn,
-          }),
-        ),
+        store.write(CARD_SESSION_KEYS.lifetimes, JSON.stringify({ expiresIn: session.expiresIn })),
       ]);
       const failedColdWrite = coldWriteResults.find(
         (result): result is PromiseRejectedResult => result.status === "rejected",
@@ -133,18 +127,14 @@ export function createCardSession(store: CardSessionStore) {
 }
 
 /** Unreadable or incomplete lifetimes answer null, so the caller reports no session. */
-function parseLifetimes(
-  value: string | null,
-): Pick<PayCardSession, "expiresIn" | "refreshTokenExpiresIn"> | null {
+function parseLifetimes(value: string | null): Pick<PayCardSession, "expiresIn"> | null {
   if (!value) {
     return null;
   }
 
   try {
-    const { expiresIn, refreshTokenExpiresIn } = JSON.parse(value) as Record<string, unknown>;
-    return typeof expiresIn === "number" && typeof refreshTokenExpiresIn === "number"
-      ? { expiresIn, refreshTokenExpiresIn }
-      : null;
+    const { expiresIn } = JSON.parse(value) as Record<string, unknown>;
+    return typeof expiresIn === "number" ? { expiresIn } : null;
   } catch {
     return null;
   }

@@ -14,7 +14,6 @@ const assignContext = assign<CardLoginContext, CardLoginEvent, undefined, CardLo
 /** Everything an ended attempt leaves behind, except the error to show for it. */
 export const forgetAttempt = assignContext({
   callback: null,
-  initiation: null,
   loginUrl: null,
   session: null,
   clearSession: false,

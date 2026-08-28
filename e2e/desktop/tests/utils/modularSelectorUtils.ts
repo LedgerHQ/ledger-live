@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
-import { Application } from "../page";
-import { ModularDialog } from "../page/dialog/modular.dialog";
+import { Application } from "tests/page";
+import { ModularDialog } from "tests/page/dialog/modular.dialog";
 
 /**
  * Returns the visible modular selector (Dialog), or null if legacy UI.

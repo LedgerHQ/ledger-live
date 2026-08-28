@@ -23,7 +23,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
-import { attachNetworkLogging } from "../utils/networkLogging";
+import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";

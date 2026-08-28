@@ -1,5 +1,43 @@
 # @ledgerhq/coin-aleo
 
+## 2.1.0
+
+### Minor Changes
+
+- [#20883](https://github.com/LedgerHQ/ledger-live/pull/20883) [`328dd6f`](https://github.com/LedgerHQ/ledger-live/commit/328dd6f802c87d7248c9bfd95fea5b843aec162a) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops cleanup before extending framework
+
+- [#20835](https://github.com/LedgerHQ/ledger-live/pull/20835) [`e5f61ca`](https://github.com/LedgerHQ/ledger-live/commit/e5f61ca5eae1df9e9ce6abcaa7715db206a71cdf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add the `register` method to the coin-aleo framework API: it seals the account view key to the Provable record scanner and returns the `{ type: "aleo", provableId }` handle, sharing the seal-and-enroll sequence with the bridge's `accessProvableApi`.
+
+- [#20846](https://github.com/LedgerHQ/ledger-live/pull/20846) [`fc4f6e1`](https://github.com/LedgerHQ/ledger-live/commit/fc4f6e16a4fbf1f5f5a900c6c178635fb55e46fc) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement the `combine` method and wire `broadcast` in the coin-aleo framework API: `combine` validates the ordered signature list (root first, then nested calls), reads the view key off the `Context`, and returns the hex-encoded SDK authorization.
+
+- [#20941](https://github.com/LedgerHQ/ledger-live/pull/20941) [`7cb7f9f`](https://github.com/LedgerHQ/ledger-live/commit/7cb7f9fcde70585663639e0c8f8fb1c950489d3c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops framework
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @ledgerhq/types-live@6.121.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0
+  - @ledgerhq/live-env@3.1.0
+
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#20883](https://github.com/LedgerHQ/ledger-live/pull/20883) [`328dd6f`](https://github.com/LedgerHQ/ledger-live/commit/328dd6f802c87d7248c9bfd95fea5b843aec162a) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops cleanup before extending framework
+
+- [#20835](https://github.com/LedgerHQ/ledger-live/pull/20835) [`e5f61ca`](https://github.com/LedgerHQ/ledger-live/commit/e5f61ca5eae1df9e9ce6abcaa7715db206a71cdf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add the `register` method to the coin-aleo framework API: it seals the account view key to the Provable record scanner and returns the `{ type: "aleo", provableId }` handle, sharing the seal-and-enroll sequence with the bridge's `accessProvableApi`.
+
+- [#20846](https://github.com/LedgerHQ/ledger-live/pull/20846) [`fc4f6e1`](https://github.com/LedgerHQ/ledger-live/commit/fc4f6e16a4fbf1f5f5a900c6c178635fb55e46fc) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement the `combine` method and wire `broadcast` in the coin-aleo framework API: `combine` validates the ordered signature list (root first, then nested calls), reads the view key off the `Context`, and returns the hex-encoded SDK authorization.
+
+- [#20941](https://github.com/LedgerHQ/ledger-live/pull/20941) [`7cb7f9f`](https://github.com/LedgerHQ/ledger-live/commit/7cb7f9fcde70585663639e0c8f8fb1c950489d3c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private list ops framework
+
+### Patch Changes
+
+- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @ledgerhq/types-live@6.121.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.1.0-next.0
+  - @ledgerhq/live-env@3.1.0-next.0
+
 ## 2.0.0
 
 ### Major Changes
@@ -420,51 +458,5 @@
   - @ledgerhq/types-cryptoassets@7.38.0-next.0
   - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
   - @ledgerhq/live-network@2.6.5-next.0
-
-## 1.14.0
-
-### Minor Changes
-
-- [#18030](https://github.com/LedgerHQ/ledger-live/pull/18030) [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: unify aleo node endpoint env
-
-### Patch Changes
-
-- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024)]:
-  - @ledgerhq/types-live@6.111.0
-  - @ledgerhq/cryptoassets@13.51.0
-  - @ledgerhq/ledger-wallet-framework@2.1.0
-  - @ledgerhq/live-env@2.38.0
-  - @ledgerhq/errors@6.36.0
-  - @ledgerhq/live-network@2.6.4
-  - @ledgerhq/devices@8.15.1
-
-## 1.14.0-next.0
-
-### Minor Changes
-
-- [#18030](https://github.com/LedgerHQ/ledger-live/pull/18030) [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: unify aleo node endpoint env
-
-### Patch Changes
-
-- Updated dependencies [[`c606898`](https://github.com/LedgerHQ/ledger-live/commit/c606898e4994768eadd99f2dea9575f92b3f9339), [`9901502`](https://github.com/LedgerHQ/ledger-live/commit/990150200e70bc3ea55c5cfc41e1c77f24cc315b), [`0ebf28c`](https://github.com/LedgerHQ/ledger-live/commit/0ebf28cac81f6f25f356d54c891fab62f328e411), [`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649), [`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`d649cf3`](https://github.com/LedgerHQ/ledger-live/commit/d649cf31ecf8b2e18ab78109e6b201ff9766cc33), [`d081ef1`](https://github.com/LedgerHQ/ledger-live/commit/d081ef1892a34fa1751fba4d774867ff11bae20b), [`d19f9de`](https://github.com/LedgerHQ/ledger-live/commit/d19f9debb00e15edbaa7d2cedfcb0d2b5ced4f80), [`ddfb84c`](https://github.com/LedgerHQ/ledger-live/commit/ddfb84cf0caf68cfaba75aa7c015b2029051fe78), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9), [`cc4dd4d`](https://github.com/LedgerHQ/ledger-live/commit/cc4dd4db5e312da55966a6f0a8daa90e75e4dd94), [`bbc72fe`](https://github.com/LedgerHQ/ledger-live/commit/bbc72fe2ad0cee010349ab3b2e5a1e369dd9e840), [`8c9596d`](https://github.com/LedgerHQ/ledger-live/commit/8c9596de8eeec00f8d660a42448c6eb65c3aa9b2), [`5842a85`](https://github.com/LedgerHQ/ledger-live/commit/5842a85907c7418a393b0dffee756bff52370024)]:
-  - @ledgerhq/types-live@6.111.0-next.0
-  - @ledgerhq/cryptoassets@13.51.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.1.0-next.0
-  - @ledgerhq/live-env@2.38.0-next.0
-  - @ledgerhq/errors@6.36.0-next.0
-  - @ledgerhq/live-network@2.6.4-next.0
-  - @ledgerhq/devices@8.15.1-next.0
-
-## 1.13.1
-
-### Patch Changes
-
-- Updated dependencies [[`812538e`](https://github.com/LedgerHQ/ledger-live/commit/812538e1788cf63aa3166d3842f0b27248400690), [`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`177e07f`](https://github.com/LedgerHQ/ledger-live/commit/177e07ffc6c733b4b9811d6f7dff6b75a106075c), [`44fd893`](https://github.com/LedgerHQ/ledger-live/commit/44fd8931435a52232cfd5abed3fec7a5b275a9be), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`5e2b764`](https://github.com/LedgerHQ/ledger-live/commit/5e2b76429c0b3024782dc179875a24c5f2655274), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
-  - @ledgerhq/types-live@6.110.0
-  - @ledgerhq/cryptoassets@13.50.0
-  - @ledgerhq/live-env@2.37.0
-  - @ledgerhq/ledger-wallet-framework@2.0.0
-  - @ledgerhq/devices@8.15.0
-  - @ledgerhq/live-network@2.6.3
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

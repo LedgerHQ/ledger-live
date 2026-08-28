@@ -216,26 +216,4 @@
 
 - [#17360](https://github.com/LedgerHQ/ledger-live/pull/17360) [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove unused useDeviceSessionState
 
-## 0.23.0
-
-### Minor Changes
-
-- [#16652](https://github.com/LedgerHQ/ledger-live/pull/16652) [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add blind-signing tracking context for dmk signer ethereum
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.2
-
-## 0.23.0-next.0
-
-### Minor Changes
-
-- [#16652](https://github.com/LedgerHQ/ledger-live/pull/16652) [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add blind-signing tracking context for dmk signer ethereum
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.2-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

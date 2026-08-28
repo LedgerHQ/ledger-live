@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.29.5
+
+### Patch Changes
+
+- Updated dependencies [[`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @shared/env@0.4.0
+
+## 0.29.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`cad4f63`](https://github.com/LedgerHQ/ledger-live/commit/cad4f63be4a3b16880ab490195af1f17921e03c2), [`8161bac`](https://github.com/LedgerHQ/ledger-live/commit/8161bac542474212dfefc8519e714da345b03f71), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e), [`39a676d`](https://github.com/LedgerHQ/ledger-live/commit/39a676d2f861d04913264e61100205b4f6044cf9)]:
+  - @shared/env@0.4.0-next.0
+
 ## 0.29.4
 
 ### Patch Changes
@@ -225,33 +239,5 @@
   - @ledgerhq/errors@6.36.0-next.0
   - @ledgerhq/devices@8.15.1-next.0
   - @ledgerhq/hw-transport@6.35.4-next.0
-
-## 0.24.0
-
-### Minor Changes
-
-- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`8c9b60b`](https://github.com/LedgerHQ/ledger-live/commit/8c9b60b13c2d9961965e34035ccad337b56fe53f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Expose the selected `device` (`KnownDevice`) on the `Connecting` `ConnectDeviceUIState` emitted by `connectDeviceUseCase`.
-
-### Patch Changes
-
-- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
-  - @ledgerhq/live-env@2.37.0
-  - @ledgerhq/devices@8.15.0
-  - @ledgerhq/hw-transport@6.35.3
-  - @ledgerhq/live-dmk-shared@0.25.1
-
-## 0.24.0-next.0
-
-### Minor Changes
-
-- [#17929](https://github.com/LedgerHQ/ledger-live/pull/17929) [`8c9b60b`](https://github.com/LedgerHQ/ledger-live/commit/8c9b60b13c2d9961965e34035ccad337b56fe53f) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Expose the selected `device` (`KnownDevice`) on the `Connecting` `ConnectDeviceUIState` emitted by `connectDeviceUseCase`.
-
-### Patch Changes
-
-- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9), [`73afced`](https://github.com/LedgerHQ/ledger-live/commit/73afced223c37efeb24943ffb9cc1ee788b72a6f)]:
-  - @ledgerhq/live-env@2.37.0-next.0
-  - @ledgerhq/devices@8.15.0-next.0
-  - @ledgerhq/hw-transport@6.35.3-next.0
-  - @ledgerhq/live-dmk-shared@0.25.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

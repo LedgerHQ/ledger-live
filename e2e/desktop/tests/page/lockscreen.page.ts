@@ -1,4 +1,4 @@
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 
 export class LockscreenPage extends AppPage {

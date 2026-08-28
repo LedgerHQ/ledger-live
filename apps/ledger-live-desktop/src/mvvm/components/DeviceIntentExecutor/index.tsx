@@ -12,7 +12,7 @@ import {
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
@@ -33,11 +33,12 @@ export { RetryableDeviceLocked } from "./components/DeviceGenericStates/Retryabl
 export { UnlockDevice } from "./components/DeviceGenericStates/UnlockDevice";
 export type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
 
-type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
+type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,
   Input,
   ExtraProps,
-  InitializationInput
+  InitializationInput,
+  Result
 > & {
   initializerConfig?: InitializerConfig;
   /**
@@ -60,8 +61,8 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
 
 const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 
-export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
-  props: Props<JobState, Input, ExtraProps>,
+export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps, Result = undefined>(
+  props: Props<JobState, Input, ExtraProps, Result>,
 ): React.ReactElement | null {
   const {
     wrappedProps,

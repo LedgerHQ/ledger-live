@@ -4,6 +4,7 @@ import {
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  CONTACT_NAME_MAX_LENGTH,
   ContactNameInputSchema,
   ContactNameSchema,
   ContactSchema,
@@ -62,6 +63,13 @@ describe("ContactSchema", () => {
     expect(() => ContactNameSchema.parse("Olive@2")).toThrow();
     expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
     expect(() => ContactNameSchema.parse("Olive@")).toThrow();
+  });
+
+  it("rejects contact names longer than the domain limit", () => {
+    expect(ContactNameSchema.parse("a".repeat(CONTACT_NAME_MAX_LENGTH))).toHaveLength(
+      CONTACT_NAME_MAX_LENGTH,
+    );
+    expect(() => ContactNameSchema.parse("a".repeat(CONTACT_NAME_MAX_LENGTH + 1))).toThrow();
   });
 });
 

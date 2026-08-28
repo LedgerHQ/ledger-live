@@ -1,8 +1,8 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-import { initReceiveApp } from "./initReceiveApp";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { initReceiveApp } from "@e2e/specs/verifyAddress/receivePerTest/initReceiveApp";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 

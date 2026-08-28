@@ -29,9 +29,6 @@ export function findMatchedContact(
 ): MatchedContact | undefined {
   const recipientAddress = resolvedRecipient ?? recipient;
   const recipientNetworkId = resolveRecipientNetworkId(currencyId);
-  if (!recipientAddress.trim()) {
-    return undefined;
-  }
   const normalizedRecipient = recipient.trim().toLowerCase();
 
   const sortedContacts = [...contacts].sort(

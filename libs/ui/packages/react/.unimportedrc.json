@@ -16,16 +16,12 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
-    "**/*.stories.*",
     "**/*.test.*"
   ],
   "ignoreUnimported": [
     "src/assets/images/images.d.ts",
-    "src/components/Table/stories.helper.tsx",
     "src/components/helpers.ts",
-    "src/components/navigation/Aside/stories.helper.tsx",
-    "src/helpers.types.ts",
-    "src/pre-ldls/components/sharedStoryBook.tsx"
+    "src/helpers.types.ts"
   ],
   "ignoreUnresolved": [
     "@emotion/is-prop-valid",

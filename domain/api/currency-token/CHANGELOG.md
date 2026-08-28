@@ -1,5 +1,19 @@
 # @domain/api-currency-token
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1)]:
+  - @shared/api-services@0.5.0
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1)]:
+  - @shared/api-services@0.5.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

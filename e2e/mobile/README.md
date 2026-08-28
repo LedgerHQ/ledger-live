@@ -97,6 +97,9 @@ pnpm test:android <testFileName>         # single file
 
 ### 6. Full Documentation
 
+To write a new spec or page object, follow
+[Adding or updating a mobile E2E test](docs/add-or-update-e2e.md).
+
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 

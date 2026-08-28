@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-recent-addresses",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "RecentAddresses entity: state types, action creators, and wallet-sync module",
   "main": "src/index.ts",

@@ -21,7 +21,11 @@ export function LedgerWalletAddressesCard({
   onPress,
 }: LedgerWalletAddressesCardProps): React.ReactNode {
   return (
-    <ListItem onClick={() => onPress(intent)} data-testid="contacts-detail-ledger-wallet-addresses">
+    <ListItem
+      onClick={() => onPress(intent)}
+      className="bg-surface"
+      data-testid="contacts-detail-ledger-wallet-addresses"
+    >
       <ListItemLeading>
         <Wallet size={20} aria-hidden />
         <ListItemContent>

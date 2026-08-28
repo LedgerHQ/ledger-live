@@ -1,6 +1,6 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { delay, isAndroid } from "../../helpers/commonHelpers";
+import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");

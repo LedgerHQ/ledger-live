@@ -53,8 +53,7 @@ the asset icon, network row, highlighted address and the action tiles. The host 
 icons, the visible actions and the side-effect callbacks; the component stays i18n-, device- and
 navigation-agnostic.
 
-> Web only for now — the native screen is delivered with the LWM wiring (LIVE-35188), and the
-> branded QR is added via `@shared/ui-qr-code` (LIVE-36118).
+> Native is a full screen (LIVE-35188). Branded QR uses `@shared/ui-qr-code`.
 
 ```tsx
 import { RequestReceive } from "@features/flow-pay-card-request";
@@ -83,7 +82,7 @@ import { RequestReceive } from "@features/flow-pay-card-request";
 ```
 
 `visibleActions` controls which tiles render, in order. Desktop uses `["save", "copy", "verify"]`;
-mobile will use `["share", "verify"]`. The Copy tile flips to the `copied` label briefly after use.
+mobile uses `["share", "copy", "verify"]`. The Copy tile flips to the `copied` label briefly after use.
 
 ### `VerifyAddress`
 
@@ -145,7 +144,7 @@ pay-card-request/
         │   ├── RequestReceive.tsx                 # Container (platform-agnostic)
         │   ├── useRequestReceiveViewModel.ts      # pure VM: display data + tracked handlers
         │   ├── RequestReceiveView.web.tsx         # Dialog (LWD)
-        │   ├── RequestReceiveView.native.tsx      # Stub until LIVE-35188
+        │   ├── RequestReceiveView.native.tsx      # Full screen (LWM)
         │   └── __tests__/
         └── VerifyAddress/
             ├── VerifyAddress.tsx                  # Container; switches phase

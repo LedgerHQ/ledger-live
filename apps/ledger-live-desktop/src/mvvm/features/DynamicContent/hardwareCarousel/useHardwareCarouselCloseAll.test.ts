@@ -44,13 +44,32 @@ describe("useHardwareCarouselCloseAll", () => {
       deviceModel: "lnx",
       personalRecoOptIn: true,
       offerType: "discount",
-      platform: "lld",
+      platform: "lwd",
     });
   });
 
   it("does not track analytics when every card was already dismissed", () => {
     mockDismissCards.mockReturnValue(false);
     const { result } = renderHook(() => useHardwareCarouselCloseAll(["card-1"]));
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockDismissCards).toHaveBeenCalledWith(["card-1"]);
+    expect(trackHardwareCarouselCloseAll).not.toHaveBeenCalled();
+  });
+
+  it("does not track analytics when the user has no eligible device model", () => {
+    mockDismissCards.mockReturnValue(true);
+    const { result } = renderHook(() => useHardwareCarouselCloseAll(["card-1"]), {
+      initialState: {
+        settings: {
+          devicesModelList: [DeviceModelId.nanoS],
+          sharePersonalizedRecommandations: true,
+        },
+      },
+    });
 
     act(() => {
       result.current();

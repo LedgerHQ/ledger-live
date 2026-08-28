@@ -52,6 +52,7 @@ export default function ActivationFinalStep({ isNewBackup, sourcePage }: Props) 
     <Success
       title={t(title)}
       description={t(desc)}
+      testId={isNewBackup ? "walletsync-activate-success-title" : undefined}
       withCta={sourcePage !== AnalyticsPage.OnboardingSync}
       withClose
       onClick={goToSync}

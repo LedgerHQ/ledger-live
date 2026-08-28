@@ -1,7 +1,7 @@
 import { Transaction, TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { BST_SEND_CURRENCIES, beforeAllFunction, SendTestOptions } from "./send";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { BST_SEND_CURRENCIES, beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
 
 const beforeAllTokenFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
   await app.init({
@@ -31,7 +31,11 @@ export function runNewSendFlowTokenTest(
   tags: string[],
   options?: SendTestOptions,
 ) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(
+    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("New Send Flow - Token Send", () => {

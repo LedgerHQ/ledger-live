@@ -26,7 +26,7 @@ export function ContactDetailAddressNetworkSection({
         />
         <p className="body-2 text-muted">{group.networkName}</p>
       </div>
-      <div className="flex flex-col overflow-hidden rounded-lg">
+      <div className="flex flex-col gap-8 overflow-hidden rounded-lg">
         {group.rows.map(row => (
           <ContactDetailAddressRowView
             key={row.addressId}

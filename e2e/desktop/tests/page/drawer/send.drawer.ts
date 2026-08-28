@@ -1,5 +1,5 @@
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 import { expect } from "@playwright/test";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 

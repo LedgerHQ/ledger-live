@@ -1,12 +1,35 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { cardApi, cardApiExtra } from "@shared/api-services";
-import { cardManagementApi, useOrderCardMutation } from "./api";
+import {
+  cardManagementApi,
+  useGetCardLinkedWalletsQuery,
+  useGetCardStatusQuery,
+  useGetInternalWalletsQuery,
+  useOrderCardMutation,
+} from "./api";
+import { PayCardErrorResponseSchema } from "./schema";
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+function errorResponse(status: number, message: string): Response {
+  return new Response(JSON.stringify(PayCardErrorResponseSchema.parse({ message })), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * The refetch an invalidation triggers only reaches `fetch` a tick later: the base query awaits the
+ * session token first. Drain the queue before counting requests, so the assertion does not depend on
+ * how many microtasks the awaited dispatch happened to spend.
+ */
+function flushPendingRequests(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 0));
 }
 
 function request(spy: jest.SpyInstance): Request {
@@ -17,15 +40,67 @@ const sessionResponse = {
   access_token: "at_token",
   expires_in: 21600,
   refresh_token: "rt_token",
-  refresh_token_expires_in: 15897600,
 };
 
 const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
+
+// The provider's own example response.
+const cardStatus = {
+  id: "000000000050277836",
+  holderName: "JOHN DOE",
+  expiryDate: "2028/01",
+  panLast4: "1234",
+  status: "ACTIVE",
+  type: "VIRTUAL",
+  orderedAt: "2023-03-27T17:07:12.662Z",
+};
+
+// The provider's own example responses, as they arrive on the wire.
+const internalWalletsOnTheWire = [
+  {
+    id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
+    balance: "125.50",
+    currency: "xrp",
+    address: "rNxp4h8apvRis6mJf9Sh8C6iRxfrDWN7AA",
+    addressMemo: "78",
+    addressId: "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c",
+    type: "INTERNAL",
+  },
+  {
+    id: "7c1839ee-918e-4787-b74f-deeb48ead58b",
+    balance: "500.00",
+    currency: "usdc",
+    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb4",
+    addressMemo: null,
+    addressId: "7c1839ee-918e-4787-b74f-deeb48ead58b",
+    type: "INTERNAL",
+  },
+];
+
+const internalWallets = internalWalletsOnTheWire.map(
+  ({ addressId: _addressId, type: _type, ...wallet }) => wallet,
+);
+
+const linkedWallets = [
+  {
+    id: "1693a6da-5945-4461-ba1c-0b9891f78848",
+    address: "DfKNsYfrCEHb7ScJkuMTtPTeDiyjmBBm9NMHnbR7uFHz",
+    currency: "sol",
+    network: "solana",
+    priority: 1,
+  },
+  {
+    id: "7c1839ee-918e-4787-b74f-deeb48ead58b",
+    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb4",
+    currency: "usdc",
+    network: "ethereum",
+    priority: 2,
+  },
+];
 
 // Wired the way the apps wire it: the store registers the service api, never this package.
 const makeStore = (
@@ -57,8 +132,10 @@ describe("cardManagementApi configuration", () => {
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "exchangeAuthorizationCode",
+      "getCardLinkedWallets",
+      "getCardStatus",
+      "getInternalWallets",
       "getUser",
-      "initiateAuthorize",
       "logout",
       "orderCard",
       "refreshSession",
@@ -68,6 +145,18 @@ describe("cardManagementApi configuration", () => {
   it("exposes the orderCard endpoint and its hook", () => {
     expect(cardManagementApi.endpoints.orderCard).toBeDefined();
     expect(useOrderCardMutation).toBeDefined();
+  });
+
+  it("exposes the getCardStatus endpoint and its hook", () => {
+    expect(cardManagementApi.endpoints.getCardStatus).toBeDefined();
+    expect(useGetCardStatusQuery).toBeDefined();
+  });
+
+  it("exposes the wallet endpoints and their hooks", () => {
+    expect(cardManagementApi.endpoints.getInternalWallets).toBeDefined();
+    expect(useGetInternalWalletsQuery).toBeDefined();
+    expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
+    expect(useGetCardLinkedWalletsQuery).toBeDefined();
   });
 
   it("shares the Card service reducer and middleware once registered in a store", () => {
@@ -84,40 +173,6 @@ describe("cardManagementApi requests", () => {
     fetchSpy?.mockRestore();
   });
 
-  describe("initiateAuthorize", () => {
-    it("sends the OAuth parameters and returns the hosted login URL", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockResolvedValue(jsonResponse({ token: "jwt", url: "https://card.test/login" }));
-
-      const store = makeStore();
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.initiateAuthorize.initiate({
-          clientId: "client-key",
-          redirectUri: "ledgerlive://paytab",
-          state: "state-value",
-          codeChallenge: "challenge-value",
-        }),
-      );
-
-      const { searchParams, pathname } = new URL(request(fetchSpy).url);
-      expect(pathname).toBe("/v1/auth/oauth/authorize/initiate");
-      expect(request(fetchSpy).method).toBe("GET");
-      expect(Object.fromEntries(searchParams)).toEqual({
-        client_id: "client-key",
-        response_type: "code",
-        redirect_uri: "ledgerlive://paytab",
-        state: "state-value",
-        code_challenge: "challenge-value",
-        code_challenge_method: "S256",
-        mode: "api",
-      });
-      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
-      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
-      expect(result.data).toEqual({ url: "https://card.test/login" });
-    });
-  });
-
   describe("exchangeAuthorizationCode", () => {
     it("posts the authorization_code grant and maps the session onto camelCase", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
@@ -126,17 +181,15 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
 
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth/token");
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
       expect(request(fetchSpy).method).toBe("POST");
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "authorization_code",
         code: "auth-code",
-        redirect_uri: "ledgerlive://paytab",
         code_verifier: "verifier",
       });
       expect(result.data).toEqual(session);
@@ -156,7 +209,6 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
@@ -177,7 +229,7 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.refreshSession.initiate({ refreshToken: "rt_token" }),
       );
 
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth/token");
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "refresh_token",
         refresh_token: "rt_token",
@@ -255,46 +307,233 @@ describe("cardManagementApi requests", () => {
       expect(result.data).toEqual({ success: true });
     });
 
-    it("keeps everything the wire contract does not declare out of the cache", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockResolvedValue(
-          jsonResponse({ success: true, cardId: "card-1", pan: "pan-must-not-reach-the-cache" }),
-        );
-
-      const store = makeStore(async () => "session-token");
-      const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
-
-      expect(result.data).toEqual({ success: true });
-    });
-
     it("rejects a response whose success flag is not a boolean", async () => {
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
-        .mockResolvedValue(jsonResponse({ success: "yes", pan: "pan-must-not-reach-the-cache" }));
+        .mockResolvedValue(jsonResponse({ success: "yes" }));
 
       const store = makeStore(async () => "session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
 
       expect(result.data).toBeUndefined();
-      expect(JSON.stringify(result.error)).not.toContain("pan-must-not-reach-the-cache");
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("getCardStatus", () => {
+    it("reads the card and drops everything the wire contract does not declare", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(cardStatus));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/status");
+      expect(request(fetchSpy).method).toBe("GET");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(result.data).toEqual(cardStatus);
+    });
+
+    it("reports a user who never ordered a card as a 404", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(404, "Card not found"));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toMatchObject({ status: 404 });
+    });
+
+    it("rejects a status the wire contract does not name", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse({ ...cardStatus, status: "SOMETHING_ELSE" }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("refetches after an order, because the order invalidates the card status", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async (input: RequestInfo | URL) =>
+          new URL((input as Request).url).pathname === "/v1/card/order"
+            ? jsonResponse({ success: true })
+            : jsonResponse(cardStatus),
+        );
+
+      const store = makeStore(async () => "session-token");
+      // Subscribed, so the invalidation has a live cache entry to refetch.
+      const status = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await status;
+      await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
+      await flushPendingRequests();
+
+      const statusRequests = fetchSpy.mock.calls.filter(
+        ([input]) => new URL((input as Request).url).pathname === "/v1/card/status",
+      );
+      expect(statusRequests).toHaveLength(2);
+
+      status.unsubscribe();
+    });
+  });
+
+  describe("getInternalWallets", () => {
+    it("reads every custodial wallet with the bearer token and the client key", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse(internalWalletsOnTheWire));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/wallet/internal");
+      expect(request(fetchSpy).method).toBe("GET");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual(internalWallets);
+    });
+
+    it("keeps the balance a string, so the provider's precision survives", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(
+          jsonResponse([{ ...internalWallets[0], balance: "9007199254740993.000001" }]),
+        );
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(result.data?.[0].balance).toBe("9007199254740993.000001");
+    });
+
+    it("drops the keys the wire contract does not declare", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse([internalWalletsOnTheWire[0]]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(result.data).toEqual([internalWallets[0]]);
+    });
+
+    it("accepts a user with no wallets as an empty list, not an error", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse([]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
+    });
+
+    it("rejects a balance the provider sent as a number", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse([{ ...internalWallets[0], balance: 125.4 }]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("rejects an envelope where the contract promises a bare array", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse({ wallets: internalWallets }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getInternalWallets.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("getCardLinkedWallets", () => {
+    it("reads the linked wallets with the bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(linkedWallets));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/wallet/internal/card_linked");
+      expect(request(fetchSpy).method).toBe("GET");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual(linkedWallets);
+    });
+
+    it("keeps a priority of zero, which is the first wallet charged", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse([{ ...linkedWallets[0], priority: 0 }]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data?.[0].priority).toBe(0);
+    });
+
+    it("accepts a card with nothing linked to it as an empty list", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse([]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
+    });
+
+    it("rejects a wallet whose priority is not a number", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse([{ ...linkedWallets[0], priority: "1" }]));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
     });
   });
 
   it("rejects a response that does not match the wire contract", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
-      .mockResolvedValue(jsonResponse({ token: "jwt", url: "not-a-url" }));
+      .mockResolvedValue(jsonResponse({ id: "not-a-uuid", verification_state: "VERIFIED" }));
 
-    const store = makeStore();
-    const result = await store.dispatch(
-      cardManagementApi.endpoints.initiateAuthorize.initiate({
-        clientId: "client-key",
-        redirectUri: "ledgerlive://paytab",
-        state: "state-value",
-        codeChallenge: "challenge-value",
-      }),
-    );
+    const store = makeStore(async () => "session-token");
+    const result = await store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();

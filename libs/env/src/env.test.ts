@@ -50,10 +50,18 @@ describe("live-env guard", () => {
     expect(getEnv("MY_STR")).toBe("hello");
   });
 
+  it("throws for prototype-chain names not in definitions (e.g. toString)", () => {
+    injectDefinitions(testDefs);
+    expect(() => getEnv("toString")).toThrow(
+      `[live-env] "toString" is not in injected definitions`,
+    );
+  });
+
   it("injectDefinitions is idempotent (second call ignored)", () => {
     injectDefinitions(testDefs);
     injectDefinitions({ OTHER: { def: 99, parser: intParser, desc: "" } });
-    expect(getEnv("OTHER")).toBeUndefined();
+    // "OTHER" was not in the first injectDefinitions call; second call is ignored
+    expect(() => getEnv("OTHER")).toThrow(`[live-env] "OTHER" is not in injected definitions`);
   });
 });
 

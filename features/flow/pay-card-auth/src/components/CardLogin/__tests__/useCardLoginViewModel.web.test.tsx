@@ -13,7 +13,6 @@ describe("mapSnapshotToViewModel", () => {
   it.each([
     "hydrating",
     "preparingAttempt",
-    "initiatingAuthorize",
     "awaitingHostedLogin",
     "validatingCallback",
     "exchangingCode",
@@ -36,10 +35,8 @@ describe("mapSnapshotToViewModel", () => {
 
   it.each([
     "pkce_failed",
-    "initiate_failed",
     "browser_open_failed",
     "missing_attempt",
-    "state_mismatch",
     "exchange_failed",
     "persist_failed",
     "fetch_user_failed",

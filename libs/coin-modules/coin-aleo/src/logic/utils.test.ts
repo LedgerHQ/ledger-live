@@ -1,10 +1,13 @@
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MICROCREDITS_PER_CREDIT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
   PROGRAM_ID,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -55,6 +58,9 @@ import type {
   ProvableApi,
 } from "../types";
 import {
+  estimateGrossRate,
+  estimateNetRate,
+  parseTotalSupply,
   parseMicrocredits,
   parseAmount,
   normalizeAleoPlaintext,
@@ -105,6 +111,7 @@ import {
   isTokenRecord,
   classifyAleoTokenType,
   resolvePrivacyContext,
+  toStakingPosition,
 } from "./utils";
 
 jest.mock("../config");
@@ -2818,5 +2825,259 @@ describe("resolvePrivacyContext", () => {
     };
 
     expect(() => resolvePrivacyContext(context)).toThrow("aleo: viewKey is missing");
+  });
+});
+
+describe("staking rates", () => {
+  const toMicrocredits = (credits: number) =>
+    new BigNumber(credits).multipliedBy(MICROCREDITS_PER_CREDIT);
+
+  // Observed on mainnet 2026-08-24, quoted in LIVE-32275 as the reference point.
+  const MAINNET_TOTAL_SUPPLY_CREDITS = new BigNumber(2_056_277_710);
+  const MAINNET_TOTAL_STAKE_CREDITS = 1_323_101_922;
+
+  describe("parseTotalSupply", () => {
+    it("accepts a JSON number", () => {
+      expect(parseTotalSupply(2_056_277_710)?.toNumber()).toBe(2_056_277_710);
+    });
+
+    it("accepts a numeric string, since the endpoint's scalar form is not guaranteed", () => {
+      expect(parseTotalSupply("2056277710")?.toNumber()).toBe(2_056_277_710);
+    });
+
+    it.each([
+      ["null", null],
+      ["undefined", undefined],
+      ["a non-numeric string", "not-a-number"],
+      ["an object", { total: 1 }],
+      ["an array", [1]],
+      ["zero", 0],
+      ["a negative supply", -1],
+      ["NaN", NaN],
+      ["Infinity", Infinity],
+    ])("rejects %s", (_label, value) => {
+      expect(parseTotalSupply(value)).toBeNull();
+    });
+  });
+
+  describe("estimateGrossRate", () => {
+    it("matches the rate observed on mainnet", () => {
+      const rate = estimateGrossRate(
+        MAINNET_TOTAL_SUPPLY_CREDITS,
+        toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS),
+      );
+
+      expect(rate?.toNumber()).toBeCloseTo(0.0777, 4);
+    });
+
+    it("converts microcredits to credits before dividing, rather than inflating by 1e6", () => {
+      const rate = estimateGrossRate(new BigNumber(1_000), toMicrocredits(1_000));
+
+      expect(rate?.toNumber()).toBe(0.05);
+    });
+
+    it.each([
+      ["zero total stake", new BigNumber(100), new BigNumber(0)],
+      ["negative total stake", new BigNumber(100), new BigNumber(-1)],
+      ["zero total supply", new BigNumber(0), new BigNumber(100)],
+      ["a non-finite total supply", new BigNumber(NaN), new BigNumber(100)],
+      ["a non-finite total stake", new BigNumber(100), new BigNumber(NaN)],
+    ])("returns null for %s", (_label, supply, stake) => {
+      expect(estimateGrossRate(supply, stake)).toBeNull();
+    });
+  });
+
+  describe("estimateNetRate", () => {
+    const baseParams = {
+      totalSupplyCredits: MAINNET_TOTAL_SUPPLY_CREDITS,
+      totalStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS),
+      // Comfortably under the 25% concentration cap.
+      validatorStakeMicrocredits: toMicrocredits(10_000_000),
+      commissionPercent: new BigNumber(10),
+    };
+
+    it("matches the net rate observed on mainnet at 10% commission", () => {
+      expect(estimateNetRate(baseParams)?.toNumber()).toBeCloseTo(0.0699, 4);
+    });
+
+    it("equals the gross rate at zero commission", () => {
+      const net = estimateNetRate({ ...baseParams, commissionPercent: new BigNumber(0) });
+      const gross = estimateGrossRate(
+        baseParams.totalSupplyCredits,
+        baseParams.totalStakeMicrocredits,
+      );
+
+      expect(net?.toNumber()).toBe(gross?.toNumber());
+    });
+
+    it("returns zero when the validator holds more than 25% of total stake", () => {
+      const rate = estimateNetRate({
+        ...baseParams,
+        validatorStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS * 0.26),
+      });
+
+      expect(rate?.toNumber()).toBe(0);
+    });
+
+    it("still pays a validator sitting exactly at the 25% cap", () => {
+      const rate = estimateNetRate({
+        ...baseParams,
+        validatorStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS * 0.25),
+      });
+
+      expect(rate?.toNumber()).toBeGreaterThan(0);
+    });
+
+    it("returns zero for a delegator below the protocol minimum", () => {
+      const rate = estimateNetRate({
+        ...baseParams,
+        delegatorStakeMicrocredits: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1),
+      });
+
+      expect(rate?.toNumber()).toBe(0);
+    });
+
+    it("pays a delegator sitting exactly at the protocol minimum", () => {
+      const rate = estimateNetRate({
+        ...baseParams,
+        delegatorStakeMicrocredits: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS),
+      });
+
+      expect(rate?.toNumber()).toBeGreaterThan(0);
+    });
+
+    it("ignores the delegator minimum when no delegator stake is given", () => {
+      expect(estimateNetRate(baseParams)?.toNumber()).toBeGreaterThan(0);
+    });
+
+    it("clamps a commission above 100% to zero instead of going negative", () => {
+      const rate = estimateNetRate({ ...baseParams, commissionPercent: new BigNumber(150) });
+
+      expect(rate?.toNumber()).toBe(0);
+    });
+
+    it("returns null — not zero — when the rate cannot be derived", () => {
+      const rate = estimateNetRate({ ...baseParams, totalStakeMicrocredits: new BigNumber(0) });
+
+      expect(rate).toBeNull();
+    });
+
+    it("returns null for a negative commission", () => {
+      const rate = estimateNetRate({ ...baseParams, commissionPercent: new BigNumber(-1) });
+
+      expect(rate).toBeNull();
+    });
+  });
+});
+
+describe("toStakingPosition", () => {
+  const ADDRESS = "aleo1d37xxnms3sq5qxcnnh3dtvzr35xemjzas4jcytjr8uvymfetnu9salav5n";
+  const BONDED_RAW = `{\n  validator: ${ADDRESS},\n  microcredits: 39339243096u64\n}`;
+  const UNBONDING_RAW = "{\n  microcredits: 39339243096u64,\n  height: 7654321u32\n}";
+  const WITHDRAW_RAW = "aleo1g5wrxvgyvckgtuceg36eg6pf024x3p6nex05lcefz0h6576rmgrs22dr4w";
+
+  const noEntries = { bondedRaw: null, unbondingRaw: null, withdrawRaw: null };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("reads a zero position for an address that never bonded", () => {
+    // Absent is not zero on chain, but it is the honest reading here — and must not throw.
+    const position = toStakingPosition(noEntries);
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.bondedValidator).toBeNull();
+    expect(position.unbondingBalance.toString()).toBe("0");
+    expect(position.unbondingHeight).toBeNull();
+    expect(position.withdrawalAddress).toBeNull();
+  });
+
+  it("reads an empty mapping body as absent rather than unparseable", () => {
+    // The node answers 200 + JSON null today, but `res.data` is an unchecked cast — an empty
+    // body must not read as a failed parse and kill the sync for an address with no stake.
+    const position = toStakingPosition({ bondedRaw: "", unbondingRaw: "", withdrawRaw: "" });
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.withdrawalAddress).toBeNull();
+    expect(log).not.toHaveBeenCalled();
+  });
+
+  it("parses a bonded-only address", () => {
+    const position = toStakingPosition({
+      ...noEntries,
+      bondedRaw: BONDED_RAW,
+      withdrawRaw: WITHDRAW_RAW,
+    });
+
+    expect(position.bondedBalance.toString()).toBe("39339243096");
+    expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.unbondingBalance.toString()).toBe("0");
+    expect(position.unbondingHeight).toBeNull();
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("parses a bonded-plus-unbonding address", () => {
+    const position = toStakingPosition({
+      bondedRaw: BONDED_RAW,
+      unbondingRaw: UNBONDING_RAW,
+      withdrawRaw: WITHDRAW_RAW,
+    });
+
+    expect(position.bondedBalance.toString()).toBe("39339243096");
+    expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.unbondingBalance.toString()).toBe("39339243096");
+    expect(position.unbondingHeight).toBe(7654321);
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("returns the withdrawal address even once nothing is bonded", () => {
+    const position = toStakingPosition({ ...noEntries, withdrawRaw: WITHDRAW_RAW });
+
+    expect(position.bondedBalance.toString()).toBe("0");
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("keeps precision on a position above Number.MAX_SAFE_INTEGER", () => {
+    const huge = "9007199254740993"; // 2^53 + 1
+    const position = toStakingPosition({
+      ...noEntries,
+      bondedRaw: `{\n  validator: ${ADDRESS},\n  microcredits: ${huge}u64\n}`,
+    });
+
+    expect(position.bondedBalance.toFixed()).toBe(huge);
+  });
+
+  describe("unparseable values", () => {
+    const cases = [
+      ["bonded", { bondedRaw: "{ garbage }" }],
+      ["unbonding", { unbondingRaw: "{ garbage }" }],
+      ["withdraw", { withdrawRaw: "not-an-address" }],
+      // Half-parsed is worse than unparsed: a validator with a zero stake, or an
+      // unbonding amount with no height, would both read as a real position.
+      ["bonded", { bondedRaw: `{\n  validator: ${ADDRESS}\n}` }],
+      ["unbonding", { unbondingRaw: "{\n  microcredits: 39339243096u64\n}" }],
+    ] as const;
+
+    it.each(cases)("throws rather than reporting a zero position for %s", (mapping, mocks) => {
+      // A zero position here would silently hide a real stake, so this must be loud.
+      expect(() => toStakingPosition({ ...noEntries, ...mocks })).toThrow(
+        `aleo: unparseable ${mapping} mapping value`,
+      );
+    });
+
+    it.each(cases)("logs the raw %s value that failed to parse", (mapping, mocks) => {
+      expect(() => toStakingPosition({ ...noEntries, ...mocks })).toThrow(
+        `aleo: unparseable ${mapping} mapping value`,
+      );
+
+      // The raw value is the whole point of the log line: without it the failure is undiagnosable.
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        "aleo/stakingPosition",
+        `unparseable ${mapping} mapping value`,
+        { raw: Object.values(mocks)[0] },
+      );
+    });
   });
 });

@@ -12,7 +12,7 @@ import {
   type FormattedValue,
   type BalanceData,
   type BalanceFilter,
-} from "@features/flow-pay-card-balance";
+} from "@features/flow-pay-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";

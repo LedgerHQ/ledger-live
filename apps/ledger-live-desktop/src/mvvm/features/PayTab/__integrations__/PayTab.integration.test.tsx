@@ -15,7 +15,7 @@ import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecu
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, makeItem } from "../hooks/__tests__/fixtures";
@@ -62,11 +62,6 @@ function mockFundedPayStablecoins() {
     stablecoins: [makeItem(USDC.id, USDC.ticker, USDC.name, 1000)],
   });
 }
-
-jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <button type="button">Login</button>,
-  CardLogout: () => null,
-}));
 
 type CapturedExecutor = {
   sourceFlow: string;
@@ -181,12 +176,13 @@ describe("PayTab integration", () => {
     );
   });
 
-  it("should still render the card login block below the hero", async () => {
+  it("should leave the card and its login to the right panel", async () => {
     renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: { ...onboardedState, ...tourSeenState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(await screen.findByRole("button", { name: "Login" })).toBeVisible();
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Login" })).not.toBeInTheDocument();
   });
 
   it("should open the balance filter dialog from the hero pill and track the interaction", async () => {

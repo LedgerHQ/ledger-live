@@ -30,6 +30,17 @@
       }
     ],
     "unicorn/no-useless-fallback-in-spread": "off",
-    "unicorn/no-useless-spread": "off"
+    "unicorn/no-useless-spread": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/../**"],
+            "message": "Relative imports are restricted. Please use bare imports or path aliases instead."
+          }
+        ]
+      }
+    ]
   }
 }

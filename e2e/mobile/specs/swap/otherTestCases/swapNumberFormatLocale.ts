@@ -2,10 +2,10 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { swapSetup } from "../../../bridge/server";
-import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
-import { expectFormattedAmount } from "../../../utils/amountUtils";
+import { swapSetup } from "@e2e/bridge/server";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
+import { expectFormattedAmount } from "@e2e/utils/amountUtils";
 import {
   getExpectedSeparators,
   buildFormattedAmountPattern,

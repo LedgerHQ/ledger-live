@@ -1,11 +1,14 @@
 import { useCallback, useMemo } from "react";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import { hasContactsOnNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/hasContactsOnNetwork";
+import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Contact } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
@@ -14,6 +17,7 @@ import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -32,11 +36,13 @@ export function useRecipientAddressModalViewModel({
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("desktop");
+  const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = sendFeatures.hasAddressBook(currency);
+  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],
@@ -53,15 +59,39 @@ export function useRecipientAddressModalViewModel({
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
   });
 
+  const contactsOnNetwork = useMemo(
+    () => filterContactsByNetwork(contacts, currency.id),
+    [contacts, currency.id],
+  );
+
   const hasSearchValue = recipientSearch.value.length > 0;
-  const showInitialState = !hasSearchValue;
+  const contactSearchResult = useMemo(() => {
+    if (!isContactsFeatureEnabled || !hasAddressBook) {
+      return undefined;
+    }
+
+    const normalizedSearchValue = recipientSearch.value.trim().toLowerCase();
+    if (!normalizedSearchValue) {
+      return undefined;
+    }
+
+    return contactsOnNetwork.find(
+      contact =>
+        contact.addresses.length > 1 && contact.name.trim().toLowerCase() === normalizedSearchValue,
+    );
+  }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
+  const showContactSearchResult =
+    hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;
+  const showInitialState = !hasSearchValue && selectedContact === undefined;
+  const showContactsList =
+    showInitialState && isContactsFeatureEnabled && hasAddressBook && contactsOnNetwork.length > 0;
   const showEmptyContactsState = useMemo(() => {
     if (!showInitialState || !isContactsFeatureEnabled || !hasAddressBook) {
       return false;
     }
 
-    return !hasContactsOnNetwork(contacts, currency.id);
-  }, [contacts, currency.id, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
+    return contactsOnNetwork.length === 0;
+  }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
   const hasMemo = sendFeatures.hasMemo(currency);
   const memoType = sendFeatures.getMemoType(currency);
@@ -94,6 +124,27 @@ export function useRecipientAddressModalViewModel({
     [onAddressSelected, sendFlowTrackingProperties],
   );
 
+  const handleContactSelect = useCallback(
+    (contact: Contact) => {
+      const address = pickContactAddressForCurrency(contact.addresses, currency.id);
+      if (address) {
+        handleAddressSelect(address.address);
+        return;
+      }
+
+      selectContact(contact);
+    },
+    [currency.id, handleAddressSelect, selectContact],
+  );
+
+  const handleContactAddressSelect = useCallback(
+    (address: string) => {
+      clearSelectedContact();
+      handleAddressSelect(address);
+    },
+    [clearSelectedContact, handleAddressSelect],
+  );
+
   const handleAddContact = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.ADD_CONTACT);
   }, [navigation]);
@@ -104,7 +155,8 @@ export function useRecipientAddressModalViewModel({
     isLoading,
     recipientSupportsDomain,
   });
-  const addressBookFamilyName = mainAccount.currency.name;
+
+  const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
     searchValue: recipientSearch.value,
@@ -115,27 +167,45 @@ export function useRecipientAddressModalViewModel({
     hasBridgeError: searchState.showBridgeRecipientError,
     isContactsFeatureEnabled,
     hasAddressBook,
-    addressBookFamilyName,
+    addressBookFamilyName: mainAccount.currency.name,
   });
 
   return {
     searchValue: recipientSearch.value,
-    isLoading,
+    isLoading: !shouldHideRegularSearchState && isLoading,
     result,
     showInitialState,
+    showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
+    contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
+    network: mainAccount.currency,
     handleAddressSelect,
+    handleContactSelect,
+    handleContactAddressSelect,
     hasMemo,
     hasMemoValidationError,
     hasFilledMemo,
     isContactsFeatureEnabled,
-    hasAddressBook,
-    addressBookFamilyName,
     addressMatchedSectionViewModel,
     memoType,
     memoTypeOptions,
     memoDefaultOption,
     memoMaxLength,
     ...searchState,
+    showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
+    showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,
+    showAddressValidationError:
+      !shouldHideRegularSearchState && searchState.showAddressValidationError,
+    showEmptyState: !shouldHideRegularSearchState && searchState.showEmptyState,
+    showBridgeSenderError: !shouldHideRegularSearchState && searchState.showBridgeSenderError,
+    showSanctionedBanner: !shouldHideRegularSearchState && searchState.showSanctionedBanner,
+    showBridgeRecipientError: !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
+    showBridgeRecipientWarning:
+      !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
+    isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
+    isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
   };
 }

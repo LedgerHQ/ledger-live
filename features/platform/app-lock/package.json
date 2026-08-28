@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-app-lock",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "App lock protection state: schemas, types and selectors shared by the flows that read it",
   "main": "src/index.ts",

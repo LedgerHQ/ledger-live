@@ -18,7 +18,6 @@ export function CardLogoutView({
         flexDirection: "row",
         alignItems: "center",
         gap: "s16",
-        paddingHorizontal: "s16",
         paddingTop: "s16",
       }}
     >

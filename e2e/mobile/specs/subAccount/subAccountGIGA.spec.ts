@@ -1,4 +1,4 @@
-import { runSendSPL } from "./subAccount";
+import { runSendSPL } from "@e2e/specs/subAccount/subAccount";
 
 const transactionE2E = [
   {
@@ -9,7 +9,7 @@ const transactionE2E = [
       undefined,
       "noTag",
     ),
-    xrayTicket: ["B2CQA-3055", "B2CQA-3057"],
+    xrayTicket: ["B2CQA-3055"],
     tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
   },
 ];

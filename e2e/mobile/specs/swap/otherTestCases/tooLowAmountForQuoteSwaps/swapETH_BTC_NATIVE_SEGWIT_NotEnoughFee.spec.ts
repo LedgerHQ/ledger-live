@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
+import { runTooLowAmountForQuoteSwapsTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const transactionE2E = {
   swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "1"),

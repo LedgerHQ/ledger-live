@@ -1,7 +1,12 @@
 import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import { isMyWalletEnabled } from "../../utils/initUtil";
+import { openDeeplink, isAndroid } from "@e2e/helpers/commonHelpers";
+import { retryUntilTimeout } from "@e2e/utils/retry";
+import { isMyWalletEnabled } from "@e2e/utils/initUtil";
+import {
+  ANALYTICS_CONSENT_DRAWER_ID,
+  ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID,
+} from "@e2e/page/drawer/wallet40Drawers.drawer";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card";
 
@@ -40,7 +45,21 @@ export default class MainNavigationPage {
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
   async waitForWallet40Ready(timeout = 60000) {
-    await waitForElementById(this.topBarDiscoverId, timeout);
+    await retryUntilTimeout(
+      async () => {
+        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_DRAWER_ID, 500))) {
+          if (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, 1000)) {
+            await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
+          }
+          throw new Error("analytics consent drawer still present");
+        }
+        if (!(await IsIdVisible(this.topBarDiscoverId, 500))) {
+          throw new Error(`"${this.topBarDiscoverId}" not visible yet`);
+        }
+      },
+      timeout,
+      600,
+    );
   }
 
   @Step("Wait for Legacy navigation to be ready")

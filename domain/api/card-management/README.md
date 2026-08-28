@@ -24,6 +24,9 @@ shape and the reasons.
 | `logout` | POST | `/v1/auth/logout` | End the session |
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
+| `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
+| `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
+| `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)

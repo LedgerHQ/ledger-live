@@ -33,8 +33,10 @@ export type ModularDrawerFlowRenderProps = Readonly<{
 export type ModularDrawerFlowProps = Readonly<{
   /** Whether the drawer flow is open */
   isOpen: boolean;
-  /** Callback fired when the drawer flow is closed */
+  /** Callback fired when the drawer flow is closed (fires cancel callback) */
   onClose?: () => void;
+  /** Hides the drawer UI without firing the cancel callback; used for inline navigation */
+  onSilentClose?: () => void;
 
   /** List of preselected currencies to display in the drawer */
   currencies?: string[];
@@ -66,6 +68,7 @@ export type ModularDrawerFlowProps = Readonly<{
 export function ModularDrawerFlow({
   isOpen,
   onClose,
+  onSilentClose,
   currencies,
   categories,
   assetsConfiguration,
@@ -115,6 +118,7 @@ export function ModularDrawerFlow({
     currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
+    onSilentClose,
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
     onCurrencySelected,

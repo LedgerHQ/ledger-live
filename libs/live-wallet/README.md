@@ -8,7 +8,7 @@ Wallet sync for the account list. This package is scoped to that single concern:
 | Path | Role |
 |---|---|
 | [`src/accounts/`](src/accounts/) | Account list sync module + the `nonImportedAccountInfos` state |
-| [`src/walletSyncComposition.ts`](src/walletSyncComposition.ts) | Assembles the `accounts`, `accountNames` and `recentAddresses` modules into the wallet-sync schema |
+| [`src/walletSyncComposition.ts`](src/walletSyncComposition.ts) | Assembles the `accounts`, `accountNames`, `contacts` and `recentAddresses` modules into the wallet-sync schema |
 
 **Full Ledger Sync stack documentation:** [`docs/ledger-sync`](../../docs/ledger-sync/README.md)
 

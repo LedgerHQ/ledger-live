@@ -147,6 +147,29 @@ describe("Earn screen", () => {
     useLocationSpy.mockRestore();
   });
 
+  it("passes simulate intent params in inputs like mobile route params", () => {
+    const useLocationSpy = jest.spyOn(require("react-router"), "useLocation").mockReturnValue({
+      pathname: "/earn",
+      search: "",
+      hash: "",
+      state: { intent: "simulate" },
+    });
+
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.intent).toBe("simulate");
+    useLocationSpy.mockRestore();
+  });
+
   it("passes uiVersion v3 when earn upselling is enabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({
@@ -197,6 +220,40 @@ describe("Earn screen", () => {
     };
 
     expect(lastCall.inputs.swapToEarn).toBe(JSON.stringify({ enabled: false }));
+  });
+
+  it("passes stableSavings with enabled and params when the feature is enabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        stableSavings: { enabled: true, params: { cohort: "a" } },
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.stableSavings).toBe(
+      JSON.stringify({ enabled: true, params: { cohort: "a" } }),
+    );
+  });
+
+  it("passes stableSavings with enabled=false and no params key when the feature is disabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        stableSavings: { enabled: false },
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.stableSavings).toBe(JSON.stringify({ enabled: false }));
   });
 
   it("passes uiVersion v4 when earn simulator is enabled", () => {

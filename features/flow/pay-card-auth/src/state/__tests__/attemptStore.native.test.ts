@@ -14,7 +14,7 @@ jest.mock("react-native-keychain", () => ({
   resetGenericPassword: jest.fn(),
 }));
 
-const attempt = { state: "state-value", codeVerifier: "verifier-value" };
+const attempt = { codeVerifier: "verifier-value" };
 
 /** What a write answers: `Result`, which names the key and the storage. Never the secret back. */
 const writeResult = {
@@ -39,7 +39,7 @@ describe("attemptStore (native)", () => {
     jest.clearAllMocks();
   });
 
-  it("keeps both halves of the attempt under one key", async () => {
+  it("keeps the verifier under one key", async () => {
     await saveAttempt(attempt);
 
     expect(setGenericPassword).toHaveBeenCalledWith("payCard", JSON.stringify(attempt), {
@@ -69,7 +69,7 @@ describe("attemptStore (native)", () => {
     await expect(loadAttempt()).resolves.toBeNull();
   });
 
-  it.each(["not json at all", "{}", '{"state":"state-value"}', '{"codeVerifier":"v"}'])(
+  it.each(["not json at all", "{}", '{"codeVerifier":""}', '{"codeVerifier":42}'])(
     "reads no attempt when the payload is %s",
     async payload => {
       jest.mocked(getGenericPassword).mockResolvedValue({ ...storedEntry, password: payload });

@@ -6,6 +6,5 @@ export function transformPayCardSessionResponse(response: PayCardSessionResponse
     accessToken: response.access_token,
     expiresIn: response.expires_in,
     refreshToken: response.refresh_token,
-    refreshTokenExpiresIn: response.refresh_token_expires_in,
   };
 }

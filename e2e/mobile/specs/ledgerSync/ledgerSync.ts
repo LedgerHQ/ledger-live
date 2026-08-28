@@ -1,7 +1,7 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { describeIfNotNanoS } from "../../helpers/commonHelpers";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";

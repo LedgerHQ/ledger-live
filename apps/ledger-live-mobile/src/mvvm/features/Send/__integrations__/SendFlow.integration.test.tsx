@@ -5,6 +5,7 @@ import { setEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   act,
@@ -64,7 +65,18 @@ type DriveOpts = Readonly<{
 
 type RenderForAccountOptions = Readonly<{
   contactsEnabled?: boolean;
+  contacts?: State["contacts"]["contacts"];
 }>;
+
+jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
+  useContactsAddressValidationAdapter: () => ({
+    validateAddress: async ({ address }: { address: string }) => ({
+      status: "valid",
+      resolvedAddress: address,
+      isDomain: false,
+    }),
+  }),
+}));
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const actual = jest.requireActual("LLM/components/DeviceIntentExecutor");
@@ -123,6 +135,7 @@ describe("Send flow integration tests", () => {
     const withAccount = (state: State): State => ({
       ...state,
       accounts: { ...state.accounts, active: [account] },
+      contacts: options.contacts ? { contacts: options.contacts } : state.contacts,
     });
 
     return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
@@ -194,6 +207,108 @@ describe("Send flow integration tests", () => {
     await flushTimers();
 
     expect(await screen.findByRole("button", { name: "Add contact" })).toBeEnabled();
+  });
+
+  it("should add a new contact from the recipient card and return to recipient after review", async () => {
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
+
+    await user.paste(
+      await screen.findByPlaceholderText("Enter address, ENS or contact"),
+      VALID_ETHEREUM_RECIPIENT,
+    );
+    await flushTimers();
+    await user.press(await screen.findByRole("button", { name: "Add contact" }));
+
+    const nameInput = await screen.findByTestId("contacts-add-contact-name-input");
+    await user.type(nameInput, "Benoit");
+    await user.press(await screen.findByTestId("contacts-add-contact-save"));
+    await flushTimers();
+
+    expect(await screen.findByText("Name address")).toBeVisible();
+    expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-add-address-name-continue"));
+
+    expect(await screen.findByText("Review address")).toBeVisible();
+    expect(await screen.findByTestId("contacts-add-address-review-continue")).toBeVisible();
+    await user.press(await screen.findByTestId("contacts-add-address-review-continue"));
+    await flushTimers();
+
+    expect(await screen.findByPlaceholderText("Enter address, ENS or contact")).toBeVisible();
+    expect(await screen.findByText("Benoit")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Add contact" })).toBeNull();
+    expect(screen.queryByTestId("contacts-add-address-review")).toBeNull();
+    expect(screen.queryByTestId("contacts-add-contact-name-input")).toBeNull();
+  });
+
+  it("should show network contacts and advance when selecting a contact with one address", async () => {
+    const contacts = [
+      mockContact({
+        id: "contact-vincent",
+        name: "Vincent",
+        addresses: [
+          mockContactAddress({
+            id: "address-vincent-eth",
+            currencyId: "ethereum",
+            label: "Ethereum Main",
+            address: VALID_ETHEREUM_RECIPIENT,
+          }),
+        ],
+      }),
+      mockContact({
+        id: "contact-solana",
+        name: "Solana contact",
+        addresses: [
+          mockContactAddress({
+            id: "address-solana",
+            currencyId: "solana",
+            label: "Solana",
+            address: "SolanaAddress123",
+          }),
+        ],
+      }),
+    ];
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true, contacts });
+
+    expect(await screen.findByTestId("contacts-compact-row-contact-vincent")).toBeVisible();
+    expect(screen.queryByText("Solana contact")).toBeNull();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-vincent"));
+
+    expect(await screen.findByText("Review")).toBeVisible();
+  });
+
+  it("should ask which address to use when a contact has several network addresses", async () => {
+    const contacts = [
+      mockContact({
+        id: "contact-benoit",
+        name: "Benoit",
+        addresses: [
+          mockContactAddress({
+            id: "address-benoit-main",
+            currencyId: "ethereum",
+            label: "Ethereum",
+            address: VALID_ETHEREUM_RECIPIENT,
+          }),
+          mockContactAddress({
+            id: "address-benoit-coinbase",
+            currencyId: "ethereum",
+            label: "Ethereum Coinbase",
+            address: "0x1234567890123456789012345678901234567890",
+          }),
+        ],
+      }),
+    ];
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true, contacts });
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+
+    expect(await screen.findByText("Select address")).toBeVisible();
+    expect(screen.getByText("Benoit")).toBeVisible();
+    expect(screen.queryByTestId("recipient-input")).toBeNull();
+
+    await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"));
+
+    expect(await screen.findByText("Review")).toBeVisible();
   });
 
   it("should explain why add contact is unavailable on an unsupported network", async () => {

@@ -4,7 +4,7 @@ import type { ContactsEditSignerMismatchDialogProps } from "../components/Contac
 import type {
   ContactsRenameContactDialogProps,
   RenameContactDialogViewModel,
-} from "../../EditContact/types";
+} from "@features/flow-contacts-edit-contact";
 import type { UseContactDetailEditDeleteFlowViewModelResult } from "./useContactDetailEditDeleteFlowViewModel";
 import type { ContactDetailEditDeleteLabels } from "./resolveContactDetailEditDeleteLabels";
 

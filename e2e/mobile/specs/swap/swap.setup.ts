@@ -1,5 +1,5 @@
-import { swapSetup } from "../../bridge/server";
-import { ApplicationOptions } from "page";
+import { swapSetup } from "@e2e/bridge/server";
+import { ApplicationOptions } from "@e2e/page/index";
 
 export async function beforeAllFunctionSwap(options: ApplicationOptions) {
   await app.init({

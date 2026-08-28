@@ -1,9 +1,9 @@
-import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
-import { FileUtils } from "../utils/fileUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 
 export class SettingsPage extends AppPage {
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
@@ -14,6 +14,7 @@ export class SettingsPage extends AppPage {
 
   private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
   private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
+  private readonly walletSyncRow = this.page.getByTestId("setting-walletSync");
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -116,6 +117,11 @@ export class SettingsPage extends AppPage {
     await this.hideEmptyTokenAccountsToggle.click();
   }
 
+  @step("Click 'Sync' to open Ledger Sync activation drawer")
+  async clickSyncLedgerSync() {
+    await this.syncWalletSyncButton.click();
+  }
+
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
     await this.manageWalletSyncButton.click();
@@ -124,6 +130,11 @@ export class SettingsPage extends AppPage {
   @step("Expect Ledger Sync settings entry point to be visible")
   async expectLedgerSyncSettingsEntryPoint() {
     await expect(this.manageWalletSyncButton.or(this.syncWalletSyncButton)).toBeVisible();
+  }
+
+  @step("Expect Ledger Sync settings row to be visible")
+  async expectLedgerSyncSettingsRow() {
+    await expect(this.walletSyncRow).toBeVisible();
   }
 
   @step("Clear cache")

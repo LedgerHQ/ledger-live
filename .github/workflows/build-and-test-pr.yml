@@ -303,13 +303,9 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
       VERCEL_LEDGER_WALLET_TEAM_ID: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
       VERCEL_LEDGER_WALLET_TOKEN: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
-      VERCEL_PROJECT_NATIVE_STORYBOOK: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
-      VERCEL_PROJECT_REACT_STORYBOOK: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
       VERCEL_PROJECT_WEBTOOLS: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
     with:
       build-web-tools: ${{ contains(needs.determine-affected.outputs.paths, 'apps/web-tools') }}
-      build-native-storybook: ${{ contains(needs.determine-affected.outputs.paths, 'libs/ui/packages/native') }}
-      build-react-storybook: ${{ contains(needs.determine-affected.outputs.paths, 'libs/ui/packages/react') }}
 
   test-cli:
     name: "Test CLI"

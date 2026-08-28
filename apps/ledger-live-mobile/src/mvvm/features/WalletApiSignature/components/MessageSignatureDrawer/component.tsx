@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { getProductName } from "@ledgerhq/devices";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignMessageIntentJobState } from "@ledgerhq/live-common/intents/signMessageIntent";
 import { useTranslation } from "~/context/Locale";

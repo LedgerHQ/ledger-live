@@ -18,15 +18,14 @@ import type { State } from "~/reducers/types";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { urls } from "~/utils/urls";
 import { BackupHubScreen } from "../screens/BackupHubScreen";
-import {
-  BACKUP_HUB_FEATURE_INTRO_PAGE,
-  BACKUP_HUB_FEATURE_INTRO_SOURCE,
-  resetBackupHubFeatureIntroViewTracking,
-} from "../analytics";
+import { resetBackupHubFeatureIntroViewTracking } from "../analytics";
 import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK,
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+  BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   RECOVER_DEEPLINK_BASE,
 } from "../constants";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "../components/ShieldCheckNotificationIcon";
@@ -113,7 +112,8 @@ describe("BackupHub screen (mobile)", () => {
     resetBackupHubFeatureIntroViewTracking();
   });
 
-  it("renders the not-subscribed variant with a discover CTA that opens the Feature Intro", async () => {
+  it("renders the not-subscribed variant with a discover CTA that opens the one-month-free Recover deeplink", async () => {
+    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
     const { user, store } = render(<BackupHubTestNavigator />, {
       overrideInitialState: overrideWith(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION),
     });
@@ -125,26 +125,15 @@ describe("BackupHub screen (mobile)", () => {
     const cta = screen.getByTestId("backup-hub-recover-cta");
     await user.press(cta);
 
-    expect(store.getState().backupHubFeatureIntro.isOpen).toBe(true);
-    expect(screen.queryByText("RECOVER_SCREEN")).toBeNull();
+    expect(store.getState().backupHubFeatureIntro.isOpen).toBe(false);
+    expect(openURLSpy).toHaveBeenCalledWith(
+      `${RECOVER_DEEPLINK_BASE}/${PROTECT_ID}?redirectTo=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.redirectTo}&source=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.source}&ajs_recover_source=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.source}&ajs_recover_campaign=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.campaign}&ajs_prop_source=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.source}&ajs_prop_campaign=${BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.campaign}`,
+    );
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Ledger Recover",
       page: BACKUP_HUB_TRACKING_PAGE_NAME,
       status: "New",
     });
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith(
-      BACKUP_HUB_FEATURE_INTRO_PAGE,
-      undefined,
-      {
-        name: BACKUP_HUB_FEATURE_INTRO_PAGE,
-        source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
-      },
-    );
-    expect(
-      jest
-        .mocked(analyticsScreen)
-        .mock.calls.filter(([page]) => page === BACKUP_HUB_FEATURE_INTRO_PAGE),
-    ).toHaveLength(1);
   });
 
   it("opens the ongoing-subscription Recover deeplink for the in-progress variant", async () => {
@@ -307,12 +296,29 @@ describe("BackupHub screen (mobile)", () => {
       ),
     });
 
+    const upsellAnalyticsProps = {
+      deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
+      personalRecoOptIn: false,
+      offerType: "none",
+      platform: "lwm",
+    };
+    expect(analyticsScreen).toHaveBeenCalledWith(
+      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      undefined,
+      {
+        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        ...upsellAnalyticsProps,
+      },
+      false,
+    );
+
     await user.press(await screen.findByTestId("backup-hub-physical-row-recovery-key"));
 
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
       }),
     );
@@ -350,13 +356,22 @@ describe("BackupHub screen (mobile)", () => {
         offerType: "none",
         platform: "lwm",
       };
+      expect(analyticsScreen).toHaveBeenCalledWith(
+        BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        undefined,
+        {
+          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          ...upsellAnalyticsProps,
+        },
+        false,
+      );
       expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         ...upsellAnalyticsProps,
       });
       expect(track).toHaveBeenCalledWith("deeplink_clicked", {
-        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        page: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.mobile,
         deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
         deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,

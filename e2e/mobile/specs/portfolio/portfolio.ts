@@ -1,8 +1,8 @@
-import { ApplicationOptions } from "page";
+import { ApplicationOptions } from "@e2e/page/index";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { isQ2WithOperationsList } from "../../utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { isQ2WithOperationsList } from "@e2e/utils/featureFlagUtils";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({

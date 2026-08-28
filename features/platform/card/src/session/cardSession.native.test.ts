@@ -30,7 +30,6 @@ const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
 
 /** The wiring the mobile app gets: the same accessors, over the keychain store. */

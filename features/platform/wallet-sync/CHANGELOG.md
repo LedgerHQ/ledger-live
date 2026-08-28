@@ -1,5 +1,21 @@
 # @features/platform-wallet-sync
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249)]:
+  - @shared/cloud-sync-module@0.3.0
+  - @shared/cloud-sync@0.2.0
+
+## 0.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9e0c703`](https://github.com/LedgerHQ/ledger-live/commit/9e0c703631379409b5a9bee047832e9ac147a249)]:
+  - @shared/cloud-sync-module@0.3.0-next.0
+  - @shared/cloud-sync@0.2.0-next.0
+
 ## 0.1.1
 
 ### Patch Changes

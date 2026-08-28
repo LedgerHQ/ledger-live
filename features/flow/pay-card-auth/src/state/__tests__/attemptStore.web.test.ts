@@ -1,6 +1,6 @@
 import { clearAttempt, loadAttempt, saveAttempt } from "../attemptStore.web";
 
-const attempt = { state: "state-value", codeVerifier: "verifier-value" };
+const attempt = { codeVerifier: "verifier-value" };
 
 describe("attemptStore (web)", () => {
   afterEach(async () => {

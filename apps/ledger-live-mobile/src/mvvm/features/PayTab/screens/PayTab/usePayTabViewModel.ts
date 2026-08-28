@@ -3,13 +3,14 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import { getEnv } from "@shared/env";
 import { useTranslation } from "~/context/Locale";
 import type { ScreenName } from "~/const";
-import type { CardLoginOauthConfig, PayCardAuthCallback } from "@features/flow-pay-card-auth";
+import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
-import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
-import type { BalanceLabels } from "@features/flow-pay-card-balance";
+import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
+import type { BalanceLabels } from "@features/flow-pay-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
+import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
@@ -22,8 +23,9 @@ export function usePayTabViewModel() {
 
   const balance = usePayCardBalance();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
-  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
+  const contacts = usePayTabContacts();
 
   const balanceLabels: BalanceLabels = useMemo(
     () => ({
@@ -39,8 +41,9 @@ export function usePayTabViewModel() {
   );
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
-  const oauthConfig: CardLoginOauthConfig = useMemo(
+  const oauthConfig: CardProps["oauthConfig"] = useMemo(
     () => ({
+      apiUrl: getEnv("CARD_API_URL"),
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
       deepLink: PAY_TAB_DEEP_LINK,
@@ -48,10 +51,11 @@ export function usePayTabViewModel() {
     [],
   );
 
-  // The OAuth redirect, when the deep link brought one. Both halves must be there to mean anything.
-  const callback: PayCardAuthCallback | null = useMemo(
-    () => (params?.code && params?.state ? { code: params.code, state: params.state } : null),
-    [params?.code, params?.state],
+  // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
+  // the verifier on disk, so nothing else has to be echoed back.
+  const callback: CardProps["callback"] = useMemo(
+    () => (params?.code ? { code: params.code } : null),
+    [params?.code],
   );
 
   const featureTour: FeatureTourProps = useMemo(
@@ -84,13 +88,14 @@ export function usePayTabViewModel() {
 
   return {
     top,
+    cardTitle: t("payTab.card.title"),
     oauthConfig,
     callback,
     featureTour,
     balance,
     balanceLabels,
     actionTiles,
+    contacts,
     depositOptions: deposit.depositOptions,
-    requestReceive: request.requestReceive,
   };
 }

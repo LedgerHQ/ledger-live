@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 
 export class SwapConfirmationDrawer extends Drawer {
   private fees = this.page.getByTestId("fees");
