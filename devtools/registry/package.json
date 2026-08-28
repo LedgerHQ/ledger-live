@@ -18,7 +18,10 @@
   "dependencies": {
     "zod": "catalog:",
     "@devtools/feature-flags": "workspace:*",
-    "@devtools/pay-card": "workspace:*"
+    "@devtools/env": "workspace:*",
+    "@devtools/pay-card": "workspace:*",
+    "@devtools/trustchain": "workspace:*",
+    "@devtools/cloud-sync": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
