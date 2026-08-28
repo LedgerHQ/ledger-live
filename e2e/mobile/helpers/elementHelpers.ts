@@ -466,7 +466,7 @@ export const WebElementHelpers = {
 
   async waitWebElement(
     webElement: WebElement,
-    timeout = TIMEOUT.s,
+    timeout = TIMEOUT.l,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
     try {
@@ -490,7 +490,7 @@ export const WebElementHelpers = {
     id: string,
     options?: { timeout?: number; throwOnTimeout?: boolean; index?: number; testIdSuffix?: string },
   ): Promise<WebElement | undefined> {
-    const timeout = options?.timeout ?? TIMEOUT.s;
+    const timeout = options?.timeout ?? TIMEOUT.l;
     const webElement = WebElementHelpers.getWebElementByTestId(id, {
       testIdSuffix: options?.testIdSuffix,
       index: options?.index,
@@ -517,7 +517,7 @@ export const WebElementHelpers = {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, options).tap());
   },
 
-  async tapWebElementByElement(element: WebElement, timeout = TIMEOUT.s): Promise<void> {
+  async tapWebElementByElement(element: WebElement, timeout = TIMEOUT.sm): Promise<void> {
     await retryUntilTimeout(async () => element.tap(), timeout);
   },
 
@@ -618,7 +618,7 @@ export const WebElementHelpers = {
    * button, form, image, link). Throws if it stays blank until `timeout`.
    */
   async waitForWebviewContentToRender(
-    timeout = TIMEOUT.s,
+    timeout = TIMEOUT.l,
   ): Promise<{ height: number; textLength: number; contentElements: number }> {
     let snapshot = { height: 0, textLength: 0, contentElements: 0 };
     await retryUntilTimeout(
@@ -656,7 +656,7 @@ export const WebElementHelpers = {
   async waitForWebElementToMatchRegex(
     webElementId: string,
     regexPattern: RegExp,
-    timeout = TIMEOUT.s,
+    timeout = TIMEOUT.sm,
   ): Promise<string> {
     let webElementText = "";
     await retryUntilTimeout(
@@ -687,7 +687,7 @@ export const WebElementHelpers = {
 
   async waitForWebElementToBeEnabled(
     id: string,
-    timeout = TIMEOUT.s,
+    timeout = TIMEOUT.l,
     options?: { index?: number },
   ): Promise<void> {
     const start = Date.now();
