@@ -1,13 +1,15 @@
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { swapSetup } from "@e2e/bridge/server";
 import { DEFAULT_LOAN, resetLoanState } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
+import { resetCollateralAllowance } from "@e2e/utils/borrowUtils";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { FF_BORROW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const loanAccount = Account.ETH_4;
+const collateralAccount = TokenAccount.ETH_WBTC_4;
 const COLLATERAL_SYMBOL = "wBTC";
 const EXPECTED_LTV = "50%";
 
@@ -38,6 +40,9 @@ const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
       // Sets SWAP_DISABLE_APPS_INSTALL: without it connectApp quits the Ethereum app to reach the
       // dashboard, which terminates the single-app Speculos container.
       await swapSetup();
+      // Needs the address app.init resolves, and runs after the reset because closing a
+      // position can itself re-approve the collateral.
+      await resetCollateralAllowance(collateralAccount);
       await app.mainNavigation.openPortfolioViaDeeplink();
     }, BORROW_TIMEOUT_MS);
 

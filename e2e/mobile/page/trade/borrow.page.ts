@@ -173,7 +173,7 @@ export default class BorrowPage {
   }
 
   private async expectStepDone(doneId: string) {
-    await device.disableSynchronization();
+    await app.common.disableSynchronizationForiOS();
     try {
       await waitWebElementByTestId(doneId, { timeout: EXECUTION_STEP_TIMEOUT_MS });
     } catch {
@@ -184,7 +184,7 @@ export default class BorrowPage {
           : `Borrow step "${doneId}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
       );
     } finally {
-      await device.enableSynchronization();
+      await app.common.enableSynchronization();
     }
   }
 
