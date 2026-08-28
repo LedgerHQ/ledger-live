@@ -50,6 +50,7 @@ import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
 import DeviceActionContentDevScreen from "./DeviceActionContentDevTool/screens/DeviceActionContentDevScreen";
 import DeviceIntentExecutorDevTool from "./DeviceIntentExecutorDevTool";
 import DeviceIntentExecutorDevScreen from "./DeviceIntentExecutorDevTool/screens/DeviceIntentExecutorDevScreen";
+import DeviceSimulationDevTool from "./DeviceSimulationDevTool";
 import LargeScreenUpsellDevTool from "./LargeScreenUpsellDevTool";
 import { LargeScreenUpsellQa } from "LLD/features/LargeScreenUpsell";
 
@@ -159,6 +160,7 @@ const Default = () => {
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />
+      <DeviceSimulationDevTool />
       <LargeScreenUpsellDevTool />
       <InfoStateDevTool />
       <DeviceActionContentDevTool />
