@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-balance",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Shared Pay balance hero (empty and funded states) for Ledger Wallet",
   "main": "src/index.ts",

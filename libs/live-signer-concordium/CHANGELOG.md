@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-concordium@1.0.1
+
+## 0.6.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-concordium@1.0.1-next.0
+
 ## 0.6.6
 
 ### Patch Changes
@@ -161,40 +175,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/coin-concordium@0.13.1-next.0
-
-## 0.4.0
-
-### Minor Changes
-
-- [#17834](https://github.com/LedgerHQ/ledger-live/pull/17834) [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Applied new Context-Module breaking changes
-
-- [#18245](https://github.com/LedgerHQ/ledger-live/pull/18245) [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add max-fee display for Concordium app 5.6.0+. `ConcordiumSigner.signTransaction` takes a required `maxFee: bigint` (µCCD) forwarded to the device for on-screen rendering. New `ConcordiumInvalidMaxFeeError` typed error for invalid input.
-
-### Patch Changes
-
-- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/coin-concordium@0.13.0
-  - @ledgerhq/errors@6.36.0
-
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#17834](https://github.com/LedgerHQ/ledger-live/pull/17834) [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Applied new Context-Module breaking changes
-
-- [#18245](https://github.com/LedgerHQ/ledger-live/pull/18245) [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add max-fee display for Concordium app 5.6.0+. `ConcordiumSigner.signTransaction` takes a required `maxFee: bigint` (µCCD) forwarded to the device for on-screen rendering. New `ConcordiumInvalidMaxFeeError` typed error for invalid input.
-
-### Patch Changes
-
-- Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/coin-concordium@0.13.0-next.0
-  - @ledgerhq/errors@6.36.0-next.0
-
-## 0.3.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-concordium@0.12.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

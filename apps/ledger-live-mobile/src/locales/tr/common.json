@@ -1,4 +1,24 @@
 {
+  "internetComputer" : {
+    "stakeBanner" : {
+      "stakeICP" : {
+        "title" : "ICP Stake Edin",
+        "description" : "ICP stake edip yönetişimine katılarak ödüller kazanın.",
+        "cta" : "ICP Stake Et"
+      }
+    },
+    "headerManageActions" : {
+      "manageNeurons" : {
+        "title" : "Nöronları Yönetin"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalance" : "Stake Bakiyesi",
+      "stakedBalanceTooltip" : "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
+      "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
+      "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir."
+    }
+  },
   "buyCurrency" : {
     "buyCTA" : "{{ currencyNameOrTicker }} satın al"
   },
@@ -752,7 +772,17 @@
       "title" : "Minimum tutar 1 SUI’dir"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "En az 1 SUI stake'te bırakılmalıdır"
+      "title" : "Tüm tutar için stake etmeyi durdurun veya en az 1 SUI'yi stake edilmiş olarak bırakın"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "Stake bilgilerine ulaşılamıyor. Lütfen hesabınızı yeniden senkronize edin ve tekrar deneyin"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "Tutar, seçilen stake'i aşıyor"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Sui uygulamanızı güncelleyin",
+      "description" : "Ledger Sui uygulamanız, SUI adres bakiyenizden bir transferi imzalayamıyor. Ledger cihazınızdaki Sui uygulamasını güncelleyin ve tekrar deneyin."
     },
     "PasswordIncorrect" : {
       "title" : "Yanlış parola",
@@ -1489,6 +1519,25 @@
     "confirm" : "Oturumu kapatmak istediğinizden emin misiniz?",
     "disclaimer" : "Tüm hesap verileri telefonunuzdan kaldırılacaktır.",
     "action" : "Oturumu kapat"
+  },
+  "appLock" : {
+    "field" : {
+      "label" : "Parolayı girin",
+      "reveal" : "Parolayı göster",
+      "hide" : "Parolayı gizle",
+      "minLength" : "En az 6 karakter olmalıdır"
+    },
+    "setupPassword" : {
+      "title" : "Parolayı girin",
+      "description" : "Uygulamayı her açtığınızda bu parolaya ihtiyacınız olacaktır. Parolanızı kaybetmeniz durumunda uygulamayı yeniden yükleyin ve cüzdanınızı geri yükleyin.",
+      "cta" : "Devam"
+    },
+    "confirmPassword" : {
+      "title" : "Parolayı onaylayın",
+      "description" : "Uygulamayı her açtığınızda bu parolaya ihtiyacınız olacaktır. Parolanızı kaybetmeniz durumunda uygulamayı yeniden yükleyin ve cüzdanınızı geri yükleyin.",
+      "mismatch" : "Parolalar eşleşmiyor",
+      "cta" : "Onayla"
+    }
   },
   "auth" : {
     "failed" : {
@@ -4499,10 +4548,13 @@
       },
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
+      "placeholderWithContacts" : "Enter address, ENS or contact",
+      "placeholderNoEnsWithContacts" : "Enter address or contact",
       "pasteFromClipboard" : {
         "title" : "Panodan yapıştır",
         "cta" : "Yapıştır"
       },
+      "contactsWillAppear" : "Kişileriniz burada görünecektir",
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
       "sendTo" : "{{address}} adresine gönder",
       "addressMatched" : "Adres eşleşti",
@@ -4510,6 +4562,10 @@
       "account" : "Hesap",
       "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
       "notInRecentHistory" : "Son işlemler geçmişinizde bulunmuyor",
+      "addressBookUnsupported" : {
+        "title" : "{{family}} henüz desteklenmiyor",
+        "description" : "Kişilerinize henüz bir {{family}} adresi ekleyemezsiniz. Zamanla daha fazla kripto eklemeye devam edeceğiz."
+      },
       "relativeDate" : {
         "justNow" : "Şimdi",
         "minutesAgo_one" : "1 dk. önce",
@@ -5051,29 +5107,28 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "Cihaz kilitli",
-        "description" : "Devam etmek için cihazınızın kilidini açın."
+        "title" : "Ledger cihazınızın kilidini açın ve ardından aşağıdaki Tekrar Dene seçimini uygulayın"
       },
       "unlockDevice" : {
         "title" : "{{productName}} kilidini açın"
       },
       "continueOnDevice" : {
         "title" : "{{productName}} üzerinde devam edin",
-        "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
+        "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
       }
     },
     "errors" : {
       "connectionError" : {
-        "title" : "Cihaz bağlantısı kesildi",
-        "description" : "Ledger cihazınız artık bağlı değil. Cihazınızın açık olduğundan ve Bluetooth kapsama alanı içinde olduğundan ya da prize takılı olduğundan emin olun."
+        "title" : "Ledger cihazı bağlantısı kesildi",
+        "description" : "Cihazınızın açık olduğundan ve Bluetooth kapsama alanı içinde olduğundan ya da prize takılı olduğundan emin olun."
       },
       "intentError" : {
         "title" : "Bilinmeyen hata",
-        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+        "description" : "Sorun devam ederse tekrar deneyin veya Ledger Destek ile iletişime geçin."
       },
       "invalidOperation" : {
-        "title" : "Geçersiz durum",
-        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+        "title" : "Bir hata oluştu",
+        "description" : "Tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
       }
     },
     "initialization" : {
@@ -5089,42 +5144,42 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "İşlem cihazda reddedildi"
+          "title" : "İşlem Ledger cihazında reddedildi"
         },
         "deviceBusy" : {
-          "title" : "Ledger cihazınızda eylem bekliyor",
-          "description" : "Tamamlayın ve ardından \"Tekrar Dene\" seçimini uygulayın."
+          "title" : "Ledger cihazınızda eylem gerekiyor",
+          "description" : "Cihazınızda işlemi tamamlayın, ardından aşağıdaki “Tekrar Dene” seçimini uygulayın."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Ledger'ınız henüz kullanılmaya hazır değil",
-          "description" : "Öncelikle {{productName}} cihazınızın kurulumunu yapmanız gerekiyor. Cihaz kurulum sürecinde size yardımcı olacağız"
+          "title" : "Ledger cihazınızın kurulması gerekiyor",
+          "description" : "Devam etmek için kurulumu yapın."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS güncellemesi gerekli"
         },
         "unsupportedApplication" : {
           "title" : "Desteklenmeyen özellik",
-          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+          "description" : "Bu işlem için gereken uygulama, Ledger cihazınız tarafından desteklenmiyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
         },
         "unsupportedFeature" : {
           "title" : "Desteklenmeyen özellik",
-          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+          "description" : "Bu işlem için gereken uygulama, Ledger cihazınız tarafından desteklenmiyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
         },
         "wrongDeviceForAccount" : {
-          "title" : "Yanlış Gizli Kurtarma İfadesi",
-          "description" : "Bu Ledger, seçilen hesapla ilişkili kurtarma ifadesi ile ayarlanmadı. Doğru cihazı kullandığınızdan emin olun."
+          "title" : "Bu hesabı ilk başta kurarken kullandığınız Ledger cihazını kullanın",
+          "description" : "Bu Ledger, seçilen kripto hesabıyla ilişkili Gizli Kurtarma İfadesi ile ayarlanmadı."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "Cihaz depolama alanı yetersiz",
-          "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin."
+          "title" : "Ledger cihazı belleğinde yer açmak için bazı uygulamaları kaldırın",
+          "description" : "Cihazınızda yeterli bellek yok."
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledger'ı Aç",
         "goToMyLedger" : "My Ledger'a Git",
-        "setupDevice" : "Cihaz kurulumu",
+        "setupDevice" : "Ledger cihazını kur",
         "updateLedgerOs" : "Ledger OS'i güncelleyin",
         "cancelOperation" : "İşlemi iptal et",
         "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
@@ -5138,7 +5193,7 @@
       },
       "states" : {
         "connecting" : {
-          "title" : "Yükleniyor"
+          "title" : "Ledger cihazınıza bağlanılıyor"
         },
         "connectionError" : {
           "errors" : {
@@ -5158,7 +5213,7 @@
             },
             "unknown" : {
               "title" : "Eşleme başarısız",
-              "description" : "Lütfen tekrar deneyin veya aşağıdaki Bluetooth sorun giderme makalemizi okuyun.",
+              "description" : "Lütfen tekrar deneyin veya daha fazla bilgi edinmek için aşağıdaki Bluetooth sorun giderme makalemizi okuyun.",
               "tip" : "Cihazınızın kilidinin açık olduğundan emin olun.",
               "cta" : {
                 "retry" : "Tekrar deneyin",
@@ -5173,24 +5228,29 @@
         "discoveryError" : {
           "errors" : {
             "bluetoothPermissionDeniedPromptable" : {
-              "title" : "Bluetooth erişimine izin verin",
-              "description" : "Bluetooth'un yakındaki Ledger cihazlarını taramasına izin verin.",
+              "title" : "Ledger cihazınıza Bluetooth üzerinden bağlanın",
+              "description" : "Ledger Wallet, yakındaki Ledger cihazlarını bulmak ve eşlemek için Bluetooth'a ihtiyaç duyar. Bluetooth üzerinden hiçbir veri paylaşılmaz.",
               "cta" : {
-                "retry" : "İzin ver",
+                "retry" : "Bluetooth'a izin ver",
                 "ignore" : "USB ile devam et"
               }
             },
             "bluetoothPermissionDeniedManualSettings" : {
-              "title" : "Bluetooth erişimine izin verin",
-              "description" : "Bluetooth izni gerekiyor. Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Yakındaki cihazlar adımlarını izleyin ve geri dönün.",
+              "title" : "Telefonunuzun Ayarlar bölümünden Bluetooth'u etkinleştirin",
+              "description" : "Ledger Wallet, Ledger cihazınızı bulmak için Bluetooth iznine ihtiyaç duyar.\n\nAyarlar → Uygulamalar → Ledger Wallet → İzinler → Yakındaki cihazlar adımlarını izleyin ve geri dönün.",
               "cta" : {
                 "retry" : "Etkinleştirdim, tekrar dene",
-                "ignore" : "USB ile devam et"
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "bluetoothPermissionUnauthorizedManualSettings" : {
-              "title" : "Bluetooth erişimine izin verin",
-              "description" : "Ledger Wallet, cihazınızı bulmak için Bluetooth iznine ihtiyaç duyar. Ayarlardan etkinleştirin.",
+              "title" : "Telefonunuzun Ayarlar bölümünden Bluetooth'u etkinleştirin",
+              "description" : {
+                "platform" : {
+                  "ios" : "Ledger Wallet, cihazınızı bulmak için Bluetooth iznine ihtiyaç duyar. Ayarlar → Ledger Wallet adımlarını izleyin. Bluetooth'u açın, ardından aşağıdaki butona dokunun.",
+                  "android" : "Ledger Wallet, Ledger cihazınızı bulmak için Bluetooth iznine ihtiyaç duyar.\n\nAyarlar → Uygulamalar → Ledger Wallet → Bluetooth adımlarını izleyin ve ardından geri dönün."
+                }
+              },
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5198,22 +5258,22 @@
                   },
                   "android" : {
                     "retry" : "Etkinleştirdim, tekrar dene",
-                    "ignore" : "USB ile devam et"
+                    "ignore" : "Bunun yerine USB ile devam et"
                   }
                 }
               }
             },
             "bluetoothDisabledPromptable" : {
-              "title" : "Bluetooth'u açın",
-              "description" : "Bluetooth kapalı. Ledger cihazınızı bulmak için açın.",
+              "title" : "Telefonunuzda Bluetooth'u etkinleştirin",
+              "description" : "Yakındaki Ledger cihazlarını taramak için etkinleştirin.",
               "cta" : {
-                "retry" : "Bluetooth'u aç",
-                "ignore" : "USB ile devam et"
+                "retry" : "Bluetooth'u etkinleştir",
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "bluetoothDisabledManualAction" : {
-              "title" : "Bluetooth'u açın",
-              "description" : "Bluetooth kapalı. Ayarlar → Bluetooth adımlarını izleyerek Bluetooth'u açın ve ardından geri dönün.",
+              "title" : "Telefonunuzda Bluetooth'u etkinleştirin",
+              "description" : "Bluetooth'u etkinleştirin, ardından tekrar denemek için geri dönün. Ayarlar → Bluetooth adımlarını izleyin. Bluetooth'u açık konuma getirin, ardından aşağıdaki butonu seçin.",
               "cta" : {
                 "platform" : {
                   "ios" : {
@@ -5221,7 +5281,7 @@
                   },
                   "android" : {
                     "retry" : "Bluetooth'u etkinleştirdim, tekrar dene",
-                    "ignore" : "USB ile devam et"
+                    "ignore" : "Bunun yerine USB ile devam et"
                   }
                 }
               }
@@ -5246,47 +5306,47 @@
               }
             },
             "locationPermissionDeniedPromptable" : {
-              "title" : "Konum erişimine izin verin",
-              "description" : "Android, Bluetooth cihazlarını taramak için konum izni gerektirir.",
+              "title" : "Android, Bluetooth cihazlarını taramak için konumun etkinleştirilmesini gerektirir.",
+              "description" : "Ledger konumunuza erişmez veya konumunuzu depolamaz.",
               "cta" : {
-                "retry" : "İzin ver",
-                "ignore" : "USB ile devam et"
+                "retry" : "Etkinleştir",
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "locationPermissionDeniedManualSettings" : {
-              "title" : "Konum erişimine izin verin",
-              "description" : "Bluetooth cihazlarını taramak için konum izni gereklidir. Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Konum sekmesine gidin ve ardından geri dönün.",
+              "title" : "Ayarlardan konumu etkinleştirin.",
+              "description" : "Android, yakındaki Bluetooth cihazlarını taramak için buna ihtiyaç duyar. Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Konum sekmesine gidin. \"İzin ver\" olarak değiştirin ve ardından aşağıdaki butonu seçin. Ledger konumunuza erişmez veya konumunuzu depolamaz.",
               "cta" : {
                 "retry" : "Etkinleştirdim, tekrar dene",
-                "ignore" : "USB ile devam et"
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "locationDisabledPromptable" : {
-              "title" : "Konumu açın",
-              "description" : "Konum hizmetleri kapalı. Bluetooth cihazlarını taramak için konum hizmetlerini açın.",
+              "title" : "Bluetooth cihazlarını taramak için konumu etkinleştirin",
+              "description" : "Android, yakındaki Bluetooth cihazlarını taramak için buna ihtiyaç duyar. Ledger konumunuza erişmez veya konumunuzu depolamaz.",
               "cta" : {
-                "retry" : "Konumu aç",
-                "ignore" : "USB ile devam et"
+                "retry" : "Konumu etkinleştir",
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "locationDisabledManualAction" : {
-              "title" : "Konumu açın",
-              "description" : "Konum hizmetleri kapalı. Ayarlar → Konum adımlarını izleyerek açın ve geri dönün.",
+              "title" : "Yakındaki Bluetooth cihazlarını taramak için konum gereklidir",
+              "description" : "Ayarlar → Konum bölümünü açın. Konum seçeneğini açık duruma getirin, ardından buraya geri dönün ve aşağıdaki butonu seçin. Ledger konumunuza asla erişmez ve konumunuzu depolamaz.",
               "cta" : {
-                "retry" : "Konumu etkinleştirdim, tekrar dene",
-                "ignore" : "USB ile devam et"
+                "retry" : "Etkinleştirdim, tekrar dene",
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "locationServicePermissionMissing" : {
-              "title" : "Konum erişimine izin verin",
-              "description" : "Konum izni eksik görünüyor. Tekrar denemek için aşağıya dokunun.",
+              "title" : "Konum izni doğrulanamadı",
+              "description" : "Android, yakındaki Bluetooth cihazlarını taramak için buna ihtiyaç duyar. “Tekrar dene” seçeneğini uygulayın, bu genellikle sorunu çözer. Aksi takdirde Ayarlar → Uygulamalar → Ledger Wallet → İzinler → Konum sekmesini kontrol edin. Ledger konumunuza erişmez veya konumunuzu depolamaz.",
               "cta" : {
                 "retry" : "Tekrar deneyin",
-                "ignore" : "USB ile devam et"
+                "ignore" : "Bunun yerine USB ile devam et"
               }
             },
             "unknown" : {
-              "title" : "Bir hata oluştu",
+              "title" : "Bluetooth taraması başarısız",
               "description" : "Bluetooth taramasını başlatamadık. Lütfen tekrar deneyin veya Ledger destek ekibiyle iletişime geçin.",
               "cta" : {
                 "retry" : "Tekrar deneyin"
@@ -5299,7 +5359,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledger cihazı gerekli",
-          "description" : "Devam etmek için imzalayıcınızı kurun veya bağlayın.",
+          "description" : "Devam etmek için Ledger cihazınızı kurun veya bağlayın.",
           "connectLedgerDevice" : "Ledger cihazı bağlayın",
           "noLedgerDevice" : "Ledger cihazım yok"
         },
@@ -9520,8 +9580,29 @@
     }
   },
   "lazyOnboardingBanner" : {
-    "title" : "Ledger cihazlarını keşfedin",
-    "description" : "En yeni ürünlerimizi ve aksesuarlarımızı inceleyin"
+    "title" : "Milyonlar neden Ledger'ı seçiyor?",
+    "description" : "Her işlemi gönül rahatlığıyla gerçekleştirmek için."
+  },
+  "lazyOnboardingTour" : {
+    "buyCta" : "Bir Ledger satın alın",
+    "slides" : {
+      "whoControls" : {
+        "title" : "Kriptolarınız güvende mi?",
+        "subtitle" : "Borsalar varlıklarınızın kontrolünü elinde tutar. Yazılımsal cüzdanlar anahtarlarınızı çevrim içi saklar. Her ikisi de sizi savunmasız bırakır."
+      },
+      "takeBackControl" : {
+        "title" : "Kontrolü geri alın",
+        "subtitle" : "Bir Ledger cihazı, kriptolarınıza erişimi çevrim dışı, bilgisayar korsanlarından uzakta ve sizin kontrolünüzde tutar."
+      },
+      "nothingMoves" : {
+        "title" : "Her hareketi siz onaylarsınız",
+        "subtitle" : "Her işlem, onaylamanız için hack'lenmeye dayanıklı Güvenli Ekranda görünür."
+      },
+      "startToday" : {
+        "title" : "Bireysel kontrol burada başlar",
+        "subtitle" : "Kriptolarınızı bir Ledger cihazının güvenliği ve kontrolüyle yönetin."
+      }
+    }
   },
   "marketBanner" : {
     "title" : "Piyasa",
@@ -9601,13 +9682,16 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
+    "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
+    "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
+    "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
     "emptyAccounts" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
     "addAccount" : "Hesap ekle",
-    "perpetualsBanner" : "Şu anda yalnızca Arbitrum zincirindeki USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
@@ -9739,7 +9823,7 @@
         },
         "dualValidator" : {
           "title" : "Çift doğrulayıcılı güvenlik",
-          "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Taraflardan hiçbiri, sizin adınıza tek başına işlem yapamaz."
+          "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Hiçbiri tek başına sizin adınıza hareket edemez."
         },
         "tokenLiability" : {
           "title" : "Standart token sorumluluğu ⚠️",
@@ -9965,6 +10049,63 @@
     "card" : "Kart",
     "paytab" : "Ödeme yap"
   },
+  "payTab" : {
+    "featureTour" : {
+      "title" : "Ödeme yapın ve ödeme alın",
+      "description" : "Stabil coin'ler, kripto dünyası ile gerçek hayattaki günlük harcamalarınız arasında bir köprü kurar",
+      "cta" : "Anladım",
+      "rows" : {
+        "global" : {
+          "title" : "Küresel çapta ödeme yapın ve ödeme alın",
+          "description" : "Düşük ağ ücretlerinden yararlanın"
+        },
+        "volatility" : {
+          "title" : "Düşük volatilite",
+          "description" : "Stabil coin'ler, itibari paraya çıpalanır"
+        },
+        "card" : {
+          "title" : "Kartla harcama yapın ve %1 para iadesi alın",
+          "description" : "USDC, USDT, BTC, ETH ve daha fazlasıyla ödeme yapın"
+        }
+      }
+    },
+    "balance" : {
+      "emptyTitle" : "Ödeme yapın ve ödeme alın",
+      "emptyDescription" : "Cüzdanınıza stabil coin yatırarak başlayın",
+      "filter" : {
+        "allStablecoins" : "Tüm stabil coin'ler",
+        "dialogTitle" : "Bakiyeye göre filtrele",
+        "dialogDescription" : "Düşük ücretler ve düşük oynaklıkla dünya çapında ödeme yapmak için stabil coin kullanın.",
+        "dialogBanner" : "Diğer tüm varlıklarınızı ana sayfanızdan yönetin",
+        "confirm" : "Onayla"
+      }
+    },
+    "actions" : {
+      "deposit" : "Stabil coin ekle",
+      "request" : "Talep et"
+    },
+    "deposit" : {
+      "title" : "Stabil coin ekle",
+      "options" : {
+        "bankTransfer" : {
+          "title" : "Banka transferi",
+          "description" : "Stabil coin almak için USD veya EUR transfer edin."
+        },
+        "swap" : {
+          "title" : "Kriptodan takas edin",
+          "description" : "Kriptonuzu stabil coin'lerle takas edin."
+        },
+        "receive" : {
+          "title" : "Kripto adresi",
+          "description" : "Başka bir cüzdandan stabil coin alın."
+        },
+        "buy" : {
+          "title" : "Satın alın",
+          "description" : "Kredi kartıyla stabil coin satın alın."
+        }
+      }
+    }
+  },
   "syncIndicator" : {
     "accessibilityLabel" : {
       "error" : "Senkronizasyon hatası",
@@ -10032,7 +10173,8 @@
       },
       "recoveryKey" : {
         "title" : "Ledger Recovery Key",
-        "description" : "PIN korumalı bir akıllı kart"
+        "description" : "PIN korumalı bir akıllı kart",
+        "incompatible" : "Cihazınızla uyumlu değil"
       },
       "secretRecoveryPhrase" : {
         "title" : "24 kelime için metal yedekleme",
@@ -10221,6 +10363,14 @@
       "duplicateLabel" : "Bu adres adı bu kişi için zaten kullanılıyor.",
       "labelTooLong" : "Bu adres adı çok uzun."
     },
+    "addAddressReview" : {
+      "title" : "Adresi inceleyin",
+      "addressLabel" : "Adres",
+      "currencyLabel" : "Para birimi",
+      "networkLabel" : "Ağ",
+      "nameLabel" : "Adres adı",
+      "continue" : "Adresi onayla"
+    },
     "addressCount_zero" : "0 adres",
     "addressCount_one" : "{{count}} adres",
     "addressCount_other" : "{{count}} adres",
@@ -10235,10 +10385,10 @@
       "ledgerWalletAddresses" : "Ledger Wallet adresleri",
       "myAddresses" : "Adreslerim",
       "emptyState" : {
-        "title" : "Henüz adres yok",
+        "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
         "meTitle" : "Kendi adreslerinizi kaydedin",
         "meDescription" : "Borsalarda veya diğer cüzdanlarda size ait olan harici adresleri kaydedin. Kendinize yapacağınız bir sonraki gönderimde, Ledger cihazınız belirlediğiniz ismi gösterecektir.",
-        "contactDescription" : "{{name}} kişisine transfer göndermek için bir cüzdan adresi kaydedin"
+        "contactDescription" : "Bir sonraki işlemde onlara isimleriyle gönderim yapabilmek için cüzdan adreslerini kaydedin"
       }
     },
     "addressDetail" : {
@@ -10306,7 +10456,6 @@
       "title" : "Karşınızda Kişiler",
       "description" : "Kripto adres defteriniz: Gönderim yaptığınız cüzdanları kaydedin, hepsi tek bir yerde.",
       "primaryAction" : "Kişileri deneyin",
-      "secondaryAction" : "Belki sonra",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Adresleri bir kez kaydedin",

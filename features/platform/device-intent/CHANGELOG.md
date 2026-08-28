@@ -1,5 +1,25 @@
 # @features/platform-device-intent
 
+## 5.1.0
+
+### Minor Changes
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the DeviceIntentExecutor component from the package public API.
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Move the Device Intent Executor to the platform layer and use DMK device model IDs throughout its connection contract.
+
+- [#21002](https://github.com/LedgerHQ/ledger-live/pull/21002) [`582f422`](https://github.com/LedgerHQ/ledger-live/commit/582f422ec2fbe8bb852c7a847c3ee0ff0a01ab32) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make DeviceIntentExecutor job lifecycle callbacks optional
+
+## 5.1.0-next.0
+
+### Minor Changes
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the DeviceIntentExecutor component from the package public API.
+
+- [#20769](https://github.com/LedgerHQ/ledger-live/pull/20769) [`9fa2ab5`](https://github.com/LedgerHQ/ledger-live/commit/9fa2ab5eb2003fcade4e5821f1253ae27c1af82d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Move the Device Intent Executor to the platform layer and use DMK device model IDs throughout its connection contract.
+
+- [#21002](https://github.com/LedgerHQ/ledger-live/pull/21002) [`582f422`](https://github.com/LedgerHQ/ledger-live/commit/582f422ec2fbe8bb852c7a847c3ee0ff0a01ab32) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make DeviceIntentExecutor job lifecycle callbacks optional
+
 ## 6.0.0
 
 ### Patch Changes
@@ -211,31 +231,5 @@
 
 - Updated dependencies [[`1b794cd`](https://github.com/LedgerHQ/ledger-live/commit/1b794cd3ba353c0f36339c445a785ff0addcdaad)]:
   - @ledgerhq/client-ids@0.9.0-next.0
-
-## 1.1.0
-
-### Minor Changes
-
-- [#15952](https://github.com/LedgerHQ/ledger-live/pull/15952) [`9569bdc`](https://github.com/LedgerHQ/ledger-live/commit/9569bdc8f6987f77e4d68118a69536544de2845a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a mobile Device Intent Executor debug playground and improve intent lifecycle handling
-
-- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/client-ids@0.8.3
-
-## 1.1.0-next.0
-
-### Minor Changes
-
-- [#15952](https://github.com/LedgerHQ/ledger-live/pull/15952) [`9569bdc`](https://github.com/LedgerHQ/ledger-live/commit/9569bdc8f6987f77e4d68118a69536544de2845a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a mobile Device Intent Executor debug playground and improve intent lifecycle handling
-
-- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/client-ids@0.8.3-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
