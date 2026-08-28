@@ -69,6 +69,13 @@ export type SendFundsNavigatorStackParamList = {
   [ScreenName.SendSelectRecipient]: {
     accountId?: string;
     parentId?: string;
+    /**
+     * The already-resolved account, forwarded when the send flow is entered from the
+     * Modular Asset Drawer. `accountScreenSelector` prefers this over re-resolving from the
+     * store by id, so accounts that aren't top-level entries (e.g. token sub-accounts) resolve
+     * reliably instead of tripping the "account is missing" invariant.
+     */
+    account?: AccountLike;
     transaction?: Transaction;
     justScanned?: boolean;
   };

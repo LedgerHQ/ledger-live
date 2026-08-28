@@ -10,6 +10,7 @@ import type { BalanceLabels } from "@features/flow-pay-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
+import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
@@ -24,6 +25,7 @@ export function usePayTabViewModel() {
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
+  const contacts = usePayTabContacts();
 
   const balanceLabels: BalanceLabels = useMemo(
     () => ({
@@ -93,6 +95,7 @@ export function usePayTabViewModel() {
     balance,
     balanceLabels,
     actionTiles,
+    contacts,
     depositOptions: deposit.depositOptions,
   };
 }
