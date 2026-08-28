@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useSwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
 import { SwapTransactionStatusView } from "./SwapTransactionStatusView";
@@ -13,7 +14,7 @@ type SwapTransactionStatusDialogViewProps = Readonly<SwapTransactionStatusDialog
 function SwapTransactionStatusDialogContent({ params }: SwapTransactionStatusDialogContentProps) {
   const viewModel = useSwapTransactionStatusViewModel(params);
 
-  return <SwapTransactionStatusView {...viewModel} />;
+  return <SwapTransactionStatusView {...viewModel} origin={params.origin} />;
 }
 
 export function SwapTransactionStatusDialogView({
@@ -22,8 +23,11 @@ export function SwapTransactionStatusDialogView({
   onClose,
   onOpenChange,
 }: SwapTransactionStatusDialogViewProps) {
+  const { t } = useTranslation();
+
   if (!isOpen || !params) return null;
   const contentKey = `${params.provider ?? ""}:${params.swapId}`;
+  const title = params.origin === "perps" ? t("perpsTransactionStatus.dialogTitle") : undefined;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fit">
@@ -31,7 +35,7 @@ export function SwapTransactionStatusDialogView({
         data-testid="swap-transaction-status-dialog"
         className="max-h-[calc(100vh-16px)] w-[400px] bg-canvas-sheet p-0 pb-24"
       >
-        <DialogHeader density="compact" onClose={onClose} />
+        <DialogHeader density="compact" title={title} onClose={onClose} />
         <DialogBody className="flex flex-col px-24 gap-24">
           <SwapTransactionStatusDialogContent key={contentKey} params={params} />
         </DialogBody>

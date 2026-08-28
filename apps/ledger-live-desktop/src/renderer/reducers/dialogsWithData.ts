@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
+import type { SwapTransactionStatusDialogParams } from "LLD/features/SwapTransactionStatusDialog/types";
 import type { Reducer } from "redux";
 import type { State } from "~/renderer/reducers";
 
@@ -7,7 +7,7 @@ export const DIALOGS_WITH_DATA_IDS = ["SWAP_TRANSACTION_STATUS"] as const;
 export type DialogWithDataId = (typeof DIALOGS_WITH_DATA_IDS)[number];
 
 export type DialogWithDataPayloadById = {
-  SWAP_TRANSACTION_STATUS: SwapTransactionStatusParams;
+  SWAP_TRANSACTION_STATUS: SwapTransactionStatusDialogParams;
 };
 
 type DialogWithDataEntry<Id extends DialogWithDataId> = {

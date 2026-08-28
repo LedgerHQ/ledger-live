@@ -23,7 +23,7 @@ export function usePerpsTransactionSignedViewModel(
 
   const handleViewTransaction = useCallback(() => {
     onClose();
-    if (swapId) dispatch(openSwapTransactionStatusDialog({ swapId, provider }));
+    if (swapId) dispatch(openSwapTransactionStatusDialog({ swapId, provider, origin: "perps" }));
   }, [onClose, dispatch, swapId, provider]);
 
   return {
