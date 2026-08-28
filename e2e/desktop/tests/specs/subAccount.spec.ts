@@ -221,9 +221,10 @@ for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) 
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
+        const parentAccountName = getParentAccountName(token.account);
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.layout.waitForSyncButtonToBeEnabled();
-        await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
+        await app.accounts.navigateToAccountByName(parentAccountName);
+        await app.account.expectAccountVisibility(parentAccountName);
         await app.account.expectTokenToBePresent(token.account);
       },
     );
