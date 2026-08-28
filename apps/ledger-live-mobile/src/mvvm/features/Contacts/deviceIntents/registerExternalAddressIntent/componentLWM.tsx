@@ -36,13 +36,10 @@ export function RegisterExternalAddressComponentLWM({
     />
   );
 
-  // The executor mounts this component before the job emits its first state.
   if (jobState === undefined) return pending;
 
   switch (jobState.type) {
     case "pending":
-    // `completed` is terminal: the orchestrator resolves its promise and drops
-    // the executor on the next tick, so hold the spinner until it unmounts.
     case "completed":
       return pending;
 
@@ -55,10 +52,6 @@ export function RegisterExternalAddressComponentLWM({
         />
       );
 
-    // 0x6A80 buckets user rejection together with malformed TLV, so this reads
-    // as a rejection: it is the only outcome a user can actually cause.
-    // The job keeps itself open here, so the retry replays the device action
-    // rather than restarting the whole Contacts flow.
     case "device-rejected": {
       const retry = jobState.retry;
       return (
@@ -83,9 +76,6 @@ export function RegisterExternalAddressComponentLWM({
       );
     }
 
-    // Approved design: neutral spot, and the way out is labelled Cancel rather
-    // than Close. Its "Connect a different device" CTA needs a recovery path the
-    // executor does not expose yet — LIVE-36562.
     case "existing-group-verification-failed":
       return (
         <InfoState
@@ -115,8 +105,6 @@ export function RegisterExternalAddressComponentLWM({
         />
       );
 
-    // DIE Phase 2 gates on the version floor, so this only lands if the kit's
-    // own guard disagrees with what the executor accepted.
     case "app-version-too-low":
       return (
         <InfoState
