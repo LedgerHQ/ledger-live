@@ -2,7 +2,11 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import {
+  LEDGER_SYNC_FEATURE_FLAGS,
+  cleanupLedgerSyncAfterAll,
+  setupLedgerSyncSeed,
+} from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 
@@ -11,64 +15,11 @@ const defaultAccountName = `${Currency.ETH.name} 1`;
 const secondAccountName = `${Currency.ETH.name} 2`;
 const renamedAccountName = `${Currency.ETH.name} LedgerSync 1`;
 
-const ledgerSyncFeatureFlags = {
-  llmWalletSync: {
-    enabled: true,
-    params: {
-      environment: ledgerSyncEnvironment,
-      watchConfig: {},
-      learnMoreLink: "",
-    },
-  },
-};
-
-/**
- * The app builds its trustchain SDK on first render and keeps it in a module singleton, so the
- * environment it boots with is the only one it will ever use — an override sent to a running app
- * moves the flag but not the SDK. Pointing the CLI elsewhere would leave the two on different
- * backends and surface as an empty trustchain rather than an error, so refuse it up front.
- */
-function assertSupportedEnvironment() {
-  if (ledgerSyncEnvironment !== "STAGING") {
-    throw new Error(
-      `Ledger Sync: mobile can only run against STAGING, got ${ledgerSyncEnvironment}. ` +
-        "The app pins its trustchain SDK at boot, so LEDGER_SYNC_ENVIRONMENT cannot move it.",
-    );
-  }
-}
-
-/**
- * A seed per run, so every suite builds its trustchain from scratch instead of clearing whatever
- * the previous run left on the backend, and so no test ever derives accounts from the shared seed.
- */
-function setupSeed() {
-  let previousSeed: string | undefined;
-  beforeAll(() => {
-    assertSupportedEnvironment();
-    previousSeed = app.ledgerSync.useGeneratedSeed();
-  });
-  afterAll(() => {
-    app.ledgerSync.restoreSeed(previousSeed);
-  });
-}
-
-/**
- * A generated seed makes the trustchain unreachable once the run ends, so this is what keeps the
- * backend from accumulating orphans. `app.init` never releases its Speculos either, so the device
- * has to be freed here or instances pile up until the file-level teardown.
- */
-function cleanupAfterAll() {
-  afterAll(async () => {
-    await app.ledgerSync.destroyTrustchain();
-    await app.common.removeSpeculos();
-  });
-}
-
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
 async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
   await app.init({
     speculosApp: AppInfos.LS,
-    featureFlags: ledgerSyncFeatureFlags,
+    featureFlags: LEDGER_SYNC_FEATURE_FLAGS,
     cliCommands: [
       ...app.ledgerSync.initializeEmptyTrustchain(),
       ...seedCommands,
@@ -88,15 +39,15 @@ async function openLedgerSyncSettings() {
 export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
   describeIfNotNanoS("Ledger Sync - add account", () => {
-    setupSeed();
-    cleanupAfterAll();
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
 
     beforeAll(async () => {
       // The CLI needs the LedgerSync app to create the trustchain and the phone needs Ethereum to
       // add the account: mobile launches both in parallel rather than relaunching one device.
       await app.init({
         speculosApp: Currency.ETH.speculosApp,
-        featureFlags: ledgerSyncFeatureFlags,
+        featureFlags: LEDGER_SYNC_FEATURE_FLAGS,
         cliCommandsOnApp: app.ledgerSync
           .initializeEmptyTrustchain()
           .map(cmd => ({ app: AppInfos.LS, cmd })),
@@ -127,8 +78,8 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
   describeIfNotNanoS("Ledger Sync - rename account", () => {
-    setupSeed();
-    cleanupAfterAll();
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
 
     beforeAll(async () => {
       await initPreSeeded([app.ledgerSync.pushAccountsToTrustchain([ethAccount])]);
@@ -158,8 +109,8 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
 export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
   describeIfNotNanoS("Ledger Sync - delete account", () => {
-    setupSeed();
-    cleanupAfterAll();
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
 
     beforeAll(async () => {
       await initPreSeeded([
@@ -191,8 +142,8 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
 export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
   describeIfNotNanoS("Ledger Sync - delete instance", () => {
-    setupSeed();
-    cleanupAfterAll();
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
 
     beforeAll(async () => {
       await initPreSeeded([app.ledgerSync.addTrustchainMember(APP_INSTANCE_NAME)]);
@@ -226,8 +177,8 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
 export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
   describeIfNotNanoS("Ledger Sync - delete backup", () => {
-    setupSeed();
-    cleanupAfterAll();
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
 
     beforeAll(async () => {
       await initPreSeeded([app.ledgerSync.pushAccountsToTrustchain([ethAccount])]);
