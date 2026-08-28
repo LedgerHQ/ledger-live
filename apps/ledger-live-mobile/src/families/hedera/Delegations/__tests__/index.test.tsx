@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
 import { NavigatorName, ScreenName } from "~/const";
 import HederaDelegations from "../index";
 import {
@@ -17,7 +17,7 @@ const mockNavigate = jest.fn();
 jest.mock("LLM/hooks/useStake/useStake", () => ({ useStake: jest.fn() }));
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaEnrichedDelegation: jest.fn(),
+  useHederaEnrichedDelegationV2: jest.fn(),
 }));
 
 jest.mock("@react-navigation/native", () => ({
@@ -32,14 +32,19 @@ jest.mock("~/components/DelegationDrawer", () => {
   const { View, Text, TouchableOpacity } = require("react-native");
   return ({
     isOpen,
+    data,
     actions,
   }: {
     isOpen: boolean;
+    data?: Array<{ label: string; Component: React.ReactNode }>;
     actions?: Array<{ label: string; disabled?: boolean; onPress: () => void }>;
   }) => {
     if (!isOpen) return null;
     return (
       <View testID="delegation-drawer">
+        {data?.map((item, i) => (
+          <View key={i}>{item.Component}</View>
+        ))}
         {actions?.map((action, i) => (
           <TouchableOpacity
             key={i}
@@ -64,7 +69,7 @@ jest.mock("~/families/hedera/shared/DelegationStatusModal", () => ({
 jest.mock("~/families/hedera/shared/ValidatorIcon", () => () => null);
 
 const mockUseStake = jest.mocked(useStake);
-const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegation);
+const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegationV2);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -188,6 +193,53 @@ describe("HederaDelegations", () => {
       expect(screen.getByTestId("drawer-action-1")).toHaveProp("accessibilityState", {
         disabled: true,
       });
+    });
+
+    it("disables every drawer action while the validators query is loading", () => {
+      const account = buildAccount();
+
+      mockUseHederaEnrichedDelegation.mockReturnValue({
+        ...mockEnrichedDelegation,
+        loading: true,
+      } as never);
+
+      render(<HederaDelegations account={account} />, {
+        overrideInitialState: s => ({
+          ...s,
+          accounts: { ...s.accounts, active: [account] },
+        }),
+      });
+
+      // the validator name is behind a skeleton while loading, so open the drawer via "See more"
+      fireEvent.press(screen.getByText("See more"));
+
+      for (const testId of ["drawer-action-0", "drawer-action-1", "drawer-action-2"]) {
+        expect(screen.getByTestId(testId)).toBeDisabled();
+      }
+    });
+
+    it("shows the fetchError status label and keeps every drawer action enabled when the fetch failed", () => {
+      const account = buildAccount();
+
+      mockUseHederaEnrichedDelegation.mockReturnValue({
+        ...mockEnrichedDelegation,
+        error: new Error("network down"),
+      } as never);
+
+      render(<HederaDelegations account={account} />, {
+        overrideInitialState: s => ({
+          ...s,
+          accounts: { ...s.accounts, active: [account] },
+        }),
+      });
+
+      fireEvent.press(screen.getByText("Hedera Node 3"));
+
+      expect(screen.getByText("Unable to load")).toBeVisible();
+
+      for (const testId of ["drawer-action-0", "drawer-action-1", "drawer-action-2"]) {
+        expect(screen.getByTestId(testId)).toBeEnabled();
+      }
     });
 
     it("navigates to HederaRedelegationFlow with correct params when Redelegate is pressed", () => {
