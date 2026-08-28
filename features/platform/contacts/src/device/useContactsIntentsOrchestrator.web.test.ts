@@ -10,6 +10,17 @@ import {
 import type { ContactsIntentPlatformDefinitions } from "./types";
 import { useContactsIntentsOrchestrator } from "./useContactsIntentsOrchestrator";
 
+jest.mock("@ledgerhq/device-contacts-kit/api/model/ContactsVersionRequirements.js", () => ({
+  resolveContactsVersionRequirements: () => ({
+    supported: true,
+    minOsVersion: "1.5.0",
+    minAppVersion: { Ethereum: "1.2.3" },
+  }),
+}));
+
+/** Contacts floor enforced by the mocked kit table above. */
+const CONTACTS_APP_FLOOR = "1.2.3";
+
 /**
  * The orchestrator never runs a job or renders a component: it drives everything
  * through the listeners the executor would call. Injecting inert definitions keeps
@@ -260,7 +271,7 @@ describe("useContactsIntentsOrchestrator initializerConfig", () => {
     const getMinVersion = dieProps.initializerConfig?.dependencies?.getMinVersion;
 
     // THEN
-    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBeDefined();
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBe(CONTACTS_APP_FLOOR);
 
     act(() => dieProps.onUserCancel());
     await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
@@ -279,11 +290,9 @@ describe("useContactsIntentsOrchestrator initializerConfig", () => {
     // WHEN
     const dieProps = getActiveDieProps(result.current);
     const getMinVersion = dieProps.initializerConfig?.dependencies?.getMinVersion;
-    const contactsFloor = getMinVersion?.("Ethereum", DeviceModelId.STAX);
 
     // THEN
-    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBe(contactsFloor);
-    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).not.toBe("0.0.1");
+    expect(getMinVersion?.("Ethereum", DeviceModelId.STAX)).toBe(CONTACTS_APP_FLOOR);
 
     act(() => dieProps.onUserCancel());
     await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);

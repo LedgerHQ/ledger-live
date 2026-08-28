@@ -40,6 +40,12 @@ export function getContactsOsMinVersion(model?: DeviceModelId): string | undefin
  * Composes the host's app-global version floor with the Contacts kit's own
  * app floor, keeping the greater of the two. Never replaces the app-global
  * floor: a caller that supplies none still gets the Contacts floor enforced.
+ *
+ * This also holds when `getLiveConfigMinVersion` is a real function that
+ * itself returns `undefined` (e.g. the host's `getMinVersion` bypassing
+ * `DISABLE_APP_VERSION_REQUIREMENTS`): that flag disables the live-config
+ * policy gate, not the Contacts kit's own hardware/protocol requirement,
+ * so the Contacts floor still applies.
  */
 export function composeContactsGetMinVersion(
   getLiveConfigMinVersion: ContactsGetMinVersion | undefined,
