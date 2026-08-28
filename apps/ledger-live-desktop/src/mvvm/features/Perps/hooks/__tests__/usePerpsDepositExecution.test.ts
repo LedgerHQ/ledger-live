@@ -184,8 +184,6 @@ describe("usePerpsDepositExecution", () => {
     expect(mockBroadcast).toHaveBeenCalledWith({ operation });
     expect(onSwapSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
     expect(mockOpenPerpsTransactionSigned).toHaveBeenCalledWith({
-      operationId: "operation-1",
-      accountId: "funding-1",
       receiveCurrencyTicker: "ETH",
       swapId: "swap-1",
       provider: "swapkit_hyperliquid",
