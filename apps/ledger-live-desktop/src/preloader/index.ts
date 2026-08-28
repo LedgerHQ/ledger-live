@@ -1,7 +1,7 @@
 /*
   This file is bundled in to the preload bundle. It get loaded and executed before the renderer bundle.
-  Everything set in the window scope will be available for the code that live in the renderer bundle.
-  Node API can be reached by the renderer bundle through a proxy define here, even if its nodeIntegration flag is off.
+  The renderer runs context-isolated with no Node, so nothing here is visible to it unless it
+  goes through `expose` — see ./bridge/expose.
 
   /!\ Everything done in this file must be safe, it can not afford to crash. /!\
 */
@@ -9,6 +9,7 @@
 import { ipcRenderer } from "electron";
 import { palettes } from "@ledgerhq/react-ui/styles/index";
 import { installBridge } from "./bridge";
+import { expose } from "./bridge/expose";
 
 // Must be first: the renderer reads bootstrap values at module-evaluation time.
 installBridge();
@@ -38,13 +39,14 @@ const params = new URLSearchParams(window.location.search);
 const openWindow = (id: number, domains?: string[]) =>
   ipcRenderer.send("webview-dom-ready", id, domains);
 
-// TODO in future, we should use contextBridge
-window.api = {
+// A direct `window.api = ...` assignment would land in the preload's own world, invisible
+// to the renderer. `appLoaded` still works across the bridge because the DOM is shared.
+expose("api", {
   appDirname: params.get("appDirname") || "",
   appLoaded,
   reloadRenderer,
   openWindow,
-};
+});
 
 /**
  * This param "theme" that we are using is set in the main thread,
