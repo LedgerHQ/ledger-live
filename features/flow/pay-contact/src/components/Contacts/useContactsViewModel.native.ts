@@ -1,16 +1,31 @@
 import { useMemo } from "react";
-import { useContacts } from "@features/platform-contacts";
+import {
+  sortContactsByLastSentThenLastAdded,
+  summarizeOutgoingOperationsByContact,
+  useContacts,
+} from "@features/platform-contacts";
 import type { ContactsNativeProps, ContactsViewNativeProps } from "../../types";
 
 const MAX_CONTACTS_DISPLAYED = 8;
 
-export function useContactsViewModel(props: ContactsNativeProps): ContactsViewNativeProps {
+const EMPTY_OPERATIONS = [] as const;
+
+export function useContactsViewModel({
+  outgoingOperations = EMPTY_OPERATIONS,
+  ...props
+}: ContactsNativeProps): ContactsViewNativeProps {
   const contacts = useContacts();
-  const savedContacts = useMemo(() => contacts.filter(contact => !contact.isMe), [contacts]);
-  const hasMore = savedContacts.length > MAX_CONTACTS_DISPLAYED;
+  const sortedContacts = useMemo(() => {
+    const savedContacts = contacts.filter(contact => !contact.isMe);
+    const summaries = summarizeOutgoingOperationsByContact(savedContacts, outgoingOperations);
+
+    return sortContactsByLastSentThenLastAdded(savedContacts, summaries);
+  }, [contacts, outgoingOperations]);
+
+  const hasMore = sortedContacts.length > MAX_CONTACTS_DISPLAYED;
   const displayedContacts = useMemo(
-    () => savedContacts.slice(0, MAX_CONTACTS_DISPLAYED),
-    [savedContacts],
+    () => sortedContacts.slice(0, MAX_CONTACTS_DISPLAYED),
+    [sortedContacts],
   );
 
   return { ...props, contacts: displayedContacts, hasMore };

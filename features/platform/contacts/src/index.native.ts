@@ -1,5 +1,6 @@
 export * from "./useContacts";
 export * from "./analytics";
+export * from "./outgoingOperations";
 export * from "./utils/getContactInitial";
 export * from "./hooks/useContactsMeContact";
 export * from "./utils/formatMeDisplayName";

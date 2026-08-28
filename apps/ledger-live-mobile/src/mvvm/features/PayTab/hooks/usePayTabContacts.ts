@@ -6,11 +6,13 @@ import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { usePayTabNewPayment } from "./usePayTabNewPayment";
+import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
 
 export function usePayTabContacts(): ContactsNativeProps {
   const { t } = useTranslation();
   const { open } = usePayTabNewPayment();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const outgoingOperations = usePayTabOutgoingOperations();
 
   const onSeeAll = useCallback(() => {
     navigation.navigate(NavigatorName.MyWallet, {
@@ -25,7 +27,8 @@ export function usePayTabContacts(): ContactsNativeProps {
       payLabel: t("payTab.contacts.pay"),
       onPay: open,
       onSeeAll,
+      outgoingOperations,
     }),
-    [t, open, onSeeAll],
+    [t, open, onSeeAll, outgoingOperations],
   );
 }
