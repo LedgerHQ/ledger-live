@@ -7,7 +7,6 @@
     },
     "settings": {
       "hasCompletedOnboarding": true,
-      "onboardingCompletionDate": "2026-08-20T10:00:00.000Z",
       "hasBeenRedirectedToPostOnboarding": true,
       "counterValue": "USD",
       "language": "en",
@@ -59,7 +58,7 @@
     "postOnboarding": {
       "deviceModelId": "stax",
       "walletEntryPointDismissed": false,
-      "entryPointFirstDisplayedDate": "2026-08-20T10:00:00.000Z",
+      "entryPointFirstDisplayedDate": null,
       "walletEntryPointEligibleForPortfolio": true,
       "actionsToComplete": ["assetsTransferMock", "syncAccountsMock", "discoverWalletMock"],
       "actionsCompleted": {
@@ -69,7 +68,7 @@
       },
       "lastActionCompleted": null,
       "postOnboardingInProgress": true,
-      "onboardingDate": "2026-08-20T10:00:00.000Z"
+      "onboardingDate": null
     },
     "featureFlags": {
       "overrides": {},

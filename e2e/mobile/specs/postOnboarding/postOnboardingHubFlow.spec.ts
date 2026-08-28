@@ -1,6 +1,8 @@
-import { runPostOnboardingHubFlowTest } from "./postOnboardingHub";
+import { runPostOnboardingHubFlowTest } from "@e2e/specs/postOnboarding/postOnboardingHub";
 
-runPostOnboardingHubFlowTest(
-  ["B2CQA-6545"],
-  ["@postOnboarding", "@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-);
+const testConfig = {
+  tmsLinks: ["B2CQA-6545"],
+  tags: ["@postOnboarding", "@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+};
+
+runPostOnboardingHubFlowTest(testConfig.tmsLinks, testConfig.tags);

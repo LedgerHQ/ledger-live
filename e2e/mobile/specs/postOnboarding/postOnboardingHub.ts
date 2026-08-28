@@ -1,9 +1,10 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-import type { ApplicationOptions } from "page";
+import type { ApplicationOptions } from "@e2e/page/index";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
 
+/** Must stay in sync with `postOnboarding.actionsToComplete` in userdata/post-onboarding-hub-flow.json. */
 export const MOCK_ACTIONS = [
   "assetsTransferMock",
   "syncAccountsMock",
@@ -30,6 +31,10 @@ async function initApp(options: ApplicationOptions = {}) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
+/**
+ * B2CQA-6545. Mock post-onboarding hub flow — no Speculos; each step completes via
+ * PostOnboardingMockActionScreen.
+ */
 export function runPostOnboardingHubFlowTest(tmsLinks: string[], tags: string[]) {
   describe("Post-onboarding hub", () => {
     beforeAll(async () => {
@@ -41,8 +46,6 @@ export function runPostOnboardingHubFlowTest(tmsLinks: string[], tags: string[])
     tags.forEach(tag => $Tag(tag));
 
     it("Full post-onboarding hub flow — all mock steps", async () => {
-      expect(MOCK_ACTIONS).toHaveLength(3);
-
       await app.postOnboardingHub.expectWidgetVisible();
       await app.postOnboardingHub.openHubFromWidget();
 

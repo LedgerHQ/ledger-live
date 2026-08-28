@@ -10,14 +10,12 @@ export default class PostOnboardingHubPage {
 
   @Step("Expect onboarding widget to be visible")
   async expectWidgetVisible(): Promise<void> {
-    await waitForElementById(this.onboardingWidgetId);
-    await detoxExpect(getElementById(this.onboardingWidgetId)).toBeVisible();
+    await waitForFullyVisibleById(this.onboardingWidgetId);
   }
 
   @Step("Expect onboarding widget to be hidden")
   async expectWidgetHidden(): Promise<void> {
     await waitForElementNotVisible(this.onboardingWidgetId);
-    await detoxExpect(getElementById(this.onboardingWidgetId)).not.toBeVisible();
   }
 
   @Step("Open post-onboarding hub from portfolio widget")
@@ -26,16 +24,9 @@ export default class PostOnboardingHubPage {
     await waitForFullyVisibleById(this.hubContainerId);
   }
 
-  @Step("Expect post-onboarding hub drawer to be visible")
-  async expectHubVisible(): Promise<void> {
-    await waitForFullyVisibleById(this.hubContainerId);
-    await detoxExpect(getElementById(this.hubContainerId)).toBeVisible();
-  }
-
   @Step("Expect hub action {{0}} to be pending")
   async expectActionPending(actionId: string): Promise<void> {
     await waitForFullyVisibleById(this.hubActionId(actionId));
-    await detoxExpect(getElementById(this.hubActionId(actionId))).toBeVisible();
   }
 
   @Step("Tap post-onboarding hub action {{0}}")
@@ -45,13 +36,14 @@ export default class PostOnboardingHubPage {
 
   @Step("Complete mock action and return to post-onboarding hub")
   async completeMockActionAndReturnToHub(): Promise<void> {
-    await waitForElementById(this.mockCompleteAndBackToHubId);
+    await waitForFullyVisibleById(this.mockCompleteAndBackToHubId);
     await tapById(this.mockCompleteAndBackToHubId);
     await waitForFullyVisibleById(this.hubContainerId);
   }
 
   @Step("Expect hub action {{0}} to be completed")
   async expectActionCompleted(actionId: string, completedLabel: string): Promise<void> {
+    await waitForFullyVisibleById(this.hubActionId(actionId));
     await detoxExpect(
       getElementByIdWithDescendantTexts(this.hubActionId(actionId), completedLabel),
     ).toBeVisible();
@@ -59,8 +51,7 @@ export default class PostOnboardingHubPage {
 
   @Step("Expect all post-onboarding hub actions to be completed")
   async expectAllActionsCompleted(): Promise<void> {
-    await waitForElementById(this.hubCompleteButtonId);
-    await detoxExpect(getElementById(this.hubCompleteButtonId)).toBeVisible();
+    await waitForFullyVisibleById(this.hubCompleteButtonId);
   }
 
   @Step("Tap post-onboarding hub complete button")

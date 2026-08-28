@@ -109,7 +109,7 @@ export function PostOnboardingHubDrawerView({
       ))}
 
       {areAllPostOnboardingActionsCompleted ? (
-        <Box lx={{ marginTop: "s24" }} style={{ marginBottom: bottomInset }}>
+        <Box lx={{ marginTop: "s24" }}>
           <Button
             appearance="base"
             size="lg"
