@@ -509,7 +509,7 @@ describe("buildExtraSyncObservable", () => {
     ).toBe(undefined);
   });
 
-  it.each(["ready", "running", "stopped", "outdated", "complete"])(
+  it.each(["ready", "running", "outdated", "complete"])(
     "scans an account whose shielded state is %s",
     async syncState => {
       getZCashClient.mockResolvedValue({
@@ -542,6 +542,58 @@ describe("buildExtraSyncObservable", () => {
       });
     },
   );
+
+  it("scans an account whose shielded state is stopped after a prior error, to retry it", async () => {
+    getZCashClient.mockResolvedValue({
+      syncShielded: () =>
+        of({
+          transactions: [],
+          processedBlocks: 5,
+          remainingBlocks: 0,
+          lastProcessedBlock: 5,
+        }),
+      findBlockHeight: jest.fn(),
+    });
+    const observable = buildExtraSyncObservable(
+      info({
+        initialAccount: {
+          id: "js:2:zcash:xpub6DZ:",
+          operations: [],
+          privateInfo: privateInfo({
+            syncState: "stopped",
+            lastSyncError: "engine down",
+            lastProcessedBlock: 1,
+          }),
+        },
+      }),
+      { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+    );
+
+    expect((await firstValueFrom(observable!)).privateInfo).toMatchObject({
+      syncState: "complete",
+      progress: 100,
+      lastProcessedBlock: 5,
+    });
+  });
+
+  it("stays out when the shielded state is stopped by the user rather than by an error", () => {
+    // No lastSyncError set -- this is what useZcashShieldedSync's stopShieldedSync writes.
+    // The automatic wallet sync always requests the shielded leg for zcash accounts, so this
+    // must return undefined or a manual stop would never stick: the next tick would rebuild
+    // the leg and flip syncState back to "running" on its own.
+    expect(
+      buildExtraSyncObservable(
+        info({
+          initialAccount: {
+            id: "js:2:zcash:xpub6DZ:",
+            operations: [],
+            privateInfo: privateInfo({ syncState: "stopped", lastProcessedBlock: 1 }),
+          },
+        }),
+        { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      ),
+    ).toBe(undefined);
+  });
 
   it("degrades to a stopped state instead of propagating when the shielded leg errors", async () => {
     getZCashClient.mockResolvedValue({

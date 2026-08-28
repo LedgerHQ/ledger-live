@@ -923,11 +923,18 @@ export function buildExtraSyncObservable(
     !!zcashInitialAccount.privateInfo?.ufvk &&
     zcashInitialAccount.privateInfo.ufvk.length > 0;
 
+  // "stopped" is overloaded: the leg sets it on its own after an error/timeout (see the
+  // catchError below, which also sets lastSyncError) so the next automatic tick can retry,
+  // but useZcashShieldedSync's manual stop sets the same value to mean "leave it alone until
+  // the user restarts it" -- without checking lastSyncError, the automatic wallet sync (which
+  // always requests the shielded leg for zcash, see BridgeSync.tsx) would rebuild it on its
+  // next tick and flip syncState back to "running", making a manual stop never stick.
   const syncStateIsEnabled =
     !!zcashInitialAccount &&
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
       zcashInitialAccount.privateInfo?.syncState === "running" ||
-      zcashInitialAccount.privateInfo?.syncState === "stopped" ||
+      (zcashInitialAccount.privateInfo?.syncState === "stopped" &&
+        !!zcashInitialAccount.privateInfo?.lastSyncError) ||
       zcashInitialAccount.privateInfo?.syncState === "outdated" ||
       zcashInitialAccount.privateInfo?.syncState === "complete");
 
