@@ -1,5 +1,5 @@
-import largeScreenUpsellDark from "./assets/large_screen_upsell_darkp";
-import largeScreenUpsellLight from "./assets/large_screen_upsell_lightp";
+import largeScreenUpsellDark from "./assets/large_screen_upsell_dark.webp";
+import largeScreenUpsellLight from "./assets/large_screen_upsell_light.webp";
 
 export const LARGE_SCREEN_UPSELL_IMAGES = {
   light: largeScreenUpsellLight,
