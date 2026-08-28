@@ -85,13 +85,7 @@ export function useContactsIntentsOrchestrator({
       new Promise<Result>((resolve, reject) => {
         let hasSettled = false;
 
-        /**
-         * Fails the flow's promise and leaves the DIE alone. Whatever the
-         * executor has on screen — the intent's own failure state, or its
-         * generic fallback — is the error UI, so it has to stay up until the
-         * user dismisses it.
-         */
-        const fail = (error: unknown) => {
+        const failWithoutDismissingExecutor = (error: unknown) => {
           if (hasSettled) {
             return;
           }
@@ -100,13 +94,6 @@ export function useContactsIntentsOrchestrator({
         };
 
         const intent = createContactIntent(operation.intentDefinition, operation.intentInput, {
-          /**
-           * The job's result reporter reports exactly once per run and covers
-           * every outcome — success, each failure `JobState`, and teardown — so
-           * this is the only listener carrying flow semantics.
-           * `mapIntentResultToResult` throws on a reported failure, which is
-           * what separates the two branches below.
-           */
           onResult: report => {
             if (hasSettled) {
               return;
@@ -115,32 +102,22 @@ export function useContactsIntentsOrchestrator({
             try {
               result = operation.mapIntentResultToResult(report);
             } catch (error) {
-              fail(error);
+              failWithoutDismissingExecutor(error);
               return;
             }
             hasSettled = true;
             resolve(result);
-            // Success is the only outcome with nothing left to show: the flow
-            // advances and owns the UI from here. Every other ending keeps the
-            // DIE mounted, so this is the one place that dismisses it on the
-            // job's behalf.
             setActiveIntent(undefined);
           },
-          // A job that completes without reporting, or that lets its observable
-          // error, has broken the reporter's contract. Neither is reachable for
-          // a job built on `createContactIntentResultReporter`, but rejecting
-          // keeps such a bug from hanging the caller's promise forever.
-          onJobComplete: () => fail(new ContactDeviceIntentMissingResultError()),
-          onJobError: fail,
+          onJobComplete: () =>
+            failWithoutDismissingExecutor(new ContactDeviceIntentMissingResultError()),
+          onJobError: failWithoutDismissingExecutor,
         });
 
         setActiveIntent({
           intent: intent as unknown as ContactDeviceIntent,
           initializationInput: operation.initializationInput,
-          // Dismissed (or unmounted) before the job settled: nothing else will
-          // settle the promise. Clearing `activeIntent` is the dismissal's own
-          // job, not this callback's.
-          cancel: () => fail(new ContactDeviceIntentCancelledError()),
+          cancel: () => failWithoutDismissingExecutor(new ContactDeviceIntentCancelledError()),
         });
       }),
     [],

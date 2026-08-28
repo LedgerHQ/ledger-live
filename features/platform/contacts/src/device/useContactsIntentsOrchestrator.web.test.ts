@@ -131,9 +131,6 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBe(error);
-    // The failure's own JobState is the user-facing error screen, rendered by
-    // the executor while idle (lastIntentSnapshot) -- the DIE must stay mounted
-    // so it actually gets a chance to show, instead of vanishing instantly.
     expect(result.current.dieProps).toBeDefined();
   });
 
@@ -147,9 +144,7 @@ describe("useContactsIntentsOrchestrator", () => {
     const dieProps = getActiveDieProps(result.current);
     const error = new Error("registration failed");
 
-    // WHEN -- a buggy job could report a failure and still let its observable
-    // error afterward instead of completing; the already-showing failure
-    // screen must not be ripped away because of that contract violation.
+    // WHEN
     act(() => {
       dieProps.intent.onResult?.({ type: "failure", error });
       dieProps.intent.onJobError?.(new Error("late observable error"));
@@ -245,9 +240,6 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentMissingResultError);
-    // Success is the only ending that dismisses the DIE on the job's behalf, so
-    // this contract violation leaves it up for the user to close, same as any
-    // other failure.
     expect(result.current.dieProps).toBeDefined();
   });
 
@@ -268,8 +260,6 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBe(error);
-    // The executor falls back to its generic IntentErrorComponent (retry/close)
-    // for an observable error -- the DIE must stay mounted for it to be seen.
     expect(result.current.dieProps).toBeDefined();
   });
 

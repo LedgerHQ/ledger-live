@@ -28,7 +28,6 @@ export function RenameContactComponentLWD({ jobState, onClose }: RenameContactCo
     testID: "contacts-rename-contact-close",
   };
 
-  // The executor mounts this component before the job emits its first state.
   if (jobState === undefined) {
     return (
       <LoadingContent
@@ -40,8 +39,6 @@ export function RenameContactComponentLWD({ jobState, onClose }: RenameContactCo
 
   switch (jobState.type) {
     case "pending":
-    // `completed` is terminal: the orchestrator resolves its promise and drops
-    // the executor on the next tick, so hold the spinner until it unmounts.
     case "completed":
       return (
         <LoadingContent
@@ -59,10 +56,6 @@ export function RenameContactComponentLWD({ jobState, onClose }: RenameContactCo
         />
       );
 
-    // 0x6A80 buckets user rejection together with malformed TLV, so this reads
-    // as a rejection: it is the only outcome a user can actually cause.
-    // The job keeps itself open here, so the retry replays the device action
-    // rather than restarting the whole Contacts flow.
     case "device-rejected": {
       const retry = jobState.retry;
       return (
@@ -85,10 +78,6 @@ export function RenameContactComponentLWD({ jobState, onClose }: RenameContactCo
       );
     }
 
-    // Rename always replays the group's existing name proof, so a proof
-    // mismatch here means the contact belongs to another device.
-    // Its "Connect a different device" CTA needs a recovery path the executor
-    // does not expose yet — LIVE-36562.
     case "existing-group-verification-failed":
       return (
         <InfoState
@@ -118,10 +107,6 @@ export function RenameContactComponentLWD({ jobState, onClose }: RenameContactCo
         />
       );
 
-    // Rename is served from the dashboard, so the kit's version guard gates on
-    // the OS rather than a coin app — the shared failure state is the same, only
-    // the copy differs. Nothing gates this before the device action runs, so
-    // unlike register this screen is the normal way an outdated OS surfaces.
     case "app-version-too-low":
       return (
         <InfoState
