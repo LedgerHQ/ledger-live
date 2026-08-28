@@ -10064,5 +10064,10 @@
     "title": "Transaction signed",
     "description": "You'll receive your {{currency}} once confirmed on the blockchain",
     "viewTransaction": "View transaction"
+  },
+  "perpsTransactionStatus": {
+    "dialogTitle": "Transaction detail",
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}"
   }
 }
