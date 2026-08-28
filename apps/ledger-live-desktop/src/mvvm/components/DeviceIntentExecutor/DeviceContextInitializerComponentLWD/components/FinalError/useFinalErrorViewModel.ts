@@ -1,5 +1,9 @@
 import { useCallback } from "react";
-import { isDmkError, type DmkError } from "@ledgerhq/live-dmk-desktop";
+import {
+  isDmkError,
+  isInvalidGetFirmwareMetadataResponseError,
+  type DmkError,
+} from "@ledgerhq/live-dmk-desktop";
 import {
   useDeviceIntentTracking,
   type EnsureAppReadyState,
@@ -19,7 +23,7 @@ type Params = Readonly<{
 
 export function useFinalErrorViewModel({ state, device, onCancel }: Params) {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const { openSupport } = useInitializerActions();
+  const { openSupport, openExperimentalSettings } = useInitializerActions();
 
   const onCancelWithTracking = useCallback(() => {
     trackConnectAppButtonClicked({
@@ -41,10 +45,22 @@ export function useFinalErrorViewModel({ state, device, onCancel }: Params) {
     openSupport();
   }, [analyticsProperties, device.modelId, openSupport, sourceFlow]);
 
+  const onGoToSettings = useCallback(() => {
+    trackConnectAppButtonClicked({
+      sourceFlow,
+      modelId: device.modelId,
+      button: CONNECT_APP_BUTTON.GoToSettings,
+      extraProperties: analyticsProperties,
+    });
+    openExperimentalSettings();
+  }, [analyticsProperties, device.modelId, openExperimentalSettings, sourceFlow]);
+
   return {
     error: getTranslatedErrorInput(state.error),
+    isInvalidProvider: isInvalidGetFirmwareMetadataResponseError(state.error),
     onCancel: onCancelWithTracking,
     onContactSupport,
+    onGoToSettings,
   };
 }
 

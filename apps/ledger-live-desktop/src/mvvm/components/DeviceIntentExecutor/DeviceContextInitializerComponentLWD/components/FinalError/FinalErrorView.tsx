@@ -6,11 +6,19 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 
 type FinalErrorViewProps = Readonly<{
   error: Error | DmkError;
+  isInvalidProvider: boolean;
   onCancel: () => void;
   onContactSupport: () => void;
+  onGoToSettings: () => void;
 }>;
 
-export function FinalErrorView({ error, onCancel, onContactSupport }: FinalErrorViewProps) {
+export function FinalErrorView({
+  error,
+  isInvalidProvider,
+  onCancel,
+  onContactSupport,
+  onGoToSettings,
+}: FinalErrorViewProps) {
   const { t } = useTranslation();
 
   return (
@@ -19,10 +27,17 @@ export function FinalErrorView({ error, onCancel, onContactSupport }: FinalError
       size="hug"
       title={<TranslatedError error={error} field="title" />}
       description={<TranslatedError error={error} field="description" />}
-      primaryCta={{
-        label: t("deviceIntentExecutor.initialization.cta.contactLedgerSupport"),
-        onPress: onContactSupport,
-      }}
+      primaryCta={
+        isInvalidProvider
+          ? {
+              label: t("errors.InvalidGetFirmwareMetadataResponseError.goToSettingsCTA"),
+              onPress: onGoToSettings,
+            }
+          : {
+              label: t("deviceIntentExecutor.initialization.cta.contactLedgerSupport"),
+              onPress: onContactSupport,
+            }
+      }
       secondaryCta={{
         label: t("common.close"),
         onPress: onCancel,

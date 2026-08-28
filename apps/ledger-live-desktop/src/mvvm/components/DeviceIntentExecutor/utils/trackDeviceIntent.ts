@@ -80,6 +80,7 @@ export const CONNECT_APP_BUTTON = {
   LearnMore: "Learn More",
   DiscoverUpgradeProgram: "Discover Upgrade Program",
   ManageApps: "Manage Apps",
+  GoToSettings: "Go To Settings",
 } as const;
 
 let isInTerminalConnectDeviceError = false;
