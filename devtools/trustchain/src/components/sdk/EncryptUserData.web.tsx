@@ -1,11 +1,6 @@
-import { useCallback, useState } from "react";
 import type { Trustchain, TrustchainSDK } from "../../types";
 import { Actionable } from "../Actionable";
-
-const toHex = (arr: Uint8Array): string =>
-  Array.from(arr)
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
+import { useEncryptUserData } from "./useEncryptUserData";
 
 export function EncryptUserData({
   sdk,
@@ -14,22 +9,19 @@ export function EncryptUserData({
   sdk: TrustchainSDK;
   trustchain: Trustchain | null;
 }>) {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState<Uint8Array | null>(null);
-
-  const action = useCallback(
-    (tc: Trustchain, msg: string) => sdk.encryptUserData(tc, new TextEncoder().encode(msg)),
-    [sdk],
+  const { input, inputs, setInput, output, setOutput, action, valueDisplay } = useEncryptUserData(
+    sdk,
+    trustchain,
   );
 
   return (
     <Actionable
       buttonTitle="sdk.encryptUserData"
-      inputs={trustchain && input ? [trustchain, input] : null}
+      inputs={inputs}
       action={action}
       value={output}
       setValue={setOutput}
-      valueDisplay={v => toHex(v)}
+      valueDisplay={valueDisplay}
     >
       <input
         type="text"

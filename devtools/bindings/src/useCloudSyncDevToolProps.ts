@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
-import type { CloudSyncDevToolProps } from "@devtools/cloud-sync";
+import type { DevToolsConfig } from "@devtools/registry";
+
+type CloudSyncDevToolProps = Extract<DevToolsConfig[number], { id: "cloud-sync" }>["config"];
 
 export function useCloudSyncDevToolProps(
   createSdk: CloudSyncDevToolProps["createSdk"],

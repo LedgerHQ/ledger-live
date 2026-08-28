@@ -3126,18 +3126,12 @@ importers:
 
   devtools/bindings:
     dependencies:
-      '@devtools/cloud-sync':
-        specifier: workspace:*
-        version: link:../cloud-sync
       '@devtools/env':
         specifier: workspace:*
         version: link:../env
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
-      '@devtools/trustchain':
-        specifier: workspace:*
-        version: link:../trustchain
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour
@@ -3323,9 +3317,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.58(@ledgerhq/lumen-design-core@0.1.26)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/test-quarantine':
+      '@support/jest-devtools':
         specifier: workspace:*
-        version: link:../../support/test-quarantine
+        version: link:../../support/jest-devtools
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3356,9 +3350,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.4.1
-      jest-sonar:
-        specifier: 0.2.16
-        version: 0.2.16
       react:
         specifier: 19.1.4
         version: 19.1.4

@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
-import type { TrustchainDevToolProps } from "@devtools/trustchain";
+import type { DevToolsConfig } from "@devtools/registry";
+
+type TrustchainDevToolProps = Extract<DevToolsConfig[number], { id: "trustchain" }>["config"];
 
 export function useTrustchainDevToolProps(
   createSdk: TrustchainDevToolProps["createSdk"],
