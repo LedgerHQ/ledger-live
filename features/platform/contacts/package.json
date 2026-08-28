@@ -35,6 +35,7 @@
     "@shared/feature-flags": "workspace:^",
     "@features/platform-device-intent": "workspace:*",
     "@ledgerhq/device-contacts-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "rxjs": "catalog:",
     "semver": "catalog:"
   },

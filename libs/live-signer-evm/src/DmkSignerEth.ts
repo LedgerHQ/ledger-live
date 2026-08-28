@@ -27,6 +27,7 @@ import {
   buildDefaultHttpBlindSigningReporter,
   liveBlindSigningReporter,
 } from "@ledgerhq/live-dmk-shared";
+import { evmAddressBookProvider } from "./addressBook/evmAddressBookProvider";
 
 export type DAError =
   | GetAddressDAError
@@ -62,13 +63,20 @@ export class DmkSignerEth implements EvmSigner {
       .setChain(ContextModuleChainID.Ethereum)
       .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
       .build();
-    this.signer = new SignerEthBuilder({
+    const builder = new SignerEthBuilder({
       dmk,
       sessionId,
       originToken,
-    })
-      .withContextModule(contextModule)
-      .build();
+    }).withContextModule(contextModule);
+
+    // Snapshot the address book for this signer's lifetime, so the recipient
+    // and the signing account are matched against the same contacts.
+    const addressBook = evmAddressBookProvider.getAddressBook();
+    if (addressBook !== undefined) {
+      builder.withAddressBook(addressBook);
+    }
+
+    this.signer = builder.build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {

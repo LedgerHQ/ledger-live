@@ -151,6 +151,7 @@
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-dmk-desktop": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
