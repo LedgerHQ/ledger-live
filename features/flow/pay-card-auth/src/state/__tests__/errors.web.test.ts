@@ -1,29 +1,16 @@
-import { CARD_RENEWAL_UNAVAILABLE, CARD_SESSION_ENDED } from "@shared/api-services";
+import { CARD_STALE_REQUEST } from "@shared/api-services";
 import { isUnauthorizedError } from "../errors";
 
 describe("isUnauthorizedError", () => {
-  it("is true for a 401 the provider answered", () => {
+  it("is true for a 401, whether the provider or an ended session produced it", () => {
     expect(isUnauthorizedError({ status: 401, data: { message: "unauthorized" } })).toBe(true);
+    expect(isUnauthorizedError({ status: 401 })).toBe(true);
   });
 
-  it("is true for a session the owner ended itself", () => {
-    expect(isUnauthorizedError({ status: 401, data: { message: CARD_SESSION_ENDED } })).toBe(true);
-  });
-
-  it.each([
-    // The request outlived its session: a new login replaced it while the request was in flight.
-    ["a session a new login replaced", "session_replaced"],
-    // A wiring mistake. No request reached the token endpoint, so nothing was learned.
-    ["an app that installed no renewal", "card session renewal is not configured"],
-  ])("is false for a 401 that says nothing about the session, from %s", (_name, reason) => {
-    // A renewal that ran and failed never arrives here. It ends the session, and the base query
-    // answers `card_session_ended` instead.
-    expect(
-      isUnauthorizedError({
-        status: 401,
-        data: { message: CARD_RENEWAL_UNAVAILABLE, reason },
-      }),
-    ).toBe(false);
+  it("is false for a request whose session a new login replaced", () => {
+    // The session on disk belongs to somebody else. Read as the end of a login, this would sign
+    // the new user out.
+    expect(isUnauthorizedError({ status: "CUSTOM_ERROR", error: CARD_STALE_REQUEST })).toBe(false);
   });
 
   it("is false for every other failure", () => {

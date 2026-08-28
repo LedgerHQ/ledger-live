@@ -1,9 +1,4 @@
-import {
-  cardSession,
-  getCardSessionToken,
-  getCardRefreshToken,
-  readCardSession,
-} from "./cardSession.web";
+import { cardSession, getCardSessionToken, readCardSession } from "./cardSession.web";
 
 const session = { accessToken: "at_token", refreshToken: "rt_token" };
 
@@ -19,7 +14,6 @@ describe("cardSession.web", () => {
     await cardSession.set(session);
 
     await expect(getCardSessionToken()).resolves.toBe("at_token");
-    await expect(getCardRefreshToken()).resolves.toBe("rt_token");
     await expect(cardSession.get()).resolves.toMatchObject({
       accessToken: "at_token",
       refreshToken: "rt_token",
@@ -32,7 +26,6 @@ describe("cardSession.web", () => {
     await cardSession.clear();
 
     await expect(getCardSessionToken()).resolves.toBeNull();
-    await expect(getCardRefreshToken()).resolves.toBeNull();
   });
 
   it("serves the base query the token and the session id of the session it came from", async () => {
