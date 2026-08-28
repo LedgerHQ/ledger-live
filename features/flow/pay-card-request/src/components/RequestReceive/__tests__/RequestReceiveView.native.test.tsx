@@ -20,7 +20,7 @@ describe("RequestReceiveView (Native)", () => {
 
     expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
     expect(screen.getByTestId("pay-card-request-receive-close")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-card")).toBeVisible();
+    expect(screen.getByTestId("pay-card-request-receive-summary")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.title)).toBeVisible();
     expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
     expect(screen.getByTestId("pay-card-request-receive-address")).toBeVisible();

@@ -43,7 +43,7 @@ export function RequestReceiveSummary({
         padding: "s24",
         width: "full",
       }}
-      testID="pay-card-request-receive-card"
+      testID="pay-card-request-receive-summary"
     >
       <Box lx={{ alignItems: "center", gap: "s8" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>

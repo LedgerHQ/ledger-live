@@ -546,7 +546,7 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByText("Request USD Coin")).toBeVisible();
       expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive-card")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive-summary")).toBeVisible();
       expect(screen.getByText("Share")).toBeVisible();
     });
 
