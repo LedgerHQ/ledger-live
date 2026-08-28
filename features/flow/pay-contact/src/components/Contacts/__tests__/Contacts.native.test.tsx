@@ -1,6 +1,12 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  mockContact,
+  mockContactAddress,
+  mockContactWithAddress,
+  mockMeContact,
+} from "@domain/entity-contact/schema.mock";
+import type { OutgoingOperation } from "@features/platform-contacts";
 import { Contacts } from "../Contacts.native";
 import { makeContactsProps, renderWithContacts } from "./shared.native";
 
@@ -59,5 +65,40 @@ describe("Contacts (Native)", () => {
 
     expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
     expect(screen.getByTestId("pay-contacts-see-all").props.onPress).toBeUndefined();
+  });
+
+  const bobAddress = "0x1111111111111111111111111111111111111111";
+  const aliceAddress = "0x2222222222222222222222222222222222222222";
+
+  const bob = mockContactWithAddress({
+    id: "contact-bob",
+    name: "Bob",
+    addresses: [mockContactAddress({ id: "addr-bob", address: bobAddress })],
+  });
+  const alice = mockContactWithAddress({
+    id: "contact-alice",
+    name: "Alice",
+    addresses: [mockContactAddress({ id: "addr-alice", address: aliceAddress })],
+  });
+
+  it("should order the contact sent to most recently first, ahead of the one added last", () => {
+    const sentToBob: OutgoingOperation[] = [
+      { recipientAddress: bobAddress, date: 1_700_000_000_000, currencyId: "ethereum" },
+    ];
+
+    renderWithContacts(
+      [mockMeContact(), bob, alice],
+      <Contacts {...makeContactsProps({ outgoingOperations: sentToBob })} />,
+    );
+
+    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Bob");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Alice");
+  });
+
+  it("should fall back to last added order when no outgoing operation matches", () => {
+    renderWithContacts([mockMeContact(), bob, alice], <Contacts {...makeContactsProps()} />);
+
+    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Alice");
+    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
   });
 });

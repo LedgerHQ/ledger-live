@@ -5,6 +5,7 @@ import type {
   ContactCreationPort,
   ContactsAddContactContentLabels,
 } from "@features/flow-contacts-add-contact";
+import type { OutgoingOperation } from "@features/platform-contacts";
 
 export type EmptyStateLabels = Readonly<{
   info: string;
@@ -43,7 +44,8 @@ export type ContactsViewProps = Readonly<{
  * contacts. The Pay tile opens the Send flow. `onContactPress` is intentionally optional and left
  * unwired for now — a later ticket can pass it to turn contact tiles into Pay entry points without
  * touching the layout. `onSeeAll` opens the full contacts list when the saved contacts exceed the
- * strip cap.
+ * strip cap. `outgoingOperations` are the host's account `OUT` operations used to order contacts by
+ * last sent-to; omit for store order only.
  */
 export type ContactsNativeProps = Readonly<{
   title: string;
@@ -51,6 +53,7 @@ export type ContactsNativeProps = Readonly<{
   onPay: () => void;
   onContactPress?: (contact: Contact) => void;
   onSeeAll: () => void;
+  outgoingOperations?: readonly OutgoingOperation[];
 }>;
 
 export type ContactsViewNativeProps = ContactsNativeProps &
