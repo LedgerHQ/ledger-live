@@ -202,9 +202,7 @@ export async function captureArtifacts(
   if (isLastRetry(testInfo)) {
     const filePath = `tests/artifacts/${testInfo.title.replace(/[^a-zA-Z0-9]/g, " ")}.json`;
 
-    await page.evaluate(filePath => {
-      window.saveLogs(filePath);
-    }, filePath);
+    await page.evaluate(filePath => window.saveLogs(filePath), filePath);
 
     await testInfo.attach("Test logs", {
       path: filePath,

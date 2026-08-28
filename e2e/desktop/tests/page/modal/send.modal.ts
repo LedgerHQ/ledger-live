@@ -8,10 +8,8 @@ export class SendModal extends Modal {
   private accountDebitInput = this.page.locator("#account-debit-placeholder input");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
-  private checkDeviceLabel = this.page.locator(
-    "text=Double-check the transaction details on your Ledger device before signing.",
-  );
-  private readonly checkTransactionbroadcastLabel = this.page.getByTestId("success-message-label");
+  private readonly checkDeviceLabel = this.page.getByTestId("device-signature-notice");
+  private readonly checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private recipientEnsDisplayed = this.page.getByTestId("transaction-recipient-ens");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
@@ -94,7 +92,6 @@ export class SendModal extends Modal {
 
   @step("Verify tx sent text")
   async expectTxSent() {
-    await this.checkDeviceLabel.waitFor({ state: "hidden" });
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
   }
 
