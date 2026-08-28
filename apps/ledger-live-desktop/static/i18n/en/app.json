@@ -10034,14 +10034,14 @@
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
-    "inputSubText": "Swap and deposit via SwapKit",
+    "inputSubText": "Swap and deposit via {{provider}}",
     "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
     "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount": "No account",
     "review": "Review",
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
-      "quoteUnavailable": "We can’t get a quote from SwapKit, try with a different asset or come back later."
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
     }
   }
 }

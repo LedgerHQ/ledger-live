@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
+import { PERPS_DEPOSIT_PROVIDER_NAME } from "LLD/features/Perps/constants/depositFunding";
 import type { DepositFormError } from "../utils/validateDepositFlow";
 
 type DepositAmountStatusProps = Readonly<{
@@ -46,13 +47,15 @@ export function DepositAmountStatus({
   const { t } = useTranslation();
 
   const errorMessage = error ? (
-    <div className="body-3 text-error" data-testid="perps-deposit-form-error">
-      {t(error.labelKey)}
-    </div>
+    <p className="body-3 text-error" data-testid="perps-deposit-form-error">
+      {t(error.labelKey, { provider: PERPS_DEPOSIT_PROVIDER_NAME })}
+    </p>
   ) : null;
 
   const providerNotice = hasAmount ? (
-    <div className="body-2 text-base">{t("perpsDeposit.inputSubText")}</div>
+    <p className="body-2 text-base">
+      {t("perpsDeposit.inputSubText", { provider: PERPS_DEPOSIT_PROVIDER_NAME })}
+    </p>
   ) : null;
 
   return (
