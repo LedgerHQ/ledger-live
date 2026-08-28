@@ -88,6 +88,6 @@ export async function bootstrapMockServerTransport(): Promise<void> {
       setEnvOnAllThreads("BASE_SOCKET_URL", scriptRunnerUrl);
     }
   } catch (error) {
-    console.error("Failed to bootstrap mock server transport", error);
+    console.warn("Failed to bootstrap mock server transport", error);
   }
 }
