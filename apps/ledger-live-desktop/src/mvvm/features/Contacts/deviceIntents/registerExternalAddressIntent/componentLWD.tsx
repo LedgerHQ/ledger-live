@@ -4,7 +4,7 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { RegisterExternalAddressJobState } from "@features/platform-contacts/device/intents";
 import { ContinueOnDevice } from "LLD/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import { LoadingContent } from "LLD/components/DeviceIntentExecutor/components/DeviceGenericStates/LoadingContent";
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 type RegisterExternalAddressComponentLWDProps = Readonly<{
   jobState: RegisterExternalAddressJobState | undefined;

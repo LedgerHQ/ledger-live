@@ -4,7 +4,7 @@ import type { RegisterExternalAddressJobState } from "@features/platform-contact
 import { Trans } from "~/context/Locale";
 import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import { LoadingContent } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/LoadingContent";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 type RegisterExternalAddressComponentLWMProps = Readonly<{
   jobState: RegisterExternalAddressJobState | undefined;
