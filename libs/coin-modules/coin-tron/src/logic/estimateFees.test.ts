@@ -1,4 +1,4 @@
-import type { TronCoinConfig } from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import {
@@ -674,6 +674,16 @@ const trxQuote = {
 describe("estimateTronifyFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // energyRent must be configured for the Tronify path; rental params omitted here so the
+    // defaults apply (overridden explicitly in the coin-config test below).
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive" },
+      },
+    }));
     // no free bandwidth or energy → full standard burn applies
     mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
     mockGetChainParameters.mockResolvedValue(chainParams);
@@ -714,11 +724,33 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("should quote with the 10-min fastTrade duration and 0.8 TRX bandwidth top-up", async () => {
+  it("should default to the 10-min fastTrade duration and 0.8 TRX top-up when coin-config omits them", async () => {
     await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
       expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
+    );
+  });
+
+  it("should use the rental duration and extra TRX from coin-config when provided", async () => {
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: "https://open.tronify.io",
+          sourceFlag: "ledgerLive",
+          rentalDurationSeconds: 1200,
+          rentalExtraTrx: 1.5,
+        },
+      },
+    }));
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 1200, extraTrx: 1.5 }),
     );
   });
 
