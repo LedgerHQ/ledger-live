@@ -24,7 +24,37 @@ describe("sanitizeMemoValue", () => {
     expect(sanitizeMemoValue({ value: "", memoType: "tag", memoMaxValue: 100 })).toBe("");
   });
 
-  it("clamps correctly with a bigint memoMaxValue (u64 upper bound)", () => {
+  it("clamps to max when digit count exceeds max string length", () => {
+    expect(
+      sanitizeMemoValue({ value: "100000000000", memoType: "tag", memoMaxValue: 4294967295 }),
+    ).toBe("4294967295");
+  });
+
+  it("does not clamp a zero-padded value that is numerically under max", () => {
+    expect(
+      sanitizeMemoValue({ value: "000000000001", memoType: "tag", memoMaxValue: 4294967295 }),
+    ).toBe("000000000001");
+  });
+
+  it("does not clamp at exactly max", () => {
+    expect(
+      sanitizeMemoValue({ value: "4294967295", memoType: "tag", memoMaxValue: 4294967295 }),
+    ).toBe("4294967295");
+  });
+
+  it("clamps just above max at equal digit count", () => {
+    expect(
+      sanitizeMemoValue({ value: "4294967296", memoType: "tag", memoMaxValue: 4294967295 }),
+    ).toBe("4294967295");
+  });
+
+  it("does not clamp a zero-padded value that equals max", () => {
+    expect(
+      sanitizeMemoValue({ value: "0004294967295", memoType: "tag", memoMaxValue: 4294967295 }),
+    ).toBe("0004294967295");
+  });
+
+  it("clamps correctly with a bigint memoMaxValue", () => {
     const U64_MAX = BigInt("18446744073709551615");
     expect(sanitizeMemoValue({ value: "0", memoType: "tag", memoMaxValue: U64_MAX })).toBe("0");
     expect(
@@ -40,5 +70,9 @@ describe("sanitizeMemoValue", () => {
     expect(
       sanitizeMemoValue({ value: "9007199254740993", memoType: "tag", memoMaxValue: U64_MAX }),
     ).toBe("9007199254740993");
+    // zero-padded value that is numerically under max
+    expect(
+      sanitizeMemoValue({ value: "00000000000000000001", memoType: "tag", memoMaxValue: U64_MAX }),
+    ).toBe("00000000000000000001");
   });
 });

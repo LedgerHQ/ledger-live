@@ -568,9 +568,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     );
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
-    // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
-    // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
-    // documents its own as volatile). Only the cursor varies from page to page below.
+    // Resume position is `minHeight` (derived from the newest persisted op), not a stored cursor.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
     const newCoreOps = await paginateOperations(cursor =>
@@ -580,9 +578,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         order: "desc",
       }),
     );
-    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
-    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
-    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
+    // Same hook as the persist/restore path so a freshly-synced operation has the same shape.
     const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))

@@ -595,6 +595,55 @@ describe("coin-framework utils", () => {
       expect(operation.type).toBe("STAKE");
       expect(operation.value).toEqual(new BigNumber(100));
     });
+
+    it("copies memoType=transferId into extra.transferId (Casper pattern)", () => {
+      const operation = buildOptimisticOperation(
+        { id: "parent-account-id", freshAddress: "account-address" } as Account,
+        {
+          family: "casper",
+          mode: "send",
+          amount: new BigNumber(100),
+          recipient: "recipient-address",
+          fees: new BigNumber(100_000_000),
+          memoType: "transferId",
+          memoValue: "9007199254740993",
+        } as GenericTransaction,
+        0n,
+      );
+
+      expect((operation.extra as Record<string, unknown>).transferId).toBe("9007199254740993");
+    });
+
+    it("does not set extra.transferId when memoType is absent or is not transferId", () => {
+      const withoutMemo = buildOptimisticOperation(
+        { id: "parent-account-id", freshAddress: "account-address" } as Account,
+        {
+          family: "familyx",
+          mode: "send",
+          amount: new BigNumber(100),
+          recipient: "recipient-address",
+          fees: new BigNumber(100),
+        } as GenericTransaction,
+        0n,
+      );
+
+      const withOtherMemo = buildOptimisticOperation(
+        { id: "parent-account-id", freshAddress: "account-address" } as Account,
+        {
+          family: "familyx",
+          mode: "send",
+          amount: new BigNumber(100),
+          recipient: "recipient-address",
+          fees: new BigNumber(100),
+          memoType: "text",
+          memoValue: "hello",
+        } as GenericTransaction,
+        0n,
+      );
+
+      expect("transferId" in (withoutMemo.extra as Record<string, unknown>)).toBe(false);
+      expect("transferId" in (withOtherMemo.extra as Record<string, unknown>)).toBe(false);
+    });
   });
 
   describe("cleanedOperation", () => {

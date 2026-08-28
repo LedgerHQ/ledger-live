@@ -19,11 +19,10 @@ type Props = {
   transaction: Transaction;
   account: Account;
 } & Navigation;
-export default function CasperSendRowsCustom(props: Props) {
-  const { transaction, ...rest } = props;
+export default function CasperSendRowsCustom({ account, transaction }: Props) {
   return (
     <>
-      <SendRowTransferId {...rest} transaction={transaction as CasperTransaction} />
+      <SendRowTransferId account={account} transaction={transaction as CasperTransaction} />
     </>
   );
 }

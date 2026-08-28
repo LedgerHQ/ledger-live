@@ -57,10 +57,8 @@ export function toSafeNumber(value: bigint): number {
   return Number(value);
 }
 
-// Two memo shapes coexist until LIVE-35735 unifies them.
 export function getTransferIdFromMemo(memo: CasperMemo | undefined): string | undefined {
   if (!memo) return undefined;
   if (memo.type === "string" && memo.kind === "transferId") return memo.value;
-  if (memo.type === "transferId") return memo.value;
   return undefined;
 }

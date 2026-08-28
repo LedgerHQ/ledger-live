@@ -29,11 +29,12 @@ async function getDeviceTransactionConfig({
     { type: "casper.extendedAmount", label: "Amount", value: transaction.amount },
   ];
 
-  if (transaction.transferId) {
+  const { memoValue } = transaction;
+  if (memoValue) {
     fields.push({
       type: "text",
       label: "Transfer ID",
-      value: transaction.transferId,
+      value: memoValue,
     });
   }
 

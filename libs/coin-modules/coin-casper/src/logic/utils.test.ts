@@ -104,11 +104,6 @@ describe("Casper utils", () => {
         { type: "string", kind: "transferId", value: "12345" } as CasperMemo,
         "12345",
       ],
-      [
-        "generic-adapter memo { type: 'transferId' }",
-        { type: "transferId", value: "9007199254740993" } as CasperMemo,
-        "9007199254740993",
-      ],
     ])("returns correct transferId for %s", (_desc, memo, expected) => {
       expect(getTransferIdFromMemo(memo)).toBe(expected);
     });

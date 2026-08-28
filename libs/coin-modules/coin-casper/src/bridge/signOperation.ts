@@ -19,7 +19,7 @@ export const buildSignOperation =
       async function main() {
         // log("debug", "[signOperation] start fn");
 
-        const { recipient, amount, fees, transferId } = transaction;
+        const { recipient, amount, fees, memoValue } = transaction;
         const { address, derivationPath } = getAddress(account);
 
         const crafted = await craftTransaction(
@@ -30,8 +30,8 @@ export const buildSignOperation =
             recipient,
             amount: BigInt(amount.toFixed(0)),
             asset: { type: "native" },
-            ...(transferId !== undefined && {
-              memo: { type: "string" as const, kind: "transferId" as const, value: transferId },
+            ...(typeof memoValue === "string" && {
+              memo: { type: "string" as const, kind: "transferId" as const, value: memoValue },
             }),
           },
           { value: BigInt(fees.toFixed(0)) },

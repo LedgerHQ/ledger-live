@@ -1,12 +1,11 @@
-import React, { useCallback } from "react";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import React from "react";
 import Input from "~/renderer/components/Input";
-import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import { useTranslation } from "react-i18next";
+import { useTransferIdChange } from "./useTransferIdChange";
 
-const TranferIdField = ({
+const TransferIdField = ({
   onChange,
   account,
   transaction,
@@ -17,26 +16,15 @@ const TranferIdField = ({
   transaction: Transaction;
   status: TransactionStatus;
 }) => {
-  invariant(transaction.family === "casper", "TransferIdField: casper family expected");
-
   const { t } = useTranslation();
 
-  const bridge = useAccountBridge<Transaction>(account);
-
-  const onTransferIdFieldChange = useCallback(
-    (value: string) => {
-      value = value.replace(/\D/g, "");
-      if (value !== "") onChange(bridge.updateTransaction(transaction, { transferId: value }));
-      else onChange(bridge.updateTransaction(transaction, { transferId: undefined }));
-    },
-    [onChange, transaction, bridge],
-  );
+  const onTransferIdFieldChange = useTransferIdChange(account, transaction, onChange);
 
   return (
     <Input
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.transferId ?? ""}
+      value={transaction.memoValue ?? ""}
       placeholder={t("families.casper.transferIdPlaceholder")}
       onChange={onTransferIdFieldChange}
       spellCheck="false"
@@ -44,4 +32,4 @@ const TranferIdField = ({
   );
 };
 
-export default TranferIdField;
+export default TransferIdField;

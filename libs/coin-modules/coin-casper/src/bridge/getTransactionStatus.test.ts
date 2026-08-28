@@ -267,12 +267,12 @@ describe("getTransactionStatus", () => {
     const account = { spendableBalance: BigNumber(1) } as CasperAccount;
     const transaction = {
       amount: BigNumber(1),
-      transferId: "random transfer id for unit test",
+      memoValue: "random transfer id for unit test",
     } as Transaction;
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors.transaction).not.toBeDefined();
 
-    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.transferId);
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memoValue);
   });
 
   it("should set error on transaction when transfer id is invalidated", async () => {
@@ -282,11 +282,11 @@ describe("getTransactionStatus", () => {
     const account = { spendableBalance: BigNumber(1) } as CasperAccount;
     const transaction = {
       amount: BigNumber(1),
-      transferId: "random transfer id for unit test",
+      memoValue: "random transfer id for unit test",
     } as Transaction;
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors.transaction).toBeInstanceOf(CasperInvalidTransferId);
 
-    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.transferId);
+    expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memoValue);
   });
 });

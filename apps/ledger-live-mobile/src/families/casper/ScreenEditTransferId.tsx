@@ -32,7 +32,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
   const { account } = useAccountScreen(route);
   invariant(account, "account is required");
   const bridge = useAccountBridge<CasperTransaction>(account);
-  const [transferId, setTransferId] = useState(route.params?.transaction.transferId);
+  const [transferId, setTransferId] = useState(route.params?.transaction.memoValue);
   const onChangeTransferIdValue = useCallback((str: string) => {
     let value: string = str;
     value = str.replace(/\D/g, "");
@@ -44,7 +44,9 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
-        transferId: transferId && transferId.toString(),
+        transferId: transferId ? transferId.toString() : undefined,
+        memoType: transferId ? "transferId" : null,
+        memoValue: transferId ? transferId.toString() : null,
       }),
     });
   }, [navigation, route.params, account, bridge, transferId]);

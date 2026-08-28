@@ -41,6 +41,8 @@ describe("prepareTransaction", () => {
     expect(updateTransaction).toHaveBeenCalledWith(mockTransaction, {
       fees: mockEstimatedFees,
       amount: mockTransaction.amount,
+      memoValue: mockTransaction.memoValue,
+      memoType: mockTransaction.memoType,
     });
 
     expect(result).toEqual({
@@ -62,6 +64,8 @@ describe("prepareTransaction", () => {
     expect(updateTransaction).toHaveBeenCalledWith(useAllAmountTx, {
       fees: mockEstimatedFees,
       amount: expectedAmount,
+      memoValue: useAllAmountTx.memoValue,
+      memoType: useAllAmountTx.memoType,
     });
 
     expect(result).toEqual({

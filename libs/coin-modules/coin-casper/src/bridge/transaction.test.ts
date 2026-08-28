@@ -100,7 +100,8 @@ describe("transaction", () => {
         useAllAmount: false,
         amount: "50000000",
         fees: "1000000",
-        transferId: TEST_TRANSFER_IDS.VALID,
+        memoType: "transferId",
+        memoValue: TEST_TRANSFER_IDS.VALID,
       };
 
       const result = fromTransactionRaw(raw);
@@ -109,7 +110,8 @@ describe("transaction", () => {
       expect(result.useAllAmount).toBe(false);
       expect(result.amount).toEqual(new BigNumber(50000000));
       expect(result.fees).toEqual(new BigNumber(1000000));
-      expect(result.transferId).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoType).toBe("transferId");
     });
 
     test("should handle transaction raw without optional fields", () => {
@@ -123,7 +125,38 @@ describe("transaction", () => {
 
       const result = fromTransactionRaw(raw);
       expect(result.family).toBe("casper");
-      expect(result.transferId).toBeUndefined();
+      expect(result.memoValue).toBeNull();
+      expect(result.memoType).toBeNull();
+    });
+
+    test("normalizes a legacy transferId payload into memoValue", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        transferId: TEST_TRANSFER_IDS.VALID,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoType).toBe("transferId");
+    });
+
+    test("prefers memoValue over legacy transferId when both are present", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        transferId: "42",
+        memoValue: TEST_TRANSFER_IDS.VALID,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
     });
   });
 
@@ -143,10 +176,12 @@ describe("transaction", () => {
       expect(result.useAllAmount).toBe(false);
       expect(result.amount).toBe("50000000");
       expect(result.fees).toBe("1000000");
-      expect(result.transferId).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoType).toBe("transferId");
+      expect(result.transferId).toBeUndefined();
     });
 
-    test("should handle transaction without optional fields", () => {
+    test("should handle transaction without memo", () => {
       const tx = createMockTransaction({
         recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
         useAllAmount: false,
@@ -155,6 +190,8 @@ describe("transaction", () => {
       });
 
       const result = transaction.toTransactionRaw(tx);
+      expect(result.memoValue).toBeNull();
+      expect(result.memoType).toBeNull();
       expect(result.transferId).toBeUndefined();
     });
 

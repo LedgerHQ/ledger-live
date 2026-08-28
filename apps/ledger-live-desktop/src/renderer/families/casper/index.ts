@@ -10,6 +10,7 @@ import AccountSubHeader from "./AccountSubHeader";
 import sendAmountFields from "./SendAmountFields";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import sendRecipientFields from "./SendRecipientFields";
+import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 
 const family: LLDCoinFamily<CasperAccount, Transaction, TransactionStatus, CasperOperation> = {
   operationDetails,
@@ -17,6 +18,7 @@ const family: LLDCoinFamily<CasperAccount, Transaction, TransactionStatus, Caspe
   sendRecipientFields,
   sendAmountFields,
   transactionConfirmFields,
+  StepSummaryAdditionalRows,
 };
 
 export default family;

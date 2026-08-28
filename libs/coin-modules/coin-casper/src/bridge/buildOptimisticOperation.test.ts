@@ -65,7 +65,7 @@ describe("buildOptimisticOperation", () => {
   test("should include transferId in the extra field when present", () => {
     const txWithTransferId = {
       ...mockTransaction,
-      transferId: TEST_TRANSFER_IDS.VALID,
+      memoValue: TEST_TRANSFER_IDS.VALID,
     };
 
     const operation = buildOptimisticOperation(mockAccount, txWithTransferId, mockHash);

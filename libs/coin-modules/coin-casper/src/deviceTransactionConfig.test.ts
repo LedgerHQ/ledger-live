@@ -64,6 +64,18 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields[4]).toEqual({ type: "text", label: "Transfer ID", value: TRANSFER_ID });
   });
 
+  test("should include transferId field when provided via memoValue (generic-adapter path)", async () => {
+    const mockTransaction = createMockTransaction({
+      amount: MOCK_AMOUNT,
+      memoType: "transferId",
+      memoValue: TRANSFER_ID,
+    });
+    const fields = await getConfigFields(mockTransaction);
+
+    expect(fields).toHaveLength(5);
+    expect(fields[4]).toEqual({ type: "text", label: "Transfer ID", value: TRANSFER_ID });
+  });
+
   test("should not include transferId field when undefined in transaction", async () => {
     const mockTransaction = createMockTransaction({ amount: MOCK_AMOUNT });
     const fields = await getConfigFields(mockTransaction);

@@ -28,7 +28,7 @@ export const getMemoTagValueByTransactionFamily = (transaction: Transaction) => 
         }
       )?.model.uiState.memo;
     case "casper":
-      return transaction?.transferId;
+      return transaction?.memoValue ?? undefined;
     default:
       return (transaction as Transaction & { memo: string })?.memo;
   }

@@ -57,21 +57,6 @@ describe("craftTransaction", () => {
     expect(idArg?.option?.value()?.ui64?.toString()).toBe(TEST_TRANSFER_IDS.VALID);
   });
 
-  it("includes the transfer id from the generic-adapter memo shape (type=transferId)", async () => {
-    const idSpy = jest.spyOn(NativeTransferBuilder.prototype, "id");
-
-    const { transaction } = await craftTransaction({
-      ...baseIntent(),
-      memo: { type: "transferId", value: TEST_TRANSFER_IDS.VALID },
-    } as TransactionIntent<CasperMemo>);
-
-    expect(idSpy).toHaveBeenCalledTimes(1);
-    expect(idSpy).toHaveBeenCalledWith(TEST_TRANSFER_IDS.VALID);
-    const idArg = getArgs(transaction).getByName("id");
-    expect(idArg?.option?.isEmpty()).toBe(false);
-    expect(idArg?.option?.value()?.ui64?.toString()).toBe(TEST_TRANSFER_IDS.VALID);
-  });
-
   it.each([
     ["no memo is provided", undefined],
     ["the transfer id is an empty string", ""],

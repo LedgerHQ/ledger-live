@@ -30,24 +30,34 @@ TO ${recipient}`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
+
+  // Back-compat: legacy payloads may carry only `transferId`; normalize to memoValue.
+  const memoValue = tr.memoValue ?? tr.transferId ?? null;
+
   return {
     ...common,
     family: tr.family,
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
-    ...(tr.transferId !== undefined && { transferId: tr.transferId }),
+    memoType: memoValue !== null ? "transferId" : (tr.memoType ?? null),
+    memoValue,
   };
 };
 
 const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
 
+  // Back-compat: callers that set only `transferId` still serialize correctly.
+  const memoValue: string | null = t.memoValue ?? t.transferId ?? null;
+  const memoType: string | null = memoValue !== null ? "transferId" : (t.memoType ?? null);
+
   return {
     ...common,
     family: t.family,
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
-    ...(t.transferId !== undefined && { transferId: t.transferId }),
+    memoType,
+    memoValue,
   };
 };
 

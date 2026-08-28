@@ -38,6 +38,19 @@ describe("getMemoTagValueByTransactionFamily", () => {
     expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Solana memo");
   });
 
+  it("should return memoValue for casper family", () => {
+    const transaction: Transaction = {
+      family: "casper",
+      memoValue: "9007199254740993",
+    } as Transaction;
+    expect(getMemoTagValueByTransactionFamily(transaction)).toBe("9007199254740993");
+  });
+
+  it("should return undefined when casper memoValue is absent", () => {
+    const transaction: Transaction = { family: "casper" } as Transaction;
+    expect(getMemoTagValueByTransactionFamily(transaction)).toBeUndefined();
+  });
+
   it("should return memo for default case", () => {
     const transaction: Transaction = { family: "cosmos", memo: "Default memo" } as Transaction & {
       memo: string;

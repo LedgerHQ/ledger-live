@@ -52,5 +52,5 @@ const Root = (props: Props) => {
 export default {
   component: Root,
   // Transaction is used here to prevent user to forward
-  fields: ["transferId", "transaction"],
+  fields: ["memoValue", "transaction"],
 };

@@ -1,9 +1,5 @@
 import type { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import {
-  isNotSupportedStub,
-  requiredApiKeys,
-  withDefaults,
-} from "@ledgerhq/coin-module-framework/api/index";
+import { requiredApiKeys, withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { CASPER_FEES_MOTES } from "../constants";
 import { TEST_ADDRESSES } from "../__tests__/fixtures/addresses.fixture";
 import type { CasperContext, CasperMemo } from "../types";
@@ -56,12 +52,6 @@ describe("createApi", () => {
     }
   });
 
-  // `craftTransactionData` is the one unsupported method the contract requires, so it cannot
-  // be omitted — it stays declared, and stays visible for what it is.
-  it("declares craftTransactionData as unsupported", () => {
-    expect(isNotSupportedStub(api.craftTransactionData)).toBe(true);
-  });
-
   describe("validateIntent", () => {
     it("validates a send intent through the api surface", async () => {
       const result = await api.validateIntent(context, sendIntent, balances, {
@@ -96,6 +86,12 @@ describe("createApi", () => {
   describe("getNextSequence", () => {
     it("resolves to 0n instead of throwing, as Casper has no account nonce", async () => {
       await expect(api.getNextSequence(context, validEd25519)).resolves.toBe(0n);
+    });
+  });
+
+  describe("craftTransactionData", () => {
+    it("reports no transaction data — Casper carries none, the transfer id travels on the intent memo", () => {
+      expect(api.craftTransactionData(context, sendIntent)).toEqual({ type: "none" });
     });
   });
 });

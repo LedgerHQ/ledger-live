@@ -45,7 +45,7 @@ export const getTransactionStatus: AccountBridge<
     errors.sender = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
-  } else if (!validateMemo(transaction.transferId)) {
+  } else if (!validateMemo(transaction.memoValue ?? undefined)) {
     errors.sender = new CasperInvalidTransferId("", {
       maxTransferId: CASPER_MAX_TRANSFER_ID,
     });

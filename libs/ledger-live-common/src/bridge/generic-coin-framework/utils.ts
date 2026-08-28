@@ -540,9 +540,6 @@ type FrameworkOperationExtra = {
  * Every key of the above. The family bag lands flat beside these, so a collision is dropped rather
  * than merged: each framework key is written *conditionally*, so a surviving family key would supply
  * the framework's own answer on an operation where the framework wrote none.
- *
- * `satisfies Record<…, true>` keeps this list honest: adding a field to `FrameworkOperationExtra`
- * without reserving it here fails to compile.
  */
 const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
   Object.keys({
@@ -1071,13 +1068,16 @@ export const buildOptimisticOperation = (
         : {}),
     }),
     extra: {
-      // Reserved keys stripped and the framework's own spread last — the same contract
-      // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
-      // and `index` are this path's alone, which is why they are not in the reserved set.
+      // Same contract as `adaptCoreOperationToLiveOperation`: strip reserved keys from the family
+      // bag, then write framework-owned keys last so they win. `blockTime`/`index` are this path's
+      // alone, so they are not in the reserved set.
       ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
       ledgerOpType: type,
       blockTime: new Date(),
       index: "0",
+      // Mirror memoType==="transferId" into extra.transferId to match what buildOperationExtra writes.
+      ...(transaction.memoType === "transferId" &&
+        transaction.memoValue && { transferId: transaction.memoValue }),
     },
   };
 

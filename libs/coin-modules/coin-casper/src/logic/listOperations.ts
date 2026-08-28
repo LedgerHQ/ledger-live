@@ -77,6 +77,22 @@ function toApiOperations(tx: NativeTransfer, accountHash: string): Operation[] {
   return ops;
 }
 
+// Heights are near-descending (deploy timestamp order), so a whole page must fall below minHeight.
+function processPage(
+  data: ITxnHistoryData[],
+  minHeight: number,
+  accountHash: string,
+  items: Operation[],
+): "empty" | "done" | "continue" {
+  if (data.length === 0) return "empty";
+  for (const tx of data) {
+    if (tx.block_height >= minHeight && isNativeTransfer(tx)) {
+      items.push(...toApiOperations(tx, accountHash));
+    }
+  }
+  return data.every(tx => tx.block_height < minHeight) ? "done" : "continue";
+}
+
 /**
  * List an account's native CSPR transfers, newest first, down to `minHeight`.
  *
@@ -100,20 +116,8 @@ export async function listOperations(
 
   for (let page = 1; ; page++) {
     const { data, page_count } = await fetchTxsPage(config, address, page);
-    if (data.length === 0) return { items };
-
-    for (const tx of data) {
-      if (tx.block_height < minHeight) continue;
-      if (isNativeTransfer(tx)) items.push(...toApiOperations(tx, accountHash));
-    }
-
-    if (page >= page_count) return { items };
-    // Ordered by deploy timestamp, so heights are only near-descending: a whole page has to fall
-    // below `minHeight` before the rest of the feed can be written off. That the feed is
-    // newest-first at all is the indexer's behaviour, not a guarantee we can request — its
-    // `order_by` / `order_direction` params are accepted and ignored — so an integration test
-    // asserts it daily against mainnet.
-    if (data.every(tx => tx.block_height < minHeight)) return { items };
+    const status = processPage(data, minHeight, accountHash, items);
+    if (status !== "continue" || page >= page_count) return { items };
   }
 }
 

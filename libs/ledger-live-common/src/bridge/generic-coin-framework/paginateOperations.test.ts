@@ -25,7 +25,7 @@ describe("paginateOperations", () => {
     expect(calls).toEqual([undefined]);
   });
 
-  it("stops on an empty-string cursor (coin-evm's Ledger explorer arm, coin-algorand)", async () => {
+  it('stops on an empty-string cursor (some modules return "" instead of omitting next)', async () => {
     const items = await paginateOperations(pages({ items: [op("a")], next: "" }));
 
     expect(items.map(o => o.tx.hash)).toEqual(["a"]);
@@ -67,7 +67,7 @@ describe("paginateOperations", () => {
     expect(calls).toEqual([undefined, "c1", "c2"]);
   });
 
-  it("stops on an empty page handed back with a cursor (coin-vechain's early return)", async () => {
+  it("stops on an empty page even when the module returns a cursor alongside it", async () => {
     const items = await paginateOperations(
       pages({ items: [op("a")], next: "c1" }, { items: [], next: "c2" }),
     );

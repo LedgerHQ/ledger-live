@@ -12,6 +12,8 @@ describe("createTransaction", () => {
       fees: new BigNumber(0),
       recipient: "",
       useAllAmount: false,
+      memoType: null,
+      memoValue: null,
     };
     expect(transaction).toEqual(expectedTransaction);
   });

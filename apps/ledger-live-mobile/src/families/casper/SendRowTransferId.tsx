@@ -18,11 +18,11 @@ type Navigation = BaseComposite<
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
-type Props = {
+type Props = Readonly<{
   account: Account;
   transaction: Transaction;
-} & Navigation;
-export default function StacksMemoRow({ account, transaction }: Props) {
+}>;
+export default function CasperSendRowTransferId({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
@@ -35,7 +35,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
       transaction,
     });
   }, [navigation, route.params, account, transaction]);
-  const transferId = transaction.transferId;
+  const transferId = transaction.memoValue;
   return (
     <View>
       {!transferId ? (
@@ -54,7 +54,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
           </LText>
         </SummaryRow>
       ) : (
-        <SummaryRow title={<Trans i18nKey="common.edit" />} onPress={editTransferId}>
+        <SummaryRow title={<Trans i18nKey="send.summary.transferId" />} onPress={editTransferId}>
           <LText semiBold style={styles.tagText} onPress={editTransferId}>
             {String(transferId)}
           </LText>
@@ -64,9 +64,6 @@ export default function StacksMemoRow({ account, transaction }: Props) {
   );
 }
 const styles = StyleSheet.create({
-  memoContainer: {
-    flexDirection: "row",
-  },
   tagText: {
     fontSize: 14,
   },
@@ -74,8 +71,5 @@ const styles = StyleSheet.create({
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
     marginLeft: 8,
-  },
-  memo: {
-    marginBottom: 10,
   },
 });

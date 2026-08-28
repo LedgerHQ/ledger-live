@@ -15,6 +15,9 @@ export type CasperAccount = Account;
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
+  memoType?: string | null;
+  memoValue?: string | null;
+  /** @deprecated Use `memoValue` instead; normalized by `prepareTransaction`. */
   transferId?: string;
 };
 
@@ -26,8 +29,11 @@ interface CasperOperationExtra {
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
-  transferId?: string;
   fees: string;
+  memoType?: string | null;
+  memoValue?: string | null;
+  /** @deprecated Accepted on inbound payloads; normalized in `fromTransactionRaw`. */
+  transferId?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

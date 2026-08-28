@@ -34,9 +34,7 @@ jest.mock("../bridge", () => ({
   getBridgeApi: (...a: any[]) => getBridgeApiMock(...a),
 }));
 
-// Keeps the dummy addresses below out of the real A4 indexer (LIVE-36423): the sync fires a
-// fire-and-forget registration that is *not* routed through the `../api` mock, so it reaches
-// production the moment LiveConfig holds a config — which is exactly what the suite next door does.
+// A4 registration is fire-and-forget and bypasses the `../api` mock — mock it to avoid hitting production (LIVE-36423).
 jest.mock("../a4/client/registration", () => ({
   ensureA4Registered: jest.fn(),
   clearA4RegistrationCache: jest.fn(),
@@ -446,9 +444,7 @@ describe("genericGetAccountShape", () => {
           {
             minHeight: expectedPagination.minHeight,
             order: expectedPagination.order,
-            // The first page is always requested cursor-less: the resume position across syncs is
-            // `minHeight`, never a cursor read back off a stored operation's `extra`.
-            cursor: undefined,
+            cursor: undefined, // resume position is minHeight, not a stored cursor
           },
         );
 
