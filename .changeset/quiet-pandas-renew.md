@@ -10,7 +10,7 @@
 Renew the Baanx Pay Card session without a new login
 
 The Card session now refreshes its access token after the provider answers 401, rotates the refresh
-token, and replays the request once. The base query sends the epoch of the session it used, so a
+token, and replays the request once. The base query sends the id of the session it used, so a
 request that a logout or a new login overtakes never replays with the new user's token, and never
 clears the new user's session.
 
@@ -32,9 +32,6 @@ cannot log a user out.
 
 The client renews nothing ahead of a failure, so it stores no expiry and reads no clock.
 
-A development build traces what the provider answered — one line per Card answer, and one for the
-renewal outcome — with every credential field replaced. A release build traces neither. Nothing else
-records a renewal answer, because a token endpoint can echo the token it rejected.
 
 Card OAuth2 credentials no longer enter a redux action. Both token grants take their credential off
 the api's `extra` and answer with a handle instead of a session, and the Card base query reports a

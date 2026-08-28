@@ -14,14 +14,22 @@ import {
   UNAUTHORIZED_STATUS,
 } from "./constants";
 import { CardApiExtraSchema } from "./schema";
-import { toSchemaFailureError } from "./schemaFailure";
-import { traceCard, traceCardApiAnswer } from "./trace";
 import type {
   CardApiExtra,
   CardBaseQueryExtraOptions,
   CardBaseQueryMeta,
   CardSessionRefreshResult,
 } from "./types";
+
+/**
+ * A schema failure, with the value that failed dropped.
+ *
+ * RTK rethrows its own `NamedSchemaError`, whose `value` is the whole token response for either
+ * OAuth2 grant. That lands in the rejected action, which the desktop log export writes to disk.
+ */
+export function toSchemaFailureError(schemaName: string): FetchBaseQueryError {
+  return { status: "CUSTOM_ERROR", error: `${schemaName} validation failed` };
+}
 
 /** Validates and returns this service's `extraArgument` slice. */
 export function cardApiExtra(extra: CardApiExtra): CardApiExtra {
@@ -118,18 +126,7 @@ const cardBaseQuery: BaseQueryFn<
       },
     })(args, api, extraOptions);
 
-    const meta = safeMeta(result.meta);
-
-    // Development builds only. A transport failure reports no `meta`, so the request describes
-    // itself from the arguments instead.
-    traceCardApiAnswer({
-      method: meta?.requestMethod ?? requestMethod(args),
-      url: meta?.requestUrl ?? requestUrl(args),
-      responseStatus: meta?.responseStatus,
-      error: result.error,
-    });
-
-    return { ...result, meta };
+    return { ...result, meta: safeMeta(result.meta) };
   };
 
   // The two OAuth2 grants authenticate themselves. They opt out of both services below, which is
@@ -139,9 +136,9 @@ const cardBaseQuery: BaseQueryFn<
   }
 
   let token: string | null | undefined;
-  let epoch: number;
+  let sessionId: number;
   try {
-    ({ token, epoch } = await extra.readCardSession());
+    ({ token, sessionId } = await extra.readCardSession());
   } catch (error) {
     // A request without the token answers 401. The renewal below cannot help, and that answer would
     // hide the read failure. Report the failure instead. A keychain the OS refused to read must
@@ -157,14 +154,10 @@ const cardBaseQuery: BaseQueryFn<
 
   let refresh: CardSessionRefreshResult;
   try {
-    // The epoch names the session this request used. A logout or a new login that landed while the
+    // The id names the session this request used. A logout or a new login that landed while the
     // request was in flight makes it stale, and the owner then renews nothing and clears nothing.
-    refresh = await extra.refreshCardSession(epoch);
-  } catch (error) {
-    traceCard(
-      "renewal",
-      `the owner threw: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    refresh = await extra.refreshCardSession(sessionId);
+  } catch {
     return renewalUnavailableResult("renewal_threw");
   }
 
@@ -175,20 +168,10 @@ const cardBaseQuery: BaseQueryFn<
       return runWithToken(refresh.accessToken);
     case "session-ended":
       return sessionEndedResult;
-    case "session-replaced":
-      return renewalUnavailableResult("session_replaced");
     case "unavailable":
       return renewalUnavailableResult(refresh.reason);
   }
 };
-
-function requestMethod(args: string | FetchArgs): string {
-  return typeof args === "string" ? "GET" : (args.method ?? "GET");
-}
-
-function requestUrl(args: string | FetchArgs): string {
-  return typeof args === "string" ? args : args.url;
-}
 
 /** Endpoint-less Card api — use cases inject here. See shared/api-services README. */
 export const cardApi = createApi({
@@ -196,11 +179,7 @@ export const cardApi = createApi({
   baseQuery: cardBaseQuery,
   tagTypes: [],
   endpoints: () => ({}),
-  /**
-   * Without this, RTK throws the `NamedSchemaError` again, and its `value` — for either OAuth2
-   * grant, the whole token response — lands in the rejected action. Keep the issues, drop the value.
-   */
-  catchSchemaFailure: error => toSchemaFailureError(error.schemaName, error.issues),
+  catchSchemaFailure: error => toSchemaFailureError(error.schemaName),
 });
 
 export type CardApi = typeof cardApi;

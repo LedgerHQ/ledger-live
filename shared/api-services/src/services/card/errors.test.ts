@@ -1,5 +1,5 @@
 import { CARD_RENEWAL_UNAVAILABLE, CARD_SESSION_ENDED } from "./constants";
-import { isCardRenewalUnavailable, isCardSessionEnded, isCardUnauthorized } from "./errors";
+import { isCardRenewalUnavailable, isCardUnauthorized } from "./errors";
 
 const unauthorized = { status: 401, data: { message: "unauthorized" } };
 const sessionEnded = { status: 401, data: { message: CARD_SESSION_ENDED } };
@@ -24,15 +24,6 @@ describe("isCardUnauthorized", () => {
     ["nothing", undefined],
   ])("is false for %s", (_name, error) => {
     expect(isCardUnauthorized(error)).toBe(false);
-  });
-});
-
-describe("isCardSessionEnded", () => {
-  it("is true only for the base query's own ended-session answer", () => {
-    expect(isCardSessionEnded(sessionEnded)).toBe(true);
-    expect(isCardSessionEnded(unauthorized)).toBe(false);
-    expect(isCardSessionEnded(renewalUnavailable)).toBe(false);
-    expect(isCardSessionEnded({ status: 500, data: { message: CARD_SESSION_ENDED } })).toBe(false);
   });
 });
 

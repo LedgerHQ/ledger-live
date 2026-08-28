@@ -6,13 +6,6 @@ export function isCardUnauthorized(error: unknown): boolean {
 }
 
 /**
- * True for the base query's own "the session is over" answer, sent once terminal cleanup has run.
- */
-export function isCardSessionEnded(error: unknown): boolean {
-  return isCardUnauthorized(error) && readBodyMessage(error) === CARD_SESSION_ENDED;
-}
-
-/**
  * True for a 401 the session owner could not judge: the renewal failed for a nonterminal reason
  * (5xx, a timeout, a transport failure, a store it could not read), or the request outlived its
  * session.

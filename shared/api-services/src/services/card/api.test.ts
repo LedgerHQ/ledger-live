@@ -2,7 +2,7 @@ import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/to
 import { z } from "zod";
 import { getCardExtra, cardApi, cardApiExtra } from "./api";
 import { CARD_RENEWAL_UNAVAILABLE, CARD_SESSION_ENDED } from "./constants";
-import { isCardRenewalUnavailable, isCardSessionEnded, isCardUnauthorized } from "./errors";
+import { isCardRenewalUnavailable, isCardUnauthorized } from "./errors";
 import type { CardApiExtra, CardSessionRefreshResult } from "./types";
 
 const UNAVAILABLE: CardSessionRefreshResult = {
@@ -16,7 +16,7 @@ function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     getCardApiBaseUrl: () => "https://card.test",
     getCardBaanxClientKey: () => "test-client-key",
-    readCardSession: async () => ({ token: "session-token", epoch: SESSION_EPOCH }),
+    readCardSession: async () => ({ token: "session-token", sessionId: SESSION_EPOCH }),
     getCardRefreshToken: async () => "refresh-token",
     takeCardAuthorizationGrant: () => null,
     receiveCardSession: () => "card-session-1",
@@ -150,7 +150,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(
-      cardApiExtra(buildExtra({ readCardSession: async () => ({ token: null, epoch: 0 }) })),
+      cardApiExtra(buildExtra({ readCardSession: async () => ({ token: null, sessionId: 0 }) })),
     );
     await store.dispatch(api.endpoints.probe.initiate());
 
@@ -172,7 +172,7 @@ describe("cardBaseQuery", () => {
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
-    // The epoch names the session the request was sent with, so the owner can tell a renewal from
+    // The session id names the session the request was sent with, so the owner can tell a renewal from
     // a request that outlived its session.
     expect(refreshCardSession).toHaveBeenCalledWith(SESSION_EPOCH);
     expect(fetchSpy).toHaveBeenCalledTimes(2);
@@ -215,7 +215,6 @@ describe("cardBaseQuery", () => {
       status: 401,
       data: { message: CARD_SESSION_ENDED },
     });
-    expect(isCardSessionEnded(result.error)).toBe(true);
     expect(isCardRenewalUnavailable(result.error)).toBe(false);
   });
 
@@ -244,7 +243,6 @@ describe("cardBaseQuery", () => {
     // Still a 401, and still not a reason to sign anybody out.
     expect(isCardUnauthorized(result.error)).toBe(true);
     expect(isCardRenewalUnavailable(result.error)).toBe(true);
-    expect(isCardSessionEnded(result.error)).toBe(false);
   });
 
   it("neither replays nor cleans up for a request that outlived its session", async () => {
@@ -252,7 +250,8 @@ describe("cardBaseQuery", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(jsonResponse({ error: "unauthorized" }, 401));
     const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
-      kind: "session-replaced",
+      kind: "unavailable",
+      reason: "session_replaced",
     }));
 
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
@@ -327,7 +326,7 @@ describe("cardBaseQuery", () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
       const readCardSession = jest.fn(async () => ({
         token: "session-token",
-        epoch: SESSION_EPOCH,
+        sessionId: SESSION_EPOCH,
       }));
 
       const { api, store } = probeStore(cardApiExtra(buildExtra({ readCardSession })));

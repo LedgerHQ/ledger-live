@@ -82,13 +82,13 @@ function setup(options: SetupOptions = {}) {
     });
   }
 
-  /** The epoch a request would have been sent with, as the base query reads it. */
-  const epoch = async () => (await api.readCardSession()).epoch;
+  /** The session id a request would have been sent with, as the base query reads it. */
+  const sessionId = async () => (await api.readCardSession()).sessionId;
 
-  /** What the base query does: read the session, then renew against the epoch it read. */
-  const renewNow = async () => api.refreshCardSession(await epoch());
+  /** What the base query does: read the session, then renew against the session id it read. */
+  const renewNow = async () => api.refreshCardSession(await sessionId());
 
-  return { ...api, store, slots, writes, renew, onCardSessionEnded, dispose, epoch, renewNow };
+  return { ...api, store, slots, writes, renew, onCardSessionEnded, dispose, sessionId, renewNow };
 }
 
 /** A live session already on disk. */
@@ -239,17 +239,17 @@ describe("createCardSession readers", () => {
     expect(renew).not.toHaveBeenCalled();
   });
 
-  it("serves the access token with the epoch of the session it came from", async () => {
+  it("serves the access token with the session id of the session it came from", async () => {
     const { readCardSession, cardSession } = setup({ initial: liveSession() });
 
     const first = await readCardSession();
-    expect(first).toEqual({ token: "at_token", epoch: expect.any(Number) });
+    expect(first).toEqual({ token: "at_token", sessionId: expect.any(Number) });
 
     await cardSession.set(loginSession);
 
     const second = await readCardSession();
     expect(second.token).toBe("at_login");
-    expect(second.epoch).toBeGreaterThan(first.epoch);
+    expect(second.sessionId).toBeGreaterThan(first.sessionId);
   });
 
   it("serves the refresh token to the renewal endpoint without renewing", async () => {
@@ -308,7 +308,7 @@ describe("createCardSession renewal", () => {
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(slots.size).toBe(0);
 
-    // The session is over, so a later caller holding the same epoch is told so, and no second grant
+    // The session is over, so a later caller holding the same session id is told so, and no second grant
     // goes out. Baanx rotates the refresh token on every use; one failure must not spend two.
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).toHaveBeenCalledTimes(1);
@@ -342,8 +342,8 @@ describe("createCardSession renewal", () => {
 
 describe("createCardSession concurrency", () => {
   it("serves many concurrent 401s from one renewal", async () => {
-    const { refreshCardSession, renew, epoch } = setup({ initial: liveSession() });
-    const current = await epoch();
+    const { refreshCardSession, renew, sessionId } = setup({ initial: liveSession() });
+    const current = await sessionId();
 
     const results = await Promise.all([
       refreshCardSession(current),
@@ -368,11 +368,11 @@ describe("createCardSession concurrency", () => {
 
   it("joins an in-flight renewal instead of starting a second one", async () => {
     const pending = deferred<unknown>();
-    const { refreshCardSession, renew, epoch } = setup({
+    const { refreshCardSession, renew, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
     });
-    const current = await epoch();
+    const current = await sessionId();
 
     const first = refreshCardSession(current);
     await Promise.resolve();
@@ -386,34 +386,34 @@ describe("createCardSession concurrency", () => {
   });
 });
 
-describe("createCardSession generation", () => {
+describe("createCardSession session id", () => {
   it("lets a clear beat a renewal that is already in flight", async () => {
     const pending = deferred<unknown>();
-    const { cardSession, refreshCardSession, slots, epoch } = setup({
+    const { cardSession, refreshCardSession, slots, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
     });
 
-    const renewal = refreshCardSession(await epoch());
+    const renewal = refreshCardSession(await sessionId());
     await Promise.resolve();
     const cleared = cardSession.clear();
 
     pending.resolve(grantReceipt());
 
     // The request that asked belonged to the session the user just ended. Nothing is replayed.
-    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
+    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
     await cleared;
     expect(slots.size).toBe(0);
   });
 
   it("never replays an old request with a new login's token", async () => {
     const pending = deferred<unknown>();
-    const { cardSession, refreshCardSession, slots, epoch } = setup({
+    const { cardSession, refreshCardSession, slots, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
     });
 
-    const renewal = refreshCardSession(await epoch());
+    const renewal = refreshCardSession(await sessionId());
     await Promise.resolve();
     const login = cardSession.set(loginSession);
 
@@ -421,21 +421,24 @@ describe("createCardSession generation", () => {
 
     // The new token belongs to whoever just signed in. Handing it to the previous session's
     // request would replay that request as the new user.
-    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
+    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
     await login;
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
     expect(slots.get(CARD_SESSION_KEYS.refreshToken)).toBe("rt_login");
   });
 
   it("neither renews nor clears for a request that outlived its session", async () => {
-    const { cardSession, refreshCardSession, renew, slots, onCardSessionEnded, epoch } = setup({
+    const { cardSession, refreshCardSession, renew, slots, onCardSessionEnded, sessionId } = setup({
       initial: liveSession(),
     });
-    const stale = await epoch();
+    const stale = await sessionId();
 
     await cardSession.set(loginSession);
 
-    await expect(refreshCardSession(stale)).resolves.toEqual({ kind: "session-replaced" });
+    await expect(refreshCardSession(stale)).resolves.toEqual({
+      kind: "unavailable",
+      reason: "session_replaced",
+    });
     expect(renew).not.toHaveBeenCalled();
     expect(onCardSessionEnded).not.toHaveBeenCalled();
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
@@ -443,46 +446,54 @@ describe("createCardSession generation", () => {
 
   it("never clears a new login's session because an old one died", async () => {
     const pending = deferred<unknown>();
-    const { cardSession, refreshCardSession, slots, onCardSessionEnded, epoch } = setup({
+    const { cardSession, refreshCardSession, slots, onCardSessionEnded, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
     });
 
-    const renewal = refreshCardSession(await epoch());
+    const renewal = refreshCardSession(await sessionId());
     await Promise.resolve();
     await cardSession.set(loginSession);
 
     pending.reject({ status: 400, data: { error: "invalid_grant" } });
 
-    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
+    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
     expect(onCardSessionEnded).not.toHaveBeenCalled();
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
   });
 
-  it("tells a request from a session that terminal cleanup ended that it ended", async () => {
-    const { refreshCardSession, epoch } = setup({
+  it("renews nothing and clears nothing for a request whose session is already over", async () => {
+    const { refreshCardSession, renew, sessionId, onCardSessionEnded } = setup({
       initial: liveSession(),
       renew: async () => {
         throw { status: 401, data: { message: "unauthorized" } };
       },
     });
-    const current = await epoch();
+    const current = await sessionId();
 
     await expect(refreshCardSession(current)).resolves.toEqual({ kind: "session-ended" });
-    // A second request that was in flight at the same time asks with the same epoch.
-    await expect(refreshCardSession(current)).resolves.toEqual({ kind: "session-ended" });
+
+    // A second request that was in flight at the same time asks with the same id. The clear bumped
+    // the id, so that session is gone: nothing to renew, and nothing left to end. The app is signed
+    // out already, so the answer only has to leave the store alone.
+    await expect(refreshCardSession(current)).resolves.toEqual({
+      kind: "unavailable",
+      reason: "session_replaced",
+    });
+    expect(renew).toHaveBeenCalledTimes(1);
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
   });
 });
 
 describe("createCardSession terminal cleanup", () => {
   it("runs once for concurrent terminal outcomes", async () => {
-    const { refreshCardSession, onCardSessionEnded, epoch } = setup({
+    const { refreshCardSession, onCardSessionEnded, sessionId } = setup({
       initial: liveSession(),
       renew: async () => {
         throw { status: 401, data: { message: "invalid_grant" } };
       },
     });
-    const current = await epoch();
+    const current = await sessionId();
 
     await Promise.all([
       refreshCardSession(current),
@@ -506,8 +517,8 @@ describe("createCardSession terminal cleanup", () => {
       onCardSessionEnded,
     });
 
-    const { epoch } = await api.readCardSession();
-    await expect(api.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+    const { sessionId } = await api.readCardSession();
+    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
     // The values are still on disk, and nothing will serve them again this process.
     await expect(api.getCardSessionToken()).resolves.toBeNull();
@@ -527,8 +538,8 @@ describe("createCardSession terminal cleanup", () => {
       },
     });
 
-    const { epoch } = await api.readCardSession();
-    await expect(api.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+    const { sessionId } = await api.readCardSession();
+    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
     expect(consoleError).toHaveBeenCalled();
     consoleError.mockRestore();
   });
@@ -557,8 +568,8 @@ describe("createCardSession terminal cleanup", () => {
       onCardSessionEnded,
     });
 
-    const { epoch } = await api.readCardSession();
-    await expect(api.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+    const { sessionId } = await api.readCardSession();
+    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
     expect(slots.size).toBe(0);
   });
