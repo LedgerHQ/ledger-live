@@ -25,7 +25,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-contact"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-contact/knip.web.config.mjs -W features/flow/pay-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-contact/knip.native.config.mjs -W features/flow/pay-contact --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

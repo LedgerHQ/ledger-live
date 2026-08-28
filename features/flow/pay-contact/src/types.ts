@@ -37,3 +37,21 @@ export type ContactsViewProps = Readonly<{
   emptyState: EmptyStateProps;
   addContactDialog: AddContactDialogViewModel;
 }>;
+
+/**
+ * Native (Mobile) Pay contacts strip: a horizontal row with a leading Pay tile, then the saved
+ * contacts. The Pay tile opens the Send flow. `onContactPress` is intentionally optional and left
+ * unwired for now — a later ticket can pass it to turn contact tiles into Pay entry points without
+ * touching the layout.
+ */
+export type ContactsNativeProps = Readonly<{
+  title: string;
+  payLabel: string;
+  onPay: () => void;
+  onContactPress?: (contact: Contact) => void;
+}>;
+
+export type ContactsViewNativeProps = ContactsNativeProps &
+  Readonly<{
+    contacts: readonly Contact[];
+  }>;

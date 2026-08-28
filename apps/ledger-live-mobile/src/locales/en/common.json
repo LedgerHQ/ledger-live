@@ -10129,6 +10129,10 @@
           "description": "Buy stablecoins with credit card."
         }
       }
+    },
+    "contacts": {
+      "title": "Pay",
+      "pay": "New"
     }
   },
   "syncIndicator": {

@@ -8,6 +8,7 @@ import {
   type BalanceLabels,
 } from "@features/flow-pay-balance";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
+import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
@@ -21,6 +22,7 @@ type PayTabViewProps = {
   readonly balance: BalanceData;
   readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
+  readonly contacts: ContactsNativeProps;
   readonly depositOptions: DepositOptionsProps;
 };
 
@@ -33,17 +35,19 @@ export function PayTabView({
   balance,
   balanceLabels,
   actionTiles,
+  contacts,
   depositOptions,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
-      <Box style={{ flex: 1, paddingTop: top }}>
+      <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
-        <DepositOptions {...depositOptions} />
+        <Contacts {...contacts} />
         <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />
+        <DepositOptions {...depositOptions} />
       </Box>
     </Box>
   );

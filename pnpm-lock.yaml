@@ -1777,6 +1777,9 @@ importers:
       '@features/flow-pay-card-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-request
+      '@features/flow-pay-contact':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-contact
       '@features/flow-pay-deposit':
         specifier: workspace:^
         version: link:../../features/flow/pay-deposit
