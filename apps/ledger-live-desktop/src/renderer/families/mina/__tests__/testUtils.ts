@@ -133,14 +133,15 @@ export function createMockMinaAccount(
   } as unknown as MinaAccount;
 }
 
+/** Pass `null` to simulate an active delegation whose validator metadata could not be resolved. */
 export function createDelegatingMinaAccount(
-  delegateValidator: ValidatorInfo = mockValidators[0],
+  delegateValidator: ValidatorInfo | null = mockValidators[0],
 ): MinaAccount {
   return createMockMinaAccount({
     resources: {
       blockProducers: mockValidators,
       stakingActive: true,
-      delegateInfo: delegateValidator,
+      delegateInfo: delegateValidator ?? undefined,
       epochInfo: {
         epoch: "50",
         slot: "100",

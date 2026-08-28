@@ -1,5 +1,5 @@
 import React from "react";
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import AccountHeaderManageActions from "../AccountHeaderManageActions";
 import { createMockMinaAccount, createDelegatingMinaAccount } from "./testUtils";
 
@@ -46,14 +46,21 @@ describe("AccountHeaderManageActions", () => {
     expect(result.current?.[0].eventProperties).toEqual({ button: "stake" });
   });
 
-  it("has an onClick handler defined", () => {
+  it("opens MODAL_MINA_STAKE for the main account when clicked", () => {
     const account = createMockMinaAccount();
 
-    const { result } = renderHook(
+    const { result, store } = renderHook(
       () => AccountHeaderManageActions({ account, parentAccount: undefined }),
       { minimal: false },
     );
 
-    expect(typeof result.current?.[0].onClick).toBe("function");
+    act(() => {
+      result.current?.[0].onClick();
+    });
+
+    expect(store.getState().modals.MODAL_MINA_STAKE).toMatchObject({
+      isOpened: true,
+      data: { account },
+    });
   });
 });

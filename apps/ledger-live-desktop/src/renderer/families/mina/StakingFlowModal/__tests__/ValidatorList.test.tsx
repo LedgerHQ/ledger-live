@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, within } from "tests/testSetup";
+import { openURL } from "~/renderer/linking";
 import ValidatorList from "../components/ValidatorList";
 import {
   createMockMinaAccount,
@@ -10,6 +11,8 @@ import {
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
+
+const mockedOpenURL = jest.mocked(openURL);
 
 describe("ValidatorList", () => {
   const defaultProps = {
@@ -65,6 +68,49 @@ describe("ValidatorList", () => {
 
     await user.click(screen.getByText("Show less"));
     expect(screen.getByText("Show all")).toBeInTheDocument();
+  });
+
+  it.each(["{Enter}", " "])("toggles the full list with the %s key", async key => {
+    const { user } = render(<ValidatorList {...defaultProps} />);
+
+    screen.getByRole("button", { name: "Show all" }).focus();
+    await user.keyboard(key);
+
+    expect(screen.getByText("Show less")).toBeInTheDocument();
+  });
+
+  it("ignores other keys on the show-all toggle", async () => {
+    const { user } = render(<ValidatorList {...defaultProps} />);
+
+    screen.getByRole("button", { name: "Show all" }).focus();
+    await user.keyboard("{ArrowDown}");
+
+    expect(screen.getByText("Show all")).toBeInTheDocument();
+  });
+
+  it("stages the selected validator as a stake transaction", async () => {
+    const onUpdateTransaction = jest.fn();
+    const { user } = render(
+      <ValidatorList {...defaultProps} onUpdateTransaction={onUpdateTransaction} />,
+    );
+
+    await user.click(screen.getAllByTestId("modal-provider-row")[0]);
+
+    expect(onUpdateTransaction).toHaveBeenCalledTimes(1);
+    const updater = onUpdateTransaction.mock.calls[0][0];
+    expect(updater(createMockTransaction())).toMatchObject({
+      recipient: mockValidators[0].address,
+      txType: "stake",
+    });
+  });
+
+  it("opens the explorer when the validator title is clicked", async () => {
+    const { user } = render(<ValidatorList {...defaultProps} />);
+
+    await user.click(screen.getAllByTestId("modal-provider-title")[0]);
+
+    expect(mockedOpenURL).toHaveBeenCalledTimes(1);
+    expect(mockedOpenURL.mock.calls[0][0]).toContain(mockValidators[0].address);
   });
 
   it("displays validator stake and commission labels", () => {
