@@ -101,6 +101,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
@@ -148,6 +149,7 @@ function App() {
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -184,6 +186,12 @@ function App() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkXrpSignerFeatureFlag?.enabled === "boolean") {
+      setXrpLdmkEnabled(ldmkXrpSignerFeatureFlag.enabled);
+    }
+  }, [ldmkXrpSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));
