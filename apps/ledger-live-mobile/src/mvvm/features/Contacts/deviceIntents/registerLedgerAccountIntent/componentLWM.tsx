@@ -1,19 +1,22 @@
+import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { EditExternalAddressJobState } from "./types";
+import type { RegisterLedgerAccountJobState } from "@features/platform-contacts/device/intents";
 
-type EditExternalAddressComponentProps = Readonly<{
-  jobState: EditExternalAddressJobState | undefined;
+type RegisterLedgerAccountComponentLWMProps = Readonly<{
+  jobState: RegisterLedgerAccountJobState | undefined;
   extraProps: undefined;
   onClose: () => void;
 }>;
 
 // Temporary minimal renderer until the production Contacts UI lands.
-export function EditExternalAddressComponent({ jobState }: EditExternalAddressComponentProps) {
+export function RegisterLedgerAccountComponentLWM({
+  jobState,
+}: RegisterLedgerAccountComponentLWMProps) {
   const message =
     jobState === undefined
       ? "Preparing Contacts operation"
       : jobState.type === "awaiting-device-confirmation"
-        ? `Confirm ${jobState.step} on your Ledger`
+        ? "Confirm on your Ledger"
         : jobState.type;
 
   return (

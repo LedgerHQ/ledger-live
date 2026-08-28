@@ -41,6 +41,7 @@ import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
 } from "@features/platform-contacts/device";
+import { contactsIntentLWMDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import {
   resolveContactsCurrencyAnalytics,
   useContactsAnalytics,
@@ -99,7 +100,9 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWMDefinitions,
+  });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {

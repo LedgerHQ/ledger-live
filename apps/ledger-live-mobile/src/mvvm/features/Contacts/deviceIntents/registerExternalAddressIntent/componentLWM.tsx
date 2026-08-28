@@ -1,14 +1,17 @@
+import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { RenameLedgerAccountJobState } from "./types";
+import type { RegisterExternalAddressJobState } from "@features/platform-contacts/device/intents";
 
-type RenameLedgerAccountComponentProps = Readonly<{
-  jobState: RenameLedgerAccountJobState | undefined;
+type RegisterExternalAddressComponentLWMProps = Readonly<{
+  jobState: RegisterExternalAddressJobState | undefined;
   extraProps: undefined;
   onClose: () => void;
 }>;
 
 // Temporary minimal renderer until the production Contacts UI lands.
-export function RenameLedgerAccountComponent({ jobState }: RenameLedgerAccountComponentProps) {
+export function RegisterExternalAddressComponentLWM({
+  jobState,
+}: RegisterExternalAddressComponentLWMProps) {
   const message =
     jobState === undefined
       ? "Preparing Contacts operation"

@@ -1,14 +1,17 @@
+import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { RegisterLedgerAccountJobState } from "./types";
+import type { RenameLedgerAccountJobState } from "@features/platform-contacts/device/intents";
 
-type RegisterLedgerAccountComponentProps = Readonly<{
-  jobState: RegisterLedgerAccountJobState | undefined;
+type RenameLedgerAccountComponentLWMProps = Readonly<{
+  jobState: RenameLedgerAccountJobState | undefined;
   extraProps: undefined;
   onClose: () => void;
 }>;
 
 // Temporary minimal renderer until the production Contacts UI lands.
-export function RegisterLedgerAccountComponent({ jobState }: RegisterLedgerAccountComponentProps) {
+export function RenameLedgerAccountComponentLWM({
+  jobState,
+}: RenameLedgerAccountComponentLWMProps) {
   const message =
     jobState === undefined
       ? "Preparing Contacts operation"

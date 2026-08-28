@@ -1,13 +1,16 @@
-import type { RenameContactJobState } from "./types";
+import React from "react";
+import type { RegisterLedgerAccountJobState } from "@features/platform-contacts/device/intents";
 
-type RenameContactComponentProps = Readonly<{
-  jobState: RenameContactJobState | undefined;
+type RegisterLedgerAccountComponentLWDProps = Readonly<{
+  jobState: RegisterLedgerAccountJobState | undefined;
   extraProps: undefined;
   onClose: () => void;
 }>;
 
 // Temporary minimal renderer until the production Contacts UI lands.
-export function RenameContactComponent({ jobState }: RenameContactComponentProps) {
+export function RegisterLedgerAccountComponentLWD({
+  jobState,
+}: RegisterLedgerAccountComponentLWDProps) {
   return (
     <div className="flex w-full flex-col gap-8 p-16">
       <p className="body-2 text-base">
