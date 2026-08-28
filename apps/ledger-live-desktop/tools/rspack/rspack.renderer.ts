@@ -22,6 +22,7 @@ export function createRendererConfig(
 ): RspackOptions {
   const isDev = mode === "development";
   const useDevServer = options?.devServer ?? isDev;
+  const devtool = isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map";
 
   // Ensure single instance of styled-components (avoid theme context issues)
   const styledComponentsPath = require.resolve("styled-components");
@@ -48,7 +49,7 @@ export function createRendererConfig(
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
+    devtool,
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -337,9 +338,10 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
-      // Production only: it scans the emitted assets, which is slow and noisy against an
-      // unminified dev bundle.
-      ...(isDev ? [] : [new ProcessReadGuard()]),
+      // Production only: scanning the emitted assets is slow and noisy against an unminified
+      // dev bundle, and it needs the source map (see `devtool` above). Dev is
+      // "eval-source-map", so this subsumes the isDev check.
+      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,

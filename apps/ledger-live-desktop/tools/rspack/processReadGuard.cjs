@@ -217,15 +217,25 @@ module.exports = class ProcessReadGuard {
         if (hits.length === 0) continue;
 
         // Only now is it worth paying for the source map.
-        let decoded = null;
-        let sources = null;
+        let raw;
         try {
-          const raw = JSON.parse(fs.readFileSync(`${file}.map`, "utf8"));
-          decoded = decodeMappings(raw.mappings);
-          sources = raw.sources;
+          raw = JSON.parse(fs.readFileSync(`${file}.map`, "utf8"));
         } catch {
-          /* No map: report the chunk instead, which still points at the problem. */
+          // ALLOWED is keyed by origin package, and only the map supplies it. Reporting the
+          // chunk name instead does not degrade gracefully: every allowlisted read stops
+          // matching and comes back as a violation, burying whether anything is really wrong.
+          compilation.errors.push(
+            new Error(
+              `ProcessReadGuard needs a source map for ${name} and found none.\n\n` +
+                "It resolves each read back to its origin package through the map, so without\n" +
+                "one it cannot tell a vetted read from a new one. Register the plugin only when\n" +
+                "`devtool` emits a source map — see rspack.renderer.ts.",
+            ),
+          );
+          return;
         }
+        const decoded = decodeMappings(raw.mappings);
+        const sources = raw.sources;
 
         const lineStarts = [];
         for (let i = 0, offset = 0; ; i++) {
@@ -236,13 +246,12 @@ module.exports = class ProcessReadGuard {
         }
 
         for (const hit of hits) {
-          let origin = name;
-          if (decoded) {
-            let line = lineStarts.findIndex(start => start > hit.index);
-            line = line === -1 ? lineStarts.length : line;
-            const source = sourceAt(decoded, sources, line, hit.index - lineStarts[line - 1]);
-            if (source) origin = packageOf(source);
-          }
+          let line = lineStarts.findIndex(start => start > hit.index);
+          line = line === -1 ? lineStarts.length : line;
+          const source = sourceAt(decoded, sources, line, hit.index - lineStarts[line - 1]);
+          // A hit the map cannot place keeps the chunk name: origin unknown is itself worth
+          // reporting, unlike the wholesale fallback above.
+          const origin = source ? packageOf(source) : name;
           const key = `${origin} :: ${hit.property}`;
           if (ALLOWED.has(key)) continue;
           if (!violations.has(key)) violations.set(key, name);
