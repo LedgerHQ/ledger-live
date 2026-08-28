@@ -1,8 +1,8 @@
 /**
  * Unit tests for the createApi factory — verifies every method the module implements is wired and
- * delegates to its logic function with the right arguments, that the capabilities the chain has
- * none of are absent from the object, and that they answer "not supported" once the consumer
- * wrapper is applied. Network and logic layers are mocked; no network access.
+ * delegates to its logic function with the right arguments, and that the capabilities the chain has
+ * none of answer "not supported" once the consumer wrapper is applied. Network and logic layers are
+ * mocked; no network access.
  */
 import type {
   Balance,
@@ -13,7 +13,7 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { createApi } from "./index";
 import type { MultiversXNetworkApi } from "../network/api";
 import { createMockMultiversXContext } from "../test/context";
@@ -252,37 +252,18 @@ describe("createApi", () => {
     expect(result).toBe(true);
   });
 
-  it("omits the capabilities the chain has none of", () => {
-    const api = createApi();
-
-    for (const method of [
-      "call",
-      "register",
-      "craftRawTransaction",
-      "getBlock",
-      "getBlockInfo",
-      "getRewards",
-    ] as const) {
-      expect(api).not.toHaveProperty(method);
-    }
-  });
-
-  it("raises 'not supported' for those capabilities once withDefaults is applied", () => {
-    // The consumer path: the resolver wraps the module, and the wrapper is what answers for a
-    // capability the module does not carry.
-    const api = withDefaults(createApi());
-    const context = createMockMultiversXContext();
-
-    expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
-    expect(() => api.getBlockInfo(context, 1)).toThrow("getBlockInfo is not supported");
-    expect(() => api.getRewards(context, SENDER)).toThrow("getRewards is not supported");
-    expect(() => api.craftRawTransaction(context, "tx", SENDER, "pubkey", 1n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-
-    // What the chain does support keeps its real implementation.
-    expect(api.supports("getStakes")).toBe(true);
-    expect(api.supports("getValidators")).toBe(true);
-    expect(api.supports("getRewards")).toBe(false);
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), createMockMultiversXContext())).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getRewards",
+        "register",
+      ],
+      inconsistent: [],
+    });
   });
 });

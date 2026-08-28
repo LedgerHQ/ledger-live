@@ -78,24 +78,6 @@ describe("api/createApi", () => {
     }
   });
 
-  it("omits the capabilities the chain has none of", () => {
-    const impl = createApi("cosmos");
-
-    for (const method of [
-      "call",
-      "register",
-      "craftRawTransaction",
-      "getRewards",
-      "getBlock",
-      "getBlockInfo",
-    ] as const) {
-      expect(impl).not.toHaveProperty(method);
-    }
-  });
-
-  // The module omits these; the framework's withDefaults — the wrapper the resolver applies — is
-  // what answers "not supported", so the consumer-facing behaviour is asserted through it.
-
   it("wires the supported delegations to the logic layer", async () => {
     const api = createApi("cosmos");
 

@@ -92,23 +92,6 @@ describe("createApi", () => {
     );
   });
 
-  it("omits the capabilities the chain has none of", () => {
-    const api = createApi();
-
-    for (const method of [
-      "getNextSequence",
-      "craftRawTransaction",
-      "validateAddress",
-      "call",
-      "register",
-      "getStakes",
-      "getRewards",
-      "getValidators",
-    ] as const) {
-      expect(api).not.toHaveProperty(method);
-    }
-  });
-
   it("delegates broadcast to the logic function", async () => {
     jest.mocked(broadcast).mockResolvedValueOnce("txHash");
     const api = createApi();

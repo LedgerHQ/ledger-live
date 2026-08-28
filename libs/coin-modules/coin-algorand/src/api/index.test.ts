@@ -69,21 +69,6 @@ describe("Algorand API", () => {
         craftTransactionData: expect.any(Function),
       });
     });
-
-    it("omits the capabilities the chain has none of", () => {
-      for (const method of [
-        "call",
-        "register",
-        "craftRawTransaction",
-        "getBlock",
-        "getStakes",
-        "getRewards",
-        "getValidators",
-        "getNextSequence",
-      ] as const) {
-        expect(api).not.toHaveProperty(method);
-      }
-    });
   });
 
   describe("broadcast", () => {

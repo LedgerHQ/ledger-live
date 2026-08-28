@@ -44,24 +44,6 @@ describe("createApi", () => {
   };
   const mockedBroadcast = jest.mocked(broadcast);
   const mockedCombine = jest.mocked(combine);
-
-  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
-  it("omits the capabilities the chain has none of", async () => {
-    await expect(capabilityReport(api, context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "craftRawTransaction",
-        "getBlock",
-        "getBlockInfo",
-        "getNextSequence",
-        "getRewards",
-        "getStakes",
-        "getValidators",
-        "validateIntent",
-      ],
-      inconsistent: [],
-    });
-  });
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
@@ -95,6 +77,24 @@ describe("createApi", () => {
     });
   });
 
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(api, context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "validateIntent",
+      ],
+      inconsistent: [],
+    });
+  });
+
   it("declares every method the chain supports", () => {
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
@@ -107,28 +107,11 @@ describe("createApi", () => {
     expect(api.getAccountInfo).toBeInstanceOf(Function);
     expect(api.register).toBeInstanceOf(Function);
     expect(api.validateAddress).toBeInstanceOf(Function);
-  });
 
-  it("omits the capabilities the chain has none of", () => {
-    for (const method of [
-      "call",
-      "craftRawTransaction",
-      "getBlock",
-      "getBlockInfo",
-      "getStakes",
-      "getRewards",
-      "getValidators",
-      "validateIntent",
-      "getNextSequence",
-    ] as const) {
-      expect(api).not.toHaveProperty(method);
-    }
-
-    // What Aleo does implement keeps its real implementation through the resolver.
-    expect(resolved.supports("register")).toBe(true);
+    // The one capability the report above cannot speak for: its default is the `{ type: 'none' }`
+    // sentinel rather than an error, so only `supports()` tells the real implementation from the
+    // backfill.
     expect(resolved.supports("getAccountInfo")).toBe(true);
-    expect(resolved.supports("validateAddress")).toBe(true);
-    expect(resolved.supports("getStakes")).toBe(false);
   });
 
   describe("getAccountInfo", () => {

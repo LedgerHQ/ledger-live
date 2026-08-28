@@ -66,22 +66,6 @@ describe("api/index", () => {
     });
   });
 
-  it("omits the capabilities the chain has none of", () => {
-    const impl = createApi("concordium_testnet");
-
-    for (const method of [
-      "call",
-      "register",
-      "getStakes",
-      "getRewards",
-      "getValidators",
-      "validateIntent",
-      "getNextSequence",
-    ] as const) {
-      expect(impl).not.toHaveProperty(method);
-    }
-  });
-
   describe("broadcast", () => {
     it("should call broadcast with transaction and currency", async () => {
       const api = createApi("concordium_testnet");

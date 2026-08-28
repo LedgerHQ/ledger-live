@@ -33,18 +33,6 @@ describe("createApi", () => {
     );
   });
 
-  it("omits the capabilities the chain has none of", () => {
-    for (const method of [
-      "getRewards",
-      "getValidators",
-      "craftRawTransaction",
-      "call",
-      "register",
-    ] as const) {
-      expect(api).not.toHaveProperty(method);
-    }
-  });
-
   it("validates a well-formed address", async () => {
     await expect(
       api.validateAddress(context, "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9", {

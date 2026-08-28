@@ -31,6 +31,11 @@ describe("createApi", () => {
   const context = createMockNearContext();
 
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  //
+  // Kept out rather than stubbed: NEAR's nonce belongs to an access key rather than to an
+  // account, a staking pool compounds rewards into the staked balance instead of emitting
+  // distribution events, and the module exposes neither a full-block read, an externally-built
+  // transaction, a contract-call escape hatch nor an enrollment step.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(), context)).resolves.toEqual({
       unsupported: [
@@ -63,25 +68,6 @@ describe("createApi", () => {
 
     for (const method of methods) {
       expect(typeof api[method as keyof typeof api]).toBe("function");
-    }
-  });
-
-  it("omits the capabilities the chain has none of", () => {
-    const impl = createApi();
-
-    // Kept out rather than stubbed: NEAR's nonce belongs to an access key rather than to an
-    // account, a staking pool compounds rewards into the staked balance instead of emitting
-    // distribution events, and the module exposes neither a full-block read, an externally-built
-    // transaction, a contract-call escape hatch nor an enrollment step.
-    for (const method of [
-      "getBlock",
-      "getRewards",
-      "getNextSequence",
-      "craftRawTransaction",
-      "call",
-      "register",
-    ] as const) {
-      expect(impl).not.toHaveProperty(method);
     }
   });
 

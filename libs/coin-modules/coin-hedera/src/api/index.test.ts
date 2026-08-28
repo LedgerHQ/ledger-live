@@ -53,6 +53,10 @@ describe("createApi", () => {
   });
 
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  //
+  // Kept out rather than stubbed: intent validation still lives in the account bridge's
+  // getTransactionStatus, and the module exposes no sequence, no externally-built transaction,
+  // no contract-call escape hatch and no enrollment step.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(mockCurrency.id), mockContext)).resolves.toEqual({
       unsupported: ["call", "craftRawTransaction", "getNextSequence", "register", "validateIntent"],
@@ -76,24 +80,6 @@ describe("createApi", () => {
     expect(impl.lastBlock).toBeInstanceOf(Function);
     expect(impl.listOperations).toBeInstanceOf(Function);
     expect(impl.validateAddress).toBeInstanceOf(Function);
-  });
-
-  it("omits the capabilities the chain has none of", () => {
-    const impl = createApi(mockCurrency.id);
-
-    // Kept out rather than stubbed: intent validation still lives in the account bridge's
-    // getTransactionStatus, and the module exposes no sequence, no externally-built transaction,
-    // no contract-call escape hatch and no enrollment step. The consumer resolver answers
-    // "not supported" for each.
-    for (const method of [
-      "validateIntent",
-      "getNextSequence",
-      "craftRawTransaction",
-      "call",
-      "register",
-    ] as const) {
-      expect(impl).not.toHaveProperty(method);
-    }
   });
 
   describe("broadcast", () => {
