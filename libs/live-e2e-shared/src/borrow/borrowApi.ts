@@ -1,4 +1,11 @@
-import type { BorrowAction, OpenLoan, PartnerActionResponse, PartnerActionStep } from "./types";
+import { Interface } from "ethers";
+import type {
+  BorrowAction,
+  EvmSignablePayload,
+  OpenLoan,
+  PartnerActionResponse,
+  PartnerActionStep,
+} from "./types";
 
 /** Staging only — the staging Borrow API is keyless (reads and actions). */
 const BASE_URL = "https://global.api.stg.ledger-test.com/borrow";
@@ -16,6 +23,8 @@ export const ETHEREUM_CHAIN_ID = 1;
  */
 export const DEFAULT_MARKET_ID =
   "morpho-blue-borrow-ethereum-wbtc-usdt-0xa921ef34e2fc7a27ccc50ae7e4b154e16c9799d3387076c421423ef52ac4df99";
+
+const ERC20 = new Interface(["function approve(address spender, uint256 value)"]);
 
 function get(v: unknown, key: string): unknown {
   return v !== null && typeof v === "object" ? Reflect.get(v, key) : undefined;
@@ -57,6 +66,16 @@ function normalizeStep(raw: unknown, index: number): PartnerActionStep {
   return { transactionId, signablePayload, actionType: actionType.toLowerCase() };
 }
 
+function parseStepPayload(step: PartnerActionStep, index: number): EvmSignablePayload {
+  try {
+    return JSON.parse(step.signablePayload);
+  } catch {
+    throw new Error(
+      `Malformed signablePayload on partner step[${index}] (${step.actionType}): ${step.signablePayload}`,
+    );
+  }
+}
+
 /** `POST /v1/positions` — returns the raw `{ positions, errors, metadata }`. */
 export async function getPositions(address: string): Promise<unknown> {
   const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }]);
@@ -76,6 +95,33 @@ export async function postAction(body: ActionRequest): Promise<PartnerActionResp
     throw new Error(`Partner returned no steps[] (actionId ${actionId})`);
   }
   return { actionId, steps: steps.map((step, i) => normalizeStep(step, i)) };
+}
+
+/**
+ * Address the collateral allowance is granted to, read from the `supply` approve step
+ * the partner builds. It is an adapter the partner can redeploy, so it is resolved rather
+ * than pinned. Building an action does not broadcast anything.
+ *
+ * The approve step is found by decoding calldata rather than by matching `step.actionType`,
+ * because the spender is an argument of that calldata: one decode both identifies the step
+ * and yields the value. `actionType` is an undocumented partner label — an open `string`
+ * with no union and no other consumer — so it is reported on failure, not matched on.
+ */
+export async function resolveCollateralSpender(
+  address: string,
+  amount: string,
+  marketId: string = DEFAULT_MARKET_ID,
+): Promise<string> {
+  const { steps } = await postAction({ address, action: "supply", args: { marketId, amount } });
+  for (const [index, step] of steps.entries()) {
+    const { data } = parseStepPayload(step, index);
+    const approve = data ? ERC20.parseTransaction({ data }) : null;
+    if (approve?.name === "approve") return approve.args.getValue("spender");
+  }
+  const actionTypes = steps.map(step => step.actionType).join(", ");
+  throw new Error(
+    `Partner supply for ${marketId} returned no ERC-20 approve step (actionTypes: ${actionTypes})`,
+  );
 }
 
 /** Best-effort notify; the state we act on is the on-chain confirmation, not this. */

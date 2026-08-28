@@ -142,6 +142,13 @@ export class Currency {
     ],
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   );
+  static readonly ETH_WBTC = new Currency(
+    "Wrapped Bitcoin",
+    "WBTC",
+    "ethereum/erc20/wrapped_bitcoin",
+    AppInfos.ETHEREUM,
+    [Network.ETHEREUM],
+  );
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
@@ -267,6 +274,7 @@ const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.BASE, "ETH (Base)"],
   [Currency.ETH_USDT, "USDT (Ethereum)"],
   [Currency.ETH_USDC, "USDC (Ethereum)"],
+  [Currency.ETH_WBTC, "WBTC (Ethereum)"],
   [Currency.ETH_LIDO, "STETH (Ethereum)"],
   [Currency.XLM_USDC, "USDC (Stellar)"],
   [Currency.ALGO_USDT, "USDT (Algorand)"],
