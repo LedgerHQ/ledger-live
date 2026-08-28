@@ -16,12 +16,6 @@ export type CardSessionSnapshot = Readonly<{
   epoch: number;
 }>;
 
-/** A renewal failure, reduced to what a caller may see. Never a response body. */
-export type CardSessionRenewalError = Readonly<{
-  status?: number | string;
-  message: string;
-}>;
-
 /**
  * What the session owner tells the base query when it asks for a renewal.
  *
@@ -39,8 +33,13 @@ export type CardSessionRefreshResult =
    * to somebody else. The original error stands.
    */
   | { readonly kind: "session-replaced" }
-  /** Nonterminal. The session may still be good, and the original error stands. */
-  | { readonly kind: "unavailable"; readonly error: CardSessionRenewalError };
+  /**
+   * No renewal ran, so nothing was learned about the session. The original error stands.
+   *
+   * The one way here is an app that never installed the renewal. A renewal that ran and failed ends
+   * the session, whatever it answered.
+   */
+  | { readonly kind: "unavailable"; readonly reason: string };
 
 /**
  * The one-shot receipt a token grant answers with.

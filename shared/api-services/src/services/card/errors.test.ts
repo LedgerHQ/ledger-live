@@ -5,7 +5,7 @@ const unauthorized = { status: 401, data: { message: "unauthorized" } };
 const sessionEnded = { status: 401, data: { message: CARD_SESSION_ENDED } };
 const renewalUnavailable = {
   status: 401,
-  data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "renewal_failed" },
+  data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "session_replaced" },
 };
 
 describe("isCardUnauthorized", () => {

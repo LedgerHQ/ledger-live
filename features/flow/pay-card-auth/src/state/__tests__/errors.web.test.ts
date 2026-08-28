@@ -10,13 +10,18 @@ describe("isUnauthorizedError", () => {
     expect(isUnauthorizedError({ status: 401, data: { message: CARD_SESSION_ENDED } })).toBe(true);
   });
 
-  it("is false for a 401 the renewal could not judge", () => {
-    // A 5xx, a timeout or a transport failure on the token endpoint. The session may still be
-    // good, and a network failure must not force a new login.
+  it.each([
+    // The request outlived its session: a new login replaced it while the request was in flight.
+    ["a session a new login replaced", "session_replaced"],
+    // A wiring mistake. No request reached the token endpoint, so nothing was learned.
+    ["an app that installed no renewal", "card session renewal is not configured"],
+  ])("is false for a 401 that says nothing about the session, from %s", (_name, reason) => {
+    // A renewal that ran and failed never arrives here. It ends the session, and the base query
+    // answers `card_session_ended` instead.
     expect(
       isUnauthorizedError({
         status: 401,
-        data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "renewal_failed" },
+        data: { message: CARD_RENEWAL_UNAVAILABLE, reason },
       }),
     ).toBe(false);
   });

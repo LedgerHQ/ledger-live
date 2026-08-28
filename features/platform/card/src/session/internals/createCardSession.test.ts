@@ -297,25 +297,21 @@ describe("createCardSession renewal", () => {
     expect(refreshReads).toHaveLength(0);
   });
 
-  it("tries again on the next 401 after a nonterminal failure", async () => {
-    let fail = true;
-    const { renewNow, renew } = setup({
+  it("spends the refresh token once, because the first failure ended the session", async () => {
+    const { renewNow, renew, slots } = setup({
       initial: liveSession(),
       renew: async () => {
-        if (fail) {
-          throw { status: 500, data: { message: "upstream" } };
-        }
-        return grantReceipt();
+        throw { status: 500, data: { message: "upstream" } };
       },
     });
 
-    await expect(renewNow()).resolves.toMatchObject({ kind: "unavailable" });
-    fail = false;
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(slots.size).toBe(0);
 
-    // Nothing may remember the failure: a 401 is now the only way in, so a memo would wedge the
-    // session until the next login.
-    await expect(renewNow()).resolves.toMatchObject({ kind: "refreshed" });
-    expect(renew).toHaveBeenCalledTimes(2);
+    // The session is over, so a later caller holding the same epoch is told so, and no second grant
+    // goes out. Baanx rotates the refresh token on every use; one failure must not spend two.
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(renew).toHaveBeenCalledTimes(1);
   });
 
   it("ends the session on a refresh token the provider already consumed", async () => {
@@ -569,52 +565,40 @@ describe("createCardSession terminal cleanup", () => {
 });
 
 describe("createCardSession failure policy", () => {
-  const nonterminal = [
-    { name: "a lost response", error: { status: "FETCH_ERROR", error: "network down" } },
-    { name: "a timeout", error: { status: "TIMEOUT_ERROR", error: "too slow" } },
+  // One rule: a renewal that ran and did not produce a session ends the session. No status is read,
+  // and no body is read. See "Renewal" in the README for the trade this makes.
+  const terminal = [
+    { name: "a rejected grant", error: { status: 400, data: { error: "invalid_grant" } } },
+    { name: "a rejected client", error: { status: 400, data: { error: "invalid_client" } } },
+    { name: "an unauthorized grant", error: { status: 401, data: { message: "unauthorized" } } },
+    { name: "a malformed request", error: { status: 400, data: { error: "invalid_request" } } },
+    { name: "a 400 that names no reason", error: { status: 400 } },
+    {
+      name: "a proxy error page over a 400",
+      error: { status: 400, data: "<html>Blocked by the network</html>" },
+    },
+    { name: "a validation error", error: { status: 422, data: { message: "x is not allowed" } } },
+    { name: "an invalid client key", error: { status: 498, data: { message: "invalid key" } } },
+    { name: "a missing client key", error: { status: 499, data: { message: "no key" } } },
     { name: "a request timeout", error: { status: 408, data: { message: "timeout" } } },
     { name: "rate limiting", error: { status: 429, data: { message: "slow down" } } },
     { name: "an upstream failure", error: { status: 500, data: { message: "boom" } } },
     { name: "a parse failure over a 500", error: { status: "PARSING_ERROR", originalStatus: 500 } },
+    { name: "a lost response", error: { status: "FETCH_ERROR", error: "network down" } },
+    { name: "a timeout", error: { status: "TIMEOUT_ERROR", error: "too slow" } },
     {
-      name: "a proxy error page over a 400",
-      error: { status: "PARSING_ERROR", originalStatus: 400, data: "<html>Forbidden</html>" },
-    },
-    {
-      name: "a 400 that names no grant error",
-      error: { status: 400, data: "<html>Blocked by the network</html>" },
-    },
-    {
-      name: "a 400 for a malformed request",
-      error: { status: 400, data: { error: "invalid_request" } },
+      name: "a schema failure over a 200",
+      error: { status: "CUSTOM_ERROR", error: "PayCardSessionResponseSchema validation failed" },
     },
     {
       name: "a serialized error",
       error: { name: "TypeError", message: "undefined is not a function" },
     },
-  ];
-
-  it.each(nonterminal)("keeps the session after $name", async ({ error }) => {
-    const { renewNow, slots, onCardSessionEnded } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw error;
-      },
-    });
-
-    await expect(renewNow()).resolves.toMatchObject({ kind: "unavailable" });
-    expect(slots.size).toBeGreaterThan(0);
-    expect(onCardSessionEnded).not.toHaveBeenCalled();
-  });
-
-  const terminal = [
-    { name: "a rejected grant", error: { status: 400, data: { error: "invalid_grant" } } },
-    { name: "a rejected client", error: { status: 400, data: { error: "invalid_client" } } },
-    { name: "an unauthorized grant", error: { status: 401, data: { message: "unauthorized" } } },
+    { name: "nothing at all", error: undefined },
   ];
 
   it.each(terminal)("ends the session after $name", async ({ error }) => {
-    const { renewNow, slots } = setup({
+    const { renewNow, slots, onCardSessionEnded } = setup({
       initial: liveSession(),
       renew: async () => {
         throw error;
@@ -623,19 +607,22 @@ describe("createCardSession failure policy", () => {
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(slots.size).toBe(0);
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps the session when the hand-off holds no session for the handle", async () => {
+  it("ends the session when the hand-off holds no session for the handle", async () => {
+    // The grant succeeded, so Baanx rotated the refresh token. The stored one is spent, and the new
+    // one went with the hand-off, so there is nothing left to renew with.
     const { renewNow, slots } = setup({
       initial: liveSession(),
       renew: async () => ({ sessionHandle: "card-session-never-stored" }),
     });
 
-    await expect(renewNow()).resolves.toMatchObject({ kind: "unavailable" });
-    expect(slots.get(CARD_SESSION_KEYS.refreshToken)).toBe("rt_token");
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(slots.size).toBe(0);
   });
 
-  it("carries a status and a message, and never the response body", async () => {
+  it("carries no part of the answer into its result", async () => {
     const { renewNow } = setup({
       initial: liveSession(),
       renew: async () => {
@@ -645,28 +632,32 @@ describe("createCardSession failure policy", () => {
 
     const result = await renewNow();
 
-    expect(result).toEqual({
-      kind: "unavailable",
-      error: { status: 500, message: "the card session renewal failed" },
-    });
+    expect(result).toEqual({ kind: "session-ended" });
     expect(JSON.stringify(result)).not.toContain("sensitive-token");
   });
 
-  it("stays nonterminal when no renewal is installed", async () => {
-    const { renewNow, slots } = setup({ initial: liveSession(), install: false });
+  it("keeps the session when no renewal is installed", async () => {
+    // The one answer that is not terminal: no request was made, so nothing was learned. A wiring
+    // mistake must not sign every user out.
+    const { renewNow, slots, onCardSessionEnded } = setup({
+      initial: liveSession(),
+      install: false,
+    });
 
     await expect(renewNow()).resolves.toEqual({
       kind: "unavailable",
-      error: { message: "card session renewal is not configured" },
+      reason: "card session renewal is not configured",
     });
     expect(slots.size).toBeGreaterThan(0);
+    expect(onCardSessionEnded).not.toHaveBeenCalled();
   });
 
-  it("stays nonterminal once the renewal is uninstalled", async () => {
-    const { renewNow, dispose } = setup({ initial: liveSession() });
+  it("keeps the session once the renewal is uninstalled", async () => {
+    const { renewNow, dispose, slots } = setup({ initial: liveSession() });
 
     dispose?.();
 
     await expect(renewNow()).resolves.toMatchObject({ kind: "unavailable" });
+    expect(slots.size).toBeGreaterThan(0);
   });
 });

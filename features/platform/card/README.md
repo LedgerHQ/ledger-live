@@ -108,23 +108,64 @@ All concurrent callers share one renewal promise. On mobile that is the main pat
 the common event is an app opened after more than an hour away, where several screens fire Card
 requests against one expired token at once.
 
-A session ends on HTTP 401, on a 400 whose body names a terminal OAuth2 grant error
-(`invalid_grant`, `invalid_client`, `unauthorized_client`), and on a write that fails after a
-renewal. Everything else keeps it: 408, 429, 5xx, a transport failure, a store read failure, a
-malformed answer, a 400 with no grant error in it, and an app that never installed the renewal.
+### One outcome keeps the session
 
-A 400 on its own is **not** enough. A proxy, a captive portal or a firewall answers the same status
-with an HTML page, and so does a client-side mistake in the request body. Reading the grant error
-code keeps those out of the terminal branch.
+A renewal has exactly one good outcome: **a new session on disk**. Every other answer ends the
+session and sends the user to the login screen.
 
-The base query answers a nonterminal failure with the original 401 and a body of
-`card_renewal_unavailable`. The login flow reads that body and keeps the session, so a 5xx or a lost
-connection on the token endpoint never signs a user out. A nonterminal failure is **not** remembered:
-the next 401 tries again, because it is the only way in.
+| The renewal | The session |
+| --- | --- |
+| a new session, written | renewed |
+| 400, 401, 422, 498, 499, any 4xx | **ends** |
+| 429, 500, 502, any 5xx | **ends** |
+| a timeout or a lost connection | **ends** |
+| 200 the wire schema rejects | **ends** |
+| a hand-off that lost the session | **ends** |
+| a write that failed after the grant | **ends** |
+| a new login or a logout got in first | kept — it belongs to somebody else |
+| the app never installed the renewal | kept — no request was made |
+
+Nothing reads a status, and nothing reads a body. `describeRenewalFailure` names the status for the
+development trace, and that is the only place a renewal answer is looked at.
+
+**This is a deliberate trade.** The alternative reads the OAuth2 error code (RFC 6749) and keeps the
+session for every answer that does not name a dead grant: a 5xx, a proxy error page, a lost
+connection. That is kinder to a user during a provider outage, but it leaves several ways for a
+session to look alive and behave dead, and each one needs its own recovery path.
+
+What one rule costs, and what was accepted with it:
+
+- A Baanx outage on the token endpoint signs out every user who opens the app while it lasts. They
+  must all log in again afterwards.
+- A wrong or missing `x-client-key` in a release (498, 499) does the same, although the credential
+  on every device is still good.
+- A user on a train, in a tunnel, is signed out by the lost connection.
+
+What it buys: one rule, one recovery path, and no session that half works.
+
+The **two** answers that keep the session are not judgements about the credential. A request whose
+session a new login replaced is answered `session-replaced`, because the session on disk belongs to
+somebody else now. An app that never installed the renewal is answered `unavailable`, because no
+request was made, so nothing was learned. The base query reports both as the original 401 with a
+body of `card_renewal_unavailable`, and the login flow reads that body and keeps the session.
 
 A store read that fails is not an empty store. The native store rejects such a read rather than
 answering `null`, and the base query reports the failure. An empty store ends a session, and a
 locked keychain must never end one.
+
+### Reading a renewal in a development build
+
+A shipped log carries no renewal answer at all: a token endpoint can echo the token it rejected. So
+a development build traces two lines that a release build never prints (see `traceCard` in
+`@shared/api-services`):
+
+```
+[card api] POST https://…/v1/auth/oauth2/token → 500 {"message":"Internal server error"}
+[card renewal] the grant answered 500 → the session ends
+```
+
+The first is every Card answer, with each credential field replaced. The second is the outcome. They
+are the only record of why a session ended.
 
 ## Credentials never travel through redux
 

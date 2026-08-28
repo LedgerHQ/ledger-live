@@ -1,7 +1,4 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import type { CardSessionRenewalError } from "@shared/api-services";
-
-export type { CardSessionRenewalError };
 
 /**
  * One session, as the store holds it.

@@ -276,7 +276,7 @@ describe("customCreateStore", () => {
       await expect(extra.getCardRefreshToken()).resolves.toBeNull();
     });
 
-    it("keeps the session when the token endpoint fails for a nonterminal reason", async () => {
+    it("ends the session when the token endpoint answers 5xx", async () => {
       setEnv("CARD_API_URL", "http://card.test");
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
@@ -289,13 +289,12 @@ describe("customCreateStore", () => {
       store.dispatch(setSignedIn(true));
 
       const { epoch } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(epoch)).resolves.toMatchObject({
-        kind: "unavailable",
-      });
+      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
 
-      // A network failure does not end a session.
-      expect(selectIsSignedIn(store.getState())).toBe(true);
-      await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
+      // One rule: a renewal that ran and produced no session ends the session. A provider outage
+      // therefore signs the user out, and the store publishes it.
+      expect(selectIsSignedIn(store.getState())).toBe(false);
+      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
     });
   });
 });
