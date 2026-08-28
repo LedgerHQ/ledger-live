@@ -106,15 +106,16 @@ export function createMockMinaAccount(overrides: Partial<MinaAccount> = {}): Min
   } as MinaAccount;
 }
 
+/** Pass `null` to build an account that delegates but whose validator metadata is unresolved. */
 export function createDelegatingMinaAccount(
-  validator: ValidatorInfo = mockValidators[0],
+  validator: ValidatorInfo | null = mockValidators[0],
   overrides: Partial<MinaAccount> = {},
 ): MinaAccount {
   return createMockMinaAccount({
     resources: {
       blockProducers: mockValidators,
       stakingActive: true,
-      delegateInfo: validator,
+      delegateInfo: validator ?? undefined,
       epochInfo: {
         epoch: "50",
         slot: "100",
