@@ -17,7 +17,10 @@ import {
 } from "./logEvent";
 import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 import { deriveFromOperationType } from "./operationType";
-import { getRawTransactionType, getStakeTarget, type TransactionLike } from "./transactionShape";
+import { getStakeTarget, type TransactionLike } from "./transactionShape";
+import { stakingMethodOf } from "./stakingApps";
+import { outputCurrencyOf, stakingMethodOfContract } from "./stakingContracts";
+import { readAction } from "./resolveAction";
 import { recallSignContext } from "./signContext";
 import { classifyTransactionError, ErrorCategory, toError, unwrapRpcError } from "./errorCategory";
 
@@ -34,6 +37,7 @@ type Attribution = {
 type ActionFields = {
   earnTransactionType?: EarnTransactionType;
   rawTransactionType?: string;
+  dappContract?: string;
   validators?: string[];
   isSendMax: boolean;
   dataSource: TransactionDataSource;
@@ -41,6 +45,8 @@ type ActionFields = {
 
 function buildCommon(attribution: Attribution, action: ActionFields): CommonLogEvent {
   const { account, mainAccount, pathway, manifestId, source } = attribution;
+  const stakingMethod = stakingMethodOfContract(action.dappContract) ?? stakingMethodOf(manifestId);
+  const outputCurrency = outputCurrencyOf(action.dappContract);
   return {
     appVersion: getEnv("LEDGER_CLIENT_VERSION"),
     pathway,
@@ -51,9 +57,14 @@ function buildCommon(attribution: Attribution, action: ActionFields): CommonLogE
     isSendMax: action.isSendMax,
     dataSource: action.dataSource,
     ...(manifestId ? { manifestId } : {}),
+    // The contract is the more precise of the two: it distinguishes Kiln's pooled product
+    // from its dedicated one, which share a manifest. The manifest covers everything else.
+    ...(stakingMethod ? { stakingMethod } : {}),
+    ...(outputCurrency ? { outputCurrency } : {}),
     ...(source ? { source } : {}),
     ...(action.earnTransactionType ? { earnTransactionType: action.earnTransactionType } : {}),
     ...(action.rawTransactionType ? { rawTransactionType: action.rawTransactionType } : {}),
+    ...(action.dappContract ? { dappContract: action.dappContract } : {}),
     ...(action.validators?.length ? { validators: action.validators } : {}),
     ...(account.type === "TokenAccount"
       ? { tokenId: account.token.id, tokenTicker: account.token.ticker }
@@ -69,13 +80,8 @@ export function buildSignCommonEvent(
   attribution: Attribution & { transaction?: TransactionLike | null },
 ): CommonLogEvent {
   const { transaction } = attribution;
-  const rawTransactionType = getRawTransactionType(transaction);
   return buildCommon(attribution, {
-    earnTransactionType: deriveEarnTransactionType(
-      attribution.mainAccount.currency.family,
-      rawTransactionType,
-    ),
-    rawTransactionType,
+    ...readAction(attribution.mainAccount.currency.family, attribution.manifestId, transaction),
     validators: getStakeTarget(transaction),
     isSendMax: Boolean(transaction?.useAllAmount),
     dataSource: TransactionDataSource.Sign,
