@@ -328,7 +328,7 @@
     "packageExtensions": {
       "@ledgerhq/device-transport-kit-mockserver": {
         "dependencies": {
-          "@ledgerhq/device-mockserver-client": "0.0.0-develop-20260629003450"
+          "@ledgerhq/device-mockserver-client": "0.0.0-develop-20260828024102"
         }
       },
       "detox-allure2-adapter": {

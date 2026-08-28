@@ -43,8 +43,8 @@ catalog:
   "@ledgerhq/device-signer-kit-xrp": 0.2.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
-  "@ledgerhq/device-mockserver-client": 0.0.0-develop-20260629003450
-  "@ledgerhq/device-transport-kit-mockserver": 0.0.0-develop-20260629003450
+  "@ledgerhq/device-mockserver-client": 0.0.0-develop-20260828024102
+  "@ledgerhq/device-transport-kit-mockserver": 0.0.0-develop-20260828024102
   "@ledgerhq/device-transport-kit-speculos": 1.2.1
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
