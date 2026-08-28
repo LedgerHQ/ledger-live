@@ -17,7 +17,11 @@ function fulfilledSessionAction() {
         track: false,
       },
       requestId: "request-1",
-      baseQueryMeta: { request: { headers: { authorization: `Bearer ${ACCESS_TOKEN}` } } },
+      baseQueryMeta: {
+        request: { headers: { authorization: `Bearer ${ACCESS_TOKEN}` } },
+        requestUrl: "https://card.test/v1/auth/oauth2/token",
+        responseStatus: 200,
+      },
     },
   };
 }
@@ -53,7 +57,11 @@ describe("redactCardApiAction", () => {
     expect(redacted.meta.arg.endpointName).toBe("exchangeAuthorizationCode");
     expect(redacted.meta.requestId).toBe("request-1");
     expect(redacted.meta.arg.originalArgs).toBe(REDACTED);
-    expect(redacted.meta.baseQueryMeta).toBe(REDACTED);
+    expect(redacted.meta.baseQueryMeta).toEqual({
+      request: REDACTED,
+      requestUrl: "https://card.test/v1/auth/oauth2/token",
+      responseStatus: 200,
+    });
     expect(redacted.payload).toBe(REDACTED);
   });
 

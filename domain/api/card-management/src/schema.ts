@@ -17,6 +17,15 @@ export const PayCardSessionSchema = z.object({
   refreshToken: z.string().min(1),
 });
 
+/**
+ * What a token grant answers with, once the session itself has gone to the owner through
+ * `receiveCardSession`. The handle names that hand-off. It is not a credential, and the first read
+ * removes it.
+ */
+export const PayCardSessionReceiptSchema = z.object({
+  sessionHandle: z.string().min(1),
+});
+
 export const PayCardLogoutResponseSchema = z.object({
   success: z.boolean(),
 });

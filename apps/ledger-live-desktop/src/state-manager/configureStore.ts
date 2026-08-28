@@ -18,8 +18,10 @@ import {
 import {
   configureCardSessionRenewal,
   getCardRefreshToken,
-  getCardSessionToken,
+  readCardSession,
+  receiveCardSession,
   refreshCardSession,
+  takeCardAuthorizationGrant,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
@@ -79,8 +81,10 @@ const customCreateStore = ({
                 // Read on every request, so the debug settings can change them without a restart.
                 getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-                getCardSessionToken,
+                readCardSession,
                 getCardRefreshToken,
+                takeCardAuthorizationGrant,
+                receiveCardSession,
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({
@@ -138,18 +142,31 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    // Card actions carry OAuth2 credentials. DevTools serializes every action it is given, so the
-    // sanitizer stands behind `track: false` and the logger redaction.
+    // No Card action carries a credential any more: the two OAuth2 grants pass theirs through
+    // `@features/platform-card` rather than through arguments and payloads, and the Card base query
+    // reports a `meta` of three plain values instead of the `Request` that holds the Bearer. The
+    // sanitizer is the second control, and it also keeps Card user data out of the DevTools panel.
     devTools: __DEV__ ? { actionSanitizer: redactCardApiAction } : false,
   });
 
   // After the store exists, because a renewal dispatches a Card mutation. `cardApi` and
   // `cardManagementApi` are the same object: `injectEndpoints` mutates in place.
+  //
+  // One renewal is installed per store, and the newest store replaces the one before it. A renderer
+  // runs one store, so the only caller that builds a second one is a test, which wants the newest.
+  // The call answers with the one that uninstalls it again.
   configureCardSessionRenewal({
     dispatch: store.dispatch,
     onCardSessionEnded: () => {
-      store.dispatch(cardApi.util.resetApiState());
+      // Published first, and synchronously: no request is waiting on it, and every screen outside
+      // the login machine reads this flag to decide whether it belongs on screen.
       store.dispatch(setSignedIn(false));
+      // Deferred, because `resetApiState` aborts every running query — including the request whose
+      // 401 started this renewal. An aborted request resolves from the uninitialized substate, so
+      // its `unwrap()` would answer `undefined` instead of throwing the 401 the base query is about
+      // to return, and the login machine would read that as a signed-in user. A macrotask is late
+      // enough for the answer to reach its caller first.
+      setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
     },
   });
 

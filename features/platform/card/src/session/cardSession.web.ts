@@ -5,6 +5,7 @@ import { secureStore } from "./internals/secureStore.web";
 export const {
   cardSession,
   getCardSessionToken,
+  readCardSession,
   getCardRefreshToken,
   refreshCardSession,
   configureCardSessionRenewal,

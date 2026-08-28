@@ -1,8 +1,15 @@
 import { cardManagementApi } from "@domain/api-card-management";
-import { cardSession, getCardSessionToken } from "@features/platform-card";
+import {
+  cardSession,
+  getCardSessionToken,
+  putCardAuthorizationGrant,
+  forgetCardAuthorizationGrant,
+  takeCardSession,
+} from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
+import { MissingLoginStateError } from "./errors";
 import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
@@ -36,12 +43,32 @@ export function createCardLoginPorts({
     forgetUser: () => {
       dispatch(cardManagementApi.util.resetApiState());
     },
-    exchangeAuthorizationCode: request =>
-      dispatch(
-        // `track: false`: this answer is a whole session, and a tracked mutation parks it in
-        // `state.cardApi.mutations`. `unwrap` hands it over just the same.
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request, { track: false }),
-      ).unwrap(),
+    /**
+     * The grant travels through `@features/platform-card`, not through the mutation's argument, and
+     * the new session comes back the same way. RTK Query dispatches an action for every phase of a
+     * request, and both the desktop log export and the mobile DevTools relay serialize them.
+     */
+    exchangeAuthorizationCode: async request => {
+      putCardAuthorizationGrant(request);
+      let sessionHandle: string;
+      try {
+        // `track: false`: nothing about this belongs in `state.cardApi.mutations`.
+        ({ sessionHandle } = await dispatch(
+          cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(undefined, {
+            track: false,
+          }),
+        ).unwrap());
+      } finally {
+        // The endpoint takes the grant on its way in. This covers the paths where it never ran.
+        forgetCardAuthorizationGrant();
+      }
+
+      const session = takeCardSession(sessionHandle);
+      if (!session) {
+        throw new MissingLoginStateError("session");
+      }
+      return session;
+    },
     getUser: async () => {
       const request = dispatch(cardManagementApi.endpoints.getUser.initiate());
       try {

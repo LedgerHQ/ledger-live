@@ -1,10 +1,12 @@
-import { isRenewedSession, isTerminalRenewalFailure, sanitizeRenewalError } from "./renewalFailure";
+import { isTerminalRenewalFailure, sanitizeRenewalError } from "./renewalFailure";
 
 describe("isTerminalRenewalFailure", () => {
   it.each([
-    ["a rejected grant", { status: 400 }],
+    ["a rejected grant", { status: 400, data: { error: "invalid_grant" } }],
+    ["a rejected client", { status: 400, data: { error: "invalid_client" } }],
+    ["an unauthorized client", { status: 400, data: { error: "unauthorized_client" } }],
     ["an unauthorized grant", { status: 401 }],
-    ["a parse failure over a rejected grant", { status: "PARSING_ERROR", originalStatus: 400 }],
+    ["a missing refresh token", { status: 401, data: { message: "missing_refresh_token" } }],
   ])("ends the session on %s", (_name, error) => {
     expect(isTerminalRenewalFailure(error)).toBe(true);
   });
@@ -20,6 +22,12 @@ describe("isTerminalRenewalFailure", () => {
     ["a serialized error", { name: "TypeError", message: "boom" }],
     ["a thrown Error", new Error("boom")],
     ["nothing at all", undefined],
+    // A 400 alone is not a rejected grant. A proxy, a captive portal or a firewall answers the
+    // same status with an error page, and none of them has seen the refresh token.
+    ["a proxy error page", { status: 400, data: "<html>Forbidden</html>" }],
+    ["a parse failure over a 400", { status: "PARSING_ERROR", originalStatus: 400 }],
+    ["a 400 that names no reason", { status: 400 }],
+    ["a malformed request", { status: 400, data: { error: "invalid_request" } }],
   ])("keeps the session on %s", (_name, error) => {
     expect(isTerminalRenewalFailure(error)).toBe(false);
   });
@@ -63,27 +71,5 @@ describe("sanitizeRenewalError", () => {
       status: 500,
       message: "the card session renewal failed",
     });
-  });
-});
-
-describe("isRenewedSession", () => {
-  it("accepts both tokens", () => {
-    expect(isRenewedSession({ accessToken: "at", refreshToken: "rt" })).toBe(true);
-  });
-
-  it("ignores a lifetime the provider still sends", () => {
-    // The endpoint's `responseSchema` validated it; nothing here stores it.
-    expect(isRenewedSession({ accessToken: "at", refreshToken: "rt", expiresIn: 3600 })).toBe(true);
-  });
-
-  it.each([
-    ["nothing", null],
-    ["a string", "at_token"],
-    ["a missing access token", { refreshToken: "rt" }],
-    ["a missing refresh token", { accessToken: "at" }],
-    ["an empty access token", { accessToken: "", refreshToken: "rt" }],
-    ["an empty refresh token", { accessToken: "at", refreshToken: "" }],
-  ])("rejects %s", (_name, value) => {
-    expect(isRenewedSession(value)).toBe(false);
   });
 });

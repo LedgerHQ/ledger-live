@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
-    "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
     "react-native-keychain": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

@@ -32,6 +32,7 @@
     "@domain/api-card-management": "workspace:^",
     "@features/platform-card": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@xstate/react": "catalog:",

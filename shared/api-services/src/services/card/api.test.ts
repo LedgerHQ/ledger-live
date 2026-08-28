@@ -1,21 +1,26 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { NamedSchemaError } from "@reduxjs/toolkit/query";
 import { z } from "zod";
 import { describeSchemaFailure, getCardExtra, cardApi, cardApiExtra } from "./api";
-import { CARD_SESSION_ENDED } from "./constants";
+import { CARD_RENEWAL_UNAVAILABLE, CARD_SESSION_ENDED } from "./constants";
+import { isCardRenewalUnavailable, isCardSessionEnded, isCardUnauthorized } from "./errors";
 import type { CardApiExtra, CardSessionRefreshResult } from "./types";
 
 const UNAVAILABLE: CardSessionRefreshResult = {
   kind: "unavailable",
-  error: new Error("no renewal configured"),
+  error: { status: 503, message: "no renewal configured" },
 };
+
+const SESSION_EPOCH = 7;
 
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     getCardApiBaseUrl: () => "https://card.test",
     getCardBaanxClientKey: () => "test-client-key",
-    getCardSessionToken: async () => "session-token",
+    readCardSession: async () => ({ token: "session-token", epoch: SESSION_EPOCH }),
     getCardRefreshToken: async () => "refresh-token",
+    takeCardAuthorizationGrant: () => null,
+    receiveCardSession: () => "card-session-1",
     refreshCardSession: async () => UNAVAILABLE,
     ...overrides,
   };
@@ -146,8 +151,10 @@ describe("cardApiExtra", () => {
   });
 
   it("throws when any session accessor is not a function", () => {
-    expect(() => cardApiExtra(buildExtra({ getCardSessionToken: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ readCardSession: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ getCardRefreshToken: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ takeCardAuthorizationGrant: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ receiveCardSession: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ refreshCardSession: undefined }))).toThrow();
   });
 
@@ -184,11 +191,19 @@ describe("cardBaseQuery", () => {
       }),
       overrideExisting: true,
     });
+    const actions: UnknownAction[] = [];
+    const record: Middleware = () => next => action => {
+      actions.push(action as UnknownAction);
+      return next(action);
+    };
     const store = configureStore({
       reducer: { [cardApi.reducerPath]: cardApi.reducer },
-      middleware: gdm => gdm({ thunk: { extraArgument: extra } }).concat(cardApi.middleware),
+      middleware: gdm =>
+        gdm({ thunk: { extraArgument: extra } })
+          .concat(cardApi.middleware)
+          .concat(record),
     });
-    return { api, store };
+    return { api, store, actions };
   }
 
   afterEach(() => {
@@ -236,7 +251,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(
-      cardApiExtra(buildExtra({ getCardSessionToken: async () => null })),
+      cardApiExtra(buildExtra({ readCardSession: async () => ({ token: null, epoch: 0 }) })),
     );
     await store.dispatch(api.endpoints.probe.initiate());
 
@@ -250,7 +265,7 @@ describe("cardBaseQuery", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(jsonResponse({ error: "unauthorized" }, 401))
       .mockResolvedValueOnce(jsonResponse({ ok: true }));
-    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
       kind: "refreshed",
       accessToken: "refreshed-token",
     }));
@@ -258,7 +273,9 @@ describe("cardBaseQuery", () => {
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
-    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    // The epoch names the session the request was sent with, so the owner can tell a renewal from
+    // a request that outlived its session.
+    expect(refreshCardSession).toHaveBeenCalledWith(SESSION_EPOCH);
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(result.data).toEqual({ ok: true });
     expect(request(fetchSpy, 1).headers.get("authorization")).toBe("Bearer refreshed-token");
@@ -270,7 +287,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockImplementation(async () => jsonResponse({}, 401));
-    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
       kind: "refreshed",
       accessToken: "refreshed-token",
     }));
@@ -287,7 +304,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockImplementation(async () => jsonResponse({}, 401));
-    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
       kind: "session-ended",
     }));
 
@@ -299,13 +316,15 @@ describe("cardBaseQuery", () => {
       status: 401,
       data: { message: CARD_SESSION_ENDED },
     });
+    expect(isCardSessionEnded(result.error)).toBe(true);
+    expect(isCardRenewalUnavailable(result.error)).toBe(false);
   });
 
-  it("returns the original error when the renewal is unavailable", async () => {
+  it("names a renewal it could not run, so a 5xx does not end a session", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(jsonResponse({ error: "unauthorized" }, 401));
-    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(
       async () => UNAVAILABLE,
     );
 
@@ -314,7 +333,38 @@ describe("cardBaseQuery", () => {
 
     expect(refreshCardSession).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(result.error).toMatchObject({ status: 401, data: { error: "unauthorized" } });
+    expect(result.error).toMatchObject({
+      status: 401,
+      data: {
+        message: CARD_RENEWAL_UNAVAILABLE,
+        reason: "renewal_failed",
+        cause: "no renewal configured",
+        status: 503,
+      },
+    });
+    // Still a 401, and still not a reason to sign anybody out.
+    expect(isCardUnauthorized(result.error)).toBe(true);
+    expect(isCardRenewalUnavailable(result.error)).toBe(true);
+    expect(isCardSessionEnded(result.error)).toBe(false);
+  });
+
+  it("neither replays nor cleans up for a request that outlived its session", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(jsonResponse({ error: "unauthorized" }, 401));
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
+      kind: "session-replaced",
+    }));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.error).toMatchObject({
+      status: 401,
+      data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "session_replaced" },
+    });
+    expect(isCardRenewalUnavailable(result.error)).toBe(true);
   });
 
   it("reports a structured error and sends nothing when the token read rejects", async () => {
@@ -323,7 +373,7 @@ describe("cardBaseQuery", () => {
     const { api, store } = probeStore(
       cardApiExtra(
         buildExtra({
-          getCardSessionToken: async () => {
+          readCardSession: async () => {
             throw new Error("keychain unavailable");
           },
         }),
@@ -335,9 +385,9 @@ describe("cardBaseQuery", () => {
     expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
   });
 
-  it("returns the 401 when the renewal rejects", async () => {
+  it("names a renewal that threw, and keeps the session", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
-    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => {
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => {
       throw new Error("keychain unavailable");
     });
 
@@ -346,18 +396,45 @@ describe("cardBaseQuery", () => {
 
     expect(refreshCardSession).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(result.error).toMatchObject({ status: 401 });
+    expect(result.error).toMatchObject({
+      status: 401,
+      data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "renewal_threw" },
+    });
+  });
+
+  it("never puts the Request, whose headers carry the Bearer, into an action", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+
+    const { api, store, actions } = probeStore(cardApiExtra(buildExtra()));
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    // RTK copies the base query's `meta` into `meta.baseQueryMeta` of the settled action, which
+    // the desktop log export writes to disk and the mobile DevTools relay sends over a socket.
+    const fulfilled = actions.find(action => action.type.endsWith("/executeQuery/fulfilled"));
+    expect(fulfilled).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    expect(
+      (fulfilled as unknown as { meta: { baseQueryMeta: unknown } }).meta.baseQueryMeta,
+    ).toEqual({
+      requestUrl: "https://card.test/probe",
+      requestMethod: "GET",
+      responseStatus: 200,
+    });
+    expect(JSON.stringify(actions)).not.toContain("session-token");
   });
 
   describe("authenticated: false", () => {
     it("sends x-client-key, reads no token and omits Authorization", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
-      const getCardSessionToken = jest.fn(async () => "session-token");
+      const readCardSession = jest.fn(async () => ({
+        token: "session-token",
+        epoch: SESSION_EPOCH,
+      }));
 
-      const { api, store } = probeStore(cardApiExtra(buildExtra({ getCardSessionToken })));
+      const { api, store } = probeStore(cardApiExtra(buildExtra({ readCardSession })));
       await store.dispatch(api.endpoints.probeUnauthenticated.initiate());
 
-      expect(getCardSessionToken).not.toHaveBeenCalled();
+      expect(readCardSession).not.toHaveBeenCalled();
       const sent = request(fetchSpy);
       expect(sent.headers.get("authorization")).toBeNull();
       expect(sent.headers.get("x-client-key")).toBe("test-client-key");
@@ -365,7 +442,7 @@ describe("cardBaseQuery", () => {
 
     it("never renews on a 401, so a dead refresh token cannot loop", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
-      const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+      const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number]>(async () => ({
         kind: "refreshed",
         accessToken: "refreshed-token",
       }));

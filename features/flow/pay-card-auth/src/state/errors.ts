@@ -1,4 +1,4 @@
-const UNAUTHORIZED_STATUS = 401;
+import { isCardRenewalUnavailable, isCardUnauthorized } from "@shared/api-services";
 
 /**
  * Every way a login attempt can end badly. The kind, not a message, is what the machine carries: the
@@ -24,17 +24,16 @@ export class MissingLoginStateError extends Error {
 }
 
 /**
- * True for a Card HTTP 401.
+ * True for a Card HTTP 401 that says the session is finished.
  *
- * The base query has already tried to renew the session by the time this runs, so a 401 here means
- * the session is finished, not merely stale. A session the owner ended itself arrives the same way:
- * the base query reports it as a 401 whose body carries `card_session_ended`.
+ * The base query has already tried to renew the session by the time this runs, so most 401s here do
+ * mean the session is over. A session the owner ended itself arrives the same way: the base query
+ * reports it as a 401 whose body carries `card_session_ended`.
+ *
+ * The one 401 that does not count is the base query's own `card_renewal_unavailable`. It says the
+ * renewal could not run — a 5xx, a timeout, a transport failure, or a request that outlived its
+ * session. Read as the end of a session, one network failure would sign the user out.
  */
 export function isUnauthorizedError(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    (error as { status: unknown }).status === UNAUTHORIZED_STATUS
-  );
+  return isCardUnauthorized(error) && !isCardRenewalUnavailable(error);
 }
