@@ -31,8 +31,8 @@ catalogs:
       specifier: 10.1.1
       version: 10.1.1
     '@ledgerhq/coin-xrp':
-      specifier: 10.0.0
-      version: 10.0.0
+      specifier: 10.1.0
+      version: 10.1.0
     '@ledgerhq/crypto-icons':
       specifier: 2.0.4
       version: 2.0.4
@@ -11714,7 +11714,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.0.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -12571,7 +12571,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.0.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -21976,8 +21976,8 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-xrp@10.0.0':
-    resolution: {integrity: sha512-ZDCOKENDZG8FhgQEJWjwXNe308wcW7El+tNlhQ/qg3+yQVnflwZs0umsTgzzp7orCzn2aNfx8Ae2BuV1m73rBg==}
+  '@ledgerhq/coin-xrp@10.1.0':
+    resolution: {integrity: sha512-qkKVgvmJEdGhkIs3Om8X9IQCNGa9w73vdN2CSMT6J/4Je/i8+S/RYEIBiFLe9+0J8wNcEUYr9oxIfIUztQ5XLw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -28544,7 +28544,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -48946,9 +48946,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@10.0.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.1.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       bignumber.js: 9.1.2
@@ -67185,7 +67185,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
