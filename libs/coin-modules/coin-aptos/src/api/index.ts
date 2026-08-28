@@ -1,14 +1,8 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  CoinModuleApi,
-  Block,
-  BlockInfo,
+  CoinModuleImpl,
   CraftedTransaction,
-  Cursor,
   Page,
-  Reward,
-  Stake,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   Balance,
@@ -19,7 +13,6 @@ import type {
   Operation,
   StakingTransactionIntent,
   TransactionIntent,
-  TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import type { AptosCoinConfig, AptosContext } from "../config";
@@ -39,14 +32,18 @@ async function clientFromContext(context: AptosContext): Promise<AptosAPI> {
   return new AptosAPI(config.aptosSettings);
 }
 
-export function createApi(): CoinModuleApi<AptosCoinConfig> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`,
+// `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. Aptos has no
+// on-chain staking surface exposed through this module, no read-only contract-call primitive, and no
+// enrollment backend; block queries and intent validation are not wired to the Aptos node yet. The
+// consumer resolver applies `withDefaults`, which answers "not supported" for each.
+//
+// `validateAddress` stays: it is a real, offline check on the address shape.
+export function createApi() {
   return {
-    async call(_context: AptosContext) {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
     broadcast: async (
       context: AptosContext,
       tx: string,
@@ -64,18 +61,10 @@ export function createApi(): CoinModuleApi<AptosCoinConfig> {
       _options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> =>
       craftTransaction(await clientFromContext(context), transactionIntent as TransactionIntent),
-    craftRawTransaction: (
-      _context: AptosContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
     estimateFees: async (
       context: AptosContext,
       transactionIntent: TransactionIntent,
+      _options?,
     ): Promise<FeeEstimation> => (await clientFromContext(context)).estimateFees(transactionIntent),
     getBalance: async (
       context: AptosContext,
@@ -93,43 +82,6 @@ export function createApi(): CoinModuleApi<AptosCoinConfig> {
       options: ListOperationsOptions,
     ): Promise<Page<Operation>> =>
       (await clientFromContext(context)).listOperations(address, options.minHeight),
-    getBlock(_context: AptosContext, _height: number): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context: AptosContext, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(
-      _context: AptosContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(
-      _context: AptosContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(
-      _context: AptosContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateIntent: async (
-      _context: AptosContext,
-      _transactionIntent: TransactionIntent | StakingTransactionIntent,
-      _balances: Balance[],
-      _options?: { customFees?: FeeEstimation },
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_context: AptosContext, _address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: (
       _context: AptosContext,
       address: string,
@@ -139,5 +91,5 @@ export function createApi(): CoinModuleApi<AptosCoinConfig> {
       _context: AptosContext,
       intent: TransactionIntent,
     ): ReturnType<typeof craftTransactionData> => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<AptosCoinConfig>;
 }

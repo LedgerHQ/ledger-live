@@ -1,21 +1,20 @@
 /**
- * Unit tests for the createApi factory — verifies the coin config is set, every
- * CoinModuleApi method is wired and delegates to its logic function with the
- * right arguments, and unsupported methods throw synchronously. Network and
- * logic layers are mocked; no network access.
+ * Unit tests for the createApi factory — verifies every method the module implements is wired and
+ * delegates to its logic function with the right arguments, and that the capabilities the chain has
+ * none of answer "not supported" once the consumer wrapper is applied. Network and logic layers are
+ * mocked; no network access.
  */
 import type {
   Balance,
   BalanceOptions,
-  CoinModuleApi,
   CraftedTransaction,
   FeeEstimation,
   Operation,
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { createApi } from "./index";
-import { type MultiversXCoinConfig } from "../config";
 import type { MultiversXNetworkApi } from "../network/api";
 import { createMockMultiversXContext } from "../test/context";
 import { broadcast } from "../logic/transaction/broadcast";
@@ -66,7 +65,7 @@ describe("createApi", () => {
     jest.clearAllMocks();
   });
 
-  it("returns an object with every CoinModuleApi method", () => {
+  it("declares every method the chain supports", () => {
     const api = createApi();
 
     expect(api).toEqual(
@@ -74,15 +73,11 @@ describe("createApi", () => {
         broadcast: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
-        craftRawTransaction: expect.any(Function),
         craftTransactionData: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
-        getBlock: expect.any(Function),
-        getBlockInfo: expect.any(Function),
-        getRewards: expect.any(Function),
         getStakes: expect.any(Function),
         getValidators: expect.any(Function),
         validateIntent: expect.any(Function),
@@ -257,17 +252,18 @@ describe("createApi", () => {
     expect(result).toBe(true);
   });
 
-  it("throws for unsupported methods", () => {
-    const api = createApi();
-    const context = createMockMultiversXContext();
-
-    expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
-    expect(() => api.getBlockInfo(context, 1)).toThrow("getBlockInfo is not supported");
-    expect(() => (api as CoinModuleApi<MultiversXCoinConfig>).getRewards(context, SENDER)).toThrow(
-      "getRewards is not supported",
-    );
-    expect(() => api.craftRawTransaction(context, "tx", SENDER, "pubkey", 1n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), createMockMultiversXContext())).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getRewards",
+        "register",
+      ],
+      inconsistent: [],
+    });
   });
 });

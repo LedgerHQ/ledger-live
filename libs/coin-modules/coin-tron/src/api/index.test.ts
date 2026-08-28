@@ -3,6 +3,7 @@ import {
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import { TronCoinConfig, TronContext } from "../config";
 import type { TronMemo, TronTxData } from "../types";
@@ -34,6 +35,17 @@ jest.mock("../network", () => ({
 }));
 
 describe("createApi", () => {
+  it("omits the capabilities the chain has none of", () => {
+    const impl = createApi();
+
+    // Kept out rather than stubbed: Tron contract reads are unsupported, withdrawals already show
+    // up in listOperations, the chain takes no externally-built transaction, and there is no
+    // enrollment step. The consumer resolver answers "not supported" for each.
+    for (const method of ["call", "register", "craftRawTransaction", "getRewards"] as const) {
+      expect(impl).not.toHaveProperty(method);
+    }
+  });
+
   const mockTronConfig: TronCoinConfig = {
     explorer: { url: "iamaurl" },
     status: { type: "active" },
@@ -49,7 +61,7 @@ describe("createApi", () => {
   });
 
   it("should resolve the coin config from the context and thread it down", async () => {
-    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = withDefaults(createApi());
     await api.getBalance(context, "address");
 
     expect(context.config).toHaveBeenCalled();
@@ -57,7 +69,7 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = withDefaults(createApi());
     const intent: TransactionIntent<TronMemo, TronTxData> = {
       intentType: "transaction",
       type: "send",
@@ -98,7 +110,7 @@ describe("createApi", () => {
   });
 
   it("should throw when limit > 200", async () => {
-    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = withDefaults(createApi());
     await expect(
       api.listOperations(context, "address", { minHeight: 0, limit: 201 }),
     ).rejects.toThrow("limit must be <= 200 for Tron (TronGrid API restriction)");
@@ -106,7 +118,7 @@ describe("createApi", () => {
   });
 
   it("should not throw when limit is exactly 200", async () => {
-    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = withDefaults(createApi());
     await expect(
       api.listOperations(context, "address", { minHeight: 0, limit: 200 }),
     ).resolves.toEqual({
@@ -122,7 +134,7 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("should throw an exception when options is provided", async () => {
-      const api = createApi();
+      const api = withDefaults(createApi());
       await expect(
         api.getBalance(context, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });

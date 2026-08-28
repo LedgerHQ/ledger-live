@@ -6,6 +6,7 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import type { SolanaCoinConfig, SolanaContext } from "../config";
 import { broadcast } from "../logic/broadcast";
@@ -98,13 +99,12 @@ describe("createApi", () => {
     jest.clearAllMocks();
   });
 
-  it("should return an object with all CoinModuleApi methods", () => {
+  it("declares every method the chain supports", () => {
     const api = createApi("solana");
 
     expect(api).toEqual(
       expect.objectContaining({
         broadcast: expect.any(Function),
-        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),
@@ -112,10 +112,7 @@ describe("createApi", () => {
         getBalance: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
-        getBlock: expect.any(Function),
-        getBlockInfo: expect.any(Function),
         getStakes: expect.any(Function),
-        getRewards: expect.any(Function),
         getValidators: expect.any(Function),
         validateIntent: expect.any(Function),
         getNextSequence: expect.any(Function),
@@ -324,12 +321,25 @@ describe("createApi", () => {
     });
   });
 
-  it("should throw for unsupported methods", () => {
-    const api = createApi("solana");
+  it("omits the capabilities the chain has none of", () => {
+    const impl = createApi("solana");
+
+    for (const method of ["call", "register", "getBlock", "getBlockInfo", "getRewards"] as const) {
+      expect(impl).not.toHaveProperty(method);
+    }
+  });
+
+  it("raises 'not supported' for those capabilities once withDefaults is applied", () => {
+    // The consumer path: the resolver wraps the module, and the wrapper is what answers.
+    const api = withDefaults(createApi("solana"));
 
     expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(context, 1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards(context, "addr")).toThrow("getRewards is not supported");
+
+    // What the chain does support keeps its real implementation.
+    expect(api.supports("getStakes")).toBe(true);
+    expect(api.supports("getValidators")).toBe(true);
   });
 
   describe("getBalance", () => {

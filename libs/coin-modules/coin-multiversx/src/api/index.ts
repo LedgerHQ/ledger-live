@@ -3,17 +3,14 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
-  Block,
-  BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
   Stake,
   StakingTransactionIntent,
   TransactionIntent,
@@ -36,7 +33,7 @@ import { listOperations } from "../logic/history/listOperations";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 
-export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
+export function createApi() {
   // The network client depends on endpoints that live in the coin config, so it is resolved per
   // call from the context (ADR-019) rather than seeded once through a module singleton.
   const resolveApi = async (context: MultiversXContext) => {
@@ -53,12 +50,6 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
       const api = await resolveApi(context);
       return broadcast(api, tx);
     },
-    async call(_context: MultiversXContext) {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
     combine: (
       _context: MultiversXContext,
       tx: string,
@@ -74,15 +65,6 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
     ): Promise<CraftedTransaction> => {
       const api = await resolveApi(context);
       return craftTransaction(api, intent, options?.customFees);
-    },
-    craftRawTransaction: (
-      _context: MultiversXContext,
-      _tx: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: (
       _context: MultiversXContext,
@@ -109,19 +91,6 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
     ): Promise<Page<Operation>> => {
       const api = await resolveApi(context);
       return listOperations(api, address, options);
-    },
-    getBlock(_context: MultiversXContext, _height: number): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context: MultiversXContext, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getRewards: (
-      _context: MultiversXContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
     },
     getValidators: async (
       context: MultiversXContext,
@@ -159,5 +128,5 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
     },
     craftTransactionData: (_context: MultiversXContext, intent: TransactionIntent) =>
       craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<MultiversXCoinConfig>;
 }

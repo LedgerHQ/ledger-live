@@ -1,4 +1,5 @@
-import { NEAR_BASE_URL_MOCKED } from "../network/node.mock";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { getBalance } from "../logic/getBalance";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
@@ -23,38 +24,44 @@ jest.mock("../logic/craftTransaction", () => ({ craftTransaction: jest.fn() }));
 jest.mock("../logic/estimateFees", () => ({ estimateFees: jest.fn() }));
 jest.mock("../logic/validateIntent", () => ({ validateIntent: jest.fn() }));
 
-const config = () => ({
-  status: { type: "active" as const },
-  infra: {
-    API_NEAR_PRIVATE_NODE: NEAR_BASE_URL_MOCKED,
-    API_NEAR_PUBLIC_NODE: NEAR_BASE_URL_MOCKED,
-    API_NEAR_INDEXER: NEAR_BASE_URL_MOCKED,
-    API_NEARBLOCKS_INDEXER: NEAR_BASE_URL_MOCKED,
-  },
-});
-
 describe("createApi", () => {
-  const api = createApi();
+  // The consumer resolver hands the module to callers through `withDefaults`, so exercise the API
+  // the way a consumer sees it: the capabilities NEAR omits are backfilled by the framework.
+  const api = withDefaults(createApi());
   const context = createMockNearContext();
 
-  it("exposes every CoinModuleApi method", () => {
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  //
+  // Kept out rather than stubbed: NEAR's nonce belongs to an access key rather than to an
+  // account, a staking pool compounds rewards into the staked balance instead of emitting
+  // distribution events, and the module exposes neither a full-block read, an externally-built
+  // transaction, a contract-call escape hatch nor an enrollment step.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getNextSequence",
+        "getRewards",
+        "register",
+      ],
+      inconsistent: [],
+    });
+  });
+  it("declares every method the chain supports", () => {
     const methods = [
       "lastBlock",
       "getBlockInfo",
-      "getBlock",
-      "call",
       "getValidators",
       "getBalance",
       "listOperations",
       "getStakes",
-      "getRewards",
       "craftTransaction",
-      "craftRawTransaction",
       "estimateFees",
       "combine",
       "broadcast",
       "validateIntent",
-      "getNextSequence",
       "validateAddress",
       "craftTransactionData",
     ];
@@ -117,33 +124,5 @@ describe("createApi", () => {
   it("validates an address format on the spot", async () => {
     await expect(api.validateAddress(context, "recipient.near", {})).resolves.toBe(true);
     await expect(api.validateAddress(context, "NOT VALID", {})).resolves.toBe(false);
-  });
-
-  it("does not support reading a block's transactions", () => {
-    expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
-  });
-
-  it("does not support rewards, which a staking pool compounds into the staked balance", () => {
-    expect(() => api.getRewards(context, "sender.near")).toThrow("getRewards is not supported");
-  });
-
-  it("explains why an account-level nonce is not available", () => {
-    expect(() => api.getNextSequence(context, "sender.near")).toThrow(
-      "the nonce belongs to an access key, not to an account",
-    );
-  });
-
-  it("does not support crafting from a raw transaction", () => {
-    expect(() => api.craftRawTransaction(context, "", "", "", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-  });
-
-  it("does not support contract calls", async () => {
-    await expect(api.call(context, {})).rejects.toThrow("call is not supported");
-  });
-
-  it("does not support account registration", async () => {
-    await expect(api.register(context, "sender.near")).rejects.toThrow("register is not supported");
   });
 });

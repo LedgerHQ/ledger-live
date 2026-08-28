@@ -3,21 +3,15 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
-  Block,
-  BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
   TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { type FilecoinCoinConfig, type FilecoinContext } from "../config";
@@ -32,20 +26,16 @@ import { estimateFees } from "../logic/transaction/estimateFees";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 
-export function createApi(): CoinModuleApi<FilecoinCoinConfig> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it: `satisfies` keeps the
+// precise type of what is returned, so a caller sees exactly which methods exist. An annotation would
+// widen every capability back to optional, including the ones this module does implement.
+export function createApi() {
   return {
     broadcast: (
       _context: FilecoinContext,
       tx: string,
       options?: { broadcastConfig?: BroadcastConfig },
     ): Promise<string> => broadcast(tx, options?.broadcastConfig),
-
-    async call(_context: FilecoinContext) {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
 
     combine: (
       _context: FilecoinContext,
@@ -98,46 +88,5 @@ export function createApi(): CoinModuleApi<FilecoinCoinConfig> {
       address: string,
       options?: BalanceOptions,
     ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(address), options),
-
-    craftRawTransaction: (
-      _context: FilecoinContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-
-    getBlock(_context: FilecoinContext, _height: number): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-
-    getBlockInfo(_context: FilecoinContext, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-
-    getStakes(
-      _context: FilecoinContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-
-    getRewards(
-      _context: FilecoinContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-
-    getValidators(
-      _context: FilecoinContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-  };
+  } satisfies CoinModuleImpl<FilecoinCoinConfig>;
 }

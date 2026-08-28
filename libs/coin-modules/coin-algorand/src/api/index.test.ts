@@ -1,3 +1,5 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import type { AlgorandCoinConfig } from "../config";
@@ -35,25 +37,33 @@ describe("Algorand API", () => {
     api = createApi();
   });
 
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), mockCtx)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "register",
+      ],
+      inconsistent: [],
+    });
+  });
   describe("createApi", () => {
-    it("should create an API instance with all required methods", () => {
+    it("declares every method the chain supports", () => {
       expect(api).toEqual({
         broadcast: expect.any(Function),
-        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
-        craftRawTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
-        getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
-        getRewards: expect.any(Function),
-        getNextSequence: expect.any(Function),
-        getStakes: expect.any(Function),
-        getValidators: expect.any(Function),
         lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
-        register: expect.any(Function),
         validateAddress: expect.any(Function),
         validateIntent: expect.any(Function),
         craftTransactionData: expect.any(Function),
@@ -203,38 +213,14 @@ describe("Algorand API", () => {
   });
 
   describe("unsupported methods", () => {
-    it("getBlock should throw not supported error", () => {
-      expect(() => api.getBlock(mockCtx, 100)).toThrow("getBlock is not supported for Algorand");
-    });
+    // The consumer path, kept here for what `supports()` reports about the real implementations.
+    const resolved = withDefaults(createApi());
 
-    it("getNextSequence should throw not applicable error", () => {
-      expect(() => api.getNextSequence(mockCtx, "ADDRESS")).toThrow(
-        "getNextSequence is not applicable for Algorand",
-      );
-    });
-
-    it("getStakes should throw not supported error", () => {
-      expect(() => api.getStakes(mockCtx, "ADDRESS")).toThrow(
-        "getStakes is not supported for Algorand",
-      );
-    });
-
-    it("getRewards should throw not supported error", () => {
-      expect(() => api.getRewards(mockCtx, "ADDRESS")).toThrow(
-        "getRewards is not supported for Algorand",
-      );
-    });
-
-    it("getValidators should throw not supported error", () => {
-      expect(() => api.getValidators(mockCtx)).toThrow(
-        "getValidators is not supported for Algorand",
-      );
-    });
-
-    it("craftRawTransaction should throw not supported error", () => {
-      expect(() => api.craftRawTransaction(mockCtx, "tx", "sender", "pubkey", 0n)).toThrow(
-        "craftRawTransaction is not supported for Algorand",
-      );
+    it("keeps the real implementations the module does carry", () => {
+      expect(resolved.supports("getBlockInfo")).toBe(true);
+      expect(resolved.supports("validateIntent")).toBe(true);
+      expect(resolved.supports("validateAddress")).toBe(true);
+      expect(resolved.supports("getStakes")).toBe(false);
     });
   });
 });

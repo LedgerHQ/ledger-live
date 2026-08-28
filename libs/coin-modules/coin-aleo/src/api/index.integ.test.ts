@@ -21,16 +21,6 @@ import {
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 
-type AleoApi = ReturnType<typeof createApi>;
-
-function requireGetAccountInfo(api: AleoApi): NonNullable<AleoApi["getAccountInfo"]> {
-  const { getAccountInfo } = api;
-  if (!getAccountInfo) {
-    throw new Error("guard: api.getAccountInfo is not implemented");
-  }
-  return getAccountInfo;
-}
-
 async function withPrivacyContext(context: AleoContext, viewKey: string): Promise<AleoContext> {
   const config = await context.config();
   const provableApi = await accessProvableApi({
@@ -128,9 +118,7 @@ describe("createApi", () => {
 
   describe("getAccountInfo", () => {
     it("returns the aleo scan status for a registered provableId", async () => {
-      const getAccountInfo = requireGetAccountInfo(api);
-
-      const info = (await getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
+      const info = (await api.getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
 
       expect(info.type).toBe("aleo");
       expect(typeof info.synced).toBe("boolean");
@@ -141,14 +129,13 @@ describe("createApi", () => {
     });
 
     it("throws AleoApiConfigurationResetError for an unknown provableId", async () => {
-      const getAccountInfo = requireGetAccountInfo(api);
       const contextWithUnknownProvableId: AleoContext = {
         ...context,
         provableId: "00000000-0000-0000-0000-000000000000",
       };
 
       await expect(
-        getAccountInfo(contextWithUnknownProvableId, testnetAddress),
+        api.getAccountInfo(contextWithUnknownProvableId, testnetAddress),
       ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
     });
   });
@@ -227,8 +214,7 @@ describe("createApi", () => {
     });
 
     it("never lists a block the record scanner has not reached", async () => {
-      const getAccountInfo = requireGetAccountInfo(api);
-      const info = (await getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
+      const info = (await api.getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
 
       const { items } = await api.listOperations(privacyContext, testnetAddress, {
         minHeight: firstActivityBlock,

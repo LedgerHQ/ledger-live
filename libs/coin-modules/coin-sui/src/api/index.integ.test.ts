@@ -3,6 +3,7 @@ import type {
   FeeEstimation,
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiContext } from "../config";
 import { createApi } from ".";
@@ -28,7 +29,7 @@ describe("Sui Api", () => {
   };
 
   beforeAll(() => {
-    module = createApi();
+    module = withDefaults(createApi());
   });
 
   describe("estimateFees", () => {

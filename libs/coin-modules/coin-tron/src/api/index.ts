@@ -3,13 +3,10 @@ import {
   AccountInfo,
   Balance,
   BlockInfo,
-  CoinModuleApi,
-  CraftedTransaction,
-  Cursor,
+  CoinModuleImpl,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
   TransactionIntent,
   TransactionValidation,
   BalanceOptions,
@@ -38,34 +35,27 @@ import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed, and why:
+//   - `call`                — Tron contract reads (triggerconstantcontract) are not supported yet.
+//   - `getRewards`          — withdrawals already appear in `listOperations`.
+//   - `craftRawTransaction` — the chain takes no externally-built transaction.
+//   - `register`            — no enrollment step.
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+export function createApi() {
   return {
-    broadcast: async (context, tx) => {
+    broadcast: async (context, tx, _options?) => {
       const config = await context.config();
       return broadcast(config, tx);
     },
-    // Tron contract reads (triggerconstantcontract) are intentionally not supported yet.
-    call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context, tx, signature) => combine(tx, signature),
-    craftTransaction: async (context, transactionIntent, options) => {
+    combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    craftTransaction: async (context, transactionIntent, options?) => {
       const config = await context.config();
       return craftTransaction(config, transactionIntent, options?.customFees);
     },
-    craftRawTransaction: (
-      _context: TronContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: async (context, transactionIntent) => {
+    estimateFees: async (context, transactionIntent, _options?) => {
       const config = await context.config();
       return estimateFees(config, transactionIntent);
     },
@@ -90,22 +80,14 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
       const config = await context.config();
       return getBlockInfo(config, height);
     },
-    getStakes: async (context, address, options) => {
+    getStakes: async (context, address, options?) => {
       const config = await context.config();
       return getStakes(config, address, options?.cursor);
     },
     // Unsupported chain-wide, as it is for cosmos, cardano and tezos: `Reward` describes a distribution
     // event with a `receivedAt` date, and Trongrid exposes only the *pending* accrued total
     // (`tronResources.unwithdrawnReward`), which `getStakes` reports as `amountRewarded` instead.
-    // Withdrawals appear in `listOperations`.
-    getRewards(
-      _context: TronContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators: async (context, options) => {
+    getValidators: async (context, options?) => {
       const config = await context.config();
       return getValidators(config, options?.cursor);
     },
@@ -127,7 +109,7 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<TronCoinConfig, TronMemo, TronTxData>;
 }
 
 /**

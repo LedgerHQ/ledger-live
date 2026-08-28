@@ -1,3 +1,4 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import type { StacksContext } from "../config";
 import { createApi } from "./index";
 
@@ -15,20 +16,12 @@ const context: StacksContext = {
 describe("createApi", () => {
   const api = createApi();
 
-  it("wires every method the interface declares", () => {
-    expect(api.lastBlock).toBeInstanceOf(Function);
-    expect(api.getBlockInfo).toBeInstanceOf(Function);
-    expect(api.getBalance).toBeInstanceOf(Function);
-    expect(api.listOperations).toBeInstanceOf(Function);
-    expect(api.craftTransaction).toBeInstanceOf(Function);
-    expect(api.estimateFees).toBeInstanceOf(Function);
-    expect(api.combine).toBeInstanceOf(Function);
-    expect(api.broadcast).toBeInstanceOf(Function);
-    expect(api.validateIntent).toBeInstanceOf(Function);
-    expect(api.getNextSequence).toBeInstanceOf(Function);
-    expect(api.validateAddress).toBeInstanceOf(Function);
-    expect(api.craftTransactionData).toBeInstanceOf(Function);
-    expect(api.getStakes).toBeInstanceOf(Function);
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(api, context)).resolves.toEqual({
+      unsupported: ["call", "craftRawTransaction", "getRewards", "getValidators", "register"],
+      inconsistent: [],
+    });
   });
 
   it("throws if combine receives anything other than exactly one signature", () => {
@@ -38,24 +31,6 @@ describe("createApi", () => {
     expect(() => api.combine(context, "0xdeadbeef", ["sig1", "sig2"])).toThrow(
       "combine expects exactly one signature",
     );
-  });
-
-  it("throws 'not supported' for call", async () => {
-    await expect(api.call(context, {})).rejects.toThrow("call is not supported");
-  });
-
-  it("throws 'not supported' for craftRawTransaction", () => {
-    expect(() => api.craftRawTransaction(context, "tx", "sender", "pub", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-  });
-
-  it("throws 'not supported' for getRewards", () => {
-    expect(() => api.getRewards(context, "address")).toThrow("getRewards is not supported");
-  });
-
-  it("throws 'not supported' for getValidators", () => {
-    expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
   });
 
   it("validates a well-formed address", async () => {

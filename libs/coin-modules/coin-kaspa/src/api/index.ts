@@ -1,22 +1,17 @@
 import type {
-  AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
   Block,
   BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
   TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -35,13 +30,26 @@ import {
 } from "../logic";
 
 /**
- * Alpaca (CoinModuleApi) factory for native KAS. Kaspa is a UTXO / BlockDAG PoW chain: no
- * per-account nonce, no native staking, no in-module token standard (see
- * `src/supportedFeatures.ts` — `blockchain_txs: ["send"]`), so the account-model and
- * staking/token methods below throw rather than return misleading data, mirroring
- * `coin-cardano`'s UTXO adaptation of the same interface.
+ * Coin-module factory for native KAS. Kaspa is a UTXO / BlockDAG PoW chain: no per-account nonce,
+ * no native staking, no in-module token standard (see `src/supportedFeatures.ts` —
+ * `blockchain_txs: ["send"]`), so the account-model and staking/token capabilities are simply not
+ * declared here.
+ *
+ * Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+ * survives and a caller sees exactly which methods exist.
+ *
+ * Omitted rather than stubbed, with the reason each one does not apply:
+ *  - `getNextSequence` — no per-account sequence/nonce; replay protection comes from spending
+ *    one-time UTXOs. (The generic-coin-framework's createTransaction sets a synthetic zero nonce for
+ *    kaspa, the same way it does for near/vechain/cardano, so signOperation never calls it.)
+ *  - `craftRawTransaction` — the module does not accept an externally-built transaction.
+ *  - `validateAddress` — on-device address validation is not exposed through this API.
+ *  - `getStakes`, `getRewards`, `getValidators` — no native staking.
+ *  - `call`, `register` — no read-only contract-call primitive and no indexer enrollment.
+ *
+ * The consumer resolver applies `withDefaults`, which answers "not supported" for each.
  */
-export function createApi(): CoinModuleApi<KaspaCoinConfig> {
+export function createApi() {
   return {
     // --- Blocks / chain state ---
     lastBlock: (_context: KaspaContext): Promise<BlockInfo> => lastBlock(),
@@ -92,58 +100,5 @@ export function createApi(): CoinModuleApi<KaspaCoinConfig> {
       validateIntent(transactionIntent, balances, options?.customFees),
     craftTransactionData: (_context: KaspaContext, intent: TransactionIntent) =>
       craftTransactionData(intent),
-
-    // --- Not applicable to Kaspa's UTXO model ---
-    // No per-account sequence/nonce (replay protection comes from spending one-time UTXOs); no
-    // raw-transaction craft; on-device address validation is not exposed through this API.
-    // (The generic-coin-framework's createTransaction sets a synthetic zero nonce for kaspa, the
-    // same way it does for near/vechain/cardano, so signOperation never actually calls this.)
-    getNextSequence: (_context: KaspaContext, _address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not applicable for Kaspa");
-    },
-    craftRawTransaction: (
-      _context: KaspaContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    validateAddress: (
-      _context: KaspaContext,
-      _address: string,
-      _parameters: Partial<AddressValidationCurrencyParameters>,
-    ): Promise<boolean> => {
-      throw new Error("validateAddress is not supported");
-    },
-
-    // --- Not supported: no native staking, no in-module token standard (blockchain_txs: ["send"]) ---
-    call: async (_context: KaspaContext) => {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    getStakes: (
-      _context: KaspaContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: (
-      _context: KaspaContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators: (
-      _context: KaspaContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> => {
-      throw new Error("getValidators is not supported");
-    },
-  };
+  } satisfies CoinModuleImpl<KaspaCoinConfig>;
 }
