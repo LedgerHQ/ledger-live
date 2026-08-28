@@ -1,12 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
-import {
-  addPendingOperation,
-  getAccountCurrency,
-  getMainAccount,
-  getParentAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -191,13 +186,6 @@ export function usePerpsDepositExecution(
         if (updateParams.length) {
           dispatch(updateAccountWithUpdater(...updateParams));
         }
-      } else {
-        const mainFromAccount = getMainAccount(depositAccount, fromParentAccount);
-        dispatch(
-          updateAccountWithUpdater(mainFromAccount.id, account =>
-            addPendingOperation(account, operation),
-          ),
-        );
       }
 
       return { operation, swapId };
@@ -289,7 +277,6 @@ export function usePerpsDepositExecution(
     amountSent,
     confirmSignAndBroadcast,
     depositAccount,
-    fromParentAccount,
     getFeature,
     onDone,
     quoteId,
