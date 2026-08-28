@@ -13,7 +13,7 @@ import {
   cleanupHederaModalTest,
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
-import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
   hederaQueries: {
@@ -46,7 +46,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
         ]),
     }),
   },
-  useHederaEnrichedDelegationV2: jest.fn(() => ({
+  useHederaEnrichedDelegation: jest.fn(() => ({
     nodeId: 0,
     delegated: new BigNumber(5_000_000_000),
     pendingReward: new BigNumber(500_000),
@@ -84,7 +84,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getCurrencyBridge: () => require("../../__mocks__/bridge.mock").resolvedCurrencyBridge,
 }));
 
-const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegationV2);
+const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegation);
 
 beforeEach(async () => {
   await setupHederaModalTest();

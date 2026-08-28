@@ -29,7 +29,6 @@ export default function DelegationRow({
 }: Readonly<Props>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const isLoadingValidators = enrichedDelegation.loading ?? false;
 
   return (
     <TouchableOpacity
@@ -44,7 +43,7 @@ export default function DelegationRow({
       </View>
       <View style={styles.nameWrapper}>
         <View style={styles.row}>
-          <Skeleton loading={isLoadingValidators} style={styles.nameSkeleton}>
+          <Skeleton loading={enrichedDelegation.loading} style={styles.nameSkeleton}>
             <Text
               fontWeight="semiBold"
               numberOfLines={1}

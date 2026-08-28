@@ -132,9 +132,8 @@ export interface HederaDelegation {
 export interface HederaEnrichedDelegation extends HederaDelegation {
   status: HEDERA_DELEGATION_STATUS;
   validator: HederaValidator;
-  // set by useHederaEnrichedDelegationV2 only; required once the legacy hook is gone
-  loading?: boolean;
-  error?: Error | null;
+  loading: boolean;
+  error: Error | null;
 }
 
 interface HederaDelegationRaw {
@@ -189,24 +188,6 @@ export type HederaValidator = {
   name: string;
   overstaked: boolean;
   isLedgerNode: boolean;
-};
-
-// kept alive for the legacy preload layer, removed with it
-export type HederaValidatorRaw = {
-  id: string;
-  minStake: string;
-  maxStake: string;
-  activeStake: string;
-  activeStakePercentage: string;
-  address: string;
-  addressChecksum: string | null;
-  name: string;
-  overstaked: boolean;
-};
-
-export type HederaPreloadData = {
-  validators: HederaValidator[];
-  associatedTokenId?: string;
 };
 
 export type HederaOperation = Operation<HederaOperationExtra>;

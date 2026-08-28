@@ -11,7 +11,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { HederaAccount, HederaDelegation } from "@ledgerhq/live-common/families/hedera/types";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
@@ -47,9 +47,8 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const accountName = useAccountName(account);
-  const enrichedDelegation = useHederaEnrichedDelegationV2(account, delegatedPosition);
+  const enrichedDelegation = useHederaEnrichedDelegation(account, delegatedPosition);
   const unit = useAccountUnit(account);
-  const isLoadingValidators = enrichedDelegation.loading ?? false;
 
   const currency = getAccountCurrency(account);
   const formattedClaimableRewards = formatCurrencyUnit(unit, enrichedDelegation.pendingReward, {
@@ -90,7 +89,7 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
       {
         label: t("delegation.validator"),
         Component: (
-          <Skeleton loading={isLoadingValidators} style={styles.statusSkeleton}>
+          <Skeleton loading={enrichedDelegation.loading} style={styles.statusSkeleton}>
             <Text
               numberOfLines={1}
               fontWeight="semiBold"
@@ -137,7 +136,7 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
         label: t("hedera.delegatedPositions.details.status.title"),
         Component: (
           <Touchable event="DelegationOpenStatusModal" onPress={openStatusModal}>
-            <Skeleton loading={isLoadingValidators} style={styles.statusSkeleton}>
+            <Skeleton loading={enrichedDelegation.loading} style={styles.statusSkeleton}>
               <Flex flexDirection="row" alignItems="center" columnGap={4}>
                 <DelegationStatusIcon status={enrichedDelegation.status} color={colors.live} />
                 <Text
@@ -175,7 +174,6 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
   }, [
     openStatusModal,
     enrichedDelegation,
-    isLoadingValidators,
     accountName,
     formattedClaimableRewards,
     colors.live,
@@ -191,10 +189,10 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
     ] satisfies HEDERA_TRANSACTION_MODES[];
 
     const mapStakeActionToDisabled = {
-      [HEDERA_TRANSACTION_MODES.Redelegate]: isLoadingValidators,
+      [HEDERA_TRANSACTION_MODES.Redelegate]: enrichedDelegation.loading,
       [HEDERA_TRANSACTION_MODES.ClaimRewards]:
-        isLoadingValidators || enrichedDelegation.pendingReward.isZero(),
-      [HEDERA_TRANSACTION_MODES.Undelegate]: isLoadingValidators,
+        enrichedDelegation.loading || enrichedDelegation.pendingReward.isZero(),
+      [HEDERA_TRANSACTION_MODES.Undelegate]: enrichedDelegation.loading,
     } as const satisfies Record<(typeof allStakeActions)[number], boolean>;
 
     const mapStakeActionToColor = {
@@ -257,16 +255,7 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
 
       return drawerAction;
     });
-  }, [
-    account.id,
-    colors.fog,
-    colors.alert,
-    colors.yellow,
-    navigation,
-    enrichedDelegation,
-    isLoadingValidators,
-    t,
-  ]);
+  }, [account.id, colors.fog, colors.alert, colors.yellow, navigation, enrichedDelegation, t]);
 
   return (
     <View style={styles.root}>
