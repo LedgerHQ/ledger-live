@@ -36,10 +36,6 @@ export type PayCardAuthorizationCodeRequest = {
   readonly codeVerifier: string;
 };
 
-export type PayCardRefreshSessionRequest = {
-  readonly refreshToken: string;
-};
-
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;

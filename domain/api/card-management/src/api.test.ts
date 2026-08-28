@@ -1,5 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { cardApi, cardApiExtra } from "@shared/api-services";
+import { configureStore, type Middleware } from "@reduxjs/toolkit";
+import { cardApi, cardApiExtra, type CardApiExtra } from "@shared/api-services";
 import {
   cardManagementApi,
   useFreezeCardMutation,
@@ -11,6 +11,7 @@ import {
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
+import { MISSING_REFRESH_TOKEN } from "./constants";
 import { PayCardErrorResponseSchema } from "./schema";
 
 function jsonResponse(body: unknown): Response {
@@ -34,6 +35,14 @@ function errorResponse(status: number, message: string): Response {
  */
 function flushPendingRequests(): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+/** Records every dispatched action, so a test can assert on what a logger would see. */
+function recordActions(sink: { type: string; meta?: unknown }[]): Middleware {
+  return () => next => action => {
+    sink.push(action as { type: string });
+    return next(action);
+  };
 }
 
 function request(spy: jest.SpyInstance): Request {
@@ -109,6 +118,7 @@ const linkedWallets = [
 // Wired the way the apps wire it: the store registers the service api, never this package.
 const makeStore = (
   getCardSessionToken: () => Promise<string | null> = () => Promise.resolve(null),
+  overrides: Partial<CardApiExtra> = {},
 ) =>
   configureStore({
     reducer: {
@@ -121,7 +131,10 @@ const makeStore = (
             getCardApiBaseUrl: () => "https://card.test",
             getCardBaanxClientKey: () => "client-key",
             getCardSessionToken,
-            refreshCardSession: () => Promise.resolve(null),
+            getCardRefreshToken: () => Promise.resolve("rt_token"),
+            refreshCardSession: () =>
+              Promise.resolve({ kind: "unavailable", error: new Error("no renewal configured") }),
+            ...overrides,
           }),
         },
       }).concat(cardManagementApi.middleware),
@@ -242,20 +255,131 @@ describe("cardManagementApi requests", () => {
   });
 
   describe("refreshSession", () => {
-    it("reuses the token endpoint with the refresh_token grant", async () => {
+    it("reuses the token endpoint with the refresh_token grant, read off the extra", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+      const getCardRefreshToken = jest.fn(async () => "rt_token");
 
-      const store = makeStore();
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.refreshSession.initiate({ refreshToken: "rt_token" }),
-      );
+      const store = makeStore(undefined, { getCardRefreshToken });
+      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
 
+      expect(getCardRefreshToken).toHaveBeenCalledTimes(1);
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "refresh_token",
         refresh_token: "rt_token",
       });
       expect(result.data).toEqual(session);
+    });
+
+    it("carries no argument, so nothing reaches a logged action", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const actions: { type: string; meta?: unknown }[] = [];
+      const store = configureStore({
+        reducer: { [cardApi.reducerPath]: cardApi.reducer },
+        middleware: gdm =>
+          gdm({
+            thunk: {
+              extraArgument: cardApiExtra({
+                cardApiBaseUrl: "https://card.test",
+                cardBaanxClientKey: "client-key",
+                getCardSessionToken: () => Promise.resolve("session-token"),
+                getCardRefreshToken: () => Promise.resolve("rt_token"),
+                refreshCardSession: () =>
+                  Promise.resolve({ kind: "unavailable", error: new Error("no renewal") }),
+              }),
+            },
+          })
+            .concat(cardApi.middleware)
+            .concat(recordActions(actions)),
+      });
+
+      await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(undefined, { track: false }),
+      );
+
+      // `meta` is what the desktop logger records, and it is the half this endpoint controls.
+      const serializedMeta = JSON.stringify(actions.map(action => action.meta));
+      expect(serializedMeta).not.toContain("rt_token");
+      expect(serializedMeta).not.toContain("at_token");
+      expect(serializedMeta).toContain("refreshSession");
+
+      // The fulfilled payload does carry the session: a renewal has to hand it back somehow.
+      // `track: false` keeps it out of the store, and `redactCardApiAction` keeps it out of a log.
+      expect(JSON.stringify(actions)).toContain("at_token");
+    });
+
+    it("sends no Authorization header, even with a live session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const store = makeStore(async () => "session-token");
+      await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
+
+      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+    });
+
+    it("answers 401 and sends nothing when no refresh token is stored", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const store = makeStore(undefined, { getCardRefreshToken: async () => null });
+      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(result.error).toEqual({
+        status: 401,
+        data: { message: MISSING_REFRESH_TOKEN },
+      });
+    });
+
+    it("answers a nonterminal error when the store read rejects", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const store = makeStore(undefined, {
+        getCardRefreshToken: async () => {
+          throw new Error("keychain unavailable");
+        },
+      });
+      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
+    });
+
+    it("never renews on its own 401, so a dead refresh token cannot loop", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => errorResponse(401, "invalid_grant"));
+      const refreshCardSession = jest.fn(async () => ({
+        kind: "refreshed" as const,
+        accessToken: "should-not-be-used",
+      }));
+
+      const store = makeStore(undefined, { refreshCardSession });
+      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
+
+      expect(refreshCardSession).not.toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(result.error).toMatchObject({ status: 401 });
+    });
+
+    it("does not expose tokens when the response does not match the wire contract", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse({
+          access_token: "sensitive-access-token",
+          refresh_token: "sensitive-refresh-token",
+          // `expires_in` is missing, so the wire schema rejects the body.
+        }),
+      );
+
+      const store = makeStore();
+      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
+      const serializedError = JSON.stringify(result.error);
+
+      expect(result.data).toBeUndefined();
+      expect(serializedError).toContain("rawResponseSchema");
+      expect(serializedError).not.toContain("sensitive-access-token");
+      expect(serializedError).not.toContain("sensitive-refresh-token");
     });
   });
 
