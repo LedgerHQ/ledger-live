@@ -9,7 +9,11 @@ import type { PerpsDepositSignViewModel } from "./usePerpsDepositSignViewModel";
 
 type PerpsDepositSignViewProps = Readonly<PerpsDepositSignViewModel>;
 
-export function PerpsDepositSignView({ deviceStep, retry }: PerpsDepositSignViewProps) {
+export function PerpsDepositSignView({
+  deviceStep,
+  retry,
+  onDeviceError,
+}: PerpsDepositSignViewProps) {
   const { t } = useTranslation();
 
   if (deviceStep.kind === "error")
@@ -28,6 +32,7 @@ export function PerpsDepositSignView({ deviceStep, retry }: PerpsDepositSignView
             action={action}
             request={request}
             onResult={onResult}
+            onError={onDeviceError}
             renderExchangeConfirmation={
               deviceStep.stepId === "confirm" ? () => <PerpsDepositConfirmation /> : undefined
             }

@@ -106,12 +106,14 @@ export function usePerpsReviewViewModel(
       amountSent: data.amountSent,
       amountTo: data.amountTo,
       quoteId: data.quoteId,
+      draft: data.draft,
     });
     onClose();
   }, [
     data.amountTo,
     data.amountSent,
     data.depositAccount,
+    data.draft,
     data.quoteId,
     data.receiverAccount,
     onClose,

@@ -76,9 +76,36 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
   });
 }
 
-function renderExecution(onDone = jest.fn()) {
-  const { result } = renderHook(() => usePerpsDepositExecution(params, onDone));
-  return { result, onDone };
+function renderExecution() {
+  const onDone = jest.fn();
+  const onRefused = jest.fn();
+  const { result } = renderHook(() => usePerpsDepositExecution(params, { onDone, onRefused }));
+  return { result, onDone, onRefused };
+}
+
+/** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
+async function signWith(signResult: unknown) {
+  mockExecuteSwap.mockImplementation(async deps => {
+    await new Promise<void>((resolve, reject) => {
+      deps.uiHooks["custom.exchange.swap"]({
+        exchangeParams: swapUiRequest,
+        onSuccess: () => resolve(),
+        onCancel: reject,
+      });
+    });
+  });
+
+  const execution = renderExecution();
+  act(() => {
+    void execution.result.current.executeDeposit();
+  });
+
+  await answerDeviceStep(execution.result.current.deviceStep, {
+    completeExchangeResult: { family: "ethereum" },
+  });
+  await answerDeviceStep(execution.result.current.deviceStep, signResult);
+
+  return execution;
 }
 
 describe("usePerpsDepositExecution", () => {
@@ -163,33 +190,42 @@ describe("usePerpsDepositExecution", () => {
     expect(onDone).toHaveBeenCalled();
   });
 
-  it("surfaces a refused signature instead of spinning", async () => {
-    mockExecuteSwap.mockImplementation(async (deps, _params) => {
-      await new Promise<void>((resolve, reject) => {
-        deps.uiHooks["custom.exchange.swap"]({
-          exchangeParams: swapUiRequest,
-          onSuccess: () => resolve(),
-          onCancel: reject,
-        });
-      });
-    });
-
-    const { result, onDone } = renderExecution();
-    act(() => {
-      void result.current.executeDeposit();
-    });
-
-    await answerDeviceStep(result.current.deviceStep, {
-      completeExchangeResult: { family: "ethereum" },
-    });
-    await answerDeviceStep(result.current.deviceStep, {
-      transactionSignError: new Error("refused on device"),
+  it("surfaces a failed signature instead of spinning", async () => {
+    const { result, onDone, onRefused } = await signWith({
+      transactionSignError: new Error("signature failed"),
     });
 
     expect(result.current.deviceStep).toEqual({
       kind: "error",
-      error: new Error("refused on device"),
+      error: new Error("signature failed"),
     });
+    expect(onDone).not.toHaveBeenCalled();
+    expect(onRefused).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "the coin app prompt",
+      Object.assign(new Error("refused"), { name: "TransactionRefusedOnDevice" }),
+    ],
+    [
+      "a signer naming it itself",
+      Object.assign(new Error("refused"), { name: "UserRefusedOnDevice" }),
+    ],
+    [
+      "the Exchange app's own error",
+      Object.assign(new Error("User refused"), {
+        name: "CompleteExchangeError",
+        title: "userRefused",
+      }),
+    ],
+  ])("reports a decline reported by %s rather than an error", async (_case, error) => {
+    const { result, onDone, onRefused } = await signWith({ transactionSignError: error });
+
+    // Declining is a decision: the caller sends the holder back to the summary,
+    // so no error screen is raised here.
+    expect(onRefused).toHaveBeenCalled();
+    expect(result.current.deviceStep).toEqual({ kind: "processing" });
     expect(onDone).not.toHaveBeenCalled();
   });
 });
