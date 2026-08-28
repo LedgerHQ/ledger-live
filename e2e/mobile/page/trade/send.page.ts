@@ -21,6 +21,8 @@ export default class SendPage {
   summaryErrorId = "insufficient-fee-error";
   highFeeConfirmButtonID = "enabled-confirmation-modal-confirm-button";
 
+  validationEnsId = "device-validation-domain";
+
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
   summaryMemoTag = () => getElementById(this.summaryMemoTagId);
@@ -217,6 +219,12 @@ export default class SendPage {
   async expectSummaryRecipientEns(ensName: string) {
     const ens = this.summaryRecipientEns();
     await detoxExpect(ens).toHaveText(ensName);
+  }
+
+  @Step("Expect validation ENS name {{{0}}}")
+  async expectValidationEnsName(ensName: string) {
+    const elem = getElementById(this.validationEnsId);
+    await detoxExpect(elem).toHaveText(ensName);
   }
 
   @Step("Expect memo tag in summary {{{0}}}")
