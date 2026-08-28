@@ -29,9 +29,19 @@ describe("renderer logger", () => {
       });
     });
 
-    it("should wrap non-Error values in Error and still call captureException", () => {
+    it("should wrap string values in Error and still call captureException", () => {
       logger.critical("string error");
       expect(datadogRenderer.captureException).toHaveBeenCalledWith(new Error("string error"));
+    });
+
+    it.each([
+      ["null", null],
+      ["undefined", undefined],
+      ["a plain object", { code: 42 }],
+      ["a DMK tagged error", { _tag: "DeviceLockedError" }],
+    ])("should keep %s local instead of reporting it to Datadog", (_label, value) => {
+      logger.critical(value);
+      expect(datadogRenderer.captureException).not.toHaveBeenCalled();
     });
   });
 
