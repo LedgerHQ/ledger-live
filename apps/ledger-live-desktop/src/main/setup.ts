@@ -9,6 +9,7 @@ import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 import { openURL } from "./openURL";
+import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
@@ -18,94 +19,78 @@ ipcMain.on("updater", (e, type) => {
   updater(type);
 });
 
-/**
- * Saves logs from the renderer process to a file.
- */
+// Main owns the path, so the renderer cannot turn a write handler into an arbitrary file write.
+async function resolveSaveTarget({ options, e2ePath }: SaveRequest): Promise<string | null> {
+  if (e2ePath && getEnv("PLAYWRIGHT_RUN")) return e2ePath;
+  const { canceled, filePath } = await dialog.showSaveDialog(options);
+  return canceled ? null : (filePath ?? null);
+}
+
 ipcMain.handle(
   "save-logs",
-  async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
-    if (!path.canceled && path.filePath) {
-      const inMemoryLogger = InMemoryLogger.getLogger();
-      const internalLogsChronological = inMemoryLogger.getLogs().reverse(); // The logs are in reverse order.
+  async (_event, request: SaveRequest, rendererLogsStr: string): Promise<SaveOutcome> => {
+    const target = await resolveSaveTarget(request);
+    if (!target) return "canceled";
 
-      // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
-      // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogsChronological: Array<{ timestamp: string }> = [];
-      try {
-        rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
-      } catch (e) {
-        console.warn("Error while parsing logs from the renderer process", e);
-        return;
-      }
+    const internalLogsChronological = InMemoryLogger.getLogger().getLogs().reverse();
 
-      fs.writeFile(
-        path.filePath,
-        mergeAllLogsJSON(
-          rendererLogsChronological,
-          internalLogsChronological,
-          getEnv("EXPORT_MAX_LOGS"),
-        ),
-      );
-    } else {
-      console.warn("No path given to save logs");
+    let rendererLogsChronological: Array<{ timestamp: string }> = [];
+    try {
+      rendererLogsChronological = JSON.parse(rendererLogsStr).reverse();
+    } catch (e) {
+      console.warn("Error while parsing logs from the renderer process", e);
+      return "failed";
     }
+
+    await fs.writeFile(
+      target,
+      mergeAllLogsJSON(
+        rendererLogsChronological,
+        internalLogsChronological,
+        getEnv("EXPORT_MAX_LOGS"),
+      ),
+    );
+    return "saved";
   },
 );
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
 
-/**
- * Opens a URL in the user's browser. `openURL` validates the scheme, so a renderer that
- * has been compromised cannot use this to launch arbitrary protocol handlers.
- */
+// openURL validates the scheme; do not swap it for shell.openExternal.
 ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
 
-/**
- * Clipboard access on the renderer's behalf. Done here rather than via
- * `navigator.clipboard` because the window grants only the `hid` permission, so a
- * clipboard-read request from the renderer would be denied.
- */
+// Not navigator.clipboard: the permission handler grants the renderer only `hid`.
 ipcMain.on("clipboard:write-text", (_event, text: string) => clipboard.writeText(text));
 
 ipcMain.handle("clipboard:read-text", () => clipboard.readText());
 
 ipcMain.handle(
   "export-operations",
-  async (
-    event,
-    path: {
-      canceled: boolean;
-      filePath: string;
-    },
-    csv: string,
-  ): Promise<boolean> => {
+  async (_event, request: SaveRequest, csv: string): Promise<SaveOutcome> => {
+    if (!csv) return "failed";
     try {
-      if (!path.canceled && path.filePath && csv) {
-        await fs.writeFile(path.filePath, csv);
-        return true;
-      }
+      const target = await resolveSaveTarget(request);
+      if (!target) return "canceled";
+      await fs.writeFile(target, csv);
+      return "saved";
     } catch {
-      // ignore
+      return "failed";
     }
-    return false;
   },
 );
 
 ipcMain.handle(
   "save-png",
-  async (_event, dialogOptions: Electron.SaveDialogOptions, base64: string): Promise<boolean> => {
+  async (_event, options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome> => {
+    if (!base64) return "failed";
     try {
-      if (base64) {
-        const result = await dialog.showSaveDialog(dialogOptions);
-        if (!result.canceled && result.filePath) {
-          await fs.writeFile(result.filePath, Buffer.from(base64, "base64"));
-          return true;
-        }
-      }
+      const target = await resolveSaveTarget({ options });
+      if (!target) return "canceled";
+      await fs.writeFile(target, Buffer.from(base64, "base64"));
+      return "saved";
     } catch {
-      // ignore
+      return "failed";
     }
-    return false;
   },
 );
 

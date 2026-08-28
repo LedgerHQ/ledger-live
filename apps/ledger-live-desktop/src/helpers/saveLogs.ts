@@ -1,4 +1,5 @@
 import { files } from "~/renderer/bridge";
+import type { SaveRequest } from "~/bridge/contract";
 import { memoryLogger } from "~/renderer/logger";
 
 export function getJSONStringifyReplacer(): (key: string, value: unknown) => unknown {
@@ -33,18 +34,16 @@ export function getJSONStringifyReplacer(): (key: string, value: unknown) => unk
   };
 }
 
-export const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
+export const saveLogs = async (request: SaveRequest) => {
   try {
-    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
-    // Uses getJSONStringifyReplacer to replace circular references with "[Circular]"
+    // Stringified here: Electron's IPC serialiser cannot carry the logs' circular references.
     const memoryLogsStr = JSON.stringify(
       memoryLogger.getMemoryLogs(),
       getJSONStringifyReplacer(),
       2,
     );
 
-    // Requests the main process to save logs in a file
-    await files.saveLogs(path, memoryLogsStr);
+    await files.saveLogs(request, memoryLogsStr);
   } catch (error) {
     console.warn("Failed to save logs:", error);
   }

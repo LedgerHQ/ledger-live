@@ -1,4 +1,5 @@
 import { files as filesBridge } from "~/renderer/bridge";
+import type { SaveOutcome } from "~/bridge/contract";
 
 export const downloadJson = (fileName: string, contents: string): void => {
   const url = URL.createObjectURL(new Blob([contents], { type: "application/json" }));
@@ -9,6 +10,7 @@ export const downloadJson = (fileName: string, contents: string): void => {
   URL.revokeObjectURL(url);
 };
 
-/** Prompts for a save location and writes the PNG. Resolves false if cancelled. */
-export const savePng = (options: Electron.SaveDialogOptions, base64: string): Promise<boolean> =>
-  filesBridge.savePng(options, base64);
+export const savePng = (
+  options: Electron.SaveDialogOptions,
+  base64: string,
+): Promise<SaveOutcome> => filesBridge.savePng(options, base64);
