@@ -5,9 +5,10 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { CARD_REDUCER_PATH, HEADER_X_CLIENT_KEY } from "./constants";
+import { CARD_REDUCER_PATH, CARD_SESSION_ENDED, HEADER_X_CLIENT_KEY } from "./constants";
 import { CardApiExtraSchema } from "./schema";
-import type { CardApiExtra } from "./types";
+import { toSchemaFailureError } from "./schemaFailure";
+import type { CardApiExtra, CardBaseQueryExtraOptions, CardSessionRefreshResult } from "./types";
 
 /** Validates and returns this service's `extraArgument` slice. */
 export function cardApiExtra(extra: CardApiExtra): CardApiExtra {
@@ -35,11 +36,22 @@ function sessionError(error: unknown): { error: FetchBaseQueryError } {
   };
 }
 
-const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-  args,
-  api,
-  extraOptions,
-) => {
+/**
+ * The answer to a request whose session the owner has just ended.
+ *
+ * 401, because the failure that led here may have been anything, and because the login flow reads
+ * `status === 401` to decide that a session is finished. The body carries no token.
+ */
+const sessionEndedResult: { error: FetchBaseQueryError } = {
+  error: { status: UNAUTHORIZED_STATUS, data: { message: CARD_SESSION_ENDED } },
+};
+
+const cardBaseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError,
+  CardBaseQueryExtraOptions
+> = async (args, api, extraOptions) => {
   const extra = getCardExtra(api);
 
   const runWithToken = (token: string | null | undefined) =>
@@ -55,39 +67,44 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
       },
     })(args, api, extraOptions);
 
+  // The two OAuth2 grants authenticate themselves. They opt out of both services below, which is
+  // also what stops a dead refresh token from looping through its own renewal.
+  if (extraOptions?.authenticated === false) {
+    return runWithToken(null);
+  }
+
   let token: string | null | undefined;
   try {
     token = await extra.getCardSessionToken();
   } catch (error) {
-    // A request without the token answers 401. The refresh below cannot help, and that answer would
+    // A request without the token answers 401. The renewal below cannot help, and that answer would
     // hide the read failure. Report the failure instead.
     return sessionError(error);
   }
 
   const result = await runWithToken(token);
 
-  const isUnauthorized =
-    !!result.error &&
-    typeof result.error.status === "number" &&
-    result.error.status === UNAUTHORIZED_STATUS;
-
-  if (!isUnauthorized) {
+  if (result.error?.status !== UNAUTHORIZED_STATUS) {
     return result;
   }
 
-  let refreshedToken: string | null | undefined;
+  let refresh: CardSessionRefreshResult;
   try {
-    refreshedToken = await extra.refreshCardSession();
+    refresh = await extra.refreshCardSession();
   } catch {
-    // The 401 tells the caller more than a failed refresh does.
+    // The 401 tells the caller more than a failed renewal does.
     return result;
   }
 
-  if (!refreshedToken) {
-    return result;
+  switch (refresh.kind) {
+    case "refreshed":
+      // At most one replay. A second 401 is the caller's answer.
+      return runWithToken(refresh.accessToken);
+    case "session-ended":
+      return sessionEndedResult;
+    case "unavailable":
+      return result;
   }
-
-  return runWithToken(refreshedToken);
 };
 
 /** Endpoint-less Card api — use cases inject here. See shared/api-services README. */
@@ -96,6 +113,11 @@ export const cardApi = createApi({
   baseQuery: cardBaseQuery,
   tagTypes: [],
   endpoints: () => ({}),
+  /**
+   * Without this, RTK throws the `NamedSchemaError` again, and its `value` — for either OAuth2
+   * grant, the whole token response — lands in the rejected action. Keep the issues, drop the value.
+   */
+  catchSchemaFailure: error => toSchemaFailureError(error.schemaName, error.issues),
 });
 
 export type CardApi = typeof cardApi;

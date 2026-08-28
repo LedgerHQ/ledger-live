@@ -1,13 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { z } from "zod";
 import { getCardExtra, cardApi, cardApiExtra } from "./api";
-import type { CardApiExtra } from "./types";
+import { CARD_SESSION_ENDED } from "./constants";
+import type { CardApiExtra, CardSessionRefreshResult } from "./types";
+
+const UNAVAILABLE: CardSessionRefreshResult = {
+  kind: "unavailable",
+  error: new Error("no renewal configured"),
+};
 
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     getCardApiBaseUrl: () => "https://card.test",
     getCardBaanxClientKey: () => "test-client-key",
     getCardSessionToken: async () => "session-token",
-    refreshCardSession: async () => "refreshed-token",
+    getCardRefreshToken: async () => "refresh-token",
+    refreshCardSession: async () => UNAVAILABLE,
     ...overrides,
   };
 }
@@ -36,8 +44,9 @@ describe("cardApiExtra", () => {
     expect(() => cardApiExtra(buildExtra({ getCardBaanxClientKey: undefined }))).toThrow();
   });
 
-  it("throws when the session accessors are not functions", () => {
+  it("throws when any session accessor is not a function", () => {
     expect(() => cardApiExtra(buildExtra({ getCardSessionToken: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ getCardRefreshToken: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ refreshCardSession: undefined }))).toThrow();
   });
 
@@ -58,10 +67,20 @@ describe("getCardExtra", () => {
 describe("cardBaseQuery", () => {
   let fetchSpy: jest.SpyInstance;
 
-  // The base query is private, so drive it the way a use case does: through an injected endpoint.
+  // The base query is private, so drive it the way a use case does: through injected endpoints.
   function probeStore(extra: CardApiExtra) {
     const api = cardApi.injectEndpoints({
-      endpoints: build => ({ probe: build.query<unknown, void>({ query: () => "/probe" }) }),
+      endpoints: build => ({
+        probe: build.query<unknown, void>({ query: () => "/probe" }),
+        probeUnauthenticated: build.query<unknown, void>({
+          query: () => "/probe",
+          extraOptions: { authenticated: false },
+        }),
+        probeWithSchema: build.query<{ token: string }, void>({
+          query: () => "/probe",
+          responseSchema: z.object({ token: z.string().min(20) }),
+        }),
+      }),
       overrideExisting: true,
     });
     const store = configureStore({
@@ -125,12 +144,15 @@ describe("cardBaseQuery", () => {
     expect(sent.headers.get("x-client-key")).toBe("test-client-key");
   });
 
-  it("refreshes the session once and retries on a 401", async () => {
+  it("renews the session once and replays on a 401", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(jsonResponse({ error: "unauthorized" }, 401))
       .mockResolvedValueOnce(jsonResponse({ ok: true }));
-    const refreshCardSession = jest.fn(async () => "refreshed-token");
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+      kind: "refreshed",
+      accessToken: "refreshed-token",
+    }));
 
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());
@@ -142,16 +164,56 @@ describe("cardBaseQuery", () => {
     expect(request(fetchSpy, 1).headers.get("x-client-key")).toBe("test-client-key");
   });
 
-  it("returns the 401 error when the session cannot be refreshed", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
-    const refreshCardSession = jest.fn(async () => null);
+  it("replays only once, so a second 401 is the answer", async () => {
+    // A fresh Response per call: a body can only be read once.
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => jsonResponse({}, 401));
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+      kind: "refreshed",
+      accessToken: "refreshed-token",
+    }));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(result.error).toMatchObject({ status: 401 });
+  });
+
+  it("answers a session-ended renewal with a 401 and sends nothing more", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => jsonResponse({}, 401));
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+      kind: "session-ended",
+    }));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.error).toEqual({
+      status: 401,
+      data: { message: CARD_SESSION_ENDED },
+    });
+  });
+
+  it("returns the original error when the renewal is unavailable", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(jsonResponse({ error: "unauthorized" }, 401));
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(
+      async () => UNAVAILABLE,
+    );
 
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
     expect(refreshCardSession).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(result.error).toMatchObject({ status: 401 });
+    expect(result.error).toMatchObject({ status: 401, data: { error: "unauthorized" } });
   });
 
   it("reports a structured error and sends nothing when the token read rejects", async () => {
@@ -172,9 +234,9 @@ describe("cardBaseQuery", () => {
     expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
   });
 
-  it("returns the 401 when the refresh rejects", async () => {
+  it("returns the 401 when the renewal rejects", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
-    const refreshCardSession = jest.fn(async () => {
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => {
       throw new Error("keychain unavailable");
     });
 
@@ -184,6 +246,53 @@ describe("cardBaseQuery", () => {
     expect(refreshCardSession).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result.error).toMatchObject({ status: 401 });
+  });
+
+  describe("authenticated: false", () => {
+    it("sends x-client-key, reads no token and omits Authorization", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+      const getCardSessionToken = jest.fn(async () => "session-token");
+
+      const { api, store } = probeStore(cardApiExtra(buildExtra({ getCardSessionToken })));
+      await store.dispatch(api.endpoints.probeUnauthenticated.initiate());
+
+      expect(getCardSessionToken).not.toHaveBeenCalled();
+      const sent = request(fetchSpy);
+      expect(sent.headers.get("authorization")).toBeNull();
+      expect(sent.headers.get("x-client-key")).toBe("test-client-key");
+    });
+
+    it("never renews on a 401, so a dead refresh token cannot loop", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
+      const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, []>(async () => ({
+        kind: "refreshed",
+        accessToken: "refreshed-token",
+      }));
+
+      const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+      const result = await store.dispatch(api.endpoints.probeUnauthenticated.initiate());
+
+      expect(refreshCardSession).not.toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(result.error).toMatchObject({ status: 401 });
+    });
+  });
+
+  describe("catchSchemaFailure", () => {
+    it("names the schema and drops the value that failed", async () => {
+      const token = "a-sentinel-access-token";
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse({ token: "short" }));
+
+      const { api, store } = probeStore(cardApiExtra(buildExtra()));
+      const result = await store.dispatch(api.endpoints.probeWithSchema.initiate());
+
+      expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
+      expect(JSON.stringify(result.error)).toContain("responseSchema");
+      expect(JSON.stringify(result.error)).not.toContain(token);
+      expect(JSON.stringify(result.error)).not.toContain("short");
+    });
   });
 });
 
