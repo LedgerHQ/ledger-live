@@ -26,7 +26,13 @@ export function DeviceScreenView({ viewModel }: DeviceScreenViewProps) {
   const Chevron = collapsed ? ChevronUp : ChevronDown;
 
   return (
-    <div className="flex flex-col rounded-md bg-canvas-muted" data-testid="device-screen">
+    // Painted above the modal layer (z-index 100): device flows put a full-window
+    // backdrop over the sidebar, and the screen has to stay clickable through it —
+    // confirming a receive address is gated on pressing the device.
+    <div
+      className="relative z-[200] flex flex-col rounded-md bg-canvas-muted"
+      data-testid="device-screen"
+    >
       <button
         type="button"
         onClick={handleToggleCollapsed}
