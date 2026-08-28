@@ -795,7 +795,7 @@ jobs:
           retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
-        if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
+        if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && steps.run-ios.outcome != 'skipped'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
@@ -1197,7 +1197,7 @@ jobs:
           retention-days: 7
 
       - name: Setup Android Shard timing artifacts
-        if: (!cancelled() || steps.run-android.outcome == 'cancelled')
+        if: (!cancelled() || steps.run-android.outcome == 'cancelled') && steps.run-android.outcome != 'skipped'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
