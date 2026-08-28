@@ -7,13 +7,21 @@ import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   calApiExtra,
+  cardApi,
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
   swapApiExtra,
 } from "@shared/api-services";
-import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  configureCardSessionRenewal,
+  getCardRefreshToken,
+  getCardSessionToken,
+  refreshCardSession,
+} from "@features/platform-card";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createAccountAliasMiddleware,
   withAccountAliases,
@@ -72,6 +80,7 @@ const customCreateStore = ({
                 getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
                 getCardSessionToken,
+                getCardRefreshToken,
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({
@@ -129,7 +138,19 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    devTools: __DEV__,
+    // Card actions carry OAuth2 credentials. DevTools serializes every action it is given, so the
+    // sanitizer stands behind `track: false` and the logger redaction.
+    devTools: __DEV__ ? { actionSanitizer: redactCardApiAction } : false,
+  });
+
+  // After the store exists, because a renewal dispatches a Card mutation. `cardApi` and
+  // `cardManagementApi` are the same object: `injectEndpoints` mutates in place.
+  configureCardSessionRenewal({
+    dispatch: store.dispatch,
+    onCardSessionEnded: () => {
+      store.dispatch(cardApi.util.resetApiState());
+      store.dispatch(setSignedIn(false));
+    },
   });
 
   return store;

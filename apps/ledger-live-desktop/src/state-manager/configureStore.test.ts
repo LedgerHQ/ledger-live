@@ -9,6 +9,9 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
+import { cardApi, type CardApiExtra } from "@shared/api-services";
+import { cardSession } from "@features/platform-card";
+import { selectIsSignedIn, setSignedIn } from "@features/flow-pay-card-auth/state";
 import customCreateStore from "./configureStore";
 
 describe("customCreateStore", () => {
@@ -205,7 +208,66 @@ describe("customCreateStore", () => {
       );
     });
   });
+
+  describe("card session renewal", () => {
+    afterEach(async () => {
+      await cardSession.clear();
+    });
+
+    it("hands the Card api every session accessor it needs", () => {
+      const store = customCreateStore({ fetchRemoteFlags: null });
+      const extra = readCardExtra(store);
+
+      expect(typeof extra.getCardSessionToken).toBe("function");
+      expect(typeof extra.getCardRefreshToken).toBe("function");
+      expect(typeof extra.refreshCardSession).toBe("function");
+    });
+
+    it("serves the stored session through the accessors the api was given", async () => {
+      const store = customCreateStore({ fetchRemoteFlags: null });
+      const extra = readCardExtra(store);
+
+      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+
+      await expect(extra.getCardSessionToken()).resolves.toBe("at_token");
+      await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
+    });
+
+    it("publishes signed-out and drops the session when a renewal ends it", async () => {
+      setEnv("CARD_API_URL", "http://card.test");
+      // The provider rejects the grant. That is terminal, so this store's own callback must run.
+      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+        async () =>
+          new Response(JSON.stringify({ message: "invalid_grant" }), {
+            status: 400,
+            headers: { "content-type": "application/json" },
+          }),
+      );
+
+      const store = customCreateStore({ fetchRemoteFlags: null });
+      const extra = readCardExtra(store);
+
+      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+      store.dispatch(setSignedIn(true));
+
+      await expect(extra.refreshCardSession()).resolves.toEqual({ kind: "session-ended" });
+
+      expect(selectIsSignedIn(store.getState())).toBe(false);
+      expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
+      await expect(extra.getCardSessionToken()).resolves.toBeNull();
+      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
+
+      fetchSpy.mockRestore();
+    });
+  });
 });
+
+/** The Card slice of the thunk extraArgument, as `cardBaseQuery` reads it. */
+function readCardExtra(store: { dispatch: unknown }): CardApiExtra {
+  type ExtraThunk = (dispatch: unknown, getState: unknown, extra: CardApiExtra) => CardApiExtra;
+  const dispatch = (store as { dispatch: (thunk: ExtraThunk) => CardApiExtra }).dispatch;
+  return dispatch((_dispatch, _getState, extra) => extra);
+}
 
 type AuthThunk = (
   dispatch: unknown,
