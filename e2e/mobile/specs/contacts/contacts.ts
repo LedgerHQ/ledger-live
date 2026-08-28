@@ -10,10 +10,10 @@ import {
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 import type { ApplicationOptions } from "@e2e/page/index";
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 // Pinned: the Contacts entry point lives on My Wallet, which the Q1 preset turns off.
-const CONTACTS_FEATURE_FLAGS: OptionalFeatureMap = {
+const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
   lwmContacts: {
     enabled: true,
     params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
