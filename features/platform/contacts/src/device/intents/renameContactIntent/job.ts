@@ -1,6 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
+import type { RenameContactInput as RenameContactKitInput } from "@ledgerhq/device-contacts-kit";
 import type {
   RenameContactDAOutput,
   RenameContactDAState,
@@ -16,7 +17,6 @@ import {
   switchMap,
   takeWhile,
   tap,
-  throwError,
 } from "rxjs";
 import {
   mapDeviceActionErrorToFailureJobState,
@@ -139,7 +139,7 @@ export const renameContactIntentJob: Job<
   const toOutcome = createOutcomeMapper({ awaitingConfirmation, retry });
 
   return defer(() => {
-    let deviceActionInput;
+    let deviceActionInput: RenameContactKitInput;
     try {
       deviceActionInput = {
         previousContactName: input.previousContactName,
@@ -181,10 +181,16 @@ export const renameContactIntentJob: Job<
       tap(outcome => outcome.report && reporter.report(outcome.report)),
       takeWhile(outcome => !outcome.terminal, true),
       map(({ jobState }) => jobState),
+      // A transport-level failure errors the kit's observable directly (no
+      // DeviceActionStatus.Error to map), so this is the only place that can
+      // catch it. Per the Device Intent Executor contract, jobs report their
+      // own failures as a terminal JobState instead of erroring the job
+      // observable, which would push the executor into its generic fallback
+      // state instead of this intent's own InfoState.
       catchError((error: unknown) => {
         const mapped = mapDmkErrorToError(error);
         reporter.report({ type: "failure", error: mapped });
-        return throwError(() => mapped);
+        return of<RenameContactJobState>({ type: "failed", error: mapped });
       }),
     );
   }).pipe(reporter.cancelOnUnsubscribe());

@@ -437,7 +437,7 @@ describe("renameContactIntentJob", () => {
     expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
   });
 
-  it("GIVEN the device action observable errors WHEN reported THEN it reports failure and errors the job observable", () => {
+  it("GIVEN the device action observable errors WHEN reported THEN it reports failure with a terminal failed state", () => {
     // GIVEN
     const job = startJob();
 
@@ -449,6 +449,11 @@ describe("renameContactIntentJob", () => {
       type: "failure",
       error: expect.objectContaining({ message: "transport disconnected" }),
     });
-    expect(job.getError()).toEqual(expect.objectContaining({ message: "transport disconnected" }));
+    expect(job.states).toContainEqual({
+      type: "failed",
+      error: expect.objectContaining({ message: "transport disconnected" }),
+    });
+    expect(job.isCompleted()).toBe(true);
+    expect(job.getError()).toBeUndefined();
   });
 });
