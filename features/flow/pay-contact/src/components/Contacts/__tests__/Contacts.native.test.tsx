@@ -31,4 +31,33 @@ describe("Contacts (Native)", () => {
 
     expect(onPay).toHaveBeenCalledTimes(1);
   });
+
+  it("should cap the strip at 8 contacts and expose see-all when more are saved", () => {
+    const onSeeAll = jest.fn();
+    const savedContacts = Array.from({ length: 9 }, (_, index) =>
+      mockContact({ id: `contact-${index}`, name: `Contact ${index}` }),
+    );
+
+    renderWithContacts(
+      [mockMeContact(), ...savedContacts],
+      <Contacts {...makeContactsProps({ onSeeAll })} />,
+    );
+
+    expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
+    expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
+
+    screen.getByTestId("pay-contacts-see-all").props.onPress();
+    expect(onSeeAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not expose see-all when 8 or fewer contacts are saved", () => {
+    const savedContacts = Array.from({ length: 8 }, (_, index) =>
+      mockContact({ id: `contact-${index}`, name: `Contact ${index}` }),
+    );
+
+    renderWithContacts([mockMeContact(), ...savedContacts], <Contacts {...makeContactsProps()} />);
+
+    expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
+    expect(screen.getByTestId("pay-contacts-see-all").props.onPress).toBeUndefined();
+  });
 });

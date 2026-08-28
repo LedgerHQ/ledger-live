@@ -10159,7 +10159,8 @@
     },
     "contacts": {
       "title": "Pay",
-      "pay": "New"
+      "pay": "New",
+      "seeAllTitle": "Pay contact"
     }
   },
   "syncIndicator": {
