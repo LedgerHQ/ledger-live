@@ -215,7 +215,6 @@ export function usePerpsDepositExecution(
 
       const depositCurrency = getAccountCurrency(depositAccount);
       const receiveCurrency = getAccountCurrency(receiverAccount);
-      const mainFromAccount = getMainAccount(depositAccount, fromParentAccount);
 
       let signed: Awaited<ReturnType<typeof confirmSignAndBroadcast>> | undefined;
 
@@ -270,8 +269,6 @@ export function usePerpsDepositExecution(
       if (!signed) return;
 
       openPerpsTransactionSigned({
-        operationId: signed.operation.id,
-        accountId: mainFromAccount.id,
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
         provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
