@@ -1,59 +1,82 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import QRCode from "react-native-qrcode-svg";
+import Svg, { Circle, Rect } from "react-native-svg";
+import { createStyledQrCode, FINDER_MODULES } from "./styledQrCode";
 import type { QrCodeProps } from "./types";
 
 const DEFAULT_QR_CODE_SIZE = 200;
-const DEFAULT_CENTER_WRAPPER_SIZE = 56;
+const FOREGROUND_COLOR = "#FFFFFF";
 
 export function QrCode({
   value,
   size = DEFAULT_QR_CODE_SIZE,
+  foregroundColor = FOREGROUND_COLOR,
   centerContent,
   testID,
 }: QrCodeProps): React.JSX.Element {
-  const styles = useStyleSheet(
-    t => ({
-      qrContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        padding: t.spacings.s24,
-        borderRadius: t.sizes.s36,
-        backgroundColor: t.colors.bg.canvasOverlaySubtle,
-        borderWidth: t.borderWidth.s1,
-        borderColor: t.colors.border.base,
-      },
-      qrSurface: {
-        alignItems: "center",
-        justifyContent: "center",
-        padding: t.spacings.s16,
-        borderRadius: t.sizes.s24,
-        backgroundColor: "#FFFFFF",
-      },
-      centerWrapper: {
-        alignItems: "center",
-        justifyContent: "center",
-        width: DEFAULT_CENTER_WRAPPER_SIZE,
-        height: DEFAULT_CENTER_WRAPPER_SIZE,
-        borderRadius: DEFAULT_CENTER_WRAPPER_SIZE / 2,
-        backgroundColor: "#FFFFFF",
-      },
-    }),
-    [],
+  const hasCenterContent = centerContent !== undefined;
+  const styledQrCode = useMemo(
+    () => createStyledQrCode(value, size, hasCenterContent),
+    [value, size, hasCenterContent],
   );
 
   return (
-    <Box testID={testID} style={styles.qrContainer}>
-      <Box style={styles.qrSurface}>
-        <Box lx={{ position: "relative", alignItems: "center", justifyContent: "center" }}>
-          <QRCode size={size} value={value} ecl="H" />
-          {centerContent !== undefined ? (
-            <Box lx={{ position: "absolute" }} style={styles.centerWrapper}>
-              {centerContent}
-            </Box>
-          ) : null}
-        </Box>
+    <Box
+      testID={testID}
+      lx={{
+        position: "relative",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        lx={{
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {styledQrCode.dots.map(({ cx, cy, radius }, index) => (
+            <Circle key={index} cx={cx} cy={cy} r={radius} fill={foregroundColor} />
+          ))}
+          {styledQrCode.finders.map(({ x, y, moduleSize }) => {
+            const outer = FINDER_MODULES * moduleSize;
+
+            return (
+              <React.Fragment key={`${x}-${y}`}>
+                <Rect
+                  x={x + moduleSize / 2}
+                  y={y + moduleSize / 2}
+                  width={outer - moduleSize}
+                  height={outer - moduleSize}
+                  rx={moduleSize * 2}
+                  fill="none"
+                  stroke={foregroundColor}
+                  strokeWidth={moduleSize}
+                />
+                <Rect
+                  x={x + moduleSize * 2}
+                  y={y + moduleSize * 2}
+                  width={moduleSize * 3}
+                  height={moduleSize * 3}
+                  rx={moduleSize}
+                  fill={foregroundColor}
+                />
+              </React.Fragment>
+            );
+          })}
+        </Svg>
+        {hasCenterContent ? (
+          <Box
+            lx={{
+              position: "absolute",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {centerContent}
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );
