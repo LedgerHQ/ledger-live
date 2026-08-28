@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { FormEvent, MouseEvent, useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
@@ -85,16 +85,13 @@ function FormLocalManifest({
     });
   }, []);
 
-  const submitHandler = (
-    e?: React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent<HTMLFormElement>,
-  ) => {
-    if (e) {
-      e.preventDefault();
-    }
-    if (formIsValid) {
-      addLocalManifest(form);
-      onClose();
-    }
+  const submitHandler = (event: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (!LiveAppManifestSchema.safeParse(form).success) return;
+
+    addLocalManifest(form);
+    onClose();
   };
 
   const contentInput = useCallback(() => {
@@ -253,7 +250,7 @@ function FormLocalManifest({
   );
 
   return (
-    <form style={{ width: "90%", margin: "auto" }}>
+    <form noValidate onSubmit={submitHandler} style={{ width: "90%", margin: "auto" }}>
       <ModalBody
         onClose={onClose}
         title={<Trans i18nKey={`settings.developer.createLocalAppModal.title.create`} />}
@@ -378,6 +375,7 @@ function FormLocalManifest({
               <Flex width={"100%"} flexDirection={"row"} columnGap={3} justifyContent={"center"}>
                 <Button
                   small
+                  type="submit"
                   disabled={!formIsValid}
                   primary
                   onClick={submitHandler}
