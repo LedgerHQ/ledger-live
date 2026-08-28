@@ -9,12 +9,14 @@ import {
 import { setOverride } from "@shared/feature-flags";
 import { setHasDismissedContactsFeatureIntroduction } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { hasDismissedContactsFeatureIntroductionSelector } from "~/reducers/settings";
 import { CONTACTS_FLAG } from "./constants";
-import { createContactsDebugSamples } from "./mockContacts";
+import { createContactsDebugSamples, createContactsFromSendHistory } from "./mockContacts";
 
 export function useContactsDevToolViewModel() {
   const dispatch = useDispatch();
+  const accounts = useSelector(flattenAccountsSelector);
   const featureFlag = useFeature(CONTACTS_FLAG);
   const hasDismissedFeatureIntroduction = useSelector(
     hasDismissedContactsFeatureIntroductionSelector,
@@ -60,6 +62,10 @@ export function useContactsDevToolViewModel() {
     dispatch(setContacts(createContactsDebugSamples()));
   }, [dispatch]);
 
+  const handleLoadFromSendHistory = useCallback(() => {
+    dispatch(setContacts(createContactsFromSendHistory(accounts)));
+  }, [dispatch, accounts]);
+
   const handleClearContacts = useCallback(() => {
     dispatch(setContacts([]));
   }, [dispatch]);
@@ -80,6 +86,7 @@ export function useContactsDevToolViewModel() {
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
     handleLoadSamples,
+    handleLoadFromSendHistory,
     handleClearContacts,
   };
 }
