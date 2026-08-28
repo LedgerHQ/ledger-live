@@ -6,7 +6,7 @@ import { initReceiveApp } from "@e2e/specs/verifyAddress/receivePerTest/initRece
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
-setTeamOwner(Team.WALLET_XP);
+setTeamOwner(Team.COIN_INTEGRATION);
 describe("Receive - import a currency", () => {
   beforeAll(initReceiveApp);
   beforeEach(() => app.portfolio.openReceiveDrawer());
