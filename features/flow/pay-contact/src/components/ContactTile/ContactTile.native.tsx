@@ -14,16 +14,15 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
 
   return (
     <Tile
-      appearance="card"
       onPress={onPress ? handlePress : undefined}
-      lx={{ width: "s96", flexGrow: 1, marginLeft: "s8" }}
+      lx={{ width: "s96", flexGrow: 1, marginLeft: "-s8" }}
       testID={`pay-contacts-tile-${index}`}
       accessibilityRole={onPress ? "button" : undefined}
       accessibilityLabel={contact.name}
     >
-      <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
+      <ContactAvatar contactId={contact.id} name={contact.name} size="lg" />
       <TileContent>
-        <TileTitle>{contact.name}</TileTitle>
+        <TileTitle lx={{ color: "muted" }}>{contact.name}</TileTitle>
       </TileContent>
     </Tile>
   );

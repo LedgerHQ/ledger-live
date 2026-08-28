@@ -11,7 +11,7 @@ export function PayTile({ label, onPress }: PayTileProps): React.JSX.Element {
   return (
     <Tile
       onPress={onPress}
-      lx={{ width: "s96", flexGrow: 1 }}
+      lx={{ width: "s96", flexGrow: 1, marginLeft: "-s8" }}
       testID="pay-contacts-pay-tile"
       accessibilityRole="button"
       accessibilityLabel={label}
