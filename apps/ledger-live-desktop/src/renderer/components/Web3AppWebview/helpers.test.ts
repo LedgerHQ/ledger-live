@@ -1,8 +1,9 @@
 import { act, renderHook } from "tests/testSetup";
-import { useWebviewState } from "./helpers";
+import { getAttachedWebview, useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import type { WebviewTag } from "./types";
+import type { WebviewAPI, WebviewTag } from "./types";
+import type { RefObject } from "react";
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -13,7 +14,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
-  safeGetRefValue: jest.fn(),
+  useDAppManifestCurrencyIds: jest.fn(() => []),
 }));
 
 const mockManifest: LiveAppManifest = {
@@ -41,6 +42,41 @@ const mockManifest: LiveAppManifest = {
 };
 
 const mockGetInitialURL = jest.mocked(getInitialURL);
+
+const createWebview = (getWebContentsId: () => number) =>
+  ({
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    getWebContentsId,
+    reload: jest.fn(),
+    goBack: jest.fn(),
+    goForward: jest.fn(),
+    openDevTools: jest.fn(),
+    clearHistory: jest.fn(),
+    loadURL: jest.fn(() => Promise.resolve()),
+  }) as unknown as WebviewTag;
+
+describe("getAttachedWebview", () => {
+  it("returns null when the ref holds no node", () => {
+    expect(getAttachedWebview({ current: null })).toBeNull();
+  });
+
+  it("returns the node while its guest is attached", () => {
+    const webview = createWebview(() => 42);
+
+    expect(getAttachedWebview({ current: webview })).toBe(webview);
+  });
+
+  it("returns null once Electron dropped the guest", () => {
+    const webview = createWebview(() => {
+      throw new Error(
+        "The WebView must be attached to the DOM and the dom-ready event emitted before this method can be called.",
+      );
+    });
+
+    expect(getAttachedWebview({ current: webview })).toBeNull();
+  });
+});
 
 describe("useWebviewState", () => {
   beforeEach(() => {
@@ -125,6 +161,96 @@ describe("useWebviewState", () => {
       const { result } = renderHook(() => useWebviewState({ manifest: manifestWithCache }, null));
 
       expect(result.current.webviewPartition).toEqual({ partition: "persist:myapp-2" });
+    });
+  });
+
+  describe("guest liveness guard", () => {
+    const attached = () => createWebview(() => 42);
+    const detached = () =>
+      createWebview(() => {
+        throw new Error(
+          "The WebView must be attached to the DOM and the dom-ready event emitted before this method can be called.",
+        );
+      });
+
+    const renderWithWebview = (webview: WebviewTag) => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+      const webviewAPIRef: RefObject<WebviewAPI | null> = { current: null };
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, webviewAPIRef),
+      );
+
+      act(() => {
+        result.current.setWebviewRef(webview);
+      });
+
+      return { result, webviewAPIRef };
+    };
+
+    it("drives the webview while its guest is attached", async () => {
+      const webview = attached();
+      const { result, webviewAPIRef } = renderWithWebview(webview);
+
+      webviewAPIRef.current?.reload();
+      webviewAPIRef.current?.goBack();
+      webviewAPIRef.current?.goForward();
+      webviewAPIRef.current?.openDevTools();
+      result.current.handleRefresh();
+      await expect(
+        webviewAPIRef.current?.loadURL("https://example.com/x"),
+      ).resolves.toBeUndefined();
+
+      expect(webview.reload).toHaveBeenCalledTimes(2);
+      expect(webview.goBack).toHaveBeenCalledTimes(1);
+      expect(webview.goForward).toHaveBeenCalledTimes(1);
+      expect(webview.openDevTools).toHaveBeenCalledTimes(1);
+      expect(webview.loadURL).toHaveBeenCalledWith("https://example.com/x");
+    });
+
+    it("no-ops instead of throwing once the element left the DOM", () => {
+      // Electron drops the guest on detach, so every forwarded call throws. A top bar
+      // button or the network error retry can still reach the node during teardown.
+      const webview = detached();
+      const { result, webviewAPIRef } = renderWithWebview(webview);
+
+      expect(() => webviewAPIRef.current?.reload()).not.toThrow();
+      expect(() => webviewAPIRef.current?.goBack()).not.toThrow();
+      expect(() => webviewAPIRef.current?.goForward()).not.toThrow();
+      expect(() => webviewAPIRef.current?.openDevTools()).not.toThrow();
+      expect(() => webviewAPIRef.current?.clearHistory()).not.toThrow();
+      expect(() => result.current.handleRefresh()).not.toThrow();
+
+      expect(webview.reload).not.toHaveBeenCalled();
+      expect(webview.goBack).not.toHaveBeenCalled();
+      expect(webview.goForward).not.toHaveBeenCalled();
+      expect(webview.openDevTools).not.toHaveBeenCalled();
+      expect(webview.clearHistory).not.toHaveBeenCalled();
+    });
+
+    it("no-ops before the ref holds a node at all", async () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+      const webviewAPIRef: RefObject<WebviewAPI | null> = { current: null };
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, webviewAPIRef),
+      );
+
+      expect(() => webviewAPIRef.current?.reload()).not.toThrow();
+      expect(() => result.current.handleRefresh()).not.toThrow();
+      await expect(webviewAPIRef.current?.loadURL("https://example.com/x")).rejects.toThrow(
+        "Webview is not attached",
+      );
+    });
+
+    it("rejects loadURL when detached so callers keep their fallback", async () => {
+      const webview = detached();
+      const { webviewAPIRef } = renderWithWebview(webview);
+
+      await expect(webviewAPIRef.current?.loadURL("https://example.com/x")).rejects.toThrow(
+        "Webview is not attached",
+      );
+      expect(webview.loadURL).not.toHaveBeenCalled();
     });
   });
 

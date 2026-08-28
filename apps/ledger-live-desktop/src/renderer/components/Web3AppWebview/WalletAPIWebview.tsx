@@ -30,7 +30,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
-import { useWebviewState } from "./helpers";
+import { getAttachedWebview, useWebviewState } from "./helpers";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -316,7 +316,7 @@ function useWebView(
 
   const webviewHook = useMemo(() => {
     return {
-      reload: () => webviewRef.current?.reloadIgnoringCache(),
+      reload: () => getAttachedWebview(webviewRef)?.reloadIgnoringCache(),
       postMessage: (message: string) => {
         const webview = webviewRef.current;
         if (webview) {
