@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { act, renderHook } from "tests/testSetup";
 import { usePerpsDepositExecution, type PerpsDepositDeviceStep } from "../usePerpsDepositExecution";
 
@@ -34,18 +34,9 @@ jest.mock("@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams
   getUpdateAccountWithUpdaterParams: () => [],
 }));
 
-function createAccount(id: string, currencyId: string): AccountLike {
-  return {
-    type: "Account",
-    id,
-    currency: getCryptoCurrencyById(currencyId),
-    spendableBalance: new BigNumber(0),
-    balance: new BigNumber(0),
-  } as AccountLike;
-}
-
-const depositAccount = createAccount("funding-1", "ethereum");
-const receiverAccount = createAccount("receiver-1", "ethereum");
+const ethereum = getCryptoCurrencyById("ethereum");
+const depositAccount = genAccount("funding-1", { currency: ethereum, operationsSize: 0 });
+const receiverAccount = genAccount("receiver-1", { currency: ethereum, operationsSize: 0 });
 
 const params = {
   depositAccount,
