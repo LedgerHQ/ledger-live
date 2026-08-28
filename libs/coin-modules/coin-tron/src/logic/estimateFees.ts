@@ -1,7 +1,7 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import type { TronCoinConfig } from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 import {
   fetchTronAccount,
   getChainParameters,
@@ -307,10 +307,11 @@ const withBreakdown = (value: bigint, breakdown: TronResourceBreakdown): FeeEsti
   parameters: { ...breakdown },
 });
 
-// 10-min fastTrade window matching the UI's fee-quote TTL
-const TRONIFY_RENTAL_DURATION_SECONDS = 600;
-// Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost — 0.8 TRX (not SUN)
-const TRONIFY_RENTAL_EXTRA_TRX = 0.8;
+// Defaults used when the remote coin-config (energyRent.tronify) doesn't override them.
+// 10-min fastTrade window matching the UI's fee-quote TTL.
+const DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS = 600;
+// Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost — 0.8 TRX (not SUN).
+const DEFAULT_TRONIFY_RENTAL_EXTRA_TRX = 0.8;
 
 /**
  * Estimate fees for the Tronify energy-rent option.
@@ -339,6 +340,14 @@ export async function estimateTronifyFees(
   // Single energy simulation; result feeds both the standard burn calc and the Tronify quote.
   const energyNeeded = await estimateEnergy(config, intent);
 
+  // Rental params are remote-configurable via coin-config (energyRent.tronify), so they can be
+  // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
+  // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
+  const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
+  const durationSeconds =
+    tronifyConfig?.rentalDurationSeconds ?? DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS;
+  const extraTrx = tronifyConfig?.rentalExtraTrx ?? DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
+
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
   // known, so they run in parallel to keep pricing latency minimal.
@@ -351,8 +360,8 @@ export async function estimateTronifyFees(
       payerAddress: intent.sender,
       receiverAddress: intent.sender, // energy is delegated to the sender (they call the contract)
       energy: BigInt(energyNeeded),
-      durationSeconds: TRONIFY_RENTAL_DURATION_SECONDS,
-      extraTrx: TRONIFY_RENTAL_EXTRA_TRX,
+      durationSeconds,
+      extraTrx,
     }),
   ]);
 
