@@ -66,6 +66,11 @@
             "message": "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing."
           },
           {
+            "name": "i18next",
+            "importNames": ["default", "t", "i18n"],
+            "message": "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'."
+          },
+          {
             "name": "@ledgerhq/ledger-wallet-framework/types",
             "importNames": [
               "CryptoCurrency",

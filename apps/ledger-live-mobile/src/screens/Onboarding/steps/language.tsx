@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
 import { Trans, useLocale } from "~/context/Locale";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import RNRestart from "react-native-restart";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";

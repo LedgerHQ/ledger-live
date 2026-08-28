@@ -1,7 +1,7 @@
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, renderHook } from "@testing-library/react-native";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import {

@@ -1,6 +1,6 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
@@ -58,6 +58,40 @@ function getRecipientPlaceholderKey({
       : "newSendFlow.placeholderNoEnsWithContacts";
   }
   return supportsDomain ? "newSendFlow.placeholder" : "newSendFlow.placeholderNoENS";
+}
+
+function resolveHeaderTitle({
+  isSelectingContactAddress,
+  showTitle,
+  titleKey,
+  currencyName,
+}: Readonly<{
+  isSelectingContactAddress: boolean;
+  showTitle: boolean;
+  titleKey: string;
+  currencyName: string;
+}>): string {
+  if (isSelectingContactAddress) return t("newSendFlow.selectAddress");
+  if (!showTitle) return "";
+  return t(titleKey, { currency: currencyName });
+}
+
+function resolveHeaderDescription({
+  isSelectingContactAddress,
+  selectedContactName,
+  showTitle,
+  showAvailable,
+  accountSummary,
+}: Readonly<{
+  isSelectingContactAddress: boolean;
+  selectedContactName: string | undefined;
+  showTitle: boolean;
+  showAvailable: boolean;
+  accountSummary: string;
+}>): string {
+  if (isSelectingContactAddress) return selectedContactName ?? "";
+  if (showTitle && showAvailable && accountSummary) return accountSummary;
+  return "";
 }
 
 export function useSendHeaderModel({
@@ -126,17 +160,20 @@ export function useSendHeaderModel({
   });
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
-  const title = isSelectingContactAddress
-    ? t("newSendFlow.selectAddress")
-    : showTitle
-      ? t(titleKey, { currency: currencyName })
-      : "";
+  const title = resolveHeaderTitle({
+    isSelectingContactAddress,
+    showTitle,
+    titleKey,
+    currencyName,
+  });
 
-  const descriptionText = isSelectingContactAddress
-    ? selectedContact.name
-    : showTitle && showAvailable && accountSummary
-      ? accountSummary
-      : "";
+  const descriptionText = resolveHeaderDescription({
+    isSelectingContactAddress,
+    selectedContactName: selectedContact?.name,
+    showTitle,
+    showAvailable,
+    accountSummary,
+  });
 
   const handleBack = useCallback(() => {
     closeScanner();

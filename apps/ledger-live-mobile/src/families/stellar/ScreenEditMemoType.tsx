@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "~/context/Locale";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import LText from "~/components/LText";

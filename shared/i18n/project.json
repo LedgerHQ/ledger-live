@@ -1,0 +1,8 @@
+{
+  "name": "@shared/i18n",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

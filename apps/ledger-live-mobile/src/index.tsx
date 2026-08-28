@@ -9,6 +9,7 @@ import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
+import { I18nProvider } from "@shared/i18n";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
@@ -365,33 +366,38 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedBottomSheetsProvider>
+                {/* Two providers, one instance: `I18nextProvider` serves the app's own
+                    react-i18next call sites, `I18nProvider` serves the DDD packages through
+                    `@shared/i18n`. */}
                 <I18nextProvider i18n={i18n}>
-                  <LocaleProvider>
-                    <PlatformAppProviderWrapper>
-                      <SafeAreaProvider>
-                        <ModalSystemPrimer />
-                        <StylesProvider>
-                          <StyledStatusBar />
-                          <NavBarColorHandler />
-                          <AuthPass>
-                            <GestureHandlerRootView style={styles.root}>
-                              <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                <AppProviders initialCountervalues={initialCountervalues}>
-                                  <AppGeoBlocker>
-                                    <AppVersionBlocker>
-                                      <BridgeSyncProvider>
-                                        <App />
-                                      </BridgeSyncProvider>
-                                    </AppVersionBlocker>
-                                  </AppGeoBlocker>
-                                </AppProviders>
-                              </WaitForAppReady>
-                            </GestureHandlerRootView>
-                          </AuthPass>
-                        </StylesProvider>
-                      </SafeAreaProvider>
-                    </PlatformAppProviderWrapper>
-                  </LocaleProvider>
+                  <I18nProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <ModalSystemPrimer />
+                          <StylesProvider>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <GestureHandlerRootView style={styles.root}>
+                                <WaitForAppReady currencyInitialized={currencyInitialized}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <BridgeSyncProvider>
+                                          <App />
+                                        </BridgeSyncProvider>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </WaitForAppReady>
+                              </GestureHandlerRootView>
+                            </AuthPass>
+                          </StylesProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nProvider>
                 </I18nextProvider>
               </QueuedBottomSheetsProvider>
             </RebootProvider>

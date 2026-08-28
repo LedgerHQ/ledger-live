@@ -64,6 +64,11 @@
             "message": "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance."
           },
           {
+            "name": "i18next",
+            "importNames": ["default", "t", "i18n"],
+            "message": "The app no longer initialises the i18next global singleton. Import the app instance from '~/i18n/instance' (or the hooks from '~/context/Locale')."
+          },
+          {
             "name": "@ledgerhq/ledger-wallet-framework/types",
             "importNames": [
               "CryptoCurrency",

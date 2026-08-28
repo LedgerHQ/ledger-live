@@ -215,6 +215,7 @@
     "@shared/cloud-sync": "workspace:^",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
+    "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@shopify/flash-list": "2.2.0",

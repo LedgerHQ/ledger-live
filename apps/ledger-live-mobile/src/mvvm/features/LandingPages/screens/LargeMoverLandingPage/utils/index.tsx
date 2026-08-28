@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
 function getTimeAgoCode(date: Date): string {
