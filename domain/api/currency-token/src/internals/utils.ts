@@ -42,6 +42,12 @@ export function transformApiTokenToTokenCurrency(
 export function validateAndTransformSingleTokenResponse(
   response: unknown,
 ): TokenCurrency | undefined {
+  // The CAL endpoint answers with a JSON `null` body (rather than `[]`) to mean
+  // "token not found". Treat that (and `undefined`) as "not found" before parsing,
+  // so it resolves to `undefined` instead of throwing a ZodError.
+  if (response === null || response === undefined) {
+    return undefined;
+  }
   const validatedResponse = ApiResponseSchema.parse(response);
   const apiToken = validatedResponse[0];
   if (!apiToken) {

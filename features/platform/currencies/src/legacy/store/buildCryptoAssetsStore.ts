@@ -102,7 +102,21 @@ export function remapRtkQueryError(error: FetchBaseQueryError | SerializedError)
     }
     if (status === "FETCH_ERROR") return new NetworkDown();
     // PARSING_ERROR / TIMEOUT_ERROR / CUSTOM_ERROR — surface the message.
-    return new Error("error" in error ? error.error : String(status));
+    return new Error("error" in error ? toErrorMessage(error.error, status) : String(status));
   }
   return new Error(error.message ?? "Unknown crypto-assets store error");
+}
+
+/**
+ * Builds a safe, readable error message for the `error` field of a non-HTTP
+ * {@link FetchBaseQueryError} (`PARSING_ERROR` / `TIMEOUT_ERROR` / `CUSTOM_ERROR`).
+ *
+ * That field is typed as `string`, but a failing `transformResponse` (e.g. a Zod
+ * schema throwing) can populate it with a raw Zod issue array or another
+ * non-string payload once it goes through RTK Query's `String(e)` coercion —
+ * producing an unreadable message. Fall back to a generic, status-qualified
+ * message whenever the payload isn't a plain string.
+ */
+function toErrorMessage(rawError: unknown, status: string): string {
+  return typeof rawError === "string" ? rawError : `Unknown ${status.toLowerCase()} error`;
 }
