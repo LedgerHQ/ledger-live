@@ -10,6 +10,7 @@ import {
   type Contact,
 } from "@domain/entity-contact";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
 import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
 import {
   isPrefillAddAddressFlowOpen,
@@ -29,7 +30,6 @@ import {
   useAddNewContactHeaderController,
   type AddNewContactHeaderState,
 } from "../context/AddNewContactHeaderContext";
-import { resolvePrefillAddAddressParams } from "LLD/features/Send/utils/resolvePrefillAddAddressParams";
 
 export type SendPrefillAddAddressPhase = Readonly<{
   state: PrefillAddAddressFlowVisibleState;
@@ -173,7 +173,6 @@ export function useSendPrefillAddAddressFlow({
     async (contact: Contact) => {
       selectedContactRef.current = contact;
       const params = resolvePrefillAddAddressParams({
-        contactId: contact.id,
         address: recipientSearch.value,
         currency: state.account.currency,
       });
