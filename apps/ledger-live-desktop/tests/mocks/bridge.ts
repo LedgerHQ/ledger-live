@@ -101,6 +101,7 @@ export const dialogs: jest.Mocked<DialogsBridge> = {
 export const files: jest.Mocked<FilesBridge> = {
   saveLogs: jest.fn().mockResolvedValue(undefined),
   exportOperations: jest.fn().mockResolvedValue(true),
+  savePng: jest.fn().mockResolvedValue(true),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
   readLocalManifest: jest.fn().mockResolvedValue(null),
   writeLocalManifest: jest.fn().mockResolvedValue(false),

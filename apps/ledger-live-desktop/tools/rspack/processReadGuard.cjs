@@ -51,9 +51,6 @@ const ALLOWED = new Map([
   ["msw :: stderr", "dev-only, behind ENABLE_MSW"],
   ["@open-draft/logger :: stdout", "dev-only, pulled in by MSW"],
   ["@open-draft/logger :: stderr", "dev-only, pulled in by MSW"],
-  // Node entry that should not be reachable from the renderer at all. Tracked separately;
-  // allowed here so the guard reports genuinely new problems rather than this known one.
-  ["electron :: execPath", "electron's Node entry, dead code in the renderer bundle"],
 ]);
 
 const B64 = new Map(

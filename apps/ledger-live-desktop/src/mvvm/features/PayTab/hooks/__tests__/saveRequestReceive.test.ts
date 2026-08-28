@@ -1,13 +1,7 @@
-import { ipcRenderer } from "electron";
 import { toPng } from "html-to-image";
+import { files } from "~/renderer/bridge";
 import logger from "~/renderer/logger";
 import { saveRequestReceive } from "../saveRequestReceive";
-
-jest.mock("electron", () => ({
-  ipcRenderer: {
-    invoke: jest.fn(),
-  },
-}));
 
 jest.mock("html-to-image", () => ({ toPng: jest.fn() }), { virtual: true });
 
@@ -17,7 +11,7 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 const mockedToPng = jest.mocked(toPng);
-const mockedInvoke = jest.mocked(ipcRenderer.invoke);
+const mockedSavePng = jest.mocked(files.savePng);
 const mockedLoggerError = jest.mocked(logger.error);
 
 const SUMMARY_HTML = '<div data-testid="pay-request-receive-summary">card</div>';
@@ -34,14 +28,13 @@ describe("saveRequestReceive", () => {
     document.body.innerHTML = "";
   });
 
-  it("should invoke save-png with dialog options and base64 when capturing succeeds", async () => {
-    mockedInvoke.mockResolvedValueOnce(true);
+  it("should save the PNG with dialog options and base64 when capturing succeeds", async () => {
+    mockedSavePng.mockResolvedValueOnce(true);
 
     await saveRequestReceive("USDC", "Save request card");
 
-    expect(mockedInvoke).toHaveBeenCalledTimes(1);
-    expect(mockedInvoke).toHaveBeenCalledWith(
-      "save-png",
+    expect(mockedSavePng).toHaveBeenCalledTimes(1);
+    expect(mockedSavePng).toHaveBeenCalledWith(
       expect.objectContaining({
         title: "Save request card",
         defaultPath: "ledger-request-USDC.png",
@@ -58,7 +51,7 @@ describe("saveRequestReceive", () => {
     await saveRequestReceive("USDC", "Save request card");
 
     expect(mockedToPng).not.toHaveBeenCalled();
-    expect(mockedInvoke).not.toHaveBeenCalled();
+    expect(mockedSavePng).not.toHaveBeenCalled();
   });
 
   it("should swallow and log capture failures", async () => {
@@ -67,7 +60,7 @@ describe("saveRequestReceive", () => {
 
     await saveRequestReceive("USDC", "Save request card");
 
-    expect(mockedInvoke).not.toHaveBeenCalled();
+    expect(mockedSavePng).not.toHaveBeenCalled();
     expect(mockedLoggerError).toHaveBeenCalledWith(error);
   });
 });
