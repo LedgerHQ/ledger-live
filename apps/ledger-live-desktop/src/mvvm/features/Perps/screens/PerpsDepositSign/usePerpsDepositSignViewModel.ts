@@ -1,23 +1,42 @@
-import { useEffect, useRef } from "react";
-import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { useCallback, useEffect, useRef } from "react";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
 } from "LLD/features/Perps/hooks/usePerpsDepositExecution";
+import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
+import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
+import type { PerpsReviewData } from "../PerpsReview/usePerpsReviewViewModel";
 
-export type PerpsDepositSignData = PerpsDepositReviewParams;
+export type PerpsDepositSignData = PerpsReviewData;
 
 export type PerpsDepositSignViewModel = {
   deviceStep: PerpsDepositDeviceStep;
   retry: () => void;
   onClose: () => void;
+  /** Errors raised while connecting to the device, which never reach the execution. */
+  onDeviceError: (error: Error) => void;
 };
 
 export function usePerpsDepositSignViewModel(
   data: PerpsDepositSignData,
   onClose: () => void,
 ): PerpsDepositSignViewModel {
-  const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(data, onClose);
+  const handleRefused = useCallback(() => {
+    openPerpsReview(data);
+    onClose();
+  }, [data, onClose]);
+
+  const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(data, {
+    onDone: onClose,
+    onRefused: handleRefused,
+  });
+
+  const onDeviceError = useCallback(
+    (error: Error) => {
+      if (isUserRefusal(error)) handleRefused();
+    },
+    [handleRefused],
+  );
 
   const startedRef = useRef(false);
   useEffect(() => {
@@ -30,5 +49,6 @@ export function usePerpsDepositSignViewModel(
     deviceStep,
     retry,
     onClose,
+    onDeviceError,
   };
 }

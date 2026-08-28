@@ -77,22 +77,22 @@ describe("usePerpsReviewViewModel", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("should hand the signing dialog the quote the review priced against", () => {
+  it("should hand the signing dialog the quote the review priced against, and the draft behind it", () => {
     const onClose = jest.fn();
-    const data = createData({
-      quoteId: "quote-1",
-      draft: { depositAccount, depositAmount: 20 },
-    });
+    const draft = { depositAccount, depositAmount: 20 };
+    const data = createData({ quoteId: "quote-1", draft });
     const { result } = renderHook(() => usePerpsReviewViewModel(data, onClose));
 
     result.current.handleDeposit();
 
+    // The draft travels with the quote so a decline on the device can come back here.
     expect(mockOpenPerpsDepositSign).toHaveBeenCalledWith({
       depositAccount,
       receiverAccount,
       amountSent: data.amountSent,
       amountTo: data.amountTo,
       quoteId: "quote-1",
+      draft,
     });
     expect(onClose).toHaveBeenCalled();
     expect(mockOpenPerpsDeposit).not.toHaveBeenCalled();

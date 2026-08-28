@@ -31,6 +31,7 @@ import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/u
 import type { States } from "~/renderer/components/DeviceAction";
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "~/renderer/analytics/segment";
+import { isUserRefusal } from "../utils/isUserRefusal";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -61,6 +62,11 @@ export type PerpsDepositExecution = Readonly<{
   retry: () => void;
 }>;
 
+export type PerpsDepositExecutionCallbacks = Readonly<{
+  onDone: () => void;
+  onRefused: () => void;
+}>;
+
 const EXCHANGE_APP_NAME = "Exchange";
 const FEE_STRATEGY = "medium";
 
@@ -70,16 +76,12 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
 );
 
 /**
- * Drives a perps deposit through the shared swap orchestration, rendering each
- * device step in the perps signing dialog rather than the live-app drawer.
- *
- * The sequence itself — nonce, provider payload, funding transaction — belongs to
- * `executeSwap`; this hook only supplies the screens and the app-state updates
- * that follow the broadcast.
+ * Runs a perps deposit through `executeSwap`, which owns the sequence, and
+ * renders its device steps in the perps dialog rather than the live-app drawer.
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  onDone: () => void,
+  { onDone, onRefused }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -266,10 +268,10 @@ export function usePerpsDepositExecution(
 
       onDone();
     } catch (e) {
-      // Device connection errors (lock / disconnect / wrong app) are rendered and
-      // retried in-place by <DeviceAction>, so they never reach here. What lands
-      // here is a result-variant error it delegates to us — a user cancel/refusal
-      // or a business failure — so we surface it (with retry) instead of spinning.
+      if (isUserRefusal(e)) {
+        onRefused();
+        return;
+      }
       setDeviceStep({ kind: "error", error: e instanceof Error ? e : new Error(String(e)) });
     }
   }, [
@@ -279,6 +281,7 @@ export function usePerpsDepositExecution(
     depositAccount,
     getFeature,
     onDone,
+    onRefused,
     quoteId,
     receiverAccount,
     runDeviceStep,
