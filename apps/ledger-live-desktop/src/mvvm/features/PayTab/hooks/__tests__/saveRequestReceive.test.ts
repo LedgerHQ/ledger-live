@@ -29,7 +29,7 @@ describe("saveRequestReceive", () => {
   });
 
   it("should save the PNG with dialog options and base64 when capturing succeeds", async () => {
-    mockedSavePng.mockResolvedValueOnce(true);
+    mockedSavePng.mockResolvedValueOnce("saved");
 
     await saveRequestReceive("USDC", "Save request card");
 

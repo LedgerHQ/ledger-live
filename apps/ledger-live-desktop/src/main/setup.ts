@@ -9,14 +9,9 @@ import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 import { openURL } from "./openURL";
+import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
 
-/**
- * Sets env variables for the main process.
- *
- * The renderer seeds its own env independently; there is no IPC channel keeping the
- * two in sync. Main reads `process.env` directly because it needs these before the
- * renderer process is spawned.
- */
+// The renderer seeds its own env independently; no IPC channel keeps the two in sync.
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
@@ -26,63 +21,65 @@ ipcMain.on("updater", (e, type) => {
 });
 
 /**
- * Saves logs from the renderer process to a file.
+ * Runs the save dialog and keeps the path, so the renderer never learns one. It used to
+ * receive the path and hand it back, which made every write handler an arbitrary-file-write
+ * primitive. `e2ePath` bypasses the dialog only when PLAYWRIGHT_RUN is set in this process.
  */
+async function resolveSaveTarget({ options, e2ePath }: SaveRequest): Promise<string | null> {
+  if (e2ePath && getEnv("PLAYWRIGHT_RUN")) return e2ePath;
+  const { canceled, filePath } = await dialog.showSaveDialog(options);
+  return canceled ? null : (filePath ?? null);
+}
+
 ipcMain.handle(
   "save-logs",
-  async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
-    if (!path.canceled && path.filePath) {
-      const inMemoryLogger = InMemoryLogger.getLogger();
-      const internalLogsChronological = inMemoryLogger.getLogs().reverse(); // The logs are in reverse order.
+  async (_event, request: SaveRequest, rendererLogsStr: string): Promise<SaveOutcome> => {
+    const target = await resolveSaveTarget(request);
+    if (!target) return "canceled";
 
-      // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
-      // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogsChronological: Array<{ timestamp: string }> = [];
-      try {
-        rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
-      } catch (e) {
-        console.warn("Error while parsing logs from the renderer process", e);
-        return;
-      }
+    const internalLogsChronological = InMemoryLogger.getLogger().getLogs().reverse();
 
-      fs.writeFile(
-        path.filePath,
-        mergeAllLogsJSON(
-          rendererLogsChronological,
-          internalLogsChronological,
-          getEnv("EXPORT_MAX_LOGS"),
-        ),
-      );
-    } else {
-      console.warn("No path given to save logs");
+    // Pre-stringified by the caller: passing the array itself hits Electron's serialiser,
+    // which cannot carry the circular references the in-memory logs contain.
+    let rendererLogsChronological: Array<{ timestamp: string }> = [];
+    try {
+      rendererLogsChronological = JSON.parse(rendererLogsStr).reverse();
+    } catch (e) {
+      console.warn("Error while parsing logs from the renderer process", e);
+      return "failed";
     }
+
+    await fs.writeFile(
+      target,
+      mergeAllLogsJSON(
+        rendererLogsChronological,
+        internalLogsChronological,
+        getEnv("EXPORT_MAX_LOGS"),
+      ),
+    );
+    return "saved";
   },
 );
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
 
-/**
- * Opens a URL in the user's browser. `openURL` validates the scheme, so a renderer that
- * has been compromised cannot use this to launch arbitrary protocol handlers.
- */
+// `openURL` validates the scheme, so a compromised renderer cannot use this to launch
+// arbitrary protocol handlers.
 ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
 
 /**
- * Clipboard access on the renderer's behalf. Done here rather than via
- * `navigator.clipboard` because the window grants only the `hid` permission, so a
- * clipboard-read request from the renderer would be denied.
+ * Clipboard access on the renderer's behalf, rather than `navigator.clipboard`: the window's
+ * permission handler grants only `hid`, so a clipboard-read from the renderer is denied —
+ * and widening that policy would give back part of what this migration removes.
  */
 ipcMain.on("clipboard:write-text", (_event, text: string) => clipboard.writeText(text));
 
 ipcMain.handle("clipboard:read-text", () => clipboard.readText());
 
 /**
- * Dev-only: reads a per-environment dotenv file for the renderer's config-mismatch
- * diagnostic. These files exist only in a repo checkout, and the renderer has no
- * filesystem access of its own.
- *
- * The environment name is checked against a fixed list rather than interpolated
- * directly, so a compromised renderer cannot use this to read arbitrary files.
+ * Dev-only, for the renderer's config-mismatch diagnostic. The environment name is checked
+ * against a fixed list rather than interpolated into the path, so a compromised renderer
+ * cannot use this to read arbitrary files.
  */
 const DOTENV_ENVIRONMENTS = new Set(["production", "staging", "testing", "development"]);
 
@@ -96,11 +93,8 @@ ipcMain.handle("read-dotenv-file", async (_event, environment: string) => {
 });
 
 /**
- * Local Live App manifests (Developer settings).
- *
- * The dialog and the file I/O are deliberately performed together here rather than
- * handing a filesystem path back to the renderer: the renderer only ever sees the file
- * contents it asked for, never a path it could reuse to read or write somewhere else.
+ * Local Live App manifests (Developer settings). The dialog and the file I/O happen together
+ * here, so the renderer only ever sees file contents, never a path it could reuse.
  */
 ipcMain.handle("read-local-manifest", async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ["openFile"] });
@@ -132,41 +126,31 @@ ipcMain.handle("write-local-manifest", async (_event, defaultName: string, conte
 
 ipcMain.handle(
   "export-operations",
-  async (
-    event,
-    path: {
-      canceled: boolean;
-      filePath: string;
-    },
-    csv: string,
-  ): Promise<boolean> => {
+  async (_event, request: SaveRequest, csv: string): Promise<SaveOutcome> => {
+    if (!csv) return "failed";
     try {
-      if (!path.canceled && path.filePath && csv) {
-        await fs.writeFile(path.filePath, csv);
-        return true;
-      }
+      const target = await resolveSaveTarget(request);
+      if (!target) return "canceled";
+      await fs.writeFile(target, csv);
+      return "saved";
     } catch {
-      // ignore
+      return "failed";
     }
-    return false;
   },
 );
 
 ipcMain.handle(
   "save-png",
-  async (_event, dialogOptions: Electron.SaveDialogOptions, base64: string): Promise<boolean> => {
+  async (_event, options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome> => {
+    if (!base64) return "failed";
     try {
-      if (base64) {
-        const result = await dialog.showSaveDialog(dialogOptions);
-        if (!result.canceled && result.filePath) {
-          await fs.writeFile(result.filePath, Buffer.from(base64, "base64"));
-          return true;
-        }
-      }
+      const target = await resolveSaveTarget({ options });
+      if (!target) return "canceled";
+      await fs.writeFile(target, Buffer.from(base64, "base64"));
+      return "saved";
     } catch {
-      // ignore
+      return "failed";
     }
-    return false;
   },
 );
 
