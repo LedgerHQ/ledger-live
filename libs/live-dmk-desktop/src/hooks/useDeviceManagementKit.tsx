@@ -21,8 +21,17 @@ const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManageme
  * Read through a function rather than captured in a constant because the flag
  * is pushed to all threads at boot, after this module is first imported.
  */
+// Scanned rather than matched with /\/+$/, whose backtracking CodeQL flags as
+// polynomial on attacker-influenced input.
+// See: https://github.com/LedgerHQ/ledger-live/security/code-scanning/358
+const stripTrailingSlashes = (value: string): string => {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end--;
+  return value.slice(0, end);
+};
+
 export const getMockServerTransportUrl = (): string =>
-  getEnv("MOCK_SERVER_TRANSPORT_URL").replace(/\/+$/, "");
+  stripTrailingSlashes(getEnv("MOCK_SERVER_TRANSPORT_URL"));
 
 let instance: DeviceManagementKit | null = null;
 
@@ -50,8 +59,7 @@ export const getMockScriptRunnerBaseUrl = (
   sessionToken?: string,
 ): string | undefined => {
   if (!sessionToken) return undefined;
-  const wsBase = mockServerUrl
-    .replace(/\/+$/, "")
+  const wsBase = stripTrailingSlashes(mockServerUrl)
     .replace(/^https:/, "wss:")
     .replace(/^http:/, "ws:");
   return `${wsBase}/secure-channel/${sessionToken}`;
