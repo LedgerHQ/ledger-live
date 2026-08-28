@@ -34,9 +34,11 @@ jest.mock("@ledgerhq/live-common/exchange/platform/completeExchange", () => ({
 }));
 
 // The account updater needs a full swap exchange to build its updaters; the
-// deposit only cares that the broadcast reached the signed dialog.
+// deposit only cares about what it is told the swap is worth.
+const mockGetUpdateAccountWithUpdaterParams = jest.fn(() => []);
 jest.mock("@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams", () => ({
-  getUpdateAccountWithUpdaterParams: () => [],
+  getUpdateAccountWithUpdaterParams: (params: unknown) =>
+    mockGetUpdateAccountWithUpdaterParams(params as never),
 }));
 
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -97,7 +99,7 @@ async function signWith(signResult: unknown) {
   });
 
   await answerDeviceStep(execution.result.current.deviceStep, {
-    completeExchangeResult: { family: "ethereum" },
+    completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
   });
   await answerDeviceStep(execution.result.current.deviceStep, signResult);
 
@@ -175,7 +177,7 @@ describe("usePerpsDepositExecution", () => {
     // Exchange app's payload check.
     expect(result.current.deviceStep).toMatchObject({ stepId: "confirm" });
     await answerDeviceStep(result.current.deviceStep, {
-      completeExchangeResult: { family: "ethereum" },
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
     });
 
     expect(result.current.deviceStep).toMatchObject({ stepId: "sign" });
@@ -189,6 +191,16 @@ describe("usePerpsDepositExecution", () => {
       provider: "swapkit_hyperliquid",
     });
     expect(onDone).toHaveBeenCalled();
+  });
+
+  it("records the swap at the quoted price, not the one the payload implies", async () => {
+    await signWith({ signedOperation: { operation } });
+
+    // The payload states its payout in the provider's own precision, so pricing
+    // the history from it would misreport the deposit once it is displayed.
+    expect(mockGetUpdateAccountWithUpdaterParams).toHaveBeenCalledWith(
+      expect.objectContaining({ magnitudeAwareRate: new BigNumber("0.95") }),
+    );
   });
 
   it("surfaces a failed signature instead of spinning", async () => {

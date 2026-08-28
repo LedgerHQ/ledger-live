@@ -100,10 +100,15 @@ export function usePerpsDepositExecution(
   const signAction = useTransactionAction();
   const completeAction = useMemo(() => createCompleteExchangeAction(completeExchange), []);
 
-  const { depositAccount, receiverAccount, amountSent, quoteId } = params;
+  const { depositAccount, receiverAccount, amountSent, amountTo, quoteId } = params;
   const fromParentAccount = useMemo(
     () => getParentAccount(depositAccount, accounts),
     [depositAccount, accounts],
+  );
+
+  const quotedReceiveAmount = useMemo(
+    () => parseCurrencyUnit(getAccountCurrency(receiverAccount).units[0], amountTo),
+    [amountTo, receiverAccount],
   );
 
   const broadcastConfig = useMemo(
@@ -183,7 +188,9 @@ export function usePerpsDepositExecution(
           result: { operation, swapId },
           exchange: exchangeParams.exchange as ExchangeSwap,
           transaction: finalTransaction,
-          magnitudeAwareRate: exchangeParams.magnitudeAwareRate ?? new BigNumber(0),
+          magnitudeAwareRate: finalTransaction.amount.isZero()
+            ? new BigNumber(0)
+            : quotedReceiveAmount.div(finalTransaction.amount),
           provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
         });
         if (updateParams.length) {
@@ -199,6 +206,7 @@ export function usePerpsDepositExecution(
       depositAccount,
       dispatch,
       fromParentAccount,
+      quotedReceiveAmount,
       runDeviceStep,
       signAction,
     ],
