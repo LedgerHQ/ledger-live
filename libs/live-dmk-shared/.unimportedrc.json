@@ -11,7 +11,8 @@
     "@jest/expect-utils",
     "@jest/get-type",
     "jest-util",
-    "@ledgerhq/device-management-kit"
+    "@ledgerhq/device-management-kit",
+    "@ledgerhq/dmk-ledger-wallet"
   ],
   "ignoreUnused": [
     "@types/semver"

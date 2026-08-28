@@ -48,6 +48,12 @@ export default function Features() {
         iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutor)}
       />
+      <SettingsRow
+        title="OS Update"
+        desc="Test the OS update orchestrator on a connected device"
+        iconLeft={<IconsLegacy.NanoFirmwareUpdateMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugOsUpdateOrchestrator)}
+      />
 
       <BLEPairingFlow />
       {/* Split all the custom lockscreen screens into a separate menu maybe? */}

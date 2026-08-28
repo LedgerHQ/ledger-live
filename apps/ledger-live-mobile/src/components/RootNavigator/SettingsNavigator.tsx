@@ -15,6 +15,7 @@ import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceI
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
+import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug/screens/OsUpdatesOrchestratorDebugScreen";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
@@ -379,6 +380,13 @@ export default function SettingsNavigator() {
         component={DebugLargeScreenUpsell}
         options={{
           title: "Large-screen upsell",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugOsUpdateOrchestrator}
+        component={DebugOsUpdateOrchestrator}
+        options={{
+          title: "OS Update orchestrator",
         }}
       />
       <Stack.Screen
