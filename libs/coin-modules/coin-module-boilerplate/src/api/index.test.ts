@@ -1,4 +1,4 @@
-import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import { type BoilerplateContext } from "../config";
@@ -6,6 +6,15 @@ import { type BoilerplateContext } from "../config";
 const context: BoilerplateContext = {
   config: async () => ({ nodeUrl: "", minReserve: 0, status: { type: "active" } }),
   logger: () => {},
+};
+
+const intent: TransactionIntent = {
+  intentType: "transaction",
+  type: "send",
+  sender: "sender-address",
+  recipient: "recipient-address",
+  amount: 42n,
+  asset: { type: "native" },
 };
 
 describe("createApi", () => {
@@ -37,6 +46,19 @@ describe("createApi", () => {
     // What the module does implement is passed through untouched, not re-wrapped.
     expect(api.lastBlock).toBe(impl.lastBlock);
     expect(api.broadcast).toBe(impl.broadcast);
+  });
+
+  // `options` is the trailing parameter this migration made optional again, so both halves are
+  // exercised: the public key is read when one is supplied, and its absence is not an error.
+  it("combine forwards the public key when one is given", () => {
+    const api = createApi();
+
+    expect(api.combine(context, "tx", ["sig"], { pubkey: "pubkey" })).toBe("txpubkeysigencodedTx");
+    expect(api.combine(context, "tx", ["sig"])).toBe("txsigencodedTx");
+  });
+
+  it("craftTransactionData answers the framework's no-op sentinel", () => {
+    expect(createApi().craftTransactionData(context, intent)).toEqual({ type: "none" });
   });
 
   describe("getBalance", () => {
