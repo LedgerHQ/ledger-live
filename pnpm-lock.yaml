@@ -25,8 +25,8 @@ catalogs:
       specifier: 8.2.0
       version: 8.2.0
     '@ledgerhq/coin-stellar':
-      specifier: 9.3.0
-      version: 9.3.0
+      specifier: 9.4.0
+      version: 9.4.0
     '@ledgerhq/coin-tezos':
       specifier: 10.1.1
       version: 10.1.1
@@ -11404,7 +11404,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.3.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12553,7 +12553,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.3.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -21964,8 +21964,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-stellar@9.3.0':
-    resolution: {integrity: sha512-DnpkLCNQIiux4+0LFE9gA4hbnLDslQbdW93x8fD1OHh79k2TIHFYy98sMxyxmfW+qCCohqtbIFbYjmuOzBAWCQ==}
+  '@ledgerhq/coin-stellar@9.4.0':
+    resolution: {integrity: sha512-6JyFGmAmmsZUq/4Z3FXR9fO4PUtg7WhasX+UTMfFrCy9NuqLgbuFsJPtntnCofcGr3kfaLTBipLVbM2SF7HkKA==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -48915,10 +48915,10 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@9.3.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-stellar@9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 8.1.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       '@stellar/stellar-sdk': 14.0.0

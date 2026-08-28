@@ -224,7 +224,7 @@ catalog:
   # Modules published by coin-modules
   "@ledgerhq/coin-hypercore": 2.0.0
   "@ledgerhq/coin-module-framework": 8.2.0
-  "@ledgerhq/coin-stellar": 9.3.0
+  "@ledgerhq/coin-stellar": 9.4.0
   "@ledgerhq/coin-tezos": 10.1.1
   "@ledgerhq/coin-xrp": 10.1.0
   detox: 20.51.3
