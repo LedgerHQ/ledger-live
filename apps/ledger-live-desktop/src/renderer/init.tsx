@@ -46,6 +46,9 @@ import {
   migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
+import { toEvmAddressBook } from "@features/platform-contacts";
+import { selectContacts } from "@domain/entity-contact";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
@@ -182,6 +185,7 @@ async function init() {
   const initialSettings = (await getKey("app", "settings")) || {};
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
+  evmAddressBookProvider.setSource(() => toEvmAddressBook(selectContacts(store.getState())));
 
   const settingsToLoad = { ...initialSettings };
 

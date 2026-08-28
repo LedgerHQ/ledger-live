@@ -2,7 +2,8 @@ import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-manage
 import { EIP712Message } from "@ledgerhq/types-live";
 import { lastValueFrom, of } from "rxjs";
 import { DmkSignerEth } from "../src/DmkSignerEth";
-import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
+import { SignerEthBuilder, SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
+import { evmAddressBookProvider } from "../src/addressBook/evmAddressBookProvider";
 import { getEnv } from "@ledgerhq/live-env";
 import { ContextModuleBuilder } from "@ledgerhq/context-module";
 
@@ -676,6 +677,64 @@ describe("DmkSignerEth", () => {
         mode: "test",
         branch: "main",
       });
+    });
+  });
+  describe("address book", () => {
+    const addressBook = {
+      ledgerAccounts: [],
+      contactGroups: [
+        {
+          contactName: "Ben",
+          groupHandle: new Uint8Array(64).fill(0xab),
+          hmacProof: new Uint8Array(32).fill(0xcd),
+          externalAddresses: [],
+        },
+      ],
+    };
+    let withAddressBookSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      withAddressBookSpy = jest.spyOn(SignerEthBuilder.prototype, "withAddressBook");
+    });
+
+    afterEach(() => {
+      withAddressBookSpy.mockRestore();
+      evmAddressBookProvider.clearSource();
+    });
+
+    it("does not provide an address book when no source is registered", () => {
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(withAddressBookSpy).not.toHaveBeenCalled();
+    });
+
+    it("does not provide an address book when the source has nothing to give", () => {
+      evmAddressBookProvider.setSource(() => undefined);
+
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(withAddressBookSpy).not.toHaveBeenCalled();
+    });
+
+    it("keeps building the signer when the source throws", () => {
+      evmAddressBookProvider.setSource(() => {
+        throw new Error("store is not ready");
+      });
+
+      const signer = new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(signer.signer).toBeDefined();
+      expect(withAddressBookSpy).not.toHaveBeenCalled();
+    });
+
+    it("reads the source once and hands the snapshot to the builder", () => {
+      const source = jest.fn(() => addressBook);
+      evmAddressBookProvider.setSource(source);
+
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(source).toHaveBeenCalledTimes(1);
+      expect(withAddressBookSpy).toHaveBeenCalledWith(addressBook);
     });
   });
 });

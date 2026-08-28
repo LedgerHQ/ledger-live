@@ -39,6 +39,7 @@ import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
+import EvmAddressBookSetup from "~/components/EvmAddressBookSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -360,6 +361,7 @@ export default class Root extends Component {
             <RebootProvider>
               <SetEnvsFromSettings />
               <SegmentSetup />
+              <EvmAddressBookSetup />
               <HookNotifications />
               <HookDynamicContentCards />
               <HookDevTools />

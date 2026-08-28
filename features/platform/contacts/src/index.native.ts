@@ -8,6 +8,7 @@ export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
 export * from "./components/ContactAvatar/index.native";
 export * from "./contactDeviceIntentsPort";
+export * from "./device/addressBook/toEvmAddressBook";
 export * from "./addressEntry/types";
 export * from "./addressEntry/validation";
 export * from "./addressEntry/state";

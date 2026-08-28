@@ -5,6 +5,7 @@ export * from "./hooks/useContactsMeContact";
 export * from "./utils/formatMeDisplayName";
 export * from "./utils/resolveMeContactDisplayName";
 export * from "./contactDeviceIntentsPort";
+export * from "./device/addressBook/toEvmAddressBook";
 export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
 export * from "./components/ContactAvatar";
