@@ -28,6 +28,11 @@ export function mapDmkErrorToError(error: unknown): Error {
   );
 }
 
+/** Case-insensitively compares a `ContactsCommandError.errorCode` against a known status word. */
+function isErrorCode(errorCode: unknown, code: string): boolean {
+  return typeof errorCode === "string" && errorCode.toLowerCase() === code;
+}
+
 /**
  * Map a Contacts DeviceAction's typed error (the kit never throws; failures
  * are typed `DAError`s) onto the shared failure taxonomy above.
@@ -46,16 +51,16 @@ export function mapDeviceActionErrorToFailureJobState(
   }
   if (tag === "ContactsCommandError") {
     const errorCode = (error as { errorCode?: unknown }).errorCode;
-    switch (errorCode) {
-      case "6a80":
-        return { type: "device-rejected", error: mappedError };
-      case "6982":
-        return { type: "existing-group-verification-failed", error: mappedError };
-      case "6984":
-        return { type: "unsupported-operation", error: mappedError };
-      default:
-        return { type: "failed", error: mappedError };
+    if (isErrorCode(errorCode, "6a80")) {
+      return { type: "device-rejected", error: mappedError };
     }
+    if (isErrorCode(errorCode, "6982")) {
+      return { type: "existing-group-verification-failed", error: mappedError };
+    }
+    if (isErrorCode(errorCode, "6984")) {
+      return { type: "unsupported-operation", error: mappedError };
+    }
+    return { type: "failed", error: mappedError };
   }
   return { type: "failed", error: mappedError };
 }

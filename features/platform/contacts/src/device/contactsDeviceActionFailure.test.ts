@@ -75,6 +75,8 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
     ["6982", "existing-group-verification-failed"],
     ["6984", "unsupported-operation"],
     ["6b00", "failed"],
+    // Status words are commonly surfaced uppercase; the mapping is case-insensitive.
+    ["6A80", "device-rejected"],
   ])(
     "GIVEN a ContactsCommandError with status word %s WHEN mapping THEN it returns %s",
     (errorCode, type) => {
@@ -88,6 +90,17 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
       expect(result.type).toBe(type);
     },
   );
+
+  it("GIVEN a ContactsCommandError with a non-string errorCode WHEN mapping THEN it returns failed", () => {
+    // WHEN
+    const result = mapDeviceActionErrorToFailureJobState({
+      _tag: "ContactsCommandError",
+      errorCode: undefined,
+    });
+
+    // THEN
+    expect(result.type).toBe("failed");
+  });
 
   it("GIVEN an unrecognized DmkError WHEN mapping THEN it returns failed", () => {
     // WHEN

@@ -9,6 +9,16 @@ import { ContactDeviceIntentInputError } from "./errors";
  * that intent's job instead.
  */
 
+/**
+ * Contact addresses are family-agnostic in the domain layer (Solana base58,
+ * Bitcoin bech32, ...), but the Contacts kit only ships Ethereum's REGISTER
+ * IDENTITY in v1, so the only identifier this ever has to encode today is an
+ * EVM hex address. A non-hex identifier throws `ContactDeviceIntentInputError`,
+ * which the job already turns into a graceful `invalid-input` job state rather
+ * than an uncaught error. Widening past hex needs a per-family encoding this
+ * function doesn't have yet, gated on the kit adding that family's device
+ * action.
+ */
 export function mapIdentifierToBytes(identifier: string): Uint8Array {
   const bytes = hexaStringToBuffer(identifier);
   if (bytes === null) {
