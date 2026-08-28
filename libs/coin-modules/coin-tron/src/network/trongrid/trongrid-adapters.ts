@@ -46,6 +46,12 @@ export function fromTrongridTxInfoToOperation(
     operation.details = { ...operation.details, familyExtra: trongridTxInfo.extra };
   }
 
+  // `memo` is a framework-reserved `details` key: the generic layer copies it onto `Operation.extra.memo`,
+  // so the sender's note round-trips into synced history.
+  if (trongridTxInfo.memo) {
+    operation.details = { ...operation.details, memo: trongridTxInfo.memo };
+  }
+
   return operation;
 }
 

@@ -211,6 +211,60 @@ describe("formatTrongridTxResponse", () => {
     });
   });
 
+  it("decodes the memo carried in raw_data.data", async () => {
+    const memo = "ledger-e2e";
+    const contract: TransactionTronAPI["raw_data"]["contract"][0] = {
+      type: "TransferContract",
+      parameter: {
+        type_url: "",
+        value: { owner_address: ownerHex, to_address: toHex, amount: 1_000_000 },
+      },
+    };
+    const tx = baseTransactionTronApi(contract, {
+      raw_data: {
+        contract: [contract],
+        ref_block_bytes: "",
+        ref_block_hash: "",
+        expiration: 0,
+        data: Buffer.from(memo).toString("hex"),
+      },
+    });
+
+    const result = await formatTrongridTxResponse(tx, () => Promise.resolve(null));
+
+    expect(result?.memo).toBe(memo);
+  });
+
+  it("does not surface raw_data.data as a memo for a non-transfer contract type", async () => {
+    // A TriggerSmartContract's `data` is the ABI-encoded call, not a user memo — decoding it as UTF-8
+    // would surface binary garbage, so only transfer contracts are decoded.
+    const contract: TransactionTronAPI["raw_data"]["contract"][0] = {
+      type: "TriggerSmartContract",
+      parameter: {
+        type_url: "",
+        value: {
+          owner_address: ownerHex,
+          to_address: toHex,
+          contract_address: trc20ContractHex,
+          amount: 0,
+        },
+      },
+    };
+    const tx = baseTransactionTronApi(contract, {
+      raw_data: {
+        contract: [contract],
+        ref_block_bytes: "",
+        ref_block_hash: "",
+        expiration: 0,
+        data: Buffer.from("not-a-memo").toString("hex"),
+      },
+    });
+
+    const result = await formatTrongridTxResponse(tx, () => Promise.resolve(null));
+
+    expect(result?.memo).toBeUndefined();
+  });
+
   it("should set hasFailed when contract execution did not succeed", async () => {
     const tx = baseTransactionTronApi(
       {

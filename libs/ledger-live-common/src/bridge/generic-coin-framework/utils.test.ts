@@ -835,9 +835,9 @@ describe("coin-framework utils", () => {
     describe("memo", () => {
       const account = { currency: { name: "ethereum", units: [{}] } } as Account;
 
-      it("defaults to NO_MEMO when no memo or tag is provided", () => {
+      it("defaults to the framework's MemoNotSupported when no memo or tag is provided", () => {
         const intent = transactionToIntent(account, {} as GenericTransaction);
-        expect(intent.memo).toEqual({ type: "NO_MEMO" });
+        expect(intent.memo).toEqual({ type: "none" });
       });
 
       it.each([
@@ -851,12 +851,12 @@ describe("coin-framework utils", () => {
         });
       });
 
-      it("maps memoType/memoValue to a typed memo", () => {
+      it("maps memoType/memoValue to a StringMemo with memoType as its kind", () => {
         const intent = transactionToIntent(account, {
           memoType: "memo-type",
           memoValue: "memo-value",
         } as GenericTransaction);
-        expect(intent.memo).toEqual({ type: "memo-type", value: "memo-value" });
+        expect(intent.memo).toEqual({ type: "string", kind: "memo-type", value: "memo-value" });
       });
 
       it("prefers tag over memoType/memoValue when both are set", () => {
