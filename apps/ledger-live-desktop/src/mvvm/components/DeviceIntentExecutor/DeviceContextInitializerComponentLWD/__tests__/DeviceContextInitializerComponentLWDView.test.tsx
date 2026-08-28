@@ -68,6 +68,7 @@ const pageByStateType: Record<EnsureAppReadyState["type"], string | undefined> =
   [BlockingStateType.WrongDeviceForAccount]: PAGE_CONNECT_APP.WrongDeviceForAccount,
   [BlockingStateType.DeviceOutOfStorageSpace]: PAGE_CONNECT_APP.OutOfStorage,
   [BlockingStateType.DeviceNotOnboarded]: PAGE_CONNECT_APP.DeviceNotOnboarded,
+  [BlockingStateType.InvalidProvider]: PAGE_CONNECT_APP.InvalidProvider,
   [FinalStateType.Error]: PAGE_CONNECT_APP.Error,
   [FinalStateType.Success]: undefined,
 };
@@ -212,6 +213,11 @@ describe("DeviceContextInitializerComponentLWDView", () => {
       label: "device not onboarded",
       state: { type: BlockingStateType.DeviceNotOnboarded },
       getElement: () => screen.getByText("Your Ledger device needs to be set up"),
+    },
+    {
+      label: "invalid provider",
+      state: { type: BlockingStateType.InvalidProvider },
+      getElement: () => screen.getByText("Invalid Provider"),
     },
     {
       label: "final error",

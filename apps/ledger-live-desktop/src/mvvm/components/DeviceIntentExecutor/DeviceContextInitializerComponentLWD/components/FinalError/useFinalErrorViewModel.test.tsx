@@ -4,7 +4,6 @@ import {
   DeviceIntentTrackingProvider,
   FinalStateType,
 } from "@ledgerhq/live-dmk-shared";
-import { InvalidGetFirmwareMetadataResponseError } from "@ledgerhq/device-management-kit";
 import React from "react";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { initializerDevice } from "../../testUtils";
@@ -22,7 +21,6 @@ jest.mock("../../../utils/trackDeviceIntent", () => ({
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const mockedTrackConnectAppButtonClicked = jest.mocked(trackConnectAppButtonClicked);
 const openSupport = jest.fn();
-const openExperimentalSettings = jest.fn();
 const wrapper = ({ children }: React.PropsWithChildren) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
     {children}
@@ -37,7 +35,7 @@ describe("useFinalErrorViewModel", () => {
       openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding: jest.fn(),
       openSupport,
-      openExperimentalSettings,
+      openExperimentalSettings: jest.fn(),
     });
   });
 
@@ -105,53 +103,6 @@ describe("useFinalErrorViewModel", () => {
       sourceFlow: "my_ledger",
       modelId: initializerDevice.modelId,
       button: CONNECT_APP_BUTTON.Close,
-      extraProperties: {},
-    });
-  });
-
-  it("GIVEN an invalid provider error WHEN rendering THEN it flags it as an invalid provider error", () => {
-    // GIVEN
-    const { result } = renderHook(
-      () =>
-        useFinalErrorViewModel({
-          state: {
-            type: FinalStateType.Error,
-            error: new InvalidGetFirmwareMetadataResponseError(),
-          },
-          device: initializerDevice,
-          onCancel: jest.fn(),
-        }),
-      { wrapper },
-    );
-
-    // THEN
-    expect(result.current.isInvalidProvider).toBe(true);
-  });
-
-  it("GIVEN an invalid provider error WHEN calling onGoToSettings THEN it opens experimental settings", () => {
-    // GIVEN
-    const { result } = renderHook(
-      () =>
-        useFinalErrorViewModel({
-          state: {
-            type: FinalStateType.Error,
-            error: new InvalidGetFirmwareMetadataResponseError(),
-          },
-          device: initializerDevice,
-          onCancel: jest.fn(),
-        }),
-      { wrapper },
-    );
-
-    // WHEN
-    result.current.onGoToSettings();
-
-    // THEN
-    expect(openExperimentalSettings).toHaveBeenCalledTimes(1);
-    expect(mockedTrackConnectAppButtonClicked).toHaveBeenCalledWith({
-      sourceFlow: "my_ledger",
-      modelId: initializerDevice.modelId,
-      button: CONNECT_APP_BUTTON.GoToSettings,
       extraProperties: {},
     });
   });

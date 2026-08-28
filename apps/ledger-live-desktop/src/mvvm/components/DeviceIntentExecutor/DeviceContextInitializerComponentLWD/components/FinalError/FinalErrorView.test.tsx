@@ -9,20 +9,17 @@ jest.mock("~/renderer/components/TranslatedError", () => ({
 }));
 
 describe("FinalErrorView", () => {
-  const renderView = (isInvalidProvider = false) => {
+  const renderView = () => {
     const onContactSupport = jest.fn();
     const onCancel = jest.fn();
-    const onGoToSettings = jest.fn();
     const { user } = render(
       <FinalErrorView
         error={new Error("unexpected")}
-        isInvalidProvider={isInvalidProvider}
         onContactSupport={onContactSupport}
         onCancel={onCancel}
-        onGoToSettings={onGoToSettings}
       />,
     );
-    return { user, onContactSupport, onCancel, onGoToSettings };
+    return { user, onContactSupport, onCancel };
   };
 
   it("GIVEN the final error view WHEN rendering THEN it shows the translated title and description", () => {
@@ -56,27 +53,5 @@ describe("FinalErrorView", () => {
     // THEN
     expect(onCancel).toHaveBeenCalledTimes(1);
     expect(onContactSupport).not.toHaveBeenCalled();
-  });
-
-  it("GIVEN an invalid provider error WHEN rendering THEN it shows a go to settings CTA instead of contact support", () => {
-    // GIVEN
-    renderView(true);
-
-    // THEN
-    expect(screen.getByRole("button", { name: "Go to settings" })).toBeVisible();
-    expect(
-      screen.queryByRole("button", { name: "Contact Ledger support" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("GIVEN an invalid provider error WHEN clicking go to settings THEN it calls onGoToSettings", async () => {
-    // GIVEN
-    const { user, onGoToSettings } = renderView(true);
-
-    // WHEN
-    await user.click(screen.getByRole("button", { name: "Go to settings" }));
-
-    // THEN
-    expect(onGoToSettings).toHaveBeenCalledTimes(1);
   });
 });

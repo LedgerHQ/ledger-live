@@ -6988,11 +6988,6 @@
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider.",
       "goToSettingsCTA": "Go to settings"
     },
-    "InvalidGetFirmwareMetadataResponseError": {
-      "title": "Invalid Provider",
-      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider.",
-      "goToSettingsCTA": "Go to settings"
-    },
     "HardResetFail": {
       "title": "Sorry, could not reset",
       "description": "Please try again or contact Ledger Support if the problem persists."
@@ -9733,6 +9728,10 @@
           "title": "Uninstall some apps to free up Ledger device memory",
           "description": "Your device doesn't have enough memory.",
           "apps": "Apps to manage: {{appNames}}"
+        },
+        "invalidProvider": {
+          "title": "Invalid Provider",
+          "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
         }
       },
       "cta": {
@@ -9741,7 +9740,8 @@
         "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
-        "contactLedgerSupport": "Contact Ledger support"
+        "contactLedgerSupport": "Contact Ledger support",
+        "goToSettings": "Go to settings"
       }
     },
     "connectDevice": {

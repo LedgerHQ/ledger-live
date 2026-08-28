@@ -1,5 +1,7 @@
 ---
+"@ledgerhq/live-dmk-shared": minor
 "ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
-Show a clear "Invalid Provider" error with a "Go to settings" action in the Device Intent Executor when the configured My Ledger provider is incorrect, instead of a raw, unclear error
+Map the DMK invalid firmware metadata error to a dedicated InvalidProvider blocking state, so the Device Intent Executor shows a clear "Invalid Provider" screen with a "Go to settings" action instead of a raw error

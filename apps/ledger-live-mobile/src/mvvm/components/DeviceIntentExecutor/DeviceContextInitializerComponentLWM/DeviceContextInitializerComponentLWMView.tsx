@@ -26,6 +26,7 @@ import { DeviceDeprecatedBlockingState } from "./components/DeviceDeprecatedBloc
 import { WrongDeviceForAccount } from "./components/WrongDeviceForAccount";
 import { DeviceOutOfStorageSpace } from "./components/DeviceOutOfStorageSpace";
 import { DeviceNotOnboarded } from "./components/DeviceNotOnboarded";
+import { InvalidProvider } from "./components/InvalidProvider";
 import { FinalError } from "./components/FinalError";
 
 function assertNever(value: never): never {
@@ -77,6 +78,8 @@ export function DeviceContextInitializerComponentLWMView({
             return <DeviceOutOfStorageSpace state={state} {...commonProps} />;
           case BlockingStateType.DeviceNotOnboarded:
             return <DeviceNotOnboarded state={state} {...commonProps} />;
+          case BlockingStateType.InvalidProvider:
+            return <InvalidProvider state={state} {...commonProps} />;
           case FinalStateType.Error:
             return <FinalError state={state} {...commonProps} />;
           case FinalStateType.Success:

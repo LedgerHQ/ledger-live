@@ -44,6 +44,7 @@ export const PAGE_CONNECT_APP = {
   DeviceDeprecatedBlocking: "Connect App - Device Deprecated Blocking",
   WrongDeviceForAccount: "Connect App - Wrong Device For Account",
   OutOfStorage: "Connect App - Out Of Storage",
+  InvalidProvider: "Connect App - Invalid Provider",
   Error: "Connect App - Error",
 } as const;
 
@@ -93,6 +94,7 @@ const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
   PAGE_CONNECT_APP.DeviceDeprecatedBlocking,
   PAGE_CONNECT_APP.WrongDeviceForAccount,
   PAGE_CONNECT_APP.OutOfStorage,
+  PAGE_CONNECT_APP.InvalidProvider,
   PAGE_CONNECT_APP.Error,
   PAGE_DEVICE_ACTION.Disconnected,
   PAGE_DEVICE_ACTION.UnknownIntentError,
