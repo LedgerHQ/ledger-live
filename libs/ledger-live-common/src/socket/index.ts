@@ -26,6 +26,14 @@ const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
 /**
+ * Mask the mock server session token, which the scriptrunner URL carries both in
+ * its `/secure-channel/<token>` path and as a `token=` query param. Keeps the
+ * token out of traces and error metadata, which reach monitoring.
+ */
+export const redactSecureChannelToken = (value: string): string =>
+  value.replace(/(\/secure-channel\/)[^/?#]+/, "$1***").replace(/([?&]token=)[^&#]+/, "$1***");
+
+/**
  * use Ledger WebSocket API to exchange data with the device
  * Returns an Observable of the final result
  */
@@ -46,7 +54,14 @@ export function createDeviceSocket(
     function: "createDeviceSocket",
     transportContext: transport.getTraceContext(),
   });
-  tracer.trace("Starting web socket communication", { url, unresponsiveExpectedDuringBulk });
+  // The mock scriptrunner URL carries the session token, so everything that is
+  // traced or attached to an error uses this instead of the raw url.
+  const safeUrl = redactSecureChannelToken(url);
+
+  tracer.trace("Starting web socket communication", {
+    url: safeUrl,
+    unresponsiveExpectedDuringBulk,
+  });
 
   // In mock server transport mode, the mock scriptrunner authenticates the
   // WebSocket via the session token as a query param. The token is embedded in
@@ -72,7 +87,7 @@ export function createDeviceSocket(
     const ws = new WS(socketUrl);
 
     ws.onopen = () => {
-      tracer.trace("Socket opened", { url });
+      tracer.trace("Socket opened", { url: safeUrl });
       o.next({
         type: "opened",
       });
@@ -84,13 +99,13 @@ export function createDeviceSocket(
 
       o.error(
         new WebsocketConnectionError(e.message, {
-          url,
+          url: safeUrl,
         }),
       );
     };
 
     ws.onclose = () => {
-      tracer.trace("Socket closed", { url, inBulkMode, correctlyFinished });
+      tracer.trace("Socket closed", { url: safeUrl, inBulkMode, correctlyFinished });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       if (correctlyFinished) {
@@ -332,7 +347,7 @@ export function createDeviceSocket(
 
             // An error from HSM
             throw new DeviceSocketFail(input.data, {
-              url,
+              url: safeUrl,
             });
           }
 
