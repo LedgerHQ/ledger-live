@@ -441,6 +441,13 @@ export const startAnalytics = async (store: ReduxStore) => {
   analytics.identify(id, allProperties, {
     context: getContext(),
   });
+  const overlayProperties = { userIdPresent: Boolean(id) };
+  trackSubject.next({
+    eventName: "[Identify]",
+    eventProperties: overlayProperties,
+    eventPropertiesWithoutExtra: overlayProperties,
+    date: new Date(),
+  });
 };
 type Properties = Error | Record<string, unknown> | null;
 export type LoggableEvent = {
@@ -526,6 +533,13 @@ export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force:
   };
   analytics.identify(id, allProperties, {
     context: getContext(),
+  });
+  const overlayProperties = { userIdPresent: Boolean(id) };
+  trackSubject.next({
+    eventName: "[Identify]",
+    eventProperties: overlayProperties,
+    eventPropertiesWithoutExtra: overlayProperties,
+    date: new Date(),
   });
 };
 /** Ensure PTX flag attributes are set as soon as feature flags load */
