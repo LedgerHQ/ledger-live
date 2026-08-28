@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { toPng } from "html-to-image";
 import logger from "~/renderer/logger";
 
-const CARD_SELECTOR = '[data-testid="pay-card-request-receive-card"]';
+const SUMMARY_SELECTOR = '[data-testid="pay-card-request-receive-summary"]';
 const BASE64_PNG_PREFIX = /^data:image\/png;base64,/;
 
 /**
@@ -10,9 +10,9 @@ const BASE64_PNG_PREFIX = /^data:image\/png;base64,/;
  * native OS save dialog. The image write happens in the main process (see the `save-png` handler)
  * so the renderer never touches the filesystem directly.
  */
-export async function saveRequestReceiveCard(ticker: string, dialogTitle: string): Promise<void> {
+export async function saveRequestReceive(ticker: string, dialogTitle: string): Promise<void> {
   try {
-    const node = document.querySelector<HTMLElement>(CARD_SELECTOR);
+    const node = document.querySelector<HTMLElement>(SUMMARY_SELECTOR);
     if (!node) {
       return;
     }

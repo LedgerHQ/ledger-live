@@ -6,7 +6,7 @@ import type { PayCardTrackEvent, RequestReceiveProps } from "@features/flow-pay-
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
 import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
-import { useSaveRequestReceiveCard } from "./useSaveRequestReceiveCard";
+import { useSaveRequestReceive } from "./useSaveRequestReceive";
 import type { PayVerifySelection } from "./usePayTabVerifyAddress";
 
 const REQUEST_PAGE = "Pay";
@@ -59,7 +59,7 @@ export function usePayTabRequestReceive(
     [selection],
   );
 
-  const saveCard = useSaveRequestReceiveCard(data?.asset.ticker ?? "");
+  const saveCard = useSaveRequestReceive(data?.asset.ticker ?? "");
 
   const labels = useMemo(
     () => ({
