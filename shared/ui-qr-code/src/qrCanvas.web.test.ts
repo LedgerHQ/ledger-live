@@ -62,6 +62,15 @@ describe("drawStyledQrCode", () => {
     expect(ctx.arc).toHaveBeenCalled();
   });
 
+  it("uses the supplied foreground color for dots and finder patterns", () => {
+    const { canvas, ctx } = createFakeCanvas();
+
+    drawStyledQrCode(canvas, "0xabc123", QR_SIZE, false, "#000000");
+
+    expect(ctx.fillStyle).toBe("#000000");
+    expect(ctx.strokeStyle).toBe("#000000");
+  });
+
   it("clears a centered, odd-sided square of modules only when there is center content", () => {
     const withoutCenter = createFakeCanvas();
     drawStyledQrCode(withoutCenter.canvas, "0xabc123", QR_SIZE, false);

@@ -1,10 +1,5 @@
-import qrcode from "qrcode";
+import { createStyledQrCode, FINDER_MODULES } from "./styledQrCode";
 
-const DOT_RADIUS_RATIO = 0.42;
-const FINDER_MODULES = 7;
-// Wide enough to keep a visible margin between the overlay and the closest dots for every QR version.
-const CLEAR_ZONE_RATIO = 0.32;
-const PADDING_RATIO = 0.06;
 const FOREGROUND_COLOR = "#FFFFFF";
 
 function traceRoundedRect(
@@ -30,9 +25,10 @@ function drawFinderPattern(
   x: number,
   y: number,
   moduleSize: number,
+  foregroundColor: string,
 ): void {
-  ctx.fillStyle = FOREGROUND_COLOR;
-  ctx.strokeStyle = FOREGROUND_COLOR;
+  ctx.fillStyle = foregroundColor;
+  ctx.strokeStyle = foregroundColor;
 
   const outer = FINDER_MODULES * moduleSize;
   // Outer ring: a 1-module-thick rounded square stroke around the 7x7 finder.
@@ -58,29 +54,13 @@ function drawFinderPattern(
   ctx.fill();
 }
 
-// Module counts are always odd, so the cleared square needs an odd side too: with an even side it
-// would sit half a module off-center while the overlay is centered on the canvas.
-function getClearCount(count: number): number {
-  const raw = Math.round(count * CLEAR_ZONE_RATIO);
-  return raw % 2 === count % 2 ? raw : raw + 1;
-}
-
-function isInFinderPattern(row: number, col: number, count: number): boolean {
-  const top = row < FINDER_MODULES;
-  const bottom = row >= count - FINDER_MODULES;
-  const left = col < FINDER_MODULES;
-  const right = col >= count - FINDER_MODULES;
-  return (top && left) || (top && right) || (bottom && left);
-}
-
 export function drawStyledQrCode(
   canvas: HTMLCanvasElement,
   value: string,
   size: number,
   hasCenterContent: boolean,
+  foregroundColor = FOREGROUND_COLOR,
 ): void {
-  const { modules } = qrcode.create(value, { errorCorrectionLevel: "H" });
-
   let ctx: CanvasRenderingContext2D | null = null;
   try {
     ctx = canvas.getContext("2d");
@@ -89,8 +69,6 @@ export function drawStyledQrCode(
   }
   if (!ctx) return;
 
-  const count = modules.size;
-  const { data } = modules;
   const dpr = window.devicePixelRatio || 1;
 
   canvas.width = size * dpr;
@@ -101,38 +79,16 @@ export function drawStyledQrCode(
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, size, size);
 
-  const padding = size * PADDING_RATIO;
-  const moduleSize = (size - padding * 2) / count;
-  const dotRadius = moduleSize * DOT_RADIUS_RATIO;
+  const styledQrCode = createStyledQrCode(value, size, hasCenterContent);
 
-  // Central square kept clear so the overlay sits on a clean background.
-  const clearCount = hasCenterContent ? getClearCount(count) : 0;
-  const clearStart = (count - clearCount) / 2;
-  const clearEnd = clearStart + clearCount;
-
-  ctx.fillStyle = FOREGROUND_COLOR;
-  for (let row = 0; row < count; row++) {
-    for (let col = 0; col < count; col++) {
-      if (isInFinderPattern(row, col, count)) continue;
-      if (
-        clearCount > 0 &&
-        row >= clearStart &&
-        row < clearEnd &&
-        col >= clearStart &&
-        col < clearEnd
-      ) {
-        continue;
-      }
-      if (!data[row * count + col]) continue;
-      const cx = padding + col * moduleSize + moduleSize / 2;
-      const cy = padding + row * moduleSize + moduleSize / 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  ctx.fillStyle = foregroundColor;
+  for (const { cx, cy, radius } of styledQrCode.dots) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  drawFinderPattern(ctx, padding, padding, moduleSize);
-  drawFinderPattern(ctx, padding + (count - FINDER_MODULES) * moduleSize, padding, moduleSize);
-  drawFinderPattern(ctx, padding, padding + (count - FINDER_MODULES) * moduleSize, moduleSize);
+  for (const { x, y, moduleSize } of styledQrCode.finders) {
+    drawFinderPattern(ctx, x, y, moduleSize, foregroundColor);
+  }
 }
