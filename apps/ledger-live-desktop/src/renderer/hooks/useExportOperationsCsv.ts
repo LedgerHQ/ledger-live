@@ -1,7 +1,6 @@
 import { files } from "~/renderer/bridge";
-import { showSaveDialog } from "~/renderer/dialog";
+import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -12,14 +11,11 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 
-async function saveOperationsToFile(
-  path: Electron.SaveDialogReturnValue,
-  csv: string,
-): Promise<boolean> {
+async function saveOperationsToFile(request: SaveRequest, csv: string): Promise<SaveOutcome> {
   try {
-    return await files.exportOperations(path, csv);
+    return await files.exportOperations(request, csv);
   } catch {
-    return false;
+    return "failed";
   }
 }
 
@@ -69,33 +65,32 @@ export function useExportOperationsCsv({
 
   const exportCsv = useCallback(async () => {
     try {
-      const path = getEnv("PLAYWRIGHT_RUN")
-        ? {
-            canceled: false,
-            // The Playwright fixture injects a unique per-test path (suffixed with the
-            // test id) to keep parallel runs from racing on the same CSV file.
-            filePath: process.env.PLAYWRIGHT_EXPORT_CSV_PATH || "./ledgerwallet-operations.csv",
-          }
-        : await showSaveDialog({
+      const csv = accountsOpToCSV(
+        accounts.filter(a => checkedIds.includes(a.id)),
+        countervalueCurrency,
+        countervalueState,
+        walletState.accountNames,
+      );
+      const outcome = await saveOperationsToFile(
+        {
+          options: {
             title: "Exported account transactions",
             defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
             filters: [{ name: "All Files", extensions: ["csv"] }],
-          });
-      if (path?.filePath) {
-        const csv = accountsOpToCSV(
-          accounts.filter(a => checkedIds.includes(a.id)),
-          countervalueCurrency,
-          countervalueState,
-          walletState.accountNames,
-        );
-        const ok = await saveOperationsToFile(path, csv);
-        if (ok) {
-          setSuccess(true);
-          onSuccess?.();
-        } else {
-          setError(true);
-          onError?.();
-        }
+          },
+          // The fixture suffixes this with the test id, so parallel runs do not race on
+          // the same CSV file.
+          e2ePath: process.env.PLAYWRIGHT_EXPORT_CSV_PATH || "./ledgerwallet-operations.csv",
+        },
+        csv,
+      );
+      if (outcome === "canceled") return;
+      if (outcome === "saved") {
+        setSuccess(true);
+        onSuccess?.();
+      } else {
+        setError(true);
+        onError?.();
       }
     } catch (err) {
       logger.error(err);

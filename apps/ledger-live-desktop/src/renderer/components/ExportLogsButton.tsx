@@ -1,5 +1,4 @@
 import { getResourceUsage } from "~/renderer/webFrame";
-import { showSaveDialog } from "~/renderer/dialog";
 import React, { useContext, useState, useCallback } from "react";
 import { ReactReduxContext } from "react-redux";
 import { useSelector } from "LLD/hooks/redux";
@@ -90,9 +89,8 @@ const ExportLogsBtnInner = ({
       accountsIds: accounts.map(a => a.id),
     });
 
-    let path;
-    if (!getEnv("PLAYWRIGHT_RUN")) {
-      path = await showSaveDialog({
+    await saveLogs({
+      options: {
         title: "Export logs",
         defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
         filters: [
@@ -101,19 +99,9 @@ const ExportLogsBtnInner = ({
             extensions: ["txt"],
           },
         ],
-      });
-    } else {
-      path = {
-        canceled: false,
-        filePath: "./ledgerwallet-logs.txt",
-      };
-    }
-
-    // showSaveDialog always resolves to an object, so the previous `if (path)` was
-    // always true. Main already ignores a canceled target; this makes the intent explicit.
-    if (path && !path.canceled) {
-      await saveLogs(path);
-    }
+      },
+      e2ePath: "./ledgerwallet-logs.txt",
+    });
   }, [accounts, getDateTxt, userId]);
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;

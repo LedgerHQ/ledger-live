@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from "tests/testSetup";
-import { dialogs, files } from "~/renderer/bridge";
+import { files } from "~/renderer/bridge";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
@@ -35,9 +35,6 @@ jest.mock("~/renderer/logger", () => ({
   default: { error: jest.fn() },
 }));
 
-// The save dialog and the write are separate bridge methods now, so the old
-// single-mock "first call then second call" sequencing becomes two explicit mocks.
-const mockShowSave = jest.mocked(dialogs.showSave);
 const mockExportOperations = jest.mocked(files.exportOperations);
 
 const mockToken: TokenCurrency = {
@@ -99,9 +96,8 @@ function setupHook(
   );
 }
 
-function mockSaveDialogThenExport(fileSaved: boolean) {
-  mockShowSave.mockResolvedValueOnce({ filePath: "/path/to/file.csv" } as never);
-  mockExportOperations.mockResolvedValueOnce(fileSaved);
+function mockExportOutcome(fileSaved: boolean) {
+  mockExportOperations.mockResolvedValueOnce(fileSaved ? "saved" : "failed");
 }
 
 describe("useExportOperationsCsv", () => {
@@ -222,7 +218,7 @@ describe("useExportOperationsCsv", () => {
   it("should export CSV successfully and call onSuccess", async () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
-    mockSaveDialogThenExport(true);
+    mockExportOutcome(true);
 
     const { result } = setupHook({ onSuccess, onError });
 
@@ -240,7 +236,7 @@ describe("useExportOperationsCsv", () => {
   it("should set error when file save fails", async () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
-    mockSaveDialogThenExport(false);
+    mockExportOutcome(false);
 
     const { result } = setupHook({ onSuccess, onError });
 
@@ -257,7 +253,7 @@ describe("useExportOperationsCsv", () => {
   it("should do nothing when save dialog is cancelled", async () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
-    mockShowSave.mockResolvedValueOnce({ canceled: true, filePath: "" } as never);
+    mockExportOperations.mockResolvedValueOnce("canceled");
 
     const { result } = setupHook({ onSuccess, onError });
 
@@ -271,9 +267,9 @@ describe("useExportOperationsCsv", () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
-  it("should set error when show-save-dialog rejects", async () => {
+  it("should set error when the export IPC rejects", async () => {
     const onError = jest.fn();
-    mockShowSave.mockRejectedValueOnce(new Error("IPC failure"));
+    mockExportOperations.mockRejectedValueOnce(new Error("IPC failure"));
 
     const { result } = setupHook({ onError });
 
@@ -285,10 +281,9 @@ describe("useExportOperationsCsv", () => {
     expect(onError).toHaveBeenCalledTimes(1);
   });
 
-  it("should set error when export-operations IPC rejects", async () => {
+  it("should set error when the main process fails to write", async () => {
     const onError = jest.fn();
-    mockShowSave.mockResolvedValueOnce({ filePath: "/path/to/file.csv" } as never);
-    mockExportOperations.mockRejectedValueOnce(new Error("write failed"));
+    mockExportOperations.mockResolvedValueOnce("failed");
 
     const { result } = setupHook({ onError });
 
@@ -301,7 +296,7 @@ describe("useExportOperationsCsv", () => {
   });
 
   it("should reset success, error and sync flag via resetState", async () => {
-    mockSaveDialogThenExport(true);
+    mockExportOutcome(true);
     const { result } = setupHook();
 
     await act(async () => {
