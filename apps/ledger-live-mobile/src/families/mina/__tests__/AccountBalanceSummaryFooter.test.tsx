@@ -4,13 +4,10 @@ import AccountBalanceFooter from "../AccountBalanceSummaryFooter";
 import { createMockMinaAccount, createDelegatingMinaAccount, mockValidators } from "./testUtils";
 import { View, Text as RNText } from "react-native";
 
-jest.mock(
-  "@ledgerhq/native-ui/pre-ldls",
-  () => ({
-    CryptoIcon: () => null,
-  }),
-  { virtual: true },
-);
+jest.mock("@ledgerhq/crypto-icons/native", () => ({
+  __esModule: true,
+  default: () => null,
+}));
 
 jest.mock("~/modals/Info", () => {
   return {

@@ -1,6 +1,6 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { TFunction } from "i18next";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useMemo, useState } from "react";

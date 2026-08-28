@@ -8,13 +8,10 @@ jest.mock("@ledgerhq/native-ui", () => {
   };
 });
 
-jest.mock(
-  "@ledgerhq/native-ui/pre-ldls",
-  () => ({
-    CryptoIcon: () => null,
-  }),
-  { virtual: true },
-);
+jest.mock("@ledgerhq/crypto-icons/native", () => ({
+  __esModule: true,
+  default: () => null,
+}));
 
 jest.mock("~/components/KeyboardView", () => {
   const { View } = require("react-native");

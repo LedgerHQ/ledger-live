@@ -1,6 +1,6 @@
 import type { ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
