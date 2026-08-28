@@ -1,12 +1,14 @@
 const path = require("path");
 
 /**
- * Fails the production renderer build when a dependency reads `process` unguarded.
+ * Fails the production renderer build when code reads a global the renderer does not have:
+ * `process.*`, or one of the bare Node globals in GLOBALS below.
  *
- * A context-isolated renderer has no `process`, so such a read is a latent `ReferenceError`
+ * A sandboxed `web`-target renderer has neither, so such a read is a latent `ReferenceError`
  * that only surfaces when that code path runs — which is how `vfile`'s `process.cwd()`
- * reached production as a crash in the firmware-update release notes rather than as a build
- * failure. Guarded reads (`typeof process`) are fine and stay in the bundle.
+ * reached production as a crash in the firmware-update release notes, and how `setImmediate`
+ * reached it as a crash on the post-onboarding redirect, rather than as build failures.
+ * Guarded reads (`typeof process`, `typeof setImmediate`) stay in the bundle.
  */
 
 // A read counts as guarded when one of these appears within GUARD_WINDOW characters before it.
@@ -14,6 +16,23 @@ const GUARD = /typeof process|globalThis\.process|\.g\.process|process\?\./;
 const GUARD_WINDOW = 140;
 
 const READ = /\bprocess\.([A-Za-z_$][A-Za-z0-9_$]*)/g;
+
+/**
+ * Node globals that are free variables rather than properties of `process`, so READ above
+ * cannot see them. `setImmediate` shipped this way: the post-onboarding redirect called it
+ * directly, and the build stayed green until a user actually finished onboarding.
+ */
+const GLOBALS = ["setImmediate", "clearImmediate"];
+
+const GLOBAL_READS = GLOBALS.map(name => ({
+  name,
+  // The lookbehind drops property access (`utils.setImmediate`) and longer identifiers,
+  // both of which read something else and cannot throw on their own.
+  read: new RegExp(String.raw`(?<![.$\w])${name}\b`, "g"),
+  // Tested against a window that *includes* the identifier, so `typeof setImmediate` counts
+  // as its own guard rather than being reported as a read.
+  guard: new RegExp(String.raw`typeof ${name}|(?:globalThis|window|self)\.${name}`),
+}));
 
 // Rewritten by DefinePlugin, so a surviving match is prose in a string literal or a module
 // the shim loader already bound — never a live reference.
@@ -51,6 +70,18 @@ const ALLOWED = new Map([
   ["msw :: stderr", "dev-only, behind ENABLE_MSW"],
   ["@open-draft/logger :: stdout", "dev-only, pulled in by MSW"],
   ["@open-draft/logger :: stderr", "dev-only, pulled in by MSW"],
+
+  // Bare Node globals (GLOBALS above). Each verified unreachable in a Chromium renderer.
+  [
+    "@lottiefiles/dotlottie-react :: setImmediate",
+    "RAF fallback class, built only when `typeof requestAnimationFrame != function`",
+  ],
+  ["@lottiefiles/dotlottie-react :: clearImmediate", "same RAF fallback class as above"],
+  ["async :: setImmediate", "guarded by hasSetImmediate, computed via `typeof` too far above"],
+  [
+    "scryptsy :: setImmediate",
+    "only in the `.async` export; its one caller, @multiversx/sdk-core, uses the sync default",
+  ],
 ]);
 
 const B64 = new Map(
@@ -108,11 +139,21 @@ function sourceAt(decoded, sources, line, column) {
   return found === null ? null : (sources[found] ?? null);
 }
 
-/** `.../node_modules/@scope/name/...` or `.../node_modules/name/...` → `@scope/name`. */
+/**
+ * `.../node_modules/@scope/name/...` or `.../node_modules/name/...` → `@scope/name`.
+ *
+ * First-party sources have no `node_modules` segment and keep their path instead, minus the
+ * `webpack://<compilation>/` and `./` prefixes. Collapsing those to a package name reported
+ * every one of them as the single origin `webpack:`, so the first such violation masked all
+ * the rest — and first-party code is exactly where an unguarded Node global tends to live.
+ */
 function packageOf(source) {
   const parts = source.split(/[\\/]node_modules[\\/]/);
   const tail = parts[parts.length - 1];
   if (!tail) return source;
+  if (parts.length === 1) {
+    return tail.replace(/^webpack:\/\/[^/]*\//, "").replace(/^(?:\.\.?\/)+/, "");
+  }
   const segments = tail.split(/[\\/]/);
   return segments[0].startsWith("@") ? `${segments[0]}/${segments[1]}` : segments[0];
 }
@@ -126,6 +167,32 @@ function findUnguarded(code) {
     const before = code.slice(Math.max(0, match.index - GUARD_WINDOW), match.index);
     if (GUARD.test(before)) continue;
     hits.push({ index: match.index, property: match[1] });
+  }
+  return hits;
+}
+
+/** Index of the last non-whitespace character before `from`, or -1. */
+function prevNonSpace(code, from) {
+  let i = from - 1;
+  while (i >= 0 && (code[i] === " " || code[i] === "\n" || code[i] === "\t")) i--;
+  return i;
+}
+
+function findUnguardedGlobals(code) {
+  const hits = [];
+  for (const { name, read, guard } of GLOBAL_READS) {
+    read.lastIndex = 0;
+    let match;
+    while ((match = read.exec(code))) {
+      const end = match.index + name.length;
+      // `{setImmediate: …}` and `, setImmediate: …` are property keys, not reads. A ternary
+      // (`cond ? setImmediate : other`) also ends in `:`, hence the check on the opener too —
+      // that one IS a read and must stay.
+      const prev = code[prevNonSpace(code, match.index)];
+      if ((prev === "," || prev === "{") && code[end] === ":") continue;
+      if (guard.test(code.slice(Math.max(0, match.index - GUARD_WINDOW), end))) continue;
+      hits.push({ index: match.index, property: name });
+    }
   }
   return hits;
 }
@@ -146,7 +213,7 @@ module.exports = class ProcessReadGuard {
         } catch {
           continue;
         }
-        const hits = findUnguarded(code);
+        const hits = [...findUnguarded(code), ...findUnguardedGlobals(code)];
         if (hits.length === 0) continue;
 
         // Only now is it worth paying for the source map.
@@ -190,10 +257,11 @@ module.exports = class ProcessReadGuard {
         .join("\n");
       compilation.errors.push(
         new Error(
-          "ProcessReadGuard: unguarded `process` read(s) in the renderer bundle.\n\n" +
+          "ProcessReadGuard: unguarded Node-only global(s) in the renderer bundle.\n\n" +
             `${detail}\n\n` +
-            "A context-isolated renderer has no `process`, so each of these throws\n" +
-            "`ReferenceError: process is not defined` if that code path ever runs.\n\n" +
+            "The renderer is a sandboxed `web` target: it has no `process` and none of the\n" +
+            "Node timer globals, so each of these throws a `ReferenceError` if that code\n" +
+            "path ever runs.\n\n" +
             "Fix by adding the package to the processShimLoader rule in rspack.renderer.ts,\n" +
             "or — if you have confirmed the read cannot throw — to ALLOWED in\n" +
             "tools/rspack/processReadGuard.cjs with the reason.",
