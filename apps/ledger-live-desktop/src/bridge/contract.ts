@@ -153,6 +153,8 @@ export type FilesBridge = {
    */
   saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
   exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  /** Prompts for a save location and writes the PNG; false when cancelled. */
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<boolean>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -241,6 +243,7 @@ export const CHANNELS = {
   showSaveDialog: "show-save-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
+  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
