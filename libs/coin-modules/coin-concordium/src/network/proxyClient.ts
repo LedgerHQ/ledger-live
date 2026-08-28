@@ -1,14 +1,15 @@
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/coin-module-framework/promises";
-import type { ConcordiumCoinConfig } from "../types";
 import type {
   AccountBalanceResponse,
   BlockInfoResponse,
   BlocksAtHeightResponse,
   BlockTransactionEventsResponse,
+  ConcordiumCoinConfig,
   ConsensusInfoResponse,
   GetTransactionCostParams,
+  PltTokenInfo,
   TransactionsResponse,
   PublicKeyAccountsResponse,
   SubmitCredentialData,
@@ -183,6 +184,42 @@ export async function getAccountBalance(
     client.request<AccountBalanceResponse>({
       method: "GET",
       url: `/v2/accBalance/${accountAddress}`,
+    }),
+  );
+}
+
+/**
+ * List every protocol-level token on the chain.
+ * GET /v0/plt/tokens
+ *
+ * Returns full token info, not just identifiers: the proxy resolves each id
+ * before responding.
+ */
+export async function getPltTokens(
+  config: ConcordiumCoinConfig,
+  currencyId: string,
+): Promise<PltTokenInfo[]> {
+  return withClient(config, currencyId, async client =>
+    client.request<PltTokenInfo[]>({
+      method: "GET",
+      url: "/v0/plt/tokens",
+    }),
+  );
+}
+
+/**
+ * Get the global info for one protocol-level token.
+ * GET /v0/plt/tokenInfo/{tokenId}
+ */
+export async function getPltTokenInfo(
+  config: ConcordiumCoinConfig,
+  currencyId: string,
+  tokenId: string,
+): Promise<PltTokenInfo> {
+  return withClient(config, currencyId, async client =>
+    client.request<PltTokenInfo>({
+      method: "GET",
+      url: `/v0/plt/tokenInfo/${encodeURIComponent(tokenId)}`,
     }),
   );
 }
