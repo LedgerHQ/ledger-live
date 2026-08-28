@@ -4,7 +4,7 @@ import React from "react";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { initializerDevice } from "../../testUtils";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
-import { useUnsupportedFirmwareVersionViewModel } from "./useUnsupportedFirmwareVersionViewModel";
+import { useInvalidProviderViewModel } from "./useInvalidProviderViewModel";
 
 jest.mock("../../hooks/useInitializerActions", () => ({
   useInitializerActions: jest.fn(),
@@ -16,70 +16,41 @@ jest.mock("../../../utils/trackDeviceIntent", () => ({
 
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const mockedTrackConnectAppButtonClicked = jest.mocked(trackConnectAppButtonClicked);
-const openMyLedgerFirmwareUpdate = jest.fn();
+const openExperimentalSettings = jest.fn();
 const wrapper = ({ children }: React.PropsWithChildren) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
     {children}
   </DeviceIntentTrackingProvider>
 );
 
-describe("useUnsupportedFirmwareVersionViewModel", () => {
+describe("useInvalidProviderViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseInitializerActions.mockReturnValue({
       openMyLedger: jest.fn(),
-      openMyLedgerFirmwareUpdate,
+      openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding: jest.fn(),
       openSupport: jest.fn(),
-      openExperimentalSettings: jest.fn(),
+      openExperimentalSettings,
     });
   });
 
-  it("GIVEN an unsupported firmware state WHEN calling onUpdateLedgerOs THEN it opens the firmware update", () => {
+  it("GIVEN an invalid provider WHEN going to settings THEN it opens experimental settings", () => {
     // GIVEN
     const { result } = renderHook(
-      () =>
-        useUnsupportedFirmwareVersionViewModel({
-          device: initializerDevice,
-          onCancel: jest.fn(),
-        }),
+      () => useInvalidProviderViewModel({ device: initializerDevice }),
       { wrapper },
     );
 
     // WHEN
-    result.current.onUpdateLedgerOs();
+    result.current.onGoToSettings();
 
     // THEN
-    expect(openMyLedgerFirmwareUpdate).toHaveBeenCalledTimes(1);
+    expect(openExperimentalSettings).toHaveBeenCalledTimes(1);
     expect(mockedTrackConnectAppButtonClicked).toHaveBeenCalledWith({
       sourceFlow: "my_ledger",
       modelId: initializerDevice.modelId,
-      button: CONNECT_APP_BUTTON.UpdateFirmware,
-      extraProperties: {},
-    });
-  });
-
-  it("GIVEN an unsupported firmware state WHEN calling onCancel THEN it preserves cancel", () => {
-    // GIVEN
-    const onCancel = jest.fn();
-    const { result } = renderHook(
-      () =>
-        useUnsupportedFirmwareVersionViewModel({
-          device: initializerDevice,
-          onCancel,
-        }),
-      { wrapper },
-    );
-
-    // WHEN
-    result.current.onCancel();
-
-    // THEN
-    expect(onCancel).toHaveBeenCalledTimes(1);
-    expect(mockedTrackConnectAppButtonClicked).toHaveBeenCalledWith({
-      sourceFlow: "my_ledger",
-      modelId: initializerDevice.modelId,
-      button: CONNECT_APP_BUTTON.Close,
+      button: CONNECT_APP_BUTTON.GoToSettings,
       extraProperties: {},
     });
   });

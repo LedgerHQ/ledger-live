@@ -3,7 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import { useUnsupportedFeatureViewModel } from "./useUnsupportedFeatureViewModel";
+import { useInvalidProviderViewModel } from "./useInvalidProviderViewModel";
 import type { InitializerDevice } from "../../types";
 import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
@@ -20,7 +20,7 @@ jest.mock("../../hooks/useInitializerActions");
 const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
-const openSupport = jest.fn();
+const openExperimentalSettings = jest.fn();
 const wrapper = ({ children }: React.PropsWithChildren) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
     {children}
@@ -35,41 +35,31 @@ const device: InitializerDevice = {
   wired: false,
 };
 
-describe("useUnsupportedFeatureViewModel", () => {
+describe("useInvalidProviderViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseInitializerActions.mockReturnValue({
       openMyLedger: jest.fn(),
       openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding: jest.fn(),
-      openSupport,
-      openExperimentalSettings: jest.fn(),
+      openSupport: jest.fn(),
+      openExperimentalSettings,
     });
   });
 
-  it("GIVEN a device WHEN rendering THEN it exposes the view handlers", () => {
-    const { result } = renderHook(() => useUnsupportedFeatureViewModel({ device }), { wrapper });
-
-    expect(result.current).toEqual(
-      expect.objectContaining({
-        onContactSupport: expect.any(Function),
-      }),
-    );
-  });
-
-  it("GIVEN a device WHEN contacting support THEN it tracks Contact Ledger Support and opens support", () => {
-    const { result } = renderHook(() => useUnsupportedFeatureViewModel({ device }), { wrapper });
+  it("GIVEN a device WHEN invoking go to settings THEN it tracks Go To Settings and opens experimental settings", () => {
+    const { result } = renderHook(() => useInvalidProviderViewModel({ device }), { wrapper });
 
     act(() => {
-      result.current.onContactSupport();
+      result.current.onGoToSettings();
     });
 
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       sourceFlow: "my_ledger",
       deviceUxV2: true,
       modelId: DeviceModelId.europa,
-      button: "Contact Ledger Support",
+      button: "Go To Settings",
     });
-    expect(openSupport).toHaveBeenCalledTimes(1);
+    expect(openExperimentalSettings).toHaveBeenCalledTimes(1);
   });
 });

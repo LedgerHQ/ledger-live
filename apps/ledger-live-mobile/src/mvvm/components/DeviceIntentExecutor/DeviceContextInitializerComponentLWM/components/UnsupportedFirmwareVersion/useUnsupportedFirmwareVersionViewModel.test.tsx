@@ -44,6 +44,7 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
       openMyLedgerFirmwareUpdate,
       openOnboarding: jest.fn(),
       openSupport: jest.fn(),
+      openExperimentalSettings: jest.fn(),
     });
   });
 
