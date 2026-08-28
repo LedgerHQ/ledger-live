@@ -10058,6 +10058,6 @@
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",
-    "terms": "By signing this transaction, I accept <termsLink>Swapkit by NEAR intent T&C</termsLink>"
+    "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
   }
 }
