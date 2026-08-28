@@ -5332,6 +5332,7 @@
         "applyFamilies": "Apply",
         "contactsData": "Contacts data",
         "loadPopulatedContacts": "Load populated contacts",
+        "loadFromSendHistory": "Load contacts from send history",
         "resetContacts": "Reset contacts",
         "resetOverride": "Reset override",
         "featureIntroduction": {

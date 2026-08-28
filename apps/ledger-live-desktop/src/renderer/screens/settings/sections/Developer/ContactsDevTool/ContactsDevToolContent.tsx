@@ -24,6 +24,7 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
     handleLoadPopulatedContacts,
+    handleLoadFromSendHistory,
     handleResetContacts,
     handleResetOverride,
     hasDismissedFeatureIntroduction,
@@ -110,6 +111,9 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
             <div className="flex flex-wrap items-center gap-4 pt-8">
               <Button appearance="accent" size="sm" onClick={handleLoadPopulatedContacts}>
                 {t("settings.developer.contactsDevTool.loadPopulatedContacts")}
+              </Button>
+              <Button appearance="accent" size="sm" onClick={handleLoadFromSendHistory}>
+                {t("settings.developer.contactsDevTool.loadFromSendHistory")}
               </Button>
               <Button appearance="transparent" size="sm" onClick={handleResetContacts}>
                 {t("settings.developer.contactsDevTool.resetContacts")}
