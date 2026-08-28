@@ -102,6 +102,29 @@ describe("segment identify overlay (LIVE-35849)", () => {
     await waitFor(() => expect(logged).toEqual([expect.objectContaining(identifyOverlayEvent)]));
   });
 
+  it("should log [Identify] with failed when identify throws synchronously", async () => {
+    await startAnalytics(createStoreWithAnalytics(true));
+    await waitFor(() => expect(logged.length).toBeGreaterThan(0));
+    mockIdentify.mockClear();
+    logged.length = 0;
+    mockIdentify.mockImplementationOnce(() => {
+      throw new Error("sdk down");
+    });
+
+    await expect(updateIdentify()).resolves.toBeUndefined();
+
+    expect(mockIdentify).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(logged).toEqual([
+        expect.objectContaining({
+          eventName: "[Identify]",
+          eventProperties: { userIdPresent: expect.any(Boolean), failed: true },
+          eventPropertiesWithoutExtra: { userIdPresent: expect.any(Boolean), failed: true },
+        }),
+      ]),
+    );
+  });
+
   it("should log [Identify] with failed when the Segment identify promise rejects", async () => {
     await startAnalytics(createStoreWithAnalytics(true));
     await waitFor(() => expect(logged.length).toBeGreaterThan(0));

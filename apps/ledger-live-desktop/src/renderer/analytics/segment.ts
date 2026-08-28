@@ -464,14 +464,16 @@ const identifyAndLogOverlay = (
   id: string | undefined,
   allProperties: Record<string, unknown>,
 ) => {
-  void Promise.resolve(
-    analytics.identify(id, allProperties, {
-      context: getContext(),
-    }),
-  ).then(
-    () => publishIdentifyOverlay(Boolean(id), false),
-    () => publishIdentifyOverlay(Boolean(id), true),
-  );
+  void Promise.resolve()
+    .then(() =>
+      analytics.identify(id, allProperties, {
+        context: getContext(),
+      }),
+    )
+    .then(
+      () => publishIdentifyOverlay(Boolean(id), false),
+      () => publishIdentifyOverlay(Boolean(id), true),
+    );
 };
 
 function sendTrack(event: string, properties: object | undefined | null) {
