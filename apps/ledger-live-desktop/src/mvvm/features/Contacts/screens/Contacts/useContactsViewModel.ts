@@ -45,6 +45,7 @@ import {
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import { useContacts, useContactsMeContact } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
@@ -88,6 +89,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const contacts = useContacts();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
     intents: contactsIntentLWDDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
   });
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;

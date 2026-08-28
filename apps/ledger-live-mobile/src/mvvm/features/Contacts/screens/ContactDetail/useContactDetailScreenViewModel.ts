@@ -32,6 +32,7 @@ import {
   type AddAddressFlowState,
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
@@ -102,6 +103,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { t } = useTranslation();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
     intents: contactsIntentLWMDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
   });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
