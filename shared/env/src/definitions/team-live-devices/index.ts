@@ -1,4 +1,23 @@
-import { intParser, floatParser, boolParser, stringParser } from "@ledgerhq/live-env";
+import {
+  intParser,
+  floatParser,
+  boolParser,
+  stringParser,
+  jsonParser,
+} from "@ledgerhq/live-env";
+
+// Firmware 1.9.1 leaves an OS update available, so the firmware-update flow can be exercised.
+const DEFAULT_MOCK_SERVER_SESSION = {
+  devices: [
+    {
+      name: "Ledger Stax",
+      device_type: "stax",
+      connectivity_type: "USB",
+      firmware_version: "1.9.1",
+      apps: [{ name: "BOLOS", version: "1.4.0" }],
+    },
+  ],
+};
 
 const teamLiveDevices = {
   MANAGER_API_BASE: {
@@ -137,6 +156,16 @@ const teamLiveDevices = {
     def: "https://device-mock-server.aws.ldg-ps-default.ldg-tech.com",
     parser: stringParser,
     desc: "base URL of the device mock server backing the mock server transport. Defaults to the shared deployment; override to point at a local instance (e.g. http://localhost:9752)",
+  },
+  MOCK_SERVER_SEED: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) BIP39 mnemonic pushed to the mock server session at boot; the server forwards it to Speculos on every app open. Empty (default) keeps the mock server's own seed",
+  },
+  MOCK_SERVER_SESSION: {
+    def: DEFAULT_MOCK_SERVER_SESSION,
+    parser: jsonParser,
+    desc: '(dev feature) JSON session imported into the mock server at boot: {"devices":[{name,device_type,connectivity_type,firmware_version,apps,mocks,catalog}]}. Defaults to a single USB Stax on firmware 1.9.1',
   },
 };
 

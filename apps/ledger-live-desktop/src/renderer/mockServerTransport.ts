@@ -53,21 +53,26 @@ export async function bootstrapMockServerTransport(): Promise<void> {
     const token = data?.token;
     if (!token) throw new Error("no token returned by /auth");
 
-    // Seed a USB Stax on the dashboard with explicit metadata so the mock
-    // derives a realistic firmware/app handshake (an empty body left firmware at
-    // "0.0.0", which confuses the connect flow). Firmware 1.9.1 leaves an OS
-    // update available so the firmware-update flow can be exercised.
+    const auth = { Authorization: `Bearer ${token}` };
+
+    // Pushed before the devices land: the endpoint rejects an empty seed, so a
+    // bad mnemonic fails before the session is half-provisioned.
+    const seedOverride = getEnv("MOCK_SERVER_SEED").trim();
+    if (seedOverride) {
+      await network({
+        method: "PUT",
+        url: `${baseUrl}/sessions/current/seed`,
+        data: { seed: seedOverride },
+        headers: auth,
+        timeout: 4000,
+      });
+    }
+
     await network({
       method: "POST",
-      url: `${baseUrl}/devices`,
-      data: {
-        name: "Ledger Stax",
-        device_type: "stax",
-        connectivity_type: "USB",
-        firmware_version: "1.9.1",
-        apps: [{ name: "BOLOS", version: "1.4.0" }],
-      },
-      headers: { Authorization: `Bearer ${token}` },
+      url: `${baseUrl}/import`,
+      data: getEnv("MOCK_SERVER_SESSION"),
+      headers: auth,
       timeout: 4000,
     });
 
