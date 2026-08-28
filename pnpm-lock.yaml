@@ -75,6 +75,9 @@ catalogs:
     '@ledgerhq/device-transport-kit-web-hid':
       specifier: 1.2.4
       version: 1.2.4
+    '@ledgerhq/dmk-ledger-wallet':
+      specifier: 0.5.0
+      version: 0.5.0
     '@ledgerhq/logs':
       specifier: 6.17.0
       version: 6.17.0
@@ -15028,6 +15031,9 @@ importers:
       '@ledgerhq/context-module':
         specifier: 2.5.0
         version: 2.5.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))
+      '@ledgerhq/dmk-ledger-wallet':
+        specifier: 'catalog:'
+        version: 0.5.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -22089,6 +22095,11 @@ packages:
       '@ledgerhq/device-management-kit': ^1.7.0
       rxjs: 7.8.2
 
+  '@ledgerhq/dmk-ledger-wallet@0.5.0':
+    resolution: {integrity: sha512-FL4jAnglkPxFAyI2JvXDRX2wG2RqsVsJS+qV8I8njJFfIO+1pnIeAY/XMRMPpspQlwTlslvc5PeEUVRgR9ECdA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.8.0
+
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
@@ -28545,7 +28556,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -49230,6 +49241,16 @@ snapshots:
       purify-ts: 2.1.0
       rxjs: 7.8.2
       uuid: 11.0.3
+
+  '@ledgerhq/dmk-ledger-wallet@0.5.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.8.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))
+      pako: 2.1.0
+      purify-ts: 2.1.0
+      rxjs: 7.8.2
+      semver: 7.7.2
+      xstate: 5.19.2
 
   '@ledgerhq/errors@5.50.0': {}
 

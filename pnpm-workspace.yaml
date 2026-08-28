@@ -26,6 +26,7 @@ catalog:
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-contacts-kit": 0.2.0
   "@ledgerhq/device-management-kit": 1.8.0
+  "@ledgerhq/dmk-ledger-wallet": 0.5.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
   "@ledgerhq/device-signer-kit-ethereum": 1.17.0
