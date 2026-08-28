@@ -4,4 +4,4 @@
 "@features/platform-contacts": patch
 ---
 
-Replace the stubbed Contacts "register external address" device intent job with a real call into `@ledgerhq/device-contacts-kit`'s `ContactsManager.registerExternalAddress()`.
+Register an external address on the device from Contacts. The device intent now calls `@ledgerhq/device-contacts-kit`'s `ContactsManager.registerExternalAddress()`, each failure gets its own JobState (app version too low, invalid input, device rejected, existing-group verification failed, unsupported operation, device error), and both apps render the confirmation step and one `InfoState` per failure. A rejection keeps the job open so the user can retry on the same device.
