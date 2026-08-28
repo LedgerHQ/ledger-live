@@ -7,7 +7,7 @@ export const getFeatureFlags = async (page: Page): Promise<PartialFeatures> => {
   const featureFlags = await page.evaluate(() => {
     return window.getAllFeatureFlags("en");
   });
-  return featureFlags;
+  return featureFlags as PartialFeatures;
 };
 
 const getLwdWallet40Params = async (page: Page) => {
