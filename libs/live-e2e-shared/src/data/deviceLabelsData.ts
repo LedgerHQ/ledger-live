@@ -78,6 +78,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveConfirm: {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.TRON.name]: DeviceLabels.CONFIRM,
       [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
@@ -149,6 +150,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
       [AppInfos.RIPPLE.name]: DeviceLabels.CONFIRM,
       [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
+      [AppInfos.TRON.name]: DeviceLabels.CONFIRM,
       [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       [AppInfos.SUI.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
