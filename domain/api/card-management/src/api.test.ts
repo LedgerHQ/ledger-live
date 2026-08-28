@@ -156,7 +156,7 @@ const makeStore = (
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => "https://card.test",
             getCardBaanxClientKey: () => "client-key",
-            readCardSession: () => Promise.resolve({ token: sessionToken, epoch: 1 }),
+            readCardSession: () => Promise.resolve({ token: sessionToken, sessionId: 1 }),
             getCardRefreshToken: () => Promise.resolve("rt_token"),
             takeCardAuthorizationGrant: handoff.takeCardAuthorizationGrant,
             receiveCardSession: handoff.receiveCardSession,

@@ -241,7 +241,7 @@ describe("customCreateStore", () => {
 
       await expect(extra.readCardSession()).resolves.toEqual({
         token: "at_token",
-        epoch: expect.any(Number),
+        sessionId: expect.any(Number),
       });
       await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
     });
@@ -264,8 +264,8 @@ describe("customCreateStore", () => {
       await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
       store.dispatch(setSignedIn(true));
 
-      const { epoch } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+      const { sessionId } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
       // The Card cache is emptied one macrotask later, so the request whose 401 started the
@@ -288,8 +288,8 @@ describe("customCreateStore", () => {
       await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
       store.dispatch(setSignedIn(true));
 
-      const { epoch } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+      const { sessionId } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
 
       // One rule: a renewal that ran and produced no session ends the session. A provider outage
       // therefore signs the user out, and the store publishes it.

@@ -18,7 +18,7 @@ Every accessor is async, because the native store only reads asynchronously.
 - `cardSession` — `set` / `clear` / `get` over the two tokens. `set` rejects with
   `CardSessionNotStoredError` when a logout or a newer login replaced the session first.
 - `readCardSession()` — reader passed to `cardApiExtra`. It answers with the access token **and the
-  epoch of the session it came from**, so the base query can name that session when it asks for a
+  id of the session it came from**, so the base query can name that session when it asks for a
   renewal. It reads, and nothing else.
 - `getCardSessionToken()` — the access token on its own, for a caller that only asks "is there a
   session?".
@@ -26,8 +26,8 @@ Every accessor is async, because the native store only reads asynchronously.
   argument so that no token can become an RTK Query argument.
 - `putCardAuthorizationGrant()` / `takeCardAuthorizationGrant()` / `receiveCardSession()` /
   `takeCardSession()` — the session hand-off. See **Credentials never travel through redux** below.
-- `refreshCardSession(epoch)` — the one renewal entry, called by the base query on a `401`. It
-  answers `refreshed` / `session-ended` / `session-replaced` / `unavailable`.
+- `refreshCardSession(sessionId)` — the one renewal entry, called by the base query on a `401`. It
+  answers `refreshed`, `session-ended`, or `unavailable` — renewed, over, or neither.
 - `configureCardSessionRenewal({ dispatch, onCardSessionEnded })` — installed once per store, at the
   app's composition root. It answers with the call that uninstalls it again.
 
@@ -71,20 +71,24 @@ callers know nothing about each other: `set` runs from the login machine, and `c
 terminal cleanup, which the request path triggers. Unqueued, a removal lands between the two halves
 of a write and leaves the access token alone on disk.
 
-A queue orders operations by the moment they were dispatched, not by what their callers meant. So the
-session also carries a **generation counter**, bumped synchronously by every `set` and `clear`. This
-counter is the session's identity, and the base query sees it as the `epoch` of a session snapshot.
+### The session id
 
-A renewal reads the counter before it starts, and its write compares it again before it stores
-anything. Without that, a renewal that began before a logout, and whose write landed after the clear,
-would restore a session the user had ended.
+**Every login and every logout starts a new session and gives it a new id.** A renewal keeps the id,
+because it is the same session with a fresh token. That is the whole idea.
 
-The base query sends the epoch back when it asks for a renewal, and that closes two holes:
+A renewal takes time, and a logout or a new login can land in the middle of one. The renewal is then
+holding the id of a session that no longer exists. So it reads the id before it starts and compares
+it again before it writes or clears anything. **If the id moved, the renewal does nothing.**
 
-- a request whose session a **new login** replaced is answered `session-replaced`. It is never
-  replayed with the new user's token.
-- a **terminal** answer for that request clears nothing, because the session it belonged to is gone
-  and the one on disk belongs to somebody else.
+Two bugs, closed by that one test:
+
+- A renewal that began before a logout would put the session back after it.
+- A renewal that failed for the user who just left would wipe the keychain of the one who just
+  arrived.
+
+The base query reads the id with the token, and hands it back when it asks for a renewal. A request
+whose session was replaced while it was in flight is therefore never replayed with the new user's
+token.
 
 `getCardSessionToken` never takes a turn: the access token is one key, and one key cannot disagree
 with itself. During a write it answers the previous token, which stays valid until the new one lands,
@@ -143,29 +147,15 @@ What one rule costs, and what was accepted with it:
 
 What it buys: one rule, one recovery path, and no session that half works.
 
-The **two** answers that keep the session are not judgements about the credential. A request whose
-session a new login replaced is answered `session-replaced`, because the session on disk belongs to
-somebody else now. An app that never installed the renewal is answered `unavailable`, because no
-request was made, so nothing was learned. The base query reports both as the original 401 with a
-body of `card_renewal_unavailable`, and the login flow reads that body and keeps the session.
+The answers that keep the session are not judgements about the credential. Both are `unavailable`,
+with a reason: `session_replaced` when a new login or a logout got in first, and
+`card session renewal is not configured` when the app installed no renewal at all — no request was
+made, so nothing was learned. The base query reports either as the original 401 with a body of
+`card_renewal_unavailable`, and the login flow reads that body and keeps the session.
 
 A store read that fails is not an empty store. The native store rejects such a read rather than
 answering `null`, and the base query reports the failure. An empty store ends a session, and a
 locked keychain must never end one.
-
-### Reading a renewal in a development build
-
-A shipped log carries no renewal answer at all: a token endpoint can echo the token it rejected. So
-a development build traces two lines that a release build never prints (see `traceCard` in
-`@shared/api-services`):
-
-```
-[card api] POST https://…/v1/auth/oauth2/token → 500 {"message":"Internal server error"}
-[card renewal] the grant failed → the session ends
-```
-
-The first is every Card answer, with each credential field replaced, and it carries the status. The
-second is the outcome. They are the only record of why a session ended.
 
 ## Credentials never travel through redux
 

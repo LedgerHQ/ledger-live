@@ -70,10 +70,7 @@ function toSessionReceipt(api: { extra: unknown }, response: GrantAnswer): Recei
   const parsed = PayCardSessionResponseSchema.safeParse(response.data);
   if (!parsed.success) {
     // The body is dropped here, exactly as `catchSchemaFailure` drops it elsewhere.
-    return {
-      error: toSchemaFailureError("PayCardSessionResponseSchema", parsed.error.issues),
-      meta: response.meta,
-    };
+    return { error: toSchemaFailureError("PayCardSessionResponseSchema"), meta: response.meta };
   }
 
   const session = transformPayCardSessionResponse(parsed.data);

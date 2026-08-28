@@ -324,8 +324,8 @@ describe("mobile store", () => {
       await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
       store.dispatch(setSignedIn(true));
 
-      const { epoch } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(epoch)).resolves.toEqual({ kind: "session-ended" });
+      const { sessionId } = await extra.readCardSession();
+      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
       // The Card cache is emptied one macrotask later, so the request whose 401 started the

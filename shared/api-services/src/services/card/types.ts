@@ -5,22 +5,25 @@ import type { CardApiExtraSchema } from "./schema";
 export type CardApiExtra = z.infer<typeof CardApiExtraSchema>;
 
 /**
- * The access token, plus the identity of the session it came from.
+ * The access token, and the id of the session it came from.
  *
- * `epoch` changes every time the owner replaces or clears the stored session. The base query keeps
- * the epoch it sent a request with and hands it back when it asks for a renewal, so the owner can
- * tell "renew the session this request used" from "this request outlived its session".
+ * Every login and every logout starts a new session and gives it a new id. A renewal keeps the id,
+ * because it is the same session with a fresh token.
+ *
+ * The base query keeps the id it sent a request with and hands it back when it asks for a renewal.
+ * That is how the owner tells "renew the session this request used" from "this request outlived its
+ * session".
  */
 export type CardSessionSnapshot = Readonly<{
   token: string | null;
-  epoch: number;
+  sessionId: number;
 }>;
 
 /**
- * What the session owner tells the base query when it asks for a renewal.
+ * What the session owner tells the base query when it asks for a renewal. Three answers, and no
+ * fourth: the session was renewed, the session is over, or neither happened.
  *
- * The owner decides; the base query only reports. A discriminated result keeps that split honest: a
- * bare token could not tell "the session is over" apart from "ask again later".
+ * The owner decides; the base query only reports.
  */
 export type CardSessionRefreshResult =
   /** A new access token is on disk, for the same session. Replay the original request with it, once. */
@@ -28,16 +31,11 @@ export type CardSessionRefreshResult =
   /** Terminal cleanup has already run. The base query answers 401 `card_session_ended`. */
   | { readonly kind: "session-ended" }
   /**
-   * The request outlived its session: a logout or a new login replaced it while the request was in
-   * flight. Nothing was renewed and nothing was cleaned up, because the session on disk now belongs
-   * to somebody else. The original error stands.
-   */
-  | { readonly kind: "session-replaced" }
-  /**
-   * No renewal ran, so nothing was learned about the session. The original error stands.
+   * Neither. Nothing was learned about the session, so the original error stands and the session on
+   * disk is left alone. `reason` says which case it was, for a support log.
    *
-   * The one way here is an app that never installed the renewal. A renewal that ran and failed ends
-   * the session, whatever it answered.
+   * Two ways here, and neither is a renewal that failed — a failed renewal ends the session:
+   * a request that outlived its session, and an app that never installed the renewal.
    */
   | { readonly kind: "unavailable"; readonly reason: string };
 

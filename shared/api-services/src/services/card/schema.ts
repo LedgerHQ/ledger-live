@@ -33,7 +33,7 @@ export const CardApiExtraSchema = z.object({
   /**
    * Async: the owner reads the session from OS secure storage on every call. It never renews.
    *
-   * It answers with the epoch as well as the token, so the base query can tell the owner which
+   * It answers with the session id as well as the token, so the base query can tell the owner which
    * session a 401 belongs to. See {@link CardSessionSnapshot}.
    */
   readCardSession: z.custom<() => Promise<CardSessionSnapshot>>(
@@ -69,10 +69,10 @@ export const CardApiExtraSchema = z.object({
     mustBeAFunction("receiveCardSession"),
   ),
   /**
-   * The one renewal entry, called by the base query after a 401. It takes the epoch the request was
+   * The one renewal entry, called by the base query after a 401. It takes the session id the request was
    * sent with, so a request that outlived its session neither renews nor cleans up.
    */
-  refreshCardSession: z.custom<(epoch: number) => Promise<CardSessionRefreshResult>>(
+  refreshCardSession: z.custom<(sessionId: number) => Promise<CardSessionRefreshResult>>(
     isFunction,
     mustBeAFunction("refreshCardSession"),
   ),

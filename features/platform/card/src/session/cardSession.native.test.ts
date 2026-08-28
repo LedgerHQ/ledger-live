@@ -61,12 +61,12 @@ describe("cardSession.native", () => {
     await expect(getCardRefreshToken()).resolves.toBeNull();
   });
 
-  it("serves the base query the token and the epoch of the session it came from", async () => {
+  it("serves the base query the token and the session id of the session it came from", async () => {
     await cardSession.set(session);
 
     await expect(readCardSession()).resolves.toEqual({
       token: "at_token",
-      epoch: expect.any(Number),
+      sessionId: expect.any(Number),
     });
   });
 });

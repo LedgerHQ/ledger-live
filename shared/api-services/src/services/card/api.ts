@@ -15,7 +15,6 @@ import {
   UNAUTHORIZED_STATUS,
 } from "./constants";
 import { CardApiExtraSchema } from "./schema";
-import { traceCard, traceCardApiAnswer } from "./trace";
 import type {
   CardApiExtra,
   CardBaseQueryExtraOptions,
@@ -118,18 +117,7 @@ const cardBaseQuery: BaseQueryFn<
       },
     })(args, api, extraOptions);
 
-    const meta = safeMeta(result.meta);
-
-    // Development builds only. A transport failure reports no `meta`, so the request describes
-    // itself from the arguments instead.
-    traceCardApiAnswer({
-      method: meta?.requestMethod ?? requestMethod(args),
-      url: meta?.requestUrl ?? requestUrl(args),
-      responseStatus: meta?.responseStatus,
-      error: result.error,
-    });
-
-    return { ...result, meta };
+    return { ...result, meta: safeMeta(result.meta) };
   };
 
   // The two OAuth2 grants authenticate themselves. They opt out of both services below, which is
@@ -139,9 +127,9 @@ const cardBaseQuery: BaseQueryFn<
   }
 
   let token: string | null | undefined;
-  let epoch: number;
+  let sessionId: number;
   try {
-    ({ token, epoch } = await extra.readCardSession());
+    ({ token, sessionId } = await extra.readCardSession());
   } catch (error) {
     // A request without the token answers 401. The renewal below cannot help, and that answer would
     // hide the read failure. Report the failure instead. A keychain the OS refused to read must
@@ -157,14 +145,10 @@ const cardBaseQuery: BaseQueryFn<
 
   let refresh: CardSessionRefreshResult;
   try {
-    // The epoch names the session this request used. A logout or a new login that landed while the
+    // The id names the session this request used. A logout or a new login that landed while the
     // request was in flight makes it stale, and the owner then renews nothing and clears nothing.
-    refresh = await extra.refreshCardSession(epoch);
-  } catch (error) {
-    traceCard(
-      "renewal",
-      `the owner threw: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    refresh = await extra.refreshCardSession(sessionId);
+  } catch {
     return renewalUnavailableResult("renewal_threw");
   }
 
@@ -175,8 +159,6 @@ const cardBaseQuery: BaseQueryFn<
       return runWithToken(refresh.accessToken);
     case "session-ended":
       return sessionEndedResult;
-    case "session-replaced":
-      return renewalUnavailableResult("session_replaced");
     case "unavailable":
       return renewalUnavailableResult(refresh.reason);
   }
@@ -202,14 +184,6 @@ export function describeSchemaFailure(error: NamedSchemaError): FetchBaseQueryEr
     status: "CUSTOM_ERROR",
     error: `${error.schemaName} rejected the response — ${issues}`,
   };
-}
-
-function requestMethod(args: string | FetchArgs): string {
-  return typeof args === "string" ? "GET" : (args.method ?? "GET");
-}
-
-function requestUrl(args: string | FetchArgs): string {
-  return typeof args === "string" ? args : args.url;
 }
 
 /** Endpoint-less Card api — use cases inject here. See shared/api-services README. */
