@@ -8,7 +8,6 @@ import {
   PayCardOnboardingStatusResponseSchema,
   PayCardOnboardingStepSchema,
   PayCardOrderResponseSchema,
-  PayCardSessionReceiptSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
   PayCardStatusResponseSchema,
@@ -19,9 +18,6 @@ import {
 export type PayCardSessionResponse = z.infer<typeof PayCardSessionResponseSchema>;
 
 export type PayCardSession = z.infer<typeof PayCardSessionSchema>;
-
-/** What a token grant answers with. See {@link PayCardSessionReceiptSchema}. */
-export type PayCardSessionReceipt = z.infer<typeof PayCardSessionReceiptSchema>;
 
 export type PayCardLogoutResult = z.infer<typeof PayCardLogoutResponseSchema>;
 

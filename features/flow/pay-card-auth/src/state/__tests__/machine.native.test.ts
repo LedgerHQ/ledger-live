@@ -20,14 +20,20 @@ const session = {
   refreshToken: "rt_token",
 };
 
-const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
+const user = {
+  id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+  verificationState: "VERIFIED",
+} as const;
 
 type Ports = { [K in keyof CardLoginPorts]: jest.Mock };
 
 /** A store that answers "nothing stored" and an API that answers the happy path. */
 function stubPorts(overrides: Partial<Ports> = {}): Ports {
   return {
-    createAttempt: jest.fn(async () => ({ ...attempt, codeChallenge: "challenge-value" })),
+    createAttempt: jest.fn(async () => ({
+      ...attempt,
+      codeChallenge: "challenge-value",
+    })),
     saveAttempt: jest.fn(async () => undefined),
     loadAttempt: jest.fn(async () => null),
     clearAttempt: jest.fn(async () => undefined),
@@ -65,7 +71,9 @@ function start(
 type CardLoginActor = Actor<typeof cardLoginMachine>;
 
 function settledAt(actor: CardLoginActor, value: string) {
-  return waitFor(actor, snapshot => snapshot.value === value, { timeout: 1000 });
+  return waitFor(actor, snapshot => snapshot.value === value, {
+    timeout: 1000,
+  });
 }
 
 describe("cardLoginMachine cold start", () => {
@@ -234,7 +242,10 @@ describe("cardLoginMachine login", () => {
   it("treats a redirect without a code as a dismissal", async () => {
     const ports = stubPorts({
       loadAttempt: jest.fn(async () => attempt),
-      openHostedLogin: jest.fn(async () => ({ type: "success", url: "ledgerlive://paytab" })),
+      openHostedLogin: jest.fn(async () => ({
+        type: "success",
+        url: "ledgerlive://paytab",
+      })),
     });
     const actor = start(ports);
     await settledAt(actor, "idle");
@@ -266,21 +277,33 @@ describe("cardLoginMachine login", () => {
 
 describe("cardLoginMachine failures", () => {
   it.each([
-    ["pkce_failed", { saveAttempt: jest.fn(async () => Promise.reject(new Error("no store"))) }],
+    [
+      "pkce_failed",
+      {
+        saveAttempt: jest.fn(async () => Promise.reject(new Error("no store"))),
+      },
+    ],
     [
       "browser_open_failed",
       { openHostedLogin: jest.fn(async () => Promise.reject(new Error("x"))) },
     ],
     [
       "exchange_failed",
-      { exchangeAuthorizationCode: jest.fn(async () => Promise.reject(new Error("400"))) },
+      {
+        exchangeAuthorizationCode: jest.fn(async () => Promise.reject(new Error("400"))),
+      },
     ],
     [
       "persist_failed",
-      { persistSession: jest.fn(async () => Promise.reject(new Error("no disk"))) },
+      {
+        persistSession: jest.fn(async () => Promise.reject(new Error("no disk"))),
+      },
     ],
   ])("reports %s", async (errorKind, overrides) => {
-    const ports = stubPorts({ loadAttempt: jest.fn(async () => attempt), ...overrides });
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      ...overrides,
+    });
     const actor = start(ports);
     await settledAt(actor, "idle");
 
@@ -330,12 +353,13 @@ describe("cardLoginMachine failures", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
   });
 
-  it("keeps the session when a 401 says only that the renewal could not run", async () => {
+  it("keeps the session when a request outlived the session it was sent with", async () => {
     const ports = stubPorts({
       hasSession: jest.fn(async () => true),
       getUser: jest.fn(async () =>
-        // What the base query answers when the token endpoint gave a 5xx or never replied.
-        Promise.reject({ status: 401, data: { message: "card_renewal_unavailable" } }),
+        // What the base query answers for a request a newer login replaced. Not a 401: the session
+        // on disk belongs to whoever just signed in.
+        Promise.reject({ status: "CUSTOM_ERROR", error: "card_stale_request" }),
       ),
     });
 
@@ -400,7 +424,10 @@ describe("cardLoginMachine failures", () => {
 
 describe("cardLoginMachine signed-in flag", () => {
   async function signedIn(overrides: Partial<Ports> = {}) {
-    const ports = stubPorts({ hasSession: jest.fn(async () => true), ...overrides });
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      ...overrides,
+    });
     const actor = start(ports);
     await settledAt(actor, "ready");
     return { ports, actor };

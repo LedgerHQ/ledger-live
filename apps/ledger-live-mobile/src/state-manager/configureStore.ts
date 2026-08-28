@@ -27,16 +27,12 @@ import {
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
-  redactCardApiAction,
   swapApiExtra,
 } from "@shared/api-services";
 import {
   configureCardSessionRenewal,
-  getCardRefreshToken,
   readCardSession,
-  receiveCardSession,
   refreshCardSession,
-  takeCardAuthorizationGrant,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
@@ -50,10 +46,7 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  // Sanitizes what the browser DevTools extension is given. It is not the Card guarantee: Rozenite
-  // below relays the same actions and takes no sanitizer, so no Card action may carry a credential
-  // in the first place. See the enhancer at the bottom of this store.
-  devTools: Config.DEBUG_RNDEBUGGER ? { actionSanitizer: redactCardApiAction } : false,
+  devTools: !!Config.DEBUG_RNDEBUGGER,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({
@@ -76,9 +69,6 @@ export const store = configureStore({
               getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
               readCardSession,
-              getCardRefreshToken,
-              takeCardAuthorizationGrant,
-              receiveCardSession,
               refreshCardSession,
             }),
             ...pushDevicesApiExtra({
@@ -137,11 +127,9 @@ export const store = configureStore({
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
-    // `rozeniteDevToolsEnhancer` relays every action over a socket to the DevTools panel, and its
-    // options carry `maxAge` and nothing else: it cannot be given an `actionSanitizer`, and an
-    // enhancer cannot redact what an inner enhancer receives. So Card credentials are kept out of
-    // the actions themselves — see `@features/platform-card`'s session hand-off — rather than
-    // stripped on the way to a panel.
+    // `rozeniteDevToolsEnhancer` relays every action over a socket to the DevTools panel, and it
+    // takes no `actionSanitizer`. That is why the Card credentials never enter an action: the two
+    // OAuth2 grants are plain thunks, which dispatch nothing.
     // Type assertion needed due to Redux version compatibility types between v4 and v5
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
@@ -151,8 +139,7 @@ export const store = configureStore({
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;
 
-// After the store exists, because a renewal dispatches a Card mutation. `cardApi` and
-// `cardManagementApi` are the same object: `injectEndpoints` mutates in place.
+// After the store exists, because a renewal dispatches the refresh grant through it.
 configureCardSessionRenewal({
   dispatch: store.dispatch,
   onCardSessionEnded: () => {

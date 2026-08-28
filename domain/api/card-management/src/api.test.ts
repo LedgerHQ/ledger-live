@@ -1,4 +1,4 @@
-import { configureStore, type Middleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { cardApi, cardApiExtra, type CardApiExtra } from "@shared/api-services";
 import {
   cardManagementApi,
@@ -11,7 +11,6 @@ import {
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
-import { MISSING_AUTHORIZATION_GRANT, MISSING_REFRESH_TOKEN } from "./constants";
 import { PayCardErrorResponseSchema } from "./schema";
 
 function jsonResponse(body: unknown): Response {
@@ -37,29 +36,9 @@ function flushPendingRequests(): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, 0));
 }
 
-/** Records every dispatched action, so a test can assert on what a logger would see. */
-function recordActions(sink: { type: string; meta?: unknown }[]): Middleware {
-  return () => next => action => {
-    sink.push(action as { type: string });
-    return next(action);
-  };
-}
-
 function request(spy: jest.SpyInstance): Request {
   return spy.mock.calls[0][0] as Request;
 }
-
-const sessionResponse = {
-  access_token: "at_token",
-  expires_in: 21600,
-  refresh_token: "rt_token",
-};
-
-const session = {
-  accessToken: "at_token",
-  expiresIn: 21600,
-  refreshToken: "rt_token",
-};
 
 // The provider's own example response.
 const cardStatus = {
@@ -115,38 +94,9 @@ const linkedWallets = [
   },
 ];
 
-/** The hand-off both grants use, as `@features/platform-card` implements it. */
-function fakeHandoff() {
-  const received: Record<string, unknown> = {};
-  let grant: { code: string; codeVerifier: string } | null = null;
-  let counter = 0;
-  return {
-    received,
-    putGrant(next: { code: string; codeVerifier: string }) {
-      grant = next;
-    },
-    takeCardAuthorizationGrant: () => {
-      const taken = grant;
-      grant = null;
-      return taken;
-    },
-    receiveCardSession: (value: unknown) => {
-      counter += 1;
-      const handle = `card-session-${counter}`;
-      received[handle] = value;
-      return handle;
-    },
-  };
-}
-
 // Wired the way the apps wire it: the store registers the service api, never this package.
-const makeStore = (
-  sessionToken: string | null = null,
-  overrides: Partial<CardApiExtra> = {},
-  extraMiddleware: Middleware[] = [],
-) => {
-  const handoff = fakeHandoff();
-  const store = configureStore({
+const makeStore = (sessionToken: string | null = null, overrides: Partial<CardApiExtra> = {}) =>
+  configureStore({
     reducer: {
       [cardManagementApi.reducerPath]: cardManagementApi.reducer,
     },
@@ -157,23 +107,12 @@ const makeStore = (
             getCardApiBaseUrl: () => "https://card.test",
             getCardBaanxClientKey: () => "client-key",
             readCardSession: () => Promise.resolve({ token: sessionToken, sessionId: 1 }),
-            getCardRefreshToken: () => Promise.resolve("rt_token"),
-            takeCardAuthorizationGrant: handoff.takeCardAuthorizationGrant,
-            receiveCardSession: handoff.receiveCardSession,
-            refreshCardSession: () =>
-              Promise.resolve({
-                kind: "unavailable",
-                error: { message: "no renewal configured" },
-              }),
+            refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
             ...overrides,
           }),
         },
-      })
-        .concat(cardApi.middleware)
-        .concat(extraMiddleware),
+      }).concat(cardApi.middleware),
   });
-  return Object.assign(store, { handoff });
-};
 
 describe("cardManagementApi configuration", () => {
   it("is the Card service api, mutated in place by injectEndpoints", () => {
@@ -183,7 +122,6 @@ describe("cardManagementApi configuration", () => {
 
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
-      "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
       "getCardOnboardingStatus",
@@ -192,7 +130,6 @@ describe("cardManagementApi configuration", () => {
       "getUser",
       "logout",
       "orderCard",
-      "refreshSession",
       "unfreezeCard",
     ]);
   });
@@ -240,201 +177,6 @@ describe("cardManagementApi requests", () => {
 
   afterEach(() => {
     fetchSpy?.mockRestore();
-  });
-
-  describe("exchangeAuthorizationCode", () => {
-    it("posts the grant it took off the extra, and hands the session over out of band", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const store = makeStore();
-      store.handoff.putGrant({ code: "auth-code", codeVerifier: "verifier" });
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(),
-      );
-
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
-      expect(request(fetchSpy).method).toBe("POST");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
-        grant_type: "authorization_code",
-        code: "auth-code",
-        code_verifier: "verifier",
-      });
-      // The answer is a handle. The session went to its owner, not into the action.
-      expect(result.data).toEqual({ sessionHandle: "card-session-1" });
-      expect(store.handoff.received["card-session-1"]).toEqual(session);
-    });
-
-    it("puts neither the grant nor the session into any action", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const actions: { type: string; meta?: unknown }[] = [];
-      const store = makeStore(null, {}, [recordActions(actions)]);
-      store.handoff.putGrant({ code: "auth-code", codeVerifier: "sensitive-verifier" });
-
-      await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(undefined, {
-          track: false,
-        }),
-      );
-
-      // Everything the desktop log export and the mobile DevTools relay would serialize.
-      const serialized = JSON.stringify(actions);
-      expect(serialized).not.toContain("sensitive-verifier");
-      expect(serialized).not.toContain("auth-code");
-      expect(serialized).not.toContain("at_token");
-      expect(serialized).not.toContain("rt_token");
-      expect(serialized).toContain("exchangeAuthorizationCode");
-    });
-
-    it("answers a wiring error when the caller put no grant in the slot", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const store = makeStore();
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(),
-      );
-
-      expect(fetchSpy).not.toHaveBeenCalled();
-      expect(result.error).toEqual({
-        status: "CUSTOM_ERROR",
-        error: MISSING_AUTHORIZATION_GRANT,
-      });
-    });
-
-    it("does not expose tokens when the response is malformed", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-        jsonResponse({
-          ...sessionResponse,
-          access_token: "sensitive-access-token",
-          refresh_token: "sensitive-refresh-token",
-          expires_in: "invalid",
-        }),
-      );
-
-      const store = makeStore();
-      store.handoff.putGrant({ code: "auth-code", codeVerifier: "verifier" });
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(),
-      );
-      const serializedError = JSON.stringify(result.error);
-
-      expect(result.data).toBeUndefined();
-      expect(serializedError).not.toContain("sensitive-access-token");
-      expect(serializedError).not.toContain("sensitive-refresh-token");
-    });
-  });
-
-  describe("refreshSession", () => {
-    it("reuses the token endpoint with the refresh_token grant, read off the extra", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-      const getCardRefreshToken = jest.fn(async () => "rt_token");
-
-      const store = makeStore(null, { getCardRefreshToken });
-      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-
-      // Once, and only here: the renewal itself never reads the key.
-      expect(getCardRefreshToken).toHaveBeenCalledTimes(1);
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
-        grant_type: "refresh_token",
-        refresh_token: "rt_token",
-      });
-      expect(result.data).toEqual({ sessionHandle: "card-session-1" });
-      expect(store.handoff.received["card-session-1"]).toEqual(session);
-    });
-
-    it("puts no token into any action, argument or payload", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const actions: { type: string; meta?: unknown }[] = [];
-      const store = makeStore("session-token", {}, [recordActions(actions)]);
-
-      await store.dispatch(
-        cardManagementApi.endpoints.refreshSession.initiate(undefined, { track: false }),
-      );
-
-      // Everything the desktop log export writes to disk and the mobile DevTools relay sends over
-      // a socket. The grant takes its credential off the extra and answers with a handle.
-      const serialized = JSON.stringify(actions);
-      expect(serialized).not.toContain("rt_token");
-      expect(serialized).not.toContain("at_token");
-      expect(serialized).not.toContain("session-token");
-      expect(serialized).toContain("refreshSession");
-      expect(serialized).toContain("card-session-1");
-    });
-
-    it("sends no Authorization header, even with a live session", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const store = makeStore("session-token");
-      await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-
-      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
-      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
-    });
-
-    it("answers 401 and sends nothing when no refresh token is stored", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const store = makeStore(null, { getCardRefreshToken: async () => null });
-      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-
-      expect(fetchSpy).not.toHaveBeenCalled();
-      expect(result.error).toEqual({
-        status: 401,
-        data: { message: MISSING_REFRESH_TOKEN },
-      });
-    });
-
-    it("answers a nonterminal error when the store read rejects", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
-
-      const store = makeStore(null, {
-        getCardRefreshToken: async () => {
-          throw new Error("keychain unavailable");
-        },
-      });
-      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-
-      expect(fetchSpy).not.toHaveBeenCalled();
-      expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
-    });
-
-    it("never renews on its own 401, so a dead refresh token cannot loop", async () => {
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(async () => errorResponse(401, "invalid_grant"));
-      const refreshCardSession = jest.fn(async () => ({
-        kind: "refreshed" as const,
-        accessToken: "should-not-be-used",
-      }));
-
-      const store = makeStore(null, { refreshCardSession });
-      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-
-      expect(refreshCardSession).not.toHaveBeenCalled();
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-      expect(result.error).toMatchObject({ status: 401 });
-    });
-
-    it("does not expose tokens when the response does not match the wire contract", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-        jsonResponse({
-          access_token: "sensitive-access-token",
-          refresh_token: "sensitive-refresh-token",
-          // `expires_in` is missing, so the wire schema rejects the body.
-        }),
-      );
-
-      const store = makeStore();
-      const result = await store.dispatch(cardManagementApi.endpoints.refreshSession.initiate());
-      const serializedError = JSON.stringify(result.error);
-
-      expect(result.data).toBeUndefined();
-      expect(serializedError).toContain("PayCardSessionResponseSchema");
-      expect(serializedError).not.toContain("sensitive-access-token");
-      expect(serializedError).not.toContain("sensitive-refresh-token");
-    });
   });
 
   describe("logout", () => {
@@ -500,7 +242,9 @@ describe("cardManagementApi requests", () => {
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/order");
       expect(request(fetchSpy).method).toBe("POST");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({ type: "VIRTUAL" });
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
+        type: "VIRTUAL",
+      });
       expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ success: true });
@@ -568,7 +312,9 @@ describe("cardManagementApi requests", () => {
       const store = makeStore("session-token");
       // Subscribed, so the invalidation has a live cache entry to refetch.
       const status = store.dispatch(
-        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, {
+          subscribe: true,
+        }),
       );
       await status;
       await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());

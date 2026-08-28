@@ -1,9 +1,4 @@
-import {
-  cardSession,
-  getCardSessionToken,
-  getCardRefreshToken,
-  readCardSession,
-} from "./cardSession.native";
+import { cardSession, getCardSessionToken, readCardSession } from "./cardSession.native";
 
 /**
  * A keychain of one entry per `service`, which is how the native store uses the library. It keeps
@@ -45,7 +40,6 @@ describe("cardSession.native", () => {
     await cardSession.set(session);
 
     await expect(getCardSessionToken()).resolves.toBe("at_token");
-    await expect(getCardRefreshToken()).resolves.toBe("rt_token");
     await expect(cardSession.get()).resolves.toMatchObject({
       accessToken: "at_token",
       refreshToken: "rt_token",
@@ -58,7 +52,6 @@ describe("cardSession.native", () => {
     await cardSession.clear();
 
     await expect(getCardSessionToken()).resolves.toBeNull();
-    await expect(getCardRefreshToken()).resolves.toBeNull();
   });
 
   it("serves the base query the token and the session id of the session it came from", async () => {

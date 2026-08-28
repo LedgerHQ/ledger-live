@@ -187,7 +187,10 @@ describe("mobile store", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
+        expect.objectContaining({
+          accessToken: KEYCLOAK_JWT,
+          tokenType: "Bearer",
+        }),
       );
       expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
@@ -258,7 +261,10 @@ describe("mobile store", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
+        expect.objectContaining({
+          accessToken: KEYCLOAK_JWT,
+          tokenType: "Bearer",
+        }),
       );
       expect(
         endpoints.prodKeycloakAuth.mock.calls.every(([{ request }]) =>
@@ -282,32 +288,41 @@ describe("mobile store", () => {
 
   describe("card session renewal", () => {
     let fetchSpy: jest.SpyInstance | undefined;
+    let warn: jest.SpyInstance;
+
+    beforeEach(() => {
+      // A terminal renewal writes one line, so a support log names the failure that ended it.
+      warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    });
 
     // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
     // rewritten environment into every test after it.
     afterEach(async () => {
       fetchSpy?.mockRestore();
       fetchSpy = undefined;
+      warn.mockRestore();
       const { cardSession } = require("@features/platform-card");
       await cardSession.clear();
     });
 
-    it("hands the Card api every session accessor it needs", () => {
+    it("hands the Card api the two session accessors it needs", () => {
       const { store } = require("./configureStore");
       const extra = readCardExtra(store);
 
-      expect(typeof extra.readCardSession).toBe("function");
-      expect(typeof extra.getCardRefreshToken).toBe("function");
-      expect(typeof extra.takeCardAuthorizationGrant).toBe("function");
-      expect(typeof extra.receiveCardSession).toBe("function");
-      expect(typeof extra.refreshCardSession).toBe("function");
+      // The base query reads the session and asks for one renewal. It needs nothing else: the two
+      // grants are plain thunks, and each one reads its own credential.
+      expect(extra).toMatchObject({
+        cardApiBaseUrl: expect.any(String),
+        cardBaanxClientKey: expect.any(String),
+        readCardSession: expect.any(Function),
+        refreshCardSession: expect.any(Function),
+      });
     });
 
     it("publishes signed-out and drops the session when a renewal ends it", async () => {
       const { setEnv } = require("@shared/env") as typeof import("@shared/env");
       setEnv("CARD_API_URL", "http://card.test");
-      // The provider rejects the grant, and names the reason the way RFC 6749 does. That is
-      // terminal, so this store's own callback must run.
+      // The provider refuses the grant. That is terminal, so this store's own callback must run.
       fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
         async () =>
           new Response(JSON.stringify({ error: "invalid_grant" }), {
@@ -321,19 +336,23 @@ describe("mobile store", () => {
       const { cardSession } = require("@features/platform-card");
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
+      await cardSession.set({
+        accessToken: "at_token",
+        refreshToken: "rt_token",
+      });
       store.dispatch(setSignedIn(true));
 
       const { sessionId } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
+      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({
+        kind: "session-ended",
+      });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
       // The Card cache is emptied one macrotask later, so the request whose 401 started the
       // renewal is not aborted before it can answer. This suite runs on fake timers.
       jest.runOnlyPendingTimers();
       expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(extra.readCardSession()).resolves.toMatchObject({ token: null });
-      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
+      await expect(cardSession.get()).resolves.toBeNull();
     });
   });
 });

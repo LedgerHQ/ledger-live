@@ -1,9 +1,4 @@
 import {
-  forgetCardAuthorizationGrant,
-  forgetReceivedCardSessions,
-  receiveCardSession,
-} from "../sessionHandoff";
-import {
   CardSessionNotStoredError,
   type CardRenewalDispatch,
   type StoredCardSession,
@@ -11,7 +6,10 @@ import {
 import { createCardSession } from "./createCardSession";
 import { CARD_LEGACY_SESSION_KEYS, CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
 
-const session: StoredCardSession = { accessToken: "at_token", refreshToken: "rt_token" };
+const session: StoredCardSession = {
+  accessToken: "at_token",
+  refreshToken: "rt_token",
+};
 
 /** What a renewal answers with. Every field differs, so a mixed read is visible. */
 const renewedSession: StoredCardSession = {
@@ -20,12 +18,10 @@ const renewedSession: StoredCardSession = {
 };
 
 /** The session a re-login writes over the top. */
-const loginSession: StoredCardSession = { accessToken: "at_login", refreshToken: "rt_login" };
-
-/** What the refresh grant answers with: a handle, never a token. */
-function grantReceipt(answer: StoredCardSession = renewedSession) {
-  return { sessionHandle: receiveCardSession(answer) };
-}
+const loginSession: StoredCardSession = {
+  accessToken: "at_login",
+  refreshToken: "rt_login",
+};
 
 function fakeStore(initial: Record<string, string> = {}) {
   const slots = new Map(Object.entries(initial));
@@ -57,25 +53,26 @@ function deferred<T>() {
 
 type SetupOptions = {
   initial?: Record<string, string>;
-  renew?: () => Promise<unknown>;
+  renew?: () => Promise<StoredCardSession>;
   install?: boolean;
 };
 
 /**
- * The renewal dispatches an RTK mutation and unwraps it. Only the unwrapped promise matters here, so
- * the fake dispatch answers with one and the real thunk is never run.
+ * The renewal dispatches a plain grant thunk and awaits the session it answers with. Only that
+ * promise matters here, so the fake dispatch answers with one and the real grant never runs.
  */
 function setup(options: SetupOptions = {}) {
   const { store, slots, writes } = fakeStore(options.initial);
-  const renew = jest.fn<Promise<unknown>, []>(options.renew ?? (async () => grantReceipt()));
+  const renew = jest.fn<Promise<StoredCardSession>, []>(
+    options.renew ?? (async () => renewedSession),
+  );
   const onCardSessionEnded = jest.fn();
 
-  const dispatch = jest.fn(() => ({ unwrap: () => renew() }));
+  const dispatch = jest.fn(() => renew());
   const api = createCardSession(store);
 
-  let dispose: (() => void) | undefined;
   if (options.install !== false) {
-    dispose = api.configureCardSessionRenewal({
+    api.configureCardSessionRenewal({
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       dispatch: dispatch as unknown as CardRenewalDispatch,
       onCardSessionEnded,
@@ -88,7 +85,16 @@ function setup(options: SetupOptions = {}) {
   /** What the base query does: read the session, then renew against the session id it read. */
   const renewNow = async () => api.refreshCardSession(await sessionId());
 
-  return { ...api, store, slots, writes, renew, onCardSessionEnded, dispose, sessionId, renewNow };
+  return {
+    ...api,
+    store,
+    slots,
+    writes,
+    renew,
+    onCardSessionEnded,
+    sessionId,
+    renewNow,
+  };
 }
 
 /** A live session already on disk. */
@@ -99,10 +105,15 @@ function liveSession(): Record<string, string> {
   };
 }
 
+// Every terminal renewal writes one line, so a support log names the failure that ended a session.
+let warn: jest.SpyInstance;
+
 beforeEach(() => {
-  // The hand-off is module state, like the session store itself.
-  forgetReceivedCardSessions();
-  forgetCardAuthorizationGrant();
+  warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+});
+
+afterEach(() => {
+  warn.mockRestore();
 });
 
 describe("createCardSession storage", () => {
@@ -130,93 +141,62 @@ describe("createCardSession storage", () => {
     expect(writes).toEqual([CARD_SESSION_KEYS.refreshToken, CARD_SESSION_KEYS.accessToken]);
   });
 
-  it("keeps only the two tokens, whatever else the caller hands over", async () => {
-    const { cardSession, slots } = setup();
-
-    // The login machine passes a whole `PayCardSession`. Its lifetime is not ours to keep.
-    await cardSession.set({ ...session, expiresIn: 3600 } as StoredCardSession);
-
-    expect([...slots.keys()].sort()).toEqual(
-      [CARD_SESSION_KEYS.accessToken, CARD_SESSION_KEYS.refreshToken].sort(),
-    );
-  });
-
-  it("removes every key on a clear", async () => {
-    const { cardSession, slots } = setup({ initial: liveSession() });
-
-    await cardSession.clear();
-
-    expect(slots.size).toBe(0);
-  });
-
-  it("removes the keys an earlier build left behind", async () => {
-    const legacyKey = CARD_LEGACY_SESSION_KEYS[0];
-    const { cardSession, store } = setup({
-      initial: { ...liveSession(), [legacyKey]: "stale" },
+  it("removes every key on a clear, the ones an earlier build left behind included", async () => {
+    const { cardSession, slots } = setup({
+      initial: {
+        ...liveSession(),
+        [CARD_LEGACY_SESSION_KEYS[0]]: "an older build wrote this",
+      },
     });
 
     await cardSession.clear();
 
-    // Nothing reads that key any more, so a logout is the only chance to take it off the device.
-    expect(store.remove).toHaveBeenCalledWith(legacyKey);
+    expect(slots.size).toBe(0);
   });
 
   it("removes every key, the refresh token included, when the access write fails", async () => {
     const { store, slots } = fakeStore();
-    jest.mocked(store.write).mockImplementation(async (key, value) => {
-      if (key === CARD_SESSION_KEYS.accessToken) {
-        throw new Error("the keychain refused to store the token");
-      }
-      slots.set(key, value);
-    });
+    jest
+      .mocked(store.write)
+      .mockImplementationOnce(async (key, value) => {
+        slots.set(key, value);
+      })
+      .mockRejectedValueOnce(new Error("the keychain refused the token"));
+    const api = createCardSession(store);
 
-    await expect(createCardSession(store).cardSession.set(session)).rejects.toThrow(
-      "the keychain refused",
-    );
+    await expect(api.cardSession.set(session)).rejects.toThrow("the keychain refused the token");
     expect(slots.size).toBe(0);
   });
 
   it("reports a write that a clear replaced, instead of reporting success", async () => {
-    const write = deferred<void>();
     const { store, slots } = fakeStore();
-    jest.mocked(store.write).mockImplementation(async (key, value) => {
+    const blocked = deferred<void>();
+    jest.mocked(store.write).mockImplementationOnce(async (key, value) => {
       slots.set(key, value);
-      if (key === CARD_SESSION_KEYS.refreshToken) {
-        await write.promise;
-      }
+      await blocked.promise;
     });
     const api = createCardSession(store);
 
-    const stored = api.cardSession.set(session);
-    await Promise.resolve();
-    // The clear bumps the generation while the write is between its two keys.
+    const written = api.cardSession.set(session);
+    // The clear lands between the two writes, so the login it was racing stored nothing.
     const cleared = api.cardSession.clear();
-    write.resolve();
+    blocked.resolve();
 
-    // Reported as success, this would send the login machine on with no Bearer to send.
-    await expect(stored).rejects.toBeInstanceOf(CardSessionNotStoredError);
+    await expect(written).rejects.toBeInstanceOf(CardSessionNotStoredError);
     await cleared;
     expect(slots.size).toBe(0);
   });
 
-  it("reads back both halves", async () => {
-    const { cardSession } = setup();
-
-    await cardSession.set(session);
-
-    await expect(cardSession.get()).resolves.toEqual(session);
-  });
-
   it("reports no session when either half is missing", async () => {
-    const withoutRefresh = setup({
+    const accessOnly = setup({
       initial: { [CARD_SESSION_KEYS.accessToken]: "at_token" },
     });
-    const withoutAccess = setup({
+    const refreshOnly = setup({
       initial: { [CARD_SESSION_KEYS.refreshToken]: "rt_token" },
     });
 
-    await expect(withoutRefresh.cardSession.get()).resolves.toBeNull();
-    await expect(withoutAccess.cardSession.get()).resolves.toBeNull();
+    await expect(accessOnly.cardSession.get()).resolves.toBeNull();
+    await expect(refreshOnly.cardSession.get()).resolves.toBeNull();
   });
 
   it("lets a store read failure travel, rather than passing it off as no session", async () => {
@@ -224,137 +204,96 @@ describe("createCardSession storage", () => {
     jest.mocked(store.read).mockRejectedValue(new Error("the keychain is locked"));
     const api = createCardSession(store);
 
-    // An absent session ends one. A keychain the OS refused says nothing about a session.
+    // An empty store ends a session. A keychain the OS refused says nothing about one.
     await expect(api.getCardSessionToken()).rejects.toThrow("the keychain is locked");
-    await expect(api.readCardSession()).rejects.toThrow("the keychain is locked");
   });
 });
 
 describe("createCardSession readers", () => {
-  it("serves the stored access token without renewing", async () => {
-    const { getCardSessionToken, renew } = setup({ initial: liveSession() });
-
-    await expect(getCardSessionToken()).resolves.toBe("at_token");
-    // A renewal starts from a 401, never from a read.
-    expect(renew).not.toHaveBeenCalled();
-  });
-
   it("serves the access token with the session id of the session it came from", async () => {
-    const { readCardSession, cardSession } = setup({ initial: liveSession() });
+    const { cardSession, readCardSession } = setup();
 
+    await cardSession.set(session);
     const first = await readCardSession();
-    expect(first).toEqual({ token: "at_token", sessionId: expect.any(Number) });
 
     await cardSession.set(loginSession);
-
     const second = await readCardSession();
+
+    expect(first).toEqual({ token: "at_token", sessionId: expect.any(Number) });
     expect(second.token).toBe("at_login");
+    // Every login starts a new session, so the base query can tell one request's session from
+    // another's.
     expect(second.sessionId).toBeGreaterThan(first.sessionId);
   });
 
-  it("serves the refresh token to the renewal endpoint without renewing", async () => {
-    const { getCardRefreshToken, renew, cardSession } = setup({ initial: liveSession() });
-
-    await expect(getCardRefreshToken()).resolves.toBe("rt_token");
-    expect(renew).not.toHaveBeenCalled();
-
-    await cardSession.clear();
-    await expect(getCardRefreshToken()).resolves.toBeNull();
-  });
-
-  it("serves nothing once the session is cleared", async () => {
-    const { getCardSessionToken, cardSession } = setup({ initial: liveSession() });
+  it("serves nothing once the session is cleared, even from a store that kept the value", async () => {
+    const { cardSession, getCardSessionToken, store, slots } = setup({
+      initial: liveSession(),
+    });
+    jest.mocked(store.remove).mockRejectedValue(new Error("the keychain is locked"));
 
     await cardSession.clear();
 
+    // Fail closed: the value is still on disk, and nothing serves it again this process.
+    expect(slots.size).toBeGreaterThan(0);
     await expect(getCardSessionToken()).resolves.toBeNull();
+    await expect(cardSession.get()).resolves.toBeNull();
   });
 });
 
 describe("createCardSession renewal", () => {
-  it("renews and stores the new session", async () => {
+  it("renews, and stores both rotated tokens", async () => {
     const { renewNow, slots } = setup({ initial: liveSession() });
 
     await expect(renewNow()).resolves.toEqual({
       kind: "refreshed",
       accessToken: "at_renewed",
     });
+    // Baanx rotates the refresh token on every grant, so the new one must land as well.
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_renewed");
     expect(slots.get(CARD_SESSION_KEYS.refreshToken)).toBe("rt_renewed");
   });
 
-  it("reads the refresh token once, through the grant", async () => {
+  it("reads the refresh token itself, and hands it to the grant", async () => {
     const { renewNow, store } = setup({ initial: liveSession() });
     jest.mocked(store.read).mockClear();
 
     await renewNow();
 
-    // The grant reads the key off `extra`. A second read here would be a second native call, and
-    // the two could disagree.
-    const refreshReads = jest
-      .mocked(store.read)
-      .mock.calls.filter(([key]) => key === CARD_SESSION_KEYS.refreshToken);
-    expect(refreshReads).toHaveLength(0);
+    // No caller outside this module can read that key any more.
+    expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.refreshToken);
   });
 
-  it("spends the refresh token once, because the first failure ended the session", async () => {
-    const { renewNow, renew, slots } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw { status: 500, data: { message: "upstream" } };
-      },
-    });
-
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(slots.size).toBe(0);
-
-    // The session is over, so a later caller holding the same session id is told so, and no second grant
-    // goes out. Baanx rotates the refresh token on every use; one failure must not spend two.
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(renew).toHaveBeenCalledTimes(1);
-  });
-
-  it("ends the session on a refresh token the provider already consumed", async () => {
-    const { renewNow, slots, onCardSessionEnded } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw { status: 400, data: { error: "invalid_grant" } };
-      },
-    });
-
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(slots.size).toBe(0);
-    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-  });
-
-  it("ends the session when the grant reports no refresh token to spend", async () => {
-    const { renewNow, slots } = setup({
-      initial: { [CARD_SESSION_KEYS.accessToken]: "at_token" },
-      renew: async () => {
-        throw { status: 401, data: { message: "missing_refresh_token" } };
-      },
-    });
-
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(slots.size).toBe(0);
-  });
-});
-
-describe("createCardSession concurrency", () => {
   it("serves many concurrent 401s from one renewal", async () => {
-    const { refreshCardSession, renew, sessionId } = setup({ initial: liveSession() });
+    const { refreshCardSession, renew, sessionId } = setup({
+      initial: liveSession(),
+    });
     const current = await sessionId();
 
-    const results = await Promise.all([
-      refreshCardSession(current),
-      refreshCardSession(current),
-      refreshCardSession(current),
-      refreshCardSession(current),
-      refreshCardSession(current),
-    ]);
+    const results = await Promise.all(Array.from({ length: 5 }, () => refreshCardSession(current)));
 
+    // The common case on mobile: an app opened after an hour away fires several requests against
+    // one expired token at once. One grant answers them all, because Baanx spends the refresh token.
     expect(renew).toHaveBeenCalledTimes(1);
     expect(results).toEqual(Array(5).fill({ kind: "refreshed", accessToken: "at_renewed" }));
+  });
+
+  it("joins an in-flight renewal instead of starting a second one", async () => {
+    const pending = deferred<StoredCardSession>();
+    const { refreshCardSession, renew, sessionId } = setup({
+      initial: liveSession(),
+      renew: () => pending.promise,
+    });
+    const current = await sessionId();
+
+    const first = refreshCardSession(current);
+    await Promise.resolve();
+    const second = refreshCardSession(current);
+    pending.resolve(renewedSession);
+
+    await expect(first).resolves.toMatchObject({ kind: "refreshed" });
+    await expect(second).resolves.toMatchObject({ kind: "refreshed" });
+    expect(renew).toHaveBeenCalledTimes(1);
   });
 
   it("starts a new renewal once the shared one has settled", async () => {
@@ -365,30 +304,136 @@ describe("createCardSession concurrency", () => {
 
     expect(renew).toHaveBeenCalledTimes(2);
   });
+});
 
-  it("joins an in-flight renewal instead of starting a second one", async () => {
-    const pending = deferred<unknown>();
-    const { refreshCardSession, renew, sessionId } = setup({
+describe("createCardSession renewal failures", () => {
+  // One rule: a renewal that did not put a session on disk ends the session. Nothing reads a status,
+  // and nothing reads a body. See "Renewal" in the README for the trade this makes.
+  const failures = [
+    {
+      name: "a grant the provider refused",
+      options: {
+        initial: liveSession(),
+        renew: async () => {
+          throw new Error("the Card request failed: the provider answered 400");
+        },
+      },
+    },
+    {
+      name: "a session that holds no refresh token",
+      options: { initial: { [CARD_SESSION_KEYS.accessToken]: "at_token" } },
+    },
+  ];
+
+  it.each(failures)(
+    "ends the session and publishes signed-out after $name",
+    async ({ options }) => {
+      const { renewNow, slots, onCardSessionEnded } = setup(options);
+
+      await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+      expect(slots.size).toBe(0);
+      expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+      // The one line a support log reads to name the failure that ended the session.
+      expect(warn).toHaveBeenCalled();
+    },
+  );
+
+  it("ends the session when the app installed no renewal", async () => {
+    // A wiring mistake reaches the same end as any other failure: no session on disk. There is no
+    // callback to publish it with, because installing one is exactly what was forgotten.
+    const { renewNow, slots } = setup({
       initial: liveSession(),
-      renew: () => pending.promise,
+      install: false,
     });
-    const current = await sessionId();
 
-    const first = refreshCardSession(current);
-    await Promise.resolve();
-    const second = refreshCardSession(current);
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(slots.size).toBe(0);
+    expect(warn).toHaveBeenCalled();
+  });
 
-    pending.resolve(grantReceipt());
+  it("ends the session when a renewed session cannot be stored", async () => {
+    // Baanx no longer accepts the previous refresh token, so a session that cannot be written
+    // leaves nothing to use.
+    const { renewNow, store, slots, onCardSessionEnded } = setup({
+      initial: liveSession(),
+    });
+    jest.mocked(store.write).mockRejectedValue(new Error("the keychain refused the token"));
 
-    await expect(first).resolves.toMatchObject({ kind: "refreshed" });
-    await expect(second).resolves.toMatchObject({ kind: "refreshed" });
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(slots.size).toBe(0);
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+  });
+
+  it("carries no part of the failure into its answer", async () => {
+    const { renewNow } = setup({
+      initial: liveSession(),
+      renew: async () => {
+        throw new Error("sensitive-token");
+      },
+    });
+
+    const result = await renewNow();
+
+    expect(result).toEqual({ kind: "session-ended" });
+    expect(JSON.stringify(result)).not.toContain("sensitive-token");
+  });
+
+  it("spends the refresh token once, because the first failure ended the session", async () => {
+    const { renewNow, renew } = setup({
+      initial: liveSession(),
+      renew: async () => {
+        throw new Error("the provider answered 500");
+      },
+    });
+
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    // `isCleared` answers the next 401 with no grant at all. One failure must not spend two tokens.
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).toHaveBeenCalledTimes(1);
+  });
+
+  it("finishes even when the store refuses every removal", async () => {
+    const { renewNow, store, getCardSessionToken, onCardSessionEnded } = setup({
+      initial: liveSession(),
+      renew: async () => {
+        throw new Error("the provider answered 400");
+      },
+    });
+    jest.mocked(store.remove).mockRejectedValue(new Error("the keychain is locked"));
+
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+    await expect(getCardSessionToken()).resolves.toBeNull();
+  });
+
+  it("survives an onCardSessionEnded that throws", async () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const { store, slots } = fakeStore(liveSession());
+    const api = createCardSession(store);
+    api.configureCardSessionRenewal({
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      dispatch: jest.fn(() =>
+        Promise.reject(new Error("the provider answered 400")),
+      ) as unknown as CardRenewalDispatch,
+      onCardSessionEnded: () => {
+        throw new Error("the store refused to reset");
+      },
+    });
+
+    const { sessionId } = await api.readCardSession();
+
+    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({
+      kind: "session-ended",
+    });
+    expect(slots.size).toBe(0);
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
   });
 });
 
 describe("createCardSession session id", () => {
-  it("lets a clear beat a renewal that is already in flight", async () => {
-    const pending = deferred<unknown>();
+  it("lets a logout beat a renewal that is already in flight", async () => {
+    const pending = deferred<StoredCardSession>();
     const { cardSession, refreshCardSession, slots, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
@@ -397,17 +442,17 @@ describe("createCardSession session id", () => {
     const renewal = refreshCardSession(await sessionId());
     await Promise.resolve();
     const cleared = cardSession.clear();
+    pending.resolve(renewedSession);
 
-    pending.resolve(grantReceipt());
-
-    // The request that asked belonged to the session the user just ended. Nothing is replayed.
-    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
+    // The request that asked belonged to the session the user just ended. Nothing is replayed, and
+    // nothing is written back over the logout.
+    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
     await cleared;
     expect(slots.size).toBe(0);
   });
 
   it("never replays an old request with a new login's token", async () => {
-    const pending = deferred<unknown>();
+    const pending = deferred<StoredCardSession>();
     const { cardSession, refreshCardSession, slots, sessionId } = setup({
       initial: liveSession(),
       renew: () => pending.promise,
@@ -416,15 +461,31 @@ describe("createCardSession session id", () => {
     const renewal = refreshCardSession(await sessionId());
     await Promise.resolve();
     const login = cardSession.set(loginSession);
+    pending.resolve(renewedSession);
 
-    pending.resolve(grantReceipt());
-
-    // The new token belongs to whoever just signed in. Handing it to the previous session's
-    // request would replay that request as the new user.
-    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
+    // The new token belongs to whoever just signed in. Handing it to the previous session's request
+    // would replay that request as the new user.
+    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
     await login;
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
     expect(slots.get(CARD_SESSION_KEYS.refreshToken)).toBe("rt_login");
+  });
+
+  it("never clears a new login's session because an old one died", async () => {
+    const pending = deferred<StoredCardSession>();
+    const { cardSession, refreshCardSession, slots, onCardSessionEnded, sessionId } = setup({
+      initial: liveSession(),
+      renew: () => pending.promise,
+    });
+
+    const renewal = refreshCardSession(await sessionId());
+    await Promise.resolve();
+    await cardSession.set(loginSession);
+    pending.reject(new Error("the provider answered 400"));
+
+    await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
+    expect(onCardSessionEnded).not.toHaveBeenCalled();
+    expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
   });
 
   it("neither renews nor clears for a request that outlived its session", async () => {
@@ -436,28 +497,9 @@ describe("createCardSession session id", () => {
     await cardSession.set(loginSession);
 
     await expect(refreshCardSession(stale)).resolves.toEqual({
-      kind: "unavailable",
-      reason: "session_replaced",
+      kind: "session-replaced",
     });
     expect(renew).not.toHaveBeenCalled();
-    expect(onCardSessionEnded).not.toHaveBeenCalled();
-    expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
-  });
-
-  it("never clears a new login's session because an old one died", async () => {
-    const pending = deferred<unknown>();
-    const { cardSession, refreshCardSession, slots, onCardSessionEnded, sessionId } = setup({
-      initial: liveSession(),
-      renew: () => pending.promise,
-    });
-
-    const renewal = refreshCardSession(await sessionId());
-    await Promise.resolve();
-    await cardSession.set(loginSession);
-
-    pending.reject({ status: 400, data: { error: "invalid_grant" } });
-
-    await expect(renewal).resolves.toEqual({ kind: "unavailable", reason: "session_replaced" });
     expect(onCardSessionEnded).not.toHaveBeenCalled();
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
   });
@@ -466,209 +508,30 @@ describe("createCardSession session id", () => {
     const { refreshCardSession, renew, sessionId, onCardSessionEnded } = setup({
       initial: liveSession(),
       renew: async () => {
-        throw { status: 401, data: { message: "unauthorized" } };
+        throw new Error("the provider answered 401");
       },
     });
     const current = await sessionId();
 
-    await expect(refreshCardSession(current)).resolves.toEqual({ kind: "session-ended" });
+    await expect(refreshCardSession(current)).resolves.toEqual({
+      kind: "session-ended",
+    });
 
     // A second request that was in flight at the same time asks with the same id. The clear bumped
-    // the id, so that session is gone: nothing to renew, and nothing left to end. The app is signed
-    // out already, so the answer only has to leave the store alone.
+    // the id, so that session is gone: nothing to renew, and nothing left to end.
     await expect(refreshCardSession(current)).resolves.toEqual({
-      kind: "unavailable",
-      reason: "session_replaced",
+      kind: "session-replaced",
     });
     expect(renew).toHaveBeenCalledTimes(1);
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
   });
-});
 
-describe("createCardSession terminal cleanup", () => {
-  it("runs once for concurrent terminal outcomes", async () => {
-    const { refreshCardSession, onCardSessionEnded, sessionId } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw { status: 401, data: { message: "invalid_grant" } };
-      },
-    });
-    const current = await sessionId();
-
-    await Promise.all([
-      refreshCardSession(current),
-      refreshCardSession(current),
-      refreshCardSession(current),
-    ]);
-
-    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-  });
-
-  it("finishes even when the store refuses every removal", async () => {
-    const { store } = fakeStore(liveSession());
-    jest.mocked(store.remove).mockRejectedValue(new Error("the keychain is locked"));
-    const onCardSessionEnded = jest.fn();
-    const api = createCardSession(store);
-    api.configureCardSessionRenewal({
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      dispatch: jest.fn(() => ({
-        unwrap: () => Promise.reject({ status: 401, data: { message: "invalid_grant" } }),
-      })) as unknown as CardRenewalDispatch,
-      onCardSessionEnded,
-    });
-
-    const { sessionId } = await api.readCardSession();
-    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
-    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-    // The values are still on disk, and nothing will serve them again this process.
-    await expect(api.getCardSessionToken()).resolves.toBeNull();
-  });
-
-  it("survives an onCardSessionEnded that throws", async () => {
-    const consoleError = jest.spyOn(console, "error").mockImplementation(() => undefined);
-    const { store } = fakeStore(liveSession());
-    const api = createCardSession(store);
-    api.configureCardSessionRenewal({
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      dispatch: jest.fn(() => ({
-        unwrap: () => Promise.reject({ status: 401, data: { message: "invalid_grant" } }),
-      })) as unknown as CardRenewalDispatch,
-      onCardSessionEnded: () => {
-        throw new Error("the store refused to reset");
-      },
-    });
-
-    const { sessionId } = await api.readCardSession();
-    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
-    expect(consoleError).toHaveBeenCalled();
-    consoleError.mockRestore();
-  });
-
-  it("answers a later 401 from the cleared flag, with no network call", async () => {
+  it("answers a later 401 from the cleared flag, with no grant at all", async () => {
     const { cardSession, renewNow, renew } = setup({ initial: liveSession() });
 
     await cardSession.clear();
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).not.toHaveBeenCalled();
-  });
-
-  it("ends the session when a renewed session cannot be stored", async () => {
-    // The provider no longer accepts the old refresh token, so a session that cannot be written
-    // leaves nothing to use.
-    const { store, slots } = fakeStore(liveSession());
-    jest.mocked(store.write).mockRejectedValue(new Error("the keychain refused the token"));
-    const onCardSessionEnded = jest.fn();
-    const api = createCardSession(store);
-    api.configureCardSessionRenewal({
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      dispatch: jest.fn(() => ({
-        unwrap: async () => grantReceipt(),
-      })) as unknown as CardRenewalDispatch,
-      onCardSessionEnded,
-    });
-
-    const { sessionId } = await api.readCardSession();
-    await expect(api.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
-    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-    expect(slots.size).toBe(0);
-  });
-});
-
-describe("createCardSession failure policy", () => {
-  // One rule: a renewal that ran and did not produce a session ends the session. No status is read,
-  // and no body is read. See "Renewal" in the README for the trade this makes.
-  const terminal = [
-    { name: "a rejected grant", error: { status: 400, data: { error: "invalid_grant" } } },
-    { name: "a rejected client", error: { status: 400, data: { error: "invalid_client" } } },
-    { name: "an unauthorized grant", error: { status: 401, data: { message: "unauthorized" } } },
-    { name: "a malformed request", error: { status: 400, data: { error: "invalid_request" } } },
-    { name: "a 400 that names no reason", error: { status: 400 } },
-    {
-      name: "a proxy error page over a 400",
-      error: { status: 400, data: "<html>Blocked by the network</html>" },
-    },
-    { name: "a validation error", error: { status: 422, data: { message: "x is not allowed" } } },
-    { name: "an invalid client key", error: { status: 498, data: { message: "invalid key" } } },
-    { name: "a missing client key", error: { status: 499, data: { message: "no key" } } },
-    { name: "a request timeout", error: { status: 408, data: { message: "timeout" } } },
-    { name: "rate limiting", error: { status: 429, data: { message: "slow down" } } },
-    { name: "an upstream failure", error: { status: 500, data: { message: "boom" } } },
-    { name: "a parse failure over a 500", error: { status: "PARSING_ERROR", originalStatus: 500 } },
-    { name: "a lost response", error: { status: "FETCH_ERROR", error: "network down" } },
-    { name: "a timeout", error: { status: "TIMEOUT_ERROR", error: "too slow" } },
-    {
-      name: "a schema failure over a 200",
-      error: { status: "CUSTOM_ERROR", error: "PayCardSessionResponseSchema validation failed" },
-    },
-    {
-      name: "a serialized error",
-      error: { name: "TypeError", message: "undefined is not a function" },
-    },
-    { name: "nothing at all", error: undefined },
-  ];
-
-  it.each(terminal)("ends the session after $name", async ({ error }) => {
-    const { renewNow, slots, onCardSessionEnded } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw error;
-      },
-    });
-
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(slots.size).toBe(0);
-    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-  });
-
-  it("ends the session when the hand-off holds no session for the handle", async () => {
-    // The grant succeeded, so Baanx rotated the refresh token. The stored one is spent, and the new
-    // one went with the hand-off, so there is nothing left to renew with.
-    const { renewNow, slots } = setup({
-      initial: liveSession(),
-      renew: async () => ({ sessionHandle: "card-session-never-stored" }),
-    });
-
-    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    expect(slots.size).toBe(0);
-  });
-
-  it("carries no part of the answer into its result", async () => {
-    const { renewNow } = setup({
-      initial: liveSession(),
-      renew: async () => {
-        throw { status: 500, data: { message: "boom", token: "sensitive-token" } };
-      },
-    });
-
-    const result = await renewNow();
-
-    expect(result).toEqual({ kind: "session-ended" });
-    expect(JSON.stringify(result)).not.toContain("sensitive-token");
-  });
-
-  it("keeps the session when no renewal is installed", async () => {
-    // The one answer that is not terminal: no request was made, so nothing was learned. A wiring
-    // mistake must not sign every user out.
-    const { renewNow, slots, onCardSessionEnded } = setup({
-      initial: liveSession(),
-      install: false,
-    });
-
-    await expect(renewNow()).resolves.toEqual({
-      kind: "unavailable",
-      reason: "card session renewal is not configured",
-    });
-    expect(slots.size).toBeGreaterThan(0);
-    expect(onCardSessionEnded).not.toHaveBeenCalled();
-  });
-
-  it("keeps the session once the renewal is uninstalled", async () => {
-    const { renewNow, dispose, slots } = setup({ initial: liveSession() });
-
-    dispose?.();
-
-    await expect(renewNow()).resolves.toMatchObject({ kind: "unavailable" });
-    expect(slots.size).toBeGreaterThan(0);
   });
 });

@@ -12,16 +12,12 @@ import {
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
-  redactCardApiAction,
   swapApiExtra,
 } from "@shared/api-services";
 import {
   configureCardSessionRenewal,
-  getCardRefreshToken,
   readCardSession,
-  receiveCardSession,
   refreshCardSession,
-  takeCardAuthorizationGrant,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
@@ -82,9 +78,6 @@ const customCreateStore = ({
                 getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
                 readCardSession,
-                getCardRefreshToken,
-                takeCardAuthorizationGrant,
-                receiveCardSession,
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({
@@ -142,19 +135,12 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    // No Card action carries a credential any more: the two OAuth2 grants pass theirs through
-    // `@features/platform-card` rather than through arguments and payloads, and the Card base query
-    // reports a `meta` of three plain values instead of the `Request` that holds the Bearer. The
-    // sanitizer is the second control, and it also keeps Card user data out of the DevTools panel.
-    devTools: __DEV__ ? { actionSanitizer: redactCardApiAction } : false,
+    devTools: __DEV__,
   });
 
-  // After the store exists, because a renewal dispatches a Card mutation. `cardApi` and
-  // `cardManagementApi` are the same object: `injectEndpoints` mutates in place.
-  //
-  // One renewal is installed per store, and the newest store replaces the one before it. A renderer
-  // runs one store, so the only caller that builds a second one is a test, which wants the newest.
-  // The call answers with the one that uninstalls it again.
+  // After the store exists, because a renewal dispatches the refresh grant through it. One renewal
+  // is installed per store, and the newest store replaces the one before it: a renderer runs one
+  // store, so the only caller that builds a second one is a test, which wants the newest.
   configureCardSessionRenewal({
     dispatch: store.dispatch,
     onCardSessionEnded: () => {

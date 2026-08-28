@@ -1,24 +1,16 @@
-import { CARD_RENEWAL_UNAVAILABLE, CARD_SESSION_ENDED } from "./constants";
-import { isCardRenewalUnavailable, isCardUnauthorized } from "./errors";
-
-const unauthorized = { status: 401, data: { message: "unauthorized" } };
-const sessionEnded = { status: 401, data: { message: CARD_SESSION_ENDED } };
-const renewalUnavailable = {
-  status: 401,
-  data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "session_replaced" },
-};
+import { CardRequestError, isCardUnauthorized } from "./errors";
 
 describe("isCardUnauthorized", () => {
   it.each([
-    ["a provider 401", unauthorized],
-    ["an ended session", sessionEnded],
-    ["a renewal that could not run", renewalUnavailable],
+    ["a provider 401", { status: 401, data: { message: "unauthorized" } }],
+    ["a 401 with no body", { status: 401 }],
   ])("is true for %s", (_name, error) => {
     expect(isCardUnauthorized(error)).toBe(true);
   });
 
   it.each([
     ["a 500", { status: 500 }],
+    ["a stale request", { status: "CUSTOM_ERROR", error: "card_stale_request" }],
     ["a transport failure", { status: "FETCH_ERROR", error: "network down" }],
     ["a thrown Error", new Error("boom")],
     ["nothing", undefined],
@@ -27,14 +19,13 @@ describe("isCardUnauthorized", () => {
   });
 });
 
-describe("isCardRenewalUnavailable", () => {
-  it("is true only for a 401 the owner could not judge", () => {
-    expect(isCardRenewalUnavailable(renewalUnavailable)).toBe(true);
-    expect(isCardRenewalUnavailable(sessionEnded)).toBe(false);
-    expect(isCardRenewalUnavailable(unauthorized)).toBe(false);
-  });
+describe("CardRequestError", () => {
+  it("names the path and the reason, and keeps a name that survives serialization", () => {
+    const error = new CardRequestError("/v1/auth/oauth2/token", "the provider answered 400");
 
-  it("reads nothing out of a body that is not an object", () => {
-    expect(isCardRenewalUnavailable({ status: 401, data: "<html>Blocked</html>" })).toBe(false);
+    expect(error.name).toBe("CardRequestError");
+    expect(error.message).toBe(
+      "the Card request to /v1/auth/oauth2/token failed: the provider answered 400",
+    );
   });
 });

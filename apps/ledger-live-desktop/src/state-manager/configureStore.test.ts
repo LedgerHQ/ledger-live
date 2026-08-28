@@ -124,7 +124,10 @@ describe("customCreateStore", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
+        expect.objectContaining({
+          accessToken: KEYCLOAK_JWT,
+          tokenType: "Bearer",
+        }),
       );
       expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
@@ -191,7 +194,10 @@ describe("customCreateStore", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
+        expect.objectContaining({
+          accessToken: KEYCLOAK_JWT,
+          tokenType: "Bearer",
+        }),
       );
       expect(endpoints.prodKeycloakAuth.mock.calls[0][0].request.url).toEqual(
         expect.stringContaining(AUTH_CONFIG.keycloakBaseUrl),
@@ -201,7 +207,9 @@ describe("customCreateStore", () => {
       expect(challengeRequest).toEqual(
         expect.objectContaining({
           signature: expect.objectContaining({
-            credential: expect.objectContaining({ publicKey: MEMBER_CREDENTIALS.pubkey }),
+            credential: expect.objectContaining({
+              publicKey: MEMBER_CREDENTIALS.pubkey,
+            }),
             attestation: ATTESTATION,
           }),
         }),
@@ -212,44 +220,55 @@ describe("customCreateStore", () => {
   describe("card session renewal", () => {
     const cardApiUrl = getEnv("CARD_API_URL");
     let fetchSpy: jest.SpyInstance | undefined;
+    let warn: jest.SpyInstance;
+
+    beforeEach(() => {
+      // A terminal renewal writes one line, so a support log names the failure that ended it.
+      warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+    });
 
     // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
     // rewritten environment into every test after it.
     afterEach(async () => {
       fetchSpy?.mockRestore();
       fetchSpy = undefined;
+      warn.mockRestore();
       setEnv("CARD_API_URL", cardApiUrl);
       await cardSession.clear();
     });
 
-    it("hands the Card api every session accessor it needs", () => {
+    it("hands the Card api the two session accessors it needs", () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      expect(typeof extra.readCardSession).toBe("function");
-      expect(typeof extra.getCardRefreshToken).toBe("function");
-      expect(typeof extra.takeCardAuthorizationGrant).toBe("function");
-      expect(typeof extra.receiveCardSession).toBe("function");
-      expect(typeof extra.refreshCardSession).toBe("function");
+      // The base query reads the session and asks for one renewal. It needs nothing else: the two
+      // grants are plain thunks, and each one reads its own credential.
+      expect(extra).toMatchObject({
+        cardApiBaseUrl: expect.any(String),
+        cardBaanxClientKey: expect.any(String),
+        readCardSession: expect.any(Function),
+        refreshCardSession: expect.any(Function),
+      });
     });
 
-    it("serves the stored session through the accessors the api was given", async () => {
+    it("serves the stored session through the reader the api was given", async () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
+      await cardSession.set({
+        accessToken: "at_token",
+        refreshToken: "rt_token",
+      });
 
       await expect(extra.readCardSession()).resolves.toEqual({
         token: "at_token",
         sessionId: expect.any(Number),
       });
-      await expect(extra.getCardRefreshToken()).resolves.toBe("rt_token");
     });
 
     it("publishes signed-out and drops the session when a renewal ends it", async () => {
       setEnv("CARD_API_URL", "http://card.test");
-      // The provider rejects the grant, and names the reason the way RFC 6749 does. That is
-      // terminal, so this store's own callback must run.
+      // The provider refuses the grant. That is terminal, so this store's own callback must run.
       fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
         async () =>
           new Response(JSON.stringify({ error: "invalid_grant" }), {
@@ -261,40 +280,23 @@ describe("customCreateStore", () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
       const extra = readCardExtra(store);
 
-      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
+      await cardSession.set({
+        accessToken: "at_token",
+        refreshToken: "rt_token",
+      });
       store.dispatch(setSignedIn(true));
 
       const { sessionId } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
+      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({
+        kind: "session-ended",
+      });
 
       expect(selectIsSignedIn(store.getState())).toBe(false);
       // The Card cache is emptied one macrotask later, so the request whose 401 started the
       // renewal is not aborted before it can answer.
       await new Promise(resolve => setTimeout(resolve, 0));
       expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(extra.readCardSession()).resolves.toMatchObject({ token: null });
-      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
-    });
-
-    it("ends the session when the token endpoint answers 5xx", async () => {
-      setEnv("CARD_API_URL", "http://card.test");
-      fetchSpy = jest
-        .spyOn(globalThis, "fetch")
-        .mockImplementation(async () => new Response("", { status: 503 }));
-
-      const store = customCreateStore({ fetchRemoteFlags: null });
-      const extra = readCardExtra(store);
-
-      await cardSession.set({ accessToken: "at_token", refreshToken: "rt_token" });
-      store.dispatch(setSignedIn(true));
-
-      const { sessionId } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({ kind: "session-ended" });
-
-      // One rule: a renewal that ran and produced no session ends the session. A provider outage
-      // therefore signs the user out, and the store publishes it.
-      expect(selectIsSignedIn(store.getState())).toBe(false);
-      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
+      await expect(cardSession.get()).resolves.toBeNull();
     });
   });
 });
