@@ -15,12 +15,16 @@ capability shared across flows, not one journey's internals.
 
 Every accessor is async, because the native store only reads asynchronously.
 
-- `cardSession` — `set` / `get` / `clear` over the whole `PayCardSession` (both tokens and both
-  lifetimes). Card Auth calls `set` when a login completes.
+- `cardSession` — `set` / `clear` / `get` over the two tokens. A whole `PayCardSession` satisfies
+  `set`, so Card Auth hands one over unchanged when a login completes; the lifetime is not kept.
 - `getCardSessionToken()` — reader passed to `cardApiExtra`; the shared base query awaits it before
-  every request to attach `Authorization: Bearer`. It reads the access token key and nothing else.
-- `refreshCardSession()` — refresh handler passed to `cardApiExtra`; the shared base query calls it
-  once after a `401`.
+  every request to attach `Authorization: Bearer`. It reads, and nothing else.
+- `getCardRefreshToken()` — reader passed to `cardApiExtra` for the renewal endpoint, which takes no
+  argument so that no token can become an RTK Query argument.
+- `refreshCardSession()` — the one renewal entry, called by the base query on a `401`. It answers
+  `refreshed` / `session-ended` / `unavailable`.
+- `configureCardSessionRenewal({ dispatch, onCardSessionEnded })` — installed once, at the app's
+  composition root.
 
 ## Where the session lives
 
@@ -33,9 +37,9 @@ Electron exposes no OS secret store in this repo, so a desktop restart asks for 
 the answer, not a shim: a Bearer credential must not join the persisted `payCard` slice (which stores
 only `hasSeenFeatureTour` / `balanceFilter`).
 
-The session occupies **three keys**, not one, because of the hot path: the base query reads the
-access token before every Card request, and a single JSON blob would make it parse two JWTs the
-request never needs. Each token therefore gets its own key, with the two lifetimes in a third.
+The session occupies **two keys**, one per token. Every Card request reads the access token and
+nothing else, so its own key keeps that path to one small value. The refresh token keeps its own key:
+the request path never reads it, and the renewal endpoint reads nothing else.
 
 Each key is a keychain `service` of its own — the only per-entry namespace the library offers. The
 app password (see `AuthPass`) uses the default bundle-ID slot, so the two never collide. A wipe built
@@ -57,18 +61,44 @@ reads the store again, and a token that outlived its session answers `401`, whic
 
 `set`, `clear` and `get` take turns on one queue, because each one touches more than one key. Their
 callers know nothing about each other: `set` runs from the login machine, and `clear` runs from
-`refreshCardSession`, which the base query calls on any Card `401`. Unqueued, a removal lands between
-the two halves of a write and leaves the access token alone on disk, and a read pairs the previous
-access token with the new refresh token.
+terminal cleanup, which the request path triggers. Unqueued, a removal lands between the two halves
+of a write and leaves the access token alone on disk.
 
-`getCardSessionToken` never waits: one key cannot disagree with itself. During a write it answers the
-previous access token, which stays valid until the new one lands, and the request path must not queue
-behind a login.
+A queue orders operations by the moment they were dispatched, not by what their callers meant. So the
+session also carries a **generation counter**, bumped synchronously by every `set` and `clear`. A
+renewal reads it before it starts, and its write compares it again before it stores anything. Without
+that, a renewal that began before a logout, and whose write landed after the clear, would bring the
+session back to life.
+
+`getCardSessionToken` never takes a turn: the access token is one key, and one key cannot disagree
+with itself. During a write it answers the previous token, which stays valid until the new one lands,
+and the request path must not queue behind a login.
 
 `clear` never rejects. `isCleared` has already ended the session, so a removal the store refused leaves
 nothing for the caller to handle.
 
-## Status
+## Renewal
 
-`refreshCardSession` still clears the session and reports it cannot be renewed. The wire contract
-exists (`refreshSession` in `@domain/api-card-management`), but the renewal itself is LIVE-34741.
+A session is renewed **only after the provider has refused one**. The base query sends the request,
+Baanx answers 401, `refreshCardSession()` renews, and the base query replays once. A second 401 is
+the caller's answer.
+
+Nothing is renewed ahead of a failure, so nothing on disk records when a token expires and no clock
+is read. The cost is one doomed request per renewal, and on an app open after an hour one doomed
+request per screen. The dependency, worth knowing: renewal starts only on a **401**. Any other status
+for an expired token, and the client never renews.
+
+All concurrent callers share one renewal promise. On mobile that is the main path, not an edge case:
+the common event is an app opened after more than an hour away, where several screens fire Card
+requests against one expired token at once.
+
+HTTP 400 and 401 end the session, as do a missing refresh token and a write that fails after a
+renewal. Everything else keeps it: 408, 429, 5xx, a transport failure, a store read failure, a
+malformed answer, and an app that never installed the renewal. A nonterminal failure is **not**
+remembered — the next 401 tries again, because it is the only way in.
+
+> [!CAUTION]
+>
+> The mutation `configureCardSessionRenewal` dispatches **must** bypass Bearer injection
+> (`extraOptions.authenticated: false` in `@domain/api-card-management`). A renewal that went through
+> the authenticated path would answer 401, renew again, and loop.

@@ -1,14 +1,13 @@
 /**
- * One Card session, spread over three keys.
+ * One Card session, over two keys.
  *
  * Every Card request reads the access token, and nothing else. Its own key keeps that path to one
- * small value, instead of a JSON blob that carries two JWTs the request never needs. The refresh
- * token then keeps its own key too, and the two lifetimes share a third.
+ * small value. The refresh token keeps its own key: the request path never reads it, and the renewal
+ * endpoint reads nothing else.
  */
 export const CARD_SESSION_KEYS = {
   accessToken: "payCard.session.accessToken",
   refreshToken: "payCard.session.refreshToken",
-  lifetimes: "payCard.session.lifetimes",
 } as const;
 
 /** One string slot per key. Native writes OS secure storage; web keeps the slots in memory. */

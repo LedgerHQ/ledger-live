@@ -1,10 +1,6 @@
-import { cardSession, getCardSessionToken } from "./cardSession.web";
+import { cardSession, getCardSessionToken, getCardRefreshToken } from "./cardSession.web";
 
-const session = {
-  accessToken: "at_token",
-  expiresIn: 21600,
-  refreshToken: "rt_token",
-};
+const session = { accessToken: "at_token", refreshToken: "rt_token" };
 
 /** The wiring the desktop app gets: the same accessors, over the in-memory store. */
 describe("cardSession.web", () => {
@@ -18,7 +14,11 @@ describe("cardSession.web", () => {
     await cardSession.set(session);
 
     await expect(getCardSessionToken()).resolves.toBe("at_token");
-    await expect(cardSession.get()).resolves.toEqual(session);
+    await expect(getCardRefreshToken()).resolves.toBe("rt_token");
+    await expect(cardSession.get()).resolves.toMatchObject({
+      accessToken: "at_token",
+      refreshToken: "rt_token",
+    });
   });
 
   it("stops serving the token once the session is cleared", async () => {
@@ -27,5 +27,6 @@ describe("cardSession.web", () => {
     await cardSession.clear();
 
     await expect(getCardSessionToken()).resolves.toBeNull();
+    await expect(getCardRefreshToken()).resolves.toBeNull();
   });
 });
