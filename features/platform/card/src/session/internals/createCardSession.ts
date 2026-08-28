@@ -1,12 +1,15 @@
 import { cardManagementApi } from "@domain/api-card-management";
-import type { CardSessionRefreshResult, CardSessionSnapshot } from "@shared/api-services";
+import {
+  traceCard,
+  type CardSessionRefreshResult,
+  type CardSessionSnapshot,
+} from "@shared/api-services";
 import {
   CardSessionNotStoredError,
   type CardSessionRenewalConfig,
-  type CardSessionRenewalError,
   type StoredCardSession,
 } from "../types";
-import { isTerminalRenewalFailure, sanitizeRenewalError } from "./renewalFailure";
+import { describeRenewalFailure } from "./renewalFailure";
 import {
   forgetCardAuthorizationGrant,
   forgetReceivedCardSessions,
@@ -180,8 +183,9 @@ export function createCardSession(store: CardSessionStore) {
 
   async function runRenewal(capturedGeneration: number): Promise<CardSessionRefreshResult> {
     if (!renewal) {
-      // Never terminal. An app that forgot to install the renewal must not log its users out.
-      return unavailable({ message: "card session renewal is not configured" });
+      // The one answer that is not terminal: no request was made, so nothing was learned about the
+      // session. An app that forgot to install the renewal must not log its users out.
+      return unavailable("card session renewal is not configured");
     }
 
     let handle: string;
@@ -194,17 +198,21 @@ export function createCardSession(store: CardSessionStore) {
         .unwrap();
       handle = receipt.sessionHandle;
     } catch (error) {
-      if (isTerminalRenewalFailure(error)) {
-        return endIfCurrent(capturedGeneration);
-      }
-      return unavailable(sanitizeRenewalError(error));
+      // Every answer but a new session ends the session. The status is traced, not read: nothing
+      // classifies a renewal failure any more. See "Renewal" in the README.
+      traceCard(
+        "renewal",
+        `the grant answered ${describeRenewalFailure(error)} → the session ends`,
+      );
+      return endIfCurrent(capturedGeneration);
     }
 
     const session = takeCardSession(handle);
     if (!session) {
-      // Nonterminal, and it should not happen: the grant succeeded, so only the hand-off was lost.
-      // The session may still be good, and the request that triggered this already has its answer.
-      return unavailable({ message: "the renewal answered with no session" });
+      // The grant succeeded, so Baanx rotated the refresh token and the stored one is spent. The new
+      // one went with the hand-off, so there is nothing left to renew with.
+      traceCard("renewal", "the grant answered with no session → the session ends");
+      return endIfCurrent(capturedGeneration);
     }
 
     let outcome: "written" | "stale";
@@ -213,6 +221,7 @@ export function createCardSession(store: CardSessionStore) {
     } catch {
       // A renewed session that cannot be stored leaves nothing to use: Baanx rotates the refresh
       // token on every grant, so the provider no longer accepts the previous one.
+      traceCard("renewal", "the new session could not be stored → the session ends");
       return endIfCurrent(capturedGeneration);
     }
 
@@ -223,16 +232,16 @@ export function createCardSession(store: CardSessionStore) {
       : { kind: "session-replaced" };
   }
 
-  function unavailable(error: CardSessionRenewalError): CardSessionRefreshResult {
-    return { kind: "unavailable", error };
+  function unavailable(reason: string): CardSessionRefreshResult {
+    return { kind: "unavailable", reason };
   }
 
   /**
    * Ends the session, but only the one this renewal started from.
    *
-   * A terminal answer for an old session says nothing about the one a new login has just stored.
-   * Without the test, a 400 `invalid_grant` for the user who just left would wipe the keychain of
-   * the user who just arrived.
+   * A failed renewal for an old session says nothing about the one a new login has just stored.
+   * Without the test, a rejected grant for the user who just left would wipe the keychain of the
+   * user who just arrived.
    *
    * The test and the `++generation` inside `clear()` are both synchronous, so nothing can replace
    * the session between them.

@@ -69,7 +69,7 @@ function setup() {
       }).concat(cardApi.middleware),
   });
 
-  session.configureCardSessionRenewal({
+  const dispose = session.configureCardSessionRenewal({
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     dispatch: store.dispatch as unknown as CardRenewalDispatch,
     onCardSessionEnded: () => {
@@ -80,7 +80,7 @@ function setup() {
     },
   });
 
-  return { session, store, onCardSessionEnded };
+  return { session, store, onCardSessionEnded, dispose };
 }
 
 /** Answers `/v1/user` and the token endpoint separately, so each test states both halves. */
@@ -149,7 +149,7 @@ describe("the Card session renewal, end to end", () => {
     expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
   });
 
-  it("keeps the session when the token endpoint answers 5xx", async () => {
+  it("ends the session when the token endpoint answers 5xx", async () => {
     fetchSpy = routeFetch({
       user: () => json({ message: "unauthorized" }, 401),
       token: () => json({ message: "upstream is down" }, 503),
@@ -159,19 +159,17 @@ describe("the Card session renewal, end to end", () => {
 
     const request = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
-    // A 401 the owner could not judge. The login flow reads this body and keeps the session.
+    // One rule: a renewal that ran and produced no session ends the session, whatever it answered.
+    // A provider outage therefore signs the user out. See "Renewal" in the README.
     await expect(request.unwrap()).rejects.toMatchObject({
       status: 401,
-      data: { message: CARD_RENEWAL_UNAVAILABLE },
+      data: { message: CARD_SESSION_ENDED },
     });
-    expect(onCardSessionEnded).not.toHaveBeenCalled();
-    await expect(session.cardSession.get()).resolves.toEqual({
-      accessToken: "at_old",
-      refreshToken: "rt_old",
-    });
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+    await expect(session.cardSession.get()).resolves.toBeNull();
   });
 
-  it("keeps the session when a firewall answers the token endpoint with a 400 page", async () => {
+  it("ends the session when a firewall answers the token endpoint with a 400 page", async () => {
     fetchSpy = routeFetch({
       user: () => json({ message: "unauthorized" }, 401),
       token: () =>
@@ -185,12 +183,38 @@ describe("the Card session renewal, end to end", () => {
 
     const request = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
+    // A captive portal or a proxy reaches the same end as a rejected grant. Nothing reads the body,
+    // so nothing can tell the two apart, and the rule does not try to.
     await expect(request.unwrap()).rejects.toMatchObject({
       status: 401,
-      data: { message: CARD_RENEWAL_UNAVAILABLE },
+      data: { message: CARD_SESSION_ENDED },
+    });
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+    await expect(session.getCardRefreshToken()).resolves.toBeNull();
+  });
+
+  it("keeps the session when no renewal is installed", async () => {
+    // The one nonterminal answer. No request reached the token endpoint, so nothing was learned
+    // about the session, and a wiring mistake must not sign every user out.
+    fetchSpy = routeFetch({
+      user: () => json({ message: "unauthorized" }, 401),
+      token: () => json({ message: "never reached" }, 500),
+    });
+    const { session, store, onCardSessionEnded, dispose } = setup();
+    await session.cardSession.set({ accessToken: "at_old", refreshToken: "rt_old" });
+    dispose();
+
+    const request = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
+
+    await expect(request.unwrap()).rejects.toMatchObject({
+      status: 401,
+      data: { message: CARD_RENEWAL_UNAVAILABLE, reason: "card session renewal is not configured" },
     });
     expect(onCardSessionEnded).not.toHaveBeenCalled();
-    await expect(session.getCardRefreshToken()).resolves.toBe("rt_old");
+    await expect(session.cardSession.get()).resolves.toEqual({
+      accessToken: "at_old",
+      refreshToken: "rt_old",
+    });
   });
 
   it("reports the read failure, and renews nothing, when the store cannot be read", async () => {

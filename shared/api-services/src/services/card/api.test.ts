@@ -7,7 +7,7 @@ import type { CardApiExtra, CardSessionRefreshResult } from "./types";
 
 const UNAVAILABLE: CardSessionRefreshResult = {
   kind: "unavailable",
-  error: { status: 503, message: "no renewal configured" },
+  reason: "card session renewal is not configured",
 };
 
 const SESSION_EPOCH = 7;
@@ -219,7 +219,7 @@ describe("cardBaseQuery", () => {
     expect(isCardRenewalUnavailable(result.error)).toBe(false);
   });
 
-  it("names a renewal it could not run, so a 5xx does not end a session", async () => {
+  it("names a renewal that never ran, so a wiring mistake does not end a session", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(jsonResponse({ error: "unauthorized" }, 401));
@@ -232,13 +232,13 @@ describe("cardBaseQuery", () => {
 
     expect(refreshCardSession).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(result.error).toMatchObject({
+    // The reason travels, and nothing else. A renewal that ran and failed never reaches here: the
+    // owner ends the session itself, and answers `session-ended`.
+    expect(result.error).toEqual({
       status: 401,
       data: {
         message: CARD_RENEWAL_UNAVAILABLE,
-        reason: "renewal_failed",
-        cause: "no renewal configured",
-        status: 503,
+        reason: "card session renewal is not configured",
       },
     });
     // Still a 401, and still not a reason to sign anybody out.

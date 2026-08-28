@@ -15,12 +15,12 @@ import {
 } from "./constants";
 import { CardApiExtraSchema } from "./schema";
 import { toSchemaFailureError } from "./schemaFailure";
+import { traceCard, traceCardApiAnswer } from "./trace";
 import type {
   CardApiExtra,
   CardBaseQueryExtraOptions,
   CardBaseQueryMeta,
   CardSessionRefreshResult,
-  CardSessionRenewalError,
 } from "./types";
 
 /** Validates and returns this service's `extraArgument` slice. */
@@ -58,23 +58,20 @@ const sessionEndedResult: { error: FetchBaseQueryError } = {
 };
 
 /**
- * The answer to a 401 the owner could not judge: the renewal failed for a nonterminal reason, or
- * the request outlived its session.
+ * The answer to a 401 that said nothing about the session: no renewal ran, or the request outlived
+ * the session it was sent with.
+ *
+ * A renewal that ran and failed never lands here. It ends the session, and the owner has already
+ * cleaned it up by the time this file sees the answer.
  *
  * The status stays 401, because that is what the provider answered. The body names the reason, and
- * the login flow reads that name to keep the session instead of signing the user out. A 5xx or a
- * transport failure on the token endpoint therefore no longer ends a login.
+ * the login flow reads that name to keep the session instead of signing the user out.
  */
-function renewalUnavailableResult(reason: string, error?: CardSessionRenewalError) {
+function renewalUnavailableResult(reason: string) {
   return {
     error: {
       status: UNAUTHORIZED_STATUS,
-      data: {
-        message: CARD_RENEWAL_UNAVAILABLE,
-        reason,
-        cause: error?.message,
-        status: error?.status,
-      },
+      data: { message: CARD_RENEWAL_UNAVAILABLE, reason },
     } satisfies FetchBaseQueryError,
   };
 }
@@ -121,7 +118,18 @@ const cardBaseQuery: BaseQueryFn<
       },
     })(args, api, extraOptions);
 
-    return { ...result, meta: safeMeta(result.meta) };
+    const meta = safeMeta(result.meta);
+
+    // Development builds only. A transport failure reports no `meta`, so the request describes
+    // itself from the arguments instead.
+    traceCardApiAnswer({
+      method: meta?.requestMethod ?? requestMethod(args),
+      url: meta?.requestUrl ?? requestUrl(args),
+      responseStatus: meta?.responseStatus,
+      error: result.error,
+    });
+
+    return { ...result, meta };
   };
 
   // The two OAuth2 grants authenticate themselves. They opt out of both services below, which is
@@ -153,9 +161,11 @@ const cardBaseQuery: BaseQueryFn<
     // request was in flight makes it stale, and the owner then renews nothing and clears nothing.
     refresh = await extra.refreshCardSession(epoch);
   } catch (error) {
-    return renewalUnavailableResult("renewal_threw", {
-      message: error instanceof Error ? error.message : String(error),
-    });
+    traceCard(
+      "renewal",
+      `the owner threw: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return renewalUnavailableResult("renewal_threw");
   }
 
   switch (refresh.kind) {
@@ -168,9 +178,17 @@ const cardBaseQuery: BaseQueryFn<
     case "session-replaced":
       return renewalUnavailableResult("session_replaced");
     case "unavailable":
-      return renewalUnavailableResult("renewal_failed", refresh.error);
+      return renewalUnavailableResult(refresh.reason);
   }
 };
+
+function requestMethod(args: string | FetchArgs): string {
+  return typeof args === "string" ? "GET" : (args.method ?? "GET");
+}
+
+function requestUrl(args: string | FetchArgs): string {
+  return typeof args === "string" ? args : args.url;
+}
 
 /** Endpoint-less Card api — use cases inject here. See shared/api-services README. */
 export const cardApi = createApi({
