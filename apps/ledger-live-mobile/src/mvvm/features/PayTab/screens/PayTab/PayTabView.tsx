@@ -41,7 +41,7 @@ export function PayTabView({
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
-      <Box style={{ flex: 1, paddingTop: top }}>
+      <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
         <Contacts {...contacts} />
