@@ -19,8 +19,8 @@ catalogs:
       specifier: 30.4.1
       version: 30.4.1
     '@ledgerhq/coin-hypercore':
-      specifier: 2.0.0
-      version: 2.0.0
+      specifier: 2.0.1
+      version: 2.0.1
     '@ledgerhq/coin-module-framework':
       specifier: 8.2.0
       version: 8.2.0
@@ -12520,7 +12520,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 2.0.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -21948,8 +21948,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-hypercore@2.0.0':
-    resolution: {integrity: sha512-tr1LARQw0CM2Ol9jQjR7WuBfWk38JQ1D3IUnVB8xD+4EJaCLw9ClaIavFo86krUgn/Nb4w1ESuxVvxAVwPRJRw==}
+  '@ledgerhq/coin-hypercore@2.0.1':
+    resolution: {integrity: sha512-2aen8CL/sAszgeiHZjKBOH6ECIkh49mD+/qT2Wg52fEDILB0k8RwOaStmO0yaW0hZl36r4bkwrW1YWfGBr/XVQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -48891,7 +48891,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@2.0.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
