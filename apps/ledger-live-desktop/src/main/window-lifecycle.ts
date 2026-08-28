@@ -48,10 +48,14 @@ const webPreferences: WebPreferences = {
   webviewTag: true,
   // allow devtools to exists in development mode or when explicitly enabled with DEV_TOOLS env var
   devTools: !!(__DEV__ || DEV_TOOLS),
-  // Allow to use nodejs in renderer thread.
-  nodeIntegration: true, // FIXME https://ledgerhq.atlassian.net/browse/LIVE-10304
-  // disable the context isolation in order to be able to use "electron" on preloader/renderer side
-  contextIsolation: false,
+  // These three move together — do not relax one on its own. `sandbox` has defaulted to
+  // true since Electron 20 and is auto-disabled only by `nodeIntegration: true`, so
+  // turning nodeIntegration off alone would silently sandbox the renderer *and* strip Node
+  // from the preload, breaking the bridge. The renderer is built as a `web` target and
+  // reaches the main process only through the preload bridge. See LIVE-10304.
+  nodeIntegration: false,
+  contextIsolation: true,
+  sandbox: true,
   // globally disable spellchecks which aren't useful to us & problematic for crypto address fields & so on
   spellcheck: false, // FIXME we should overrides this directly on the input fields instead of globally disabling it
 };
