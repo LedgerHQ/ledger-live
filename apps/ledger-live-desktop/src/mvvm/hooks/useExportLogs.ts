@@ -1,7 +1,6 @@
 import { getAllEnvs } from "@shared/env";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getResourceUsage } from "~/renderer/webFrame";
-import { showSaveDialog } from "~/renderer/dialog";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
 import logger from "~/renderer/logger";
@@ -29,17 +28,14 @@ export function useExportLogs() {
         accountsIds: accounts.map(a => a.id),
       });
 
-      const path = await showSaveDialog({
-        title: "Export logs",
-        defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
-        filters: [{ name: "All Files", extensions: ["txt"] }],
+      await saveLogs({
+        options: {
+          title: "Export logs",
+          defaultPath: `ledgerwallet-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+          filters: [{ name: "All Files", extensions: ["txt"] }],
+        },
+        e2ePath: "./ledgerwallet-logs.txt",
       });
-
-      // showSaveDialog always resolves to an object, so the previous `if (path)` was
-      // always true. Main already ignores a canceled target; this makes the intent explicit.
-      if (path && !path.canceled) {
-        await saveLogs(path);
-      }
     } catch (error) {
       logger.critical(error as Error);
     }

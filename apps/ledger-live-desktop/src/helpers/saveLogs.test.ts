@@ -43,7 +43,7 @@ describe("getJSONStringifyReplacer", () => {
 });
 
 describe("saveLogs", () => {
-  const fakePath = { filePath: "/fake/path" } as Electron.SaveDialogReturnValue;
+  const fakeRequest = { options: { defaultPath: "/fake/path" } };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -55,14 +55,14 @@ describe("saveLogs", () => {
     circularObj.self = circularObj;
     const logs = { log: "test", circularObj };
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue(logs);
-    (files.saveLogs as jest.Mock).mockResolvedValue(undefined);
+    (files.saveLogs as jest.Mock).mockResolvedValue(true);
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
     expect(files.saveLogs).toHaveBeenCalledTimes(1);
-    expect(files.saveLogs).toHaveBeenCalledWith(fakePath, expect.any(String));
+    expect(files.saveLogs).toHaveBeenCalledWith(fakeRequest, expect.any(String));
     const serializedLogs = (files.saveLogs as jest.Mock).mock.calls[0][1];
     expect(serializedLogs).toContain("[Circular]");
   });
@@ -75,7 +75,7 @@ describe("saveLogs", () => {
     const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
     expect(consoleWarnSpy).toHaveBeenCalledWith("Failed to save logs:", error);

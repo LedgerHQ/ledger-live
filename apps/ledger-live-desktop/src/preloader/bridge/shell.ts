@@ -2,10 +2,9 @@ import { ipcRenderer } from "electron";
 import {
   CHANNELS,
   type AppBridge,
-  type DialogsBridge,
   type FilesBridge,
   type PowerBridge,
-  type SaveTarget,
+  type SaveRequest,
   type StoreBridge,
 } from "~/bridge/contract";
 
@@ -18,18 +17,11 @@ export const app: AppBridge = {
   show: () => ipcRenderer.send(CHANNELS.showApp, {}),
 };
 
-export const dialogs: DialogsBridge = {
-  showSave: (options: Electron.SaveDialogOptions) =>
-    ipcRenderer.invoke(CHANNELS.showSaveDialog, options),
-  showOpen: (options: Electron.OpenDialogOptions) =>
-    ipcRenderer.invoke(CHANNELS.showOpenDialog, options),
-};
-
 export const files: FilesBridge = {
-  saveLogs: (target: SaveTarget, logsJson: string) =>
-    ipcRenderer.invoke(CHANNELS.saveLogs, target, logsJson),
-  exportOperations: (target: SaveTarget, csv: string) =>
-    ipcRenderer.invoke(CHANNELS.exportOperations, target, csv),
+  saveLogs: (request: SaveRequest, logsJson: string) =>
+    ipcRenderer.invoke(CHANNELS.saveLogs, request, logsJson),
+  exportOperations: (request: SaveRequest, csv: string) =>
+    ipcRenderer.invoke(CHANNELS.exportOperations, request, csv),
   savePng: (options: Electron.SaveDialogOptions, base64: string) =>
     ipcRenderer.invoke(CHANNELS.savePng, options, base64),
   openUserDataDirectory: () => ipcRenderer.invoke(CHANNELS.openUserDataDirectory),

@@ -1,13 +1,9 @@
 /**
- * The contract between the preload script and the renderer.
+ * The contract between the preload script and the renderer, imported by both so the
+ * compiler enforces that they agree.
  *
- * This is the single shared declaration of what crosses the context bridge. The preload
- * implements `LedgerBridge`; the renderer consumes it through `~/renderer/bridge`. Because
- * both sides import *this* file, the compiler enforces that they agree — which an ambient
- * `interface Window` cannot do, since ambient globals cannot be imported.
- *
- * Keep this file type-only plus the channel constants. It is pulled into the preload
- * bundle, which must stay tiny and free of Node and renderer code.
+ * Keep it type-only plus the channel constants: it is pulled into the preload bundle, which
+ * must stay free of Node and renderer code.
  */
 
 /** Values that survive the context bridge's structured-clone-like conversion. */
@@ -20,23 +16,16 @@ export type Serializable =
   | { [key: string]: Serializable };
 
 /**
- * Data captured once in the main process and handed to the renderer before any of its
- * code runs.
- *
- * This exists because a large amount of renderer code reads `process.env` and `os` at
- * module scope, synchronously. A sandboxed preload has neither, and asynchronous IPC
- * cannot satisfy a module-scope read, so the values are collected up front instead.
+ * Captured in main and handed to the renderer before any of its code runs: renderer modules
+ * read `process.env` and `os` at module scope, which async IPC cannot satisfy.
  */
 export type Bootstrap = {
-  /** Bumped whenever this shape changes, so a stale preload is detected rather than silently misread. */
+  /** Bumped whenever this shape changes, so a stale preload is detected rather than misread. */
   version: 1;
   /**
-   * The main process's full `process.env`.
-   *
-   * Deliberately unfiltered: several consumers read keys that are not `@ledgerhq/live-env`
-   * names (HIDE_DEBUG_MOCK, LEDGER_MIN_HEIGHT, the NO_DEBUG_* family, DEFAULT_*_MANIFEST_ID),
-   * and the E2E suites pass arbitrary variables through `electron.launch({ env })`.
-   * Allow-listing here would silently disable them.
+   * Deliberately unfiltered: consumers read keys that are not `@ledgerhq/live-env` names
+   * (HIDE_DEBUG_MOCK, LEDGER_MIN_HEIGHT, the NO_DEBUG_* family, DEFAULT_*_MANIFEST_ID), and
+   * the E2E suites pass arbitrary variables through `electron.launch({ env })`.
    */
   env: Record<string, string | undefined>;
   os: {
@@ -49,31 +38,22 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
-  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
-  locale: {
-    app: string;
-    system: string;
-  };
   /** Contents of the `lld.json` store, hydrated so renderer reads can stay synchronous. */
   store: Record<string, unknown>;
 };
 
 /**
- * The application database, owned by the main process.
- *
- * One named method per operation, with no channel parameter. A generic
- * `invoke(channel, ...args)` passthrough would be far less code, and would also hand any
- * script running in the renderer the entire main-process surface — including
- * `setEncryptionKey` and `isEncryptionKeyCorrect`, which together are an offline oracle
- * against the account database. Naming each operation keeps that surface reviewable and
- * lets the payloads stay typed.
+ * One named method per operation, and no channel parameter anywhere in this file. A generic
+ * `invoke(channel, ...args)` passthrough would hand any script running in the renderer the
+ * whole main-process surface — including `setEncryptionKey` and `isEncryptionKeyCorrect`,
+ * which together are an offline oracle against the account database.
  */
 export type DbBridge = {
   getKey(ns: string, keyPath: string, defaultValue?: unknown): Promise<unknown>;
   /**
-   * `value` must be JSON-safe. Account graphs contain BigNumber instances, which the
-   * bridge would silently flatten, so callers encode before reaching this point.
+   * `value` must be JSON-safe. Account graphs contain BigNumber instances, which the bridge
+   * silently flattens, so callers encode before reaching this point.
    */
   setKey(ns: string, keyPath: string, value: Serializable): Promise<void>;
   hasEncryptionKey(ns: string, keyPath: string): Promise<boolean>;
@@ -88,10 +68,7 @@ export type DbBridge = {
 
 type TransportError = { message: string; id: string };
 
-/**
- * Transport handlers resolve with a tagged union instead of rejecting, so failures arrive
- * as data. That is why these are typed as unions rather than as promises that throw.
- */
+/** Transport handlers resolve with a tagged union instead of rejecting: failures are data. */
 export type TransportOpenResult =
   | { type: "open-response"; requestId: string; data: { descriptor: string } }
   | { type: "open-error"; requestId: string; error: TransportError };
@@ -109,10 +86,8 @@ export type TransportListenResult =
   | { type: "listen-error"; requestId: string; error: TransportError };
 
 /**
- * Device transport, used only for Speculos and the HTTP proxy. Real devices talk WebHID
- * straight from the renderer and do not come through here.
- *
- * APDUs cross as hex strings: a Buffer would be flattened by the bridge's conversion.
+ * Device transport, used only for Speculos and the HTTP proxy — real devices talk WebHID
+ * straight from the renderer. APDUs cross as hex: a Buffer is flattened by the conversion.
  */
 export type TransportBridge = {
   open(requestId: string, descriptor: string, timeout?: number): Promise<TransportOpenResult>;
@@ -125,22 +100,12 @@ export type TransportBridge = {
 };
 
 /**
- * Removes a subscription created by one of the `on*` methods below.
- *
- * Subscriptions are cancelled through a returned closure rather than by passing the
- * listener back, because `removeListener(channel, fn)` cannot work across the bridge: the
- * renderer's function arrives in the preload as a proxy with a different identity, so the
- * lookup would silently fail and the listener would leak.
+ * Cancels a subscription. A closure rather than `removeListener(channel, fn)`, which cannot
+ * work across the bridge: the renderer's function arrives in the preload as a proxy with a
+ * different identity, so removal would silently no-op and the listener would leak.
  */
 export type Unsubscribe = () => void;
 
-/**
- * Payload pushed by the auto-updater.
- *
- * `status` is kept as a plain string here rather than importing the renderer's
- * `UpdateStatus` union: this file is compiled into the preload bundle and must not pull in
- * renderer code. The consumer narrows it.
- */
 export type UpdaterStatusEvent = {
   status: string;
   payload?: { percent?: number; version?: string };
@@ -157,8 +122,18 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
-/** Where a save dialog put the file, as returned by Electron. */
-export type SaveTarget = { canceled: boolean; filePath?: string };
+/**
+ * A request to write a file. Main runs the save dialog itself and keeps the resulting path,
+ * so the renderer never learns one.
+ */
+export type SaveRequest = {
+  options: Electron.SaveDialogOptions;
+  /** Fixed path for the E2E suites. Honoured only when PLAYWRIGHT_RUN is set in main. */
+  e2ePath?: string;
+};
+
+/** Cancelling is not a failure, and callers surface the two differently. */
+export type SaveOutcome = "saved" | "canceled" | "failed";
 
 export type AppBridge = {
   reload(): void;
@@ -168,28 +143,18 @@ export type AppBridge = {
   show(): void;
 };
 
-export type DialogsBridge = {
-  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
-  showOpen(options: Electron.OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
-};
-
 export type FilesBridge = {
   /**
-   * `logsJson` is pre-stringified by the caller. The in-memory logs contain circular
-   * references and typed arrays that neither the bridge nor Electron's IPC serialiser can
-   * carry, so they are serialised with a custom replacer first — do not "simplify" this
-   * into passing the array.
+   * `logsJson` is pre-stringified with a custom replacer, because the in-memory logs hold
+   * circular references and typed arrays that neither the bridge nor Electron's IPC
+   * serialiser can carry. Do not "simplify" this into passing the array.
    */
-  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
-  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
-  /** Prompts for a save location and writes the PNG; false when cancelled. */
-  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<boolean>;
+  saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
+  exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
-  /** Prompts for a manifest and returns its contents; null when cancelled. */
   readLocalManifest(): Promise<string | null>;
-  /** Prompts for a save location and writes `contents`; false when cancelled. */
   writeLocalManifest(defaultName: string, contents: string): Promise<boolean>;
-  /** Dev-only. Returns null outside development or for an unknown environment. */
   readDotEnvFile(environment: string): Promise<string | null>;
 };
 
@@ -204,41 +169,25 @@ export type StoreBridge = {
   clear(): void;
 };
 
-/**
- * Kept as its own group rather than folded into `system`, so the existing lint guardrail
- * that matches on a `shell` object keeps working against the bridge facade.
- */
+/** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
 export type ShellBridge = {
-  /** Validated in the main process before anything is launched. */
   openExternal(url: string): void;
 };
 
 export type SystemBridge = {
-  /**
-   * Clipboard access goes through the main process rather than `navigator.clipboard`.
-   * The window's permission check handler grants only `hid`, so a `clipboard-read`
-   * request from the renderer would be denied — and widening that policy to work around
-   * it would undo part of what this migration is for.
-   */
   clipboardWriteText(text: string): void;
   /** Resolves null when the clipboard cannot be read, which is distinct from empty. */
   clipboardReadText(): Promise<string | null>;
-  /** `webFrame` is available to the preload even under sandbox, so these stay synchronous. */
   setVisualZoomLevelLimits(minimum: number, maximum: number): void;
   getResourceUsage(): Electron.ResourceUsage | undefined;
 };
 
 /**
- * ZCash shielded-sync IPC.
- *
- * This is the one place a channel-parameterised method is acceptable: the caller is
- * `@ledgerhq/coin-bitcoin`, whose own `ZCASH_IPC` constant is a closed `as const` list, and
- * the preload validates every channel against it. Naming each operation here would just
- * duplicate that contract in a second place that could drift.
+ * The one place a channel name is a parameter. Safe only because the preload validates
+ * every channel against `@ledgerhq/coin-zcash`'s own closed `ZCASH_IPC` list.
  */
 export type ZcashBridge = {
   invoke(channel: string, args: unknown): Promise<unknown>;
-  /** Returns an unsubscribe closure; listener identity does not survive the bridge. */
   subscribe(channel: string, callback: (payload: unknown) => void): Unsubscribe;
 };
 
@@ -253,22 +202,14 @@ export type LedgerBridge = {
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
   app: AppBridge;
-  dialogs: DialogsBridge;
   files: FilesBridge;
   power: PowerBridge;
   store: StoreBridge;
 };
 
-/**
- * Every IPC channel name lives here, and nowhere else.
- *
- * Channel strings appearing at call sites are what make a generic `invoke(channel, ...)`
- * passthrough tempting; a passthrough would re-expose the whole main-process surface to
- * any script running in the renderer, which is the thing this migration removes.
- */
+/** Every IPC channel name lives here, and nowhere else. */
 export const CHANNELS = {
   bootstrap: "bootstrap",
-  /** Write-through updates to the `lld.json` store hydrated in {@link Bootstrap.store}. */
   storeSet: "lld-store:set",
   storeClear: "lld-store:clear",
   getKey: "getKey",
@@ -294,8 +235,6 @@ export const CHANNELS = {
   appRelaunch: "app-relaunch",
   appQuit: "app-quit",
   showApp: "show-app",
-  showSaveDialog: "show-save-dialog",
-  showOpenDialog: "show-open-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
   savePng: "save-png",
