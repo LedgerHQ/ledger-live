@@ -28,8 +28,8 @@ catalogs:
       specifier: 9.4.0
       version: 9.4.0
     '@ledgerhq/coin-tezos':
-      specifier: 10.1.1
-      version: 10.1.1
+      specifier: 10.2.0
+      version: 10.2.0
     '@ledgerhq/coin-xrp':
       specifier: 10.1.0
       version: 10.1.0
@@ -11495,7 +11495,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.1.1
+        version: 10.2.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -12568,7 +12568,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.1.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -21960,11 +21960,6 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-module-framework@8.1.0':
-    resolution: {integrity: sha512-Hv24o2O/wJB6NX5TiK/glyX8MjFYhAbZYfGmnthN21SWOzvlDQE90E8+eS0VMz6EIrXtqBShX5QszINwRYh1nw==}
-    peerDependencies:
-      '@ledgerhq/live-network': ^3.0.0
-
   '@ledgerhq/coin-module-framework@8.2.0':
     resolution: {integrity: sha512-Zpb9xzEqUF/4Gpo4MbIeWWLiix78LGdELsBwUqIK7NFqW8FNW9Ay6bJhc0cn5STCXEjY08zXVnYoZ8ZUQe52qw==}
     peerDependencies:
@@ -21976,8 +21971,8 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-tezos@10.1.1':
-    resolution: {integrity: sha512-0TzHLVpcMFVBTFyNQEzoGhZpnDmEhs+p2ZVezDLKraGJGHgVelg89fqbSflXsaCu//89RURUrC+io8YgbY9reA==}
+  '@ledgerhq/coin-tezos@10.2.0':
+    resolution: {integrity: sha512-6a3dUvJOt2UuJLhknmNOB61QTEqIZGaQEgHiB5mjWCF4xDn/bVgQlB/qBombcQhzZaq1tef4C8FDyT5aCDSnbw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -48903,15 +48898,6 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
 
-  '@ledgerhq/coin-module-framework@8.1.0':
-    dependencies:
-      bignumber.js: 9.1.2
-
-  '@ledgerhq/coin-module-framework@8.1.0(@ledgerhq/live-network@libs+live-network)':
-    dependencies:
-      '@ledgerhq/live-network': link:libs/live-network
-      bignumber.js: 9.1.2
-
   '@ledgerhq/coin-module-framework@8.2.0':
     dependencies:
       bignumber.js: 9.1.2
@@ -48930,9 +48916,9 @@ snapshots:
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-tezos@10.1.1':
+  '@ledgerhq/coin-tezos@10.2.0':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.1.0
+      '@ledgerhq/coin-module-framework': 8.2.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -48940,9 +48926,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-tezos@10.1.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-tezos@10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.1.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       '@taquito/ledger-signer': 23.0.1
@@ -67158,7 +67144,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -67205,9 +67193,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
