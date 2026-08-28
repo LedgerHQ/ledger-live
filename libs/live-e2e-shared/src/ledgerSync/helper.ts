@@ -60,6 +60,14 @@ export class LedgerSyncCliHelper {
     cloudSyncApiBaseUrl,
   };
 
+  /**
+   * The member the trustchain was created with — the CLI. `addTrustchainMember` replaces the
+   * working credentials with the new member's, and the app is then seeded with those, so this is
+   * the only handle a test has on the *other* instance. Removing the seeded one is refused by the
+   * app: "You can't remove this phone while you're using it".
+   */
+  static readonly initialMember = { pubKey: "" };
+
   static readonly ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
     pubKey: "",
     privateKey: "",
@@ -128,6 +136,7 @@ export class LedgerSyncCliHelper {
    * used as a `cliCommands` entry directly — wrap it in a no-arg command.
    */
   static async addTrustchainMember(name: string) {
+    LedgerSyncCliHelper.initialMember.pubKey = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.pubKey;
     await LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
 
     const output = ledgerKeyRingProtocol({
@@ -153,14 +162,33 @@ export class LedgerSyncCliHelper {
     return LedgerSyncCliHelper.pushLedgerSyncData();
   }
 
+  /**
+   * Empty credentials reach the signer as a zero-length key and surface as noble's
+   * `invalid private key: expected ui8a of size 32, got object`, which says nothing about the
+   * real cause. Fail on the actual problem instead: the trustchain was never initialized.
+   */
+  private static assertInitialized(operation: string) {
+    const { pubKey, privateKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
+    const { rootId } = LedgerSyncCliHelper.ledgerSyncPushDataArgs;
+    invariant(
+      pubKey && privateKey && rootId,
+      `Ledger Sync: cannot ${operation} before the trustchain is initialized ` +
+        `(pubKey: ${pubKey.length} chars, privateKey: ${privateKey.length} chars, rootId: "${rootId}")`,
+    );
+  }
+
   static async pullLedgerSyncData() {
+    LedgerSyncCliHelper.assertInitialized("pull");
+    // Keyring args last: the pull args carry their own copy of the credentials, and only the
+    // keyring ones are guaranteed to have been refreshed by initializeLedgerKeyRingProtocol.
     return ledgerSync({
-      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     });
   }
 
   static async pushLedgerSyncData() {
+    LedgerSyncCliHelper.assertInitialized("push");
     return ledgerSync({
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,

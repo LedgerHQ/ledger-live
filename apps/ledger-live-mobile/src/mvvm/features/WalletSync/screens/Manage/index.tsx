@@ -146,7 +146,11 @@ const WalletSyncManage = () => {
             />
           ))}
 
-          <InstancesRow disabled={hasError} onPress={isError ? undefined : goToManageInstances}>
+          <InstancesRow
+            testID="walletSync-manage-instances"
+            disabled={hasError}
+            onPress={isError ? undefined : goToManageInstances}
+          >
             <Container
               flexDirection="row"
               justifyContent="space-between"

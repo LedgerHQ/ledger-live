@@ -8,6 +8,7 @@ import CustomLockscreenPage from "@e2e/page/stax/customLockscreen.page";
 import DeviceValidationPage from "@e2e/page/trade/deviceValidation.page";
 import DiscoverPage from "@e2e/page/discover/discover.page";
 import LedgerSyncPage from "@e2e/page/settings/ledgerSync.page";
+import TrustchainPage from "@e2e/page/trustchain.page";
 import ManagerPage from "@e2e/page/manager/manager.page";
 import MarketPage from "@e2e/page/market/market.page";
 import OnboardingStepsPage from "@e2e/page/onboarding/onboardingSteps.page";
@@ -72,6 +73,7 @@ export class Application {
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
   private discoverPageInstance = lazyInit(DiscoverPage);
   private ledgerSyncPageInstance = lazyInit(LedgerSyncPage);
+  private trustchainPageInstance = lazyInit(TrustchainPage);
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
@@ -149,6 +151,10 @@ export class Application {
 
   public get discover() {
     return this.discoverPageInstance();
+  }
+
+  public get trustchain() {
+    return this.trustchainPageInstance();
   }
 
   public get ledgerSync() {
