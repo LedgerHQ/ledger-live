@@ -7660,6 +7660,12 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../../domain/api/card-management
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       react-native-keychain:
         specifier: 'catalog:'
         version: 10.0.0

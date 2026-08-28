@@ -8,10 +8,36 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
+import { cardApi, type CardApiExtra } from "@shared/api-services";
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
+
+/**
+ * One keychain entry per `service`, which is how the Card session store uses the library. The native
+ * module does not exist under jest, and `@features/platform-card` resolves to its native build here.
+ */
+jest.mock("react-native-keychain", () => {
+  const entries = new Map<string, string>();
+  return {
+    ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },
+    STORAGE_TYPE: { AES_GCM_NO_AUTH: "KeystoreAESGCM_NoAuth" },
+    getGenericPassword: jest.fn(async ({ service }: { service: string }) => {
+      const password = entries.get(service);
+      return password === undefined ? false : { username: "payCard", password };
+    }),
+    setGenericPassword: jest.fn(
+      async (_username: string, password: string, { service }: { service: string }) => {
+        entries.set(service, password);
+        return { service, storage: "KeystoreAESGCM_NoAuth" };
+      },
+    ),
+    resetGenericPassword: jest.fn(async ({ service }: { service: string }) =>
+      entries.delete(service),
+    ),
+  };
+});
 
 jest.mock("@rozenite/redux-devtools-plugin", () => ({
   rozeniteDevToolsEnhancer: jest.fn(() => (next: (...args: unknown[]) => unknown) => {
@@ -253,7 +279,56 @@ describe("mobile store", () => {
       );
     });
   });
+
+  describe("card session renewal", () => {
+    it("hands the Card api every session accessor it needs", () => {
+      const { store } = require("./configureStore");
+      const extra = readCardExtra(store);
+
+      expect(typeof extra.getCardSessionToken).toBe("function");
+      expect(typeof extra.getCardRefreshToken).toBe("function");
+      expect(typeof extra.refreshCardSession).toBe("function");
+    });
+
+    it("publishes signed-out and drops the session when a renewal ends it", async () => {
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("CARD_API_URL", "http://card.test");
+      // The provider rejects the grant. That is terminal, so this store's own callback must run.
+      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+        async () =>
+          new Response(JSON.stringify({ message: "invalid_grant" }), {
+            status: 400,
+            headers: { "content-type": "application/json" },
+          }),
+      );
+
+      const { store } = require("./configureStore");
+      const { cardSession } = require("@features/platform-card");
+      const { setSignedIn, selectIsSignedIn } = require("@features/flow-pay-card-auth/state");
+      const extra = readCardExtra(store);
+
+      await cardSession.set({ accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" });
+      store.dispatch(setSignedIn(true));
+
+      await expect(extra.refreshCardSession()).resolves.toEqual({ kind: "session-ended" });
+
+      expect(selectIsSignedIn(store.getState())).toBe(false);
+      expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
+      await expect(extra.getCardSessionToken()).resolves.toBeNull();
+      await expect(extra.getCardRefreshToken()).resolves.toBeNull();
+
+      await cardSession.clear();
+      fetchSpy.mockRestore();
+    });
+  });
 });
+
+/** The Card slice of the thunk extraArgument, as `cardBaseQuery` reads it. */
+function readCardExtra(store: unknown): CardApiExtra {
+  type ExtraThunk = (dispatch: unknown, getState: unknown, extra: CardApiExtra) => CardApiExtra;
+  const dispatch = (store as { dispatch: (thunk: ExtraThunk) => CardApiExtra }).dispatch;
+  return dispatch((_dispatch, _getState, extra) => extra);
+}
 
 type AuthThunk = (
   dispatch: unknown,

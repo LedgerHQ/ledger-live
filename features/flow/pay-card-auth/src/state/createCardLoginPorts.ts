@@ -37,7 +37,11 @@ export function createCardLoginPorts({
       dispatch(cardManagementApi.util.resetApiState());
     },
     exchangeAuthorizationCode: request =>
-      dispatch(cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request)).unwrap(),
+      dispatch(
+        // `track: false`: this answer is a whole session, and a tracked mutation parks it in
+        // `state.cardApi.mutations`. `unwrap` hands it over just the same.
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request, { track: false }),
+      ).unwrap(),
     getUser: async () => {
       const request = dispatch(cardManagementApi.endpoints.getUser.initiate());
       try {

@@ -22,13 +22,21 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings"
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
+  cardApi,
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
   swapApiExtra,
 } from "@shared/api-services";
-import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  configureCardSessionRenewal,
+  getCardRefreshToken,
+  getCardSessionToken,
+  refreshCardSession,
+} from "@features/platform-card";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
@@ -40,7 +48,8 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  devTools: !!Config.DEBUG_RNDEBUGGER,
+  // Card actions carry OAuth2 credentials, and DevTools serializes every action it is given.
+  devTools: Config.DEBUG_RNDEBUGGER ? { actionSanitizer: redactCardApiAction } : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({
@@ -63,6 +72,7 @@ export const store = configureStore({
               getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
               getCardSessionToken,
+              getCardRefreshToken,
               refreshCardSession,
             }),
             ...pushDevicesApiExtra({
@@ -129,6 +139,16 @@ export const store = configureStore({
 
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;
+
+// After the store exists, because a renewal dispatches a Card mutation. `cardApi` and
+// `cardManagementApi` are the same object: `injectEndpoints` mutates in place.
+configureCardSessionRenewal({
+  dispatch: store.dispatch,
+  onCardSessionEnded: () => {
+    store.dispatch(cardApi.util.resetApiState());
+    store.dispatch(setSignedIn(false));
+  },
+});
 
 setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
   const unsubscribe = NetInfo.addEventListener(state => {

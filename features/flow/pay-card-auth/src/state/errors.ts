@@ -24,8 +24,11 @@ export class MissingLoginStateError extends Error {
 }
 
 /**
- * True for a Card HTTP 401. The base query has already asked `refreshCardSession` to renew the
- * session by the time this runs, so a 401 here means the session is finished, not merely stale.
+ * True for a Card HTTP 401.
+ *
+ * The base query has already tried to renew the session by the time this runs, so a 401 here means
+ * the session is finished, not merely stale. A session the owner ended itself arrives the same way:
+ * the base query reports it as a 401 whose body carries `card_session_ended`.
  */
 export function isUnauthorizedError(error: unknown): boolean {
   return (
