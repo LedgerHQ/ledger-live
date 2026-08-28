@@ -5,7 +5,9 @@ import {
   methodToString,
   getRandomTransferID,
   toSafeNumber,
+  getTransferIdFromMemo,
 } from "./utils";
+import type { CasperMemo } from "../types";
 
 describe("Casper utils", () => {
   describe("isNoErrorReturnCode", () => {
@@ -90,6 +92,25 @@ describe("Casper utils", () => {
 
     test("should throw for a value below the safe integer range", () => {
       expect(() => toSafeNumber(BigInt(Number.MIN_SAFE_INTEGER) - 1n)).toThrow(RangeError);
+    });
+  });
+
+  describe("getTransferIdFromMemo", () => {
+    it.each([
+      ["undefined memo", undefined, undefined],
+      ["MemoNotSupported", { type: "none" } as CasperMemo, undefined],
+      [
+        "StringMemo<'transferId'>",
+        { type: "string", kind: "transferId", value: "12345" } as CasperMemo,
+        "12345",
+      ],
+      [
+        "generic-adapter memo { type: 'transferId' }",
+        { type: "transferId", value: "9007199254740993" } as CasperMemo,
+        "9007199254740993",
+      ],
+    ])("returns correct transferId for %s", (_desc, memo, expected) => {
+      expect(getTransferIdFromMemo(memo)).toBe(expected);
     });
   });
 });

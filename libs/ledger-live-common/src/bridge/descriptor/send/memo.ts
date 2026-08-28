@@ -27,7 +27,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
       },
     };
   },
-  casper: memo => ({ transferId: memo }),
+  casper: memo => ({ transferId: memo, memoType: "transferId", memoValue: memo }),
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };
     if (typeof memo === "string") return { tag: Number(memo) };

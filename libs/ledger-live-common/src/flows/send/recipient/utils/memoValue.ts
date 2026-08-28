@@ -2,8 +2,8 @@ type SanitizeMemoValueArgs = Readonly<{
   value: string;
   /** Memo input kind coming from the send descriptor (ex "tag" restricts to digits). */
   memoType?: string;
-  /** Max numeric value when memoType is "tag" (ex UINT32_MAX), from the send descriptor. */
-  memoMaxValue?: number;
+  /** Max numeric value for tag memos, from the send descriptor. */
+  memoMaxValue?: number | bigint;
 }>;
 
 /**
@@ -21,6 +21,7 @@ export function sanitizeMemoValue({
   const digitsOnly = value.replace(/\D/g, "");
   if (memoMaxValue === undefined || digitsOnly === "") return digitsOnly;
 
-  const num = Number(digitsOnly);
-  return num > memoMaxValue ? String(memoMaxValue) : digitsOnly;
+  const maxBig = BigInt(memoMaxValue);
+  const valueBig = BigInt(digitsOnly);
+  return valueBig > maxBig ? String(memoMaxValue) : digitsOnly;
 }

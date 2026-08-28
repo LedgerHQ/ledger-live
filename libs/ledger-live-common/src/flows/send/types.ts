@@ -31,7 +31,7 @@ export type SendFlowUiConfig = Readonly<{
   hasMemo: boolean;
   memoType?: string;
   memoMaxLength?: number;
-  memoMaxValue?: number;
+  memoMaxValue?: number | bigint;
   memoOptions?: readonly string[];
   recipientSupportsDomain: boolean;
   hasFeePresets: boolean;
