@@ -45,27 +45,27 @@ describe("the session hand-off", () => {
     expect(takeCardSession(handle)).toBeNull();
   });
 
-  it("keeps two hand-offs apart", () => {
+  it("never hands a caller the session a later grant put here", () => {
     const first = receiveCardSession(session);
     const second = receiveCardSession({ accessToken: "at_2", refreshToken: "rt_2" });
 
+    // The two can belong to different users, so a stale handle answers nothing rather than the
+    // wrong session. One slot, so the later grant is the one that stands.
+    expect(takeCardSession(first)).toBeNull();
     expect(takeCardSession(second)).toEqual({ accessToken: "at_2", refreshToken: "rt_2" });
-    expect(takeCardSession(first)).toEqual(session);
   });
 
   it("answers nothing for a handle it never issued", () => {
     expect(takeCardSession("card-session-nobody-issued")).toBeNull();
   });
 
-  it("bounds itself when a caller drops a receipt", () => {
+  it("holds one session, so a dropped receipt cannot pile up", () => {
     const dropped = receiveCardSession(session);
-    const handles = Array.from({ length: 6 }, (_, index) =>
-      receiveCardSession({ accessToken: `at_${index}`, refreshToken: `rt_${index}` }),
-    );
+    const latest = receiveCardSession({ accessToken: "at_2", refreshToken: "rt_2" });
 
-    // An unread session is a credential nobody can spend. The oldest goes first.
+    // An unread session is a credential nobody can spend. The next grant overwrites it.
     expect(takeCardSession(dropped)).toBeNull();
-    expect(takeCardSession(handles[handles.length - 1])).not.toBeNull();
+    expect(takeCardSession(latest)).not.toBeNull();
   });
 
   it("drops everything when the session ends", () => {
