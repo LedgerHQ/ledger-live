@@ -9,7 +9,9 @@ function makeProps(overrides: Partial<ContactsViewNativeProps> = {}): ContactsVi
     title: "Pay contact",
     payLabel: "Pay",
     contacts: [],
+    hasMore: false,
     onPay: jest.fn(),
+    onSeeAll: jest.fn(),
     ...overrides,
   };
 }
@@ -69,5 +71,20 @@ describe("ContactsView (Native)", () => {
     screen.getByTestId("pay-contacts-tile-0").props.onPress();
 
     expect(onContactPress).toHaveBeenCalledWith(contacts[0]);
+  });
+
+  it("should not expose the see-all affordance when hasMore is false", () => {
+    render(<ContactsView {...makeProps({ hasMore: false })} />);
+
+    expect(screen.getByTestId("pay-contacts-see-all").props.onPress).toBeUndefined();
+  });
+
+  it("should open the full contacts list from the see-all affordance when hasMore is true", () => {
+    const onSeeAll = jest.fn();
+
+    render(<ContactsView {...makeProps({ hasMore: true, onSeeAll })} />);
+    screen.getByTestId("pay-contacts-see-all").props.onPress();
+
+    expect(onSeeAll).toHaveBeenCalledTimes(1);
   });
 });

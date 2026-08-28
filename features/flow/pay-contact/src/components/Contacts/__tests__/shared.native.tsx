@@ -30,6 +30,7 @@ export function makeContactsProps(
     title: "Pay contact",
     payLabel: "Pay",
     onPay: jest.fn(),
+    onSeeAll: jest.fn(),
     ...overrides,
   };
 }

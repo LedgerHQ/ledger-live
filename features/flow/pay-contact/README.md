@@ -35,8 +35,12 @@ tile (opens the Send flow) followed by the saved contacts. The empty state rende
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
 
-<Contacts title={title} payLabel={payLabel} onPay={openSend} />;
+<Contacts title={title} payLabel={payLabel} onPay={openSend} onSeeAll={openContactsList} />;
 ```
+
+The strip caps at 8 saved contacts. When more are saved, the section title becomes a see-all
+control that calls `onSeeAll` — the host opens the full contacts list (the mobile Contacts flow).
+The `hasMore` flag and the 8-item slice are derived by the view-model; the view is props-only.
 
 Contact tiles are display-only for now. `onContactPress` is an optional prop left unwired so a later
 ticket can turn each tile into a Pay entry point without changing the layout.
