@@ -1,4 +1,4 @@
-import { of, Subject, Observable } from "rxjs";
+import { BehaviorSubject, of, Subject, Observable } from "rxjs";
 import {
   ConnectedDevice,
   DeviceModelId,
@@ -7,6 +7,8 @@ import {
   DeviceSessionState,
   DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
+import { CantOpenDevice } from "@ledgerhq/hw-transport/errors";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceManagementKitTransport } from "./DeviceManagementKitTransport";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
@@ -271,5 +273,42 @@ describe("DeviceManagementKitTransport", () => {
         device: testDevice2,
       }),
     );
+  });
+
+  // Mirrors the real WebHID transport, whose device list starts as an empty array.
+  describe("open with no device available yet", () => {
+    let availableDevices: BehaviorSubject<DiscoveredDevice[]>;
+
+    beforeEach(() => {
+      activeDeviceSessionSubject.next(null);
+      availableDevices = new BehaviorSubject<DiscoveredDevice[]>([]);
+      jest
+        .spyOn(deviceManagementKit, "listenToAvailableDevices")
+        .mockReturnValue(availableDevices.asObservable());
+      jest
+        .spyOn(deviceManagementKit, "getDeviceSessionState")
+        .mockReturnValue(new Subject<DeviceSessionState>());
+    });
+
+    afterEach(() => {
+      activeDeviceSessionSubject.next(null);
+    });
+
+    it("should skip the empty list and connect to the first device that shows up", async () => {
+      const connect = jest.spyOn(deviceManagementKit, "connect").mockResolvedValue("session-456");
+
+      const opening = DeviceManagementKitTransport.open();
+      availableDevices.next([testDevice1]);
+
+      await expect(opening).resolves.toBeInstanceOf(DeviceManagementKitTransport);
+      expect(connect).toHaveBeenCalledWith(expect.objectContaining({ device: testDevice1 }));
+    });
+
+    it("should throw CantOpenDevice instead of connecting to an undefined device", async () => {
+      const connect = jest.spyOn(deviceManagementKit, "connect");
+
+      await expect(DeviceManagementKitTransport.open(10)).rejects.toBeInstanceOf(CantOpenDevice);
+      expect(connect).not.toHaveBeenCalled();
+    });
   });
 });
