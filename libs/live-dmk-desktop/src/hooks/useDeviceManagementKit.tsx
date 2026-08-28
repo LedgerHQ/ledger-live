@@ -13,11 +13,16 @@ import { LocalTracer } from "@ledgerhq/logs";
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
 /**
- * Fixed URL of the local device mock server used when the mock server transport
- * is enabled. Previously configurable via the `MOCK_SERVER_TRANSPORT_URL` env;
- * now a constant since the mock server always runs on this port locally.
+ * Base URL of the device mock server used when the mock server transport is
+ * enabled. Defaults to the shared deployment, so the transport works without
+ * running a pod locally; point `MOCK_SERVER_TRANSPORT_URL` at a local instance
+ * (e.g. http://localhost:9752) to use one.
+ *
+ * Read through a function rather than captured in a constant because the flag
+ * is pushed to all threads at boot, after this module is first imported.
  */
-export const MOCK_SERVER_TRANSPORT_URL = "http://localhost:9752";
+export const getMockServerTransportUrl = (): string =>
+  getEnv("MOCK_SERVER_TRANSPORT_URL").replace(/\/+$/, "");
 
 let instance: DeviceManagementKit | null = null;
 
@@ -57,7 +62,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
     const userId = getEnv("USER_ID");
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     const mockServerTransportEnabled = getEnv("MOCK_SERVER_TRANSPORT");
-    const mockServerUrl = MOCK_SERVER_TRANSPORT_URL;
+    const mockServerUrl = getMockServerTransportUrl();
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
       mockServerTransportEnabled,

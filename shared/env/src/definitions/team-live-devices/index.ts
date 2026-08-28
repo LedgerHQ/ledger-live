@@ -131,7 +131,12 @@ const teamLiveDevices = {
   MOCK_SERVER_TRANSPORT: {
     def: false,
     parser: boolParser,
-    desc: "enable the Device Management Kit mock server transport (connects to a local device mock server instead of a physical device)",
+    desc: "enable the Device Management Kit mock server transport (connects to a device mock server instead of a physical device)",
+  },
+  MOCK_SERVER_TRANSPORT_URL: {
+    def: "https://device-mock-server.aws.ldg-ps-default.ldg-tech.com",
+    parser: stringParser,
+    desc: "base URL of the device mock server backing the mock server transport. Defaults to the shared deployment; override to point at a local instance (e.g. http://localhost:9752)",
   },
 };
 

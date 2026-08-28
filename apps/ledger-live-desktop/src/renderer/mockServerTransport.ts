@@ -4,7 +4,7 @@ import {
   setMockServerSessionToken,
   getMockServerSessionToken,
   getMockScriptRunnerBaseUrl,
-  MOCK_SERVER_TRANSPORT_URL,
+  getMockServerTransportUrl,
 } from "@ledgerhq/live-dmk-desktop";
 import { setEnvOnAllThreads } from "~/helpers/env";
 
@@ -42,7 +42,7 @@ export async function bootstrapMockServerTransport(): Promise<void> {
     return;
   }
 
-  const baseUrl = MOCK_SERVER_TRANSPORT_URL;
+  const baseUrl = getMockServerTransportUrl();
   try {
     const { data } = await network<{ token?: string }>({
       method: "POST",

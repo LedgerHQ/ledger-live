@@ -5522,7 +5522,7 @@
       "enableCountervaluesStaging": "Countervalues API staging",
       "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
       "enableMockServerTransport": "Mock server transport",
-      "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a local device mock server instead of a physical device. Requires an app restart to take effect.",
+      "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a device mock server instead of a physical device. Uses the shared mock server unless MOCK_SERVER_TRANSPORT_URL points elsewhere. Requires an app restart to take effect.",
       "mockServerStatus": {
         "connected": "Mock server connected",
         "disconnected": "Mock server unreachable",
