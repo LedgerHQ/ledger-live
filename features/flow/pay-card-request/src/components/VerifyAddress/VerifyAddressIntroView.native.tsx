@@ -10,6 +10,7 @@ export function VerifyAddressIntroView({
   verifyCta,
   onVerify,
   onClose,
+  bottomInset,
 }: VerifyAddressIntroViewProps) {
   return (
     <VerifyAddressSheet
@@ -23,6 +24,7 @@ export function VerifyAddressIntroView({
       ctaLabel={verifyCta}
       onCta={onVerify}
       ctaTestId="pay-card-verify-address-verify-cta"
+      bottomInset={bottomInset}
     />
   );
 }

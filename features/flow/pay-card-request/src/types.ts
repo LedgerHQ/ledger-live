@@ -38,6 +38,8 @@ export type VerifyAddressProps = Readonly<{
   onGotIt: () => void;
   onClose: () => void;
   onTrackEvent?: PayCardTrackEvent;
+  /** Native only: Android 3-button nav / iOS home indicator. */
+  bottomInset?: number;
 }>;
 
 export type VerifyAddressViewModel = Readonly<{
@@ -56,6 +58,7 @@ export type VerifyAddressIntroViewProps = Readonly<{
   verifyCta: string;
   onVerify: () => void;
   onClose: () => void;
+  bottomInset?: number;
 }>;
 
 export type VerifyAddressSuccessViewProps = Readonly<{
@@ -66,6 +69,7 @@ export type VerifyAddressSuccessViewProps = Readonly<{
   gotItCta: string;
   onGotIt: () => void;
   onClose: () => void;
+  bottomInset?: number;
 }>;
 
 /**

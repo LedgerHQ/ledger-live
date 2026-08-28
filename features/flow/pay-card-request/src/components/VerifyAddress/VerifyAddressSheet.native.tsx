@@ -17,6 +17,7 @@ type VerifyAddressSheetProps = Readonly<{
   onCta: () => void;
   ctaTestId: string;
   children?: React.ReactNode;
+  bottomInset?: number;
 }>;
 
 export function VerifyAddressSheet({
@@ -31,6 +32,7 @@ export function VerifyAddressSheet({
   onCta,
   ctaTestId,
   children,
+  bottomInset = 0,
 }: VerifyAddressSheetProps) {
   return (
     <QueuedBottomSheet
@@ -40,8 +42,8 @@ export function VerifyAddressSheet({
       testID={sheetTestId}
     >
       {isOpen ? (
-        <BottomSheetView style={{ paddingHorizontal: 16 }}>
-          <Box lx={{ gap: "s24", paddingVertical: "s24" }} testID={contentTestId}>
+        <BottomSheetView style={{ paddingHorizontal: 16, paddingBottom: bottomInset + 24 }}>
+          <Box lx={{ gap: "s24", paddingTop: "s24" }} testID={contentTestId}>
             <Box lx={{ alignItems: "center", gap: "s12" }}>
               <Spot appearance="icon" icon={icon} size={56} />
               <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>

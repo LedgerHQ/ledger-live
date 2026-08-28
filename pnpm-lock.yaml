@@ -1813,6 +1813,9 @@ importers:
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style
+      '@features/platform-verify-address-intent':
+        specifier: workspace:^
+        version: link:../../features/platform/verify-address-intent
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
