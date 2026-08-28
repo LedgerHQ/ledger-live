@@ -10,7 +10,11 @@ export const PerpsDepositSignTerms = () => (
       i18nKey="perpsDepositSign.terms"
       components={{
         termsLink: (
-          <span className="cursor-pointer underline" onClick={() => openURL(SWAPKIT_TERMS_URL)} />
+          <button
+            type="button"
+            className="inline cursor-pointer border-0 bg-transparent p-0 underline body-4 text-muted"
+            onClick={() => openURL(SWAPKIT_TERMS_URL)}
+          />
         ),
       }}
     />
