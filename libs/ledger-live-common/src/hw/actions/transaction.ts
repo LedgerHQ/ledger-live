@@ -147,6 +147,16 @@ export const createAction = (
       isACRE,
     } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
+    // A background account sync hands down a new account object with the same id. Tearing down an
+    // in-flight device signature request over that identity change abandons a prompt the device is
+    // still showing: the approval the user then gives lands on a closed subscriber, and the fresh
+    // request asks them to sign all over again. Keyed on the id, with the live object read via ref.
+    const mainAccountRef = useRef(mainAccount);
+    useEffect(() => {
+      mainAccountRef.current = mainAccount;
+    }, [mainAccount]);
+    const mainAccountId = mainAccount.id;
+
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: isACRE ? undefined : mainAccount, // Bypass derivation check with ACRE as we can use other addresses than the freshest
       appName,
@@ -213,14 +223,15 @@ export const createAction = (
       let cancelled = false;
       let sub: { unsubscribe: () => void } | undefined;
       (async () => {
+        const signingAccount = mainAccountRef.current;
         const bridge = isACRE
           ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (ACREBridge.accountBridge as unknown as AccountBridge<any>)
-          : await getAccountBridge(mainAccount);
+          : await getAccountBridge(signingAccount);
         if (cancelled) return;
         sub = bridge
           .signOperation({
-            account: mainAccount,
+            account: signingAccount,
             transaction,
             deviceId: device.deviceId,
             deviceModelId: device.modelId,
@@ -241,7 +252,7 @@ export const createAction = (
         cancelled = true;
         sub?.unsubscribe();
       };
-    }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
+    }, [device, mainAccountId, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
     return {
       ...appState,
       ...state,
