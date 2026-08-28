@@ -1,6 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { ContactsManagerBuilder } from "@ledgerhq/device-contacts-kit";
+import type { RegisterExternalAddressInput as RegisterExternalAddressKitInput } from "@ledgerhq/device-contacts-kit";
 import type {
   RegisterExternalAddressDAOutput,
   RegisterExternalAddressDAState,
@@ -156,7 +157,7 @@ export const registerExternalAddressIntentJob: Job<
   const toOutcome = createOutcomeMapper({ input, awaitingConfirmation, retry });
 
   return defer(() => {
-    let deviceActionInput;
+    let deviceActionInput: RegisterExternalAddressKitInput;
     try {
       deviceActionInput = {
         contactName: input.contactName,
