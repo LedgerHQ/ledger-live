@@ -1,6 +1,8 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ProcessReadGuard = require("./processReadGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -11,9 +13,6 @@ import {
   isRsdoctorEnabled,
 } from "./utils";
 
-/**
- * Creates the rspack configuration for the Electron renderer process
- */
 // Supplies the `process.*` stand-ins the DefinePlugin entries below rewrite reads to.
 const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
 
@@ -31,24 +30,20 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // The renderer has no Node access under contextIsolation, so it is built as an ordinary
-    // web target. "es2022" pins output.environment explicitly — with no browserslist config
-    // a bare "web" target falls back to conservative codegen. Electron 43 ships Chromium 150.
+    // "es2022" pins output.environment: with no browserslist config a bare "web" target
+    // falls back to conservative codegen. Electron 43 ships Chromium 150.
     target: ["web", "es2022"],
     entry: {
-      // The process shim must run before the application's first module: many modules read
-      // process.env at module scope, and DefinePlugin rewrites those reads to globals this
-      // module assigns.
+      // The shim must run before the application's first module, which reads process.env at
+      // module scope.
       renderer: [rendererProcessShim, path.resolve(rootFolder, "src", "renderer", "index.ts")],
     },
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
-      // The chunk-loading runtime otherwise emits `global[...]`, because electron-renderer
-      // is a Node-ish target. `global` does not exist in the renderer's main world once
-      // contextIsolation is on, so the very first chunk load throws
-      // "ReferenceError: global is not defined". DefinePlugin cannot fix this — it does not
-      // rewrite the bundler's own runtime.
+      // Without this the chunk-loading runtime emits `global[...]` and the first chunk load
+      // throws "ReferenceError: global is not defined". DefinePlugin cannot reach it: that
+      // is the bundler's own runtime, not source.
       globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
@@ -85,21 +80,12 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
-      // Honour package.json `browser` field *object* mappings, e.g. {"crypto": false}.
-      // mainFields only covers the string form; without this, packages that ship a browser
-      // build keep resolving their Node entry and drag builtins back in.
+      // mainFields only covers the string form of `browser`; without this the object form
+      // ({"crypto": false}) is ignored and packages resolve their Node entry instead.
       aliasFields: ["browser"],
-      // Node builtins the dependency tree still reaches for. Deliberately explicit rather
-      // than a blanket polyfill plugin: each entry that is actually used is a bundle-size
-      // regression worth seeing in review.
-      //
-      // `crypto` maps to crypto-browserify only because an audit showed the libs use just
-      // randomBytes/createHash/createHmac/createSign. It has NO AES-GCM (browserify-cipher
-      // omits it), so if a GCM user is ever reintroduced this will build green and throw at
-      // runtime — that is why hw-ledger-key-ring-protocol was moved to @noble instead.
-      //
-      // `os` is deliberately absent: os-browserify reports type() === "Browser" and an empty
-      // hostname(), which would silently mislabel the Ledger Sync instance name.
+      // Listed one by one rather than via a blanket polyfill plugin, so each addition shows
+      // up as a bundle-size regression in review. `os` is absent on purpose — see
+      // src/system/index.ts.
       fallback: {
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("readable-stream"),
@@ -110,8 +96,8 @@ export function createRendererConfig(
         util: require.resolve("util/"),
         assert: require.resolve("assert/"),
         buffer: require.resolve("buffer/"),
-        // Unreachable in a browser build: live-network gates its keep-alive agent on
-        // process.release, which is defined away above.
+        // Unreachable: live-network gates its keep-alive agent on process.release, which is
+        // defined away below.
         http: false,
         https: false,
         net: false,
@@ -306,6 +292,15 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
+        // Dependencies that call `process.cwd()`/`process.nextTick()` without
+        // feature-detecting first — see processShimLoader.cjs. processReadGuard.cjs fails
+        // the build when an unguarded read appears outside this list.
+        {
+          test: /\.js$/,
+          include:
+            /[\\/]node_modules[\\/](vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
+          use: [path.resolve(__dirname, "processShimLoader.cjs")],
+        },
       ],
     },
     plugins: [
@@ -313,33 +308,23 @@ export function createRendererConfig(
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
-        // A context-isolated renderer has no `process`. These reads are rewritten to
-        // globals assigned by src/renderer/bootstrap/process.ts, which is prepended to the
-        // entry so it runs before the application's first module.
-        //
-        // ProvidePlugin cannot be used for this: it only rewrites free variables it sees
-        // while parsing source, and these identifiers are introduced by DefinePlugin
-        // afterwards, so it never observes them.
-        //
-        // Note the more specific keys above (process.env.NODE_ENV and the dotenv entries)
-        // still win for those exact expressions; this only catches everything else.
+        // Rewritten to globals assigned by src/renderer/bootstrap/process.ts. The more
+        // specific keys above (process.env.NODE_ENV, the dotenv entries) still win for those
+        // exact expressions; these catch everything else.
         "process.env": "globalThis.__LLD_PROCESS_ENV__",
         "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
         "process.mas": "globalThis.__LLD_PROCESS_MAS__",
         "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
         "process.type": JSON.stringify("renderer"),
-        // Deliberately undefined, not merely absent: libs/live-network gates a
-        // `require("https")` keep-alive agent on `process.release?.name === "node"`.
-        // Defining it away removes that branch from a browser-shaped bundle.
+        // Undefined, not absent: libs/live-network gates a `require("https")` keep-alive
+        // agent on `process.release?.name === "node"`, and defining it away drops that
+        // branch from a browser-shaped bundle.
         "process.release": "undefined",
-        // Third-party code reaching for the Node `global`. Only aliased `window` because
-        // nodeIntegration was on; it does not exist under contextIsolation.
+        "process.browser": "true",
         global: "globalThis",
       }),
-      // `Buffer` is a Node global that the coin/crypto stack uses as a free variable in
-      // hundreds of places. Unlike the DefinePlugin-introduced identifiers above,
-      // ProvidePlugin works here: it rewrites free variables it sees while parsing source,
-      // and `Buffer` genuinely is one.
+      // ProvidePlugin works for `Buffer` — a genuine free variable it sees while parsing —
+      // but not for the identifiers above, which DefinePlugin introduces afterwards.
       new rspack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
       }),
@@ -352,6 +337,9 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
+      // Production only: it scans the emitted assets, which is slow and noisy against an
+      // unminified dev bundle.
+      ...(isDev ? [] : [new ProcessReadGuard()]),
     ],
     optimization: {
       minimize: !isDev,
