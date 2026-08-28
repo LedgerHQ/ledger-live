@@ -83,6 +83,9 @@ export async function listOperations(
   const params: TransactionQueryParams = {
     limit,
     order: options.order === "asc" ? "a" : "d",
+    // The proxy tests this parameter for presence, not value, so it must be
+    // omitted rather than set to false to disable it.
+    includeRawRejectReason: true,
   };
 
   if (options.minHeight > 0) {
