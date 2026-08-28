@@ -31,11 +31,19 @@ const currencies: AddAccountTestCase[] = [
   { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678", teamOwner: Team.BST },
   { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679" },
   { currency: Currency.BCH, xrayTicket: "B2CQA-2498, B2CQA-2652, B2CQA-2680" },
-  { currency: Currency.ALGO, xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681", teamOwner: Team.BST },
+  {
+    currency: Currency.ALGO,
+    xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681",
+    teamOwner: Team.BST,
+  },
   { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683", teamOwner: Team.BST },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.GRAM, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685", teamOwner: Team.BST },
+  {
+    currency: Currency.GRAM,
+    xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685",
+    teamOwner: Team.BST,
+  },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646", teamOwner: Team.BST },
   {
     currency: Currency.BASE,
