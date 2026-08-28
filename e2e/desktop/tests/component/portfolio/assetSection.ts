@@ -1,7 +1,7 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { Component } from "../../page/abstractClasses";
+import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
-import { AssetsTable } from "./assetsTable";
+import { AssetsTable } from "tests/component/portfolio/assetsTable";
 
 export type AssetCategory = "cryptos" | "stablecoins";
 

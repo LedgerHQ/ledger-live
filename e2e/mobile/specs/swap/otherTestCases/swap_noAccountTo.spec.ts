@@ -1,4 +1,4 @@
-import { runSwapWithoutAccountTest } from "./swap.other";
+import { runSwapWithoutAccountTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const noAccountToTestConfig = {
   account1: Account.ETH_1,

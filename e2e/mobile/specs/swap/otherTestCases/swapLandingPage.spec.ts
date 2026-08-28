@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapLandingPageTest } from "./swap.other";
+import { runSwapLandingPageTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapTestConfig = {
   fromAccount: Account.ETH_1,

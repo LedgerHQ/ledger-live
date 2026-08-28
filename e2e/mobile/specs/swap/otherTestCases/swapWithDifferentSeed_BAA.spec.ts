@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapWithDifferentSeedTest } from "./swap.other";
+import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const swapTestConfig = {

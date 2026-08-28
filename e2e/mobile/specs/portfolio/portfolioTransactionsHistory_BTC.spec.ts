@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runPortfolioTransactionsHistoryTest } from "./portfolio";
+import { runPortfolioTransactionsHistoryTest } from "@e2e/specs/portfolio/portfolio";
 
 runPortfolioTransactionsHistoryTest(
   Account.BTC_NATIVE_SEGWIT_1,

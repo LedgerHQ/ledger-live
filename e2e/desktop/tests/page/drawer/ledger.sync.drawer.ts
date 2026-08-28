@@ -1,6 +1,6 @@
-import { step } from "../../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Drawer } from "../../component/drawer.component";
+import { Drawer } from "tests/component/drawer.component";
 
 export class LedgerSyncDrawer extends Drawer {
   private deleteSyncButton = this.page.getByText("Delete sync");

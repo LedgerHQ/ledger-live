@@ -1,8 +1,8 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { ApplicationOptions } from "page";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { ApplicationOptions } from "@e2e/page/index";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

@@ -3,8 +3,8 @@
 /// <reference path=".//global.d.ts" />
 import type { Subject } from "rxjs";
 import type { Server, WebSocket } from "ws";
-import type { Application } from "../page";
-import type { MessageData, ServerData } from "../bridge/types";
+import type { Application } from "page";
+import type { MessageData, ServerData } from "@e2e/bridge/types";
 import type expect from "expect";
 import type {
   $TmsLink as $TmsLinkType,
@@ -13,7 +13,7 @@ import type {
   $Owner as $OwnerType,
   $ParentSuite as $ParentSuiteType,
 } from "jest-allure2-reporter/api";
-import { NativeElementHelpers, WebElementHelpers } from "../helpers/elementHelpers";
+import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { Currency as CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate as DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
@@ -24,7 +24,7 @@ import { Transaction as TransactionType } from "@ledgerhq/live-e2e-shared/models
 import { Fee as FeeType } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { AppInfos as AppInfosType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap as SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { CLI as CLIType } from "../utils/cliUtils";
+import { CLI as CLIType } from "@e2e/utils/cliUtils";
 
 declare global {
   var IS_FAILED: boolean;

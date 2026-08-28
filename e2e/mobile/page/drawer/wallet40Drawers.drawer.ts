@@ -1,9 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isAndroid } from "../../helpers/commonHelpers";
+import { isAndroid } from "@e2e/helpers/commonHelpers";
 import {
   QUICK_VISIBILITY_PROBE_TIMEOUT,
   VISIBILITY_PROBE_TIMEOUT,
-} from "../../helpers/elementHelpers";
+} from "@e2e/helpers/elementHelpers";
 
 export const ANALYTICS_CONSENT_DRAWER_ID = "analytics-consent-drawer";
 export const ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID = "analytics-consent-drawer-secondary-button";

@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runUserClearApplicationCacheTest } from "./settings";
+import { runUserClearApplicationCacheTest } from "@e2e/specs/settings/settings";
 
 const testConfig = {
   account: Account.ETH_1,

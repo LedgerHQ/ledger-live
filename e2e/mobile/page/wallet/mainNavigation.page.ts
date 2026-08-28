@@ -1,12 +1,12 @@
 import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink, isAndroid } from "../../helpers/commonHelpers";
-import { retryUntilTimeout } from "../../utils/retry";
-import { isMyWalletEnabled } from "../../utils/initUtil";
+import { openDeeplink, isAndroid } from "@e2e/helpers/commonHelpers";
+import { retryUntilTimeout } from "@e2e/utils/retry";
+import { isMyWalletEnabled } from "@e2e/utils/initUtil";
 import {
   ANALYTICS_CONSENT_DRAWER_ID,
   ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID,
-} from "../drawer/wallet40Drawers.drawer";
+} from "@e2e/page/drawer/wallet40Drawers.drawer";
 
 type Wallet40TabName = "home" | "swap" | "earn" | "card";
 

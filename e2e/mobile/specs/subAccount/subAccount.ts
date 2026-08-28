@@ -1,11 +1,11 @@
-import { verifyAppValidationSendInfo } from "../../models/send";
+import { verifyAppValidationSendInfo } from "@e2e/models/send";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import invariant from "invariant";
 
 const BST_ADD_SUBACCOUNT_PARENT_CURRENCIES = new Set(["algorand", "sui"]);

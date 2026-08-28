@@ -1,4 +1,4 @@
-import { runSwapHistoryFeedbackTest } from "./swap.other";
+import { runSwapHistoryFeedbackTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapFeedbackTestConfig = {
   tmsLinks: ["B2CQA-2370"],

@@ -1,6 +1,6 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNewSendFlowTokenTest } from "../newSendFlow";
-import { FF_NEW_SEND_FLOW_ENABLED } from "../../../utils/featureFlagUtils";
+import { runNewSendFlowTokenTest } from "@e2e/specs/send/newSendFlow";
+import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 runNewSendFlowTokenTest(
   new Transaction(TokenAccount.ALGO_USDT_1, TokenAccount.ALGO_USDT_2, "0.01", undefined, "noTag"),

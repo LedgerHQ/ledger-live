@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidAmountTest } from "../send";
+import { runSendInvalidAmountTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag");
 runSendInvalidAmountTest(

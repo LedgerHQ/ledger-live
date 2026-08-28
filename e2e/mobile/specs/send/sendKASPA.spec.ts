@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendTest } from "./send";
+import { runSendTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2");
 runSendTest(

@@ -2,7 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { retryUntilTimeout } from "../../utils/retry";
+import { retryUntilTimeout } from "@e2e/utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain

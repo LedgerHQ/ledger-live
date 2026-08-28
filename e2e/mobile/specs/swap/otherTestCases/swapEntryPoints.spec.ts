@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapEntryPoints } from "./swap.other";
+import { runSwapEntryPoints } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapEntryPointsConfig = {
   account: Account.BTC_NATIVE_SEGWIT_1,

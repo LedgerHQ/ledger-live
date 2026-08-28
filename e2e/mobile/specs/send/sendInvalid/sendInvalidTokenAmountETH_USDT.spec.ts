@@ -1,4 +1,4 @@
-import { runSendInvalidTokenAmountTest } from "../send";
+import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(
   TokenAccount.ETH_USDT_2,

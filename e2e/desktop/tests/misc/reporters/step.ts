@@ -12,7 +12,7 @@ type HasConstructor = {
  *
  * @example
  ```
- import { step } from './step_decorator';
+ import { step } from 'tests/misc/reporters/step';
  class MyTestClass {
  @step('optional step name')
  async myTestFunction() {

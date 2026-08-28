@@ -1,10 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
-import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
+import { removeSpeculosAndDeregisterKnownSpeculos } from "@e2e/utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isIos, openDeeplink } from "../helpers/commonHelpers";
+import { isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { device } from "detox";
-import ErrorPage from "./error.page";
-import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
+import ErrorPage from "@e2e/page/error.page";
+import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";

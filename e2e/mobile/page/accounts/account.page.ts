@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import { VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class AccountPage {

@@ -1,5 +1,5 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "../bridge/server";
+import { getFlags } from "@e2e/bridge/server";
 
 import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
 

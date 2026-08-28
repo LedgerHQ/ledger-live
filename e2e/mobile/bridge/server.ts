@@ -4,12 +4,8 @@ import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
 
-import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
-import type {
-  MessageData,
-  OverrideFeatureFlagPayload,
-  ServerData,
-} from "../../../apps/ledger-live-mobile/src/e2e/bridge/types";
+import { NavigatorName } from "~/const";
+import type { MessageData, OverrideFeatureFlagPayload, ServerData } from "~/e2e/bridge/types";
 import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";

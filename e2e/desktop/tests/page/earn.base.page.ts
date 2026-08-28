@@ -1,5 +1,5 @@
 import { step } from "tests/misc/reporters/step";
-import { WebViewAppPage } from "./webViewApp.page";
+import { WebViewAppPage } from "tests/page/webViewApp.page";
 
 export abstract class EarnBasePage extends WebViewAppPage {
   protected readonly webviewIdentifier = "earn";

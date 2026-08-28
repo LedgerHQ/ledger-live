@@ -1,10 +1,10 @@
 import { setEnv } from "@shared/env";
 import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
-import { ApplicationOptions } from "page";
+import { ApplicationOptions } from "@e2e/page/index";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
