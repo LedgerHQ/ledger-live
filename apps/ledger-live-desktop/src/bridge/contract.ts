@@ -182,6 +182,8 @@ export type FilesBridge = {
    */
   saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
   exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  /** Prompts for a save location and writes the PNG; false when cancelled. */
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<boolean>;
   openUserDataDirectory(): Promise<unknown>;
   /** Prompts for a manifest and returns its contents; null when cancelled. */
   readLocalManifest(): Promise<string | null>;
@@ -296,6 +298,7 @@ export const CHANNELS = {
   showOpenDialog: "show-open-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
+  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   readLocalManifest: "read-local-manifest",
   writeLocalManifest: "write-local-manifest",

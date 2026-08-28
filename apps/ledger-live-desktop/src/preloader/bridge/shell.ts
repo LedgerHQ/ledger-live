@@ -30,6 +30,8 @@ export const files: FilesBridge = {
     ipcRenderer.invoke(CHANNELS.saveLogs, target, logsJson),
   exportOperations: (target: SaveTarget, csv: string) =>
     ipcRenderer.invoke(CHANNELS.exportOperations, target, csv),
+  savePng: (options: Electron.SaveDialogOptions, base64: string) =>
+    ipcRenderer.invoke(CHANNELS.savePng, options, base64),
   openUserDataDirectory: () => ipcRenderer.invoke(CHANNELS.openUserDataDirectory),
   readLocalManifest: () => ipcRenderer.invoke(CHANNELS.readLocalManifest),
   writeLocalManifest: (defaultName: string, contents: string) =>

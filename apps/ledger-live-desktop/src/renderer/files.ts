@@ -15,3 +15,7 @@ export const readLocalManifest = (): Promise<string | null> => filesBridge.readL
 /** Prompts for a save location and writes `contents`. Resolves false if cancelled. */
 export const writeLocalManifest = (defaultName: string, contents: string): Promise<boolean> =>
   filesBridge.writeLocalManifest(defaultName, contents);
+
+/** Prompts for a save location and writes the PNG. Resolves false if cancelled. */
+export const savePng = (options: Electron.SaveDialogOptions, base64: string): Promise<boolean> =>
+  filesBridge.savePng(options, base64);
