@@ -5,6 +5,7 @@ import { SectionHeader } from "./SectionHeader";
 
 export function ContactsSampleDataSection({
   onLoadSamples,
+  onLoadFromSendHistory,
   onClearContacts,
 }: ContactsSampleDataSectionProps): React.JSX.Element {
   return (
@@ -23,6 +24,17 @@ export function ContactsSampleDataSection({
         </Text>
         <Button appearance="accent" size="sm" onPress={onLoadSamples} lx={{ marginBottom: "s12" }}>
           Load 25 sample contacts
+        </Button>
+        <Text typography="body3" lx={{ color: "muted", marginBottom: "s16" }}>
+          Replace saved contacts with one per address you sent to, newest first, for Pay ordering.
+        </Text>
+        <Button
+          appearance="accent"
+          size="sm"
+          onPress={onLoadFromSendHistory}
+          lx={{ marginBottom: "s12" }}
+        >
+          Load contacts from send history
         </Button>
         <Button appearance="base" size="sm" onPress={onClearContacts}>
           Clear saved contacts

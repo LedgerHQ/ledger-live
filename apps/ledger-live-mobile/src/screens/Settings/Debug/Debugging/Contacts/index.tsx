@@ -25,6 +25,7 @@ export default function DebugContacts() {
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
     handleLoadSamples,
+    handleLoadFromSendHistory,
     handleClearContacts,
   } = useContactsDevToolViewModel();
 
@@ -49,6 +50,7 @@ export default function DebugContacts() {
 
         <ContactsSampleDataSection
           onLoadSamples={handleLoadSamples}
+          onLoadFromSendHistory={handleLoadFromSendHistory}
           onClearContacts={handleClearContacts}
         />
 
