@@ -670,6 +670,28 @@ describe("estimateTronifyFees", () => {
     );
   });
 
+  it("should fall back to defaults when coin-config rental params are invalid", async () => {
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: "https://open.tronify.io",
+          sourceFlag: "ledgerLive",
+          rentalDurationSeconds: -5,
+          rentalExtraTrx: Number.NaN,
+        },
+      },
+    }));
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
+    );
+  });
+
   it("should compute savings as originalValue - value", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 

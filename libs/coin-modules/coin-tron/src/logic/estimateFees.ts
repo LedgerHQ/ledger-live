@@ -313,6 +313,16 @@ const DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS = 600;
 // Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost — 0.8 TRX (not SUN).
 const DEFAULT_TRONIFY_RENTAL_EXTRA_TRX = 0.8;
 
+// Remote coin-config is unvalidated JSON: a provided value that isn't a finite number >= min is a
+// misconfiguration, not a valid override. Fall back to the default and log it — so a config typo is
+// debuggable instead of silently sending a malformed/negative quote request.
+const readRentalParam = (value: unknown, fallback: number, min: number, name: string): number => {
+  if (value === undefined) return fallback;
+  if (typeof value === "number" && Number.isFinite(value) && value >= min) return value;
+  log("tron/estimateFees", `ignoring invalid coin-config ${name}, using default`, { value });
+  return fallback;
+};
+
 /**
  * Estimate fees for the Tronify energy-rent option.
  *
@@ -344,9 +354,18 @@ export async function estimateTronifyFees(
   // tuned without a release; fall back to the defaults when unset. Read from the coinConfig
   // singleton — the same source the energyRent provider selection uses (network/tronify, energyRent).
   const tronifyConfig = coinConfig.getCoinConfig().energyRent?.tronify;
-  const durationSeconds =
-    tronifyConfig?.rentalDurationSeconds ?? DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS;
-  const extraTrx = tronifyConfig?.rentalExtraTrx ?? DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
+  const durationSeconds = readRentalParam(
+    tronifyConfig?.rentalDurationSeconds,
+    DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS,
+    1,
+    "rentalDurationSeconds",
+  );
+  const extraTrx = readRentalParam(
+    tronifyConfig?.rentalExtraTrx,
+    DEFAULT_TRONIFY_RENTAL_EXTRA_TRX,
+    0,
+    "rentalExtraTrx",
+  );
 
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
   // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
