@@ -12,6 +12,7 @@ import {
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
@@ -169,9 +170,16 @@ const swaps = [
   //     "@family-celo",
   //   ],
   // },
+  {
+    fromAccount: Account.ALEO_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-6592",
+    tag: [...deviceTagsWithoutLNS(), "@aleo", "@family-aleo", "@ethereum", "@family-evm"],
+    postSeedHook: shareViewKeyCommand(Account.ALEO_1),
+  },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
+for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook } of swaps) {
   test.describe("Swap - accepted", () => {
     setupEnv(true);
 
@@ -196,7 +204,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(fromAccount),
+            cmd: liveDataWithAddressCommand(fromAccount, { postSeedHook }),
           },
           {
             app: toAccount.currency.speculosApp,
