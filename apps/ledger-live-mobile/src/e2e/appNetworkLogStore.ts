@@ -6,6 +6,80 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "ax
  * reports on failure — the app-side counterpart to the desktop network log collector.
  */
 
+/**
+ * URL patterns that are pure noise in E2E network logs: the app's own code/asset
+ * bundles, fonts, and third-party telemetry / CDN / countervalues start-up traffic.
+ * Ported from the desktop pageLogCollector (QAA-1514 / QAA-1433). Callers keep failing
+ * requests regardless, so a real error is never hidden.
+ */
+const NETWORK_NOISE_HOSTS = [
+  // telemetry / analytics start-up
+  "firebaseinstallations.googleapis.com",
+  "firebaseremoteconfig.googleapis.com",
+  "firebase.googleapis.com",
+  "firebaselogging-pa.googleapis.com",
+  "sentry.io",
+  "segment.io",
+  "cdn.segment.com",
+  "google-analytics.com",
+  "googletagmanager.com",
+  "datadoghq.com",
+  "braze.com",
+  // ledger asset / cdn / countervalues flood
+  "cdn.live.ledger.com",
+  "countervalues.live.ledger.com",
+  "countervalues.api.live.ledger.com",
+];
+
+const NETWORK_NOISE_ASSET_EXTENSIONS = new Set([
+  // code / styles
+  "js",
+  "mjs",
+  "css",
+  "map",
+  // fonts
+  "woff",
+  "woff2",
+  "ttf",
+  "otf",
+  "eot",
+  // images / media
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "svg",
+  "ico",
+  "webp",
+  "avif",
+  "mp4",
+  "wasm",
+]);
+
+function pathExtension(pathname: string): string {
+  const lastSegment = pathname.slice(pathname.lastIndexOf("/") + 1);
+  const dotIndex = lastSegment.lastIndexOf(".");
+  return dotIndex === -1 ? "" : lastSegment.slice(dotIndex + 1);
+}
+
+/** True when `url` is app-asset / font / telemetry / CDN start-up noise (not a real API call). */
+export function isNoiseNetworkUrl(url: string): boolean {
+  let host = "";
+  let pathname = url;
+  try {
+    const parsed = new URL(url);
+    host = parsed.host;
+    pathname = parsed.pathname;
+  } catch {
+    pathname = url.split(/[?#]/)[0];
+  }
+  const lowerPath = pathname.toLowerCase();
+  if (NETWORK_NOISE_ASSET_EXTENSIONS.has(pathExtension(lowerPath))) return true;
+  return NETWORK_NOISE_HOSTS.some(
+    noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
+  );
+}
+
 export interface AppNetworkLog {
   timestamp: string;
   method: string;
@@ -54,6 +128,10 @@ function hostOf(url: string): string {
 
 export const appNetworkLogStore = {
   addNetworkLog(entry: AppNetworkLog) {
+    // Always keep failures; drop asset / telemetry / CDN noise so start-up spam
+    // cannot evict real API calls from the FIFO buffer (QAA-1514).
+    const isFailure = (entry.status !== undefined && entry.status >= 400) || !!entry.failureText;
+    if (!isFailure && isNoiseNetworkUrl(entry.url)) return;
     networkLogs.unshift(entry);
     while (networkLogs.length > MAX_NETWORK_LOGS) {
       networkLogs.pop();

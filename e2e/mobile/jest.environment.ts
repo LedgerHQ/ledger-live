@@ -12,6 +12,8 @@ import {
   installConsoleCapture,
   uninstallConsoleCapture,
 } from "@e2e/utils/loggingUtils";
+import { allure } from "jest-allure2-reporter/api";
+import { getLastMergedFeatureFlags } from "@e2e/utils/initUtil";
 import { getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";
 import {
@@ -66,6 +68,19 @@ async function captureFailureDiagnostics(): Promise<void> {
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "attachSpeculosStartupErrorToAllure",
   );
+  // Attach feature flags only on failure (QAA-1514).
+  const mergedFlags = getLastMergedFeatureFlags();
+  if (mergedFlags) {
+    await withTimeout(
+      allure.attachment(
+        "Merged Feature Flags",
+        JSON.stringify(mergedFlags, null, 2),
+        "application/json",
+      ),
+      FAST_DIAGNOSTIC_TIMEOUT_MS,
+      "attachMergedFeatureFlags",
+    );
+  }
   // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
   let logs = await withTimeout(getLogs(), 12_000, "getLogs");

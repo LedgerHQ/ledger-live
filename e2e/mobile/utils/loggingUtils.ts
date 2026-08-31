@@ -99,13 +99,16 @@ function splitSummaryAndJson(text: string): { summary: string; body: string | nu
   }
 }
 
+// Console levels worth attaching: warnings + errors only (mirrors desktop PageLogCollector).
+const CONSOLE_KEEP_LEVELS = new Set(["warn", "warning", "error"]);
+
 export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
   const lines: string[] = [
     "TIMESTAMP                      | LEVEL   | MESSAGE",
     "-------------------------------|---------|--------",
   ];
 
-  for (const e of entries) {
+  for (const e of entries.filter(e => CONSOLE_KEEP_LEVELS.has((e.level ?? "log").toLowerCase()))) {
     const ts = (e.timestamp ?? "").slice(0, TS_WIDTH).padEnd(TS_WIDTH);
     const level = (e.level ?? "log").toUpperCase().padEnd(LEVEL_WIDTH);
     const raw = (e.text ?? "").replaceAll("\n", " ");
@@ -139,10 +142,14 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     parsed = { appLogs: logsPayload };
   }
 
+  // When the payload is not valid JSON, `appLogs` is a raw string — attach as text/plain
+  // so it renders legibly instead of as a single escaped JSON line.
+  const appLogsValue = parsed.appLogs ?? logsPayload;
+  const appLogsIsString = typeof appLogsValue === "string";
   await allure.attachment(
-    "App logs",
-    JSON.stringify(parsed.appLogs ?? logsPayload, null, 2),
-    "application/json",
+    "App Logs",
+    appLogsIsString ? appLogsValue : JSON.stringify(appLogsValue, null, 2),
+    appLogsIsString ? "text/plain" : "application/json",
   );
   parsed.appLogs = undefined;
 
@@ -157,7 +164,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
 
   if (parsed.appNetworkLogs?.length) {
     await allure.attachment(
-      "Ledger Wallet Network Logs",
+      "App Network Logs",
       JSON.stringify(parsed.appNetworkLogs, null, 2),
       "application/json",
     );
@@ -168,7 +175,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
   // read several hundred individual entries.
   if (parsed.appNetworkSummary) {
     await allure.attachment(
-      "Ledger Wallet Network Summary",
+      "App Network Summary",
       JSON.stringify(parsed.appNetworkSummary, null, 2),
       "application/json",
     );

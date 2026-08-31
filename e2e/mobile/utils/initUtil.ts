@@ -1,7 +1,6 @@
 import { loadConfig, setFeatureFlags } from "@e2e/bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
-import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { getMergedFeatureFlags } from "@e2e/utils/featureFlagUtils";
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
@@ -31,6 +30,14 @@ type CliCommand = ((
 };
 
 export let isMyWalletEnabled = false;
+
+/** Last merged feature-flag set computed by setFeatureFlags — read by the failure hook. */
+let lastMergedFeatureFlags: object | null = null;
+
+/** Returns the last merged feature flags, or null if setFeatureFlags hasn't run yet. */
+export function getLastMergedFeatureFlags(): object | null {
+  return lastMergedFeatureFlags;
+}
 
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
@@ -381,11 +388,9 @@ export class InitializationManager {
     const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
-    await allure.attachment(
-      "Merged Feature Flags",
-      JSON.stringify(mergedFeatureFlags, null, 2),
-      "application/json",
-    );
+    // Store for the failure hook — only attached on failure (QAA-1514).
+    lastMergedFeatureFlags = mergedFeatureFlags;
+
     await setFeatureFlags(mergedFeatureFlags);
   }
 }
