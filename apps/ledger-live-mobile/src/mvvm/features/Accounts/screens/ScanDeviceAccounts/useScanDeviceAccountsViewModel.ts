@@ -190,14 +190,17 @@ export default function useScanDeviceAccountsViewModel({
     [selectedIds],
   );
 
-  // Close inline flow: drawer + navigation
+  const popInlineScreens = useCallback(() => {
+    const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+    parent?.pop(navigationDepth ?? 2);
+  }, [navigation, navigationDepth]);
+
   const closeInlineFlow = useCallback(() => {
     if (onCloseNavigation) {
       onCloseNavigation();
     }
-    const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
-    parent?.pop(navigationDepth ?? 2);
-  }, [navigation, onCloseNavigation, navigationDepth]);
+    popInlineScreens();
+  }, [onCloseNavigation, popInlineScreens]);
 
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
@@ -261,14 +264,13 @@ export default function useScanDeviceAccountsViewModel({
     const { onSuccess } = route.params;
 
     if (inline) {
-      closeInlineFlow();
-
       if (onSuccess) {
         onSuccess({
           scannedAccounts,
           selected: accountsToAdd,
         });
       }
+      popInlineScreens();
     } else
       navigation.replace(ScreenName.AddAccountsSuccess, {
         ...route.params,
@@ -299,7 +301,7 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts,
     selectedIds,
     dispatch,
-    closeInlineFlow,
+    popInlineScreens,
     analyticsMetadata?.AccountsFound?.onContinue,
     analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);

@@ -154,9 +154,11 @@ describe("useScanDeviceAccountsViewModel callbacks", () => {
     expect(track).toHaveBeenCalledWith("accounts_added", expect.anything());
   });
 
-  it("closes the inline flow and calls onSuccess when importing inline", async () => {
-    const onSuccess = jest.fn();
-    const onCloseNavigation = jest.fn();
+  it("resolves inline import with onSuccess before popping and does not cancel", async () => {
+    const callOrder: string[] = [];
+    const onSuccess = jest.fn(() => callOrder.push("success"));
+    const onCloseNavigation = jest.fn(() => callOrder.push("cancel"));
+    pop.mockImplementation(() => callOrder.push("pop"));
     setRouteParams("ethereum", "device-1", { inline: true, onSuccess, onCloseNavigation });
     setScanObservable(of(makeDiscoveredEvent(createAccount())));
 
@@ -166,12 +168,14 @@ describe("useScanDeviceAccountsViewModel callbacks", () => {
 
     act(() => result.current.importAccounts());
 
-    expect(onCloseNavigation).toHaveBeenCalled();
-    expect(pop).toHaveBeenCalled();
+    expect(onCloseNavigation).not.toHaveBeenCalled();
     expect(onSuccess).toHaveBeenCalledWith(
       expect.objectContaining({ selected: expect.any(Array) }),
     );
+    expect(pop).toHaveBeenCalled();
+    expect(callOrder).toEqual(["success", "pop"]);
     expect(replace).not.toHaveBeenCalledWith(ScreenName.AddAccountsSuccess, expect.anything());
+    pop.mockReset();
   });
 
   it("pops the parent navigator on modal hide after a cancel (non-inline)", async () => {
