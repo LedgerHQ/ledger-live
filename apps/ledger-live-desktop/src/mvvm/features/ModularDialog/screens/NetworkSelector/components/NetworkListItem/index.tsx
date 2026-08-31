@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  useCallback,
+  useState,
+  type KeyboardEvent,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import {
   ListItem,
   ListItemTitle,
@@ -6,10 +12,13 @@ import {
   ListItemDescription,
   ListItemLeading,
   ListItemTrailing,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { ReactElement, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 export type NetworkListItemData = {
   currency: CryptoOrTokenCurrency;
@@ -31,7 +40,23 @@ export const NetworkListItem = ({
   onClick,
   disabled,
 }: NetworkListItemProps) => {
-  return (
+  const { t } = useTranslation();
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  const handleDisabledItemClick = useCallback(() => {
+    setIsTooltipOpen(true);
+  }, []);
+
+  const handleDisabledItemKeyDown = useCallback((event: KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    setIsTooltipOpen(true);
+  }, []);
+
+  const listItem = (
     <ListItem
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
@@ -51,5 +76,29 @@ export const NetworkListItem = ({
       </ListItemLeading>
       <ListItemTrailing>{rightElement}</ListItemTrailing>
     </ListItem>
+  );
+
+  if (!disabled) {
+    return listItem;
+  }
+
+  return (
+    <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+      <TooltipTrigger asChild>
+        <span
+          className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          tabIndex={0}
+          role="button"
+          aria-disabled
+          onClick={handleDisabledItemClick}
+          onKeyDown={handleDisabledItemKeyDown}
+        >
+          {listItem}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {t("modularAssetDrawer.unsupportedNetworkTooltip", { network: currency.name })}
+      </TooltipContent>
+    </Tooltip>
   );
 };
