@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
+import type { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { PayCardTrackEvent } from "@features/flow-pay-card-request";
 import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
 import type {
   VerifyAddressIntentInput,
@@ -8,26 +10,33 @@ import type {
 } from "@features/platform-verify-address-intent";
 import {
   buildDeviceInitializationInput,
-  DeviceIntentExecutorLWD,
+  DeviceIntentExecutorLWM,
   type InitializationInput,
-} from "LLD/components/DeviceIntentExecutor";
-import type { PayVerifyOutcome, PayVerifySelection } from "../hooks/usePayTabVerifyAddress";
+} from "LLM/components/DeviceIntentExecutor";
+import type { PayVerifyOutcome } from "../hooks/usePayTabVerifyAddress";
 import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
-import { verifyAddressIntentLWDDefinition } from "./intentLWDDefinition";
+import { verifyAddressIntentLWMDefinition } from "./intentLWMDefinition";
 
 const CONNECTION_PARAMS: DeviceConnectionParams = { acceptedDeviceModelIds: [] };
 
-type Props = Readonly<{
-  selection: PayVerifySelection;
-  /** Called once the executor dialog is actually showing, so the intro can step aside. */
+const JOB_TRACK_EVENT: Partial<Record<VerifyAddressIntentJobState["type"], string>> = {
+  verified: "request_verification_complete",
+  cancelled: "request_verification_cancelled",
+  mismatch: "request_verification_mismatch",
+  unsupported: "request_verification_unsupported",
+};
+
+export type VerifyAddressExecutorLWMProps = Readonly<{
+  mainAccount: Account;
+  tokenCurrency?: TokenCurrency;
+  page: string;
   onReady: () => void;
-  /** Called once when the executor leaves, with the outcome that drives navigation. */
   onExit: (outcome: PayVerifyOutcome) => void;
+  onTrackEvent?: PayCardTrackEvent;
 }>;
 
-const noop = () => {};
+const noop = () => undefined;
 
-/** Maps the last observed job state to the outcome a user dismissal should report. */
 function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): PayVerifyOutcome {
   switch (state?.type) {
     case "mismatch":
@@ -41,20 +50,17 @@ function outcomeFromLastState(state: VerifyAddressIntentJobState | undefined): P
   }
 }
 
-export function VerifyAddressExecutorLWD({
-  selection,
+export function VerifyAddressExecutorLWM({
+  mainAccount,
+  tokenCurrency,
+  page,
   onReady,
   onExit,
-}: Props): React.ReactElement | null {
-  const { account, parentAccount } = selection;
+  onTrackEvent,
+}: VerifyAddressExecutorLWMProps): React.ReactElement | null {
   const [initInput, setInitInput] = useState<InitializationInput | null>(null);
   const lastJobStateRef = useRef<VerifyAddressIntentJobState | undefined>(undefined);
   const exitedRef = useRef(false);
-
-  const mainAccount = useMemo(
-    () => getMainAccount(account, parentAccount ?? undefined),
-    [account, parentAccount],
-  );
 
   const exit = useCallback(
     (outcome: PayVerifyOutcome) => {
@@ -71,7 +77,7 @@ export function VerifyAddressExecutorLWD({
       appRequest: {
         account: mainAccount,
         currency: mainAccount.currency,
-        tokenCurrency: account.type === "TokenAccount" ? account.token : undefined,
+        tokenCurrency,
       },
       flow: FlowName.receive,
     })
@@ -81,38 +87,40 @@ export function VerifyAddressExecutorLWD({
         onReady();
       })
       .catch(() => {
-        // Fail closed and restore the request card so the flow never hangs on a broken init.
         if (!cancelled) exit("initFailed");
       });
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, account, onReady, exit]);
+  }, [mainAccount, tokenCurrency, onReady, exit]);
 
   const onJobStateChanged = useCallback(
     (jobState: VerifyAddressIntentJobState) => {
+      if (exitedRef.current) return;
       lastJobStateRef.current = jobState;
-      // Confirming on the device ends the flow: no extra acknowledgement needed.
+      const event = JOB_TRACK_EVENT[jobState.type];
+      if (event) onTrackEvent?.(event, { page });
       if (jobState.type === "verified") exit("verified");
     },
-    [exit],
+    [exit, onTrackEvent, page],
   );
 
-  const onUserCancel = useCallback(
-    () => exit(outcomeFromLastState(lastJobStateRef.current)),
-    [exit],
-  );
+  const onUserCancel = useCallback(() => {
+    if (exitedRef.current) return;
+    onTrackEvent?.("request_verification_dismiss", { page });
+    exit(outcomeFromLastState(lastJobStateRef.current));
+  }, [exit, onTrackEvent, page]);
 
   const intent = useMemo(
     () =>
-      createIntent(verifyAddressIntentLWDDefinition, buildVerifyAddressIntentInput(mainAccount)),
+      createIntent(verifyAddressIntentLWMDefinition, buildVerifyAddressIntentInput(mainAccount)),
     [mainAccount],
   );
 
   if (!initInput) return null;
 
   return (
-    <DeviceIntentExecutorLWD<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
+    <DeviceIntentExecutorLWM<VerifyAddressIntentJobState, VerifyAddressIntentInput, undefined>
       enabled
       sourceFlow="receive"
       deviceConnectionParams={CONNECTION_PARAMS}
@@ -121,8 +129,6 @@ export function VerifyAddressExecutorLWD({
       intentComponentExtraProps={undefined}
       onExecutorStateChanged={noop}
       onIntentJobStateChanged={onJobStateChanged}
-      onIntentJobComplete={noop}
-      onIntentJobError={noop}
       cancelIntentRequestId={undefined}
       onUserCancel={onUserCancel}
     />

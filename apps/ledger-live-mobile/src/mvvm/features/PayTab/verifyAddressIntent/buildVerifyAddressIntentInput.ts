@@ -5,16 +5,13 @@ import {
   getAddressVerification,
   type VerifyAddressIntentInput,
 } from "@features/platform-verify-address-intent";
-
-function getExpectedVerifyAddress(account: Account): string {
-  return account.derivationMode === "canton" ? (account.xpub ?? "") : account.freshAddress;
-}
+import { getFreshAccountAddress } from "~/utils/address";
 
 export function buildVerifyAddressIntentInput(mainAccount: Account): VerifyAddressIntentInput {
   const { freshAddressPath, currency, derivationMode } = mainAccount;
 
   return {
-    expectedAddress: getExpectedVerifyAddress(mainAccount),
+    expectedAddress: getFreshAccountAddress(mainAccount),
     startAddressVerification: ({ dmk, sessionId }) =>
       getAddressVerification(() =>
         getAddress(new DmkCompatTransport(dmk, sessionId), {
