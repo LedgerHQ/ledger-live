@@ -1,8 +1,8 @@
 {
-  "name": "@features/flow-pay-card-request",
+  "name": "@features/flow-pay-request",
   "version": "0.2.0",
   "private": true,
-  "description": "Pay Card request flow for Ledger Wallet",
+  "description": "Pay request flow for Ledger Wallet",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -25,7 +25,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-request"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-request"
   },
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",

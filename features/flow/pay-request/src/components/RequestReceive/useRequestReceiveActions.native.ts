@@ -38,28 +38,28 @@ export function useRequestReceiveActions({
         icon: Share,
         label: labels.share,
         onClick: onShare,
-        testId: "pay-card-request-receive-share",
+        testId: "pay-request-receive-share",
       },
       copy: {
         id: "copy",
         icon: hasCopied ? Check : Copy,
         label: hasCopied ? labels.copied : labels.copy,
         onClick: onCopy,
-        testId: "pay-card-request-receive-copy",
+        testId: "pay-request-receive-copy",
       },
       save: {
         id: "save",
         icon: Download,
         label: labels.save,
         onClick: onSave,
-        testId: "pay-card-request-receive-save",
+        testId: "pay-request-receive-save",
       },
       verify: {
         id: "verify",
         icon: LedgerLogo,
         label: labels.verify,
         onClick: onVerify,
-        testId: "pay-card-request-receive-verify",
+        testId: "pay-request-receive-verify",
       },
     };
 

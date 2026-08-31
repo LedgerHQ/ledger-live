@@ -43,7 +43,7 @@ export function RequestReceiveSummary({
         padding: "s24",
         width: "full",
       }}
-      testID="pay-card-request-receive-summary"
+      testID="pay-request-receive-summary"
     >
       <Box lx={{ alignItems: "center", gap: "s8" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
@@ -51,7 +51,7 @@ export function RequestReceiveSummary({
         </Text>
         <Box
           lx={{ flexDirection: "row", alignItems: "center", gap: "s6" }}
-          testID="pay-card-request-receive-network"
+          testID="pay-request-receive-network"
         >
           {networkIcon ? (
             <CryptoIcon
@@ -69,7 +69,7 @@ export function RequestReceiveSummary({
       </Box>
       <QrCode
         value={qrPayload}
-        testID="pay-card-request-receive-qr-code"
+        testID="pay-request-receive-qr-code"
         centerContent={
           <CryptoIcon
             ledgerId={assetIcon.ledgerId}

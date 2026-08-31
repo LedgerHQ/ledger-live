@@ -319,16 +319,16 @@ describe("PayTab integration", () => {
       await selectUsdcOnEthereum(user);
 
       expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
+      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
+      expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
     });
 
     it("should render the request receive card for the selected account", async () => {
       renderRequestReceive();
 
       expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive-summary")).toBeVisible();
+      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
+      expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
       expect(screen.getByText("Share")).toBeVisible();
     });
 
@@ -354,7 +354,7 @@ describe("PayTab integration", () => {
       });
 
       expect(screen.getByTestId("generic-error-modal")).toBeVisible();
-      expect(screen.queryByTestId("pay-card-request-receive-qr-code")).toBeNull();
+      expect(screen.queryByTestId("pay-request-receive-qr-code")).toBeNull();
     });
 
     it("should show the parent address when the selected token is not yet a sub-account", async () => {
@@ -364,7 +364,7 @@ describe("PayTab integration", () => {
       await selectUsdcOnEthereum(user);
 
       expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
+      expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
     });
   });
 

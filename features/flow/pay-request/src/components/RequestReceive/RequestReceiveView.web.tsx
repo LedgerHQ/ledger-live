@@ -33,7 +33,7 @@ export function RequestReceiveView({
     <Dialog open onOpenChange={handleOpenChange} height="fit">
       <DialogContent className="max-h-[90vh]">
         <DialogHeader onClose={onClose} />
-        <DialogBody className="flex flex-col gap-12" data-testid="pay-card-request-receive">
+        <DialogBody className="flex flex-col gap-12" data-testid="pay-request-receive">
           <RequestReceiveSummary
             title={labels.title}
             networkLabel={labels.networkLabel}

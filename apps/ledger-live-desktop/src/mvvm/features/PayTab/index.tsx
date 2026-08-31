@@ -3,7 +3,7 @@ import { Balance } from "@features/flow-pay-balance";
 import { Contacts } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
 import { DepositOptions } from "@features/flow-pay-deposit";
-import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
+import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";

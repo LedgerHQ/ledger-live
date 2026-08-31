@@ -23,7 +23,7 @@ export function RequestReceiveView({
   const { hasCopied, handleCopy } = useRequestReceiveView({ onCopy });
 
   return (
-    <Box lx={{ flex: 1, backgroundColor: "canvas" }} testID="pay-card-request-receive">
+    <Box lx={{ flex: 1, backgroundColor: "canvas" }} testID="pay-request-receive">
       <Box lx={{ alignItems: "flex-start", paddingHorizontal: "s4", paddingTop: "s8" }}>
         <IconButton
           icon={Close}
@@ -31,7 +31,7 @@ export function RequestReceiveView({
           size="md"
           onPress={onClose}
           accessibilityLabel="Close"
-          testID="pay-card-request-receive-close"
+          testID="pay-request-receive-close"
         />
       </Box>
       <Box

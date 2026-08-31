@@ -28,17 +28,17 @@ describe("RequestReceive (Web)", () => {
   it("renders nothing while closed", () => {
     renderRequestReceive({ isOpen: false });
 
-    expect(screen.queryByTestId("pay-card-request-receive")).toBeNull();
+    expect(screen.queryByTestId("pay-request-receive")).toBeNull();
   });
 
   it("renders the title, network and highlighted address", () => {
     renderRequestReceive();
 
     expect(RequestReceiveView).toEqual(expect.any(Function));
-    expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive")).toBeVisible();
     expect(screen.getByText("Request USD Coin")).toBeVisible();
     expect(screen.getByText("Base network")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-address")).toHaveTextContent(
+    expect(screen.getByTestId("pay-request-receive-address")).toHaveTextContent(
       REQUEST_RECEIVE_ADDRESS,
     );
   });
@@ -46,7 +46,7 @@ describe("RequestReceive (Web)", () => {
   it("renders the QR code for the address", () => {
     renderRequestReceive();
 
-    expect(screen.getByTestId("pay-card-request-receive-qr-code")).toHaveTextContent(
+    expect(screen.getByTestId("pay-request-receive-qr-code")).toHaveTextContent(
       REQUEST_RECEIVE_ADDRESS,
     );
   });
@@ -54,17 +54,17 @@ describe("RequestReceive (Web)", () => {
   it("renders only the visible actions in order", () => {
     renderRequestReceive({ visibleActions: ["save", "verify"] });
 
-    expect(screen.getByTestId("pay-card-request-receive-save")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-verify")).toBeVisible();
-    expect(screen.queryByTestId("pay-card-request-receive-copy")).toBeNull();
-    expect(screen.queryByTestId("pay-card-request-receive-share")).toBeNull();
+    expect(screen.getByTestId("pay-request-receive-save")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-verify")).toBeVisible();
+    expect(screen.queryByTestId("pay-request-receive-copy")).toBeNull();
+    expect(screen.queryByTestId("pay-request-receive-share")).toBeNull();
   });
 
   it("tracks then invokes the injected callbacks", async () => {
     const user = userEvent.setup();
     const { props } = renderRequestReceive();
 
-    await user.click(screen.getByTestId("pay-card-request-receive-save"));
+    await user.click(screen.getByTestId("pay-request-receive-save"));
     expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "save",
       buttonLocation: "request",
@@ -72,7 +72,7 @@ describe("RequestReceive (Web)", () => {
     });
     expect(props.onSave).toHaveBeenCalledWith(REQUEST_RECEIVE_ADDRESS);
 
-    await user.click(screen.getByTestId("pay-card-request-receive-verify"));
+    await user.click(screen.getByTestId("pay-request-receive-verify"));
     expect(props.onVerify).toHaveBeenCalledWith(REQUEST_RECEIVE_ADDRESS);
   });
 
@@ -80,13 +80,13 @@ describe("RequestReceive (Web)", () => {
     const user = userEvent.setup();
     const { props } = renderRequestReceive();
 
-    const copyTile = screen.getByTestId("pay-card-request-receive-copy");
+    const copyTile = screen.getByTestId("pay-request-receive-copy");
     expect(copyTile).toHaveTextContent("Copy");
 
     await user.click(copyTile);
 
     expect(props.onCopy).toHaveBeenCalledWith(REQUEST_RECEIVE_ADDRESS);
-    expect(screen.getByTestId("pay-card-request-receive-copy")).toHaveTextContent("Copied");
+    expect(screen.getByTestId("pay-request-receive-copy")).toHaveTextContent("Copied");
   });
 
   it("closes from the dialog close button", async () => {

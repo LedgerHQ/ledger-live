@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { PayCardTrackEvent } from "@features/flow-pay-card-request";
+import type { PayRequestTrackEvent } from "@features/flow-pay-request";
 import { createIntent, type DeviceConnectionParams } from "@features/platform-device-intent";
 import type {
   VerifyAddressIntentInput,
@@ -32,7 +32,7 @@ export type VerifyAddressExecutorLWMProps = Readonly<{
   page: string;
   onReady: () => void;
   onExit: (outcome: PayVerifyOutcome) => void;
-  onTrackEvent?: PayCardTrackEvent;
+  onTrackEvent?: PayRequestTrackEvent;
 }>;
 
 const noop = () => undefined;

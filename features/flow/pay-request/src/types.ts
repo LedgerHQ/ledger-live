@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import type { AddressParts } from "./utils/splitAddress";
 
-export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
+export type PayRequestTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
 export type VerifyAddressPhase = "hidden" | "intro" | "success";
 
@@ -37,7 +37,7 @@ export type VerifyAddressProps = Readonly<{
   /** Host closes the success overlay. */
   onGotIt: () => void;
   onClose: () => void;
-  onTrackEvent?: PayCardTrackEvent;
+  onTrackEvent?: PayRequestTrackEvent;
   /** Native only: Android 3-button nav / iOS home indicator. */
   bottomInset?: number;
 }>;
@@ -95,7 +95,7 @@ export type RequestReceiveViewModelParams = RequestActionCallbacks &
     asset: RequestReceiveAsset;
     network: string;
     page: string;
-    onTrackEvent?: PayCardTrackEvent;
+    onTrackEvent?: PayRequestTrackEvent;
   }>;
 
 export type RequestReceiveViewModel = Readonly<{
