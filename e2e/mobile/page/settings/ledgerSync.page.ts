@@ -76,7 +76,7 @@ export default class LedgerSyncPage {
     await detoxExpect(getElementById(this.deleteSyncId)).toBeVisible();
   }
 
-  @Step("Expect instance $0 removal to be successful")
+  @Step("Expect instance {{{0}}} removal to be successful")
   async expectMemberRemoval(memberName: string) {
     await waitForElementById(this.instanceRemovalSuccessTextId);
     await detoxExpect(getElementById(this.instanceRemovalSuccessTextId)).toHaveText(
@@ -90,18 +90,18 @@ export default class LedgerSyncPage {
     await tapById(this.manageInstancesId);
   }
 
-  @Step("Expect instance $0 to be listed")
+  @Step("Expect instance {{{0}}} to be listed")
   async expectInstanceVisible(memberPubKey: string) {
     await waitForElementById(this.instanceRowId(memberPubKey));
   }
 
-  @Step("Expect instance $0 to be gone")
+  @Step("Expect instance {{{0}}} to be gone")
   async expectInstanceRemoved(memberPubKey: string) {
     await waitForElementNotVisible(this.instanceRowId(memberPubKey));
   }
 
   /** The row itself is not touchable — only the Remove CTA inside it is. */
-  @Step("Remove instance $0")
+  @Step("Remove instance {{{0}}}")
   async removeInstance(memberPubKey: string) {
     await tapById(`${this.instanceRowId(memberPubKey)}-cta`);
   }
