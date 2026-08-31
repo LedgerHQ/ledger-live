@@ -72,6 +72,7 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
     addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
     onClearSearch: () => void;
     onRequestAddContact: (onAllowed: () => void) => void;
+    onSelectContact: (contactId: ContactId) => void;
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {
@@ -343,6 +344,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailActionsDialogs,
     onOpenMe,
     onOpenContact,
+    onSelectContact,
   } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
   const preference = useContactsFeatureIntroductionPreference();
   const featureIntroductionState = useContactsFeatureIntroductionState({
@@ -450,6 +452,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onRequestAddContact,
     onOpenMe,
     onOpenContact,
+    onSelectContact,
     detail,
     ledgerSyncStatus,
     dieProps,

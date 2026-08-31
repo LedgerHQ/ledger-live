@@ -36,6 +36,7 @@ export function useContactDetailPaneAdapter(
   addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
   onOpenMe: ContactsViewProps["onOpenMe"];
   onOpenContact: ContactsViewProps["onOpenContact"];
+  onSelectContact: (contactId: ContactId) => void;
 }> {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -107,13 +108,19 @@ export function useContactDetailPaneAdapter(
       buildNavigationBackState(CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY, "/contacts"),
     );
   }, [navigate]);
-  const openContact = useCallback(
+  const selectContact = useCallback(
     (contactId: ContactId) => {
-      trackContactsListContactOpen(analytics, contactId, meContact.id);
       setDetailContactId(contactId);
       clearSelection();
     },
-    [analytics, clearSelection, meContact.id],
+    [clearSelection],
+  );
+  const openContact = useCallback(
+    (contactId: ContactId) => {
+      trackContactsListContactOpen(analytics, contactId, meContact.id);
+      selectContact(contactId);
+    },
+    [analytics, meContact.id, selectContact],
   );
   const handleAddAddress = useCallback(
     (contact: AddAddressContact) => {
@@ -230,5 +237,6 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs,
     onOpenMe: openContact,
     onOpenContact: openContact,
+    onSelectContact: selectContact,
   };
 }

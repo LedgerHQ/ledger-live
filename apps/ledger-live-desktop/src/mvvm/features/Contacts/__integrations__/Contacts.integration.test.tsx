@@ -315,8 +315,9 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
-      expect(screen.getByText("Coinbase 1")).toBeVisible();
     });
+
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Coinbase 1");
   });
 
   it("should open Ledger Sync activation instead of adding a contact while sync is inactive", async () => {
