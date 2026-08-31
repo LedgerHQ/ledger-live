@@ -67,7 +67,7 @@ export function ContactsAddAddressFlowContent({
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
-}: ContactsAddAddressFlowContentProps): React.JSX.Element | null {
+}: ContactsAddAddressFlowContentProps): React.JSX.Element {
   switch (state.status) {
     case "enteringAddress":
       return (
@@ -94,8 +94,7 @@ export function ContactsAddAddressFlowContent({
         />
       );
     case "reviewingAddress":
-      // Only the prefilled entry mode carries the asset and network to review.
-      return state.displayContext === null ? null : (
+      return (
         <ContactsAddAddressReview
           addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}

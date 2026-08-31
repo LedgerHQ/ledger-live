@@ -96,6 +96,15 @@ type NamedAddAddressSession = Omit<ConfirmedAddAddressSession, "addressLabel"> &
     addressLabel: ValidAddAddressLabelState;
   }>;
 
+/**
+ * Only the prefilled entry mode carries the asset and network the review screen
+ * renders, so a session without a display context never reaches it.
+ */
+type ReviewableAddAddressSession = Omit<NamedAddAddressSession, "displayContext"> &
+  Readonly<{
+    displayContext: AddAddressDisplayContext;
+  }>;
+
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
@@ -105,7 +114,7 @@ export type AddAddressFlowState =
     }>
   | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
   | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
-  | (NamedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
+  | (ReviewableAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
   | (NamedAddAddressSession & Readonly<{ status: "confirmationRequired" }>);
 
 export type AddAddressFlowViewModel = Readonly<{

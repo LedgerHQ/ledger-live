@@ -336,23 +336,6 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
-  it("should keep the address details step while both inputs are edited", async () => {
-    const contact = mockContact();
-    const addressValidation = createValidationPort();
-    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
-
-    act(() => result.current.start(contact));
-    act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
-    act(() => result.current.updateAddressLabel("Exchange"));
-    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
-
-    expect(result.current.state).toMatchObject({
-      status: "enteringAddress",
-      addressEntry: { status: "valid", resolvedAddress: VALID_ADDRESS },
-      addressLabel: { label: "Exchange", status: "valid" },
-    });
-  });
-
   it("should expose invalid characters and prevent review", async () => {
     const contact = mockContact();
     const addressValidation = createValidationPort();

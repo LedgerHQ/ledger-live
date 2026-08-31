@@ -152,11 +152,4 @@ describe("ContactsAddAddressFlowContent", () => {
     fireEvent.click(screen.getByTestId("contacts-add-address-review-continue"));
     expect(prefilledReviewProps.onContinueFromReview).toHaveBeenCalledTimes(1);
   });
-
-  it("should render nothing for a review state without a display context", () => {
-    const props = createContentProps(createContentState("reviewingAddress"));
-    const { container } = render(<ContactsAddAddressFlowContent {...props} />);
-
-    expect(container).toBeEmptyDOMElement();
-  });
 });

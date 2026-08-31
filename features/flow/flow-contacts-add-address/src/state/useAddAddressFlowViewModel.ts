@@ -298,14 +298,17 @@ export function useAddAddressFlowViewModel({
         return currentState;
       }
 
-      if (currentState.entryMode === "prefilled") {
+      // Only a prefilled session carries the display context the review screen
+      // renders; every other session hands straight over to the device.
+      const { displayContext } = currentState;
+      if (currentState.entryMode === "prefilled" && displayContext !== null) {
         return {
           status: "reviewingAddress",
           selectedContactId: currentState.selectedContactId,
           existingAddressLabels: currentState.existingAddressLabels,
           selectedCurrencyId: currentState.selectedCurrencyId,
           entryMode: currentState.entryMode,
-          displayContext: currentState.displayContext,
+          displayContext,
           addressEntry: currentState.addressEntry,
           addressLabel: currentState.addressLabel,
         };
