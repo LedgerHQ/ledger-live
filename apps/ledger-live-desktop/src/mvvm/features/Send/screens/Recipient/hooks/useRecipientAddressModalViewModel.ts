@@ -18,6 +18,7 @@ import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionVie
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
+import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -149,6 +150,10 @@ export function useRecipientAddressModalViewModel({
     navigation.goToStep(SEND_FLOW_STEP.ADD_CONTACT);
   }, [navigation]);
 
+  const featureIntroduction = useContactsFeatureIntroductionViewModel({
+    isContactsEntryAvailable: isContactsFeatureEnabled && hasAddressBook,
+  });
+
   const searchState = useRecipientSearchState({
     searchValue: recipientSearch.value,
     result,
@@ -189,6 +194,7 @@ export function useRecipientAddressModalViewModel({
     hasMemoValidationError,
     hasFilledMemo,
     isContactsFeatureEnabled,
+    featureIntroduction,
     addressMatchedSectionViewModel,
     memoType,
     memoTypeOptions,

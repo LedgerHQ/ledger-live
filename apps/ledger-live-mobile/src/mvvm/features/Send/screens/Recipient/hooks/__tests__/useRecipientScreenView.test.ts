@@ -14,6 +14,7 @@ import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recip
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
+import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
@@ -24,6 +25,7 @@ jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(),
 }));
 jest.mock("../../../../context/RecipientContactSelectionContext");
+jest.mock("../useContactsFeatureIntroductionViewModel");
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
@@ -32,6 +34,9 @@ const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
+const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
+  useContactsFeatureIntroductionViewModel,
+);
 
 const mockAccount = createMockAccount({
   id: "account_1",
@@ -119,7 +124,44 @@ describe("useRecipientScreenView", () => {
       selectContact: jest.fn(),
       clearSelectedContact: jest.fn(),
     });
+    mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
+      isOpen: false,
+      title: "",
+      description: "",
+      highlights: [],
+      primaryActionLabel: "",
+      onComplete: jest.fn(),
+      onClose: jest.fn(),
+    });
   });
+
+  it.each([
+    { isEnabled: true, families: ["evm"], isContactsEntryAvailable: true },
+    { isEnabled: false, families: ["evm"], isContactsEntryAvailable: false },
+    { isEnabled: true, families: ["tron"], isContactsEntryAvailable: false },
+  ])(
+    "offers the contacts introduction only when the feature is enabled for the family (%o)",
+    ({ isEnabled, families, isContactsEntryAvailable }) => {
+      mockedUseContactsFeature.mockReturnValue({
+        isEnabled,
+        showNewBadge: false,
+        eligibleAddressFamilies: families,
+      });
+
+      renderHook(() =>
+        useRecipientScreenView({
+          account: mockAccount,
+          currency: createMockCurrency({ id: "ethereum", family: "evm" }),
+          onAddressSelected: jest.fn(),
+          recipientSupportsDomain: true,
+        }),
+      );
+
+      expect(mockedUseContactsFeatureIntroductionViewModel).toHaveBeenCalledWith({
+        isContactsEntryAvailable,
+      });
+    },
+  );
 
   it("shows initial state when no search value", () => {
     const { result } = renderHook(() =>
