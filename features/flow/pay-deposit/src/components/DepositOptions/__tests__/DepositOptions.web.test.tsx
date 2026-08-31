@@ -3,28 +3,21 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DepositOptions } from "../DepositOptions";
 import type { DepositOptionsProps } from "../../../types";
-
-const LABELS: DepositOptionsProps["labels"] = {
-  title: "Deposit stablecoin",
-  options: {
-    bankTransfer: { title: "Bank transfer", description: "From your bank account" },
-    swap: { title: "Swap", description: "From your crypto" },
-    receive: { title: "Receive", description: "From another wallet" },
-    buy: { title: "Buy", description: "With card or bank" },
-  },
-};
+import { DEPOSIT_RESOURCES, i18nWrapper } from "./i18nWrapper";
 
 function renderDeposit(overrides: Partial<DepositOptionsProps> = {}) {
   const props: DepositOptionsProps = {
     isOpen: true,
-    labels: LABELS,
     page: "Pay",
     onClose: jest.fn(),
     onSelect: jest.fn(),
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  return { props, ...render(<DepositOptions {...props} />) };
+  return {
+    props,
+    ...render(<DepositOptions {...props} />, { wrapper: i18nWrapper(DEPOSIT_RESOURCES) }),
+  };
 }
 
 describe("DepositOptions (Web)", () => {

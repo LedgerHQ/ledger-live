@@ -4,12 +4,12 @@ import type { DepositOptionsProps } from "../../types";
 import { useDepositOptionsViewModel } from "./useDepositOptionsViewModel";
 
 export function DepositOptions(props: DepositOptionsProps) {
-  const { options, onSelectOption } = useDepositOptionsViewModel(props);
+  const { title, options, onSelectOption } = useDepositOptionsViewModel(props);
 
   return (
     <DepositOptionsView
       isOpen={props.isOpen}
-      title={props.labels.title}
+      title={title}
       options={options}
       bottomInset={props.bottomInset}
       onClose={props.onClose}
