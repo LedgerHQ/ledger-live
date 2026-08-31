@@ -162,8 +162,8 @@ function ContactsViewModelProbe({
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
         Start Add Address
       </button>
-      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromReview}>
-        Continue address review
+      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromAddressDetails}>
+        Save address
       </button>
     </>
   );
@@ -494,7 +494,7 @@ describe("Contacts integration", () => {
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-24");
   });
 
-  it("should render the address and its prefilled name together before review", async () => {
+  it("should render the address and its prefilled name together before the device review", async () => {
     const { store, user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
@@ -550,24 +550,8 @@ describe("Contacts integration", () => {
     await user.type(addressNameInput, "Exchange");
     await user.click(confirmationButton);
 
-    expect(screen.getByRole("dialog")).toBe(dialog);
-    expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: "Go back" }));
-    expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
-
-    await user.click(screen.getByTestId("contacts-add-address-confirm"));
-    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
-
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-add-address-input")).not.toBeInTheDocument();
       expect(
         within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
       ).toBeVisible();
@@ -597,7 +581,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should ignore review continuation when the address flow is closed", async () => {
+  it("should ignore an address save when the address flow is closed", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <ContactsViewModelProbe contactId={meContactId} contactType="me" />
@@ -608,7 +592,7 @@ describe("Contacts integration", () => {
       },
     );
 
-    await user.click(screen.getByRole("button", { name: "Continue address review" }));
+    await user.click(screen.getByRole("button", { name: "Save address" }));
 
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
   });

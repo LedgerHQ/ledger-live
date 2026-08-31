@@ -17,14 +17,11 @@ export function AddNewContactAddressView({ addressPhase }: AddNewContactAddressV
         entryLabels={addressPhase.entryLabels}
         nameLabels={addressPhase.nameLabels}
         reviewLabels={addressPhase.reviewLabels}
-        completionLabels={addressPhase.completionLabels}
         onAddressChange={() => undefined}
         onContinueFromAddressDetails={() => undefined}
         onAddressLabelChange={addressPhase.onAddressLabelChange}
         onContinueFromName={addressPhase.onContinueFromName}
         onContinueFromReview={addressPhase.onContinueFromReview}
-        onCompleteMockConfirmation={() => undefined}
-        onClose={() => undefined}
       />
     </div>
   );

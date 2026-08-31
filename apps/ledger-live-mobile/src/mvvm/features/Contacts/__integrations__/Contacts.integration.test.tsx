@@ -198,7 +198,7 @@ function ContactDetailViewModelProbe() {
         return `enteringAddress:${viewModel.addAddressFlowState.selectedContactId}:${viewModel.addAddressFlowState.selectedCurrencyId}`;
       case "namingAddress":
       case "confirmationRequired":
-      case "success":
+      case "reviewingAddress":
         return viewModel.addAddressFlowState.status;
     }
   })();

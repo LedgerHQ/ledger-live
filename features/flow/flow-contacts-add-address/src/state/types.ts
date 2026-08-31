@@ -96,11 +96,6 @@ type NamedAddAddressSession = Omit<ConfirmedAddAddressSession, "addressLabel"> &
     addressLabel: ValidAddAddressLabelState;
   }>;
 
-export type AddAddressContactDetailTarget = Readonly<{
-  type: "contactDetail";
-  contactId: ContactId;
-}>;
-
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
@@ -110,17 +105,8 @@ export type AddAddressFlowState =
     }>
   | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
   | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
-  | (NamedAddAddressSession &
-      Readonly<{
-        status: "reviewingAddress";
-        origin: "addressDetails" | "addressName";
-      }>)
-  | (NamedAddAddressSession & Readonly<{ status: "confirmationRequired" }>)
-  | (NamedAddAddressSession &
-      Readonly<{
-        status: "success";
-        target?: AddAddressContactDetailTarget;
-      }>);
+  | (NamedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
+  | (NamedAddAddressSession & Readonly<{ status: "confirmationRequired" }>);
 
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
@@ -130,10 +116,7 @@ export type AddAddressFlowViewModel = Readonly<{
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
   updateAddressLabel: (label: string) => void;
   confirmAddress: () => void;
-  continueFromAddressDetails: () => void;
   continueFromName: () => void;
-  continueFromReview: () => void;
-  completeMockConfirmation: () => void;
   goBack: () => void;
   close: () => void;
 }>;
@@ -157,17 +140,4 @@ export type AddAddressNameLabels = Readonly<{
   namingDisclaimer: string;
   continueToReview: string;
   validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
-}>;
-export type AddAddressCompletionLabels = Readonly<{
-  title: string;
-  continue: string;
-  successTitle: string;
-  close: string;
-}>;
-
-export type AddAddressPlaceholderViewProps = Readonly<{
-  title: string;
-  buttonLabel: string;
-  testID: string;
-  onContinue: () => void;
 }>;

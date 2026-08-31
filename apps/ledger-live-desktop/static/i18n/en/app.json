@@ -9601,9 +9601,7 @@
       "currencyLabel": "Currency",
       "networkLabel": "Network",
       "nameLabel": "Address name",
-      "continue": "Confirm address",
-      "successTitle": "Address saved",
-      "close": "Close"
+      "continue": "Confirm address"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",

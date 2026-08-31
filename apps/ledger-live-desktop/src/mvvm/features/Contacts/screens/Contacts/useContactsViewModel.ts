@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -33,7 +33,6 @@ import {
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
   type AddAddressContact,
-  type AddAddressCompletionLabels,
   type AddAddressEntryLabels,
   type AddAddressFlowState,
   type ContactsAddAddressNameLabels,
@@ -105,16 +104,25 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBack: goBackAddAddress,
     updateAddress,
     updateAddressLabel,
-    continueFromAddressDetails,
     continueFromName,
-    continueFromReview,
-    completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
-  const saveAddressFromReview = useCallback(async () => {
-    if (addAddressFlowState.status !== "reviewingAddress") {
+  const isSavingAddress = useRef(false);
+  /**
+   * The address details step hands over to the device: the Device Intent Executor
+   * owns the review, so there is no in-app review or success screen to show.
+   */
+  const saveAddress = useCallback(async () => {
+    if (
+      isSavingAddress.current ||
+      addAddressFlowState.status !== "enteringAddress" ||
+      addAddressFlowState.addressEntry.status !== "valid" ||
+      addAddressFlowState.addressLabel.status !== "valid"
+    ) {
       return;
     }
+
+    isSavingAddress.current = true;
 
     const { network, asset } = await resolveContactsCurrencyAnalytics(
       addAddressFlowState.selectedCurrencyId,
@@ -138,8 +146,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
       contact => contact.id === addAddressFlowState.selectedContactId,
     );
     if (selectedContact === undefined) {
+      isSavingAddress.current = false;
       return;
     }
+
     try {
       const signedAddress = await deviceIntents.registerExternalAddress({
         contact: selectedContact,
@@ -172,20 +182,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
         isEns: inputMethod === "ens",
         flow: CONTACTS_FLOW.CONTACTS,
       });
-
-      continueFromReview();
     } catch {
-      closeAddAddress();
+      // The Device Intent Executor keeps its own failure screen up: closing the
+      // flow behind it is all that is left to do.
     }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    contacts,
-    continueFromReview,
-    deviceIntents,
-    dispatch,
-  ]);
+
+    closeAddAddress();
+    isSavingAddress.current = false;
+  }, [addAddressFlowState, analytics, closeAddAddress, contacts, deviceIntents, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -286,15 +290,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [t],
   );
-  const addAddressCompletionLabels = useMemo<AddAddressCompletionLabels>(
-    () => ({
-      title: t("contacts.addAddressReview.title"),
-      continue: t("contacts.addAddressReview.continue"),
-      successTitle: t("contacts.addAddressReview.successTitle"),
-      close: t("contacts.addAddressReview.close"),
-    }),
-    [t],
-  );
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
@@ -306,15 +301,15 @@ export function useContactsViewModel(): ContactsPageViewModel {
       },
       nameLabels: addAddressNameLabels,
       reviewLabels: addAddressReviewLabels,
-      completionLabels: addAddressCompletionLabels,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
       },
-      onContinueFromAddressDetails: continueFromAddressDetails,
+      onContinueFromAddressDetails: () => {
+        void saveAddress();
+      },
       onAddressLabelChange: updateAddressLabel,
       onContinueFromName: continueFromName,
-      onContinueFromReview: saveAddressFromReview,
-      onCompleteMockConfirmation: completeMockConfirmation,
+      onContinueFromReview: () => undefined,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
@@ -323,16 +318,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
       handleSanctionedAddressLearnMore,
       addAddressNameLabels,
       addAddressReviewLabels,
-      addAddressCompletionLabels,
       addAddressFlowState,
       onBackAddAddress,
       onCloseAddAddress,
       updateAddress,
       updateAddressLabel,
-      continueFromAddressDetails,
       continueFromName,
-      saveAddressFromReview,
-      completeMockConfirmation,
+      saveAddress,
       t,
     ],
   );

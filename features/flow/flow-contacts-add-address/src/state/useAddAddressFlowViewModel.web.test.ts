@@ -241,7 +241,7 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
-  it("should require confirmation and return the saved address target", async () => {
+  it("should require confirmation once the address is named", async () => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({
       status: "valid",
@@ -268,16 +268,6 @@ describe("useAddAddressFlowViewModel", () => {
       status: "confirmationRequired",
       selectedContactId: contactId,
       selectedCurrencyId: ETHEREUM_CURRENCY_ID,
-      addressEntry: {
-        value: "ledger.eth",
-        resolvedAddress: RESOLVED_ADDRESS,
-      },
-    });
-
-    act(() => result.current.completeMockConfirmation());
-    expect(result.current.state).toMatchObject({
-      status: "success",
-      target: { type: "contactDetail", contactId },
       addressEntry: {
         value: "ledger.eth",
         resolvedAddress: RESOLVED_ADDRESS,
@@ -346,7 +336,7 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
-  it("should continue directly from address details to review when both inputs are valid", async () => {
+  it("should keep the address details step while both inputs are edited", async () => {
     const contact = mockContact();
     const addressValidation = createValidationPort();
     const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
@@ -355,33 +345,12 @@ describe("useAddAddressFlowViewModel", () => {
     act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
     act(() => result.current.updateAddressLabel("Exchange"));
     await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
-    act(() => result.current.continueFromAddressDetails());
 
-    expect(result.current.state).toMatchObject({
-      status: "reviewingAddress",
-      origin: "addressDetails",
-      addressLabel: { label: "Exchange", status: "valid" },
-    });
-
-    act(() => result.current.goBack());
     expect(result.current.state).toMatchObject({
       status: "enteringAddress",
+      addressEntry: { status: "valid", resolvedAddress: VALID_ADDRESS },
       addressLabel: { label: "Exchange", status: "valid" },
     });
-  });
-
-  it("should prevent direct review when either address detail is invalid", async () => {
-    const contact = mockContact();
-    const addressValidation = createValidationPort();
-    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
-
-    act(() => result.current.start(contact));
-    act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
-    act(() => result.current.updateAddressLabel("Ethereum 💎"));
-    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
-    act(() => result.current.continueFromAddressDetails());
-
-    expect(result.current.state.status).toBe("enteringAddress");
   });
 
   it("should expose invalid characters and prevent review", async () => {
@@ -956,7 +925,6 @@ describe("useAddAddressFlowViewModel", () => {
 
       expect(result.current.state).toMatchObject({
         status: "reviewingAddress",
-        origin: "addressName",
         entryMode: "prefilled",
         addressLabel: { label: "Exchange", status: "valid" },
         displayContext: {

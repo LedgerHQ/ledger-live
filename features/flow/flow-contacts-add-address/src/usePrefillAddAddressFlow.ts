@@ -67,15 +67,8 @@ export function usePrefillAddAddressFlow({
   const dispatch = useDispatch();
   const contacts = useContacts();
   const pendingRequest = useRef<PendingRequest | null>(null);
-  const {
-    state,
-    startWithPrefilled,
-    updateAddressLabel,
-    continueFromName,
-    continueFromReview,
-    goBack,
-    close,
-  } = useAddAddressFlowViewModel({ addressValidation, manualValidationDebounceMs });
+  const { state, startWithPrefilled, updateAddressLabel, continueFromName, goBack, close } =
+    useAddAddressFlowViewModel({ addressValidation, manualValidationDebounceMs });
 
   const settle = useCallback((result: OpenPrefillAddAddressResult) => {
     pendingRequest.current?.resolve(result);
@@ -138,7 +131,6 @@ export function usePrefillAddAddressFlow({
           deviceCredentials: signedAddress.deviceCredentials,
         }),
       );
-      continueFromReview();
       close();
       settle({ status: "saved", address });
     } catch {
@@ -149,16 +141,7 @@ export function usePrefillAddAddressFlow({
       close();
       settle({ status: "confirmation_failed" });
     }
-  }, [
-    close,
-    contacts,
-    continueFromReview,
-    createAddressId,
-    deviceIntents,
-    dispatch,
-    settle,
-    state,
-  ]);
+  }, [close, contacts, createAddressId, deviceIntents, dispatch, settle, state]);
 
   const openPrefillAddAddressFlow = useCallback(
     async (params: OpenPrefillAddAddressParams): Promise<OpenPrefillAddAddressResult> => {
