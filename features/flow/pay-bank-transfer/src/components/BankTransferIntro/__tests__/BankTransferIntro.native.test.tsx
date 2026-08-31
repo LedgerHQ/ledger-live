@@ -2,30 +2,28 @@ import React from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { BankTransferIntro } from "../BankTransferIntro";
 import type { BankTransferIntroProps } from "../../../types";
+import { I18nWrapper } from "./i18nWrapper";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-const LABELS: BankTransferIntroProps["labels"] = {
-  title: "Convert cash to stablecoins",
-  description: "Transfer USD or EUR from your bank.",
-  createAccountLabel: "Create an account",
-  logInLabel: "Log in",
-  providedBy: "Provided by Noah",
-  rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
-};
-
 function renderIntro(overrides: Partial<BankTransferIntroProps> = {}) {
   const props: BankTransferIntroProps = {
     isOpen: true,
-    labels: LABELS,
     onBankTransfer: jest.fn(),
     onClose: jest.fn(),
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  return { props, ...render(<BankTransferIntro {...props} />) };
+  return {
+    props,
+    ...render(
+      <I18nWrapper>
+        <BankTransferIntro {...props} />
+      </I18nWrapper>,
+    ),
+  };
 }
 
 describe("BankTransferIntro (Native)", () => {

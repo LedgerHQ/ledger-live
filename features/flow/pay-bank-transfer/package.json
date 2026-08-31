@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-bank-transfer"
   },
   "dependencies": {
+    "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
