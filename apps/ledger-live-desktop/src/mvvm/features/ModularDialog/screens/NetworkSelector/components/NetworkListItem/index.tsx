@@ -6,9 +6,13 @@ import {
   ListItemDescription,
   ListItemLeading,
   ListItemTrailing,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { useTranslation } from "react-i18next";
 import type { ReactElement, ReactNode } from "react";
 
 export type NetworkListItemData = {
@@ -31,13 +35,16 @@ export const NetworkListItem = ({
   onClick,
   disabled,
 }: NetworkListItemProps) => {
-  return (
+  const { t } = useTranslation();
+
+  const listItem = (
     <ListItem
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       aria-disabled={disabled || undefined}
       data-testid={`network-item-name-${currency.name}`}
       className="-outline-offset-2"
+      aria-hidden={disabled || undefined}
     >
       <ListItemLeading>
         <SquaredCryptoIcon size={48} ledgerId={currency.id} ticker={currency.ticker} />
@@ -51,5 +58,28 @@ export const NetworkListItem = ({
       </ListItemLeading>
       <ListItemTrailing>{rightElement}</ListItemTrailing>
     </ListItem>
+  );
+
+  if (!disabled) {
+    return listItem;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          tabIndex={0}
+          role="button"
+          aria-disabled
+          aria-label={currency.name}
+        >
+          {listItem}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {t("modularAssetDrawer.unsupportedNetworkTooltip", { network: currency.name })}
+      </TooltipContent>
+    </Tooltip>
   );
 };

@@ -7,7 +7,11 @@ import {
   ListItemTitle,
   ListItemDescription,
   ListItemTrailing,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
+import { useTranslation } from "react-i18next";
 import { AssetType } from "../../../../types";
 
 const copyToClipboard = async (text: string) => {
@@ -60,17 +64,20 @@ export const AssetListItem = ({
   shouldDisplayId,
   disabled,
 }: AssetListItemProps) => {
+  const { t } = useTranslation();
+
   const handleClick = () => {
     if (disabled) return;
     onClick({ name, ticker, id });
   };
 
-  return (
+  const listItem = (
     <ListItem
       className="-outline-offset-2"
       disabled={disabled}
       onClick={handleClick}
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
+      aria-hidden={disabled || undefined}
     >
       <ListItemLeading>
         <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
@@ -89,5 +96,28 @@ export const AssetListItem = ({
       </ListItemLeading>
       <ListItemTrailing>{rightElement}</ListItemTrailing>
     </ListItem>
+  );
+
+  if (!disabled) {
+    return listItem;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          tabIndex={0}
+          role="button"
+          aria-disabled
+          aria-label={name}
+        >
+          {listItem}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>
+        {t("modularAssetDrawer.unsupportedAssetTooltip", { asset: name })}
+      </TooltipContent>
+    </Tooltip>
   );
 };

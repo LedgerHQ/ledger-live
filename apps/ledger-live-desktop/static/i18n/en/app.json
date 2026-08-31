@@ -8838,6 +8838,8 @@
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
+    "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
+    "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
