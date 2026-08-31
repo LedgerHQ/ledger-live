@@ -6,8 +6,8 @@ export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   enterLanguageMenuButton = () => getElementById("language-button");
-  enterLedgerSyncId = "wallet-sync-button";
-  enterLedgerSync = () => getElementById(this.enterLedgerSyncId);
+  private readonly enterLedgerSyncId = "wallet-sync-button";
+  private readonly enterLedgerSync = () => getElementById(this.enterLedgerSyncId);
   localizedText = (text: string) => getElementByText(text);
 
   countervalueSettingsRowId = "countervalue-settings-row";

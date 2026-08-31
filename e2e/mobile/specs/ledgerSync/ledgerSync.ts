@@ -37,10 +37,7 @@ async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
 
 /** Boots the app with no trustchain, so the settings row leads to the activation flow. */
 async function initUnactivated(speculosApp?: SpeculosAppType) {
-  await app.init({
-    ...(speculosApp ? { speculosApp } : {}),
-    featureFlags: LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS,
-  });
+  await app.init({ speculosApp, featureFlags: LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS });
   await app.mainNavigation.waitForWallet40Ready();
 }
 
@@ -53,6 +50,17 @@ async function openGeneralSettings() {
 async function openLedgerSyncSettings() {
   await openGeneralSettings();
   await app.settingsGeneral.navigateToLedgerSync();
+}
+
+/**
+ * Walks the settings entry point through to the activation screen, which is what the row leads to
+ * whenever this instance has no backup.
+ */
+async function openActivationFlowFromSettings() {
+  await openGeneralSettings();
+  await app.settingsGeneral.expectLedgerSyncEntryPoint();
+  await app.settingsGeneral.navigateToLedgerSync();
+  await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
 }
 
 export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
@@ -223,10 +231,7 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
       await app.trustchain.expectToBeDestroyed();
 
       // The instance is unsynced now, so the settings row leads back to the activation flow.
-      await openGeneralSettings();
-      await app.settingsGeneral.expectLedgerSyncEntryPoint();
-      await app.settingsGeneral.navigateToLedgerSync();
-      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+      await openActivationFlowFromSettings();
     });
   });
 }
@@ -257,10 +262,7 @@ export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: st
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it("[WXP][Ledger Sync] Activation Flow - No Backup Activated", async () => {
-      await openGeneralSettings();
-      await app.settingsGeneral.expectLedgerSyncEntryPoint();
-      await app.settingsGeneral.navigateToLedgerSync();
-      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+      await openActivationFlowFromSettings();
     });
   });
 }
@@ -280,10 +282,7 @@ export function runLedgerSyncActivationBackupTest(tmsLinks: string[], tags: stri
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it("[WXP][Ledger Sync] Activation Flow - Backup Activated", async () => {
-      await openGeneralSettings();
-      await app.settingsGeneral.expectLedgerSyncEntryPoint();
-      await app.settingsGeneral.navigateToLedgerSync();
-      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+      await openActivationFlowFromSettings();
 
       await app.ledgerSync.tapTurnOnSync();
       // `lwmLedgerSyncOptimisation` inserts the choose-sync-method step between the CTA and the
