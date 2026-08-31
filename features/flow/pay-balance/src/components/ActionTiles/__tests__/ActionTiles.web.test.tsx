@@ -1,18 +1,14 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { fireEvent, screen } from "@testing-library/react";
 import { ActionTiles } from "../ActionTiles";
 import type { ActionTilesProps } from "../types";
-
-function renderWithStyle(ui: React.ReactElement) {
-  return render(<StyleProvider colorScheme="dark">{ui}</StyleProvider>);
-}
+import { renderWithStyle } from "../../../__tests__/renderWithStyle.web";
 
 function buildProps(overrides: Partial<ActionTilesProps> = {}): ActionTilesProps {
   return {
     tiles: [
-      { id: "deposit", label: "Deposit", onPress: jest.fn(), appearance: "base" },
-      { id: "request", label: "Request", onPress: jest.fn(), appearance: "transparent" },
+      { id: "deposit", onPress: jest.fn(), appearance: "base" },
+      { id: "request", onPress: jest.fn(), appearance: "transparent" },
     ],
     page: "Pay",
     ...overrides,
@@ -33,7 +29,7 @@ describe("ActionTiles (Web)", () => {
     renderWithStyle(
       <ActionTiles
         {...buildProps({
-          tiles: [{ id: "deposit", label: "Deposit", onPress, appearance: "base" }],
+          tiles: [{ id: "deposit", onPress, appearance: "base" }],
           onTrackEvent,
         })}
       />,

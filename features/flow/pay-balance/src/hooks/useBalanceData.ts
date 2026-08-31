@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { BalanceFilter } from "../state";
 import type { DefaultStablecoin, StablecoinItem } from "../logic/buildBalanceFilterOptions";
@@ -11,7 +12,6 @@ export type UseBalanceDataParams = Readonly<{
   filter: BalanceFilter;
   isLoading: boolean;
   isError: boolean;
-  allLabel: string;
   formatFiat: (value: number) => string;
   formatCrypto: (unit: Unit, balance: number) => string;
   formatCountervalue: (value: number) => FormattedValue;
@@ -28,7 +28,6 @@ export function useBalanceData({
   filter,
   isLoading,
   isError,
-  allLabel,
   formatFiat,
   formatCrypto,
   formatCountervalue,
@@ -36,6 +35,9 @@ export function useBalanceData({
   onResetFilter,
   onTrackEvent,
 }: UseBalanceDataParams): BalanceData {
+  const { t } = useTranslation();
+  const allLabel = t("payTab.balance.filter.allStablecoins");
+
   const { data, shouldResetFilter } = useMemo(
     () =>
       buildBalanceData({

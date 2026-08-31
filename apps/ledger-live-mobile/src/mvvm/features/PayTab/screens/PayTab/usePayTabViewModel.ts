@@ -6,7 +6,6 @@ import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
-import type { BalanceLabels } from "@features/flow-pay-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -26,19 +25,6 @@ export function usePayTabViewModel() {
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
   const contacts = usePayTabContacts();
-
-  const balanceLabels: BalanceLabels = useMemo(
-    () => ({
-      emptyTitle: t("payTab.balance.emptyTitle"),
-      emptyDescription: t("payTab.balance.emptyDescription"),
-      allStablecoins: t("payTab.balance.filter.allStablecoins"),
-      filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
-      filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
-      filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
-      confirm: t("payTab.balance.filter.confirm"),
-    }),
-    [t],
-  );
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardProps["oauthConfig"] = useMemo(
@@ -73,7 +59,6 @@ export function usePayTabViewModel() {
     callback,
     featureTour,
     balance,
-    balanceLabels,
     actionTiles,
     contacts,
     depositOptions: deposit.depositOptions,

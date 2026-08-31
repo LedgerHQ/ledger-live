@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "@shared/i18n";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../../state";
 import { resolveSelection } from "../../logic/resolveSelection";
-import type { BalanceProps, BalanceViewProps } from "../../types";
+import type { BalanceLabels, BalanceProps, BalanceViewProps } from "../../types";
 
 export function useBalanceViewModel({
   status,
@@ -13,8 +14,22 @@ export function useBalanceViewModel({
   onConfirmFilter,
   onTrackEvent,
   actionTiles,
-  labels,
 }: BalanceProps): BalanceViewProps {
+  const { t } = useTranslation();
+
+  const labels: BalanceLabels = useMemo(
+    () => ({
+      emptyTitle: t("payTab.balance.emptyTitle"),
+      emptyDescription: t("payTab.balance.emptyDescription"),
+      allStablecoins: t("payTab.balance.filter.allStablecoins"),
+      filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
+      filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
+      filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
+      confirm: t("payTab.balance.filter.confirm"),
+    }),
+    [t],
+  );
+
   const optionIds = useMemo(() => filterOptions.map(option => option.id), [filterOptions]);
   const effectiveFilter = resolveSelection(filter, optionIds);
 

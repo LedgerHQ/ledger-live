@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@domain/entity-currency-unit": "workspace:^",
+    "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",

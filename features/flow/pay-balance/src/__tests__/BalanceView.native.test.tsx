@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
 import type { BalanceViewProps } from "../types";
 import { BalanceView } from "../components/Hero/BalanceView.native";
+import { i18nWrapper } from "./i18nWrapper";
 import {
   depositActionTiles,
   emptyLabels,
@@ -44,7 +45,7 @@ function fundedProps(): BalanceViewProps {
 }
 
 function renderView(props: BalanceViewProps) {
-  return render(<BalanceView {...props} />);
+  return render(<BalanceView {...props} />, { wrapper: i18nWrapper() });
 }
 
 describe("BalanceView (Native)", () => {

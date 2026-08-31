@@ -1,12 +1,7 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
-import {
-  Balance,
-  type ActionTilesProps,
-  type BalanceData,
-  type BalanceLabels,
-} from "@features/flow-pay-balance";
+import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
@@ -20,7 +15,6 @@ type PayTabViewProps = {
   readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
-  readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
   readonly depositOptions: DepositOptionsProps;
@@ -33,7 +27,6 @@ export function PayTabView({
   callback,
   featureTour,
   balance,
-  balanceLabels,
   actionTiles,
   contacts,
   depositOptions,
@@ -43,7 +36,7 @@ export function PayTabView({
       <Wallet40Background type="pay" />
       <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
         <TrackScreen category="Pay" balance_filter={balance.filter} />
-        <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
+        <Balance {...balance} actionTiles={actionTiles} />
         <Contacts {...contacts} />
         <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />

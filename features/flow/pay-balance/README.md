@@ -23,13 +23,12 @@ import { Balance } from "@features/flow-pay-balance";
   stableBalance={stableBalance}
   filter={filter}
   formatCountervalue={formatCountervalue}
-  labels={labels}
 />;
 ```
 
 The host passes the balance data (aggregated stable balance, `status`, `filter` and a countervalue
-formatter) and the display `labels` directly, so the views stay props-only and platform navigation
-and data access remain at the app composition root.
+formatter) directly, so platform navigation and data access remain at the app composition root.
+Copy is resolved inside the feature through `@shared/i18n`.
 
 Store, persistence and test setup should import the slice from
 `@features/flow-pay-balance/state` so they do not load the hero UI.
@@ -50,7 +49,6 @@ return useBalanceData({
   filter,
   isLoading,
   isError,
-  allLabel,
   formatFiat,
   formatCrypto,
   formatCountervalue,
