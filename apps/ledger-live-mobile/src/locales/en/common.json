@@ -10573,19 +10573,18 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
-      "primaryAction": "Try contacts",
+      "primaryAction": "Explore now",
       "highlights": {
         "saveAddresses": {
-          "title": "Save addresses once",
-          "description": "Keep the addresses you send to in one place."
+          "title": "Save addresses by a name you choose",
+          "description": "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress": {
           "title": "Send to the right address",
-          "description": "Funds reach the right wallet every time."
+          "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Private across your devices",
+          "title": "Securely top up via Ledger Wallet™",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

@@ -376,7 +376,7 @@ describe("Contacts integration", () => {
     expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 
-  it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {
+  it("should show the one-time feature introduction on first visit and complete it from Explore now", async () => {
     const { user, store } = renderContactsScreen({
       settings: { hasDismissedContactsFeatureIntroduction: false },
     });

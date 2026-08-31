@@ -32,7 +32,6 @@ describe("ContactsView", () => {
         featureIntroduction={{
           isOpen: false,
           title: "Add contacts",
-          description: "Save recipient addresses.",
           highlights: [],
           primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
@@ -70,7 +69,6 @@ describe("ContactsView", () => {
         featureIntroduction={{
           isOpen: false,
           title: "Add contacts",
-          description: "Save recipient addresses.",
           highlights: [],
           primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),

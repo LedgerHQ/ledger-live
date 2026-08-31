@@ -1,6 +1,17 @@
 import React from "react";
 import { Image, type ImageSourcePropType } from "react-native";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  BottomSheetHeader,
+  BottomSheetView,
+  Box,
+  Button,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import type { ContactsFeatureIntroductionContentProps } from "./types";
@@ -8,7 +19,6 @@ import type { ContactsFeatureIntroductionContentProps } from "./types";
 export function ContactsFeatureIntroductionContent({
   isOpen,
   title,
-  description,
   highlights,
   primaryActionLabel,
   heroImageSrc,
@@ -27,51 +37,61 @@ export function ContactsFeatureIntroductionContent({
       {isOpen ? (
         <>
           <BottomSheetHeader spacing />
-          <Box lx={{ gap: "s16", paddingHorizontal: "s16" }}>
-            <Box
-              testID="contacts-feature-introduction-hero"
-              style={{
-                height: 200,
-                width: "100%",
-                borderRadius: 12,
-                overflow: "hidden",
-              }}
-              lx={{ backgroundColor: "muted" }}
-            >
-              <Image
-                testID="contacts-feature-introduction-hero-image"
-                source={heroImage as ImageSourcePropType}
-                accessibilityIgnoresInvertColors
-                style={{ width: "100%", height: "100%" }}
-                resizeMode="cover"
-              />
-            </Box>
-            <Box lx={{ gap: "s8" }}>
-              <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-                {title}
-              </Text>
-              <Text typography="body2" lx={{ color: "muted" }}>
-                {description}
-              </Text>
-            </Box>
-            {highlights.map(highlight => {
-              const HighlightIcon = Icons[highlight.icon];
-
-              return (
-                <Box key={highlight.icon} lx={{ flexDirection: "row", gap: "s12" }}>
-                  <HighlightIcon />
-                  <Box lx={{ flex: 1, gap: "s4" }}>
-                    <Text typography="body1SemiBold" lx={{ color: "base" }}>
-                      {highlight.title}
-                    </Text>
-                    <Text typography="body2" lx={{ color: "muted" }}>
-                      {highlight.description}
-                    </Text>
-                  </Box>
+          <Box
+            testID="contacts-feature-introduction-content"
+            style={{ flex: 1, minHeight: 679 }}
+            lx={{ justifyContent: "space-between", paddingHorizontal: "s16" }}
+          >
+            <Box lx={{ gap: "s16" }}>
+              <Box
+                testID="contacts-feature-introduction-hero"
+                style={{
+                  height: 192,
+                  width: "100%",
+                  borderRadius: 24,
+                  overflow: "hidden",
+                }}
+                lx={{ backgroundColor: "muted" }}
+              >
+                <Image
+                  testID="contacts-feature-introduction-hero-image"
+                  source={heroImage as ImageSourcePropType}
+                  accessibilityIgnoresInvertColors
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              </Box>
+              <Box lx={{ gap: "s4" }}>
+                <Box lx={{ gap: "s8", paddingBottom: "s8" }}>
+                  <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+                    {title}
+                  </Text>
                 </Box>
-              );
-            })}
-            <Box lx={{ paddingTop: "s8" }}>
+                <Box>
+                  {highlights.map(highlight => {
+                    const HighlightIcon = Icons[highlight.icon];
+
+                    return (
+                      <ListItem
+                        key={highlight.icon}
+                        density="expanded"
+                        testID={`contacts-feature-introduction-highlight-${highlight.icon}`}
+                        lx={{ marginHorizontal: "-s8" }}
+                      >
+                        <ListItemLeading>
+                          <HighlightIcon size={24} />
+                          <ListItemContent>
+                            <ListItemTitle>{highlight.title}</ListItemTitle>
+                            <ListItemDescription>{highlight.description}</ListItemDescription>
+                          </ListItemContent>
+                        </ListItemLeading>
+                      </ListItem>
+                    );
+                  })}
+                </Box>
+              </Box>
+            </Box>
+            <Box lx={{ gap: "s16", paddingTop: "s12" }}>
               <Button
                 appearance="base"
                 size="lg"
