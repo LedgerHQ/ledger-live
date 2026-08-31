@@ -72,13 +72,47 @@ export const reassignOperationType = (
   controller?: Principal,
 ): InternetComputerOperation[] => {
   const neuronAddressSet = new Set(neuronAddresses);
-  return operations.map(op => {
+  const retyped = operations.map(op => {
     if (op.type !== "OUT") return op;
     if (!neuronAddressSet.has(op.recipients[0]) && !isOwnStakeTransfer(op, controller)) return op;
     const type: OperationType = new BigNumber(op.extra?.memo ?? "0").gt(0)
       ? "STAKE_NEURON"
       : "TOP_UP_NEURON";
     return { ...op, id: encodeOperationId(op.accountId, op.hash, type), type };
+  });
+  // Retyping rewrites the id, and both callers hand this the list they are about to store, so the
+  // collapse has to happen here or the caller stores the collision. See dedupeRetypedOperations.
+  return dedupeRetypedOperations(retyped);
+};
+
+const NEURON_TRANSFER_OP_TYPES = new Set<OperationType>(["STAKE_NEURON", "TOP_UP_NEURON"]);
+
+/**
+ * Drop the copies one transfer accumulates as its classification changes.
+ *
+ * An operation id encodes its type, and `mergeOps` dedups on that id, so retyping a transfer mints
+ * an id the merge has never seen: the retyped operation is added beside the stale `OUT` rather than
+ * replacing it, and nothing removes the loser afterwards — `mergeOps` never dedups the stored list
+ * against itself. A top-up carries memo 0 and so cannot be recognized until a device-signed
+ * `list_neurons` supplies the neuron addresses, which makes the reclassification, and the duplicate,
+ * routine rather than a corner case.
+ *
+ * Only an `OUT` superseded by a neuron type is dropped, never an `IN`: a self-transfer legitimately
+ * produces one of each under a single hash. The pass is also what heals an account that already
+ * holds duplicates, since no sync would otherwise remove them.
+ */
+export const dedupeRetypedOperations = (
+  operations: InternetComputerOperation[],
+): InternetComputerOperation[] => {
+  const supersededHashes = new Set(
+    operations.filter(op => NEURON_TRANSFER_OP_TYPES.has(op.type)).map(op => op.hash),
+  );
+  const kept = new Set<string>();
+  return operations.filter(op => {
+    if (op.type === "OUT" && supersededHashes.has(op.hash)) return false;
+    if (kept.has(op.id)) return false;
+    kept.add(op.id);
+    return true;
   });
 };
 
