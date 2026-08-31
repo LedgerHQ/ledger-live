@@ -543,75 +543,29 @@ packageExtensionsChecksum: sha256-ncotzmACiC2rOyyMil4Rrs2djdIDzC2+p16TbkRXDRA=
 pnpmfileChecksum: sha256-1xBax/cTinXRJCqszgjBfA3QdiSU/Ahca9lf5luZbRo=
 
 patchedDependencies:
-  '@bunli/core@0.9.1':
-    hash: fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565
-    path: patches/@bunli__core@0.9.1.patch
-  '@callstack/repack@5.2.5':
-    hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
-    path: patches/@callstack__repack@5.2.5.patch
-  '@changesets/get-github-info@0.6.0':
-    hash: e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
-    path: patches/@changesets__get-github-info@0.6.0.patch
-  '@datadog/datadog-ci@3.11.0':
-    hash: b450ce3a710107fd8d0dc3a43f33daffc0fe5ccc92344c98744b9ba421db33ae
-    path: patches/@datadog__datadog-ci@3.11.0.patch
-  '@exodus/patch-broken-hermes-typed-arrays':
-    hash: 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
-    path: patches/@exodus__patch-broken-hermes-typed-arrays.patch
-  '@hiero-ledger/proto@2.25.0':
-    hash: 3db17dbc9a7f2fe6248f2f94d98f3ad73afecaf999c190595e95da9c6a0eff29
-    path: patches/@hiero-ledger__proto@2.25.0.patch
-  '@taquito/http-utils':
-    hash: 74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e
-    path: patches/@taquito__http-utils.patch
-  '@testing-library/react-native@13.3.3':
-    hash: 4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76
-    path: patches/@testing-library__react-native@13.3.3.patch
-  '@ton/core':
-    hash: 9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324
-    path: patches/@ton__core.patch
-  asyncstorage-down@4.2.0:
-    hash: de0963775da5b91d167469189fc2683439a7c96f70ab510ccbcb6d01c11e365c
-    path: patches/asyncstorage-down@4.2.0.patch
-  bigint-buffer@1.1.5:
-    hash: 8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536
-    path: patches/bigint-buffer@1.1.5.patch
-  buffer@6.0.3:
-    hash: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
-    path: patches/buffer@6.0.3.patch
-  detox-allure2-adapter@1.0.0-alpha.42:
-    hash: c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba
-    path: patches/detox-allure2-adapter@1.0.0-alpha.42.patch
-  detox@20.51.3:
-    hash: 6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61
-    path: patches/detox@20.51.3.patch
-  react-native-bundle-visualizer@3.1.3:
-    hash: 860509fa484fba50bc575fd4729f51687bfb5342e9fca66d2b7c12b0cf81e11d
-    path: patches/react-native-bundle-visualizer@3.1.3.patch
-  react-native-fast-pbkdf2@0.3.1:
-    hash: 9dfb84332ee579fa33b0faf1675112a321afd26a1e30ded28e36597953aa86e2
-    path: patches/react-native-fast-pbkdf2@0.3.1.patch
-  react-native-image-crop-tools@1.6.4:
-    hash: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
-    path: patches/react-native-image-crop-tools@1.6.4.patch
-  react-native-webview@13.16.0:
-    hash: d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506
-    path: patches/react-native-webview@13.16.0.patch
-  react-native-worklets@0.8.1:
-    hash: 8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25
-    path: patches/react-native-worklets@0.8.1.patch
-  react-native@0.81.6:
-    hash: fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1
-    path: patches/react-native@0.81.6.patch
-  rn-fetch-blob@0.12.0:
-    hash: 5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd
-    path: patches/rn-fetch-blob@0.12.0.patch
-  styled-components@6.1.19:
-    hash: 810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7
-    path: patches/styled-components@6.1.19.patch
-  usb@2.17.0:
-    hash: 489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5
-    path: patches/usb@2.17.0.patch
+  '@bunli/core@0.9.1': fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565
+  '@callstack/repack@5.2.5': 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
+  '@changesets/get-github-info@0.6.0': e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
+  '@datadog/datadog-ci@3.11.0': b450ce3a710107fd8d0dc3a43f33daffc0fe5ccc92344c98744b9ba421db33ae
+  '@exodus/patch-broken-hermes-typed-arrays': 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
+  '@hiero-ledger/proto@2.25.0': 3db17dbc9a7f2fe6248f2f94d98f3ad73afecaf999c190595e95da9c6a0eff29
+  '@taquito/http-utils': 74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e
+  '@testing-library/react-native@13.3.3': 4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76
+  '@ton/core': 9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324
+  asyncstorage-down@4.2.0: de0963775da5b91d167469189fc2683439a7c96f70ab510ccbcb6d01c11e365c
+  bigint-buffer@1.1.5: 8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536
+  buffer@6.0.3: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
+  detox-allure2-adapter@1.0.0-alpha.42: 44e36d4e6e5a8db4049091a3b42ab07fa4d08a2243bdfaab52010b822527d9ac
+  detox@20.51.3: 6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61
+  react-native-bundle-visualizer@3.1.3: 860509fa484fba50bc575fd4729f51687bfb5342e9fca66d2b7c12b0cf81e11d
+  react-native-fast-pbkdf2@0.3.1: 9dfb84332ee579fa33b0faf1675112a321afd26a1e30ded28e36597953aa86e2
+  react-native-image-crop-tools@1.6.4: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
+  react-native-webview@13.16.0: d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506
+  react-native-worklets@0.8.1: 8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25
+  react-native@0.81.6: fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1
+  rn-fetch-blob@0.12.0: 5d357d2cf58066f49b2c2d96c7b92b4b1c6d3d63508aca870f571e092deaaefd
+  styled-components@6.1.19: 810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7
+  usb@2.17.0: 489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5
 
 importers:
 
@@ -5309,7 +5263,7 @@ importers:
         version: 20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(patch_hash=c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba)(detox@20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.4.1)(@jest/types@30.4.1)(jest-docblock@30.4.0)(jest-environment-node@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))
+        version: 1.0.0-alpha.42(patch_hash=44e36d4e6e5a8db4049091a3b42ab07fa4d08a2243bdfaab52010b822527d9ac)(detox@20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.4.1)(@jest/types@30.4.1)(jest-docblock@30.4.0)(jest-environment-node@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))
       expect:
         specifier: 30.4.1
         version: 30.4.1
@@ -8176,7 +8130,7 @@ importers:
         version: 30.4.1(@types/node@24.12.0)
       tsx:
         specifier: ^4.7.1
-        version: 4.10.3
+        version: 4.20.6
 
   libs/coin-modules/coin-aleo:
     dependencies:
@@ -8328,7 +8282,7 @@ importers:
     dependencies:
       '@apollo/client':
         specifier: ^3.12.6
-        version: 3.12.6(graphql@16.10.0)(react@19.1.4)
+        version: 3.12.6(graphql@16.14.2)(react@19.1.4)
       '@aptos-labs/ts-sdk':
         specifier: ^3.1.3
         version: 3.1.3(got@11.8.5)
@@ -8364,7 +8318,7 @@ importers:
         version: 11.8.5
       graphql:
         specifier: ^16.10.0
-        version: 16.10.0
+        version: 16.14.2
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -8904,7 +8858,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       expect:
         specifier: 30.4.1
         version: 30.4.1
@@ -9153,7 +9107,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       fast-check:
         specifier: ^3.12.0
         version: 3.17.1
@@ -9751,7 +9705,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       expect:
         specifier: 30.4.1
         version: 30.4.1
@@ -9793,7 +9747,7 @@ importers:
         version: link:../../types-live
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
+        version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.5.4)
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -9814,7 +9768,7 @@ importers:
         version: 4.17.21
       protobufjs:
         specifier: ^7.2.6
-        version: 7.3.2
+        version: 7.5.4
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10006,7 +9960,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -10212,7 +10166,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
@@ -10236,7 +10190,7 @@ importers:
     dependencies:
       '@0no-co/graphql.web':
         specifier: ^1.0.11
-        version: 1.0.11(graphql@16.13.2)
+        version: 1.3.3(graphql@16.14.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.2.0(@ledgerhq/live-network@libs+live-network)
@@ -10272,7 +10226,7 @@ importers:
         version: 9.1.2
       gql.tada:
         specifier: ^1.9.2
-        version: 1.9.2(@typescript/typescript6@6.0.2)(graphql@16.13.2)
+        version: 1.11.3(@typescript/typescript6@6.0.2)(graphql@16.14.2)
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
@@ -10282,7 +10236,7 @@ importers:
     devDependencies:
       '@gql.tada/internal':
         specifier: 1.0.9
-        version: 1.0.9(@typescript/typescript6@6.0.2)(graphql@16.13.2)
+        version: 1.0.9(@typescript/typescript6@6.0.2)(graphql@16.14.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -10315,7 +10269,7 @@ importers:
         version: 24.12.0
       graphql:
         specifier: ^16.10.0
-        version: 16.13.2
+        version: 16.14.2
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
@@ -10467,7 +10421,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
@@ -10549,7 +10503,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
@@ -12226,10 +12180,10 @@ importers:
     dependencies:
       '@ethersproject/constants':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ethersproject/hash':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -12998,7 +12952,7 @@ importers:
         version: 1.4.1
       tsx:
         specifier: ^4.7.1
-        version: 4.10.3
+        version: 4.20.6
       usehooks-ts:
         specifier: ^2.13.0
         version: 2.16.0(react@19.1.4)
@@ -13205,7 +13159,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       expect:
         specifier: 30.4.1
         version: 30.4.1
@@ -13251,7 +13205,7 @@ importers:
         version: 24.12.0
       dotenv:
         specifier: ^16.4.5
-        version: 16.4.5
+        version: 16.4.7
       expect:
         specifier: 30.4.1
         version: 30.4.1
@@ -13782,13 +13736,13 @@ importers:
     dependencies:
       '@ethersproject/abi':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ethersproject/rlp':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ethersproject/transactions':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../../domain-service
@@ -13819,10 +13773,10 @@ importers:
     devDependencies:
       '@ethersproject/bignumber':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ethersproject/constants':
         specifier: ^5.7.0
-        version: 5.7.0
+        version: 5.8.0
       '@ethersproject/units':
         specifier: ^5.7.0
         version: 5.7.0
@@ -13983,7 +13937,7 @@ importers:
         version: 0.4.2
       long:
         specifier: ^5.2.0
-        version: 5.2.3
+        version: 5.3.1
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -14118,7 +14072,7 @@ importers:
         version: link:../hw-transport
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
+        version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.5.4)
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -14130,7 +14084,7 @@ importers:
         version: 0.4.2
       protobufjs:
         specifier: ^7.2.6
-        version: 7.3.2
+        version: 7.5.4
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -16089,7 +16043,7 @@ importers:
         version: 0.3.2
       ws:
         specifier: ^8.16.0
-        version: 8.17.1
+        version: 8.21.0
 
   libs/promise:
     dependencies:
@@ -18085,12 +18039,6 @@ packages:
     peerDependenciesMeta:
       graphql:
         optional: true
-
-  '@0no-co/graphqlsp@1.12.16':
-    resolution: {integrity: sha512-B5pyYVH93Etv7xjT6IfB7QtMBdaaC07yjbhN6v8H7KgFStMkPvi+oWYBTibMFRMY89qwc9H8YixXg8SXDVgYWw==}
-    peerDependencies:
-      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
-      typescript: ^5.0.0
 
   '@0no-co/graphqlsp@1.17.3':
     resolution: {integrity: sha512-4PPvxDPmbntddpgMyA3VId5/E9YGdRuuS/mW+THOvtTx/C79Pf+lN28LkNNACJrF9L7YACiAJelyOkC6LqUzvw==}
@@ -20288,7 +20236,7 @@ packages:
     engines: {node: '>=22.12.0'}
 
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
-    resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
+    resolution: {gitHosted: true, integrity: sha512-MXgzlTDEEndJB3TBbvd5uFQO/8gaINo1Hfen8vef5rq/VHVPeB63uuv/uO5+8GFsAJ/rauu6XB79S6K4+aXc+w==, tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
     version: 10.2.0-electron.1
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -20425,34 +20373,16 @@ packages:
   '@emotion/weak-memoize@0.4.0':
     resolution: {integrity: sha512-snKqtPW01tN0ui7yu9rGv69aJXr/a/Ywvl11sUjNtEcRc+ng/mQriFL0wLXMef74iHa/EkftbDzU9F8iFbH+zg==}
 
-  '@esbuild/aix-ppc64@0.20.2':
-    resolution: {integrity: sha512-D+EBOJHXdNZcLJRBkhENNG8Wji2kgc9AZ9KiPr1JuZjsNtyHzrsfLRrY0tk2H2aoFu6RANO1y1iPPUCDYWkb5g==}
-    engines: {node: '>=12'}
-    cpu: [ppc64]
-    os: [aix]
-
   '@esbuild/aix-ppc64@0.25.5':
     resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [aix]
 
-  '@esbuild/android-arm64@0.20.2':
-    resolution: {integrity: sha512-mRzjLacRtl/tWU0SvD8lUEwb61yP9cqQo6noDZP/O8VkwafSYwZ4yWy24kan8jE/IMERpYncRt2dw438LP3Xmg==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [android]
-
   '@esbuild/android-arm64@0.25.5':
     resolution: {integrity: sha512-VGzGhj4lJO+TVGV1v8ntCZWJktV7SGCs3Pn1GRWI1SBFtRALoomm8k5E9Pmwg3HOAal2VDc2F9+PM/rEY6oIDg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [android]
-
-  '@esbuild/android-arm@0.20.2':
-    resolution: {integrity: sha512-t98Ra6pw2VaDhqNWO2Oph2LXbz/EJcnLmKLGBJwEwXX/JAN83Fym1rU8l0JUWK6HkIbWONCSSatf4sf2NBRx/w==}
-    engines: {node: '>=12'}
-    cpu: [arm]
     os: [android]
 
   '@esbuild/android-arm@0.25.5':
@@ -20461,34 +20391,16 @@ packages:
     cpu: [arm]
     os: [android]
 
-  '@esbuild/android-x64@0.20.2':
-    resolution: {integrity: sha512-btzExgV+/lMGDDa194CcUQm53ncxzeBrWJcncOBxuC6ndBkKxnHdFJn86mCIgTELsooUmwUm9FkhSp5HYu00Rg==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [android]
-
   '@esbuild/android-x64@0.25.5':
     resolution: {integrity: sha512-D2GyJT1kjvO//drbRT3Hib9XPwQeWd9vZoBJn+bu/lVsOZ13cqNdDeqIF/xQ5/VmWvMduP6AmXvylO/PIc2isw==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [android]
 
-  '@esbuild/darwin-arm64@0.20.2':
-    resolution: {integrity: sha512-4J6IRT+10J3aJH3l1yzEg9y3wkTDgDk7TSDFX+wKFiWjqWp/iCfLIYzGyasx9l0SAFPT1HwSCR+0w/h1ES/MjA==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [darwin]
-
   '@esbuild/darwin-arm64@0.25.5':
     resolution: {integrity: sha512-GtaBgammVvdF7aPIgH2jxMDdivezgFu6iKpmT+48+F8Hhg5J/sfnDieg0aeG/jfSvkYQU2/pceFPDKlqZzwnfQ==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [darwin]
-
-  '@esbuild/darwin-x64@0.20.2':
-    resolution: {integrity: sha512-tBcXp9KNphnNH0dfhv8KYkZhjc+H3XBkF5DKtswJblV7KlT9EI2+jeA8DgBjp908WEuYll6pF+UStUCfEpdysA==}
-    engines: {node: '>=12'}
-    cpu: [x64]
     os: [darwin]
 
   '@esbuild/darwin-x64@0.25.5':
@@ -20497,22 +20409,10 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@esbuild/freebsd-arm64@0.20.2':
-    resolution: {integrity: sha512-d3qI41G4SuLiCGCFGUrKsSeTXyWG6yem1KcGZVS+3FYlYhtNoNgYrWcvkOoaqMhwXSMrZRl69ArHsGJ9mYdbbw==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [freebsd]
-
   '@esbuild/freebsd-arm64@0.25.5':
     resolution: {integrity: sha512-nk4tGP3JThz4La38Uy/gzyXtpkPW8zSAmoUhK9xKKXdBCzKODMc2adkB2+8om9BDYugz+uGV7sLmpTYzvmz6Sw==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [freebsd]
-
-  '@esbuild/freebsd-x64@0.20.2':
-    resolution: {integrity: sha512-d+DipyvHRuqEeM5zDivKV1KuXn9WeRX6vqSqIDgwIfPQtwMP4jaDsQsDncjTDDsExT4lR/91OLjRo8bmC1e+Cw==}
-    engines: {node: '>=12'}
-    cpu: [x64]
     os: [freebsd]
 
   '@esbuild/freebsd-x64@0.25.5':
@@ -20521,22 +20421,10 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
-  '@esbuild/linux-arm64@0.20.2':
-    resolution: {integrity: sha512-9pb6rBjGvTFNira2FLIWqDk/uaf42sSyLE8j1rnUpuzsODBq7FvpwHYZxQ/It/8b+QOS1RYfqgGFNLRI+qlq2A==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [linux]
-
   '@esbuild/linux-arm64@0.25.5':
     resolution: {integrity: sha512-Z9kfb1v6ZlGbWj8EJk9T6czVEjjq2ntSYLY2cw6pAZl4oKtfgQuS4HOq41M/BcoLPzrUbNd+R4BXFyH//nHxVg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [linux]
-
-  '@esbuild/linux-arm@0.20.2':
-    resolution: {integrity: sha512-VhLPeR8HTMPccbuWWcEUD1Az68TqaTYyj6nfE4QByZIQEQVWBB8vup8PpR7y1QHL3CpcF6xd5WVBU/+SBEvGTg==}
-    engines: {node: '>=12'}
-    cpu: [arm]
     os: [linux]
 
   '@esbuild/linux-arm@0.25.5':
@@ -20545,22 +20433,10 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@esbuild/linux-ia32@0.20.2':
-    resolution: {integrity: sha512-o10utieEkNPFDZFQm9CoP7Tvb33UutoJqg3qKf1PWVeeJhJw0Q347PxMvBgVVFgouYLGIhFYG0UGdBumROyiig==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [linux]
-
   '@esbuild/linux-ia32@0.25.5':
     resolution: {integrity: sha512-sQ7l00M8bSv36GLV95BVAdhJ2QsIbCuCjh/uYrWiMQSUuV+LpXwIqhgJDcvMTj+VsQmqAHL2yYaasENvJ7CDKA==}
     engines: {node: '>=18'}
     cpu: [ia32]
-    os: [linux]
-
-  '@esbuild/linux-loong64@0.20.2':
-    resolution: {integrity: sha512-PR7sp6R/UC4CFVomVINKJ80pMFlfDfMQMYynX7t1tNTeivQ6XdX5r2XovMmha/VjR1YN/HgHWsVcTRIMkymrgQ==}
-    engines: {node: '>=12'}
-    cpu: [loong64]
     os: [linux]
 
   '@esbuild/linux-loong64@0.25.5':
@@ -20569,22 +20445,10 @@ packages:
     cpu: [loong64]
     os: [linux]
 
-  '@esbuild/linux-mips64el@0.20.2':
-    resolution: {integrity: sha512-4BlTqeutE/KnOiTG5Y6Sb/Hw6hsBOZapOVF6njAESHInhlQAghVVZL1ZpIctBOoTFbQyGW+LsVYZ8lSSB3wkjA==}
-    engines: {node: '>=12'}
-    cpu: [mips64el]
-    os: [linux]
-
   '@esbuild/linux-mips64el@0.25.5':
     resolution: {integrity: sha512-kB/66P1OsHO5zLz0i6X0RxlQ+3cu0mkxS3TKFvkb5lin6uwZ/ttOkP3Z8lfR9mJOBk14ZwZ9182SIIWFGNmqmg==}
     engines: {node: '>=18'}
     cpu: [mips64el]
-    os: [linux]
-
-  '@esbuild/linux-ppc64@0.20.2':
-    resolution: {integrity: sha512-rD3KsaDprDcfajSKdn25ooz5J5/fWBylaaXkuotBDGnMnDP1Uv5DLAN/45qfnf3JDYyJv/ytGHQaziHUdyzaAg==}
-    engines: {node: '>=12'}
-    cpu: [ppc64]
     os: [linux]
 
   '@esbuild/linux-ppc64@0.25.5':
@@ -20593,34 +20457,16 @@ packages:
     cpu: [ppc64]
     os: [linux]
 
-  '@esbuild/linux-riscv64@0.20.2':
-    resolution: {integrity: sha512-snwmBKacKmwTMmhLlz/3aH1Q9T8v45bKYGE3j26TsaOVtjIag4wLfWSiZykXzXuE1kbCE+zJRmwp+ZbIHinnVg==}
-    engines: {node: '>=12'}
-    cpu: [riscv64]
-    os: [linux]
-
   '@esbuild/linux-riscv64@0.25.5':
     resolution: {integrity: sha512-kTxwu4mLyeOlsVIFPfQo+fQJAV9mh24xL+y+Bm6ej067sYANjyEw1dNHmvoqxJUCMnkBdKpvOn0Ahql6+4VyeA==}
     engines: {node: '>=18'}
     cpu: [riscv64]
     os: [linux]
 
-  '@esbuild/linux-s390x@0.20.2':
-    resolution: {integrity: sha512-wcWISOobRWNm3cezm5HOZcYz1sKoHLd8VL1dl309DiixxVFoFe/o8HnwuIwn6sXre88Nwj+VwZUvJf4AFxkyrQ==}
-    engines: {node: '>=12'}
-    cpu: [s390x]
-    os: [linux]
-
   '@esbuild/linux-s390x@0.25.5':
     resolution: {integrity: sha512-K2dSKTKfmdh78uJ3NcWFiqyRrimfdinS5ErLSn3vluHNeHVnBAFWC8a4X5N+7FgVE1EjXS1QDZbpqZBjfrqMTQ==}
     engines: {node: '>=18'}
     cpu: [s390x]
-    os: [linux]
-
-  '@esbuild/linux-x64@0.20.2':
-    resolution: {integrity: sha512-1MdwI6OOTsfQfek8sLwgyjOXAu+wKhLEoaOLTjbijk6E2WONYpH9ZU2mNtR+lZ2B4uwr+usqGuVfFT9tMtGvGw==}
-    engines: {node: '>=12'}
-    cpu: [x64]
     os: [linux]
 
   '@esbuild/linux-x64@0.25.5':
@@ -20635,12 +20481,6 @@ packages:
     cpu: [arm64]
     os: [netbsd]
 
-  '@esbuild/netbsd-x64@0.20.2':
-    resolution: {integrity: sha512-K8/DhBxcVQkzYc43yJXDSyjlFeHQJBiowJ0uVL6Tor3jGQfSGHNNJcWxNbOI8v5k82prYqzPuwkzHt3J1T1iZQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [netbsd]
-
   '@esbuild/netbsd-x64@0.25.5':
     resolution: {integrity: sha512-WOb5fKrvVTRMfWFNCroYWWklbnXH0Q5rZppjq0vQIdlsQKuw6mdSihwSo4RV/YdQ5UCKKvBy7/0ZZYLBZKIbwQ==}
     engines: {node: '>=18'}
@@ -20653,23 +20493,11 @@ packages:
     cpu: [arm64]
     os: [openbsd]
 
-  '@esbuild/openbsd-x64@0.20.2':
-    resolution: {integrity: sha512-eMpKlV0SThJmmJgiVyN9jTPJ2VBPquf6Kt/nAoo6DgHAoN57K15ZghiHaMvqjCye/uU4X5u3YSMgVBI1h3vKrQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [openbsd]
-
   '@esbuild/openbsd-x64@0.25.5':
     resolution: {integrity: sha512-G4hE405ErTWraiZ8UiSoesH8DaCsMm0Cay4fsFWOOUcz8b8rC6uCvnagr+gnioEjWn0wC+o1/TAHt+It+MpIMg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [openbsd]
-
-  '@esbuild/sunos-x64@0.20.2':
-    resolution: {integrity: sha512-2UyFtRC6cXLyejf/YEld4Hajo7UHILetzE1vsRcGL3earZEW77JxrFjH4Ez2qaTiEfMgAXxfAZCm1fvM/G/o8w==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [sunos]
 
   '@esbuild/sunos-x64@0.25.5':
     resolution: {integrity: sha512-l+azKShMy7FxzY0Rj4RCt5VD/q8mG/e+mDivgspo+yL8zW7qEwctQ6YqKX34DTEleFAvCIUviCFX1SDZRSyMQA==}
@@ -20677,34 +20505,16 @@ packages:
     cpu: [x64]
     os: [sunos]
 
-  '@esbuild/win32-arm64@0.20.2':
-    resolution: {integrity: sha512-GRibxoawM9ZCnDxnP3usoUDO9vUkpAxIIZ6GQI+IlVmr5kP3zUq+l17xELTHMWTWzjxa2guPNyrpq1GWmPvcGQ==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [win32]
-
   '@esbuild/win32-arm64@0.25.5':
     resolution: {integrity: sha512-O2S7SNZzdcFG7eFKgvwUEZ2VG9D/sn/eIiz8XRZ1Q/DO5a3s76Xv0mdBzVM5j5R639lXQmPmSo0iRpHqUUrsxw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [win32]
 
-  '@esbuild/win32-ia32@0.20.2':
-    resolution: {integrity: sha512-HfLOfn9YWmkSKRQqovpnITazdtquEW8/SoHW7pWpuEeguaZI4QnCRW6b+oZTztdBnZOS2hqJ6im/D5cPzBTTlQ==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [win32]
-
   '@esbuild/win32-ia32@0.25.5':
     resolution: {integrity: sha512-onOJ02pqs9h1iMJ1PQphR+VZv8qBMQ77Klcsqv9CNW2w6yLqoURLcgERAIurY6QE63bbLuqgP9ATqajFLK5AMQ==}
     engines: {node: '>=18'}
     cpu: [ia32]
-    os: [win32]
-
-  '@esbuild/win32-x64@0.20.2':
-    resolution: {integrity: sha512-N49X4lJX27+l9jbLKSqZ6bKNjzQvHaT8IIFUy+YIqmXQdjYCToGWwOItDrfby14c78aDd5NHQl29xingXfCdLQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
     os: [win32]
 
   '@esbuild/win32-x64@0.25.5':
@@ -20740,29 +20550,17 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@ethersproject/abi@5.7.0':
-    resolution: {integrity: sha512-351ktp42TiRcYB3H1OP8yajPeAQstMW/yCFokj/AthP9bLHzQFPlOrxOcwYEDkUAICmOHljvN4K39OMTMUa9RA==}
-
   '@ethersproject/abi@5.8.0':
     resolution: {integrity: sha512-b9YS/43ObplgyV6SlyQsG53/vkSal0MNA1fskSC4mbnCMi8R+NkcH8K9FPYNESf6jUefBUniE4SOKms0E/KK1Q==}
 
   '@ethersproject/abstract-provider@5.8.0':
     resolution: {integrity: sha512-wC9SFcmh4UK0oKuLJQItoQdzS/qZ51EJegK6EmAWlh+OptpQ/npECOR3QqECd8iGHC0RJb4WKbVdSfif4ammrg==}
 
-  '@ethersproject/abstract-signer@5.7.0':
-    resolution: {integrity: sha512-a16V8bq1/Cz+TGCkE2OPMTOUDLS3grCpdjoJCYNnVBbdYEMSgKrU0+B90s8b6H+ByYTBZN7a3g76jdIJi7UfKQ==}
-
   '@ethersproject/abstract-signer@5.8.0':
     resolution: {integrity: sha512-N0XhZTswXcmIZQdYtUnd79VJzvEwXQw6PK0dTl9VoYrEBxxCPXqS0Eod7q5TNKRxe1/5WUMuR0u0nqTF/avdCA==}
 
-  '@ethersproject/address@5.7.0':
-    resolution: {integrity: sha512-9wYhYt7aghVGo758POM5nqcOMaE168Q6aRLJZwUmiqSrAungkG74gSSeKEIR7ukixesdRZGPgVqme6vmxs1fkA==}
-
   '@ethersproject/address@5.8.0':
     resolution: {integrity: sha512-GhH/abcC46LJwshoN+uBNoKVFPxUuZm6dA257z0vZkKmU1+t8xTn8oK7B9qrj8W2rFRMch4gbJl6PmVxjxBEBA==}
-
-  '@ethersproject/base64@5.7.0':
-    resolution: {integrity: sha512-Dr8tcHt2mEbsZr/mwTPIQAf3Ai0Bks/7gTw9dSqk1mQvhW3XvRlmDJr/4n+wg1JmCl16NZue17CDh8xb/vZ0sQ==}
 
   '@ethersproject/base64@5.8.0':
     resolution: {integrity: sha512-lN0oIwfkYj9LbPx4xEkie6rAMJtySbpOAFXSDVQaBnAzYfB4X2Qr+FXJGxMoc3Bxp2Sm8OwvzMrywxyw0gLjIQ==}
@@ -20785,14 +20583,8 @@ packages:
   '@ethersproject/constants@5.8.0':
     resolution: {integrity: sha512-wigX4lrf5Vu+axVTIvNsuL6YrV4O5AXl5ubcURKMEME5TnWBouUh0CDTWxZ2GpnRn1kcCgE7l8O5+VbV9QTTcg==}
 
-  '@ethersproject/hash@5.7.0':
-    resolution: {integrity: sha512-qX5WrQfnah1EFnO5zJv1v46a8HW0+E5xuBBDTwMFZLuVTx0tbU2kkx15NqdjxecrLGatQN9FGQKpb1FKdHCt+g==}
-
   '@ethersproject/hash@5.8.0':
     resolution: {integrity: sha512-ac/lBcTbEWW/VGJij0CNSw/wPcw9bSRgCB0AIBz8CvED/jfvDoV9hsIIiWfvWmFEi8RcXtlNwp2jv6ozWOsooA==}
-
-  '@ethersproject/keccak256@5.7.0':
-    resolution: {integrity: sha512-2UcPboeL/iW+pSg6vZ6ydF8tCnv3Iu/8tUmLLzWWGzxWKFFqOBQFLo6uLUv6BDrLgCDfN28RJ/wtByx+jZ4KBg==}
 
   '@ethersproject/keccak256@5.8.0':
     resolution: {integrity: sha512-A1pkKLZSz8pDaQ1ftutZoaN46I6+jvuqugx5KYNeQOPqq+JZ0Txm7dlWesCHB5cndJSu5vP2VKptKf7cksERng==}
@@ -20806,14 +20598,8 @@ packages:
   '@ethersproject/networks@5.8.0':
     resolution: {integrity: sha512-egPJh3aPVAzbHwq8DD7Po53J4OUSsA1MjQp8Vf/OZPav5rlmWUaFLiq8cvQiGK0Z5K6LYzm29+VA/p4RL1FzNg==}
 
-  '@ethersproject/properties@5.7.0':
-    resolution: {integrity: sha512-J87jy8suntrAkIZtecpxEPxY//szqr1mlBaYlQ0r4RCaiD2hjheqF9s1LVE8vVuJCXisjIP+JgtK/Do54ej4Sw==}
-
   '@ethersproject/properties@5.8.0':
     resolution: {integrity: sha512-PYuiEoQ+FMaZZNGrStmN7+lWjlsoufGIHdww7454FIaGdbe/p5rnaCXTr5MtBYl3NkeoVhHZuyzChPeGeKIpQw==}
-
-  '@ethersproject/rlp@5.7.0':
-    resolution: {integrity: sha512-rBxzX2vK8mVF7b0Tol44t5Tb8gomOHkj5guL+HhzQ1yBh/ydjGnpw6at+X6Iw0Kp3OzzzkcKp8N9r0W4kYSs9w==}
 
   '@ethersproject/rlp@5.8.0':
     resolution: {integrity: sha512-LqZgAznqDbiEunaUvykH2JAoXTT9NV0Atqk8rQN9nx9SEgThA/WMx5DnW8a9FOufo//6FZOCHZ+XiClzgbqV9Q==}
@@ -20821,20 +20607,11 @@ packages:
   '@ethersproject/shims@5.7.0':
     resolution: {integrity: sha512-WeDptc6oAprov5CCN2LJ/6/+dC9gTonnkdAtLepm/7P5Z+3PRxS5NpfVWmOMs1yE4Vitl2cU8bOPWC0GvGSbVg==}
 
-  '@ethersproject/signing-key@5.7.0':
-    resolution: {integrity: sha512-MZdy2nL3wO0u7gkB4nA/pEf8lu1TlFswPNmy8AiYkfKTdO6eXBJyUdmHO/ehm/htHw9K/qF8ujnTyUAD+Ry54Q==}
-
   '@ethersproject/signing-key@5.8.0':
     resolution: {integrity: sha512-LrPW2ZxoigFi6U6aVkFN/fa9Yx/+4AtIUe4/HACTvKJdhm0eeb107EVCIQcrLZkxaSIgc/eCrX8Q1GtbH+9n3w==}
 
-  '@ethersproject/strings@5.7.0':
-    resolution: {integrity: sha512-/9nu+lj0YswRNSH0NXYqrh8775XNyEdUQAuf3f+SmOrnVewcJ5SBNAjF7lpgehKi4abvNNXyf+HX86czCdJ8Mg==}
-
   '@ethersproject/strings@5.8.0':
     resolution: {integrity: sha512-qWEAk0MAvl0LszjdfnZ2uC8xbR2wdv4cDabyHiBh3Cldq/T8dPH3V4BbBsAYJUeonwD+8afVXld274Ls+Y1xXg==}
-
-  '@ethersproject/transactions@5.7.0':
-    resolution: {integrity: sha512-kmcNicCp1lp8qanMTC3RIikGgoJ80ztTyvtsFvCYpSCfkjhD0jZ2LOrnbcuxuToLIUYYf+4XwD1rP+B/erDIhQ==}
 
   '@ethersproject/transactions@5.8.0':
     resolution: {integrity: sha512-UglxSDjByHG0TuU17bDfCemZ3AnKO2vYrL5/2n2oXvKzvb7Cz+W9gOWXKARjp2URVwcWlQlPOEQyAviKwT4AHg==}
@@ -21487,19 +21264,6 @@ packages:
     peerDependencies:
       react: 19.1.4
       react-native: '*'
-
-  '@gql.tada/cli-utils@1.7.3':
-    resolution: {integrity: sha512-3iQY5E/jvv3Lnh6D1Mh7zr+Bb9C/TGk1DHkm+lbIjQBnZAu2m+BcTcr1e3spUt6Aa6HG/xAN2XxpbWw9oZALEg==}
-    peerDependencies:
-      '@gql.tada/svelte-support': 1.0.2
-      '@gql.tada/vue-support': 1.0.2
-      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
-      typescript: ^5.0.0 || ^6.0.0
-    peerDependenciesMeta:
-      '@gql.tada/svelte-support':
-        optional: true
-      '@gql.tada/vue-support':
-        optional: true
 
   '@gql.tada/cli-utils@1.9.3':
     resolution: {integrity: sha512-P1TiXErpJwIi73sei5fzwGA/SOeCaIHFWFR4RdZPLwqxZzQN0T6MAUivzXBgKCORL67rvYnLaaPoWeqWq/61ug==}
@@ -31656,11 +31420,6 @@ packages:
   es6template@1.0.5:
     resolution: {integrity: sha512-WASLwPb/GoVFxESVJqpVpgUhrC3Z4mami74a2d2MsvYwicn8YkGSWGippd+l2ciSoPoymv4KNFYgDi3B4t7RGA==}
 
-  esbuild@0.20.2:
-    resolution: {integrity: sha512-WdOOppmUNU+IbZ0PaDiTst80zjnrOkyJNHoKupIcVyU8Lvla3Ugx94VzkQ32Ijqd7UhHJy75gNWDMUekcrSJ6g==}
-    engines: {node: '>=12'}
-    hasBin: true
-
   esbuild@0.25.5:
     resolution: {integrity: sha512-P8OtKZRv/5J5hhz0cUAdu/cLuPIKXpQl1R9pZtvmHWQvrAUVd0UNIPT4IB4W3rNOqVO0rlqHmCIbSwxh/c9yUQ==}
     engines: {node: '>=18'}
@@ -32935,12 +32694,6 @@ packages:
     peerDependencies:
       typescript: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  gql.tada@1.9.2:
-    resolution: {integrity: sha512-QxRHVpxtrOVdYXz6oavq0lBM+Zdp0swapLGJcD4SLpXDcsD337BHDFrzqqjfkbepv0sSAiO0LGabu1kI5D5Gyg==}
-    hasBin: true
-    peerDependencies:
-      typescript: ^5.0.0 || ^6.0.0
-
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
@@ -32956,14 +32709,6 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-
-  graphql@16.10.0:
-    resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
-    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
-
-  graphql@16.13.2:
-    resolution: {integrity: sha512-5bJ+nf/UCpAjHM8i06fl7eLyVC9iuNAjm9qzkiu2ZGhM0VscSvS6WDPfAwkdkBuoXGM9FJSbKl6wylMwP9Ktig==}
-    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   graphql@16.14.2:
     resolution: {integrity: sha512-Chq1s4CY7jmh8gO2qvLIJyfCDIN+EHLFW/9iShnp1z8FjBQMoodWP1kDC36VAMXXIvAjj4ARa7ntfAV2BrjsbA==}
@@ -35054,9 +34799,6 @@ packages:
 
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
-
-  long@5.2.3:
-    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
 
   long@5.3.1:
     resolution: {integrity: sha512-ka87Jz3gcx/I7Hal94xaN2tZEOPoUOEVftkQqZx2EeQRN7LGdfLlI3FvZ+7WDplm+vK2Urx9ULrvSowtdCieng==}
@@ -37601,10 +37343,6 @@ packages:
 
   protobufjs@7.2.5:
     resolution: {integrity: sha512-gGXRSXvxQ7UiPgfw8gevrfRWcTlSbOFg+p/N+JVJEK5VhueL2miT6qTymqAmjr1Q5WbOCyJbyrk6JfWKwlFn6A==}
-    engines: {node: '>=12.0.0'}
-
-  protobufjs@7.3.2:
-    resolution: {integrity: sha512-RXyHaACeqXeqAKGLDl68rQKbmObRsTIn4TYVUUug1KfS47YWCo5MacGITEryugIgZqORCvJWEk4l449POg5Txg==}
     engines: {node: '>=12.0.0'}
 
   protobufjs@7.5.4:
@@ -40293,11 +40031,6 @@ packages:
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
 
-  tsx@4.10.3:
-    resolution: {integrity: sha512-f0g60aFSVRVkzcQkEflh8fPLRfmt+HJHgWi/plG5UgvVaV+9TcpOwJ0sZJSACXmwmjMPg9yQR0BhTLbhkfV2uA==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-
   tsx@4.20.6:
     resolution: {integrity: sha512-ytQKuwgmrrkDTFP4LjR0ToE2nqgy886GpvRSpU0JAnrdBYppuY5rLkRUYPU1yCryb24SsKBTL/hlDQAEFVwtZg==}
     engines: {node: '>=18.0.0'}
@@ -41626,21 +41359,11 @@ snapshots:
 
   '@0no-co/graphql.web@1.0.11': {}
 
-  '@0no-co/graphql.web@1.0.11(graphql@16.13.2)':
-    optionalDependencies:
-      graphql: 16.13.2
-
   '@0no-co/graphql.web@1.3.3': {}
 
   '@0no-co/graphql.web@1.3.3(graphql@16.14.2)':
     optionalDependencies:
       graphql: 16.14.2
-
-  '@0no-co/graphqlsp@1.12.16(@typescript/typescript6@6.0.2)(graphql@16.13.2)':
-    dependencies:
-      '@gql.tada/internal': 1.0.9(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      graphql: 16.13.2
-      typescript: '@typescript/typescript6@6.0.2'
 
   '@0no-co/graphqlsp@1.17.3(@typescript/typescript6@6.0.2)(graphql@16.14.2)':
     dependencies:
@@ -41686,14 +41409,14 @@ snapshots:
     dependencies:
       graphql: 16.14.2
 
-  '@apollo/client@3.12.6(graphql@16.10.0)(react@19.1.4)':
+  '@apollo/client@3.12.6(graphql@16.14.2)(react@19.1.4)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
       '@wry/caches': 1.0.1
       '@wry/equality': 0.5.7
       '@wry/trie': 0.5.0
-      graphql: 16.10.0
-      graphql-tag: 2.12.6(graphql@16.10.0)
+      graphql: 16.14.2
+      graphql-tag: 2.12.6(graphql@16.14.2)
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
       prop-types: 15.8.1
@@ -46354,103 +46077,52 @@ snapshots:
 
   '@emotion/weak-memoize@0.4.0': {}
 
-  '@esbuild/aix-ppc64@0.20.2':
-    optional: true
-
   '@esbuild/aix-ppc64@0.25.5':
-    optional: true
-
-  '@esbuild/android-arm64@0.20.2':
     optional: true
 
   '@esbuild/android-arm64@0.25.5':
     optional: true
 
-  '@esbuild/android-arm@0.20.2':
-    optional: true
-
   '@esbuild/android-arm@0.25.5':
-    optional: true
-
-  '@esbuild/android-x64@0.20.2':
     optional: true
 
   '@esbuild/android-x64@0.25.5':
     optional: true
 
-  '@esbuild/darwin-arm64@0.20.2':
-    optional: true
-
   '@esbuild/darwin-arm64@0.25.5':
-    optional: true
-
-  '@esbuild/darwin-x64@0.20.2':
     optional: true
 
   '@esbuild/darwin-x64@0.25.5':
     optional: true
 
-  '@esbuild/freebsd-arm64@0.20.2':
-    optional: true
-
   '@esbuild/freebsd-arm64@0.25.5':
-    optional: true
-
-  '@esbuild/freebsd-x64@0.20.2':
     optional: true
 
   '@esbuild/freebsd-x64@0.25.5':
     optional: true
 
-  '@esbuild/linux-arm64@0.20.2':
-    optional: true
-
   '@esbuild/linux-arm64@0.25.5':
-    optional: true
-
-  '@esbuild/linux-arm@0.20.2':
     optional: true
 
   '@esbuild/linux-arm@0.25.5':
     optional: true
 
-  '@esbuild/linux-ia32@0.20.2':
-    optional: true
-
   '@esbuild/linux-ia32@0.25.5':
-    optional: true
-
-  '@esbuild/linux-loong64@0.20.2':
     optional: true
 
   '@esbuild/linux-loong64@0.25.5':
     optional: true
 
-  '@esbuild/linux-mips64el@0.20.2':
-    optional: true
-
   '@esbuild/linux-mips64el@0.25.5':
-    optional: true
-
-  '@esbuild/linux-ppc64@0.20.2':
     optional: true
 
   '@esbuild/linux-ppc64@0.25.5':
     optional: true
 
-  '@esbuild/linux-riscv64@0.20.2':
-    optional: true
-
   '@esbuild/linux-riscv64@0.25.5':
     optional: true
 
-  '@esbuild/linux-s390x@0.20.2':
-    optional: true
-
   '@esbuild/linux-s390x@0.25.5':
-    optional: true
-
-  '@esbuild/linux-x64@0.20.2':
     optional: true
 
   '@esbuild/linux-x64@0.25.5':
@@ -46459,40 +46131,22 @@ snapshots:
   '@esbuild/netbsd-arm64@0.25.5':
     optional: true
 
-  '@esbuild/netbsd-x64@0.20.2':
-    optional: true
-
   '@esbuild/netbsd-x64@0.25.5':
     optional: true
 
   '@esbuild/openbsd-arm64@0.25.5':
     optional: true
 
-  '@esbuild/openbsd-x64@0.20.2':
-    optional: true
-
   '@esbuild/openbsd-x64@0.25.5':
-    optional: true
-
-  '@esbuild/sunos-x64@0.20.2':
     optional: true
 
   '@esbuild/sunos-x64@0.25.5':
     optional: true
 
-  '@esbuild/win32-arm64@0.20.2':
-    optional: true
-
   '@esbuild/win32-arm64@0.25.5':
     optional: true
 
-  '@esbuild/win32-ia32@0.20.2':
-    optional: true
-
   '@esbuild/win32-ia32@0.25.5':
-    optional: true
-
-  '@esbuild/win32-x64@0.20.2':
     optional: true
 
   '@esbuild/win32-x64@0.25.5':
@@ -46528,18 +46182,6 @@ snapshots:
 
   '@ethereumjs/rlp@5.0.2': {}
 
-  '@ethersproject/abi@5.7.0':
-    dependencies:
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/hash': 5.7.0
-      '@ethersproject/keccak256': 5.8.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
-
   '@ethersproject/abi@5.8.0':
     dependencies:
       '@ethersproject/address': 5.8.0
@@ -46562,14 +46204,6 @@ snapshots:
       '@ethersproject/transactions': 5.8.0
       '@ethersproject/web': 5.8.0
 
-  '@ethersproject/abstract-signer@5.7.0':
-    dependencies:
-      '@ethersproject/abstract-provider': 5.8.0
-      '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/logger': 5.8.0
-      '@ethersproject/properties': 5.8.0
-
   '@ethersproject/abstract-signer@5.8.0':
     dependencies:
       '@ethersproject/abstract-provider': 5.8.0
@@ -46578,14 +46212,6 @@ snapshots:
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
 
-  '@ethersproject/address@5.7.0':
-    dependencies:
-      '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/keccak256': 5.8.0
-      '@ethersproject/logger': 5.8.0
-      '@ethersproject/rlp': 5.8.0
-
   '@ethersproject/address@5.8.0':
     dependencies:
       '@ethersproject/bignumber': 5.8.0
@@ -46593,10 +46219,6 @@ snapshots:
       '@ethersproject/keccak256': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/rlp': 5.8.0
-
-  '@ethersproject/base64@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
 
   '@ethersproject/base64@5.8.0':
     dependencies:
@@ -46630,18 +46252,6 @@ snapshots:
     dependencies:
       '@ethersproject/bignumber': 5.8.0
 
-  '@ethersproject/hash@5.7.0':
-    dependencies:
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
-
   '@ethersproject/hash@5.8.0':
     dependencies:
       '@ethersproject/abstract-signer': 5.8.0
@@ -46653,11 +46263,6 @@ snapshots:
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
-
-  '@ethersproject/keccak256@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      js-sha3: 0.8.0
 
   '@ethersproject/keccak256@5.8.0':
     dependencies:
@@ -46672,18 +46277,9 @@ snapshots:
     dependencies:
       '@ethersproject/logger': 5.8.0
 
-  '@ethersproject/properties@5.7.0':
-    dependencies:
-      '@ethersproject/logger': 5.8.0
-
   '@ethersproject/properties@5.8.0':
     dependencies:
       '@ethersproject/logger': 5.8.0
-
-  '@ethersproject/rlp@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/logger': 5.7.0
 
   '@ethersproject/rlp@5.8.0':
     dependencies:
@@ -46691,15 +46287,6 @@ snapshots:
       '@ethersproject/logger': 5.8.0
 
   '@ethersproject/shims@5.7.0': {}
-
-  '@ethersproject/signing-key@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/logger': 5.8.0
-      '@ethersproject/properties': 5.8.0
-      bn.js: 5.2.2
-      elliptic: 6.6.1
-      hash.js: 1.1.7
 
   '@ethersproject/signing-key@5.8.0':
     dependencies:
@@ -46710,29 +46297,11 @@ snapshots:
       elliptic: 6.6.1
       hash.js: 1.1.7
 
-  '@ethersproject/strings@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/constants': 5.8.0
-      '@ethersproject/logger': 5.8.0
-
   '@ethersproject/strings@5.8.0':
     dependencies:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/constants': 5.8.0
       '@ethersproject/logger': 5.8.0
-
-  '@ethersproject/transactions@5.7.0':
-    dependencies:
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/keccak256': 5.8.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/rlp': 5.7.0
-      '@ethersproject/signing-key': 5.7.0
 
   '@ethersproject/transactions@5.8.0':
     dependencies:
@@ -46748,8 +46317,8 @@ snapshots:
 
   '@ethersproject/units@5.7.0':
     dependencies:
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/constants': 5.7.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/constants': 5.8.0
       '@ethersproject/logger': 5.7.0
 
   '@ethersproject/web@5.8.0':
@@ -47922,13 +47491,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
-  '@gql.tada/cli-utils@1.7.3(@typescript/typescript6@6.0.2)(graphql@16.13.2)':
-    dependencies:
-      '@0no-co/graphqlsp': 1.12.16(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      '@gql.tada/internal': 1.0.9(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      graphql: 16.13.2
-      typescript: '@typescript/typescript6@6.0.2'
-
   '@gql.tada/cli-utils@1.9.3(@typescript/typescript6@6.0.2)(graphql@16.14.2)':
     dependencies:
       '@0no-co/graphqlsp': 1.17.3(@typescript/typescript6@6.0.2)(graphql@16.14.2)
@@ -47936,10 +47498,10 @@ snapshots:
       graphql: 16.14.2
       typescript: '@typescript/typescript6@6.0.2'
 
-  '@gql.tada/internal@1.0.9(@typescript/typescript6@6.0.2)(graphql@16.13.2)':
+  '@gql.tada/internal@1.0.9(@typescript/typescript6@6.0.2)(graphql@16.14.2)':
     dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
-      graphql: 16.13.2
+      '@0no-co/graphql.web': 1.3.3(graphql@16.14.2)
+      graphql: 16.14.2
       typescript: '@typescript/typescript6@6.0.2'
 
   '@gql.tada/internal@1.2.2(@typescript/typescript6@6.0.2)(graphql@16.14.2)':
@@ -47967,10 +47529,6 @@ snapshots:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
       graphql: 16.14.2
       tslib: 2.6.2
-
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
-    dependencies:
-      graphql: 16.10.0
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.14.2)':
     dependencies:
@@ -50017,7 +49575,7 @@ snapshots:
       axios: 1.13.6
       bip39: 3.1.0
 
-  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)':
+  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(protobufjs@7.5.4)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
       '@noble/ed25519': 1.7.3
@@ -50030,7 +49588,7 @@ snapshots:
       ed2curve: 0.3.0
       json-bigint: 1.0.0
       keccak: 3.0.2
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       scryptsy: 2.1.0
       tweetnacl: 1.0.3
       uuid: 8.3.2
@@ -61440,7 +60998,7 @@ snapshots:
 
   detect-node@2.1.0: {}
 
-  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba)(detox@20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.4.1)(@jest/types@30.4.1)(jest-docblock@30.4.0)(jest-environment-node@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=44e36d4e6e5a8db4049091a3b42ab07fa4d08a2243bdfaab52010b822527d9ac)(detox@20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.4.1)(@jest/types@30.4.1)(jest-docblock@30.4.0)(jest-environment-node@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.51.3(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.4.1)(jest@30.4.1(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
@@ -62169,32 +61727,6 @@ snapshots:
       extend-shallow: 2.0.1
       get-value: 2.0.6
       sliced: 1.0.1
-
-  esbuild@0.20.2:
-    optionalDependencies:
-      '@esbuild/aix-ppc64': 0.20.2
-      '@esbuild/android-arm': 0.20.2
-      '@esbuild/android-arm64': 0.20.2
-      '@esbuild/android-x64': 0.20.2
-      '@esbuild/darwin-arm64': 0.20.2
-      '@esbuild/darwin-x64': 0.20.2
-      '@esbuild/freebsd-arm64': 0.20.2
-      '@esbuild/freebsd-x64': 0.20.2
-      '@esbuild/linux-arm': 0.20.2
-      '@esbuild/linux-arm64': 0.20.2
-      '@esbuild/linux-ia32': 0.20.2
-      '@esbuild/linux-loong64': 0.20.2
-      '@esbuild/linux-mips64el': 0.20.2
-      '@esbuild/linux-ppc64': 0.20.2
-      '@esbuild/linux-riscv64': 0.20.2
-      '@esbuild/linux-s390x': 0.20.2
-      '@esbuild/linux-x64': 0.20.2
-      '@esbuild/netbsd-x64': 0.20.2
-      '@esbuild/openbsd-x64': 0.20.2
-      '@esbuild/sunos-x64': 0.20.2
-      '@esbuild/win32-arm64': 0.20.2
-      '@esbuild/win32-ia32': 0.20.2
-      '@esbuild/win32-x64': 0.20.2
 
   esbuild@0.25.5:
     optionalDependencies:
@@ -63813,18 +63345,6 @@ snapshots:
       - '@gql.tada/vue-support'
       - graphql
 
-  gql.tada@1.9.2(@typescript/typescript6@6.0.2)(graphql@16.13.2):
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
-      '@0no-co/graphqlsp': 1.12.16(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      '@gql.tada/cli-utils': 1.7.3(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      '@gql.tada/internal': 1.0.9(@typescript/typescript6@6.0.2)(graphql@16.13.2)
-      typescript: '@typescript/typescript6@6.0.2'
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - graphql
-
   graceful-fs@4.2.11: {}
 
   gradient-string@2.0.2:
@@ -63834,14 +63354,10 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-tag@2.12.6(graphql@16.10.0):
+  graphql-tag@2.12.6(graphql@16.14.2):
     dependencies:
-      graphql: 16.10.0
+      graphql: 16.14.2
       tslib: 2.6.2
-
-  graphql@16.10.0: {}
-
-  graphql@16.13.2: {}
 
   graphql@16.14.2: {}
 
@@ -66711,8 +66227,6 @@ snapshots:
 
   long@4.0.0: {}
 
-  long@5.2.3: {}
-
   long@5.3.1: {}
 
   longest-streak@3.1.0: {}
@@ -67366,7 +66880,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
@@ -67627,7 +67143,7 @@ snapshots:
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
-      metro: 0.83.7(metro-transform-worker@0.83.7)
+      metro: 0.83.7
       metro-babel-transformer: 0.83.7
       metro-cache: 0.83.7
       metro-cache-key: 0.83.7
@@ -67777,53 +67293,6 @@ snapshots:
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro@0.83.7(metro-transform-worker@0.83.7):
-    dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
-      accepts: 2.0.0
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 4.4.3
-      error-stack-parser: 2.1.4
-      flow-enums-runtime: 0.0.6
-      graceful-fs: 4.2.11
-      hermes-parser: 0.35.0
-      image-size: 1.1.1
-      invariant: 2.2.4
-      jest-worker: 29.7.0
-      jsc-safe-url: 0.2.4
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.83.7
-      metro-cache: 0.83.7
-      metro-cache-key: 0.83.7
-      metro-config: 0.83.7(metro-transform-worker@0.83.7)
-      metro-core: 0.83.7
-      metro-file-map: 0.83.7
-      metro-resolver: 0.83.7
-      metro-runtime: 0.83.7
-      metro-source-map: 0.83.7
-      metro-symbolicate: 0.83.7
-      metro-transform-plugins: 0.83.7
-      metro-transform-worker: 0.83.7
-      mime-types: 3.0.1
-      nullthrows: 1.1.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      throat: 5.0.0
-      ws: 7.5.10
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -70232,21 +69701,6 @@ snapshots:
       long: 4.0.0
 
   protobufjs@7.2.5:
-    dependencies:
-      '@protobufjs/aspromise': 1.1.2
-      '@protobufjs/base64': 1.1.2
-      '@protobufjs/codegen': 2.0.4
-      '@protobufjs/eventemitter': 1.1.0
-      '@protobufjs/fetch': 1.1.0
-      '@protobufjs/float': 1.0.2
-      '@protobufjs/inquire': 1.1.0
-      '@protobufjs/path': 1.1.2
-      '@protobufjs/pool': 1.1.0
-      '@protobufjs/utf8': 1.1.0
-      '@types/node': 24.12.0
-      long: 5.3.1
-
-  protobufjs@7.3.2:
     dependencies:
       '@protobufjs/aspromise': 1.1.2
       '@protobufjs/base64': 1.1.2
@@ -73873,13 +73327,6 @@ snapshots:
     dependencies:
       tslib: 2.6.2
       typescript: 4.9.5
-
-  tsx@4.10.3:
-    dependencies:
-      esbuild: 0.20.2
-      get-tsconfig: 4.7.5
-    optionalDependencies:
-      fsevents: 2.3.3
 
   tsx@4.20.6:
     dependencies:

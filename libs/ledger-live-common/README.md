@@ -59,3 +59,4 @@ formatting.
 - Coin modules: [../coin-modules/README.md](../coin-modules/README.md)
 - LedgerJS: [../ledgerjs/README.md](../ledgerjs/README.md)
 - Blockchain support process: [Ledger Developer Portal](https://developers.ledger.com/docs/coin/general-process/)
+
