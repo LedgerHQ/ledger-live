@@ -30,7 +30,7 @@ const Idler = () => {
     };
   }, [debounceOnChange]);
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
     if (hasPassword && autoLockTimeout && autoLockTimeout !== -1) {
       timeout = setTimeout(() => {
         dispatch(lock());

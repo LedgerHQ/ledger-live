@@ -1,1 +1,1 @@
-export * from "./ContactAvatar.web";
+export * from "./ContactAvatar";

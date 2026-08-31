@@ -65,7 +65,7 @@ class StepperNumber extends PureComponent<Props, State> {
     }
   }
 
-  _timeout: NodeJS.Timeout | undefined = undefined;
+  _timeout: ReturnType<typeof setTimeout> | undefined = undefined;
   isMax = (v: number) => v >= this.props.max;
   isMin = (v: number) => v <= this.props.min;
   emitChange = (v: number) => {

@@ -17,7 +17,7 @@ type Props = {
 const CopyWithFeedback = ({ text }: Props) => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isUnmountedRef = useRef(false);
 
   useEffect(() => {

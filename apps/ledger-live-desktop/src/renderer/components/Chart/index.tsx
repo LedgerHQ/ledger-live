@@ -99,7 +99,7 @@ export default function Chart({
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<ChartJs | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const { colors } = useTheme();
   const [tooltip, setTooltip] = useState<ChartTooltipModel>();
   const valueKeyRef = useRef(valueKey);

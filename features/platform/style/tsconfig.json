@@ -10,6 +10,8 @@
     "noEmit": true,
     "types": ["jest", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.native.json" }
+  ]
 }

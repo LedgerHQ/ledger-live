@@ -1,3 +1,3 @@
 export * from "./index";
-export * from "./ContactsListView.web";
-export * from "./components/ContactsCompactList/ContactsCompactList.web";
+export { ContactsListView } from "./ContactsListView.web";
+export { ContactsCompactList } from "./components/ContactsCompactList/ContactsCompactList.web";

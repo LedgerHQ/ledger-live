@@ -1,1 +1,1 @@
-export * from "./ContactNameInput.web";
+export * from "./ContactNameInput";

@@ -61,7 +61,7 @@ const Drawer = () => {
     wasOpenRef.current = state.open;
   }, [state.open, state.id]);
   useEffect(() => {
-    let t: NodeJS.Timeout | undefined;
+    let t: ReturnType<typeof setTimeout> | undefined;
     if (queue.length > 1) {
       const [, ...rest] = queue;
       t = setTimeout(() => setQueue(rest), DURATION * 2);
