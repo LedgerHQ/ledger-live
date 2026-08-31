@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   BottomSheet,
   BottomSheetHeader,
@@ -24,16 +24,22 @@ export function UnsupportedSelectionTooltipSheet({ tooltip, onClose }: Props): R
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const bottomSheetRef = useBottomSheetRef();
+  const isClosingRef = useRef(true);
 
   useEffect(() => {
     if (tooltip) {
+      isClosingRef.current = false;
       bottomSheetRef.current?.present();
     } else {
+      isClosingRef.current = true;
       bottomSheetRef.current?.dismiss();
     }
   }, [bottomSheetRef, tooltip]);
 
   const handleClose = useCallback(() => {
+    if (isClosingRef.current) return;
+
+    isClosingRef.current = true;
     onClose();
     bottomSheetRef.current?.dismiss();
   }, [bottomSheetRef, onClose]);
@@ -46,7 +52,7 @@ export function UnsupportedSelectionTooltipSheet({ tooltip, onClose }: Props): R
       maxDynamicContentSize="fullWithOffset"
       backdropPressBehavior="close"
       backgroundComponent={BottomSheetInfoGradient}
-      onClose={onClose}
+      onClose={handleClose}
       enablePanDownToClose
       testID="contacts-unsupported-selection-tooltip"
     >

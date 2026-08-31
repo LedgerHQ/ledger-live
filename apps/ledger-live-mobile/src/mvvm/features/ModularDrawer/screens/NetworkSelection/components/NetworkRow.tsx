@@ -59,7 +59,7 @@ export const NetworkRow = ({
     </ListItem>
   );
 
-  if (!disabledTooltip || !onDisabledPress) return listItem;
+  if (!disabled || !disabledTooltip || !onDisabledPress) return listItem;
 
   return (
     <Pressable
