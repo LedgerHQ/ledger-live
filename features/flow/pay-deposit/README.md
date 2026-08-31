@@ -15,15 +15,6 @@ import { DepositOptions } from "@features/flow-pay-deposit";
 <DepositOptions
   isOpen={isDepositOpen}
   page="Pay"
-  labels={{
-    title: t("payTab.deposit.title"),
-    options: {
-      bankTransfer: { title: t("..."), description: t("...") },
-      swap: { title: t("..."), description: t("...") },
-      receive: { title: t("..."), description: t("...") },
-      buy: { title: t("..."), description: t("...") },
-    },
-  }}
   onClose={closeDeposit}
   onSelect={handleDepositOption}
   onTrackEvent={track}
@@ -32,8 +23,9 @@ import { DepositOptions } from "@features/flow-pay-deposit";
 
 The overlay is opened by the host (the Pay tab Deposit / "add stablecoins" action tile) via a local
 `isOpen` boolean. The view stays props-only: it emits `onSelect(id)` and the host owns navigation
-(Swap tab, Receive filtered to stablecoins, Buy live app, Bank transfer flow). i18n and analytics
-resolution stay in the app; this package stays i18n-agnostic.
+(Swap tab, Receive filtered to stablecoins, Buy live app, Bank transfer flow). Copy is resolved
+inside the feature through `@shared/i18n` (`payTab.deposit.*`); the host injects navigation and
+analytics only.
 
 ### Tracking
 

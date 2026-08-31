@@ -7138,6 +7138,9 @@ importers:
 
   features/flow/pay-deposit:
     dependencies:
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../../../shared/ui-queued-bottom-sheet
