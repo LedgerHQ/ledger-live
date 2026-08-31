@@ -10,6 +10,7 @@ export type AccountKey =
   | "cosmos"
   | "ethereum"
   | "hedera"
+  | "mina"
   | "multiversx"
   | "near"
   | "polkadot"
@@ -57,6 +58,9 @@ export const accountsByKey = {
   }),
   hedera: genAccount("notifications-prompt-hedera", {
     currency: getCryptoCurrencyById("hedera"),
+  }),
+  mina: genAccount("notifications-prompt-mina", {
+    currency: getCryptoCurrencyById("mina"),
   }),
   multiversx: genAccount("notifications-prompt-multiversx", {
     currency: getCryptoCurrencyById("elrond"),
@@ -353,6 +357,17 @@ export const stakePromptCases: StakePromptCase[] = [
       properties: { stakingNodeId: 1 },
     },
     params: { source: stakePromptSource },
+  },
+  {
+    label: "Mina staking",
+    bucket: "delegation/staking",
+    flowName: NavigatorName.MinaStakingFlow,
+    familyExportKey: "MinaStakingFlow",
+    successScreenName: ScreenName.MinaStakingValidationSuccess,
+    errorScreenName: ScreenName.MinaStakingValidationError,
+    accountKey: "mina",
+    operationType: "DELEGATE",
+    transaction: { family: "mina", txType: "stake", recipient: "mina-validator" },
   },
   {
     label: "MultiversX claim rewards",

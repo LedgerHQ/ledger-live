@@ -96,4 +96,11 @@ describe("AccountBalanceSummaryFooter", () => {
 
     expect(screen.getByText(mockValidators[0].address)).toBeOnTheScreen();
   });
+
+  it("falls back to a dash when the delegate metadata is missing", () => {
+    const account = createDelegatingMinaAccount(null);
+    render(<AccountBalanceFooter account={account} />);
+
+    expect(screen.getAllByText("-")).toHaveLength(2);
+  });
 });

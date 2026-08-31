@@ -8,6 +8,7 @@ import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import StakingValidator from "./01-Validator";
 import StakingSummary from "./02-Summary";
 import StakingValidationError from "./04-ValidationError";
@@ -35,6 +36,7 @@ const ConnectDeviceStepHeader = ({ title, subtitle }: { title: string; subtitle:
 function StakingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   const validatorHeaderTitle = useCallback(
@@ -71,7 +73,7 @@ function StakingFlow() {
   const connectDeviceHeaderTitle = useCallback(
     () => (
       <ConnectDeviceStepHeader
-        title={t("mina.selectValidator.stepLabels.connectDevice")}
+        title={t("mina.selectValidator.stepLabels.confirmation")}
         subtitle={t("send.stepperHeader.stepRange", {
           currentStep: "3",
           totalSteps,
@@ -135,6 +137,11 @@ function StakingFlow() {
           headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>

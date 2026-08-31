@@ -72,7 +72,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={t("mina.summaryFooter.delegatedTo")}
         onPress={onPressInfoCreator("delegatedTo")}
-        value={account.resources?.delegateInfo?.identityName || ""}
+        value={account.resources?.delegateInfo?.identityName || "-"}
       />
       <InfoItem
         title={t("mina.summaryFooter.stakedBalance")}
@@ -82,7 +82,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={t("mina.summaryFooter.producerAddress")}
         onPress={onPressInfoCreator("producerAddress")}
-        value={account.resources?.delegateInfo?.address || ""}
+        value={account.resources?.delegateInfo?.address || "-"}
       />
     </ScrollView>
   );
