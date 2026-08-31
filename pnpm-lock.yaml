@@ -938,6 +938,9 @@ importers:
       '@features/flow-pay-balance':
         specifier: workspace:^
         version: link:../../features/flow/pay-balance
+      '@features/flow-pay-bank-transfer':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-bank-transfer
       '@features/flow-pay-card':
         specifier: workspace:^
         version: link:../../features/flow/pay-card
@@ -1789,6 +1792,9 @@ importers:
       '@features/flow-pay-balance':
         specifier: workspace:^
         version: link:../../features/flow/pay-balance
+      '@features/flow-pay-bank-transfer':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-bank-transfer
       '@features/flow-pay-card':
         specifier: workspace:^
         version: link:../../features/flow/pay-card
