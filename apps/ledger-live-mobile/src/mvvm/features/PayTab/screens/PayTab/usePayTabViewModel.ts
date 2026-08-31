@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
-import { getEnv } from "@shared/env";
+import useEnv from "@features/platform-env";
 import { useTranslation } from "~/context/Locale";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
@@ -26,15 +26,21 @@ export function usePayTabViewModel() {
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
   const contacts = usePayTabContacts();
 
+  // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
+  // login must take the new values without a restart of the app.
+  const apiUrl = useEnv("CARD_API_URL");
+  const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
+  const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
+
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardProps["oauthConfig"] = useMemo(
     () => ({
-      apiUrl: getEnv("CARD_API_URL"),
-      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
-      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+      apiUrl,
+      clientId,
+      redirectUri,
       deepLink: PAY_TAB_DEEP_LINK,
     }),
-    [],
+    [apiUrl, clientId, redirectUri],
   );
 
   // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
