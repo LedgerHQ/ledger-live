@@ -888,24 +888,65 @@ describe("Contacts integration", () => {
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
 
-    const bitcoinAsset = await screen.findByTestId("asset-item-BTC");
+    const bitcoinAsset = await screen.findByTestId("asset-item-explanation-BTC");
     const tetherAsset = screen.getByTestId("asset-item-USDT");
-    expect(bitcoinAsset).toBeDisabled();
+    expect(bitcoinAsset).toBeEnabled();
     expect(tetherAsset).toBeEnabled();
+
+    await user.press(bitcoinAsset);
+
+    await waitFor(() => {
+      expect(screen.getByText("Bitcoin isn't supported yet")).toBeVisible();
+      expect(
+        screen.getByText(
+          "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",
+        ),
+      ).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Bitcoin isn't supported yet")).toBeNull();
+    });
+    expect(
+      screen.getByLabelText("Bitcoin isn't supported yet", {
+        exact: true,
+      }),
+    ).toBeVisible();
 
     await user.press(tetherAsset);
 
-    const solanaNetwork = await screen.findByTestId("network-item-Solana");
+    const solanaNetwork = await screen.findByTestId("network-item-explanation-Solana");
     const ethereumNetwork = screen.getByTestId("network-item-Ethereum");
-    expect(solanaNetwork).toBeDisabled();
+    expect(solanaNetwork).toBeEnabled();
     expect(ethereumNetwork).toBeEnabled();
+
+    await user.press(solanaNetwork);
+
+    await waitFor(() => {
+      expect(screen.getByText("Solana Network isn't supported yet")).toBeVisible();
+      expect(
+        screen.getByText(
+          "You can't select Solana network for Tether USD. We're adding more networks over time.",
+        ),
+      ).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Solana Network isn't supported yet")).toBeNull();
+    });
 
     await user.press(ethereumNetwork);
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
     });
-  });
+  }, 10_000);
 
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
