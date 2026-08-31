@@ -1,22 +1,20 @@
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactDetailActionsPorts } from "./ports";
+import type { ContactDeletionPort } from "./ports";
 import {
   createErrorContactDeleteLifecycle,
   createSuccessContactDeleteLifecycle,
-} from "./contactActionsViewModel";
+} from "./contactDeleteViewModel";
 import type { ContactDeleteLifecycle } from "../types";
 
-export type ContactDetailActionsController = Readonly<{
+export type ContactDeleteController = Readonly<{
   confirmDelete: (contactId: ContactId) => Promise<ContactDeleteLifecycle>;
 }>;
 
-export function createContactDetailActionsController(
-  ports: ContactDetailActionsPorts,
-): ContactDetailActionsController {
+export function createContactDeleteController(ports: ContactDeletionPort): ContactDeleteController {
   return {
     confirmDelete: async contactId => {
       try {
-        await ports.deletion.deleteContact(contactId);
+        await ports.deleteContact(contactId);
 
         return createSuccessContactDeleteLifecycle(contactId);
       } catch {

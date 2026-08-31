@@ -8,9 +8,9 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { Trash } from "@ledgerhq/lumen-ui-react/symbols";
-import type { ContactsDeleteConfirmationDialogProps } from "./types";
+import type { ContactConfirmationDialogProps } from "./types";
 
-export function ContactsDeleteConfirmationDialog({
+export function ContactConfirmationDialog({
   isOpen,
   isDeleting,
   labels,
@@ -18,7 +18,7 @@ export function ContactsDeleteConfirmationDialog({
   confirmTestId,
   onConfirm,
   onCancel,
-}: ContactsDeleteConfirmationDialogProps): React.ReactNode {
+}: ContactConfirmationDialogProps): React.ReactNode {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onCancel();

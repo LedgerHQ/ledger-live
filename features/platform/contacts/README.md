@@ -37,6 +37,8 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - Address-entry primitives: validation types, entry-state transitions, presentation resolution,
   and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
   their respective leaf flows.
+- `ContactConfirmationDialog` and `ContactConfirmationBottomSheet`: shared confirmation
+  presentation primitives used by Contacts deletion and signer-confirmation journeys.
 
 ## Device Intent Executor scaffold
 

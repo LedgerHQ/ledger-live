@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { ContactConfirmationBottomSheet } from "../ContactConfirmationBottomSheet/ContactConfirmationBottomSheet.native";
+import { ContactConfirmationBottomSheet } from "@features/platform-contacts/native";
 import type { ContactsEditSignerDrawerProps } from "./types";
 
 export function ContactsEditSignerDialog({

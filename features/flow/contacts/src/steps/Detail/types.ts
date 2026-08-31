@@ -24,21 +24,8 @@ export type ContactDetailLedgerWalletAccountsIntent = Readonly<{
   type: "open-ledger-wallet-accounts";
 }>;
 
-export type ContactDetailDeleteIntent = Readonly<{
-  type: "delete-contact";
-  contactId: ContactId;
-}>;
-
-export type ContactDeleteLifecycle =
-  | Readonly<{ status: "idle" }>
-  | Readonly<{ status: "open"; contactId: ContactId }>
-  | Readonly<{ status: "success"; contactId: ContactId }>
-  | Readonly<{ status: "error"; contactId: ContactId }>;
-
 export type ContactDetailActionsViewModel = Readonly<{
   editIntent: ContactDetailEditIntent | undefined;
-  deleteIntent: ContactDetailDeleteIntent;
-  deleteLifecycle: ContactDeleteLifecycle;
   isSignerRequiredForEdit: boolean;
 }>;
 

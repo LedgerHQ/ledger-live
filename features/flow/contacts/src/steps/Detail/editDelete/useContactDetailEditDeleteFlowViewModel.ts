@@ -4,8 +4,9 @@ import {
   selectContactById,
   type ContactId,
 } from "@domain/entity-contact";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
+import { useDeleteContactFlowViewModel } from "@features/flow-contacts-delete-contact";
 import type { ContactDetailActionsPorts } from "../model/ports";
 import { useContactDetailActionsViewModel } from "../useContactDetailActionsViewModel";
 import { useContactEditSignerUiState } from "../useContactEditSignerUiState";
@@ -24,6 +25,10 @@ type ContactsStateRoot = Parameters<typeof selectContactById>[0];
 export type UseContactDetailEditDeleteFlowViewModelResult = ReturnType<
   typeof useContactDetailActionsViewModel
 > &
+  Pick<
+    ReturnType<typeof useDeleteContactFlowViewModel>,
+    "deleteIntent" | "deleteLifecycle" | "openDelete" | "cancelDelete" | "confirmDelete"
+  > &
   Readonly<{
     canDelete: boolean;
     contactName: string;
@@ -49,15 +54,15 @@ export function useContactDetailEditDeleteFlowViewModel({
   onDeleteSuccess,
 }: UseContactDetailEditDeleteFlowViewModelOptions): UseContactDetailEditDeleteFlowViewModelResult {
   const contact = useSelector((state: ContactsStateRoot) => selectContactById(state, contactId));
-  const {
-    cancelDelete,
-    confirmDelete: confirmDeleteAction,
-    deleteLifecycle,
-    openDelete,
-    editIntent,
-    deleteIntent,
-    isSignerRequiredForEdit,
-  } = useContactDetailActionsViewModel(contactId, ports);
+  const { editIntent, isSignerRequiredForEdit } = useContactDetailActionsViewModel(
+    contactId,
+    ports,
+  );
+  const deleteFlow = useDeleteContactFlowViewModel({
+    contactId,
+    deletionPort: ports.deletion,
+    onSuccess: onDeleteSuccess,
+  });
   const {
     editUiState,
     isEditSessionActive,
@@ -71,8 +76,7 @@ export function useContactDetailEditDeleteFlowViewModel({
     onEditClose: closeEditUiState,
   } = useContactEditSignerUiState();
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const canDelete = contact !== undefined && !contact.isMe;
+  const canDelete = deleteFlow.canDelete;
   const contactName = contact?.name ?? "";
 
   const onEditPress = useCallback(() => {
@@ -132,39 +136,20 @@ export function useContactDetailEditDeleteFlowViewModel({
     setIsActionsMenuOpen(false);
   }, []);
 
-  const confirmDelete = useCallback(async () => {
-    setIsDeleting(true);
-
-    try {
-      await confirmDeleteAction();
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [confirmDeleteAction]);
-
-  useEffect(() => {
-    if (deleteLifecycle.status !== "success") {
-      return;
-    }
-
-    onDeleteSuccess?.();
-    cancelDelete();
-  }, [cancelDelete, deleteLifecycle.status, onDeleteSuccess]);
-
   return {
     editIntent,
-    deleteIntent,
-    deleteLifecycle,
+    deleteIntent: deleteFlow.deleteIntent,
+    deleteLifecycle: deleteFlow.deleteLifecycle,
     isSignerRequiredForEdit,
-    openDelete,
-    cancelDelete,
-    confirmDelete,
+    openDelete: deleteFlow.openDelete,
+    cancelDelete: deleteFlow.cancelDelete,
+    confirmDelete: deleteFlow.confirmDelete,
     canDelete,
     contactName,
     editUiState,
     isEditSessionActive,
     isActionsMenuOpen,
-    isDeleting,
+    isDeleting: deleteFlow.isDeleting,
     onEditPress,
     onDeletePress,
     requestSaveApproval,

@@ -25,3 +25,4 @@ export * from "./contactAddressEdit/ports";
 export * from "./contactAddressEdit/createContactAddressEditPort";
 export * from "./components/ContactNameInput";
 export * from "./components/ContactNameDisclaimer";
+export * from "./components/ContactConfirmationDialog";

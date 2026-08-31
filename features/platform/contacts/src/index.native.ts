@@ -23,3 +23,4 @@ export * from "./contactEdit/createContactEditPort";
 export * from "./contactAddressEdit/ports";
 export * from "./contactAddressEdit/createContactAddressEditPort";
 export * from "./components/ContactNameInput/index.native";
+export * from "./components/ContactConfirmationBottomSheet/index.native";

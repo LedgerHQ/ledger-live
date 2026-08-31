@@ -2,10 +2,10 @@ import React, { useCallback, useState } from "react";
 import { Platform } from "react-native";
 import {
   ContactDetailActionsMenu,
-  ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
 } from "@features/flow-contacts";
+import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDrawer } from "@features/flow-contacts-edit-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
