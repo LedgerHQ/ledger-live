@@ -1,17 +1,31 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useAddContactDialogViewModel } from "@features/flow-contacts-add-contact";
-import { useContacts } from "@features/platform-contacts";
-import type { ContactsProps, ContactsViewProps } from "../../types";
+import {
+  sortContactsByLastSentThenLastAdded,
+  summarizeOutgoingOperationsByContact,
+  useContacts,
+} from "@features/platform-contacts";
+import type { ContactRowViewModel, ContactsProps, ContactsViewProps } from "../../types";
 
 const noop = () => undefined;
+const EMPTY_OPERATIONS = [] as const;
 
 export function useContactsViewModel({
-  title,
   emptyState,
   addContact,
+  outgoingOperations = EMPTY_OPERATIONS,
+  ...props
 }: ContactsProps): ContactsViewProps {
   const contacts = useContacts();
-  const isEmpty = contacts.every(contact => contact.isMe);
+  const rows = useMemo<readonly ContactRowViewModel[]>(() => {
+    const savedContacts = contacts.filter(contact => !contact.isMe);
+    const summaries = summarizeOutgoingOperationsByContact(savedContacts, outgoingOperations);
+
+    return sortContactsByLastSentThenLastAdded(savedContacts, summaries).map(contact => ({
+      contact,
+      transactionCount: summaries[contact.id]?.txCount ?? 0,
+    }));
+  }, [contacts, outgoingOperations]);
   const { labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks } = addContact;
   const addContactDialog = useAddContactDialogViewModel({
     contactCreation,
@@ -25,8 +39,9 @@ export function useContactsViewModel({
   );
 
   return {
-    title,
-    isEmpty,
+    ...props,
+    isEmpty: rows.length === 0,
+    rows,
     emptyState: { ...emptyState, onAddContact },
     addContactDialog,
   };

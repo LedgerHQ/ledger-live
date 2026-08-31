@@ -12,7 +12,12 @@ import {
 } from "@domain/entity-contact";
 import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
 import { StyleProvider } from "@features/platform-style";
-import type { ContactsProps, ContactsViewProps, PayAddContactProps } from "../../../types";
+import type {
+  ContactsProps,
+  ContactsTableLabels,
+  ContactsViewProps,
+  PayAddContactProps,
+} from "../../../types";
 
 export function makeContactsStore(contacts: Contact[]) {
   return configureStore({
@@ -51,6 +56,19 @@ export const emptyStateLabels: ContactsProps["emptyState"] = {
   addContactLabel: "Add contact",
 };
 
+export const tableLabels: ContactsTableLabels = {
+  name: "Name",
+  addresses: "Addresses",
+  transactions: "Transactions",
+  formatTransactionCount: count => `${count} transaction`,
+  payAction: "Pay",
+  moreAction: "More",
+};
+
+export function renderAddresses() {
+  return null;
+}
+
 export function makeAddContactProps(
   overrides: Partial<PayAddContactProps> = {},
 ): PayAddContactProps {
@@ -79,6 +97,8 @@ export function makeContactsProps(overrides: Partial<ContactsProps> = {}): Conta
     title: "Pay contact",
     emptyState: emptyStateLabels,
     addContact: makeAddContactProps(),
+    labels: tableLabels,
+    renderAddresses,
     ...overrides,
   };
 }
@@ -109,6 +129,9 @@ export function makeContactsViewProps(
   return {
     title: "Pay contact",
     isEmpty: true,
+    rows: [],
+    labels: tableLabels,
+    renderAddresses,
     emptyState: { ...emptyStateLabels, onAddContact: jest.fn() },
     addContactDialog: makeAddContactDialogViewModel(),
     ...overrides,

@@ -21,6 +21,9 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
+import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
+import { usePayTabNewPayment } from "./usePayTabNewPayment";
+import { renderPayContactAddresses } from "../components/PayContactAddresses";
 
 export type UsePayTabContactsResult = Readonly<{
   contacts: ContactsProps;
@@ -34,6 +37,8 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   const { openDrawer } = useActivationDrawer();
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
+  const outgoingOperations = usePayTabOutgoingOperations();
+  const { open: openNewPayment } = usePayTabNewPayment();
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
@@ -94,6 +99,17 @@ export function usePayTabContacts(): UsePayTabContactsResult {
           onSaveSuccess,
           callbacks,
         },
+        labels: {
+          name: t("payTab.contacts.table.name"),
+          addresses: t("payTab.contacts.table.addresses"),
+          transactions: t("payTab.contacts.table.transactions"),
+          formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
+          payAction: t("payTab.contacts.actions.pay"),
+          moreAction: t("payTab.contacts.actions.more"),
+        },
+        renderAddresses: renderPayContactAddresses,
+        onPayContact: () => openNewPayment(),
+        outgoingOperations,
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
@@ -111,6 +127,8 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       onRequestAddContact,
       onSaveSuccess,
       callbacks,
+      outgoingOperations,
+      openNewPayment,
       isLedgerSyncIntroductionOpen,
       onActivateLedgerSyncIntroduction,
       onDismissLedgerSyncIntroduction,

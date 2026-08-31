@@ -1,5 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
-import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  mockContact,
+  mockContactAddress,
+  mockContactWithAddress,
+  mockMeContact,
+} from "@domain/entity-contact/schema.mock";
+import type { OutgoingOperation } from "@features/platform-contacts";
 import { useContactsViewModel } from "../useContactsViewModel";
 import { makeAddContactProps, makeContactsProps, makeContactsWrapper } from "./shared";
 
@@ -25,13 +31,44 @@ describe("useContactsViewModel", () => {
     expect(result.current.isEmpty).toBe(true);
   });
 
-  it("should not be empty when a saved contact exists", () => {
-    const { result } = renderViewModel([
-      mockMeContact(),
-      mockContact({ id: "contact-ada", name: "Ada" }),
-    ]);
+  it("should exclude the me contact and expose every saved contact without a cap", () => {
+    const savedContacts = Array.from({ length: 9 }, (_, index) =>
+      mockContact({ id: `contact-${index}`, name: `Contact ${index}` }),
+    );
+    const { result } = renderViewModel([mockMeContact(), ...savedContacts]);
 
     expect(result.current.isEmpty).toBe(false);
+    expect(result.current.rows).toHaveLength(9);
+    expect(result.current.rows.every(row => !row.contact.isMe)).toBe(true);
+  });
+
+  it("should order contacts by last sent-to, then last added", () => {
+    const bobAddress = "0x1111111111111111111111111111111111111111";
+    const bob = mockContactWithAddress({
+      id: "contact-bob",
+      name: "Bob",
+      addresses: [mockContactAddress({ id: "addr-bob", address: bobAddress })],
+    });
+    const alice = mockContactWithAddress({
+      id: "contact-alice",
+      name: "Alice",
+      addresses: [
+        mockContactAddress({
+          id: "addr-alice",
+          address: "0x2222222222222222222222222222222222222222",
+        }),
+      ],
+    });
+    const sentToBob: OutgoingOperation[] = [
+      { recipientAddress: bobAddress, date: 1_700_000_000_000, currencyId: "ethereum" },
+    ];
+    const { result } = renderViewModel(
+      [mockMeContact(), bob, alice],
+      makeContactsProps({ outgoingOperations: sentToBob }),
+    );
+
+    expect(result.current.rows.map(row => row.contact.name)).toEqual(["Bob", "Alice"]);
+    expect(result.current.rows.map(row => row.transactionCount)).toEqual([1, 0]);
   });
 
   it("should request add contact with the dialog open handler", () => {
