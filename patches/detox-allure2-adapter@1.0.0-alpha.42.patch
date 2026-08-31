@@ -1,3 +1,4 @@
+diff --git a/dist/listener.js b/dist/listener.js
 --- a/dist/listener.js
 +++ b/dist/listener.js
 @@ -25,10 +25,18 @@
@@ -55,6 +56,7 @@
      })
          .on('test_fn_success', async () => {
          await Promise.all([logs?.attachAfterSuccess(api_1.allure), screenshots?.attachSuccess(api_1.allure)]);
+diff --git a/dist/logs/log-buffer.js b/dist/logs/log-buffer.js
 --- a/dist/logs/log-buffer.js
 +++ b/dist/logs/log-buffer.js
 @@ -76,15 +76,15 @@
