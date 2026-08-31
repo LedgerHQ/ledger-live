@@ -10,6 +10,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { FollowTopic as Topic, InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -24,7 +25,7 @@ const TOPICS = Object.keys(KNOWN_TOPICS) as Topic[];
 /** Picks the governance topic whose followees the next screen edits. */
 export default function FollowTopic({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, neuron, transaction, bridge } = useNeuronAction(navigation, route);
+  const { account, neuron, backToList, transaction, bridge } = useNeuronAction(navigation, route);
   const principal = useICPPrincipal(account);
 
   // Following is a voting action a hot key may take — except on NeuronManagement, which the
@@ -55,6 +56,8 @@ export default function FollowTopic({ navigation, route }: Props) {
     },
     [bridge, navigation, neuron, route.params, transaction],
   );
+
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>

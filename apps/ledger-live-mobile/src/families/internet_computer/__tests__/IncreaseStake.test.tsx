@@ -1,9 +1,12 @@
-import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import type {
+  ICPNeuron,
+  Transaction,
+} from "@ledgerhq/live-common/families/internet_computer/types";
+import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import React from "react";
 import IncreaseStake from "../NeuronManageFlow/IncreaseStake";
-import { ICP_UNIT, makeICPAccount } from "./testUtils";
+import { ICP_UNIT, makeHealthyNeuron, makeICPAccount } from "./testUtils";
 
 // 12.34567891 ICP: the fifth decimal rounds up, so a rounded format would report a maximum above
 // what the bridge will actually accept.
@@ -12,6 +15,7 @@ const MAX_SPENDABLE = new BigNumber("1234567891");
 let transaction: Partial<Transaction>;
 let status: { errors: Record<string, Error>; warnings: Record<string, Error> };
 let estimateMaxSpendable: () => Promise<BigNumber>;
+let neuron: ICPNeuron | undefined;
 
 const notEnoughBalance = Object.assign(new Error("NotEnoughBalance"), { name: "NotEnoughBalance" });
 
@@ -19,10 +23,13 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({ useAccountUnit: () => ICP_UNIT })
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({ estimateMaxSpendable: () => estimateMaxSpendable() }),
 }));
+const mockBackToList = jest.fn();
+
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
     account: makeICPAccount({ neurons: [] }),
-    neuron: undefined,
+    neuron,
+    backToList: mockBackToList,
     transaction,
     updateTransaction: jest.fn(),
     status,
@@ -46,6 +53,7 @@ describe("IncreaseStake", () => {
     transaction = { type: "increase_stake", amount: new BigNumber(0) };
     status = { errors: {}, warnings: {} };
     estimateMaxSpendable = () => Promise.resolve(MAX_SPENDABLE);
+    neuron = makeHealthyNeuron();
   });
 
   afterEach(() => {
@@ -101,5 +109,31 @@ describe("IncreaseStake", () => {
     renderScreen();
 
     expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+});
+
+// A refresh or a disburse drops a neuron from the snapshot, and this screen resolves its neuron live
+// out of redux by the id in its route params — so it can lose the neuron with the user standing
+// still. Rendering nothing left a blank screen.
+describe("IncreaseStake without its neuron", () => {
+  beforeEach(() => {
+    mockBackToList.mockClear();
+  });
+
+  it("explains itself instead of rendering a blank screen", () => {
+    neuron = undefined;
+
+    renderScreen();
+
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
+  });
+
+  it("offers the way back to the neuron list", () => {
+    neuron = undefined;
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId("icp-missing-neuron-back-button"));
+
+    expect(mockBackToList).toHaveBeenCalled();
   });
 });

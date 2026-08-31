@@ -1,4 +1,7 @@
-import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import type {
+  ICPNeuron,
+  Transaction,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import React from "react";
 import AddHotKey from "../NeuronManageFlow/AddHotKey";
@@ -19,10 +22,15 @@ jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
   useICPPrincipal: () => principal,
 }));
+let neuron: ICPNeuron | undefined = makeHealthyNeuron();
+
+const mockBackToList = jest.fn();
+
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
     account: {},
-    neuron: makeHealthyNeuron(),
+    neuron,
+    backToList: mockBackToList,
     transaction,
     updateTransaction: jest.fn(),
     status,
@@ -42,6 +50,7 @@ describe("AddHotKey", () => {
     transaction = { type: "add_hot_key" };
     status = { errors: {}, warnings: {} };
     principal = "own-principal-abc";
+    neuron = makeHealthyNeuron();
   });
 
   // An absent hot key is not a valid principal, so the screen used to open calling the empty field
@@ -92,5 +101,31 @@ describe("AddHotKey", () => {
     renderScreen();
 
     expect(screen.queryByTestId("icp-own-principal")).toBeNull();
+  });
+});
+
+// A refresh or a disburse drops a neuron from the snapshot, and this screen resolves its neuron live
+// out of redux by the id in its route params — so it can lose the neuron with the user standing
+// still. Rendering nothing left a blank screen.
+describe("AddHotKey without its neuron", () => {
+  beforeEach(() => {
+    mockBackToList.mockClear();
+  });
+
+  it("explains itself instead of rendering a blank screen", () => {
+    neuron = undefined;
+
+    renderScreen();
+
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
+  });
+
+  it("offers the way back to the neuron list", () => {
+    neuron = undefined;
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId("icp-missing-neuron-back-button"));
+
+    expect(mockBackToList).toHaveBeenCalled();
   });
 });

@@ -16,6 +16,7 @@ type ActionRoute = {
   name: string;
   params: {
     accountId: string;
+    parentId?: string;
     neuronId: string;
     transaction: Transaction;
   };
@@ -57,9 +58,22 @@ export function useNeuronAction(navigation: Navigation, route: ActionRoute) {
     [navigation, route.params, status, transaction],
   );
 
+  // Every one of these screens names one neuron, so a neuron that has left the snapshot leaves the
+  // screen with nothing to show and nothing worth signing. Built here so each screen only has to
+  // render the shared MissingNeuron, and so a screen added later cannot forget the way out.
+  const backToList = useCallback(
+    () =>
+      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+        accountId: route.params.accountId,
+        parentId: route.params.parentId,
+      }),
+    [navigation, route.params.accountId, route.params.parentId],
+  );
+
   return {
     account: icpAccount,
     neuron,
+    backToList,
     // Exposed for the one case that cannot wait for `updateTransaction`: a screen that patches the
     // transaction and hands it straight to the next screen needs the patched value now, not after
     // the state settles.

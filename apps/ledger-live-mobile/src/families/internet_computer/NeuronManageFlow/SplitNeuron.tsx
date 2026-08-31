@@ -18,6 +18,7 @@ import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { toBigNumber } from "../amounts";
 import ActionFooter from "../components/ActionFooter";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -34,6 +35,7 @@ export default function SplitNeuron({ navigation, route }: Props) {
   const {
     account,
     neuron,
+    backToList,
     transaction,
     updateTransaction,
     status,
@@ -47,7 +49,7 @@ export default function SplitNeuron({ navigation, route }: Props) {
     [updateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   const min = minAllowedSplitAmount(BigInt(ICP_FEES));
   const max = maxAllowedSplitAmount(neuron);
