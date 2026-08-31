@@ -38,7 +38,9 @@ const StepSelectFollowees = (props: StepProps) => {
     onUpdateTransaction,
     transitionTo,
   } = props;
-  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
+  // Only its presence matters here: this step reads the followee count off the transaction, not the
+  // neuron, so `some` says all that is needed.
+  const hasNeuron = neurons.some(n => n.id?.toString() === selectedNeuronId);
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
   const followTopic = transaction?.followTopic;
@@ -62,7 +64,7 @@ const StepSelectFollowees = (props: StepProps) => {
     setDraft("");
   }, [draft, followeesIds, setFollowees]);
 
-  if (!neuron) {
+  if (!hasNeuron) {
     return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
   }
 

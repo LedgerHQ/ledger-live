@@ -26,13 +26,14 @@ const StepAddHotKey = ({
   transitionTo,
 }: StepProps) => {
   const principal = useICPPrincipal(account);
-  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
+  // Only its presence matters here: this step reads no field off the neuron.
+  const hasNeuron = neurons.some(n => n.id?.toString() === selectedNeuronId);
   const onChange = useCallback(
     (hotKeyToAdd: string) => onUpdateTransaction(tx => ({ ...tx, hotKeyToAdd })),
     [onUpdateTransaction],
   );
 
-  if (!neuron) {
+  if (!hasNeuron) {
     return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
   }
 
