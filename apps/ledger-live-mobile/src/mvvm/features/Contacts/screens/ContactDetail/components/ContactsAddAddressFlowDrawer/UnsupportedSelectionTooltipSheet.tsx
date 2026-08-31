@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DisabledItemTooltip } from "LLM/features/ModularDrawer";
+import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -44,6 +45,7 @@ export function UnsupportedSelectionTooltipSheet({ tooltip, onClose }: Props): R
       enableDynamicSizing
       maxDynamicContentSize="fullWithOffset"
       backdropPressBehavior="close"
+      backgroundComponent={BottomSheetInfoGradient}
       onClose={onClose}
       enablePanDownToClose
       testID="contacts-unsupported-selection-tooltip"
