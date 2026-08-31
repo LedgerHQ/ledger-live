@@ -38,6 +38,14 @@ As a result:
 
 Tests therefore assert on your own layout/view-model wiring, not on real Lumen internals.
 
+## Web environment polyfills
+
+`setup/web.js` polyfills the Encoding API (`TextEncoder` / `TextDecoder`) on the jsdom global.
+jsdom doesn't implement it, unlike every runtime this code ships to (browsers, React Native,
+Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/device-contacts-kit`
+does — throws `ReferenceError` the moment a web test imports it, even transitively.
+It also mocks `window.matchMedia`.
+
 ## Usage
 
 ```js
