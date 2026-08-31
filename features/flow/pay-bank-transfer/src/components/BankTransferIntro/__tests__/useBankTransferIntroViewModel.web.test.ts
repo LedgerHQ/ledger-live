@@ -75,6 +75,13 @@ describe("useBankTransferIntroViewModel", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("forwards the host-bundled hero image", () => {
+    const heroImage = 42;
+    const { result } = setup({ heroImage });
+
+    expect(result.current.heroImage).toBe(heroImage);
+  });
+
   it("does not throw when no tracker is provided", () => {
     const { props, result } = setup({ onTrackEvent: undefined });
 

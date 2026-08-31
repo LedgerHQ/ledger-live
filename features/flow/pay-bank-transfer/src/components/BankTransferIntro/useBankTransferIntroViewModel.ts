@@ -18,6 +18,7 @@ const TRACK_BUTTON = {
 export function useBankTransferIntroViewModel({
   isOpen,
   labels,
+  heroImage,
   bottomInset = 0,
   onBankTransfer,
   onClose,
@@ -71,6 +72,7 @@ export function useBankTransferIntroViewModel({
     createAccountLabel: labels.createAccountLabel,
     logInLabel: labels.logInLabel,
     providedBy: labels.providedBy,
+    heroImage,
     rows: labels.rows,
     bottomInset,
     onShown,

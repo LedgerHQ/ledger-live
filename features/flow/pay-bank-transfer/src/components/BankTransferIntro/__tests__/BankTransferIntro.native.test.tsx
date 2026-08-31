@@ -3,6 +3,10 @@ import { cleanup, render, screen, userEvent } from "@testing-library/react-nativ
 import { BankTransferIntro } from "../BankTransferIntro";
 import type { BankTransferIntroProps } from "../../../types";
 
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  QueuedBottomSheet: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 const LABELS: BankTransferIntroProps["labels"] = {
   title: "Convert cash to stablecoins",
   description: "Transfer USD or EUR from your bank.",

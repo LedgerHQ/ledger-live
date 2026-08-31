@@ -10,6 +10,8 @@ export type BankTransferIntroRow = Readonly<{
 
 export type BankTransferHandoff = "createAccount" | "logIn";
 
+export type BankTransferIntroHeroImage = number | { readonly uri: string };
+
 export type BankTransferIntroLabels = Readonly<{
   title: string;
   description: string;
@@ -22,6 +24,8 @@ export type BankTransferIntroLabels = Readonly<{
 export type BankTransferIntroProps = Readonly<{
   isOpen: boolean;
   labels: BankTransferIntroLabels;
+  /** Host-bundled image source. Re.pack only resolves assets required from the app. */
+  heroImage?: BankTransferIntroHeroImage;
   bottomInset?: number;
   /** Host-owned partner handoff (Noah / Trading). This package never navigates. */
   onBankTransfer: (handoff: BankTransferHandoff) => void;
@@ -36,6 +40,7 @@ export type BankTransferIntroViewModel = Readonly<{
   createAccountLabel: string;
   logInLabel: string;
   providedBy: string;
+  heroImage?: BankTransferIntroHeroImage;
   rows: readonly BankTransferIntroRow[];
   bottomInset: number;
   onShown: () => void;

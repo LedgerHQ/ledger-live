@@ -71,5 +71,6 @@ export function usePayTabViewModel() {
     contacts,
     isContactsEnabled,
     depositOptions: deposit.depositOptions,
+    bankTransferIntro: deposit.bankTransferIntro,
   };
 }

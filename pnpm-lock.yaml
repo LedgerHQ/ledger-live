@@ -6541,6 +6541,10 @@ importers:
         version: 1.51.0
 
   features/flow/pay-bank-transfer:
+    dependencies:
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
