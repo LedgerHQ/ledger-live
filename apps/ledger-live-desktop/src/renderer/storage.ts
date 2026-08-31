@@ -4,6 +4,7 @@ import { getEnv } from "@shared/env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
+import { ENCRYPTED_APP_KEYS, type EncryptedAppKey } from "~/config/encryptedAppKeys";
 import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
 
@@ -79,20 +80,32 @@ type DatabaseValues = {
   payCard: PayCard;
 };
 
+const encryptedAppKeySet: ReadonlySet<keyof DatabaseValues> = new Set(ENCRYPTED_APP_KEYS);
+
 // Infers the type seen from the user side (non-raw).
-type DatabaseValue<
-  K extends keyof DatabaseValues,
-  T = K extends keyof Transforms ? Transforms[K] : unknown,
-  // This is needed to make the type inference work here.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  V = T extends Transform<any, any> ? Awaited<ReturnType<T["get"]>> : DatabaseValues[K],
-> = V;
+type DatabaseValue<K extends keyof DatabaseValues> = DatabaseValueMap[K];
+type DatabaseValueMap = {
+  [K in keyof DatabaseValues]: K extends keyof Transforms
+    ? Awaited<ReturnType<Transforms[K]["get"]>>
+    : DatabaseValues[K];
+};
+
+type DatabaseReadValue<K extends keyof DatabaseValues> = K extends EncryptedAppKey
+  ? ProtectedValue<DatabaseValue<K>>
+  : DatabaseValue<K> | null | undefined;
+type AnyDatabaseReadValue =
+  | ProtectedValue<DatabaseValue<EncryptedAppKey>>
+  | DatabaseValue<UnprotectedAppKey>
+  | null
+  | undefined;
+type ProtectedValue<T> = { status: "encrypted" } | { status: "available"; data: T | null };
+type UnprotectedAppKey = Exclude<keyof DatabaseValues, EncryptedAppKey>;
 
 // A Transformer is a pair of functions to encode/decode the raw data.
 type Transform<R, M> = {
   get: (
     raws: Parameters<DataModel<R, M>["decode"]>[0][],
-  ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[] | null>;
+  ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[]>;
   set: (
     raws: Parameters<DataModel<R, M>["encode"]>[0][],
   ) => Promise<Awaited<ReturnType<DataModel<R, M>["encode"]>>[]>;
@@ -106,8 +119,6 @@ type Transforms = {
 const transforms: Transforms = {
   accounts: {
     get: async raws => {
-      // NB to prevent parsing encrypted string as JSON
-      if (typeof raws === "string") return null;
       const accounts: Array<[Account, AccountUserData]> = [];
       if (raws) {
         for (const raw of raws) {
@@ -125,27 +136,87 @@ const transforms: Transforms = {
   },
 };
 
-export const getKey = async <
-  K extends keyof DatabaseValues,
-  V = DatabaseValue<K>,
-  DV extends V = V,
->(
-  ns: string,
+export function getKey<K extends keyof DatabaseValues>(
+  ns: "app",
   keyPath: K,
-  defaultValue?: DV,
-): Promise<V> => {
-  let data = await ipcRenderer.invoke("getKey", {
+  defaultValue?: DatabaseValue<K>,
+): Promise<DatabaseReadValue<K>>;
+export async function getKey(
+  ns: "app",
+  keyPath: keyof DatabaseValues,
+  defaultValue?: DatabaseValue<keyof DatabaseValues>,
+): Promise<AnyDatabaseReadValue> {
+  return isProtectedAppKey(keyPath)
+    ? getEncryptedKey(ns, keyPath, defaultValue as DatabaseValue<typeof keyPath>)
+    : getUnprotectedKey(ns, keyPath, defaultValue as DatabaseValue<typeof keyPath>);
+}
+
+async function getEncryptedKey<K extends EncryptedAppKey>(
+  ns: "app",
+  keyPath: K,
+  defaultValue?: DatabaseValue<K>,
+): Promise<ProtectedValue<DatabaseValue<K>>> {
+  const data = await getKeyIpc(ns, keyPath);
+
+  if (typeof data === "string") return { status: "encrypted" };
+  if (data === undefined) return { status: "available", data: defaultValue ?? null };
+  if (data === null) return { status: "available", data: null };
+
+  return {
+    status: "available",
+    // WARNING: These type casts are not guaranteed the storage could contain an unexpected value
+    data: hasOwn(transforms, keyPath)
+      ? await getTransformedKey(keyPath, data as RawDatabaseValue<typeof keyPath>)
+      : (data as DatabaseValue<K>),
+  };
+}
+
+async function getUnprotectedKey<K extends UnprotectedAppKey>(
+  ns: "app",
+  keyPath: K,
+  defaultValue?: DatabaseValue<K>,
+): Promise<DatabaseValue<K> | null | undefined> {
+  const data = await getKeyIpc(ns, keyPath, defaultValue);
+
+  if (typeof data === "undefined" || data === null) return data;
+
+  // WARNING: These type casts are not guaranteed the storage could contain an unexpected value
+  return hasOwn(transforms, keyPath)
+    ? await getTransformedKey(keyPath, data as RawDatabaseValue<typeof keyPath>)
+    : (data as DatabaseValue<K>);
+}
+
+function getKeyIpc<K extends keyof DatabaseValues>(
+  ns: "app",
+  keyPath: K,
+  defaultValue?: DatabaseValue<K>,
+): Promise<unknown> {
+  return ipcRenderer.invoke("getKey", {
     ns,
     keyPath,
     defaultValue,
   });
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const transform = transforms[keyPath as keyof Transforms];
-  if (transform) {
-    data = await transform.get(data);
-  }
-  return data;
-};
+}
+
+type RawDatabaseValue<K extends keyof DatabaseValues> = K extends keyof Transforms
+  ? Parameters<Transforms[K]["get"]>[0]
+  : DatabaseValue<K>;
+function getTransformedKey<K extends keyof Transforms>(
+  keyPath: K,
+  value: RawDatabaseValue<K>,
+): Promise<DatabaseValue<K>> {
+  return transforms[keyPath].get(value);
+}
+
+function hasOwn<T extends object>(object: T, key: PropertyKey): key is keyof T {
+  return Object.hasOwn(object, key);
+}
+
+function isProtectedAppKey<K extends keyof DatabaseValues>(
+  keyPath: K,
+): keyPath is Extract<K, EncryptedAppKey> {
+  return encryptedAppKeySet.has(keyPath);
+}
 
 let debounceToUse = debounce;
 if (getEnv("PLAYWRIGHT_RUN")) {
@@ -157,8 +228,8 @@ if (getEnv("PLAYWRIGHT_RUN")) {
 }
 
 const debouncedSetKey = memoize(
-  <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
-    debounceToUse(async (value: V) => {
+  <K extends keyof DatabaseValues>(ns: "app", keyPath: K) =>
+    debounceToUse(async (value: DatabaseValue<K>) => {
       try {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const transform = transforms[keyPath as keyof Transforms];
@@ -175,18 +246,18 @@ const debouncedSetKey = memoize(
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
       }
     }, 1000),
-  (ns: string, keyPath: string) => `${ns}:${keyPath}`,
+  (ns: "app", keyPath: string) => `${ns}:${keyPath}`,
 );
 
-export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val extends V = V>(
-  ns: string,
+export const setKey = <K extends keyof DatabaseValues>(
+  ns: "app",
   keyPath: K,
-  value: Val,
+  value: DatabaseValue<K>,
 ) => {
-  debouncedSetKey<K, V>(ns, keyPath)(value);
+  debouncedSetKey<K>(ns, keyPath)(value);
 };
 
-export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
+export const hasEncryptionKey = (ns: "app", keyPath: EncryptedAppKey) =>
   ipcRenderer.invoke("hasEncryptionKey", {
     ns,
     keyPath,
@@ -212,22 +283,19 @@ function identitySelector<V>(state: V): V {
   return state;
 }
 
-export function useDB<
-  Selected,
-  K extends keyof DatabaseValues,
-  V = DatabaseValue<K>,
-  DV extends V = V,
->(
-  ns: string,
+export function useDB<Selected, K extends UnprotectedAppKey>(
+  ns: "app",
   keyPath: K,
-  initialState: DV,
+  initialState: DatabaseValue<K>,
   // @ts-expect-error State !== Selected
-  selector: (state: V) => Selected = identitySelector,
+  selector: (state: DatabaseValue<K>) => Selected = identitySelector,
 ) {
-  return useDBRaw<V, Selected>({
+  return useDBRaw<DatabaseValue<K>, Selected>({
     initialState,
-    getter: useCallback(() => getKey(ns, keyPath, initialState), [ns, keyPath, initialState]),
-    // @ts-expect-error Todo: state doesn't fit
+    getter: useCallback(
+      async () => (await getUnprotectedKey(ns, keyPath, initialState)) ?? undefined,
+      [ns, keyPath, initialState],
+    ),
     setter: useCallback(state => setKey(ns, keyPath, state), [ns, keyPath]),
     selector,
   });
