@@ -233,12 +233,41 @@ catalog:
 
 overrides:
   node-abi: ^4.9.0
+  react: "catalog:"
+  react-dom: "catalog:"
+  csstype: 3.2.3
+  stellar-base>sodium-native: ^3.2.1
+  remove-flow-types-loader>flow-remove-types: ^2
+  remove-flow-types-loader>loader-utils: "*"
+  "@ledgerhq/devices": "workspace:*"
+  "@ledgerhq/hw-transport": "workspace:*"
+  "@ledgerhq/context-module": "catalog:"
+  tslib: 2.6.2
+  "@ethersproject/providers>ws": 7.5.10
+  elliptic: 6.6.1
+  use-latest-callback: 0.1.9
+  use-isomorphic-layout-effect: ^1.2.1
+  use-sync-external-store: ^1.6.0
+  ethers: 6.15.0
+  bignumber.js: 9.1.2
+  "@radix-ui/react-slot": ^1.2.4
+  "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": 1.1.3
+  "@ton/ton>zod": "catalog:"
+  jest-environment-node: 30.4.1
+  jest-mock: 30.4.1
+  jest-matcher-utils: 30.4.1
+  jest-diff: 30.4.1
+  jest-message-util: 30.4.1
+  jest-util: 30.4.1
+  "@jest/expect-utils": 30.4.1
+  "@jest/create-cache-key-function": 30.4.1
+  "@jest/types": 30.4.1
+  expect: 30.4.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
 
-packageImportMethod: hardlink
 supportedArchitectures:
   os:
     - current
