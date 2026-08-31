@@ -87,7 +87,10 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
       derivePrincipalFromPubkey(publicKey),
     ),
     blockHeight: blockHeight.toNumber(),
-    operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
+    // `operationsCount` is deliberately absent: the framework derives it from the merged list when
+    // the shape omits it. Adding the fetched page to the stored count double-counted, because the
+    // index canister is queried from the current ledger tip every time and so returns the newest
+    // page again on every sync — the figure climbed without bound instead of tracking the account.
     xpub: publicKey,
     neurons,
   };
@@ -103,9 +106,12 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
  */
 export const postSync = (_initial: ICPAccount, synced: ICPAccount): ICPAccount => {
   const operations = dedupeRetypedOperations(synced.operations as InternetComputerOperation[]);
-  // Same array unless something was actually dropped: a new object every sync would invalidate
-  // every consumer memoized on `operations`.
-  return operations.length === synced.operations.length ? synced : { ...synced, operations };
+  // Same object unless something was actually dropped: a new one every sync would invalidate every
+  // consumer memoized on `operations`. `operationsCount` follows, since the framework counted the
+  // merged list before this pass thinned it.
+  return operations.length === synced.operations.length
+    ? synced
+    : { ...synced, operations, operationsCount: operations.length };
 };
 
 function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): string {
