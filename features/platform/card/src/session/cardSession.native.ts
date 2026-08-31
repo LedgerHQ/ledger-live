@@ -6,6 +6,7 @@ export const {
   cardSession,
   getCardSessionToken,
   readCardSession,
+  isCardSessionCurrent,
   refreshCardSession,
   configureCardSessionRenewal,
 } = createCardSession(secureStore);

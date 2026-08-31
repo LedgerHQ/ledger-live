@@ -5,7 +5,7 @@ import {
   type CardSessionRenewalConfig,
   type StoredCardSession,
 } from "../types";
-import { CARD_LEGACY_SESSION_KEYS, CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
+import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
 
 /**
  * Builds the session accessors over one store. The platform picks the store; everything else about a
@@ -29,7 +29,7 @@ export function createCardSession(store: CardSessionStore) {
   }
 
   /**
-   * True from a clear until the next successful write.
+   * True from the start of a replacement or clear until the next successful write.
    *
    * A locked keychain rejects every removal, so a cleared access token can still read back. The flag
    * keeps "cleared means no Bearer" true for the life of the process. A restart reads the store
@@ -54,8 +54,13 @@ export function createCardSession(store: CardSessionStore) {
    */
   let sessionId = 0;
 
-  /** The one renewal every concurrent caller shares. Always belongs to the current session. */
-  let inFlight: Promise<CardSessionRefreshResult> | null = null;
+  type InFlightRefresh = {
+    failedAccessToken: string;
+    promise: Promise<CardSessionRefreshResult>;
+  };
+
+  /** The refresh attempt concurrent callers for one failed token share. */
+  let inFlight: InFlightRefresh | null = null;
 
   let renewal: CardSessionRenewalConfig | null = null;
 
@@ -105,11 +110,7 @@ export function createCardSession(store: CardSessionStore) {
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
-
-    // The one path that can take a key an earlier build left behind. See `CARD_LEGACY_SESSION_KEYS`.
-    for (const key of CARD_LEGACY_SESSION_KEYS) {
-      await store.remove(key).catch(() => undefined);
-    }
+    await store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined);
   }
 
   async function readAccessToken(): Promise<string | null> {
@@ -147,16 +148,18 @@ export function createCardSession(store: CardSessionStore) {
 
   /* ---------------------------------------------------------------- renewal */
 
-  function renewSession(): Promise<CardSessionRefreshResult> {
-    const renewing = sessionId;
+  function startRefresh(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
     // Deferred by one microtask, so `inFlight` is set before any of the attempt runs. Otherwise an
     // attempt that ends the session synchronously would clear a field this line then re-assigns.
-    const attempt = Promise.resolve().then(() => runRenewal(renewing));
-    inFlight = attempt;
+    const attempt = Promise.resolve().then(() => runRefresh(requestSessionId, failedAccessToken));
+    inFlight = { failedAccessToken, promise: attempt };
 
     // Identity-checked, so a settling attempt never clears a newer one.
     const settle = () => {
-      if (inFlight === attempt) {
+      if (inFlight?.promise === attempt) {
         inFlight = null;
       }
     };
@@ -173,18 +176,35 @@ export function createCardSession(store: CardSessionStore) {
    * failed — ends the session. Nothing here reads a status and nothing reads a body: one rule leaves
    * no way for a session to look alive and behave dead.
    */
-  async function runRenewal(renewing: number): Promise<CardSessionRefreshResult> {
+  async function runRefresh(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
     try {
+      const currentAccessToken = await readAccessToken();
+
+      if (requestSessionId !== sessionId) {
+        return { kind: "session-replaced" };
+      }
+
+      if (!currentAccessToken) {
+        throw new Error("the Card session holds no access token");
+      }
+
+      if (currentAccessToken !== failedAccessToken) {
+        return { kind: "refreshed", accessToken: currentAccessToken };
+      }
+
       const session = await grantNewSession();
-      const outcome = await takeTurn(() => writeSession(session, renewing));
+      const outcome = await takeTurn(() => writeSession(session, requestSessionId));
 
       // "stale" means a clear or a login replaced the session while the grant was in flight. The new
       // token belongs to that session, not to the request that asked for this renewal.
       return outcome === "written"
         ? { kind: "refreshed", accessToken: session.accessToken }
         : { kind: "session-replaced" };
-    } catch (error) {
-      return endIfCurrent(renewing, error);
+    } catch {
+      return endIfCurrent(requestSessionId);
     }
   }
 
@@ -217,21 +237,18 @@ export function createCardSession(store: CardSessionStore) {
    * The test and the `++sessionId` inside `clear()` are both synchronous, so nothing can replace the
    * session between them.
    */
-  async function endIfCurrent(renewing: number, error: unknown): Promise<CardSessionRefreshResult> {
+  async function endIfCurrent(renewing: number): Promise<CardSessionRefreshResult> {
     if (renewing !== sessionId) {
       return { kind: "session-replaced" };
     }
 
-    // Expected and recoverable: the user logs in again. It is the one line that says which failure
-    // ended the session, so a support log can name it.
-    console.warn("[card] the session renewal failed, so the session is over", error);
-
-    await clear();
+    const clearing = clear();
+    console.warn("[card] the session renewal failed, so the session is over");
+    await clearing;
     try {
       renewal?.onCardSessionEnded();
-    } catch (callbackError) {
-      // The app's own projection failed. The session is over either way.
-      console.error("[card] onCardSessionEnded failed", callbackError);
+    } catch {
+      console.error("[card] onCardSessionEnded failed");
     }
 
     return { kind: "session-ended" };
@@ -239,9 +256,14 @@ export function createCardSession(store: CardSessionStore) {
 
   /* ---------------------------------------------------------------- surface */
 
-  const set = async (session: StoredCardSession): Promise<void> => {
-    const written = ++sessionId;
+  const beginSessionReplacement = (): number => {
+    isCleared = true;
     inFlight = null;
+    return ++sessionId;
+  };
+
+  const set = async (session: StoredCardSession): Promise<void> => {
+    const written = beginSessionReplacement();
 
     const outcome = await takeTurn(() => writeSession(session, written));
     if (outcome === "stale") {
@@ -252,8 +274,7 @@ export function createCardSession(store: CardSessionStore) {
   };
 
   const clear = (): Promise<void> => {
-    ++sessionId;
-    inFlight = null;
+    beginSessionReplacement();
     return takeTurn(removeSession);
   };
 
@@ -272,8 +293,7 @@ export function createCardSession(store: CardSessionStore) {
    * provider has refused one.
    *
    * It never waits for a turn: the access token is one key, and one key cannot disagree with itself.
-   * During a `set` it answers the previous token, which stays valid until the new one lands. The
-   * request path must not queue behind a login.
+   * During a replacement `set` it answers no token. The request path must not queue behind a login.
    *
    * The id is read first, so it can only name the session the token came from or an older one.
    * Older is the safe side: the base query then replays nothing and clears nothing.
@@ -283,6 +303,9 @@ export function createCardSession(store: CardSessionStore) {
     return { token: await readAccessToken(), sessionId: id };
   };
 
+  const isCardSessionCurrent = (requestSessionId: number): boolean =>
+    !isCleared && requestSessionId === sessionId;
+
   /**
    * The one entry point, called by the base query after the provider answered 401.
    *
@@ -290,19 +313,32 @@ export function createCardSession(store: CardSessionStore) {
    * any more, the request outlived it: nothing is renewed and nothing is cleared, and the base query
    * answers the caller with a stale-request error.
    *
-   * Concurrent callers of the same session share one attempt. A request can only reach this once,
-   * because the base query replays at most once and does not renew again on the replay's answer.
+   * Concurrent callers carrying the same failed token share one attempt. A caller carrying another
+   * token waits for that attempt and rechecks, so a stale 401 cannot hide a current token's 401.
    */
-  async function refreshCardSession(requestSessionId: number): Promise<CardSessionRefreshResult> {
+  function refreshCardSession(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
     if (requestSessionId !== sessionId) {
-      return { kind: "session-replaced" };
+      return Promise.resolve({ kind: "session-replaced" });
     }
 
     if (isCleared) {
-      return { kind: "session-ended" };
+      return Promise.resolve({ kind: "session-ended" });
     }
 
-    return inFlight ?? renewSession();
+    if (!inFlight) {
+      return startRefresh(requestSessionId, failedAccessToken);
+    }
+
+    if (inFlight.failedAccessToken === failedAccessToken) {
+      return inFlight.promise;
+    }
+
+    const activeRefresh = inFlight.promise;
+    const recheck = () => refreshCardSession(requestSessionId, failedAccessToken);
+    return activeRefresh.then(recheck, recheck);
   }
 
   /**
@@ -318,6 +354,7 @@ export function createCardSession(store: CardSessionStore) {
     cardSession: { set, get, clear },
     getCardSessionToken,
     readCardSession,
+    isCardSessionCurrent,
     refreshCardSession,
     configureCardSessionRenewal,
   };

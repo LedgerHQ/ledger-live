@@ -88,11 +88,13 @@ export async function postCardJson(
  * `error.status` then reads `undefined`. The app owns both session ports, so this file cannot
  * promise they resolve. It gives a rejection the shape the signature declares.
  */
-function sessionPortError(error: unknown): { error: FetchBaseQueryError } {
+function sessionPortError(operation: "read" | "renew"): {
+  error: FetchBaseQueryError;
+} {
   return {
     error: {
       status: "CUSTOM_ERROR",
-      error: error instanceof Error ? error.message : String(error),
+      error: `Card session ${operation} failed`,
     },
   };
 }
@@ -129,13 +131,22 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
   let session: CardSessionSnapshot;
   try {
     session = await extra.readCardSession();
-  } catch (error) {
+  } catch {
     // A keychain the OS refused must never pass for an absent session, because an absent session
     // ends one. Report the read failure rather than a 401 the renewal could not help with.
-    return sessionPortError(error);
+    return sessionPortError("read");
   }
 
-  const result = await send(session.token);
+  const sendForCurrentSession = async (token: string) => {
+    if (!extra.isCardSessionCurrent(session.sessionId)) {
+      return staleRequestResult;
+    }
+
+    const answer = await send(token);
+    return extra.isCardSessionCurrent(session.sessionId) ? answer : staleRequestResult;
+  };
+
+  const result = session.token ? await sendForCurrentSession(session.token) : await send(null);
 
   // A request that carried no Bearer has no session to renew, and any other status is the caller's
   // answer.
@@ -145,16 +156,16 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
 
   let renewal: CardSessionRefreshResult;
   try {
-    renewal = await extra.refreshCardSession(session.sessionId);
-  } catch (error) {
-    return sessionPortError(error);
+    renewal = await extra.refreshCardSession(session.sessionId, session.token);
+  } catch {
+    return sessionPortError("renew");
   }
 
   switch (renewal.kind) {
     case "refreshed":
       // At most one replay, and only with a token from the same session. A second 401 is the
       // caller's answer.
-      return send(renewal.accessToken);
+      return sendForCurrentSession(renewal.accessToken);
     case "session-ended":
       // Terminal cleanup has already run. The 401 the provider sent is the answer, and the login
       // flow reads it as the end of the session.

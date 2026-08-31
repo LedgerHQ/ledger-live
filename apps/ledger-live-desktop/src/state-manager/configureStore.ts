@@ -16,6 +16,7 @@ import {
 } from "@shared/api-services";
 import {
   configureCardSessionRenewal,
+  isCardSessionCurrent,
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
@@ -78,6 +79,7 @@ const customCreateStore = ({
                 getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
                 readCardSession,
+                isCardSessionCurrent,
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({

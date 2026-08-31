@@ -107,6 +107,7 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
             getCardApiBaseUrl: () => "https://card.test",
             getCardBaanxClientKey: () => "client-key",
             readCardSession: () => Promise.resolve({ token: sessionToken, sessionId: 1 }),
+            isCardSessionCurrent: () => true,
             refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
             ...overrides,
           }),

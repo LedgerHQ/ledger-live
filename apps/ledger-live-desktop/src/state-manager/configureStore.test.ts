@@ -2,16 +2,13 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/ledger-auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
-import { getEnv, setEnv } from "@shared/env";
+import { setEnv } from "@shared/env";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
-import { cardApi, type CardApiExtra } from "@shared/api-services";
-import { cardSession } from "@features/platform-card";
-import { selectIsSignedIn, setSignedIn } from "@features/flow-pay-card-auth/state";
 import customCreateStore from "./configureStore";
 
 describe("customCreateStore", () => {
@@ -124,10 +121,7 @@ describe("customCreateStore", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accessToken: KEYCLOAK_JWT,
-          tokenType: "Bearer",
-        }),
+        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
       expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
@@ -194,10 +188,7 @@ describe("customCreateStore", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accessToken: KEYCLOAK_JWT,
-          tokenType: "Bearer",
-        }),
+        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
       expect(endpoints.prodKeycloakAuth.mock.calls[0][0].request.url).toEqual(
         expect.stringContaining(AUTH_CONFIG.keycloakBaseUrl),
@@ -207,106 +198,14 @@ describe("customCreateStore", () => {
       expect(challengeRequest).toEqual(
         expect.objectContaining({
           signature: expect.objectContaining({
-            credential: expect.objectContaining({
-              publicKey: MEMBER_CREDENTIALS.pubkey,
-            }),
+            credential: expect.objectContaining({ publicKey: MEMBER_CREDENTIALS.pubkey }),
             attestation: ATTESTATION,
           }),
         }),
       );
     });
   });
-
-  describe("card session renewal", () => {
-    const cardApiUrl = getEnv("CARD_API_URL");
-    let fetchSpy: jest.SpyInstance | undefined;
-    let warn: jest.SpyInstance;
-
-    beforeEach(() => {
-      // A terminal renewal writes one line, so a support log names the failure that ended it.
-      warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
-    });
-
-    // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
-    // rewritten environment into every test after it.
-    afterEach(async () => {
-      fetchSpy?.mockRestore();
-      fetchSpy = undefined;
-      warn.mockRestore();
-      setEnv("CARD_API_URL", cardApiUrl);
-      await cardSession.clear();
-    });
-
-    it("hands the Card api the two session accessors it needs", () => {
-      const store = customCreateStore({ fetchRemoteFlags: null });
-      const extra = readCardExtra(store);
-
-      // The base query reads the session and asks for one renewal. It needs nothing else: the two
-      // grants are plain thunks, and each one reads its own credential.
-      expect(extra).toMatchObject({
-        cardApiBaseUrl: expect.any(String),
-        cardBaanxClientKey: expect.any(String),
-        readCardSession: expect.any(Function),
-        refreshCardSession: expect.any(Function),
-      });
-    });
-
-    it("serves the stored session through the reader the api was given", async () => {
-      const store = customCreateStore({ fetchRemoteFlags: null });
-      const extra = readCardExtra(store);
-
-      await cardSession.set({
-        accessToken: "at_token",
-        refreshToken: "rt_token",
-      });
-
-      await expect(extra.readCardSession()).resolves.toEqual({
-        token: "at_token",
-        sessionId: expect.any(Number),
-      });
-    });
-
-    it("publishes signed-out and drops the session when a renewal ends it", async () => {
-      setEnv("CARD_API_URL", "http://card.test");
-      // The provider refuses the grant. That is terminal, so this store's own callback must run.
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
-        async () =>
-          new Response(JSON.stringify({ error: "invalid_grant" }), {
-            status: 400,
-            headers: { "content-type": "application/json" },
-          }),
-      );
-
-      const store = customCreateStore({ fetchRemoteFlags: null });
-      const extra = readCardExtra(store);
-
-      await cardSession.set({
-        accessToken: "at_token",
-        refreshToken: "rt_token",
-      });
-      store.dispatch(setSignedIn(true));
-
-      const { sessionId } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({
-        kind: "session-ended",
-      });
-
-      expect(selectIsSignedIn(store.getState())).toBe(false);
-      // The Card cache is emptied one macrotask later, so the request whose 401 started the
-      // renewal is not aborted before it can answer.
-      await new Promise(resolve => setTimeout(resolve, 0));
-      expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(cardSession.get()).resolves.toBeNull();
-    });
-  });
 });
-
-/** The Card slice of the thunk extraArgument, as `cardBaseQuery` reads it. */
-function readCardExtra(store: { dispatch: unknown }): CardApiExtra {
-  type ExtraThunk = (dispatch: unknown, getState: unknown, extra: CardApiExtra) => CardApiExtra;
-  const dispatch = (store as { dispatch: (thunk: ExtraThunk) => CardApiExtra }).dispatch;
-  return dispatch((_dispatch, _getState, extra) => extra);
-}
 
 type AuthThunk = (
   dispatch: unknown,

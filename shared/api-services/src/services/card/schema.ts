@@ -27,12 +27,16 @@ export const CardApiExtraSchema = z.object({
     isFunction,
     mustBeAFunction("readCardSession"),
   ),
+  isCardSessionCurrent: z.custom<(sessionId: number) => boolean>(
+    isFunction,
+    mustBeAFunction("isCardSessionCurrent"),
+  ),
   /**
    * The one renewal entry, called by the base query after a 401. It takes the session id the request
-   * was sent with, so a request that outlived its session neither renews nor cleans up.
+   * and access token the request was sent with. A request that outlived its session neither renews
+   * nor cleans up, and a delayed 401 can reuse a token another request already refreshed.
    */
-  refreshCardSession: z.custom<(sessionId: number) => Promise<CardSessionRefreshResult>>(
-    isFunction,
-    mustBeAFunction("refreshCardSession"),
-  ),
+  refreshCardSession: z.custom<
+    (sessionId: number, accessToken: string) => Promise<CardSessionRefreshResult>
+  >(isFunction, mustBeAFunction("refreshCardSession")),
 });

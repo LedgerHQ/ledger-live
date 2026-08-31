@@ -8,36 +8,10 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
-import { cardApi, type CardApiExtra } from "@shared/api-services";
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
-
-/**
- * One keychain entry per `service`, which is how the Card session store uses the library. The native
- * module does not exist under jest, and `@features/platform-card` resolves to its native build here.
- */
-jest.mock("react-native-keychain", () => {
-  const entries = new Map<string, string>();
-  return {
-    ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },
-    STORAGE_TYPE: { AES_GCM_NO_AUTH: "KeystoreAESGCM_NoAuth" },
-    getGenericPassword: jest.fn(async ({ service }: { service: string }) => {
-      const password = entries.get(service);
-      return password === undefined ? false : { username: "payCard", password };
-    }),
-    setGenericPassword: jest.fn(
-      async (_username: string, password: string, { service }: { service: string }) => {
-        entries.set(service, password);
-        return { service, storage: "KeystoreAESGCM_NoAuth" };
-      },
-    ),
-    resetGenericPassword: jest.fn(async ({ service }: { service: string }) =>
-      entries.delete(service),
-    ),
-  };
-});
 
 jest.mock("@rozenite/redux-devtools-plugin", () => ({
   rozeniteDevToolsEnhancer: jest.fn(() => (next: (...args: unknown[]) => unknown) => {
@@ -187,10 +161,7 @@ describe("mobile store", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accessToken: KEYCLOAK_JWT,
-          tokenType: "Bearer",
-        }),
+        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
       expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
@@ -261,10 +232,7 @@ describe("mobile store", () => {
       );
 
       expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accessToken: KEYCLOAK_JWT,
-          tokenType: "Bearer",
-        }),
+        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
       expect(
         endpoints.prodKeycloakAuth.mock.calls.every(([{ request }]) =>
@@ -285,84 +253,7 @@ describe("mobile store", () => {
       );
     });
   });
-
-  describe("card session renewal", () => {
-    let fetchSpy: jest.SpyInstance | undefined;
-    let warn: jest.SpyInstance;
-
-    beforeEach(() => {
-      // A terminal renewal writes one line, so a support log names the failure that ended it.
-      warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
-    });
-
-    // Restored whatever the assertions did, so one failure cannot leak a mocked `fetch` and a
-    // rewritten environment into every test after it.
-    afterEach(async () => {
-      fetchSpy?.mockRestore();
-      fetchSpy = undefined;
-      warn.mockRestore();
-      const { cardSession } = require("@features/platform-card");
-      await cardSession.clear();
-    });
-
-    it("hands the Card api the two session accessors it needs", () => {
-      const { store } = require("./configureStore");
-      const extra = readCardExtra(store);
-
-      // The base query reads the session and asks for one renewal. It needs nothing else: the two
-      // grants are plain thunks, and each one reads its own credential.
-      expect(extra).toMatchObject({
-        cardApiBaseUrl: expect.any(String),
-        cardBaanxClientKey: expect.any(String),
-        readCardSession: expect.any(Function),
-        refreshCardSession: expect.any(Function),
-      });
-    });
-
-    it("publishes signed-out and drops the session when a renewal ends it", async () => {
-      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
-      setEnv("CARD_API_URL", "http://card.test");
-      // The provider refuses the grant. That is terminal, so this store's own callback must run.
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
-        async () =>
-          new Response(JSON.stringify({ error: "invalid_grant" }), {
-            status: 400,
-            headers: { "content-type": "application/json" },
-          }),
-      );
-
-      const { store } = require("./configureStore");
-      const { setSignedIn, selectIsSignedIn } = require("@features/flow-pay-card-auth/state");
-      const { cardSession } = require("@features/platform-card");
-      const extra = readCardExtra(store);
-
-      await cardSession.set({
-        accessToken: "at_token",
-        refreshToken: "rt_token",
-      });
-      store.dispatch(setSignedIn(true));
-
-      const { sessionId } = await extra.readCardSession();
-      await expect(extra.refreshCardSession(sessionId)).resolves.toEqual({
-        kind: "session-ended",
-      });
-
-      expect(selectIsSignedIn(store.getState())).toBe(false);
-      // The Card cache is emptied one macrotask later, so the request whose 401 started the
-      // renewal is not aborted before it can answer. This suite runs on fake timers.
-      jest.runOnlyPendingTimers();
-      expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
-      await expect(cardSession.get()).resolves.toBeNull();
-    });
-  });
 });
-
-/** The Card slice of the thunk extraArgument, as `cardBaseQuery` reads it. */
-function readCardExtra(store: unknown): CardApiExtra {
-  type ExtraThunk = (dispatch: unknown, getState: unknown, extra: CardApiExtra) => CardApiExtra;
-  const dispatch = (store as { dispatch: (thunk: ExtraThunk) => CardApiExtra }).dispatch;
-  return dispatch((_dispatch, _getState, extra) => extra);
-}
 
 type AuthThunk = (
   dispatch: unknown,

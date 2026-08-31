@@ -19,12 +19,12 @@ someEndpoint: build.query<Canonical, Request>({
 });
 ```
 
-| Key                 | Answers                   | Lives in        |
-| ------------------- | ------------------------- | --------------- |
-| `query`             | What we send              | `api.ts`        |
-| `rawResponseSchema` | What the backend promised | `schema.ts`     |
-| `transformResponse` | How it becomes ours       | `transforms.ts` |
-| `responseSchema`    | What the caller gets      | `schema.ts`     |
+| Key | Answers | Lives in |
+| --- | --- | --- |
+| `query` | What we send | `api.ts` |
+| `rawResponseSchema` | What the backend promised | `schema.ts` |
+| `transformResponse` | How it becomes ours | `transforms.ts` |
+| `responseSchema` | What the caller gets | `schema.ts` |
 
 Drop the keys you do not need. An endpoint whose wire shape is already canonical declares
 `responseSchema` alone — `logout` and `getUser` both do.
@@ -39,8 +39,7 @@ more than it looks:
 
 - **RTK Query skips `transformResponse` for a `queryFn` endpoint.** `getTransformCallbackForEndpoint`
   in `buildThunks` is guarded by `endpointDefinition.query &&`. The mapper is silently ignored, so the
-  mapping moves inside the function, by hand. (`rawResponseSchema` still runs, but it validates what
-  the function returns, not the wire body, so a `queryFn` that maps by hand must parse by hand too.)
+  mapping moves inside the function, by hand.
 - The `baseQuery` result is `unknown`, so the body needs a cast or a manual `safeParse`.
 - Every one brings its own `if (response.error) return { error: response.error }`.
 
@@ -49,25 +48,9 @@ neighbours.
 
 ## An endpoint that handles a credential is not an endpoint
 
-RTK Query dispatches an action for every phase of a request. `meta.arg.originalArgs` rides on the
-pending action, and the answer rides on the fulfilled one. The desktop redux logger writes both into
-the file users attach to a support ticket, in production, and the mobile DevTools relay sends both
-over a socket and accepts no sanitizer. A `createAsyncThunk` dispatches the same two actions.
-
-So a call that presents a credential or answers with one is a **plain thunk** in `grants.ts`, not an
-endpoint. Dispatching a plain thunk runs it and answers with its value, and dispatches nothing.
-
-The two OAuth2 grants are the only such calls today. Each one:
-
-- takes its credential as an ordinary function argument, because nothing dispatches it;
-- sends its request with `postCardJson` from `@shared/api-services` — the base URL and the
-  `x-client-key`, no Bearer, and no 401 renewal;
-- validates the wire body with `PayCardSessionResponseSchema.safeParse` and maps it with
-  `transformPayCardSessionResponse`;
-- throws a `CardRequestError` naming the path and the status, and never the body.
-
-Neither grant has a hook. A renewal is the base query's decision, and the code exchange belongs to
-the login machine.
+RTK Query and `createAsyncThunk` expose arguments and results in lifecycle actions. Credential calls
+therefore use plain thunks in `grants.ts`, which dispatch nothing. They call `postCardJson` without a
+Bearer or renewal, validate and transform the response, and never include the body in an error.
 
 ## Where configuration comes from
 

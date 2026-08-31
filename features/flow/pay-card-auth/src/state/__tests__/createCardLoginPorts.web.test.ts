@@ -1,5 +1,5 @@
-import { exchangeAuthorizationCode } from "@domain/api-card-management";
-import { getCardSessionToken } from "@features/platform-card";
+import { cardManagementApi, exchangeAuthorizationCode } from "@domain/api-card-management";
+import { cardSession, getCardSessionToken } from "@features/platform-card";
 import { createCardLoginPorts, type CardLoginDispatch } from "../createCardLoginPorts";
 import type { OpenHostedLogin } from "../types";
 
@@ -17,7 +17,7 @@ jest.mock("@domain/api-card-management", () => ({
 }));
 
 const grant = { code: "a-code", codeVerifier: "a-verifier" };
-const session = { accessToken: "at_token", refreshToken: "rt_token" };
+const session = { accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" };
 
 // Never called here: these tests only cover the session and exchange ports.
 const openHostedLogin: OpenHostedLogin = jest.fn(
@@ -76,6 +76,26 @@ describe("createCardLoginPorts", () => {
       await expect(ports.exchangeAuthorizationCode(grant)).rejects.toThrow(
         "the provider refused the grant",
       );
+    });
+  });
+
+  describe("persistSession", () => {
+    it("clears the previous Card cache after the replacement session is stored", async () => {
+      let finishWrite!: () => void;
+      jest.mocked(cardSession.set).mockReturnValue(
+        new Promise(resolve => {
+          finishWrite = resolve;
+        }),
+      );
+      const { ports, dispatch } = buildPorts();
+
+      const persisted = ports.persistSession(session);
+      expect(dispatch).not.toHaveBeenCalled();
+
+      finishWrite();
+      await persisted;
+
+      expect(dispatch).toHaveBeenCalledWith(cardManagementApi.util.resetApiState());
     });
   });
 });

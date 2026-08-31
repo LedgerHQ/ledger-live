@@ -32,7 +32,10 @@ export function createCardLoginPorts({
     loadAttempt,
     clearAttempt,
     hasSession: async () => Boolean(await getCardSessionToken()),
-    persistSession: session => cardSession.set(session),
+    persistSession: async session => {
+      await cardSession.set(session);
+      dispatch(cardManagementApi.util.resetApiState());
+    },
     clearSession: () => cardSession.clear(),
     forgetUser: () => {
       dispatch(cardManagementApi.util.resetApiState());
