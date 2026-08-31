@@ -10,7 +10,6 @@ import { track, trackPage } from "~/renderer/analytics/segment";
 import { closeSwapTransactionStatusDialog } from "../swapTransactionStatusDialog";
 
 const TRANSLATION_PREFIX = "swap2.modals.transactionStatus.earnBanner";
-const PROMOTED_TOKENS = new Set<string>(["ETH", "USDC", "USDT"]);
 const PAGE = "swapTransactionSuccess";
 const FLOW = "swap";
 
@@ -30,12 +29,16 @@ export function useEarnBannerViewModel({
   const navigate = useNavigate();
   const feature = useFeature("ptxEarnTransactionSuccessBanner");
   const promotedToken = receiveCurrency?.ticker;
+  const promotedTokens = useMemo(
+    () => new Set(feature?.params?.promotedTokens ?? []),
+    [feature?.params?.promotedTokens],
+  );
   const isEligible = Boolean(
     feature?.enabled &&
     sendCurrency &&
     provider &&
     promotedToken &&
-    PROMOTED_TOKENS.has(promotedToken),
+    promotedTokens.has(promotedToken),
   );
 
   useAssetsData({

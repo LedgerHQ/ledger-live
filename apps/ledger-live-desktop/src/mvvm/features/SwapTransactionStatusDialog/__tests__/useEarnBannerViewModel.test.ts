@@ -31,9 +31,6 @@ const ethereum = mockEthCryptoCurrency;
 const provider = "lifi";
 const positiveApy = { value: 0.05, type: "APY" as const };
 
-const flagEnabled = withFlagOverrides({ ptxEarnTransactionSuccessBanner: { enabled: true } });
-const flagDisabled = withFlagOverrides({ ptxEarnTransactionSuccessBanner: { enabled: false } });
-
 const defaultProps = {
   sendCurrency: bitcoin,
   receiveCurrency: ethereum,
@@ -42,10 +39,10 @@ const defaultProps = {
 
 function renderEarnBanner(
   props: Parameters<typeof useEarnBannerViewModel>[0] = defaultProps,
-  enabled = true,
+  flag: { enabled?: boolean; params?: { promotedTokens?: string[] } } = { enabled: true },
 ) {
   return renderHook(() => useEarnBannerViewModel(props), {
-    initialState: enabled ? flagEnabled : flagDisabled,
+    initialState: withFlagOverrides({ ptxEarnTransactionSuccessBanner: flag }),
   });
 }
 
@@ -77,7 +74,7 @@ describe("useEarnBannerViewModel", () => {
   });
 
   it("should be hidden when the feature flag is disabled", () => {
-    const { result } = renderEarnBanner(defaultProps, false);
+    const { result } = renderEarnBanner(defaultProps, { enabled: false });
 
     expect(result.current.isVisible).toBe(false);
     expect(result.current.title).toBeUndefined();
@@ -104,6 +101,29 @@ describe("useEarnBannerViewModel", () => {
     expect(result.current.isVisible).toBe(false);
     expect(result.current.title).toBeUndefined();
     expect(trackPage).not.toHaveBeenCalled();
+  });
+
+  it("should be visible when the flag params promote a non-default ticker", () => {
+    mockUseInterestRatesByCurrencies.mockReturnValue({
+      [bitcoin.id]: positiveApy,
+    });
+
+    const { result } = renderEarnBanner(
+      { ...defaultProps, receiveCurrency: bitcoin },
+      { enabled: true, params: { promotedTokens: ["BTC"] } },
+    );
+
+    expect(result.current.isVisible).toBe(true);
+  });
+
+  it("should be hidden when the flag params list is empty", () => {
+    const { result } = renderEarnBanner(defaultProps, {
+      enabled: true,
+      params: { promotedTokens: [] },
+    });
+
+    expect(result.current.isVisible).toBe(false);
+    expect(result.current.title).toBeUndefined();
   });
 
   it("should be hidden when APY is 0", () => {

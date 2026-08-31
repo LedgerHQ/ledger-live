@@ -14,7 +14,6 @@ import { useTranslation } from "~/context/Locale";
 import { closeSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 
 const TRANSLATION_PREFIX = "transfer.swap2.modals.transactionStatus.earnBanner";
-const PROMOTED_TOKENS = new Set<string>(["ETH", "USDC", "USDT"]);
 const PAGE = "swapTransactionSuccess";
 const FLOW = "swap";
 
@@ -34,12 +33,16 @@ export function useEarnBannerViewModel({
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const feature = useFeature("ptxEarnTransactionSuccessBanner");
   const promotedToken = receiveCurrency?.ticker;
+  const promotedTokens = useMemo(
+    () => new Set(feature?.params?.promotedTokens ?? []),
+    [feature?.params?.promotedTokens],
+  );
   const isEligible = Boolean(
     feature?.enabled &&
     sendCurrency &&
     provider &&
     promotedToken &&
-    PROMOTED_TOKENS.has(promotedToken),
+    promotedTokens.has(promotedToken),
   );
 
   useAssetsData({
