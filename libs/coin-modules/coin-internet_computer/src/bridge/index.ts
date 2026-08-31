@@ -18,7 +18,7 @@ import type {
   TransactionStatus,
   ICPSigner,
 } from "../types";
-import { getAccountShape } from "./bridgeHelpers/account";
+import { getAccountShape, postSync } from "./bridgeHelpers/account";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -46,7 +46,7 @@ function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyB
   };
 }
 
-const sync = makeSync({ getAccountShape });
+const sync = makeSync({ getAccountShape, postSync });
 
 function buildAccountBridge(
   signerContext: SignerContext<ICPSigner>,
