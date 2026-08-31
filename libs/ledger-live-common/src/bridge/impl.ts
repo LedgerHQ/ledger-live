@@ -26,7 +26,7 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
-import { isZcashShieldedEnabled } from "./zcashRouting";
+import { resolveFamily } from "./zcashRouting";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
@@ -41,15 +41,7 @@ import {
   TransactionStage,
 } from "@ledgerhq/transaction-observability";
 
-// The family owning a currency's bridge is `currency.family`, except zcash:
-// `zcashShielded` routes it to the standalone "zcash" family
-// (@ledgerhq/coin-zcash) instead of coin-bitcoin's chain-adapter. The flag is
-// read from the mirror the host app feeds (`setZcashShieldedEnabled`), so a
-// developer-drawer override moves the routing with it; the two families keep
-// separate cache entries, so a flip mid-session resolves the other bridge.
-function resolveFamily(currency: CryptoCurrency): string {
-  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
-}
+export { resolveFamily };
 
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
