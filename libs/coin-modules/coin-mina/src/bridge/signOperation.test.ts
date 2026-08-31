@@ -85,6 +85,19 @@ describe("signOperation", () => {
       expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "DELEGATE");
     });
 
+    it("should build REDELEGATE operation when staking on an already delegating account", () => {
+      const stakeTx = createMockTransaction({ txType: "stake" });
+      const delegatingAccount = {
+        ...mockAccount,
+        resources: { stakingActive: true },
+      } as unknown as typeof mockAccount;
+
+      const result = buildOptimisticOperation(delegatingAccount, stakeTx, new BigNumber(10));
+
+      expect(result.type).toBe("REDELEGATE");
+      expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "REDELEGATE");
+    });
+
     it("should build UNDELEGATE operation when txType is unstake", () => {
       const unstakeTx = createMockTransaction({ txType: "unstake" });
 

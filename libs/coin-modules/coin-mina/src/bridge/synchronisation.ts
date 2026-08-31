@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
-import type { Operation } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { MINA_BLOCK_INFO_CONCURRENCY, MINA_BLOCK_INFO_TIMEOUT } from "../consts";
@@ -141,8 +141,10 @@ export const mapRosettaTxnToOperation = async (
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
-      // delegate change — if sender delegates to themselves, it's an undelegate
-      const type = fromAccount === toAccount ? "UNDELEGATE" : "REDELEGATE";
+      // delegate change — if sender delegates to themselves, it's an undelegate. Otherwise the
+      // chain only says the account now delegates; whether that starts or switches a delegation
+      // is settled by refineDelegationTypes, which sees the whole history.
+      const type = fromAccount === toAccount ? "UNDELEGATE" : "DELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),
@@ -168,6 +170,50 @@ export const mapRosettaTxnToOperation = async (
     return [];
   }
 };
+
+const DELEGATION_TYPES: ReadonlySet<OperationType> = new Set([
+  "DELEGATE",
+  "REDELEGATE",
+  "UNDELEGATE",
+]);
+
+const sequenceNumber = (op: MinaOperation) => op.transactionSequenceNumber?.toNumber() ?? 0;
+
+/**
+ * A `delegate_change` tells who the account delegates to, never whether it already delegated,
+ * so only the delegation state at that block separates a first delegation from a validator
+ * switch. Rosetta history is always fetched in full, so replaying the delegation operations
+ * oldest-first rebuilds that state and promotes the switches to REDELEGATE.
+ */
+export function refineDelegationTypes(operations: MinaOperation[]): MinaOperation[] {
+  const delegations = operations
+    .filter(op => DELEGATION_TYPES.has(op.type))
+    .sort((a, b) => {
+      const byDate = a.date.valueOf() - b.date.valueOf();
+      if (byDate !== 0) return byDate;
+      // Same block: the nonce is what orders two delegation changes of the same account.
+      return sequenceNumber(a) - sequenceNumber(b);
+    });
+
+  let delegating = false;
+  const refined = new Map<string, MinaOperation>();
+
+  for (const op of delegations) {
+    if (op.type === "UNDELEGATE") {
+      // A failed change leaves the delegation untouched.
+      if (!op.hasFailed) delegating = false;
+      continue;
+    }
+    const type: OperationType = delegating ? "REDELEGATE" : "DELEGATE";
+    if (!op.hasFailed) delegating = true;
+    if (type !== op.type) {
+      refined.set(op.id, { ...op, type, id: encodeOperationId(op.accountId, op.hash, type) });
+    }
+  }
+
+  if (refined.size === 0) return operations;
+  return operations.map(op => refined.get(op.id) ?? op);
+}
 
 // Staking data is not on the critical path: an upstream failure must degrade it, not fail the
 // whole account synchronisation (balance and operations).
@@ -250,7 +296,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     ),
   );
 
-  const operations = mergeOps(oldOperations, newOperations.flat());
+  const operations = mergeOps(oldOperations, refineDelegationTypes(newOperations.flat()));
 
   const resources = await getStakingResources(address, operations, initialAccount?.resources);
 

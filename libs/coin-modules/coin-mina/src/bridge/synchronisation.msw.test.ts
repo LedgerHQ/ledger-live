@@ -54,7 +54,7 @@ describe("mapRosettaTxnToOperation via MSW", () => {
     expect(ops[0].recipients).toEqual([ADDRESS]);
   });
 
-  it("should map a delegate_change transaction to a REDELEGATE operation", async () => {
+  it("should map a delegate_change transaction to a DELEGATE operation", async () => {
     const tokenId = "wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf";
     const delegateTxn: RosettaTransaction = {
       block_identifier: { index: 200, hash: "block-200" },
@@ -83,7 +83,7 @@ describe("mapRosettaTxnToOperation via MSW", () => {
     const ops = await mapRosettaTxnToOperation(ACCOUNT_ID, ADDRESS, delegateTxn);
 
     expect(ops).toHaveLength(1);
-    expect(ops[0].type).toBe("REDELEGATE");
+    expect(ops[0].type).toBe("DELEGATE");
     expect(ops[0].value.toNumber()).toBe(0);
     expect(ops[0].fee.toNumber()).toBe(10000000);
   });
