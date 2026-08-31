@@ -11,7 +11,6 @@ const COPY = {
   wrongDevice: "Use the same Ledger device you used to add this contact",
   invalidData: "This address can't be saved",
   appVersionTooLow: "App update required",
-  scopeUnsupported: "This label can't be changed yet",
   genericError: "Unknown error",
 } as const;
 
@@ -66,7 +65,6 @@ describe("EditExternalAddressComponentLWM", () => {
     ["invalid-input", COPY.invalidData],
     ["unsupported-operation", COPY.invalidData],
     ["app-version-too-low", COPY.appVersionTooLow],
-    ["scope-edit-unsupported", COPY.scopeUnsupported],
     ["failed", COPY.genericError],
   ])("should show its error screen when the job state is %s", (type, title) => {
     renderComponent(failure(type));
@@ -101,10 +99,16 @@ describe("EditExternalAddressComponentLWM", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("should offer only a way out when the label change is unsupported", () => {
-    renderComponent(failure("scope-edit-unsupported"));
+  it("should show the same waiting screen for both confirmations of a combined edit", () => {
+    // The two steps are deliberately not numbered: the on-device screens are
+    // what distinguish them.
+    renderComponent({
+      type: "awaiting-device-confirmation",
+      step: "scope",
+      deviceModelId: DeviceModelId.STAX,
+      deviceName: "Lily's Ledger",
+    });
 
-    expect(screen.getByText("Close")).toBeVisible();
-    expect(screen.queryByText("Retry")).toBeNull();
+    expect(screen.getByText(COPY.continueOnDevice)).toBeVisible();
   });
 });

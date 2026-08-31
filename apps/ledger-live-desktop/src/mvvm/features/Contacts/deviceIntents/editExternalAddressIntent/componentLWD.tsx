@@ -55,18 +55,6 @@ export function EditExternalAddressComponentLWD({
         />
       );
 
-    case "scope-edit-unsupported":
-      return (
-        <InfoState
-          preset="info"
-          size="hug"
-          title={t("contacts.deviceIntents.errors.scopeEditUnsupported.title")}
-          description={t("contacts.deviceIntents.errors.scopeEditUnsupported.description")}
-          primaryCta={closeCta}
-          testID="contacts-edit-external-address-scope-unsupported"
-        />
-      );
-
     case "device-rejected": {
       const retry = jobState.retry;
       return (

@@ -54,19 +54,13 @@ export type EditExternalAddressJobState =
       readonly deviceName: string;
     }
   /**
-   * Reserved for the two-step composition: one step approved, the next still to
-   * go. Unreachable while only the identifier step exists — see
-   * `scope-edit-unsupported`.
+   * The combined edit approved its identifier step and is starting its scope
+   * step. Carries no payload: the device records nothing, so the intermediate
+   * proof is only the next step's input and abandoning the edit here leaves the
+   * stored record untouched and still valid.
    */
   | { readonly type: "partial-result" }
   | { readonly type: "completed" }
-  /**
-   * The edit changes the scope, which needs a kit method that does not exist yet
-   * (DSDK-1380). Terminal, and raised before any device interaction: the scope
-   * is bound into the address-level `hmacRest`, so it cannot be changed
-   * host-side without invalidating the stored proof.
-   */
-  | { readonly type: "scope-edit-unsupported"; readonly error: Error }
   | ContactDeviceIntentFailureJobState;
 
 export type EditExternalAddressIntentDefinition = IntentDefinition<

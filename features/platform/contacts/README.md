@@ -59,16 +59,24 @@ rename. The edit intent covers three ADR operations on its own — identifier ed
 both at once — through its `EditExternalAddressStep`.
 
 Each intent lives in its own directory with `types.ts`, `job.ts` and a component-less
-`intentDefinition.ts`. Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
-`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking DMK
-or `@ledgerhq/device-contacts-kit`.
+`intentDefinition.ts`. The three external-contact intents — registration, rename and edit — drive
+`@ledgerhq/device-contacts-kit`'s `ContactsManager` for real. The two Ledger-account intents are
+still deterministic scaffolds: they emit `pending`, `awaiting-device-confirmation`, then a
+persistence-friendly `completed` result without invoking DMK or the kit.
 
 The renderers are app-owned, because a `features/` package cannot resolve translations today. Each
 app keeps them under `src/mvvm/features/Contacts/deviceIntents/<intent>/`, composes each shared
 definition with its own component into an `IntentPlatformDefinition`, and injects the resulting bag
 into `useContactsIntentsOrchestrator`.
 
-The combined edit intentionally emits an identifier `partial-result` before the scope confirmation
-when both fields change. This preserves the ADR's non-atomic recovery contract: a consumer must
-persist that intermediate result before the scope step completes. Real ContactsManager adapters and
-application-flow wiring are deferred to their dedicated work.
+The combined edit emits a payload-free `partial-result` between its two device confirmations. It
+carries nothing to persist, because the device stores no address book: it verifies the `hmacRest`
+proof it is given, asks the user, and returns a fresh one. Each proof therefore covers one specific
+`(identifier, scope)` pair, which is what dictates the chain — the identifier step proves
+`(previousAddress, previousScope)` and yields a proof over `(newAddress, previousScope)`, exactly
+what the scope step must present.
+
+That statelessness also makes the chain atomic from the host's point of view. Abandoning a combined
+edit between its two confirmations drops an intermediate proof and leaves the stored record
+untouched and still valid, so a retry restarts the whole chain from the stored proof rather than
+resuming mid-way.
