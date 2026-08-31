@@ -28,12 +28,15 @@ import {
 } from "../test/fixtures";
 import type { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 import {
+  dropSupersededOperations,
   getAccountShape,
   mapRosettaTxnToOperation,
   refineDelegationTypes,
   assignToAccountRaw,
   assignFromAccountRaw,
 } from "./synchronisation";
+
+const storedOp = (id: string, hash: string): MinaOperation => ({ id, hash }) as MinaOperation;
 
 describe("synchronisation", () => {
   beforeEach(() => {
@@ -673,6 +676,42 @@ describe("synchronisation", () => {
       ];
 
       expect(refineDelegationTypes(ops)[0]).toBe(payment);
+    });
+  });
+
+  describe("dropSupersededOperations", () => {
+    it("drops a stored operation whose transaction came back under another id", () => {
+      const stored = [storedOp("account_id-tx1-REDELEGATE", "tx1")];
+      const fetched = [storedOp("account_id-tx1-DELEGATE", "tx1")];
+
+      expect(dropSupersededOperations(stored, fetched)).toEqual([]);
+    });
+
+    it("keeps a stored operation the fetch confirms under the same id", () => {
+      const stored = [storedOp("account_id-tx1-DELEGATE", "tx1")];
+      const fetched = [storedOp("account_id-tx1-DELEGATE", "tx1")];
+
+      expect(dropSupersededOperations(stored, fetched)).toEqual(stored);
+    });
+
+    it("keeps a stored operation the fetch does not report at all", () => {
+      const stored = [storedOp("account_id-tx1-OUT", "tx1")];
+      const fetched = [storedOp("account_id-tx2-OUT", "tx2")];
+
+      expect(dropSupersededOperations(stored, fetched)).toEqual(stored);
+    });
+
+    it("keeps the other operations of a transaction that yields several", () => {
+      const stored = [
+        storedOp("account_id-tx1-OUT", "tx1"),
+        storedOp("account_id-tx1-FEES", "tx1"),
+      ];
+      const fetched = [
+        storedOp("account_id-tx1-OUT", "tx1"),
+        storedOp("account_id-tx1-FEES", "tx1"),
+      ];
+
+      expect(dropSupersededOperations(stored, fetched)).toEqual(stored);
     });
   });
 });

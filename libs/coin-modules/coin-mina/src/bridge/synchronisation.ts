@@ -197,6 +197,23 @@ export function refineDelegationTypes(operations: MinaOperation[]): MinaOperatio
   return operations.map(op => refined.get(op.id) ?? op);
 }
 
+/**
+ * An operation id encodes its type, so refining a delegation type re-ids the operation. `mergeOps`
+ * dedupes on the id alone, so an account synchronised before the refinement would keep its stored
+ * operation next to the refined one and list the same transaction twice. Rosetta returns the whole
+ * history on every sync, so a stored operation whose transaction came back under other ids only
+ * exists under a stale id.
+ */
+export function dropSupersededOperations<T extends Operation>(
+  storedOperations: T[],
+  fetchedOperations: Operation[],
+): T[] {
+  const fetchedIds = new Set(fetchedOperations.map(op => op.id));
+  const fetchedHashes = new Set(fetchedOperations.map(op => op.hash));
+
+  return storedOperations.filter(op => fetchedIds.has(op.id) || !fetchedHashes.has(op.hash));
+}
+
 // Staking data is not on the critical path: an upstream failure must degrade it, not fail the
 // whole account synchronisation (balance and operations).
 const getStakingResources = async (
@@ -278,7 +295,11 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     ),
   );
 
-  const operations = mergeOps(oldOperations, refineDelegationTypes(newOperations.flat()));
+  const fetchedOperations = refineDelegationTypes(newOperations.flat());
+  const operations = mergeOps(
+    dropSupersededOperations(oldOperations, fetchedOperations),
+    fetchedOperations,
+  );
 
   const resources = await getStakingResources(address, operations, initialAccount?.resources);
 
