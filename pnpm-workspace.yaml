@@ -329,3 +329,5 @@ allowBuilds:
   web3-bzz: true
   web3-shh: true
   usb: true
+  cpu-features: false
+  unrs-resolver: false
