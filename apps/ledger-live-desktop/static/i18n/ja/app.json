@@ -901,6 +901,9 @@
         "confirm" : "確認"
       }
     },
+    "card" : {
+      "balanceLabel" : "残高"
+    },
     "actions" : {
       "deposit" : "ステーブルコインを追加",
       "request" : "リクエスト",
@@ -924,6 +927,38 @@
         "buy" : {
           "title" : "購入",
           "description" : "クレジットカードでステーブルコインを購入する。"
+        }
+      }
+    },
+    "request" : {
+      "title" : "リクエスト{{asset}}",
+      "networkLabel" : "{{network}}ネットワーク",
+      "saveDialogTitle" : "リクエストカードを保存",
+      "actions" : {
+        "share" : "共有する",
+        "copy" : "コピー",
+        "copied" : "コピー済み",
+        "save" : "保存",
+        "verify" : "認証する"
+      },
+      "verifyAddress" : {
+        "introTitle" : "アドレスを認証する",
+        "introDescription" : "アドレス置き換え攻撃を防ぐため、Ledgerデバイスのセキュアスクリーンでアドレスを確認してください。",
+        "verifyCta" : "アドレスの認証",
+        "successTitle" : "デバイスのセキュアスクリーンに表示されているアドレス",
+        "nextStepsLabel" : "次のステップ",
+        "nextStepShare" : "ご希望のアプリでアドレスを共有してください",
+        "nextStepMatch" : "共有アドレスが、Ledgerデバイスのアドレスと一致していることを確認してください。",
+        "gotItCta" : "了解",
+        "device" : {
+          "cancelledTitle" : "アドレスの検証がキャンセルされました",
+          "cancelledDescription" : "デバイスでアドレスを拒否しました。再度表示して確認することができます。",
+          "mismatchTitle" : "アドレスが一致しません",
+          "mismatchDescription" : "デバイスに表示されているアドレスが、リクエストされたアドレスと異なります。このアドレスは共有しないでください。",
+          "unsupportedTitle" : "検証は利用できません",
+          "unsupportedDescription" : "このデバイスのアプリでは、デバイス上での検証用アドレスを表示できません。",
+          "retryCta" : "アドレスをもう一度表示",
+          "closeCta" : "閉じる"
         }
       }
     }
@@ -2530,6 +2565,8 @@
     },
     "placeholder" : "アドレスまたはENSを入力してください",
     "placeholderNoENS" : "アドレスを入力",
+    "placeholderWithContacts" : "アドレス、ENS、または連絡先を入力してください",
+    "placeholderNoEnsWithContacts" : "アドレスまたは連絡先を入力してください",
     "recent" : "再送信",
     "myAccounts" : "アカウント",
     "sendTo" : "送付先：{{address}}",
@@ -7227,6 +7264,9 @@
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "Saplingアドレスへの送信は対応していません"
     },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "数量が少なすぎるため、ブロードキャストできません（最小{{minimumZatoshis}}ザトシ）"
+    },
     "InvalidNonce" : {
       "title" : "ナンスは必須です"
     },
@@ -7866,10 +7906,20 @@
       "title" : "最低数量は1 SUIです"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "最低1SUIをステーキングに残しておく必要があります"
+      "title" : "全額をステーキング解除するか、少なくとも1 SUIをステーキングに残してください"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "ステーキングの詳細は利用できません。アカウントを再同期してから、もう一度お試しください"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "数量が選択したステーキングを超えています"
     },
     "SomeSuiForUnstake" : {
       "title" : "今後のネットワーク手数料とステーキング解除に備えて、ウォレットに最低0.1 SUIを残しておいてください。"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Suiアプリをアップデートしてください。",
+      "description" : "お使いのLedgerのSuiアプリでは、SUIアドレスの残高からの送金に署名できません。LedgerデバイスのSuiアプリをアップデートして、再度お試しください。"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。",
@@ -8632,6 +8682,11 @@
       "title" : "さらなるセキュリティ。より確実なコントロール",
       "description" : "セキュリティ機能についての詳細をご確認ください。",
       "cta" : "詳細はこちら"
+    },
+    "profile" : {
+      "title" : "デバイスをアップグレード",
+      "description" : "大画面、より優れたセキュリティ。{{discount}}％をお楽しみください。",
+      "cta" : "探索"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8699,12 @@
       "title" : "署名前に詐欺を見抜く",
       "subtitle" : "リアルタイムの脅威検出を可能にする、高度なセキュリティ機能についての詳細をご確認ください。",
       "cta" : "詳細をチェック"
+    },
+    "recoverTrigger" : {
+      "title" : "安心のリカバリーをご希望ですか？",
+      "subtitle" : "お使いのNano Sのセキュリティは万全ですが、Ledger Recoverには対応していません。新しいモデルにアップグレードして、安全なIDベースのウォレットバックアップをロック解除しましょう。",
+      "cta" : "詳細はこちら",
+      "dismiss" : "後で"
     }
   },
   "modularAssetDrawer" : {
@@ -8747,7 +8808,8 @@
     "title" : "ホーム",
     "today" : "今日",
     "carousel" : {
-      "title" : "お客様へ"
+      "title" : "お客様へ",
+      "closeAll" : "すべて閉じる"
     },
     "addAccountCta" : "暗号資産アカウントを追加",
     "noBalanceTitle" : "まずはウォレットへの入金から始めましょう",
@@ -8930,7 +8992,7 @@
       "privateBalance" : "プライベート残高",
       "privateBalanceTooltip" : "一般には非公開の残高",
       "privateBalanceWarning" : "プライベート残高には、SaplingおよびOrchardのシールドされた資金は含まれません。",
-      "privateBalanceMaturing" : "{{spendable}}利用可能 · {{maturing}}使用中"
+      "privateBalanceMaturing" : "プライベート残高：{{spendable}}利用可能 · {{maturing}}使用中"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9025,10 @@
             "message" : "プライベート残高が同期済みではありません",
             "cta" : "同期を再開"
           },
+          "failed" : {
+            "message" : "プライベート残高の同期に失敗しました。",
+            "cta" : "同期を再開"
+          },
           "running" : {
             "message" : "プライベート残高を同期中 ({{progress}}％)",
             "timeRemaining" : "推定残り時間： {{hours}} : {{minutes}}"
@@ -8985,7 +9051,8 @@
         "stopSync" : "同期を停止",
         "upToDate" : "最新の状態",
         "lastSync" : "最終同期：{{date}}",
-        "estimatedTimeRemaining" : "推定残り時間： {{hours}} : {{minutes}}"
+        "estimatedTimeRemaining" : "推定残り時間： {{hours}} : {{minutes}}",
+        "syncFailed" : "プライベート残高の同期に失敗しました。"
       },
       "datepicker" : {
         "label" : "バースデーハイト",
@@ -9363,6 +9430,10 @@
     },
     "addAddressReview" : {
       "title" : "アドレスを確認",
+      "addressLabel" : "アドレス",
+      "currencyLabel" : "通貨",
+      "networkLabel" : "ネットワーク",
+      "nameLabel" : "アドレス名",
       "continue" : "アドレスを確認",
       "successTitle" : "アドレスを保存しました",
       "close" : "閉じる"
@@ -9443,6 +9514,7 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
+      "activate" : "Ledger Syncをオンにする",
       "dismiss" : "了解"
     },
     "featureIntroduction" : {
@@ -9532,8 +9604,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "デバイスがロック済みです",
-        "description" : "デバイスのロックを解除して続行する。"
+        "title" : "Ledgerデバイスのロックを解除し、以下の「再試行」を選択してください"
       },
       "unlockDevice" : {
         "title" : "{{productName}}のロックを解除"
@@ -9545,16 +9616,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "デバイスが切断されました",
-        "description" : "Ledgerが接続されていません。デバイスの電源が入っていて、接続されていることを確認してください。"
+        "title" : "Ledgerデバイスが切断されました",
+        "description" : "デバイスの電源が入っていて、接続されていることを確認してください。"
       },
       "intentError" : {
         "title" : "不明なエラー",
-        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+        "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
       },
       "invalidOperation" : {
-        "title" : "無効な状態",
-        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+        "title" : "エラーが発生しました。",
+        "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
       }
     },
     "initialization" : {
@@ -9570,43 +9641,43 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "デバイス上で操作が却下されました。"
+          "title" : "Ledgerデバイス上で操作が却下されました"
         },
         "deviceBusy" : {
-          "title" : "Ledgerデバイスで操作が保留されています",
-          "description" : "完了し、「Retry（再試行）」を選択する。"
+          "title" : "Ledgerデバイスで操作が必要です",
+          "description" : "デバイスで操作を完了し、下の「再試行」を選択してください。"
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "お客様のLedgerはまだ使用する準備ができていません",
-          "description" : "最初に{{productName}}の初期設定を行う必要があります。デバイスの初期設定手順をご案内します。"
+          "title" : "お使いのLedgerデバイスを設定する必要があります。",
+          "description" : "続行するには、セットアップを行ってください。"
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OSアップデートが必要です"
         },
         "unsupportedApplication" : {
           "title" : "サポートされていない機能",
-          "description" : "この操作に必要なアプリは、現在お使いのLedgerデバイスでは利用できません。詳細についてはLedgerサポートにお問い合わせください。"
+          "description" : "この操作に必要なアプリは、お使いのLedgerデバイスでサポートされていません。詳細についてはLedgerサポートにお問い合わせください。"
         },
         "unsupportedFeature" : {
           "title" : "サポートされていない機能",
-          "description" : "この操作に必要なアプリは、現在お使いのLedgerデバイスでは利用できません。詳細についてはLedgerサポートにお問い合わせください。"
+          "description" : "この操作に必要なアプリは、お使いのLedgerデバイスでサポートされていません。詳細についてはLedgerサポートにお問い合わせください。"
         },
         "wrongDeviceForAccount" : {
-          "title" : "シークレットリカバリーフレーズに誤りがあります",
-          "description" : "このLedgerには、選択されたアカウントにリンクされたリカバリーフレーズが設定されていません。正しいデバイスを使用していることをご確認ください。"
+          "title" : "このアカウントを最初に設定したLedgerデバイスを使用してください",
+          "description" : "このLedgerには、選択された暗号資産アカウントにリンクされたシークレットリカバリーフレーズが設定されていません。"
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "デバイスのメモリが不足しています",
-          "description" : "デバイスのメモリが不足しています。アプリをアンインストールしてもう一度お試しください。",
+          "title" : "Ledgerデバイスのメモリを確保するために、いくつかのアプリをアンインストールしてください。",
+          "description" : "デバイスのメモリが不足しています。",
           "apps" : "管理するアプリ：{{appNames}}"
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledgerを開く",
         "goToMyLedger" : "My Ledgerに移動",
-        "setupDevice" : "デバイスをセットアップ",
+        "setupDevice" : "Ledgerデバイスのセットアップ",
         "updateLedgerOs" : "Ledger OSを更新する",
         "cancelOperation" : "操作をキャンセル",
         "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
@@ -9623,7 +9694,7 @@
           "title" : "読み込み中"
         },
         "connecting" : {
-          "title" : "読み込み中"
+          "title" : "Ledgerデバイスに接続中"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9726,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledgerデバイスが必要です",
-          "description" : "続行するには、署名用デバイスをセットアップまたは接続してください。",
+          "description" : "続行するには、Ledgerデバイスをセットアップまたは接続してください。",
           "connectLedgerDevice" : "Ledgerデバイスを接続",
           "noLedgerDevice" : "Ledgerデバイスを持っていません"
         },
