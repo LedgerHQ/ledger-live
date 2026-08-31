@@ -86,7 +86,7 @@ export function ContactsListView({
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 8,
-            paddingBottom: 24,
+            paddingBottom: 8,
           }}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
