@@ -662,6 +662,33 @@ describe("getTransactionStatus, note-spending flows", () => {
   });
 });
 
+describe("getTransactionStatus, memo byte limit", () => {
+  it.each([
+    [
+      "transparent-input",
+      transaction({ transferType: "transparent-to-shielded", recipient: U_ADDRESS }),
+    ],
+    ["note-spending", transaction({ transferType: "shielded", recipient: U_ADDRESS })],
+  ])("rejects an oversized UTF-8 memo for %s flows", async (_label, tx) => {
+    const status = await getTransactionStatus(account(), { ...tx, memo: "😀".repeat(129) });
+
+    expect(status.errors.transaction?.name).toBe("ZcashMemoTooLong");
+  });
+
+  it("accepts a memo at exactly 512 UTF-8 bytes", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        memo: "😀".repeat(128),
+      }),
+    );
+
+    expect(status.errors.transaction).toBeUndefined();
+  });
+});
+
 describe("getTransactionStatus, recipientIsReadOnly", () => {
   it.each([
     ["transparent-input", transaction({ selfTransfer: true }), account()],

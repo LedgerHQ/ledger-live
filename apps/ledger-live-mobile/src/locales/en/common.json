@@ -129,6 +129,9 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
       "description": "The network fee might be too low. Please increase"
