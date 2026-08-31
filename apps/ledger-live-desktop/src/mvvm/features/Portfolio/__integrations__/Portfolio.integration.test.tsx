@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
-import i18next from "i18next";
+import i18next from "~/renderer/i18n/init";
 import PortfolioPage from "../index";
 import type { Portfolio as PortfolioType } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";

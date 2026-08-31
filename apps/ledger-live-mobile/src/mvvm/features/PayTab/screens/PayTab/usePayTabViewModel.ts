@@ -60,30 +60,10 @@ export function usePayTabViewModel() {
 
   const featureTour: FeatureTourProps = useMemo(
     () => ({
-      title: t("payTab.featureTour.title"),
-      description: t("payTab.featureTour.description"),
-      ctaLabel: t("payTab.featureTour.cta"),
-      rows: [
-        {
-          icon: "Globe",
-          title: t("payTab.featureTour.rows.global.title"),
-          description: t("payTab.featureTour.rows.global.description"),
-        },
-        {
-          icon: "Chart5",
-          title: t("payTab.featureTour.rows.volatility.title"),
-          description: t("payTab.featureTour.rows.volatility.description"),
-        },
-        {
-          icon: "CreditCard",
-          title: t("payTab.featureTour.rows.card.title"),
-          description: t("payTab.featureTour.rows.card.description"),
-        },
-      ],
       onTrackScreen: (page: string) => track(page),
       onTrackEvent: (event: string, params: Record<string, unknown>) => track(event, params),
     }),
-    [t],
+    [],
   );
 
   return {

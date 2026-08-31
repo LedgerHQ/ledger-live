@@ -1,5 +1,4 @@
-import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
+import i18next from "~/i18n/instance";
 import {
   counterValueFormatter,
   getDateFormatter,
@@ -8,19 +7,10 @@ import {
   getCurrentPage,
 } from ".";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
-import en from "~/locales/en/common.json";
 
-beforeAll(async () => {
-  await i18next.use(initReactI18next).init({
-    lng: "en",
-    fallbackLng: "en",
-    resources: {
-      en: {
-        translation: en,
-      },
-    },
-  });
-});
+// The app instance already carries `en/common.json`; it just has no language until
+// `LocaleProvider` picks one at runtime.
+beforeAll(() => i18next.changeLanguage("en"));
 
 describe("counterValueFormatter", () => {
   describe("basic formatting", () => {

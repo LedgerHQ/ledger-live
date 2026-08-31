@@ -4,42 +4,22 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
-import type { FeatureTourContent, FeatureTourProps } from "../types";
-
-const CONTENT: FeatureTourContent = {
-  title: "Pay and get paid",
-  description: "Stablecoin closes the gap between crypto and real life spending",
-  ctaLabel: "Got it",
-  rows: [
-    {
-      icon: "Globe",
-      title: "Pay and get paid globally",
-      description: "Benefits from low networks fees",
-    },
-    {
-      icon: "Chart5",
-      title: "Minimal volatility",
-      description: "Stablecoin are based on fiat",
-    },
-    {
-      icon: "CreditCard",
-      title: "Spend with a card and get 1% cashback",
-      description: "Pay in USDC, USDT, BTC, ETH and more",
-    },
-  ],
-};
+import { I18nTestProvider } from "@shared/i18n/testing";
+import type { FeatureTourProps } from "../types";
+import { FEATURE_TOUR_RESOURCES } from "./fixtures";
 
 function makeStore() {
   return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
 }
 
-function renderTour(props: Partial<FeatureTourProps> = {}, store = makeStore()) {
-  const merged: FeatureTourProps = { ...CONTENT, ...props };
+function renderTour(props: FeatureTourProps = {}, store = makeStore()) {
   return {
     store,
     ...render(
       <Provider store={store}>
-        <FeatureTour {...merged} />
+        <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
+          <FeatureTour {...props} />
+        </I18nTestProvider>
       </Provider>,
     ),
   };
@@ -83,5 +63,19 @@ describe("FeatureTour (Web)", () => {
     renderTour({}, store);
 
     expect(screen.queryByText("Spend with a card and get 1% cashback")).toBeNull();
+  });
+
+  it("resolves its copy from the mounted i18n provider, not from props", () => {
+    render(
+      <Provider store={makeStore()}>
+        <I18nTestProvider
+          resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
+        >
+          <FeatureTour />
+        </I18nTestProvider>
+      </Provider>,
+    );
+
+    expect(screen.getByText("Compris")).toBeInTheDocument();
   });
 });

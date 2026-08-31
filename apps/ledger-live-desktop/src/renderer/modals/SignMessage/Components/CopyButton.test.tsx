@@ -2,21 +2,6 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import CopyButton from "./CopyButton";
 
-jest.mock("i18next", () => {
-  return {
-    __esModule: true,
-    t: jest.fn(key => {
-      if (key === "common.copy") return "Copy";
-      if (key === "common.copied") return "Copied";
-      return key;
-    }),
-    default: {
-      use: jest.fn().mockReturnThis(),
-      init: jest.fn(),
-    },
-  };
-});
-
 describe("CopyButton", () => {
   const testText = "Text to copy";
   beforeAll(() => {
