@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { ContactDetailViewProps } from "./types";
-import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.web";
-import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.web";
-import { ContactDetailHeader } from "./components/ContactDetailHeader/ContactDetailHeader.web";
-import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard.web";
+import { ContactDetailActions } from "./components/ContactDetailActions/ContactDetailActions";
+import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList";
+import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState";
+import { ContactDetailHeader } from "./components/ContactDetailHeader/ContactDetailHeader";
+import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard";
 
 const COMPACT_HEADER_SCROLL_OFFSET = 150;
 

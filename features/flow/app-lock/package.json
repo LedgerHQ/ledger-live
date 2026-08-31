@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/app-lock"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/app-lock/knip.config.mjs -W features/flow/app-lock"
   },
   "dependencies": {
     "@features/platform-app-lock": "workspace:*"

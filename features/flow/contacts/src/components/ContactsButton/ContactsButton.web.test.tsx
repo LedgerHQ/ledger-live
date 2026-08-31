@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ContactsButton } from "./ContactsButton.web";
+import { ContactsButton } from "./ContactsButton";
 
 describe("ContactsButton", () => {
   it("should render the Contacts card and invoke its action", async () => {

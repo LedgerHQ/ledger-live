@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { createContactsSearchViewModel } from "@features/flow-contacts-list";
-import { ContactsView } from "./ContactsView.web";
+import { ContactsView } from "./ContactsView";
 
 const labels = {
   title: "Contacts",

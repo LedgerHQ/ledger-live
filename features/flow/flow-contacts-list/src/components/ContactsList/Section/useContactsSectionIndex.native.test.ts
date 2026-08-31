@@ -3,7 +3,7 @@ import { ContactIdSchema } from "@domain/entity-contact";
 import type { RefObject } from "react";
 import type { SectionList } from "react-native";
 import type { ContactsListItem, ContactsListSection } from "../../../types";
-import { useContactsSectionIndex } from "./useContactsSectionIndex.native";
+import { useContactsSectionIndex } from "./useContactsSectionIndex";
 
 const sections: readonly ContactsListSection[] = [
   {

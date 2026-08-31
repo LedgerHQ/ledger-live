@@ -4,7 +4,7 @@ import {
   resetGenericPassword,
   setGenericPassword,
 } from "react-native-keychain";
-import { secureStore } from "./secureStore.native";
+import { secureStore } from "./secureStore";
 
 jest.mock("react-native-keychain", () => ({
   ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },

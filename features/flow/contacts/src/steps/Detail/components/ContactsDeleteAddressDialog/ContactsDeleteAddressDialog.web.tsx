@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsDeleteConfirmationDialog } from "../ContactsDeleteConfirmationDialog/ContactsDeleteConfirmationDialog.web";
+import { ContactsDeleteConfirmationDialog } from "../ContactsDeleteConfirmationDialog/ContactsDeleteConfirmationDialog";
 import type { ContactsDeleteAddressDialogProps } from "./types";
 
 export function ContactsDeleteAddressDialog(

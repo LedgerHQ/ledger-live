@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsRenameAddressDialogProps } from "./types";
-import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
+import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation";
 
 export function ContactsRenameAddressDialog({
   isOpen,

@@ -1,2 +1,2 @@
 // Desktop (Web) - resolved by Rspack
-export * from "./ContactsButton.web";
+export * from "./ContactsButton";

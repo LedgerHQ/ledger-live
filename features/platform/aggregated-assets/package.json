@@ -11,11 +11,13 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/aggregated-assets/knip.config.mjs -W features/platform/aggregated-assets"
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",

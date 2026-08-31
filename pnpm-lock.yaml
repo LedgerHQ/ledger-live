@@ -7372,6 +7372,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7387,6 +7390,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

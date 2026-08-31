@@ -10,7 +10,7 @@ import {
   ThemeProvider as NativeThemeProvider,
   useTheme as nativeUseTheme,
 } from "styled-components/native";
-import { withStyleProvider } from "../withStyleProvider.native";
+import { withStyleProvider } from "../withStyleProvider";
 
 const mockTheme = { colors: { brand: "ledger" } };
 

@@ -3,7 +3,7 @@ const noPlatformSuffixImports = {
   createOnce(context) {
     function checkSource(node) {
       const source = node.source?.value;
-      if (source?.includes(".web") || source?.includes(".native")) {
+      if ((source?.includes(".web") || source?.includes(".native")) && !source?.includes(".webp")) {
         context.report({
           message: "Imports should not contains .web or .native, use --fix to remove them",
           node,

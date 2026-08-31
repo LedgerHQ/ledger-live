@@ -1,7 +1,7 @@
 import React from "react";
 import type { ContactDetailViewProps } from "../../types";
-import { ContactDetailAvatar } from "../ContactDetailAvatar.web";
-import { ContactDetailName } from "../ContactDetailName.web";
+import { ContactDetailAvatar } from "../ContactDetailAvatar";
+import { ContactDetailName } from "../ContactDetailName";
 
 type ContactDetailHeaderIdentityProps = Readonly<{
   contact: ContactDetailViewProps["contact"];

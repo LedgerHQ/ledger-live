@@ -1,10 +1,10 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactDetailViewProps } from "./types";
-import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.native";
-import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.native";
-import { ContactDetailHeader } from "./components/ContactDetailHeader.native";
-import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard.native";
+import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList";
+import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState";
+import { ContactDetailHeader } from "./components/ContactDetailHeader";
+import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard";
 
 export function ContactDetailView({
   contact,

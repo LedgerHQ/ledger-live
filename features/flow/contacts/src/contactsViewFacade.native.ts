@@ -1,2 +1,2 @@
-export { ContactsView } from "./ContactsView.native";
+export { ContactsView } from "./ContactsView";
 export type { ContactsViewProps, ContactsViewNativeProps } from "./ContactsView.types";

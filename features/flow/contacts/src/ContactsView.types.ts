@@ -1,9 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type {
-  ContactsListViewLabels,
-  ContactsPageViewModel,
-} from "@features/flow-contacts-list/native";
+import type { ContactsListViewLabels, ContactsPageViewModel } from "@features/flow-contacts-list";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,

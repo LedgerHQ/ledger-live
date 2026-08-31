@@ -12,11 +12,13 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/analytics-consent"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/analytics-consent/knip.config.mjs -W features/flow/analytics-consent"
   },
   "dependencies": {
     "@domain/entity-analytics-consent": "workspace:*",

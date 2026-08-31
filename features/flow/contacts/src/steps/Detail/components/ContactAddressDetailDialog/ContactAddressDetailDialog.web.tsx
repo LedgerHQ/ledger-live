@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { ContactAddressDetailActions } from "./ContactAddressDetailActions.web";
-import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.web";
+import { ContactAddressDetailActions } from "./ContactAddressDetailActions";
+import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary";
 import type { ContactAddressDetailDialogProps } from "./types";
 
 const COPY_FEEDBACK_MS = 3000;

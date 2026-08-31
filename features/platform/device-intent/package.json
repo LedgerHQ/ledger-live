@@ -14,11 +14,13 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/device-intent"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-intent/knip.config.mjs -W features/platform/device-intent"
   },
   "dependencies": {
     "@ledgerhq/logs": "catalog:",

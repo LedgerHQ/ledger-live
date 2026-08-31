@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { ContactsAddContactContent } from "./ContactsAddContactContent.web";
+import { ContactsAddContactContent } from "./ContactsAddContactContent";
 import type { AddContactDialogViewModel } from "./types";
 
 export function ContactsAddContactDialog({

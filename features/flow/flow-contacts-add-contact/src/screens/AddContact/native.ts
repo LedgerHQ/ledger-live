@@ -1,1 +1,1 @@
-export * from "./ContactsAddContactContent.native";
+export * from "./ContactsAddContactContent";

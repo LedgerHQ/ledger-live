@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { BankTransferIntroView } from "../BankTransferIntroView.web";
+import { BankTransferIntroView } from "../BankTransferIntroView";
 import type { BankTransferIntroViewProps } from "../../../types";
 
 const defaultProps: BankTransferIntroViewProps = {

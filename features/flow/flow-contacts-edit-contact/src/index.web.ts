@@ -1,2 +1,2 @@
 export * from "./exports";
-export * from "./ContactsRenameContactDialog.web";
+export * from "./ContactsRenameContactDialog";

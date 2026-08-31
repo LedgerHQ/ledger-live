@@ -18,6 +18,8 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
     "typecheck:native": "tsc --noEmit -p tsconfig.native.json --explainFiles 2>&1 | grep -A 10 'ContactsRenameContactDialog.web.tsx'",

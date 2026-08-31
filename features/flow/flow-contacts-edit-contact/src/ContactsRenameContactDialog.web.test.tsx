@@ -4,7 +4,7 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
-import { ContactsRenameContactDialog } from "./index.web";
+import { ContactsRenameContactDialog } from ".";
 import type { ContactsRenameContactDialogProps } from "./types";
 
 function createViewModel(

@@ -1,4 +1,4 @@
-import { cardSession, getCardSessionToken } from "./cardSession.native";
+import { cardSession, getCardSessionToken } from "./cardSession";
 
 /**
  * A keychain of one entry per `service`, which is how the native store uses the library. It keeps

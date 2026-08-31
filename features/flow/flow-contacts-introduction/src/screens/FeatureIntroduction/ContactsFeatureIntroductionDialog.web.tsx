@@ -3,7 +3,7 @@ import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledger
 import type { ContactsFeatureIntroduction } from "../../state/types";
 import { useContactsFeatureIntroductionActions } from "./useContactsFeatureIntroductionActions";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
-import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntroductionDialogContent.web";
+import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntroductionDialogContent";
 
 export function ContactsFeatureIntroductionDialog({
   isOpen,

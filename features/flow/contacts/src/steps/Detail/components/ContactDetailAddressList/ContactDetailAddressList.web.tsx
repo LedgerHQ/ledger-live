@@ -1,6 +1,6 @@
 import React from "react";
 import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRowIntent } from "../../types";
-import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection.web";
+import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection";
 
 type ContactDetailAddressListProps = Readonly<{
   addressGroups: readonly ContactDetailAddressNetworkGroup[];
