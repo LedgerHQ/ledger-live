@@ -1,4 +1,4 @@
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook } from "@testing-library/react";
 import { getAttachedWebview, useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { track } from "~/renderer/analytics/segment";
