@@ -12,6 +12,7 @@ import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import { useFormatDuration } from "../../useFormatDuration";
 import SubmitFooter from "./SubmitFooter";
+import MissingNeuron from "./MissingNeuron";
 import type { StepProps } from "../../neuronFlow/types";
 
 const MAX_DAYS = Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY);
@@ -26,8 +27,10 @@ const isPositive = (seconds: string): boolean => /^\d+$/.test(seconds) && BigInt
 const StepSetDissolveDelay = ({
   neurons,
   selectedNeuronId,
+  setSelectedNeuronId,
   transaction,
   onUpdateTransaction,
+  transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
@@ -64,7 +67,9 @@ const StepSetDissolveDelay = ({
     [allowedDays, isIncrease, onUpdateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   const resultingSeconds = isIncrease ? currentSeconds + enteredSeconds : enteredSeconds;
 

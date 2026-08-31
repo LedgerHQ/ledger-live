@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
+import MissingNeuron from "./MissingNeuron";
 import type { FollowTopic, StepProps } from "../../neuronFlow/types";
 
 // "Unspecified" is the catch-all default the canister applies when no topic-specific followees are
@@ -17,6 +18,7 @@ const StepFollowTopic = ({
   account,
   neurons,
   selectedNeuronId,
+  setSelectedNeuronId,
   onUpdateTransaction,
   transitionTo,
 }: StepProps) => {
@@ -47,6 +49,10 @@ const StepFollowTopic = ({
     },
     [neuron, onUpdateTransaction, transitionTo],
   );
+
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   return (
     <Box px={4}>

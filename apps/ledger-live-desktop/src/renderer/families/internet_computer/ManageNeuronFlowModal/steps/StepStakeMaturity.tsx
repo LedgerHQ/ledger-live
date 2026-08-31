@@ -6,6 +6,7 @@ import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import { toBigNumber } from "../../amounts";
 import SubmitFooter from "./SubmitFooter";
+import MissingNeuron from "./MissingNeuron";
 import type { StepProps } from "../../neuronFlow/types";
 
 const MAX_PERCENTAGE = 100n;
@@ -25,8 +26,10 @@ const StepStakeMaturity = ({
   account,
   neurons,
   selectedNeuronId,
+  setSelectedNeuronId,
   transaction,
   onUpdateTransaction,
+  transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
@@ -44,7 +47,9 @@ const StepStakeMaturity = ({
     [onUpdateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   const selected = (neuron.maturityE8sEquivalent * enteredPercentage(percentage)) / MAX_PERCENTAGE;
 

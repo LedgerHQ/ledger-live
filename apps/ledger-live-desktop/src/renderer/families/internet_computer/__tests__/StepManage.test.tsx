@@ -111,7 +111,7 @@ describe("StepManage", () => {
     const props = makeStepProps({ neurons: [], selectedNeuronId: "7" });
     const { user } = render(<StepManage {...props} />);
 
-    await user.click(screen.getByTestId("icp-manage-missing-back-button"));
+    await user.click(screen.getByTestId("icp-missing-neuron-back-button"));
 
     expect(props.setSelectedNeuronId).toHaveBeenCalledWith(null);
     expect(props.transitionTo).toHaveBeenCalledWith("listNeuron");
