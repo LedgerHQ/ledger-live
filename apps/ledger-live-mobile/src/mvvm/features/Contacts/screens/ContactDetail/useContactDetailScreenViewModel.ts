@@ -5,15 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
-  type ContactAddressDetailDialogNativeLabels,
-  type ContactAddressDetailDialogNativeProps,
-  type ContactDetailLabels,
-  type ContactDetailViewProps,
-  useContactDetailSharedState,
-  useContactAddressDetailDialog,
   useContactsLedgerSyncMutationGuard,
-  useEmptyContactDetail,
-  usePopulatedContactDetail,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_EVENTS,
@@ -22,6 +14,16 @@ import {
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
 } from "@features/flow-contacts";
+import {
+  type ContactAddressDetailDialogNativeLabels,
+  type ContactAddressDetailDialogNativeProps,
+  type ContactDetailLabels,
+  type ContactDetailViewProps,
+  useContactDetailSharedState,
+  useContactAddressDetailDialog,
+  useEmptyContactDetail,
+  usePopulatedContactDetail,
+} from "@features/flow-contacts-detail";
 import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
 import type {
   ContactsLedgerSyncIntroduction,

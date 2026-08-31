@@ -12,9 +12,11 @@ import {
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+} from "@features/flow-contacts";
+import {
   useContactAddressDetailDialog,
   usePopulatedContactDetail,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 

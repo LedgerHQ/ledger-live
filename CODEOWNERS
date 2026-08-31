@@ -123,6 +123,7 @@ features/platform/contacts/                               @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-contact/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-detail/                       @ledgerhq/wallet-xp
 features/flow/flow-contacts-edit-address/                 @ledgerhq/wallet-xp
 features/flow/flow-contacts-edit-contact/                 @ledgerhq/wallet-xp
 features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp

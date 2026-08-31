@@ -121,6 +121,7 @@
     "@features/flow-contacts": "workspace:^",
     "@features/flow-contacts-add-address": "workspace:^",
     "@features/flow-contacts-add-contact": "workspace:^",
+    "@features/flow-contacts-detail": "workspace:^",
     "@features/flow-contacts-edit-address": "workspace:^",
     "@features/flow-contacts-edit-contact": "workspace:^",
     "@features/flow-contacts-introduction": "workspace:^",

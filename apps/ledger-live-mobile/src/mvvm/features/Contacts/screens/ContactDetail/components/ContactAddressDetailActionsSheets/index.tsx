@@ -4,7 +4,7 @@ import {
   ContactsDeleteAddressDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";

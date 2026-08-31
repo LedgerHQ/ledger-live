@@ -146,6 +146,8 @@ module.exports = {
       "<rootDir>/../../features/flow/flow-contacts-introduction/src/index.native.ts",
     "^@features/flow-contacts-add-address$":
       "<rootDir>/../../features/flow/flow-contacts-add-address/src/index.native.ts",
+    "^@features/flow-contacts-detail$":
+      "<rootDir>/../../features/flow/flow-contacts-detail/src/index.native.ts",
     // Map Lumen RN source entry points to a single module graph. The root
     // mapping alone is not enough: subpath imports (/symbols, /styles) must
     // target the same source tree or Jest loads duplicate @ledgerhq/lumen-ui-rnative

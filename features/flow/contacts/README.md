@@ -8,16 +8,10 @@ Shared Contacts flow package for Desktop and Mobile.
 
 ## Scope
 
-- Empty contact detail selection and presentation
-- Populated contact detail view model (address rows, count, and open-detail intents)
-- Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
-- Contact address detail view model (selected address payload, QR payload string, and not-found state)
-- Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
 - Contacts orchestration through `ContactsView`, which composes List, Detail, and Introduction
   journeys
-- Shared UI components (`.web.tsx` / `.native.tsx`)
-- Contact detail composition; Platform Contacts owns the reusable Contact avatar, including the
-  app-owned "Me" profile image
+- Detail/Edit contact and Detail/Edit address orchestration bindings
+- Shared entry UI and typed analytics contract
 - Contacts analytics contract: typed event/page names, payloads, and
   `createContactsAnalyticsHelper()` for apps to inject their `track` functions
 
@@ -34,6 +28,11 @@ Folders under `src/` are internal implementation details and are not exported as
 list. It never imports this orchestrator. `ContactsView` is the appropriate API when the screen
 also needs Contacts Detail or introductions.
 
+`@features/flow-contacts-detail` owns the reusable Contact Detail journey. Applications import its
+views, Detail hooks, types, and dialog or drawer content directly when they mount Detail outside
+the aggregate. This package owns only the bindings that coordinate Detail with the independent Edit
+contact and Edit address leaf flows.
+
 `@features/flow-contacts-introduction` owns the Feature Introduction and Ledger Sync Introduction
 journeys. Applications that mount their hooks, helpers, or native content directly import that leaf
 instead of this orchestrator.
@@ -48,10 +47,8 @@ dialog or Native drawer directly; the aggregate composes its state with Contact 
 `@features/flow-contacts-edit-address` owns the Edit address journey. Applications import its Web
 dialog or Native drawer directly; the aggregate composes its state with Contact Detail.
 
-Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split
-used by the app features (View + ViewModel + types + colocated components). Web and React Native
-export their respective `ContactsView` and `ContactDetailView` implementations through the root
-entry point. The native entry also exports `ContactsAddContactHeaderButton` via the List leaf flow.
+The aggregate exposes `ContactsView` for the complete screen. The native entry also exports
+`ContactsAddContactHeaderButton` via the List leaf flow.
 
 ## Testing
 
@@ -70,20 +67,14 @@ for larger steps (e.g. `List`). Every folder under `components/` is a PascalCase
 
 ```
 src/
-├── ContactsView.web/.native.tsx         # orchestrates List with parent-owned journeys
+├── ContactsView.web/.native.tsx         # orchestrates List, Detail and introductions
 ├── ContactsView.types.ts
-├── steps/
-│   └── Detail/                          # Contact detail (web + native)
-│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
-│       ├── model/                       # empty + populated + address detail + quick-action builders
-│       ├── components/                  # Header, EmptyState and detail-specific UI
-│       └── index.ts / web.ts / native.ts
-├── components/                          # Cross-step shared UI
+├── detailOrchestration/                 # coordinates Detail with independent Edit leaf flows
+├── components/                          # Aggregate entry UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 ├── hooks/                               # Contacts flow-only hooks
 ├── utils/                               # Contacts flow-only utilities
 ├── analytics/                           # Typed tracking contract + helper
-├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── index.ts                             # Web public API
 └── index.native.ts                      # React Native public API
 ```
