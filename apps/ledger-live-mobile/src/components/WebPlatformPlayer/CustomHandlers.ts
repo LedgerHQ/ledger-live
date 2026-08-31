@@ -41,7 +41,10 @@ export function createDeeplinkOpenHandler({
       return;
     }
 
-    if (isDeeplinkOpenHardeningEnabled && !isUrlSafe(params.url)) {
+    // Scheme allowlist is always enforced. The feature flag only gates the
+    // locked-app deferral so remote config cannot re-enable file:// / smb:// /
+    // javascript: opens from a Live App with custom.deeplink.open.
+    if (!isUrlSafe(params.url)) {
       console.warn("Blocked unsafe custom.deeplink.open URL");
       track("custom.deeplink.open blocked", { reason: "scheme" });
       return;

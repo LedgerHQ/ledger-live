@@ -21,25 +21,24 @@ import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/C
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
-import { useFeature } from "@features/platform-feature-flags";
 
 type DeeplinkOpenHandlerParams = { url: string };
 
 type CreateDeeplinkOpenHandlerParams = {
-  isDeeplinkOpenHardeningEnabled: boolean;
   openDeepLink?: (url: string) => void;
 };
 
 export function createDeeplinkOpenHandler({
-  isDeeplinkOpenHardeningEnabled,
   openDeepLink = url => ipcRenderer.send("deep-linking", url),
-}: CreateDeeplinkOpenHandlerParams) {
+}: CreateDeeplinkOpenHandlerParams = {}) {
   return (params?: DeeplinkOpenHandlerParams) => {
     if (!params) {
       return;
     }
 
-    if (isDeeplinkOpenHardeningEnabled && !isUrlSafe(params.url)) {
+    // Scheme allowlist is always enforced (not behind lwdDeeplinkOpenHardening).
+    // That flag still gates locked-app deeplink deferral in useDeeplinking.
+    if (!isUrlSafe(params.url)) {
       console.warn("Blocked unsafe custom.deeplink.open URL");
       track("custom.deeplink.open blocked", { reason: "scheme" });
       return;
@@ -183,19 +182,15 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
 }
 
 export function useDeeplinkCustomHandlers() {
-  const isDeeplinkOpenHardeningEnabled = useFeature("lwdDeeplinkOpenHardening")?.enabled === true;
-
   return useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...deeplinkHandlers({
         uiHooks: {
-          "custom.deeplink.open": createDeeplinkOpenHandler({
-            isDeeplinkOpenHardeningEnabled,
-          }),
+          "custom.deeplink.open": createDeeplinkOpenHandler(),
         },
       }),
     };
-  }, [isDeeplinkOpenHardeningEnabled]);
+  }, []);
 }
 
 export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]) {
