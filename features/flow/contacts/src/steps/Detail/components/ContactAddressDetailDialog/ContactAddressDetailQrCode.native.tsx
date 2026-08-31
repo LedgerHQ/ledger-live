@@ -25,7 +25,7 @@ export function ContactAddressDetailQrCode({
         justifyContent: "center",
         padding: t.spacings.s24,
         borderRadius: t.sizes.s36,
-        backgroundColor: t.colors.bg.base,
+        backgroundColor: t.colors.bg.white,
         boxShadow: t.shadows.lg,
       },
     }),
@@ -37,7 +37,7 @@ export function ContactAddressDetailQrCode({
       <QrCode
         value={address}
         size={QR_CODE_SIZE}
-        foregroundColor={theme.colors.bg.interactive}
+        foregroundColor={theme.colors.bg.black}
         centerContent={
           <CryptoIcon
             ledgerId={iconProps.ledgerId}
