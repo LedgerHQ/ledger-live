@@ -22,10 +22,10 @@ export default class LedgerSyncPage {
   private readonly useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
   private readonly manageInstancesId = "walletSync-manage-instances";
 
+  private readonly activationTitleId = "walletsync-activation-title";
+  private readonly activationDescriptionId = "walletsync-activation-description";
+
   private readonly activationButton = () => getElementById("walletsync-activation-button");
-  private readonly activationTitle = () => getElementById("walletsync-activation-title");
-  private readonly activationDescription = () =>
-    getElementById("walletsync-activation-description");
   private readonly activationSuccessCloseButton = () =>
     getElementById("walletsync-activation-success-close");
 
@@ -44,10 +44,14 @@ export default class LedgerSyncPage {
     await removeMemberLedgerSync();
   }
 
+  /**
+   * Polls rather than asserting outright: the drawer animates in from the bottom, so the title can
+   * be on screen but still clipped below the 75% visible-area threshold for a frame or two.
+   */
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
-    await detoxExpect(this.activationTitle()).toBeVisible();
-    await detoxExpect(this.activationDescription()).toBeVisible();
+    await waitForElementById(this.activationTitleId);
+    await waitForElementById(this.activationDescriptionId);
   }
 
   @Step("Tap on the activation button")

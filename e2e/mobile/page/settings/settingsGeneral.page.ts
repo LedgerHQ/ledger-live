@@ -6,7 +6,8 @@ export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   enterLanguageMenuButton = () => getElementById("language-button");
-  enterLedgerSync = () => getElementById("wallet-sync-button");
+  enterLedgerSyncId = "wallet-sync-button";
+  enterLedgerSync = () => getElementById(this.enterLedgerSyncId);
   localizedText = (text: string) => getElementByText(text);
 
   countervalueSettingsRowId = "countervalue-settings-row";
@@ -44,7 +45,7 @@ export default class SettingsGeneralPage {
   /** The row renders the same id whether or not a backup exists; only its destination changes. */
   @Step("Expect the Ledger Sync entry point to be visible")
   async expectLedgerSyncEntryPoint() {
-    await detoxExpect(this.enterLedgerSync()).toBeVisible();
+    await waitForElementById(this.enterLedgerSyncId);
   }
 
   @Step("Select language {{{0}}}")
