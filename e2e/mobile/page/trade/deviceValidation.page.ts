@@ -3,10 +3,10 @@ import { Step } from "jest-allure2-reporter/api";
 
 export default class DeviceValidationPage extends CommonPage {
   validationScrollViewId = "device-validation-scroll-view";
-  private validationAmount = () => getElementById("device-validation-amount");
-  private validationAddress = () => getElementById("device-validation-address");
-  private validationProvider = () => getElementById("device-validation-provider");
-  private validationFees = () => getElementById("device-validation-transaction-fee");
+  private readonly validationAmount = () => getElementById("device-validation-amount");
+  private readonly validationAddress = () => getElementById("device-validation-address");
+  private readonly validationProvider = () => getElementById("device-validation-provider");
+  private readonly validationFees = () => getElementById("device-validation-transaction-fee");
 
   @Step("Expect device validation screen to be displayed")
   async expectDeviceValidationScreen() {

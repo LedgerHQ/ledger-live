@@ -35,10 +35,7 @@ function compile() {
     .getPreEmitDiagnostics(program)
     // Only include errors from e2e/mobile directory
     .filter(
-      diag =>
-        diag.file &&
-        diag.file.fileName.startsWith(e2eDirectory) &&
-        /\.tsx?/.test(diag.file.fileName),
+      diag => diag.file?.fileName.startsWith(e2eDirectory) && /\.tsx?/.test(diag.file.fileName),
     );
 
   const formatDiagnosticHost = {

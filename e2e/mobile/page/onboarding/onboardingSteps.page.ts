@@ -80,8 +80,8 @@ export default class OnboardingStepsPage {
       await detoxExpect(this.deviceCardHeader(device.id)).toHaveText("Ledger");
       const titleId = await getTextOfElement(this.deviceCardTitleId(device.id));
       const normalizedTitle = titleId
-        .replace(/\s+/g, " ")
-        .replace(/\u200B/g, "")
+        .replaceAll(/\s+/g, " ")
+        .replaceAll(/\u200B/g, "")
         .trim();
       jestExpect(normalizedTitle).toBe(device.name);
       await detoxExpect(this.deviceCardImage(device.id)).toBeVisible();
