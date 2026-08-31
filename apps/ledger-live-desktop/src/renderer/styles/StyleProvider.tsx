@@ -16,6 +16,14 @@ type Props = {
   selectedPalette: "light" | "dark";
 };
 
+// Desktop-scoped pinker background override (koda/pinker-background).
+// Only overrides the app's main background token; does not touch the shared
+// @ledgerhq/ui-shared palette (which also feeds ledger-live-mobile).
+const PINK_BACKGROUND = {
+  light: { default: "#FDEBF3", main: "#FDEBF3" },
+  dark: { default: "#2A1620", main: "#2A1620" },
+};
+
 const StyleProvider = ({ children, selectedPalette }: Props) => {
   const v3SelectedPalette = selectedPalette === "light" ? "light" : "dark";
   // @ts-expect-error This is a hack to get the v2 palette in the v3 theme
@@ -26,6 +34,11 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
       colors: {
         ...V3Palettes[v3SelectedPalette],
         ...defaultTheme.colors,
+        background: {
+          ...V3Palettes[v3SelectedPalette].background,
+          ...defaultTheme.colors.background,
+          ...PINK_BACKGROUND[v3SelectedPalette],
+        },
       },
       theme: selectedPalette,
     }),

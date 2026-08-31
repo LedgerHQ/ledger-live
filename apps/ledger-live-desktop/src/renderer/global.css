@@ -10,6 +10,17 @@ body {
   font-family: Inter;
 }
 
+/* Desktop-scoped pinker background override (koda/pinker-background).
+   Overrides only the Wallet 4.0 canvas background token locally; does not
+   touch the shared @ledgerhq/lumen-design-core package. */
+:root {
+  --color-background-canvas: #fdebf3;
+}
+
+.dark {
+  --color-background-canvas: #2a1620;
+}
+
 #react-root {
   display: flex;
   flex-direction: column;
