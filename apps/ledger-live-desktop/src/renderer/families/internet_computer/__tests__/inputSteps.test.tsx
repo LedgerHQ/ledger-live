@@ -219,7 +219,7 @@ describe("StepSplitNeuron", () => {
   });
 
   it("keeps continue disabled until an amount is entered", () => {
-    const props = makeStepProps({ transaction: { amount: new BigNumber(0) } });
+    const props = stepProps({ transaction: { amount: new BigNumber(0) } });
     render(<SubmitFooter {...props} canContinue={!!props.transaction?.amount.gt(0)} />);
 
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
@@ -228,16 +228,6 @@ describe("StepSplitNeuron", () => {
 
 describe("StepStakeMaturity", () => {
   const withMaturity = makeHealthyNeuron({ id: 5n, maturityE8sEquivalent: 200_000_000n });
-
-  it("renders nothing when the selected neuron has gone", () => {
-    const { container } = render(
-      <StepStakeMaturity
-        {...makeStepProps({ neurons: [withMaturity], selectedNeuronId: "999" })}
-      />,
-    );
-
-    expect(container.firstChild).toBeNull();
-  });
 
   it("stores the typed percentage on the transaction", async () => {
     const props = makeStepProps({
@@ -317,14 +307,22 @@ describe("StepStakeMaturity", () => {
   // The bridge rejects both, but no ICP error carries a translation, so leaning on the error banner
   // would surface "ICPInvalidPercentage" to the user.
   it.each(["", "0"])("keeps continue disabled for the percentage %p", percentageToStake => {
-    const props = makeStepProps({ transaction: { type: "stake_maturity", percentageToStake } });
+    const props = makeStepProps({
+      neurons: [withMaturity],
+      selectedNeuronId: "5",
+      transaction: { type: "stake_maturity", percentageToStake },
+    });
     render(<StepStakeMaturityFooter {...props} />);
 
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 
   it.each(["1", "100"])("allows continue for the percentage %p", percentageToStake => {
-    const props = makeStepProps({ transaction: { type: "stake_maturity", percentageToStake } });
+    const props = makeStepProps({
+      neurons: [withMaturity],
+      selectedNeuronId: "5",
+      transaction: { type: "stake_maturity", percentageToStake },
+    });
     render(<StepStakeMaturityFooter {...props} />);
 
     expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
@@ -527,9 +525,68 @@ describe("StepSelectFollowees", () => {
   });
 });
 
+// A refresh or a disburse drops a neuron from the snapshot while a step may still be mounted on it,
+// and every one of these steps addresses exactly one neuron. Rendering nothing left the flow on an
+// empty body — the white screen QA hit on the dissolve-delay form.
+describe("a step whose neuron has left the snapshot", () => {
+  const cases = [
+    {
+      name: "setDissolveDelay",
+      Step: StepSetDissolveDelay,
+      transaction: { type: "increase_dissolve_delay", additionalDissolveDelay: "" },
+    },
+    {
+      name: "splitNeuron",
+      Step: StepSplitNeuron,
+      transaction: { type: "split_neuron", amount: new BigNumber(0) },
+    },
+    {
+      name: "stakeMaturity",
+      Step: StepStakeMaturity,
+      transaction: { type: "stake_maturity", percentageToStake: "" },
+    },
+    { name: "followTopic", Step: StepFollowTopic, transaction: { type: "follow" } },
+    {
+      name: "selectFollowees",
+      Step: StepSelectFollowees,
+      transaction: { type: "follow", followTopic: "Governance" },
+    },
+    {
+      name: "addHotKey",
+      Step: StepAddHotKey,
+      transaction: { type: "add_hot_key", hotKeyToAdd: "" },
+    },
+  ];
+
+  const gone = (transaction: Record<string, unknown>) =>
+    makeStepProps({ neurons: [NEURON], selectedNeuronId: "999", transaction });
+
+  it.each(cases)(
+    "$name explains itself instead of rendering an empty body",
+    ({ Step, transaction }) => {
+      render(<Step {...gone(transaction)} />);
+
+      expect(screen.getByText(/no longer in your synced snapshot/)).toBeInTheDocument();
+    },
+  );
+
+  it.each(cases)(
+    "$name clears the stale selection on the way back",
+    async ({ Step, transaction }) => {
+      const props = gone(transaction);
+      const { user } = render(<Step {...props} />);
+
+      await user.click(screen.getByTestId("icp-missing-neuron-back-button"));
+
+      expect(props.setSelectedNeuronId).toHaveBeenCalledWith(null);
+      expect(props.transitionTo).toHaveBeenCalledWith("listNeuron");
+    },
+  );
+});
+
 describe("SubmitFooter", () => {
   it("blocks continue while the bridge reports an error", () => {
-    const props = makeStepProps({
+    const props = stepProps({
       status: {
         errors: { transaction: new Error("nope") },
         warnings: {},
@@ -542,13 +599,21 @@ describe("SubmitFooter", () => {
   });
 
   it("blocks continue while the bridge is still recomputing", () => {
-    render(<SubmitFooter {...makeStepProps({ bridgePending: true })} />);
+    render(<SubmitFooter {...stepProps({ bridgePending: true })} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  // The body explains the state, but it is the footer that stops the signature: the transaction
+  // still names the neuron and the canister would refuse it.
+  it("withholds continue when the selected neuron has left the snapshot", () => {
+    render(<SubmitFooter {...makeStepProps({ neurons: [NEURON], selectedNeuronId: "999" })} />);
 
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 
   it("moves to the signing step once everything checks out", async () => {
-    const props = makeStepProps();
+    const props = stepProps();
     const { user } = render(<SubmitFooter {...props} />);
 
     await user.click(screen.getByTestId("icp-continue-button"));
@@ -559,7 +624,7 @@ describe("SubmitFooter", () => {
 
 describe("SubmitFooter error banner", () => {
   const withBridgeError = () =>
-    makeStepProps({
+    stepProps({
       status: {
         errors: { transaction: new Error("nope") },
         warnings: {},
