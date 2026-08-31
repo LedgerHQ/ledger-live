@@ -114,6 +114,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
     /** Emits into the nth scope attempt (default: the first). */
     emitScope: (state: unknown, run = 0) => emitTo("scope", run)(state),
     failIdentifier: (err: unknown, run = 0) => runs.identifier[run]?.error(err),
+    failScope: (err: unknown, run = 0) => runs.scope[run]?.error(err),
     identifierCancel: (run = 0) => cancels.identifier[run],
     scopeCancel: (run = 0) => cancels.scope[run],
     isCompleted: () => completed,
@@ -392,6 +393,76 @@ describe("editExternalAddressIntentJob", () => {
         error: expect.any(ContactDeviceIntentCancelledError),
       });
       expect(job.onResult).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN the scope step is running WHEN the caller unsubscribes THEN it tears that step down", () => {
+      // GIVEN
+      const job = startJob(COMBINED);
+      job.emitIdentifier(identifierCompletion([0x07, 0x08]));
+
+      // WHEN
+      job.subscription.unsubscribe();
+
+      // THEN
+      // The chain hands teardown to whichever step is live, so the scope step
+      // has to pair its own `cancel` with unsubscription too.
+      expect(job.scopeCancel(0)).toHaveBeenCalled();
+    });
+
+    it("GIVEN the scope step's transport fails THEN it reports a terminal failure", () => {
+      // GIVEN
+      const job = startJob(COMBINED);
+      job.emitIdentifier(identifierCompletion([0x07, 0x08]));
+
+      // WHEN
+      job.failScope(new Error("transport disconnected"));
+
+      // THEN
+      expect(job.onResult).toHaveBeenCalledWith({
+        type: "failure",
+        error: expect.objectContaining({ message: "transport disconnected" }),
+      });
+      expect(job.states).toContainEqual({
+        type: "failed",
+        error: expect.objectContaining({ message: "transport disconnected" }),
+      });
+      expect(job.isCompleted()).toBe(true);
+      expect(job.getError()).toBeUndefined();
+    });
+
+    it("GIVEN the scope step is stopped THEN it reports a terminal failure", () => {
+      // GIVEN
+      const job = startJob(COMBINED);
+      job.emitIdentifier(identifierCompletion([0x07, 0x08]));
+
+      // WHEN
+      job.emitScope({ status: DeviceActionStatus.Stopped });
+
+      // THEN
+      expect(job.onResult).toHaveBeenCalledWith({ type: "failure", error: expect.any(Error) });
+      expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
+    });
+
+    it("GIVEN status word 0x6982 on the scope step THEN it reports existing-group-verification-failed", () => {
+      // GIVEN
+      const job = startJob(COMBINED);
+      job.emitIdentifier(identifierCompletion([0x07, 0x08]));
+
+      // WHEN
+      job.emitScope({
+        status: DeviceActionStatus.Error,
+        error: {
+          _tag: "ContactsCommandError",
+          errorCode: "6982",
+          message: "SWO_SECURITY_CONDITION_NOT_SATISFIED",
+        },
+      });
+
+      // THEN
+      expect(job.states).toContainEqual({
+        type: "existing-group-verification-failed",
+        error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+      });
     });
 
     it("GIVEN the scope step is rejected WHEN the user retries THEN it restarts from the identifier step", () => {
