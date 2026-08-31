@@ -59,6 +59,7 @@ function setup(store: CardSessionStore = memoryStore()) {
             cardApiBaseUrl: BASE_URL,
             cardBaanxClientKey: "client-key",
             readCardSession: session.readCardSession,
+            isCardSessionCurrent: session.isCardSessionCurrent,
             refreshCardSession: session.refreshCardSession,
           }),
         },
@@ -82,7 +83,10 @@ function setup(store: CardSessionStore = memoryStore()) {
 }
 
 /** Answers `/v1/user` and the token endpoint separately, so each test states both halves. */
-function routeFetch(routes: { user: () => Response; token: () => Response }) {
+function routeFetch(routes: {
+  user: () => Response | Promise<Response>;
+  token: () => Response | Promise<Response>;
+}) {
   return jest.spyOn(globalThis, "fetch").mockImplementation(async input => {
     const url = input instanceof Request ? input.url : String(input);
     return url.endsWith(TOKEN_PATH) ? routes.token() : routes.user();
@@ -98,6 +102,14 @@ function grantBody(spy: jest.SpyInstance): unknown {
 }
 
 const flushTimers = () => new Promise(resolve => setTimeout(resolve, 0));
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(resolveIt => {
+    resolve = resolveIt;
+  });
+  return { promise, resolve };
+}
 
 let fetchSpy: jest.SpyInstance | undefined;
 let warn: jest.SpyInstance;
@@ -219,6 +231,40 @@ describe("the Card session renewal, end to end", () => {
     });
   });
 
+  it("discards a successful response from a session that a new login replaced", async () => {
+    const userRequested = deferred<void>();
+    const oldUserResponse = deferred<Response>();
+    fetchSpy = routeFetch({
+      user: () => {
+        userRequested.resolve();
+        return oldUserResponse.promise;
+      },
+      token: () => json({ message: "never reached" }, 500),
+    });
+    const { session, store } = setup();
+    await session.cardSession.set({
+      accessToken: "at_old",
+      refreshToken: "rt_old",
+    });
+
+    const stale = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
+    await userRequested.promise;
+    await session.cardSession.set({
+      accessToken: "at_new",
+      refreshToken: "rt_new",
+    });
+    oldUserResponse.resolve(json(USER));
+
+    await expect(stale.unwrap()).rejects.toEqual({
+      status: "CUSTOM_ERROR",
+      error: CARD_STALE_REQUEST,
+    });
+    await expect(session.cardSession.get()).resolves.toEqual({
+      accessToken: "at_new",
+      refreshToken: "rt_new",
+    });
+  });
+
   it("reports the read failure, and renews nothing, when the store cannot be read", async () => {
     fetchSpy = routeFetch({
       user: () => json(USER),
@@ -237,7 +283,7 @@ describe("the Card session renewal, end to end", () => {
       store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap(),
     ).rejects.toEqual({
       status: "CUSTOM_ERROR",
-      error: "the keychain is locked",
+      error: "Card session read failed",
     });
     expect(fetchSpy).not.toHaveBeenCalled();
   });

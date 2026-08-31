@@ -40,6 +40,7 @@ function makeStore() {
               token: "session-token",
               sessionId: 1,
             }),
+            isCardSessionCurrent: () => true,
             refreshCardSession: async () => ({ kind: "session-replaced" }),
           }),
         },
@@ -50,7 +51,10 @@ function makeStore() {
   return { store, actions };
 }
 
-function sentRequest(spy: jest.SpyInstance): { url: string; init: RequestInit } {
+function sentRequest(spy: jest.SpyInstance): {
+  url: string;
+  init: RequestInit;
+} {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const [url, init] = spy.mock.calls[0] as [string, RequestInit];
   return { url, init };

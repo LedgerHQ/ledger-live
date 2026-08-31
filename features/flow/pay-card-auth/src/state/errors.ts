@@ -1,4 +1,4 @@
-import { isCardUnauthorized } from "@shared/api-services";
+const UNAUTHORIZED_STATUS = 401;
 
 /**
  * Every way a login attempt can end badly. The kind, not a message, is what the machine carries: the
@@ -17,20 +17,21 @@ export type PayCardLoginErrorKind =
  * own transitions; it exists so a broken invariant fails loudly instead of sending an empty verifier.
  */
 export class MissingLoginStateError extends Error {
-  override name = "MissingLoginStateError";
   constructor(what: string) {
     super(`The login ${what} is no longer available`);
+    this.name = "MissingLoginStateError";
   }
 }
 
 /**
- * True for a Card HTTP 401, which says the session is finished.
- *
- * The base query has already renewed the session, or ended it, by the time this runs. It answers a
- * 401 only when the provider refused a request the session could not rescue. Every other failure —
- * a store it could not read, a request whose session a newer login replaced — carries a different
- * status, so one network failure cannot sign the user out.
+ * True for a Card HTTP 401. The base query has already asked `refreshCardSession` to renew the
+ * session by the time this runs, so a 401 here means the session is finished, not merely stale.
  */
 export function isUnauthorizedError(error: unknown): boolean {
-  return isCardUnauthorized(error);
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    (error as { status: unknown }).status === UNAUTHORIZED_STATUS
+  );
 }
