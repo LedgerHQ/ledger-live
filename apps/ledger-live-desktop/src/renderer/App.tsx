@@ -24,7 +24,7 @@ import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider
 import { themeSelector } from "./actions/general";
 import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
-import { useBraze } from "./hooks/useBraze";
+import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -53,7 +53,6 @@ const queryClient = new QueryClient();
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
-  useBraze();
   useResetTimeRangeOnGraphRework();
 
   useEffect(() => {
@@ -81,43 +80,45 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [zcashShielded?.enabled]);
 
   return (
-    <StyleProvider selectedPalette={selectedPalette}>
-      <ThemeProvider colorScheme={selectedPalette}>
-        <ThrowBlock
-          onError={() => {
-            if (!__DEV__) {
-              setReloadEnabled(false);
-            }
-          }}
-        >
-          <ConnectEnvsToDatadog />
-          <UpdaterProvider>
-            <AppDataStorageProvider>
-              <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
-                <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <ServiceStatusProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <QueryClientProvider client={queryClient}>
-                                <Default />
-                                <ReactQueryDevtoolsProvider />
-                              </QueryClientProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </ServiceStatusProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesBridgedProvider>
-              </DeviceManagementKitProvider>
-            </AppDataStorageProvider>
-          </UpdaterProvider>
-        </ThrowBlock>
-      </ThemeProvider>
-    </StyleProvider>
+    <BrazeProvider>
+      <StyleProvider selectedPalette={selectedPalette}>
+        <ThemeProvider colorScheme={selectedPalette}>
+          <ThrowBlock
+            onError={() => {
+              if (!__DEV__) {
+                setReloadEnabled(false);
+              }
+            }}
+          >
+            <ConnectEnvsToDatadog />
+            <UpdaterProvider>
+              <AppDataStorageProvider>
+                <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
+                  <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                    <ToastProvider>
+                      <ServiceStatusProviderWrapper>
+                        <Router>
+                          <PostOnboardingProviderWrapped>
+                            <PlatformAppProviderWrapper>
+                              <DrawerProvider>
+                                <QueryClientProvider client={queryClient}>
+                                  <Default />
+                                  <ReactQueryDevtoolsProvider />
+                                </QueryClientProvider>
+                              </DrawerProvider>
+                            </PlatformAppProviderWrapper>
+                          </PostOnboardingProviderWrapped>
+                        </Router>
+                      </ServiceStatusProviderWrapper>
+                    </ToastProvider>
+                  </CountervaluesBridgedProvider>
+                </DeviceManagementKitProvider>
+              </AppDataStorageProvider>
+            </UpdaterProvider>
+          </ThrowBlock>
+        </ThemeProvider>
+      </StyleProvider>
+    </BrazeProvider>
   );
 };
 
