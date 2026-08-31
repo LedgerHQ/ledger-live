@@ -7694,6 +7694,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../../domain/api/card-management
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
@@ -7707,9 +7710,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
