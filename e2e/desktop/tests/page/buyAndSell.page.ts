@@ -20,6 +20,8 @@ interface ProviderConfig {
   parseAddress?: (value: string) => string;
 }
 
+const toSeconds = (ms: number) => `${ms / 1000}s`;
+
 export class BuyAndSellPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "buy";
 
@@ -130,10 +132,13 @@ export class BuyAndSellPage extends WebViewAppPage {
         return;
       } catch (error) {
         if (attempt === attemptTimeouts.length - 1) {
-          const budget = attemptTimeouts.map(t => `${t / 1000}s`).join(" + ");
+          const waits = attemptTimeouts.map(toSeconds).join(" + ");
+          const reloadBudget = reloadTimeout * (attemptTimeouts.length - 1);
+          const worstCase = attemptTimeouts.reduce((total, t) => total + t, reloadBudget);
           throw new Error(
             `Buy/Sell web app did not render "${testId}" after ${attemptTimeouts.length} attempts ` +
-              `(${budget}) — webview stuck loading.`,
+              `(${waits} waiting + up to ${toSeconds(reloadBudget)} reloading, ` +
+              `${toSeconds(worstCase)} worst case) — webview stuck loading.`,
             { cause: error },
           );
         }
