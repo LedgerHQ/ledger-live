@@ -9,7 +9,7 @@ const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 // These three only read account state, so they can share one app instance. The tests that add
 // an account keep their own spec, where a fresh instance is what makes the count assertions
 // meaningful.
-setTeamOwner(Team.WALLET_XP);
+setTeamOwner(Team.COIN_INTEGRATION);
 describe("Receive - read-only flows", () => {
   beforeAll(initReceiveApp);
   beforeEach(() => app.portfolio.openReceiveDrawer());

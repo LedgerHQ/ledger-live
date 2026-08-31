@@ -11,6 +11,7 @@ type AddAccountTestCase = {
   readonly currency: Currency;
   readonly xrayTicket: string;
   readonly portfolioAssetName?: string;
+  readonly teamOwner?: Team;
 };
 
 const currencies: AddAccountTestCase[] = [
@@ -20,34 +21,42 @@ const currencies: AddAccountTestCase[] = [
   },
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
-  { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675" },
+  { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675", teamOwner: Team.BST },
   {
     currency: Currency.DOT,
     xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676",
     portfolioAssetName: Currency.DOT.name,
   },
   { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2677" },
-  { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678" },
+  { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678", teamOwner: Team.BST },
   { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679" },
   { currency: Currency.BCH, xrayTicket: "B2CQA-2498, B2CQA-2652, B2CQA-2680" },
-  { currency: Currency.ALGO, xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681" },
+  {
+    currency: Currency.ALGO,
+    xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681",
+    teamOwner: Team.BST,
+  },
   { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
-  { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
+  { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683", teamOwner: Team.BST },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.GRAM, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
-  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
+  {
+    currency: Currency.GRAM,
+    xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685",
+    teamOwner: Team.BST,
+  },
+  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646", teamOwner: Team.BST },
   {
     currency: Currency.BASE,
     xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228",
     portfolioAssetName: Currency.ETH.name,
   },
-  { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
+  { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298", teamOwner: Team.BST },
 ];
 
 for (const currency of currencies) {
   test.describe("Add account", () => {
     test.use({
-      teamOwner: Team.WALLET_XP,
+      teamOwner: currency.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
     });
@@ -119,7 +128,7 @@ for (const currency of currencies) {
 
 test.describe("Add account", () => {
   test.use({
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.ALEO.speculosApp,
     featureFlags: {
