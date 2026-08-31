@@ -3,19 +3,14 @@ import BigNumber from "bignumber.js";
 import { render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import { makeHederaAccount } from "../../__mocks__/account.mock";
 import type { StepProps } from "../types";
 
-let queryFn: () => Promise<unknown>;
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => queryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
 }));
 
 import StepSummary from "../steps/StepSummary";
@@ -52,7 +47,7 @@ const makeProps = (): StepProps =>
 
 describe("UndelegationFlowModal/StepSummary", () => {
   it("does not show the removed-validator placeholder while the validator list fetch is still failing", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(<StepSummary {...makeProps()} />, { initialState: defaultState });
 
@@ -63,7 +58,7 @@ describe("UndelegationFlowModal/StepSummary", () => {
   });
 
   it("shows the removed-validator placeholder once the fetch succeeds and the validator is gone", async () => {
-    queryFn = () => Promise.resolve([]);
+    mockValidatorsQuery = { validators: [], loading: false, error: null };
 
     render(<StepSummary {...makeProps()} />, { initialState: defaultState });
 
@@ -75,7 +70,7 @@ describe("UndelegationFlowModal/StepSummary", () => {
   });
 
   it("shows the validator name once the fetch succeeds and the validator is still present", async () => {
-    queryFn = () => Promise.resolve([validator]);
+    mockValidatorsQuery = { validators: [validator], loading: false, error: null };
 
     render(<StepSummary {...makeProps()} />, { initialState: defaultState });
 

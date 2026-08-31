@@ -4,6 +4,7 @@ import { act, render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import DelegationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
 import { subjectRefs } from "../../__mocks__/bridge.mock";
 import {
@@ -29,16 +30,10 @@ const mockValidators = [
   },
 ];
 
-let queryFn: () => Promise<unknown> = () => Promise.resolve(mockValidators);
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => queryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(() => null),
 }));
 
@@ -60,7 +55,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
 }));
 
 beforeEach(async () => {
-  queryFn = () => Promise.resolve(mockValidators);
+  mockValidatorsQuery = { validators: mockValidators, loading: false, error: null };
   await setupHederaModalTest();
 });
 
@@ -115,7 +110,7 @@ describe("Hedera DelegationFlowModal (integration)", () => {
   });
 
   it("keeps Continue disabled and shows the fetch error when the validators fetch fails", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
     await setupHederaModalTest({
       ...DEFAULT_TX_STATUS,
       errors: { validators: new Error("network down") },

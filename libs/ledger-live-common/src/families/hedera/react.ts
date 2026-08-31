@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { getHederaValidators } from "@ledgerhq/coin-hedera/network/utils";
-import { HEDERA_VALIDATORS_CACHE_MINUTES } from "@ledgerhq/coin-hedera/constants";
-import { getDelegationStatus } from "./utils";
+import { useMemo } from "react";
+import { useGetValidatorsQuery } from "./state-manager/api";
+import { filterValidatorBySearchTerm, getDelegationStatus } from "./utils";
 import type {
   HederaAccount,
   HederaValidator,
@@ -10,36 +9,40 @@ import type {
   HederaEnrichedDelegation,
 } from "./types";
 
-const HEDERA_VALIDATORS_CACHE_TTL_MS = HEDERA_VALIDATORS_CACHE_MINUTES * 60 * 1000;
-
-export const hederaQueries = {
-  all: () => ["hedera"] as const,
-  validatorsList: (currencyId: string) =>
-    queryOptions({
-      queryKey: [...hederaQueries.all(), "validators", currencyId],
-      // getHederaValidators owns the TTL and is the same data that getTransactionStatus validates against.
-      // staleTime stays 0 to keep both reading one entry.
-      // side effect: refetch and invalidateQueries are no-ops, call .clear() to force a refresh.
-      queryFn: (): Promise<HederaValidator[]> => getHederaValidators(currencyId),
-      retry: false,
-      staleTime: 0,
-      gcTime: HEDERA_VALIDATORS_CACHE_TTL_MS,
-    }),
+export type HederaValidatorsQuery = {
+  validators: HederaValidator[];
+  loading: boolean;
+  error: Error | null;
 };
+
+export function useHederaValidators(currencyId: string, search?: string): HederaValidatorsQuery {
+  const { data, isLoading, error } = useGetValidatorsQuery(currencyId);
+
+  const validators = useMemo(() => {
+    const all = data ?? [];
+    return search ? all.filter(v => filterValidatorBySearchTerm(v, search)) : all;
+  }, [data, search]);
+
+  return {
+    validators,
+    loading: isLoading,
+    // an error while validators are already cached is not worth showing, the list still renders
+    error: data === undefined && error instanceof Error ? error : null,
+  };
+}
 
 export function useHederaEnrichedDelegation(
   account: HederaAccount,
   delegation: HederaDelegation,
 ): HederaEnrichedDelegation {
-  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
-  const validators = queryValidators.data ?? [];
+  const { validators, loading, error } = useHederaValidators(account.currency.id);
   const validatorById = new Map(validators.map(v => [v.id, v]));
   const validator = validatorById.get(String(delegation.nodeId)) ?? null;
 
   return {
     ...delegation,
-    loading: queryValidators.isLoading,
-    error: queryValidators.data === undefined ? queryValidators.error : null,
+    loading,
+    error,
     status: getDelegationStatus(validator),
     validator: {
       name: validator?.name ?? "",

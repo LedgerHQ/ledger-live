@@ -1,22 +1,17 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
-import { renderWithReactQuery as render, screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import RedelegationSelectValidator from "./SelectValidator";
 import { HEDERA_ACCOUNT_1 } from "../__mocks__/account.mock";
 
-let validatorsQueryFn: () => Promise<unknown>;
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => validatorsQueryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
 }));
 
 const mockNavigate = jest.fn();
@@ -37,6 +32,7 @@ const validator = {
   activeStake: new BigNumber(0),
   activeStakePercentage: new BigNumber(0),
   overstaked: false,
+  isLedgerNode: false,
 };
 
 const overrideInitialState = (state: State): State => ({
@@ -50,7 +46,7 @@ describe("RedelegationFlow SelectValidator", () => {
   });
 
   it("shows a spinner and no validator row while the validators query is loading", () => {
-    validatorsQueryFn = () => new Promise(() => {});
+    mockValidatorsQuery = { validators: [], loading: true, error: null };
 
     render(<RedelegationSelectValidator navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState,
@@ -61,7 +57,7 @@ describe("RedelegationFlow SelectValidator", () => {
   });
 
   it("shows the fetch error text and keeps the list mounted", async () => {
-    validatorsQueryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(<RedelegationSelectValidator navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState,
@@ -71,7 +67,7 @@ describe("RedelegationFlow SelectValidator", () => {
   });
 
   it("does not show an error and navigates to Amount when a validator is selected", async () => {
-    validatorsQueryFn = () => Promise.resolve([validator]);
+    mockValidatorsQuery = { validators: [validator], loading: false, error: null };
 
     const { user } = render(
       <RedelegationSelectValidator navigation={mockNavigation} route={mockRoute} />,

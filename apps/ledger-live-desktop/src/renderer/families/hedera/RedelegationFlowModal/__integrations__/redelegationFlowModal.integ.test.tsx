@@ -13,39 +13,44 @@ import {
   cleanupHederaModalTest,
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
-import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
+import {
+  useHederaEnrichedDelegation,
+  type HederaValidatorsQuery,
+} from "@ledgerhq/live-common/families/hedera/react";
+
+const mockValidatorsQuery: HederaValidatorsQuery = {
+  validators: [
+    {
+      id: "0",
+      name: "Hedera Node 0",
+      address: "0.0.3",
+      addressChecksum: null,
+      minStake: new BigNumber(0),
+      maxStake: new BigNumber(250_000_000_000_000_000),
+      activeStake: new BigNumber(0),
+      activeStakePercentage: new BigNumber(0),
+      overstaked: false,
+      isLedgerNode: false,
+    },
+    {
+      id: "5",
+      name: "Hedera Node 5",
+      address: "0.0.5",
+      addressChecksum: null,
+      minStake: new BigNumber(0),
+      maxStake: new BigNumber(250_000_000_000_000_000),
+      activeStake: new BigNumber(0),
+      activeStakePercentage: new BigNumber(0),
+      overstaked: false,
+      isLedgerNode: false,
+    },
+  ],
+  loading: false,
+  error: null,
+};
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () =>
-        Promise.resolve([
-          {
-            id: "0",
-            name: "Hedera Node 0",
-            address: "0.0.3",
-            addressChecksum: null,
-            minStake: new BigNumber(0),
-            maxStake: new BigNumber(250_000_000_000_000_000),
-            activeStake: new BigNumber(0),
-            activeStakePercentage: new BigNumber(0),
-            overstaked: false,
-          },
-          {
-            id: "5",
-            name: "Hedera Node 5",
-            address: "0.0.5",
-            addressChecksum: null,
-            minStake: new BigNumber(0),
-            maxStake: new BigNumber(250_000_000_000_000_000),
-            activeStake: new BigNumber(0),
-            activeStakePercentage: new BigNumber(0),
-            overstaked: false,
-          },
-        ]),
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(() => ({
     nodeId: 0,
     delegated: new BigNumber(5_000_000_000),
