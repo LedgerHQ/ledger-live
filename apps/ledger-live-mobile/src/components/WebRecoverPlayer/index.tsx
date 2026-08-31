@@ -101,7 +101,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   }, [handleBypassOnboarding, webviewState]);
 
   return (
-    <SafeAreaView style={[styles.root]} isFlex>
+    <SafeAreaView style={[styles.root, { backgroundColor: "#000000" }]} isFlex edges={["top"]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
@@ -127,7 +127,7 @@ export default WebRecoverPlayer;
 
 const styles = StyleSheet.create({
   root: {
-    flexGrow: 1,
+    flex: 1,
   },
   headerRight: {
     display: "flex",
