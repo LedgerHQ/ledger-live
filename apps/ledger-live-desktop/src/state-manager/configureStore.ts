@@ -14,6 +14,10 @@ import {
   swapApiExtra,
 } from "@shared/api-services";
 import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  createAccountAliasMiddleware,
+  withAccountAliases,
+} from "~/renderer/middlewares/accountAlias";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -45,7 +49,7 @@ const customCreateStore = ({
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
-    preloadedState: state,
+    preloadedState: withAccountAliases(state),
     middleware: getDefaultMiddleware =>
       applyLldRTKApiMiddlewares(
         getDefaultMiddleware({
@@ -102,6 +106,7 @@ const customCreateStore = ({
         }),
       )
         .concat(logger)
+        .concat(createAccountAliasMiddleware())
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
         .concat(dbMiddleware ? [dbMiddleware] : [])
         .concat(

@@ -1,6 +1,7 @@
 import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { Currency } from "@domain/entity-currency";
 import { DeeplinkHandler } from "../types";
+import { getAccountUrl } from "~/renderer/utils";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
 export const accountsHandler: DeeplinkHandler<"accounts"> = (
@@ -12,7 +13,7 @@ export const accountsHandler: DeeplinkHandler<"accounts"> = (
   if (address && typeof address === "string") {
     const account = accounts.find(acc => acc.freshAddress === address);
     if (account) {
-      navigate(`/account/${account.id}`);
+      navigate(getAccountUrl(account.id));
       return;
     }
   }
@@ -38,16 +39,17 @@ export const accountHandler: DeeplinkHandler<"account"> = (route, { accounts, na
     );
 
     if (account) {
-      navigate(`/account/${account.id}`);
+      navigate(getAccountUrl(account.id));
     }
     return;
   }
 
   const [chosenAccount] = foundAccounts;
+  if (!chosenAccount) return;
 
-  if (chosenAccount?.type === "Account") {
-    navigate(`/account/${chosenAccount.id}`);
+  if (chosenAccount.type === "Account") {
+    navigate(getAccountUrl(chosenAccount.id));
   } else {
-    navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
+    navigate(getAccountUrl(chosenAccount.id, chosenAccount.parentId));
   }
 };

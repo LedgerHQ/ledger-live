@@ -45,6 +45,7 @@ import {
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useNavigate } from "react-router";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;
@@ -123,7 +124,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
         state: {
           yieldId: "polkadot-dot-validator-staking",
           accountId: account.id,
-          returnTo: `/account/${account.id}`,
+          returnTo: getAccountUrl(account.id),
         },
       });
     } else {

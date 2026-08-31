@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import IconCoins from "~/renderer/icons/Coins";
 
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   account: AccountLike;
@@ -47,7 +48,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         state: {
           yieldId,
           accountId: account.id,
-          returnTo: `/account/${account.id}`,
+          returnTo: getAccountUrl(account.id),
         },
       });
     },

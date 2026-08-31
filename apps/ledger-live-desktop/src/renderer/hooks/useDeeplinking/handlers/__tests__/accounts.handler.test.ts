@@ -13,6 +13,7 @@ jest.mock("../../utils", () => ({
 }));
 
 import { getAccountsOrSubAccountsByCurrency } from "../../utils";
+import { getAccountUrl } from "~/renderer/utils";
 
 const mockFindCryptoCurrencyByKeyword = jest.mocked(findCryptoCurrencyByKeyword);
 const mockGetAccountsOrSubAccountsByCurrency = jest.mocked(getAccountsOrSubAccountsByCurrency);
@@ -49,7 +50,7 @@ describe("accounts.handler", () => {
 
       accountsHandler({ type: "accounts", address: "bc1qtest123" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
+      expect(context.navigate).toHaveBeenCalledWith(getAccountUrl(mockAccount.id));
     });
 
     it("navigates to accounts list when address not found", () => {
@@ -127,7 +128,7 @@ describe("accounts.handler", () => {
 
       accountHandler({ type: "account", currency: "bitcoin", address: "bc1qtest123" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
+      expect(context.navigate).toHaveBeenCalledWith(getAccountUrl(mockAccount.id));
     });
 
     it("navigates to first matching account when no address provided", () => {
@@ -139,7 +140,7 @@ describe("accounts.handler", () => {
 
       accountHandler({ type: "account", currency: "ethereum" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith(`/account/${mockAccount.id}`);
+      expect(context.navigate).toHaveBeenCalledWith(getAccountUrl(mockAccount.id));
     });
 
     it("navigates to token account with parent path", () => {
@@ -156,7 +157,9 @@ describe("accounts.handler", () => {
 
       accountHandler({ type: "account", currency: "ethereum" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/account/parent-account-1/token-account-1");
+      expect(context.navigate).toHaveBeenCalledWith(
+        getAccountUrl("token-account-1", "parent-account-1"),
+      );
     });
   });
 });

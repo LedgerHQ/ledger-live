@@ -6,6 +6,7 @@ import { FormattedAccountItem } from "../../../components/FormattedAccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { AccountListProps } from "../types";
+import { getAccountUrl } from "~/renderer/utils";
 
 export const AccountList = ({
   accounts,
@@ -21,7 +22,7 @@ export const AccountList = ({
       if (isAccountSelectionFlow) {
         navigateToEditAccountName(account);
       } else {
-        navigate(`/account/${account.id}`);
+        navigate(getAccountUrl(account.id));
         setDrawer();
       }
     },

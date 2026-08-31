@@ -55,6 +55,7 @@ jest.mock("~/renderer/components/RetryButton", () => ({
 }));
 
 import StepConfirmation, { StepConfirmationFooter } from "../steps/StepConfirmation";
+import { getAccountUrl } from "~/renderer/utils";
 
 const currency = getCryptoCurrencyById("tezos");
 
@@ -188,7 +189,7 @@ describe("StakeFlowModal/StepConfirmation", () => {
       fireEvent.click(cta!);
     });
     expect(props.onClose).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(`/account/${props.account?.id}`);
+    expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(props.account?.id ?? ""));
   });
 
   it("footer success CTA falls back to the operation's account id when account is missing", () => {
@@ -203,6 +204,6 @@ describe("StakeFlowModal/StepConfirmation", () => {
       fireEvent.click(cta!);
     });
     expect(props.onClose).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(`/account/${operation.accountId}`);
+    expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(operation.accountId));
   });
 });
