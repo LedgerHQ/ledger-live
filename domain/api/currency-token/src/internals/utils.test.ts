@@ -91,6 +91,14 @@ describe("validateAndTransformSingleTokenResponse", () => {
     );
   });
 
+  it("should return undefined when the response is null", () => {
+    expect(validateAndTransformSingleTokenResponse(null)).toBeUndefined();
+  });
+
+  it("should return undefined when the response is undefined", () => {
+    expect(validateAndTransformSingleTokenResponse(undefined)).toBeUndefined();
+  });
+
   it("should return undefined when the array is empty", () => {
     expect(validateAndTransformSingleTokenResponse([])).toBeUndefined();
   });

@@ -102,7 +102,11 @@ export function remapRtkQueryError(error: FetchBaseQueryError | SerializedError)
     }
     if (status === "FETCH_ERROR") return new NetworkDown();
     // PARSING_ERROR / TIMEOUT_ERROR / CUSTOM_ERROR — surface the message.
-    return new Error("error" in error ? error.error : String(status));
+    return new Error("error" in error ? toErrorMessage(error.error, status) : String(status));
   }
   return new Error(error.message ?? "Unknown crypto-assets store error");
+}
+
+function toErrorMessage(rawError: unknown, status: string): string {
+  return typeof rawError === "string" ? rawError : `Unknown ${status.toLowerCase()} error`;
 }
