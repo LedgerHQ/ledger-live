@@ -68,12 +68,12 @@ export function useContactsCurrencySelectionAdapter({
   const disabledItemsExplanation = useMemo<DisabledItemsExplanation>(
     () => ({
       asset: assetName => ({
-        title: t("modularDrawer.unsupportedAssetTooltip.title", { asset: assetName }),
-        content: t("modularDrawer.unsupportedAssetTooltip.description", { asset: assetName }),
+        title: t("modularDrawer.unsupportedAssetExplanation.title", { asset: assetName }),
+        content: t("modularDrawer.unsupportedAssetExplanation.description", { asset: assetName }),
       }),
       network: (networkName, assetName) => ({
-        title: t("modularDrawer.unsupportedNetworkTooltip.title", { network: networkName }),
-        content: t("modularDrawer.unsupportedNetworkTooltip.description", {
+        title: t("modularDrawer.unsupportedNetworkExplanation.title", { network: networkName }),
+        content: t("modularDrawer.unsupportedNetworkExplanation.description", {
           network: networkName,
           asset: assetName,
         }),
