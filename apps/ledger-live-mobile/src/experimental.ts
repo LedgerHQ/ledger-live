@@ -152,28 +152,15 @@ export const isReadOnly = (key: string) => Object.keys(Config).includes(key);
 export const enabledExperimentalFeatures = (): string[] =>
   [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));
 
-/**
- * The build's own values, which `react-native-config` reads from the `.env` file.
- *
- * They are applied here, while this module evaluates, and not in the asynchronous block below. Some
- * modules read an env once, as they evaluate, and keep that value: the redux store takes the Card
- * API base URL and the Baanx client key that way. A copy that waits for the disk lands after those
- * reads, and the store keeps the definition default instead of the `.env` value.
- */
-for (const k in Config) {
-  // The native module answers null for a key the build left out, and the parsers refuse it.
-  if (Config[k] == null) continue;
-  setEnvUnsafe(k as EnvName, Config[k]);
-}
-
 (async () => {
   const envs = await getStorageEnv();
 
   for (const k in envs) {
-    // The build value wins over a saved one, which is the rule `isReadOnly` states. The loop above
-    // already applied it, so a saved value must not overwrite it here.
-    if (isReadOnly(k)) continue;
     setEnvUnsafe(k as EnvName, envs[k]);
+  }
+
+  for (const k in Config) {
+    setEnvUnsafe(k as EnvName, Config[k]);
   }
 
   const saveEnvs = async (name: string, value: unknown) => {
