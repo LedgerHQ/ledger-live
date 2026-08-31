@@ -25,13 +25,13 @@ import {
   useCanTopUpNeuron,
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
-import React, { useCallback } from "react";
+import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
+import MissingNeuron from "./MissingNeuron";
 import { NeuronDetailRow, NeuronSection } from "../../components/NeuronDetails";
 import { toBigNumber } from "../../amounts";
 import { useFormatDuration } from "../../useFormatDuration";
@@ -75,26 +75,9 @@ const StepManage = ({
   });
   const canTopUp = useCanTopUpNeuron(account, neuron);
 
-  // Clears the stale id on the way out, so the step cannot be re-entered on a neuron that is gone.
-  const backToList = useCallback(() => {
-    setSelectedNeuronId(null);
-    transitionTo("listNeuron");
-  }, [setSelectedNeuronId, transitionTo]);
-
   // Disburse and a refresh both drop a neuron from the snapshot while this step may still name it.
-  // Rendering nothing left the stepper sitting on an empty Manage body with no way to read what had
-  // happened, so say so and offer the list.
   if (!neuron) {
-    return (
-      <Box flow={3} px={4} alignItems="center">
-        <Text ff="Inter|Regular" fontSize={4} color="neutral.c70">
-          <Trans i18nKey="internetComputer.manageNeuronFlow.manage.missingNeuron" />
-        </Text>
-        <Button primary onClick={backToList} data-testid="icp-manage-missing-back-button">
-          <Trans i18nKey="internetComputer.manageNeuronFlow.confirmation.backToNeurons" />
-        </Button>
-      </Box>
-    );
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
   }
 
   const permissions = getNeuronActionPermissions(neuron);

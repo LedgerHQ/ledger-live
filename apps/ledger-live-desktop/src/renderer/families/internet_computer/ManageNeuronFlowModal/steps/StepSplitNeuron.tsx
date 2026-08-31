@@ -13,6 +13,7 @@ import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
 import { toBigNumber } from "../../amounts";
 import SubmitFooter from "./SubmitFooter";
+import MissingNeuron from "./MissingNeuron";
 import type { StepProps } from "../../neuronFlow/types";
 
 /**
@@ -23,9 +24,11 @@ const StepSplitNeuron = ({
   account,
   neurons,
   selectedNeuronId,
+  setSelectedNeuronId,
   transaction,
   status,
   onUpdateTransaction,
+  transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
   const unit = account.currency.units[0];
@@ -36,7 +39,9 @@ const StepSplitNeuron = ({
     [onUpdateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   const min = minAllowedSplitAmount(BigInt(ICP_FEES));
   const max = maxAllowedSplitAmount(neuron);

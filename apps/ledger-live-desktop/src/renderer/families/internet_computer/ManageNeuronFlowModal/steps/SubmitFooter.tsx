@@ -5,7 +5,10 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import type { StepProps } from "../../neuronFlow/types";
 
-type Props = Pick<StepProps, "status" | "bridgePending" | "onClose" | "transitionTo"> & {
+type Props = Pick<
+  StepProps,
+  "status" | "bridgePending" | "onClose" | "transitionTo" | "neurons" | "selectedNeuronId"
+> & {
   /** Extra condition beyond the bridge's own validation, for input the bridge cannot see yet. */
   canContinue?: boolean;
   /**
@@ -26,11 +29,18 @@ const SubmitFooter = ({
   bridgePending,
   onClose,
   transitionTo,
+  neurons,
+  selectedNeuronId,
   canContinue = true,
   hasInput = true,
 }: Props) => {
   const errors = Object.values(status.errors);
   const blocking = errors.length > 0;
+  // Every step this footer serves signs against one neuron, so a neuron that has left the snapshot
+  // makes Continue a dead end: the transaction still names it and the canister would refuse. The
+  // step body explains the state; withholding Continue here is what stops the signature. Checked in
+  // one place so a step added later cannot forget it.
+  const missingNeuron = !neurons.some(neuron => neuron.id?.toString() === selectedNeuronId);
 
   return (
     <Box grow>
@@ -42,7 +52,7 @@ const SubmitFooter = ({
         <Button
           primary
           ml={2}
-          disabled={bridgePending || blocking || !canContinue}
+          disabled={bridgePending || blocking || !canContinue || missingNeuron}
           onClick={() => transitionTo("manageAction")}
           data-testid="icp-continue-button"
         >

@@ -7,6 +7,7 @@ import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import { NeuronDetailRow } from "../../components/NeuronDetails";
 import SubmitFooter from "./SubmitFooter";
+import MissingNeuron from "./MissingNeuron";
 import type { StepProps } from "../../neuronFlow/types";
 
 const EMPTY_FOLLOWEES: string[] = [];
@@ -29,7 +30,15 @@ const currentFolloweeCount = ({ neurons, selectedNeuronId, transaction }: StepPr
  * anything this step held separately could disagree with what the device is handed.
  */
 const StepSelectFollowees = (props: StepProps) => {
-  const { transaction, onUpdateTransaction } = props;
+  const {
+    neurons,
+    selectedNeuronId,
+    setSelectedNeuronId,
+    transaction,
+    onUpdateTransaction,
+    transitionTo,
+  } = props;
+  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
   const followTopic = transaction?.followTopic;
@@ -52,6 +61,10 @@ const StepSelectFollowees = (props: StepProps) => {
     setFollowees([...followeesIds, id]);
     setDraft("");
   }, [draft, followeesIds, setFollowees]);
+
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   if (!followTopic) return null;
 

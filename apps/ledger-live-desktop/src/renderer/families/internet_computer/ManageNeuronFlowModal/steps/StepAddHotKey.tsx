@@ -6,6 +6,7 @@ import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import SubmitFooter from "./SubmitFooter";
+import MissingNeuron from "./MissingNeuron";
 import type { StepProps } from "../../neuronFlow/types";
 
 /**
@@ -15,12 +16,25 @@ import type { StepProps } from "../../neuronFlow/types";
  * The account's own principal is shown because nothing else in the app does, which left the field
  * asking for an identifier the user had no way to see or recognize.
  */
-const StepAddHotKey = ({ account, transaction, onUpdateTransaction }: StepProps) => {
+const StepAddHotKey = ({
+  account,
+  neurons,
+  selectedNeuronId,
+  setSelectedNeuronId,
+  transaction,
+  onUpdateTransaction,
+  transitionTo,
+}: StepProps) => {
   const principal = useICPPrincipal(account);
+  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   const onChange = useCallback(
     (hotKeyToAdd: string) => onUpdateTransaction(tx => ({ ...tx, hotKeyToAdd })),
     [onUpdateTransaction],
   );
+
+  if (!neuron) {
+    return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
+  }
 
   return (
     <Box flow={3} px={4}>
