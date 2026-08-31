@@ -479,12 +479,8 @@ export function useWalletAPIServer({
           TOKEN_LOOKUP_CONCURRENCY,
           [...specificTokenIds],
           async tokenId => {
-            try {
-              const token = await getCryptoAssetsStore().findTokenById(tokenId);
-              return token ? currencyToWalletAPICurrency(token) : null;
-            } catch {
-              return null;
-            }
+            const token = await getCryptoAssetsStore().findTokenById(tokenId);
+            return token ? currencyToWalletAPICurrency(token) : null;
           },
         );
         specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
