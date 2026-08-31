@@ -8,7 +8,7 @@ import type {
   HederaDelegation,
   HederaEnrichedDelegation,
 } from "@ledgerhq/live-common/families/hedera/types";
-import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
 import { useStake } from "LLD/hooks/useStake";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
@@ -34,7 +34,7 @@ const Delegations = ({
   delegatedPosition: HederaDelegation;
 }) => {
   const dispatch = useDispatch();
-  const enrichedDelegation = useHederaEnrichedDelegation(account, delegatedPosition);
+  const enrichedDelegation = useHederaEnrichedDelegationV2(account, delegatedPosition);
 
   const onClaimRewards = useCallback(() => {
     dispatch(openModal("MODAL_HEDERA_CLAIM_REWARDS", { account }));

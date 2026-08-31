@@ -4,7 +4,7 @@ import { render, screen, userEvent } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { openModal } from "~/renderer/actions/modals";
 import { useStake } from "LLD/hooks/useStake";
-import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import DelegatedPositions from "../DelegatedPositions/index";
 import { HEDERA_ACCOUNT_1, makeHederaAccount } from "../__mocks__/account.mock";
@@ -13,7 +13,7 @@ import { mockDelegation, mockEnrichedDelegation } from "../__mocks__/delegation.
 jest.mock("LLD/hooks/useStake", () => ({ useStake: jest.fn() }));
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaEnrichedDelegation: jest.fn(),
+  useHederaEnrichedDelegationV2: jest.fn(),
 }));
 
 jest.mock("~/renderer/actions/modals", () => ({
@@ -53,7 +53,7 @@ jest.mock("~/renderer/families/hedera/DelegatedPositions/Header", () => ({
 }));
 
 const mockUseStake = jest.mocked(useStake);
-const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegation);
+const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegationV2);
 const mockOpenModal = jest.mocked(openModal);
 
 const makeTokenAccount = (): TokenAccount =>
