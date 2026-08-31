@@ -1,7 +1,12 @@
 import { getNeuronStakeSubAccountIdentifier } from "../logic/buildNeuronTransaction";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import type { InternetComputerOperation } from "../types";
-import { getBufferFromString, isValidHex, reassignOperationType } from "./utils";
+import {
+  dedupeRetypedOperations,
+  getBufferFromString,
+  isValidHex,
+  reassignOperationType,
+} from "./utils";
 
 describe("isValidHex", () => {
   it("accepts a whole even-length hex string (>= 3 bytes)", () => {
@@ -117,5 +122,78 @@ describe("reassignOperationType", () => {
     );
 
     expect(op!.type).toBe("OUT");
+  });
+});
+
+/*
+ * QA saw stake and top-up rows appear two and three times over. An operation id encodes its type and
+ * `mergeOps` dedups on that id, so reclassifying a transfer mints an id the merge has never seen:
+ * the retyped operation joins the stale `OUT` instead of replacing it, and nothing removes the loser.
+ */
+describe("dedupeRetypedOperations", () => {
+  const op = (overrides: Partial<InternetComputerOperation>) =>
+    ({
+      accountId: "account-1",
+      senders: ["sender"],
+      recipients: ["recipient"],
+      extra: {},
+      ...overrides,
+    }) as unknown as InternetComputerOperation;
+
+  // An IN and an OUT legitimately share a hash on a self-transfer, so hash alone must not collapse.
+  it("keeps an incoming operation that shares its hash with an outgoing one", () => {
+    const kept = dedupeRetypedOperations([
+      op({ id: "a-h1-OUT", hash: "h1", type: "OUT" }),
+      op({ id: "a-h1-IN", hash: "h1", type: "IN" }),
+    ]);
+
+    expect(kept.map(o => o.type)).toEqual(["OUT", "IN"]);
+  });
+
+  it("keeps a plain send that no neuron operation supersedes", () => {
+    const kept = dedupeRetypedOperations([
+      op({ id: "a-h1-OUT", hash: "h1", type: "OUT" }),
+      op({ id: "a-h2-STAKE_NEURON", hash: "h2", type: "STAKE_NEURON" }),
+    ]);
+
+    expect(kept).toHaveLength(2);
+  });
+
+  it("drops the stale send once the same transfer is known to be a stake", () => {
+    const kept = dedupeRetypedOperations([
+      op({ id: "a-h1-STAKE_NEURON", hash: "h1", type: "STAKE_NEURON" }),
+      op({ id: "a-h1-OUT", hash: "h1", type: "OUT" }),
+    ]);
+
+    expect(kept.map(o => o.id)).toEqual(["a-h1-STAKE_NEURON"]);
+  });
+
+  // A top-up carries memo 0, so it is only recognizable once a signed list_neurons has landed.
+  it("drops the stale send once the same transfer is known to be a top-up", () => {
+    const kept = dedupeRetypedOperations([
+      op({ id: "a-h1-TOP_UP_NEURON", hash: "h1", type: "TOP_UP_NEURON" }),
+      op({ id: "a-h1-OUT", hash: "h1", type: "OUT" }),
+    ]);
+
+    expect(kept.map(o => o.id)).toEqual(["a-h1-TOP_UP_NEURON"]);
+  });
+
+  // The in-place retype collapses the leftover OUT onto an id already present, so the account ends
+  // up holding the very same operation twice. QA's export held one stake three times over.
+  it("collapses operations that are already byte-identical", () => {
+    const stake = op({ id: "a-h1-STAKE_NEURON", hash: "h1", type: "STAKE_NEURON" });
+
+    expect(dedupeRetypedOperations([stake, stake, stake])).toEqual([stake]);
+  });
+
+  it("preserves the order of what it keeps", () => {
+    const kept = dedupeRetypedOperations([
+      op({ id: "a-h3-IN", hash: "h3", type: "IN" }),
+      op({ id: "a-h2-TOP_UP_NEURON", hash: "h2", type: "TOP_UP_NEURON" }),
+      op({ id: "a-h2-OUT", hash: "h2", type: "OUT" }),
+      op({ id: "a-h1-OUT", hash: "h1", type: "OUT" }),
+    ]);
+
+    expect(kept.map(o => o.id)).toEqual(["a-h3-IN", "a-h2-TOP_UP_NEURON", "a-h1-OUT"]);
   });
 });

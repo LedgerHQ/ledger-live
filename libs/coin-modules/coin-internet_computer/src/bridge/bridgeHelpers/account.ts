@@ -7,7 +7,11 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
-import { normalizeEpochTimestamp, reassignOperationType } from "../../common-logic/utils";
+import {
+  dedupeRetypedOperations,
+  normalizeEpochTimestamp,
+  reassignOperationType,
+} from "../../common-logic/utils";
 import { ICP_FEES } from "../../consts";
 import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "../../logic/crypto";
 import { hashTransaction } from "../../logic/hashTransaction";
@@ -89,6 +93,19 @@ export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
   };
 
   return result;
+};
+
+/**
+ * `getAccountShape` only ever retypes the page it just fetched; the stale `OUT` copy of a transfer
+ * lives in the stored list, which the framework merges in afterwards. So the collapse has to run
+ * once more on the merged result — this is also the pass that heals an account already holding
+ * duplicates, since `mergeOps` never dedups the stored list against itself.
+ */
+export const postSync = (_initial: ICPAccount, synced: ICPAccount): ICPAccount => {
+  const operations = dedupeRetypedOperations(synced.operations as InternetComputerOperation[]);
+  // Same array unless something was actually dropped: a new object every sync would invalidate
+  // every consumer memoized on `operations`.
+  return operations.length === synced.operations.length ? synced : { ...synced, operations };
 };
 
 function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): string {
