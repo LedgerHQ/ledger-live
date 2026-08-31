@@ -901,6 +901,9 @@
         "confirm" : "Bestätigen"
       }
     },
+    "card" : {
+      "balanceLabel" : "Saldo"
+    },
     "actions" : {
       "deposit" : "Stablecoin hinzufügen",
       "request" : "Anfordern",
@@ -924,6 +927,38 @@
         "buy" : {
           "title" : "Kaufen",
           "description" : "Kaufe Stablecoin mit Kreditkarte."
+        }
+      }
+    },
+    "request" : {
+      "title" : "{{asset}} anfragen",
+      "networkLabel" : "{{network}}-Netzwerk",
+      "saveDialogTitle" : "Anforderungskarte speichern",
+      "actions" : {
+        "share" : "Teilen",
+        "copy" : "Kopieren",
+        "copied" : "Kopiert",
+        "save" : "Speichern",
+        "verify" : "Verifizieren"
+      },
+      "verifyAddress" : {
+        "introTitle" : "Verifiziere deine Adresse",
+        "introDescription" : "Zum Schutz vor Adressersetzungsangriffen bestätigst du deine Adresse auf dem Secure Screen Ihres Ledger-Geräts.",
+        "verifyCta" : "Adresse verifizieren",
+        "successTitle" : "Auf dem Secure Screen des Geräts angezeigte Adresse",
+        "nextStepsLabel" : "Nächste Schritte",
+        "nextStepShare" : "Teile deine Adresse über deine gewünschte App",
+        "nextStepMatch" : "Stelle sicher, dass die freigegebene Adresse mit der auf deinem Ledger-Gerät übereinstimmt.",
+        "gotItCta" : "Verstanden",
+        "device" : {
+          "cancelledTitle" : "Adressverifizierung abgebrochen",
+          "cancelledDescription" : "Du hast die Adresse auf deinem Gerät abgelehnt. Du kannst sie erneut anzeigen, um sie zu bestätigen.",
+          "mismatchTitle" : "Adressen stimmen nicht überein",
+          "mismatchDescription" : "Die auf deinem Gerät angezeigte Adresse unterscheidet sich von der angeforderten. Gebe diese Adresse nicht weiter.",
+          "unsupportedTitle" : "Überprüfung nicht verfügbar",
+          "unsupportedDescription" : "Diese Geräte-App kann die Adresse nicht zur Überprüfung auf dem Gerät anzeigen.",
+          "retryCta" : "Adresse erneut anzeigen",
+          "closeCta" : "Schließen"
         }
       }
     }
@@ -2530,6 +2565,8 @@
     },
     "placeholder" : "Adresse oder ENS eingeben",
     "placeholderNoENS" : "Adresse eingeben",
+    "placeholderWithContacts" : "Adresse, ENS oder Kontakt eingeben",
+    "placeholderNoEnsWithContacts" : "Adresse oder Kontakt eingeben",
     "recent" : "Neulich",
     "myAccounts" : "Meine Konten",
     "sendTo" : "An {{address}} senden",
@@ -7227,6 +7264,9 @@
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "Senden an Sapling-Adressen wird nicht unterstützt"
     },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "Der Betrag ist zu gering, um übertragen zu werden (mindestens {{minimumZatoshis}} Zatoshis)"
+    },
     "InvalidNonce" : {
       "title" : "Nonce ist erforderlich"
     },
@@ -7866,10 +7906,20 @@
       "title" : "Der Mindestbetrag beläuft sich auf 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "Mindestens 1 SUI muss im Stake verbleiben"
+      "title" : "Beende das Staken des gesamten Betrags oder belasse mindestens 1 SUI im Staking"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "Details zum Staking nicht verfügbar. Bitte synchronisiere dein Konto neu und versuche es erneut"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "Betrag übersteigt das ausgewählte Staking"
     },
     "SomeSuiForUnstake" : {
       "title" : "Bitte achte darauf, dass du mindestens 0,1 SUI in deiner Wallet hast, um zukünftige Netzwerkgebühren zu decken und die Delegierung deines Stakes aufzuheben."
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Aktualisiere deine Sui-App",
+      "description" : "Deine Ledger-Sui-App kann keine Überweisung vom Kontostand deiner SUI-Adresse signieren. Aktualisiere die Sui-App auf deinem Ledger-Gerät und versuche es erneut."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen.",
@@ -8632,6 +8682,11 @@
       "title" : "Mehr Sicherheit. Mehr Kontrolle",
       "description" : "Erfahre mehr über Sicherheitsfunktionen.",
       "cta" : "Weitere Informationen"
+    },
+    "profile" : {
+      "title" : "Upgrade deines Geräts",
+      "description" : "Größerer Bildschirm, bessere Sicherheit. Sichere dir {{discount}}%.",
+      "cta" : "Entdecken"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8699,12 @@
       "title" : "Betrug vor dem Signieren erkennen",
       "subtitle" : "Erfahre mehr über fortschrittliche Sicherheitsfunktionen, die eine Bedrohungserkennung in Echtzeit ermöglichen.",
       "cta" : "Weitere Informationen"
+    },
+    "recoverTrigger" : {
+      "title" : "Möchtest du eine sorgenfreie Wiederherstellung?",
+      "subtitle" : "Dein Nano S ist zwar absolut sicher, aber nicht mit Ledger Recover kompatibel. Führe ein Upgrade auf ein neueres Modell durch, um ein sicheres, ID-basiertes Wallet-Backup zu entsperren.",
+      "cta" : "Weitere Informationen",
+      "dismiss" : "Nicht jetzt"
     }
   },
   "modularAssetDrawer" : {
@@ -8747,7 +8808,8 @@
     "title" : "Startseite",
     "today" : "Heute",
     "carousel" : {
-      "title" : "Für dich"
+      "title" : "Für dich",
+      "closeAll" : "Alle schließen"
     },
     "addAccountCta" : "Kryptokonto hinzufügen",
     "noBalanceTitle" : "Beginne, indem du deine Wallet auflädst",
@@ -8930,7 +8992,7 @@
       "privateBalance" : "Privater Saldo",
       "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist",
       "privateBalanceWarning" : "Der private Kontostand schließt geschützte Sapling- und Orchard-Guthaben aus",
-      "privateBalanceMaturing" : "{{spendable}} ausgabefähig · {{maturing}} reifend"
+      "privateBalanceMaturing" : "Privater Kontostand: {{spendable}} ausgabefähig · {{maturing}} reifend"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9025,10 @@
             "message" : "Privater Kontostand ist nicht synchronisiert",
             "cta" : "Synchronisierung fortsetzen"
           },
+          "failed" : {
+            "message" : "Synchronisierung des privaten Kontostands fehlgeschlagen",
+            "cta" : "Synchronisierung fortsetzen"
+          },
           "running" : {
             "message" : "Privater Kontostand wird synchronisiert ({{progress}}%)",
             "timeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}"
@@ -8985,7 +9051,8 @@
         "stopSync" : "Synchronisierung anhalten",
         "upToDate" : "Aktuell",
         "lastSync" : "Letzte Synchronisierung: {{date}}",
-        "estimatedTimeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}",
+        "syncFailed" : "Synchronisierung des privaten Kontostands fehlgeschlagen"
       },
       "datepicker" : {
         "label" : "Wiederherstellungshöhe",
@@ -9363,6 +9430,10 @@
     },
     "addAddressReview" : {
       "title" : "Adresse überprüfen",
+      "addressLabel" : "Adresse",
+      "currencyLabel" : "Währung",
+      "networkLabel" : "Netzwerk",
+      "nameLabel" : "Adressname",
       "continue" : "Adresse bestätigen",
       "successTitle" : "Adresse gespeichert",
       "close" : "Schließen"
@@ -9443,6 +9514,7 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "Deine Kontakte sind mit deinem Ledger Ende-zu-Ende verschlüsselt und werden mit deinen Geräten synchronisiert – nur du kannst sie entsperren.",
+      "activate" : "Ledger Sync einschalten",
       "dismiss" : "Verstanden"
     },
     "featureIntroduction" : {
@@ -9532,8 +9604,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "Gerät ist gesperrt",
-        "description" : "Entsperre dein Gerät, um fortzufahren."
+        "title" : "Entsperre dein Ledger-Gerät und wähle dann unten „Wiederholen“"
       },
       "unlockDevice" : {
         "title" : "Entsperre deinen {{productName}}"
@@ -9545,16 +9616,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "Gerät nicht verbunden",
-        "description" : "Dein Ledger ist nicht mehr verbunden. Stelle sicher, dass das Gerät eingeschaltet und angeschlossen ist."
+        "title" : "Ledger-Gerät nicht verbunden",
+        "description" : "Stelle sicher, dass das Gerät eingeschaltet und angeschlossen ist."
       },
       "intentError" : {
         "title" : "Unbekannter Fehler",
-        "description" : "Ein Fehler ist aufgetreten Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+        "description" : "Versuche es erneut oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
       },
       "invalidOperation" : {
-        "title" : "Ungültiger Zustand",
-        "description" : "Ein Fehler ist aufgetreten Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+        "title" : "Ein Fehler ist aufgetreten",
+        "description" : "Versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
       }
     },
     "initialization" : {
@@ -9570,43 +9641,43 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "Vorgang am Gerät abgelehnt"
+          "title" : "Vorgang am Ledger-Gerät abgelehnt"
         },
         "deviceBusy" : {
-          "title" : "Aktion ausstehend auf deinem Ledger-Gerät",
-          "description" : "Vervollständige sie und wähle dann Wiederholen aus."
+          "title" : "Aktion erforderlich auf deinem Ledger-Gerät",
+          "description" : "Beende die Aktion auf deinem Gerät und wähle dann „Wiederholen“ unten aus."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Dein Ledger-Gerät ist noch nicht einsatzbereit",
-          "description" : "Du musst deine {{productName}} zuerst einrichten. Wir begleiten dich durch den Einrichtungsvorgang."
+          "title" : "Dein Ledger-Gerät muss eingerichtet werden",
+          "description" : "Richte es ein, um fortzufahren."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS-Update erforderlich"
         },
         "unsupportedApplication" : {
           "title" : "Nicht unterstützte Funktion",
-          "description" : "Die für diesen Vorgang benötigte App ist derzeit auf deinem Ledger-Gerät nicht verfügbar. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
+          "description" : "Die für diese Aktion benötigte App wird von deinem Ledger-Gerät nicht unterstützt. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
         },
         "unsupportedFeature" : {
           "title" : "Nicht unterstützte Funktion",
-          "description" : "Die für diesen Vorgang benötigte App ist derzeit auf deinem Ledger-Gerät nicht verfügbar. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
+          "description" : "Die für diese Aktion benötigte App wird von deinem Ledger-Gerät nicht unterstützt. Bitte kontaktiere den Ledger-Kundenservice für weitere Details."
         },
         "wrongDeviceForAccount" : {
-          "title" : "Falsche geheime Wiederherstellungsphrase",
-          "description" : "Dieser Ledger ist nicht mit der Wiederherstellungsphrase eingerichtet, die mit dem ausgewählten Konto verknüpft ist. Überprüfe, ob du das richtige Gerät verwendest."
+          "title" : "Verwende das Ledger-Gerät, mit dem du dieses Konto ursprünglich eingerichtet hast",
+          "description" : "Dieser Ledger ist nicht mit der geheimen Wiederherstellungsphrase eingerichtet, die mit dem ausgewählten Kryptokonto verknüpft ist."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "Nicht genug Gerätespeicher",
-          "description" : "Dein Gerät hat nicht genügend Speicherplatz. Bitte deinstalliere Apps und versuche es dann noch einmal.",
+          "title" : "Deinstalliere einige Apps, um Speicherplatz auf dem Ledger-Gerät freizugeben.",
+          "description" : "Dein Gerät hat nicht genügend Speicherplatz.",
           "apps" : "Zu verwaltende Apps: {{appNames}}"
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledger öffnen",
         "goToMyLedger" : "Zu My Ledger wechseln",
-        "setupDevice" : "Gerät einrichten",
+        "setupDevice" : "Ledger-Gerät einrichten",
         "updateLedgerOs" : "Ledger OS aktualisieren",
         "cancelOperation" : "Vorgang abbrechen",
         "contactLedgerSupport" : "Ledger-Kundenservice kontaktieren"
@@ -9623,7 +9694,7 @@
           "title" : "Wird geladen"
         },
         "connecting" : {
-          "title" : "Wird geladen"
+          "title" : "Verbindung mit deinem Ledger-Gerät wird hergestellt"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9726,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledger-Gerät erforderlich",
-          "description" : "Zum Fortfahren musst du deinen Signer einrichten oder ihn verbinden.",
+          "description" : "Um fortzufahren, richte dein Ledger-Gerät ein oder verbinde es.",
           "connectLedgerDevice" : "Ledger-Gerät anschließen",
           "noLedgerDevice" : "Ich habe kein Ledger-Gerät"
         },
