@@ -480,3 +480,51 @@ describe("StepManage", () => {
     expect(screen.queryByText("10 ICP")).not.toBeInTheDocument();
   });
 });
+
+/*
+ * QA reported "Dissolve delay bonus: +0%" on a neuron whose voting power was visibly above its
+ * stake. Rounding to a whole percent was the cause, and it failed at both ends of the curve.
+ */
+describe("StepManage bonus rounding", () => {
+  const withDelay = (dissolveDelaySeconds: number) =>
+    controlled({
+      dissolveDelaySeconds: BigInt(dissolveDelaySeconds),
+      dissolveState: { DissolveDelaySeconds: BigInt(dissolveDelaySeconds) },
+      ageSeconds: 0n,
+    });
+
+  const renderWithDelay = (dissolveDelaySeconds: number) => {
+    const neuron = withDelay(dissolveDelaySeconds);
+    render(
+      <StepManage
+        {...makeStepProps({
+          account: makeICPAccount({ neurons: [neuron] }),
+          neurons: [neuron],
+          selectedNeuronId: "7",
+        })}
+      />,
+    );
+  };
+
+  // The curve is quadratic, so it is nearly flat near zero: this is the band a neuron locked just
+  // above the 14-day voting minimum sits in, and it used to report no bonus at all.
+  it("keeps a sub-one-percent bonus instead of reporting none", () => {
+    renderWithDelay(19 * SECONDS_IN_DAY + 23 * 3600);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+0\.15%/)).toBeInTheDocument();
+  });
+
+  // A quarter of the maximum delay is exactly +12.5%, which Math.round turned into 13.
+  it("does not round an exact half away", () => {
+    renderWithDelay(NNS_MAXIMUM_DISSOLVE_DELAY / 4);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+12\.5%/)).toBeInTheDocument();
+  });
+
+  // Trailing zeros are dropped, so the round values still read as whole percentages.
+  it("leaves a whole-percent bonus without decimals", () => {
+    renderWithDelay(NNS_MAXIMUM_DISSOLVE_DELAY);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+200%/)).toBeInTheDocument();
+  });
+});
