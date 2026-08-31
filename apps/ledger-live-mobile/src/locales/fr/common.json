@@ -10440,7 +10440,7 @@
       "cancel" : "Annuler"
     },
     "editSignerMismatch" : {
-      "title" : "Utilisez le même appareil Ledger que vous avez utilisé pour ajouter ce contact",
+      "title" : "Utilisez l’appareil Ledger ayant servi à ajouter ce contact",
       "description" : "L’appareil connecté ne correspond pas.",
       "connectDifferentDevice" : "Connecter un autre appareil",
       "cancel" : "Annuler"
