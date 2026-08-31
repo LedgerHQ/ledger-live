@@ -4,8 +4,8 @@ import type { CardApiExtra } from "./types";
 
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
-    cardApiBaseUrl: "https://card.test",
-    cardBaanxClientKey: "test-client-key",
+    getCardApiBaseUrl: () => "https://card.test",
+    getCardBaanxClientKey: () => "test-client-key",
     getCardSessionToken: async () => "session-token",
     refreshCardSession: async () => "refreshed-token",
     ...overrides,
@@ -31,9 +31,9 @@ describe("cardApiExtra", () => {
     expect(cardApiExtra(extra)).toEqual(extra);
   });
 
-  it("throws when the base url is missing or empty", () => {
-    expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: undefined }))).toThrow();
-    expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: "" }))).toThrow();
+  it("throws when the config accessors are not functions", () => {
+    expect(() => cardApiExtra(buildExtra({ getCardApiBaseUrl: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ getCardBaanxClientKey: undefined }))).toThrow();
   });
 
   it("throws when the session accessors are not functions", () => {
@@ -42,7 +42,9 @@ describe("cardApiExtra", () => {
   });
 
   it("accepts an empty Baanx client key (provisioned later via CARD_BAANX_CLIENT_KEY)", () => {
-    expect(cardApiExtra(buildExtra({ cardBaanxClientKey: "" })).cardBaanxClientKey).toBe("");
+    expect(
+      cardApiExtra(buildExtra({ getCardBaanxClientKey: () => "" })).getCardBaanxClientKey(),
+    ).toBe("");
   });
 });
 
@@ -84,6 +86,30 @@ describe("cardBaseQuery", () => {
     expect(sent.url).toBe("https://card.test/probe");
     expect(sent.headers.get("authorization")).toBe("Bearer session-token");
     expect(sent.headers.get("x-client-key")).toBe("test-client-key");
+  });
+
+  it("reads the base url and the client key again on every request", async () => {
+    // The debug settings change the two envs while the app runs. The store holds the accessors, so
+    // the next request must carry the new values without a restart.
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+    let baseUrl = "https://card.first";
+    let clientKey = "first-key";
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({ getCardApiBaseUrl: () => baseUrl, getCardBaanxClientKey: () => clientKey }),
+      ),
+    );
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    baseUrl = "https://card.second";
+    clientKey = "second-key";
+    await store.dispatch(api.endpoints.probe.initiate(undefined, { forceRefetch: true }));
+
+    expect(request(fetchSpy, 0).url).toBe("https://card.first/probe");
+    expect(request(fetchSpy, 0).headers.get("x-client-key")).toBe("first-key");
+    expect(request(fetchSpy, 1).url).toBe("https://card.second/probe");
+    expect(request(fetchSpy, 1).headers.get("x-client-key")).toBe("second-key");
   });
 
   it("sends x-client-key and omits Authorization when no session token is available", async () => {

@@ -64,8 +64,9 @@ const customCreateStore = ({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
               ...cardApiExtra({
-                cardApiBaseUrl: getEnv("CARD_API_URL"),
-                cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+                // Read on every request, so the debug settings can change them without a restart.
+                getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
+                getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
                 getCardSessionToken,
                 refreshCardSession,
               }),
