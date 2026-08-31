@@ -1,3 +1,4 @@
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import {
   type GetAccountShape,
@@ -16,25 +17,6 @@ import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { getTransactions } from "../logic/history/getTransactions";
 import { fetchValidators, getEpochInfo, RosettaTransaction } from "../network";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
-
-/**
- * Runs `worker` over `items` with at most `limit` concurrent executions, avoiding the
- * unbounded `Promise.all` burst that overwhelms the node on accounts with many transactions.
- */
-async function runWithConcurrency<T>(
-  limit: number,
-  items: T[],
-  worker: (item: T) => Promise<void>,
-): Promise<void> {
-  let cursor = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (cursor < items.length) {
-      const index = cursor++;
-      await worker(items[index]);
-    }
-  });
-  await Promise.all(runners);
-}
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -275,7 +257,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   // unbounded /block request per transaction (which overwhelms the node on busy accounts).
   const uniqueBlockHeights = [...new Set(rosettaTxns.map(t => t.block_identifier.index))];
   const blockTimestamps = new Map<number, number>();
-  await runWithConcurrency(MINA_BLOCK_INFO_CONCURRENCY, uniqueBlockHeights, async height => {
+  await promiseAllBatched(MINA_BLOCK_INFO_CONCURRENCY, uniqueBlockHeights, async height => {
     try {
       const info = await getBlockInfo(height, MINA_BLOCK_INFO_TIMEOUT);
       blockTimestamps.set(height, info.block.timestamp);
