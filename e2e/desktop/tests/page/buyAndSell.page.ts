@@ -134,9 +134,10 @@ export class BuyAndSellPage extends WebViewAppPage {
         return;
       } catch (error) {
         if (attempt === attemptTimeouts.length - 1) {
+          const budget = attemptTimeouts.map(t => `${t / 1000}s`).join(" + ");
           throw new Error(
             `Buy/Sell web app did not render "${testId}" after ${attemptTimeouts.length} attempts ` +
-              `(${attemptTimeouts.map(t => `${t / 1000}s`).join(" + ")}) — webview stuck loading.`,
+              `(${budget}) — webview stuck loading.`,
             { cause: error },
           );
         }
