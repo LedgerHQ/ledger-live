@@ -33,6 +33,12 @@ import {
   onboardedState,
   tourSeenState,
 } from "./fixtures";
+import {
+  aliceContact,
+  CONTACT_HISTORY_ID,
+  CONTACT_HISTORY_NAME,
+  createEthAccountWithContactTransfers,
+} from "../../History/__integrations__/contactHistory.fixtures";
 
 const mockNavigate = jest.fn();
 
@@ -297,5 +303,34 @@ describe("PayTab integration", () => {
 
     expect(await screen.findByTestId("pay-card-request-receive")).toBeVisible();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
+  });
+
+  it("should count send and receive transfers with a contact and open History from View transactions", async () => {
+    const account = createEthAccountWithContactTransfers();
+    const { user } = render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [account],
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    expect(await screen.findByTestId(`pay-contacts-tile-${CONTACT_HISTORY_ID}`)).toBeVisible();
+    expect(screen.getByText(CONTACT_HISTORY_NAME)).toBeVisible();
+    expect(screen.getByText("2 transactions")).toBeVisible();
+
+    const moreButton = screen.getByRole("button", { name: "More options" });
+    expect(moreButton).toBeEnabled();
+    await user.click(moreButton);
+    await user.click(await screen.findByRole("menuitem", { name: "View transactions" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/history?contactId=${CONTACT_HISTORY_ID}`,
+      expect.objectContaining({
+        state: { historyBackPath: "/paytab" },
+      }),
+    );
   });
 });

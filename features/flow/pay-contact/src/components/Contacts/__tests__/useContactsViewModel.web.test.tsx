@@ -5,7 +5,7 @@ import {
   mockContactWithAddress,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import type { OutgoingOperation } from "@features/platform-contacts";
+import type { ContactOperation } from "@features/platform-contacts";
 import { useContactsViewModel } from "../useContactsViewModel";
 import { makeAddContactProps, makeContactsProps, makeContactsWrapper } from "./shared";
 
@@ -59,16 +59,41 @@ describe("useContactsViewModel", () => {
         }),
       ],
     });
-    const sentToBob: OutgoingOperation[] = [
-      { recipientAddress: bobAddress, date: 1_700_000_000_000, currencyId: "ethereum" },
+    const sentToBob: ContactOperation[] = [
+      {
+        id: "op-bob",
+        type: "OUT",
+        recipients: [bobAddress],
+        date: 1_700_000_000_000,
+        currencyId: "ethereum",
+      },
     ];
     const { result } = renderViewModel(
       [mockMeContact(), bob, alice],
-      makeContactsProps({ outgoingOperations: sentToBob }),
+      makeContactsProps({ operations: sentToBob }),
     );
 
     expect(result.current.rows.map(row => row.contact.name)).toEqual(["Bob", "Alice"]);
     expect(result.current.rows.map(row => row.transactionCount)).toEqual([1, 0]);
+  });
+
+  it("should count incoming and outgoing transactions in the table", () => {
+    const address = "0x1111111111111111111111111111111111111111";
+    const contact = mockContactWithAddress({
+      id: "contact-bob",
+      name: "Bob",
+      addresses: [mockContactAddress({ id: "addr-bob", address })],
+    });
+    const operations: ContactOperation[] = [
+      { id: "op-in", type: "IN", senders: [address], date: 1000, currencyId: "ethereum" },
+      { id: "op-out", type: "OUT", recipients: [address], date: 2000, currencyId: "ethereum" },
+    ];
+    const { result } = renderViewModel(
+      [mockMeContact(), contact],
+      makeContactsProps({ operations }),
+    );
+
+    expect(result.current.rows.map(row => row.transactionCount)).toEqual([2]);
   });
 
   it("should request add contact with the dialog open handler", () => {

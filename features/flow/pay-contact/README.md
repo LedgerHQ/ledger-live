@@ -18,15 +18,17 @@ import { Contacts } from "@features/flow-pay-contact";
   title={title}
   emptyState={{ info, addContactLabel }}
   addContact={{ labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
-  labels={{ name, addresses, transactions, formatTransactionCount, payAction, moreAction }}
+  labels={{ name, addresses, transactions, formatTransactionCount, payAction, moreAction, viewTransactions }}
   renderAddresses={addresses => <PayContactAddresses addresses={addresses} />}
   onPayContact={openNewPayment}
-  outgoingOperations={outgoingOperations}
+  onViewTransactions={openContactHistory}
+  operations={operations}
 />;
 ```
 
-`renderAddresses` is app-owned (e.g. `IconStack`). Optional `outgoingOperations` sort by last
-sent-to and fill the transaction count.
+`renderAddresses` is app-owned (e.g. `IconStack`). Optional `operations` (incoming + outgoing
+`ContactOperation`s) fill the transaction count and order rows by last sent-to. The row overflow
+(`...`) menu exposes **View transactions** → `onViewTransactions(contact)`.
 
 ## Native
 

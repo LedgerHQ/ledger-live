@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
 import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
+  type Contact,
 } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import {
@@ -21,7 +23,8 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
-import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { usePayTabContactOperations } from "./usePayTabContactOperations";
 import { usePayTabNewPayment } from "./usePayTabNewPayment";
 import { renderPayContactAddresses } from "../components/PayContactAddresses";
 
@@ -33,12 +36,23 @@ export type UsePayTabContactsResult = Readonly<{
 export function usePayTabContacts(): UsePayTabContactsResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { pathname: payTabPath } = useLocation();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
-  const outgoingOperations = usePayTabOutgoingOperations();
+  const operations = usePayTabContactOperations();
   const { open: openNewPayment } = usePayTabNewPayment();
+  const onViewTransactions = useCallback(
+    (contact: Contact) => {
+      navigate(
+        `/history?contactId=${encodeURIComponent(contact.id)}`,
+        buildNavigationBackState("historyBackPath", payTabPath),
+      );
+    },
+    [navigate, payTabPath],
+  );
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
@@ -106,10 +120,12 @@ export function usePayTabContacts(): UsePayTabContactsResult {
           formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
           payAction: t("payTab.contacts.actions.pay"),
           moreAction: t("payTab.contacts.actions.more"),
+          viewTransactions: t("payTab.contacts.actions.viewTransactions"),
         },
         renderAddresses: renderPayContactAddresses,
         onPayContact: () => openNewPayment(),
-        outgoingOperations,
+        onViewTransactions,
+        operations,
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
@@ -127,7 +143,8 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       onRequestAddContact,
       onSaveSuccess,
       callbacks,
-      outgoingOperations,
+      operations,
+      onViewTransactions,
       openNewPayment,
       isLedgerSyncIntroductionOpen,
       onActivateLedgerSyncIntroduction,

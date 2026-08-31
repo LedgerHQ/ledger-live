@@ -6,7 +6,7 @@ import type {
   ContactCreationPort,
   ContactsAddContactContentLabels,
 } from "@features/flow-contacts-add-contact";
-import type { OutgoingOperation } from "@features/platform-contacts";
+import type { ContactOperation, OutgoingOperation } from "@features/platform-contacts";
 
 export type EmptyStateLabels = Readonly<{
   info: string;
@@ -30,6 +30,7 @@ export type ContactsTableLabels = Readonly<{
   formatTransactionCount: (count: number) => string;
   payAction: string;
   moreAction: string;
+  viewTransactions: string;
 }>;
 
 export type ContactsProps = Readonly<{
@@ -39,8 +40,8 @@ export type ContactsProps = Readonly<{
   labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => ReactNode;
   onPayContact?: (contact: Contact) => void;
-  onContactMore?: (contact: Contact) => void;
-  outgoingOperations?: readonly OutgoingOperation[];
+  onViewTransactions?: (contact: Contact) => void;
+  operations?: readonly ContactOperation[];
 }>;
 
 export type ContactRowViewModel = Readonly<{
@@ -50,7 +51,7 @@ export type ContactRowViewModel = Readonly<{
 
 export type ContactsViewProps = Pick<
   ContactsProps,
-  "title" | "labels" | "renderAddresses" | "onPayContact" | "onContactMore"
+  "title" | "labels" | "renderAddresses" | "onPayContact" | "onViewTransactions"
 > &
   Readonly<{
     isEmpty: boolean;
