@@ -21,12 +21,16 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import type { DisabledItemTooltip, DisabledItemsTooltip } from "../../types";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   selectableNetworkIds?: readonly string[];
+  disabledNetworkTooltip?: DisabledItemsTooltip["network"];
+  onDisabledNetworkPress?: (tooltip: DisabledItemTooltip) => void;
+  selectedAssetName?: string;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -36,6 +40,9 @@ const NetworkSelection = ({
   onNetworkSelected,
   networksConfiguration,
   selectableNetworkIds,
+  disabledNetworkTooltip,
+  onDisabledNetworkPress,
+  selectedAssetName,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { t } = useTranslation();
   const flow = useSelector(modularDrawerFlowSelector);
@@ -125,6 +132,12 @@ const NetworkSelection = ({
             {...item}
             disabled={isSelectableNetwork(item.id) ? undefined : true}
             onClick={() => handleNetworkClick(item.id)}
+            disabledTooltip={
+              !isSelectableNetwork(item.id) && selectedAssetName
+                ? disabledNetworkTooltip?.(item.name, selectedAssetName)
+                : undefined
+            }
+            onDisabledPress={onDisabledNetworkPress}
           />
         )}
         contentContainerStyle={{

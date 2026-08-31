@@ -36,6 +36,7 @@ import {
   getPerpsUiUseCase,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import type { DisabledItemTooltip, DisabledItemsTooltip } from "../../types";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -49,6 +50,8 @@ export type AssetSelectionStepProps = {
   assetsSorted?: AssetData[];
   uiUseCase?: string;
   selectableNetworkIds?: readonly string[];
+  disabledAssetTooltip?: DisabledItemsTooltip["asset"];
+  onDisabledAssetPress?: (tooltip: DisabledItemTooltip) => void;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -65,6 +68,8 @@ const AssetSelection = ({
   assetsSorted,
   uiUseCase,
   selectableNetworkIds,
+  disabledAssetTooltip,
+  onDisabledAssetPress,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
@@ -152,8 +157,15 @@ const AssetSelection = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: AssetRowData }) => <AssetRow {...item} onClick={handleAssetClick} />,
-    [handleAssetClick],
+    ({ item }: { item: AssetRowData }) => (
+      <AssetRow
+        {...item}
+        onClick={handleAssetClick}
+        disabledTooltip={item.disabled ? disabledAssetTooltip?.(item.name) : undefined}
+        onDisabledPress={onDisabledAssetPress}
+      />
+    ),
+    [disabledAssetTooltip, handleAssetClick, onDisabledAssetPress],
   );
 
   const renderContent = () => {

@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-address";
 import { ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
 import {
+  type DisabledItemsTooltip,
+  type DisabledItemTooltip,
   type ModularDrawerFlowProps,
   useModularDrawerController,
 } from "LLM/features/ModularDrawer";
@@ -24,6 +27,8 @@ type UseContactsCurrencySelectionAdapterOptions = Readonly<{
 
 export type ContactsCurrencySelectionAdapter = Readonly<{
   flowProps: Omit<ModularDrawerFlowProps, "children">;
+  unsupportedItemTooltip: DisabledItemTooltip | null;
+  dismissUnsupportedItemTooltip: () => void;
 }>;
 
 function resolveContactCurrencySelection(
@@ -44,6 +49,10 @@ export function useContactsCurrencySelectionAdapter({
   onCurrencySelected,
   onSelectionCancelled,
 }: UseContactsCurrencySelectionAdapterOptions): ContactsCurrencySelectionAdapter {
+  const { t } = useTranslation();
+  const [unsupportedItemTooltip, setUnsupportedItemTooltip] = useState<DisabledItemTooltip | null>(
+    null,
+  );
   const selectionStartedRef = useRef(false);
   const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
@@ -57,6 +66,23 @@ export function useContactsCurrencySelectionAdapter({
     uiUseCase,
     useCase,
   } = useModularDrawerController();
+  const disabledItemsTooltip = useMemo<DisabledItemsTooltip>(
+    () => ({
+      asset: assetName => ({
+        title: t("modularDrawer.unsupportedAssetTooltip.title", { asset: assetName }),
+        content: t("modularDrawer.unsupportedAssetTooltip.description", { asset: assetName }),
+      }),
+      network: (networkName, assetName) => ({
+        title: t("modularDrawer.unsupportedNetworkTooltip.title", { network: networkName }),
+        content: t("modularDrawer.unsupportedNetworkTooltip.description", {
+          network: networkName,
+          asset: assetName,
+        }),
+      }),
+      onPress: setUnsupportedItemTooltip,
+    }),
+    [t],
+  );
   const completeSelection = useCallback(
     (currency: CryptoOrTokenCurrency | null) => {
       const selection = resolveContactCurrencySelection(currency);
@@ -86,6 +112,7 @@ export function useContactsCurrencySelectionAdapter({
   useEffect(() => {
     if (!isOpen) {
       selectionStartedRef.current = false;
+      setUnsupportedItemTooltip(null);
       return;
     }
     if (selectionStartedRef.current) {
@@ -117,6 +144,7 @@ export function useContactsCurrencySelectionAdapter({
       uiUseCase,
       useCase,
       selectableNetworkIds: networkIds,
+      disabledItemsTooltip,
     }),
     [
       areCurrenciesFiltered,
@@ -128,8 +156,11 @@ export function useContactsCurrencySelectionAdapter({
       preselectedCurrencies,
       uiUseCase,
       useCase,
+      disabledItemsTooltip,
     ],
   );
 
-  return { flowProps };
+  const dismissUnsupportedItemTooltip = useCallback(() => setUnsupportedItemTooltip(null), []);
+
+  return { flowProps, unsupportedItemTooltip, dismissUnsupportedItemTooltip };
 }

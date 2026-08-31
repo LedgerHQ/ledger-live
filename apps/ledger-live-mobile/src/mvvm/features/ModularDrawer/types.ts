@@ -9,6 +9,17 @@ export enum ModularDrawerStep {
   Account = "Account",
 }
 
+export type DisabledItemTooltip = Readonly<{
+  title: string;
+  content: string;
+}>;
+
+export type DisabledItemsTooltip = Readonly<{
+  asset: (assetName: string) => DisabledItemTooltip;
+  network: (networkName: string, assetName: string) => DisabledItemTooltip;
+  onPress: (tooltip: DisabledItemTooltip) => void;
+}>;
+
 export const MODULAR_DRAWER_KEY = "modularDrawer";
 
 export type ModularDrawerCompletionMode = "currency";
