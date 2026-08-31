@@ -112,7 +112,6 @@ test.describe("Ledger Sync - add account", () => {
       await app.accounts.expectCryptoAccountRowVisible(`${addedCurrency.name} 1`);
 
       await app.layout.syncAccountsIfAvailable();
-      await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectToHoldAccount(addedAccountId, addedCurrency.id);
     },
@@ -153,7 +152,6 @@ test.describe("Ledger Sync - rename account", () => {
       await app.account.expectAccountVisibility(renamedAccountName);
 
       await app.layout.syncAccountsIfAvailable();
-      await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
     },
@@ -196,7 +194,6 @@ test.describe("Ledger Sync - delete account", () => {
       await app.accounts.expectReduxAccountIds([secondEthAccount.id]);
 
       await app.layout.syncAccountsIfAvailable();
-      await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectAccountIds([secondEthAccount.id]);
     },

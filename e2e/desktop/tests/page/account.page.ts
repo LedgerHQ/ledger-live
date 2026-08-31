@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
@@ -202,23 +202,24 @@ export class AccountPage extends AppPage {
     await this.closeModal.click();
   }
 
+  private async revealTokenRow(row: Locator) {
+    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
+    if (!(await row.isVisible())) {
+      await this.showAllTokensButton.click();
+    }
+  }
+
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
-    if (await this.showAllTokensButton.isVisible()) {
-      await this.showAllTokensButton.click();
-    }
+    await this.revealTokenRow(row);
     await expect(row).toBeVisible();
   }
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
-    if (await this.showAllTokensButton.isVisible()) {
-      await this.showAllTokensButton.click();
-    }
+    await this.revealTokenRow(row);
     await row.click();
     await this.waitForAccountHeaderName(tokenAccount.currency.name, tokenAccount.currency.ticker);
   }
