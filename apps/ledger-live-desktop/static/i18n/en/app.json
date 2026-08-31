@@ -922,7 +922,8 @@
       },
       "actions": {
         "pay": "Send to contact",
-        "more": "More options"
+        "more": "More options",
+        "viewTransactions": "View transactions"
       }
     },
     "actions": {

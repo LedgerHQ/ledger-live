@@ -7,8 +7,9 @@ import {
   TableCellItem,
   TableRow,
 } from "@ledgerhq/lumen-ui-react";
-import { MoreHorizontal, Telegram } from "@ledgerhq/lumen-ui-react/symbols";
+import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactAvatar } from "@features/platform-contacts";
+import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsTableLabels } from "../../types";
 
@@ -18,7 +19,7 @@ type ContactTileProps = Readonly<{
   labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => React.ReactNode;
   onPay?: (contact: Contact) => void;
-  onMore?: (contact: Contact) => void;
+  onViewTransactions?: (contact: Contact) => void;
 }>;
 
 export function ContactTile({
@@ -27,7 +28,7 @@ export function ContactTile({
   labels,
   renderAddresses,
   onPay,
-  onMore,
+  onViewTransactions,
 }: ContactTileProps) {
   return (
     <TableRow data-testid={`pay-contacts-tile-${contact.id}`}>
@@ -52,14 +53,10 @@ export function ContactTile({
             onClick={() => onPay?.(contact)}
             data-testid={`pay-contacts-pay-action-${contact.id}`}
           />
-          <IconButton
-            appearance="gray"
-            size="sm"
-            icon={MoreHorizontal}
-            aria-label={labels.moreAction}
-            disabled={!onMore}
-            onClick={() => onMore?.(contact)}
-            data-testid={`pay-contacts-more-action-${contact.id}`}
+          <ContactMoreMenu
+            contact={contact}
+            labels={labels}
+            onViewTransactions={onViewTransactions}
           />
         </div>
       </TableCell>
