@@ -12,6 +12,6 @@ match one or more of the following constraints` — or before the button had
 mounted at all. 3/5 nightlies, still failing in the latest.
 
 Each of the three sheet taps now waits for the sheet's own container
-(`transfer-drawer`) at 100% visibility, per `docs/add-or-update-e2e.md` rules 11
+(`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
 and 12: anchor on the state that proves the sheet is at rest rather than adding a
 retry or lengthening a timeout.
