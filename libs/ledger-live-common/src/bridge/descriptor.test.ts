@@ -718,6 +718,7 @@ describe("zcash descriptor resolution", () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     // `setZcashShieldedEnabled` is module-level global state shared across
     // every suite in this jest worker: restore it so later suites are not
     // silently corrupted.
