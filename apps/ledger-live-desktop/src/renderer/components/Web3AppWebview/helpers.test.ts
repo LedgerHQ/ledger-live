@@ -324,7 +324,9 @@ describe("useWebviewState", () => {
       } as unknown as WebviewTag;
 
       const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
-      act(() => { result.current.setWebviewRef(mockWebview); });
+      act(() => {
+        result.current.setWebviewRef(mockWebview);
+      });
 
       const handler = addEventListener.mock.calls.find(
         ([event]: [string]) => event === "did-fail-load",
@@ -337,7 +339,12 @@ describe("useWebviewState", () => {
       const { result, handler } = setupWithWebview();
 
       act(() => {
-        handler({ errorCode: -3, errorDescription: "ERR_ABORTED", validatedURL: "https://example.com/", isMainFrame: true });
+        handler({
+          errorCode: -3,
+          errorDescription: "ERR_ABORTED",
+          validatedURL: "https://example.com/",
+          isMainFrame: true,
+        });
       });
 
       expect(result.current.webviewState.isAppUnavailable).toBe(false);
@@ -348,18 +355,31 @@ describe("useWebviewState", () => {
       const { result, handler } = setupWithWebview();
 
       act(() => {
-        handler({ errorCode: -2, errorDescription: "ERR_FAILED", validatedURL: "https://example.com/", isMainFrame: true });
+        handler({
+          errorCode: -2,
+          errorDescription: "ERR_FAILED",
+          validatedURL: "https://example.com/",
+          isMainFrame: true,
+        });
       });
 
       expect(result.current.webviewState.isAppUnavailable).toBe(true);
-      expect(mockTrack).toHaveBeenCalledWith("useWebviewState", { errorCode: -2, url: "example.com" });
+      expect(mockTrack).toHaveBeenCalledWith("useWebviewState", {
+        errorCode: -2,
+        url: "example.com",
+      });
     });
 
     it("does not set isAppUnavailable when ERR_FAILED (-2) is on a sub-frame", () => {
       const { result, handler } = setupWithWebview();
 
       act(() => {
-        handler({ errorCode: -2, errorDescription: "ERR_FAILED", validatedURL: "https://example.com/", isMainFrame: false });
+        handler({
+          errorCode: -2,
+          errorDescription: "ERR_FAILED",
+          validatedURL: "https://example.com/",
+          isMainFrame: false,
+        });
       });
 
       expect(result.current.webviewState.isAppUnavailable).toBe(false);

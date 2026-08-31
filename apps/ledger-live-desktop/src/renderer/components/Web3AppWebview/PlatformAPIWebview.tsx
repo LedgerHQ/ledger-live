@@ -51,15 +51,21 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
-    const { webviewState, webviewRef, setWebviewRef, webviewProps, webviewPartition, handleRefresh } =
-      useWebviewState(
-        {
-          manifest,
-          inputs,
-          manifestDomainCheckEnabled,
-        },
-        ref,
-      );
+    const {
+      webviewState,
+      webviewRef,
+      setWebviewRef,
+      webviewProps,
+      webviewPartition,
+      handleRefresh,
+    } = useWebviewState(
+      {
+        manifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
+      ref,
+    );
 
     const tracking = useMemo(
       () =>
