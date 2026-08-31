@@ -9,6 +9,7 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getAccountUrl } from "~/renderer/utils";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -241,7 +242,7 @@ describe("useStake()", () => {
           customDappUrl: `https://mockdapp.com/?embed=true&chainId=1&accountId=${URIEncodedParentAccountId}`,
           name: "Mock Dapp v3",
           walletAccountId: "1a536838-dd18-5e39-b13f-0ba422fb395c",
-          returnTo: "/account/js:2:ethereum:0x01:/js:2:ethereum:0x01:usdt:",
+          returnTo: getAccountUrl("js:2:ethereum:0x01:usdt:", "js:2:ethereum:0x01:"),
           chainId: 1,
         },
       }),
@@ -265,7 +266,7 @@ describe("useStake()", () => {
           name: "Mock dapp browser v1 app",
           appId: "mock-dapp-v1",
           walletAccountId: "6760dd02-ab43-5c5a-9c7e-c75731580a08",
-          returnTo: "/account/js:2:ethereum:0x01:/js:2:ethereum:0x01:usdc:",
+          returnTo: getAccountUrl("js:2:ethereum:0x01:usdc:", "js:2:ethereum:0x01:"),
           chainId: 1,
         },
       }),
@@ -289,7 +290,7 @@ describe("useStake()", () => {
         name: "Mock Live App",
         appId: "mock-live-app",
         walletAccountId: "0eda416c-9669-57a2-84f6-741df8c11267",
-        returnTo: "/account/js:2:tron:T:",
+        returnTo: getAccountUrl("js:2:tron:T:"),
         yieldId: "tron-native-staking",
       },
     });

@@ -24,6 +24,7 @@ import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
@@ -58,6 +59,7 @@ import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverr
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
+  accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
   countervalues: CountervaluesState;
@@ -100,6 +102,7 @@ export type State = LLDRTKApiState & {
 };
 
 const appReducer = combineReducers({
+  accountAliases: accountAliasSlice.reducer,
   accounts,
   application,
   countervalues,

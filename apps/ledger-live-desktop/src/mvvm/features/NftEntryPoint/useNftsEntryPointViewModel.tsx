@@ -6,6 +6,7 @@ import React from "react";
 
 import { useNavigate } from "react-router";
 import { entryPointConfig } from "./config";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   accountId: string;
@@ -27,7 +28,7 @@ export default function useNftsEntryPointViewModel({ accountId, currencyId }: Pr
         website: link,
         accountId,
         chainId: currencyId,
-        returnTo: `/account/${accountId}`,
+        returnTo: getAccountUrl(accountId),
       },
     });
   };

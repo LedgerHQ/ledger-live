@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   account: CosmosAccount | TokenAccount;
@@ -41,7 +42,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
         state: {
           yieldId: "cronos-cro-native-staking",
           accountId: account.id,
-          returnTo: `/account/${account.id}`,
+          returnTo: getAccountUrl(account.id),
         },
       });
     }

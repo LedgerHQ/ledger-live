@@ -30,6 +30,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { getAccountUrl } from "~/renderer/utils";
 
 type DelegationActionsModalName =
   | "MODAL_COSMOS_CLAIM_REWARDS"
@@ -68,7 +69,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       state: {
         yieldId: "cronos-cro-native-staking",
         accountId: account.id,
-        returnTo: `/account/${account.id}`,
+        returnTo: getAccountUrl(account.id),
       },
     });
   }, [account.id, navigate]);

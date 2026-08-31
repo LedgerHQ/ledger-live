@@ -226,7 +226,7 @@ const OperationD = (props: Props) => {
     });
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
-    const url = `/account/${mainAccount.id}`;
+    const url = getAccountUrl(mainAccount.id);
     if (location.pathname !== url) {
       setTrackingSource("operation details");
       navigate(url);
