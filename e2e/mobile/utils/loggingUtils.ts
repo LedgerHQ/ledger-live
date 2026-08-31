@@ -133,7 +133,11 @@ type ParsedLogsPayload = {
   webviewLoadErrors?: unknown[];
 };
 
-/** Parse logs payload and attach App logs, Webview Network Logs, and Webview Console Logs to Allure. */
+/**
+ * Parse a serialized logs payload and attach all available sections to Allure:
+ * App Logs, App Network Logs, App Network Summary, Webview Network Logs,
+ * Webview Console Logs (warn/error only), and Webview Load Errors.
+ */
 export async function attachFailureLogsToAllure(logsPayload: string): Promise<void> {
   let parsed: ParsedLogsPayload;
   try {
