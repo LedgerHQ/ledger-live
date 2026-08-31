@@ -8,7 +8,7 @@ import {
   type SendPrefillAddAddressPhase,
 } from "LLM/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { useAddToExistingContactViewModel } from "LLM/features/Send/screens/AddToExistingContact/hooks/useAddToExistingContactViewModel";
-import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
+import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useTranslation } from "~/context/Locale";
 
 export type AddNewContactAddressPhase = SendPrefillAddAddressPhase;
@@ -76,11 +76,12 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
-  const iosKeyboardGap = 32;
-  const keyboardBottomOffset =
-    isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
-      : 0;
+  const keyboardBottomOffset = resolveKeyboardBottomOffset({
+    isKeyboardVisible,
+    keyboardHeight,
+    platform: Platform.OS,
+    version: Platform.Version,
+  });
   const [drawerOrigin, setDrawerOrigin] = useState<AddContactDrawerOrigin | null>(null);
   const closeAfterSave = useCallback(() => {
     setDrawerOrigin(null);

@@ -4,7 +4,7 @@ import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnat
 import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
+import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
 export function ContactsAddContactDrawerSheet({
@@ -17,11 +17,12 @@ export function ContactsAddContactDrawerSheet({
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
-  const iosKeyboardGap = 32;
-  const keyboardInset =
-    isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
-      : 0;
+  const keyboardInset = resolveKeyboardBottomOffset({
+    isKeyboardVisible,
+    keyboardHeight,
+    platform: Platform.OS,
+    version: Platform.Version,
+  });
   const [hasOpened, setHasOpened] = useState(false);
   const handleOpened = useCallback(() => setHasOpened(true), []);
   const handleClose = useCallback(() => {
