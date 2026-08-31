@@ -13,6 +13,7 @@ import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
 import Circle from "~/components/Circle";
 import DelegationDrawer, { IconProps } from "~/components/DelegationDrawer";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { NavigatorName, ScreenName } from "~/const";
 import DelegateIcon from "~/icons/Delegate";
 import IlluRewards from "~/icons/images/Rewards";
@@ -38,6 +39,8 @@ function Delegations({ account }: Props) {
   const bridge = useAccountBridge<Transaction>(account, undefined);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPreparingUndelegate, setIsPreparingUndelegate] = useState(false);
+  const [undelegateError, setUndelegateError] = useState<Error | null>(null);
 
   const { delegateInfo } = account.resources ?? {};
   const validatorName = delegateInfo?.identityName || delegateInfo?.address || "";
@@ -86,20 +89,39 @@ function Delegations({ account }: Props) {
     });
   }, [onNavigate]);
 
-  const onUndelegate = useCallback(() => {
-    const tx = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(tx, {
-      txType: "unstake",
-      recipient: account.freshAddress,
-    });
-    onNavigate({
-      route: NavigatorName.MinaStakingFlow,
-      screen: ScreenName.MinaStakingSelectDevice,
-      params: {
-        transaction,
-      },
-    });
+  const onUndelegate = useCallback(async () => {
+    setIsPreparingUndelegate(true);
+    try {
+      const tx = bridge.createTransaction(account);
+      // Unstaking has no summary step, so nothing else on the way to the device fills the fee
+      // and the nonce, and the signer rejects a zero fee before the device is even reached.
+      const transaction = await bridge.prepareTransaction(
+        account,
+        bridge.updateTransaction(tx, {
+          txType: "unstake",
+          recipient: account.freshAddress,
+        }),
+      );
+      const status = await bridge.getTransactionStatus(account, transaction);
+      onNavigate({
+        route: NavigatorName.MinaStakingFlow,
+        screen: ScreenName.MinaStakingSelectDevice,
+        params: {
+          transaction,
+          status,
+        },
+      });
+    } catch (e) {
+      setIsDrawerOpen(false);
+      setUndelegateError(e instanceof Error ? e : new Error(String(e)));
+    } finally {
+      setIsPreparingUndelegate(false);
+    }
   }, [account, bridge, onNavigate]);
+
+  const onCloseUndelegateError = useCallback(() => {
+    setUndelegateError(null);
+  }, []);
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     if (!delegateInfo) return [];
@@ -150,7 +172,7 @@ function Delegations({ account }: Props) {
         ),
         event: "DelegationActionRedelegate",
         onPress: onRedelegate,
-        disabled: false,
+        disabled: isPreparingUndelegate,
       },
       {
         label: t("mina.delegation.undelegate"),
@@ -161,10 +183,10 @@ function Delegations({ account }: Props) {
         ),
         event: "DelegationActionUndelegate",
         onPress: onUndelegate,
-        disabled: false,
+        disabled: isPreparingUndelegate,
       },
     ],
-    [t, colors.fog, colors.alert, onRedelegate, onUndelegate],
+    [t, colors.fog, colors.alert, onRedelegate, onUndelegate, isPreparingUndelegate],
   );
 
   const hasDelegation = account.resources?.stakingActive;
@@ -180,6 +202,8 @@ function Delegations({ account }: Props) {
         data={data}
         actions={delegationActions}
       />
+
+      <GenericErrorBottomModal error={undelegateError} onClose={onCloseUndelegateError} />
 
       {!hasDelegation ? (
         <AccountDelegationInfo

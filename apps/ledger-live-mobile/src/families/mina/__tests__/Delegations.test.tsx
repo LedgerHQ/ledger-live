@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import MinaDelegations from "../Delegations";
 import { createMockMinaAccount, createDelegatingMinaAccount, mockValidators } from "./testUtils";
 import { NavigatorName, ScreenName } from "~/const";
@@ -7,6 +7,13 @@ import { NavigatorName, ScreenName } from "~/const";
 const navigate = jest.fn();
 const createTransaction = jest.fn(() => ({ family: "mina", txType: "delegation" }));
 const updateTransaction = jest.fn((tx: object, patch: object) => ({ ...tx, ...patch }));
+const preparedStatus = { errors: {}, warnings: {} };
+const prepareTransaction = jest.fn(async (_account: unknown, tx: object) => ({
+  ...tx,
+  fees: { fee: "100000000", accountCreationFee: "0" },
+  nonce: 7,
+}));
+const getTransactionStatus = jest.fn(async () => preparedStatus);
 
 jest.mock("@ledgerhq/native-ui", () => {
   const React = require("react");
@@ -30,8 +37,23 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({ createTransaction, updateTransaction }),
+  useAccountBridge: () => ({
+    createTransaction,
+    updateTransaction,
+    prepareTransaction,
+    getTransactionStatus,
+  }),
 }));
+
+jest.mock("~/components/GenericErrorBottomModal", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return {
+    __esModule: true,
+    default: ({ error }: { error: Error | null }) =>
+      error ? React.createElement(Text, null, `error:${error.message}`) : null,
+  };
+});
 
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ name: "MINA", code: "MINA", magnitude: 9 }),
@@ -219,7 +241,7 @@ describe("Delegations (mina)", () => {
     });
   });
 
-  it("builds an unstake transaction and skips to the device step from the undelegate action", async () => {
+  it("prepares the unstake transaction before skipping to the device step", async () => {
     const user = userEvent.setup();
     const account = createDelegatingMinaAccount(mockValidators[0]);
     render(<MinaDelegations account={account} />);
@@ -231,12 +253,36 @@ describe("Delegations (mina)", () => {
       txType: "unstake",
       recipient: account.freshAddress,
     });
-    expect(navigate).toHaveBeenCalledWith(NavigatorName.MinaStakingFlow, {
-      screen: ScreenName.MinaStakingSelectDevice,
-      params: {
-        accountId: account.id,
-        transaction: expect.objectContaining({ txType: "unstake" }),
-      },
-    });
+    expect(prepareTransaction).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ txType: "unstake", recipient: account.freshAddress }),
+    );
+    // The device step signs what it is handed, so the fee and the nonce must be the prepared
+    // ones and not the empty defaults createTransaction returns.
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith(NavigatorName.MinaStakingFlow, {
+        screen: ScreenName.MinaStakingSelectDevice,
+        params: {
+          accountId: account.id,
+          transaction: expect.objectContaining({
+            txType: "unstake",
+            fees: { fee: "100000000", accountCreationFee: "0" },
+            nonce: 7,
+          }),
+          status: preparedStatus,
+        },
+      }),
+    );
+  });
+
+  it("surfaces the error and stays put when the unstake transaction cannot be prepared", async () => {
+    const user = userEvent.setup();
+    prepareTransaction.mockRejectedValueOnce(new Error("fees unavailable"));
+    render(<MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />);
+
+    await user.press(screen.getByText("mina.delegation.undelegate"));
+
+    await waitFor(() => expect(screen.getByText("error:fees unavailable")).toBeOnTheScreen());
+    expect(navigate).not.toHaveBeenCalled();
   });
 });
