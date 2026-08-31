@@ -16,6 +16,7 @@ import { useTranslation } from "~/context/Locale";
 import ActionFooter from "../components/ActionFooter";
 import { useFormatDuration } from "../useFormatDuration";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -33,8 +34,15 @@ export const MAX_DAYS = Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY);
 export default function SetDissolveDelay({ navigation, route }: Props) {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
-  const { neuron, transaction, updateTransaction, status, bridgePending, continueToDevice } =
-    useNeuronAction(navigation, route);
+  const {
+    neuron,
+    backToList,
+    transaction,
+    updateTransaction,
+    status,
+    bridgePending,
+    continueToDevice,
+  } = useNeuronAction(navigation, route);
 
   const isIncrease = transaction?.type === "increase_dissolve_delay";
 
@@ -80,7 +88,7 @@ export default function SetDissolveDelay({ navigation, route }: Props) {
     [allowedDays, isIncrease, updateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   const resultingSeconds = isIncrease ? currentSeconds + enteredSeconds : enteredSeconds;
 

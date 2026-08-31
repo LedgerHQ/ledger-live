@@ -27,7 +27,7 @@ import {
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
 import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
-import { Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
+import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { TrackScreen } from "~/analytics";
@@ -41,6 +41,7 @@ import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { toBigNumber } from "../amounts";
 import { NeuronDetailRow, NeuronSection } from "../components/NeuronDetails";
 import { useFormatDuration } from "../useFormatDuration";
+import MissingNeuron from "./MissingNeuron";
 import { useNeuronActions, type NeuronScreen } from "./useNeuronActions";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
@@ -99,22 +100,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
   );
 
   // Disburse and a refresh both drop a neuron from the snapshot while this screen may still name it.
-  // Rendering nothing left the user on a blank screen with no way to read what had happened, so say
-  // so and offer the list.
-  if (!neuron) {
-    return (
-      <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
-        <Flex flex={1} p={6} justifyContent="center" style={{ gap: 16 }}>
-          <Text variant="body" color="neutral.c70" textAlign="center">
-            {t("internetComputer.manageNeuronFlow.manage.missingNeuron")}
-          </Text>
-          <Button type="main" onPress={backToList} testID="icp-manage-missing-back-button">
-            {t("internetComputer.manageNeuronFlow.confirmation.backToNeurons")}
-          </Button>
-        </Flex>
-      </SafeAreaView>
-    );
-  }
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);

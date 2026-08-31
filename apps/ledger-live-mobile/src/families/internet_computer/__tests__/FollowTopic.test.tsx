@@ -11,14 +11,17 @@ import { makeHealthyNeuron } from "./testUtils";
 const GOVERNANCE = 4;
 
 let transaction: Partial<Transaction>;
-let neuron: ICPNeuron;
+let neuron: ICPNeuron | undefined;
 
 const mockNavigate = jest.fn();
+
+const mockBackToList = jest.fn();
 
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
     account: {},
     neuron,
+    backToList: mockBackToList,
     transaction,
     bridge: { updateTransaction: (t: object, patch: object) => ({ ...t, ...patch }) },
     updateTransaction: jest.fn(),
@@ -110,5 +113,31 @@ describe("FollowTopic", () => {
     fireEvent.press(screen.getByTestId("icp-follow-topic-Governance"));
 
     expect(handedOver().followeesIds).toEqual(["7"]);
+  });
+});
+
+// A refresh or a disburse drops a neuron from the snapshot, and this screen resolves its neuron live
+// out of redux by the id in its route params — so it can lose the neuron with the user standing
+// still. Rendering nothing left a blank screen.
+describe("FollowTopic without its neuron", () => {
+  beforeEach(() => {
+    mockBackToList.mockClear();
+  });
+
+  it("explains itself instead of rendering a blank screen", () => {
+    neuron = undefined;
+
+    renderScreen();
+
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
+  });
+
+  it("offers the way back to the neuron list", () => {
+    neuron = undefined;
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId("icp-missing-neuron-back-button"));
+
+    expect(mockBackToList).toHaveBeenCalled();
   });
 });

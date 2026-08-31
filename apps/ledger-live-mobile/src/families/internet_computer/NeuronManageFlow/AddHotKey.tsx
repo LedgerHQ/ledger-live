@@ -10,6 +10,7 @@ import { useTranslation } from "~/context/Locale";
 import CopyButton from "LLM/components/CopyButton";
 import ActionFooter from "../components/ActionFooter";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -26,8 +27,16 @@ type Props = StackNavigatorProps<
  */
 export default function AddHotKey({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, transaction, updateTransaction, status, bridgePending, continueToDevice } =
-    useNeuronAction(navigation, route);
+  const {
+    account,
+    neuron,
+    backToList,
+    transaction,
+    updateTransaction,
+    status,
+    bridgePending,
+    continueToDevice,
+  } = useNeuronAction(navigation, route);
   const principal = useICPPrincipal(account);
 
   // Held locally so the field does not wait on a bridge round-trip; see SetDissolveDelay for why a
@@ -41,6 +50,8 @@ export default function AddHotKey({ navigation, route }: Props) {
     },
     [updateTransaction],
   );
+
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>

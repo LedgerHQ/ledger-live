@@ -14,6 +14,7 @@ import AmountInput from "~/screens/SendFunds/AmountInput";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import ActionFooter from "../components/ActionFooter";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -28,8 +29,16 @@ type Props = StackNavigatorProps<
  */
 export default function IncreaseStake({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, transaction, updateTransaction, status, bridgePending, continueToDevice } =
-    useNeuronAction(navigation, route);
+  const {
+    account,
+    neuron,
+    backToList,
+    transaction,
+    updateTransaction,
+    status,
+    bridgePending,
+    continueToDevice,
+  } = useNeuronAction(navigation, route);
   const unit = useAccountUnit(account);
   const bridge = useAccountBridge<Transaction>(account);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
@@ -56,6 +65,8 @@ export default function IncreaseStake({ navigation, route }: Props) {
   );
 
   const amount = transaction?.amount ?? new BigNumber(0);
+
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>

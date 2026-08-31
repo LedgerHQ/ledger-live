@@ -392,7 +392,7 @@ describe("NeuronDetails", () => {
     renderDetails();
 
     expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
-    expect(screen.getByTestId("icp-manage-missing-back-button")).toBeVisible();
+    expect(screen.getByTestId("icp-missing-neuron-back-button")).toBeVisible();
   });
 
   /*

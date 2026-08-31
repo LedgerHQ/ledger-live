@@ -11,6 +11,7 @@ import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { toBigNumber } from "../amounts";
 import ActionFooter from "../components/ActionFooter";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -36,6 +37,7 @@ export default function StakeMaturity({ navigation, route }: Props) {
   const {
     account,
     neuron,
+    backToList,
     transaction,
     updateTransaction,
     status,
@@ -62,7 +64,7 @@ export default function StakeMaturity({ navigation, route }: Props) {
     [updateTransaction],
   );
 
-  if (!neuron) return null;
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   const selected = (neuron.maturityE8sEquivalent * enteredPercentage(percentage)) / MAX_PERCENTAGE;
 

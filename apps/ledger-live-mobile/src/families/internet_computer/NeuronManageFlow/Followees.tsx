@@ -10,6 +10,7 @@ import { useTranslation } from "~/context/Locale";
 import ActionFooter from "../components/ActionFooter";
 import { NeuronDetailRow } from "../components/NeuronDetails";
 import { useNeuronAction } from "./useNeuronAction";
+import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
@@ -29,8 +30,15 @@ const EMPTY_FOLLOWEES: string[] = [];
 export default function Followees({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
-  const { neuron, transaction, updateTransaction, status, bridgePending, continueToDevice } =
-    useNeuronAction(navigation, route);
+  const {
+    neuron,
+    backToList,
+    transaction,
+    updateTransaction,
+    status,
+    bridgePending,
+    continueToDevice,
+  } = useNeuronAction(navigation, route);
   const followTopic = transaction?.followTopic;
   // How many followees the neuron currently has on the topic being edited.
   const currentCount = followTopic
@@ -55,6 +63,8 @@ export default function Followees({ navigation, route }: Props) {
     setFollowees([...followeesIds, id]);
     setDraft("");
   }, [draft, followeesIds, setFollowees]);
+
+  if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>

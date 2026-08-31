@@ -3,14 +3,17 @@ import {
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
-import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import type {
+  ICPNeuron,
+  Transaction,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import React from "react";
 import SetDissolveDelay, { MAX_DAYS } from "../NeuronManageFlow/SetDissolveDelay";
 import { makeHealthyNeuron } from "./testUtils";
 
 let transaction: Partial<Transaction> = { type: "set_dissolve_delay" };
-let neuron = makeHealthyNeuron();
+let neuron: ICPNeuron | undefined = makeHealthyNeuron();
 let status: { errors: Record<string, Error>; warnings: Record<string, Error> } = {
   errors: {},
   warnings: {},
@@ -34,10 +37,13 @@ const mockUpdateTransaction = jest.fn((updater: (t: object) => object) => {
 });
 const mockNavigate = jest.fn();
 
+const mockBackToList = jest.fn();
+
 jest.mock("../NeuronManageFlow/useNeuronAction", () => ({
   useNeuronAction: () => ({
     account: {},
     neuron,
+    backToList: mockBackToList,
     transaction,
     updateTransaction: mockUpdateTransaction,
     status,
@@ -227,5 +233,31 @@ describe("SetDissolveDelay", () => {
     renderScreen();
 
     expect(screen.queryByText(/cannot vote/)).toBeNull();
+  });
+});
+
+// A refresh or a disburse drops a neuron from the snapshot, and this screen resolves its neuron live
+// out of redux by the id in its route params — so it can lose the neuron with the user standing
+// still. Rendering nothing left a blank screen.
+describe("SetDissolveDelay without its neuron", () => {
+  beforeEach(() => {
+    mockBackToList.mockClear();
+  });
+
+  it("explains itself instead of rendering a blank screen", () => {
+    neuron = undefined;
+
+    renderScreen();
+
+    expect(screen.getByText(/no longer in your synced snapshot/)).toBeVisible();
+  });
+
+  it("offers the way back to the neuron list", () => {
+    neuron = undefined;
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId("icp-missing-neuron-back-button"));
+
+    expect(mockBackToList).toHaveBeenCalled();
   });
 });
