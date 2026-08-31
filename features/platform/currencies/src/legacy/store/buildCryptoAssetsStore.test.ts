@@ -109,6 +109,25 @@ describe("buildCryptoAssetsStore", () => {
     });
   });
 
+  it("PARSING_ERROR with a raw Zod-issue-array payload -> readable fallback message", async () => {
+    const { store, dispatch } = setup();
+    dispatch.mockResolvedValue({
+      error: {
+        status: "PARSING_ERROR",
+        error: [
+          {
+            code: "invalid_type",
+            expected: "array",
+            received: "null",
+            path: [],
+            message: "Invalid input: expected array, received null",
+          },
+        ],
+      },
+    });
+    await expect(store.findTokenById("id")).rejects.toThrow("Unknown parsing_error error");
+  });
+
   it("defaults to the shared cryptoAssetsApi when no api is injected", () => {
     expect(() =>
       buildCryptoAssetsStore({ dispatch: jest.fn() as unknown as CryptoAssetsStoreDispatch }),
