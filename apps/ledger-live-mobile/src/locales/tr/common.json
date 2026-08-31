@@ -4548,8 +4548,8 @@
       },
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
-      "placeholderWithContacts" : "Enter address, ENS or contact",
-      "placeholderNoEnsWithContacts" : "Enter address or contact",
+      "placeholderWithContacts" : "Adres, ENS veya kişi adı girin",
+      "placeholderNoEnsWithContacts" : "Adres veya kişi adı girin",
       "pasteFromClipboard" : {
         "title" : "Panodan yapıştır",
         "cta" : "Yapıştır"
