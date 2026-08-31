@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-ddd
+Move Pay balance/action-tile copy resolution into @features/flow-pay-balance via @shared/i18n so hosts no longer pass translated labels.
