@@ -1,6 +1,5 @@
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactsDeleteContactDialogProps,
   type ContactsEditSignerDialogProps,
   type ContactsEditSignerMismatchDialogProps,
   type ContactDetailActionsLabels,
@@ -10,6 +9,7 @@ import {
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import type { ContactsDeleteContactDialogProps } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";

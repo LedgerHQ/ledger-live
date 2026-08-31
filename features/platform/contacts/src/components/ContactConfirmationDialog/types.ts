@@ -1,14 +1,14 @@
-export type ContactsDeleteConfirmationDialogLabels = Readonly<{
+export type ContactConfirmationDialogLabels = Readonly<{
   title: string;
   description: string;
   confirm: string;
   cancel: string;
 }>;
 
-export type ContactsDeleteConfirmationDialogProps = Readonly<{
+export type ContactConfirmationDialogProps = Readonly<{
   isOpen: boolean;
   isDeleting: boolean;
-  labels: ContactsDeleteConfirmationDialogLabels;
+  labels: ContactConfirmationDialogLabels;
   dialogTestId: string;
   confirmTestId: string;
   onConfirm: () => Promise<void>;
