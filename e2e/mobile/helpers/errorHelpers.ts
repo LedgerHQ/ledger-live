@@ -1,6 +1,6 @@
-export const ERROR_MODAL_SELECTORS = ["generic-error-modal"] as const;
+const ERROR_MODAL_SELECTORS = ["generic-error-modal"] as const;
 
-export async function detectErrorModal(timeout: number = 1000): Promise<string | null> {
+async function detectErrorModal(timeout: number = 1000): Promise<string | null> {
   for (const errorSelector of ERROR_MODAL_SELECTORS) {
     const isErrorVisible = await IsIdVisible(errorSelector, timeout);
     if (isErrorVisible) {

@@ -35,7 +35,7 @@ export type CliCommand = ((
 };
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
-export type SpeculosFixtureHandle = {
+type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
   get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
