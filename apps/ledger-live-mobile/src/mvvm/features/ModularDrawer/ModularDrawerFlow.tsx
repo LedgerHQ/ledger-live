@@ -13,7 +13,7 @@ import {
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
-import type { DisabledItemsTooltip } from "./types";
+import type { DisabledItemsExplanation } from "./types";
 
 export type ModularDrawerFlowRenderProps = Readonly<{
   /** Existing Modular Drawer flow to render in the chosen presentation shell */
@@ -62,7 +62,7 @@ export type ModularDrawerFlowProps = Readonly<{
   /** Network IDs that remain selectable while all MAD rows stay visible. */
   selectableNetworkIds?: readonly string[];
   /** Optional explanations displayed when an unavailable asset or network is pressed. */
-  disabledItemsTooltip?: DisabledItemsTooltip;
+  disabledItemsExplanation?: DisabledItemsExplanation;
 
   /** Renders the Modular Drawer flow inside a presentation shell */
   children: (props: ModularDrawerFlowRenderProps) => React.ReactNode;
@@ -82,7 +82,7 @@ export function ModularDrawerFlow({
   uiUseCase,
   areCurrenciesFiltered,
   selectableNetworkIds,
-  disabledItemsTooltip,
+  disabledItemsExplanation,
   children,
 }: ModularDrawerFlowProps): React.JSX.Element {
   const {
@@ -144,16 +144,16 @@ export function ModularDrawerFlow({
         assetsSorted,
         uiUseCase,
         selectableNetworkIds,
-        disabledAssetTooltip: disabledItemsTooltip?.asset,
-        onDisabledAssetPress: disabledItemsTooltip?.onPress,
+        disabledAssetExplanation: disabledItemsExplanation?.asset,
+        onDisabledAssetPress: disabledItemsExplanation?.onPress,
       }}
       networksViewModel={{
         onNetworkSelected: handleNetwork,
         availableNetworks,
         networksConfiguration: networkConfigurationSanitized,
         selectableNetworkIds,
-        disabledNetworkTooltip: disabledItemsTooltip?.network,
-        onDisabledNetworkPress: disabledItemsTooltip?.onPress,
+        disabledNetworkExplanation: disabledItemsExplanation?.network,
+        onDisabledNetworkPress: disabledItemsExplanation?.onPress,
         selectedAssetName,
       }}
       accountsViewModel={{

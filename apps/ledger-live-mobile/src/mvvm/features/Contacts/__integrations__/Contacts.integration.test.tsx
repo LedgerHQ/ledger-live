@@ -888,7 +888,7 @@ describe("Contacts integration", () => {
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
 
-    const bitcoinAsset = await screen.findByTestId("asset-item-tooltip-BTC");
+    const bitcoinAsset = await screen.findByTestId("asset-item-explanation-BTC");
     const tetherAsset = screen.getByTestId("asset-item-USDT");
     expect(bitcoinAsset).toBeEnabled();
     expect(tetherAsset).toBeEnabled();
@@ -918,7 +918,7 @@ describe("Contacts integration", () => {
 
     await user.press(tetherAsset);
 
-    const solanaNetwork = await screen.findByTestId("network-item-tooltip-Solana");
+    const solanaNetwork = await screen.findByTestId("network-item-explanation-Solana");
     const ethereumNetwork = screen.getByTestId("network-item-Ethereum");
     expect(solanaNetwork).toBeEnabled();
     expect(ethereumNetwork).toBeEnabled();

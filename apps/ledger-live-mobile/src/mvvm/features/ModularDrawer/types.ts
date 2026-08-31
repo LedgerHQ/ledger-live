@@ -9,15 +9,15 @@ export enum ModularDrawerStep {
   Account = "Account",
 }
 
-export type DisabledItemTooltip = Readonly<{
+export type DisabledItemExplanation = Readonly<{
   title: string;
   content: string;
 }>;
 
-export type DisabledItemsTooltip = Readonly<{
-  asset: (assetName: string) => DisabledItemTooltip;
-  network: (networkName: string, assetName: string) => DisabledItemTooltip;
-  onPress: (tooltip: DisabledItemTooltip) => void;
+export type DisabledItemsExplanation = Readonly<{
+  asset: (assetName: string) => DisabledItemExplanation;
+  network: (networkName: string, assetName: string) => DisabledItemExplanation;
+  onPress: (explanation: DisabledItemExplanation) => void;
 }>;
 
 export const MODULAR_DRAWER_KEY = "modularDrawer";

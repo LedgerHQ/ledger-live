@@ -2,7 +2,7 @@ import React from "react";
 import { ModularDrawerFlow } from "LLM/features/ModularDrawer";
 import { ContactsAddAddressFlowDrawerContent } from "./ContactsAddAddressFlowDrawerContent";
 import type { ContactsAddAddressFlowDrawerViewModel } from "./useContactsAddAddressFlowDrawerViewModel";
-import { UnsupportedSelectionTooltipSheet } from "./UnsupportedSelectionTooltipSheet";
+import { UnsupportedSelectionSheet } from "./UnsupportedSelectionSheet";
 
 export function ContactsAddAddressFlowDrawerView(
   viewModel: ContactsAddAddressFlowDrawerViewModel,
@@ -17,9 +17,9 @@ export function ContactsAddAddressFlowDrawerView(
           />
         )}
       </ModularDrawerFlow>
-      <UnsupportedSelectionTooltipSheet
-        tooltip={viewModel.currencySelection.unsupportedItemTooltip}
-        onClose={viewModel.currencySelection.dismissUnsupportedItemTooltip}
+      <UnsupportedSelectionSheet
+        explanation={viewModel.currencySelection.unsupportedItemExplanation}
+        onClose={viewModel.currencySelection.dismissUnsupportedItemExplanation}
       />
     </>
   );

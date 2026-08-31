@@ -36,7 +36,7 @@ import {
   getPerpsUiUseCase,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import type { DisabledItemTooltip, DisabledItemsTooltip } from "../../types";
+import type { DisabledItemExplanation, DisabledItemsExplanation } from "../../types";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -50,8 +50,8 @@ export type AssetSelectionStepProps = {
   assetsSorted?: AssetData[];
   uiUseCase?: string;
   selectableNetworkIds?: readonly string[];
-  disabledAssetTooltip?: DisabledItemsTooltip["asset"];
-  onDisabledAssetPress?: (tooltip: DisabledItemTooltip) => void;
+  disabledAssetExplanation?: DisabledItemsExplanation["asset"];
+  onDisabledAssetPress?: (explanation: DisabledItemExplanation) => void;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -68,7 +68,7 @@ const AssetSelection = ({
   assetsSorted,
   uiUseCase,
   selectableNetworkIds,
-  disabledAssetTooltip,
+  disabledAssetExplanation,
   onDisabledAssetPress,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
@@ -161,11 +161,11 @@ const AssetSelection = ({
       <AssetRow
         {...item}
         onClick={handleAssetClick}
-        disabledTooltip={item.disabled ? disabledAssetTooltip?.(item.name) : undefined}
+        disabledExplanation={item.disabled ? disabledAssetExplanation?.(item.name) : undefined}
         onDisabledPress={onDisabledAssetPress}
       />
     ),
-    [disabledAssetTooltip, handleAssetClick, onDisabledAssetPress],
+    [disabledAssetExplanation, handleAssetClick, onDisabledAssetPress],
   );
 
   const renderContent = () => {

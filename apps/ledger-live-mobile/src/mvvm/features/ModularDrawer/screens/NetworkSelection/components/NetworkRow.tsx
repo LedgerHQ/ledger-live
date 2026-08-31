@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import Icon from "@ledgerhq/crypto-icons/native";
-import type { DisabledItemTooltip } from "../../../types";
+import type { DisabledItemExplanation } from "../../../types";
 
 export type NetworkRowData = {
   id: string;
@@ -24,8 +24,8 @@ export type NetworkRowData = {
 
 type Props = NetworkRowData & {
   onClick: () => void;
-  disabledTooltip?: DisabledItemTooltip;
-  onDisabledPress?: (tooltip: DisabledItemTooltip) => void;
+  disabledExplanation?: DisabledItemExplanation;
+  onDisabledPress?: (explanation: DisabledItemExplanation) => void;
 };
 
 const NEGATIVE_MARGIN_OFFSET: LumenViewStyle = { marginHorizontal: "-s8" };
@@ -38,7 +38,7 @@ export const NetworkRow = ({
   rightElement,
   onClick,
   disabled,
-  disabledTooltip,
+  disabledExplanation,
   onDisabledPress,
 }: Props) => {
   const listItem = (
@@ -59,17 +59,17 @@ export const NetworkRow = ({
     </ListItem>
   );
 
-  if (!disabled || !disabledTooltip || !onDisabledPress) return listItem;
+  if (!disabled || !disabledExplanation || !onDisabledPress) return listItem;
 
   return (
     <Pressable
       accessible
       accessibilityRole="button"
-      accessibilityLabel={disabledTooltip.title}
-      accessibilityHint={disabledTooltip.content}
+      accessibilityLabel={disabledExplanation.title}
+      accessibilityHint={disabledExplanation.content}
       style={{ width: "100%" }}
-      testID={`network-item-tooltip-${name}`}
-      onPress={() => onDisabledPress(disabledTooltip)}
+      testID={`network-item-explanation-${name}`}
+      onPress={() => onDisabledPress(disabledExplanation)}
     >
       <Box
         pointerEvents="none"

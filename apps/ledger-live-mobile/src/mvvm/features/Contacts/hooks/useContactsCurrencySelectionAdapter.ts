@@ -5,8 +5,8 @@ import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-ad
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import {
-  type DisabledItemsTooltip,
-  type DisabledItemTooltip,
+  type DisabledItemsExplanation,
+  type DisabledItemExplanation,
   type ModularDrawerFlowProps,
   useModularDrawerController,
 } from "LLM/features/ModularDrawer";
@@ -27,8 +27,8 @@ type UseContactsCurrencySelectionAdapterOptions = Readonly<{
 
 export type ContactsCurrencySelectionAdapter = Readonly<{
   flowProps: Omit<ModularDrawerFlowProps, "children">;
-  unsupportedItemTooltip: DisabledItemTooltip | null;
-  dismissUnsupportedItemTooltip: () => void;
+  unsupportedItemExplanation: DisabledItemExplanation | null;
+  dismissUnsupportedItemExplanation: () => void;
 }>;
 
 function resolveContactCurrencySelection(
@@ -50,9 +50,8 @@ export function useContactsCurrencySelectionAdapter({
   onSelectionCancelled,
 }: UseContactsCurrencySelectionAdapterOptions): ContactsCurrencySelectionAdapter {
   const { t } = useTranslation();
-  const [unsupportedItemTooltip, setUnsupportedItemTooltip] = useState<DisabledItemTooltip | null>(
-    null,
-  );
+  const [unsupportedItemExplanation, setUnsupportedItemExplanation] =
+    useState<DisabledItemExplanation | null>(null);
   const selectionStartedRef = useRef(false);
   const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
@@ -66,7 +65,7 @@ export function useContactsCurrencySelectionAdapter({
     uiUseCase,
     useCase,
   } = useModularDrawerController();
-  const disabledItemsTooltip = useMemo<DisabledItemsTooltip>(
+  const disabledItemsExplanation = useMemo<DisabledItemsExplanation>(
     () => ({
       asset: assetName => ({
         title: t("modularDrawer.unsupportedAssetTooltip.title", { asset: assetName }),
@@ -79,7 +78,7 @@ export function useContactsCurrencySelectionAdapter({
           asset: assetName,
         }),
       }),
-      onPress: setUnsupportedItemTooltip,
+      onPress: setUnsupportedItemExplanation,
     }),
     [t],
   );
@@ -112,7 +111,7 @@ export function useContactsCurrencySelectionAdapter({
   useEffect(() => {
     if (!isOpen) {
       selectionStartedRef.current = false;
-      setUnsupportedItemTooltip(null);
+      setUnsupportedItemExplanation(null);
       return;
     }
     if (selectionStartedRef.current) {
@@ -144,7 +143,7 @@ export function useContactsCurrencySelectionAdapter({
       uiUseCase,
       useCase,
       selectableNetworkIds: networkIds,
-      disabledItemsTooltip,
+      disabledItemsExplanation,
     }),
     [
       areCurrenciesFiltered,
@@ -156,11 +155,14 @@ export function useContactsCurrencySelectionAdapter({
       preselectedCurrencies,
       uiUseCase,
       useCase,
-      disabledItemsTooltip,
+      disabledItemsExplanation,
     ],
   );
 
-  const dismissUnsupportedItemTooltip = useCallback(() => setUnsupportedItemTooltip(null), []);
+  const dismissUnsupportedItemExplanation = useCallback(
+    () => setUnsupportedItemExplanation(null),
+    [],
+  );
 
-  return { flowProps, unsupportedItemTooltip, dismissUnsupportedItemTooltip };
+  return { flowProps, unsupportedItemExplanation, dismissUnsupportedItemExplanation };
 }
