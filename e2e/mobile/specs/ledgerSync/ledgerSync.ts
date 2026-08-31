@@ -3,12 +3,18 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import {
+  LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS,
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
-import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
+import {
+  CLI_MEMBER_NAME,
+  ethAccount,
+  secondEthAccount,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
+import type { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 
 const APP_INSTANCE_NAME = "LWM";
 const defaultAccountName = `${Currency.ETH.name} 1`;
@@ -29,10 +35,23 @@ async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-async function openLedgerSyncSettings() {
+/** Boots the app with no trustchain, so the settings row leads to the activation flow. */
+async function initUnactivated(speculosApp?: SpeculosAppType) {
+  await app.init({
+    ...(speculosApp ? { speculosApp } : {}),
+    featureFlags: LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS,
+  });
+  await app.mainNavigation.waitForWallet40Ready();
+}
+
+async function openGeneralSettings() {
   await app.mainNavigation.openPortfolioViaDeeplink();
   await app.mainNavigation.navigateToSettings();
   await app.settings.navigateToGeneralSettings();
+}
+
+async function openLedgerSyncSettings() {
+  await openGeneralSettings();
   await app.settingsGeneral.navigateToLedgerSync();
 }
 
@@ -58,7 +77,7 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Adding a new account propagates it to the trustchain", async () => {
+    it("[Live Hub][Ledger Sync] Adding New Account (Online)", async () => {
       await app.trustchain.expectToBeEmpty();
 
       await app.portfolio.addAccount();
@@ -69,6 +88,9 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 
       const accountId = await app.addAccount.addAccountAtIndex(defaultAccountName, Currency.ETH.id);
       await app.addAccount.tapCloseAddAccountCta();
+
+      await app.accounts.openViaDeeplink();
+      await app.common.expectAccountName(defaultAccountName);
 
       await app.trustchain.expectToHoldAccount(accountId, Currency.ETH.id);
     });
@@ -87,11 +109,12 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Renaming an account propagates the new name to the trustchain", async () => {
+    it("[WXP][Ledger Sync] Renaming Account (Online)", async () => {
       await app.trustchain.expectAccountToHaveDefaultName(ethAccount.id);
 
       await app.accounts.openViaDeeplink();
       await app.accounts.expectAccountsNumber(1, app.ledgerSync.ledgerSyncPushDataArgs.data);
+      await app.common.expectAccountName(defaultAccountName);
 
       await app.common.goToAccountByName(defaultAccountName);
       await app.account.openAccountSettings();
@@ -120,7 +143,7 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Deleting an account removes it from the trustchain", async () => {
+    it("[WXP][Ledger Sync] Deleting Account (Online)", async () => {
       await app.trustchain.expectAccountIds([ethAccount.id, secondEthAccount.id]);
 
       await app.accounts.openViaDeeplink();
@@ -132,6 +155,7 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
       await app.account.confirmAccountDelete();
 
       await app.accounts.openViaDeeplink();
+      await app.accounts.expectAccountAbsence(ethAccount.id);
       await app.common.expectAccountName(secondAccountName);
 
       await app.trustchain.expectAccountIds([secondEthAccount.id]);
@@ -151,7 +175,7 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Removing an instance drops it from the synchronized list", async () => {
+    it("[WXP][Ledger Sync] Delete instance", async () => {
       // The app was seeded with the member added last, so the CLI is the other instance — the
       // only one the app will let us remove.
       const cliMemberPubKey = app.ledgerSync.initialMemberPubKey;
@@ -165,6 +189,8 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
       await app.ledgerSync.removeInstance(cliMemberPubKey);
       await app.common.selectKnownDevice();
       await app.ledgerSync.removeMemberFromLedgerSyncOnSpeculos();
+      await app.ledgerSync.expectMemberRemoval(CLI_MEMBER_NAME);
+
       // The app navigates to a success screen after removal, unmounting the instances list.
       // Navigate back so the assertion runs against the live list, not a stale screen.
       await openLedgerSyncSettings();
@@ -186,7 +212,7 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Deleting the backup destroys the trustchain and unsyncs the instance", async () => {
+    it("[WXP][Ledger Sync] Delete backup", async () => {
       await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
 
       await openLedgerSyncSettings();
@@ -195,6 +221,82 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
       await app.ledgerSync.expectBackupDeletion();
 
       await app.trustchain.expectToBeDestroyed();
+
+      // The instance is unsynced now, so the settings row leads back to the activation flow.
+      await openGeneralSettings();
+      await app.settingsGeneral.expectLedgerSyncEntryPoint();
+      await app.settingsGeneral.navigateToLedgerSync();
+      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+    });
+  });
+}
+
+export function runLedgerSyncSettingsEntryPointTest(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.WALLET_XP);
+  describeIfNotNanoS("Ledger Sync - entry point in settings", () => {
+    beforeAll(async () => {
+      await initUnactivated();
+    });
+
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+    it("[WXP][Ledger Sync] A wallet sync entry point should exist in the settings", async () => {
+      await openGeneralSettings();
+      await app.settingsGeneral.expectLedgerSyncEntryPoint();
+    });
+  });
+}
+
+export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.WALLET_XP);
+  describeIfNotNanoS("Ledger Sync - activation flow no backup activated", () => {
+    beforeAll(async () => {
+      await initUnactivated();
+    });
+
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+    it("[WXP][Ledger Sync] Activation Flow - No Backup Activated", async () => {
+      await openGeneralSettings();
+      await app.settingsGeneral.expectLedgerSyncEntryPoint();
+      await app.settingsGeneral.navigateToLedgerSync();
+      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+    });
+  });
+}
+
+export function runLedgerSyncActivationBackupTest(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.WALLET_XP);
+  describeIfNotNanoS("Ledger Sync - activation flow backup activated", () => {
+    setupLedgerSyncSeed();
+    // The app creates this trustchain, not the CLI, so the teardown has no handle on it to delete —
+    // the generated seed is what makes it unreachable. The hook still has to release Speculos.
+    cleanupLedgerSyncAfterAll();
+
+    beforeAll(async () => {
+      await initUnactivated(AppInfos.LS);
+    });
+
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+    it("[WXP][Ledger Sync] Activation Flow - Backup Activated", async () => {
+      await openGeneralSettings();
+      await app.settingsGeneral.expectLedgerSyncEntryPoint();
+      await app.settingsGeneral.navigateToLedgerSync();
+      await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
+
+      await app.ledgerSync.tapTurnOnSync();
+      // `lwmLedgerSyncOptimisation` inserts the choose-sync-method step between the CTA and the
+      // device selection.
+      await app.ledgerSync.tapUseMyLedgerDevice();
+      await app.common.selectKnownDevice();
+      await app.ledgerSync.activateLedgerSyncOnSpeculos();
+      await app.ledgerSync.expectLedgerSyncSuccessPage();
+      await app.ledgerSync.closeActivationSuccessPage();
+
+      // A backup exists now, so the settings row leads to the management screen.
+      await openLedgerSyncSettings();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
     });
   });
 }

@@ -11,10 +11,35 @@ export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
     enabled: true,
     params: {
       environment: ledgerSyncEnvironment,
-      watchConfig: {},
+      watchConfig: {
+        pollingInterval: 2_000,
+        initialTimeout: 500,
+      },
       learnMoreLink: "",
     },
   },
+  llmLedgerSyncEntryPoints: { enabled: true },
+};
+
+/**
+ * `lwmLedgerSyncOptimisation` swaps the activation screen for the one that routes through
+ * choose-sync-method, so the suites that drive the activation UI have to opt into it explicitly.
+ */
+export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: OptionalFeatureMap = {
+  ...LEDGER_SYNC_FEATURE_FLAGS,
+  // Only the settings entry point, so a banner on another screen cannot perturb the flow. The
+  // override replaces `params` wholesale rather than merging, so the others stay off.
+  llmLedgerSyncEntryPoints: {
+    enabled: true,
+    params: {
+      manager: false,
+      accounts: false,
+      settings: true,
+      onboarding: false,
+      postOnboarding: false,
+    },
+  },
+  lwmLedgerSyncOptimisation: { enabled: true },
 };
 
 /**

@@ -41,6 +41,12 @@ export default class SettingsGeneralPage {
     await tapByElement(this.enterLedgerSync());
   }
 
+  /** The row renders the same id whether or not a backup exists; only its destination changes. */
+  @Step("Expect the Ledger Sync entry point to be visible")
+  async expectLedgerSyncEntryPoint() {
+    await detoxExpect(this.enterLedgerSync()).toBeVisible();
+  }
+
   @Step("Select language {{{0}}}")
   async selectLanguage(lang: string) {
     await scrollToText(lang, this.languageScrollViewId);
