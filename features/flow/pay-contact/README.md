@@ -3,12 +3,13 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
 
-Pay-tab contacts section: a title, an empty state with an **Add contact** CTA, and the shared Add
-contact dialog from `@features/flow-contacts-add-contact`.
+Pay-tab contacts. Web is a table of saved contacts; native is a horizontal strip with a leading
+Pay tile. Both exclude the `me` contact.
 
-The package reads the contacts, derives the empty state, and owns the dialog. The host injects the
-copy, the Add contact `labels`, a `ContactCreationPort`, optional analytics `callbacks` /
-`onSaveSuccess`, and `onRequestAddContact` — a gate (e.g. Ledger Sync) the CTA runs before opening.
+Mount `Contacts` under a Redux `Provider` with `contactsSlice`. Desktop adapter:
+`usePayTabContacts`.
+
+## Web
 
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
@@ -17,20 +18,17 @@ import { Contacts } from "@features/flow-pay-contact";
   title={title}
   emptyState={{ info, addContactLabel }}
   addContact={{ labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
+  labels={{ name, addresses, transactions, formatTransactionCount, payAction, moreAction }}
+  renderAddresses={addresses => <PayContactAddresses addresses={addresses} />}
+  onPayContact={openNewPayment}
+  outgoingOperations={outgoingOperations}
 />;
 ```
 
-Desktop's `usePayTabContacts` is the reference adapter: it builds the labels and creation port,
-reuses the Contacts analytics callbacks, and gates the CTA through the Ledger Sync mutation guard.
-The Ledger Sync activation UI stays app-owned and is mounted next to `Contacts` by the Pay tab.
+`renderAddresses` is app-owned (e.g. `IconStack`). Optional `outgoingOperations` sort by last
+sent-to and fill the transaction count.
 
-Hosts must render `Contacts` under a Redux `Provider` with the `contactsSlice` reducer.
-
-## Native (Mobile)
-
-The native barrel exposes a different `Contacts` surface: a horizontal strip with a leading **Pay**
-tile (opens the Send flow) followed by the saved contacts. The empty state renders no contact tiles
-— only the Pay tile remains.
+## Native
 
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
@@ -38,9 +36,5 @@ import { Contacts } from "@features/flow-pay-contact";
 <Contacts title={title} payLabel={payLabel} onPay={openSend} onSeeAll={openContactsList} />;
 ```
 
-The strip caps at 8 saved contacts. When more are saved, the section title becomes a see-all
-control that calls `onSeeAll` — the host opens the full contacts list (the mobile Contacts flow).
-The `hasMore` flag and the 8-item slice are derived by the view-model; the view is props-only.
-
-Contact tiles are display-only for now. `onContactPress` is an optional prop left unwired so a later
-ticket can turn each tile into a Pay entry point without changing the layout.
+Caps at 8 contacts. `onSeeAll` opens the full list when there are more. `onContactPress` is optional
+and unused for now.

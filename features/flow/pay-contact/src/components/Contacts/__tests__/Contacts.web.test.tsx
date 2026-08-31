@@ -4,13 +4,14 @@ import userEvent from "@testing-library/user-event";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import { Contacts } from "../Contacts.web";
-import { makeAddContactProps, makeContactsStore, renderWithContacts } from "./shared";
-import type { ContactsProps } from "../../../types";
-
-const emptyState: ContactsProps["emptyState"] = {
-  info: "You don’t have contact yet",
-  addContactLabel: "Add contact",
-};
+import {
+  emptyStateLabels,
+  makeAddContactProps,
+  makeContactsStore,
+  renderAddresses,
+  renderWithContacts,
+  tableLabels,
+} from "./shared";
 
 function renderContacts(
   contacts: Parameters<typeof renderWithContacts>[0],
@@ -19,7 +20,13 @@ function renderContacts(
 ) {
   return renderWithContacts(
     contacts,
-    <Contacts title="Pay contact" emptyState={emptyState} addContact={addContact} />,
+    <Contacts
+      title="Pay contact"
+      emptyState={emptyStateLabels}
+      addContact={addContact}
+      labels={tableLabels}
+      renderAddresses={renderAddresses}
+    />,
     store,
   );
 }
@@ -30,7 +37,7 @@ describe("Contacts (Web)", () => {
 
     expect(screen.getByTestId("pay-contacts-empty-state")).toBeVisible();
     expect(screen.getByText("You don’t have contact yet")).toBeVisible();
-    expect(screen.queryByTestId("contacts-table")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("pay-contacts-list")).not.toBeInTheDocument();
   });
 
   it("should open the add-contact dialog from the empty-state CTA", async () => {
@@ -79,9 +86,10 @@ describe("Contacts (Web)", () => {
     expect(store.getState().contacts.contacts.some(c => c.name === "Coinbase 1")).toBe(true);
   });
 
-  it("should not render the empty state when a saved contact exists", () => {
+  it("should list saved contacts when they exist", () => {
     renderContacts([mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })]);
 
     expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
+    expect(screen.getByTestId("pay-contacts-tile-contact-ada")).toBeVisible();
   });
 });

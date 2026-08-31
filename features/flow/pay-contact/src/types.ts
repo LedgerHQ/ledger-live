@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Contact } from "@domain/entity-contact";
 import type {
   AddContactDialogLifecycleCallbacks,
@@ -14,10 +15,6 @@ export type EmptyStateLabels = Readonly<{
 
 export type EmptyStateProps = EmptyStateLabels & Readonly<{ onAddContact: () => void }>;
 
-/**
- * Everything the host injects so the Pay contacts section can open the shared Add contact dialog.
- * `onRequestAddContact` lets the host gate the CTA (e.g. Ledger Sync) before the dialog opens.
- */
 export type PayAddContactProps = Readonly<{
   labels: ContactsAddContactContentLabels;
   contactCreation: ContactCreationPort;
@@ -26,27 +23,42 @@ export type PayAddContactProps = Readonly<{
   callbacks?: AddContactDialogLifecycleCallbacks;
 }>;
 
+export type ContactsTableLabels = Readonly<{
+  name: string;
+  addresses: string;
+  transactions: string;
+  formatTransactionCount: (count: number) => string;
+  payAction: string;
+  moreAction: string;
+}>;
+
 export type ContactsProps = Readonly<{
   title: string;
   emptyState: EmptyStateLabels;
   addContact: PayAddContactProps;
+  labels: ContactsTableLabels;
+  renderAddresses: (addresses: Contact["addresses"]) => ReactNode;
+  onPayContact?: (contact: Contact) => void;
+  onContactMore?: (contact: Contact) => void;
+  outgoingOperations?: readonly OutgoingOperation[];
 }>;
 
-export type ContactsViewProps = Readonly<{
-  title: string;
-  isEmpty: boolean;
-  emptyState: EmptyStateProps;
-  addContactDialog: AddContactDialogViewModel;
+export type ContactRowViewModel = Readonly<{
+  contact: Contact;
+  transactionCount: number;
 }>;
 
-/**
- * Native (Mobile) Pay contacts strip: a horizontal row with a leading Pay tile, then the saved
- * contacts. The Pay tile opens the Send flow. `onContactPress` is intentionally optional and left
- * unwired for now — a later ticket can pass it to turn contact tiles into Pay entry points without
- * touching the layout. `onSeeAll` opens the full contacts list when the saved contacts exceed the
- * strip cap. `outgoingOperations` are the host's account `OUT` operations used to order contacts by
- * last sent-to; omit for store order only.
- */
+export type ContactsViewProps = Pick<
+  ContactsProps,
+  "title" | "labels" | "renderAddresses" | "onPayContact" | "onContactMore"
+> &
+  Readonly<{
+    isEmpty: boolean;
+    rows: readonly ContactRowViewModel[];
+    emptyState: EmptyStateProps;
+    addContactDialog: AddContactDialogViewModel;
+  }>;
+
 export type ContactsNativeProps = Readonly<{
   title: string;
   payLabel: string;

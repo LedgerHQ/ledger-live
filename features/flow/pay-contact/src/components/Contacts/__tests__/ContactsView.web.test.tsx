@@ -1,47 +1,12 @@
 import React from "react";
 import { screen } from "@testing-library/react";
+import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsView } from "../ContactsView.web";
-import { renderWithContacts } from "./shared";
+import { makeContactsViewProps, renderWithContacts } from "./shared";
 import type { ContactsViewProps } from "../../../types";
 
-const emptyState: ContactsViewProps["emptyState"] = {
-  info: "You don’t have contact yet",
-  addContactLabel: "Add contact",
-  onAddContact: jest.fn(),
-};
-
-const addContactDialog: ContactsViewProps["addContactDialog"] = {
-  isOpen: false,
-  isConfirmEnabled: false,
-  isSaving: false,
-  draftName: "",
-  avatarInitial: "",
-  invalidNameError: null,
-  labels: {
-    title: "Add contact",
-    namePlaceholder: "Contact name",
-    namingDisclaimer: "Use a nickname.",
-    confirmName: "Add contact",
-    nameValidationErrors: {},
-  } as ContactsViewProps["addContactDialog"]["labels"],
-  onDraftNameChange: jest.fn(),
-  onConfirm: jest.fn(),
-  reset: jest.fn(),
-  onOpen: jest.fn(),
-  onClose: jest.fn(),
-};
-
 function renderView(props: Partial<ContactsViewProps> = {}) {
-  return renderWithContacts(
-    [],
-    <ContactsView
-      title="Pay contact"
-      isEmpty
-      emptyState={emptyState}
-      addContactDialog={addContactDialog}
-      {...props}
-    />,
-  );
+  return renderWithContacts([], <ContactsView {...makeContactsViewProps(props)} />);
 }
 
 describe("ContactsView (Web)", () => {
@@ -56,13 +21,28 @@ describe("ContactsView (Web)", () => {
     renderView();
 
     expect(screen.getByTestId("pay-contacts-empty-state")).toBeVisible();
-    expect(screen.queryByTestId("contacts-table")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("pay-contacts-list")).not.toBeInTheDocument();
   });
 
   it("should not render the empty state when isEmpty is false", () => {
     renderView({ isEmpty: false });
 
     expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
+  });
+
+  it("should render a table row for each contact when not empty", () => {
+    renderView({
+      isEmpty: false,
+      rows: [
+        { contact: mockContact({ id: "contact-ada", name: "Ada" }), transactionCount: 0 },
+        { contact: mockContact({ id: "contact-bob", name: "Bob" }), transactionCount: 0 },
+      ],
+    });
+
+    expect(screen.getByTestId("pay-contacts-list")).toBeVisible();
+    expect(screen.getByText("Ada")).toBeVisible();
+    expect(screen.getByText("Bob")).toBeVisible();
+    expect(screen.getAllByTestId(/^pay-contacts-tile-/)).toHaveLength(2);
   });
 
   it("should render the closed add-contact dialog without showing it", () => {
