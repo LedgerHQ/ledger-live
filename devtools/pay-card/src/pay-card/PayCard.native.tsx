@@ -6,7 +6,7 @@ import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen } = props;
 
   return (

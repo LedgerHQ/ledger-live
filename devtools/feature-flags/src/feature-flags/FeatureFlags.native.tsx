@@ -3,7 +3,7 @@ import { FeatureFlagsToolProvider, FlagSelectionProvider } from "../context";
 import { FlagList } from "../components";
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 
-export function FeatureFlags(props: Readonly<FeatureFlagsToolProps>) {
+function FeatureFlags(props: Readonly<FeatureFlagsToolProps>) {
   return (
     <BottomSheetModalProvider>
       <FeatureFlagsToolProvider {...props}>
