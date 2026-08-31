@@ -41,6 +41,10 @@ export default class PortfolioPage {
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
   marketBannerTitle = "market-banner-title";
+  // The row's own container, from QUICK_ACTIONS_TEST_IDS.ctas.container. Waiting on this at 100%
+  // visibility is what proves the row has mounted and settled; the buttons inside it are laid out
+  // by then, so a tap cannot land on a view that is still arriving.
+  quickActionsCtasContainerId = "quick-actions-ctas";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
   quickActionBuyButtonV4 = "quick-action-buy";
@@ -391,18 +395,29 @@ export default class PortfolioPage {
     await waitForElementById(this.quickActionBuyButtonV4);
   }
 
+  // tapById does not wait, so these taps used to be issued the moment the portfolio rendered.
+  // The quick actions mount after the portfolio's own data resolves, which is why the tap could
+  // fail with "No views in hierarchy found matching ... quick-action-buy" (QAA-1524) — the row was
+  // not there yet, rather than being under-visible.
+  private async waitForQuickActionsSettled() {
+    await waitForFullyVisibleById(this.quickActionsCtasContainerId);
+  }
+
   @Step("Press quick action buy button")
   async pressQuickActionBuyButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action swap button")
   async pressQuickActionSwapButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionSwapButtonV4);
   }
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
