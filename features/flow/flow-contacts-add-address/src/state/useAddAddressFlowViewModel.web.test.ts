@@ -457,13 +457,22 @@ describe("useAddAddressFlowViewModel", () => {
     act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
     await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
     act(() => result.current.confirmAddress());
+    act(() => result.current.updateAddressLabel("Exchange"));
     act(() => result.current.continueFromName());
 
     act(() => result.current.goBack());
-    expect(result.current.state.status).toBe("namingAddress");
+    expect(result.current.state).toMatchObject({
+      status: "namingAddress",
+      addressLabel: { label: "Exchange", status: "valid" },
+    });
 
     act(() => result.current.goBack());
-    expect(result.current.state.status).toBe("enteringAddress");
+    // Stepping back into address entry keeps both inputs, so nothing is retyped.
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: { status: "valid", resolvedAddress: VALID_ADDRESS },
+      addressLabel: { label: "Exchange", status: "valid" },
+    });
 
     act(() => result.current.goBack());
     expect(result.current.state).toEqual({
