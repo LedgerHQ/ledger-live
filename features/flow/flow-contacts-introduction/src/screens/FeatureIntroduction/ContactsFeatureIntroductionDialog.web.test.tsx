@@ -12,7 +12,6 @@ function renderDialog() {
     <ContactsFeatureIntroductionDialog
       isOpen
       title="Add contacts"
-      description="Save verified recipient addresses."
       highlights={[
         { icon: "Contact", title: "Save recipients", description: "Reuse an address safely." },
       ]}

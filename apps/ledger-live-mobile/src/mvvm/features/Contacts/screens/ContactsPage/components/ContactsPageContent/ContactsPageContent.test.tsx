@@ -46,9 +46,8 @@ function createViewModel({
       ? {
           isOpen: true,
           title: "Introducing Contacts",
-          description: "Your address book for crypto.",
           highlights: [],
-          primaryActionLabel: "Try contacts",
+          primaryActionLabel: "Explore now",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }

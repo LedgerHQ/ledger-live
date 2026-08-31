@@ -10,9 +10,10 @@ function renderContent(isOpen = true) {
     <ContactsFeatureIntroductionContent
       isOpen={isOpen}
       title="Add contacts"
-      description="Save verified recipient addresses."
       highlights={[
         { icon: "Contact", title: "Save recipients", description: "Reuse an address safely." },
+        { icon: "ShieldCheck", title: "Send safely", description: "Trust the recipient." },
+        { icon: "Devices", title: "Keep in sync", description: "Use Ledger Sync." },
       ]}
       primaryActionLabel="Get started"
       bottomInset={12}
@@ -33,6 +34,9 @@ describe("ContactsFeatureIntroductionContent", () => {
       CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE,
     );
     expect(screen.getByText("Save recipients")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-highlight-Contact")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-highlight-ShieldCheck")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-highlight-Devices")).toBeVisible();
     expect(screen.queryByTestId("contacts-feature-introduction-secondary")).toBeNull();
 
     fireEvent.press(screen.getByTestId("contacts-feature-introduction-primary"));

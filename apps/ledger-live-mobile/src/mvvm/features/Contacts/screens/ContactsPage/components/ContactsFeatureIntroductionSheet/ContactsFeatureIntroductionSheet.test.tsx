@@ -10,16 +10,15 @@ const highlights = CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, transla
 }));
 
 describe("ContactsFeatureIntroductionSheet", () => {
-  it("should call onComplete once from Try contacts", async () => {
+  it("should call onComplete once from Explore now", async () => {
     const onComplete = jest.fn();
     const onClose = jest.fn();
     const { user } = render(
       <ContactsFeatureIntroductionSheet
         isOpen
         title="Introducing Contacts"
-        description="Your address book for crypto."
         highlights={highlights}
-        primaryActionLabel="Try contacts"
+        primaryActionLabel="Explore now"
         onComplete={onComplete}
         onClose={onClose}
       />,
@@ -41,9 +40,8 @@ describe("ContactsFeatureIntroductionSheet", () => {
       <ContactsFeatureIntroductionSheet
         isOpen
         title="Introducing Contacts"
-        description="Your address book for crypto."
         highlights={highlights}
-        primaryActionLabel="Try contacts"
+        primaryActionLabel="Explore now"
         onComplete={onComplete}
         onClose={onClose}
       />,

@@ -8,7 +8,6 @@ import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntro
 export function ContactsFeatureIntroductionDialog({
   isOpen,
   title,
-  description,
   highlights,
   primaryActionLabel,
   heroImageSrc,
@@ -32,14 +31,13 @@ export function ContactsFeatureIntroductionDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] bg-canvas-sheet p-0"
+        className="min-h-[min(696px,90vh)] max-h-[90vh] bg-canvas-sheet p-0"
         data-testid="contacts-feature-introduction-dialog"
       >
         <DialogHeader density="expanded" onClose={onClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden px-24 pb-24">
           <ContactsFeatureIntroductionDialogContent
             title={title}
-            description={description}
             highlights={highlights}
             heroImage={heroImage}
           />

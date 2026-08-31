@@ -37,7 +37,6 @@ export function useContactsFeatureIntroductionViewModel({
     () => ({
       isOpen: isRequested,
       title: t("contacts.featureIntroduction.title"),
-      description: t("contacts.featureIntroduction.description"),
       highlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: dismiss,

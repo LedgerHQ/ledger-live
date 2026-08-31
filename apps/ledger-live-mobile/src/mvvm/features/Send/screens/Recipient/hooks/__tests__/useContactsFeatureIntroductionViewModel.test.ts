@@ -27,14 +27,22 @@ describe("useContactsFeatureIntroductionViewModel", () => {
 
     expect(result.current.isOpen).toBe(true);
     expect(result.current.title).toBe("Introducing Contacts");
-    expect(result.current.primaryActionLabel).toBe("Try contacts");
+    expect(result.current.primaryActionLabel).toBe("Explore now");
     expect(result.current.highlights).toEqual([
-      { icon: "Contact", title: "Save addresses once", description: expect.any(String) },
-      { icon: "ShieldCheck", title: "Send to the right address", description: expect.any(String) },
+      {
+        icon: "Contact",
+        title: "Save addresses by a name you choose",
+        description: "Exchanges, friends, your own external accounts.",
+      },
+      {
+        icon: "ShieldCheck",
+        title: "Send to the right address",
+        description: "See a name you trust, not an address.",
+      },
       {
         icon: "Devices",
-        title: "Private across your devices",
-        description: expect.any(String),
+        title: "Securely top up via Ledger Wallet™",
+        description: "End-to-end encrypted with Ledger Sync.",
       },
     ]);
   });
