@@ -195,9 +195,8 @@ test.use({
 - Use `@step` decorator in Page Objects
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
 - **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
-- **Every `test()` must include a TMS annotation** with a valid Xray ticket ID. Omitting it causes
-  `getDescription(test.info().annotations, "TMS")` to return the literal string `"Type not found"`,
-  which `addTmsLink()` and the JSON reporter then propagate as a bogus Xray entry.
+- **Every `test()` must include a TMS annotation** with a valid Xray ticket ID. A test with no TMS
+  annotation reports nothing to Xray, so its result is silently lost.
 
   ```typescript
   const xrayTicket = "B2CQA-XXXX"; // obtain from QA before merging
@@ -210,6 +209,49 @@ test.use({
     async ({ app }) => { ... },
   );
   ```
+
+### Data-driven tests: one Xray test + a dataset
+
+A spec that loops over an array of coins should **not** carry one Xray ticket per coin. Point every
+row at a single Xray test and pass the coin as a dataset parameter, so each row reports as its own
+iteration — one failing coin shows red while the others stay green.
+
+```typescript
+import { xrayDataset, xrayKeys } from "@ledgerhq/live-e2e-shared/xray/annotations";
+
+const ADD_ACCOUNT_XRAY_TEST = "B2CQA-XXXX";
+
+test(
+  `[${currency.testLabel}] - Add account`,
+  {
+    tag: buildTags({ currencyId: currency.id }),
+    annotation: [
+      // Scenarios that are NOT per-coin stay plain keys.
+      { type: "TMS", description: "B2CQA-2644, B2CQA-2672" },
+      xrayDataset(ADD_ACCOUNT_XRAY_TEST, { Currency: currency.testLabel }),
+    ],
+  },
+  async ({ app }) => {
+    await addTmsLink(xrayKeys(test.info().annotations)); // links plain and dataset keys alike
+    ...
+  },
+);
+```
+
+Rules:
+
+- The parameter **name and value must match the dataset configured on the Xray test exactly**, or
+  Xray cannot map the iteration. Use `currency.testLabel` as the value — it is already what the test
+  title shows, and it disambiguates tokens and same-ticker coins (`ETH (Base)`, `USDT (Tron)`).
+- A ticket that is genuinely per-coin becomes a dataset row; a cross-cutting ticket
+  (e.g. `[Portfolio] Transactions details`) stays a plain `TMS` key.
+- A key must not appear in both — it would otherwise be reported twice.
+- The dataset does **not** have to pre-exist on the Xray test: Xray creates the rows from the
+  exported `parameters`. Defining it in Xray is still worthwhile so the expected rows are visible.
+- **Never publish a filtered run.** Xray *replaces* a Test Run's iterations on import rather than
+  merging them — re-importing a subset wipes the rows already there and can flip the test green
+  (measured: 3 iterations, one FAILED, became 0 iterations and PASSED). This is why the
+  `upload-to-xray` job in `test-ui-e2e-only-desktop.yml` is guarded on `inputs.test_filter == ''`.
 
 - Be aware that there may be environment variables to gate which UI elements you can assert on. For example, CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). So tests may pass locally but exercise different elements than CI. '
 - As such, you may need to declare flags explicitly in `test.use({ featureFlags })` if your UI varies based on specific feature flag parameters or configurations.

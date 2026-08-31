@@ -113,7 +113,7 @@ function serializeCliError(error: unknown) {
 
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
-    await allure.tms(id);
+    if (id) await allure.tms(id);
   }
 }
 

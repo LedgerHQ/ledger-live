@@ -2,55 +2,37 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { xrayDataset, xrayKeys } from "@ledgerhq/live-e2e-shared/xray/annotations";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
+const ADD_ACCOUNT_XRAY_TEST = "B2CQA-6561"; // TEST VICTOR -> TO BE REMOVED WITH REAL TICKET
+
 type AddAccountTestCase = {
   readonly currency: Currency;
-  readonly xrayTicket: string;
   readonly portfolioAssetName?: string;
   readonly teamOwner?: Team;
 };
 
 const currencies: AddAccountTestCase[] = [
-  {
-    currency: Currency.BTC,
-    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073, B2CQA-786",
-  },
-  { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
-  { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
-  { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675", teamOwner: Team.BST },
-  {
-    currency: Currency.DOT,
-    xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676",
-    portfolioAssetName: Currency.DOT.name,
-  },
-  { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2677" },
-  { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678", teamOwner: Team.BST },
-  { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679" },
-  { currency: Currency.BCH, xrayTicket: "B2CQA-2498, B2CQA-2652, B2CQA-2680" },
-  {
-    currency: Currency.ALGO,
-    xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681",
-    teamOwner: Team.BST,
-  },
-  { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
-  { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683", teamOwner: Team.BST },
-  { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  {
-    currency: Currency.GRAM,
-    xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685",
-    teamOwner: Team.BST,
-  },
-  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646", teamOwner: Team.BST },
-  {
-    currency: Currency.BASE,
-    xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228",
-    portfolioAssetName: Currency.ETH.name,
-  },
-  { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298", teamOwner: Team.BST },
+  { currency: Currency.BTC },
+  { currency: Currency.ETH },
+  { currency: Currency.ETC },
+  { currency: Currency.XRP, teamOwner: Team.BST },
+  { currency: Currency.DOT, portfolioAssetName: Currency.DOT.name },
+  { currency: Currency.TRX },
+  { currency: Currency.ADA, teamOwner: Team.BST },
+  { currency: Currency.XLM },
+  { currency: Currency.BCH },
+  { currency: Currency.ALGO, teamOwner: Team.BST },
+  { currency: Currency.ATOM },
+  { currency: Currency.XTZ, teamOwner: Team.BST },
+  { currency: Currency.SOL },
+  { currency: Currency.GRAM, teamOwner: Team.BST },
+  { currency: Currency.APT, teamOwner: Team.BST },
+  { currency: Currency.BASE, portfolioAssetName: Currency.ETH.name },
+  { currency: Currency.ZEC, teamOwner: Team.BST },
 ];
 
 for (const currency of currencies) {
@@ -68,13 +50,14 @@ for (const currency of currencies) {
           currencyId: currency.currency.id,
           extraTags: currency.currency === Currency.ETH ? ["@smoke"] : [],
         }),
-        annotation: {
-          type: "TMS",
-          description: currency.xrayTicket,
-        },
+        annotation: [
+          xrayDataset(ADD_ACCOUNT_XRAY_TEST, {
+            Currency: currency.currency.testLabel,
+          }),
+        ],
       },
       async ({ app, userdataFile }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await addTmsLink(xrayKeys(test.info().annotations));
         const firstAccountName = `${currency.currency.name} 1`;
 
         await app.portfolio.waitForPortfolioEmptyState();
@@ -126,6 +109,8 @@ for (const currency of currencies) {
   });
 }
 
+// Aleo is a dataset row like any other coin, but keeps its own describe: the flow adds a
+// view-key warning and confirmation, and it needs a feature flag.
 test.describe("Add account", () => {
   test.use({
     teamOwner: Team.BST,
@@ -143,13 +128,14 @@ test.describe("Add account", () => {
     `[${Currency.ALEO.testLabel}] - Add account`,
     {
       tag: buildTags({ currencyId: Currency.ALEO.id, skipLNS: true }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-4450, B2CQA-4451, B2CQA-4452",
-      },
+      annotation: [
+        xrayDataset(ADD_ACCOUNT_XRAY_TEST, {
+          Currency: Currency.ALEO.testLabel,
+        }),
+      ],
     },
     async ({ app, userdataFile }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addTmsLink(xrayKeys(test.info().annotations));
       const firstAccountName = `${Currency.ALEO.name} 1`;
 
       await app.portfolio.waitForPortfolioEmptyState();

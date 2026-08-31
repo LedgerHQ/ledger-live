@@ -578,7 +578,10 @@ jobs:
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
     needs: [prepare-devices, e2e-tests]
-    if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' }}
+    # A filtered run only covers some of a dataset's rows, and re-importing a partial set into a
+    # Test Execution REPLACES the iterations already there — measured: 3 iterations (one FAILED)
+    # became 0 and the test flipped to PASSED. So never publish a partial run.
+    if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' && inputs.test_filter == '' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
@@ -591,18 +594,26 @@ jobs:
       - name: Authenticate to Xray
         id: authenticate
         run: |
-          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
-          echo "xray_token=$response" >> "$GITHUB_OUTPUT"
+          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+          # The endpoint returns the JWT as a JSON string, so strip the surrounding quotes.
+          echo "::add-mask::$(echo "$response" | tr -d '"')"
+          echo "xray_token=$(echo "$response" | tr -d '"')" >> "$GITHUB_OUTPUT"
 
       - name: Publish report on Xray
         id: publish-xray
         run: |
-          response=$(curl -H "Content-Type: application/json" \
+          # Without --fail-with-body a rejected payload exits 0 and the whole execution is lost
+          # silently — the report is a single blob, so one bad entry loses every result.
+          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" \
                     -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
                     -X POST \
                     --data @e2e/desktop/artifacts/xray/xray-report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-          key=$(echo "$response" | jq -r '.key')
+          key=$(echo "$response" | jq -r '.key // empty')
+          if [ -z "$key" ]; then
+            echo "::error::Xray import returned no execution key: $response"
+            exit 1
+          fi
           echo "xray_key=$key" >> "$GITHUB_OUTPUT"
 
       - name: Write Xray report in summary
