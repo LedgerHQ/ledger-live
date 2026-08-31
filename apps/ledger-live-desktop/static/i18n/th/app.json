@@ -901,6 +901,9 @@
         "confirm" : "ยืนยัน"
       }
     },
+    "card" : {
+      "balanceLabel" : "Balance"
+    },
     "actions" : {
       "deposit" : "เพิ่มสเตเบิลคอยน์",
       "request" : "คำขอให้ชำระเงิน",
@@ -924,6 +927,38 @@
         "buy" : {
           "title" : "ซื้อ",
           "description" : "ซื้อสเตเบิลคอยน์ด้วยบัตรเครดิต"
+        }
+      }
+    },
+    "request" : {
+      "title" : "ส่งคำขอ {{asset}}",
+      "networkLabel" : "เครือข่าย {{network}}",
+      "saveDialogTitle" : "บันทึกบัตรที่ขอ",
+      "actions" : {
+        "share" : "แชร์",
+        "copy" : "คัดลอก",
+        "copied" : "คัดลอกแล้ว",
+        "save" : "บันทึก",
+        "verify" : "ตรวจสอบ"
+      },
+      "verifyAddress" : {
+        "introTitle" : "ตรวจสอบที่อยู่คริปโตของคุณ",
+        "introDescription" : "เพื่อป้องกัน Address Replacement Attack โปรดตรวจสอบที่อยู่คริปโตของคุณบนหน้าจอที่ปลอดภัยของอุปกรณ์ Ledger",
+        "verifyCta" : "ตรวจสอบทื่อยู่คริปโต",
+        "successTitle" : "ที่อยู่คริปโตที่แสดงบนหน้าจอที่ปลอดภัยของอุปกรณ์",
+        "nextStepsLabel" : "ขั้นตอนถัดไป",
+        "nextStepShare" : "แชร์ที่อยู่คริปโตของคุณผ่านแอปที่คุณต้องการ",
+        "nextStepMatch" : "ตรวจสอบให้แน่ใจว่าที่อยู่คริปโตที่แชร์ตรงกับที่อยู่คริปโตบนอุปกรณ์ Ledger ของคุณ",
+        "gotItCta" : "เข้าใจแล้ว",
+        "device" : {
+          "cancelledTitle" : "การตรวจสอบที่อยู่คริปโตถูกยกเลิก",
+          "cancelledDescription" : "คุณปฏิเสธที่อยู่คริปโตบนอุปกรณ์ของคุณ คุณสามารถเลือกแสดงเพื่อตรวจสอบอีกครั้งได้",
+          "mismatchTitle" : "ที่อยู่คริปโตไม่ตรงกัน",
+          "mismatchDescription" : "ที่อยู่คริปโตที่แสดงบนอุปกรณ์ของคุณต่างจากที่ร้องขอ ห้ามแชร์ที่อยู่คริปโตนี้",
+          "unsupportedTitle" : "การตรวจสอบไม่พร้อมใช้งาน",
+          "unsupportedDescription" : "แอปของอุปกรณ์นี้ไม่สามารถแสดงที่อยู่คริปโตสำหรับการตรวจสอบบนอุปกรณ์ได้",
+          "retryCta" : "แสดงที่อยู่คริปโตอีกครั้ง",
+          "closeCta" : "ปิด"
         }
       }
     }
@@ -2530,6 +2565,8 @@
     },
     "placeholder" : "ป้อน Address หรือ ENS",
     "placeholderNoENS" : "ป้อน Address",
+    "placeholderWithContacts" : "ป้อนที่อยู่ ENS หรือรายชื่อ",
+    "placeholderNoEnsWithContacts" : "ป้อนที่อยู่ หรือรายชื่อ",
     "recent" : "ล่าสุด",
     "myAccounts" : "บัญชีของฉัน",
     "sendTo" : "ส่งไปยัง {{address}}",
@@ -6510,7 +6547,7 @@
           },
           "dualValidator" : {
             "title" : "ระบบความปลอดภัยที่ต้องมีผู้ตรวจสอบสองราย",
-            "body" : "ธุรกรรมจำเป็นต้องได้รับการลงนามร่วมกันจาก Ledger และ Kiln ไม่มีฝ่ายใดฝ่ายหนึ่งที่สามารถดำเนินการแทนคุณได้เพียงลำพัง"
+            "body" : "การทำรายการต้องมีการลงนามร่วมกันจากทั้ง Ledger และ Kiln ซึ่งทั้งสองฝ่ายไม่สามารถดำเนินการแทนคุณโดยลำพังได้"
           },
           "tokenLiability" : {
             "title" : "มาตรฐานความรับผิดชอบของโทเคน ⚠️",
@@ -7227,6 +7264,9 @@
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "ไม่รองรับการส่งไปยังที่อยู่คริปโตของ Sapling"
     },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "จำนวนน้อยเกินไปที่จะบรอดแคสต์ (ขั้นต่ำ {{minimumZatoshis}} Satoshis)"
+    },
     "InvalidNonce" : {
       "title" : "จำเป็นต้องมีตัวเลข Nonce"
     },
@@ -7866,10 +7906,20 @@
       "title" : "จำนวนขั้นต่ำคือ 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "ควรเหลืออย่างน้อย 1 SUI ไว้ในสเตค (Stake)"
+      "title" : "ยกเลิกการสเตคจำนวนทั้งหมด หรือเหลือสเตคไว้อย่างน้อย 1 SUI"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "รายละเอียดการสเตคไม่พร้อมใช้งาน กรุณาซิงค์บัญชีของคุณใหม่ จากนั้นลองอีกครั้ง"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "จำนวนที่เลือกเกินกว่าจำนวนที่สเตคไว้"
     },
     "SomeSuiForUnstake" : {
       "title" : "โปรดตรวจสอบให้แน่ใจว่าคุณมีอย่างน้อย 0.1 SUI ในวอลเล็ตของคุณเพื่อครอบคลุมค่าธรรมเนียมเครือข่ายในครั้งต่อไปและจะสามารถ Undelegate การสเตคของคุณได้"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "อัปเดตแอป Sui ของคุณ",
+      "description" : "แอป Ledger Sui ของคุณไม่สามารถลงนามรายการโอนจากยอดเงินที่มีอยู่ของ SUI ได้ อัปเดตแอป Sui บนอุปกรณ์ Ledger ของคุณแล้วลองอีกครั้ง"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "ยอดคงเหลือ (ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ",
@@ -8632,6 +8682,11 @@
       "title" : "ความปลอดภัยที่มากขึ้น ควบคุมได้มากขึ้น",
       "description" : "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัย",
       "cta" : "เรียนรู้เพิ่มเติม"
+    },
+    "profile" : {
+      "title" : "อัปเกรดอุปกรณ์ของคุณ",
+      "description" : "หน้าจอใหญ่ขึ้น ความปลอดภัยมากขึ้น พร้อมส่วนลด {{discount}}%",
+      "cta" : "สำรวจ"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8699,12 @@
       "title" : "ตรวจพบสแกมก่อนลงนาม",
       "subtitle" : "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัยขั้นสูงที่ช่วยตรวจจับภัยคุกคามแบบเรียลไทม์",
       "cta" : "เรียนรู้เพิ่มเติม"
+    },
+    "recoverTrigger" : {
+      "title" : "อยากกู้คืนได้แบบไร้กังวลไหม?",
+      "subtitle" : "ถึงแม้ Nano S จะมีความปลอดภัยสูง แต่ก็ไม่รองรับบริการ Ledger Recover อัปเกรดเป็นรุ่นที่ใหม่กว่าเพื่อสามารถสำรองข้อมูลวอลเล็ตด้วยพาสปอร์ตของคุณได้",
+      "cta" : "เรียนรู้เพิ่มเติม",
+      "dismiss" : "ไม่ใช่ตอนนี้"
     }
   },
   "modularAssetDrawer" : {
@@ -8747,7 +8808,8 @@
     "title" : "หน้าหลัก",
     "today" : "วันนี้",
     "carousel" : {
-      "title" : "สำหรับคุณ"
+      "title" : "สำหรับคุณ",
+      "closeAll" : "ปิดทั้งหมด"
     },
     "addAccountCta" : "เพิ่มบัญชีคริปโต",
     "noBalanceTitle" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ",
@@ -8930,7 +8992,7 @@
       "privateBalance" : "ยอดคงเหลือในบัญชีส่วนบุคคล",
       "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ",
       "privateBalanceWarning" : "ยอดคงเหลือส่วนตัวไม่รวมเงินทุนที่ได้รับการปกป้องโดย Sapling และ Orchard",
-      "privateBalanceMaturing" : "ใช้จ่ายได้ {{spendable}} · อยู่ระหว่างรอครบกำหนด {{maturing}}"
+      "privateBalanceMaturing" : "ยอดคงเหลือส่วนตัว: สามารถใช้จ่ายได้ {{spendable}} · อยู่ระหว่างรอครบกำหนด {{maturing}}"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9025,10 @@
             "message" : "ยอดคงเหลือส่วนตัวยังไม่ได้ทำการซิงค์",
             "cta" : "ดำเนินการซิงค์ต่อ"
           },
+          "failed" : {
+            "message" : "การซิงค์ยอดคงเหลือส่วนตัวล้มเหลว",
+            "cta" : "ดำเนินการซิงค์ต่อ"
+          },
           "running" : {
             "message" : "ยอดคงเหลือส่วนตัวกำลังทำการซิงค์ ({{progress}}%)",
             "timeRemaining" : "ต้องใช้เวลาอีกประมาณ: {{hours}}:{{minutes}}"
@@ -8985,7 +9051,8 @@
         "stopSync" : "หยุดการซิงค์",
         "upToDate" : "เป็นปัจจุบัน",
         "lastSync" : "ซิงค์ล่าสุด: {{date}}",
-        "estimatedTimeRemaining" : "เวลาที่เหลือโดยประมาณ: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "เวลาที่เหลือโดยประมาณ: {{hours}}:{{minutes}}",
+        "syncFailed" : "การซิงค์ยอดคงเหลือส่วนตัวล้มเหลว"
       },
       "datepicker" : {
         "label" : "ระดับบล็อก (Birthday Height)",
@@ -9363,6 +9430,10 @@
     },
     "addAddressReview" : {
       "title" : "ตรวจสอบที่อยู่คริปโต",
+      "addressLabel" : "ที่อยู่คริปโต",
+      "currencyLabel" : "สกุลเงิน",
+      "networkLabel" : "เครือข่าย",
+      "nameLabel" : "ชื่อที่อยู่",
       "continue" : "ยืนยันที่อยู่คริปโต",
       "successTitle" : "บันทึกที่อยู่คริปโตแล้ว",
       "close" : "ปิด"
@@ -9443,6 +9514,7 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
+      "activate" : "เปิด Ledger Sync",
       "dismiss" : "เข้าใจแล้ว"
     },
     "featureIntroduction" : {
@@ -9532,8 +9604,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "อุปกรณ์อยู่ในสถานะล็อก",
-        "description" : "ปลดล็อกอุปกรณ์ของคุณเพื่อดำเนินการต่อ"
+        "title" : "ปลดล็อกอุปกรณ์ Ledger ของคุณ จากนั้นเลือก ลองอีกครั้ง ด้านล่าง"
       },
       "unlockDevice" : {
         "title" : "ปลดล็อก {{productName}} ของคุณ"
@@ -9545,16 +9616,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
-        "description" : "Ledger ของคุณถูกตัดการเชื่อมต่อแล้ว กรุณาตรวจสอบให้แน่ใจว่าคุณได้เปิดเครื่องและทำการเสียบสายต่อเรียบร้อยแล้ว"
+        "title" : "อุปกรณ์ Ledger ถูกตัดการเชื่อมต่อแล้ว",
+        "description" : "กรุณาตรวจสอบให้แน่ใจว่าคุณได้เปิดเครื่องและทำการเสียบสายต่อเรียบร้อยแล้ว"
       },
       "intentError" : {
         "title" : "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",
-        "description" : "เกิดข้อผิดพลาด โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+        "description" : "ลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
       },
       "invalidOperation" : {
-        "title" : "สถานะไม่ถูกต้อง",
-        "description" : "เกิดข้อผิดพลาด โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+        "title" : "เกิดข้อผิดพลาด",
+        "description" : "ลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
       }
     },
     "initialization" : {
@@ -9570,43 +9641,43 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "การดำเนินการถูกปฏิเสธบนอุปกรณ์"
+          "title" : "การดำเนินการถูกปฏิเสธบนอุปกรณ์ Ledger"
         },
         "deviceBusy" : {
-          "title" : "มีการดำเนินการรออยู่บนอุปกรณ์ Ledger ของคุณ",
-          "description" : "โปรดดำเนินการให้เสร็จสิ้น จากนั้นเลือก Retry (ลองอีกครั้ง)"
+          "title" : "ต้องดำเนินการบนอุปกรณ์ Ledger ของคุณ",
+          "description" : "ดำเนินการให้เสร็จสิ้นบนอุปกรณ์ของคุณ จากนั้นเลือก “ลองใหม่” ด้านล่าง"
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Ledger ของคุณยังไม่พร้อมใช้งาน",
-          "description" : "คุณต้องทำการตั้งค่า {{productName}} ของคุณก่อน เราจะแนะนำคุณตลอดกระบวนการติดตั้งอุปกรณ์"
+          "title" : "อุปกรณ์ Ledger ของคุณต้องได้รับการตั้งค่า",
+          "description" : "ตั้งค่าเพื่อดำเนินการต่อ"
         },
         "unsupportedFirmwareVersion" : {
           "title" : "จำเป็นต้องมีการอัปเดต Ledger OS ก่อน"
         },
         "unsupportedApplication" : {
           "title" : "ฟีเจอร์ที่ไม่รองรับ",
-          "description" : "แอปที่ต้องใช้สำหรับการดำเนินการนี้ไม่พร้อมใช้งานบนอุปกรณ์ Ledger ของคุณ โปรดติดต่อ Ledger Support เพื่อขอรับรายละเอียด"
+          "description" : "อุปกรณ์ Ledger ของคุณไม่รองรับแอปที่ต้องใช้กับรายการนี้ โปรดติดต่อ Ledger Support สำหรับรายละเอียด"
         },
         "unsupportedFeature" : {
           "title" : "ฟีเจอร์ที่ไม่รองรับ",
-          "description" : "แอปที่ต้องใช้สำหรับการดำเนินการนี้ไม่พร้อมใช้งานบนอุปกรณ์ Ledger ของคุณ โปรดติดต่อ Ledger Support เพื่อขอรับรายละเอียด"
+          "description" : "อุปกรณ์ Ledger ของคุณไม่รองรับแอปที่ต้องใช้กับรายการนี้ โปรดติดต่อ Ledger Support สำหรับรายละเอียด"
         },
         "wrongDeviceForAccount" : {
-          "title" : "Secret Recovery Phrase ไม่ถูกต้อง",
-          "description" : "อุปกรณ์ Ledger นี้ไม่ได้ถูกตั้งค่าด้วยวลีกู้คืนที่เชื่อมกับบัญชีที่เลือกไว้ โปรดตรวจสอบว่าคุณกำลังใช้อุปกรณ์ถูกเครื่อง"
+          "title" : "ใช้อุปกรณ์ Ledger เครื่องเดิมที่คุณใช้ตั้งค่าบัญชีนี้",
+          "description" : "อุปกรณ์ Ledger นี้ไม่ได้ถูกตั้งค่าด้วย Secret Recovery Phrase ที่เชื่อมโยงกับบัญชีคริปโตที่เลือก"
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "หน่วยความจำของอุปกรณ์ไม่เพียงพอ",
-          "description" : "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอ โปรดถอนการติดตั้งแอปและลองอีกครั้ง",
+          "title" : "ถอนการติดตั้งแอปบางตัวออก เพื่อเพิ่มพื้นที่หน่วยความจำในอุปกรณ์ Ledger",
+          "description" : "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอ",
           "apps" : "แอปที่ต้องจัดการ: {{appNames}}"
         }
       },
       "cta" : {
         "openMyLedger" : "เปิด My Ledger",
         "goToMyLedger" : "ไปที่ My Ledger",
-        "setupDevice" : "ติดตั้งอุปกรณ์",
+        "setupDevice" : "ตั้งค่าอุปกรณ์ Ledger",
         "updateLedgerOs" : "อัปเดต Ledger OS",
         "cancelOperation" : "ยกเลิกการดำเนินการ",
         "contactLedgerSupport" : "ติดต่อ Ledger Support"
@@ -9623,7 +9694,7 @@
           "title" : "กำลังโหลด"
         },
         "connecting" : {
-          "title" : "กำลังโหลด"
+          "title" : "กำลังเชื่อมต่อกับอุปกรณ์ Ledger ของคุณ"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9726,7 @@
         },
         "noKnownDevice" : {
           "title" : "ต้องใช้อุปกรณ์ Ledger",
-          "description" : "หากต้องการดำเนินการต่อ ให้ทำการติดตั้งหรือเชื่อมต่อกับอุปกรณ์ลงนาม Ledger ของคุณ",
+          "description" : "หากต้องการดำเนินการต่อ ให้ตั้งค่าหรือเชื่อมต่ออุปกรณ์ Ledger ของคุณ",
           "connectLedgerDevice" : "เชื่อมต่อกับอุปกรณ์ Ledger",
           "noLedgerDevice" : "ฉันไม่มีอุปกรณ์ Ledger"
         },
