@@ -6,7 +6,7 @@ import ModalLock from "~/components/ModalLock";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
-import { LoadingContent } from "./LoadingContent";
+import { LoadingContent } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/LoadingContent";
 
 type LoadingStateProps = Readonly<{
   device: InitializerDevice;

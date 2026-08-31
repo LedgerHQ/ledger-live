@@ -9545,6 +9545,27 @@
     "explore": "Explore all Ledger devices"
   },
   "contacts": {
+    "deviceIntents": {
+      "registerExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "errors": {
+        "wrongDevice": {
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
+        },
+        "invalidData": {
+          "title": "This address can't be saved",
+          "description": "Your Ledger device rejected the contact details. Try again or contact Ledger Support if the issue continues."
+        },
+        "appVersionTooLow": {
+          "title": "App update required",
+          "description": "Update the app on your Ledger device to save contacts, then try again."
+        }
+      }
+    },
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
