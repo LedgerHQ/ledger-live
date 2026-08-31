@@ -11,4 +11,4 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 
 Each press now waits for the row's own container at 100% visibility, which proves
 the row is mounted and laid out. Anchoring the wait rather than lengthening a
-timeout or adding a retry, per `docs/add-or-update-e2e.md` rules 11 and 12.
+timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
