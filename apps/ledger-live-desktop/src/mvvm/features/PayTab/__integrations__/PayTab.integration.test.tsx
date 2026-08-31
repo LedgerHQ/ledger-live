@@ -69,6 +69,17 @@ function mockFundedPayStablecoins() {
   });
 }
 
+async function openBankTransferIntro() {
+  mockFundedPayStablecoins();
+  const { user } = renderWithMockedCounterValuesProvider(<PayTab />, {
+    initialState: fundedState,
+  });
+  await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
+  await user.click(await screen.findByText("Bank transfer"));
+  await screen.findByRole("heading", { name: "Send cash, receive stablecoin" });
+  return user;
+}
+
 type CapturedExecutor = {
   sourceFlow: string;
   intent: { input: { expectedAddress: string } };
@@ -222,6 +233,68 @@ describe("PayTab integration", () => {
 
     expect(await screen.findByTestId("pay-card-deposit-options")).toBeVisible();
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
+  });
+
+  it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
+    await openBankTransferIntro();
+
+    expect(screen.getByRole("heading", { name: "Send cash, receive stablecoin" })).toBeVisible();
+    expect(
+      screen.getByText("Transfer cash and receive stablecoins straight to your Ledger Wallet™."),
+    ).toBeVisible();
+    expect(screen.getByText("Receive transfers from any bank")).toBeVisible();
+    expect(screen.getByText("No hidden fees")).toBeVisible();
+    expect(screen.getByText("Put your money to work right away")).toBeVisible();
+    expect(screen.getByText("Provided by Noah")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Create an account" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Log in to Noah" })).toBeVisible();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
+    await openBankTransferIntro();
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "bank transfer",
+      buttonLocation: "deposit",
+      page: "Pay",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+  });
+
+  it("should navigate to Noah when Create an account is clicked", async () => {
+    const user = await openBankTransferIntro();
+    await user.click(screen.getByRole("button", { name: "Create an account" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=createAccount",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "create an account",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+    expect(mockedTrack).not.toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+  });
+
+  it("should navigate to Noah when Log in to Noah is clicked", async () => {
+    const user = await openBankTransferIntro();
+    await user.click(screen.getByRole("button", { name: "Log in to Noah" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=logIn",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "log in to noah",
+      flow: "C2S",
+      page: "cash to stable",
+    });
   });
 
   it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {

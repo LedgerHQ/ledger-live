@@ -7,12 +7,16 @@ const defaultProps: BankTransferIntroViewProps = {
   isOpen: true,
   title: "Convert cash to stablecoins",
   description: "Transfer USD or EUR from your bank.",
-  continueLabel: "Continue",
+  createAccountLabel: "Create an account",
+  logInLabel: "Log in",
+  providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
   bottomInset: 0,
   onShown: jest.fn(),
-  onContinuePress: jest.fn(),
+  onCreateAccountPress: jest.fn(),
+  onLogInPress: jest.fn(),
   onClosePress: jest.fn(),
+  onDismiss: jest.fn(),
 };
 
 describe("BankTransferIntroView (Native)", () => {
@@ -47,7 +51,7 @@ describe("BankTransferIntroView (Native)", () => {
     render(<BankTransferIntroView {...defaultProps} />);
 
     expect(screen.getByText("Convert cash to stablecoins")).toBeTruthy();
-    expect(screen.getByLabelText("Continue")).toBeTruthy();
+    expect(screen.getByLabelText("Create an account")).toBeTruthy();
   });
 
   it("reserves the bottom safe area so the CTA stays visible", () => {
@@ -57,14 +61,14 @@ describe("BankTransferIntroView (Native)", () => {
     expect(content.props.style.paddingBottom).toBeGreaterThanOrEqual(48);
   });
 
-  it("continues once even if the CTA is pressed repeatedly", () => {
-    const onContinuePress = jest.fn();
-    render(<BankTransferIntroView {...defaultProps} onContinuePress={onContinuePress} />);
+  it("creates an account once even if the CTA is pressed repeatedly", () => {
+    const onCreateAccountPress = jest.fn();
+    render(<BankTransferIntroView {...defaultProps} onCreateAccountPress={onCreateAccountPress} />);
 
-    const cta = screen.getByLabelText("Continue");
+    const cta = screen.getByLabelText("Create an account");
     fireEvent.press(cta);
     fireEvent.press(cta);
 
-    expect(onContinuePress).toHaveBeenCalledTimes(1);
+    expect(onCreateAccountPress).toHaveBeenCalledTimes(1);
   });
 });

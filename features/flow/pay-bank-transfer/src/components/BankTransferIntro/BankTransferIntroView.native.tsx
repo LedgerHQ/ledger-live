@@ -18,11 +18,14 @@ export function BankTransferIntroView({
   isOpen,
   title,
   description,
-  continueLabel,
+  createAccountLabel,
+  logInLabel,
+  providedBy,
   rows,
   bottomInset,
   onShown,
-  onContinuePress,
+  onCreateAccountPress,
+  onLogInPress,
 }: BankTransferIntroViewProps) {
   const acted = useRef(false);
   const onShownRef = useRef(onShown);
@@ -35,13 +38,21 @@ export function BankTransferIntroView({
     }
   }, [isOpen]);
 
-  const handleContinue = useCallback(() => {
+  const actOnce = useCallback((action: () => void) => {
     if (acted.current) {
       return;
     }
     acted.current = true;
-    onContinuePress();
-  }, [onContinuePress]);
+    action();
+  }, []);
+
+  const handleCreateAccount = useCallback(() => {
+    actOnce(onCreateAccountPress);
+  }, [actOnce, onCreateAccountPress]);
+
+  const handleLogIn = useCallback(() => {
+    actOnce(onLogInPress);
+  }, [actOnce, onLogInPress]);
 
   return (
     <BottomSheetView
@@ -79,15 +90,32 @@ export function BankTransferIntroView({
                 );
               })}
             </Box>
+            <Text
+              typography="body3"
+              lx={{ color: "muted", textAlign: "center" }}
+              testID="pay-bank-transfer-intro-provided-by"
+            >
+              {providedBy}
+            </Text>
             <Button
               appearance="base"
               size="lg"
               isFull
-              onPress={handleContinue}
-              accessibilityLabel={continueLabel}
-              testID="pay-bank-transfer-intro-continue"
+              onPress={handleCreateAccount}
+              accessibilityLabel={createAccountLabel}
+              testID="pay-bank-transfer-intro-create-account"
             >
-              {continueLabel}
+              {createAccountLabel}
+            </Button>
+            <Button
+              appearance="gray"
+              size="lg"
+              isFull
+              onPress={handleLogIn}
+              accessibilityLabel={logInLabel}
+              testID="pay-bank-transfer-intro-log-in"
+            >
+              {logInLabel}
             </Button>
           </Box>
         </>

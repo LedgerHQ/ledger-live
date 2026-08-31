@@ -50,7 +50,9 @@ const Bank = () => {
 
   function handleClose() {
     navigate(-1);
-    dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
+    if (!noahAuth) {
+      dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
+    }
   }
 
   return (

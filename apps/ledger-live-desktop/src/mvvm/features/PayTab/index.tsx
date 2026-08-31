@@ -3,6 +3,7 @@ import { Balance } from "@features/flow-pay-balance";
 import { Contacts } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
 import { DepositOptions } from "@features/flow-pay-deposit";
+import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
@@ -43,6 +44,7 @@ const PayTab = () => {
       <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
 
       <DepositOptions {...deposit.depositOptions} />
+      <BankTransferIntro {...deposit.bankTransferIntro} />
       <RequestReceive {...request.requestReceive} />
 
       <VerifyAddress {...verify.verifyAddress} />
