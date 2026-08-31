@@ -88,4 +88,9 @@ jobs:
         shell: bash
         run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
 
-
+      - name: Get affected packages and paths
+        id: nx-affected
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        with:
+          base: ${{ steps.clean-refs.outputs.base_ref }}
+          head: HEAD
