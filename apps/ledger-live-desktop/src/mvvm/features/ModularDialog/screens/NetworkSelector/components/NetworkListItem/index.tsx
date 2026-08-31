@@ -1,4 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, {
+  useCallback,
+  useState,
+  type KeyboardEvent,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import {
   ListItem,
   ListItemTitle,
@@ -13,7 +19,6 @@ import {
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTranslation } from "react-i18next";
-import type { ReactElement, ReactNode } from "react";
 
 export type NetworkListItemData = {
   currency: CryptoOrTokenCurrency;
@@ -42,6 +47,15 @@ export const NetworkListItem = ({
     setIsTooltipOpen(true);
   }, []);
 
+  const handleDisabledItemKeyDown = useCallback((event: KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    setIsTooltipOpen(true);
+  }, []);
+
   const listItem = (
     <ListItem
       onClick={disabled ? undefined : onClick}
@@ -49,7 +63,6 @@ export const NetworkListItem = ({
       aria-disabled={disabled || undefined}
       data-testid={`network-item-name-${currency.name}`}
       className="-outline-offset-2"
-      aria-hidden={disabled || undefined}
     >
       <ListItemLeading>
         <SquaredCryptoIcon size={48} ledgerId={currency.id} ticker={currency.ticker} />
@@ -77,8 +90,8 @@ export const NetworkListItem = ({
           tabIndex={0}
           role="button"
           aria-disabled
-          aria-label={currency.name}
           onClick={handleDisabledItemClick}
+          onKeyDown={handleDisabledItemKeyDown}
         >
           {listItem}
         </span>

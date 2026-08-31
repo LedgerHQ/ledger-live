@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, type KeyboardEvent } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
   ListItem,
@@ -71,6 +71,15 @@ export const AssetListItem = ({
     setIsTooltipOpen(true);
   }, []);
 
+  const handleDisabledItemKeyDown = useCallback((event: KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    setIsTooltipOpen(true);
+  }, []);
+
   const handleClick = () => {
     if (disabled) return;
     onClick({ name, ticker, id });
@@ -80,9 +89,9 @@ export const AssetListItem = ({
     <ListItem
       className="-outline-offset-2"
       disabled={disabled}
-      onClick={handleClick}
+      onClick={disabled ? undefined : handleClick}
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
-      aria-hidden={disabled || undefined}
+      aria-disabled={disabled || undefined}
     >
       <ListItemLeading>
         <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
@@ -115,8 +124,8 @@ export const AssetListItem = ({
           tabIndex={0}
           role="button"
           aria-disabled
-          aria-label={name}
           onClick={handleDisabledItemClick}
+          onKeyDown={handleDisabledItemKeyDown}
         >
           {listItem}
         </span>
