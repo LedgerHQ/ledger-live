@@ -4579,7 +4579,11 @@
       "addContact": {
         "newContact": "Add a new contact",
         "existingContact": "Add to an existing contact",
-        "selectContact": "Select contact"
+        "selectContact": "Select contact",
+        "syncWallet": {
+          "title": "Sync your wallet to add a contact",
+          "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers."
+        }
       },
       "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
@@ -9245,6 +9249,10 @@
         "title": "Ledger Sync",
         "description": "Sync your accounts automatically, even when switching to a new phone.",
         "cta": "Turn on Ledger Sync"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "activation": {

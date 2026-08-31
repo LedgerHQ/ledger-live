@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ListItem,
@@ -8,6 +8,10 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { Contact, Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import { useSendFlowActions } from "../../context/SendFlowContext";
+import { WalletSyncView } from "./WalletSyncView";
 
 export type AddContactViewProps = Readonly<{
   onAddNewContact?: () => void;
@@ -15,7 +19,38 @@ export type AddContactViewProps = Readonly<{
 }>;
 
 export function AddContactView({ onAddNewContact, onAddToExistingContact }: AddContactViewProps) {
+  const [skipWalletSync, setSkipWalletSync] = useState(false);
+
   const { t } = useTranslation();
+  const { close } = useSendFlowActions();
+  const { shouldDisplayEntryPoint, entryPointComponent, openDrawer, onClickEntryPoint } =
+    useLedgerSyncEntryPointViewModel({
+      entryPoint: EntryPoint.sendFlow,
+      needEligibleDevice: true,
+      onboardingNewDevice: true,
+    });
+
+  const WalletSyncButton = entryPointComponent;
+
+  function handleOnWalletSyncPress() {
+    onClickEntryPoint();
+    close();
+    openDrawer();
+  }
+
+  function handleOnSkipWalletSyncPress() {
+    setSkipWalletSync(true);
+  }
+
+  if (shouldDisplayEntryPoint && !skipWalletSync) {
+    return (
+      <WalletSyncView
+        WalletSyncButton={WalletSyncButton}
+        onWalletSyncPress={handleOnWalletSyncPress}
+        onSkipWalletSyncPress={handleOnSkipWalletSyncPress}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col" data-testid="send-add-contact-step">

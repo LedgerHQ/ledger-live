@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -8,7 +8,12 @@ import {
 } from "LLM/components/QueuedDrawerFlow";
 import { AddContactView } from "LLM/features/Send/screens/AddContact/AddContactView";
 import { SelectContactStep } from "LLM/features/Send/screens/AddToExistingContact/SelectContactStep";
+import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { ContactNameStep } from "./components/ContactNameStep";
+import { WalletSyncStep } from "./components/WalletSyncStep";
 import { useAddNewContactAddressScreens } from "./hooks/useAddNewContactAddressScreens";
 import type {
   AddContactDrawerStep,
@@ -34,6 +39,10 @@ const CONTACT_STEP_OPTIONS = {
 const SELECT_STEP_OPTIONS = {
   hasBackButton: true,
   enablePanDownToClose: true,
+} as const satisfies QueuedDrawerFlowOptions;
+
+const WALLET_SYNC_STEP_OPTIONS = {
+  enableDynamicSizing: true,
 } as const satisfies QueuedDrawerFlowOptions;
 
 export type AddNewContactViewProps = AddNewContactViewModel;
@@ -83,11 +92,51 @@ export function AddNewContactView({
   onDrawerClose,
   ...contactDrawer
 }: AddNewContactViewProps) {
+  const [skipWalletSync, setSkipWalletSync] = useState(false);
   const addressScreens = useAddNewContactAddressScreens({
     addressPhase,
     bottomOffset: keyboardBottomOffset,
   });
-  const screens: QueuedDrawerFlowScreenRegistry<AddContactDrawerStep> = {
+  const {
+    shouldDisplayEntryPoint,
+    entryPointComponent,
+    openActivationDrawer,
+    isActivationDrawerVisible,
+    closeActivationDrawer,
+    onClickEntryPoint,
+  } = useLedgerSyncEntryPointViewModel({
+    entryPoint: EntryPoint.sendFlow,
+    page: "SendFlow",
+  });
+
+  const WalletSyncButton = entryPointComponent;
+
+  function handleOnWalletSyncPress() {
+    onClickEntryPoint({ page: "SendFlow" });
+    onDrawerClose();
+    openActivationDrawer();
+  }
+
+  function handleOnSkipWalletSyncPress() {
+    setSkipWalletSync(true);
+  }
+
+  function handleOnDrawerClose() {
+    setSkipWalletSync(false);
+    onDrawerClose();
+  }
+
+  const screens: QueuedDrawerFlowScreenRegistry<"walletSync" | AddContactDrawerStep> = {
+    walletSync: {
+      content: (
+        <WalletSyncStep
+          WalletSyncButton={WalletSyncButton}
+          onWalletSyncPress={handleOnWalletSyncPress}
+          onSkipWalletSyncPress={handleOnSkipWalletSyncPress}
+        />
+      ),
+      options: WALLET_SYNC_STEP_OPTIONS,
+    },
     chooser: {
       content: (
         <AddContactChooserStep
@@ -129,14 +178,21 @@ export function AddNewContactView({
   };
 
   return (
-    <QueuedDrawerFlow
-      currentStep={drawerStep}
-      defaultOptions={FLOW_OPTIONS}
-      isOpen={isDrawerOpen}
-      onBack={onDrawerBack}
-      onClose={onDrawerClose}
-      screens={screens}
-      testID="send-add-new-contact-drawer"
-    />
+    <>
+      <QueuedDrawerFlow
+        currentStep={shouldDisplayEntryPoint && !skipWalletSync ? "walletSync" : drawerStep}
+        defaultOptions={shouldDisplayEntryPoint && !skipWalletSync ? {} : FLOW_OPTIONS}
+        isOpen={isDrawerOpen}
+        onBack={onDrawerBack}
+        onClose={handleOnDrawerClose}
+        screens={screens}
+        testID="send-add-new-contact-drawer"
+      />
+      <ActivationDrawer
+        startingStep={Steps.Activation}
+        isOpen={isActivationDrawerVisible}
+        handleClose={closeActivationDrawer}
+      />
+    </>
   );
 }

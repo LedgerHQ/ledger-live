@@ -2619,7 +2619,11 @@
     "addContact": {
       "newContact": "Add a new contact",
       "existingContact": "Add to an existing contact",
-      "selectContact": "Select contact"
+      "selectContact": "Select contact",
+      "syncWallet": {
+        "title": "Sync your wallet to add a contact",
+        "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers"
+      }
     },
     "relativeDate": {
       "justNow": "Just now",
@@ -8656,6 +8660,10 @@
       },
       "onboarding": {
         "title": "Sync with another Ledger Wallet app"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "manage": {
