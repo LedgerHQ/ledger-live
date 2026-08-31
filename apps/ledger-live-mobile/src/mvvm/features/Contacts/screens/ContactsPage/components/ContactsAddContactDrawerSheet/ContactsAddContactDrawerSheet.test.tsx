@@ -162,12 +162,30 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("should pass the shared keyboard inset to the dynamic drawer", () => {
+  it("should clear the keyboard by the same gap the other contact drawers leave on iOS", () => {
+    Platform.OS = "ios";
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 356 });
+  });
+
+  it("should pass the shared keyboard inset without the iOS gap on Android", () => {
+    Platform.OS = "android";
     mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
 
     render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
 
     expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 324 });
+  });
+
+  it("should reserve no keyboard room while the keyboard is hidden", () => {
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: false, keyboardHeight: 0 });
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 24 });
   });
 
   it("should omit the keyboard inset when native resize handles the keyboard", () => {

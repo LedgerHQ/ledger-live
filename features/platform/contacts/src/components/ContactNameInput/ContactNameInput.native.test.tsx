@@ -37,10 +37,10 @@ describe("ContactNameInput", () => {
     expect(screen.getByText("3/32")).toBeVisible();
   });
 
-  it("should focus on mount by default", () => {
+  it("should leave the field unfocused unless a host asks for focus", () => {
     render(<ContactNameInput value="" placeholder="Contact name" onChangeText={jest.fn()} />);
 
-    expect(mockFocus).toHaveBeenCalledTimes(1);
+    expect(mockFocus).not.toHaveBeenCalled();
   });
 
   it("should stay unfocused while the host withholds focus, then focus once it is granted", () => {

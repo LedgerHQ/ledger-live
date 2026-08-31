@@ -14,12 +14,14 @@ export function ContactsAddContactDrawerSheet({
   ...contentProps
 }: AddContactAppAdapterResult): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { keyboardHeight } = useKeyboardVisible({
+  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
-  const keyboardInset = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-    ? keyboardHeight
-    : 0;
+  const iosKeyboardGap = 32;
+  const keyboardInset =
+    isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
+      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
+      : 0;
   const [hasOpened, setHasOpened] = useState(false);
   const handleOpened = useCallback(() => setHasOpened(true), []);
   const handleClose = useCallback(() => {

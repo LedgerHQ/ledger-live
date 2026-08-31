@@ -76,9 +76,10 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
+  const iosKeyboardGap = 32;
   const keyboardBottomOffset =
     isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
-      ? keyboardHeight
+      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
       : 0;
   const [drawerOrigin, setDrawerOrigin] = useState<AddContactDrawerOrigin | null>(null);
   const closeAfterSave = useCallback(() => {
