@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
+import { selectContacts } from "@domain/entity-contact";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { truncateAddress } from "LLD/features/History/utils/truncateAddress";
@@ -9,12 +11,16 @@ export type AddressDisplayResult = {
   displayName: string;
   matchingAccount: AccountLike | undefined;
   accountName: string | undefined;
+  contactName: string | undefined;
+  contactAddressLabel: string | undefined;
 };
 
 const EMPTY_RESULT: AddressDisplayResult = {
   displayName: "",
   matchingAccount: undefined,
   accountName: undefined,
+  contactName: undefined,
+  contactAddressLabel: undefined,
 };
 
 function useMatchingAccount(address: string, currencyId: string): AccountLike | undefined {
@@ -30,9 +36,18 @@ function useMatchingAccount(address: string, currencyId: string): AccountLike | 
   }, [allAccounts, address, currencyId]);
 }
 
+function useMatchingContact(address: string, currencyId: string) {
+  const contacts = useSelector(selectContacts);
+
+  return useMemo(
+    () => (address ? findMatchedContact(contacts, address, currencyId) : undefined),
+    [contacts, address, currencyId],
+  );
+}
+
 /**
  * Resolves the best display label for a blockchain address.
- * Priority: Ledger account name > truncated address.
+ * Priority: Ledger account name > contact name > truncated address.
  *
  * @param address - raw blockchain address
  * @param currencyId - main currency id (use parentCurrency.id for tokens)
@@ -40,12 +55,20 @@ function useMatchingAccount(address: string, currencyId: string): AccountLike | 
 export function useAddressDisplay(address: string, currencyId: string): AddressDisplayResult {
   const matchingAccount = useMatchingAccount(address, currencyId);
   const accountName = useMaybeAccountName(matchingAccount);
+  const matchingContact = useMatchingContact(address, currencyId);
 
   return useMemo(() => {
     if (!address) return EMPTY_RESULT;
 
-    const displayName = accountName ?? truncateAddress(address);
+    const contactName = matchingContact?.contactName;
+    const displayName = accountName ?? contactName ?? truncateAddress(address);
 
-    return { displayName, matchingAccount, accountName };
-  }, [address, matchingAccount, accountName]);
+    return {
+      displayName,
+      matchingAccount,
+      accountName,
+      contactName,
+      contactAddressLabel: matchingContact?.addressLabel,
+    };
+  }, [address, matchingAccount, accountName, matchingContact]);
 }

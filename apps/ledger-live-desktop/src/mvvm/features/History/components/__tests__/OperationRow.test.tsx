@@ -13,8 +13,8 @@ jest.mock("LLD/components/Cells/BalanceCell", () => ({
 jest.mock("LLD/components/Cells/CounterValueCell", () => ({
   CounterValueCell: () => null,
 }));
-jest.mock("../OperationCounterpartyLabel", () => ({
-  OperationCounterpartyLabel: () => null,
+jest.mock("../OperationCounterpartyCell", () => ({
+  OperationCounterpartyCell: () => null,
 }));
 
 const tezosCurrency = getCryptoCurrencyById("tezos");
