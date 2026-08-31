@@ -7,6 +7,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
+import { urls } from "~/utils/urls";
 import { StyleSheet, View } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
@@ -210,9 +211,7 @@ function Delegations({ account }: Props) {
           title={t("account.delegation.info.title")}
           image={<IlluRewards style={styles.illustration} />}
           description={t("mina.stakeBanner.description")}
-          infoUrl={
-            "https://minaprotocol.com/blog/mina-token-holders-everything-you-need-to-know-about-staking"
-          }
+          infoUrl={urls.minaStaking}
           infoTitle={t("account.delegation.info.title")}
           onPress={onDelegate}
           ctaTitle={t("account.delegation.info.cta")}

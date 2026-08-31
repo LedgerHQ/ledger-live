@@ -1,6 +1,5 @@
 import { MinaAccount, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -23,10 +22,6 @@ type Props = CompositeScreenProps<
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-function isMinaAccount(account: AccountLike): account is MinaAccount {
-  return account.type === "Account";
-}
-
 function StakingValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -36,10 +31,10 @@ function StakingValidator({ navigation, route }: Props) {
   invariant(account.type === "Account", "account must be of type Account");
 
   const unit = useAccountUnit(account);
-  const minaResources = isMinaAccount(account) ? account.resources : undefined;
-  const blockProducers = useMemo(() => {
-    return minaResources?.blockProducers || [];
-  }, [minaResources?.blockProducers]);
+  const blockProducers = useMemo(
+    () => (account as MinaAccount).resources?.blockProducers || [],
+    [account],
+  );
 
   // Sort validators by stake (highest first) and filter by search
   const validators = useMemo(() => {

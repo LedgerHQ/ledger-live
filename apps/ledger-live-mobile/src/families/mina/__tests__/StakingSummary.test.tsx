@@ -8,11 +8,14 @@ import { useSelector } from "~/context/hooks";
 const navigate = jest.fn();
 const createTransaction = jest.fn(() => ({ family: "mina" }));
 const updateTransaction = jest.fn((tx: object, patch: object) => ({ ...tx, ...patch }));
-const setTransaction = jest.fn();
+// Mirrors the hook reducer: it hands the current transaction to the updater.
+const applyTransactionUpdate = jest.fn((updater: (tx: unknown) => unknown) =>
+  updater(bridgeTransactionState.transaction),
+);
 
 let bridgeTransactionState: {
   transaction: unknown;
-  setTransaction: typeof setTransaction;
+  updateTransaction: typeof applyTransactionUpdate;
   status: { errors: Record<string, Error>; warnings: Record<string, Error> };
   bridgePending: boolean;
   bridgeError: Error | null;
@@ -171,7 +174,7 @@ describe("StakingFlow/02-Summary", () => {
     jest.clearAllMocks();
     bridgeTransactionState = {
       transaction,
-      setTransaction,
+      updateTransaction: applyTransactionUpdate,
       status: { errors: {}, warnings: {} },
       bridgePending: false,
       bridgeError: null,
@@ -200,8 +203,8 @@ describe("StakingFlow/02-Summary", () => {
   it("realigns the transaction recipient on the selected validator", () => {
     renderSummary();
 
+    expect(applyTransactionUpdate).toHaveBeenCalled();
     expect(updateTransaction).toHaveBeenCalledWith(transaction, { recipient: validator.address });
-    expect(setTransaction).toHaveBeenCalled();
   });
 
   it("continues to the device step with the prepared transaction", async () => {
@@ -227,7 +230,6 @@ describe("StakingFlow/02-Summary", () => {
 
     expect(navigate).toHaveBeenCalledWith(ScreenName.MinaStakingValidator, {
       accountId: account.id,
-      validator,
     });
   });
 

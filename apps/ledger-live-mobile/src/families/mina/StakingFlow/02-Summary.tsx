@@ -46,9 +46,8 @@ function StakingSummary({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    bridge,
-    () => {
+  const { transaction, updateTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(bridge, () => {
       const tx = bridge.createTransaction(account);
       return {
         account,
@@ -58,18 +57,13 @@ function StakingSummary({ navigation, route }: Props) {
           recipient: validator.address,
         }),
       };
-    },
-  );
+    });
 
-  /* eslint-disable react-hooks/exhaustive-deps */
+  // Picking another validator navigates back to this already-mounted screen with new params,
+  // so the recipient set when the transaction was created has to follow.
   useEffect(() => {
-    if (!transaction) return;
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        recipient: validator.address,
-      }),
-    );
-  }, [validator, account, setTransaction]);
+    updateTransaction(tx => bridge.updateTransaction(tx, { recipient: validator.address }));
+  }, [validator.address, bridge, updateTransaction]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "mina", "transaction mina");
@@ -111,8 +105,10 @@ function StakingSummary({ navigation, route }: Props) {
 
   const onChangeDelegator = useCallback(() => {
     rotateAnim.setValue(0);
-    navigation.navigate(ScreenName.MinaStakingValidator, route.params);
-  }, [rotateAnim, navigation, route.params]);
+    navigation.navigate(ScreenName.MinaStakingValidator, {
+      accountId: route.params.accountId,
+    });
+  }, [rotateAnim, navigation, route.params.accountId]);
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);

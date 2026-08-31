@@ -121,6 +121,8 @@ export const urls = {
   algorandStaking: "https://support.ledger.com/article/360015897740-zd",
   polkadotStaking: "https://support.ledger.com/article/360018131260-zd",
   multiversxStaking: "https://support.ledger.com/article/360016750819-zd",
+  minaStaking:
+    "https://minaprotocol.com/blog/mina-token-holders-everything-you-need-to-know-about-staking",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   stakingRewards: "https://support.ledger.com/article/5961622776861-zd",
   swap: {
