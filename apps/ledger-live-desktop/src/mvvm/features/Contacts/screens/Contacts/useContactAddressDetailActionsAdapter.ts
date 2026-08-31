@@ -1,11 +1,6 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
-  type ContactsDeleteAddressDialogProps,
-  type ContactsEditSignerDialogProps,
-  type ContactsEditSignerMismatchDialogProps,
-  type ContactAddressDetailDialogProps,
-  type ContactAddressDetailSendIntent,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -16,9 +11,16 @@ import {
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   useContactAddressEditAnalytics,
-  useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
+import {
+  type ContactsDeleteAddressDialogProps,
+  type ContactsEditSignerDialogProps,
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactAddressDetailDialogProps,
+  type ContactAddressDetailSendIntent,
+  useContactsAddressDetailActionsPorts,
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDialogProps,

@@ -1,15 +1,17 @@
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactsDeleteContactDialogProps,
-  type ContactsEditSignerDialogProps,
-  type ContactsEditSignerMismatchDialogProps,
-  type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
   resolveContactDetailEditDeleteLabels,
   useContactDetailEditDeleteAnalytics,
   useContactDetailEditDeleteFlowBindings,
-  useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import {
+  type ContactsDeleteContactDialogProps,
+  type ContactsEditSignerDialogProps,
+  type ContactsEditSignerMismatchDialogProps,
+  type ContactDetailActionsLabels,
+  useContactsEditDeletePorts,
+} from "@features/flow-contacts-detail";
 import type { ContactsRenameContactDialogProps } from "@features/flow-contacts-edit-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";

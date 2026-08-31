@@ -6,7 +6,7 @@ import type {
   ContactsLedgerSyncIntroduction,
   ContactsLedgerSyncStatus,
 } from "@features/flow-contacts-introduction";
-import type { ContactDetailViewProps } from "./steps/Detail/types";
+import type { ContactDetailViewProps } from "@features/flow-contacts-detail";
 
 type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;

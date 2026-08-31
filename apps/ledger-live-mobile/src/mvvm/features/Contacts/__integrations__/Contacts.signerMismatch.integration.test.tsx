@@ -24,8 +24,13 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 }));
 
 jest.mock("@features/flow-contacts", () => {
-  const actual =
-    jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
+  return jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
+});
+
+jest.mock("@features/flow-contacts-detail", () => {
+  const actual = jest.requireActual<typeof import("@features/flow-contacts-detail")>(
+    "@features/flow-contacts-detail",
+  );
   const mismatchPort = actual.createMockContactSignerValidationPort({
     currentSignerId: "signer-b",
   });

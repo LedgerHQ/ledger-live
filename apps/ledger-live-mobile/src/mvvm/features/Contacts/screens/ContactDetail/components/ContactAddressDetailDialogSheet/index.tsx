@@ -3,7 +3,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import {
   ContactAddressDetailDialog,
   type ContactAddressDetailDialogNativeProps,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { Share } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";

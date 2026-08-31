@@ -12,7 +12,7 @@ import {
   mockMeContact,
   mockPopulatedContacts,
 } from "@domain/entity-contact/schema.mock";
-import { ContactDetailView } from "@features/flow-contacts";
+import { ContactDetailView } from "@features/flow-contacts-detail";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
