@@ -146,6 +146,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       contact => contact.id === addAddressFlowState.selectedContactId,
     );
     if (selectedContact === undefined) {
+      closeAddAddress();
       isSavingAddress.current = false;
       return;
     }
