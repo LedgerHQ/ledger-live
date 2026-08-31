@@ -32,10 +32,7 @@ export function RequestReceiveSummary({
     >
       <div className="flex flex-col items-center gap-8">
         <span className="heading-3-semi-bold text-base">{title}</span>
-        <div
-          className="flex flex-row items-center gap-6"
-          data-testid="pay-request-receive-network"
-        >
+        <div className="flex flex-row items-center gap-6" data-testid="pay-request-receive-network">
           {networkIcon ? (
             <CryptoIcon
               ledgerId={networkIcon.ledgerId}
