@@ -128,7 +128,7 @@ describe("hedera/react", () => {
     let validators: HederaValidator[];
 
     beforeEach(async () => {
-      validators = await getHederaValidators(currency.id);
+      validators = await getHederaValidators({ currencyId: currency.id });
     });
 
     it("should report loading:true before validators resolve, then loading:false once they do", async () => {

@@ -20,7 +20,7 @@ export const hederaQueries = {
       // getHederaValidators owns the TTL and is the same data that getTransactionStatus validates against.
       // staleTime stays 0 to keep both reading one entry.
       // side effect: refetch and invalidateQueries are no-ops, call .clear() to force a refresh.
-      queryFn: (): Promise<HederaValidator[]> => getHederaValidators(currencyId),
+      queryFn: (): Promise<HederaValidator[]> => getHederaValidators({ currencyId }),
       retry: false,
       staleTime: 0,
       gcTime: HEDERA_VALIDATORS_CACHE_TTL_MS,

@@ -111,18 +111,20 @@ describe("checkAccountTokenAssociationStatus", () => {
   const usdcToken = getTokenCurrencyFromCAL(0); // HTS USDC "0.0.456858"
 
   it("returns true when account has the HTS token associated", async () => {
-    const result = await checkAccountTokenAssociationStatus(
-      MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-      usdcToken,
-    );
+    const result = await checkAccountTokenAssociationStatus({
+      configOrCurrencyId: coinConfig,
+      address: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+      tokenId: usdcToken.contractAddress,
+    });
     expect(result).toBe(true);
   });
 
   it("returns false when account does not have the HTS token associated", async () => {
-    const result = await checkAccountTokenAssociationStatus(
-      MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-      usdcToken,
-    );
+    const result = await checkAccountTokenAssociationStatus({
+      configOrCurrencyId: coinConfig,
+      address: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+      tokenId: usdcToken.contractAddress,
+    });
     expect(result).toBe(false);
   });
 });
@@ -172,7 +174,7 @@ describe("getHederaValidators", () => {
   let validators: HederaValidator[];
 
   beforeAll(async () => {
-    validators = await getHederaValidators("hedera");
+    validators = await getHederaValidators({ currencyId: "hedera" });
   });
 
   it("fetches every page and returns a non-empty list", () => {

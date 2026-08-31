@@ -9,6 +9,7 @@ import {
   serializeSignature,
   serializeTransaction,
 } from "../logic/utils";
+import { rpcClient } from "../network/rpc";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMemo, HederaSigner } from "../types";
 import { createFrameworkSigner } from "./frameworkSigner";
@@ -33,6 +34,10 @@ const makeSigner = (overrides: Partial<HederaSigner> = {}): HederaSigner => ({
   getPublicKey: jest.fn().mockResolvedValue("aabbcc"),
   signTransaction: jest.fn().mockResolvedValue(new Uint8Array([1, 2, 3])),
   ...overrides,
+});
+
+afterAll(async () => {
+  await rpcClient._resetInstance();
 });
 
 describe("createFrameworkSigner.getAddress", () => {

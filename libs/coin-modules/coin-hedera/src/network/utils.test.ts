@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import {
   getMockedERC20TokenBalance,
   getMockedERC20TokenTransfer,
@@ -468,9 +468,11 @@ describe("network utils", () => {
 
   describe("getHederaValidators", () => {
     const mockGetNodes = jest.mocked(apiClient.getNodes);
+    const config = getMockedConfig({ ledgerNodeId: 0 });
+    const params = { currencyId: mockCurrency.id, config };
 
     beforeAll(() => {
-      hederaCoinConfig.setCoinConfig(() => getMockedConfig({ ledgerNodeId: 0 }));
+      hederaCoinConfig.setCoinConfig(() => config);
     });
 
     beforeEach(() => {
@@ -480,10 +482,11 @@ describe("network utils", () => {
     });
 
     it("calls getNodes with fetchAllPages=true and maps the result", async () => {
-      const validators = await getHederaValidators(mockCurrency.id);
+      const validators = await getHederaValidators(params);
 
+      expect(mockGetNodes).toHaveBeenCalledTimes(1);
       expect(mockGetNodes).toHaveBeenCalledWith({
-        configOrCurrencyId: mockCurrency.id,
+        configOrCurrencyId: config,
         fetchAllPages: true,
       });
       expect(validators).toHaveLength(1);
@@ -491,13 +494,13 @@ describe("network utils", () => {
     });
 
     it("hits the network once for two consecutive calls, and again after clear()", async () => {
-      await getHederaValidators(mockCurrency.id);
-      await getHederaValidators(mockCurrency.id);
+      await getHederaValidators(params);
+      await getHederaValidators(params);
 
       expect(mockGetNodes).toHaveBeenCalledTimes(1);
 
       getHederaValidators.clear(mockCurrency.id);
-      await getHederaValidators(mockCurrency.id);
+      await getHederaValidators(params);
 
       expect(mockGetNodes).toHaveBeenCalledTimes(2);
     });
@@ -505,24 +508,20 @@ describe("network utils", () => {
     it("does not cache a failed fetch, so the next call retries", async () => {
       mockGetNodes.mockRejectedValueOnce(new Error("network unavailable"));
 
-      await expect(getHederaValidators(mockCurrency.id)).rejects.toThrow("network unavailable");
-      await expect(getHederaValidators(mockCurrency.id)).resolves.toHaveLength(1);
+      await expect(getHederaValidators(params)).rejects.toThrow("network unavailable");
+      await expect(getHederaValidators(params)).resolves.toHaveLength(1);
       expect(mockGetNodes).toHaveBeenCalledTimes(2);
     });
   });
 
   describe("checkAccountTokenAssociationStatus", () => {
     const accountId = "0.0.1234";
-    const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1234", tokenType: "hts" });
-    const erc20Token = getMockedHTSTokenCurrency({
-      contractAddress: "0.0.4321",
-      tokenType: "erc20",
-    });
+    const tokenId = "0.0.1234";
 
     beforeEach(() => {
       jest.clearAllMocks();
       // reset LRU cache to make sure all tests receive correct mocks from mockedGetAccount
-      checkAccountTokenAssociationStatus.clear(`${accountId}-${htsToken.contractAddress}`);
+      checkAccountTokenAssociationStatus.clear(`${accountId}-${tokenId}`);
     });
 
     it("returns true if max_automatic_token_associations === -1", async () => {
@@ -536,7 +535,11 @@ describe("network utils", () => {
         },
       });
 
-      const result = await checkAccountTokenAssociationStatus(accountId, htsToken);
+      const result = await checkAccountTokenAssociationStatus({
+        configOrCurrencyId: defaultConfig,
+        address: accountId,
+        tokenId,
+      });
       expect(result).toBe(true);
     });
 
@@ -547,11 +550,15 @@ describe("network utils", () => {
         balance: {
           balance: 1,
           timestamp: "",
-          tokens: [{ token_id: htsToken.contractAddress, balance: 1 }],
+          tokens: [{ token_id: tokenId, balance: 1 }],
         },
       });
 
-      const result = await checkAccountTokenAssociationStatus(accountId, htsToken);
+      const result = await checkAccountTokenAssociationStatus({
+        configOrCurrencyId: defaultConfig,
+        address: accountId,
+        tokenId,
+      });
       expect(result).toBe(true);
     });
 
@@ -566,14 +573,12 @@ describe("network utils", () => {
         },
       });
 
-      const result = await checkAccountTokenAssociationStatus(accountId, htsToken);
+      const result = await checkAccountTokenAssociationStatus({
+        configOrCurrencyId: defaultConfig,
+        address: accountId,
+        tokenId,
+      });
       expect(result).toBe(false);
-    });
-
-    it("returns true for erc20 tokens", async () => {
-      const result = await checkAccountTokenAssociationStatus(accountId, erc20Token);
-      expect(apiClient.getAccount as jest.Mock).not.toHaveBeenCalled();
-      expect(result).toBe(true);
     });
 
     it("supports addresses with checksum", async () => {
@@ -585,14 +590,18 @@ describe("network utils", () => {
         balance: {
           balance: 1,
           timestamp: "",
-          tokens: [{ token_id: htsToken.contractAddress, balance: 1 }],
+          tokens: [{ token_id: tokenId, balance: 1 }],
         },
       });
 
-      await checkAccountTokenAssociationStatus(addressWithChecksum, htsToken);
+      await checkAccountTokenAssociationStatus({
+        configOrCurrencyId: defaultConfig,
+        address: addressWithChecksum,
+        tokenId,
+      });
       expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
       expect(apiClient.getAccount).toHaveBeenCalledWith({
-        configOrCurrencyId: htsToken.parentCurrencyId,
+        configOrCurrencyId: defaultConfig,
         address: "0.0.9124531",
       });
     });
