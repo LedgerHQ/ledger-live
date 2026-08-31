@@ -11,6 +11,30 @@ type Props = Readonly<{
   onClose: () => void;
 }>;
 
+const DEVICE_SCREEN = {
+  cancelled: {
+    preset: "info",
+    title: "payTab.request.verifyAddress.device.cancelledTitle",
+    description: "payTab.request.verifyAddress.device.cancelledDescription",
+    testID: "pay-card-verify-address-cancelled",
+    showRetry: true,
+  },
+  mismatch: {
+    preset: "error",
+    title: "payTab.request.verifyAddress.device.mismatchTitle",
+    description: "payTab.request.verifyAddress.device.mismatchDescription",
+    testID: "pay-card-verify-address-mismatch",
+    showRetry: false,
+  },
+  unsupported: {
+    preset: "error",
+    title: "payTab.request.verifyAddress.device.unsupportedTitle",
+    description: "payTab.request.verifyAddress.device.unsupportedDescription",
+    testID: "pay-card-verify-address-unsupported",
+    showRetry: false,
+  },
+} as const;
+
 function NextStepsScreen({ onGotIt }: Readonly<{ onGotIt: () => void }>) {
   const { t } = useTranslation();
   const steps = [
@@ -59,60 +83,34 @@ export function VerifyAddressIntentComponentLWM({
   const { t } = useTranslation();
 
   if (!jobState) return null;
-
-  switch (jobState.type) {
-    case "verifying":
-    case "verified":
-      return <NextStepsScreen onGotIt={onClose} />;
-    case "cancelled":
-      return (
-        <InfoState
-          preset="info"
-          size="hug"
-          title={t("payTab.request.verifyAddress.device.cancelledTitle")}
-          description={t("payTab.request.verifyAddress.device.cancelledDescription")}
-          primaryCta={{
-            label: t("payTab.request.verifyAddress.device.retryCta"),
-            onPress: jobState.retry,
-            testID: "pay-card-verify-address-retry-cta",
-          }}
-          secondaryCta={{
-            label: t("payTab.request.verifyAddress.device.closeCta"),
-            onPress: onClose,
-            testID: "pay-card-verify-address-close-cta",
-          }}
-          testID="pay-card-verify-address-cancelled"
-        />
-      );
-    case "mismatch":
-      return (
-        <InfoState
-          preset="error"
-          size="hug"
-          title={t("payTab.request.verifyAddress.device.mismatchTitle")}
-          description={t("payTab.request.verifyAddress.device.mismatchDescription")}
-          primaryCta={{
-            label: t("payTab.request.verifyAddress.device.closeCta"),
-            onPress: onClose,
-            testID: "pay-card-verify-address-close-cta",
-          }}
-          testID="pay-card-verify-address-mismatch"
-        />
-      );
-    case "unsupported":
-      return (
-        <InfoState
-          preset="error"
-          size="hug"
-          title={t("payTab.request.verifyAddress.device.unsupportedTitle")}
-          description={t("payTab.request.verifyAddress.device.unsupportedDescription")}
-          primaryCta={{
-            label: t("payTab.request.verifyAddress.device.closeCta"),
-            onPress: onClose,
-            testID: "pay-card-verify-address-close-cta",
-          }}
-          testID="pay-card-verify-address-unsupported"
-        />
-      );
+  if (jobState.type === "verifying" || jobState.type === "verified") {
+    return <NextStepsScreen onGotIt={onClose} />;
   }
+
+  const screen = DEVICE_SCREEN[jobState.type];
+  const closeCta = {
+    label: t("payTab.request.verifyAddress.device.closeCta"),
+    onPress: onClose,
+    testID: "pay-card-verify-address-close-cta",
+  };
+
+  return (
+    <InfoState
+      preset={screen.preset}
+      size="hug"
+      title={t(screen.title)}
+      description={t(screen.description)}
+      primaryCta={
+        screen.showRetry && jobState.type === "cancelled"
+          ? {
+              label: t("payTab.request.verifyAddress.device.retryCta"),
+              onPress: jobState.retry,
+              testID: "pay-card-verify-address-retry-cta",
+            }
+          : closeCta
+      }
+      secondaryCta={screen.showRetry ? closeCta : undefined}
+      testID={screen.testID}
+    />
+  );
 }
