@@ -24,12 +24,35 @@ import { ValidatorImage } from "../StakingFlow/ValidatorRow";
 import { rgba } from "../../../colors";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
-type Props = {
+type Props = Readonly<{
   account: MinaAccount;
-};
+}>;
 
 type DelegationDrawerProps = Parameters<typeof DelegationDrawer>[0];
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
+
+function RedelegateActionIcon(props: Readonly<IconProps>) {
+  const { colors } = useTheme();
+  return (
+    <Circle {...props} bg={colors.fog}>
+      <DelegateIcon />
+    </Circle>
+  );
+}
+
+function UndelegateActionIcon(props: Readonly<IconProps>) {
+  const { colors } = useTheme();
+  return (
+    <Circle {...props} bg={rgba(colors.alert, 0.2)}>
+      <UndelegateIcon />
+    </Circle>
+  );
+}
+
+const drawerValidatorImage = (name: string) =>
+  function DrawerValidatorImage({ size }: Readonly<{ size: number }>) {
+    return <ValidatorImage name={name} size={size} />;
+  };
 
 function Delegations({ account }: Props) {
   const { colors } = useTheme();
@@ -166,28 +189,25 @@ function Delegations({ account }: Props) {
     () => [
       {
         label: t("mina.delegation.redelegate"),
-        Icon: (props: IconProps) => (
-          <Circle {...props} bg={colors.fog}>
-            <DelegateIcon />
-          </Circle>
-        ),
+        Icon: RedelegateActionIcon,
         event: "DelegationActionRedelegate",
         onPress: onRedelegate,
         disabled: isPreparingUndelegate,
       },
       {
         label: t("mina.delegation.undelegate"),
-        Icon: (props: IconProps) => (
-          <Circle {...props} bg={rgba(colors.alert, 0.2)}>
-            <UndelegateIcon />
-          </Circle>
-        ),
+        Icon: UndelegateActionIcon,
         event: "DelegationActionUndelegate",
         onPress: onUndelegate,
         disabled: isPreparingUndelegate,
       },
     ],
-    [t, colors.fog, colors.alert, onRedelegate, onUndelegate, isPreparingUndelegate],
+    [t, onRedelegate, onUndelegate, isPreparingUndelegate],
+  );
+
+  const ValidatorImageComponent = useMemo(
+    () => drawerValidatorImage(validatorName),
+    [validatorName],
   );
 
   const hasDelegation = account.resources?.stakingActive;
@@ -198,7 +218,7 @@ function Delegations({ account }: Props) {
         isOpen={data.length > 0 && isDrawerOpen}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) => <ValidatorImage name={validatorName} size={size} />}
+        ValidatorImage={ValidatorImageComponent}
         amount={new BigNumber(account.balance)}
         data={data}
         actions={delegationActions}
@@ -235,7 +255,7 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function MinaDelegations({ account }: { account: AccountLike }) {
+export default function MinaDelegations({ account }: Readonly<{ account: AccountLike }>) {
   const mainAccount = getMainAccount(account, undefined) as MinaAccount;
   if (!mainAccount.resources) return null;
   return <Delegations account={mainAccount} />;

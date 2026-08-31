@@ -11,12 +11,12 @@ import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
 import { ValidatorImage } from "../StakingFlow/ValidatorRow";
 
-type Props = {
+type Props = Readonly<{
   account: MinaAccount;
   currency: Currency;
   unit: Unit;
   onPress: (account: MinaAccount) => void;
-};
+}>;
 
 export default function DelegationRow({ account, currency, unit, onPress }: Props) {
   const { colors } = useTheme();
