@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
   ListItem,
@@ -65,6 +65,11 @@ export const AssetListItem = ({
   disabled,
 }: AssetListItemProps) => {
   const { t } = useTranslation();
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  const handleDisabledItemClick = useCallback(() => {
+    setIsTooltipOpen(true);
+  }, []);
 
   const handleClick = () => {
     if (disabled) return;
@@ -103,7 +108,7 @@ export const AssetListItem = ({
   }
 
   return (
-    <Tooltip>
+    <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
       <TooltipTrigger asChild>
         <span
           className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
@@ -111,6 +116,7 @@ export const AssetListItem = ({
           role="button"
           aria-disabled
           aria-label={name}
+          onClick={handleDisabledItemClick}
         >
           {listItem}
         </span>

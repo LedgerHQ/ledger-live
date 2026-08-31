@@ -99,17 +99,16 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     const bitcoinAsset = screen.getByTestId("asset-item-ticker-btc");
     expect(bitcoinAsset).toHaveAttribute("aria-disabled", "true");
 
+    await user.click(bitcoinAsset);
+
+    expect(mockOnAssetSelected).not.toHaveBeenCalled();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin isn't supported yet.");
+
     bitcoinAsset.parentElement?.focus();
 
     expect(bitcoinAsset.parentElement).toHaveFocus();
     expect(bitcoinAsset.parentElement).toHaveAttribute("role", "button");
     expect(bitcoinAsset.parentElement).toHaveAttribute("aria-disabled", "true");
-
-    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin isn't supported yet.");
-
-    await user.click(bitcoinAsset);
-
-    expect(mockOnAssetSelected).not.toHaveBeenCalled();
   });
 
   it("should allow eligible assets to reach the full network list", async () => {
@@ -128,15 +127,18 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     const arbitrumNetwork = screen.getByTestId("network-item-name-Arbitrum");
     expect(arbitrumNetwork).toHaveAttribute("aria-disabled", "true");
 
+    await user.click(arbitrumNetwork);
+
+    expect(mockOnAssetSelected).not.toHaveBeenCalled();
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "Arbitrum network isn't supported yet.",
+    );
+
     arbitrumNetwork.parentElement?.focus();
 
     expect(arbitrumNetwork.parentElement).toHaveFocus();
     expect(arbitrumNetwork.parentElement).toHaveAttribute("role", "button");
     expect(arbitrumNetwork.parentElement).toHaveAttribute("aria-disabled", "true");
-
-    expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "Arbitrum network isn't supported yet.",
-    );
 
     await user.click(ethereumNetwork);
 

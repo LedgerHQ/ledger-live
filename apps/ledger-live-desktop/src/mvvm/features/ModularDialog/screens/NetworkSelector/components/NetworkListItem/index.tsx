@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   ListItem,
   ListItemTitle,
@@ -36,6 +36,11 @@ export const NetworkListItem = ({
   disabled,
 }: NetworkListItemProps) => {
   const { t } = useTranslation();
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  const handleDisabledItemClick = useCallback(() => {
+    setIsTooltipOpen(true);
+  }, []);
 
   const listItem = (
     <ListItem
@@ -65,7 +70,7 @@ export const NetworkListItem = ({
   }
 
   return (
-    <Tooltip>
+    <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
       <TooltipTrigger asChild>
         <span
           className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
@@ -73,6 +78,7 @@ export const NetworkListItem = ({
           role="button"
           aria-disabled
           aria-label={currency.name}
+          onClick={handleDisabledItemClick}
         >
           {listItem}
         </span>
