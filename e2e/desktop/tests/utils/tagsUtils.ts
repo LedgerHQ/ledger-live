@@ -14,7 +14,7 @@ export function shouldSkipLNSTag(currencyId: string): boolean {
   return LNS_UNSUPPORTED_CURRENCIES.has(currencyId);
 }
 
-export function deviceTags(): string[] {
+function deviceTags(): string[] {
   return [...DEVICE_TAGS];
 }
 
@@ -22,7 +22,7 @@ export function deviceTagsWithoutLNS(): string[] {
   return DEVICE_TAGS.filter(tag => tag !== "@LNS");
 }
 
-export function currencyTags(currencyId: string): string[] {
+function currencyTags(currencyId: string): string[] {
   const family = getFamilyByCurrencyId(currencyId);
   return [`@${currencyId}`, ...(family ? [`@family-${family}`] : [])];
 }

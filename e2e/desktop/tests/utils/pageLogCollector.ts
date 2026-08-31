@@ -79,7 +79,7 @@ function pathExtension(pathname: string): string {
 }
 
 /** True when `url` is app-asset / font / telemetry / CDN start-up noise (not a real API call). */
-export function isNoiseNetworkUrl(url: string): boolean {
+function isNoiseNetworkUrl(url: string): boolean {
   let host = "";
   let pathname = url;
   try {

@@ -169,10 +169,4 @@ export class HistoryPage extends AppPage {
     await this.exportDoneButton.click();
     await expect(this.exportSuccessTitle).not.toBeVisible();
   }
-
-  @step("Close export dialog")
-  async closeExportDialog() {
-    await this.page.keyboard.press("Escape");
-    await expect(this.exportDialog).not.toBeVisible();
-  }
 }

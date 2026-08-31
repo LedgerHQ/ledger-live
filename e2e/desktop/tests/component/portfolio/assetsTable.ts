@@ -16,11 +16,11 @@ export class AssetsTable {
     return sanitizeAssetNameForTestId(`${currency.name}-${currency.id}`);
   }
 
-  assetByCurrency(currency: Currency): Locator {
+  private assetByCurrency(currency: Currency): Locator {
     return this.root.getByTestId(`w40-asset-row-${this.getCurrencyTestIdSuffix(currency)}`);
   }
 
-  assetValueByCurrency(currency: Currency): Locator {
+  private assetValueByCurrency(currency: Currency): Locator {
     return this.root.getByTestId(`w40-asset-row-value-${this.getCurrencyTestIdSuffix(currency)}`);
   }
 

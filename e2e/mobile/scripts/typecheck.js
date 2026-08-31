@@ -5,13 +5,29 @@ const { EOL } = require("os");
 const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const e2eDirectory = path.resolve(__dirname, "..");
 
-function compile() {
-  const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, e2eDirectory);
+const parseConfigHost = {
+  useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+  readDirectory: ts.sys.readDirectory,
+  fileExists: ts.sys.fileExists,
+  readFile: ts.sys.readFile,
+  getCurrentDirectory: ts.sys.getCurrentDirectory,
+  onUnRecoverableConfigFileDiagnostic: diagnostic => {
+    console.error(ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL));
+    process.exit(1);
+  },
+};
 
-  const program = ts.createProgram(config.fileNames, {
-    ...config.options,
-    noEmit: true,
-  });
+function compile() {
+  const configPath = path.join(e2eDirectory, "tsconfig.json");
+  const config = ts.getParsedCommandLineOfConfigFile(configPath, { noEmit: true }, parseConfigHost);
+
+  if (!config) {
+    console.error(`❌ - Could not read ${configPath}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  const program = ts.createProgram(config.fileNames, config.options);
 
   console.log(`⏳ - Running typescript type checker...`);
 
@@ -19,10 +35,7 @@ function compile() {
     .getPreEmitDiagnostics(program)
     // Only include errors from e2e/mobile directory
     .filter(
-      diag =>
-        diag.file &&
-        diag.file.fileName.startsWith(e2eDirectory) &&
-        /\.tsx?/.test(diag.file.fileName),
+      diag => diag.file?.fileName.startsWith(e2eDirectory) && /\.tsx?/.test(diag.file.fileName),
     );
 
   const formatDiagnosticHost = {

@@ -39,14 +39,14 @@ const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
 
-export type RevealForTapOptions = {
+type RevealForTapOptions = {
   /** Scroll container. Omitted means the engine guesses the first scrollable by type. */
   container?: string | RegExp;
   /** Search direction; the edge clearance always continues the same way. Defaults to "down". */
   direction?: Direction;
 };
 
-export type WaitForElementOptions = {
+type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
   checkVisibility?: boolean;

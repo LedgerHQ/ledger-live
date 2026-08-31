@@ -18,8 +18,6 @@ export default class AddAccountDrawer extends CommonPage {
   modalButtonId = "add-accounts-modal-add-button";
   continueButtonId = "enabled-add-accounts-continue-button";
   closeAddAccountButtonId = "button-close-add-account";
-  addFundsButtonId = "button-add-funds";
-  actionDrawerReceiveButtonId = "action-drawer-receive-button";
 
   accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
 
@@ -119,15 +117,5 @@ export default class AddAccountDrawer extends CommonPage {
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
     await this.finishAccountsDiscovery();
     return accountId;
-  }
-
-  @Step("Click on 'Add funds to my account' button")
-  async tapAddFunds() {
-    await tapById(this.addFundsButtonId);
-  }
-
-  @Step("Click on 'Receive' in action drawer")
-  async tapReceiveActionDrawer() {
-    await tapById(this.actionDrawerReceiveButtonId);
   }
 }
