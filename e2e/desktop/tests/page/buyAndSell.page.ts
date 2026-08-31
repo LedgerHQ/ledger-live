@@ -110,18 +110,14 @@ export class BuyAndSellPage extends WebViewAppPage {
    * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
    * Mirrors the recovery used in borrow.page.ts. Used to guard every entry point that lands
    * on the Buy/Sell webview, not just the crypto selector step.
-   *
-   * The web app gates its whole tree (including `navigation-tabs`) behind two spinners, and
-   * every HTTP call it makes is serialized behind a Firebase Remote Config fetch plus a
-   * wallet-api round trip in its axios request interceptor — none of which have a timeout.
-   * On a loaded CI runner that boot has been observed to take >50s, so a short deadline here
-   * fails while the app is still making progress, and reloading throws that progress away and
-   * restarts the same slow boot. Wait generously first, and only reload as a genuine last
-   * resort.
    */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForWebviewReady(testId: string) {
     const attemptTimeouts = [90_000, 60_000];
+    // Kept short and independent of the attempt budget: the reload is best-effort (its failure
+    // is ignored), so letting it inherit a 90s deadline would only make the worst case
+    // unpredictable without improving recovery.
+    const reloadTimeout = 15_000;
 
     for (const [attempt, readyTimeout] of attemptTimeouts.entries()) {
       // Re-fetch the webview on every attempt: it can be torn down and recreated
@@ -147,7 +143,7 @@ export class BuyAndSellPage extends WebViewAppPage {
         // aborting the whole retry loop.
         try {
           const freshWebview = await this.getWebView();
-          await freshWebview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+          await freshWebview.reload({ timeout: reloadTimeout, waitUntil: "domcontentloaded" });
         } catch {
           // Ignore: target likely closed mid-wait; next attempt re-resolves the webview.
         }
