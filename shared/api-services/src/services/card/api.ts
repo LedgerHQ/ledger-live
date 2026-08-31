@@ -109,6 +109,13 @@ const staleRequestResult: { error: FetchBaseQueryError } = {
   error: { status: "CUSTOM_ERROR", error: CARD_STALE_REQUEST },
 };
 
+function isUnauthorized(error: FetchBaseQueryError | undefined): boolean {
+  return (
+    error?.status === UNAUTHORIZED_STATUS ||
+    (error?.status === "PARSING_ERROR" && error.originalStatus === UNAUTHORIZED_STATUS)
+  );
+}
+
 const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
@@ -150,7 +157,7 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
 
   // A request that carried no Bearer has no session to renew, and any other status is the caller's
   // answer.
-  if (!session.token || result.error?.status !== UNAUTHORIZED_STATUS) {
+  if (!session.token || !isUnauthorized(result.error)) {
     return result;
   }
 

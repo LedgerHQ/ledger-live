@@ -224,6 +224,26 @@ describe("cardBaseQuery", () => {
     expect(request(fetchSpy, 1).headers.get("authorization")).toBe("Bearer refreshed-token");
   });
 
+  it("renews when a non-JSON response still has HTTP status 401", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response("unauthorized", { status: 401 }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true }));
+    const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number, string]>(
+      async () => ({
+        kind: "refreshed",
+        accessToken: "refreshed-token",
+      }),
+    );
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledWith(SESSION_ID, "session-token");
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(result.data).toEqual({ ok: true });
+  });
+
   it("replays only once, so a second 401 is the answer", async () => {
     // A fresh Response per call: a body can only be read once.
     fetchSpy = jest
