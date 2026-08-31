@@ -1,29 +1,15 @@
-import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
-import { StatusCodes } from "@ledgerhq/hw-transport";
-import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import { Observable } from "rxjs";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { DerivationMode } from "@ledgerhq/types-live";
-import type { DeviceConnectionResult } from "@features/platform-device-intent";
-import type {
-  VerifyAddressDeviceAction,
-  VerifyAddressDeviceState,
-} from "@features/platform-verify-address-intent";
+import type { VerifyAddressDeviceAction, VerifyAddressDeviceState } from "./types";
 
 const USER_REFUSED_ERROR_NAMES = new Set(["UserRefusedAddress", "UserRefusedOnDevice"]);
+const CONDITIONS_OF_USE_NOT_SATISFIED = 0x6985;
+const USER_REFUSED_ON_DEVICE = 0x5501;
 
 const USER_REFUSED_STATUS_CODES = new Set<number>([
-  StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED,
-  StatusCodes.USER_REFUSED_ON_DEVICE,
+  CONDITIONS_OF_USE_NOT_SATISFIED,
+  USER_REFUSED_ON_DEVICE,
 ]);
-
 const UNSUPPORTED_ERROR_NAME = "DeviceAppVerifyNotSupported";
-
-type Params = Readonly<{
-  currency: CryptoCurrency;
-  path: string;
-  derivationMode: DerivationMode;
-}>;
 
 function toError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
@@ -31,6 +17,7 @@ function toError(error: unknown): Error {
 
 type DeviceError = Readonly<{ name?: string; statusCode?: number }>;
 
+/** Reads `name` and `statusCode`. `instanceof` fails across duplicated `@ledgerhq/errors`. */
 function readDeviceError(error: unknown): DeviceError {
   if (typeof error !== "object" || error === null) return {};
 
@@ -48,7 +35,7 @@ function isUserRefusal({ name, statusCode }: DeviceError): boolean {
   return statusCode !== undefined && USER_REFUSED_STATUS_CODES.has(statusCode);
 }
 
-export function mapGetAddressError(error: unknown): VerifyAddressDeviceState | undefined {
+function mapVerifyAddressError(error: unknown): VerifyAddressDeviceState | undefined {
   const deviceError = readDeviceError(error);
 
   if (isUserRefusal(deviceError)) return { type: "refused" };
@@ -60,20 +47,14 @@ export function mapGetAddressError(error: unknown): VerifyAddressDeviceState | u
 }
 
 export function getAddressVerification(
-  { dmk, sessionId }: DeviceConnectionResult,
-  { currency, path, derivationMode }: Params,
+  verify: () => Promise<{ address: string }>,
 ): VerifyAddressDeviceAction {
   let cancelled = false;
 
   const observable = new Observable<VerifyAddressDeviceState>(subscriber => {
     subscriber.next({ type: "awaiting-confirmation" });
 
-    getAddress(new DmkCompatTransport(dmk, sessionId), {
-      currency,
-      path,
-      derivationMode,
-      verify: true,
-    })
+    verify()
       .then(result => {
         if (cancelled) return;
         subscriber.next({ type: "confirmed", address: result.address });
@@ -82,7 +63,7 @@ export function getAddressVerification(
       .catch(error => {
         if (cancelled) return;
 
-        const mapped = mapGetAddressError(error);
+        const mapped = mapVerifyAddressError(error);
         if (mapped) {
           subscriber.next(mapped);
           subscriber.complete();

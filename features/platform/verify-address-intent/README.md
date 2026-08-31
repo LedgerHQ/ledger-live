@@ -39,15 +39,18 @@ observable of **normalized**, signer-agnostic `VerifyAddressDeviceState` events
 `cancel`. The job maps those to its `JobState` union.
 
 The host is free to implement the seam however it wants — a DMK-native signer
-kit, or (as LWD does) the generic `getAddress` resolver run over the DIE's DMK
-transport, which already dispatches to each family's DMK-native or legacy signer
-under the hood:
+kit, or (as LWD / LWM do) the generic `getAddress` resolver run over the DIE's
+DMK transport. `getAddressVerification` turns that Promise into the
+normalized `{ observable, cancel }` action so each app only owns the
+`getAddress` + `DmkCompatTransport` call:
 
 ```ts
 import { createIntent } from "@features/platform-device-intent";
-import { verifyAddressIntentDefinition } from "@features/platform-verify-address-intent";
+import {
+  getAddressVerification,
+  verifyAddressIntentDefinition,
+} from "@features/platform-verify-address-intent";
 
-// Host builds the platform definition by adding its renderer:
 const verifyAddressIntentPlatformDefinition = {
   ...verifyAddressIntentDefinition,
   component: VerifyAddressComponentLWD,
@@ -55,9 +58,10 @@ const verifyAddressIntentPlatformDefinition = {
 
 const intent = createIntent(verifyAddressIntentPlatformDefinition, {
   expectedAddress: mainAccount.freshAddress,
-  // Host-injected device operation returning { observable, cancel }, emitting
-  // normalized VerifyAddressDeviceState events (see the LWD adapter).
-  startAddressVerification: connection => getAddressVerification(connection, params),
+  startAddressVerification: ({ dmk, sessionId }) =>
+    getAddressVerification(() =>
+      getAddress(new DmkCompatTransport(dmk, sessionId), { ...params, verify: true }),
+    ),
 });
 ```
 
@@ -74,6 +78,7 @@ const intent = createIntent(verifyAddressIntentPlatformDefinition, {
 | `VerifyAddressDeviceState`              | Normalized device-progress events consumed by the job.   |
 | `VerifyAddressIntentPlatformDefinition` | Platform definition alias (adds the renderer).           |
 | `VerifyAddressIntent`                   | Runtime intent alias.                                    |
+| `getAddressVerification`               | Turns a host `getAddress` Promise into `{ observable, cancel }`, mapping refusal / unsupported errors. |
 
 ## Installation
 

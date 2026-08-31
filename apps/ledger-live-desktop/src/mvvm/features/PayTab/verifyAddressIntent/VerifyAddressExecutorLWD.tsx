@@ -105,11 +105,8 @@ export function VerifyAddressExecutorLWD({
 
   const intent = useMemo(
     () =>
-      createIntent(
-        verifyAddressIntentLWDDefinition,
-        buildVerifyAddressIntentInput(account, parentAccount),
-      ),
-    [account, parentAccount],
+      createIntent(verifyAddressIntentLWDDefinition, buildVerifyAddressIntentInput(mainAccount)),
+    [mainAccount],
   );
 
   if (!initInput) return null;
