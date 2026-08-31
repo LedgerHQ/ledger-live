@@ -37,6 +37,7 @@ const mockGetValidators = jest.mocked(logic.getValidators);
 const mockGetStakes = jest.mocked(logic.getStakes);
 const mockGetRewards = jest.mocked(logic.getRewards);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
+const mockValidateIntent = jest.mocked(logic.validateIntent);
 
 // The consumer resolver hands the module to callers through `withDefaults`, so exercise the API the
 // way a consumer sees it: the capabilities Hedera omits are backfilled by the framework.
@@ -52,14 +53,10 @@ describe("createApi", () => {
     api = buildApi(mockCurrency.id);
   });
 
-  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
-  //
-  // Kept out rather than stubbed: intent validation still lives in the account bridge's
-  // getTransactionStatus, and the module exposes no sequence, no externally-built transaction,
-  // no contract-call escape hatch and no enrollment step.
+  // `toEqual` on purpose: the list of unsupported capabilities is exhaustive.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi(mockCurrency.id), mockContext)).resolves.toEqual({
-      unsupported: ["call", "craftRawTransaction", "getNextSequence", "register", "validateIntent"],
+      unsupported: ["call", "craftRawTransaction", "getNextSequence", "register"],
       inconsistent: [],
     });
   });
@@ -516,6 +513,42 @@ describe("createApi", () => {
       await expect(api.listOperations(mockContext, mockAddress, mockOptions)).rejects.toThrow(
         "hedera: evm address is missing",
       );
+    });
+  });
+
+  describe("validateIntent", () => {
+    it("should resolve the config and delegate to logic's validateIntent", async () => {
+      const mockedValidation = {
+        errors: {},
+        warnings: {},
+        estimatedFees: 100n,
+        amount: 0n,
+        totalSpent: 100n,
+      };
+
+      // @ts-expect-error - partial intent
+      const txIntent: TransactionIntent<HederaMemo> = {
+        type: "send",
+        sender: "0.0.1234",
+        recipient: "0.0.5678",
+        amount: 100n,
+      };
+      const balances = [{ value: 100n, asset: { type: "native" } }];
+      const customFees = { value: 10n };
+
+      mockValidateIntent.mockResolvedValue(mockedValidation);
+
+      const result = await api.validateIntent(mockContext, txIntent, balances, { customFees });
+
+      expect(result).toEqual(mockedValidation);
+      expect(mockValidateIntent).toHaveBeenCalledTimes(1);
+      expect(mockValidateIntent).toHaveBeenCalledWith({
+        config: await mockContext.config(),
+        currencyId: mockCurrency.id,
+        intent: txIntent,
+        balances,
+        customFees,
+      });
     });
   });
 });

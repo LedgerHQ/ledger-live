@@ -141,10 +141,11 @@ async function handleHTSTokenTransaction(
 
   if (!errors.recipient) {
     try {
-      const hasRecipientTokenAssociated = await checkAccountTokenAssociationStatus(
-        transaction.recipient,
-        subAccount.token,
-      );
+      const hasRecipientTokenAssociated = await checkAccountTokenAssociationStatus({
+        configOrCurrencyId: account.currency.id,
+        address: transaction.recipient,
+        tokenId: subAccount.token.contractAddress,
+      });
 
       if (!hasRecipientTokenAssociated) {
         warnings.missingAssociation = new HederaRecipientTokenAssociationRequired();
@@ -291,7 +292,7 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
 
   const [validators, estimatedFees] = await Promise.all([
     needsValidators
-      ? getHederaValidators(account.currency.id).catch(error =>
+      ? getHederaValidators({ currencyId: account.currency.id }).catch(error =>
           error instanceof Error ? error : new Error(String(error)),
         )
       : undefined,
