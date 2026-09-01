@@ -1,6 +1,8 @@
-import { Flex, Icons, Text, Button as SystemButton } from "@ledgerhq/native-ui";
+import { Flex, Text, Button as SystemButton } from "@ledgerhq/native-ui";
+import { Box, InteractiveIcon, Tag as LumenTag } from "@ledgerhq/lumen-ui-rnative";
+import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Close as CloseIcon } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React, { PropsWithChildren } from "react";
-import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Video from "react-native-video";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
@@ -91,19 +93,23 @@ export const Media = ({ uri, size, filledImage, isMediaOnly, mediaType }: MediaP
   }
 };
 
-const absoluteTopStyle: StyleProp<ViewStyle> = {
+const absoluteTopStyle = {
   position: "absolute",
-  padding: 12,
+  padding: "s12",
   zIndex: 1,
-};
+} satisfies LumenViewStyle;
 
 export const Close = ({ onPress }: { onPress: ButtonAction }) => {
   return (
-    <View style={{ right: 0, ...absoluteTopStyle }}>
-      <Pressable onPress={onPress} hitSlop={11}>
-        <Icons.Close size="XS" />
-      </Pressable>
-    </View>
+    <Box lx={{ ...absoluteTopStyle, right: "s0" }}>
+      <InteractiveIcon
+        iconType="stroked"
+        icon={CloseIcon}
+        size={16}
+        onPress={onPress}
+        accessibilityLabel="Dismiss"
+      />
+    </Box>
   );
 };
 
@@ -114,16 +120,10 @@ type LabelProps = {
 };
 
 export const Tag = ({ label }: LabelProps) => {
-  const { colors } = useTheme();
-
   return (
-    <View style={{ left: 0, ...absoluteTopStyle }}>
-      <Flex bg={colors.primary.c80} borderRadius={"4px"} height={"18px"} justifyContent="center">
-        <Text variant="small" fontWeight="bold" px={"6px"} color={colors.neutral.c00}>
-          {label}
-        </Text>
-      </Flex>
-    </View>
+    <Box lx={{ ...absoluteTopStyle, left: "s0" }}>
+      <LumenTag label={label} appearance="accent" size="sm" />
+    </Box>
   );
 };
 
