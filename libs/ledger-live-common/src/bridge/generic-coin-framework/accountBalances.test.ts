@@ -1,4 +1,4 @@
-import { getAccountBalanceRows } from "./accountBalances";
+import { accountRefOf, getAccountBalanceRows } from "./accountBalances";
 
 const getBalance = jest.fn();
 const getTokenFromAsset = jest.fn();
@@ -92,5 +92,47 @@ describe("getAccountBalanceRows", () => {
   it("propagates a chain failure rather than reporting a zero balance", async () => {
     getBalance.mockRejectedValue(new Error("rpc down"));
     await expect(read()).rejects.toThrow("rpc down");
+  });
+});
+
+describe("accountRefOf", () => {
+  const account = {
+    type: "Account",
+    id: ACCOUNT_ID,
+    freshAddress: "0xABC",
+    derivationMode: "",
+    currency: { id: "ethereum" },
+  };
+
+  it("carries the id, currency and fresh address", () => {
+    expect(accountRefOf(account)).toEqual({
+      accountId: ACCOUNT_ID,
+      currencyId: "ethereum",
+      address: "0xABC",
+      derivationMode: "",
+    });
+  });
+
+  it("falls back to the xpub encoded in the id when no fresh address is known", () => {
+    expect(accountRefOf({ ...account, freshAddress: "" }).address).toBe("0xabc");
+  });
+
+  it("leaves parentId unset on a main account", () => {
+    expect(accountRefOf(account).parentId).toBeUndefined();
+  });
+
+  it("resolves a token account against its parent's address and currency", () => {
+    const token = {
+      type: "TokenAccount",
+      id: `${ACCOUNT_ID}+ethereum%2Ferc20%2Fusd__coin`,
+      token: { parentCurrencyId: "ethereum" },
+    };
+    expect(accountRefOf(token, account)).toEqual({
+      accountId: token.id,
+      currencyId: "ethereum",
+      address: "0xABC",
+      derivationMode: "",
+      parentId: ACCOUNT_ID,
+    });
   });
 });

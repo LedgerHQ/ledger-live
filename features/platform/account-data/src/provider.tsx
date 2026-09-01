@@ -10,7 +10,8 @@ const AccountDataContext = createContext<AccountDataScheduler | null>(null);
  * import `libs/`), and a test gets its own scheduler instead of racing over a global.
  */
 export const AccountDataProvider: FC<{
-  scheduler: AccountDataScheduler;
+  /** `null` is accepted so an app can mount the provider before its boot has built the scheduler. */
+  scheduler: AccountDataScheduler | null;
   children: ReactNode;
 }> = ({ scheduler, children }) => (
   <AccountDataContext.Provider value={scheduler}>{children}</AccountDataContext.Provider>

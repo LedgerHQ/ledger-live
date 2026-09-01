@@ -1,4 +1,7 @@
-import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  decodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { AccountIdSchema, type AccountId } from "@shared/schema-primitives";
@@ -90,4 +93,52 @@ export async function getAccountBalanceRows({
     });
   }
   return rows;
+}
+
+/**
+ * Minimal view of an account this function needs — satisfied as-is by `Account` and `TokenAccount`
+ * from `@ledgerhq/types-live`, so callers pass whatever they already hold.
+ */
+export type AccountForRef = {
+  type: string;
+  id: string;
+  freshAddress?: string;
+  derivationMode?: string;
+  currency?: { id: string };
+  token?: { parentCurrencyId: string };
+};
+
+/** The account-data layer's `AccountRef` shape, declared here so `libs/` need not import `features/`. */
+export type AccountRefLike = {
+  accountId: AccountId;
+  currencyId: string;
+  address: string;
+  derivationMode: string;
+  parentId?: AccountId;
+};
+
+/**
+ * Build the ref the account-data layer works with from an account the app already holds.
+ *
+ * Identical in every host, so it lives here rather than in each composition root. A token account
+ * resolves against its parent's address and currency — pass the parent, or the ref falls back to the
+ * xpub encoded in the id and carries no `parentId`.
+ */
+export function accountRefOf(account: AccountForRef, parent?: AccountForRef): AccountRefLike {
+  const main = account.type === "TokenAccount" ? parent : account;
+  const { xpubOrAddress } = decodeAccountId(main?.id ?? account.id);
+  const currencyId =
+    account.type === "TokenAccount"
+      ? (account.token?.parentCurrencyId ?? main?.currency?.id ?? "")
+      : (account.currency?.id ?? "");
+
+  return {
+    accountId: AccountIdSchema.parse(account.id),
+    currencyId,
+    address: main?.freshAddress || xpubOrAddress,
+    derivationMode: main?.derivationMode ?? "",
+    ...(account.type === "TokenAccount" && parent
+      ? { parentId: AccountIdSchema.parse(parent.id) }
+      : {}),
+  };
 }
