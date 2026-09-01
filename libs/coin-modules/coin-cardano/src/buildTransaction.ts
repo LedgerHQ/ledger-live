@@ -153,9 +153,6 @@ const buildSendTokenTransaction = async ({
     typhonTx.addInput(getTyphonInputFromUtxo(u));
   }
 
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
-  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
-
   typhonTx.addOutput({
     address: receiverAddress,
     amount: requiredMinAdaForTokens,
@@ -207,9 +204,6 @@ const buildSendAdaTransaction = async ({
         tokens: tokenBalance,
       });
     }
-
-    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
-    if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
     // Send Max: compute the fee + recipient amount explicitly instead of routing the recipient
     // through Typhon's change mechanism, whose <2 ADA dust guard would fold the whole low balance
@@ -270,9 +264,6 @@ const buildSendAdaTransaction = async ({
     selectedUtxos.push(utxo);
     usedUtxoAdaAmount = usedUtxoAdaAmount.plus(transactionInput.amount);
   }
-
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
-  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   // If any selected UTXOs carry native tokens, those tokens must appear in
   // outputs or Typhon will throw "Not enough tokens". We send them back to
@@ -450,8 +441,15 @@ export const buildTransaction = async (
   const ttl = getTTL(account.currency.id);
   typhonTx.setTTL(ttl);
 
-  // add ABSTAIN vote certificate when account has rewards but not the vote delegation
+  // Conway governance opt-in for the staking flows only: when an account has unclaimed rewards but
+  // no dRep, a delegate/undelegate registers an ABSTAIN vote-delegation certificate so future
+  // reward withdrawals stay valid. A plain send must NOT carry this — the Conway
+  // ConwayWdrlNotDelegatedToDRep rule constrains only a tx that withdraws, so a send with no
+  // withdrawal is valid with zero certificates, and injecting one breaks swaps (the device swap
+  // policy denies num_certificates != 0). Gated as an explicit staking-mode allowlist (not
+  // `!== "send"`) so a future mode can't silently inherit the injection.
   if (
+    (transaction.mode === "delegate" || transaction.mode === "undelegate") &&
     account.cardanoResources.delegation?.rewards.gt(0) &&
     !account.cardanoResources.delegation.dRepHex
   ) {

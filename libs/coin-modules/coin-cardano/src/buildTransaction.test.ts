@@ -50,7 +50,11 @@ describe("buildTransaction", () => {
       expect(certificates).toEqual([]);
     });
 
-    it("should add abstain when drepHex is absent and rewards is available", async () => {
+    // The Conway rule ConwayWdrlNotDelegatedToDRep is enforced only over a transaction's withdrawal
+    // set, so a send that does not touch the reward account is valid with zero certificates even
+    // when rewards are unclaimed and no dRep is set. Injecting the cert here also breaks swaps (the
+    // firmware swap policy denies num_certificates != 0).
+    it("should not add an abstain vote on a send when rewards exist but no dRep is set", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           dRepHex: undefined, // drepHex absent
@@ -59,13 +63,7 @@ describe("buildTransaction", () => {
       });
       const transaction = await buildTransaction(account, txPayload);
       const certificates = transaction.getCertificates();
-      expect(
-        certificates.some(
-          c =>
-            c.type === TyphonTypes.CertificateType.VOTE_DELEGATION &&
-            c.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN,
-        ),
-      ).toBe(true);
+      expect(certificates).toEqual([]);
     });
   });
 
@@ -100,7 +98,9 @@ describe("buildTransaction", () => {
       expect(withdrawals.length).toBe(0);
     });
 
-    it("should add withdrawal when dRepHex and rewards both are available", async () => {
+    // A send must not silently sweep staking rewards either: the withdrawal changes the amount the
+    // user (or a swap) agreed to, and the firmware swap policy denies num_withdrawals != 0.
+    it("should not sweep rewards via a withdrawal on a send when delegated to a dRep", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           dRepHex: "drepHex", // drepHex present
@@ -109,7 +109,37 @@ describe("buildTransaction", () => {
       });
       const transaction = await buildTransaction(account, txPayload);
       const withdrawals = transaction.getWithdrawals();
-      expect(withdrawals.length).toBe(1);
+      expect(withdrawals.length).toBe(0);
+    });
+
+    it("should not sweep rewards via a withdrawal on a token send when delegated to a dRep", async () => {
+      const policyId = "a".repeat(56);
+      const assetName = "74657374";
+      const tokenId = `cardano/native/${policyId}${assetName}`;
+      const baseUtxos = getCardanoAccountFixture({ delegation: undefined }).cardanoResources.utxos;
+      const tokenUtxos = baseUtxos.map(u => ({
+        ...u,
+        tokens: [{ policyId, assetName, amount: new BigNumber(1000) }],
+      }));
+      const account = getCardanoAccountFixture({
+        delegation: { dRepHex: "drepHex", rewards: new BigNumber(10e6) },
+        utxos: tokenUtxos,
+      });
+      account.cardanoResources.protocolParams = getProtocolParamsFixture();
+      account.subAccounts = [
+        {
+          type: "TokenAccount",
+          id: "token-account-1",
+          token: { id: tokenId },
+          balance: new BigNumber(1000),
+        } as any,
+      ];
+      const transaction = await buildTransaction(account, {
+        ...txPayload,
+        subAccountId: "token-account-1",
+        amount: new BigNumber(500),
+      });
+      expect(transaction.getWithdrawals().length).toBe(0);
     });
   });
 
@@ -182,6 +212,28 @@ describe("buildTransaction", () => {
         account.cardanoResources.delegation?.deposit,
       );
     });
+
+    // Deregistering a stake key requires the account's rewards to be withdrawn in the same
+    // transaction, so undelegate still sweeps them.
+    it("should still sweep rewards via a withdrawal on undelegate when delegated to a dRep", async () => {
+      const account = getCardanoAccountFixture({
+        delegation: {
+          status: true,
+          deposit: (2e6).toString(),
+          dRepHex: "drepHex",
+          rewards: new BigNumber(10e6),
+        },
+      });
+      const transaction = await buildTransaction(account, {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "undelegate",
+        poolId: undefined,
+        protocolParams: getProtocolParamsFixture(),
+      });
+      expect(transaction.getWithdrawals().length).toBe(1);
+    });
   });
 
   describe("delegate transaction", () => {
@@ -235,6 +287,33 @@ describe("buildTransaction", () => {
         | undefined;
 
       expect(registerCertificate).toBeUndefined();
+    });
+
+    it("should still add the abstain vote on delegate when rewards exist but no dRep is set", async () => {
+      const account = getCardanoAccountFixture({
+        delegation: {
+          status: true,
+          deposit: (2e6).toString(),
+          dRepHex: undefined,
+          rewards: new BigNumber(10e6),
+        },
+      });
+      const transaction = await buildTransaction(account, {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "delegate",
+        poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+        protocolParams: getProtocolParamsFixture(),
+      });
+      const hasAbstain = transaction
+        .getCertificates()
+        .some(
+          c =>
+            c.type === TyphonTypes.CertificateType.VOTE_DELEGATION &&
+            c.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN,
+        );
+      expect(hasAbstain).toBe(true);
     });
   });
 
