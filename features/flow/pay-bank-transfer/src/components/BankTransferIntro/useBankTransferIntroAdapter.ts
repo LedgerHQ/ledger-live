@@ -9,7 +9,7 @@ import { useBankTransferIntroViewModel } from "./useBankTransferIntroViewModel";
 
 export type UseBankTransferIntroAdapterParams = Readonly<{
   labels: BankTransferIntroLabels;
-  onBankTransfer: () => void;
+  onBankTransfer: BankTransferIntroProps["onBankTransfer"];
   onTrackEvent?: PayCardTrackEvent;
 }>;
 

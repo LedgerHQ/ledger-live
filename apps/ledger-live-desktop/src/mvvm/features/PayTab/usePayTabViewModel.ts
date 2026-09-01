@@ -29,6 +29,7 @@ export function usePayTabViewModel() {
     featureTour,
     actionTiles,
     depositOptions: deposit.depositOptions,
+    bankTransferIntro: deposit.bankTransferIntro,
     requestReceive: request.requestReceive,
     verifyPhase: verify.phase,
     verifyAddress: verify.verifyAddress,
