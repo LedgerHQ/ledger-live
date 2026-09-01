@@ -2,13 +2,16 @@ import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
+import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-const beforeAllFunction = async (delegation: DelegateType) => {
+const beforeAllFunction = async (delegation: DelegateType, featureFlags?: OptionalFeatureMap) => {
   await app.init({
     speculosApp: delegation.account.currency.speculosApp,
     cliCommands: [liveDataWithAddressCommand(delegation.account)],
+    featureFlags,
   });
 
   await app.mainNavigation.waitForWallet40Ready();
@@ -111,10 +114,76 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
 
-      await app.undelegate.tapStakingRow();
-      await app.undelegate.tapUnstakeAction();
-      await app.undelegate.enterAmount(delegation.amount);
-      await app.undelegate.continueFromAmount();
+      const currencyId = delegation.account.currency.id;
+
+      await app.undelegate.tapStakingRow(currencyId, 0);
+      await app.undelegate.tapUnstakeAction("StakingActionUnstake");
+      await app.undelegate.enterAmount(currencyId, delegation.amount);
+      await app.undelegate.continueFromAmount(currencyId);
+
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await app.operationDetails.waitForOperationDetails();
+      await app.operationDetails.checkAccount(delegation.account.accountName);
+      await app.operationDetails.checkTransactionType("UNDELEGATE");
+    });
+  });
+}
+
+export function runMinaDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Delegate", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation, FF_MINA_STAKING_ENABLED);
+    });
+
+    it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId = delegation.account.currency.id;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      // Mina delegates the whole balance, so the flow opens on the validator list and has no
+      // amount step.
+      await app.stake.selectValidatorFromList(delegation.provider);
+      await app.stake.expectProvider(currencyId, delegation.provider);
+      await app.stake.summaryContinue(currencyId);
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
+
+export function runMinaUndelegateTest(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Undelegate", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation, FF_MINA_STAKING_ENABLED);
+    });
+
+    it(`[${delegation.account.currency.testLabel}] - Undelegate`, async () => {
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+
+      // Undelegating returns the whole balance, so the action prepares the transaction itself and
+      // goes straight to the device.
+      await app.undelegate.tapStakingRow(delegation.account.currency.id);
+      await app.undelegate.tapUnstakeAction("DelegationActionUndelegate");
 
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
