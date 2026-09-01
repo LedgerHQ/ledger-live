@@ -1,7 +1,7 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
-"@ledgerhq/live-e2e-shared": patch
-"live-mobile": patch
+"ledger-live-mobile-e2e-tests": minor
+"@ledgerhq/live-e2e-shared": minor
+"live-mobile": minor
 ---
 
 Split the Ledger Wallet Mobile Ledger Sync E2E test into five suites, one per Xray ticket, each

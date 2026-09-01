@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-algorand": patch
+"@ledgerhq/coin-algorand": minor
 ---
 
 Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.

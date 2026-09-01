@@ -1,7 +1,7 @@
 ---
-"@features/flow-contacts-add-address": patch
-"@features/flow-contacts-edit-address": patch
-"live-mobile": patch
+"@features/flow-contacts-add-address": minor
+"@features/flow-contacts-edit-address": minor
+"live-mobile": minor
 ---
 
 Fix Contacts address drawers so the confirm button stays visible above the keyboard on Android

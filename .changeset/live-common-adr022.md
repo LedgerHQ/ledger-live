@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Apply the coin-module framework's `withDefaults` and `withLogging` wrappers at `getCoinModuleApi`, the single point where the generic adapter resolves a coin module, on both the local and the network branch.

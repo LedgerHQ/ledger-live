@@ -1,7 +1,7 @@
 ---
 "@features/flow-pay-contact": minor
-"@features/flow-pay-balance": patch
-"@features/flow-pay-card-auth": patch
+"@features/flow-pay-balance": minor
+"@features/flow-pay-card-auth": minor
 "live-mobile": minor
 ---
 

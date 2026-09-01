@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-solana": minor
 ---
 
 fix(coin-solana): pair each signature with its own parsed transaction in listOperations

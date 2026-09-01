@@ -180,20 +180,4 @@
   - @ledgerhq/devices@8.15.0-next.0
   - @ledgerhq/hw-transport-node-speculos@6.34.3-next.0
 
-## 0.10.2
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0
-  - @ledgerhq/live-dmk-speculos@0.8.8
-
-## 0.10.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0-next.0
-  - @ledgerhq/live-dmk-speculos@0.8.8-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

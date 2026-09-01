@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-concordium": patch
+"@ledgerhq/coin-concordium": minor
 ---
 
 Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.

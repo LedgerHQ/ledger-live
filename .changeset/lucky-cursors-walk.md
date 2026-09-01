@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-evm": minor
 ---
 
 fix(coin-framework): follow the listOperations cursor so account history is no longer truncated to one page

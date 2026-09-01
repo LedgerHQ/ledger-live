@@ -172,18 +172,4 @@
 - Updated dependencies [[`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405)]:
   - @ledgerhq/coin-cosmos@0.36.0
 
-## 0.2.7-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-cosmos@0.36.0-next.1
-
-## 0.2.7-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405)]:
-  - @ledgerhq/coin-cosmos@0.36.0-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

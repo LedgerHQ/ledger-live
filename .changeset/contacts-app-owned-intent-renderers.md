@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@features/platform-contacts": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@features/platform-contacts": minor
 ---
 
 Move the Contacts device intent renderers into the apps.

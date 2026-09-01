@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-cosmos": patch
+"@ledgerhq/coin-cosmos": minor
 ---
 
 Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.

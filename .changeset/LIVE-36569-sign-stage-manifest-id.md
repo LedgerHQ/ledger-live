@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Report the originating live-app or dApp on sign-stage `earn_transaction_failed` events.

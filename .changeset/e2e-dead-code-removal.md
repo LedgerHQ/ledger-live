@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop-e2e-tests": patch
-"ledger-live-mobile-e2e-tests": patch
-"@ledgerhq/live-e2e-shared": patch
+"ledger-live-desktop-e2e-tests": minor
+"ledger-live-mobile-e2e-tests": minor
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Remove dead code from the e2e test suites: page-object methods and locators with no callers are deleted, members used only inside their own class are made `private`, and symbols exported but only referenced in their own file lose the `export`. Two empty page classes left behind by the sweep (`portfolioEmptyState.page.ts`, `transferMenu.drawer.ts`) are removed along with their `Application` wiring.

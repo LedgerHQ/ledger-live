@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Refactor `account.request` cancel-navigation out of `useUiHook` and fix premature cancel in the inline add-account flow.

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-module-boilerplate": patch
+"@ledgerhq/coin-module-boilerplate": minor
 ---
 
 Migrate the boilerplate to the coin-module authoring type, establishing the shape every new module copies.

@@ -2409,23 +2409,4 @@
   - @ledgerhq/hw-bolos@6.36.6
   - @ledgerhq/hw-transport-mocker@6.34.6
 
-## 36.4.0-next.0
-
-### Minor Changes
-
-- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
-
-### Patch Changes
-
-- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
-  - @ledgerhq/asset-aggregation@0.10.0-next.0
-  - @ledgerhq/coin-solana@0.57.0-next.0
-  - @ledgerhq/live-signer-solana@0.17.0-next.0
-
-## 36.4.0-next.1
-
-### Minor Changes
-
-- [#19575](https://github.com/LedgerHQ/ledger-live/pull/19575) [`50ab44f`](https://github.com/LedgerHQ/ledger-live/commit/50ab44f07f628fd819dff28d8cdd14b1ca5e4962) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix selectCurrencyForMetaId returning Arbitrum One chain instead of ARB ERC-20 token
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

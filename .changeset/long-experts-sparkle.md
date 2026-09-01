@@ -1,9 +1,9 @@
 ---
 "@features/flow-contacts-add-contact": minor
-"@support/jest-features-flow": patch
+"@support/jest-features-flow": minor
 "@features/flow-pay-contact": minor
 "ledger-live-desktop": minor
-"live-mobile": patch
+"live-mobile": minor
 "@features/flow-contacts": minor
 ---
 

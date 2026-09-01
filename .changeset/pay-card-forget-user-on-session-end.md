@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-auth": patch
+"@features/flow-pay-card-auth": minor
 ---
 
 Forget the cached Card user when a 401 ends the session, not only on an explicit logout.

@@ -1,5 +1,5 @@
 ---
-"@domain/api-card-management": patch
+"@domain/api-card-management": minor
 ---
 
 Align the Card schemas and their tests with the provider's documented responses:

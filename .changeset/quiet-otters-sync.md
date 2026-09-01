@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-zcash": patch
-"ledger-live-desktop": patch
+"@ledgerhq/coin-zcash": minor
+"ledger-live-desktop": minor
 ---
 
 Fix the Zcash shielded-balance "Stop sync" action, which previously did nothing when the

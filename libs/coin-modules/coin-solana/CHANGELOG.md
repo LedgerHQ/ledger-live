@@ -398,16 +398,4 @@
   - @ledgerhq/devices@8.17.0-next.0
   - @ledgerhq/live-network@2.6.7-next.0
 
-## 0.56.1
-
-### Patch Changes
-
-- [#19512](https://github.com/LedgerHQ/ledger-live/pull/19512) [`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add new OCMS v1 msg format
-
-## 0.56.1-hotfix.0
-
-### Patch Changes
-
-- [#19512](https://github.com/LedgerHQ/ledger-live/pull/19512) [`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add new OCMS v1 msg format
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

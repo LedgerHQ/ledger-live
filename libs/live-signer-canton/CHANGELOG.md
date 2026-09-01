@@ -160,18 +160,4 @@
 - Updated dependencies []:
   - @ledgerhq/coin-canton@0.26.2
 
-## 0.9.8-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.26.2-next.1
-
-## 0.9.8-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.26.2-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

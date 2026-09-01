@@ -306,16 +306,4 @@
 
 - [#17236](https://github.com/LedgerHQ/ledger-live/pull/17236) [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add debug FAB toggle to quickly open Asset Detail screen
 
-## 2.34.0
-
-### Minor Changes
-
-- [#17072](https://github.com/LedgerHQ/ledger-live/pull/17072) [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix avatar resolution
-
-## 2.34.0-next.0
-
-### Minor Changes
-
-- [#17072](https://github.com/LedgerHQ/ledger-live/pull/17072) [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix avatar resolution
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

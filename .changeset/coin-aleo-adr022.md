@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-aleo": minor
 ---
 
 Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.

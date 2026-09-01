@@ -419,26 +419,4 @@
   - @ledgerhq/live-wallet@0.28.0
   - @ledgerhq/live-dmk-speculos@0.10.1
 
-## 0.32.0-next.0
-
-### Minor Changes
-
-- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
-
-### Patch Changes
-
-- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
-  - @ledgerhq/live-cli@24.46.0-next.0
-  - @ledgerhq/live-common@36.4.0-next.0
-  - @ledgerhq/live-e2e-shared@0.2.0-next.2
-
-## 0.32.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`50ab44f`](https://github.com/LedgerHQ/ledger-live/commit/50ab44f07f628fd819dff28d8cdd14b1ca5e4962)]:
-  - @ledgerhq/live-common@36.4.0-next.1
-  - @ledgerhq/live-cli@25.0.0-next.1
-  - @ledgerhq/live-e2e-shared@0.2.0-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

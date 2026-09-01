@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-canton": minor
 ---
 
 Build the api from the framework's `notSupportedApi()` instead of hand-writing seventeen
