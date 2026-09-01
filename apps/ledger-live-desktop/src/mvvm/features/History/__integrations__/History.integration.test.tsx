@@ -252,6 +252,7 @@ describe("History integration", () => {
         accounts: [account],
         settings: AFTER_ONBOARDING_STATE,
         contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });
 
@@ -274,12 +275,33 @@ describe("History integration", () => {
         accounts: [account],
         settings: AFTER_ONBOARDING_STATE,
         contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });
 
     await waitFor(() => {
       expect(screen.getByTestId(`history-operation-row-${OUT_TO_OTHER_OP_ID}`)).toBeVisible();
     });
+    expect(screen.queryByTestId("history-contact-scope")).not.toBeInTheDocument();
+  });
+
+  it("should ignore the contactId scope when the lwdPayTab flag is disabled", async () => {
+    const account = createEthAccountWithContactTransfers();
+
+    render(<History />, {
+      initialRoute: `/history?contactId=${CONTACT_HISTORY_ID}`,
+      initialState: {
+        accounts: [account],
+        settings: AFTER_ONBOARDING_STATE,
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId(`history-operation-row-${OUT_TO_OTHER_OP_ID}`)).toBeVisible();
+    });
+    expect(screen.getByTestId(`history-operation-row-${OUT_TO_CONTACT_OP_ID}`)).toBeVisible();
+    expect(screen.getByTestId(`history-operation-row-${IN_FROM_CONTACT_OP_ID}`)).toBeVisible();
     expect(screen.queryByTestId("history-contact-scope")).not.toBeInTheDocument();
   });
 
@@ -290,6 +312,7 @@ describe("History integration", () => {
         accounts: [EMPTY_BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
         contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
       },
     });
 
