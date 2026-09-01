@@ -36,5 +36,7 @@ export default createStakingFlowBody<StepId>({
   title: "aleo.unbond.flow.title",
   trackCloseEvent: "CloseModalUnbond",
   mode: "unbond_public",
-  recipientFromFresh: true,
+  // `recipient` carries the on-chain `staker`, which is always the account itself.
+  // prepareTransaction re-pins it, so this is only a sensible starting value.
+  initialRecipient: account => account.freshAddress,
 });

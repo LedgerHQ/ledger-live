@@ -78,17 +78,18 @@ export class AleoNoClaimableAmount extends Error {
   }
 }
 
-/**
- * Raised when a BOND_PUBLIC transaction targets a validator that the Aleo
- * committee currently reports as closed (not accepting new delegators).
- * This is the bridge-level counterpart to the UI-only guard in
- * StepValidator.tsx, so bonding to a closed validator is rejected even when
- * the UI falls back to a manual address input (e.g. validator fetch failed).
- */
 export class AleoClosedValidator extends Error {
   override name = "AleoClosedValidator";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "AleoClosedValidator");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoAlreadyBondedElsewhere extends Error {
+  override name = "AleoAlreadyBondedElsewhere";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoAlreadyBondedElsewhere");
     if (fields) Object.assign(this, fields);
   }
 }

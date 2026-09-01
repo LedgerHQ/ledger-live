@@ -23,19 +23,12 @@ import {
 } from "@ledgerhq/live-common/families/aleo/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
-// Shared between BondPublicFlowModal / UnbondFlowModal / ClaimUnbondFlowModal:
-// the three Body.tsx files were ~90% byte-identical, differing only by the
-// steps array, the initial transaction patch, the initial step id, the title
-// key and the close-tracking event. This factory captures the shared shell,
-// matching the createStakingFlowModal / createStepConfirmation factories.
-
 export type StakingFlowData = {
   account: AleoAccount;
   parentAccount?: Account;
   source?: string;
 };
 
-// Structurally identical to each flow's StepProps in its types.ts.
 export type StakingStepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -78,7 +71,12 @@ type StakingFlowBodyConfig<StepId extends string> = {
   title: string;
   trackCloseEvent: string;
   mode: Transaction["mode"];
-  recipientFromFresh?: boolean;
+  /**
+   * Seeds `transaction.recipient`. Each flow means something different by that field —
+   * the staker for unbond/claim, the validator for bond — so the resolver takes the
+   * account instead of the factory guessing. Omit to start empty.
+   */
+  initialRecipient?: (account: AleoAccount) => string;
   withdrawalFromFresh?: boolean;
 };
 
@@ -88,7 +86,7 @@ export function createStakingFlowBody<StepId extends string>({
   title,
   trackCloseEvent,
   mode,
-  recipientFromFresh,
+  initialRecipient,
   withdrawalFromFresh,
 }: StakingFlowBodyConfig<StepId>) {
   type Props = StakingFlowBodyOwnProps<StepId> & StateProps;
@@ -113,7 +111,7 @@ export function createStakingFlowBody<StepId extends string>({
         const t0 = bridge.createTransaction(account);
         const patch: Partial<Transaction> & { withdrawal?: string } = {
           mode,
-          recipient: recipientFromFresh ? mainAccount.freshAddress : "",
+          recipient: initialRecipient?.(account) ?? "",
         };
         if (withdrawalFromFresh) patch.withdrawal = mainAccount.freshAddress;
         const transaction = bridge.updateTransaction(t0, patch);

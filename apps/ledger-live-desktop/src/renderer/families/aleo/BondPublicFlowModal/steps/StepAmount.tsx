@@ -2,6 +2,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -34,15 +35,19 @@ const StepAmount = ({
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
+      {!status.errors.amount && status.errors.fees ? (
+        <ErrorBanner error={status.errors.fees} />
+      ) : null}
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
-          {account && transaction ? (
-            <SpendableBanner
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-            />
-          ) : null}
+          <Alert type="hint" small>
+            <Trans i18nKey="aleo.bond.flow.steps.amount.minimum" />
+          </Alert>
+          <SpendableBanner
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+          />
           <AmountField
             status={status}
             account={account}
@@ -66,10 +71,8 @@ export class StepAmountFooter extends PureComponent<StepProps> {
 
   render() {
     const { account, parentAccount, status, bridgePending } = this.props;
-    const { errors } = status;
     if (!account) return null;
-    const hasErrors = Object.keys(errors).length;
-    const canNext = !bridgePending && !hasErrors;
+    const canNext = !bridgePending && Object.keys(status.errors).length === 0;
     return (
       <>
         <AccountFooter parentAccount={parentAccount} account={account} status={status} />

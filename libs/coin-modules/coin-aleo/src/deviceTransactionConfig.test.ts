@@ -87,10 +87,36 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  it("should always include the Amount field", async () => {
+  it("should include the Amount field", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
       transaction: mockTransaction,
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({ type: "amount", label: "Amount" });
+  });
+
+  // The on-chain call takes only the staker, so the amount is absent from the signed
+  // payload and the device shows no amount. `transaction.amount` is pinned to 0 for this
+  // mode, so keeping the field would advertise a bogus "0 ALEO".
+  it("should omit the Amount field for claim unbond, which carries no amount", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: getMockedTransaction({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC }),
+      // Non-zero fees so the trailing row is `fees` rather than the sponsored-fee text,
+      // keeping this assertion about the amount row alone.
+      status: { ...mockStatus, amount: new BigNumber(0), estimatedFees: new BigNumber(100) },
+    });
+
+    expect(fields).not.toContainEqual({ type: "amount", label: "Amount" });
+    expect(fields.map(f => f.type)).toEqual(["text", "address", "address", "fees"]);
+  });
+
+  it("should keep the Amount field for unbond, which does carry an amount", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: getMockedTransaction({ mode: TRANSACTION_TYPE.UNBOND_PUBLIC }),
       status: mockStatus,
     });
 

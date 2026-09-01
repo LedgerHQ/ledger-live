@@ -17,12 +17,6 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-// Shared between BondPublicFlowModal / UnbondFlowModal / ClaimUnbondFlowModal:
-// the three StepConfirmation.tsx files were byte-identical apart from i18n
-// keys, tracking labels and the `staking_completed` payload field name, so
-// this factory takes those as config and returns the pair of components each
-// flow's steps array expects.
-
 type StakingConfirmationProps = {
   t: TFunction;
   account?: Account | null;
@@ -46,11 +40,8 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 export type StakingConfirmationConfig = {
-  /** e.g. "bond" | "unbond" | "claim" — used to build i18n keys and labels */
   flow: "bond" | "unbond" | "claim";
-  /** e.g. "bonding" | "unbonding" | "claiming" — used for tracking */
   action: "bonding" | "unbonding" | "claiming";
-  /** field name used in the `staking_completed` segment payload */
   trackField: "validator" | "staker";
 };
 

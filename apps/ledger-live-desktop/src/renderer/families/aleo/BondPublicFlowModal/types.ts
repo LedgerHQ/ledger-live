@@ -5,7 +5,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/aleo/types";
 import { OpenModal } from "~/renderer/actions/modals";
 
-export type StepId = "validator" | "withdrawal" | "amount" | "connectDevice" | "confirmation";
+export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {
   t: TFunction;
