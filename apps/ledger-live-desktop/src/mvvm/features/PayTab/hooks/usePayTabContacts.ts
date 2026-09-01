@@ -87,7 +87,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer();
+    openDrawer({ startOnSyncMethod: true });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
@@ -129,6 +129,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
+        title: t("contacts.ledgerSyncIntroduction.title"),
         description: t("contacts.ledgerSyncIntroduction.description"),
         activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
         dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),

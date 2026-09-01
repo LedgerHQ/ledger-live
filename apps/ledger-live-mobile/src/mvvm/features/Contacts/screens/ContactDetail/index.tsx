@@ -4,6 +4,7 @@ import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlo
 import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDetailActionsSheets";
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
+import { ContactsLedgerSyncActivationDrawer } from "LLM/features/Contacts/components/ContactsLedgerSyncActivationDrawer";
 import { ContactsLedgerSyncIntroductionSheet } from "LLM/features/Contacts/components/ContactsLedgerSyncIntroductionSheet";
 import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
@@ -37,10 +38,8 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         signerMismatchSheet={viewModel.addressDetailActions.signerMismatchSheet}
       />
       <ContactDetailEditDeleteSheets {...viewModel.editDeleteFlow} />
-      <ContactsLedgerSyncIntroductionSheet
-        {...viewModel.ledgerSyncIntroduction}
-        {...viewModel.ledgerSyncIntroductionContent}
-      />
+      <ContactsLedgerSyncIntroductionSheet {...viewModel.ledgerSyncIntroduction} />
+      <ContactsLedgerSyncActivationDrawer {...viewModel.ledgerSyncActivationDrawer} />
       {viewModel.dieProps === undefined ? null : (
         <DeviceIntentExecutorLWM sourceFlow="contacts" {...viewModel.dieProps} />
       )}

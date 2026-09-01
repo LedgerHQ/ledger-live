@@ -27,6 +27,7 @@ export function ContactsView({
             isContactsLedgerSyncActivationRequired(ledgerSyncStatus) &&
             ledgerSyncIntroduction.isOpen
           }
+          title={ledgerSyncIntroduction.title}
           description={ledgerSyncIntroduction.description}
           activateLabel={ledgerSyncIntroduction.activateLabel}
           dismissLabel={ledgerSyncIntroduction.dismissLabel}

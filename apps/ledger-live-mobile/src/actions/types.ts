@@ -582,15 +582,18 @@ export enum WalletSyncActionTypes {
   WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
   LEDGER_SYNC_SET_ACTIVATE_DRAWER = "LEDGER_SYNC_SET_ACTIVATE_DRAWER",
   LEDGER_SYNC_SET_ACTIVATE_STEP = "LEDGER_SYNC_SET_ACTIVATE_STEP",
+  LEDGER_SYNC_SET_RETURNS_TO_ENTRY_SCREEN = "LEDGER_SYNC_SET_RETURNS_TO_ENTRY_SCREEN",
 }
 
 export type WalletSyncSetManageKeyDrawerPayload = boolean;
 export type WalletSyncSetActivateDrawer = boolean;
 export type WalletSyncSetActivateStep = Steps;
+export type WalletSyncSetReturnsToEntryScreen = boolean;
 export type WalletSyncPayload =
   | WalletSyncSetManageKeyDrawerPayload
   | WalletSyncSetActivateDrawer
-  | WalletSyncSetActivateStep;
+  | WalletSyncSetActivateStep
+  | WalletSyncSetReturnsToEntryScreen;
 
 // === AUTH ACTIONS ===
 export enum AuthActionTypes {

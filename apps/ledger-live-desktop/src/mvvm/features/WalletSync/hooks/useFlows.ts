@@ -107,6 +107,14 @@ export const useFlows = () => {
     }
   };
 
+  const goToSyncMethodScreenWalletSync = () => {
+    if (trustchain?.rootId) {
+      dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
+    } else {
+      dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+    }
+  };
+
   return {
     currentFlow,
     currentStep,
@@ -114,5 +122,6 @@ export const useFlows = () => {
     goToPreviousScene,
     FlowOptions,
     goToWelcomeScreenWalletSync,
+    goToSyncMethodScreenWalletSync,
   };
 };

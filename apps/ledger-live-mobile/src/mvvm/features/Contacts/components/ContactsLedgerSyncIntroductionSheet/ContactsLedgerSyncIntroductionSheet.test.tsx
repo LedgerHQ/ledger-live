@@ -9,17 +9,17 @@ describe("ContactsLedgerSyncIntroductionSheet", () => {
     const { user } = render(
       <ContactsLedgerSyncIntroductionSheet
         isOpen
-        title="Turn on Ledger Sync to save contacts"
+        title="Sync your wallet to add a contact"
         description="Your contacts are encrypted."
-        activateLabel="Turn on Ledger Sync"
-        dismissLabel="Got it"
+        activateLabel="Sync my wallet"
+        dismissLabel="Not now"
         onActivate={onActivate}
         onDismiss={onDismiss}
       />,
     );
 
-    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
-    await user.press(screen.getByRole("button", { name: "Got it" }));
+    await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
+    await user.press(screen.getByRole("button", { name: "Not now" }));
 
     expect(onActivate).toHaveBeenCalledTimes(1);
     expect(onDismiss).toHaveBeenCalledTimes(1);

@@ -320,6 +320,16 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Coinbase 1");
   });
 
+  it("should not open Ledger Sync activation when landing on Contacts while sync is inactive", () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    renderContactsScreen();
+
+    expect(screen.getByTestId("contacts-page")).toBeVisible();
+    expect(
+      screen.queryByTestId("contacts-ledger-sync-introduction-dialog"),
+    ).not.toBeInTheDocument();
+  });
+
   it("should open Ledger Sync activation instead of adding a contact while sync is inactive", async () => {
     mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
     const { user } = renderContactsScreen();
@@ -327,12 +337,28 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-add-contact"));
 
     expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
-    expect(screen.getByRole("dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-ledger-sync-introduction-dialog")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+    await user.click(screen.getByRole("button", { name: "Sync my wallet" }));
 
-    expect(mockOpenActivationDrawer).toHaveBeenCalledTimes(1);
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(mockOpenActivationDrawer).toHaveBeenCalledWith({ startOnSyncMethod: true });
+    expect(
+      screen.queryByTestId("contacts-ledger-sync-introduction-dialog"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("should close the Ledger Sync introduction from the secondary action", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+    await user.click(screen.getByRole("button", { name: "Not now" }));
+
+    expect(mockOpenActivationDrawer).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("contacts-ledger-sync-introduction-dialog"),
+    ).not.toBeInTheDocument();
   });
 
   it("should block a duplicate contact name and allow a unique replacement", async () => {
