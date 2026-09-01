@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Gate History contactId scoping behind the lwdPayTab feature flag
+Gate History contact features (contactId scoping and From/To contact name resolution) behind the lwdPayTab feature flag

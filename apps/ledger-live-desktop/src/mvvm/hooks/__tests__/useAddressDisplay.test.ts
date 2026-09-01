@@ -94,6 +94,17 @@ describe("useAddressDisplay", () => {
     expect(result.current.contactAddressLabel).toBe("USDT Coinbase");
   });
 
+  it("should ignore contacts when includeContacts is false", () => {
+    const { result } = renderHook(
+      () => useAddressDisplay(contactAddress, "ethereum", { includeContacts: false }),
+      { initialState: stateWithContact },
+    );
+
+    expect(result.current.contactName).toBeUndefined();
+    expect(result.current.contactAddressLabel).toBeUndefined();
+    expect(result.current.displayName).toBe("0x1ad2...3034");
+  });
+
   it("should not match a contact address on another network", () => {
     const { result } = renderHook(() => useAddressDisplay(contactAddress, "polygon"), {
       initialState: stateWithContact,

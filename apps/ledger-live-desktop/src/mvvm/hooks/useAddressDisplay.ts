@@ -45,14 +45,25 @@ function useMatchingContact(address: string, currencyId: string) {
   );
 }
 
+export type UseAddressDisplayOptions = {
+  /** When false, contact matches are ignored (no contact name nor address label). Defaults to true. */
+  includeContacts?: boolean;
+};
+
 /**
  * Resolves the best display label for a blockchain address.
  * Priority: Ledger account name > contact name > truncated address.
  *
  * @param address - raw blockchain address
  * @param currencyId - main currency id (use parentCurrency.id for tokens)
+ * @param options - set of options to configure the display
  */
-export function useAddressDisplay(address: string, currencyId: string): AddressDisplayResult {
+export function useAddressDisplay(
+  address: string,
+  currencyId: string,
+  options?: UseAddressDisplayOptions,
+): AddressDisplayResult {
+  const includeContacts = options?.includeContacts ?? true;
   const matchingAccount = useMatchingAccount(address, currencyId);
   const accountName = useMaybeAccountName(matchingAccount);
   const matchingContact = useMatchingContact(address, currencyId);
@@ -60,7 +71,8 @@ export function useAddressDisplay(address: string, currencyId: string): AddressD
   return useMemo(() => {
     if (!address) return EMPTY_RESULT;
 
-    const contactName = matchingContact?.contactName;
+    const contact = includeContacts ? matchingContact : undefined;
+    const contactName = contact?.contactName;
     const displayName = accountName ?? contactName ?? truncateAddress(address);
 
     return {
@@ -68,7 +80,7 @@ export function useAddressDisplay(address: string, currencyId: string): AddressD
       matchingAccount,
       accountName,
       contactName,
-      contactAddressLabel: matchingContact?.addressLabel,
+      contactAddressLabel: contact?.addressLabel,
     };
-  }, [address, matchingAccount, accountName, matchingContact]);
+  }, [address, matchingAccount, accountName, matchingContact, includeContacts]);
 }
