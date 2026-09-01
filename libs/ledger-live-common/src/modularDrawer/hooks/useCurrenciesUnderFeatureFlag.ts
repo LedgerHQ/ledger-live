@@ -98,6 +98,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const arcTestnet = useFeature("currencyArcTestnet");
   const robinhood = useFeature("currencyRobinhood");
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+  const gonka = useFeature("currencyGonka");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<string, Feature<unknown> | null>> => ({
@@ -194,6 +195,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arc_testnet: arcTestnet,
       robinhood,
       robinhood_testnet: robinhoodTestnet,
+      gonka,
     }),
     [
       adi,
@@ -288,6 +290,7 @@ export function useCurrenciesUnderFeatureFlag() {
       arcTestnet,
       robinhood,
       robinhoodTestnet,
+      gonka,
     ],
   );
 
