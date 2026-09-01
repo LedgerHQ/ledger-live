@@ -280,6 +280,53 @@ describe("createCardSession readers", () => {
     await clearing;
   });
 
+  it("answers nothing for a read that a clear overtook", async () => {
+    const { store, slots } = fakeStore(liveSession());
+    const readStarted = deferred<void>();
+    const releaseRead = deferred<void>();
+    // The value is taken before the wait, so the store answers what it held when the read began.
+    jest.mocked(store.read).mockImplementation(async key => {
+      const held = slots.get(key) ?? null;
+      readStarted.resolve();
+      await releaseRead.promise;
+      return held;
+    });
+    const api = createCardSession(store);
+
+    const reading = api.getCardSessionToken();
+    await readStarted.promise;
+    const clearing = api.cardSession.clear();
+    releaseRead.resolve();
+
+    // The store still answers the token it was asked for. The session it belongs to is over.
+    await expect(reading).resolves.toBeNull();
+    await clearing;
+  });
+
+  it("answers nothing for a read that a new login overtook", async () => {
+    const { store, slots } = fakeStore(liveSession());
+    const readStarted = deferred<void>();
+    const releaseRead = deferred<void>();
+    // The value is taken before the wait, so the store answers what it held when the read began.
+    jest.mocked(store.read).mockImplementation(async key => {
+      const held = slots.get(key) ?? null;
+      readStarted.resolve();
+      await releaseRead.promise;
+      return held;
+    });
+    const api = createCardSession(store);
+
+    const reading = api.getCardSessionToken();
+    await readStarted.promise;
+    await api.cardSession.set(loginSession);
+    releaseRead.resolve();
+
+    // The login finished, so the cleared flag is down again. The read still holds the token of the
+    // session before it, and only the session id tells the two apart.
+    await expect(reading).resolves.toBeNull();
+    await expect(api.getCardSessionToken()).resolves.toBe("at_login");
+  });
+
   it("serves nothing once the session is cleared, even from a store that kept the value", async () => {
     const { cardSession, getCardSessionToken, store, slots } = setup({
       initial: liveSession(),

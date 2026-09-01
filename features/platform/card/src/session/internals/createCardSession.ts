@@ -113,21 +113,35 @@ export function createCardSession(store: CardSessionStore) {
     await store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined);
   }
 
-  async function readAccessToken(): Promise<string | null> {
+  /**
+   * Reads one key, and answers nothing for a session that ended while the read was in flight.
+   *
+   * The guard before the read is not enough on its own. A store read takes time, and a clear or a
+   * login can land inside it. Read once, the guard would serve a token from a session that is over
+   * to a caller holding nothing to notice it with. So the session the read started from is compared
+   * again after the read, and only a token that still belongs to that session is served.
+   *
+   * {@link readCardSession} is the one reader that does not come through here. It answers with a
+   * pair, and the id in that pair is how its caller tells a stale token from a current one.
+   */
+  async function readToken(key: string): Promise<string | null> {
     if (isCleared) {
       return null;
     }
 
-    return store.read(CARD_SESSION_KEYS.accessToken);
+    const reading = sessionId;
+    const token = await store.read(key);
+
+    return isCleared || reading !== sessionId ? null : token;
+  }
+
+  async function readAccessToken(): Promise<string | null> {
+    return readToken(CARD_SESSION_KEYS.accessToken);
   }
 
   /** Private. The refresh token leaves this module only inside a grant request. */
   async function readRefreshToken(): Promise<string | null> {
-    if (isCleared) {
-      return null;
-    }
-
-    return store.read(CARD_SESSION_KEYS.refreshToken);
+    return readToken(CARD_SESSION_KEYS.refreshToken);
   }
 
   async function readSession(): Promise<StoredCardSession | null> {
@@ -297,10 +311,17 @@ export function createCardSession(store: CardSessionStore) {
    *
    * The id is read first, so it can only name the session the token came from or an older one.
    * Older is the safe side: the base query then replays nothing and clears nothing.
+   *
+   * It serves the token the store answered, and does not drop it for a session that moved during
+   * the read, the way {@link readToken} does. The base query reads no token as "this request has no
+   * Bearer to send" and sends it anonymously. A replacement must not turn an authenticated request
+   * into an anonymous one, so a token that outlived its session is served with the id it came with,
+   * and `isCardSessionCurrent` is what holds the request back.
    */
   const readCardSession = async (): Promise<CardSessionSnapshot> => {
     const id = sessionId;
-    return { token: await readAccessToken(), sessionId: id };
+    const token = isCleared ? null : await store.read(CARD_SESSION_KEYS.accessToken);
+    return { token, sessionId: id };
   };
 
   const isCardSessionCurrent = (requestSessionId: number): boolean =>
