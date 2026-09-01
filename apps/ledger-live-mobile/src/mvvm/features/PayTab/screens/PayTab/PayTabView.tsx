@@ -12,6 +12,8 @@ import { TrackScreen } from "~/analytics";
 type PayTabViewProps = {
   readonly top: number;
   readonly cardTitle: string;
+  readonly cardBalanceLabel: string;
+  readonly formatCountervalue: CardProps["formatCountervalue"];
   readonly oauthConfig: CardProps["oauthConfig"];
   readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
@@ -26,6 +28,8 @@ type PayTabViewProps = {
 export function PayTabView({
   top,
   cardTitle,
+  cardBalanceLabel,
+  formatCountervalue,
   oauthConfig,
   callback,
   featureTour,
@@ -43,7 +47,13 @@ export function PayTabView({
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} actionTiles={actionTiles} />
         {isContactsEnabled && <Contacts {...contacts} />}
-        <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
+        <Card
+          title={cardTitle}
+          oauthConfig={oauthConfig}
+          callback={callback}
+          formatCountervalue={formatCountervalue}
+          balanceLabel={cardBalanceLabel}
+        />
         <FeatureTour {...featureTour} />
         <DepositOptions {...depositOptions} />
         <BankTransferIntro {...bankTransferIntro} />

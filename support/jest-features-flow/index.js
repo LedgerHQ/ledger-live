@@ -23,6 +23,8 @@ const nativeMocks = {
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
+  // react-native-svg reads `Touchable` off the react-native stub above, which does not carry it.
+  "^react-native-svg$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
