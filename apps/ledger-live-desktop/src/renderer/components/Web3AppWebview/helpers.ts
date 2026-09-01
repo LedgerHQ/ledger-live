@@ -242,6 +242,11 @@ export function useWebviewState(
 
   const handleFailLoad = useCallback((errorEvent: Electron.DidFailLoadEvent) => {
     const { errorCode, validatedURL, isMainFrame } = errorEvent;
+
+    // ERR_ABORTED (-3) means the navigation was cancelled (e.g. user closed the drawer
+    // before the webview finished loading). This is intentional — not an error.
+    if (errorCode === -3) return;
+
     const fullURL = new URL(validatedURL);
     const errorInfo = {
       errorCode,

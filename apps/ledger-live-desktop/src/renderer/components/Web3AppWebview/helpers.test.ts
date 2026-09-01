@@ -1,6 +1,7 @@
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook } from "@testing-library/react";
 import { getAttachedWebview, useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { track } from "~/renderer/analytics/segment";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
@@ -15,6 +16,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   useDAppManifestCurrencyIds: jest.fn(() => []),
+}));
+
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: jest.fn(),
 }));
 
 const mockManifest: LiveAppManifest = {
@@ -42,6 +47,7 @@ const mockManifest: LiveAppManifest = {
 };
 
 const mockGetInitialURL = jest.mocked(getInitialURL);
+const mockTrack = jest.mocked(track);
 
 const createWebview = (getWebContentsId: () => number) =>
   ({
@@ -81,6 +87,7 @@ describe("getAttachedWebview", () => {
 describe("useWebviewState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockTrack.mockClear();
   });
 
   describe("webviewProps.src", () => {
@@ -297,6 +304,86 @@ describe("useWebviewState", () => {
       addEventListener.mock.calls.forEach(([eventName, handler]) => {
         expect(removeEventListener).toHaveBeenCalledWith(eventName, handler);
       });
+    });
+  });
+
+  describe("handleFailLoad", () => {
+    const setupWithWebview = () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+      const addEventListener = jest.fn();
+      const mockWebview = {
+        addEventListener,
+        removeEventListener: jest.fn(),
+        getWebContentsId: () => 42,
+        reload: jest.fn(),
+        goBack: jest.fn(),
+        goForward: jest.fn(),
+        openDevTools: jest.fn(),
+        clearHistory: jest.fn(),
+        loadURL: jest.fn(() => Promise.resolve()),
+      } as unknown as WebviewTag;
+
+      const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
+      act(() => {
+        result.current.setWebviewRef(mockWebview);
+      });
+
+      const handler = addEventListener.mock.calls.find(
+        ([event]: [string]) => event === "did-fail-load",
+      )?.[1];
+
+      return { result, handler };
+    };
+
+    it("ignores ERR_ABORTED (-3) without updating state or tracking", () => {
+      const { result, handler } = setupWithWebview();
+
+      act(() => {
+        handler({
+          errorCode: -3,
+          errorDescription: "ERR_ABORTED",
+          validatedURL: "https://example.com/",
+          isMainFrame: true,
+        });
+      });
+
+      expect(result.current.webviewState.isAppUnavailable).toBe(false);
+      expect(mockTrack).not.toHaveBeenCalled();
+    });
+
+    it("sets isAppUnavailable and tracks when ERR_FAILED (-2) hits the main frame", () => {
+      const { result, handler } = setupWithWebview();
+
+      act(() => {
+        handler({
+          errorCode: -2,
+          errorDescription: "ERR_FAILED",
+          validatedURL: "https://example.com/",
+          isMainFrame: true,
+        });
+      });
+
+      expect(result.current.webviewState.isAppUnavailable).toBe(true);
+      expect(mockTrack).toHaveBeenCalledWith("useWebviewState", {
+        errorCode: -2,
+        url: "example.com",
+      });
+    });
+
+    it("does not set isAppUnavailable when ERR_FAILED (-2) is on a sub-frame", () => {
+      const { result, handler } = setupWithWebview();
+
+      act(() => {
+        handler({
+          errorCode: -2,
+          errorDescription: "ERR_FAILED",
+          validatedURL: "https://example.com/",
+          isMainFrame: false,
+        });
+      });
+
+      expect(result.current.webviewState.isAppUnavailable).toBe(false);
+      expect(mockTrack).toHaveBeenCalled();
     });
   });
 });
