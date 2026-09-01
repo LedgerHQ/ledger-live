@@ -32,6 +32,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
+import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -171,6 +172,9 @@ async function init() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
+
+  // Dev and E2E only; a packaged build ignores it. See bootstrapCardSession.
+  await bootstrapCardSession(dispatch);
   await initIdentities(store);
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
   if (process.env.LEDGER_LIVE_DEEPLINK) {

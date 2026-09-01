@@ -41,6 +41,7 @@ import { NewSendModal } from "tests/page/modal/new.send.modal";
 import { PrivateBalanceModal } from "tests/page/modal/private.balance.modal";
 import { HistoryPage } from "tests/page/history.page";
 import { MainNavigationPage } from "tests/page/mainNavigation.page";
+import { PayTabPage } from "tests/page/payTab.page";
 import { SwapTransactionStatusDialog } from "tests/page/dialog/swap.transaction.status.dialog";
 import { TezosStakeModal } from "tests/page/modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "tests/page/modal/tezos.earning.choice.modal";
@@ -108,6 +109,7 @@ export class Application extends PageHolder {
   }
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
+  public payTab = new PayTabPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
   public tezosUnstake = new TezosUnstakeModal(this.page);
