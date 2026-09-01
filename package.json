@@ -22,7 +22,7 @@
     "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
     "lint:structure": "nx run-many -t lint:structure",
     "bump": "changeset version",
-    "clean": "git clean -fdX",
+    "clean": "git clean -fdX && node tools/nx/write-nx-cache-config.mjs --force",
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
