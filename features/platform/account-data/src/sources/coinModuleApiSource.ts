@@ -1,14 +1,10 @@
 import {
   AccountBalanceSchema,
+  AmountStrSchema,
   type AccountBalance,
   type BalanceAssetId,
 } from "@domain/entity-account-balance";
-import {
-  AccountIdSchema,
-  BigNumberStrSchema,
-  DateTimeIsoSchema,
-  type AccountId,
-} from "@shared/schema-primitives";
+import { AccountIdSchema, DateTimeIsoSchema, type AccountId } from "@shared/schema-primitives";
 import type {
   AccountDataSource,
   AccountRef,
@@ -65,15 +61,21 @@ const subtractLocked = (value: string, locked: string | undefined): string => {
   return (spendable < 0n ? 0n : spendable).toString();
 };
 
-const toAccountBalance = (row: AssetBalanceRow, at: string): AccountBalance =>
-  AccountBalanceSchema.parse({
+const toAccountBalance = (row: AssetBalanceRow, at: string): AccountBalance => {
+  // Parsed *before* the arithmetic: `BigInt` throws a bare SyntaxError on a fractional string, so a
+  // module reporting "1.5" has to fail validation with a message that names the field instead.
+  const value = AmountStrSchema.parse(row.value);
+  const locked = row.locked === undefined ? undefined : AmountStrSchema.parse(row.locked);
+
+  return AccountBalanceSchema.parse({
     accountId: AccountIdSchema.parse(row.accountId),
     assetId: row.assetId,
-    balance: BigNumberStrSchema.parse(row.value),
-    spendableBalance: BigNumberStrSchema.parse(subtractLocked(row.value, row.locked)),
+    balance: value,
+    spendableBalance: subtractLocked(value, locked),
     ...(row.parentId ? { parentId: AccountIdSchema.parse(row.parentId) } : {}),
     at: DateTimeIsoSchema.parse(at),
   });
+};
 
 /**
  * The granular path: read the balance straight off the chain, and stop there.

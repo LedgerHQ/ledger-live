@@ -8,6 +8,7 @@ import {
   type WithAccountBalances,
 } from "@domain/entity-account-balance";
 import { AccountIdSchema, type AccountId } from "@shared/schema-primitives";
+import type { AccountSlice } from "./port";
 
 /** A legacy account, as the mirror reads it. `Account` from `@ledgerhq/types-live` satisfies this. */
 export type MirroredAccount = MainAccountForBalance & { lastSyncDate: Date };
@@ -38,6 +39,8 @@ export type MirroredStore<S extends WithAccountBalances> = {
  * A plain store subscription rather than a middleware or a hook: it must run once per accounts
  * change, not once per action and not once per mounted component.
  *
+ * `onError` receives a projection failure for one account; the pass continues with the others.
+ *
  * `selectAccounts` is a parameter because the two apps genuinely differ — desktop keeps `Account[]`
  * at `state.accounts`, mobile keeps `{ active: Account[] }` — and the identity check below relies on
  * it returning the stored array, not a fresh one.
@@ -47,8 +50,14 @@ export type MirroredStore<S extends WithAccountBalances> = {
 export function mirrorLegacyAccountBalances<S extends WithAccountBalances>(
   store: MirroredStore<S>,
   selectAccounts: (state: S) => readonly MirroredAccount[],
+  onError?: (error: unknown, accountId: string) => void,
 ): () => void {
   let previousAccounts: readonly MirroredAccount[] | undefined;
+  // The account object last mirrored, per id. Accounts are immutable and replaced on change, so
+  // reference equality is a sound *and* O(1) "nothing changed" test. Without it every pass would
+  // re-project every account — `BridgeSync` replaces the array once per synced account, so a sync
+  // round would cost O(N²) with an O(table) scan inside, on the main thread.
+  const mirrored = new Map<string, MirroredAccount>();
 
   const sync = () => {
     const state = store.getState();
@@ -59,13 +68,31 @@ export function mirrorLegacyAccountBalances<S extends WithAccountBalances>(
     previousAccounts = accounts;
 
     for (const account of accounts) {
+      if (mirrored.get(account.id) === account) continue;
+      // Per account, because the projection validates amounts: one account carrying something the
+      // schema rejects must not stop the other accounts in this pass from being mirrored.
+      try {
+        mirrorOne(account);
+        mirrored.set(account.id, account);
+      } catch (error) {
+        onError?.(error, account.id);
+      }
+    }
+
+    const removed = (known ?? [])
+      .filter(account => !accounts.some(current => current.id === account.id))
+      .map(account => AccountIdSchema.parse(account.id));
+    for (const id of removed) mirrored.delete(id);
+    if (removed.length > 0) store.dispatch(removeAccountBalances(removed));
+
+    function mirrorOne(account: MirroredAccount) {
       const parentId = AccountIdSchema.parse(account.id);
       // The mirror revisits *every* account whenever any one of them syncs. Without this check it
       // would keep re-imposing the legacy `account.balance` on rows a granular source has since read
       // from the chain — and because the scheduler's `lastFetchedAt` would still look fresh, nothing
       // would refetch for `maxAge`. So it writes only when the legacy account is the newer
       // observation.
-      if (!isNewerThanStored(account, accountBalances, parentId)) continue;
+      if (!isNewerThanStored(account, accountBalances, parentId)) return;
       const rows = toAccountBalances(account, account.lastSyncDate);
       const stale =
         !sameBalances(rows, accountBalances) ||
@@ -74,11 +101,6 @@ export function mirrorLegacyAccountBalances<S extends WithAccountBalances>(
         rows.length !== 1 + countSubRows(parentId, accountBalances);
       if (stale) store.dispatch(replaceAccountBalances({ accountId: parentId, balances: rows }));
     }
-
-    const removed = (known ?? [])
-      .filter(account => !accounts.some(current => current.id === account.id))
-      .map(account => AccountIdSchema.parse(account.id));
-    if (removed.length > 0) store.dispatch(removeAccountBalances(removed));
   };
 
   sync();
@@ -117,3 +139,20 @@ const sameBalances = (rows: AccountBalance[], table: AccountBalancesState): bool
       stored.parentId === row.parentId
     );
   });
+
+/**
+ * The standard `observedAt` for the `balance` slice, reading the entity table an app already mounts.
+ *
+ * Pass it to `createAccountDataScheduler` so a row the legacy mirror just wrote counts as fresh. It
+ * is what makes the two loops — `BridgeSync` in the background, the scheduler on demand — stop
+ * duplicating each other's work.
+ */
+export function observedBalanceAt(
+  getState: () => WithAccountBalances,
+): (accountId: AccountId, slice: AccountSlice) => number | undefined {
+  return (accountId, slice) => {
+    if (slice !== "balance") return undefined;
+    const at = getState().accountBalances[accountId]?.at;
+    return at === undefined ? undefined : new Date(at).getTime();
+  };
+}

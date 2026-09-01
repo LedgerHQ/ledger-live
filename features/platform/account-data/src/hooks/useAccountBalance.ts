@@ -28,6 +28,9 @@ export type UseAccountBalanceResult = {
 /**
  * The account's balance, and nothing else.
  *
+ * Takes the **main account's** ref. Passing a token account's ref reads its row without registering
+ * demand, since only the parent's read can produce it.
+ *
  * Mounting this registers `balance` demand and nothing more, so on a chain with a granular coin
  * module it costs one `getBalance` call — no operation history, no balance-history derivation, no
  * family resource bag. On a chain without one the router falls back to a full sync, i.e. exactly
@@ -40,7 +43,10 @@ export function useAccountBalance(
   const scheduler = useAccountDataScheduler();
   const accountId = ref?.accountId;
 
-  const refs = useMemo(() => (ref ? [ref] : []), [ref]);
+  // A token account's balance is filled by its parent's read (one chain call returns every asset at
+  // an address), and no source serves a token ref — so demanding one would only ever produce an
+  // unservable-slice error. Read its row, let the parent's demand fetch it.
+  const refs = useMemo(() => (ref && !ref.parentId ? [ref] : []), [ref]);
   useAccountDataDemand(refs, BALANCE_ONLY, options);
 
   const balance = useSelector((state: WithAccountBalances) =>
@@ -52,7 +58,7 @@ export function useAccountBalance(
   const status = useSliceStatus(accountId, "balance");
 
   const refresh = useCallback(async () => {
-    if (!scheduler || !ref) return;
+    if (!scheduler || !ref || ref.parentId) return;
     await scheduler.fetch({ ref, slices: BALANCE_ONLY, reason: "refresh", maxAge: 0 });
   }, [scheduler, ref]);
 

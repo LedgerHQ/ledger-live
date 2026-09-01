@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import { AccountIdSchema } from "@shared/schema-primitives";
@@ -12,20 +11,23 @@ type TestAccount = {
   type: string;
   id: string;
   currency: { id: string };
-  balance: BigNumber;
-  spendableBalance: BigNumber;
+  balance: { toFixed(): string };
+  spendableBalance: { toFixed(): string };
   lastSyncDate: Date;
   subAccounts?: unknown[];
 };
 
 const SYNCED_AT = new Date("2026-01-31T12:00:00.000Z");
 
+// `AmountLike` is structural, so the mirror needs no BigNumber to be exercised.
+const amount = (value: string) => ({ toFixed: () => value });
+
 const ethAccount = (overrides: Partial<TestAccount> = {}): TestAccount => ({
   type: "Account",
   id: "js:2:ethereum:0xabc:",
   currency: { id: "ethereum" },
-  balance: new BigNumber("100"),
-  spendableBalance: new BigNumber("90"),
+  balance: amount("100"),
+  spendableBalance: amount("90"),
   lastSyncDate: SYNCED_AT,
   ...overrides,
 });
@@ -34,8 +36,8 @@ const btcAccount = (): TestAccount => ({
   type: "Account",
   id: "js:2:bitcoin:xpubabc:",
   currency: { id: "bitcoin" },
-  balance: new BigNumber("7"),
-  spendableBalance: new BigNumber("7"),
+  balance: amount("7"),
+  spendableBalance: amount("7"),
   lastSyncDate: SYNCED_AT,
 });
 
@@ -44,8 +46,8 @@ const usdcSubAccount = (balance = "42") => ({
   id: "js:2:ethereum:0xabc:+ethereum%2Ferc20%2Fusd__coin",
   parentId: "js:2:ethereum:0xabc:",
   token: { id: "ethereum/erc20/usd__coin" },
-  balance: new BigNumber(balance),
-  spendableBalance: new BigNumber(balance),
+  balance: amount(balance),
+  spendableBalance: amount(balance),
 });
 
 const ETH_ID = AccountIdSchema.parse("js:2:ethereum:0xabc:");
@@ -99,7 +101,7 @@ describe("mirrorLegacyAccountBalances", () => {
 
   it("picks up a balance change", () => {
     const { table, setAccounts, stop } = setup([ethAccount()]);
-    setAccounts([ethAccount({ balance: new BigNumber("250") })]);
+    setAccounts([ethAccount({ balance: amount("250") })]);
     expect(table()[ETH_ID].balance).toBe("250");
     stop();
   });
@@ -143,7 +145,7 @@ describe("mirrorLegacyAccountBalances", () => {
       ]),
     );
     // Any other account finishing a sync replaces the accounts array and re-runs the mirror.
-    setAccounts([ethAccount(), { ...btcAccount(), balance: new BigNumber("8") }]);
+    setAccounts([ethAccount(), { ...btcAccount(), balance: amount("8") }]);
     expect(table()[ETH_ID].balance).toBe("777");
     stop();
   });
@@ -163,7 +165,7 @@ describe("mirrorLegacyAccountBalances", () => {
     );
     setAccounts([
       ethAccount({
-        balance: new BigNumber("250"),
+        balance: amount("250"),
         lastSyncDate: new Date(SYNCED_AT.getTime() + 1),
       }),
     ]);
@@ -174,7 +176,22 @@ describe("mirrorLegacyAccountBalances", () => {
   it("stops mirroring once unsubscribed", () => {
     const { table, setAccounts, stop } = setup([ethAccount()]);
     stop();
-    setAccounts([ethAccount({ balance: new BigNumber("999") })]);
+    setAccounts([ethAccount({ balance: amount("999") })]);
     expect(table()[ETH_ID].balance).toBe("100");
+  });
+});
+
+describe("mirrorLegacyAccountBalances — cost", () => {
+  it("re-projects nothing when the account objects are unchanged", () => {
+    const eth = ethAccount();
+    const btc = btcAccount();
+    const { store, setAccounts, stop } = setup([eth, btc]);
+    const before = store.getState().accountBalances;
+
+    // A sync round replaces the accounts array; only the synced account gets a new object. Every
+    // other account must short-circuit on identity rather than be re-projected.
+    setAccounts([eth, btc]);
+    expect(store.getState().accountBalances).toBe(before);
+    stop();
   });
 });

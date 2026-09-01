@@ -57,6 +57,47 @@ describe("createAccountDataScheduler", () => {
     expect(onFetch).toHaveBeenCalledTimes(1);
   });
 
+  it("treats data already in the store as fresh, so a background sync is not repeated", async () => {
+    // The case that matters: BridgeSync produced a balance two seconds ago and the mirror stamped it.
+    // The scheduler has never fetched this slice, so without `observedAt` it would run a full sync.
+    const onFetch = jest.fn();
+    const local = createAccountDataScheduler({
+      registry: createAccountDataSourceRegistry([granular({ onFetch })]),
+      dispatch: () => {},
+      now: () => 100_000,
+      observedAt: () => 98_000,
+    });
+    await local.fetch({ ref, slices: ["balance"], reason: "test", maxAge: 30_000 });
+    expect(onFetch).not.toHaveBeenCalled();
+    local.dispose();
+  });
+
+  it("still fetches when the stored data is older than maxAge", async () => {
+    const onFetch = jest.fn();
+    const local = createAccountDataScheduler({
+      registry: createAccountDataSourceRegistry([granular({ onFetch })]),
+      dispatch: () => {},
+      now: () => 100_000,
+      observedAt: () => 10_000,
+    });
+    await local.fetch({ ref, slices: ["balance"], reason: "test", maxAge: 30_000 });
+    expect(onFetch).toHaveBeenCalledTimes(1);
+    local.dispose();
+  });
+
+  it("ignores stored data on a forced read", async () => {
+    const onFetch = jest.fn();
+    const local = createAccountDataScheduler({
+      registry: createAccountDataSourceRegistry([granular({ onFetch })]),
+      dispatch: () => {},
+      now: () => 100_000,
+      observedAt: () => 99_999,
+    });
+    await local.fetch({ ref, slices: ["balance"], reason: "refresh", maxAge: 0 });
+    expect(onFetch).toHaveBeenCalledTimes(1);
+    local.dispose();
+  });
+
   it("refetches once the value is older than maxAge", async () => {
     const onFetch = jest.fn();
     let clock = 1_000;

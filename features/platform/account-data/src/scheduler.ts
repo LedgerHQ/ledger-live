@@ -66,6 +66,17 @@ export type AccountDataSchedulerOptions = {
   defaultMaxAge?: number;
   maxConcurrent?: number;
   now?: () => number;
+  /**
+   * When the data already in the store for this pair was observed, if anything is there.
+   *
+   * Freshness is a property of the data, not of who fetched it. `at` on a balance row is stamped by
+   * whoever produced it — a source, *or* the legacy mirror following `BridgeSync`. Without this the
+   * first `useAccountBalance` after a background sync would refetch a balance that is seconds old,
+   * and on a family with no granular module that means a **second full sync**.
+   *
+   * See `observedBalanceAt` for the standard implementation over the balance table.
+   */
+  observedAt?: (accountId: AccountId, slice: AccountSlice) => number | undefined;
   /** Called for every slice-scoped failure, for logging / analytics. */
   onError?: (
     error: unknown,
@@ -93,6 +104,7 @@ export function createAccountDataScheduler({
   defaultMaxAge = DEFAULT_MAX_AGE,
   maxConcurrent = DEFAULT_MAX_CONCURRENT,
   now = () => Date.now(),
+  observedAt,
   onError,
 }: AccountDataSchedulerOptions): AccountDataScheduler {
   const statuses = new Map<string, SliceStatus>();
@@ -136,8 +148,14 @@ export function createAccountDataScheduler({
   };
 
   const isFresh = (accountId: AccountId, slice: AccountSlice, maxAge: number): boolean => {
-    const { lastFetchedAt } = getStatus(accountId, slice);
-    return lastFetchedAt !== undefined && now() - lastFetchedAt < maxAge;
+    if (maxAge <= 0) return false;
+    // The later of "when this scheduler last fetched it" and "when the data in the store was
+    // observed". The second is what stops a redundant fetch — and, on a legacy family, a redundant
+    // full sync — right after a background sync has already produced the value.
+    const fetched = getStatus(accountId, slice).lastFetchedAt;
+    const observed = observedAt?.(accountId, slice);
+    const seen = Math.max(fetched ?? -Infinity, observed ?? -Infinity);
+    return Number.isFinite(seen) && now() - seen < maxAge;
   };
 
   const applyUpdate = (update: SliceUpdate): void => {
@@ -269,6 +287,21 @@ export function createAccountDataScheduler({
     await Promise.all([...joined, ...legs]);
   };
 
+  // `fetch` rejects for anything a source's `supports` / `capabilities` / `deliveries` throws, which
+  // is not an `UnservableSlicesError` and so is not already routed per slice. Without this those
+  // become unhandled rejections instead of the per-slice errors the rest of this file guarantees.
+  const report = (running: Promise<void>, ref: AccountRef, slices: readonly AccountSlice[]) =>
+    running.catch(error => {
+      for (const slice of slices) {
+        patchStatus(ref.accountId, slice, {
+          pending: false,
+          error: error instanceof Error ? error : new Error(String(error)),
+        });
+        onError?.(error, { ref, slice, reason: "subscribe" });
+      }
+      notify();
+    });
+
   const subscribe = (
     ref: AccountRef,
     slices: readonly AccountSlice[],
@@ -279,7 +312,7 @@ export function createAccountDataScheduler({
       const key = keyOf(ref.accountId, slice);
       demand.set(key, (demand.get(key) ?? 0) + 1);
     }
-    void fetch({ ref, slices, reason, maxAge });
+    void report(fetch({ ref, slices, reason, maxAge }), ref, slices);
 
     // One interval per (account, slices, cadence) group, reference-counted on its own key. Counting
     // it against the slices' aggregate demand instead would leak: two subscriptions over the same
@@ -294,7 +327,11 @@ export function createAccountDataScheduler({
         polls.set(pollKey, {
           refs: 1,
           handle: setInterval(() => {
-            void fetch({ ref, slices, reason: `${reason}-poll`, maxAge: maxAge ?? pollMs });
+            void report(
+              fetch({ ref, slices, reason: `${reason}-poll`, maxAge: maxAge ?? pollMs }),
+              ref,
+              slices,
+            );
           }, pollMs),
         });
       }
