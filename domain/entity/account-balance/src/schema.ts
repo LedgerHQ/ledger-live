@@ -47,15 +47,20 @@ export const AccountBalanceSchema = z.object({
   at: DateTimeIsoSchema,
 });
 
-/** Balance rows keyed by account id — main accounts and token accounts in the same flat table. */
-export const AccountBalancesStateSchema = z.record(z.string(), AccountBalanceSchema);
+/**
+ * Balance rows keyed by account id — main accounts and token accounts in the same flat table.
+ *
+ * The key is validated too, not only the row: this schema is what a persisted (so untrusted) table
+ * is read back through, and a blank key would sail through `z.string()` only to fail every lookup.
+ */
+export const AccountBalancesStateSchema = z.record(AccountIdSchema, AccountBalanceSchema);
 
 export type BalanceAssetId = z.infer<typeof BalanceAssetIdSchema>;
 export type AccountBalance = z.infer<typeof AccountBalanceSchema>;
 
 /**
- * Declared by hand rather than inferred: `z.record` widens the branded key back to `string`, and the
- * whole point of the table is that only an {@link AccountId} may index it.
+ * Declared by hand rather than inferred: the table's contract — only an {@link AccountId} may index
+ * it — is what every consumer types against, and it must hold whether or not the schema is in play.
  */
 export type AccountBalancesState = Record<AccountId, AccountBalance>;
 

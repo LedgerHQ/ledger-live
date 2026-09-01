@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { accountIdSetKey, sliceSetKey } from "../internals";
+import { accountRefSetKey, sliceSetKey } from "../internals";
 import type { AccountRef, AccountSlice } from "../port";
 import { useAccountDataScheduler } from "../provider";
 import type { SubscribeOptions } from "../scheduler";
@@ -22,8 +22,10 @@ export function useAccountDataDemand(
 ): void {
   const scheduler = useAccountDataScheduler();
   // Both keys identify a *set*, not a sequence: without the sort, re-ordering a portfolio would
-  // release and re-register every demand even though nothing was added or removed.
-  const refsKey = accountIdSetKey(refs.map(ref => ref.accountId));
+  // release and re-register every demand even though nothing was added or removed. The ref key
+  // covers every field, so a ref whose address or derivation mode changed under a stable id does
+  // re-subscribe instead of leaving the scheduler on the stale one.
+  const refsKey = accountRefSetKey(refs);
   const slicesKey = sliceSetKey(slices);
   const { maxAge, pollMs, reason } = options ?? {};
 

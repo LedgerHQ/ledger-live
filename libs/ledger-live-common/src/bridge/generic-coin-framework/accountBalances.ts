@@ -83,6 +83,7 @@ export async function getAccountBalanceRows({
   const native = balances.filter(balance => balance.asset.type === "native");
   const tokens = balances.filter(balance => balance.asset.type !== "native");
 
+  const blacklisted = new Set(blacklistedTokenIds);
   // Resolved in parallel, as `buildSubAccounts` already does: awaiting one token at a time turns an
   // account holding a dozen assets into a dozen sequential CAL lookups.
   const tokenRows = await Promise.all(
@@ -90,7 +91,7 @@ export async function getAccountBalanceRows({
       // A token asset becomes a row only once the family can name the token behind it: a token
       // account's id is derived from the token, so an unresolvable asset has nowhere to go.
       const token = await bridgeApi.getTokenFromAsset?.(asset);
-      if (!token || blacklistedTokenIds.includes(token.id)) return null;
+      if (!token || blacklisted.has(token.id)) return null;
       return {
         accountId: AccountIdSchema.parse(encodeTokenAccountId(accountId, token)),
         assetId: TokenCurrencyIdSchema.parse(token.id),

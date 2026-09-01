@@ -14,4 +14,8 @@ describe("AccountIdSchema", () => {
   it("rejects an empty id", () => {
     expect(() => AccountIdSchema.parse("")).toThrow();
   });
+
+  it("rejects a blank id", () => {
+    expect(() => AccountIdSchema.parse("   ")).toThrow();
+  });
 });

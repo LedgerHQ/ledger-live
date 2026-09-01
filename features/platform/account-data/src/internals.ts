@@ -1,4 +1,4 @@
-import type { AccountSlice } from "./port";
+import type { AccountRef, AccountSlice } from "./port";
 
 /**
  * Codepoint order, stated explicitly.
@@ -26,3 +26,21 @@ export const sliceSetKey = (slices: readonly AccountSlice[]): string =>
 /** The same, for a set of account ids. */
 export const accountIdSetKey = (ids: readonly string[]): string =>
   [...ids].sort(byCodepoint).join(",");
+
+/**
+ * A stable key for a *set* of account refs — every field, not just the id.
+ *
+ * Keying on the id alone would be a correctness bug, not just a missed refresh: the same account id
+ * can be handed a new `address` (a fresh receive address rotates on UTXO families) or a corrected
+ * `derivationMode`, and a subscription that does not re-register keeps the scheduler polling the ref
+ * it captured — reading balances for the wrong address until the component unmounts.
+ */
+export const accountRefSetKey = (refs: readonly AccountRef[]): string =>
+  refs
+    .map(ref =>
+      [ref.accountId, ref.currencyId, ref.address, ref.derivationMode, ref.parentId ?? ""].join(
+        "|",
+      ),
+    )
+    .sort(byCodepoint)
+    .join(",");

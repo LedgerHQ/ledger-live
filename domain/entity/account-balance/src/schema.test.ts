@@ -60,4 +60,9 @@ describe("AccountBalancesStateSchema", () => {
       AccountBalancesStateSchema.parse({ [main.accountId]: { ...main, balance: "oops" } }),
     ).toThrow();
   });
+
+  it("rejects a blank key, which no lookup could ever hit", () => {
+    const main = mockAccountBalance();
+    expect(() => AccountBalancesStateSchema.parse({ "": main })).toThrow();
+  });
 });
