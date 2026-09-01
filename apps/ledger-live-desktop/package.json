@@ -188,7 +188,6 @@
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
-    "@shared/schema-primitives": "workspace:^",
     "@shared/ui-info-state": "workspace:*",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",
