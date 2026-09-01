@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { act, renderHook } from "@tests/test-renderer";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
 
@@ -369,5 +370,70 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.isReviewOpen).toBe(false);
     expect(result.current.reviewParams).toBeNull();
+  });
+
+  describe("handing the reviewed deposit over to the device", () => {
+    const device = {
+      deviceId: "device-1",
+      deviceName: "Ledger Stax",
+      modelId: "stax",
+      wired: false,
+    } as unknown as Device;
+
+    function renderReviewedDeposit() {
+      mockCalculate.mockReturnValue(2.5e16);
+      const { props } = createProps();
+      const { result } = renderViewModel(props);
+
+      act(() => result.current.pickDepositAccount());
+      selectFundingAccount(fundedAccount);
+      typeAmount(result.current.pressAmountKey, "20");
+      act(() => result.current.handleReview());
+
+      return result;
+    }
+
+    it("swaps the summary for the device step once the deposit is handed over", () => {
+      const result = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+
+      expect(result.current.isReviewOpen).toBe(false);
+      expect(result.current.isSignOpen).toBe(true);
+    });
+
+    it("brings the summary back, amounts intact, when signing is declined", () => {
+      const result = renderReviewedDeposit();
+      const reviewed = result.current.reviewParams;
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.returnToReview());
+
+      expect(result.current.isSignOpen).toBe(false);
+      expect(result.current.isReviewOpen).toBe(true);
+      expect(result.current.reviewParams).toEqual(reviewed);
+    });
+
+    it("keeps the device after a decline, so handing over again skips the device list", () => {
+      const result = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.selectSigningDevice(device));
+      act(() => result.current.returnToReview());
+
+      expect(result.current.signingDevice).toEqual(device);
+    });
+
+    it("forgets the device once the deposit lands, so the next one starts at selection", () => {
+      const result = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.selectSigningDevice(device));
+      act(() => result.current.endSigning());
+
+      expect(result.current.isSignOpen).toBe(false);
+      expect(result.current.isReviewOpen).toBe(false);
+      expect(result.current.signingDevice).toBeUndefined();
+    });
   });
 });
