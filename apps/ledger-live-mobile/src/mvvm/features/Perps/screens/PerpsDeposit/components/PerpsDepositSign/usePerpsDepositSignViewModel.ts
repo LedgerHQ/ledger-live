@@ -8,21 +8,13 @@ import {
 } from "LLM/features/Perps/hooks/usePerpsDepositExecution";
 import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
 
-/** The sheet owns no navigation header, so pairing's header requests are dropped. */
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
 
-/** Mounted only while signing, so opening and closing is the caller's business. */
-export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
+ßexport type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
   Readonly<{
-    /**
-     * The device to sign on, held by the deposit screen so that it outlives a
-     * single attempt. Signing again after a decline then skips the device list.
-     */
     selectedDevice: Device | null | undefined;
     onSelectDevice: (device: Device | null | undefined) => void;
-    /** The deposit landed. */
     onDone: () => void;
-    /** The holder backed out, so the summary they came from comes back. */
     onRefused: () => void;
   }>;
 
@@ -31,7 +23,6 @@ export type PerpsDepositSignViewModel = Readonly<{
   deviceStep: PerpsDepositDeviceStep;
   setSelectedDevice: (device: Device | null | undefined) => void;
   retry: () => void;
-  /** Errors raised while connecting to the device, which never reach the execution. */
   onDeviceError: (error: Error) => void;
   handleDrawerClose: () => void;
   ignoreHeaderOptions: (request: SetHeaderOptionsRequest) => void;
