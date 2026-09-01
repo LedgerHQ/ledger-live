@@ -32,9 +32,13 @@ jest.mock("~/context/hooks", () => ({
   useDispatch: () => dispatch,
 }));
 
-jest.mock("@features/platform-contacts", () => ({
-  ...jest.requireActual("@features/platform-contacts"),
-  createMockContactDeviceIntentsPort: () => ({ registerExternalAddress }),
+let mockDieProps: { enabled: boolean } | undefined;
+
+jest.mock("@features/platform-contacts/device", () => ({
+  useContactsIntentsOrchestrator: () => ({
+    deviceIntents: { registerExternalAddress },
+    dieProps: mockDieProps,
+  }),
 }));
 
 jest.mock(
@@ -102,6 +106,7 @@ describe("useAddNewContactViewModel", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDieProps = undefined;
     registerExternalAddress.mockResolvedValue(signedAddress);
     mockedUseContactsAddContactDrawerAdapter.mockReturnValue(adapterResult as never);
     mockedUseContactsAddressValidationAdapter.mockReturnValue({
@@ -125,6 +130,14 @@ describe("useAddNewContactViewModel", () => {
     expect(result.current.isDrawerOpen).toBe(true);
     expect(result.current.addressPhase).toBeNull();
     expect(mockedUseContactsAddContactDrawerAdapter).toHaveBeenCalled();
+  });
+
+  it("should close the drawer while the device intent executor is running", () => {
+    mockDieProps = { enabled: true };
+
+    const { result } = renderDrawer();
+
+    expect(result.current.isDrawerOpen).toBe(false);
   });
 
   it("should start the add-address flow after creating a contact", async () => {
@@ -258,6 +271,29 @@ describe("useAddNewContactViewModel", () => {
     expect(registerExternalAddress).toHaveBeenCalledTimes(1);
     expect(countAddAddressDispatches()).toBe(1);
     expect(result.current.addressPhase).toBeNull();
+  });
+
+  it("should still save the address when the drawer closes to free the queue", async () => {
+    const deferredRegistration = createDeferred<typeof signedAddress>();
+    registerExternalAddress.mockReturnValue(deferredRegistration.promise);
+
+    const { result, rerender } = await renderAtReviewStep();
+
+    act(() => result.current.addressPhase?.onContinueFromReview());
+
+    // The executor is up, so the drawer yields the queue and QueuedBottomSheet reports the
+    // programmatic close through onClose. That must not cancel the pending save.
+    mockDieProps = { enabled: true };
+    rerender({});
+    expect(result.current.isDrawerOpen).toBe(false);
+    act(() => result.current.onDrawerClose());
+
+    await act(async () => {
+      deferredRegistration.resolve(signedAddress);
+      await deferredRegistration.promise;
+    });
+
+    expect(countAddAddressDispatches()).toBe(1);
   });
 
   it("should discard a pending registration when the user goes back", async () => {

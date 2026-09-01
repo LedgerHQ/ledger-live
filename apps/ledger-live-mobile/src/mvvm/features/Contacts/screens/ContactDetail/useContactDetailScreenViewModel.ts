@@ -86,7 +86,7 @@ type NavigationProp = BaseNavigationComposite<
 
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
   const dispatch = useDispatch();
-  const hasCompletedMockConfirmation = useRef(false);
+  const hasCompletedConfirmation = useRef(false);
   const trackedContactDetailId = useRef<string | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
   const analytics = useContactsAnalytics();
@@ -127,20 +127,19 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     updateAddressLabel,
     confirmAddress,
     continueFromName,
-    completeMockConfirmation,
     goBack: goBackAddAddress,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({
     addressValidation,
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
   });
-  const completeMockAddressConfirmation = useCallback(async () => {
+  const completeAddressConfirmation = useCallback(async () => {
     if (addAddressFlowState.status !== "confirmationRequired") {
-      hasCompletedMockConfirmation.current = false;
+      hasCompletedConfirmation.current = false;
       return;
     }
 
-    if (hasCompletedMockConfirmation.current) {
+    if (hasCompletedConfirmation.current) {
       return;
     }
 
@@ -148,7 +147,13 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       return;
     }
 
-    hasCompletedMockConfirmation.current = true;
+    hasCompletedConfirmation.current = true;
+
+    /**
+     * The Device Intent Executor owns the review from here, so this flow has nothing left
+     * to show. `addAddressFlowState` below is this render's snapshot, unaffected by closing.
+     */
+    closeAddAddress();
 
     try {
       const signedAddress = await deviceIntents.registerExternalAddress({
@@ -172,8 +177,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
           deviceCredentials: signedAddress.deviceCredentials,
         }),
       );
-      completeMockConfirmation();
-      closeAddAddress();
 
       try {
         const { network, asset } = await resolveContactsCurrencyAnalytics(
@@ -194,22 +197,13 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
         // Analytics enrichment is best-effort and must not affect the user flow.
       }
     } catch (error) {
-      hasCompletedMockConfirmation.current = false;
+      hasCompletedConfirmation.current = false;
       console.warn("Failed to complete add-address confirmation", error);
-      closeAddAddress();
     }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    completeMockConfirmation,
-    contact,
-    deviceIntents,
-    dispatch,
-  ]);
+  }, [addAddressFlowState, analytics, closeAddAddress, contact, deviceIntents, dispatch]);
   useEffect(() => {
-    void completeMockAddressConfirmation();
-  }, [completeMockAddressConfirmation]);
+    void completeAddressConfirmation();
+  }, [completeAddressConfirmation]);
   const startAddAddressForContact = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
 
