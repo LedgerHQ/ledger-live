@@ -7,6 +7,7 @@ import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
 } from "@features/flow-pay-feature-tour/state";
+import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {
@@ -28,6 +29,11 @@ describe("usePayCardToolProps", () => {
 
   beforeEach(() => {
     store = buildStore();
+  });
+
+  afterEach(() => {
+    setEnv("CARD_API_URL", getEnvDefault("CARD_API_URL"));
+    setEnv("CARD_BAANX_CLIENT_KEY", getEnvDefault("CARD_BAANX_CLIENT_KEY"));
   });
 
   it("exposes desktop onboarding steps and default flag values", () => {
@@ -146,6 +152,44 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.hasSeenFeatureTour).toBe(true);
+  });
+
+  it("exposes the two Card env vars, with the development tenant as the suggestion", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.env.vars).toEqual([
+      {
+        key: "CARD_API_URL",
+        value: getEnv("CARD_API_URL"),
+        suggestedValue: "https://dev.api.baanx.com",
+      },
+      {
+        key: "CARD_BAANX_CLIENT_KEY",
+        value: getEnv("CARD_BAANX_CLIENT_KEY"),
+        suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
+      },
+    ]);
+  });
+
+  it("setVar changes the env, and the value it reports follows", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.env.setVar("CARD_API_URL", "https://card.staging.test");
+    });
+
+    expect(getEnv("CARD_API_URL")).toBe("https://card.staging.test");
+    expect(result.current.env.vars[0]?.value).toBe("https://card.staging.test");
+  });
+
+  it("follows a change made outside the tool", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      setEnv("CARD_BAANX_CLIENT_KEY", "another-tenant-key");
+    });
+
+    expect(result.current.env.vars[1]?.value).toBe("another-tenant-key");
   });
 
   it("resetPayCardFeatureTourSeen clears the seen flag", () => {

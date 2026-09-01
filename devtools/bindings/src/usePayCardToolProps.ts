@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
+import { changes, getEnv, setEnvUnsafe, type EnvName } from "@shared/env";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resetPayCardFeatureTourSeen,
@@ -10,6 +11,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
+type PayCardEnvVar = PayCardToolProps["env"]["vars"][number];
 
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
@@ -30,6 +32,25 @@ const NATIVE_ONLY_STEP: OnboardingStep = {
 };
 
 const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase", done: false };
+
+/**
+ * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
+ *
+ * A release build carries neither, so it starts on the definition defaults: the production URL and
+ * an empty client key. The suggestions put the development tenant one press away.
+ */
+const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
+  { key: "CARD_API_URL", suggestedValue: "https://dev.api.baanx.com" },
+  { key: "CARD_BAANX_CLIENT_KEY", suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6" },
+];
+
+function readCardEnvVars(): readonly PayCardEnvVar[] {
+  return CARD_ENV_VARS.map(({ key, suggestedValue }) => ({
+    key,
+    value: String(getEnv(key)),
+    suggestedValue,
+  }));
+}
 
 function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
   return platform === "native"
@@ -107,13 +128,31 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
+  const [envVars, setEnvVars] = useState<readonly PayCardEnvVar[]>(readCardEnvVars);
+
+  useEffect(() => {
+    // Read again on mount, because a change can land between the first render and this subscription.
+    setEnvVars(readCardEnvVars());
+    const sub = changes.subscribe(({ name }) => {
+      if (CARD_ENV_VARS.some(candidate => candidate.key === name)) setEnvVars(readCardEnvVars());
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
+  const setEnvVar = useCallback((key: string, value: string) => {
+    setEnvUnsafe(key, value);
+  }, []);
+
+  const env = useMemo(() => ({ vars: envVars, setVar: setEnvVar }), [envVars, setEnvVar]);
+
   return useMemo(
     () => ({
       flags,
       onboarding,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
+      env,
     }),
-    [flags, onboarding, hasSeenFeatureTour, resetFeatureTour],
+    [flags, onboarding, hasSeenFeatureTour, resetFeatureTour, env],
   );
 }
