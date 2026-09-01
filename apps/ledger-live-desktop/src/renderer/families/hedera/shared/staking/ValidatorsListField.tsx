@@ -1,12 +1,18 @@
 import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
+import {
+  getDefaultValidator,
+  filterValidatorBySearchTerm,
+} from "@ledgerhq/live-common/families/hedera/utils";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Spinner from "~/renderer/components/Spinner";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import ValidatorSearchInput, {
   NoResultPlaceholder,
@@ -25,7 +31,11 @@ const ValidatorsListField = ({ account, selectedValidatorId, onChangeValidator }
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
   const unit = useAccountUnit(account);
-  const validators = useHederaValidators(account.currency, search);
+  const queryValidators = useQuery({
+    ...hederaQueries.validatorsList(account.currency.id),
+    select: data => (search ? data.filter(v => filterValidatorBySearchTerm(v, search)) : data),
+  });
+  const validators = queryValidators.data ?? [];
 
   const defaultValidator = getDefaultValidator(validators);
   const selectedValidator = validators.find(v => v.id === selectedValidatorId);
@@ -52,26 +62,43 @@ const ValidatorsListField = ({ account, selectedValidatorId, onChangeValidator }
   const getDisplayedValidators = () => {
     if (showAll) return validators;
     if (value) return [value];
-    return [validators[0]];
+    return validators.length > 0 ? [validators[0]] : [];
   };
 
   return (
     <>
-      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      {queryValidators.isLoadingError && (
+        <Box mb={2}>
+          <Text color="pearl">
+            <TranslatedError error={queryValidators.error} />
+          </Text>
+        </Box>
+      )}
+      {showAll && !queryValidators.isLoadingError && (
+        <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />
+      )}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          <ScrollLoadingList
-            data={getDisplayedValidators()}
-            style={{
-              flex: showAll ? "1 0 256px" : "1 0 64px",
-              marginBottom: 0,
-              paddingLeft: 0,
-            }}
-            renderItem={renderItem}
-            noResultPlaceholder={
-              validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
-            }
-          />
+          {queryValidators.isLoading ? (
+            <Box p={4} alignItems="center" justifyContent="center">
+              <Spinner size={24} />
+            </Box>
+          ) : (
+            <ScrollLoadingList
+              data={getDisplayedValidators()}
+              style={{
+                flex: showAll ? "1 0 256px" : "1 0 64px",
+                marginBottom: 0,
+                paddingLeft: 0,
+              }}
+              renderItem={renderItem}
+              noResultPlaceholder={
+                !queryValidators.isLoadingError &&
+                validators.length <= 0 &&
+                search.length > 0 && <NoResultPlaceholder search={search} />
+              }
+            />
+          )}
         </Box>
         <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
           <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>

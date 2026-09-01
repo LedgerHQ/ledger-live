@@ -13,8 +13,13 @@ import {
 } from "../../__mocks__/flowHelpers";
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => []),
-  useHederaEnrichedDelegation: jest.fn(
+  hederaQueries: {
+    validatorsList: () => ({
+      queryKey: ["mock-hedera-validators"],
+      queryFn: () => Promise.resolve([]),
+    }),
+  },
+  useHederaEnrichedDelegationV2: jest.fn(
     () => require("../../__mocks__/delegation.mock").mockEnrichedDelegation,
   ),
 }));

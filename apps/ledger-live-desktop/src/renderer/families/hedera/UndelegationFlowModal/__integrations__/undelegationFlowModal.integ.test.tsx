@@ -14,20 +14,26 @@ import {
 } from "../../__mocks__/flowHelpers";
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
-    {
-      id: "0",
-      name: "Hedera Node 0",
-      address: "0.0.3",
-      addressChecksum: null,
-      minStake: new BigNumber(0),
-      maxStake: new BigNumber(250_000_000_000_000_000),
-      activeStake: new BigNumber(0),
-      activeStakePercentage: new BigNumber(0),
-      overstaked: false,
-    },
-  ]),
-  useHederaEnrichedDelegation: jest.fn(
+  hederaQueries: {
+    validatorsList: () => ({
+      queryKey: ["mock-hedera-validators"],
+      queryFn: () =>
+        Promise.resolve([
+          {
+            id: "0",
+            name: "Hedera Node 0",
+            address: "0.0.3",
+            addressChecksum: null,
+            minStake: new BigNumber(0),
+            maxStake: new BigNumber(250_000_000_000_000_000),
+            activeStake: new BigNumber(0),
+            activeStakePercentage: new BigNumber(0),
+            overstaked: false,
+          },
+        ]),
+    }),
+  },
+  useHederaEnrichedDelegationV2: jest.fn(
     () => require("../../__mocks__/delegation.mock").mockEnrichedDelegation,
   ),
 }));

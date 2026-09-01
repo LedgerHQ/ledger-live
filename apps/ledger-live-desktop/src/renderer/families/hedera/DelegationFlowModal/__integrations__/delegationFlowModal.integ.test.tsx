@@ -11,24 +11,35 @@ import {
   setupHederaModalTest,
   cleanupHederaModalTest,
   clickContinueWhenEnabled,
+  DEFAULT_TX_STATUS,
 } from "../../__mocks__/flowHelpers";
 
+const mockValidators = [
+  {
+    id: "0",
+    name: "Hedera Node 0",
+    address: "0.0.3",
+    addressChecksum: null,
+    minStake: new BigNumber(0),
+    maxStake: new BigNumber(250_000_000_000_000_000),
+    activeStake: new BigNumber(0),
+    activeStakePercentage: new BigNumber(0),
+    overstaked: false,
+    isLedgerNode: true,
+  },
+];
+
+let queryFn: () => Promise<unknown> = () => Promise.resolve(mockValidators);
+
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
-    {
-      id: "0",
-      name: "Hedera Node 0",
-      address: "0.0.3",
-      addressChecksum: null,
-      minStake: new BigNumber(0),
-      maxStake: new BigNumber(250_000_000_000_000_000),
-      activeStake: new BigNumber(0),
-      activeStakePercentage: new BigNumber(0),
-      overstaked: false,
-      isLedgerNode: true,
-    },
-  ]),
-  useHederaEnrichedDelegation: jest.fn(() => null),
+  hederaQueries: {
+    validatorsList: () => ({
+      queryKey: ["mock-hedera-validators"],
+      queryFn: () => queryFn(),
+      retry: false,
+    }),
+  },
+  useHederaEnrichedDelegationV2: jest.fn(() => null),
 }));
 
 jest.mock("@ledgerhq/live-common/hw/actions/app", () => ({
@@ -49,6 +60,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
 }));
 
 beforeEach(async () => {
+  queryFn = () => Promise.resolve(mockValidators);
   await setupHederaModalTest();
 });
 
@@ -100,5 +112,18 @@ describe("Hedera DelegationFlowModal (integration)", () => {
     });
 
     await waitFor(() => expect(screen.getByRole("button", { name: /retry/i })).toBeVisible());
+  });
+
+  it("keeps Continue disabled and shows the fetch error when the validators fetch fails", async () => {
+    queryFn = () => Promise.reject(new Error("network down"));
+    await setupHederaModalTest({
+      ...DEFAULT_TX_STATUS,
+      errors: { validators: new Error("network down") },
+    });
+
+    setupModal();
+
+    await waitFor(() => expect(screen.getByText(/network down/i)).toBeVisible());
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 });
