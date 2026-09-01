@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ContactsNativeProps } from "@features/flow-pay-contact";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { usePayTabNewPayment } from "./usePayTabNewPayment";

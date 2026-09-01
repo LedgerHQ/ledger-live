@@ -33,8 +33,8 @@ describe("FeatureTour (Web)", () => {
   it("renders the feature rows and CTA when not seen", () => {
     renderTour();
 
-    expect(screen.getByText("Spend with a card and get 1% cashback")).toBeInTheDocument();
-    expect(screen.getByText("Got it")).toBeInTheDocument();
+    expect(screen.getByText("Shop worldwide with crypto card")).toBeInTheDocument();
+    expect(screen.getByText("Explore Pay")).toBeInTheDocument();
   });
 
   it("tracks the screen view once shown", () => {
@@ -44,11 +44,11 @@ describe("FeatureTour (Web)", () => {
     expect(onTrackScreen).toHaveBeenCalledWith("Page card feature intro");
   });
 
-  it("marks the tour as seen and emits the click event on Got it", () => {
+  it("marks the tour as seen and emits the click event on the CTA", () => {
     const onTrackEvent = jest.fn();
     const { store } = renderTour({ onTrackEvent });
 
-    fireEvent.click(screen.getByText("Got it"));
+    fireEvent.click(screen.getByText("Explore Pay"));
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
@@ -62,7 +62,7 @@ describe("FeatureTour (Web)", () => {
     store.dispatch(markPayCardFeatureTourSeen());
     renderTour({}, store);
 
-    expect(screen.queryByText("Spend with a card and get 1% cashback")).toBeNull();
+    expect(screen.queryByText("Shop worldwide with crypto card")).toBeNull();
   });
 
   it("resolves its copy from the mounted i18n provider, not from props", () => {

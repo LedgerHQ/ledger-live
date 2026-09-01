@@ -4,21 +4,22 @@ export const FEATURE_TOUR_RESOURCES = {
     translation: {
       payTab: {
         featureTour: {
-          title: "Pay and get paid",
-          description: "Stablecoin closes the gap between crypto and real life spending",
-          cta: "Got it",
+          title: "All your payments, in one place",
+          description:
+            "Meet your new Pay tab, making your crypto ready for everyday money moments.",
+          cta: "Explore Pay",
           rows: {
             global: {
-              title: "Pay and get paid globally",
-              description: "Benefits from low networks fees",
+              title: "Pay your contacts",
+              description: "Send crypto to saved addresses.",
             },
             volatility: {
-              title: "Minimal volatility",
-              description: "Stablecoin are based on fiat",
+              title: "Request payments",
+              description: "Ask Contacts to send funds straight to you.",
             },
             card: {
-              title: "Spend with a card and get 1% cashback",
-              description: "Pay in USDC, USDT, BTC, ETH and more",
+              title: "Shop worldwide with crypto card",
+              description: "And earn uncapped 1% cashback.",
             },
           },
         },

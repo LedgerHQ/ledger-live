@@ -2,7 +2,7 @@ export type PayCardTrackScreen = (page: string) => void;
 
 export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
-export type FeatureTourRowIcon = "Globe" | "Chart5" | "CreditCard";
+export type FeatureTourRowIcon = "Contact" | "Link" | "CreditCard";
 
 export type FeatureTourRow = Readonly<{
   icon: FeatureTourRowIcon;
