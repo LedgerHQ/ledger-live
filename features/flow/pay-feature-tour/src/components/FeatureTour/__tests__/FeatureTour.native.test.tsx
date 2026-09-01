@@ -37,8 +37,8 @@ describe("FeatureTour (Native)", () => {
   it("renders the intro title and feature rows when not seen", () => {
     renderTour();
 
-    expect(screen.getByText("All your payments, in one place")).toBeTruthy();
-    expect(screen.getByText("Shop worldwide with crypto card")).toBeTruthy();
+    expect(screen.getByText("All your payments, in one place")).toBeVisible();
+    expect(screen.getByText("Shop worldwide with crypto card")).toBeVisible();
   });
 
   it("tracks the screen view once shown", () => {
@@ -81,6 +81,6 @@ describe("FeatureTour (Native)", () => {
       </Provider>,
     );
 
-    expect(screen.getByLabelText("Compris")).toBeTruthy();
+    expect(screen.getByLabelText("Compris")).toBeVisible();
   });
 });

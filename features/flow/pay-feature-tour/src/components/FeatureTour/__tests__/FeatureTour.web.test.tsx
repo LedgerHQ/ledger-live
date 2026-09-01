@@ -33,8 +33,8 @@ describe("FeatureTour (Web)", () => {
   it("renders the feature rows and CTA when not seen", () => {
     renderTour();
 
-    expect(screen.getByText("Shop worldwide with crypto card")).toBeInTheDocument();
-    expect(screen.getByText("Explore Pay")).toBeInTheDocument();
+    expect(screen.getByText("Shop worldwide with crypto card")).toBeVisible();
+    expect(screen.getByText("Explore Pay")).toBeVisible();
   });
 
   it("tracks the screen view once shown", () => {
@@ -76,6 +76,6 @@ describe("FeatureTour (Web)", () => {
       </Provider>,
     );
 
-    expect(screen.getByText("Compris")).toBeInTheDocument();
+    expect(screen.getByText("Compris")).toBeVisible();
   });
 });

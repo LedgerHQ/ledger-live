@@ -24,6 +24,7 @@ import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   EMPTY_DESCRIPTION,
   EMPTY_TITLE,
+  FEATURE_TOUR_CTA,
   FEATURE_TOUR_ROW,
   INIT_INPUT,
   USDC_TOKEN,
@@ -128,10 +129,10 @@ describe("PayTab integration", () => {
     });
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
-    expect(screen.getByRole("button", { name: "Got it" })).toBeVisible();
+    expect(screen.getByRole("button", { name: FEATURE_TOUR_CTA })).toBeVisible();
   });
 
-  it("should persist dismissal and hide the tour after clicking Got it", async () => {
+  it("should persist dismissal and hide the tour after clicking Explore Pay", async () => {
     const { user, store } = render(<PayTab />, {
       initialState: {
         payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: false },
@@ -140,7 +141,7 @@ describe("PayTab integration", () => {
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: "Got it" }));
+    await user.click(screen.getByRole("button", { name: FEATURE_TOUR_CTA }));
 
     await waitFor(() => {
       expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
@@ -154,7 +155,7 @@ describe("PayTab integration", () => {
     });
 
     expect(screen.queryByText(FEATURE_TOUR_ROW)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Got it" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: FEATURE_TOUR_CTA })).not.toBeInTheDocument();
   });
 
   it("should render the empty hero when the user holds no stablecoins", async () => {
