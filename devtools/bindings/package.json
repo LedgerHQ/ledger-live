@@ -20,9 +20,11 @@
     "lint": "oxlint src"
   },
   "dependencies": {
-    "@devtools/registry": "workspace:*",
     "@devtools/env": "workspace:*",
+    "@devtools/registry": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
+    "@features/platform-account-data": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*"

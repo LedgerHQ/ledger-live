@@ -12,7 +12,9 @@ import {
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 const localCache: Record<string, unknown> = {};
-const bridgeCache = makeBridgeCacheSystem({
+
+/** Shared by every bridge caller in this app, so a currency is prepared at most once per session. */
+export const bridgeCache = makeBridgeCacheSystem({
   saveData(c, d) {
     localCache[c.id] = d;
     return Promise.resolve();

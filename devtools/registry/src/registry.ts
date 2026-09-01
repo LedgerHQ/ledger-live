@@ -2,11 +2,12 @@ import * as platform from "./metadata/platform";
 import * as walletXp from "./metadata/wallet-xp";
 
 export const tools = {
-  "feature-flags": platform.featureFlags,
-  env: platform.env,
-  "pay-card": walletXp.payCard,
-  trustchain: platform.trustchain,
   "cloud-sync": platform.cloudSync,
+  env: platform.env,
+  "feature-flags": platform.featureFlags,
+  trustchain: platform.trustchain,
+  "pay-card": walletXp.payCard,
+  "account-balances": walletXp.accountBalances,
 } as const;
 
 /**
@@ -25,8 +26,9 @@ export type DevToolsConfig = Array<DevToolConfig>;
  * For propless tools, `config` must be `undefined` — e.g. `{ id: "dummy", config: undefined }`.
  */
 export type DevToolConfig =
-  | { id: "feature-flags"; config: platform.FeatureFlagsToolProps }
+  | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
   | { id: "env"; config: platform.EnvDevToolProps }
-  | { id: "pay-card"; config: walletXp.PayCardToolProps }
+  | { id: "feature-flags"; config: platform.FeatureFlagsToolProps }
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
-  | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps };
+  | { id: "pay-card"; config: walletXp.PayCardToolProps }
+  | { id: "account-balances"; config: walletXp.AccountBalancesToolProps };
