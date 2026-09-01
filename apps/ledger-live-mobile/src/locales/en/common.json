@@ -8698,7 +8698,9 @@
           "inactive": "Inactive",
           "inactiveTooltip": "Validator not found",
           "overstaked": "Overstaked",
-          "overstakedTooltip": "This node is overstaked, APY is lower than optimal"
+          "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+          "fetchError": "Unable to load",
+          "fetchErrorTooltip": "Couldn't load validator data. Please try again."
         },
         "rewards": "Rewards",
         "actions": {
@@ -10429,6 +10431,11 @@
           "title": "Preparing your Ledger device"
         }
       },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
@@ -10441,6 +10448,10 @@
         "appVersionTooLow": {
           "title": "App update required",
           "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
         }
       }
     },

@@ -8287,6 +8287,7 @@
             "inactiveTooltip": "Validator not found",
             "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
             "activeTooltip": "Delegated amount generates rewards",
+            "fetchErrorTooltip": "Couldn't load validator data. Please try again.",
             "delegated": "Delegated",
             "rewards": "Rewards"
           },
@@ -8365,6 +8366,8 @@
             "newValidatorLabel": "New delegation",
             "newValidatorSelectPlaceholder": "Select validator",
             "removedValidatorSelectPlaceholder": "Previously selected validator is no longer available",
+            "unableToLoadSelectPlaceholder": "Unable to load validators",
+            "loadingValidatorPlaceholder": "Loading validators...",
             "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
             "amountLabel": "Amount to redelegate",
             "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
@@ -9573,6 +9576,11 @@
           "title": "Preparing your Ledger device"
         }
       },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
@@ -9585,6 +9593,10 @@
         "appVersionTooLow": {
           "title": "App update required",
           "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
         }
       }
     },

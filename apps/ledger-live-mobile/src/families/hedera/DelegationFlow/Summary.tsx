@@ -17,6 +17,7 @@ import invariant from "invariant";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
+import Skeleton from "~/components/Skeleton";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -46,7 +47,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account.type === "Account", "account type must be Account");
 
   const bridge: AccountBridge<Transaction> = useAccountBridge(account);
-  const validators = useHederaValidators(account.currency);
+  const queryValidators = useHederaValidators(account.currency.id);
+  const validators = queryValidators.validators;
   const defaultValidator = getDefaultValidator(validators);
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
@@ -133,13 +135,15 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
           right={
             <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
               <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                <Animated.View
-                  style={{
-                    transform: [{ rotate }],
-                  }}
-                >
-                  <ValidatorIcon validator={selectedValidator} />
-                </Animated.View>
+                <Skeleton loading={queryValidators.loading} style={styles.validatorIconSkeleton}>
+                  <Animated.View
+                    style={{
+                      transform: [{ rotate }],
+                    }}
+                  >
+                    <ValidatorIcon validator={selectedValidator} />
+                  </Animated.View>
+                </Skeleton>
                 <ChangeDelegator />
               </Circle>
             </Touchable>
@@ -150,8 +154,16 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
             onChangeValidator={onChangeDelegator}
             validator={selectedValidator}
             account={account}
+            isLoadingValidator={queryValidators.loading}
           />
         </View>
+        {!!queryValidators.error && (
+          <View style={styles.fetchError}>
+            <Text color="error.c50" textAlign="center">
+              <TranslatedError error={queryValidators.error} />
+            </Text>
+          </View>
+        )}
         <View style={styles.alert}>
           <Alert
             type="primary"
@@ -187,10 +199,12 @@ function SummaryWords({
   validator,
   account,
   onChangeValidator,
+  isLoadingValidator,
 }: Readonly<{
   validator?: HederaValidator;
   account: AccountLike;
   onChangeValidator: () => void;
+  isLoadingValidator: boolean;
 }>) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
@@ -213,14 +227,16 @@ function SummaryWords({
           <Trans i18nKey="hedera.delegation.steps.summary.to" />
         </Words>
         <Touchable onPress={onChangeValidator}>
-          <Selectable
-            name={
-              validator
-                ? t("hedera.delegation.nodeName", { index: validator.id, name: validator.name })
-                : ""
-            }
-            testID="hedera-delegation-summary-validator"
-          />
+          <Skeleton loading={isLoadingValidator} style={styles.validatorNameSkeleton}>
+            <Selectable
+              name={
+                validator
+                  ? t("hedera.delegation.nodeName", { index: validator.id, name: validator.name })
+                  : ""
+              }
+              testID="hedera-delegation-summary-validator"
+            />
+          </Skeleton>
         </Touchable>
       </Line>
     </>
@@ -362,6 +378,19 @@ const styles = StyleSheet.create({
   },
   alert: {
     marginBottom: 16,
+  },
+  fetchError: {
+    marginBottom: 12,
+  },
+  validatorIconSkeleton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  validatorNameSkeleton: {
+    width: 120,
+    height: 40,
+    borderRadius: 4,
   },
   validatorSelection: {
     flexDirection: "row",

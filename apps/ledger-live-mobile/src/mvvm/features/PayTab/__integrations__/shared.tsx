@@ -104,6 +104,7 @@ type RenderPayTabOptions = Readonly<{
   holdsUni?: boolean;
   cryptoOnly?: boolean;
   contacts?: Contact[];
+  contactsEnabled?: boolean;
 }>;
 
 function withUsdcHoldings(state: State): State {
@@ -200,6 +201,7 @@ export function renderPayTab({
   holdsUni = false,
   cryptoOnly = false,
   contacts,
+  contactsEnabled = false,
 }: RenderPayTabOptions = {}) {
   return render(
     <>
@@ -217,6 +219,9 @@ export function renderPayTab({
             enabled: true,
             params: { enableModularization: true, searchDebounceTime: 0 },
           },
+          ...(contactsEnabled
+            ? { lwmContacts: { enabled: true, params: { newBadge: false } } }
+            : {}),
         },
         state => {
           const next: State = {

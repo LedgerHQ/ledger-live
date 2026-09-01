@@ -26,6 +26,7 @@ export const mockSignedOperation = {
 export function makeMockAccountBridge(
   mode: Transaction["mode"],
   properties?: Record<string, unknown>,
+  errors: Record<string, Error> = {},
 ) {
   return {
     createTransaction: jest.fn((_account: AccountLike) => ({
@@ -39,7 +40,7 @@ export function makeMockAccountBridge(
     updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
     prepareTransaction: async (_account: AccountLike, tx: unknown) => tx,
     getTransactionStatus: async () => ({
-      errors: {},
+      errors,
       warnings: {},
       estimatedFees: new BigNumber(1000),
       amount: new BigNumber(0),

@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "~/context/Locale";
 import SafeAreaView from "~/components/SafeAreaView";
-import { FlatList, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { Text } from "@ledgerhq/native-ui";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { TrackScreen } from "~/analytics";
@@ -13,14 +12,12 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import { ScreenName } from "~/const";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { HederaDelegationFlowParamList } from "./types";
-import ValidatorRow from "../shared/ValidatorRow";
+import ValidatorsList from "../shared/ValidatorsList";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationSelectValidator>
 >;
-
-const keyExtractor = (v: HederaValidator) => v.id;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -30,8 +27,6 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const validators = useHederaValidators(account.currency, searchQuery);
-
   const onItemPress = useCallback(
     (validator: HederaValidator) => {
       navigation.navigate(ScreenName.HederaDelegationSummary, {
@@ -40,13 +35,6 @@ export default function SelectValidator({ navigation, route }: Props) {
       });
     },
     [navigation, route.params],
-  );
-
-  const renderItem = useCallback(
-    (data: { item: HederaValidator }) => (
-      <ValidatorRow account={account} validator={data.item} onPress={onItemPress} />
-    ),
-    [onItemPress, account],
   );
 
   return (
@@ -59,14 +47,15 @@ export default function SelectValidator({ navigation, route }: Props) {
         currency="hedera"
       />
       <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <View style={styles.header}>
-        <ValidatorHead />
-      </View>
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={validators}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
+      <ValidatorsList
+        account={account}
+        searchQuery={searchQuery}
+        onItemPress={onItemPress}
+        header={
+          <View style={styles.header}>
+            <ValidatorHead />
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -74,11 +63,11 @@ export default function SelectValidator({ navigation, route }: Props) {
 
 const ValidatorHead = () => (
   <View style={styles.validatorHead}>
-    <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
+    <Text typography="body2SemiBold" lx={{ color: "muted" }} numberOfLines={1}>
       <Trans i18nKey="delegation.validator" />
     </Text>
     <View style={styles.validatorHeadContainer}>
-      <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
+      <Text typography="body2SemiBold" lx={{ color: "muted" }} numberOfLines={1}>
         <Trans i18nKey="hedera.delegation.steps.validator.totalStake" />
       </Text>
     </View>
@@ -92,22 +81,10 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
   },
-  list: {
-    paddingHorizontal: 16,
-  },
-  center: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   validatorHead: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  validatorHeadText: {
-    fontSize: 14,
   },
   validatorHeadContainer: {
     flexDirection: "row",

@@ -1,10 +1,14 @@
 export type ContactDeviceIntentFailureJobState =
+  /**
+   * The kit's version guard refused the device. Which version it refused
+   * depends on who serves the operation: an embedded coin app for the
+   * app-owned intents, the device OS for the dashboard-owned ones (contact
+   * rename). The kit reports both as one error, so each renderer supplies the
+   * copy that matches its own intent.
+   */
   | { readonly type: "app-version-too-low"; readonly error: Error }
   | { readonly type: "invalid-input"; readonly error: Error }
-  /**
-   * 0x6A80 (SWO_INCORRECT_DATA): malformed TLV, invalid group handle, or user
-   * rejection — one bucket, by firmware design.
-   */
+  /** 0x5501 (`ActionRefusedError`) from the dashboard, or 0x6A80 (SWO_INCORRECT_DATA) from the Contacts app, which buckets a refusal with malformed TLV and an invalid group handle. */
   | { readonly type: "device-rejected"; readonly error: Error; readonly retry?: () => void }
   /** 0x6982 (SWO_SECURITY_CONDITION_NOT_SATISFIED): HMAC_PROOF/HMAC_REST verification failed — only reachable when replaying an existing group. */
   | { readonly type: "existing-group-verification-failed"; readonly error: Error }
@@ -48,6 +52,9 @@ export function mapDeviceActionErrorToFailureJobState(
   }
   if (tag === "ContactsValidationError") {
     return { type: "invalid-input", error: mappedError };
+  }
+  if (tag === "ActionRefusedError") {
+    return { type: "device-rejected", error: mappedError };
   }
   if (tag === "ContactsCommandError") {
     const errorCode = (error as { errorCode?: unknown }).errorCode;
