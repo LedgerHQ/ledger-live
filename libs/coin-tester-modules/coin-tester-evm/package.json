@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@features/platform-currencies": "workspace:^",
-    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

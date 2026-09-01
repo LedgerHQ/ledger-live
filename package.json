@@ -110,7 +110,6 @@
     "coin:celo": "pnpm --filter coin-celo",
     "coin:concordium": "pnpm --filter coin-concordium",
     "coin:cosmos": "pnpm --filter coin-cosmos",
-    "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
     "coin:kaspa": "pnpm --filter coin-kaspa",
     "coin:tester": "pnpm --filter coin-tester",
