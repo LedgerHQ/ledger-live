@@ -40,9 +40,6 @@ import {
   TransactionPathway,
   TransactionStage,
 } from "@ledgerhq/transaction-observability";
-
-export { resolveFamily };
-
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};

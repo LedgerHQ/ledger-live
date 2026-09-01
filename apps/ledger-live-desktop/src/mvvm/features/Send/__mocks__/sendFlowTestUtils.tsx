@@ -238,9 +238,6 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
     const bridge = {};
     return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
   }),
-  // The descriptor registry resolves a currency to its family through this export;
-  // none of the currencies used here are routed to a different family than their own.
-  resolveFamily: jest.fn((currency: { family: string }) => currency.family),
   getAccountBridgeByFamily: jest.fn(async () => ({
     validateAddress: jest.fn(async () => true),
   })),

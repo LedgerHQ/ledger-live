@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCurrencyBridge, resolveFamily } from "../impl";
+import { getCurrencyBridge } from "../impl";
+import { resolveFamily } from "../zcashRouting";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../../families/aptos/descriptor";
 import { descriptor as bitcoinDescriptor } from "../../families/bitcoin/descriptor";
