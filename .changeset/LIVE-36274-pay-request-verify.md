@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-request": minor
+"@features/flow-pay-request": minor
 "live-mobile": minor
 "@shared/ui-info-state": minor
 "@features/platform-verify-address-intent": minor

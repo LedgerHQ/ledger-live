@@ -28,14 +28,11 @@ export function RequestReceiveSummary({
   return (
     <div
       className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl"
-      data-testid="pay-card-request-receive-summary"
+      data-testid="pay-request-receive-summary"
     >
       <div className="flex flex-col items-center gap-8">
         <span className="heading-3-semi-bold text-base">{title}</span>
-        <div
-          className="flex flex-row items-center gap-6"
-          data-testid="pay-card-request-receive-network"
-        >
+        <div className="flex flex-row items-center gap-6" data-testid="pay-request-receive-network">
           {networkIcon ? (
             <CryptoIcon
               ledgerId={networkIcon.ledgerId}
@@ -50,7 +47,7 @@ export function RequestReceiveSummary({
       </div>
       <QrCode
         value={qrPayload}
-        testID="pay-card-request-receive-qr-code"
+        testID="pay-request-receive-qr-code"
         centerContent={
           <CryptoIcon
             ledgerId={assetIcon.ledgerId}

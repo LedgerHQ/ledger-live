@@ -287,7 +287,7 @@ describe("PayTab integration", () => {
     };
     act(() => onSuccess(USDC_TOKEN, ETH_ACCOUNT_WITH_USDC));
 
-    await user.click(await screen.findByTestId("pay-card-request-receive-verify"));
+    await user.click(await screen.findByTestId("pay-request-receive-verify"));
     await user.click(await screen.findByTestId("pay-card-verify-address-verify-cta"));
 
     await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
@@ -301,7 +301,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    expect(await screen.findByTestId("pay-card-request-receive")).toBeVisible();
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
   });
 

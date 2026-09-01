@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type {
-  PayCardTrackEvent,
+  PayRequestTrackEvent,
   VerifyAddressLabels,
   VerifyAddressProps,
-} from "@features/flow-pay-card-request";
+} from "@features/flow-pay-request";
 import { useTranslation } from "~/context/Locale";
 
 export const PAY_REQUEST_VERIFY_PAGE = "Request Address Verification";
@@ -17,7 +17,10 @@ export type PayVerifyOutcome =
   | "dismissed"
   | "initFailed";
 
-export function usePayTabVerifyAddress(onTrackEvent?: PayCardTrackEvent, onMismatch?: () => void) {
+export function usePayTabVerifyAddress(
+  onTrackEvent?: PayRequestTrackEvent,
+  onMismatch?: () => void,
+) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [introOpen, setIntroOpen] = useState(false);

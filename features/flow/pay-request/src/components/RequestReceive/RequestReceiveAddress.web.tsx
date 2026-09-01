@@ -9,7 +9,7 @@ export function RequestReceiveAddress({ addressParts }: RequestReceiveAddressPro
   const { start, middle, end } = addressParts;
 
   return (
-    <p className="break-all text-center pl-48 pr-48" data-testid="pay-card-request-receive-address">
+    <p className="break-all text-center pl-48 pr-48" data-testid="pay-request-receive-address">
       <span className="body-2-semi-bold text-base">{start}</span>
       <span className="body-2 text-muted">{middle}</span>
       <span className="body-2-semi-bold text-base">{end}</span>

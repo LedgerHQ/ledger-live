@@ -1,4 +1,4 @@
-# Pay Card Request
+# Pay Request
 
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
@@ -15,7 +15,7 @@ or domain dependencies. The host resolves the selected account into primitives a
 action side effects; the view-model formats display data and wraps each action with tracking.
 
 ```tsx
-import { useRequestReceiveViewModel } from "@features/flow-pay-card-request";
+import { useRequestReceiveViewModel } from "@features/flow-pay-request";
 
 const vm = useRequestReceiveViewModel({
   address,
@@ -56,7 +56,7 @@ navigation-agnostic.
 > Native is a full screen (LIVE-35188). Branded QR uses `@shared/ui-qr-code`.
 
 ```tsx
-import { RequestReceive } from "@features/flow-pay-card-request";
+import { RequestReceive } from "@features/flow-pay-request";
 
 <RequestReceive
   isOpen={isOpen}
@@ -101,7 +101,7 @@ The `executing` device phase (connect / open app / waiting) is rendered by the a
 (`hidden` → `intro` → `success`).
 
 ```tsx
-import { VerifyAddress } from "@features/flow-pay-card-request";
+import { VerifyAddress } from "@features/flow-pay-request";
 
 <VerifyAddress
   phase={phase}
@@ -129,7 +129,7 @@ file it can reach through no other path would be reported as dead.
 Every `index.*` is a pure barrel (`export *` only).
 
 ```text
-pay-card-request/
+pay-request/
 ├── package.json
 └── src/
     ├── index.ts                                # Public API barrel (web/default) → ./exports

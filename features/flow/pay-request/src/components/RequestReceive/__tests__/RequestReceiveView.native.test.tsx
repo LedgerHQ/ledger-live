@@ -18,16 +18,16 @@ describe("RequestReceiveView (Native)", () => {
       />,
     );
 
-    expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-close")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-summary")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-close")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.title)).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-qr-code")).toBeVisible();
-    expect(screen.getByTestId("pay-card-request-receive-address")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-address")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.share)).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.copy)).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.verify)).toBeVisible();
-    expect(screen.queryByTestId("pay-card-request-receive-save")).toBeNull();
+    expect(screen.queryByTestId("pay-request-receive-save")).toBeNull();
   });
 
   it("closes from the top-left close button", async () => {
@@ -35,7 +35,7 @@ describe("RequestReceiveView (Native)", () => {
     const onClose = jest.fn();
     render(<RequestReceiveView {...createRequestReceiveViewProps({ onClose })} />);
 
-    await user.press(screen.getByTestId("pay-card-request-receive-close"));
+    await user.press(screen.getByTestId("pay-request-receive-close"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -49,7 +49,7 @@ describe("RequestReceiveView (Native)", () => {
       />,
     );
 
-    await user.press(screen.getByTestId("pay-card-request-receive-copy"));
+    await user.press(screen.getByTestId("pay-request-receive-copy"));
 
     expect(onCopy).toHaveBeenCalledTimes(1);
   });

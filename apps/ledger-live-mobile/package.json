@@ -116,7 +116,7 @@
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-deposit": "workspace:^",
     "@features/flow-pay-feature-tour": "workspace:^",
-    "@features/flow-pay-card-request": "workspace:^",
+    "@features/flow-pay-request": "workspace:^",
     "@features/flow-pay-contact": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/flow-contacts-add-address": "workspace:^",

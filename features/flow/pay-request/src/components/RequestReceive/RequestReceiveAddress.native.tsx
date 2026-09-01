@@ -15,7 +15,7 @@ export function RequestReceiveAddress({ addressParts }: RequestReceiveAddressPro
     <Text
       typography="body2"
       lx={{ color: "muted", textAlign: "center" }}
-      testID="pay-card-request-receive-address"
+      testID="pay-request-receive-address"
     >
       <Text typography="body2SemiBold" lx={{ color: "base" }}>
         {start}

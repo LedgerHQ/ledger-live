@@ -5,7 +5,7 @@ import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { PayCardTrackEvent, RequestReceiveProps } from "@features/flow-pay-card-request";
+import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
 import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { deriveRequestReceiveData } from "LLM/features/PayTab/hooks/deriveRequestReceiveData";
@@ -18,7 +18,7 @@ import type { PayTabRequestReceiveViewProps } from "./PayTabRequestReceiveView";
 
 const REQUEST_PAGE = "Pay";
 
-const onTrackEvent: PayCardTrackEvent = (event, params) => {
+const onTrackEvent: PayRequestTrackEvent = (event, params) => {
   void track(event, params);
 };
 

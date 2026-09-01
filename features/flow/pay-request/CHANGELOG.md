@@ -1,4 +1,4 @@
-# @features/flow-pay-card-request
+# @features/flow-pay-request
 
 ## 0.2.0
 

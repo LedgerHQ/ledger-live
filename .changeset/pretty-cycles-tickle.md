@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-request": patch
+"@features/flow-pay-request": patch
 "ledger-live-desktop": patch
 "live-mobile": patch
 ---
