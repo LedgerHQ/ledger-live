@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { accountIdSetKey, sliceSetKey } from "../internals";
 import type { AccountRef, AccountSlice } from "../port";
 import { useAccountDataScheduler } from "../provider";
 import type { SubscribeOptions } from "../scheduler";
@@ -20,13 +21,10 @@ export function useAccountDataDemand(
   options?: SubscribeOptions,
 ): void {
   const scheduler = useAccountDataScheduler();
-  // Sorted: the key identifies the *set* of accounts demanded. Without it, sorting a portfolio
-  // would release and re-register every demand even though nothing was added or removed.
-  const refsKey = refs
-    .map(ref => ref.accountId)
-    .sort()
-    .join(",");
-  const slicesKey = [...slices].sort().join(",");
+  // Both keys identify a *set*, not a sequence: without the sort, re-ordering a portfolio would
+  // release and re-register every demand even though nothing was added or removed.
+  const refsKey = accountIdSetKey(refs.map(ref => ref.accountId));
+  const slicesKey = sliceSetKey(slices);
   const { maxAge, pollMs, reason } = options ?? {};
 
   const latest = useRef(refs);

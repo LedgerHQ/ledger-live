@@ -6,6 +6,7 @@ import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Account } from "@ledgerhq/types-live";
 import { Button, Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
+import type { SliceStatus } from "@features/platform-account-data";
 import { useAccountBalance } from "@features/platform-account-data/react";
 import { ToolPage } from "../components/ToolPage";
 import { inferAccount, syncAccount } from "../logic/syncAccount";
@@ -118,6 +119,17 @@ function App() {
 }
 
 /**
+ * One line saying where the number came from, flattened out of a ternary chain: an error wins over
+ * a source, and "no read yet" is the only case left.
+ */
+function sourceLine(status: SliceStatus, assetCount: number): string {
+  if (status.error) return status.error.message;
+  if (!status.sourceId) return "no read yet";
+  const extra = assetCount > 1 ? ` — ${assetCount} assets in one read` : "";
+  return `served by ${status.sourceId}${extra}`;
+}
+
+/**
  * The balance, and only the balance.
  *
  * `useAccountBalance` registers demand for the `balance` slice alone, so on a family with a granular
@@ -125,7 +137,7 @@ function App() {
  * `sourceId` says which source the router picked, which is the whole point of the panel: it is the
  * cheapest way to see the hybrid routing decide.
  */
-function BalancePanel({ accountId }: { accountId: string }) {
+function BalancePanel({ accountId }: Readonly<{ accountId: string }>) {
   const account = useMemo(() => {
     try {
       return inferAccount(accountId);
@@ -144,7 +156,9 @@ function BalancePanel({ accountId }: { accountId: string }) {
       <div className="flex items-baseline gap-8">
         <span className="body-1-semi-bold">
           {balance
-            ? formatCurrencyUnit(unit, new BigNumber(balance.balance), { showCode: true })
+            ? formatCurrencyUnit(unit, new BigNumber(balance.balance), {
+                showCode: true,
+              })
             : "—"}
         </span>
         {status.pending ? <Spinner size={12} /> : null}
@@ -155,7 +169,9 @@ function BalancePanel({ accountId }: { accountId: string }) {
       {balance && balance.spendableBalance !== balance.balance ? (
         <span className="body-3 text-muted">
           spendable{" "}
-          {formatCurrencyUnit(unit, new BigNumber(balance.spendableBalance), { showCode: true })}
+          {formatCurrencyUnit(unit, new BigNumber(balance.spendableBalance), {
+            showCode: true,
+          })}
         </span>
       ) : null}
       {subAccountBalances.length > 0 ? (
@@ -167,17 +183,7 @@ function BalancePanel({ accountId }: { accountId: string }) {
           ))}
         </ul>
       ) : null}
-      <span className="body-4 text-muted">
-        {status.error
-          ? status.error.message
-          : status.sourceId
-            ? `served by ${status.sourceId}${
-                subAccountBalances.length > 0
-                  ? ` — ${1 + subAccountBalances.length} assets in one read`
-                  : ""
-              }`
-            : "no read yet"}
-      </span>
+      <span className="body-4 text-muted">{sourceLine(status, 1 + subAccountBalances.length)}</span>
     </div>
   );
 }

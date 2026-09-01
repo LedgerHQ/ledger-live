@@ -17,7 +17,9 @@ const subAccountBalancesIndexSelector = createSelector(accountBalancesTableSelec
   const index: Record<AccountId, AccountBalance[]> = {};
   for (const balance of Object.values(table)) {
     if (!balance.parentId) continue;
-    (index[balance.parentId] ??= []).push(balance);
+    const siblings = index[balance.parentId] ?? [];
+    siblings.push(balance);
+    index[balance.parentId] = siblings;
   }
   return index;
 });

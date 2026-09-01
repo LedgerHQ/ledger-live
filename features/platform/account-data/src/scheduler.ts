@@ -2,6 +2,7 @@ import type { UnknownAction } from "@reduxjs/toolkit";
 import { replaceAccountBalances } from "@domain/entity-account-balance";
 import type { AccountId } from "@shared/schema-primitives";
 import { SourceUnderDeliveryError, UnservableSlicesError } from "./errors";
+import { sliceSetKey } from "./internals";
 import { planFetch, type FetchPlan } from "./router";
 import type { AccountDataSourceRegistry } from "./registry";
 import {
@@ -318,7 +319,7 @@ export function createAccountDataScheduler({
     // it against the slices' aggregate demand instead would leak: two subscriptions over the same
     // slices with different cadences own different intervals, and neither release would see the
     // demand reach zero while the other is still mounted.
-    const pollKey = `${ref.accountId}|${[...slices].sort().join(",")}|${pollMs}`;
+    const pollKey = `${ref.accountId}|${sliceSetKey(slices)}|${pollMs}`;
     if (pollMs !== undefined) {
       const existing = polls.get(pollKey);
       if (existing) {

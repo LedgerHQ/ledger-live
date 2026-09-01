@@ -5,7 +5,6 @@
 
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import {
   accountBalancesSlice,
   initialAccountBalancesState,
