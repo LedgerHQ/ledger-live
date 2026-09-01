@@ -43,6 +43,7 @@ const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 
 export const sendFeatures = {
   canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
+  hasMemo: fromDescriptor(d => d.inputs.memo != null, false),
   /**
    * Whether to offer a memo input for `recipient`. The recipient is required rather
    * than optional because a coin may restrict its memo to the recipients that can

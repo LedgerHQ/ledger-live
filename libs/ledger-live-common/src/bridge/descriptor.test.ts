@@ -211,13 +211,13 @@ describe("sendFeatures", () => {
     });
   });
 
-  // These coins accept a memo for any recipient, so the address does not matter.
   it.each([
     ["solana", true],
     ["algorand", true],
     ["bitcoin", false],
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
+    expect(sendFeatures.hasMemo(currency)).toBe(expected);
     expect(sendFeatures.hasMemoForRecipient(currency, "")).toBe(expected);
   });
 
@@ -778,7 +778,7 @@ describe("zcash descriptor resolution", () => {
     setZcashShieldedEnabled(true);
     const zcash = getCryptoCurrencyById("zcash");
 
-    // Only a shielded recipient can be handed a memo, hence the unified address.
+    expect(sendFeatures.hasMemo(zcash)).toBe(true);
     expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_UA_WITH_ORCHARD)).toBe(true);
     expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_T1_ADDRESS)).toBe(false);
     expect(sendFeatures.getMemoMaxLength(zcash)).toBe(512);

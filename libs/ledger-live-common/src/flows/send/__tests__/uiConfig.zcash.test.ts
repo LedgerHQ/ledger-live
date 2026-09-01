@@ -6,11 +6,6 @@ import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../../bridge
 // registry or `sendFeatures`: it exercises the real family-resolution ->
 // descriptor -> uiConfig chain end to end.
 
-// Vectors shared with coin-zcash's `logic/address.test.ts`.
-const UA_WITH_ORCHARD =
-  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
-const T1_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
-
 describe("getSendUiConfig (zcash, real resolution)", () => {
   const previousShieldedEnabled = isZcashShieldedEnabled();
 
@@ -25,7 +20,7 @@ describe("getSendUiConfig (zcash, real resolution)", () => {
     setZcashShieldedEnabled(true);
     const zcash = getCryptoCurrencyById("zcash");
 
-    const uiConfig = getSendUiConfig(zcash, UA_WITH_ORCHARD);
+    const uiConfig = getSendUiConfig(zcash);
 
     expect(uiConfig.hasFeePresets).toBe(false);
     expect(uiConfig.hasCustomFees).toBe(false);
@@ -34,30 +29,6 @@ describe("getSendUiConfig (zcash, real resolution)", () => {
     expect(uiConfig.hasMemo).toBe(true);
     expect(uiConfig.memoType).toBe("text");
     expect(uiConfig.memoMaxLength).toBe(512);
-  });
-
-  // The legacy send flow showed the memo field only for `recipientType === "private"`
-  // (renderer/families/bitcoin/SendRecipientFields.tsx); the descriptor-driven flow
-  // has to reach the same answer, or it offers a memo no transparent output can carry.
-  it.each([
-    ["a transparent recipient", T1_ADDRESS],
-    ["no recipient yet", ""],
-  ])("does not offer a memo for %s", (_label, recipient) => {
-    setZcashShieldedEnabled(true);
-    const zcash = getCryptoCurrencyById("zcash");
-
-    const uiConfig = getSendUiConfig(zcash, recipient);
-
-    expect(uiConfig.hasMemo).toBe(false);
-    // The descriptor still describes the input, so the shape stays available to the
-    // UI for the moment the recipient becomes shielded.
-    expect(uiConfig.memoType).toBe("text");
-  });
-
-  it("keeps a memo coin without recipient restrictions unconditional", () => {
-    const cosmos = getCryptoCurrencyById("cosmos");
-
-    expect(getSendUiConfig(cosmos, "").hasMemo).toBe(true);
   });
 
   it("areFeesEditable is false", () => {

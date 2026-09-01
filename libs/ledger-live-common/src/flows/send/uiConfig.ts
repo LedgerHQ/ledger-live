@@ -16,16 +16,7 @@ export const DEFAULT_SEND_UI_CONFIG: SendFlowUiConfig = {
   hasDefaultStrategy: false,
 };
 
-/**
- * `recipient` is the address the flow currently points at, needed because a coin can
- * restrict its memo to some recipients (see `InputDescriptor.appliesToRecipient`).
- * `hasMemo` therefore answers "show the memo input for this recipient", not "this coin
- * knows about memos" -- callers wanting the latter should read the descriptor.
- */
-export function getSendUiConfig(
-  currency: CryptoOrTokenCurrency | null,
-  recipient: string = "",
-): SendFlowUiConfig {
+export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlowUiConfig {
   if (!currency) return DEFAULT_SEND_UI_CONFIG;
   const descriptor = getSendDescriptor(currency);
 
@@ -36,7 +27,7 @@ export function getSendUiConfig(
   const memoDescriptor = descriptor.inputs.memo;
 
   return {
-    hasMemo: sendFeatures.hasMemoForRecipient(currency, recipient),
+    hasMemo: sendFeatures.hasMemo(currency),
     memoType: memoDescriptor?.type,
     memoMaxLength: sendFeatures.getMemoMaxLength(currency),
     memoMaxValue: sendFeatures.getMemoMaxValue(currency),

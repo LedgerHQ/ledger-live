@@ -87,7 +87,7 @@ export function useOpenSendFlow({
       if (
         canSkipRecipientStep(
           { recipient: prefilledRecipient, skipRecipientStep },
-          getSendUiConfig(getAccountCurrency(account), prefilledRecipient ?? ""),
+          getSendUiConfig(getAccountCurrency(account)),
         ) &&
         params.transaction
       ) {

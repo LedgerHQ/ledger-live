@@ -8,10 +8,11 @@ import { useRecipientMemo } from "./useRecipientMemo";
 
 type UseMemoViewModelProps = Readonly<{
   address: string;
+  hasMemo: boolean;
   onSkip: () => void;
 }>;
 
-export function useMemoViewModel({ address, onSkip }: UseMemoViewModelProps) {
+export function useMemoViewModel({ address, hasMemo, onSkip }: UseMemoViewModelProps) {
   const { t } = useTranslation();
   const { state, uiConfig } = useSendFlowData();
   const { transaction } = useSendFlowActions();
@@ -45,7 +46,7 @@ export function useMemoViewModel({ address, onSkip }: UseMemoViewModelProps) {
   );
 
   const memo = useRecipientMemo({
-    hasMemo: uiConfig.hasMemo,
+    hasMemo,
     memoDefaultOption,
     memoType: uiConfig.memoType,
     memoTypeOptions,
