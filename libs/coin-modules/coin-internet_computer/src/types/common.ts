@@ -128,7 +128,9 @@ export type InternetComputerOperationExtraRaw = {
 
 const EXTRA_KEYS = ["memo", "createdNeuronId", "neurons", "outcome", "methodName"] as const;
 
-const hasAnyExtraKey = (value: object): boolean => EXTRA_KEYS.some(key => key in value);
+// Own properties only: `in` would also answer for anything the prototype chain happens to carry.
+const hasAnyExtraKey = (value: object): boolean =>
+  EXTRA_KEYS.some(key => Object.prototype.hasOwnProperty.call(value, key));
 
 export function isInternetComputerOperationExtra(
   extra: OperationExtra,

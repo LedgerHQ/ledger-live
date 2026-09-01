@@ -118,6 +118,13 @@ describe("operation extra (de)serialization", () => {
     expect(fromOperationExtraRaw({ unrelated: true })).toEqual({});
   });
 
+  // The guard asks whether the object carries one of our keys, which is a question about its own
+  // properties: `in` would have said yes to anything whose prototype happened to name one.
+  it("does not take an object for an ICP extra on an inherited key alone", () => {
+    expect(fromOperationExtraRaw(Object.create({ memo: "1" }))).toEqual({});
+    expect(toOperationExtraRaw(Object.create({ methodName: "list_neurons" }))).toEqual({});
+  });
+
   it("falls back to an empty snapshot when the persisted neurons are corrupt", () => {
     const revived = fromOperationExtraRaw({ neurons: "{ not valid json" });
     expect((revived as InternetComputerOperationExtra).neurons).toEqual([]);
