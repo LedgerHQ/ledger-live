@@ -1,5 +1,26 @@
 # @ledgerhq/coin-framework
 
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`ea4b535`](https://github.com/LedgerHQ/ledger-live/commit/ea4b5356d630618bf059719eeef9390f4c5ffba6) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns its object with `satisfies CoinModuleImpl<KaspaCoinConfig>` — which keeps the precise shape, so a caller sees exactly which methods exist — declaring the eleven the module implements: `broadcast`, `combine`, `craftTransaction`, `craftTransactionData`, `estimateFees`, `getBalance`, `getBlock`, `getBlockInfo`, `lastBlock`, `listOperations` and `validateIntent`.
+
+  The eight capabilities Kaspa has none of — `call`, `register`, `craftRawTransaction`, `validateAddress`, `getNextSequence`, `getStakes`, `getRewards` and `getValidators` — are omitted instead of each carrying a `throw new Error("… is not supported")`. Why each is absent is recorded above the factory rather than left to the stub it used to sit on: Kaspa is a UTXO / BlockDAG chain with no per-account sequence or nonce, replay protection coming from spending one-time UTXOs (and the generic-coin-framework's `createTransaction` already supplies a synthetic zero nonce for kaspa, so `signOperation` never reached that method); there is no native staking, hence no stakes, rewards or validator set; `supportedFeatures` declares `blockchain_txs: ["send"]`, so there is no in-module token standard and no read-only contract-call escape hatch; the module accepts no externally-built transaction; and on-device address validation is not exposed through this API.
+
+  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises a `"<method> is not supported"` error — with the framework's generic wording now for `getNextSequence`, whose stub read "not applicable for Kaspa", and thrown synchronously where the `call` and `register` stubs it replaces were `async` functions returning a rejected promise. `supports(method)` now reports which capabilities are real.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 2.1.0
 
 ### Minor Changes

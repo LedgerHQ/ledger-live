@@ -1,5 +1,32 @@
 # @ledgerhq/coin-stacks
 
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`d4d3258`](https://github.com/LedgerHQ/ledger-live/commit/d4d3258b7a5b6d5e7ef9d5c9c6760bf42421c633) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns its object with `satisfies CoinModuleImpl<…>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits the five capabilities Stacks has none of instead of giving each a `throw new Error("… is not supported")`.
+
+  Why each is absent is recorded above the factory rather than lost with the stub it used to sit on: pox-5 exposes only an accrued reward total rather than a series of distribution events, and `getStakes` already reports it; there is no enumerable validator set, since a stake targets a pool signer read from the staker's own pox-5 entry; the module accepts no externally-built transaction; no read-only contract-call escape hatch is exposed; and there is no enrollment step.
+
+  `getStakes` stays, so staking is covered a la carte: the one staking read pox-5 can answer cheaply is real while the other two are absent.
+
+  `combine` keeps its `throw`: it rejects a signature array that does not hold exactly one entry, which is argument validation on an implemented method rather than an unimplemented capability.
+
+  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — except that the default throws synchronously where the stub it replaces was an `async` function returning a rejected promise. `supports(method)` now reports which capabilities are real.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `combine`, `getStakes` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 0.29.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @features/platform-device-intent
 
+## 5.2.0-next.0
+
+### Minor Changes
+
+- [#21017](https://github.com/LedgerHQ/ledger-live/pull/21017) [`9d5a6d9`](https://github.com/LedgerHQ/ledger-live/commit/9d5a6d980442ac78bcc1c3c12fbfee389aa8e0c9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a typed result callback contract to device intent jobs
+
 ## 5.1.0
 
 ### Minor Changes

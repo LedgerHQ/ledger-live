@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-alias",
-  "version": "0.0.1",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "AccountAlias entity: non-reversible aliases for account ids, reverse-lookup state and selectors",
   "main": "src/index.ts",

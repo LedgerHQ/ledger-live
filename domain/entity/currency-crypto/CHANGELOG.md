@@ -1,5 +1,11 @@
 # @domain/entity-currency-crypto
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#21224](https://github.com/LedgerHQ/ledger-live/pull/21224) [`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - add Gonka (GNK) as a new Cosmos-family currency with coin type 1200
+
 ## 0.10.0
 
 ### Minor Changes

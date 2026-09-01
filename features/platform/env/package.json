@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-env",
-  "version": "0.2.2",
+  "version": "0.2.3-next.0",
   "private": true,
   "description": "React hook for typed env var subscriptions",
   "main": "src/index.ts",

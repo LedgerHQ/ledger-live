@@ -1,5 +1,26 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 5.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`377763b`](https://github.com/LedgerHQ/ledger-live/commit/377763b6807ff9269b5d2720be060519989958a4) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Migrate the boilerplate to the coin-module authoring type, establishing the shape every new module copies.
+
+  `createApi` now returns an object checked against `CoinModuleImpl` with `satisfies`, declaring only the eight methods the module implements. `satisfies` rather than a return-type annotation, so the precise shape survives: a caller sees exactly which methods exist, and referencing an omitted one is a compile error instead of an optional to silence — an annotation would widen every capability back to optional, including the ones the module does implement. The eleven capabilities the chain has none of — `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`, `getStakes`, `getRewards`, `getValidators`, `validateIntent`, `getNextSequence`, `validateAddress` — are simply left out instead of each carrying a hand-written `throw new Error("… is not supported")`. The consumer reaches the module through a resolver that applies `withDefaults`, which supplies every omitted capability, so the surface a caller sees is unchanged and `supports()` now reports which ones are real.
+
+  The module's own test asserts both halves of that contract, since this is the reference shape: what `createApi` declares, and what the same value looks like once wrapped.
+
+  Because a module may now omit methods, a direct `createApi` call no longer receives a complete object. `no-restricted-imports` rejects one, in both the `ledger-live-common` and `coin-modules` configs, so a new bypass fails the existing lint job. The per-family `coinModuleApi.ts` adapters the resolver loads are exempt, as are test files, along with the four callers previously established as unable to break — celo's synchronisation and its composing `createApi`, `getTokenAllowance`, and the Canton mock bridge.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `craftTransaction`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 5.0.1
 
 ### Patch Changes

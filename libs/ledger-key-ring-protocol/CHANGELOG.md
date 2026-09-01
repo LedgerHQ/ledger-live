@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/speculos-transport@0.10.13-next.0
+
 ## 0.21.0
 
 ### Minor Changes

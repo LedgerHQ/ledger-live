@@ -1,5 +1,13 @@
 # @features/flow-large-screen-upsell
 
+## 2.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`c8bb138`](https://github.com/LedgerHQ/ledger-live/commit/c8bb13851393d4b1a50a5ece62763ba43110ae6f), [`116f006`](https://github.com/LedgerHQ/ledger-live/commit/116f006fb7e1dc3ed7d97c41ec08b2340b66a12e)]:
+  - @shared/feature-flags@0.21.0-next.0
+  - @features/platform-feature-flags@0.6.8-next.0
+
 ## 2.0.0
 
 ### Major Changes

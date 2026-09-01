@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-deposit",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Pay deposit options flow for Ledger Wallet",
   "main": "src/index.ts",

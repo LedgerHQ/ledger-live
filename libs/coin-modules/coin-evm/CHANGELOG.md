@@ -1,5 +1,36 @@
 # @ledgerhq/coin-evm
 
+## 5.2.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`83b019e`](https://github.com/LedgerHQ/ledger-live/commit/83b019e128b59a289a28184e58c33b108cd3f188) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns its object with `satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits `craftRawTransaction`, `register`, `getStakes` and `getRewards` instead of giving each a `throw new Error("… is not supported")`.
+
+  Staking is partial rather than absent, which is why the capabilities are per-method: `getValidators` stays and serves the validator list, while no staking position or reward event is read here.
+
+  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real.
+
+- [#21127](https://github.com/LedgerHQ/ledger-live/pull/21127) [`41faac4`](https://github.com/LedgerHQ/ledger-live/commit/41faac432e8c17e3718d90cc26ce6ae650800681) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(evm): drop ledgerhq deps from package.json
+
+- [#21015](https://github.com/LedgerHQ/ledger-live/pull/21015) [`2c70999`](https://github.com/LedgerHQ/ledger-live/commit/2c709990d3569bc50504822ce90c9e9024210312) Thanks [@YazhuEth](https://github.com/YazhuEth)! - fix(coin-framework): follow the listOperations cursor so account history is no longer truncated to one page
+
+  getAccountShape called listOperations once and discarded the returned `next`, so any account with
+  more operations than one explorer page never received the rest, and no later sync recovered the
+  tail: the walk is newest-first and `minHeight` only ever moves forward, so the pages below the
+  first were lost for good.
+
+  It now walks the cursor chain within a sync, treating a falsy cursor as end of stream. The walk is
+  unbounded — only a module that cannot progress ends it early: an empty page, or a cursor already
+  followed (a repeat, or a longer cycle). The `extra.pagingToken` resume read is removed:
+  nothing could ever write it, and `minHeight` is the resume position across syncs.
+
+  On the coin-evm side, the Ledger explorer's `fetchPaginatedOpsWithRetries` appends each batch in
+  place instead of rebuilding the whole accumulator (`[...previous, ...batch]`) once per page.
+
+- [#20802](https://github.com/LedgerHQ/ledger-live/pull/20802) [`1cf5583`](https://github.com/LedgerHQ/ledger-live/commit/1cf55832f785fc57881169092f1190fa7ddfecf9) Thanks [@qperrot](https://github.com/qperrot)! - Drive EVM NFT activation from the `supportedTokens` config field instead of `isNFTActive` and the `showNfts` boolean. `EvmConfig.showNfts` is replaced by `supportedTokens: ("erc721" | "erc1155")[]`, so each NFT standard is enabled independently, and coin-evm no longer depends on `@ledgerhq/ledger-wallet-framework/nft`. Activation is checked via explicit standard membership (`supportedTokens.includes("erc721" | "erc1155")`).
+
 ## 5.1.0
 
 ### Minor Changes

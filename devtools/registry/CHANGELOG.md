@@ -1,5 +1,13 @@
 # @devtools/registry
 
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8)]:
+  - @devtools/feature-flags@0.9.0-next.0
+  - @devtools/cloud-sync@0.1.1-next.0
+
 ## 0.4.0
 
 ### Minor Changes

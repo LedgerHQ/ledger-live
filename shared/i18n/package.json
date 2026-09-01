@@ -1,6 +1,6 @@
 {
   "name": "@shared/i18n",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Thin i18n context bridge: apps inject their i18next instance once, features/* and domain/* call useTranslation() and Trans without props-drilling strings",
   "main": "src/index.ts",

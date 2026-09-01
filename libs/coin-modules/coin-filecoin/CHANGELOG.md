@@ -1,5 +1,24 @@
 # @ledgerhq/coin-filecoin
 
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`36b7fda`](https://github.com/LedgerHQ/ledger-live/commit/36b7fda667ed2bc281291ac25573e36ac7244532) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns an object checked against `CoinModuleImpl` with `satisfies` — which keeps the precise shape, so a caller sees exactly which methods exist — declaring the eleven the module implements — `broadcast`, `combine`, `craftTransaction`, `craftTransactionData`, `estimateFees`, `getBalance`, `getNextSequence`, `lastBlock`, `listOperations`, `validateAddress`, `validateIntent`. The eight capabilities Filecoin has none of — `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`, `getStakes`, `getRewards`, `getValidators` — are omitted instead of each carrying a `throw new Error("… is not supported")`.
+
+  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real rather than being unable to tell a placeholder from an implementation.
+
+  The API integration test exercises the module the way a consumer does, through `withDefaults`, and additionally asserts that the module itself no longer carries the eight omitted methods.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 2.0.1
 
 ### Patch Changes

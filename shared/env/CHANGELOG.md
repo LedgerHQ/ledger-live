@@ -1,5 +1,18 @@
 # @shared/env
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#21104](https://github.com/LedgerHQ/ledger-live/pull/21104) [`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b) Thanks [@henri-ly](https://github.com/henri-ly)! - Point `A4_URL_PRD` at the Ledger Wallet base URL `https://explorers.api.live.ledger.com/a4` instead of the Vault one.
+
+- [#21074](https://github.com/LedgerHQ/ledger-live/pull/21074) [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Introduce `@support/jest-shared` with `createSharedJestConfig` and `createSharedUiJestConfig` factories; wire all `shared/*` jest configs to use them.
+
+### Patch Changes
+
+- Updated dependencies [[`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @features/flow-contacts-introduction
 
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#21348](https://github.com/LedgerHQ/ledger-live/pull/21348) [`46f41d2`](https://github.com/LedgerHQ/ledger-live/commit/46f41d2787191684f52e5dc85b0cd629901b13d8) Thanks [@deepyjr](https://github.com/deepyjr)! - Update the Contacts feature introduction image and English copy, and remove its description field from the shared contract.
+
 ## 0.3.0
 
 ### Minor Changes

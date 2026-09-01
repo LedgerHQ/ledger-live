@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 3.2.0-next.0
+
+### Minor Changes
+
+- [#21124](https://github.com/LedgerHQ/ledger-live/pull/21124) [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Make getEnv and getEnvDefault throw when the name is not in injected definitions
+
 ## 3.1.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-currency-format
 
+## 0.14.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 0.14.2
 
 ### Patch Changes

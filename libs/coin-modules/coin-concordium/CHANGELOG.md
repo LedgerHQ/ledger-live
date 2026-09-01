@@ -1,5 +1,40 @@
 # @ledgerhq/coin-concordium
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`da47556`](https://github.com/LedgerHQ/ledger-live/commit/da475565799815dd17c4cb941068031e564da9b6) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` no longer declares `CoinModuleApi` as its return type: it returns the object it actually
+  builds, checked with `satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>`. Seven
+  capability methods that only threw are omitted instead of stubbed — `call`, `register`, the three
+  staking reads (`getStakes`, `getRewards`, `getValidators`), `validateIntent`, and `getNextSequence`
+  (the crafting path resolves the sequence internally via `getNextValidSequence`, so the capability was
+  never published to callers anyway). Everything Concordium does implement stays, including
+  `craftRawTransaction` and the full block API (`lastBlock`, `getBlockInfo`, `getBlock`), which are real
+  implementations rather than stubs.
+
+  Consumers see no behavioural change: the resolver applies the framework's `withDefaults`, which
+  backfills each omitted method with the same `"<name> is not supported"` throw. `supports()` on the
+  wrapped api now reports these capabilities as absent, which the stubs previously masked.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `combine`, `craftTransaction`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+- [#21239](https://github.com/LedgerHQ/ledger-live/pull/21239) [`02c9ccf`](https://github.com/LedgerHQ/ledger-live/commit/02c9ccfb409317a72f0b29d1fb755214adc9e596) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Protocol-Level Token (PLT) support: TransactionType.TokenUpdate, CIS-7 CBOR encoding, and flat wire serialization
+
+- [#21264](https://github.com/LedgerHQ/ledger-live/pull/21264) [`e723d82`](https://github.com/LedgerHQ/ledger-live/commit/e723d823688cd7f00d4b16549b45c62a500c8a9d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Type the PLT wallet-proxy responses: `accountTokens`, the `/v0/plt/tokens` and `/v0/plt/tokenInfo` clients, PLT transaction detail fields, and the raw reject reason
+
+### Patch Changes
+
+- Updated dependencies [[`02c9ccf`](https://github.com/LedgerHQ/ledger-live/commit/02c9ccfb409317a72f0b29d1fb755214adc9e596), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/concordium-core@0.6.0-next.0
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 1.0.1
 
 ### Patch Changes

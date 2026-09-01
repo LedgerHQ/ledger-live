@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-device-intent",
-  "version": "5.1.0",
+  "version": "5.2.0-next.0",
   "private": true,
   "description": "Cross-platform Device Intent Executor",
   "main": "src/index.ts",

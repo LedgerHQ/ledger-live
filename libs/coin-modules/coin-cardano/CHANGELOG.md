@@ -1,5 +1,36 @@
 # @ledgerhq/coin-cardano
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`e76361d`](https://github.com/LedgerHQ/ledger-live/commit/e76361de6952dc17336daa0679557fcb7b935430) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` no longer declares `CoinModuleApi` as its return type: it returns the object it actually
+  builds, checked with `satisfies CoinModuleImpl<CardanoCoinConfig, StringMemo>`. The seven capability
+  methods the module never implemented are omitted instead of stubbed — `call`, `register`,
+  `craftRawTransaction`, `getBlock`, `getBlockInfo`, `getRewards` and `getNextSequence`, the last one
+  because Cardano is UTXO-based and has no per-account sequence to advance. Cardano's partial staking
+  support is unchanged and now visible in the type: `getStakes` and `getValidators` are real
+  implementations, only the reward-distribution listing is absent.
+
+  Consumers see no behavioural change. The generic-coin-framework resolver hands the module out through
+  the framework's `withDefaults`, which backfills every omitted method with the same
+  `"<name> is not supported"` throw the stubs raised — the one wording change is `getNextSequence`,
+  which now reports "not supported" rather than "not applicable for Cardano". `supports()` on the
+  wrapped api now reports these capabilities as absent, which the stubs previously masked.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+- [#21251](https://github.com/LedgerHQ/ledger-live/pull/21251) [`076322c`](https://github.com/LedgerHQ/ledger-live/commit/076322c82b0edcba1eda4981902f98cfe6c62b43) Thanks [@ishaba](https://github.com/ishaba)! - cardano: stop injecting an ABSTAIN vote-delegation certificate (and an automatic reward withdrawal) into plain send transactions. The Conway `ConwayWdrlNotDelegatedToDRep` rule constrains only a transaction that withdraws rewards, so a send that does not touch the reward account is valid with zero certificates and zero withdrawals regardless of unclaimed rewards — injecting either silently changed the user's governance state and broke swaps (the device swap policy rejects any certificate or withdrawal). These reward/governance obligations now apply only to the delegate/undelegate flows, which are unchanged. Fixes Cardano swaps failing on accounts that hold staking rewards. Applies to both the account bridge (`buildTransaction`) and the CoinModule API (`craftTransaction`) paths.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/transaction-observability",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Sign/broadcast transaction observability: normalized log events, a global observer registry, and error/staking-action classification, shared across all Ledger Live transaction routes",
   "keywords": [

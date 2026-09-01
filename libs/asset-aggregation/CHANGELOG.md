@@ -1,5 +1,17 @@
 # @ledgerhq/asset-aggregation
 
+## 0.13.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
+  - @domain/entity-currency-crypto@0.11.0-next.0
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @domain/api-aggregated-assets@0.4.2-next.0
+  - @domain/entity-currency@0.4.2-next.0
+  - @domain/entity-currency-token@0.5.1-next.0
+  - @ledgerhq/live-countervalues@0.24.5-next.0
+
 ## 0.13.2
 
 ### Patch Changes
