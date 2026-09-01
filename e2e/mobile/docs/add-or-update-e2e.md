@@ -31,7 +31,8 @@ reach it as `app.<name>`.
 2. **Arrange state in fixtures and flags, not in UI steps.** Dismissed introductions, onboarding and
    settings belong in `userdata/*.json`; entry-point flags belong in the test function file, combined
    with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports
-   only `data.settings` and `data.accounts` — domain entities cannot be seeded this way.
+   `data.settings`, `data.accounts`, `data.trustchain`, and `data.postOnboarding` when present — other
+   domain entities cannot be seeded this way.
 
 3. **No conditional steps.** Never `completeXIfVisible`: it costs time on every run and hides the
    regression when the thing stops appearing. Remove the blocker via rule 2 instead.

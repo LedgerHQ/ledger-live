@@ -52,7 +52,12 @@ const PostOnboardingMockActionScreen = ({ navigation, route }: NavigationProps) 
         <Button mt={6} type="main" onPress={handleCompleteAndGoToWallet}>
           Complete action & go to Wallet
         </Button>
-        <Button mt={6} type="main" onPress={handleCompleteAndGoToHub}>
+        <Button
+          mt={6}
+          type="main"
+          onPress={handleCompleteAndGoToHub}
+          testID="post-onboarding-mock-complete-and-back-to-hub"
+        >
           Complete action & go back to onboarding hub
         </Button>
       </Flex>
