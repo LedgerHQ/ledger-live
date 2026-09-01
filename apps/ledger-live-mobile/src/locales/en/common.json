@@ -8698,7 +8698,9 @@
           "inactive": "Inactive",
           "inactiveTooltip": "Validator not found",
           "overstaked": "Overstaked",
-          "overstakedTooltip": "This node is overstaked, APY is lower than optimal"
+          "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+          "fetchError": "Unable to load",
+          "fetchErrorTooltip": "Couldn't load validator data. Please try again."
         },
         "rewards": "Rewards",
         "actions": {

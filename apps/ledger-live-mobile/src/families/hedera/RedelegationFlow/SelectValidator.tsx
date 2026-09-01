@@ -1,24 +1,21 @@
 import React, { useCallback, useState } from "react";
 import SafeAreaView from "~/components/SafeAreaView";
-import { FlatList, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { TrackScreen } from "~/analytics";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { HederaRedelegationFlowParamList } from "./types";
-import ValidatorRow from "../shared/ValidatorRow";
+import ValidatorsList from "../shared/ValidatorsList";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationSelectValidator>
 >;
-
-const keyExtractor = (v: HederaValidator) => v.id;
 
 export default function RedelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -28,8 +25,6 @@ export default function RedelegationSelectValidator({ navigation, route }: Props
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const validators = useHederaValidators(account.currency, searchQuery);
-
   const onItemPress = useCallback(
     (validator: HederaValidator) => {
       navigation.navigate(ScreenName.HederaRedelegationAmount, {
@@ -38,13 +33,6 @@ export default function RedelegationSelectValidator({ navigation, route }: Props
       });
     },
     [navigation, route.params],
-  );
-
-  const renderItem = useCallback(
-    (data: { item: HederaValidator }) => (
-      <ValidatorRow account={account} validator={data.item} onPress={onItemPress} />
-    ),
-    [onItemPress, account],
   );
 
   return (
@@ -57,12 +45,7 @@ export default function RedelegationSelectValidator({ navigation, route }: Props
         currency="hedera"
       />
       <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={validators}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+      <ValidatorsList account={account} searchQuery={searchQuery} onItemPress={onItemPress} />
     </SafeAreaView>
   );
 }
@@ -70,8 +53,5 @@ export default function RedelegationSelectValidator({ navigation, route }: Props
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  list: {
-    paddingHorizontal: 16,
   },
 });
