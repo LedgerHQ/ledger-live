@@ -11,7 +11,11 @@ import {
 } from "@domain/entity-contact";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import {
+  useContactsIntentsOrchestrator,
+  type ContactsDeviceIntentExecutorProps,
+} from "@features/platform-contacts/device";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
   isPrefillAddAddressFlowOpen,
   useAddAddressFlowViewModel,
@@ -21,6 +25,7 @@ import {
   type ContactsAddAddressReviewLabels,
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
+import { contactsIntentLWDDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -37,6 +42,7 @@ export type SendPrefillAddAddressPhase = Readonly<{
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels: ContactsAddAddressReviewLabels;
   completionLabels: AddAddressCompletionLabels;
+  dieProps: ContactsDeviceIntentExecutorProps | undefined;
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
@@ -70,7 +76,10 @@ export function useSendPrefillAddAddressFlow({
   const saveRequestId = useRef(0);
   const isSaving = useRef(false);
   const addressValidation = useContactsAddressValidationAdapter();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWDDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
+  });
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -260,6 +269,7 @@ export function useSendPrefillAddAddressFlow({
         nameLabels,
         reviewLabels,
         completionLabels,
+        dieProps,
         onAddressLabelChange: updateAddressLabel,
         onContinueFromName: continueFromName,
         onContinueFromReview: () => {
