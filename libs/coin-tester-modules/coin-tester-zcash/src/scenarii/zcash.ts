@@ -27,6 +27,7 @@ import {
   assertCommonTxProperties,
   assertIronwoodBalanceDelta,
   assertTransparentBalanceDelta,
+  ironwoodBalance,
   transparentBalance,
 } from "../assert";
 import { EXPLORER_ORIGIN, startIndexer, stopIndexer } from "../indexer";
@@ -53,6 +54,19 @@ const ZCASH_UTILS_NETWORK = "mainnet";
 // the chain's reward schedule.
 const T_TO_T_AMOUNT = new BigNumber(50_000);
 const Z_TO_T_AMOUNT = new BigNumber(25_000);
+
+// Number of Ironwood notes accumulated before the final sweep, per Teddy's
+// request: build up to NOTE_COUNT_TARGET notes, then send everything back in
+// one transaction, exercising `selectNotes`' largest-first multi-note
+// selection (untested elsewhere in this file -- every other scenario here
+// only ever has exactly 1 spendable note).
+const NOTE_COUNT_TARGET = 10;
+// Well above DUST_THRESHOLD (5_000, see coin-selection.ts) so the change note
+// each split leaves behind is never absorbed into the fee, and small enough
+// that NOTE_COUNT_TARGET - 1 splits never come close to exhausting the
+// account's remaining balance (a full coinbase reward, minus a few tens of
+// thousands already spent by the scenarios above).
+const NOTE_SPLIT_AMOUNT = new BigNumber(20_000);
 
 // How many blocks to confirm each transaction with (mined right after its own
 // broadcast -- see mockIndexer below): comfortably past
@@ -205,11 +219,90 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
     },
   };
 
+  // Splits one Ironwood note into two (a payment note back to our own
+  // external address, plus a change note at our internal address): net +1
+  // note per call, since exactly 1 note is consumed and 2 are created.
+  // `selectNotes` always picks the single largest note to cover
+  // NOTE_SPLIT_AMOUNT alone (it dwarfs every note in play here), so this
+  // never spends more than 1 note per round -- the note *count* grows, but
+  // each individual split stays a 1-spend transaction.
+  const makeNoteSplitScenario = (round: number): ZcashScenarioTransaction => ({
+    name: `Split shielded note into two (${round}/${NOTE_COUNT_TARGET - 1})`,
+    family: "zcash",
+    transferType: "shielded",
+    sender: "private",
+    recipientType: "private",
+    amount: NOTE_SPLIT_AMOUNT,
+    recipient: shieldedRecipientAddress,
+    expect: (previousAccount, currentAccount) => {
+      const expectedFee = computeShieldedSpendFee(1, true, "shielded");
+      const [latestOperation] = currentAccount.operations;
+      // "SHIELDED_TX_IRONWOOD_IN", same reasoning as scenarioShieldedToShielded
+      // above: the change note lands on our *internal* address and carries
+      // transfer_type "internal", invisible to getTxType's net-delta sum: only
+      // the payment note (external address, transfer_type "incoming") counts,
+      // and it nets positive.
+      expect(latestOperation.type).toBe("SHIELDED_TX_IRONWOOD_IN");
+      expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
+
+      // Payment + change both stay in the account's own Ironwood pool -- only
+      // the fee actually leaves it.
+      assertIronwoodBalanceDelta(previousAccount, currentAccount, expectedFee.negated());
+    },
+  });
+
+  const noteSplitScenarios: ZcashScenarioTransaction[] = Array.from(
+    { length: NOTE_COUNT_TARGET - 1 },
+    (_, i) => makeNoteSplitScenario(i + 1),
+  );
+
+  const scenarioNoteConsolidationSweep: ZcashScenarioTransaction = {
+    name: `De-shield all ${NOTE_COUNT_TARGET} accumulated notes in a single sweep (z→t)`,
+    family: "zcash",
+    transferType: "shielded-to-transparent",
+    sender: "private",
+    recipientType: "public",
+    useAllAmount: true,
+    recipient: transparentRecipientAddress,
+    expect: (previousAccount, currentAccount) => {
+      const previousIronwoodBalance = ironwoodBalance(previousAccount);
+      // useAllAmount forces selectNotes to spend every one of the
+      // NOTE_COUNT_TARGET accumulated notes (the splits' payment notes plus
+      // the final remaining change note) in one transaction -- the multi-note
+      // selection path this scenario exists to exercise.
+      const expectedFee = computeShieldedSpendFee(
+        NOTE_COUNT_TARGET,
+        false,
+        "shielded-to-transparent",
+      );
+      const [latestOperation] = currentAccount.operations;
+      // "IN", same reasoning as scenarioShieldedToTransparent above: no
+      // transparent input funds this transaction, so mapTxToOperations
+      // records the transparent-leg credit as an inflow regardless of how
+      // many Ironwood notes fund it.
+      expect(latestOperation.type).toBe("IN");
+      expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
+
+      assertTransparentBalanceDelta(
+        previousAccount,
+        currentAccount,
+        previousIronwoodBalance.minus(expectedFee),
+      );
+      assertIronwoodBalanceDelta(
+        previousAccount,
+        currentAccount,
+        previousIronwoodBalance.negated(),
+      );
+    },
+  };
+
   return [
     scenarioTransparentToTransparent,
     scenarioTransparentToShielded,
     scenarioShieldedToTransparent,
     scenarioShieldedToShielded,
+    ...noteSplitScenarios,
+    scenarioNoteConsolidationSweep,
   ];
 };
 
@@ -302,7 +395,7 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     await generateBlocksToAddress(BLOCKS_BETWEEN_TRANSACTIONS, burnAddress);
   },
   afterAll: async account => {
-    expect(account.operations.length).toBeGreaterThanOrEqual(4);
+    expect(account.operations.length).toBeGreaterThanOrEqual(4 + NOTE_COUNT_TARGET);
     stopIndexer();
   },
   teardown: async () => {
