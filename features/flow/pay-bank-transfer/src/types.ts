@@ -8,6 +8,8 @@ export type BankTransferIntroRow = Readonly<{
   description: string;
 }>;
 
+export type BankTransferHandoff = "createAccount" | "logIn";
+
 export type BankTransferIntroLabels = Readonly<{
   title: string;
   description: string;
