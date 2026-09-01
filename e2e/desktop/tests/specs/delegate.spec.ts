@@ -399,6 +399,13 @@ for (const validator of validators) {
           await app.delegate.verifyContinueDisabled();
           await app.delegate.selectProviderByName(validator.delegate.provider);
           await app.delegate.verifyProviderTC(validator.delegate.provider);
+        } else if (validator.delegate.account.currency.name == Currency.ADA.name) {
+          // Cardano auto-selects the first validator asynchronously and only enables Continue
+          // once the bridge finishes recomputing the transaction status. The provider row renders
+          // before that recompute settles, so asserting Continue right after the name is flaky.
+          // Explicitly (re)select the provider to force a clean, settled transaction update.
+          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
+          await app.delegate.selectProviderByName(validator.delegate.provider);
         } else {
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
           await app.delegate.verifyContinueEnabled();
