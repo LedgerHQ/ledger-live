@@ -25,7 +25,7 @@ export class BaanxConfigError extends BaanxAuthError {
   constructor(missingVars: readonly string[]) {
     super(
       `Baanx test auth is not configured. Set ${missingVars.join(", ")} in your environment ` +
-        `(see libs/baanx-test-client/README.md).`,
+        `(see e2e/tooling/baanx-test-client/README.md).`,
     );
     this.missingVars = missingVars;
   }
@@ -120,7 +120,7 @@ export class BaanxRateLimitError extends BaanxAuthError {
       `${apiMessage ?? "Rate limited by Baanx (429)."} ` +
         (retryAfter ? `Retry-After: ${retryAfter}.` : "No Retry-After header was returned.") +
         ` If this hit during a parallel run, share one token across workers instead of ` +
-        `logging in per worker (see libs/baanx-test-client/README.md).`,
+        `logging in per worker (see e2e/tooling/baanx-test-client/README.md).`,
     );
     this.retryAfter = retryAfter;
   }

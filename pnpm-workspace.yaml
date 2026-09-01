@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "apps/wallet-cli/npm/*"
   - "e2e/*"
+  - "e2e/tooling/*"
   - "features/flow/*"
   - "features/platform/*"
   - "libs/*"

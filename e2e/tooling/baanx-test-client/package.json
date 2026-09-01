@@ -10,7 +10,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/baanx-test-client",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/e2e/tooling/baanx-test-client",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -26,9 +26,9 @@
     "test:watch": "jest --watch",
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "coverage": "jest --coverage",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
-    "unimported": "pnpm knip --directory ../.. -W libs/baanx-test-client"
+    "unimported": "pnpm knip --directory ../../.. -W e2e/tooling/baanx-test-client"
   },
   "dependencies": {
     "otpauth": "catalog:"

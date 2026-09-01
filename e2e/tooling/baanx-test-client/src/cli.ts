@@ -45,7 +45,7 @@ Configuration is read from the environment only:
 
 ${describeVars()}
 
-See libs/baanx-test-client/README.md.
+See e2e/tooling/baanx-test-client/README.md.
 `;
 
 async function main(argv: string[]): Promise<number> {
