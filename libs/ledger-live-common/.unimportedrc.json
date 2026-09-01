@@ -750,6 +750,7 @@
     "src/families/cardano/bridge/api.ts",
     "src/families/cardano/coinModuleApi.ts",
     "src/families/cardano/config.ts",
+    "src/families/casper/coinModuleApi.ts",
     "src/families/casper/config.ts",
     "src/families/casper/deviceSigner.ts",
     "src/families/casper/signer.ts",
