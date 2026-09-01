@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-account-data",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
