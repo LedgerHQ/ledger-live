@@ -13,6 +13,22 @@ function trimTrailingZeros(fraction: string): string {
 }
 
 /**
+ * Group a digit string in threes, without going through `Number`.
+ *
+ * `toLocaleString` would be shorter and wrong: a balance is a smallest-unit integer that routinely
+ * exceeds `Number.MAX_SAFE_INTEGER` (18 decimals on any EVM chain), so converting it would round the
+ * amount the devtool exists to show exactly.
+ */
+function groupThousands(digits: string): string {
+  let grouped = "";
+  for (let end = digits.length; end > 0; end -= 3) {
+    const start = Math.max(0, end - 3);
+    grouped = grouped ? `${digits.slice(start, end)},${grouped}` : digits.slice(start, end);
+  }
+  return grouped || "0";
+}
+
+/**
  * Render a smallest-unit amount the way the app would.
  *
  * Deliberately local and dependency-free: the tool needs a readable number, not the app's full
@@ -27,7 +43,7 @@ export function formatAmount(value: string, unit?: AmountUnit): string {
   const fraction = unit.magnitude === 0 ? "" : padded.slice(padded.length - unit.magnitude);
   const decimals = trimTrailingZeros(fraction.slice(0, MAX_DECIMALS));
   const fractionPart = decimals ? `.${decimals}` : "";
-  return `${Number(whole).toLocaleString("en-US")}${fractionPart} ${unit.code}`;
+  return `${groupThousands(whole)}${fractionPart} ${unit.code}`;
 }
 
 /** Seconds since a timestamp, or `undefined` when there is nothing to age. */

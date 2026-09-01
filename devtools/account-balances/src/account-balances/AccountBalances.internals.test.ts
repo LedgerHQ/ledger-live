@@ -16,6 +16,12 @@ describe("formatAmount", () => {
     expect(formatAmount("1234567891234567891", ETH)).toBe("1.23456789 ETH");
   });
 
+  it("keeps every digit of a whole part past Number.MAX_SAFE_INTEGER", () => {
+    expect(formatAmount("123456789012345678901000000", TRX)).toBe(
+      "123,456,789,012,345,678,901 TRX",
+    );
+  });
+
   it("handles a value shorter than the magnitude, and zero", () => {
     expect(formatAmount("1", ETH)).toBe("0 ETH");
     expect(formatAmount("0", TRX)).toBe("0 TRX");
