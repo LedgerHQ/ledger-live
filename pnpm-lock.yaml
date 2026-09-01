@@ -438,6 +438,9 @@ catalogs:
     nx:
       specifier: 22.7.8
       version: 22.7.8
+    otpauth:
+      specifier: 9.5.1
+      version: 9.5.1
     oxfmt:
       specifier: 0.64.0
       version: 0.64.0
@@ -5479,6 +5482,37 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+
+  e2e/tooling/baanx-test-client:
+    dependencies:
+      otpauth:
+        specifier: 'catalog:'
+        version: 9.5.1
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   features/flow/analytics-consent:
     dependencies:
@@ -22838,6 +22872,10 @@ packages:
     resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
     engines: {node: '>= 20.19.0'}
 
+  '@noble/hashes@2.2.0':
+    resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
+    engines: {node: '>= 20.19.0'}
+
   '@noble/hashes@2.3.0':
     resolution: {integrity: sha512-oN+QwyX7VSHotibwubG3kpzbwKrfnyR6OOO+3Nk/53ADL7FmgHHz4TgrbaYKvvOw09u6QTx0oiH1cNCIOuN0CQ==}
     engines: {node: '>= 20.19.0'}
@@ -36086,6 +36124,9 @@ packages:
     resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
     engines: {node: '>=0.10.0'}
 
+  otpauth@9.5.1:
+    resolution: {integrity: sha512-fJmDAHc8wImfqqqOXIlBvT1dEKrZK0Cmb2VEgScpNTolCz0PHh6ExUZGv4sLtOsWNaHCQlD+rRqaPgnoxFoZjQ==}
+
   outdent@0.5.0:
     resolution: {integrity: sha512-/jHxFIzoMXdqPzTaCpFzAAWhpkSjZPF4Vsn6jAfNpmbH/ymsmd7Qc6VE9BGn0L6YMj6uwpQLxCECpus4ukKS9Q==}
 
@@ -37400,9 +37441,6 @@ packages:
 
   react-is@19.1.1:
     resolution: {integrity: sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==}
-
-  react-is@19.2.7:
-    resolution: {integrity: sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A==}
 
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
@@ -43685,7 +43723,7 @@ snapshots:
 
   '@babel/template@7.27.2':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.8
 
@@ -43718,7 +43756,7 @@ snapshots:
 
   '@babel/traverse@7.28.5':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
@@ -43730,7 +43768,7 @@ snapshots:
 
   '@babel/traverse@7.28.5(supports-color@5.5.0)':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
@@ -43862,7 +43900,7 @@ snapshots:
 
   '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react@19.1.4)':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       '@babel/traverse': 7.29.8
       '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react@19.1.4)
       better-result: 2.8.2
@@ -45394,7 +45432,7 @@ snapshots:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       elliptic: 6.6.1
       hash.js: 1.1.7
 
@@ -49000,6 +49038,8 @@ snapshots:
 
   '@noble/hashes@2.0.1': {}
 
+  '@noble/hashes@2.2.0': {}
+
   '@noble/hashes@2.3.0': {}
 
   '@noble/secp256k1@1.7.1': {}
@@ -51485,7 +51525,7 @@ snapshots:
       open: 10.2.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.2.7
+      react-is: 19.2.8
       semver: 7.8.1
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
@@ -57733,12 +57773,12 @@ snapshots:
 
   browserify-rsa@4.1.0:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       randombytes: 2.1.0
 
   browserify-sign@4.2.3:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
@@ -63396,7 +63436,7 @@ snapshots:
 
   jest-message-util@30.5.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@jest/types': 30.5.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -66931,6 +66971,10 @@ snapshots:
 
   os-tmpdir@1.0.2: {}
 
+  otpauth@9.5.1:
+    dependencies:
+      '@noble/hashes': 2.2.0
+
   outdent@0.5.0: {}
 
   outvariant@1.4.3: {}
@@ -68415,8 +68459,6 @@ snapshots:
   react-is@19.0.0: {}
 
   react-is@19.1.1: {}
-
-  react-is@19.2.7: {}
 
   react-is@19.2.8: {}
 
