@@ -35,3 +35,10 @@ export const getStakePoolExplorer = (
 ): string | undefined => {
   return explorerView?.stakePool?.replace("$poolId", poolId);
 };
+
+export const getDRepExplorer = (
+  explorerView: ExplorerView | undefined,
+  hex: string,
+): string | undefined => {
+  return explorerView?.dRep?.replace("$hex", hex);
+};

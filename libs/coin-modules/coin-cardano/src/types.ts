@@ -137,6 +137,7 @@ export type CardanoDelegation = {
   ticker: string | undefined;
   name: string | undefined;
   dRepHex: string | undefined;
+  dRepName: string | undefined;
   rewards: BigNumber;
 };
 
@@ -147,6 +148,7 @@ export type CardanoDelegationRaw = {
   ticker: string | undefined;
   name: string | undefined;
   dRepHex: string | undefined;
+  dRepName: string | undefined;
   rewards: string;
 };
 
@@ -172,7 +174,7 @@ export type CardanoResourcesRaw = {
   protocolParams: ProtocolParamsRaw;
 };
 
-export type CardanoOperationMode = "send" | "delegate" | "undelegate";
+export type CardanoOperationMode = "send" | "delegate" | "undelegate" | "voteDelegate";
 
 /**
  * Cardano transaction
@@ -183,6 +185,9 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber;
   memo?: string;
   poolId: string | undefined;
+  dRepAbstain?: boolean;
+  dRepNoConfidence?: boolean;
+  dRepHex?: string;
   protocolParams?: ProtocolParams;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
@@ -196,6 +201,9 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string;
   memo?: string;
   poolId: string | undefined;
+  dRepAbstain?: boolean;
+  dRepNoConfidence?: boolean;
+  dRepHex?: string;
   protocolParams?: ProtocolParams;
   // also the transaction fields as raw JSON data
 };
@@ -238,4 +246,5 @@ export type CardanoOperationExtra = {
   deposit?: string;
   refund?: string;
   rewards?: string;
+  vote?: string;
 };

@@ -1,6 +1,15 @@
 import BigNumber from "bignumber.js";
-import { canStake, computeAdaBalance, isAlreadyStaking, isValidNumString } from "./logic";
-import { CardanoAccount } from "./types";
+import {
+  canStake,
+  isAlreadyStaking,
+  isValidNumString,
+  selectMinimumUtxos,
+  getTyphonInputFromUtxo,
+  computeAdaBalance,
+  findVoteDelegation,
+  getRewardAddress,
+} from "./logic";
+import { CardanoAccount, CardanoOutput } from "./types";
 
 describe("canStake", () => {
   it("should return false when acc has no funds", () => {
@@ -107,5 +116,131 @@ describe("computeAdaBalance", () => {
     expect(total.toFixed()).toBe("1800000");
     expect(spendable.toFixed()).toBe("800000"); // max(0, 1,000,000 - 1,500,000) + 800,000
     expect(total.minus(spendable).gte(0)).toBe(true);
+  });
+});
+
+describe("selectMinimumUtxos", () => {
+  const createUtxo = (amount: number): CardanoOutput => {
+    return {
+      amount: new BigNumber(amount),
+    } as CardanoOutput;
+  };
+
+  it("should return empty array if no utxos are provided", () => {
+    const utxos: Array<CardanoOutput> = [];
+    const result = selectMinimumUtxos(utxos, new BigNumber(100));
+    expect(result).toEqual([]);
+  });
+
+  it("should select single utxo if it covers the amount + buffer", () => {
+    const utxo1 = createUtxo(20e6);
+    const utxo2 = createUtxo(5e6);
+    const utxos = [utxo1, utxo2];
+
+    const result = selectMinimumUtxos(utxos, new BigNumber(5e6));
+    expect(result.length).toBe(1);
+    expect(result[0]).toBe(utxo1);
+  });
+
+  it("should select multiple utxos to cover the amount + buffer prioritizing higher amounts", () => {
+    const utxo1 = createUtxo(4e6);
+    const utxo2 = createUtxo(8e6);
+    const utxo3 = createUtxo(6e6);
+    const utxos = [utxo1, utxo2, utxo3];
+
+    const result = selectMinimumUtxos(utxos, new BigNumber(2e6));
+    expect(result.length).toBe(2);
+    expect(result[0]).toBe(utxo2);
+    expect(result[1]).toBe(utxo3);
+  });
+
+  it("should select all utxos if total amount is less than required", () => {
+    const utxo1 = createUtxo(4e6);
+    const utxo2 = createUtxo(2e6);
+    const utxos = [utxo1, utxo2];
+
+    const result = selectMinimumUtxos(utxos, new BigNumber(10e6));
+    expect(result.length).toBe(2);
+    expect(result).toEqual([utxo1, utxo2]);
+  });
+});
+
+describe("getTyphonInputFromUtxo", () => {
+  it("should return a Typhon Input from a CardanoOutput", () => {
+    const mockUtxo: CardanoOutput = {
+      address: "0000000000000000000000000000000000000000000000000000000000=",
+      paymentCredential: {
+        key: "mockKey",
+        path: {
+          purpose: 1852,
+          coin: 1815,
+          account: 0,
+          chain: 0,
+          index: 0,
+        },
+      },
+      hash: "mockTxId",
+      index: 0,
+      amount: new BigNumber(100),
+      tokens: [],
+    } as unknown as CardanoOutput;
+
+    const typhonInput = getTyphonInputFromUtxo(mockUtxo);
+
+    expect(typhonInput.txId).toEqual("mockTxId");
+    expect(typhonInput.index).toEqual(0);
+    expect(typhonInput.amount).toEqual(new BigNumber(100));
+    expect(typhonInput.tokens).toEqual([]);
+    expect(typhonInput.address).toBeDefined();
+  });
+});
+
+describe("findVoteDelegation", () => {
+  const stakeKey = "aabbccddeeff00112233445566778899aabbccddeeff001122334455";
+  const networkId = 1;
+  const stakeHex = getRewardAddress(stakeKey, networkId).getHex();
+
+  it("should return undefined if there are no vote delegations", () => {
+    const tx = { certificate: {} } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toBeUndefined();
+
+    const tx2 = { certificate: { voteDelegations: [] } } as any;
+    expect(findVoteDelegation(tx2, stakeKey, networkId)).toBeUndefined();
+  });
+
+  it("should return undefined if the vote delegation does not match the stake address", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex: "differentStakeHex", dRepHex: "2" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toBeUndefined();
+  });
+
+  it("should return 'ABSTAIN' if matched and dRepHex is '2'", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "2" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("ABSTAIN");
+  });
+
+  it("should return 'NO CONFIDENCE' if matched and dRepHex is '3'", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "3" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("NO CONFIDENCE");
+  });
+
+  it("should return dRepHex if matched and dRepHex is a custom address", () => {
+    const tx = {
+      certificate: {
+        voteDelegations: [{ stakeHex, dRepHex: "customDRepHex" }],
+      },
+    } as any;
+    expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("customDRepHex");
   });
 });

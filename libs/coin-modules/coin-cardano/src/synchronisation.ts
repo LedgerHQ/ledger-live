@@ -22,6 +22,7 @@ import {
   computeAdaBalance,
   findStakeDeRegistration,
   findStakeRegistration,
+  findVoteDelegation,
   findWithdrawal,
   getAccountChange,
   getAccountStakeCredential,
@@ -260,6 +261,11 @@ export function mapTxToAccountOperation(
     });
   }
 
+  const vote = findVoteDelegation(tx, stakeCredential.key, networkParams.networkId);
+  if (vote) {
+    extra.vote = vote;
+  }
+
   let mainOperationType: OperationType;
   if (tx.certificate.stakeDelegations.length) {
     mainOperationType = "DELEGATE";
@@ -268,6 +274,8 @@ export function mapTxToAccountOperation(
     tx.certificate.stakeDeRegsConway?.length
   ) {
     mainOperationType = "UNDELEGATE";
+  } else if (tx.certificate.voteDelegations?.length) {
+    mainOperationType = "VOTE";
   } else {
     mainOperationType = getOperationType({
       valueChange: operationValue,

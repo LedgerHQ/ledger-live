@@ -33,6 +33,7 @@ export async function getDelegationInfo(
       deposit: res.deposit,
       poolId: res.poolInfo?.poolId,
       dRepHex: res.dRepInfo?.hex,
+      dRepName: res.dRepInfo?.givenName,
       ticker: res.poolInfo?.ticker,
       name: res.poolInfo?.name,
       rewards: new BigNumber(res.rewardsAvailable),
