@@ -29,6 +29,7 @@
     "@domain/api-currency-token": "workspace:*",
     "@shared/cloud-sync": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",

@@ -68,12 +68,12 @@ technical and are handled automatically at the next level, so they stay invisibl
 
 ![web-tools — Cloud Sync SDK panel](./images/webtools-cloudsync-sdk.webp)
 
-### Account Sync level
+### Wallet Sync level
 
 The closest to the real Ledger Wallet experience: automatic propagation and conflict
-reconciliation across instances; import accounts, rename them, etc.
+reconciliation across instances; import accounts, rename them, list contacts, and create contacts.
 
-![web-tools — Account Sync panel](./images/webtools-accounts-sync.webp)
+![web-tools — Wallet Sync panel](./images/webtools-accounts-sync.webp)
 
 ## Develop a new WalletSync module
 
