@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
 import type { AccountRef } from "@features/platform-account-data";
-import { useAccountDataScheduler } from "@features/platform-account-data/react";
+import { useAccountDataScheduler, useSliceStatuses } from "@features/platform-account-data/react";
 import {
   accountBalanceSelector,
   subAccountBalancesSelector,
@@ -22,6 +22,11 @@ export type AccountBalancesInput = {
   name: string;
   /** Whether a coin module declares it can serve this account's balance on its own. */
   granular: boolean;
+  /**
+   * Display unit per asset id, so amounts render as `0.0153 ETH` rather than as smallest units.
+   * The host supplies it because only it holds the resolved currencies and tokens.
+   */
+  units: Readonly<Record<string, { code: string; magnitude: number }>>;
 };
 
 /**
@@ -42,42 +47,55 @@ export function useAccountBalancesToolProps(
 
   const table = useSelector((state: WithAccountBalances) => state.accountBalances);
 
-  const accounts = useMemo<Row[]>(
-    () =>
-      inputs.map(({ ref, name, granular }) => {
-        const state: WithAccountBalances = { accountBalances: table };
-        const balance = accountBalanceSelector(state, { accountId: ref.accountId });
-        const subs = subAccountBalancesSelector(state, { accountId: ref.accountId });
-        const status = scheduler?.getStatus(ref.accountId, "balance");
+  const accountIds = useMemo(() => inputs.map(({ ref }) => ref.accountId), [inputs]);
+  // Subscribed, not read inside the memo below: statuses live outside Redux, so nothing would
+  // invalidate the memo when one changes — `Reading…` would never appear, and a failure that writes
+  // no balance would never be shown at all.
+  const statuses = useSliceStatuses(accountIds, "balance");
 
-        return {
-          accountId: ref.accountId,
-          name,
-          currencyId: ref.currencyId,
-          address: ref.address,
-          granular,
-          balance: balance && {
-            assetId: balance.assetId,
-            value: balance.balance,
-            spendable: balance.spendableBalance,
-            at: balance.at,
-          },
-          tokens: subs.map(sub => ({
-            assetId: sub.assetId,
-            value: sub.balance,
-            spendable: sub.spendableBalance,
-            at: sub.at,
-          })),
-          status: {
-            pending: status?.pending ?? false,
-            sourceId: status?.sourceId,
-            error: status?.error?.message,
-            lastFetchedAt: status?.lastFetchedAt,
-          },
-        };
-      }),
-    [inputs, table, scheduler],
-  );
+  const accounts = useMemo<Row[]>(() => {
+    // One wrapper for the whole pass: the selectors read `state.accountBalances`, and the memoized
+    // parent index keys off that table's identity, so a literal per row would only add garbage.
+    const state: WithAccountBalances = { accountBalances: table };
+
+    return inputs.map(({ ref, name, granular, units }, index) => {
+      const balance = accountBalanceSelector(state, {
+        accountId: ref.accountId,
+      });
+      const subs = subAccountBalancesSelector(state, {
+        accountId: ref.accountId,
+      });
+      const status = statuses[index];
+
+      return {
+        accountId: ref.accountId,
+        name,
+        currencyId: ref.currencyId,
+        address: ref.address,
+        granular,
+        balance: balance && {
+          assetId: balance.assetId,
+          unit: units[balance.assetId],
+          value: balance.balance,
+          spendable: balance.spendableBalance,
+          at: balance.at,
+        },
+        tokens: subs.map(sub => ({
+          assetId: sub.assetId,
+          unit: units[sub.assetId],
+          value: sub.balance,
+          spendable: sub.spendableBalance,
+          at: sub.at,
+        })),
+        status: {
+          pending: status?.pending ?? false,
+          sourceId: status?.sourceId,
+          error: status?.error?.message,
+          lastFetchedAt: status?.lastFetchedAt,
+        },
+      };
+    });
+  }, [inputs, table, statuses]);
 
   const refsById = useMemo(
     () => new Map(inputs.map(({ ref }) => [String(ref.accountId), ref])),
@@ -88,7 +106,12 @@ export function useAccountBalancesToolProps(
     (accountId: string) => {
       const ref = refsById.get(accountId);
       if (!scheduler || !ref) return;
-      void scheduler.fetch({ ref, slices: ["balance"], reason: "devtool", maxAge: 0 });
+      void scheduler.fetch({
+        ref,
+        slices: ["balance"],
+        reason: "devtool",
+        maxAge: 0,
+      });
     },
     [scheduler, refsById],
   );
