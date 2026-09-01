@@ -9560,6 +9560,11 @@
           "title": "Preparing your Ledger device"
         }
       },
+      "editExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
