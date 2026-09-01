@@ -219,8 +219,6 @@ export const prepareTransaction: AccountBridge<
     return updateTransaction(transaction, {
       amount: new BigNumber(0),
       fees: estimatedFees,
-      // The recipient flows into the on-chain `staker` field, which must be the
-      // account itself; pin it so a stale/arbitrary recipient can't target another staker.
       recipient: account.freshAddress,
     });
   }

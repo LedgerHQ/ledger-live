@@ -39,6 +39,7 @@ import {
   TRANSACTION_TYPE,
 } from "../constants";
 import {
+  AleoAlreadyBondedElsewhere,
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
@@ -229,14 +230,6 @@ async function validateRecipient({
 }
 
 /**
- * Bridge-level guard mirroring (and backstopping) the UI-only closed-validator
- * check in StepValidator.tsx: it derives `isOpen` from the fetched validator
- * list and disables the UI's Continue button, but that guard silently
- * disappears when the validator fetch fails and the UI falls back to a
- * free-text address input with an empty list. Re-checking here makes the
- * bridge — not the UI — authoritative, so a closed-validator bond is
- * rejected regardless of which UI path was used.
- *
  * The committee/latest response (fetched via getValidators) is the only
  * place `isOpen` is available; there is no single-address lookup. A
  * validator absent from the committee is not proven closed (it may be new,
@@ -338,15 +331,20 @@ async function handleTransferTransaction({
       errors.withdrawal = withdrawalError;
     }
 
-    // Only worth checking once we know the recipient is a well-formed
-    // address; an invalid/empty recipient is already reported above.
     if (!recipientError) {
-      const closedValidatorError = await validateBondValidatorIsOpen({
-        account,
-        recipient: transaction.recipient,
-      });
-      if (closedValidatorError) {
-        errors.recipient = closedValidatorError;
+      // One validator per address: a bond to any other one is rejected on-chain, so
+      // that takes precedence over whether the target happens to be open.
+      const bondedValidator = account.aleoResources?.bondedValidator;
+      if (bondedValidator && bondedValidator !== transaction.recipient) {
+        errors.recipient = new AleoAlreadyBondedElsewhere(undefined, { bondedValidator });
+      } else {
+        const closedValidatorError = await validateBondValidatorIsOpen({
+          account,
+          recipient: transaction.recipient,
+        });
+        if (closedValidatorError) {
+          errors.recipient = closedValidatorError;
+        }
       }
     }
   }
