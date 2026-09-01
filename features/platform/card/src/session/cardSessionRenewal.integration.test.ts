@@ -56,8 +56,8 @@ function setup(store: CardSessionStore = memoryStore()) {
       gdm({
         thunk: {
           extraArgument: cardApiExtra({
-            cardApiBaseUrl: BASE_URL,
-            cardBaanxClientKey: "client-key",
+            getCardApiBaseUrl: () => BASE_URL,
+            getCardBaanxClientKey: () => "client-key",
             readCardSession: session.readCardSession,
             isCardSessionCurrent: session.isCardSessionCurrent,
             refreshCardSession: session.refreshCardSession,

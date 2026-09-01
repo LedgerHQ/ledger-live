@@ -163,6 +163,30 @@ describe("cardBaseQuery", () => {
     expect(sent.headers.get("x-client-key")).toBe("test-client-key");
   });
 
+  it("reads the base url and the client key again on every request", async () => {
+    // The debug settings change the two envs while the app runs. The store holds the accessors, so
+    // the next request must carry the new values without a restart.
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+    let baseUrl = "https://card.first";
+    let clientKey = "first-key";
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({ getCardApiBaseUrl: () => baseUrl, getCardBaanxClientKey: () => clientKey }),
+      ),
+    );
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    baseUrl = "https://card.second";
+    clientKey = "second-key";
+    await store.dispatch(api.endpoints.probe.initiate(undefined, { forceRefetch: true }));
+
+    expect(request(fetchSpy, 0).url).toBe("https://card.first/probe");
+    expect(request(fetchSpy, 0).headers.get("x-client-key")).toBe("first-key");
+    expect(request(fetchSpy, 1).url).toBe("https://card.second/probe");
+    expect(request(fetchSpy, 1).headers.get("x-client-key")).toBe("second-key");
+  });
+
   it("renews nothing when the answer is not a 401", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 500));
     const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number, string]>(
