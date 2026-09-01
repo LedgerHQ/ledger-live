@@ -127,7 +127,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     updateAddressLabel,
     confirmAddress,
     continueFromName,
-    completeMockConfirmation,
     goBack: goBackAddAddress,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({
@@ -149,6 +148,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }
 
     hasCompletedMockConfirmation.current = true;
+
+    /**
+     * The Device Intent Executor owns the review from here, so this flow has nothing left
+     * to show. `addAddressFlowState` below is this render's snapshot, unaffected by closing.
+     */
+    closeAddAddress();
 
     try {
       const signedAddress = await deviceIntents.registerExternalAddress({
@@ -172,8 +177,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
           deviceCredentials: signedAddress.deviceCredentials,
         }),
       );
-      completeMockConfirmation();
-      closeAddAddress();
 
       try {
         const { network, asset } = await resolveContactsCurrencyAnalytics(
@@ -196,17 +199,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     } catch (error) {
       hasCompletedMockConfirmation.current = false;
       console.warn("Failed to complete add-address confirmation", error);
-      closeAddAddress();
     }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    completeMockConfirmation,
-    contact,
-    deviceIntents,
-    dispatch,
-  ]);
+  }, [addAddressFlowState, analytics, closeAddAddress, contact, deviceIntents, dispatch]);
   useEffect(() => {
     void completeMockAddressConfirmation();
   }, [completeMockAddressConfirmation]);

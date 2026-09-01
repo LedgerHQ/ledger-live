@@ -135,7 +135,13 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   }, [closeAddressFlow, closeContactStep, resetSearch]);
 
   const drawerStep = resolveDrawerStep(drawerOrigin, addressPhase?.state.status ?? "closed");
-  const isDrawerOpen = drawerOrigin !== null || isOpeningAddressFlow || addressPhase !== null;
+  /**
+   * The Device Intent Executor is a queued drawer too: this one has to give up its slot
+   * while the intent runs, or the executor waits in the queue behind it and never shows.
+   */
+  const isDrawerOpen =
+    dieProps?.enabled !== true &&
+    (drawerOrigin !== null || isOpeningAddressFlow || addressPhase !== null);
   const onDrawerBack = resolveOnDrawerBack(drawerStep, drawerOrigin, {
     goBackFromAddressPhase,
     closeDrawer,

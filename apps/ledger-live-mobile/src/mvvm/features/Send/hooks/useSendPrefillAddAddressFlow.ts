@@ -66,11 +66,15 @@ export function useSendPrefillAddAddressFlow({
     isSaving.current = false;
   }, []);
 
+  /**
+   * Closing does not cancel a registration already handed to the device: the drawer also
+   * closes to free the queue for the executor, and the signed address must still be saved.
+   * Cancelling on the device rejects the intent, which the save path already handles.
+   */
   const closeAddressFlow = useCallback(() => {
-    cancelPendingSave();
     setIsOpeningAddressFlow(false);
     close();
-  }, [cancelPendingSave, close]);
+  }, [close]);
 
   const goBackFromAddressPhase = useCallback(() => {
     cancelPendingSave();
