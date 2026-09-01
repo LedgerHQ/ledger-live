@@ -70,7 +70,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
 import { useFeature } from "@features/platform-feature-flags";
 
-type Status = PartialNullable<{
+export type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
@@ -135,11 +135,7 @@ type Props<H extends Status, P> = {
   analyticsPropertyFlow?: string;
   location?: HOOKS_TRACKING_LOCATIONS;
   onClose?: () => void;
-  /*
-   * Defines in what type of component this action will be rendered in.
-   *
-   * Used to adapt the UI to either a drawer or a view.
-   */
+  renderExchangeConfirmation?: () => React.JSX.Element;
 };
 
 export default function DeviceAction<R, H extends Status, P>({
@@ -180,6 +176,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   payload,
   location,
   onClose,
+  renderExchangeConfirmation,
 }: Props<H, P> & {
   request?: R;
 }): React.JSX.Element | null {
@@ -577,6 +574,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
+    if (renderExchangeConfirmation) return renderExchangeConfirmation();
+
     const swapRequest = {
       ...request,
       colors,
