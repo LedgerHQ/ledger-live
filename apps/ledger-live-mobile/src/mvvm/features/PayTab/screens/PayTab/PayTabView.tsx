@@ -17,6 +17,7 @@ type PayTabViewProps = {
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
+  readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
 };
 
@@ -29,6 +30,7 @@ export function PayTabView({
   balance,
   actionTiles,
   contacts,
+  isContactsEnabled,
   depositOptions,
 }: PayTabViewProps) {
   return (
@@ -37,7 +39,7 @@ export function PayTabView({
       <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} actionTiles={actionTiles} />
-        <Contacts {...contacts} />
+        {isContactsEnabled && <Contacts {...contacts} />}
         <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />
         <DepositOptions {...depositOptions} />

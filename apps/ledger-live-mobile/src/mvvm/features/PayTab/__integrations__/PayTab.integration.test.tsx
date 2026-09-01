@@ -369,8 +369,15 @@ describe("PayTab integration", () => {
   });
 
   describe("contacts strip", () => {
-    it("should render the Pay tile without see-all when 8 or fewer contacts are saved", async () => {
+    it("should not render the contacts section when lwmContacts is disabled", async () => {
       renderPayTab({ contacts: seedContacts(8) });
+
+      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
+      expect(screen.queryByTestId("pay-contacts")).toBeNull();
+    });
+
+    it("should render the Pay tile without see-all when 8 or fewer contacts are saved", async () => {
+      renderPayTab({ contacts: seedContacts(8), contactsEnabled: true });
 
       expect(await screen.findByTestId("pay-contacts-pay-tile")).toBeVisible();
       expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
@@ -379,7 +386,7 @@ describe("PayTab integration", () => {
     });
 
     it("should cap the strip at 8 and open the contacts list with a Pay title via see-all", async () => {
-      const { user } = renderPayTab({ contacts: seedContacts(9) });
+      const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByTestId("pay-contacts-tile-7")).toBeVisible();
       expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
