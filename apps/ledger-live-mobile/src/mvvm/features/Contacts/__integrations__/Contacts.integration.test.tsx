@@ -32,6 +32,11 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
+jest.mock("LLM/features/WalletSync/screens/Activation/ActivationDrawer", () => ({
+  __esModule: true,
+  default: ({ isOpen, startingStep }: { isOpen: boolean; startingStep: string }) =>
+    isOpen ? <Text testID={`wallet-sync-drawer-${startingStep}`}>{startingStep}</Text> : null,
+}));
 // Device intents resolve without a device so these tests cover the calling flows only.
 // The executor wiring is covered by Contacts.deviceIntents.integration.test.tsx.
 jest.mock("@features/platform-contacts/device");
@@ -606,14 +611,15 @@ describe("Contacts integration", () => {
 
     await user.press(await screen.findByTestId("contacts-detail-add-address"));
 
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
     expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
 
-    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+    await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
 
     await waitFor(() => {
-      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-drawer-ChooseSyncMethod")).toBeVisible();
     });
+    expect(screen.queryByTestId("wallet-sync-activation")).toBeNull();
   });
 
   it("should open Wallet Sync activation instead of Add Contact when sync is unavailable", async () => {
@@ -625,20 +631,21 @@ describe("Contacts integration", () => {
       }),
     });
 
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
-    await user.press(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
+
     await user.press(await screen.findByTestId("contacts-add-contact-row"));
 
     await waitFor(() => {
-      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+      expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
     });
     expect(screen.queryByTestId("contacts-add-contact-drawer")).toBeNull();
 
-    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+    await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
 
     await waitFor(() => {
-      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-drawer-ChooseSyncMethod")).toBeVisible();
     });
+    expect(screen.queryByTestId("wallet-sync-activation")).toBeNull();
   });
 
   it("should open Wallet Sync activation instead of Add Address when sync is unavailable", async () => {
@@ -653,15 +660,47 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-detail-add-address"));
 
     await waitFor(() => {
-      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+      expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
     });
     expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
 
-    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+    await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
 
     await waitFor(() => {
-      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+      expect(screen.getByTestId("wallet-sync-drawer-ChooseSyncMethod")).toBeVisible();
     });
+    expect(screen.queryByTestId("wallet-sync-activation")).toBeNull();
+  });
+
+  it("should not open the Ledger Sync introduction when landing on Contacts", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    expect(await screen.findByTestId("contacts-screen")).toBeVisible();
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
+  });
+
+  it("should dismiss the Ledger Sync introduction from the secondary action", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(await screen.findByTestId("contacts-add-contact-row"));
+    await user.press(await screen.findByRole("button", { name: "Not now" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
+    });
+    expect(screen.queryByTestId("wallet-sync-drawer-ChooseSyncMethod")).toBeNull();
   });
 
   it.each(["checking"] as const)(
@@ -678,7 +717,7 @@ describe("Contacts integration", () => {
       await user.press(await screen.findByTestId("contacts-detail-add-address"));
 
       expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
-      expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+      expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
     },
   );
   it("should expose the Add Address session started for Me", async () => {

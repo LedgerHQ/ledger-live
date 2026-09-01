@@ -424,6 +424,7 @@ export type WalletSyncState = {
   isManageKeyDrawerOpen: boolean;
   isActivateDrawerOpen: boolean;
   activateDrawerStep: Steps;
+  returnsToEntryScreen: boolean;
 };
 
 // === LARGEMOVER STATE ===

@@ -9,17 +9,25 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../../WalletSync/hooks/useFlows";
 
+export type OpenActivationDrawerOptions = Readonly<{
+  startOnSyncMethod?: boolean;
+}>;
+
 export function useActivationDrawer(onboardingNewDevice?: boolean) {
   const dispatch = useDispatch();
-  const { goToWelcomeScreenWalletSync } = useFlows();
+  const { goToWelcomeScreenWalletSync, goToSyncMethodScreenWalletSync } = useFlows();
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const currentStep = useSelector(walletSyncStepSelector);
   const hasFlowEvent = useMemo(() => !StepsOutsideFlow.includes(currentStep), [currentStep]);
   const { onActionTrack } = useLedgerSyncAnalytics();
 
-  const openDrawer = () => {
+  const openDrawer = (options?: OpenActivationDrawerOptions) => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync(onboardingNewDevice);
+      if (options?.startOnSyncMethod) {
+        goToSyncMethodScreenWalletSync();
+      } else {
+        goToWelcomeScreenWalletSync(onboardingNewDevice);
+      }
     }
     dispatch(setDrawerVisibility(true));
   };

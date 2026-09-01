@@ -72,6 +72,28 @@ describe("useFlows", () => {
     expect(store.getState().walletSync.flow).toBe(Flow.Activation);
   });
 
+  it("should go to the sync method step when no trustchain", () => {
+    const { result, store } = renderHook(() => useFlows(), { initialState: INITIAL_STATE });
+
+    act(() => {
+      result.current.goToSyncMethodScreenWalletSync();
+    });
+    expect(store.getState().walletSync.step).toBe(Step.SynchronizeMode);
+    expect(store.getState().walletSync.flow).toBe(Flow.Synchronize);
+  });
+
+  it("should go to LedgerSyncActivated from the sync method step when trustchain exists", () => {
+    const { result, store } = renderHook(() => useFlows(), {
+      initialState: INITIAL_STATE_WITH_TRUSTCHAIN,
+    });
+
+    act(() => {
+      result.current.goToSyncMethodScreenWalletSync();
+    });
+    expect(store.getState().walletSync.step).toBe(Step.LedgerSyncActivated);
+    expect(store.getState().walletSync.flow).toBe(Flow.LedgerSyncActivated);
+  });
+
   it("should expose FlowOptions and STEPS_WITH_BACK", () => {
     const { result } = renderHook(() => useFlows(), { initialState: INITIAL_STATE });
     expect(result.current.FlowOptions).toBeDefined();

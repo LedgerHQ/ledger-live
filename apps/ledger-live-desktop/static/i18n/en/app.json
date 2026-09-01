@@ -9719,9 +9719,10 @@
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
-      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "activate": "Turn on Ledger Sync",
-      "dismiss": "Got it"
+      "title": "Sync your wallet to add a contact",
+      "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      "activate": "Sync my wallet",
+      "dismiss": "Not now"
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",

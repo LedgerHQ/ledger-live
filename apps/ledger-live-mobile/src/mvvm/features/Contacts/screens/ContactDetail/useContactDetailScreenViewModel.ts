@@ -22,10 +22,9 @@ import {
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
 } from "@features/flow-contacts";
-import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
-import type {
-  ContactsLedgerSyncIntroduction,
-  ContactsLedgerSyncIntroductionContentProps,
+import {
+  isContactsLedgerSyncActivationRequired,
+  type ContactsLedgerSyncIntroduction,
 } from "@features/flow-contacts-introduction";
 import {
   useAddAddressFlowViewModel,
@@ -56,6 +55,8 @@ import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
+import { useContactsLedgerSyncActivationDrawer } from "../../hooks/useContactsLedgerSyncActivationDrawer";
+import type { ContactsLedgerSyncActivationDrawerProps } from "../../components/ContactsLedgerSyncActivationDrawer";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
 import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
@@ -75,10 +76,7 @@ type ContactDetailScreenViewModel =
       addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
-      ledgerSyncIntroductionContent: Pick<
-        ContactsLedgerSyncIntroductionContentProps,
-        "title" | "activateLabel" | "onActivate"
-      >;
+      ledgerSyncActivationDrawer: ContactsLedgerSyncActivationDrawerProps;
       dieProps: ContactsDeviceIntentExecutorProps | undefined;
     }>;
 
@@ -99,6 +97,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
+  const { ledgerSyncActivationDrawer, openLedgerSyncActivationDrawer } =
+    useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
@@ -250,10 +250,9 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [navigation]);
   const onActivateLedgerSync = useCallback(() => {
     dismissPendingIntent();
-    navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncActivationInit,
-    });
-  }, [dismissPendingIntent, navigation]);
+    setIsLedgerSyncIntroductionOpen(false);
+    openLedgerSyncActivationDrawer();
+  }, [dismissPendingIntent, openLedgerSyncActivationDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     dismissPendingIntent();
     setIsLedgerSyncIntroductionOpen(false);
@@ -476,15 +475,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     ledgerSyncIntroduction: {
       isOpen:
         isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && isLedgerSyncIntroductionOpen,
+      title: t("contacts.ledgerSyncIntroduction.title"),
       description: t("contacts.ledgerSyncIntroduction.description"),
+      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
+      onActivate: onActivateLedgerSync,
       onDismiss: onDismissLedgerSyncIntroduction,
     },
-    ledgerSyncIntroductionContent: {
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      onActivate: onActivateLedgerSync,
-    },
+    ledgerSyncActivationDrawer,
     dieProps,
   };
 }
