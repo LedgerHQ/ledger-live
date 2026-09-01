@@ -14,6 +14,9 @@ describe("estimateFees", () => {
     TRANSACTION_TYPE.TRANSFER_PRIVATE,
     TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
     TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+    TRANSACTION_TYPE.BOND_PUBLIC,
+    TRANSACTION_TYPE.UNBOND_PUBLIC,
+    TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
   ])("should return correct fee for %s transaction type", (transactionType: TransactionType) => {
     const result = estimateFees({
       configOrCurrencyId: mockConfig,
