@@ -18,6 +18,12 @@ export type ContactDeviceContext = Readonly<{
   initializationInput: ContactsDeviceInitializationInput;
 }>;
 
+export const CONTACTS_DASHBOARD_INITIALIZATION_INPUT: ContactsDeviceInitializationInput = {
+  appName: "BOLOS",
+  dependencies: [],
+  requireLatestFirmware: false,
+};
+
 export function resolveContactDeviceContext(
   currencyId: ContactAddress["currencyId"],
 ): ContactDeviceContext {
