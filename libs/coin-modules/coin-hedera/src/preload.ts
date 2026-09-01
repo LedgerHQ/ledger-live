@@ -1,12 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import {
-  extractCompanyFromNodeDescription,
-  getChecksum,
-  resolveConfig,
-  sortValidators,
-} from "./logic/utils";
+import { mapMirrorNodesToValidators, resolveConfig } from "./logic/utils";
 import { apiClient } from "./network/api";
 import { setHederaPreloadData } from "./preload-data";
 import type { HederaPreloadData, HederaValidator, HederaValidatorRaw } from "./types";
@@ -18,35 +13,9 @@ export const getPreloadStrategy = () => ({
 export async function preload(currency: CryptoCurrency): Promise<HederaPreloadData> {
   log("hedera/preload", "preloading hedera data...");
   const result = await apiClient.getNodes({ configOrCurrencyId: currency.id, fetchAllPages: true });
-  const config = resolveConfig(currency.id);
-  const ledgerNodeId = String(config.ledgerNodeId);
-
-  const validators: HederaValidator[] = result.nodes.map(mirrorNode => {
-    const id = mirrorNode.node_id.toString();
-    const minStake = new BigNumber(mirrorNode.min_stake);
-    const maxStake = new BigNumber(mirrorNode.max_stake);
-    const activeStake = new BigNumber(mirrorNode.stake_rewarded);
-    const activeStakePercentage = maxStake.gt(0)
-      ? activeStake.dividedBy(maxStake).multipliedBy(100).dp(0, BigNumber.ROUND_CEIL)
-      : new BigNumber(0);
-
-    return {
-      id,
-      address: mirrorNode.node_account_id,
-      addressChecksum: getChecksum(mirrorNode.node_account_id),
-      name: extractCompanyFromNodeDescription(mirrorNode.description),
-      minStake,
-      maxStake,
-      activeStake,
-      activeStakePercentage,
-      overstaked: activeStake.gte(maxStake),
-      isLedgerNode: id === ledgerNodeId,
-    };
-  });
-
-  const sortedValidators = sortValidators(validators);
+  const ledgerNodeId = String(resolveConfig(currency.id).ledgerNodeId);
   const data: HederaPreloadData = {
-    validators: sortedValidators,
+    validators: mapMirrorNodesToValidators(result.nodes, ledgerNodeId),
   };
 
   setHederaPreloadData(data, currency);

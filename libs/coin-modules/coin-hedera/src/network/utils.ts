@@ -3,7 +3,7 @@ import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
-import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
 import type {
   FiatCurrency,
   TokenCurrency,
@@ -11,9 +11,16 @@ import type {
 } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
+import { HEDERA_VALIDATORS_CACHE_MINUTES, STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
-import { getChecksum, nanosToSeconds, toEntityId, toTimestamp } from "../logic/utils";
+import {
+  getChecksum,
+  mapMirrorNodesToValidators,
+  nanosToSeconds,
+  resolveConfig,
+  toEntityId,
+  toTimestamp,
+} from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -21,6 +28,7 @@ import type {
   ERC20TokenTransfer,
   EnrichedERC20Transfer,
   HederaMirrorTransaction,
+  HederaValidator,
   StakingAnalysis,
   HederaCoinConfig,
 } from "../types";
@@ -221,6 +229,20 @@ export const getCurrencyToUSDRate = makeLRUCache(
   },
   currency => currency.ticker,
   seconds(3),
+);
+
+export const getHederaValidators = makeLRUCache(
+  async (currencyId: string): Promise<HederaValidator[]> => {
+    const ledgerNodeId = String(resolveConfig(currencyId).ledgerNodeId);
+    const result = await apiClient.getNodes({
+      configOrCurrencyId: currencyId,
+      fetchAllPages: true,
+    });
+
+    return mapMirrorNodesToValidators(result.nodes, ledgerNodeId);
+  },
+  (currencyId: string) => currencyId,
+  minutes(HEDERA_VALIDATORS_CACHE_MINUTES),
 );
 
 export const checkAccountTokenAssociationStatus = makeLRUCache(
