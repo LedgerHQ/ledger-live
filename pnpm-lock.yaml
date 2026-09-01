@@ -858,6 +858,9 @@ importers:
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -963,6 +966,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -1191,6 +1197,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -1706,6 +1715,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -1814,6 +1826,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -2646,6 +2661,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2661,6 +2679,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -2847,6 +2868,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -2871,6 +2895,9 @@ importers:
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-currencies':
         specifier: workspace:*
         version: link:../../features/platform/currencies
@@ -2982,6 +3009,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4636,6 +4666,49 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-balance:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../currency-token
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7403,6 +7476,76 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+
+  features/platform/account-data:
+    dependencies:
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-balance
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+    devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-token
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
 
   features/platform/aggregated-assets:
     dependencies:
@@ -12927,6 +13070,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -67618,7 +67764,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

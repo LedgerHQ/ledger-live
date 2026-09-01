@@ -1,0 +1,38 @@
+{
+  "name": "@domain/entity-account-balance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AccountBalance entity: the balance / spendableBalance table for accounts and their token accounts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema.mock": "./src/schema.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-balance"
+  },
+  "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@domain/entity-currency-token": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/schema-primitives": "workspace:^",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}
