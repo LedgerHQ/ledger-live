@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-internet_computer": patch
+"@ledgerhq/coin-internet_computer": minor
 ---
 
-Stop an Internet Computer stake or top-up appearing more than once in the operation history. Reclassifying a transfer rewrites its operation id, so the sync merge added the retyped operation beside the stale one rather than replacing it; the superseded copies are now dropped, including on accounts that already hold them
+Name the errors an Internet Computer neuron call raises. Both rejection paths threw a bare `Error`, so the apps fell back to "Something went wrong. Please retry" — the wrong instruction for a request the network answered, and no way to tell the two apart. `ICPGovernanceRejected` (the canister ran the command and refused it) and `ICPCallRejected` (the replica refused the ingress message, so nothing ran) are now distinct and carry the network's own wording, with the caller's principal redacted. A `list_neurons` read that came back empty reported success while the snapshot sat untouched; it now raises `ICPNeuronsNotRead`.
