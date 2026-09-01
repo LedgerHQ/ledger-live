@@ -30,3 +30,5 @@
 -keep class com.brentvatne.** { *; }
 -keep class com.yqritc.** { *; }
 -keep class com.google.android.exoplayer2.** { *; }
+
+-keep class com.ledger.live.BuildConfig { *; }
