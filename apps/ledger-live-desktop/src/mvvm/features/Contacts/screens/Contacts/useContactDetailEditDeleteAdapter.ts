@@ -1,6 +1,5 @@
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactsEditSignerDialogProps,
   type ContactsEditSignerMismatchDialogProps,
   type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
@@ -25,7 +24,6 @@ export type ContactDetailEditDeleteDialogProps = Readonly<{
   }>;
   renameDialog: ContactsRenameContactDialogProps;
   deleteDialog: ContactsDeleteContactDialogProps;
-  signerDialog: ContactsEditSignerDialogProps;
   signerMismatchDialog: ContactsEditSignerMismatchDialogProps;
 }>;
 
@@ -65,7 +63,6 @@ export function useContactDetailEditDeleteAdapter(
       : undefined,
     renameDialog: uiState.rename,
     deleteDialog: uiState.delete,
-    signerDialog: uiState.signer,
     signerMismatchDialog: uiState.signerMismatch,
   };
 }

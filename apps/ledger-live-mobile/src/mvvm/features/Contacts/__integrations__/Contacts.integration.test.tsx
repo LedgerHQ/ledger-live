@@ -1209,7 +1209,7 @@ describe("Contacts integration", () => {
     expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
   });
 
-  it("should rename an address after confirming on the signer sheet", async () => {
+  it("should rename an address after applying changes", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -1225,11 +1225,6 @@ describe("Contacts integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Exchange wallet");
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
-
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    expect(screen.getByText("Confirm on your device")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
@@ -1264,9 +1259,9 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
-    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
     });
@@ -1350,7 +1345,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should rename a saved contact after confirming on the signer sheet", async () => {
+  it("should rename a saved contact after applying changes", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -1367,10 +1362,6 @@ describe("Contacts integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Benjamin");
     await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();

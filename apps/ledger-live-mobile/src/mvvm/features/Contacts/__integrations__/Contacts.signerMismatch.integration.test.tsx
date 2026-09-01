@@ -91,12 +91,6 @@ describe("Contacts signer mismatch integration", () => {
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    });
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
       expect(
         screen.getByText("Use the same Ledger device you used to add this contact"),
@@ -123,10 +117,6 @@ describe("Contacts signer mismatch integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Benjamin");
     await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
@@ -155,9 +145,6 @@ describe("Contacts signer mismatch integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Benjamin");
     await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
     expect(await screen.findByTestId("contacts-edit-signer-mismatch-cancel")).toBeVisible();
 
     await user.press(screen.getByTestId("contacts-edit-signer-mismatch-cancel"));

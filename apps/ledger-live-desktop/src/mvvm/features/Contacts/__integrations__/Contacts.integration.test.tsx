@@ -932,7 +932,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should ask for the signer only after saving a contact with addresses", async () => {
+  it("should save a contact with addresses without an intermediate signer dialog", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
@@ -945,13 +945,6 @@ describe("Contacts integration", () => {
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    });
-    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
@@ -1064,12 +1057,7 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toHaveTextContent(
@@ -1102,12 +1090,7 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
     });

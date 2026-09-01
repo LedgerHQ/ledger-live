@@ -360,7 +360,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const isAddressDetailActionSheetOpen =
     addressDetailActions.deleteSheet.isOpen ||
     addressDetailActions.renameSheet.isOpen ||
-    addressDetailActions.signerSheet.isOpen ||
     addressDetailActions.signerMismatchSheet.isOpen;
   const onCloseAddressDetailSheet = useCallback(() => {
     if (isAddressDetailActionSheetOpen) {

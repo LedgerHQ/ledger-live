@@ -160,11 +160,11 @@ describe("useContactAddressDetailActionsAdapter", () => {
       result.current.actions.addressDetailDialog.onEdit?.();
     });
 
-    expect(result.current.actions.signerSheet.isOpen).toBe(false);
-
     await waitFor(() => {
       expect(result.current.actions.renameSheet.isOpen).toBe(true);
     });
+
+    expect(result.current.actions.renameSheet.isDeviceRequired).toBe(true);
 
     expect(trackPage).toHaveBeenCalledWith(CONTACTS_PAGE_EVENTS.EDIT_ADDRESS, {
       source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
@@ -191,12 +191,7 @@ describe("useContactAddressDetailActionsAdapter", () => {
       flow: CONTACTS_FLOW.CONTACTS,
     });
 
-    await waitFor(() => {
-      expect(result.current.actions.signerSheet.isOpen).toBe(true);
-    });
-
     await act(async () => {
-      await result.current.actions.signerSheet.onConfirm();
       await confirmed;
     });
 

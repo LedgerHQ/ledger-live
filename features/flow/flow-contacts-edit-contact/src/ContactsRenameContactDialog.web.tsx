@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
 import type { ContactsRenameContactDialogProps } from "./types";
 
@@ -11,6 +12,7 @@ export function ContactsRenameContactDialog({
   isSaving,
   draftName,
   invalidNameError,
+  isDeviceRequired,
   labels,
   onClose,
   onDraftNameChange,
@@ -52,6 +54,7 @@ export function ContactsRenameContactDialog({
             size="lg"
             className="w-full"
             disabled={!isConfirmEnabled}
+            icon={isDeviceRequired ? LedgerLogo : undefined}
             loading={isSaving}
             onClick={() => void onConfirm()}
             data-testid="contacts-rename-contact-confirm"

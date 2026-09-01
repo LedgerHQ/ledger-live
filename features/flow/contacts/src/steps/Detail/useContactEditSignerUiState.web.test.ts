@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useContactEditSignerUiState } from "./useContactEditSignerUiState";
 
 describe("useContactEditSignerUiState", () => {
-  it("should open the edit dialog without asking for the signer", () => {
+  it("should open the edit dialog", () => {
     const { result } = renderHook(() => useContactEditSignerUiState());
 
     act(() => {
@@ -13,123 +13,52 @@ describe("useContactEditSignerUiState", () => {
     expect(result.current.isEditSessionActive).toBe(true);
   });
 
-  it("should open the signer dialog and keep the approval pending until it is granted", async () => {
+  it("should replace the edit dialog with the mismatch dialog", () => {
     const { result } = renderHook(() => useContactEditSignerUiState());
-    const onApproval = jest.fn();
-    let approval!: Promise<boolean>;
 
     act(() => {
       result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
-      void approval.then(onApproval);
-    });
-
-    expect(result.current.editUiState).toBe("signer-open");
-    expect(onApproval).not.toHaveBeenCalled();
-
-    await act(async () => {
-      result.current.grantSignerApproval();
-      await approval;
-    });
-
-    expect(result.current.editUiState).toBe("edit-open");
-    expect(onApproval).toHaveBeenCalledWith(true);
-  });
-
-  it("should decline the approval and return to the edit dialog when the signer is cancelled", async () => {
-    const { result } = renderHook(() => useContactEditSignerUiState());
-    let approval!: Promise<boolean>;
-
-    act(() => {
-      result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
-    });
-
-    await act(async () => {
-      result.current.onSignerCancel();
-      await expect(approval).resolves.toBe(false);
-    });
-
-    expect(result.current.editUiState).toBe("edit-open");
-  });
-
-  it("should ignore a signer cancel fired after leaving the signer step", async () => {
-    const { result } = renderHook(() => useContactEditSignerUiState());
-    let approval!: Promise<boolean>;
-
-    act(() => {
-      result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
-    });
-
-    await act(async () => {
-      result.current.grantSignerApproval();
-      await approval;
-    });
-
-    act(() => {
-      result.current.onSignerCancel();
-    });
-
-    expect(result.current.editUiState).toBe("edit-open");
-  });
-
-  it("should keep the approval pending while the user connects a different device", async () => {
-    const { result } = renderHook(() => useContactEditSignerUiState());
-    const onApproval = jest.fn();
-    let approval!: Promise<boolean>;
-
-    act(() => {
-      result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
-      void approval.then(onApproval);
       result.current.openSignerMismatchDialog();
     });
 
     expect(result.current.editUiState).toBe("signer-mismatch");
-
-    act(() => {
-      result.current.onConnectDifferentDevice();
-    });
-
-    expect(result.current.editUiState).toBe("signer-open");
-    expect(onApproval).not.toHaveBeenCalled();
-
-    await act(async () => {
-      result.current.grantSignerApproval();
-      await approval;
-    });
-
-    expect(onApproval).toHaveBeenCalledWith(true);
   });
 
-  it("should decline the approval and return to the edit dialog when the mismatch is cancelled", async () => {
+  it("should return to the edit dialog when the user connects a different device", () => {
     const { result } = renderHook(() => useContactEditSignerUiState());
-    let approval!: Promise<boolean>;
 
     act(() => {
       result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
       result.current.openSignerMismatchDialog();
     });
 
-    await act(async () => {
-      result.current.onSignerMismatchCancel();
-      await expect(approval).resolves.toBe(false);
+    act(() => {
+      result.current.onConnectDifferentDevice();
     });
 
     expect(result.current.editUiState).toBe("edit-open");
   });
 
-  it("should ignore a mismatch cancel fired after leaving the mismatch step", async () => {
+  it("should return to the edit dialog when the mismatch is cancelled", () => {
     const { result } = renderHook(() => useContactEditSignerUiState());
-    const onApproval = jest.fn();
-    let approval!: Promise<boolean>;
 
     act(() => {
       result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
-      void approval.then(onApproval);
+      result.current.openSignerMismatchDialog();
+    });
+
+    act(() => {
+      result.current.onSignerMismatchCancel();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
+  it("should ignore a mismatch cancel fired after leaving the mismatch step", () => {
+    const { result } = renderHook(() => useContactEditSignerUiState());
+
+    act(() => {
+      result.current.openEditDialog();
       result.current.openSignerMismatchDialog();
     });
 
@@ -138,15 +67,7 @@ describe("useContactEditSignerUiState", () => {
       result.current.onSignerMismatchCancel();
     });
 
-    expect(result.current.editUiState).toBe("signer-open");
-    expect(onApproval).not.toHaveBeenCalled();
-
-    await act(async () => {
-      result.current.grantSignerApproval();
-      await approval;
-    });
-
-    expect(onApproval).toHaveBeenCalledWith(true);
+    expect(result.current.editUiState).toBe("edit-open");
   });
 
   it("should close the edit dialog only from the edit step", () => {
@@ -154,14 +75,14 @@ describe("useContactEditSignerUiState", () => {
 
     act(() => {
       result.current.openEditDialog();
-      void result.current.requestSignerApproval();
+      result.current.openSignerMismatchDialog();
       result.current.onEditClose();
     });
 
-    expect(result.current.editUiState).toBe("signer-open");
+    expect(result.current.editUiState).toBe("signer-mismatch");
 
     act(() => {
-      result.current.grantSignerApproval();
+      result.current.onSignerMismatchCancel();
       result.current.onEditClose();
     });
 
@@ -169,43 +90,18 @@ describe("useContactEditSignerUiState", () => {
     expect(result.current.isEditSessionActive).toBe(false);
   });
 
-  it("should decline the approval when the flow is reset", async () => {
+  it("should close any step when the flow is reset", () => {
     const { result } = renderHook(() => useContactEditSignerUiState());
-    let approval!: Promise<boolean>;
 
     act(() => {
       result.current.openEditDialog();
-      approval = result.current.requestSignerApproval();
+      result.current.openSignerMismatchDialog();
     });
 
-    await act(async () => {
+    act(() => {
       result.current.resetEditUiState();
-      await expect(approval).resolves.toBe(false);
     });
 
     expect(result.current.editUiState).toBe("closed");
-  });
-
-  it("should decline a pending approval when a new signer request replaces it", async () => {
-    const { result } = renderHook(() => useContactEditSignerUiState());
-    let firstApproval!: Promise<boolean>;
-    let secondApproval!: Promise<boolean>;
-
-    act(() => {
-      result.current.openEditDialog();
-      firstApproval = result.current.requestSignerApproval();
-    });
-
-    act(() => {
-      secondApproval = result.current.requestSignerApproval();
-    });
-
-    await expect(firstApproval).resolves.toBe(false);
-    expect(result.current.editUiState).toBe("signer-open");
-
-    await act(async () => {
-      result.current.grantSignerApproval();
-      await expect(secondApproval).resolves.toBe(true);
-    });
   });
 });
