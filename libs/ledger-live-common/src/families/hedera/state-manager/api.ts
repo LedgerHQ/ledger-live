@@ -12,7 +12,7 @@ export const hederaApi = createApi({
     getValidators: build.query<HederaValidator[], string>({
       queryFn: async currencyId => {
         try {
-          return { data: await getHederaValidators(currencyId) };
+          return { data: await getHederaValidators({ currencyId }) };
         } catch (error) {
           return { error: error instanceof Error ? error : new Error(String(error)) };
         }
