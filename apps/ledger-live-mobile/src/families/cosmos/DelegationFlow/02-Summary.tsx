@@ -58,7 +58,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     if (validator !== undefined) {
       return validator;
     }
-    if (mainAccount.currency.id === "persistence" || mainAccount.currency.id === "quicksilver") {
+    if (["persistence", "quicksilver", "osmo"].includes(mainAccount.currency.id)) {
       return undefined;
     }
     return validators[0];
