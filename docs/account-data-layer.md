@@ -70,9 +70,29 @@ flowchart TD
     ent -->|"selectors"| apps
 ```
 
-That single inversion — sources built at the top, injected downward — is the entire reason the `port`
-concept exists, and it is what makes the same layer usable from a React app _and_ from a Bun CLI with
-no Redux store.
+That single inversion — the concrete coin layer reaching the port from above — is the entire reason
+the `port` concept exists, and it is what makes the same layer usable from a React app _and_ from a
+Bun CLI with no Redux store.
+
+### One host adapter per app, not one source set per app
+
+An app does not hand-write its sources. It implements `AccountDataHost` — four functions — and
+`createDefaultAccountDataSources(host)` builds both sources from it:
+
+```ts
+const host: AccountDataHost = {
+  granularFamilies: getEnabledGenericCoinFrameworkFamilies, // read, never copied
+  familyOf: id => findCryptoCurrencyById(id)?.family,
+  readAssetBalances: ref => getAccountBalanceRows(ref), // shared, family-agnostic
+  syncAccountBalances: ref => /* this app's full sync */,
+};
+```
+
+This is not about brevity. The **capability decision** — which families can serve a balance on their
+own — has to exist in exactly one place per app, read from a shared gate. Four apps each writing their
+own `capabilities` callback is precisely how this repo ended up with three divergent "families with
+the new API" lists. `mirrorLegacyAccountBalances` and `accountRefOf` are shared for the same reason;
+only `syncAccountBalances` differs per host, because only the store access genuinely differs.
 
 **Why not RTK Query?** The coin modules own their transport, so there is no `baseQuery` to hang
 endpoints on. And the balance table is a store of record: persisted, locally mutated once pending
@@ -145,14 +165,15 @@ forty syncs. `replaceAccountBalances` is atomic over an account _and_ all its to
 chains report a token swept to zero by **omitting** it — a plain upsert would freeze that row at its
 pre-sweep value forever.
 
-## Wired in four places
+## Wired in five places
 
 | Surface                 | What it does now                                                                                                                  | What it proves                                                                                             |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | web-tools · Ledger Sync | Resolving an incoming descriptor no longer runs a full `bridge.sync()` — a balance-only bridge answers with a `{balance}` request | `descriptorToAccount` already rebuilds every other field with no network; the sync was paid for one number |
 | web-tools · `/sync`     | Balance first, with `served by coin-module-api` / `legacy-bridge` and the token rows; full sync is a button                       | Makes the routing decision observable                                                                      |
 | wallet-cli · `balances` | The hardcoded `coinFrameworkFamilies` set is gone; the router decides. Output unchanged                                           | No React, no store — the entity reducer runs over a local variable. The core is framework-free             |
-| desktop                 | Reducer mounted, both sources registered, balances mirrored from the legacy account store                                         | Adoption is not a rewrite: `accountsSelector` and the ~250 sites behind it keep working                    |
+| desktop                 | Reducer mounted, sources registered, balances mirrored from the legacy account store                                             | Adoption is not a rewrite: `accountsSelector` and the ~250 sites behind it keep working                    |
+| mobile                  | The same, through the same host adapter. Nothing reads the table through the layer yet                                            | The architecture is ready: the first screen that wants a balance costs a hook call, not an integration     |
 
 **Capability is not the same as implementation.** 16 families implement `CoinModuleApi`
 (canton, cardano, celo, cosmos, evm, hypercore, kaspa, multiversx, near, solana, stacks, stellar,
