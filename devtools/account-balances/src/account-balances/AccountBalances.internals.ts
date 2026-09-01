@@ -3,6 +3,16 @@ import type { AccountBalanceRow, AmountUnit } from "../types";
 const MAX_DECIMALS = 8;
 
 /**
+ * Drop trailing zeros. A scan rather than `/0+$/`, whose backtracking is quadratic on an all-zero
+ * fraction — the common case here, since most balances have far fewer decimals than the magnitude.
+ */
+function trimTrailingZeros(fraction: string): string {
+  let end = fraction.length;
+  while (end > 0 && fraction[end - 1] === "0") end--;
+  return fraction.slice(0, end);
+}
+
+/**
  * Render a smallest-unit amount the way the app would.
  *
  * Deliberately local and dependency-free: the tool needs a readable number, not the app's full
@@ -15,8 +25,9 @@ export function formatAmount(value: string, unit?: AmountUnit): string {
   const padded = value.padStart(unit.magnitude + 1, "0");
   const whole = padded.slice(0, padded.length - unit.magnitude) || "0";
   const fraction = unit.magnitude === 0 ? "" : padded.slice(padded.length - unit.magnitude);
-  const trimmed = fraction.slice(0, MAX_DECIMALS).replace(/0+$/, "");
-  return `${Number(whole).toLocaleString("en-US")}${trimmed ? `.${trimmed}` : ""} ${unit.code}`;
+  const decimals = trimTrailingZeros(fraction.slice(0, MAX_DECIMALS));
+  const fractionPart = decimals ? `.${decimals}` : "";
+  return `${Number(whole).toLocaleString("en-US")}${fractionPart} ${unit.code}`;
 }
 
 /** Seconds since a timestamp, or `undefined` when there is nothing to age. */
