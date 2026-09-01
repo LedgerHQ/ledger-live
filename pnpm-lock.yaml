@@ -2675,10 +2675,10 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.0(@ledgerhq/logs@6.19.0)
+        version: 5.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.2.0
+        version: 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2715,6 +2715,9 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../../libs/live-dmk-shared
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../libs/live-network
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -11001,7 +11004,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.0
+        version: 5.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -11014,9 +11017,15 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -22306,9 +22315,6 @@ packages:
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
-
-  '@ledgerhq/logs@6.17.0':
-    resolution: {integrity: sha512-yra33g5q/AU7+PwAws+GaVpQGUuxnDREjVBnviJjcaJLVKuLzI4pnj8Bd3nY3fypM5k1yZEYKEXfUuGFUjP2+w==}
 
   '@ledgerhq/logs@6.19.0':
     resolution: {integrity: sha512-kmWj18C7eTtuytdaWygzVrQm9EoD4YWuYnd/kY8stVBBAzRdJzrGlm013ijQF6I/kGLKlGY7JKmll6j32KGpfQ==}
@@ -49166,20 +49172,6 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-evm@5.2.0':
-    dependencies:
-      '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.2.0
-      axios: 1.13.5
-      bignumber.js: 9.1.2
-      eip55: 2.1.1
-      ethers: 6.15.0
-      react-native-get-random-values: 1.11.0
-    transitivePeerDependencies:
-      - bufferutil
-      - react-native
-      - utf-8-validate
-
   '@ledgerhq/coin-evm@5.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
@@ -49223,21 +49215,6 @@ snapshots:
       eip55: 2.1.1
       ethers: 6.15.0
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
-    transitivePeerDependencies:
-      - bufferutil
-      - react-native
-      - utf-8-validate
-
-  '@ledgerhq/coin-evm@5.2.0(@ledgerhq/logs@6.19.0)':
-    dependencies:
-      '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.2.0
-      '@ledgerhq/logs': 6.19.0
-      axios: 1.13.5
-      bignumber.js: 9.1.2
-      eip55: 2.1.1
-      ethers: 6.15.0
-      react-native-get-random-values: 1.11.0
     transitivePeerDependencies:
       - bufferutil
       - react-native
@@ -49635,19 +49612,17 @@ snapshots:
       '@ledgerhq/errors': 6.37.0
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-promise': 0.2.2
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
       axios: 1.13.2
       lru-cache: 7.18.3
 
   '@ledgerhq/live-promise@0.2.2':
     dependencies:
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
 
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
-
-  '@ledgerhq/logs@6.17.0': {}
 
   '@ledgerhq/logs@6.19.0': {}
 
