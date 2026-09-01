@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
+import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
@@ -37,6 +38,43 @@ jest.mock("@features/flow-pay-card", () => ({
     </>
   ),
 }));
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet } = actual;
+
+  function MockQueuedBottomSheet({
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+    onOpened,
+    ...props
+  }: QueuedBottomSheetProps) {
+    const shouldOpen = !!(isRequestingToBeOpened || isForcingToBeOpened);
+    React.useEffect(() => {
+      if (shouldOpen) onOpened?.();
+    }, [shouldOpen, onOpened]);
+    return (
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isRequestingToBeOpened}
+        isForcingToBeOpened={isForcingToBeOpened}
+        onOpened={onOpened}
+        {...props}
+      />
+    );
+  }
+
+  return {
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
+  };
+});
+
+async function openBankTransferIntro(user: ReturnType<typeof renderPayTab>["user"]) {
+  await user.press(await screen.findByText("Add stablecoin"));
+  await user.press(await screen.findByText("Bank transfer"));
+  await screen.findByRole("header", { name: "Send cash, receive stablecoin" });
+}
 
 describe("PayTab integration", () => {
   beforeEach(() => {
@@ -282,16 +320,71 @@ describe("PayTab integration", () => {
         });
       });
     });
+  });
 
-    it("navigates to the Noah fiat provider when the bank transfer option is selected", async () => {
+  describe("bank transfer", () => {
+    it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
       const { user } = renderPayTab({ holdsUsdc: true });
 
-      await user.press(await screen.findByTestId("action-tile-deposit"));
-      await user.press(await screen.findByTestId("pay-card-deposit-option-bankTransfer"));
+      await openBankTransferIntro(user);
 
-      expect(await screen.findByTestId("receive-funds-screen")).toHaveTextContent(
-        `${ScreenName.ReceiveProvider}:noah`,
-      );
+      expect(screen.getByRole("header", { name: "Send cash, receive stablecoin" })).toBeVisible();
+      expect(
+        screen.getByText("Transfer cash and receive stablecoins straight to your Ledger Wallet™."),
+      ).toBeVisible();
+      expect(screen.getByText("Receive transfers from any bank")).toBeVisible();
+      expect(screen.getByText("No hidden fees")).toBeVisible();
+      expect(screen.getByText("Put your money to work right away")).toBeVisible();
+      expect(screen.getByText("Provided by Noah")).toBeVisible();
+      expect(screen.getByRole("button", { name: "Create an account" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Log in to Noah" })).toBeVisible();
+      expect(screen.queryByText(`${ScreenName.ReceiveProvider}:noah`)).toBeNull();
+    });
+
+    it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "bank transfer",
+        buttonLocation: "deposit",
+        page: "Pay",
+      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    });
+
+    it("should open Noah when Create an account is pressed", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+      await user.press(screen.getByRole("button", { name: "Create an account" }));
+
+      expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "create an account",
+        flow: "C2S",
+        page: "cash to stable",
+      });
+      expect(jest.mocked(track)).not.toHaveBeenCalledWith("button_clicked", {
+        button: "close",
+        flow: "C2S",
+        page: "cash to stable",
+      });
+    });
+
+    it("should open Noah when Log in to Noah is pressed", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+      await user.press(screen.getByRole("button", { name: "Log in to Noah" }));
+
+      expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "log in to noah",
+        flow: "C2S",
+        page: "cash to stable",
+      });
     });
   });
 

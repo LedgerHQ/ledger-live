@@ -32,11 +32,19 @@ describe("useBankTransferIntroAdapter", () => {
     const onTrackEvent = jest.fn();
 
     const { result } = renderHook(() =>
-      useBankTransferIntroAdapter({ labels, onBankTransfer, onTrackEvent }),
+      useBankTransferIntroAdapter({
+        labels,
+        heroImage: 7,
+        bottomInset: 34,
+        onBankTransfer,
+        onTrackEvent,
+      }),
     );
 
     const { bankTransferIntro } = result.current;
     expect(bankTransferIntro.labels).toBe(labels);
+    expect(bankTransferIntro.heroImage).toBe(7);
+    expect(bankTransferIntro.bottomInset).toBe(34);
     expect(bankTransferIntro.onBankTransfer).toBe(onBankTransfer);
     expect(bankTransferIntro.onTrackEvent).toBe(onTrackEvent);
   });

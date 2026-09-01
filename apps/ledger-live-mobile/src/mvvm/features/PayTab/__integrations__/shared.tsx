@@ -59,7 +59,7 @@ type TestStackParamList = {
   PayTabTest: undefined;
   [NavigatorName.ReceiveFunds]: {
     screen: ScreenName.ReceiveProvider;
-    params: { manifestId: string; fromMenu: boolean };
+    params: { manifestId: string; fromMenu: boolean; noahAuth?: "createAccount" | "logIn" };
   };
   [NavigatorName.MyWallet]:
     | {
