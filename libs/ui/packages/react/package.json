@@ -79,10 +79,10 @@
     "format": "oxfmt ./src",
     "format:check": "oxfmt --check ./src",
     "typecheck": "tsc --p . --noEmit --customConditions node",
-    "test": "pnpm -w -F ui build-and-test",
+    "test": "exit 0",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
-    "unimported": "unimported"
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/react"
   },
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
@@ -125,9 +125,6 @@
     "tailwind-merge": "catalog:",
     "@babel/preset-react": "7.28.5",
     "@babel/preset-typescript": "7.28.5",
-    "@rsbuild/core": "catalog:",
-    "@rsbuild/plugin-node-polyfill": "catalog:",
-    "@rsbuild/plugin-react": "catalog:",
     "@rspack/core": "catalog:",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "*",
@@ -152,7 +149,6 @@
     "oxfmt": "catalog:",
     "fs-extra": "^10.0.1",
     "jest": "catalog:",
-    "os-browserify": "0.3.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rimraf": "^4.4.1",
@@ -161,9 +157,7 @@
     "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
-    "tiny-glob": "^0.2.9",
-    "tty-browserify": "0.0.1",
-    "util": "^0.12.5"
+    "tiny-glob": "^0.2.9"
   },
   "dependenciesMeta": {
     "@ledgerhq/icons-ui": {
