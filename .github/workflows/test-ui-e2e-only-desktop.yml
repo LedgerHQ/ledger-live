@@ -406,10 +406,17 @@ jobs:
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
-          PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          # The Playwright reporter publishes to Xray itself. Only the primary device reports.
+          # A narrowed run is refused only when reusing an execution: Xray REPLACES a Test Run's
+          # iterations on import, so a partial dataset would delete rows already recorded there.
+          # With no key, Xray creates a fresh execution and there is nothing to overwrite.
+          XRAY_ENABLED: >-
+            ${{ matrix.is_primary && inputs.export_to_xray
+             && (inputs.test_filter == '' || inputs.test_execution == '') }}
+          XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+          XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
@@ -568,59 +575,6 @@ jobs:
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
-
-  upload-to-xray:
-    name: "Upload to Xray"
-    runs-on: [ledger-live-medium]
-    env:
-      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
-      JIRA_URL: https://ledgerhq.atlassian.net/browse
-    needs: [prepare-devices, e2e-tests]
-    # A filtered run only covers some of a dataset's rows, and re-importing a partial set into a
-    # Test Execution REPLACES the iterations already there — measured: 3 iterations (one FAILED)
-    # became 0 and the test flipped to PASSED. So never publish a partial run.
-    if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' && inputs.test_filter == '' }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-
-      - name: Download Xray Results
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: xray-reports
-          path: "e2e/desktop/artifacts/xray"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
-          # The endpoint returns the JWT as a JSON string, so strip the surrounding quotes.
-          echo "::add-mask::$(echo "$response" | tr -d '"')"
-          echo "xray_token=$(echo "$response" | tr -d '"')" >> "$GITHUB_OUTPUT"
-
-      - name: Publish report on Xray
-        id: publish-xray
-        run: |
-          # Without --fail-with-body a rejected payload exits 0 and the whole execution is lost
-          # silently — the report is a single blob, so one bad entry loses every result.
-          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @e2e/desktop/artifacts/xray/xray-report.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-          key=$(echo "$response" | jq -r '.key // empty')
-          if [ -z "$key" ]; then
-            echo "::error::Xray import returned no execution key: $response"
-            exit 1
-          fi
-          echo "xray_key=$key" >> "$GITHUB_OUTPUT"
-
-      - name: Write Xray report in summary
-        shell: bash
-        env:
-          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
-        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   notify-to-slack:
     name: "Notify to Slack"

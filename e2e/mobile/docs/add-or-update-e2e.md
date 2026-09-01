@@ -127,8 +127,12 @@ Rules:
 - **Never publish a partial run.** Xray *replaces* a Test Run's iterations on import rather than
   merging — re-importing a subset wipes the rows already there and can flip the test green
   (measured: 3 iterations, one FAILED, became 0 iterations and PASSED). Hence the
-  `test_filter`/`smoke_tests` guard on `upload-to-xray`, and the `--expect` gate in
-  `scripts/build-xray-report.mjs` that refuses to publish when a shard has died.
+  `test_filter`/`smoke_tests` guard on the upload job, and the completeness gate in
+  `scripts/publish-xray-report.mjs` that refuses to publish when a shard has died.
+- Mobile is sharded across CI jobs, so results only exist together once every shard's artifact is
+  downloaded. `scripts/publish-xray-report.mjs` is that aggregation step and it uploads too, so
+  the workflow needs nothing but one `node` call. Desktop, being unsharded, publishes straight
+  from its Playwright reporter.
 - iOS and Android publish to **separate** Test Executions, so they never overwrite each other.
   Do not point `test_execution_android`, `test_execution_ios` and desktop's `test_execution` at
   the same Jira key.

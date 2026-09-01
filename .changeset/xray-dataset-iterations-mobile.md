@@ -8,10 +8,10 @@ Report mobile add account coins as Xray dataset iterations
 
 Brings LWM to parity with LWD: the 18 `addAccount*.spec.ts` files drop their per-coin TMS links
 and instead report as `Currency` iterations of a single Xray test, via the `$Parameter` global the
-allure reporter already injects. The Xray test key now lives in one shared constant used by both
-platforms.
+allure reporter already injects. The Xray test key is declared per platform, so each suite owns
+its own.
 
-`xray.formater.sh` is replaced by `scripts/build-xray-report.mjs`, which reuses the same payload
+`xray.formater.sh` is replaced by `scripts/publish-xray-report.mjs`, which reuses the same payload
 builder as desktop instead of reimplementing it in bash. That fixes several defects in the old
 script: allure statuses are mapped to valid Xray ones (`skipped`/`unknown` were sent verbatim),
 only `tms`-type links are treated as test keys, results are ordered by start time so a passing

@@ -1,17 +1,26 @@
 /* eslint-disable no-console */
-// Builds the body of Xray's `POST /api/v2/import/execution` from a directory of Allure results.
+// Builds the Xray Test Execution payload from a directory of Allure results and publishes it.
+//
+// Mobile is sharded across up to 12 CI jobs, so — unlike desktop, where the Playwright reporter
+// publishes directly — the results only exist together once every shard's artifact has been
+// downloaded. This script is that aggregation step, and it owns the upload too, so the workflow
+// needs nothing but `node <this>`.
 //
 // Runs under plain `node` with NO install and NO build: Node strips the TypeScript types off the
-// shared builder imported below, which is dependency-free on purpose. Keep it that way — a single
-// `enum`, `namespace`, decorator or parameter property in report.ts breaks this job with
-// ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX (its sibling enum/Currency.ts already trips exactly that).
+// shared modules imported below, which are dependency-free on purpose. Keep them that way — a
+// single `enum`, `namespace`, decorator or parameter property breaks this with
+// ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX (their sibling enum/Currency.ts already trips exactly that).
 //
-// Usage:
-//   node build-xray-report.mjs --input <dir> --output <file> --platform <ios|android>
-//                              [--execution-key <KEY>] [--expect <KEY>=<n>]
+// Configured entirely by environment:
+//   ALLURE_RESULTS_DIR  directory of *-result.json (required)
+//   PLATFORM            ios | android, used in the execution summary (required)
+//   TEST_EXECUTION      reuse an existing Test Execution instead of creating one (optional)
+//   XRAY_ENABLED        "true" to publish; anything else writes the report and stops
+//   XRAY_CLIENT_ID / XRAY_CLIENT_SECRET / XRAY_API_URL
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { buildXrayReport } from "../../../libs/live-e2e-shared/src/xray/report.ts";
+import { isXrayPublishEnabled, XrayClient } from "../../../libs/live-e2e-shared/src/xray/client.ts";
 
 // Allure statuses are not Xray statuses. jest.config.js already maps broken -> failed, but
 // `skipped` and `unknown` still reach us and Xray rejects them verbatim — inside `iterations[]`
@@ -24,9 +33,14 @@ const XRAY_STATUS = {
   unknown: "TODO",
 };
 
-function arg(name, fallback = "") {
-  const index = process.argv.indexOf(`--${name}`);
-  return index === -1 ? fallback : (process.argv[index + 1] ?? fallback);
+const SPEC_DIR = "e2e/mobile/specs/addAccount";
+const resultsDir = process.env.ALLURE_RESULTS_DIR;
+const platform = (process.env.PLATFORM ?? "").toUpperCase();
+const executionKey = (process.env.TEST_EXECUTION ?? "").trim();
+
+if (!resultsDir || !platform) {
+  console.error("::error::ALLURE_RESULTS_DIR and PLATFORM are required");
+  process.exit(2);
 }
 
 function resultFiles(dir) {
@@ -37,27 +51,14 @@ function resultFiles(dir) {
 
 function firstLines(message, max = 5) {
   if (!message) return undefined;
-  const plain = message.replace(/\[[0-9;]*m/g, "").trim();
+  const plain = message.replace(/\[[0-9;]*m/g, "").trim();
   return plain ? plain.split("\n").slice(0, max).join("\n") : undefined;
 }
 
-const inputDir = arg("input");
-const outputFile = arg("output");
-const platform = arg("platform").toUpperCase();
-const executionKey = arg("execution-key").trim();
-const expectations = arg("expect")
-  .split(",")
-  .filter(Boolean)
-  .map(pair => {
-    const [testKey, count] = pair.split("=");
-    return { testKey, count: Number(count) };
-  });
-
 // A retry writes a SECOND result file for the same test (the reporter runs with
 // `overwrite: false`), and an iteration is identified by its parameters, so the last entry wins.
-// readdir order is arbitrary — sorting by `start` is what makes "last" mean "most recent
-// attempt", which is the semantics the bash formatter had via its last-start-wins loop.
-const parsed = resultFiles(inputDir)
+// readdir order is arbitrary — sorting by `start` is what makes "last" mean "most recent attempt".
+const parsed = resultFiles(resultsDir)
   .map(file => JSON.parse(readFileSync(file, "utf8")))
   .toSorted((a, b) => (a.start ?? 0) - (b.start ?? 0));
 
@@ -107,22 +108,40 @@ const report = buildXrayReport(
       },
 );
 
-// Xray REPLACES a Test Run's iterations on re-import rather than merging them, so an empty or
-// short payload silently deletes rows that are already there. Fail the step instead.
+const outputFile = join(resultsDir, "xray_report.json");
+writeFileSync(outputFile, JSON.stringify(report, null, 2));
+console.log(`Xray report saved at: ${outputFile} (${report.tests.length} test(s))`);
+
+// Xray REPLACES a Test Run's iterations on import rather than merging them, so an empty or short
+// payload silently deletes rows that are already there. Refuse instead of publishing one.
 if (report.tests.length === 0) {
-  console.error(`::error::[xray] refusing to publish: no test results found in ${inputDir}`);
+  console.error(`::error::[xray] refusing to publish: no test results found in ${resultsDir}`);
   process.exit(2);
 }
-for (const { testKey, count } of expectations) {
-  const found = report.tests.find(test => test.testKey === testKey)?.iterations?.length ?? 0;
-  if (found < count) {
+
+// One iteration per add-account spec, counted from the spec dir so a new coin updates this gate
+// for free. Fewer means a shard died and importing would delete the missing coins.
+const expected = readdirSync(SPEC_DIR).filter(name => name.endsWith(".spec.ts")).length;
+for (const test of report.tests) {
+  const found = test.iterations?.length ?? 0;
+  if (found > 0 && found < expected) {
     console.error(
-      `::error::[xray] refusing to publish: ${testKey} has ${found}/${count} iterations ` +
+      `::error::[xray] refusing to publish: ${test.testKey} has ${found}/${expected} iterations ` +
         `(a shard probably died) — importing would delete the missing rows`,
     );
     process.exit(2);
   }
 }
 
-writeFileSync(outputFile, JSON.stringify(report, null, 2));
-console.log(`Xray JSON file created: ${outputFile} (${report.tests.length} test(s))`);
+if (!isXrayPublishEnabled(process.env)) {
+  console.log("[xray] publishing disabled (XRAY_ENABLED != true or credentials missing).");
+  process.exit(0);
+}
+
+const client = new XrayClient({
+  clientId: process.env.XRAY_CLIENT_ID,
+  clientSecret: process.env.XRAY_CLIENT_SECRET,
+  baseUrl: process.env.XRAY_API_URL,
+});
+const key = await client.importExecution(report);
+console.log(`Xray execution: https://ledgerhq.atlassian.net/browse/${key}`);

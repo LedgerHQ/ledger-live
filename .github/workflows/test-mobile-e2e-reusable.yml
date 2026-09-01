@@ -1456,18 +1456,25 @@ jobs:
         ${{ (matrix.platform == 'android' && inputs.test_execution_android)
          || (matrix.platform == 'ios' && inputs.test_execution_ios) || '' }}
     needs: [detox-tests-android, detox-tests-ios]
-    # A filtered or smoke run covers only some of the dataset's rows, and re-importing a partial
-    # set REPLACES the iterations already on the Test Run (measured: 3 -> 0, FAILED -> PASSED).
-    # Only addAccountBTC carries @smoke, so a smoke run would leave the test with a single row.
-    if: ${{ !cancelled() && inputs.export_to_xray && inputs.test_filter == '' && !inputs.smoke_tests }}
+    # A narrowed run (test_filter, or smoke — only addAccountBTC carries @smoke) may cover just
+    # part of a dataset, and re-importing a partial set REPLACES the iterations already on the
+    # Test Run (measured: 3 -> 0, FAILED -> PASSED). That is only destructive when reusing an
+    # execution; with no key Xray creates a fresh one. publish-xray-report.mjs additionally
+    # refuses any payload that is missing rows.
+    if: >-
+      ${{ !cancelled() && inputs.export_to_xray
+       && ((inputs.test_filter == '' && !inputs.smoke_tests)
+        || (matrix.platform == 'android' && inputs.test_execution_android == '')
+        || (matrix.platform == 'ios' && inputs.test_execution_ios == '')) }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
 
-      # No pnpm install and no build: build-xray-report.mjs imports the shared payload builder
-      # straight from source and Node strips its types. .nvmrc tracks mise.toml (24.14.0).
+      # No pnpm install and no build: publish-xray-report.mjs imports the shared payload builder
+      # and Xray client straight from source, and Node strips their types.
+      # .nvmrc tracks mise.toml (24.14.0).
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
@@ -1479,59 +1486,20 @@ jobs:
           pattern: ${{ matrix.platform }}-test-artifacts-*
           merge-multiple: true
 
-      - name: Build Xray payload
-        shell: bash
+      - name: Publish results to Xray
         env:
-          ARTIFACTS: artifacts-${{ matrix.platform }}
+          ALLURE_RESULTS_DIR: artifacts-${{ matrix.platform }}
           PLATFORM: ${{ matrix.platform }}
-        run: |
-          # Derived from the spec glob so adding a 19th coin updates the gate for free.
-          EXPECTED=$(find e2e/mobile/specs/addAccount -name '*.spec.ts' | wc -l | tr -d ' ')
-          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \
-            e2e/mobile/scripts/build-xray-report.mjs \
-            --input "$ARTIFACTS" \
-            --output "$ARTIFACTS/xray_report.json" \
-            --platform "$PLATFORM" \
-            --execution-key "$TEST_EXECUTION" \
-            --expect "B2CQA-6561=$EXPECTED"
+          XRAY_ENABLED: "true"
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON e2e/mobile/scripts/publish-xray-report.mjs
 
       - name: Upload aggregated xray results
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           retention-days: 1
           name: xray-reports-${{ matrix.platform }}
           path: "artifacts-${{ matrix.platform }}/xray_report.json"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" -X POST \
-                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
-                    ${{ env.XRAY_API_URL }}/authenticate)
-          # The endpoint returns the JWT as a JSON string, so strip the surrounding quotes.
-          echo "::add-mask::$(echo "$response" | tr -d '"')"
-          echo "xray_token=$(echo "$response" | tr -d '"')" >> "$GITHUB_OUTPUT"
-      - name: Publish report on Xray
-        id: publish-xray
-        run: |
-          # Without --fail-with-body a rejected payload exits 0 and the whole execution is lost
-          # silently — the report is a single blob, so one bad entry loses every result.
-          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @artifacts-${{ matrix.platform }}/xray_report.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-          key=$(echo "$response" | jq -r '.key // empty')
-          if [ -z "$key" ]; then
-            echo "::error::Xray import returned no execution key: $response"
-            exit 1
-          fi
-          echo "xray_key=$key" >> "$GITHUB_OUTPUT"
-      - name: Write Xray report link in summary
-        shell: bash
-        env:
-          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
-        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
 
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"

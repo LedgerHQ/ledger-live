@@ -251,7 +251,13 @@ Rules:
 - **Never publish a filtered run.** Xray *replaces* a Test Run's iterations on import rather than
   merging them — re-importing a subset wipes the rows already there and can flip the test green
   (measured: 3 iterations, one FAILED, became 0 iterations and PASSED). This is why the
-  `upload-to-xray` job in `test-ui-e2e-only-desktop.yml` is guarded on `inputs.test_filter == ''`.
+  reporter only publishes when `XRAY_ENABLED` is true, which `test-ui-e2e-only-desktop.yml` sets
+  only for the primary device on an unfiltered run.
+
+The reporter publishes to Xray itself at the end of the run — there is no upload job and no curl
+in the workflow. It always writes `tests/artifacts/xray/xray-report.json` for the CI artifact, and
+uploads only when `XRAY_ENABLED=true` and credentials are present, so it is safe to leave
+registered locally. A publish failure is logged, never thrown: reporting must not fail a run.
 
 - Be aware that there may be environment variables to gate which UI elements you can assert on. For example, CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). So tests may pass locally but exercise different elements than CI. '
 - As such, you may need to declare flags explicitly in `test.use({ featureFlags })` if your UI varies based on specific feature flag parameters or configurations.
