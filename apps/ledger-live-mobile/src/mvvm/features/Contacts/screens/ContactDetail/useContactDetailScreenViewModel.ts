@@ -127,7 +127,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     updateAddressLabel,
     confirmAddress,
     continueFromName,
-    completeMockConfirmation,
     goBack: goBackAddAddress,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({
@@ -172,7 +171,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
           deviceCredentials: signedAddress.deviceCredentials,
         }),
       );
-      completeMockConfirmation();
       closeAddAddress();
 
       try {
@@ -198,15 +196,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       console.warn("Failed to complete add-address confirmation", error);
       closeAddAddress();
     }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    completeMockConfirmation,
-    contact,
-    deviceIntents,
-    dispatch,
-  ]);
+  }, [addAddressFlowState, analytics, closeAddAddress, contact, deviceIntents, dispatch]);
   useEffect(() => {
     void completeMockAddressConfirmation();
   }, [completeMockAddressConfirmation]);

@@ -22,10 +22,8 @@ function resolveDrawerStep(
     case "enteringAddress":
       return "address";
     case "namingAddress":
-      return "name";
     case "reviewingAddress":
     case "confirmationRequired":
-    case "success":
       return "name";
   }
 }
@@ -118,7 +116,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
         : null,
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
-    isOpen: state.status !== "closed" && state.status !== "success",
+    isOpen: state.status !== "closed",
     onBack,
     onFlowClose: onClose,
   } as const;

@@ -298,17 +298,19 @@ export function useAddAddressFlowViewModel({
         return currentState;
       }
 
-      if (currentState.entryMode === "prefilled") {
+      // Only a prefilled session carries the display context the review screen
+      // renders; every other session hands straight over to the device.
+      const { displayContext } = currentState;
+      if (currentState.entryMode === "prefilled" && displayContext !== null) {
         return {
           status: "reviewingAddress",
           selectedContactId: currentState.selectedContactId,
           existingAddressLabels: currentState.existingAddressLabels,
           selectedCurrencyId: currentState.selectedCurrencyId,
           entryMode: currentState.entryMode,
-          displayContext: currentState.displayContext,
+          displayContext,
           addressEntry: currentState.addressEntry,
           addressLabel: currentState.addressLabel,
-          origin: "addressName",
         };
       }
 
@@ -323,54 +325,6 @@ export function useAddAddressFlowViewModel({
         addressLabel: currentState.addressLabel,
       };
     });
-  }, []);
-  const continueFromAddressDetails = useCallback(() => {
-    cancelAddressValidation();
-    setState(currentState => {
-      if (
-        currentState.status !== "enteringAddress" ||
-        currentState.addressEntry.status !== "valid" ||
-        currentState.addressLabel.status !== "valid"
-      ) {
-        return currentState;
-      }
-
-      return {
-        status: "reviewingAddress",
-        selectedContactId: currentState.selectedContactId,
-        existingAddressLabels: currentState.existingAddressLabels,
-        selectedCurrencyId: currentState.selectedCurrencyId,
-        entryMode: currentState.entryMode,
-        displayContext: currentState.displayContext,
-        addressEntry: currentState.addressEntry,
-        addressLabel: currentState.addressLabel,
-        origin: "addressDetails",
-      };
-    });
-  }, [cancelAddressValidation]);
-  const continueFromReview = useCallback(() => {
-    setState(currentState => {
-      if (currentState.status !== "reviewingAddress") {
-        return currentState;
-      }
-
-      const { origin, ...session } = currentState;
-      return { ...session, status: "success" };
-    });
-  }, []);
-  const completeMockConfirmation = useCallback(() => {
-    setState(currentState =>
-      currentState.status === "confirmationRequired"
-        ? {
-            ...currentState,
-            status: "success",
-            target: {
-              type: "contactDetail",
-              contactId: currentState.selectedContactId,
-            },
-          }
-        : currentState,
-    );
   }, []);
   const goBack = useCallback(() => {
     cancelAddressValidation();
@@ -391,22 +345,9 @@ export function useAddAddressFlowViewModel({
             return CLOSED_ADD_ADDRESS_FLOW_STATE;
           }
           return { ...currentState, status: "enteringAddress" };
-        case "reviewingAddress": {
-          if (currentState.entryMode === "prefilled") {
-            const { origin, ...session } = currentState;
-            return origin === "addressDetails"
-              ? { ...session, status: "enteringAddress" }
-              : { ...session, status: "namingAddress" };
-          }
-          const { origin, ...session } = currentState;
-          return origin === "addressDetails"
-            ? { ...session, status: "enteringAddress" }
-            : { ...session, status: "namingAddress" };
-        }
+        case "reviewingAddress":
         case "confirmationRequired":
           return { ...currentState, status: "namingAddress" };
-        case "success":
-          return currentState;
       }
     });
   }, [cancelAddressValidation]);
@@ -424,10 +365,7 @@ export function useAddAddressFlowViewModel({
     updateAddress,
     updateAddressLabel,
     confirmAddress,
-    continueFromAddressDetails,
     continueFromName,
-    continueFromReview,
-    completeMockConfirmation,
     goBack,
     close,
   };

@@ -22,6 +22,7 @@ import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/useContactsViewModel";
+import { ContactsAddAddressFlowDialog } from "LLD/features/Contacts/screens/Contacts/components/ContactsAddAddressFlowDialog";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { CONTEXT_MENU_VIEW } from "LLD/features/MyWallet/components/ContextMenu/types";
@@ -162,9 +163,11 @@ function ContactsViewModelProbe({
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
         Start Add Address
       </button>
-      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromReview}>
-        Continue address review
+      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromAddressDetails}>
+        Save address
       </button>
+      {/* Renders the real steps so a test can reach a state the dialog's own CTA blocks. */}
+      <ContactsAddAddressFlowDialog {...viewModel.addAddressFlowDialog} />
     </>
   );
 }
@@ -551,24 +554,8 @@ describe("Contacts integration", () => {
     await user.type(addressNameInput, "Exchange");
     await user.click(confirmationButton);
 
-    expect(screen.getByRole("dialog")).toBe(dialog);
-    expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: "Go back" }));
-    expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
-
-    await user.click(screen.getByTestId("contacts-add-address-confirm"));
-    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
-
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-add-address-input")).not.toBeInTheDocument();
       expect(
         within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
       ).toBeVisible();
@@ -598,7 +585,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should ignore review continuation when the address flow is closed", async () => {
+  it("should ignore an address save when the address flow is closed", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <ContactsViewModelProbe contactId={meContactId} contactType="me" />
@@ -609,9 +596,51 @@ describe("Contacts integration", () => {
       },
     );
 
-    await user.click(screen.getByRole("button", { name: "Continue address review" }));
+    await user.click(screen.getByRole("button", { name: "Save address" }));
 
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+  });
+
+  it("should ignore an address save while the address name is invalid", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+    await waitFor(() => expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled());
+
+    const addressNameInput = screen.getByTestId("contacts-add-address-name-input");
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Ethereum 💎");
+    expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+
+    // Bypasses the disabled CTA to exercise the view model's own guard. The open
+    // dialog marks everything behind it aria-hidden, hence the `hidden` query.
+    fireEvent.click(screen.getByRole("button", { name: "Save address", hidden: true }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
+      "enteringAddress",
+    );
+    expect(store.getState().contacts.contacts.flatMap(contact => contact.addresses)).toHaveLength(
+      0,
+    );
   });
 
   it("should render an invalid-format helper and block address confirmation", async () => {

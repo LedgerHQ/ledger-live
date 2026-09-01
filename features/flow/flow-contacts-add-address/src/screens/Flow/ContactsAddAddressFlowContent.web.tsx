@@ -3,39 +3,39 @@ import { ContactsAddAddressEntry } from "../AddressEntry/components/ContactsAddA
 import type { SanctionedAddressBannerProps } from "../../components/SanctionedAddressBanner/types";
 import { ContactsAddAddressNameInput } from "../AddressName/components/Input/ContactsAddAddressNameInput";
 import type { ContactsAddAddressNameLabels } from "../AddressName/types";
-import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion";
 import { ContactsAddAddressReview, type ContactsAddAddressReviewLabels } from "../Review";
 import type {
-  AddAddressCompletionLabels,
   AddAddressEntryLabels,
   AddAddressFlowState,
   AddAddressInputSource,
 } from "../../state/types";
 
-export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review" | "success";
+export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review";
 
-type OpenAddAddressFlowState = Exclude<AddAddressFlowState, { status: "closed" }>;
-type AddAddressFlowContentState = Exclude<OpenAddAddressFlowState, { status: "selectingCurrency" }>;
+/**
+ * `confirmationRequired` is the native flow's hand-off to its device intent: no web
+ * screen renders it, so it is excluded here rather than mapped to a step.
+ */
+type AddAddressWebFlowState = Exclude<
+  AddAddressFlowState,
+  { status: "closed" | "confirmationRequired" }
+>;
+type AddAddressFlowContentState = Exclude<AddAddressWebFlowState, { status: "selectingCurrency" }>;
 
 export type ContactsAddAddressFlowContentProps = Readonly<{
   state: AddAddressFlowContentState;
   entryLabels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
-  reviewLabels?: ContactsAddAddressReviewLabels;
-  completionLabels: AddAddressCompletionLabels;
+  reviewLabels: ContactsAddAddressReviewLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
-  onCompleteMockConfirmation: () => void;
-  onClose: () => void;
 }>;
 
-export function resolveAddAddressWebFlowStep(
-  state: OpenAddAddressFlowState,
-): AddAddressWebFlowStep {
+export function resolveAddAddressWebFlowStep(state: AddAddressWebFlowState): AddAddressWebFlowStep {
   switch (state.status) {
     case "selectingCurrency":
       return "currency";
@@ -43,20 +43,16 @@ export function resolveAddAddressWebFlowStep(
       return "address";
     case "namingAddress":
       return "name";
-    case "confirmationRequired":
     case "reviewingAddress":
       return "review";
-    case "success":
-      return "success";
   }
 }
 
-export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowState): boolean {
+export function shouldUseAddAddressFlowBackNavigation(state: AddAddressWebFlowState): boolean {
   return (
     state.status === "enteringAddress" ||
     state.status === "namingAddress" ||
-    state.status === "reviewingAddress" ||
-    state.status === "confirmationRequired"
+    state.status === "reviewingAddress"
   );
 }
 
@@ -66,14 +62,11 @@ export function ContactsAddAddressFlowContent({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
-  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
-  onCompleteMockConfirmation,
-  onClose,
 }: ContactsAddAddressFlowContentProps): React.JSX.Element {
   switch (state.status) {
     case "enteringAddress":
@@ -100,46 +93,14 @@ export function ContactsAddAddressFlowContent({
           onContinue={onContinueFromName}
         />
       );
-    case "confirmationRequired":
-      return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.continue}
-          onContinue={onCompleteMockConfirmation}
-          testID="contacts-add-address-confirmation"
-          title={completionLabels.title}
-        />
-      );
     case "reviewingAddress":
-      if (
-        state.entryMode === "prefilled" &&
-        state.displayContext !== null &&
-        reviewLabels !== undefined
-      ) {
-        return (
-          <ContactsAddAddressReview
-            addressEntry={state.addressEntry}
-            addressLabel={state.addressLabel}
-            displayContext={state.displayContext}
-            labels={reviewLabels}
-            onContinue={onContinueFromReview}
-          />
-        );
-      }
       return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.continue}
+        <ContactsAddAddressReview
+          addressEntry={state.addressEntry}
+          addressLabel={state.addressLabel}
+          displayContext={state.displayContext}
+          labels={reviewLabels}
           onContinue={onContinueFromReview}
-          testID="contacts-add-address-review"
-          title={completionLabels.title}
-        />
-      );
-    case "success":
-      return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.close}
-          onContinue={onClose}
-          testID="contacts-add-address-success"
-          title={completionLabels.successTitle}
         />
       );
   }

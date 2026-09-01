@@ -8,7 +8,6 @@ import {
 import {
   isPrefillAddAddressFlowOpen,
   usePrefillAddAddressFlow,
-  type AddAddressCompletionLabels,
   type ContactsAddAddressNameLabels,
   type ContactsAddAddressReviewLabels,
 } from "@features/flow-contacts-add-address";
@@ -52,15 +51,6 @@ export function PrefillAddAddressFlowRoot(): React.JSX.Element | null {
     }),
     [t],
   );
-  const completionLabels = useMemo<AddAddressCompletionLabels>(
-    () => ({
-      title: t("contacts.addAddressReview.title"),
-      continue: t("contacts.addAddressReview.continue"),
-      successTitle: t("contacts.addAddressReview.successTitle"),
-      close: t("contacts.addAddressReview.close"),
-    }),
-    [t],
-  );
 
   if (!isPrefillAddAddressFlowOpen(state)) {
     return null;
@@ -87,7 +77,6 @@ export function PrefillAddAddressFlowRoot(): React.JSX.Element | null {
     },
     nameLabels,
     reviewLabels,
-    completionLabels,
     onAddressChange: () => undefined,
     onContinueFromAddressDetails: () => undefined,
     onAddressLabelChange: updateAddressLabel,
@@ -95,7 +84,6 @@ export function PrefillAddAddressFlowRoot(): React.JSX.Element | null {
     onContinueFromReview: () => {
       void saveFromReview();
     },
-    onCompleteMockConfirmation: () => undefined,
     onBack,
     onClose,
   };

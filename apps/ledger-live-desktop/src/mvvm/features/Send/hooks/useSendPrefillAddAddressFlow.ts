@@ -15,7 +15,6 @@ import { createMockContactDeviceIntentsPort } from "@features/platform-contacts"
 import {
   isPrefillAddAddressFlowOpen,
   useAddAddressFlowViewModel,
-  type AddAddressCompletionLabels,
   type AddAddressEntryLabels,
   type ContactsAddAddressNameLabels,
   type ContactsAddAddressReviewLabels,
@@ -36,7 +35,6 @@ export type SendPrefillAddAddressPhase = Readonly<{
   entryLabels: AddAddressEntryLabels;
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels: ContactsAddAddressReviewLabels;
-  completionLabels: AddAddressCompletionLabels;
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
@@ -243,23 +241,12 @@ export function useSendPrefillAddAddressFlow({
     }),
     [t],
   );
-  const completionLabels = useMemo<AddAddressCompletionLabels>(
-    () => ({
-      title: t("contacts.addAddressReview.title"),
-      continue: t("contacts.addAddressReview.continue"),
-      successTitle: t("contacts.addAddressReview.successTitle"),
-      close: t("contacts.addAddressReview.close"),
-    }),
-    [t],
-  );
-
   const addressPhase = isAddressPhase
     ? {
         state: addressFlowState,
         entryLabels,
         nameLabels,
         reviewLabels,
-        completionLabels,
         onAddressLabelChange: updateAddressLabel,
         onContinueFromName: continueFromName,
         onContinueFromReview: () => {

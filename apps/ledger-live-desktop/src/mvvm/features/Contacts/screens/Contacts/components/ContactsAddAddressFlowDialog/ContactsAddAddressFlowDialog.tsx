@@ -15,17 +15,15 @@ export function ContactsAddAddressFlowDialog({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
-  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
-  onCompleteMockConfirmation,
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
-  if (state.status === "closed") {
+  if (state.status === "closed" || state.status === "confirmationRequired") {
     return null;
   }
 
@@ -35,26 +33,22 @@ export function ContactsAddAddressFlowDialog({
     <ModularDialogFlow fillAvailableHeight={isSelectingCurrency} onClose={onClose}>
       {modularDialog => {
         const currentStep = resolveAddAddressWebFlowStep(state);
-        const flowContent =
-          state.status === "selectingCurrency" ? (
-            modularDialog.content
-          ) : (
-            <ContactsAddAddressFlowContent
-              completionLabels={completionLabels}
-              entryLabels={entryLabels}
-              sanctionedAddressBanner={sanctionedAddressBanner}
-              nameLabels={nameLabels}
-              reviewLabels={reviewLabels}
-              onAddressChange={onAddressChange}
-              onAddressLabelChange={onAddressLabelChange}
-              onClose={onClose}
-              onContinueFromAddressDetails={onContinueFromAddressDetails}
-              onContinueFromName={onContinueFromName}
-              onContinueFromReview={onContinueFromReview}
-              onCompleteMockConfirmation={onCompleteMockConfirmation}
-              state={state}
-            />
-          );
+        const flowContent = isSelectingCurrency ? (
+          modularDialog.content
+        ) : (
+          <ContactsAddAddressFlowContent
+            entryLabels={entryLabels}
+            sanctionedAddressBanner={sanctionedAddressBanner}
+            nameLabels={nameLabels}
+            reviewLabels={reviewLabels}
+            onAddressChange={onAddressChange}
+            onAddressLabelChange={onAddressLabelChange}
+            onContinueFromAddressDetails={onContinueFromAddressDetails}
+            onContinueFromName={onContinueFromName}
+            onContinueFromReview={onContinueFromReview}
+            state={state}
+          />
+        );
         const screens: DialogFlowScreenRegistry<AddAddressWebFlowStep> = {
           currency: {
             content: modularDialog.content,
@@ -86,13 +80,6 @@ export function ContactsAddAddressFlowDialog({
             options: {
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
-            },
-          },
-          success: {
-            content: flowContent,
-            options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
-              hasBackButton: false,
             },
           },
         };
