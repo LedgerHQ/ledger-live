@@ -27,19 +27,14 @@
       ],
       "lib-es/*": [
         "lib-es/*"
-      ],
-      "*": [
-        "lib/*"
       ]
     }
   },
   "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
+    "./scenarii/zcash": {
+      "@ledgerhq/source": "./src/scenarii/zcash.ts",
+      "require": "./lib/scenarii/zcash.js",
+      "default": "./lib-es/scenarii/zcash.js"
     },
     "./package.json": "./package.json"
   },
@@ -55,6 +50,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
+    "knip-check": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-zcash",
     "test": "jest",
     "coverage": "jest --coverage",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
@@ -87,6 +83,8 @@
     "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "bip32": "^4.0.0",
+    "bs58check": "^4.0.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

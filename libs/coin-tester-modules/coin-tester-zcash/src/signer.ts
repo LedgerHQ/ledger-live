@@ -35,7 +35,7 @@ import { getCapturedPcztHex } from "./zcashClientTestSeam";
 // deliberately the mainnet Zcash version byte, not Zcash's own testnet/regtest one.
 // See that file for why: @ledgerhq/coin-zcash's recipient classifier only accepts
 // mainnet-prefixed addresses.
-const P2PKH_VERSION = 7352;
+export const P2PKH_VERSION = 7352;
 
 // `testDeriveKeys`/`testSignPczt`/`orchardAddressFromUfvk` all key off this network
 // string; "mainnet" keeps the derived UFVK/addresses within coin-zcash's own
@@ -46,16 +46,25 @@ const HARDENED_OFFSET = 0x80000000;
 
 function parsePathSegment(segment: string): number {
   const hardened = segment.endsWith("'") || segment.endsWith("h") || segment.endsWith("H");
-  const index = parseInt(hardened ? segment.slice(0, -1) : segment, 10);
+  const digits = hardened ? segment.slice(0, -1) : segment;
+  if (!/^\d+$/.test(digits)) {
+    throw new Error(`invalid BIP32 path segment: "${segment}"`);
+  }
+  const index = parseInt(digits, 10);
   return hardened ? index + HARDENED_OFFSET : index;
 }
 
 function parsePath(path: string): number[] {
-  return path
-    .split("/")
-    .map(segment => segment.trim())
-    .filter(Boolean)
-    .map(parsePathSegment);
+  return (
+    path
+      .split("/")
+      .map(segment => segment.trim())
+      .filter(Boolean)
+      // A leading "m" (root marker) is the standard BIP32 notation but not
+      // itself a derivation index; every other segment must parse as one.
+      .filter(segment => segment.toLowerCase() !== "m")
+      .map(parsePathSegment)
+  );
 }
 
 function ser32(i: number): Uint8Array {
@@ -108,7 +117,7 @@ function deriveChild(parent: Bip32Node, index: number): Bip32Node {
   return { privateKey: childPrivateKey, chainCode: digest.slice(32, 64) };
 }
 
-function derivePath(seed: Uint8Array, path: string): Bip32Node {
+export function derivePath(seed: Uint8Array, path: string): Bip32Node {
   return parsePath(path).reduce(deriveChild, masterNodeFromSeed(seed));
 }
 
@@ -118,7 +127,7 @@ function hash160(data: Uint8Array): Uint8Array {
 
 /** Base58Check of the 22-byte {2-byte version BE}{20-byte hash160} payload --
  * Zcash's own P2PKH encoding (`t1...`), per `wallet-btc/crypto/zec.ts`. */
-function p2pkhAddress(privateKey: Uint8Array): string {
+export function p2pkhAddress(privateKey: Uint8Array): string {
   const pubKey = secp256k1.getPublicKey(privateKey, true);
   const hash = hash160(pubKey);
   const payload = new Uint8Array(22);

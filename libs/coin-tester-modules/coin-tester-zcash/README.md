@@ -10,8 +10,9 @@ consensus node) + `zaino` (shielded gRPC indexer) stack.
 ## Features
 
 - Deterministic testing scenarios covering all 4 Zcash send flows
-- Local signer delegating 100% of signing to `@ledgerhq/zcash-utils`'s test-only NAPI surface
-  (`testDeriveKeys`/`testSignPczt`/`orchardAddressFromUfvk`) — no device, no hand-rolled crypto
+- Local signer delegating all Orchard/Ironwood signing to `@ledgerhq/zcash-utils`'s test-only NAPI
+  surface (`testDeriveKeys`/`testSignPczt`/`orchardAddressFromUfvk`) — no device required. Only the
+  transparent BIP32 derivation and P2PKH address encoding are implemented locally (`src/signer.ts`)
 - Integration with a local `zebra` + `zaino` regtest stack for chain state
 - MSW bridges the wallet's Ledger-explorer HTTP calls to `zebra`'s own address-indexed JSON-RPC
   (`getaddressutxos`/`getaddresstxids`/`getrawtransaction`), so no separate explorer service is required

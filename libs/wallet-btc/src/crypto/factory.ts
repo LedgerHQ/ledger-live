@@ -30,17 +30,14 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Qtum({ network });
       break;
     }
-    case "zcash": {
-      const network = coininfo.zcash.main.toBitcoinJS();
-      res = new crypto.Zec({ network });
-      break;
-    }
+    // `zcash_regtest` deliberately reuses mainnet's version bytes, not
+    // `coininfo.zcash.test`: @ledgerhq/coin-zcash's own recipient classifier
+    // hardcodes mainnet address prefixes with no per-network
+    // parameterization, so a testnet-encoded address would never validate
+    // there. See `zcash_regtest.ts` in domain/entity/currency-crypto for the
+    // full rationale.
+    case "zcash":
     case "zcash_regtest": {
-      // Deliberately reuses the mainnet version bytes, not `coininfo.zcash.test`:
-      // @ledgerhq/coin-zcash's own recipient classifier hardcodes mainnet address
-      // prefixes with no per-network parameterization, so a testnet-encoded
-      // address would never validate there. See `zcash_regtest.ts` in
-      // domain/entity/currency-crypto for the full rationale.
       const network = coininfo.zcash.main.toBitcoinJS();
       res = new crypto.Zec({ network });
       break;
