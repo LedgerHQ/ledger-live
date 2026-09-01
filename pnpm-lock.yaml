@@ -25,8 +25,8 @@ catalogs:
       specifier: 8.2.0
       version: 8.2.0
     '@ledgerhq/coin-stellar':
-      specifier: 9.4.0
-      version: 9.4.0
+      specifier: 9.5.0
+      version: 9.5.0
     '@ledgerhq/coin-tezos':
       specifier: 10.2.0
       version: 10.2.0
@@ -11560,7 +11560,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.5.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12709,7 +12709,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.5.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -22180,8 +22180,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-stellar@9.4.0':
-    resolution: {integrity: sha512-6JyFGmAmmsZUq/4Z3FXR9fO4PUtg7WhasX+UTMfFrCy9NuqLgbuFsJPtntnCofcGr3kfaLTBipLVbM2SF7HkKA==}
+  '@ledgerhq/coin-stellar@9.5.0':
+    resolution: {integrity: sha512-nScqq2lbfc5CwWzcRlOLKFN6s8UmOphDH3guQ/dlhG3OwWNE6M4Ndcez7OduA/42B6J0oRY7d779PDhH5RbJBg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -49233,7 +49233,7 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-stellar@9.5.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
@@ -67554,7 +67554,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -67601,7 +67603,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
