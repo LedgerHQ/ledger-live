@@ -7,8 +7,38 @@ import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
 } from "@features/flow-pay-feature-tour/state";
-import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import { usePayCardToolProps } from "./usePayCardToolProps";
+
+/**
+ * `@shared/env` is mocked, as in `useEnvDevToolProps.test.ts`. The real module reads its definitions
+ * from `@ledgerhq/live-env`, which this package does not depend on, so CI cannot resolve it.
+ */
+const DEFAULT_ENV_VALUES: Record<string, string> = {
+  CARD_API_URL: "https://card.api.live.ledger.com",
+  CARD_BAANX_CLIENT_KEY: "",
+};
+let envValues: Record<string, string> = { ...DEFAULT_ENV_VALUES };
+let envListener: ((change: { name: string }) => void) | undefined;
+
+const mockSetEnvUnsafe = jest.fn((key: string, value: string) => {
+  envValues[key] = value;
+  envListener?.({ name: key });
+});
+
+jest.mock("@shared/env", () => ({
+  getEnv: (key: string) => envValues[key],
+  setEnvUnsafe: (key: string, value: string) => mockSetEnvUnsafe(key, value),
+  changes: {
+    subscribe: (listener: (change: { name: string }) => void) => {
+      envListener = listener;
+      return {
+        unsubscribe: () => {
+          envListener = undefined;
+        },
+      };
+    },
+  },
+}));
 
 function buildStore() {
   return configureStore({
@@ -29,11 +59,8 @@ describe("usePayCardToolProps", () => {
 
   beforeEach(() => {
     store = buildStore();
-  });
-
-  afterEach(() => {
-    setEnv("CARD_API_URL", getEnvDefault("CARD_API_URL"));
-    setEnv("CARD_BAANX_CLIENT_KEY", getEnvDefault("CARD_BAANX_CLIENT_KEY"));
+    envValues = { ...DEFAULT_ENV_VALUES };
+    mockSetEnvUnsafe.mockClear();
   });
 
   it("exposes desktop onboarding steps and default flag values", () => {
@@ -160,12 +187,12 @@ describe("usePayCardToolProps", () => {
     expect(result.current.env.vars).toEqual([
       {
         key: "CARD_API_URL",
-        value: getEnv("CARD_API_URL"),
+        value: "https://card.api.live.ledger.com",
         suggestedValue: "https://dev.api.baanx.com",
       },
       {
         key: "CARD_BAANX_CLIENT_KEY",
-        value: getEnv("CARD_BAANX_CLIENT_KEY"),
+        value: "",
         suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
       },
     ]);
@@ -178,17 +205,22 @@ describe("usePayCardToolProps", () => {
       result.current.env.setVar("CARD_API_URL", "https://card.staging.test");
     });
 
-    expect(getEnv("CARD_API_URL")).toBe("https://card.staging.test");
+    expect(mockSetEnvUnsafe).toHaveBeenCalledWith("CARD_API_URL", "https://card.staging.test");
     expect(result.current.env.vars[0]?.value).toBe("https://card.staging.test");
   });
 
-  it("follows a change made outside the tool", () => {
+  it("follows a change made outside the tool, and ignores every other env", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     act(() => {
-      setEnv("CARD_BAANX_CLIENT_KEY", "another-tenant-key");
+      envValues.CARD_BAANX_CLIENT_KEY = "another-tenant-key";
+      envListener?.({ name: "SOME_OTHER_ENV" });
     });
+    expect(result.current.env.vars[1]?.value).toBe("");
 
+    act(() => {
+      envListener?.({ name: "CARD_BAANX_CLIENT_KEY" });
+    });
     expect(result.current.env.vars[1]?.value).toBe("another-tenant-key");
   });
 
