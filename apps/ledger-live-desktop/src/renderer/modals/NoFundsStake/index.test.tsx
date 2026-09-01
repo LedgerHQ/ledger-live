@@ -81,15 +81,12 @@ describe("NoFundsStakeModal", () => {
       const usdcSubAccount = ethAccountWithUsdc.subAccounts?.[0];
       if (!usdcSubAccount) throw new Error("No USDC sub-account in mock");
 
-      render(
-        <NoFundsStakeModal account={usdcSubAccount} parentAccount={ethAccountWithUsdc} />,
-        {
-          initialState: {
-            accounts: [ethAccountWithUsdc],
-            modals: { MODAL_NO_FUNDS_STAKE: { isOpened: true } },
-          },
+      render(<NoFundsStakeModal account={usdcSubAccount} parentAccount={ethAccountWithUsdc} />, {
+        initialState: {
+          accounts: [ethAccountWithUsdc],
+          modals: { MODAL_NO_FUNDS_STAKE: { isOpened: true } },
         },
-      );
+      });
 
       fireEvent.click(screen.getByText("Swap"));
 
