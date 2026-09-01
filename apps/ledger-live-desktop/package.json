@@ -128,7 +128,7 @@
     "@ledgerhq/coin-casper": "workspace:^",
     "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
-    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-zcash": "workspace:^",

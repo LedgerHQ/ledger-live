@@ -235,7 +235,6 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 libs/coin-modules/coin-module-boilerplate/                               @ledgerhq/coin-integration
 libs/coin-modules/coin-bitcoin/                                          @ledgerhq/coin-integration
 libs/coin-modules/coin-cosmos/                                           @ledgerhq/coin-integration
-libs/coin-modules/coin-evm/                                              @ledgerhq/coin-integration
 libs/coin-modules/coin-polkadot/                                         @ledgerhq/coin-integration
 libs/coin-modules/coin-solana/                                           @ledgerhq/coin-integration
 libs/coin-modules/coin-tron/                                             @ledgerhq/coin-integration
