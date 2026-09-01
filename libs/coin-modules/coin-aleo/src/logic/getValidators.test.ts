@@ -2,6 +2,7 @@ import { apiClient } from "../network/api";
 import type { AleoCommitteeResponse } from "../types/api";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import coinConfig from "../config";
+import { MICROCREDITS_PER_CREDIT } from "../constants";
 import { getValidators } from "./getValidators";
 
 jest.mock("../network/api");
@@ -10,16 +11,20 @@ const OPEN_HIGH_STAKE = "aleo1open_high";
 const OPEN_LOW_STAKE = "aleo1open_low";
 const CLOSED_HIGH_STAKE = "aleo1closed_high";
 
-// Supply equal to the staked total makes the gross rate exactly the inflation rate
-// (0.05 * S / S), so each expectation below stays readable.
-const TOTAL_SUPPLY_CREDITS = 100;
+const microcredits = (credits: number) => credits * MICROCREDITS_PER_CREDIT;
+
+// Keep these magnitudes above MIN_VALIDATOR_STAKE_MICROCREDITS: a validator under that
+// committee floor earns nothing whatever the ratios say, so shrinking them would make the
+// test stop testing the ratios it asserts on.
+const TOTAL_STAKE_CREDITS = 200_000_000;
+const TOTAL_SUPPLY_CREDITS = TOTAL_STAKE_CREDITS;
 const GROSS_RATE = 0.05;
 const committee: AleoCommitteeResponse = {
-  total_stake: 100 * 1_000_000,
+  total_stake: microcredits(TOTAL_STAKE_CREDITS),
   members: {
-    [CLOSED_HIGH_STAKE]: [50 * 1_000_000, false, 0],
-    [OPEN_LOW_STAKE]: [10 * 1_000_000, true, 50],
-    [OPEN_HIGH_STAKE]: [20 * 1_000_000, true, 0],
+    [CLOSED_HIGH_STAKE]: [microcredits(100_000_000), false, 0],
+    [OPEN_LOW_STAKE]: [microcredits(20_000_000), true, 50],
+    [OPEN_HIGH_STAKE]: [microcredits(40_000_000), true, 0],
   },
 };
 
@@ -72,6 +77,22 @@ describe("getValidators", () => {
     expect(validators.find(v => v.address === CLOSED_HIGH_STAKE)?.estimatedYearlyRewardsRate).toBe(
       0,
     );
+  });
+
+  it("reports a zero rate below the committee minimum, even at zero commission", async () => {
+    const BELOW_MINIMUM = "aleo1below_minimum";
+    jest.mocked(apiClient.getCommittee).mockResolvedValue({
+      ...committee,
+      members: {
+        ...committee.members,
+        // Just under the floor, so this is the threshold and not the ratios talking.
+        [BELOW_MINIMUM]: [microcredits(9_999_999), true, 0],
+      },
+    });
+
+    const validators = await getValidators(CURRENCY_ID);
+
+    expect(validators.find(v => v.address === BELOW_MINIMUM)?.estimatedYearlyRewardsRate).toBe(0);
   });
 
   it("fetches committee, names and supply concurrently", async () => {

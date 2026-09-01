@@ -8022,6 +8022,10 @@
       "title": "This validator is closed",
       "description": "This validator is not accepting new delegators. Choose an open validator to continue."
     },
+    "AleoAlreadyBondedElsewhere": {
+      "title": "You are already staking with another validator",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
     },
@@ -9468,21 +9472,26 @@
         "steps": {
           "validator": {
             "title": "Validator",
-            "label": "Validator address",
-            "loading": "Loading validators...",
-            "closed": "Closed",
-            "commission": "Commission"
-          },
-          "withdrawal": {
-            "title": "Withdrawal",
-            "label": "Withdrawal address",
-            "info": "On Aleo, the withdrawal address controls where the bonded funds can be claimed after they are unbonded. It defaults to your account address. Only change it if you want the funds to be claimable by another Aleo account."
+            "fetchError": "The validator list could not be loaded.",
+            "totalStake": "Total stake",
+            "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+            "commissionOnly": "{{commission}}% commission",
+            "rowSubtitleClosed": "Validator is closed to new stake",
+            "rowSubtitleEarnsNothing": "Validator earns no rewards",
+            "nonEarning": {
+              "belowCommitteeMinimum": "This validator holds less than the 10,000,000 ALEO committee minimum, so it earns no rewards and neither would you.",
+              "fullCommission": "This validator takes 100% commission, so delegators keep nothing.",
+              "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so delegators earn nothing."
+            },
+            "topUpOnly": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one."
           },
           "amount": {
-            "title": "Amount"
+            "title": "Amount",
+            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked — convert your private balance to public first if you want to stake it."
           },
           "connectDevice": {
-            "title": "Device"
+            "title": "Device",
+            "validatorLabel": "Validator"
           },
           "confirmation": {
             "title": "Confirmation",
@@ -9497,7 +9506,7 @@
       }
     },
     "manage": {
-      "headerAction": "Staking",
+      "headerAction": "Earn",
       "title": "Manage staking",
       "bond": {
         "title": "Bond",
@@ -9516,7 +9525,11 @@
       "flow": {
         "title": "Unbond ALEO",
         "steps": {
-          "amount": { "title": "Amount", "availableLabel": "Bonded balance" },
+          "amount": {
+            "title": "Amount",
+            "unbondableBanner": "Maximum unbondable amount is",
+            "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
           "connectDevice": { "title": "Device" },
           "confirmation": {
             "title": "Confirmation",

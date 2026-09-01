@@ -2,11 +2,6 @@ import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
 import { ModalData } from "~/renderer/modals/types";
 
-// Shared between BondPublicFlowModal / UnbondFlowModal / ClaimUnbondFlowModal:
-// the three index.tsx wrappers were ~37-line near-identical class components
-// that only differed by the modal name, the initial step id and the Body
-// component they render. This factory captures the shared shell.
-
 type BodyProps<Data, StepId> = {
   stepId: StepId;
   onClose: () => void;
@@ -26,7 +21,10 @@ export function createStakingFlowModal<Name extends keyof ModalData, StepId exte
   type State = { stepId: StepId };
   const INITIAL_STATE: State = { stepId: initialStepId };
 
-  class StakingFlowModal extends PureComponent<ModalData[Name], State> {
+  // The modal takes no props: its data arrives from the redux modal state through
+  // Modal's `render` callback below, the same way SelfTransferModal works. Typing the
+  // props as ModalData[Name] wrongly demanded `account` at every render site.
+  class StakingFlowModal extends PureComponent<Record<string, never>, State> {
     state: State = INITIAL_STATE;
     handleReset = () => this.setState({ ...INITIAL_STATE });
     handleStepChange = (stepId: StepId) => this.setState({ stepId });

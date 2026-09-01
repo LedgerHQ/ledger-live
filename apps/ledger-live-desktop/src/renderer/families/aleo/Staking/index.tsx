@@ -158,8 +158,6 @@ const Staking = ({ account }: { account: AleoAccount }) => {
   const hasBonded = bondedBalance.gt(0);
   const hasUnbonding = unbondingBalance.gt(0);
 
-  // Poll the live block height so the countdown stays fresh between account syncs,
-  // but only while an unstaking countdown is actually visible.
   const isCountingDown =
     hasUnbonding &&
     !isClaimable &&

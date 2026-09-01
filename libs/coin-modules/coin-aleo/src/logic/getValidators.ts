@@ -2,7 +2,13 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { apiClient } from "../network/api";
-import { estimateNetRate, isRecord, parseTotalSupply, resolveConfig } from "./utils";
+import {
+  estimateNetRate,
+  getValidatorNonEarningReason,
+  isRecord,
+  parseTotalSupply,
+  resolveConfig,
+} from "./utils";
 import type {
   AleoCommitteeMember,
   AleoCommitteeResponse,
@@ -79,15 +85,21 @@ export const getValidators = makeLRUCache(
 
     return Object.entries(committee.members)
       .map(([address, [stakeMicrocredits, isOpen, commissionPercent]]) => {
+        const shared = {
+          totalStakeMicrocredits,
+          validatorStakeMicrocredits: new BigNumber(stakeMicrocredits),
+          commissionPercent: new BigNumber(commissionPercent),
+        };
+        // Total stake alone decides whether a validator earns; the rate additionally
+        // needs the supply, so a missing supply drops the rate but keeps the reason.
+        const nonEarningReason =
+          totalStakeMicrocredits === null
+            ? null
+            : getValidatorNonEarningReason({ ...shared, totalStakeMicrocredits });
         const rate =
           totalSupplyCredits === null || totalStakeMicrocredits === null
             ? null
-            : estimateNetRate({
-                totalSupplyCredits,
-                totalStakeMicrocredits,
-                validatorStakeMicrocredits: new BigNumber(stakeMicrocredits),
-                commissionPercent: new BigNumber(commissionPercent),
-              });
+            : estimateNetRate({ ...shared, totalStakeMicrocredits, totalSupplyCredits });
 
         return {
           address,
@@ -96,6 +108,7 @@ export const getValidators = makeLRUCache(
           isOpen,
           commissionPercent,
           ...(rate !== null && { estimatedYearlyRewardsRate: rate.toNumber() }),
+          ...(nonEarningReason !== null && { nonEarningReason }),
         };
       })
       .sort((left, right) => {

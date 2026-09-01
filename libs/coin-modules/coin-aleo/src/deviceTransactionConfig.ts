@@ -37,8 +37,14 @@ async function getDeviceTransactionConfig({
     { type: "text", label: "Method", value: method },
     { type: "address", label: "From", address: mainAccount.freshAddress },
     { type: "address", label: "To", address: transaction.recipient },
-    { type: "amount", label: "Amount" },
   );
+
+  // `claim_unbond_public` takes only the staker: the amount is decided by the chain and
+  // absent from the signed payload, so the device displays none and neither do we.
+  // `transaction.amount` is pinned to 0 for this mode, which would render as "0 ALEO".
+  if (transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    fields.push({ type: "amount", label: "Amount" });
+  }
 
   // TODO: restore config.isFeeSponsored check
   // https://ledgerhq.atlassian.net/browse/LIVE-29092

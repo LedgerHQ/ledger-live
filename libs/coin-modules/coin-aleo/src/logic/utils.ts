@@ -34,6 +34,7 @@ import {
   MAX_VALIDATOR_STAKE_SHARE,
   MICROCREDITS_PER_CREDIT,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
+  MIN_VALIDATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
@@ -70,6 +71,7 @@ import type {
   AleoTokenType,
   EnrichedPrivateRecord,
   AleoStakingPosition,
+  AleoValidatorNonEarningReason,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -321,11 +323,6 @@ function resolveStakingOperationType(rawTx: AleoPublicTransaction): OperationTyp
     : undefined;
 }
 
-/**
- * Shared predicate for "no usable sender was recorded" — a single source of truth so
- * resolveSenderAddress (raw indexer sender_address) and backfillStakingSenders (already
- * bridge-mapped op.senders) cannot drift on what counts as blank.
- */
 function isBlankSenderValue(sender: string | null | undefined): boolean {
   return !sender;
 }
@@ -751,15 +748,11 @@ export function findBestRecordForFee({
   return bestFeeRecord;
 }
 
-/**
- * Narrows the generic `OperationExtra` to Aleo's shape. `functionId` is the discriminant:
- * every Aleo extra carries one and no other family's does.
- */
+/** `functionId` works as the discriminant because no other family's extra carries one. */
 export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
   return extra !== null && typeof extra === "object" && "functionId" in extra;
 }
 
-/** {@link isAleoOperationExtra} for the serialized form. */
 export function isAleoOperationExtraRaw(
   extraRaw: OperationExtraRaw,
 ): extraRaw is AleoOperationExtraRaw {
@@ -1562,6 +1555,35 @@ export function estimateGrossRate(
  *
  * Null means "cannot be derived", zero means "earns nothing"; not interchangeable.
  */
+/**
+ * Why a validator pays its delegators nothing, or null when it pays. The single source
+ * of truth for these rules: {@link estimateNetRate} collapses all of them to a rate of
+ * exactly 0, so anything wanting to say *which* must ask here rather than infer.
+ */
+export function getValidatorNonEarningReason({
+  totalStakeMicrocredits,
+  validatorStakeMicrocredits,
+  commissionPercent,
+}: {
+  totalStakeMicrocredits: BigNumber;
+  validatorStakeMicrocredits: BigNumber;
+  commissionPercent: BigNumber;
+}): AleoValidatorNonEarningReason | null {
+  if (validatorStakeMicrocredits.isLessThan(MIN_VALIDATOR_STAKE_MICROCREDITS)) {
+    return "belowCommitteeMinimum";
+  }
+  if (
+    validatorStakeMicrocredits
+      .dividedBy(totalStakeMicrocredits)
+      .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE)
+  ) {
+    return "overConcentrated";
+  }
+  if (commissionPercent.isGreaterThanOrEqualTo(100)) return "fullCommission";
+
+  return null;
+}
+
 export function estimateNetRate({
   totalSupplyCredits,
   totalStakeMicrocredits,
@@ -1581,15 +1603,17 @@ export function estimateNetRate({
 
   if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
 
-  const validatorOverConcentrated = validatorStakeMicrocredits
-    .dividedBy(totalStakeMicrocredits)
-    .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE);
   const delegatorBelowMinimum =
     delegatorStakeMicrocredits !== undefined &&
     delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
-  if (validatorOverConcentrated || delegatorBelowMinimum) return new BigNumber(0);
+  const nonEarningReason = getValidatorNonEarningReason({
+    totalStakeMicrocredits,
+    validatorStakeMicrocredits,
+    commissionPercent,
+  });
+  if (delegatorBelowMinimum || nonEarningReason !== null) return new BigNumber(0);
 
-  const keptShare = BigNumber.maximum(new BigNumber(1).minus(commissionPercent.dividedBy(100)), 0);
+  const keptShare = new BigNumber(1).minus(commissionPercent.dividedBy(100));
 
   return grossRate.multipliedBy(keptShare);
 }
