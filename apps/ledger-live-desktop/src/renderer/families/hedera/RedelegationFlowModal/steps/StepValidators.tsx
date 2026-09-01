@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
@@ -38,7 +38,7 @@ function StepValidators({
   const stakingNodeId = transaction.properties?.stakingNodeId;
   const selectedValidatorId = typeof stakingNodeId === "number" ? String(stakingNodeId) : null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const enrichedDelegation = useHederaEnrichedDelegationV2(account, delegation);
+  const enrichedDelegation = useHederaEnrichedDelegation(account, delegation);
   const feeError = status.errors.fee;
   const validatorRemoved = isValidatorRemoved({
     loading: enrichedDelegation.loading,

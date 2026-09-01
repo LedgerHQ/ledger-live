@@ -19,7 +19,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       retry: false,
     }),
   },
-  useHederaEnrichedDelegationV2: () => ({
+  useHederaEnrichedDelegation: () => ({
     loading: false,
     error: null,
     validator: { id: "3", address: "0.0.3" },

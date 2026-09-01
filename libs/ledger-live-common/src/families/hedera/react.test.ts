@@ -6,28 +6,15 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import hederaCoinConfig from "@ledgerhq/coin-hedera/config";
-import { getCurrentHederaPreloadData } from "@ledgerhq/coin-hedera/preload-data";
 import { getHederaValidators } from "@ledgerhq/coin-hedera/network/utils";
 import { apiClient } from "@ledgerhq/coin-hedera/network/api";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { liveConfig } from "../../config/sharedConfig";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import * as hooks from "./react";
 import type { HederaAccount, HederaDelegation, HederaValidator } from "./types";
-
-const localCache: Record<string, unknown> = {};
-const cache = makeBridgeCacheSystem({
-  saveData(c, d) {
-    localCache[c.id] = d;
-    return Promise.resolve();
-  },
-  getData(c) {
-    return Promise.resolve(localCache[c.id]);
-  },
-});
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -96,201 +83,6 @@ describe("hedera/react", () => {
     });
   });
 
-  describe("useHederaPreloadData", () => {
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should return preloaded data", async () => {
-      const { result } = renderHook(() => hooks.useHederaPreloadData(currency));
-      const data = getCurrentHederaPreloadData(currency);
-
-      expect(result.current).toStrictEqual(data);
-    });
-  });
-
-  describe("useHederaValidators", () => {
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should return all validators when no search query", () => {
-      const { result } = renderHook(() => hooks.useHederaValidators(currency));
-      const data = getCurrentHederaPreloadData(currency);
-
-      expect(result.current).toEqual(data.validators);
-    });
-
-    it("should return all validators when search query is empty string", () => {
-      const { result } = renderHook(() => hooks.useHederaValidators(currency, ""));
-      const data = getCurrentHederaPreloadData(currency);
-
-      expect(result.current).toEqual(data.validators);
-    });
-
-    it("should filter validators by name", () => {
-      const { result } = renderHook(() => hooks.useHederaValidators(currency, "Swirlds"));
-
-      expect(result.current.length).toBeGreaterThan(0);
-      result.current.forEach(validator => {
-        expect(validator.name.toLowerCase()).toContain("swirlds");
-      });
-    });
-
-    it("should filter validators by node ID", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const firstValidator = data.validators[0];
-
-      if (firstValidator) {
-        const { result } = renderHook(() => hooks.useHederaValidators(currency, firstValidator.id));
-
-        expect(result.current.length).toBeGreaterThan(0);
-        expect(result.current.some(v => v.id === firstValidator.id)).toBe(true);
-      }
-    });
-
-    it("should return empty array when no validators match search", () => {
-      const { result } = renderHook(() =>
-        hooks.useHederaValidators(currency, "nonexistingvalidator"),
-      );
-
-      expect(result.current).toEqual([]);
-    });
-
-    it("should be case insensitive when filtering", () => {
-      const { result: upperResult } = renderHook(() =>
-        hooks.useHederaValidators(currency, "SWIRLDS"),
-      );
-      const { result: lowerResult } = renderHook(() =>
-        hooks.useHederaValidators(currency, "swirlds"),
-      );
-
-      expect(upperResult.current.length).toEqual(lowerResult.current.length);
-    });
-  });
-
-  describe("useHederaEnrichedDelegation", () => {
-    const mockAccount = {
-      type: "Account",
-      id: "mock-account-id",
-      currency,
-      balance: new BigNumber(1000000),
-      spendableBalance: new BigNumber(1000000),
-      hederaResources: {
-        delegation: null,
-      },
-    } as unknown as HederaAccount;
-
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should enrich delegation with validator data", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
-
-      const delegation: HederaDelegation = {
-        nodeId: Number(validator.id),
-        delegated: new BigNumber(100000),
-        pendingReward: new BigNumber(500),
-      };
-
-      const { result } = renderHook(() =>
-        hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-      );
-
-      expect(result.current).toEqual({
-        nodeId: delegation.nodeId,
-        delegated: delegation.delegated,
-        pendingReward: delegation.pendingReward,
-        status: "overstaked",
-        validator: {
-          name: validator.name,
-          address: validator.address,
-          addressChecksum: validator.addressChecksum,
-          id: validator.id,
-          minStake: validator.minStake,
-          maxStake: validator.maxStake,
-          activeStake: validator.activeStake,
-          activeStakePercentage: validator.activeStakePercentage,
-          overstaked: validator.overstaked,
-          isLedgerNode: validator.isLedgerNode,
-        },
-      });
-    });
-
-    it("should handle delegation with non-existent validator", () => {
-      const delegation: HederaDelegation = {
-        nodeId: 999999,
-        delegated: new BigNumber(100000),
-        pendingReward: new BigNumber(500),
-      };
-
-      const { result } = renderHook(() =>
-        hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-      );
-
-      expect(result.current).toEqual({
-        nodeId: delegation.nodeId,
-        delegated: delegation.delegated,
-        pendingReward: delegation.pendingReward,
-        status: "inactive",
-        validator: {
-          name: "",
-          address: "",
-          addressChecksum: null,
-          id: String(delegation.nodeId),
-          minStake: new BigNumber(0),
-          maxStake: new BigNumber(0),
-          activeStake: new BigNumber(0),
-          activeStakePercentage: new BigNumber(0),
-          overstaked: false,
-          isLedgerNode: false,
-        },
-      });
-    });
-
-    it("should handle delegation with zero staked amount", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
-
-      const delegation: HederaDelegation = {
-        nodeId: Number(validator.id),
-        delegated: new BigNumber(0),
-        pendingReward: new BigNumber(0),
-      };
-
-      const { result } = renderHook(() =>
-        hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-      );
-
-      expect(result.current.delegated).toEqual(new BigNumber(0));
-      expect(result.current.validator.id).toEqual(validator.id);
-    });
-
-    it("should handle delegation with pending rewards", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
-
-      const delegation: HederaDelegation = {
-        nodeId: Number(validator.id),
-        delegated: new BigNumber(100000),
-        pendingReward: new BigNumber(1500),
-      };
-
-      const { result } = renderHook(() =>
-        hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-      );
-
-      expect(result.current.pendingReward).toEqual(new BigNumber(1500));
-    });
-  });
   describe("hederaQueries.validatorsList", () => {
     it("should return all validators", async () => {
       const { result } = renderHook(
@@ -321,7 +113,7 @@ describe("hedera/react", () => {
     });
   });
 
-  describe("useHederaEnrichedDelegationV2", () => {
+  describe("useHederaEnrichedDelegation", () => {
     const mockAccount = {
       type: "Account",
       id: "mock-account-id",
@@ -347,7 +139,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -368,7 +160,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -406,7 +198,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -447,7 +239,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -469,7 +261,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -495,7 +287,7 @@ describe("hedera/react", () => {
         React.createElement(QueryClientProvider, { client: queryClient }, children);
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         { wrapper },
       );
 
@@ -525,7 +317,7 @@ describe("hedera/react", () => {
       };
 
       const { result } = renderHook(
-        () => hooks.useHederaEnrichedDelegationV2(mockAccount, delegation),
+        () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         {
           wrapper: createWrapper(),
         },
@@ -535,13 +327,3 @@ describe("hedera/react", () => {
     });
   });
 });
-
-function setup(): {
-  prepare: () => Promise<unknown>;
-} {
-  const currency = getCryptoCurrencyById("hedera");
-
-  return {
-    prepare: async () => cache.prepareCurrency(currency),
-  };
-}

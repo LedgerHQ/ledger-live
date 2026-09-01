@@ -33,7 +33,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
         ]),
     }),
   },
-  useHederaEnrichedDelegationV2: jest.fn(
+  useHederaEnrichedDelegation: jest.fn(
     () => require("../../__mocks__/delegation.mock").mockEnrichedDelegation,
   ),
 }));

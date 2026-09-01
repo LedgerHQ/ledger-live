@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useHederaEnrichedDelegationV2 } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import { NavigatorName, ScreenName } from "~/const";
 import HederaDelegations from "../index";
 import {
@@ -17,7 +17,7 @@ const mockNavigate = jest.fn();
 jest.mock("LLM/hooks/useStake/useStake", () => ({ useStake: jest.fn() }));
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaEnrichedDelegationV2: jest.fn(),
+  useHederaEnrichedDelegation: jest.fn(),
 }));
 
 jest.mock("@react-navigation/native", () => ({
@@ -69,7 +69,7 @@ jest.mock("~/families/hedera/shared/DelegationStatusModal", () => ({
 jest.mock("~/families/hedera/shared/ValidatorIcon", () => () => null);
 
 const mockUseStake = jest.mocked(useStake);
-const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegationV2);
+const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegation);
 
 beforeEach(() => {
   jest.clearAllMocks();
