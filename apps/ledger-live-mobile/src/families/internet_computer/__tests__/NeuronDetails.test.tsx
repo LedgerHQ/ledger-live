@@ -414,3 +414,49 @@ describe("NeuronDetails", () => {
     expect(screen.getByText("Increase stake")).toBeVisible();
   });
 });
+
+/*
+ * QA reported "Dissolve delay bonus: +0%" on a neuron whose voting power was visibly above its
+ * stake. Rounding to a whole percent was the cause, and it failed at both ends of the curve.
+ */
+describe("NeuronDetails bonus rounding", () => {
+  const withDelay = (dissolveDelaySeconds: number) => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      dissolveDelaySeconds: BigInt(dissolveDelaySeconds),
+      dissolveState: { DissolveDelaySeconds: BigInt(dissolveDelaySeconds) },
+      ageSeconds: 0n,
+    });
+    renderDetails();
+  };
+
+  // The curve is quadratic, so it is nearly flat near zero: this is the band a neuron locked just
+  // above the 14-day voting minimum sits in, and it used to report no bonus at all.
+  it("keeps a sub-one-percent bonus instead of reporting none", () => {
+    withDelay(19 * SECONDS_IN_DAY + 23 * 3600);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+0\.15%/)).toBeVisible();
+  });
+
+  // A quarter of the maximum delay is exactly +12.5%, which Math.round turned into 13.
+  it("does not round an exact half away", () => {
+    withDelay(NNS_MAXIMUM_DISSOLVE_DELAY / 4);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+12\.5%/)).toBeVisible();
+  });
+
+  // Trailing zeros are dropped, so the round values still read as whole percentages.
+  it("leaves a whole-percent bonus without decimals", () => {
+    withDelay(NNS_MAXIMUM_DISSOLVE_DELAY);
+
+    expect(screen.getByText(/Dissolve delay bonus: \+200%/)).toBeVisible();
+  });
+
+  // Dissolving parks aging_since_timestamp_seconds at u64::MAX, so the age bonus is a true zero
+  // rather than a rounded fraction — this row is meant to keep reading +0%.
+  it("still reports a genuinely absent age bonus as zero", () => {
+    withDelay(NNS_MAXIMUM_DISSOLVE_DELAY);
+
+    expect(screen.getByText("+0%")).toBeVisible();
+  });
+});

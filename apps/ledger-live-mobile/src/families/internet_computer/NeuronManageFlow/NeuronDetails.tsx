@@ -50,8 +50,19 @@ type Props = StackNavigatorProps<
   ScreenName.InternetComputerNeuronDetails
 >;
 
-// Percentage above the 1x base, as the bonus is presented to the user.
-const bonusPercent = (multiplier: number) => Math.round((multiplier - 1) * 100);
+/**
+ * Percentage above the 1x base, as the bonus is presented to the user.
+ *
+ * The dissolve-delay curve is quadratic, so it is nearly flat near zero: rounding to a whole percent
+ * reported +0% for every delay under 36.5 days — the voting minimum being 14 days, that covered the
+ * whole band a freshly locked neuron sits in — while the voting power beside it visibly disagreed.
+ * It also lost exact values further up, rendering the +12.5% of a six-month delay as +13%.
+ *
+ * Two decimals is as far as the figure means anything: it is a ratio derived from a
+ * `dissolveDelaySeconds` snapshot, not a unit-exact amount like the e8s voting power above it.
+ * Trailing zeros are dropped so the round values still read as +50% and +200%.
+ */
+const bonusPercent = (multiplier: number) => String(Number(((multiplier - 1) * 100).toFixed(2)));
 
 // Following and periodic confirmation are voting actions, which the canister authorizes for hot keys
 // as well as the controller (governance.rs: `follow` and `refresh_voting_power` both gate on
