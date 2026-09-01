@@ -132,13 +132,9 @@ const App = ({ store, initialCountervalues }: Props) => {
       <I18nextProvider i18n={i18n}>
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
-            {accountDataScheduler ? (
-              <AccountDataProvider scheduler={accountDataScheduler}>
-                <InnerApp initialCountervalues={initialCountervalues} />
-              </AccountDataProvider>
-            ) : (
+            <AccountDataProvider scheduler={accountDataScheduler}>
               <InnerApp initialCountervalues={initialCountervalues} />
-            )}
+            </AccountDataProvider>
           </Provider>
         </I18nProvider>
       </I18nextProvider>

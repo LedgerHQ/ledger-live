@@ -15,11 +15,10 @@ import {
 import {
   createAccountDataScheduler,
   createAccountDataSourceRegistry,
-  createCoinModuleApiSource,
-  createLegacyBridgeSource,
+  createDefaultAccountDataSources,
+  type AccountDataHost,
   type AccountDataScheduler,
   type AccountRef,
-  type AccountSlice,
   type AssetBalanceRow,
 } from "@features/platform-account-data";
 import { AccountIdSchema } from "@shared/schema-primitives";
@@ -37,9 +36,6 @@ import { walletCliDebug } from "../shared/log";
  * full sync, never break it.
  */
 const GRANULAR_FAMILIES: ReadonlySet<string> = new Set(getEnabledGenericCoinFrameworkFamilies());
-
-const BALANCE_ONLY: ReadonlySet<AccountSlice> = new Set<AccountSlice>(["balance"]);
-const NOTHING: ReadonlySet<AccountSlice> = new Set();
 
 /** Build the ref the account-data layer works with from a session account descriptor. */
 export function accountRefOf(descriptor: AccountDescriptor): AccountRef {
@@ -139,22 +135,16 @@ export function createAccountDataRuntime({
     return descriptor;
   };
 
-  const registry = createAccountDataSourceRegistry([
-    createCoinModuleApiSource({
-      capabilities: ref => {
-        const currency = getCryptoCurrencyById(ref.currencyId);
-        return GRANULAR_FAMILIES.has(currency.family) ? BALANCE_ONLY : NOTHING;
-      },
-      getBalances: async ref =>
-        (await adapters.loadCoinFramework()).getBalanceRows(descriptorFor(ref.accountId)),
-    }),
-    createLegacyBridgeSource({
-      supports: () => true,
-      sync: async ref => ({
-        balances: await (await adapters.loadBridge()).getBalanceRows(descriptorFor(ref.accountId)),
-      }),
-    }),
-  ]);
+  const host: AccountDataHost = {
+    granularFamilies: () => GRANULAR_FAMILIES,
+    familyOf: currencyId => getCryptoCurrencyById(currencyId).family,
+    readAssetBalances: async ref =>
+      (await adapters.loadCoinFramework()).getBalanceRows(descriptorFor(ref.accountId)),
+    syncAccountBalances: async ref =>
+      (await adapters.loadBridge()).getBalanceRows(descriptorFor(ref.accountId)),
+  };
+
+  const registry = createAccountDataSourceRegistry(createDefaultAccountDataSources(host));
 
   const scheduler = createAccountDataScheduler({
     registry,
