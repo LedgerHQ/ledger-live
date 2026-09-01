@@ -3,6 +3,8 @@ import { Button, TextInput } from "@ledgerhq/lumen-ui-react";
 import {
   contact,
   getContactNameValidationError,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+  isValidContactName,
   parseContactName,
   type Contact,
   type ContactNameValidationErrorName,
@@ -19,8 +21,11 @@ export function createContact(
   const existingNames = contacts.map(({ name }) => name);
   const validationError = getContactNameValidationError(draftName, existingNames);
 
-  if (validationError !== null) {
-    return { contact: null, validationError };
+  if (!isValidContactName(draftName, existingNames)) {
+    return {
+      contact: null,
+      validationError: validationError ?? INVALID_CONTACT_NAME_ERROR_NAME,
+    };
   }
 
   return {
@@ -83,7 +88,11 @@ export function ContactsSync({ contacts, onCreate }: ContactsSyncProps) {
             >
               <span className="body-2-semi-bold">{item.name}</span>
               <span className="body-3 text-muted">
-                {item.isMe ? "Me" : `${item.addresses.length} addresses`}
+                {item.isMe
+                  ? "Me"
+                  : `${item.addresses.length} ${
+                      item.addresses.length === 1 ? "address" : "addresses"
+                    }`}
               </span>
             </li>
           ))}
@@ -101,7 +110,10 @@ export function ContactsSync({ contacts, onCreate }: ContactsSyncProps) {
         </Button>
       </form>
       {feedback ? (
-        <output className={hasError ? "mt-8 text-error body-2" : "mt-8 text-success body-2"}>
+        <output
+          className={hasError ? "mt-8 text-error body-2" : "mt-8 text-success body-2"}
+          role={hasError ? "alert" : "status"}
+        >
           {feedback}
         </output>
       ) : null}
