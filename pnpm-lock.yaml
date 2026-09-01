@@ -1197,9 +1197,6 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
-      '@shared/schema-primitives':
-        specifier: workspace:^
-        version: link:../../shared/schema-primitives
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -3211,6 +3208,12 @@ importers:
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -3238,6 +3241,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -29089,7 +29095,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -67793,9 +67799,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -67842,9 +67846,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

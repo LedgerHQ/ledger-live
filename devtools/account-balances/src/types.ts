@@ -1,6 +1,14 @@
+/** Enough of a currency unit to render an amount the way the app would. */
+export interface AmountUnit {
+  readonly code: string;
+  readonly magnitude: number;
+}
+
 /** A balance the account-data layer has stored for one account or token account. */
 export interface StoredBalance {
   readonly assetId: string;
+  /** Absent when the host could not resolve the asset — the raw smallest-unit value is shown then. */
+  readonly unit?: AmountUnit;
   /** Total holdings, in the asset's smallest unit. */
   readonly value: string;
   /** The part of `value` that can be spent right now. */
