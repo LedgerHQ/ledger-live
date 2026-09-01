@@ -64,9 +64,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bip39": "^3.1.0",
@@ -75,6 +73,8 @@
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
