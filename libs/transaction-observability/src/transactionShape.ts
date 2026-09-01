@@ -38,9 +38,10 @@ export function getDappSelector(tx: TransactionLike | undefined | null): string 
   const data = tx?.data;
   if (data === undefined || data === null) return undefined;
 
-  // A live transaction carries a Buffer; a serialised one carries a `0x`-prefixed string. Both
-  // reach this package, so normalise rather than assume — reading a string as a Buffer yields
-  // `0x0x095ea7`, which looks like a selector and is not one.
+  // A live transaction carries a Buffer. A serialised one carries a string, and the optimistic
+  // operation's is *unprefixed* — observed as `a1903eab…` on a real Lido deposit — while other
+  // routes prefix it. So normalise rather than assume: reading a prefixed string as a Buffer
+  // yields `0x0x095ea7`, which looks like a selector and is not one.
   const hex =
     typeof data === "string"
       ? data.replace(/^0x/i, "")

@@ -471,3 +471,84 @@ describe("the gate rejects inherited property names", () => {
     },
   );
 });
+
+describe("classifying at broadcast with no sign context", () => {
+  /**
+   * The generic coin framework copies the transaction onto the operation: `recipients` is its
+   * recipient and `transactionRaw.data` its call data, as a bare hex string with no `0x`.
+   *
+   * This is the route correlation cannot serve — a signed operation serialised across the
+   * wallet-api webview boundary loses object identity, and successes are reported here.
+   */
+  const broadcastOnly = (raw: Record<string, unknown>, recipients: string[], manifestId?: string) =>
+    buildBroadcastCommonEvent({
+      account: ethereum,
+      mainAccount: ethereum,
+      pathway: TransactionPathway.Dapp,
+      manifestId,
+      signedOperation: {
+        signature: "0xsig",
+        operation: { type: "OUT", extra: {}, recipients, transactionRaw: raw },
+      } as unknown as SignedOperation,
+    });
+
+  it("reads the action, contract and token off the operation", () => {
+    const common = broadcastOnly(
+      { mode: "send", data: LIDO_SUBMIT.slice(2) },
+      [LIDO_STETH],
+      "lido",
+    );
+
+    expect(common).toMatchObject({
+      earnTransactionType: "deposit",
+      rawTransactionType: "submit",
+      dappContract: LIDO_STETH.toLowerCase(),
+      outputCurrency: "stETH",
+      stakingMethod: "liquid",
+      dataSource: "broadcast",
+    });
+  });
+
+  // Kiln's two products share a manifest, so without the contract a success could not say
+  // which one it was — the case that made carrying state necessary in the first place.
+  it("names Kiln's product from the operation alone", () => {
+    const common = broadcastOnly(
+      { mode: "send", data: LIDO_SUBMIT.slice(2) },
+      [KILN_PSETH],
+      "kiln-staking",
+    );
+
+    expect(common).toMatchObject({ stakingMethod: "pooling", outputCurrency: "psETH" });
+  });
+
+  it("claims nothing for a contract call outside a staking app", () => {
+    const common = broadcastOnly({ mode: "send", data: WETH_DEPOSIT.slice(2) }, [LIDO_STETH]);
+
+    expect(common.earnTransactionType).toBeUndefined();
+    expect(common.dappContract).toBeUndefined();
+  });
+
+  // A plain send's recipient is the user's own payee. It must never surface as a contract.
+  it("never reports a recipient when there is no call data", () => {
+    const common = broadcastOnly({ mode: "send" }, ["0xsomeone"], "lido");
+
+    expect(common.dappContract).toBeUndefined();
+    expect(common.rawTransactionType).toBe("OUT");
+  });
+
+  it("still falls back to the operation type when transactionRaw is absent", () => {
+    const common = buildBroadcastCommonEvent({
+      account: ethereum,
+      mainAccount: ethereum,
+      pathway: TransactionPathway.Dapp,
+      manifestId: "lido",
+      signedOperation: {
+        signature: "0xsig",
+        operation: { type: "OUT", extra: {} },
+      } as unknown as SignedOperation,
+    });
+
+    expect(common.rawTransactionType).toBe("OUT");
+    expect(common.dappContract).toBeUndefined();
+  });
+});
