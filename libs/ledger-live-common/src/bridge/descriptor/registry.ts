@@ -1,7 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getCurrencyBridge } from "../impl";
-import { resolveFamily } from "../zcashRouting";
+import { getCurrencyBridge, resolveFamily } from "../impl";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";
 import { descriptor as aptosDescriptor } from "../../families/aptos/descriptor";
 import { descriptor as bitcoinDescriptor } from "../../families/bitcoin/descriptor";
@@ -80,9 +79,7 @@ export function getDescriptor(currency: CryptoOrTokenCurrency | undefined): Coin
     return bridge.getDescriptor(cryptoCurrency) as CoinDescriptor;
   }
 
-  // Fallback: use the descriptor registry
-  // Same family resolution as the bridge layer, so a Zcash account served by
-  // @ledgerhq/coin-zcash resolves to the Zcash descriptor rather than Bitcoin's.
+  // Fallback: same family resolution as the bridge layer.
   const fullDescriptor = descriptorRegistry[resolveFamily(cryptoCurrency)];
   if (fullDescriptor) {
     return fullDescriptor;
