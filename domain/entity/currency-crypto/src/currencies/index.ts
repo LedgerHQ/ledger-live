@@ -192,6 +192,7 @@ export * from "./waves";
 export * from "./westend";
 export * from "./xion";
 export * from "./zcash";
+export * from "./zcash_regtest";
 export * from "./zclassic";
 export * from "./zcoin";
 export * from "./zencash";
