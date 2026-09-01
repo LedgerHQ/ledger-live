@@ -63,6 +63,7 @@ export const tableLabels: ContactsTableLabels = {
   formatTransactionCount: count => `${count} transaction`,
   payAction: "Pay",
   moreAction: "More",
+  viewContact: "View contact",
   viewTransactions: "View transactions",
 };
 

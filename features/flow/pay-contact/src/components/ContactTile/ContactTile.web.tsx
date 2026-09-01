@@ -18,7 +18,8 @@ type ContactTileProps = Readonly<{
   transactionCount: number;
   labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => React.ReactNode;
-  onPay?: (contact: Contact) => void;
+  onContactPress?: (contact: Contact) => void;
+  onViewContact?: (contact: Contact) => void;
   onViewTransactions?: (contact: Contact) => void;
 }>;
 
@@ -27,11 +28,16 @@ export function ContactTile({
   transactionCount,
   labels,
   renderAddresses,
-  onPay,
+  onContactPress,
+  onViewContact,
   onViewTransactions,
 }: ContactTileProps) {
   return (
-    <TableRow data-testid={`pay-contacts-tile-${contact.id}`}>
+    <TableRow
+      clickable={Boolean(onContactPress)}
+      onClick={onContactPress ? () => onContactPress(contact) : undefined}
+      data-testid={`pay-contacts-tile-${contact.id}`}
+    >
       <TableCell>
         <TableCellItem>
           <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
@@ -43,19 +49,24 @@ export function ContactTile({
       <TableCell align="end">{renderAddresses(contact.addresses)}</TableCell>
       <TableCell align="end">{labels.formatTransactionCount(transactionCount)}</TableCell>
       <TableCell align="end">
-        <div className="flex items-center justify-end gap-8">
+        <div
+          className="flex items-center justify-end gap-8"
+          onClick={e => e.stopPropagation()}
+          role="presentation"
+        >
           <IconButton
             appearance="gray"
             size="sm"
             icon={Telegram}
             aria-label={labels.payAction}
-            disabled={!onPay}
-            onClick={() => onPay?.(contact)}
+            disabled={!onContactPress}
+            onClick={() => onContactPress?.(contact)}
             data-testid={`pay-contacts-pay-action-${contact.id}`}
           />
           <ContactMoreMenu
             contact={contact}
             labels={labels}
+            onViewContact={onViewContact}
             onViewTransactions={onViewTransactions}
           />
         </div>

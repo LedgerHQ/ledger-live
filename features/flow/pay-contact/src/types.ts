@@ -30,6 +30,7 @@ export type ContactsTableLabels = Readonly<{
   formatTransactionCount: (count: number) => string;
   payAction: string;
   moreAction: string;
+  viewContact: string;
   viewTransactions: string;
 }>;
 
@@ -39,7 +40,8 @@ export type ContactsProps = Readonly<{
   addContact: PayAddContactProps;
   labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => ReactNode;
-  onPayContact?: (contact: Contact) => void;
+  onContactPress?: (contact: Contact) => void;
+  onViewContact?: (contact: Contact) => void;
   onViewTransactions?: (contact: Contact) => void;
   operations?: readonly ContactOperation[];
 }>;
@@ -51,7 +53,7 @@ export type ContactRowViewModel = Readonly<{
 
 export type ContactsViewProps = Pick<
   ContactsProps,
-  "title" | "labels" | "renderAddresses" | "onPayContact" | "onViewTransactions"
+  "title" | "labels" | "renderAddresses" | "onContactPress" | "onViewContact" | "onViewTransactions"
 > &
   Readonly<{
     isEmpty: boolean;
