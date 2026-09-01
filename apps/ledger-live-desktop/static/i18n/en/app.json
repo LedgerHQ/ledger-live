@@ -923,6 +923,7 @@
       "actions": {
         "pay": "Send to contact",
         "more": "More options",
+        "viewContact": "View contact",
         "viewTransactions": "View transactions"
       }
     },

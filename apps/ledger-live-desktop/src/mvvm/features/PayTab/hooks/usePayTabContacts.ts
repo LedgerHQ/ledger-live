@@ -53,6 +53,16 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     },
     [navigate, payTabPath],
   );
+  const onContactPress = useCallback(
+    (contact: Contact) => openNewPayment(contact),
+    [openNewPayment],
+  );
+  const onViewContact = useCallback(
+    (contact: Contact) => {
+      navigate(`/contacts?contactId=${encodeURIComponent(contact.id)}`);
+    },
+    [navigate],
+  );
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
@@ -120,10 +130,12 @@ export function usePayTabContacts(): UsePayTabContactsResult {
           formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
           payAction: t("payTab.contacts.actions.pay"),
           moreAction: t("payTab.contacts.actions.more"),
+          viewContact: t("payTab.contacts.actions.viewContact"),
           viewTransactions: t("payTab.contacts.actions.viewTransactions"),
         },
         renderAddresses: renderPayContactAddresses,
-        onPayContact: () => openNewPayment(),
+        onContactPress,
+        onViewContact,
         onViewTransactions,
         operations,
       },
@@ -144,8 +156,9 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       onSaveSuccess,
       callbacks,
       operations,
+      onContactPress,
+      onViewContact,
       onViewTransactions,
-      openNewPayment,
       isLedgerSyncIntroductionOpen,
       onActivateLedgerSyncIntroduction,
       onDismissLedgerSyncIntroduction,
