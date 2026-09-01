@@ -79,8 +79,8 @@ catalogs:
       specifier: 0.5.0
       version: 0.5.0
     '@ledgerhq/logs':
-      specifier: 6.17.0
-      version: 6.17.0
+      specifier: 6.19.0
+      version: 6.19.0
     '@ledgerhq/lumen-design-core':
       specifier: 0.1.26
       version: 0.1.26
@@ -737,7 +737,7 @@ importers:
         version: link:../../libs/live-dmk-speculos
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/types-live
@@ -1109,7 +1109,7 @@ importers:
         version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.26
@@ -1975,7 +1975,7 @@ importers:
         version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.26
@@ -2717,7 +2717,7 @@ importers:
         version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-devices':
         specifier: workspace:*
         version: link:../../libs/types-devices
@@ -2924,7 +2924,7 @@ importers:
         version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.26
@@ -5161,7 +5161,7 @@ importers:
         version: link:../../libs/live-e2e-shared
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/types-devices
@@ -5241,7 +5241,7 @@ importers:
     dependencies:
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       invariant:
         specifier: 2.2.4
         version: 2.2.4
@@ -7795,7 +7795,7 @@ importers:
     dependencies:
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -8251,7 +8251,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8403,7 +8403,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8494,7 +8494,7 @@ importers:
         version: link:../../live-signer-zcash
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../psbtv2
@@ -8645,7 +8645,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8721,7 +8721,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8803,7 +8803,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8897,7 +8897,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -8994,7 +8994,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9091,7 +9091,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9176,7 +9176,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -9246,7 +9246,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9340,7 +9340,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9419,7 +9419,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9498,7 +9498,7 @@ importers:
         version: link:../../ledger-wallet-framework
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9583,7 +9583,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9683,7 +9683,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9841,7 +9841,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9926,7 +9926,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -9990,7 +9990,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10102,7 +10102,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10205,7 +10205,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10308,7 +10308,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10396,7 +10396,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10475,7 +10475,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -10636,7 +10636,7 @@ importers:
         version: link:../../live-signer-zcash
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11564,7 +11564,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -11582,7 +11582,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11874,7 +11874,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11889,7 +11889,7 @@ importers:
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12009,7 +12009,7 @@ importers:
         version: link:../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -12143,7 +12143,7 @@ importers:
     dependencies:
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -12413,7 +12413,7 @@ importers:
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -12511,7 +12511,7 @@ importers:
         version: link:../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/speculos-transport':
         specifier: workspace:*
         version: link:../speculos-transport
@@ -12680,7 +12680,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -12713,13 +12713,13 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -12731,7 +12731,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -12884,7 +12884,7 @@ importers:
         version: link:../live-signer-zcash
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -13350,7 +13350,7 @@ importers:
         version: link:../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -13616,7 +13616,7 @@ importers:
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../../psbtv2
@@ -13857,7 +13857,7 @@ importers:
         version: link:../hw-transport-mocker
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../../types-live
@@ -14543,7 +14543,7 @@ importers:
         version: link:../hw-transport-mocker
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)
@@ -14660,7 +14660,7 @@ importers:
         version: link:../devices
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       events:
         specifier: ^3.3.0
         version: 3.3.0
@@ -14700,7 +14700,7 @@ importers:
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14740,7 +14740,7 @@ importers:
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14780,7 +14780,7 @@ importers:
         version: link:../hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       axios:
         specifier: 'catalog:'
         version: 1.13.5
@@ -14826,7 +14826,7 @@ importers:
         version: link:../../../hw-transport-http
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -14906,7 +14906,7 @@ importers:
         version: link:../promise
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../types-live
@@ -15041,7 +15041,7 @@ importers:
         version: link:../live-dmk-shared
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../types-devices
@@ -15111,7 +15111,7 @@ importers:
         version: link:../live-dmk-shared
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../types-devices
@@ -15187,7 +15187,7 @@ importers:
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../types-devices
@@ -15266,7 +15266,7 @@ importers:
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
         version: 0.3.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))
@@ -15357,7 +15357,7 @@ importers:
         version: link:../live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
         version: 0.3.0(@ledgerhq/device-management-kit@1.8.0(rxjs@7.8.2))
@@ -15498,7 +15498,7 @@ importers:
         version: link:../promise
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -16149,7 +16149,7 @@ importers:
     dependencies:
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -16229,7 +16229,7 @@ importers:
         version: link:../promise
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -16963,7 +16963,7 @@ importers:
         version: link:../live-network
       '@ledgerhq/logs':
         specifier: 'catalog:'
-        version: 6.17.0
+        version: 6.19.0
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -22364,6 +22364,9 @@ packages:
 
   '@ledgerhq/logs@6.17.0':
     resolution: {integrity: sha512-yra33g5q/AU7+PwAws+GaVpQGUuxnDREjVBnviJjcaJLVKuLzI4pnj8Bd3nY3fypM5k1yZEYKEXfUuGFUjP2+w==}
+
+  '@ledgerhq/logs@6.19.0':
+    resolution: {integrity: sha512-kmWj18C7eTtuytdaWygzVrQm9EoD4YWuYnd/kY8stVBBAzRdJzrGlm013ijQF6I/kGLKlGY7JKmll6j32KGpfQ==}
 
   '@ledgerhq/lumen-design-core@0.1.26':
     resolution: {integrity: sha512-mlxwSGflB/NazeB8Fisg4ow1nVnJwraID7JsFcCSOxjMI55FQOm4Sv4zni4SS8XyADUI4JmldyKb5LyL2lSLXg==}
@@ -28871,7 +28874,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -49225,11 +49228,11 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
 
   '@ledgerhq/coin-module-framework@8.2.0':
     dependencies:
@@ -49240,12 +49243,12 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-stellar@9.4.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
 
@@ -49259,11 +49262,11 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-tezos@10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-tezos@10.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -49271,11 +49274,11 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.2.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.17.0
+      '@ledgerhq/logs': 6.19.0
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.0
@@ -49630,6 +49633,8 @@ snapshots:
   '@ledgerhq/logs@6.12.0': {}
 
   '@ledgerhq/logs@6.17.0': {}
+
+  '@ledgerhq/logs@6.19.0': {}
 
   '@ledgerhq/lumen-design-core@0.1.26':
     dependencies:
