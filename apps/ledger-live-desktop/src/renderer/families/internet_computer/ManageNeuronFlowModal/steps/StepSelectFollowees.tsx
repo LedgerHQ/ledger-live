@@ -57,12 +57,16 @@ const StepSelectFollowees = (props: StepProps) => {
     [onUpdateTransaction],
   );
 
+  // What gets added is the draft's digits, not the draft. Gating the button on the draft itself let
+  // a principal — which carries no digits at all — enable a click that silently did nothing.
+  const draftId = useMemo(() => draft.replace(/\D/g, ""), [draft]);
+  const canAdd = draftId !== "" && !followeesIds.includes(draftId);
+
   const onAdd = useCallback(() => {
-    const id = draft.replace(/\D/g, "");
-    if (!id || followeesIds.includes(id)) return;
-    setFollowees([...followeesIds, id]);
+    if (!canAdd) return;
+    setFollowees([...followeesIds, draftId]);
     setDraft("");
-  }, [draft, followeesIds, setFollowees]);
+  }, [canAdd, draftId, followeesIds, setFollowees]);
 
   if (!hasNeuron) {
     return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
@@ -85,7 +89,7 @@ const StepSelectFollowees = (props: StepProps) => {
           </Text>
           <Input value={draft} onChange={setDraft} data-testid="icp-followee-input" />
         </Box>
-        <Button primary onClick={onAdd} disabled={!draft} data-testid="icp-followee-add-button">
+        <Button primary onClick={onAdd} disabled={!canAdd} data-testid="icp-followee-add-button">
           <Trans i18nKey="internetComputer.manageNeuronFlow.selectFollowees.add" />
         </Button>
       </Box>
