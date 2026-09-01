@@ -4,9 +4,12 @@ import { I18nWrapper } from "./i18nWrapper";
 
 describe("useBankTransferIntroAdapter", () => {
   it("starts closed and toggles isOpen via open and onClosePress", () => {
-    const { result } = renderHook(() => useBankTransferIntroAdapter({ onBankTransfer: jest.fn() }), {
-      wrapper: I18nWrapper,
-    });
+    const { result } = renderHook(
+      () => useBankTransferIntroAdapter({ onBankTransfer: jest.fn() }),
+      {
+        wrapper: I18nWrapper,
+      },
+    );
 
     expect(result.current.isOpen).toBe(false);
     expect(result.current.bankTransferIntro.isOpen).toBe(false);
