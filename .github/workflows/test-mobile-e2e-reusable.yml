@@ -1456,16 +1456,7 @@ jobs:
         ${{ (matrix.platform == 'android' && inputs.test_execution_android)
          || (matrix.platform == 'ios' && inputs.test_execution_ios) || '' }}
     needs: [detox-tests-android, detox-tests-ios]
-    # A narrowed run (test_filter, or smoke — only addAccountBTC carries @smoke) may cover just
-    # part of a dataset, and re-importing a partial set REPLACES the iterations already on the
-    # Test Run (measured: 3 -> 0, FAILED -> PASSED). That is only destructive when reusing an
-    # execution; with no key Xray creates a fresh one. publish-xray-report.mjs additionally
-    # refuses any payload that is missing rows.
-    if: >-
-      ${{ !cancelled() && inputs.export_to_xray
-       && ((inputs.test_filter == '' && !inputs.smoke_tests)
-        || (matrix.platform == 'android' && inputs.test_execution_android == '')
-        || (matrix.platform == 'ios' && inputs.test_execution_ios == '')) }}
+    if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -1486,7 +1477,15 @@ jobs:
           pattern: ${{ matrix.platform }}-test-artifacts-*
           merge-multiple: true
 
+      # A narrowed run (test_filter, or smoke — only addAccountBTC carries @smoke) may cover just
+      # part of a dataset, and re-importing a partial set REPLACES the iterations already on the
+      # Test Run (measured: 3 -> 0, FAILED -> PASSED). That is only destructive when reusing an
+      # execution; with no key Xray creates a fresh one. publish-xray-report.mjs additionally
+      # refuses any payload that is missing rows.
+      # This lives on the step, not the job: `matrix` and `env` are out of scope in a job-level if.
       - name: Publish results to Xray
+        if: >-
+          ${{ (inputs.test_filter == '' && !inputs.smoke_tests) || env.TEST_EXECUTION == '' }}
         env:
           ALLURE_RESULTS_DIR: artifacts-${{ matrix.platform }}
           PLATFORM: ${{ matrix.platform }}
