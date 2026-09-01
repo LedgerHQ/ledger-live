@@ -1,3 +1,7 @@
+import { NEVER, fromEvent, lastValueFrom, race, throwError, type Observable } from "rxjs";
+import { mergeMap, reduce } from "rxjs/operators";
+import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import { toAccountBalances, type AccountBalance } from "@domain/entity-account-balance";
 import {
   decodeAccountId,
   encodeTokenAccountId,
@@ -50,11 +54,18 @@ export async function getAccountBalanceRows({
   currencyId,
   address,
   kind = "local",
+  blacklistedTokenIds = [],
 }: {
   accountId: string;
   currencyId: string;
   address: string;
   kind?: string;
+  /**
+   * Tokens the user has hidden. Filtered here so this path agrees with the legacy one, whose
+   * `buildSubAccounts` already drops them — otherwise a hidden token would reappear as soon as a
+   * granular read replaced the account's row set.
+   */
+  blacklistedTokenIds?: readonly string[];
 }): Promise<AssetBalanceRow[]> {
   const currency = getCryptoCurrencyById(currencyId);
   const parentId = AccountIdSchema.parse(accountId);
@@ -83,7 +94,7 @@ export async function getAccountBalanceRows({
     // A token asset becomes a row only once the family can name the token behind it: a token
     // account's id is derived from the token, so an unresolvable asset has nowhere to go.
     const token = await bridgeApi.getTokenFromAsset?.(asset);
-    if (!token) continue;
+    if (!token || blacklistedTokenIds.includes(token.id)) continue;
     rows.push({
       accountId: AccountIdSchema.parse(encodeTokenAccountId(accountId, token)),
       assetId: TokenCurrencyIdSchema.parse(token.id),
@@ -141,4 +152,39 @@ export function accountRefOf(account: AccountForRef, parent?: AccountForRef): Ac
       ? { parentId: AccountIdSchema.parse(parent.id) }
       : {}),
   };
+}
+
+/**
+ * Run a full `AccountBridge.sync()` and keep only what the balance table needs.
+ *
+ * The compatibility path, shared by every host so the abort semantics are right in one place:
+ * `takeUntil` upstream of `reduce` would *complete* the stream, making `reduce` emit its seed — the
+ * **un-synced** account — which the caller would then store as a fresh balance. Aborting has to
+ * reject, so the scheduler records an error rather than stale data stamped as current.
+ */
+export async function syncAccountBalanceRows({
+  account,
+  bridge,
+  blacklistedTokenIds = [],
+  signal,
+}: {
+  account: Account;
+  bridge: Pick<AccountBridge<TransactionCommon>, "sync">;
+  blacklistedTokenIds?: string[];
+  signal?: AbortSignal;
+}): Promise<AccountBalance[]> {
+  if (signal?.aborted) throw new DOMException("aborted before the sync started", "AbortError");
+
+  const synced$ = bridge
+    .sync(account, { paginationConfig: {}, blacklistedTokenIds })
+    .pipe(reduce((acc: Account, updater: (a: Account) => Account) => updater(acc), account));
+
+  const aborted$: Observable<Account> = signal
+    ? fromEvent(signal, "abort").pipe(
+        mergeMap(() => throwError(() => new DOMException("sync aborted", "AbortError"))),
+      )
+    : NEVER;
+
+  // `race` resolves on whichever settles first: the reduced account, or the abort's error.
+  return toAccountBalances(await lastValueFrom(race(synced$, aborted$)));
 }
