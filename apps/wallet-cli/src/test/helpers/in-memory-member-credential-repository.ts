@@ -6,6 +6,7 @@ import {
 export class InMemoryMemberCredentialRepository implements MemberCredentialRepository {
   readonly entries = new Map<string, string>();
   #readError: Error | undefined;
+  #deleteError: Error | undefined;
 
   getPassword(service: string, account: string): string | null {
     if (this.#readError) throw this.#readError;
@@ -17,6 +18,7 @@ export class InMemoryMemberCredentialRepository implements MemberCredentialRepos
   }
 
   deletePassword(service: string, account: string): void {
+    if (this.#deleteError) throw this.#deleteError;
     this.entries.delete(this.key(service, account));
   }
 
@@ -24,9 +26,14 @@ export class InMemoryMemberCredentialRepository implements MemberCredentialRepos
     this.#readError = error;
   }
 
+  setDeleteError(error: Error | undefined): void {
+    this.#deleteError = error;
+  }
+
   clear(): void {
     this.entries.clear();
     this.#readError = undefined;
+    this.#deleteError = undefined;
   }
 
   private key(service: string, account: string): string {

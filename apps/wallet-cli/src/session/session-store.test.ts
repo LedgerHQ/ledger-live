@@ -175,6 +175,21 @@ describe("Session.addDescriptors", () => {
   });
 });
 
+describe("Session.wipeRing", () => {
+  it("clears trustchain state while preserving the password salt", () => {
+    const session = Session.from([]);
+    session.setTrustchain({ rootId: "root-id", applicationPath: "m/0'/17'/0'" });
+    session.trackDomain("project");
+    session.setPasswordSalt("0".repeat(32));
+
+    session.wipeRing();
+
+    expect(session.trustchain).toBeUndefined();
+    expect(session.domains).toEqual([]);
+    expect(session.passwordSalt).toBe("0".repeat(32));
+  });
+});
+
 describe("YAML round-trip", () => {
   it("session serializes and parses back intact", () => {
     const session = Session.from([]);

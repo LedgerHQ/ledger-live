@@ -3,6 +3,11 @@ import { z } from "zod";
 import os from "node:os";
 import { Session } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
+import {
+  deletePrivateKey,
+  hasStoredKey,
+  isStoredKeyPasswordProtected,
+} from "../../key-ring/keychain";
 import { getOrCreateMemberCredentials } from "../../key-ring/member-credentials";
 import { generatePasswordSalt, deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
@@ -45,6 +50,13 @@ export default defineCommand({
           "Ledger Key Ring already initialized. Run `wallet-cli ring destroy` to reset.",
         );
       }
+      if (isStoredKeyPasswordProtected() && !session.passwordSalt) {
+        throw new Error(
+          "The stored password-protected member credential cannot be unlocked because its password " +
+            "metadata is missing. Run `wallet-cli ring destroy`, then rerun " +
+            "`wallet-cli ring init` to create a new identity.",
+        );
+      }
 
       trackRingInitStarted({
         passwordProtected: !flags["unsecure-no-password"],
@@ -61,6 +73,11 @@ export default defineCommand({
         if (password !== confirm) throw new Error("Passwords do not match.");
         passwordSalt = session.passwordSalt ?? generatePasswordSalt();
         wrappingKey = await deriveWrappingKey(password, passwordSalt);
+        const hasPlaintextCredential = hasStoredKey() && !isStoredKeyPasswordProtected();
+        const isStoredCredentialReady = !hasPlaintextCredential || deletePrivateKey();
+        if (!isStoredCredentialReady) {
+          throw new Error("Failed to replace the existing member credential in the OS keychain.");
+        }
       }
 
       const memberName = flags.name ?? defaultMemberName();

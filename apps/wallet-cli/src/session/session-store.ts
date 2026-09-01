@@ -224,11 +224,10 @@ export class Session {
     return true;
   }
 
-  /** Clears Ledger Key Ring state (trustchain, tracked keys, password salt). Keeps discovered accounts. */
+  /** Clears trustchain state while preserving member credential metadata and discovered accounts. */
   wipeRing(): void {
     this._trustchain = undefined;
     this._domains = [];
-    this._passwordSalt = undefined;
   }
 
   clear(): number {
