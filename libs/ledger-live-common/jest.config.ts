@@ -74,6 +74,12 @@ if (process.env.CI) {
   reporters.push("github-actions");
 }
 
+// Since jest 30.5 the `^buffer$` moduleNameMapper below also captures `node:buffer`, so
+// jest.buffer-shim.js cannot reach the builtin itself. Capture what it needs here, in
+// real Node, and pass it through the environment.
+const { constants, kStringMaxLength } = require("node:buffer");
+process.env.__NODE_BUFFER_EXTRAS = JSON.stringify({ constants, kStringMaxLength });
+
 const defaultConfig = {
   globals: {
     Buffer: Uint8Array,

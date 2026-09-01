@@ -21,7 +21,7 @@ packages:
   - "support/*"
 
 catalog:
-  "@jest/globals": 30.4.1
+  "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.5.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-contacts-kit": 0.3.0
@@ -85,8 +85,8 @@ catalog:
   expo-keep-awake: 15.0.8
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
-  "@jest/reporters": 30.4.1
-  "@jest/test-result": 30.4.1
+  "@jest/reporters": 30.5.0
+  "@jest/test-result": 30.5.0
   "@reduxjs/toolkit": 2.11.2
   "@rsbuild/core": 2.1.13
   "@rsbuild/plugin-node-polyfill": 1.4.6
@@ -144,7 +144,7 @@ catalog:
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.5
-  babel-jest: 30.4.1
+  babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
   class-variance-authority: 0.7.1
@@ -163,18 +163,18 @@ catalog:
   "@polkadot/rpc-provider": 16.5.4
   "@polkadot/util": 14.0.1
   "@polkadot/util-crypto": 14.0.1
-  expect: 30.4.1
+  expect: 30.5.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
   lodash: 4.17.21
   msw: ^2.7.3
-  jest: 30.4.1
-  jest-circus: 30.4.1
-  jest-docblock: 30.4.0
-  jest-environment-jsdom: 30.4.1
-  jest-environment-node: 30.4.1
+  jest: 30.5.0
+  jest-circus: 30.5.0
+  jest-docblock: 30.5.0
+  jest-environment-jsdom: 30.5.0
+  jest-environment-node: 30.5.0
   jest-file-snapshot: 0.7.0
-  jest-util: 30.4.1
+  jest-util: 30.5.0
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
