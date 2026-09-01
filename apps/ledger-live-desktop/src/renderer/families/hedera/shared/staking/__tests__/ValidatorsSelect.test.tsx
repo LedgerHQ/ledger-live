@@ -3,17 +3,12 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import ValidatorsSelect from "../ValidatorsSelect";
 import { makeHederaAccount } from "../../../__mocks__/account.mock";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 
-let queryFn: () => Promise<unknown>;
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => queryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
 }));
 
 const defaultState = { settings: AFTER_ONBOARDING_STATE };
@@ -21,7 +16,7 @@ const account = makeHederaAccount();
 
 describe("ValidatorsSelect", () => {
   it("shows the fetch error text and keeps the select mounted", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(<ValidatorsSelect account={account} selectedValidatorId={null} />, {
       initialState: defaultState,
@@ -32,7 +27,7 @@ describe("ValidatorsSelect", () => {
   });
 
   it("does not show the generic 'select validator' placeholder when the fetch fails", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(<ValidatorsSelect account={account} selectedValidatorId={null} />, {
       initialState: defaultState,
@@ -43,7 +38,7 @@ describe("ValidatorsSelect", () => {
   });
 
   it("does not show the removed-validator placeholder when the fetch fails", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(
       <ValidatorsSelect account={account} selectedValidatorId={null} showRemovedPlaceholder />,
@@ -57,7 +52,7 @@ describe("ValidatorsSelect", () => {
   });
 
   it("does not show an error when the fetch succeeds", async () => {
-    queryFn = () => Promise.resolve([]);
+    mockValidatorsQuery = { validators: [], loading: false, error: null };
 
     render(<ValidatorsSelect account={account} selectedValidatorId={null} />, {
       initialState: defaultState,
@@ -67,7 +62,7 @@ describe("ValidatorsSelect", () => {
   });
 
   it("shows the loading placeholder and disables the select while the fetch is pending", async () => {
-    queryFn = () => new Promise(() => {});
+    mockValidatorsQuery = { validators: [], loading: true, error: null };
 
     render(<ValidatorsSelect account={account} selectedValidatorId={null} />, {
       initialState: defaultState,

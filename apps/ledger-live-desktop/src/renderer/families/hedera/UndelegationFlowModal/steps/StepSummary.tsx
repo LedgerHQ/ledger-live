@@ -1,8 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useQuery } from "@tanstack/react-query";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
@@ -28,11 +27,11 @@ function StepSummary({
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const currentValidatorNodeId = account.hederaResources?.delegation?.nodeId;
-  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
-  const validator = queryValidators.data?.find(v => v.id === String(currentValidatorNodeId));
+  const queryValidators = useHederaValidators(account.currency.id);
+  const validator = queryValidators.validators.find(v => v.id === String(currentValidatorNodeId));
   const validatorRemoved = isValidatorRemoved({
-    loading: queryValidators.isLoading,
-    error: queryValidators.isLoadingError,
+    loading: queryValidators.loading,
+    error: !!queryValidators.error,
     hasValidator: !!validator,
     nodeId: currentValidatorNodeId,
   });

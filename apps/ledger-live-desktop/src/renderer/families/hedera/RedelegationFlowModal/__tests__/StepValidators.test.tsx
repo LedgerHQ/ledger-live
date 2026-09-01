@@ -4,21 +4,16 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import { makeHederaAccount } from "../../__mocks__/account.mock";
 import { makeHederaTransaction } from "../../__mocks__/transaction.mock";
 import StepValidators from "../steps/StepValidators";
 import type { StepProps } from "../types";
 
-let queryFn: () => Promise<unknown>;
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => queryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: () => ({
     loading: false,
     error: null,
@@ -51,8 +46,8 @@ const makeProps = (): StepProps =>
   }) as unknown as StepProps;
 
 describe("RedelegationFlowModal/StepValidators", () => {
-  it("shows the fetch error only once when both selects hit a failing fetch", async () => {
-    queryFn = () => Promise.reject(new Error("network down"));
+  it("renders the fetch error once even though two selects read it", async () => {
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
 
     render(<StepValidators {...makeProps()} />, { initialState: defaultState });
 

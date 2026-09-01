@@ -2,31 +2,24 @@
  * @jest-environment jsdom
  */
 import "../../__tests__/test-helpers/dom-polyfill";
-import React from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import hederaCoinConfig from "@ledgerhq/coin-hedera/config";
 import { getHederaValidators } from "@ledgerhq/coin-hedera/network/utils";
 import { apiClient } from "@ledgerhq/coin-hedera/network/api";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { liveConfig } from "../../config/sharedConfig";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
+import { hederaApi } from "./state-manager/api";
 import * as hooks from "./react";
 import type { HederaAccount, HederaDelegation, HederaValidator } from "./types";
 
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children);
-}
-
 describe("hedera/react", () => {
   const currency = getCryptoCurrencyById("hedera");
+  let store: ReturnType<typeof createTestStore>;
+  let wrapper: ReturnType<typeof createWrapper>;
 
   beforeAll(() => {
     LiveConfig.setConfig(liveConfig);
@@ -81,35 +74,26 @@ describe("hedera/react", () => {
       ],
       nextCursor: null,
     });
+    store = createTestStore([hederaApi], { disableSerializableCheck: true });
+    wrapper = createWrapper(store);
   });
 
-  describe("hederaQueries.validatorsList", () => {
+  describe("useHederaValidators", () => {
     it("should return all validators", async () => {
-      const { result } = renderHook(
-        () => useQuery(hooks.hederaQueries.validatorsList(currency.id)),
-        {
-          wrapper: createWrapper(),
-        },
-      );
+      const { result } = renderHook(() => hooks.useHederaValidators(currency.id), { wrapper });
 
-      await waitFor(() => expect(result.current.data).toHaveLength(3));
+      await waitFor(() => expect(result.current.validators).toHaveLength(3));
       // sortValidators puts the Ledger node first, then orders by active stake descending
-      expect(result.current.data?.map(validator => validator.id)).toEqual(["1", "0", "3"]);
+      expect(result.current.validators.map(validator => validator.id)).toEqual(["1", "0", "3"]);
     });
 
     it("should surface an error when the validators fetch fails", async () => {
       jest.spyOn(apiClient, "getNodes").mockRejectedValueOnce(new Error("network down"));
 
-      const { result } = renderHook(
-        () => useQuery(hooks.hederaQueries.validatorsList(currency.id)),
-        {
-          wrapper: createWrapper(),
-        },
-      );
+      const { result } = renderHook(() => hooks.useHederaValidators(currency.id), { wrapper });
 
-      await waitFor(() => expect(result.current.isError).toBe(true));
-      expect(result.current.error).toBeInstanceOf(Error);
-      expect(result.current.data).toBeUndefined();
+      await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
+      expect(result.current.validators).toEqual([]);
     });
   });
 
@@ -140,9 +124,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       expect(result.current.loading).toBe(true);
@@ -161,9 +143,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       await waitFor(() =>
@@ -199,9 +179,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       await waitFor(() =>
@@ -240,9 +218,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       await waitFor(() => expect(result.current.validator.id).toEqual(validator.id));
@@ -262,9 +238,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       await waitFor(() => expect(result.current.error).toBeInstanceOf(Error));
@@ -282,10 +256,6 @@ describe("hedera/react", () => {
         pendingReward: new BigNumber(500),
       };
 
-      const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-      const wrapper = ({ children }: { children: React.ReactNode }) =>
-        React.createElement(QueryClientProvider, { client: queryClient }, children);
-
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
         { wrapper },
@@ -296,11 +266,11 @@ describe("hedera/react", () => {
       expect(result.current.error).toBeNull();
 
       jest.spyOn(apiClient, "getNodes").mockRejectedValueOnce(new Error("network down"));
-      // without this the queryFn just replays the cached promise and the refetch never fails
+      // without this the query just replays the cached list and the refetch never fails
       getHederaValidators.clear(currency.id);
-      await queryClient.refetchQueries({
-        queryKey: [...hooks.hederaQueries.all(), "validators", currency.id],
-      });
+      await store.dispatch(
+        hederaApi.endpoints.getValidators.initiate(currency.id, { forceRefetch: true }),
+      );
 
       await waitFor(() => expect(result.current.error).toBeNull());
       expect(result.current.validator.id).toEqual(validator.id);
@@ -318,9 +288,7 @@ describe("hedera/react", () => {
 
       const { result } = renderHook(
         () => hooks.useHederaEnrichedDelegation(mockAccount, delegation),
-        {
-          wrapper: createWrapper(),
-        },
+        { wrapper },
       );
 
       await waitFor(() => expect(result.current.pendingReward).toEqual(new BigNumber(1500)));

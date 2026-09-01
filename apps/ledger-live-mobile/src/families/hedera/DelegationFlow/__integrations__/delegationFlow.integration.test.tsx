@@ -9,34 +9,31 @@ import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
 import { HEDERA_ACCOUNT_1, overrideWithHederaAccount1 } from "../../__mocks__/account.mock";
 import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
-let validatorsQueryFn = () =>
-  Promise.resolve([
-    {
-      id: "0",
-      name: "Hedera Node 0",
-      address: "0.0.3",
-      addressChecksum: null,
-      minStake: new BigNumber(0),
-      maxStake: new BigNumber(250_000_000_000_000_000),
-      activeStake: new BigNumber(0),
-      activeStakePercentage: new BigNumber(0),
-      overstaked: false,
-    },
-  ]);
+const MOCK_VALIDATORS = [
+  {
+    id: "0",
+    name: "Hedera Node 0",
+    address: "0.0.3",
+    addressChecksum: null,
+    minStake: new BigNumber(0),
+    maxStake: new BigNumber(250_000_000_000_000_000),
+    activeStake: new BigNumber(0),
+    activeStakePercentage: new BigNumber(0),
+    overstaked: false,
+    isLedgerNode: false,
+  },
+];
+
+let mockValidatorsQuery: HederaValidatorsQuery;
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  hederaQueries: {
-    validatorsList: () => ({
-      queryKey: ["mock-hedera-validators"],
-      queryFn: () => validatorsQueryFn(),
-      retry: false,
-    }),
-  },
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(() => null),
 }));
 
@@ -118,20 +115,7 @@ describe("Hedera DelegationFlow (integration)", () => {
     mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
       stakingNodeId: 0,
     });
-    validatorsQueryFn = () =>
-      Promise.resolve([
-        {
-          id: "0",
-          name: "Hedera Node 0",
-          address: "0.0.3",
-          addressChecksum: null,
-          minStake: new BigNumber(0),
-          maxStake: new BigNumber(250_000_000_000_000_000),
-          activeStake: new BigNumber(0),
-          activeStakePercentage: new BigNumber(0),
-          overstaked: false,
-        },
-      ]);
+    mockValidatorsQuery = { validators: MOCK_VALIDATORS, loading: false, error: null };
   });
 
   it("completes the happy path: Summary → SelectDevice → ConnectDevice → ValidationSuccess", async () => {
@@ -176,7 +160,7 @@ describe("Hedera DelegationFlow (integration)", () => {
   });
 
   it("blocks Continue and shows the error when the validator list fails to load", async () => {
-    validatorsQueryFn = () => Promise.reject(new Error("network down"));
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
     mockAccountBridge = makeMockAccountBridge(
       HEDERA_TRANSACTION_MODES.Delegate,
       { stakingNodeId: 0 },

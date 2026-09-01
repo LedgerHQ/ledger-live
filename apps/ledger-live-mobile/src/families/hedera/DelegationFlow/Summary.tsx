@@ -1,5 +1,4 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -8,7 +7,7 @@ import {
   getDefaultValidator,
   isStakingTransaction,
 } from "@ledgerhq/live-common/families/hedera/utils";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
@@ -48,8 +47,8 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account.type === "Account", "account type must be Account");
 
   const bridge: AccountBridge<Transaction> = useAccountBridge(account);
-  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
-  const validators = queryValidators.data ?? [];
+  const queryValidators = useHederaValidators(account.currency.id);
+  const validators = queryValidators.validators;
   const defaultValidator = getDefaultValidator(validators);
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
@@ -136,7 +135,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
           right={
             <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
               <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                <Skeleton loading={queryValidators.isLoading} style={styles.validatorIconSkeleton}>
+                <Skeleton loading={queryValidators.loading} style={styles.validatorIconSkeleton}>
                   <Animated.View
                     style={{
                       transform: [{ rotate }],
@@ -155,10 +154,10 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
             onChangeValidator={onChangeDelegator}
             validator={selectedValidator}
             account={account}
-            isLoadingValidator={queryValidators.isLoading}
+            isLoadingValidator={queryValidators.loading}
           />
         </View>
-        {queryValidators.isLoadingError && (
+        {!!queryValidators.error && (
           <View style={styles.fetchError}>
             <Text color="error.c50" textAlign="center">
               <TranslatedError error={queryValidators.error} />

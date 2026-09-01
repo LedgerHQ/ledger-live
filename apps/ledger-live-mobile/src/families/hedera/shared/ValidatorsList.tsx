@@ -1,9 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
-import { filterValidatorBySearchTerm } from "@ledgerhq/live-common/families/hedera/utils";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import type { Account } from "@ledgerhq/types-live";
 import ValidatorRow from "./ValidatorRow";
@@ -24,12 +22,8 @@ export default function ValidatorsList({
   onItemPress,
   header,
 }: Readonly<Props>) {
-  const queryValidators = useQuery({
-    ...hederaQueries.validatorsList(account.currency.id),
-    select: data =>
-      searchQuery ? data.filter(v => filterValidatorBySearchTerm(v, searchQuery)) : data,
-  });
-  const validators = queryValidators.data ?? [];
+  const queryValidators = useHederaValidators(account.currency.id, searchQuery);
+  const validators = queryValidators.validators;
 
   const renderItem = useCallback(
     (data: { item: HederaValidator }) => (
@@ -38,7 +32,7 @@ export default function ValidatorsList({
     [onItemPress, account],
   );
 
-  if (queryValidators.isLoading) {
+  if (queryValidators.loading) {
     return (
       <View style={styles.center}>
         <Spinner size={32} />
@@ -49,7 +43,7 @@ export default function ValidatorsList({
   return (
     <>
       {header}
-      {queryValidators.isLoadingError && <ValidatorsFetchError error={queryValidators.error} />}
+      {!!queryValidators.error && <ValidatorsFetchError error={queryValidators.error} />}
       <FlatList
         contentContainerStyle={styles.list}
         data={validators}

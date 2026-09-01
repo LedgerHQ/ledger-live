@@ -1,14 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import {
-  getDefaultValidator,
-  filterValidatorBySearchTerm,
-} from "@ledgerhq/live-common/families/hedera/utils";
+import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -31,11 +27,8 @@ const ValidatorsListField = ({ account, selectedValidatorId, onChangeValidator }
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
   const unit = useAccountUnit(account);
-  const queryValidators = useQuery({
-    ...hederaQueries.validatorsList(account.currency.id),
-    select: data => (search ? data.filter(v => filterValidatorBySearchTerm(v, search)) : data),
-  });
-  const validators = queryValidators.data ?? [];
+  const queryValidators = useHederaValidators(account.currency.id, search);
+  const validators = queryValidators.validators;
 
   const defaultValidator = getDefaultValidator(validators);
   const selectedValidator = validators.find(v => v.id === selectedValidatorId);
@@ -67,19 +60,19 @@ const ValidatorsListField = ({ account, selectedValidatorId, onChangeValidator }
 
   return (
     <>
-      {queryValidators.isLoadingError && (
+      {!!queryValidators.error && (
         <Box mb={2}>
           <Text color="pearl">
             <TranslatedError error={queryValidators.error} />
           </Text>
         </Box>
       )}
-      {showAll && !queryValidators.isLoadingError && (
+      {showAll && !queryValidators.error && (
         <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />
       )}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          {queryValidators.isLoading ? (
+          {queryValidators.loading ? (
             <Box p={4} alignItems="center" justifyContent="center">
               <Spinner size={24} />
             </Box>
@@ -93,7 +86,7 @@ const ValidatorsListField = ({ account, selectedValidatorId, onChangeValidator }
               }}
               renderItem={renderItem}
               noResultPlaceholder={
-                !queryValidators.isLoadingError &&
+                !queryValidators.error &&
                 validators.length <= 0 &&
                 search.length > 0 && <NoResultPlaceholder search={search} />
               }

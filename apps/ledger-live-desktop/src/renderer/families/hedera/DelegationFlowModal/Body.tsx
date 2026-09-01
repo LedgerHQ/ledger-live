@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
@@ -6,9 +6,8 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { useQuery } from "@tanstack/react-query";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
@@ -93,8 +92,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
-  const validators = useMemo(() => queryValidators.data ?? [], [queryValidators.data]);
+  const { validators } = useHederaValidators(account.currency.id);
   const bridge = useAccountBridge<Transaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(bridge, () => {

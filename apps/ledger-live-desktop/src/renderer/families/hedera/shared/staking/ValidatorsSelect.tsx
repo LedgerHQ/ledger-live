@@ -3,11 +3,10 @@ import { useTranslation } from "react-i18next";
 // FilterOptionOption type for react-select v5 filter callback
 type FilterOptionOption<T> = { label: string; value: string; data: T };
 import styled from "styled-components";
-import { useQuery } from "@tanstack/react-query";
 import { Box } from "@ledgerhq/react-ui";
 import type { HederaAccount, HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { filterValidatorBySearchTerm } from "@ledgerhq/live-common/families/hedera/utils";
-import { hederaQueries } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import Select from "~/renderer/components/Select";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import ValidatorOption from "~/renderer/families/hedera/shared/staking/ValidatorOption";
@@ -35,8 +34,8 @@ export default function ValidatorsSelect({
   const [query, setQuery] = useState<string>();
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
-  const queryValidators = useQuery(hederaQueries.validatorsList(account.currency.id));
-  const options = useMemo(() => queryValidators.data ?? [], [queryValidators.data]);
+  const queryValidators = useHederaValidators(account.currency.id);
+  const options = queryValidators.validators;
 
   const renderItem = useCallback(
     (item: { data: HederaValidator; isDisabled: boolean }) => {
@@ -57,16 +56,14 @@ export default function ValidatorsSelect({
     return options.find(v => v.id === selectedValidatorId) ?? null;
   }, [selectedValidatorId, options]);
 
-  const hasNoDataError = queryValidators.data === undefined && !!queryValidators.error;
-  const fetchError = hasNoDataError && !disabled ? queryValidators.error : undefined;
-  const displayError = error ?? fetchError;
+  const displayError = error ?? (disabled ? null : queryValidators.error);
 
   const getPlaceholder = () => {
-    if (hasNoDataError) {
+    if (queryValidators.error) {
       return t("hedera.redelegation.flow.steps.validators.unableToLoadSelectPlaceholder");
     }
 
-    if (queryValidators.isLoading) {
+    if (queryValidators.loading) {
       return t("hedera.redelegation.flow.steps.validators.loadingValidatorPlaceholder");
     }
 
@@ -110,7 +107,7 @@ export default function ValidatorsSelect({
         onInputChange={setQuery}
         filterOption={filterOptions}
         inputValue={query}
-        isLoading={queryValidators.isLoading}
+        isLoading={queryValidators.loading}
         isDisabled={disabled || options.length <= 1}
         placeholder={getPlaceholder()}
         noOptionsMessage={({ inputValue }) =>
@@ -122,13 +119,13 @@ export default function ValidatorsSelect({
           onChangeValidator?.(validator ?? null);
         }}
       />
-      <ErrorContainer hasError={displayError || warning}>{renderErrorMessage()}</ErrorContainer>
+      <ErrorContainer hasError={!!displayError || !!warning}>{renderErrorMessage()}</ErrorContainer>
     </>
   );
 }
 
 const ErrorContainer = styled(Box)<{
-  hasError: Error | undefined;
+  hasError: boolean;
 }>`
   margin-top: 0px;
   font-size: 12px;
