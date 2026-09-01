@@ -2675,10 +2675,10 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.2.0(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.2.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.2.0
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2715,9 +2715,6 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../../libs/live-dmk-shared
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../libs/live-network
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -49215,6 +49212,21 @@ snapshots:
       eip55: 2.1.1
       ethers: 6.15.0
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+    transitivePeerDependencies:
+      - bufferutil
+      - react-native
+      - utf-8-validate
+
+  '@ledgerhq/coin-evm@5.2.0(@ledgerhq/logs@6.19.0)':
+    dependencies:
+      '@ethersproject/shims': 5.7.0
+      '@ledgerhq/coin-module-framework': 8.2.0
+      '@ledgerhq/logs': 6.19.0
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0
+      react-native-get-random-values: 1.11.0
     transitivePeerDependencies:
       - bufferutil
       - react-native

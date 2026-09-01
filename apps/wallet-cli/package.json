@@ -74,7 +74,6 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
