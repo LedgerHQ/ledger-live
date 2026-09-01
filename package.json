@@ -244,7 +244,7 @@
     "eslint": "8.57.0",
     "jest-sonar": "0.2.16",
     "knip": "6.32.2",
-    "nx": "22.7.8",
+    "nx": "catalog:",
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

@@ -194,6 +194,8 @@ catalog:
   playwright: 1.60.0
   allure-playwright: 3.9.0
   allure-js-commons: 3.9.0
+  nx: 22.7.8
+  "@nx/devkit": 22.7.8
   oxlint: 1.79.0
   oxfmt: 0.64.0
   # Modules published by coin-modules
