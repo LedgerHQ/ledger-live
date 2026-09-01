@@ -477,6 +477,49 @@ describe("StepSelectFollowees", () => {
     expect(patched.followeesIds).toEqual(["8"]);
   });
 
+  it("adds the digits of the draft as a followee", async () => {
+    const props = makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+    });
+    const { user } = render(<StepSelectFollowees {...props} />);
+
+    await user.type(screen.getByTestId("icp-followee-input"), "8");
+    await user.click(screen.getByTestId("icp-followee-add-button"));
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.followeesIds).toEqual(["9", "8"]);
+  });
+
+  // A principal is what a user reaches for when asked for a neuron, and it has no digits at all.
+  // Add stayed enabled and the click was swallowed, because only the draft's emptiness was gated.
+  it("keeps Add disabled for a draft with no digits in it", async () => {
+    const props = makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    const { user } = render(<StepSelectFollowees {...props} />);
+
+    await user.type(screen.getByTestId("icp-followee-input"), "rrkah-fqaaa-cai");
+
+    expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
+  });
+
+  it("keeps Add disabled for a followee the list already holds", async () => {
+    const props = makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+    });
+    const { user } = render(<StepSelectFollowees {...props} />);
+
+    await user.type(screen.getByTestId("icp-followee-input"), "9");
+
+    expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
+  });
+
   // NEURON follows one neuron on Governance already, so an empty submission would clear it — the
   // canister replaces the whole list per call. The neutral empty-state copy read like a no-op.
   it("warns that submitting an empty list stops existing following", () => {
