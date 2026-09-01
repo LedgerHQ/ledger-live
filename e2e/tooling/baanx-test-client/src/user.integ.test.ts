@@ -34,7 +34,9 @@ const missing = REQUIRED.filter(name => !process.env[name]?.trim());
 const describeLive = missing.length === 0 ? describe : describe.skip;
 
 if (missing.length > 0) {
-  console.log(`Skipping Baanx integration test — not configured. Missing: ${missing.join(", ")}`);
+  console.log(
+    "Skipping Baanx integration test — not configured (required auth environment variables are missing).",
+  );
 }
 
 describeLive("Baanx live auth → GET /v1/user", () => {

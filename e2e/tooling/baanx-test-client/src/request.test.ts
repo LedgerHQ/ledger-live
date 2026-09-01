@@ -78,7 +78,7 @@ describe("baanxRequest", () => {
     expect(mock.requests[1].headers["x-us-env"]).toBe("true");
   });
 
-  it("lets explicit headers override the defaults", async () => {
+  it("forwards extra headers without replacing the client key", async () => {
     const { mock, auth } = callWith([LOGIN_OK, { body: {} }]);
 
     await baanxRequest({
@@ -90,6 +90,28 @@ describe("baanxRequest", () => {
 
     expect(mock.requests[1].headers["x-trace-id"]).toBe("abc");
     expect(mock.requests[1].headers["x-client-key"]).toBe("env-client-key");
+  });
+
+  it("keeps the session bearer and client key when caller headers try to replace them", async () => {
+    const { mock, auth } = callWith([LOGIN_OK, { body: {} }]);
+
+    await baanxRequest({
+      path: "/v1/user",
+      headers: {
+        authorization: "Bearer caller-token",
+        Authorization: "Bearer Caller-Token",
+        "x-client-key": "caller-key",
+        "X-Client-Key": "Caller-Key",
+      },
+      auth,
+      fetchImpl: mock.fetchImpl,
+    });
+
+    const request = mock.requests[1];
+    expect(request.headers.authorization).toBe("Bearer token-1");
+    expect(request.headers.Authorization).toBeUndefined();
+    expect(request.headers["x-client-key"]).toBe("env-client-key");
+    expect(request.headers["X-Client-Key"]).toBeUndefined();
   });
 
   describe("query strings", () => {
@@ -200,9 +222,15 @@ describe("baanxRequest", () => {
       ]);
 
       const error = await captureError(
-        baanxRequest({ path: "/v1/user", auth, fetchImpl: mock.fetchImpl }),
+        baanxRequest({
+          path: "/v1/user",
+          headers: { authorization: "Bearer caller-token" },
+          auth,
+          fetchImpl: mock.fetchImpl,
+        }),
       );
 
+      expect(mock.requests[1].headers.authorization).toBe("Bearer token-1");
       expect(error.message).not.toContain("token-1");
     });
 
