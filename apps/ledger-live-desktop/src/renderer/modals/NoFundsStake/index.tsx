@@ -18,6 +18,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -95,12 +96,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     dispatch(closeModal(modalName));
 
     navigate("/swap", {
-      state: {
+      state: buildSwapNavigationState({
         defaultCurrency: currency,
-        defaultAccountId: account.id,
-        defaultParentAccountId: parentAccount?.id,
-        from: location.pathname,
-      },
+        fromPath: location.pathname,
+        account,
+        parentAccount: parentAccount ?? undefined,
+      }),
     });
   }, [currency, account, parentAccount, location, navigate, dispatch]);
 
