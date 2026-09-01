@@ -707,18 +707,21 @@ describe("sendFeatures", () => {
 
 describe("zcash descriptor resolution", () => {
   const previousShieldedEnabled = isZcashShieldedEnabled();
+  let getCurrencyConfigurationSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    jest.spyOn(configModule, "getCurrencyConfiguration").mockReturnValue({
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-    });
+    getCurrencyConfigurationSpy = jest
+      .spyOn(configModule, "getCurrencyConfiguration")
+      .mockReturnValue({
+        status: {
+          type: "active",
+          features: [{ id: "blockchain_txs", status: "active" }],
+        },
+      });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    getCurrencyConfigurationSpy.mockRestore();
     // `setZcashShieldedEnabled` is module-level global state shared across
     // every suite in this jest worker: restore it so later suites are not
     // silently corrupted.
