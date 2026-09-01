@@ -6,9 +6,13 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
   isVisible: true,
   title: "Pay and get paid",
   description: "Stablecoin closes the gap between crypto and real life spending",
-  ctaLabel: "Got it",
+  ctaLabel: "Explore Pay",
   rows: [
-    { icon: "Globe", title: "Spend everywhere", description: "Use your balance around the world" },
+    {
+      icon: "Contact",
+      title: "Spend everywhere",
+      description: "Use your balance around the world",
+    },
   ],
   onShown: jest.fn(),
   onDismiss: jest.fn(),
@@ -39,8 +43,8 @@ describe("FeatureTourView (Web)", () => {
     const onDismiss = jest.fn();
     render(<FeatureTourView {...defaultProps} onDismiss={onDismiss} />);
 
-    fireEvent.click(screen.getByText("Got it"));
-    fireEvent.click(screen.getByText("Got it"));
+    fireEvent.click(screen.getByText("Explore Pay"));
+    fireEvent.click(screen.getByText("Explore Pay"));
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });

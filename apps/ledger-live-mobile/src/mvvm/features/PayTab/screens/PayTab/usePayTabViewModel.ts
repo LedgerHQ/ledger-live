@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";

@@ -23,8 +23,8 @@ The keys it reads, in the host app's **default** namespace (`app` on Desktop, `c
 | `payTab.featureTour.title` | Sheet title |
 | `payTab.featureTour.description` | Sheet subtitle |
 | `payTab.featureTour.cta` | Dismiss button |
-| `payTab.featureTour.rows.global.{title,description}` | Row 1 (`Globe`) |
-| `payTab.featureTour.rows.volatility.{title,description}` | Row 2 (`Chart5`) |
+| `payTab.featureTour.rows.global.{title,description}` | Row 1 (`Contact`) |
+| `payTab.featureTour.rows.volatility.{title,description}` | Row 2 (`Link`) |
 | `payTab.featureTour.rows.card.{title,description}` | Row 3 (`CreditCard`) |
 
 Both apps must carry these keys at the same path until translation keys are colocated per feature
@@ -35,7 +35,7 @@ Tests wrap the component in `I18nTestProvider` from `@shared/i18n/testing`.
 
 Visibility is derived from this flow's `payCardFeatureTour` slice (`hasSeenFeatureTour`),
 exposed through `@features/flow-pay-feature-tour/state`. Store, persistence and test
-setup should import that entry so they do not load the tour UI. Dismissing the tour (Got it, close
+setup should import that entry so they do not load the tour UI. Dismissing the tour (Explore Pay, close
 button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. Analytics are injected via the
 optional `onTrackScreen` / `onTrackEvent` props so the flow stays decoupled from any app analytics
 package.
@@ -84,5 +84,5 @@ pay-feature-tour/
 ```
 
 The view shows a hero image, title, subtitle, and three Lumen `ListItem` feature rows
-(Globe / Chart5 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
-with a single "Got it" CTA to dismiss.
+(Contact / Link / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
+with a single "Explore Pay" CTA to dismiss.

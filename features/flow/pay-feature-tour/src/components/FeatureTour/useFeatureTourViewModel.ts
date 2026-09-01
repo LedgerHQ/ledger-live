@@ -20,8 +20,8 @@ const KEY_PREFIX = "payTab.featureTour";
 
 /** Icon per row, paired with the translation sub-key that carries its copy. */
 const ROWS: readonly { icon: FeatureTourRowIcon; key: string }[] = [
-  { icon: "Globe", key: "global" },
-  { icon: "Chart5", key: "volatility" },
+  { icon: "Contact", key: "global" },
+  { icon: "Link", key: "volatility" },
   { icon: "CreditCard", key: "card" },
 ];
 

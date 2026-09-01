@@ -26,8 +26,8 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 
 export const EMPTY_TITLE = "Pay and get paid";
 export const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
-export const FEATURE_TOUR_ROW = "Minimal volatility";
-export const FEATURE_TOUR_CTA = "Got it";
+export const FEATURE_TOUR_ROW = "Request payments";
+export const FEATURE_TOUR_CTA = "Explore Pay";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usd = getFiatCurrencyByTicker("USD");

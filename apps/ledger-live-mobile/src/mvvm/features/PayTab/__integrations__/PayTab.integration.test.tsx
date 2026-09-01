@@ -91,7 +91,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("should persist dismissal and hide the tour after pressing Got it", async () => {
+    it("should persist dismissal and hide the tour after pressing Explore Pay", async () => {
       const { user, store } = renderPayTab({ hasSeenFeatureTour: false });
 
       await waitFor(() => {
