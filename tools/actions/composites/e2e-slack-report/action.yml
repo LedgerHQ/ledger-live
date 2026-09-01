@@ -95,14 +95,6 @@ inputs:
     required: false
     default: ""
 
-  # --- Optional extra field, appended as its own section (e.g. desktop Xray link). ---
-  extra_field_title:
-    required: false
-    default: ""
-  extra_field_url:
-    required: false
-    default: ""
-
 runs:
   using: "composite"
   steps:
@@ -137,8 +129,6 @@ runs:
         ROW2_STATUS: ${{ inputs.row2_status }}
         ROW2_MISSING_SHARDS: ${{ inputs.row2_missing_shards }}
         ROW2_QAA_URL: ${{ inputs.row2_qaa_url }}
-        EXTRA_FIELD_TITLE: ${{ inputs.extra_field_title }}
-        EXTRA_FIELD_URL: ${{ inputs.extra_field_url }}
       with:
         script: |
           const path = require("path");

@@ -1,8 +1,7 @@
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import test from "tests/fixtures/common";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { performSwapUntilQuoteSelectionStep, setupEnv } from "tests/utils/swapUtils";
 import { keepRunningProviders } from "@ledgerhq/live-e2e-shared/swap";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";

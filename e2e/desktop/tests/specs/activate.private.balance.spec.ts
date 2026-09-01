@@ -2,8 +2,7 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const accounts = [

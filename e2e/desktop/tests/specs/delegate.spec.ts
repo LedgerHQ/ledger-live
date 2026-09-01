@@ -4,8 +4,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@shared/env";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataCommand,

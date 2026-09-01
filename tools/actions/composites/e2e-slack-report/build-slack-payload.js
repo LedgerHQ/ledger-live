@@ -50,9 +50,6 @@ function rowsFromEnv(env) {
  */
 function modelFromEnv(env) {
   const smokeSuffix = env.SMOKE_TESTS === "true" ? " (Smoke Tests)" : "";
-  const extraField = env.EXTRA_FIELD_TITLE
-    ? { title: env.EXTRA_FIELD_TITLE, url: env.EXTRA_FIELD_URL || "" }
-    : null;
   return {
     product: env.PRODUCT || "",
     ref: env.REF || "",
@@ -60,7 +57,6 @@ function modelFromEnv(env) {
     headerDevices: env.HEADER_DEVICES || "",
     runUrl: env.RUN_URL || "",
     rows: rowsFromEnv(env),
-    extraField,
   };
 }
 
@@ -86,7 +82,7 @@ function attachmentColor(rows) {
  * @returns {{ text: string, attachments: Array<object> }} Slack payload without `channel`.
  */
 function buildSlackPayload(model) {
-  const { product, ref, smokeSuffix, headerDevices, runUrl, rows, extraField } = model;
+  const { product, ref, smokeSuffix, headerDevices, runUrl, rows } = model;
 
   const blocks = [
     {
@@ -139,14 +135,13 @@ function buildSlackPayload(model) {
     });
   }
 
-  // Secondary links demoted to one muted line: legacy Allure per row, workflow run, optional extra.
+  // Secondary links demoted to one muted line: legacy Allure per row, then the workflow run.
   const secondary = [];
   const legacyLinks = rows
     .filter(row => row.reportUrl)
     .map(row => `<${row.reportUrl}|${row.emoji} ${row.label}>`);
   if (legacyLinks.length > 0) secondary.push(`Legacy Allure: ${legacyLinks.join(" · ")}`);
   secondary.push(`<${runUrl}|⚙️ Workflow run>`);
-  if (extraField) secondary.push(`<${extraField.url}|${extraField.title}>`);
   blocks.push({
     type: "context",
     elements: [{ type: "mrkdwn", text: secondary.join("   ·   ") }],

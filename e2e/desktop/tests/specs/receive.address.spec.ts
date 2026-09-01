@@ -5,8 +5,7 @@ import {
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import type { Application } from "tests/page";
 import {
   addEmptyAccountCommand,

@@ -4,8 +4,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   setupEnv,

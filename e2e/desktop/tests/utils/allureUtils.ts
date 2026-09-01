@@ -111,6 +111,11 @@ function serializeCliError(error: unknown) {
   };
 }
 
+export function getDescription(annotations: TestInfo["annotations"], type: "TMS" | "BUG") {
+  const annotation = annotations.find(ann => ann.type === type);
+  return annotation?.description ?? "Type not found";
+}
+
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
     await allure.tms(id);

@@ -9,8 +9,7 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 

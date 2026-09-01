@@ -10,8 +10,7 @@ import {
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import {
