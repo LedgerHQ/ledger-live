@@ -7,6 +7,7 @@ import {
   waitFor,
   render,
   within,
+  withFlagOverrides,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -305,6 +306,22 @@ describe("PayTab integration", () => {
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
   });
 
+  it("should not render the contacts section when lwdContacts is disabled", async () => {
+    const account = createEthAccountWithContactTransfers();
+    render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [account],
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByTestId("pay-contacts")).not.toBeInTheDocument();
+  });
+
   it("should count send and receive transfers with a contact and open History from View transactions", async () => {
     const account = createEthAccountWithContactTransfers();
     const { user } = render(<PayTab />, {
@@ -314,6 +331,7 @@ describe("PayTab integration", () => {
         ...tourSeenState,
         accounts: [account],
         contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdContacts: { enabled: true, params: { newBadge: false } } }),
       },
     });
 

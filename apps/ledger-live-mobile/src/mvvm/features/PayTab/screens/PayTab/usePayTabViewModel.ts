@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
+import { useContactsFeature } from "@features/platform-contacts";
 import { useTranslation } from "~/context/Locale";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
@@ -25,6 +26,7 @@ export function usePayTabViewModel() {
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
   const contacts = usePayTabContacts();
+  const { isEnabled: isContactsEnabled } = useContactsFeature("mobile");
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
   // login must take the new values without a restart of the app.
@@ -67,6 +69,7 @@ export function usePayTabViewModel() {
     balance,
     actionTiles,
     contacts,
+    isContactsEnabled,
     depositOptions: deposit.depositOptions,
   };
 }
