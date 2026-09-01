@@ -4,9 +4,12 @@ import type { StakingOperation } from "@ledgerhq/coin-module-framework/api/types
  * Normalized staking action, for cross-flow funnel analytics.
  *
  * Written out rather than derived from `StakingOperation`: this is an analytics contract, so
- * it must widen by deliberate edit, never on a dependency bump. `approve` and `redeem` are
- * deliberately absent until the dApp/live-app parts land; `deposit` is already needed natively,
- * because Celo splits staking into a lock leg and a vote leg.
+ * it must widen by deliberate edit, never on a dependency bump. `deposit` is needed natively
+ * too, because Celo splits staking into a lock leg and a vote leg. `redeem` is the share-exact
+ * ERC-4626 exit, which only the dApp route produces.
+ *
+ * `approve` is deliberately absent: ETH staking needs no approval before delegating, so
+ * counting one would inflate the funnel's denominator.
  */
 export type EarnTransactionType =
   // StakingOperation
@@ -16,7 +19,8 @@ export type EarnTransactionType =
   | "claimReward"
   | "compoundReward"
   | "withdraw"
-  | "deposit";
+  | "deposit"
+  | "redeem";
 
 // Fails the build if upstream StakingOperation drifts out of EarnTransactionType.
 type Extends<Narrow extends Wide, Wide> = Narrow;

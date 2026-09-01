@@ -17,7 +17,10 @@ import {
 } from "./logEvent";
 import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 import { deriveFromOperationType } from "./operationType";
-import { getRawTransactionType, getStakeTarget, type TransactionLike } from "./transactionShape";
+import { getStakeTarget, type TransactionLike } from "./transactionShape";
+import { isStakingApp, stakingMethodOf } from "./stakingApps";
+import { outputCurrencyOf, stakingMethodOfContract } from "./stakingContracts";
+import { readAction } from "./resolveAction";
 import { recallSignContext } from "./signContext";
 import { classifyTransactionError, ErrorCategory, toError, unwrapRpcError } from "./errorCategory";
 
@@ -34,6 +37,7 @@ type Attribution = {
 type ActionFields = {
   earnTransactionType?: EarnTransactionType;
   rawTransactionType?: string;
+  dappContract?: string;
   validators?: string[];
   isSendMax: boolean;
   dataSource: TransactionDataSource;
@@ -41,6 +45,8 @@ type ActionFields = {
 
 function buildCommon(attribution: Attribution, action: ActionFields): CommonLogEvent {
   const { account, mainAccount, pathway, manifestId, source } = attribution;
+  const stakingMethod = stakingMethodOfContract(action.dappContract) ?? stakingMethodOf(manifestId);
+  const outputCurrency = outputCurrencyOf(action.dappContract);
   return {
     appVersion: getEnv("LEDGER_CLIENT_VERSION"),
     pathway,
@@ -51,9 +57,14 @@ function buildCommon(attribution: Attribution, action: ActionFields): CommonLogE
     isSendMax: action.isSendMax,
     dataSource: action.dataSource,
     ...(manifestId ? { manifestId } : {}),
+    // The contract is the more precise of the two: it distinguishes Kiln's pooled product
+    // from its dedicated one, which share a manifest. The manifest covers everything else.
+    ...(stakingMethod ? { stakingMethod } : {}),
+    ...(outputCurrency ? { outputCurrency } : {}),
     ...(source ? { source } : {}),
     ...(action.earnTransactionType ? { earnTransactionType: action.earnTransactionType } : {}),
     ...(action.rawTransactionType ? { rawTransactionType: action.rawTransactionType } : {}),
+    ...(action.dappContract ? { dappContract: action.dappContract } : {}),
     ...(action.validators?.length ? { validators: action.validators } : {}),
     ...(account.type === "TokenAccount"
       ? { tokenId: account.token.id, tokenTicker: account.token.ticker }
@@ -69,13 +80,8 @@ export function buildSignCommonEvent(
   attribution: Attribution & { transaction?: TransactionLike | null },
 ): CommonLogEvent {
   const { transaction } = attribution;
-  const rawTransactionType = getRawTransactionType(transaction);
   return buildCommon(attribution, {
-    earnTransactionType: deriveEarnTransactionType(
-      attribution.mainAccount.currency.family,
-      rawTransactionType,
-    ),
-    rawTransactionType,
+    ...readAction(attribution.mainAccount.currency.family, attribution.manifestId, transaction),
     validators: getStakeTarget(transaction),
     isSendMax: Boolean(transaction?.useAllAmount),
     dataSource: TransactionDataSource.Sign,
@@ -134,20 +140,56 @@ export function buildBroadcastCommonEvent(
       // `extra.votes`), where the sign stage cannot see it — so take whichever stage has one
       // rather than letting a correlation hit throw the other away.
       validators: signed.validators ?? stakeTargetFromOperation(operation),
+      // The operation carries the recipient too, so a context stored without a contract
+      // (a rehydrated one, or one from before this field existed) still resolves.
+      dappContract: signed.dappContract ?? contractFromOperation(attribution, operation),
       dataSource: TransactionDataSource.Sign,
     });
   }
 
-  const rawMode = (operation.transactionRaw as { mode?: string } | undefined)?.mode;
-  const fromRawMode = deriveEarnTransactionType(family, rawMode);
+  // The generic coin framework copies the transaction onto the operation. Observed on a real
+  // Lido deposit: `recipients[0]` is the contract and `transactionRaw` carries `mode` plus the
+  // call data as a bare hex string with no `0x`. The shape comes from the coin module, not the
+  // route, so it holds for the dApp providers too.
+  //
+  // That makes a contract call classifiable without the sign stage, which matters wherever
+  // correlation misses: it keys on object identity, so a signed operation serialised and
+  // rehydrated — persisted, or handed back across the wallet-api boundary — will not match.
+  const raw = operation.transactionRaw as { mode?: string; data?: string } | undefined;
+  const fromOperation = readAction(family, attribution.manifestId, {
+    family,
+    mode: raw?.mode,
+    data: raw?.data,
+    recipient: operation.recipients?.[0],
+  });
+
+  // `readAction` echoes the mode back as the raw type even when it classifies nothing, so a
+  // plain `send` would otherwise shadow the operation type. Keep its wording only when it
+  // actually said something: an action, or a contract call whose selector is worth reporting.
+  const spoke =
+    fromOperation.earnTransactionType !== undefined || fromOperation.dappContract !== undefined;
 
   return buildCommon(attribution, {
-    earnTransactionType: fromRawMode ?? deriveFromOperationType(family, operation.type),
-    rawTransactionType: fromRawMode ? rawMode : operation.type,
+    ...fromOperation,
+    earnTransactionType:
+      fromOperation.earnTransactionType ?? deriveFromOperationType(family, operation.type),
+    rawTransactionType: spoke ? fromOperation.rawTransactionType : operation.type,
     validators: stakeTargetFromOperation(operation),
     isSendMax: false,
     dataSource: TransactionDataSource.Broadcast,
   });
+}
+
+/**
+ * The called contract, read off the optimistic operation.
+ *
+ * Gated on the manifest for the same reason the sign stage is: a plain send's recipient is the
+ * user's own payee, and must never be reported as a staking contract.
+ */
+function contractFromOperation(attribution: Attribution, operation: Operation): string | undefined {
+  if (!isStakingApp(attribution.manifestId)) return undefined;
+  const recipient = operation.recipients?.[0];
+  return typeof recipient === "string" ? recipient.toLowerCase() : undefined;
 }
 
 export function buildTransactionSuccessEvent(common: CommonLogEvent): SuccessLogEvent {

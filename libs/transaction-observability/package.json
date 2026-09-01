@@ -20,6 +20,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/env": "workspace:*"
   },
@@ -45,6 +46,7 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "coverage": "jest --coverage"
   },
   "exports": {

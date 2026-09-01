@@ -16262,6 +16262,9 @@ importers:
 
   libs/transaction-observability:
     dependencies:
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../evm-tools
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live

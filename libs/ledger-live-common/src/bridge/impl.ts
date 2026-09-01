@@ -280,6 +280,9 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
               event.signedOperation,
               arg0.account.currency.family,
               arg0.transaction,
+              // A dApp's action is only read inside a known staking app, so the manifest has
+              // to travel with it — broadcast sees an `OUT` and could not recover it.
+              currentLiveAppManifestId(),
             );
           }
         }),

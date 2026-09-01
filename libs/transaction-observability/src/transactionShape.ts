@@ -24,6 +24,32 @@ export function getRawTransactionType(tx: TransactionLike | undefined | null): s
   return tx.mode as string | undefined;
 }
 
+/**
+ * The four-byte function selector of an EVM contract call, or `undefined` for a plain transfer.
+ *
+ * Read only when the transaction carries no staking `mode`, so EVM chains that stake natively
+ * (sei_evm, monad and the rest set a generic-framework mode) keep using their own vocabulary
+ * and never fall through to here.
+ *
+ * Deliberately takes only the selector. The rest of the call data holds amounts and addresses
+ * and has no place in product analytics.
+ */
+export function getDappSelector(tx: TransactionLike | undefined | null): string | undefined {
+  const data = tx?.data;
+  if (data === undefined || data === null) return undefined;
+
+  // A live transaction carries a Buffer. A serialised one carries a string, and the optimistic
+  // operation's is *unprefixed* — observed as `a1903eab…` on a real Lido deposit — while other
+  // routes prefix it. So normalise rather than assume: reading a prefixed string as a Buffer
+  // yields `0x0x095ea7`, which looks like a selector and is not one.
+  const hex =
+    typeof data === "string"
+      ? data.replace(/^0x/i, "")
+      : (data as { toString(encoding: "hex"): string }).toString("hex");
+
+  return /^[0-9a-f]{8}/i.test(hex) ? `0x${hex.slice(0, 8).toLowerCase()}` : undefined;
+}
+
 function nonEmptyStrings(list?: (string | undefined | null)[]): string[] | undefined {
   const filtered = (list ?? []).filter((a): a is string => Boolean(a));
   return filtered.length ? filtered : undefined;
