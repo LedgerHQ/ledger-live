@@ -5,6 +5,7 @@ import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
+  SKIP_MEMO_CONFIRMATION: "SKIP_MEMO_CONFIRMATION",
   RECENT_HISTORY: "RECENT_HISTORY",
   ADD_CONTACT: "ADD_CONTACT",
   ADD_NEW_CONTACT: "ADD_NEW_CONTACT",

@@ -16,7 +16,6 @@ import { AddressDisclaimer } from "./AddressDisclaimer";
 import { RecipientHeaderPrefix } from "./RecipientHeaderPrefix";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
-import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { RecipientQrScanner } from "../screens/Recipient/components/RecipientQrScanner";
 import type { SendStepConfig } from "../types";
 
@@ -39,11 +38,6 @@ export function SendHeader() {
     onMemoTypeChange,
     showMemoValueInput,
     onMemoValueChange,
-    showSkipMemo,
-    skipMemoState,
-    onSkipMemoRequestConfirm,
-    onSkipMemoCancelConfirm,
-    onSkipMemoConfirm,
     resetViewState,
   } = useSendHeaderMemo();
 
@@ -140,16 +134,6 @@ export function SendHeader() {
                 />
               ) : null}
             </div>
-
-            {showSkipMemo && !transactionError && (
-              <SkipMemoSection
-                currencyId={currencyId}
-                state={skipMemoState}
-                onRequestConfirm={onSkipMemoRequestConfirm}
-                onCancelConfirm={onSkipMemoCancelConfirm}
-                onConfirm={onSkipMemoConfirm}
-              />
-            )}
           </div>
         ) : null}
       </>
@@ -176,11 +160,6 @@ export function SendHeader() {
     transactionError,
     transactionErrorName,
     onMemoValueChange,
-    showSkipMemo,
-    skipMemoState,
-    onSkipMemoRequestConfirm,
-    onSkipMemoCancelConfirm,
-    onSkipMemoConfirm,
     handleRecipientInputClick,
     handleRecipientInputChange,
     handleQrCodeClick,
