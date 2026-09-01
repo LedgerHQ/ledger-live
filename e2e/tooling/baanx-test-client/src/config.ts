@@ -20,8 +20,8 @@ import type { BaanxAuthConfig, BaanxRegion, ResolvedBaanxAuthConfig, TotpAlgorit
 
 /** Every variable this package reads. Names are safe to print; values are not. */
 export const ENV_VARS = {
-  baseUrl: "BAANX_API_BASE_URL",
-  clientKey: "BAANX_CLIENT_KEY",
+  baseUrl: "BAANX_TEST_API_URL",
+  clientKey: "BAANX_TEST_CLIENT_KEY",
   email: "BAANX_TEST_USER_EMAIL",
   password: "BAANX_TEST_USER_PASSWORD",
   totpSecret: "BAANX_TEST_USER_TOTP_SECRET",
@@ -53,7 +53,7 @@ export function resolveBaanxAuthConfig(
   const missing: string[] = [];
   if (!clientKey) missing.push(ENV_VARS.clientKey);
   if (!email) missing.push(ENV_VARS.email);
-  if (!password) missing.push(ENV_VARS.password);
+  if (!password || password.trim().length === 0) missing.push(ENV_VARS.password);
   if (!totpSecret) missing.push(ENV_VARS.totpSecret);
   if (missing.length > 0) throw new BaanxConfigError(missing);
 
@@ -127,8 +127,7 @@ function checkInt(
 }
 
 function read(env: EnvSource, name: string): string | undefined {
-  const value = env[name]?.trim();
-  return value ? value : undefined;
+  return env[name]?.trim();
 }
 
 function resolveRegion(override: BaanxRegion | undefined, env: EnvSource): BaanxRegion {

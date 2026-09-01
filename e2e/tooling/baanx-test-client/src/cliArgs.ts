@@ -32,15 +32,19 @@ export function parseCliArgs(argv: string[]): CliArgs {
 /**
  * Report only the flag name, never its value.
  *
- * An accidental `token -- --password=hunter2` must not write the secret into
- * terminal scrollback or CI logs just because the flag was rejected. Lives here
- * rather than in cli.ts so tests can import it without running the entry point.
+ * Accidental `token -- --password=hunter2` or `token -- -phunter2` must not
+ * write the secret into terminal scrollback or CI logs just because the flag
+ * was rejected. Lives here rather than in cli.ts so tests can import it
+ * without running the entry point.
  */
 export function flagNameOf(argument: string): string {
-  // A positional argument is not a flag name, so nothing about it is safe to
-  // print: `token hunter2` would otherwise echo the secret itself.
   if (!argument.startsWith("-")) return "[redacted positional argument]";
 
   const eq = argument.indexOf("=");
-  return eq === -1 ? argument : `${argument.slice(0, eq)}=[redacted]`;
+  if (eq !== -1) return `${argument.slice(0, eq)}=[redacted]`;
+
+  const isShortFlagWithGluedValue = !argument.startsWith("--") && argument.length > 2;
+  if (isShortFlagWithGluedValue) return `${argument.slice(0, 2)}=[redacted]`;
+
+  return argument;
 }

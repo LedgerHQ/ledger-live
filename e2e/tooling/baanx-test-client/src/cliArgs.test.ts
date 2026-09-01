@@ -55,11 +55,13 @@ describe("flagNameOf", () => {
     ["--password=hunter2", "--password=[redacted]"],
     ["--client-key=abc123", "--client-key=[redacted]"],
     ["--secret=a=b=c", "--secret=[redacted]"],
+    ["-phunter2", "-p=[redacted]"],
+    ["-p=hunter2", "-p=[redacted]"],
   ])("redacts the value in %p", (input, expected) => {
     expect(flagNameOf(input)).toBe(expected);
   });
 
-  it.each(["--nope", "-j"])("leaves the valueless flag %p intact", argument => {
+  it.each(["--nope", "--password", "-j", "-h"])("leaves the valueless flag %p intact", argument => {
     expect(flagNameOf(argument)).toBe(argument);
   });
 
@@ -72,7 +74,10 @@ describe("flagNameOf", () => {
     },
   );
 
-  it("never returns the secret half", () => {
-    expect(flagNameOf("--password=hunter2")).not.toContain("hunter2");
-  });
+  it.each(["--password=hunter2", "-phunter2", "-p=hunter2"])(
+    "never returns the secret half of %p",
+    argument => {
+      expect(flagNameOf(argument)).not.toContain("hunter2");
+    },
+  );
 });

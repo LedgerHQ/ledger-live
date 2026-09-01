@@ -18,6 +18,7 @@ import {
   BaanxRateLimitError,
   BaanxTransportError,
 } from "../errors";
+import { ENV_VARS } from "../config";
 import { loginToBaanx } from "./login";
 import { generateTotpCodeAt } from "./totp";
 import { ASSUMED_TOKEN_LIFETIME_MS } from "../types";
@@ -378,7 +379,7 @@ describe("loginToBaanx — mapped HTTP failures", () => {
 
     expect(error).toBeInstanceOf(BaanxInvalidClientKeyError);
     expect(error.message).toContain("Invalid Token");
-    expect(error.message).toContain("BAANX_CLIENT_KEY");
+    expect(error.message).toContain(ENV_VARS.clientKey);
     // The key itself must not be echoed.
     expect(error.message).not.toContain("test-client-key");
   });
@@ -390,7 +391,7 @@ describe("loginToBaanx — mapped HTTP failures", () => {
 
     expect(error).toBeInstanceOf(BaanxMissingClientKeyError);
     expect(error.message).toContain("Token Required");
-    expect(error.message).toContain("BAANX_CLIENT_KEY");
+    expect(error.message).toContain(ENV_VARS.clientKey);
   });
 
   it("maps 401 to invalid credentials", async () => {
@@ -499,7 +500,7 @@ describe("loginToBaanx — mapped HTTP failures", () => {
     ) as { message: string };
 
     // Guards the guard: if this ever becomes true, the test has stopped reproducing the bug.
-    expect(rejection instanceof Error).toBe(false);
+    expect(rejection).not.toBeInstanceOf(Error);
 
     const { fetchImpl } = createFetchMock([{ rejectsWith: rejection }]);
 

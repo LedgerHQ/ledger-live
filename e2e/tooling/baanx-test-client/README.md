@@ -37,9 +37,9 @@ workaround — the account has to be re-provisioned. `BaanxOtpError` says so whe
 ## Configuration
 
 Environment variables only — see [`.env.sample`](./.env.sample) for the full annotated list.
-Required: `BAANX_CLIENT_KEY` (sandbox needs its own; the app's `CARD_BAANX_CLIENT_KEY` will not work),
+Required: `BAANX_TEST_CLIENT_KEY` (sandbox needs its own; the app's `CARD_BAANX_CLIENT_KEY` will not work),
 `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, `BAANX_TEST_USER_TOTP_SECRET`. Optional:
-`BAANX_API_BASE_URL` (defaults to `https://dev.api.baanx.com`), `BAANX_TEST_USER_REGION`, and the
+`BAANX_TEST_API_URL` (defaults to `https://dev.api.baanx.com`), `BAANX_TEST_USER_REGION`, and the
 `BAANX_TOTP_*` parameters.
 
 There are deliberately no CLI flags for secrets — flags leak into process lists and shell history.
@@ -180,7 +180,7 @@ All extend `BaanxAuthError` and carry Baanx's own message where there is one.
 | `BaanxOnboardingIncompleteError` | 200 with a `phase`; carries `.phase`, `.userId`. |
 | `BaanxOtpError` | Challenge could not be completed, or the code was rejected. |
 | `BaanxNoTokenError` | 200, no token, no explanation; carries redacted `.body`. |
-| `BaanxInvalidClientKeyError` / `BaanxMissingClientKeyError` | 498 / 499; name `BAANX_CLIENT_KEY`. |
+| `BaanxInvalidClientKeyError` / `BaanxMissingClientKeyError` | 498 / 499; name `BAANX_TEST_CLIENT_KEY`. |
 | `BaanxInvalidCredentialsError` | 401; `.accountLocked` set when the message indicates a lock. |
 | `BaanxRateLimitError` | 429; carries `.retryAfter`. |
 | `BaanxHttpError` | Other non-2xx; carries `.status` and redacted `.body`. |

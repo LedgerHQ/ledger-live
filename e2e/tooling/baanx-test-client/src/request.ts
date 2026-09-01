@@ -22,7 +22,10 @@ export interface BaanxRequestOptions {
   body?: unknown;
   /** Appended as a query string; `undefined` values are dropped. */
   query?: Record<string, string | number | boolean | undefined>;
-  /** Extra headers, merged over the ones we set. */
+  /**
+   * Extra headers. `Authorization` and `x-client-key` are owned by this
+   * function and are dropped if supplied here.
+   */
   headers?: Record<string, string>;
   /** Config overrides and env/transport injection, as `getBaanxAuthToken`. */
   auth?: BaanxAuthTokenOptions;
@@ -71,7 +74,7 @@ export async function baanxRequest<T = unknown>({
       clientKey: config.clientKey,
       region: config.region,
       body,
-      headers: { authorization: `Bearer ${token}`, ...headers },
+      headers: { ...withoutProtectedHeaders(headers), authorization: `Bearer ${token}` },
       fetchImpl,
     });
 
@@ -104,6 +107,20 @@ export async function baanxRequest<T = unknown>({
 function stripRuntimeOptions(auth: BaanxAuthTokenOptions) {
   const { env: _env, deps: _deps, forceRefresh: _force, now: _now, ...overrides } = auth;
   return overrides;
+}
+
+const PROTECTED_HEADER_NAMES = new Set(["authorization", "x-client-key", "x-us-env"]);
+
+function withoutProtectedHeaders(
+  headers: Record<string, string> | undefined,
+): Record<string, string> {
+  if (!headers) return {};
+
+  const extra: Record<string, string> = {};
+  for (const [name, value] of Object.entries(headers)) {
+    if (!PROTECTED_HEADER_NAMES.has(name.toLowerCase())) extra[name] = value;
+  }
+  return extra;
 }
 
 function buildQuery(query: BaanxRequestOptions["query"]): string {
