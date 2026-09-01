@@ -16,6 +16,11 @@ express "I only want the balance", and requires a full `Account` to ask for an u
 This layer lets a screen ask for **one slice**, and routes each slice to the cheapest source that can
 serve it.
 
+> [!TIP]
+> **To see it: Desktop → DevTools → Debugging → _Account Balances_.** `Read balance` forces a
+> round-trip; `Read all` respects freshness — the reads it _skips_ are the interesting part. No
+> device needed: web-tools `/sync`, paste `tron:T…`.
+
 ## The inversion
 
 ```mermaid
@@ -91,8 +96,13 @@ const host: AccountDataHost = {
 This is not about brevity. The **capability decision** — which families can serve a balance on their
 own — has to exist in exactly one place per app, read from a shared gate. Four apps each writing their
 own `capabilities` callback is precisely how this repo ended up with three divergent "families with
-the new API" lists. `mirrorLegacyAccountBalances` and `accountRefOf` are shared for the same reason;
-only `syncAccountBalances` differs per host, because only the store access genuinely differs.
+the new API" lists. `mirrorLegacyAccountBalances`, `accountRefOf` and the full-sync
+projection are shared for the same reason; only the store access genuinely differs per host.
+
+The devtool obeys the rule from the other side: `@devtools/account-balances` imports no
+`@devtools/*` package and reaches no app internals. Its props come from
+`useAccountBalancesToolProps` in `@devtools/bindings` — the sanctioned bridge — and the host supplies
+only what it alone knows, its accounts shaped as `AccountRef`s.
 
 **Why not RTK Query?** The coin modules own their transport, so there is no `baseQuery` to hang
 endpoints on. And the balance table is a store of record: persisted, locally mutated once pending
@@ -165,44 +175,40 @@ forty syncs. `replaceAccountBalances` is atomic over an account _and_ all its to
 chains report a token swept to zero by **omitting** it — a plain upsert would freeze that row at its
 pre-sweep value forever.
 
-## Wired in five places
+## Wired in six places
 
 | Surface                 | What it does now                                                                                                                  | What it proves                                                                                             |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | web-tools · Ledger Sync | Resolving an incoming descriptor no longer runs a full `bridge.sync()` — a balance-only bridge answers with a `{balance}` request | `descriptorToAccount` already rebuilds every other field with no network; the sync was paid for one number |
 | web-tools · `/sync`     | Balance first, with `served by coin-module-api` / `legacy-bridge` and the token rows; full sync is a button                       | Makes the routing decision observable                                                                      |
 | wallet-cli · `balances` | The hardcoded `coinFrameworkFamilies` set is gone; the router decides. Output unchanged                                           | No React, no store — the entity reducer runs over a local variable. The core is framework-free             |
-| desktop                 | Reducer mounted, sources registered, balances mirrored from the legacy account store                                             | Adoption is not a rewrite: `accountsSelector` and the ~250 sites behind it keep working                    |
+| desktop                 | Reducer mounted, sources registered, balances mirrored from the legacy account store                                              | Adoption is not a rewrite: `accountsSelector` and the ~250 sites behind it keep working                    |
 | mobile                  | The same, through the same host adapter. Nothing reads the table through the layer yet                                            | The architecture is ready: the first screen that wants a balance costs a hook call, not an integration     |
+| desktop · DevTools      | `@devtools/account-balances`: every account with its balance, the source that served it, its token rows and their age             | The routing decision stops being something you take on trust — and it is the layer's first real consumer   |
 
 **Capability is not the same as implementation.** 16 families implement `CoinModuleApi`
 (canton, cardano, celo, cosmos, evm, hypercore, kaspa, multiversx, near, solana, stacks, stellar,
 tezos, tron, vechain, xrp); only 6 are routed through it by
 `genericCoinFrameworkFamilies.json`. Ten have a working `getBalance` the wallet never calls.
 
+## Verified on Tron
+
+[`coin-tron/src/logic/getBalance.ts`](../libs/coin-modules/coin-tron/src/logic/getBalance.ts) is a
+single `GET /v1/accounts/{address}` whose response already carries the native balance plus every
+TRC10 and TRC20 holding — no history fetch, no per-token round trip. Paste a `tron:T…` address into
+web-tools `/sync`, or open the devtool below, and the balance renders with
+`served by coin-module-api` and its token rows without the full sync ever running.
+
+`coin-evm` is the other shape: its `getBalance` also has to discover which token contracts the
+address holds, so it is not a 1:1 chain call. Both work. **How cheap a `getBalance` is, is the
+module's business, not this layer's** — and that is the point worth carrying: _"implements
+`CoinModuleApi`" does not mean "can serve a balance independently"_. Only the module knows, which is
+why `capabilities` must be declared by the module rather than inferred by the wallet from a family
+boolean.
+
 ## What is not true yet
 
-> [!WARNING]
-> **On EVM, a granular balance read still fetches the whole transaction history** — not through the
-> full sync, but inside `getBalance` itself.
-> [`coin-evm/src/logic/getBalance.ts`](../libs/coin-modules/coin-evm/src/logic/getBalance.ts) calls
-> `explorerApi.getOperations(config, currencyId, address, 0)` to discover which token contracts the
-> address has touched, and the Ledger explorer client paginates recursively to the end.
->
-> So an EVM balance costs: one `eth_getBalance`, one `getStakes`, **the entire history of the
-> address**, then one `balanceOf` per contract. On a very active address it does not complete in a UI
-> timeframe.
-
-The generalisable lesson: **"implements `CoinModuleApi`" does not mean "can serve a balance
-independently."** Only the module knows — which is why `capabilities` must be declared by the module
-rather than inferred by the wallet from a family boolean. It also sharpens the backend ask: a
-_tokens-held_ endpoint would fix EVM outright.
-
-Contrast [`coin-tron/src/logic/getBalance.ts`](../libs/coin-modules/coin-tron/src/logic/getBalance.ts),
-which is one `GET /v1/accounts/{address}` returning native + TRC10 + TRC20 inline, with no history
-call at all. Tron is the family to demo the win on.
-
-Two more open ends:
+Open ends:
 
 - **The graph sits next to the balance.** `AccountRowItem` renders `<Delta>`, which pulls
   `balanceHistoryCache` → `generateHistoryFromOperations`. The portfolio graph is a pure function of
@@ -210,11 +216,23 @@ Two more open ends:
   operations. Surfaces without that coupling today: `components/AccountsList/AccountRow.tsx`, the
   Ledger Sync devtool, and the send flow on intent-capable families (`validateIntent` takes
   `Balance[]`, not an `Account`).
-- **`BridgeSync` still polls everything.** The scheduler sits _beside_ it, not in front. A
-  balance-only screen adds no cost but does not remove the background sync either.
+- **`BridgeSync` still owns background syncing.** The scheduler sits _beside_ it, not in front, so
+  the background cost is unchanged. It no longer _duplicates_ it, though: freshness reads the row's
+  `at`, which the legacy mirror stamps from `lastSyncDate`, so a balance read seconds after a sync is
+  a no-op rather than — on a family with no granular module — a second full sync.
 - **Operations parity is unproven** — wallet-cli disabled coin-framework `getOperations` for every
   family. This is the argument for per-slice capabilities: take the balance win now, leave
   `operations` on the bridge, same family, no contradiction.
+- **wallet-cli reads only `evm` granularly.** A deliberate narrowing of the wallet's own gate: the
+  adapter it replaced was hardcoded to `createLocalEvmApi`, so no other family ever took that path
+  there. Widening is one line plus a `balances` before/after per family — the difference to watch is
+  token resolution, not the native amount.
+- **Both apps run the mirror for a table nothing reads yet.** It short-circuits on account identity,
+  so an unchanged account costs a `Map` lookup, but it is still work done for data no product screen
+  consumes today.
+- **Amounts are validated on the legacy path.** `AmountStrSchema` rejects negative and fractional
+  values, so an account whose balance is neither fails projection — for that account only, reported
+  through `onError`, with the rest of the pass continuing.
 
 ## Adding a slice
 

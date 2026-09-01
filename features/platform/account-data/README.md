@@ -86,13 +86,12 @@ stop. It never assembles an `Account`, never walks a second operation page, and 
 slice nobody asked for. One call returns every asset the address holds, native and tokens alike, so
 an account with twelve token accounts asks the module **once** rather than thirteen times.
 
-> [!WARNING]
-> How cheap that call is, is the *module's* business, not this layer's — and it varies. `coin-tron`
-> answers from one account-state request. `coin-evm` does **not**: its `getBalance` walks the address's
-> entire transaction history to discover which token contracts to query
-> (`coin-evm/src/logic/getBalance.ts`). So "implements `CoinModuleApi`" does not mean "can serve a
-> balance independently", and a capability declared here is only as honest as the module behind it.
-> See [docs/account-data-layer.md](../../../docs/account-data-layer.md).
+> [!NOTE]
+> How cheap that call is, is the *module's* business, not this layer's, and it varies: `coin-tron`
+> answers from one account-state request, `coin-evm` also has to discover which token contracts the
+> address holds. Both work. So "implements `CoinModuleApi`" does not mean "can serve a balance
+> independently" — a capability declared here is only as honest as the module behind it. See
+> [docs/account-data-layer.md](../../../docs/account-data-layer.md).
 
 **`createLegacyBridgeSource`** is the compatibility half: today's full sync, unchanged, behind the
 port. It is what makes goal 4 of the migration true — *legacy families keep working with zero
