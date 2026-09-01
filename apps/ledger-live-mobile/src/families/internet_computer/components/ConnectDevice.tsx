@@ -125,13 +125,12 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
     [route.name, route.params, stepNavigation],
   );
 
-  return useMemo(
+  // Only the device action is memoized. Anything theme-derived has to stay outside, or it would
+  // have to join the dependencies below and a theme switch would remount DeviceAction mid-signature.
+  const deviceAction = useMemo(
     () =>
       transaction ? (
-        <SafeAreaView
-          edges={edges}
-          style={[styles.root, { backgroundColor: colors.background.main }]}
-        >
+        <>
           <TrackScreen
             category={category}
             name="ConnectDevice"
@@ -149,12 +148,20 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
             renderOnResult={handleTx}
             analyticsPropertyFlow={analyticsPropertyFlow}
           />
-        </SafeAreaView>
+        </>
       ) : null,
     // Excludes account-derived deps on purpose: the optimistic fold above changes the account and
     // would otherwise remount DeviceAction mid-signature.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     [status, transaction, device, handleTx, onSelectDeviceLink],
+  );
+
+  if (!deviceAction) return null;
+
+  return (
+    <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: colors.background.main }]}>
+      {deviceAction}
+    </SafeAreaView>
   );
 }
 
