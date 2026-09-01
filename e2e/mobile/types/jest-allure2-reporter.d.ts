@@ -8,6 +8,12 @@ declare module "jest-allure2-reporter/api" {
 
   export function $Tag(...tags: string[]): void;
 
+  /**
+   * Attach a dataset parameter to this test, so it reports as one iteration of a data-driven
+   * Xray test. Collection-time only — see `setXrayDataset` in helpers/allure/allure-helper.ts.
+   */
+  export function $Parameter(name: string, value: string): void;
+
   export function $Owner(owner: string): void;
 
   export function $ParentSuite(parentSuite: string): void;

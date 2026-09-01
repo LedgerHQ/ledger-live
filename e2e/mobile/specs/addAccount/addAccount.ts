@@ -1,6 +1,9 @@
 import { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { setTeamOwner, setXrayDataset } from "@e2e/helpers/allure/allure-helper";
+
+// TEST VICTOR -> TO BE REMOVED WITH REAL TICKET
+export const ADD_ACCOUNT_XRAY_TEST = "B2CQA-6561";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set([
   "ton",
@@ -12,7 +15,7 @@ const BST_ADD_ACCOUNT_CURRENCIES = new Set([
   "ripple",
 ]);
 
-export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
+export function runAddAccountTest(currency: CurrencyType, tags: string[]) {
   describe("Add account", () => {
     beforeAll(async () => {
       await app.init({
@@ -23,8 +26,8 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     });
 
     setTeamOwner(BST_ADD_ACCOUNT_CURRENCIES.has(currency.id) ? Team.BST : Team.COIN_INTEGRATION);
-    tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
+    setXrayDataset(ADD_ACCOUNT_XRAY_TEST, { Currency: currency.testLabel });
     it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();

@@ -1438,7 +1438,11 @@ jobs:
           - android
           - ios
         exclude:
-          - platform: ${{ github.event.inputs.tests_type == 'Android Only' && 'ios' }}
+          # `github.event.inputs` is the CALLER's event under workflow_call — every other
+          # tests_type check in this file uses `inputs.`. Without the second entry the android leg
+          # still ran for "iOS Only", downloaded nothing and POSTed an empty result set.
+          - platform: ${{ inputs.tests_type == 'Android Only' && 'ios' }}
+          - platform: ${{ inputs.tests_type == 'iOS Only' && 'android' }}
 
       fail-fast: false
     env:
@@ -1446,14 +1450,27 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
-      TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
+      # Both branches must be platform-guarded: `'android' && '' || ios_key` yields the iOS key,
+      # so an Android run with no Android key published into the iOS execution.
+      TEST_EXECUTION: >-
+        ${{ (matrix.platform == 'android' && inputs.test_execution_android)
+         || (matrix.platform == 'ios' && inputs.test_execution_ios) || '' }}
     needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ !cancelled() && inputs.export_to_xray }}
+    # A filtered or smoke run covers only some of the dataset's rows, and re-importing a partial
+    # set REPLACES the iterations already on the Test Run (measured: 3 -> 0, FAILED -> PASSED).
+    # Only addAccountBTC carries @smoke, so a smoke run would leave the test with a single row.
+    if: ${{ !cancelled() && inputs.export_to_xray && inputs.test_filter == '' && !inputs.smoke_tests }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
+
+      # No pnpm install and no build: build-xray-report.mjs imports the shared payload builder
+      # straight from source and Node strips its types. .nvmrc tracks mise.toml (24.14.0).
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
 
       - name: Download Allure Results
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -1462,8 +1479,21 @@ jobs:
           pattern: ${{ matrix.platform }}-test-artifacts-*
           merge-multiple: true
 
-      - name: Format Xray results
-        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
+      - name: Build Xray payload
+        shell: bash
+        env:
+          ARTIFACTS: artifacts-${{ matrix.platform }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          # Derived from the spec glob so adding a 19th coin updates the gate for free.
+          EXPECTED=$(find e2e/mobile/specs/addAccount -name '*.spec.ts' | wc -l | tr -d ' ')
+          node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \
+            e2e/mobile/scripts/build-xray-report.mjs \
+            --input "$ARTIFACTS" \
+            --output "$ARTIFACTS/xray_report.json" \
+            --platform "$PLATFORM" \
+            --execution-key "$TEST_EXECUTION" \
+            --expect "B2CQA-6561=$EXPECTED"
 
       - name: Upload aggregated xray results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -1475,22 +1505,28 @@ jobs:
       - name: Authenticate to Xray
         id: authenticate
         run: |
-          response=$(curl -H "Content-Type: application/json" -X POST \
+          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" -X POST \
                     --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
                     ${{ env.XRAY_API_URL }}/authenticate)
-          echo "Xray Authentication Response: $response"
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
+          # The endpoint returns the JWT as a JSON string, so strip the surrounding quotes.
+          echo "::add-mask::$(echo "$response" | tr -d '"')"
+          echo "xray_token=$(echo "$response" | tr -d '"')" >> "$GITHUB_OUTPUT"
       - name: Publish report on Xray
         id: publish-xray
         run: |
-          response=$(curl -H "Content-Type: application/json" \
+          # Without --fail-with-body a rejected payload exits 0 and the whole execution is lost
+          # silently — the report is a single blob, so one bad entry loses every result.
+          response=$(curl --fail-with-body -sS -H "Content-Type: application/json" \
                     -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
                     -X POST \
                     --data @artifacts-${{ matrix.platform }}/xray_report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-          echo "Xray Report Response: $response"
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
+          key=$(echo "$response" | jq -r '.key // empty')
+          if [ -z "$key" ]; then
+            echo "::error::Xray import returned no execution key: $response"
+            exit 1
+          fi
+          echo "xray_key=$key" >> "$GITHUB_OUTPUT"
       - name: Write Xray report link in summary
         shell: bash
         env:

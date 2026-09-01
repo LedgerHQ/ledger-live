@@ -92,6 +92,47 @@ reach it as `app.<name>`.
     HTML-escaped, so use `{{{0}}}` for one containing `&`, `<` or `'`. Arguments appear as Allure
     parameters even without a placeholder.
 
+## Data-driven tests: one Xray test + a dataset
+
+A family that runs the same flow per coin should **not** carry one TMS link per coin. Point every
+spec at a single Xray test and pass the coin as a dataset parameter, so each one reports as its
+own iteration — a failing coin shows red while the others stay green.
+
+```ts
+import { setTeamOwner, setXrayDataset } from "@e2e/helpers/allure/allure-helper";
+
+const ADD_ACCOUNT_XRAY_TEST = "B2CQA-XXXX";
+
+describe("Add account", () => {
+  beforeAll(async () => { /* … */ });
+
+  setTeamOwner(Team.COIN_INTEGRATION);
+  tags.forEach(tag => $Tag(tag));
+  setXrayDataset(ADD_ACCOUNT_XRAY_TEST, { Currency: currency.testLabel });
+  it(`[${currency.testLabel}] - Add account`, async () => { /* … */ });
+});
+```
+
+Rules:
+
+- **`setXrayDataset` must be the last thing before `it(...)`.** Annotations are queued and flushed
+  onto whatever node the next Jest event creates, so a `beforeAll`, nested `describe` or second
+  `it` in between silently redirects them. Links and labels survive that (they are inherited from
+  the describe block); **parameters are not**, so the iteration just disappears with no error.
+- The parameter name and value must match the Xray dataset exactly. Use `currency.testLabel` — it
+  is what the test title already shows and it disambiguates tokens and same-ticker coins
+  (`ETH (Base)`, `USDT (Tron)`). Desktop uses the same value, so both platforms line up.
+- The dataset does **not** have to pre-exist on the Xray test; Xray creates the rows from the
+  exported parameters.
+- **Never publish a partial run.** Xray *replaces* a Test Run's iterations on import rather than
+  merging — re-importing a subset wipes the rows already there and can flip the test green
+  (measured: 3 iterations, one FAILED, became 0 iterations and PASSED). Hence the
+  `test_filter`/`smoke_tests` guard on `upload-to-xray`, and the `--expect` gate in
+  `scripts/build-xray-report.mjs` that refuses to publish when a shard has died.
+- iOS and Android publish to **separate** Test Executions, so they never overwrite each other.
+  Do not point `test_execution_android`, `test_execution_ios` and desktop's `test_execution` at
+  the same Jira key.
+
 ## Stability
 
 11. **Wait for a sheet's own content anchor at 100% visibility.** `toBeVisible()` defaults to **75%**,

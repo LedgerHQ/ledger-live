@@ -7,7 +7,8 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-const ADD_ACCOUNT_XRAY_TEST = "B2CQA-6561"; // TEST VICTOR -> TO BE REMOVED WITH REAL TICKET
+// TEST VICTOR -> TO BE REMOVED WITH REAL TICKET
+const ADD_ACCOUNT_XRAY_TEST = "B2CQA-6561";
 
 type AddAccountTestCase = {
   readonly currency: Currency;

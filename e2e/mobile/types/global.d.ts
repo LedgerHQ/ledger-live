@@ -11,6 +11,7 @@ import type {
   Step as StepType,
   $Tag as $TagType,
   $Owner as $OwnerType,
+  $Parameter as $ParameterType,
   $ParentSuite as $ParentSuiteType,
 } from "jest-allure2-reporter/api";
 import { NativeElementHelpers, WebElementHelpers } from "@e2e/helpers/elementHelpers";
@@ -46,6 +47,7 @@ declare global {
   var $TmsLink: typeof $TmsLinkType;
   var $Tag: typeof $TagType;
   var $Owner: typeof $OwnerType;
+  var $Parameter: typeof $ParameterType;
   var $ParentSuite: typeof $ParentSuiteType;
   var CLI: typeof CLIType;
   var jestExpect: typeof expect;

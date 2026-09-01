@@ -1,8 +1,8 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { setTeamOwner, setXrayDataset } from "@e2e/helpers/allure/allure-helper";
+import { ADD_ACCOUNT_XRAY_TEST } from "@e2e/specs/addAccount/addAccount";
 
-const tmsLinks = ["B2CQA-4450", "B2CQA-4451", "B2CQA-4452"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aleo", "@family-aleo"];
 
 describe("Add account", () => {
@@ -18,8 +18,8 @@ describe("Add account", () => {
   });
 
   setTeamOwner(Team.BST);
-  tmsLinks.forEach(link => $TmsLink(link));
   tags.forEach(tag => $Tag(tag));
+  setXrayDataset(ADD_ACCOUNT_XRAY_TEST, { Currency: Currency.ALEO.testLabel });
 
   it(`[${Currency.ALEO.testLabel}] - Add account`, async () => {
     await app.portfolio.addAccount();
