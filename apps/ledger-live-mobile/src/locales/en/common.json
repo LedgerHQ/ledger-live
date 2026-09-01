@@ -10207,7 +10207,8 @@
       }
     },
     "card": {
-      "title": "Crypto card"
+      "title": "Crypto card",
+      "balanceLabel": "Balance"
     },
     "cardOnboarding": {
       "widget": {

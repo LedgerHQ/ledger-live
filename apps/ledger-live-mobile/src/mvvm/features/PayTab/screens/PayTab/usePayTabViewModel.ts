@@ -1,5 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import BigNumber from "bignumber.js";
 import { useRoute, type RouteProp } from "@react-navigation/native";
+import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useTranslation } from "@shared/i18n";
@@ -14,6 +16,8 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
+import { useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
@@ -21,6 +25,9 @@ export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
   const { t } = useTranslation();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
+  const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const unit = counterValueCurrency.units[0];
 
   const balance = usePayCardBalance();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
@@ -29,6 +36,12 @@ export function usePayTabViewModel() {
   const payment = usePayTabNewPayment();
   const contacts = usePayTabContacts(payment.open);
   const { isEnabled: isContactsEnabled } = useContactsFeature("mobile");
+
+  const formatCountervalue: CardProps["formatCountervalue"] = useCallback(
+    (value: number) =>
+      formatCurrencyUnitFragment(unit, new BigNumber(value), { locale, showCode: true }),
+    [unit, locale],
+  );
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
   // login must take the new values without a restart of the app.
@@ -65,6 +78,8 @@ export function usePayTabViewModel() {
   return {
     top,
     cardTitle: t("payTab.card.title"),
+    cardBalanceLabel: t("payTab.card.balanceLabel"),
+    formatCountervalue,
     oauthConfig,
     callback,
     featureTour,
