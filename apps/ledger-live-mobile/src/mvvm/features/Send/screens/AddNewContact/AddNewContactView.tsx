@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import {
   QueuedDrawerFlow,
   type QueuedDrawerFlowOptions,
@@ -80,6 +81,7 @@ function AddContactChooserStep({
 
 export function AddNewContactView({
   addressPhase,
+  dieProps,
   isOpeningAddressFlow,
   keyboardBottomOffset,
   drawerStep,
@@ -193,6 +195,9 @@ export function AddNewContactView({
         isOpen={isActivationDrawerVisible}
         handleClose={closeActivationDrawer}
       />
+      {dieProps === undefined ? null : (
+        <DeviceIntentExecutorLWM sourceFlow="contacts" {...dieProps} />
+      )}
     </>
   );
 }

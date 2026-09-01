@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { Platform } from "react-native";
 import type { Contact } from "@domain/entity-contact";
 import type { AddAddressFlowState } from "@features/flow-contacts-add-address";
+import type { ContactsDeviceIntentExecutorProps } from "@features/platform-contacts/device";
 import { useContactsAddContactDrawerAdapter } from "LLM/features/Contacts/screens/ContactsPage/hooks/useContactsAddContactDrawerAdapter";
 import {
   useSendPrefillAddAddressFlow,
@@ -20,6 +21,7 @@ type AddContactDrawerOrigin = "chooser" | "contact" | "select";
 export type AddNewContactViewModel = ReturnType<typeof useContactsAddContactDrawerAdapter> &
   Readonly<{
     addressPhase: AddNewContactAddressPhase | null;
+    dieProps: ContactsDeviceIntentExecutorProps | undefined;
     isOpeningAddressFlow: boolean;
     keyboardBottomOffset: number;
     drawerStep: AddContactDrawerStep;
@@ -88,6 +90,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   }, []);
   const {
     addressPhase,
+    dieProps,
     isOpeningAddressFlow,
     startForContact,
     goBackFromAddressPhase,
@@ -145,6 +148,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
     onOpen,
     onClose: closeDrawer,
     addressPhase,
+    dieProps,
     isOpeningAddressFlow,
     keyboardBottomOffset,
     drawerStep,
