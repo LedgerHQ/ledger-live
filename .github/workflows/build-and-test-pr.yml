@@ -342,7 +342,7 @@ jobs:
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/skip-redundant-pr-comment-jobs
     permissions:
       security-events: write
       contents: read
@@ -396,7 +396,7 @@ jobs:
           || contains(needs.determine-affected.outputs.paths, 'libs/ledger-live-common')
           || contains(needs.determine-affected.outputs.paths, 'libs/coin-framework')
           || contains(needs.determine-affected.outputs.paths, 'libs/coin-modules')) }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@ci/skip-redundant-pr-comment-jobs
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
 
