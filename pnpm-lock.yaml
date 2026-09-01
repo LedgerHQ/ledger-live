@@ -12095,9 +12095,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      bip32:
-        specifier: ^4.0.0
-        version: 4.0.0
       bs58check:
         specifier: ^4.0.0
         version: 4.0.0

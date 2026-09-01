@@ -1,162 +1,39 @@
-import { BIP32Factory } from "bip32";
 import bs58check from "bs58check";
-import { secp256k1 } from "@noble/curves/secp256k1";
 import { derivePath, p2pkhAddress, P2PKH_VERSION } from "./signer";
 
-// ECC wrapper for @noble/curves/secp256k1 to be compatible with BIP32Factory,
-// mirroring coin-tester-bitcoin's own signer.ts (test-only cross-check here,
-// not shipped): bip32 v4 dropped its bundled secp256k1 implementation and
-// requires the caller to supply one.
-function bytesToBigInt(bytes: Uint8Array): bigint {
-  const hex = Array.from(bytes)
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-  return BigInt("0x" + hex);
-}
-
-function bigIntToBytes(value: bigint): Uint8Array {
-  const hex = value.toString(16).padStart(64, "0");
-  const bytes = new Uint8Array(32);
-  for (let i = 0; i < 32; i++) {
-    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
-  }
-  return bytes;
-}
-
-const eccWrapper = {
-  isPoint(point: Uint8Array | Buffer): boolean {
-    try {
-      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-      if (pointBytes.length !== 33 && pointBytes.length !== 65) return false;
-      secp256k1.ProjectivePoint.fromHex(pointBytes);
-      return true;
-    } catch {
-      return false;
-    }
-  },
-
-  isPrivate(privateKey: Uint8Array | Buffer): boolean {
-    try {
-      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-      if (keyBytes.length !== 32) return false;
-      return secp256k1.utils.isValidPrivateKey(keyBytes);
-    } catch {
-      return false;
-    }
-  },
-
-  pointFromScalar(privateKey: Uint8Array | Buffer, compressed = true): Uint8Array | null {
-    try {
-      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-      if (!this.isPrivate(keyBytes)) return null;
-      return secp256k1.getPublicKey(keyBytes, compressed);
-    } catch {
-      return null;
-    }
-  },
-
-  pointAddScalar(
-    point: Uint8Array | Buffer,
-    scalar: Uint8Array | Buffer,
-    compressed?: boolean,
-  ): Uint8Array | null {
-    try {
-      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
-      if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
-
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
-      const scalarPoint = secp256k1.ProjectivePoint.BASE.multiply(bytesToBigInt(scalarBytes));
-      const result = p.add(scalarPoint);
-
-      const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
-    } catch {
-      return null;
-    }
-  },
-
-  privateAdd(privateKey: Uint8Array | Buffer, scalar: Uint8Array | Buffer): Uint8Array | null {
-    try {
-      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
-      if (!this.isPrivate(keyBytes) || !this.isPrivate(scalarBytes)) return null;
-
-      const result = (bytesToBigInt(keyBytes) + bytesToBigInt(scalarBytes)) % secp256k1.CURVE.n;
-      if (result === 0n) return null;
-      return bigIntToBytes(result);
-    } catch {
-      return null;
-    }
-  },
-
-  pointMultiply(
-    point: Uint8Array | Buffer,
-    scalar: Uint8Array | Buffer,
-    compressed?: boolean,
-  ): Uint8Array | null {
-    try {
-      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
-      if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
-
-      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
-      const result = p.multiply(bytesToBigInt(scalarBytes));
-      const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
-      return result.toRawBytes(isCompressed);
-    } catch {
-      return null;
-    }
-  },
-
-  pointCompress(point: Uint8Array | Buffer, compressed = true): Uint8Array {
-    const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
-    return secp256k1.ProjectivePoint.fromHex(pointBytes).toRawBytes(compressed);
-  },
-
-  isPointCompressed(point: Uint8Array | Buffer): boolean {
-    return point.length === 33;
-  },
-
-  sign(hash: Uint8Array | Buffer, privateKey: Uint8Array | Buffer): Uint8Array {
-    const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
-    const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-    return secp256k1.sign(hashBytes, keyBytes, { prehash: false }).toCompactRawBytes();
-  },
-
-  verify(
-    hash: Uint8Array | Buffer,
-    publicKey: Uint8Array | Buffer,
-    signature: Uint8Array | Buffer,
-  ): boolean {
-    try {
-      const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
-      const pubKeyBytes = publicKey instanceof Buffer ? new Uint8Array(publicKey) : publicKey;
-      const sigBytes = signature instanceof Buffer ? new Uint8Array(signature) : signature;
-      return secp256k1.verify(sigBytes, hashBytes, pubKeyBytes, { prehash: false });
-    } catch {
-      return false;
-    }
-  },
-};
-
-const bip32 = BIP32Factory(eccWrapper);
-
-// BIP32 spec's own official test vector 1 seed.
+// BIP32 spec's own official Test Vector 1 (seed and extended private keys),
+// verbatim from https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki.
+// No `bip32`/`tiny-secp256k1` dependency needed: an extended private key is
+// just Base58Check(version[4] || depth[1] || parentFingerprint[4] ||
+// childNumber[4] || chainCode[32] || 0x00 || privateKey[32]), so decoding one
+// with `bs58check` (pure JS, no native build) is enough to read off the raw
+// private key and chain code to compare against.
 const TEST_SEED = Buffer.from("000102030405060708090a0b0c0d0e0f", "hex");
 
-describe("derivePath", () => {
-  it.each(["0'", "0'/1", "0'/1/2'", "0'/1/2'/2", "44'/133'/0'/0/0"])(
-    "matches bip32's own CKDpriv derivation for path %s",
-    path => {
-      const ours = derivePath(TEST_SEED, path);
-      const theirs = bip32.fromSeed(TEST_SEED).derivePath(path);
+const TEST_VECTOR_1: Record<string, string> = {
+  m: "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi",
+  "0'": "xprv9uHRZZhk6KAJC1avXpDAp4MDc3sQKNxDiPvvkX8Br5ngLNv1TxvUxt4cV1rGL5hj6KCesnDYUhd7oWgT11eZG7XnxHrnYeSvkzY7d2bhkJ7",
+  "0'/1":
+    "xprv9wTYmMFdV23N2TdNG573QoEsfRrWKQgWeibmLntzniatZvR9BmLnvSxqu53Kw1UmYPxLgboyZQaXwTCg8MSY3H2EU4pWcQDnRnrVA1xe8fs",
+};
 
-      expect(Buffer.from(ours.privateKey).toString("hex")).toBe(
-        Buffer.from(theirs.privateKey as Uint8Array).toString("hex"),
+function decodeXprv(xprv: string): { privateKey: Buffer; chainCode: Buffer } {
+  const raw = bs58check.decode(xprv);
+  return { chainCode: Buffer.from(raw.slice(13, 45)), privateKey: Buffer.from(raw.slice(46, 78)) };
+}
+
+describe("derivePath", () => {
+  it.each(Object.keys(TEST_VECTOR_1))(
+    "matches BIP32 spec's own Test Vector 1 for path %s",
+    path => {
+      const expected = decodeXprv(TEST_VECTOR_1[path]);
+      const actual = derivePath(TEST_SEED, path === "m" ? "" : path);
+
+      expect(Buffer.from(actual.privateKey).toString("hex")).toBe(
+        expected.privateKey.toString("hex"),
       );
-      expect(Buffer.from(ours.chainCode).toString("hex")).toBe(
-        Buffer.from(theirs.chainCode).toString("hex"),
+      expect(Buffer.from(actual.chainCode).toString("hex")).toBe(
+        expected.chainCode.toString("hex"),
       );
     },
   );
