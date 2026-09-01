@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import type { CardProps, CardViewProps } from "./Card.types";
 
-/** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
-const MOCK_CARD_BALANCE = 100;
+/** The balance API is not wired yet, and the card renders the same at zero as at any amount. */
+const PLACEHOLDER_CARD_BALANCE = 0;
 
 /**
  * View model for the Pay Card flow. The flow owns the (currently mocked) balance, so hosts no longer
@@ -19,7 +19,7 @@ export function useCardViewModel({
 }: CardProps): CardViewProps {
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
     if (!formatCountervalue || balanceLabel === undefined) return undefined;
-    return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
+    return { balance: PLACEHOLDER_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [formatCountervalue, balanceLabel]);
 
   return { title, oauthConfig, callback, cardVisual };
