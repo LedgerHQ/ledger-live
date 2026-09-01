@@ -34,7 +34,6 @@
     "**/tools/**",
     "**/*.mock.*",
     "**/*.d.ts",
-    "**/.storybook-web/**",
     "**/.eslintrc.guardrails.js",
     "**/.eslintrc.i18n.js",
     "**/.eslintrc.tailwind.js"
@@ -50,10 +49,6 @@
         "src/webviewPreloader/index.ts"
       ],
       "ignore": [
-        ".storybook/stub.ts",
-        ".storybook/electronStub.js",
-        ".storybook/fsStub.js",
-        ".storybook/settingsMock.ts",
         "src/renderer/mockServiceWorker.js",
         "src/errors.ts"
       ],
@@ -64,7 +59,6 @@
         "@electron/fuses",
         "embla-carousel-autoplay",
         "embla-carousel-react",
-        "events",
         "@ledgerhq/zcash-utils"
       ]
     },

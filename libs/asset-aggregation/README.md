@@ -17,7 +17,7 @@
 - `assetAggregation` — core logic to merge accounts into a deduplicated asset list
 - `assetCategorization` — classifies assets by type/category
 - `assetDistribution` — computes portfolio share (%) per asset
-- `mocks/` — mock asset data for tests and Storybook
+- `mocks/` — mock asset data for tests
 
 ## Usage context
 
