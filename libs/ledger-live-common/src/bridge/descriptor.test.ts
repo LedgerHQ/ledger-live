@@ -10,6 +10,11 @@ import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "./zcashRouting"
 
 jest.mock("../config/index");
 
+// Vectors shared with coin-zcash's `logic/address.test.ts`.
+const ZCASH_UA_WITH_ORCHARD =
+  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+const ZCASH_T1_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
+
 describe("getDescriptor", () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -206,13 +211,14 @@ describe("sendFeatures", () => {
     });
   });
 
+  // These coins accept a memo for any recipient, so the address does not matter.
   it.each([
     ["solana", true],
     ["algorand", true],
     ["bitcoin", false],
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
-    expect(sendFeatures.hasMemo(currency)).toBe(expected);
+    expect(sendFeatures.hasMemoForRecipient(currency, "")).toBe(expected);
   });
 
   it("should check fee presets support", () => {
@@ -772,7 +778,9 @@ describe("zcash descriptor resolution", () => {
     setZcashShieldedEnabled(true);
     const zcash = getCryptoCurrencyById("zcash");
 
-    expect(sendFeatures.hasMemo(zcash)).toBe(true);
+    // Only a shielded recipient can be handed a memo, hence the unified address.
+    expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_UA_WITH_ORCHARD)).toBe(true);
+    expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_T1_ADDRESS)).toBe(false);
     expect(sendFeatures.getMemoMaxLength(zcash)).toBe(512);
     expect(sendFeatures.hasDefaultStrategy(zcash)).toBe(false);
     expect(sendFeatures.getFeePresetOptions(zcash, {})).toEqual([]);

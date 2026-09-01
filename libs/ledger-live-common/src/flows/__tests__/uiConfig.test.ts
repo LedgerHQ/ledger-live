@@ -8,7 +8,7 @@ jest.mock("../../bridge/descriptor/registry", () => ({
 }));
 jest.mock("../../bridge/descriptor/send/features", () => ({
   sendFeatures: {
-    hasMemo: jest.fn(),
+    hasMemoForRecipient: jest.fn(),
     getMemoMaxLength: jest.fn(),
     getMemoMaxValue: jest.fn(),
     getMemoOptions: jest.fn(),
@@ -75,7 +75,7 @@ describe("getSendUiConfig", () => {
         inputs: {},
         fees: { hasPresets: true, hasCustom: true, hasCoinControl: true },
       });
-      mockedSendFeatures.hasMemo.mockReturnValue(false);
+      mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
       mockedSendFeatures.getMemoMaxLength.mockReturnValue(undefined);
       mockedSendFeatures.getMemoMaxValue.mockReturnValue(undefined);
       mockedSendFeatures.getMemoOptions.mockReturnValue(undefined);
@@ -108,7 +108,7 @@ describe("getSendUiConfig", () => {
         inputs: { recipientSupportsDomain: true },
         fees: { hasPresets: true, hasCustom: true },
       });
-      mockedSendFeatures.hasMemo.mockReturnValue(false);
+      mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
       mockedSendFeatures.getMemoMaxLength.mockReturnValue(undefined);
       mockedSendFeatures.getMemoMaxValue.mockReturnValue(undefined);
       mockedSendFeatures.getMemoOptions.mockReturnValue(undefined);
@@ -143,7 +143,7 @@ describe("getSendUiConfig", () => {
         },
         fees: { hasPresets: false, hasCustom: true },
       });
-      mockedSendFeatures.hasMemo.mockReturnValue(true);
+      mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
       mockedSendFeatures.getMemoMaxLength.mockReturnValue(200);
       mockedSendFeatures.getMemoMaxValue.mockReturnValue(undefined);
       mockedSendFeatures.getMemoOptions.mockReturnValue(undefined);
@@ -167,6 +167,33 @@ describe("getSendUiConfig", () => {
         hasCoinControl: false,
         hasDefaultStrategy: true,
       });
+    });
+  });
+
+  describe("recipient-restricted memo", () => {
+    it("resolves hasMemo against the recipient the flow points at", () => {
+      mockedGetSendDescriptor.mockReturnValue({
+        inputs: { memo: { type: "text", maxLength: 512 } },
+        fees: { hasPresets: false, hasCustom: false },
+      });
+
+      getSendUiConfig(mockSolanaCurrency, "some-recipient");
+
+      expect(mockedSendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+        mockSolanaCurrency,
+        "some-recipient",
+      );
+    });
+
+    it("treats a missing recipient as an empty one", () => {
+      mockedGetSendDescriptor.mockReturnValue({
+        inputs: { memo: { type: "text", maxLength: 512 } },
+        fees: { hasPresets: false, hasCustom: false },
+      });
+
+      getSendUiConfig(mockSolanaCurrency);
+
+      expect(mockedSendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(mockSolanaCurrency, "");
     });
   });
 

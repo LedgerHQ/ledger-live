@@ -105,7 +105,7 @@ describe("useRecipientAddressModalViewModel", () => {
       if (!account) return mockAccount;
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
-    mockedSendFeatures.hasMemo.mockReturnValue(false);
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
     mockedUseContacts.mockReturnValue([]);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: false,

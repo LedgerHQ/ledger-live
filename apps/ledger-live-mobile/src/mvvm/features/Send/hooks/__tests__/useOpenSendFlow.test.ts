@@ -1,6 +1,10 @@
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  isZcashShieldedEnabled,
+  setZcashShieldedEnabled,
+} from "@ledgerhq/live-common/bridge/zcashRouting";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenSendFlow } from "../useOpenSendFlow";
@@ -221,6 +225,85 @@ describe("useOpenSendFlow", () => {
           accountId: account.id,
           transaction: expect.objectContaining({ recipient }),
         }),
+      });
+    });
+  });
+
+  describe("Zcash recipient-restricted memo", () => {
+    const previousShieldedEnabled = isZcashShieldedEnabled();
+    const shieldedRecipient =
+      "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+    const transparentRecipient = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
+
+    beforeEach(() => {
+      setZcashShieldedEnabled(true);
+    });
+
+    afterEach(() => {
+      setZcashShieldedEnabled(previousShieldedEnabled);
+    });
+
+    it("keeps the legacy recipient step for a shielded direct recipient", async () => {
+      const currency = getCryptoCurrencyById("zcash");
+      const account = genAccount("legacy-send-zcash-shielded-recipient", { currency });
+      const { result } = renderHook(() =>
+        useOpenSendFlow({
+          currency,
+          sourceScreenName: "Contact Detail",
+        }),
+      );
+
+      act(() =>
+        result.current.handleOpenSendFlow({
+          recipient: shieldedRecipient,
+          skipRecipientStep: true,
+        }),
+      );
+      const onAccountSelected = mockOpenDrawer.mock.calls[0][0].onAccountSelected;
+      await act(async () => {
+        onAccountSelected(account);
+      });
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+          screen: ScreenName.SendSelectRecipient,
+          params: expect.objectContaining({
+            accountId: account.id,
+            transaction: expect.objectContaining({ recipient: shieldedRecipient }),
+          }),
+        });
+      });
+    });
+
+    it("opens the legacy amount step for a transparent direct recipient", async () => {
+      const currency = getCryptoCurrencyById("zcash");
+      const account = genAccount("legacy-send-zcash-transparent-recipient", { currency });
+      const { result } = renderHook(() =>
+        useOpenSendFlow({
+          currency,
+          sourceScreenName: "Contact Detail",
+        }),
+      );
+
+      act(() =>
+        result.current.handleOpenSendFlow({
+          recipient: transparentRecipient,
+          skipRecipientStep: true,
+        }),
+      );
+      const onAccountSelected = mockOpenDrawer.mock.calls[0][0].onAccountSelected;
+      await act(async () => {
+        onAccountSelected(account);
+      });
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+          screen: ScreenName.SendAmountCoin,
+          params: expect.objectContaining({
+            accountId: account.id,
+            transaction: expect.objectContaining({ recipient: transparentRecipient }),
+          }),
+        });
       });
     });
   });

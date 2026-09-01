@@ -94,7 +94,7 @@ export function useRecipientAddressModalViewModel({
     return contactsOnNetwork.length === 0;
   }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
-  const hasMemo = sendFeatures.hasMemo(currency);
+  const hasMemo = sendFeatures.hasMemoForRecipient(currency, recipientSearch.value);
   const memoType = sendFeatures.getMemoType(currency);
   const memoTypeOptions = sendFeatures.getMemoOptions(currency);
   const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);

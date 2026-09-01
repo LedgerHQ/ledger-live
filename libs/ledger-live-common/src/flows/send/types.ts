@@ -28,6 +28,7 @@ export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
 export type BaseSendFlowConfig = FlowConfig<SendFlowStep, BaseSendStepConfig>;
 
 export type SendFlowUiConfig = Readonly<{
+  /** Whether to offer a memo input for the recipient the flow currently points at. */
   hasMemo: boolean;
   memoType?: string;
   memoMaxLength?: number;

@@ -91,9 +91,12 @@ export function useSendFlowBusinessLogic({
     parentAccount: accountHook.state.parentAccount,
   });
 
+  // Resolved against the search value rather than the committed recipient: memo
+  // visibility has to follow the address as it is typed, and the flow only commits a
+  // recipient once one is picked (or once the memo itself changes).
   const uiConfig = useMemo(
-    () => getSendUiConfig(accountHook.state.currency),
-    [accountHook.state.currency],
+    () => getSendUiConfig(accountHook.state.currency, recipientSearchValue),
+    [accountHook.state.currency, recipientSearchValue],
   );
 
   const setAccountAndNavigate = useCallback(

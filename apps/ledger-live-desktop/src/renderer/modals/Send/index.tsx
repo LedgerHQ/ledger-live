@@ -62,7 +62,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         recipient: modalData.recipient,
         skipRecipientStep: modalData.skipRecipientStep,
       },
-      getSendUiConfig(getAccountCurrency(modalData.account)),
+      getSendUiConfig(getAccountCurrency(modalData.account), modalData.recipient ?? ""),
     );
   const effectiveStepId = !hasStartedDirectSend && canStartDirectSend ? "amount" : stepId;
   const isModalLocked = MODAL_LOCKED[effectiveStepId];
