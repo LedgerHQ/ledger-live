@@ -40,10 +40,23 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
   ? new Set(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
   : undefined;
 
+// `allure.description()` appends rather than replaces: every call pushes one paragraph and the
+// reporter joins them with a blank line. Speculos is legitimately launched more than once per test
+// — the initUtil retry loops re-create the instance, and the swap helpers bring up a second one for
+// a token approval — so the same `SPECULOS App: <name> (<version>)` block can land in a description
+// several times. Keep the first of each and drop verbatim repeats: blocks for genuinely different
+// apps (a swap shows one per currency plus Exchange and its dependencies) all differ, so they stay.
+const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
+    description: ({ testCaseMetadata }) =>
+      dedupeParagraphs(testCaseMetadata.description).join("\n\n"),
+    // Same appending behaviour, and the same separator the reporter's own default uses.
+    descriptionHtml: ({ testCaseMetadata }) =>
+      dedupeParagraphs(testCaseMetadata.descriptionHtml).join("\n"),
     links: {
       issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
       tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
