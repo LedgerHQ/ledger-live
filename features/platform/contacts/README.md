@@ -68,15 +68,3 @@ The renderers are app-owned, because a `features/` package cannot resolve transl
 app keeps them under `src/mvvm/features/Contacts/deviceIntents/<intent>/`, composes each shared
 definition with its own component into an `IntentPlatformDefinition`, and injects the resulting bag
 into `useContactsIntentsOrchestrator`.
-
-The combined edit emits a payload-free `partial-result` between its two device confirmations. It
-carries nothing to persist, because the device stores no address book: it verifies the `hmacRest`
-proof it is given, asks the user, and returns a fresh one. Each proof therefore covers one specific
-`(identifier, scope)` pair, which is what dictates the chain — the identifier step proves
-`(previousAddress, previousScope)` and yields a proof over `(newAddress, previousScope)`, exactly
-what the scope step must present.
-
-That statelessness also makes the chain atomic from the host's point of view. Abandoning a combined
-edit between its two confirmations drops an intermediate proof and leaves the stored record
-untouched and still valid, so a retry restarts the whole chain from the stored proof rather than
-resuming mid-way.
