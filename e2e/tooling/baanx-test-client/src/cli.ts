@@ -32,7 +32,7 @@ function describeVars(): string {
   return rows.map(([name, note]) => `  ${name.padEnd(width)}  ${note}`).join("\n");
 }
 
-const USAGE = `Usage: pnpm --silent --filter @ledgerhq/baanx-test-client token [--json]
+const USAGE = `Usage: pnpm --silent --filter @ledgerhq/baanx-test-client token [--json|--session]
 
 Prints a Baanx access token for the configured test user.
 
