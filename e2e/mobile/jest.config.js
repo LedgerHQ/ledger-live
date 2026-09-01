@@ -35,6 +35,11 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
 
 const platform = process.env.DETOX_CONFIGURATION?.startsWith("ios") ? "ios" : "android";
 
+// Same set jest.environment.ts narrows the run to on a Detox retry. Present only on a retry pass.
+const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
+  ? new Set(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
+  : undefined;
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
@@ -54,6 +59,14 @@ const jestAllure2ReporterOptions = {
     },
     status: ({ value }) => (value === "broken" ? "failed" : value),
     historyId: ({ value }) => `${value}:${platform}`,
+    // On a Detox retry, jest.environment.ts marks the tests we are not retrying as skipped rather
+    // than deleting them, because deleting desynchronises jest's result list from jest-metadata's
+    // registry and the reporter pairs those positionally (losing a result entirely). They are
+    // still reported, though, so drop them here: they share a historyId with their previous
+    // attempt, and a later-timestamped "skipped" would override that verdict in the report.
+    // Inert outside a retry pass, when retryTestNames is undefined.
+    ignored: ({ value, testCase }) =>
+      value || (!!retryTestNames && !retryTestNames.has(testCase.fullName)),
   },
   overwrite: false,
   environment: async ({ $ }) => ({

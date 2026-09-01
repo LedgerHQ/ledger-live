@@ -3,16 +3,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
-  tmsLinks: [
-    "B2CQA-4345",
-    "B2CQA-4339",
-    "B2CQA-4346",
-    "B2CQA-4343",
-    "B2CQA-4341",
-    "B2CQA-4340",
-    "B2CQA-4351",
-    "B2CQA-4350",
-  ],
+  tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4341", "B2CQA-4340", "B2CQA-4351"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
@@ -21,7 +12,7 @@ const CURRENCY = ACCOUNT.currency;
 const TICKER = CURRENCY.ticker;
 
 setTeamOwner(Team.WALLET_XP);
-describe("Portfolio", () => {
+describe("Portfolio with account", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
@@ -29,19 +20,6 @@ describe("Portfolio", () => {
       featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
-  });
-
-  testConfig.tmsLinks.forEach(link => $TmsLink(link));
-  testConfig.tags.forEach(tag => $Tag(tag));
-
-  it("Portfolio zero balance state shows quick actions", async () => {
-    await app.portfolio.checkQuickActionTransferButtonVisibility();
-    await app.portfolio.checkQuickActionSwapButtonVisibility();
-    await app.portfolio.checkQuickActionBuyButtonVisibility();
-    await app.portfolio.checkNoBalanceTitleVisibility();
-  });
-
-  it(`[${ACCOUNT.currency.testLabel}] - Portfolio with a zero-balance account shows balance and analytics`, async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.performSearchByTicker(TICKER);
@@ -51,6 +29,9 @@ describe("Portfolio", () => {
     await app.common.tapCloseWithConfirmationButton();
     await app.mainNavigation.tapWallet40Tab("home");
   });
+
+  testConfig.tmsLinks.forEach(link => $TmsLink(link));
+  testConfig.tags.forEach(tag => $Tag(tag));
 
   it("Portfolio with funds shows balance and quick actions", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
