@@ -63,7 +63,9 @@ describe("TrendingAssetsList", () => {
 
     await user.click(screen.getByTestId("market-banner-asset-bitcoin"));
     expect(mockSetTrackingSource).toHaveBeenCalledWith(MARKET_BANNER_TRACKING_SOURCE);
-    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
+    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin", {
+      state: { id: "bitcoin", ledgerIds: ["bitcoin"] },
+    });
   });
 
   it("should show left arrow and handle scroll left when not at start", async () => {
