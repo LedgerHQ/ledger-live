@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/live-countervalues-react";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import {
@@ -64,6 +65,14 @@ export type PerpsDepositViewModel = Readonly<{
   isReviewOpen: boolean;
   reviewParams: PerpsReviewParams | null;
   closeReview: () => void;
+  isSignOpen: boolean;
+  signingDevice: Device | null | undefined;
+  selectSigningDevice: (device: Device | null | undefined) => void;
+  handOverToDevice: () => void;
+  /** The device declined, which is not a failure: the summary takes over again. */
+  returnToReview: () => void;
+  /** Signed and broadcast, so nothing is left to sign. */
+  endSigning: () => void;
 }>;
 
 export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepositViewModel {
@@ -79,6 +88,8 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const [depositAccountId, setDepositAccountId] = useState<string | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isSignOpen, setIsSignOpen] = useState(false);
+  const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
 
   /** Read from the store so balances stay live while the form is open. */
@@ -261,6 +272,22 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const closeReview = useCallback(() => setIsReviewOpen(false), []);
 
+  const handOverToDevice = useCallback(() => {
+    setIsReviewOpen(false);
+    setIsSignOpen(true);
+  }, []);
+
+  /** The device is kept, so handing over again skips the device list. */
+  const returnToReview = useCallback(() => {
+    setIsSignOpen(false);
+    setIsReviewOpen(true);
+  }, []);
+
+  const endSigning = useCallback(() => {
+    setIsSignOpen(false);
+    setSigningDevice(undefined);
+  }, []);
+
   return {
     headerDescription: `${receiverAccountName} · ${receiverAccountCounterValue}`,
     amountText,
@@ -288,5 +315,11 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     isReviewOpen,
     reviewParams,
     closeReview,
+    isSignOpen,
+    signingDevice,
+    selectSigningDevice: setSigningDevice,
+    handOverToDevice,
+    returnToReview,
+    endSigning,
   };
 }
