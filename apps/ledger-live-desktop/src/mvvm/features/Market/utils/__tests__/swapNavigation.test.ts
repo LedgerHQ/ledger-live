@@ -73,8 +73,7 @@ describe("buildSwapNavigationState", () => {
   it("never passes a raw currency object as defaultCurrency", () => {
     const state = buildSwapNavigationState({ defaultCurrency: bitcoin, fromPath: "/earn" });
 
-    expect(typeof state.defaultCurrency).toBe("object");
-    expect((state.defaultCurrency as object).hasOwnProperty("toCurrencyId")).toBe(true);
+    expect(state.defaultCurrency).toHaveProperty("toCurrencyId");
     expect(state.defaultCurrency).not.toHaveProperty("id");
     expect(state.defaultCurrency).not.toHaveProperty("type");
   });

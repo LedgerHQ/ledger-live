@@ -76,7 +76,7 @@ describe("NoFundsStakeModal", () => {
       expect(state.from).toBe("/earn");
     });
 
-    it("passes toTokenId for a token account", () => {
+    it("prefills token receive currency and includes account + parent ids for a token account", () => {
       const ethAccountWithUsdc = ETH_ACCOUNT_WITH_USDC;
       const usdcSubAccount = ethAccountWithUsdc.subAccounts?.[0];
       if (!usdcSubAccount) throw new Error("No USDC sub-account in mock");
@@ -101,6 +101,7 @@ describe("NoFundsStakeModal", () => {
     it("shows Buy, Swap, and Receive options", () => {
       render(<NoFundsStakeModal account={ETH_ACCOUNT} />, { initialState: modalOpenState });
 
+      expect(screen.getByText("Buy")).toBeInTheDocument();
       expect(screen.getByText("Swap")).toBeInTheDocument();
       expect(screen.getByText("Receive")).toBeInTheDocument();
     });
