@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 37.5.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab)]:
+  - @ledgerhq/asset-aggregation@0.14.0-next.1
+
 ## 37.5.0-next.0
 
 ### Minor Changes

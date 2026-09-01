@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 4.19.0-next.1
+
+### Minor Changes
+
+- [#21394](https://github.com/LedgerHQ/ledger-live/pull/21394) [`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MarketBanner/Market list navigation so clicking Arbitrum opens the ARB asset detail instead of the Ethereum one, by passing the market ledger ids in the navigation state and preventing a bare market id from colliding with a same-named chain id
+
+### Patch Changes
+
+- Updated dependencies [[`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab)]:
+  - @ledgerhq/asset-aggregation@0.14.0-next.1
+  - @ledgerhq/asset-detail@0.11.3-next.1
+  - @ledgerhq/live-common@37.5.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.20.9-next.1
+
 ## 4.19.0-next.0
 
 ### Minor Changes
