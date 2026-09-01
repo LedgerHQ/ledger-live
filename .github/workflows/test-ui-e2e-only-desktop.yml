@@ -297,7 +297,7 @@ jobs:
         shell: bash
 
       - name: Configure test environment (API endpoints, broadcast settings)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/e2e-swap-update-api-base-urls
         with:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}

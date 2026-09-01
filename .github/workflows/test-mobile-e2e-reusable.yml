@@ -733,7 +733,7 @@ jobs:
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/e2e-swap-update-api-base-urls
         with:
           enable_broadcast: ${{ env.IOS_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
@@ -1005,7 +1005,7 @@ jobs:
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@chore/e2e-swap-update-api-base-urls
         with:
           enable_broadcast: ${{ env.ANDROID_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
