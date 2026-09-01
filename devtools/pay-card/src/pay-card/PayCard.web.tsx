@@ -2,9 +2,10 @@ import { Button, Divider, Tag } from "@ledgerhq/lumen-ui-react";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
+import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen } = props;
+  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen, env } = props;
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -69,6 +70,17 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             Reset feature tour
           </Button>
         </div>
+      </Section>
+
+      <Divider />
+
+      <Section title="Env vars">
+        <p className="body-4 text-muted">
+          Applied at once, and not saved: a restart brings the build's values back.
+        </p>
+        {env.vars.map(envVar => (
+          <EnvVarRow key={envVar.key} envVar={envVar} onSet={env.setVar} />
+        ))}
       </Section>
     </div>
   );

@@ -24,6 +24,17 @@ function buildProps(): PayCardToolProps {
     },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
+    env: {
+      vars: [
+        {
+          key: "CARD_API_URL",
+          value: "https://card.api.live.ledger.com",
+          suggestedValue: "https://dev.api.baanx.com",
+        },
+        { key: "CARD_BAANX_CLIENT_KEY", value: "", suggestedValue: "dev-client-key" },
+      ],
+      setVar: jest.fn(),
+    },
   };
 }
 
@@ -41,6 +52,41 @@ describe("PayCard (web)", () => {
 
     fireEvent.click(screen.getByText("Reset feature tour"));
     expect(props.resetPayCardFeatureTourSeen).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows both Card env vars, and the value the app reads now", () => {
+    render(<PayCard {...buildProps()} />);
+
+    expect(screen.getByText("Env vars")).toBeDefined();
+    expect(screen.getByText("CARD_API_URL=https://card.api.live.ledger.com")).toBeDefined();
+    // An empty client key must read as empty, and not as a missing row.
+    expect(screen.getByText("CARD_BAANX_CLIENT_KEY=(empty)")).toBeDefined();
+  });
+
+  it("fills each input with the suggested value, so one click changes the tenant", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    const input = screen.getByLabelText("CARD_API_URL") as HTMLInputElement;
+    expect(input.value).toBe("https://dev.api.baanx.com");
+
+    fireEvent.click(screen.getAllByText("Set")[0]!);
+    expect(props.env.setVar).toHaveBeenCalledWith("CARD_API_URL", "https://dev.api.baanx.com");
+  });
+
+  it("sets what the tester typed", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.change(screen.getByLabelText("CARD_API_URL"), {
+      target: { value: "https://card.api.live.ledger.com" },
+    });
+    fireEvent.click(screen.getAllByText("Set")[0]!);
+
+    expect(props.env.setVar).toHaveBeenCalledWith(
+      "CARD_API_URL",
+      "https://card.api.live.ledger.com",
+    );
   });
 
   it("wires onboarding actions", () => {
