@@ -50,6 +50,28 @@ describe("createContactsFromSendHistory", () => {
     expect(createContactsFromSendHistory([account])).toEqual([]);
   });
 
+  it("groups recipients so some contacts hold two or three addresses", () => {
+    const account = ethereumAccount(
+      Array.from({ length: 7 }, (_, index) =>
+        outOperation(
+          `op-${index}`,
+          `0x${String(index + 1)
+            .repeat(40)
+            .slice(0, 40)}`,
+          `2026-01-0${index + 1}`,
+        ),
+      ),
+    );
+
+    const contacts = createContactsFromSendHistory([account]);
+
+    expect(contacts.map(contact => contact.addresses.length)).toEqual([1, 2, 1, 3]);
+    expect(contacts[1].addresses.map(address => address.label)).toEqual(["ETH 1", "ETH 2"]);
+    expect(contacts.flatMap(contact => contact.addresses.map(address => address.id))).toHaveLength(
+      7,
+    );
+  });
+
   it("creates one contact per distinct recipient ordered by last sent-to", () => {
     const older = "0x1111111111111111111111111111111111111111";
     const newer = "0x2222222222222222222222222222222222222222";
