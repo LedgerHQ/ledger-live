@@ -45,9 +45,6 @@ jspm_packages/
 yalc.lock
 packages/react/lib
 
-# Storybook jazz
-packages/react/storybook-static
-
 # Expo web build
 packages/native/web-build
 

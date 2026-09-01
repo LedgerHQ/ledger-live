@@ -1,14 +1,11 @@
-import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
-import type { AssetType } from "../ModularDialog/types";
 
 export const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 export const ethereumCurrency = getCryptoCurrencyById("ethereum");
 export const arbitrumCurrency = getCryptoCurrencyById("arbitrum");
 export const baseCurrency = getCryptoCurrencyById("base");
 export const scrollCurrency = getCryptoCurrencyById("scroll");
-export const injectiveCurrency = getCryptoCurrencyById("injective");
 export const solanaCurrency = getCryptoCurrencyById("solana");
 export const hederaCurrency = getCryptoCurrencyById("hedera");
 
@@ -44,47 +41,3 @@ export const usdcToken: TokenCurrency = {
     },
   ],
 };
-
-export const arbitrumAssetType: AssetType = {
-  id: "arbitrum",
-  name: "Arbitrum",
-  ticker: "ARB",
-};
-
-export const bitcoinAssetType: AssetType = {
-  id: "bitcoin",
-  name: "Bitcoin",
-  ticker: "BTC",
-};
-
-export const ethereumAssetType: AssetType = {
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-};
-
-export const findCryptoCurrencyById = (id: string) =>
-  [bitcoinCurrency, ethereumCurrency, arbitrumCurrency].find(a => a.id === id);
-
-export const mockAssetsConfiguration: EnhancedModularDrawerConfiguration["assets"] = {
-  filter: "topNetworks",
-  leftElement: "apy",
-  rightElement: "balance",
-};
-
-export const mockNetworksConfiguration: EnhancedModularDrawerConfiguration["networks"] = {
-  leftElement: "numberOfAccounts",
-  rightElement: "balance",
-};
-
-export enum LoadingStatus {
-  Success = "success",
-}
-
-export { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-
-export const formatCurrencyUnit = (
-  _unit: unknown,
-  _value: unknown,
-  options?: { discreet?: boolean },
-) => (options?.discreet ? "***" : "100.00");

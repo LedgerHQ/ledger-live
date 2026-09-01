@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { clipboard } from "electron";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Wrapper, Illustration, Number, Title, Content, BulletRowIcon } from "./shared";
@@ -7,12 +8,6 @@ import BulletRow from "~/renderer/components/BulletRow";
 import Text from "~/renderer/components/Text";
 import IconCopy from "~/renderer/icons/Copy";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
-let clipboard: Electron.Clipboard | null = null;
-if (!process.env.STORYBOOK_ENV) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const electron = require("electron");
-  clipboard = electron.clipboard; // eslint-disable-line
-}
 
 const Pre = styled(Box).attrs({
   selectable: true,
@@ -36,7 +31,7 @@ const snippet =
 const UpdateUdevRulesSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
   const onCopy = useCallback(() => {
-    if (clipboard) clipboard.writeText(snippet);
+    clipboard.writeText(snippet);
   }, []);
   return (
     <Wrapper>

@@ -241,7 +241,6 @@
     "@react-native/babel-plugin-codegen": "catalog:",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/parser": "catalog:",
-    "@vitest/mocker": "4.0.17",
     "chalk": "4.1.2",
     "eslint": "8.57.0",
     "jest-sonar": "0.2.16",
