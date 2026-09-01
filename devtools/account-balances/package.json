@@ -5,11 +5,12 @@
   "description": "List accounts and read their balance through the account-data layer",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest --config jest.config.js --passWithNoTests",
     "coverage": "jest --config jest.config.js --coverage --passWithNoTests",
     "lint": "oxlint src"
