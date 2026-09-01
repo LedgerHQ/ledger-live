@@ -5,47 +5,36 @@ import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
 import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
-import evmBridge from "@ledgerhq/live-common/families/evm/bridge/api";
-import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import {
-  extractBalance,
-  adaptCoreOperationToLiveOperation,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
+  getAccountBalanceRows,
+  type AssetBalanceRow,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
+import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
+import { adaptCoreOperationToLiveOperation } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
-import type { AccountDescriptor, Balance, Operation } from "../models";
+import type { AccountDescriptor, Operation } from "../models";
 
 export type OperationsPage = {
   operations: Operation[];
   nextCursor: string | undefined;
 };
 
-type CoinFrameworkAssetEntry = { asset: { type: string }; value: bigint };
-
 export class CoinFrameworkAdapter {
-  async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
-    const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
-    const currency = getCryptoCurrencyById(descriptor.currencyId);
-    const api = createLocalEvmApi(currency.id);
-    const context = buildContext(currency.id);
-    // Pending better bridge API — evmBridge used as interim token resolver
-    const bridgeApi = evmBridge(currency);
-
-    const balanceRes: CoinFrameworkAssetEntry[] = await api.getBalance(context, address);
-    const native = extractBalance(balanceRes, "native");
-    const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
-
-    const tokenBalances = await Promise.all(
-      tokenAssets.map(async ({ asset, value }): Promise<Balance | null> => {
-        const token = await bridgeApi.getTokenFromAsset?.(asset);
-        if (!token) return null;
-        return { assetId: token.id, balance: BigNumberStrSchema.parse(String(value)) };
-      }),
-    );
-
-    return [
-      { assetId: currency.id, balance: BigNumberStrSchema.parse(String(native.value)) },
-      ...tokenBalances.filter((b): b is Balance => b !== null),
-    ];
+  /**
+   * Every asset held at the account's address, in **one** `getBalance` call — native and tokens
+   * alike, whatever the family.
+   *
+   * Family-agnostic since the coin module comes from live-common's registry: this used to import
+   * `createLocalEvmApi` and `evmBridge` directly, which is why the CLI could only read EVM
+   * granularly. That was an implementation limit, not a capability one.
+   */
+  getBalanceRows(descriptor: AccountDescriptor): Promise<AssetBalanceRow[]> {
+    const { xpubOrAddress } = decodeAccountId(descriptor.id);
+    return getAccountBalanceRows({
+      accountId: descriptor.id,
+      currencyId: descriptor.currencyId,
+      address: descriptor.freshAddress || xpubOrAddress,
+    });
   }
 
   async getOperations(
