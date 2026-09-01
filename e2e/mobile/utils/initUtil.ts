@@ -275,9 +275,6 @@ async function executeCliCommands(
     } catch (err) {
       lastError = err;
 
-      // Guarded like executeCliCommandsOnApp and setupMainSpeculosApp above: after the final
-      // attempt the loop exits and throws, so re-setting up Speculos there only burns an
-      // acquire/release cycle, and would replace lastError with its own failure if it threw.
       if (attempt < maxRetries) {
         if (speculosApp && entryMap) {
           checkTestFailed();
