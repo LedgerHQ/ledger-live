@@ -5,6 +5,7 @@ import {
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
 import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
@@ -57,8 +58,9 @@ export function useHistoryViewModel(): HistoryViewModel {
   const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
 
   const [searchParams] = useSearchParams();
+  const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
   const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
-  const contactId = contactIdResult.success ? contactIdResult.data : undefined;
+  const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
   const contact = useSelector(state =>
     contactId ? selectContactById(state, contactId) : undefined,
   );

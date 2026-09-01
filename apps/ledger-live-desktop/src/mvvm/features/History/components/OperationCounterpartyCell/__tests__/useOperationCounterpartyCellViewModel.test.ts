@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
@@ -36,9 +36,13 @@ const makeItem = (address: string): OperationTableItem =>
     type: "OUT",
   }) as unknown as OperationTableItem;
 
-const renderViewModel = (address: string) =>
+const renderViewModel = (address: string, payTabEnabled = true) =>
   renderHook(() => useOperationCounterpartyCellViewModel(makeItem(address)), {
-    initialState: { accounts: [account], contacts: { contacts: [ben] } },
+    initialState: {
+      accounts: [account],
+      contacts: { contacts: [ben] },
+      ...withFlagOverrides({ lwdPayTab: { enabled: payTabEnabled } }),
+    },
   });
 
 describe("useOperationCounterpartyCellViewModel", () => {
@@ -58,6 +62,13 @@ describe("useOperationCounterpartyCellViewModel", () => {
     const { result } = renderViewModel("0xdeadbeef00000000000000000000000000000000");
 
     expect(result.current.displayName).toBe("0xdead...0000");
+    expect(result.current.contactAddressLabel).toBeUndefined();
+  });
+
+  it("should ignore contact resolution when the lwdPayTab flag is disabled", () => {
+    const { result } = renderViewModel(contactAddress, false);
+
+    expect(result.current.displayName).toBe("0x1ad2...3034");
     expect(result.current.contactAddressLabel).toBeUndefined();
   });
 });
