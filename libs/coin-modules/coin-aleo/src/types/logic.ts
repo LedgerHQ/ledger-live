@@ -49,6 +49,11 @@ export type AleoAccountInfo = {
   scannedHeight: number;
 };
 
+export type AleoValidatorNonEarningReason =
+  | "belowCommitteeMinimum"
+  | "overConcentrated"
+  | "fullCommission";
+
 export type AleoValidator = {
   address: string;
   name?: string;
@@ -60,6 +65,7 @@ export type AleoValidator = {
    * derived; `0` is a real value meaning "earns nothing".
    */
   estimatedYearlyRewardsRate?: number;
+  nonEarningReason?: AleoValidatorNonEarningReason;
 };
 
 export type AleoStakingPosition = {

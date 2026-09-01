@@ -6,17 +6,11 @@ import { getAleoCurrencyConfig } from "../shared/utils";
 import { LIVE_BLOCK_HEIGHT_POLL_MS } from "../constants";
 
 type Options = {
-  /** Height to fall back to (typically account.blockHeight) until a live value is fetched. */
   fallbackHeight: number;
-  /** Poll only while true, e.g. an unstaking countdown is actually on screen. */
   enabled: boolean;
 };
 
-/**
- * Returns the freshest known Aleo block height, polling `lastBlock` every
- * {@link LIVE_BLOCK_HEIGHT_POLL_MS} while `enabled`. Polling pauses when the tab
- * is hidden and network errors are swallowed (last good value is kept).
- */
+/** Polling pauses while the tab is hidden, and network errors keep the last good value. */
 export function useAleoLiveBlockHeight(
   currency: CryptoCurrency,
   { fallbackHeight, enabled }: Options,
@@ -45,7 +39,6 @@ export function useAleoLiveBlockHeight(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency.id]);
 
-  // Poll on a fixed cadence while enabled; `null` pauses the shared interval.
   useInterval(fetchHeight, enabled ? LIVE_BLOCK_HEIGHT_POLL_MS : null);
 
   useEffect(() => {
@@ -57,8 +50,6 @@ export function useAleoLiveBlockHeight(
       return;
     }
     cancelled.current = false;
-    // Fetch straight away, and again whenever the tab becomes visible, so the
-    // value is fresh without waiting a full interval.
     fetchHeight();
     const onVisibilityChange = () => {
       if (!document.hidden) fetchHeight();
