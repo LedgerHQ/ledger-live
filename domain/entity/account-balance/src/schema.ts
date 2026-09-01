@@ -16,6 +16,18 @@ import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 export const BalanceAssetIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 /**
+ * An amount in the asset's smallest unit.
+ *
+ * Stricter than `BigNumberStrSchema`, which admits `-1` and `1.5`: a balance has no sign and no
+ * fraction — the smallest unit *is* the unit — and every consumer does `BigInt` arithmetic on it,
+ * which throws on a fractional string. Refined rather than re-branded so the value stays a
+ * `BigNumberStr` for callers.
+ */
+export const AmountStrSchema = BigNumberStrSchema.refine(value => /^\d+$/.test(value), {
+  message: "Expected a non-negative integer amount in the asset's smallest unit",
+});
+
+/**
  * One account's balance, at one point in time.
  *
  * `balance` and `spendableBalance` are decimal strings in the asset's smallest unit — never
@@ -26,9 +38,9 @@ export const AccountBalanceSchema = z.object({
   accountId: AccountIdSchema,
   assetId: BalanceAssetIdSchema,
   /** Total holdings, including whatever is locked, reserved or staked. */
-  balance: BigNumberStrSchema,
+  balance: AmountStrSchema,
   /** The part of `balance` that can be spent right now (total minus locked / reserved). */
-  spendableBalance: BigNumberStrSchema,
+  spendableBalance: AmountStrSchema,
   /** Set when this row is a token account; absent on a main account. */
   parentId: AccountIdSchema.optional(),
   /** When the source produced this balance — the freshness the UI can show. */

@@ -1,7 +1,7 @@
-import { AccountIdSchema, BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
+import { AccountIdSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import type { AccountBalance } from "./schema";
+import { AmountStrSchema, type AccountBalance } from "./schema";
 
 /** Anything that prints itself as a decimal string — `BigNumber` and `Decimal` both qualify. */
 export type AmountLike = { toFixed(): string };
@@ -32,8 +32,8 @@ export type AccountForBalance = MainAccountForBalance | TokenAccountForBalance;
 const toTokenBalance = (account: TokenAccountForBalance, at: string): AccountBalance => ({
   accountId: AccountIdSchema.parse(account.id),
   assetId: TokenCurrencyIdSchema.parse(account.token.id),
-  balance: BigNumberStrSchema.parse(account.balance.toFixed()),
-  spendableBalance: BigNumberStrSchema.parse(account.spendableBalance.toFixed()),
+  balance: AmountStrSchema.parse(account.balance.toFixed()),
+  spendableBalance: AmountStrSchema.parse(account.spendableBalance.toFixed()),
   parentId: AccountIdSchema.parse(account.parentId),
   at: DateTimeIsoSchema.parse(at),
 });
@@ -57,8 +57,8 @@ export function toAccountBalances(
     {
       accountId: AccountIdSchema.parse(account.id),
       assetId: CryptoCurrencyIdSchema.parse(account.currency.id),
-      balance: BigNumberStrSchema.parse(account.balance.toFixed()),
-      spendableBalance: BigNumberStrSchema.parse(account.spendableBalance.toFixed()),
+      balance: AmountStrSchema.parse(account.balance.toFixed()),
+      spendableBalance: AmountStrSchema.parse(account.spendableBalance.toFixed()),
       at: DateTimeIsoSchema.parse(isoDate),
     },
     ...(account.subAccounts ?? []).map(subAccount => toTokenBalance(subAccount, isoDate)),

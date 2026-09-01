@@ -34,16 +34,6 @@ export const subAccountBalancesSelector = (
   { accountId }: { accountId: AccountId },
 ): readonly AccountBalance[] => subAccountBalancesIndexSelector(state)[accountId] ?? NO_BALANCES;
 
-/**
- * The account's balance followed by its token accounts', which is what an account screen renders in
- * one pass. The main row comes first and is omitted when it has not been fetched yet.
- */
-export const accountAndSubAccountBalancesSelector = createSelector(
-  [accountBalanceSelector, subAccountBalancesSelector],
-  (balance, subBalances): readonly AccountBalance[] =>
-    balance ? [balance, ...subBalances] : subBalances,
-);
-
 /** Whether a balance is known for this account — the "have we ever fetched it" question. */
 export const hasAccountBalanceSelector = (
   state: WithAccountBalances,

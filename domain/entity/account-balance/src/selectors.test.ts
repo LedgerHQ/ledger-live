@@ -2,7 +2,6 @@ import { AccountIdSchema } from "@shared/schema-primitives";
 import type { WithAccountBalances } from "./schema";
 import { mockAccountBalance, mockTokenAccountBalance } from "./schema.mock";
 import {
-  accountAndSubAccountBalancesSelector,
   accountBalanceSelector,
   hasAccountBalanceSelector,
   subAccountBalancesSelector,
@@ -47,21 +46,6 @@ describe("subAccountBalancesSelector", () => {
   it("returns the same reference for the same table", () => {
     const first = subAccountBalancesSelector(state, { accountId: main.accountId });
     expect(subAccountBalancesSelector(state, { accountId: main.accountId })).toBe(first);
-  });
-});
-
-describe("accountAndSubAccountBalancesSelector", () => {
-  it("puts the main balance first", () => {
-    expect(accountAndSubAccountBalancesSelector(state, { accountId: main.accountId })).toEqual([
-      main,
-      token,
-    ]);
-  });
-
-  it("omits the main balance when it was not fetched", () => {
-    expect(accountAndSubAccountBalancesSelector(state, { accountId: otherMainId })).toEqual([
-      orphan,
-    ]);
   });
 });
 
