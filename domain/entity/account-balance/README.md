@@ -37,7 +37,7 @@ Three deliberate choices:
 | `replaceAccountBalances` | Atomically set an account's balance **and** the full set of its token-account balances |
 | `upsertAccountBalances` | Insert/overwrite specific rows, leaving the rest alone |
 | `removeAccountBalances`, `resetAccountBalances` | Account removal, profile reset |
-| `accountBalanceSelector`, `subAccountBalancesSelector`, `accountAndSubAccountBalancesSelector` | Reads, with a memoized parent → children index |
+| `accountBalanceSelector`, `subAccountBalancesSelector`, `hasAccountBalanceSelector` | Reads, with a memoized parent → children index |
 | `toAccountBalances` | Project a legacy `Account` / `TokenAccount` onto rows — the compatibility seam |
 
 ### Why `replaceAccountBalances` is the one sources should use

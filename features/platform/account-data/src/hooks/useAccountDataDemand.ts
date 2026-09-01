@@ -20,7 +20,12 @@ export function useAccountDataDemand(
   options?: SubscribeOptions,
 ): void {
   const scheduler = useAccountDataScheduler();
-  const refsKey = refs.map(ref => ref.accountId).join(",");
+  // Sorted: the key identifies the *set* of accounts demanded. Without it, sorting a portfolio
+  // would release and re-register every demand even though nothing was added or removed.
+  const refsKey = refs
+    .map(ref => ref.accountId)
+    .sort()
+    .join(",");
   const slicesKey = [...slices].sort().join(",");
   const { maxAge, pollMs, reason } = options ?? {};
 

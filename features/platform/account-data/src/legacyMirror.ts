@@ -79,8 +79,9 @@ export function mirrorLegacyAccountBalances<S extends WithAccountBalances>(
       }
     }
 
+    const present = new Set(accounts.map(account => account.id));
     const removed = (known ?? [])
-      .filter(account => !accounts.some(current => current.id === account.id))
+      .filter(account => !present.has(account.id))
       .map(account => AccountIdSchema.parse(account.id));
     for (const id of removed) mirrored.delete(id);
     if (removed.length > 0) store.dispatch(removeAccountBalances(removed));

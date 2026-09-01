@@ -136,3 +136,18 @@ describe("accountRefOf", () => {
     });
   });
 });
+
+describe("accountRefOf — token accounts", () => {
+  const token = {
+    type: "TokenAccount",
+    id: `${ACCOUNT_ID}+ethereum%2Ferc20%2Fusd__coin`,
+    parentId: ACCOUNT_ID,
+    token: { parentCurrencyId: "ethereum" },
+  };
+
+  it("marks a token ref even when no parent is passed", () => {
+    // Without parentId the ref would look like a main-account ref, and the sources gate on it — so
+    // an account-wide balance replacement would be keyed under a token id.
+    expect(accountRefOf(token).parentId).toBe(ACCOUNT_ID);
+  });
+});

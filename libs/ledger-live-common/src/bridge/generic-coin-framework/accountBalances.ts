@@ -80,29 +80,35 @@ export async function getAccountBalanceRows({
     bridgeApi.balanceOptions,
   );
 
-  const rows: AssetBalanceRow[] = [];
-  for (const { asset, value, locked } of balances) {
-    if (asset.type === "native") {
-      rows.push({
-        accountId: parentId,
-        assetId: CryptoCurrencyIdSchema.parse(currency.id),
+  const native = balances.filter(balance => balance.asset.type === "native");
+  const tokens = balances.filter(balance => balance.asset.type !== "native");
+
+  // Resolved in parallel, as `buildSubAccounts` already does: awaiting one token at a time turns an
+  // account holding a dozen assets into a dozen sequential CAL lookups.
+  const tokenRows = await Promise.all(
+    tokens.map(async ({ asset, value, locked }): Promise<AssetBalanceRow | null> => {
+      // A token asset becomes a row only once the family can name the token behind it: a token
+      // account's id is derived from the token, so an unresolvable asset has nowhere to go.
+      const token = await bridgeApi.getTokenFromAsset?.(asset);
+      if (!token || blacklistedTokenIds.includes(token.id)) return null;
+      return {
+        accountId: AccountIdSchema.parse(encodeTokenAccountId(accountId, token)),
+        assetId: TokenCurrencyIdSchema.parse(token.id),
         value: value.toString(),
         ...(locked === undefined ? {} : { locked: locked.toString() }),
-      });
-      continue;
-    }
-    // A token asset becomes a row only once the family can name the token behind it: a token
-    // account's id is derived from the token, so an unresolvable asset has nowhere to go.
-    const token = await bridgeApi.getTokenFromAsset?.(asset);
-    if (!token || blacklistedTokenIds.includes(token.id)) continue;
-    rows.push({
-      accountId: AccountIdSchema.parse(encodeTokenAccountId(accountId, token)),
-      assetId: TokenCurrencyIdSchema.parse(token.id),
-      value: value.toString(),
-      ...(locked === undefined ? {} : { locked: locked.toString() }),
-      parentId,
-    });
-  }
+        parentId,
+      };
+    }),
+  );
+
+  const rows: AssetBalanceRow[] = native.map(({ value, locked }) => ({
+    accountId: parentId,
+    assetId: CryptoCurrencyIdSchema.parse(currency.id),
+    value: value.toString(),
+    ...(locked === undefined ? {} : { locked: locked.toString() }),
+  }));
+  rows.push(...tokenRows.filter((row): row is AssetBalanceRow => row !== null));
+
   return rows;
 }
 
@@ -115,6 +121,7 @@ export type AccountForRef = {
   id: string;
   freshAddress?: string;
   derivationMode?: string;
+  parentId?: string;
   currency?: { id: string };
   token?: { parentCurrencyId: string };
 };
@@ -132,12 +139,17 @@ export type AccountRefLike = {
  * Build the ref the account-data layer works with from an account the app already holds.
  *
  * Identical in every host, so it lives here rather than in each composition root. A token account
- * resolves against its parent's address and currency — pass the parent, or the ref falls back to the
- * xpub encoded in the id and carries no `parentId`.
+ * resolves against its parent: pass the parent object for its fresh address and derivation mode, or
+ * the ref falls back to the xpub encoded in the parent id. Either way the ref carries `parentId`,
+ * which is what tells a source this is a token account.
  */
 export function accountRefOf(account: AccountForRef, parent?: AccountForRef): AccountRefLike {
   const main = account.type === "TokenAccount" ? parent : account;
-  const { xpubOrAddress } = decodeAccountId(main?.id ?? account.id);
+  const tokenParentId =
+    account.type === "TokenAccount" ? (parent?.id ?? account.parentId) : undefined;
+  // A token account id carries a `+token` suffix that `decodeAccountId` rejects, so fall back to the
+  // parent's id rather than the account's own when no parent object was passed.
+  const { xpubOrAddress } = decodeAccountId(main?.id ?? tokenParentId ?? account.id);
   const currencyId =
     account.type === "TokenAccount"
       ? (account.token?.parentCurrencyId ?? main?.currency?.id ?? "")
@@ -148,9 +160,10 @@ export function accountRefOf(account: AccountForRef, parent?: AccountForRef): Ac
     currencyId,
     address: main?.freshAddress || xpubOrAddress,
     derivationMode: main?.derivationMode ?? "",
-    ...(account.type === "TokenAccount" && parent
-      ? { parentId: AccountIdSchema.parse(parent.id) }
-      : {}),
+    // Always set for a token account, from the account itself when no parent was passed. A token ref
+    // without it would look like a main-account ref, and the sources gate on `parentId` — so it
+    // would key an account-wide balance replacement under a token id.
+    ...(tokenParentId === undefined ? {} : { parentId: AccountIdSchema.parse(tokenParentId) }),
   };
 }
 
