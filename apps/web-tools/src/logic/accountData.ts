@@ -1,21 +1,23 @@
 // The web-tools composition root for the account-data layer.
 
-import { NEVER, fromEvent, lastValueFrom, reduce, takeUntil } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountBalanceRows } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
+import {
+  getAccountBalanceRows,
+  syncAccountBalanceRows,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
 import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import {
   accountBalanceSelector,
   subAccountBalancesSelector,
-  toAccountBalances,
   type AccountBalance,
 } from "@domain/entity-account-balance";
 import {
   createAccountDataScheduler,
   createAccountDataSourceRegistry,
   createDefaultAccountDataSources,
+  observedBalanceAt,
   type AccountDataHost,
   type AccountRef,
 } from "@features/platform-account-data";
@@ -71,13 +73,7 @@ function accountDataHost(): AccountDataHost {
       const account = shapedAccounts.get(ref.accountId) ?? inferAccount(ref.accountId);
       const bridge = await getAccountBridge(account);
       await bridgeCache.prepareCurrency(account.currency);
-      const synced = await lastValueFrom(
-        bridge.sync(account, { paginationConfig: {}, blacklistedTokenIds: [] }).pipe(
-          takeUntil(signal ? fromEvent(signal, "abort") : NEVER),
-          reduce<(account: Account) => Account, Account>((acc, updater) => updater(acc), account),
-        ),
-      );
-      return toAccountBalances(synced);
+      return syncAccountBalanceRows({ account, bridge, signal });
     },
   };
 }
@@ -92,6 +88,7 @@ function accountDataHost(): AccountDataHost {
 export const accountDataScheduler = createAccountDataScheduler({
   registry: createAccountDataSourceRegistry(createDefaultAccountDataSources(accountDataHost())),
   dispatch: store.dispatch,
+  observedAt: observedBalanceAt(store.getState),
   onError: (error, { ref, reason }) =>
     console.warn(`account-data: ${ref.accountId} (${reason})`, error),
 });

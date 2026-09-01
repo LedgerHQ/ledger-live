@@ -3,7 +3,7 @@
 // No React, no Redux store: the layer's core is framework-free, so the entity reducer is driven
 // directly over a local variable and the scheduler is used through its imperative `fetch`.
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import {
@@ -26,16 +26,17 @@ import type { AccountDescriptor } from "./models";
 import { walletCliDebug } from "../shared/log";
 
 /**
- * Families this CLI reads granularly — the same gate the wallet apps use.
+ * Families this CLI reads granularly.
  *
- * A **narrowing**, never a widening: 16 families implement `CoinModuleApi`, and this keeps the CLI on
- * the subset already serving balances in production Ledger Live. Reading it from live-common rather
- * than hardcoding a set here is the point — the CLI must not become a fourth, divergent list.
+ * A deliberate **narrowing** of the wallet's own gate, which enables six families
+ * (`getEnabledGenericCoinFrameworkFamilies`). Kept at `evm` because that is the only one this CLI's
+ * `balances` output has been validated against: the adapter it replaced was hardcoded to
+ * `createLocalEvmApi`, so no other family ever took this path here.
  *
- * Pin it tighter (e.g. `new Set(["evm"])`) if a family regresses; that can only send it back to the
- * full sync, never break it.
+ * Widening is a one-line change plus a `balances` before/after per family — the difference to watch
+ * is token resolution (`getTokenFromAsset` vs the sync's sub-accounts), not the native amount.
  */
-const GRANULAR_FAMILIES: ReadonlySet<string> = new Set(getEnabledGenericCoinFrameworkFamilies());
+const GRANULAR_FAMILIES: ReadonlySet<string> = new Set(["evm"]);
 
 /** Build the ref the account-data layer works with from a session account descriptor. */
 export function accountRefOf(descriptor: AccountDescriptor): AccountRef {
@@ -137,7 +138,9 @@ export function createAccountDataRuntime({
 
   const host: AccountDataHost = {
     granularFamilies: () => GRANULAR_FAMILIES,
-    familyOf: currencyId => getCryptoCurrencyById(currencyId).family,
+    // `findCryptoCurrencyById`, not `getCryptoCurrencyById`: the latter throws, which would turn an
+    // unknown currency into a crash inside a capability check instead of an unservable slice.
+    familyOf: currencyId => findCryptoCurrencyById(currencyId)?.family,
     readAssetBalances: async ref =>
       (await adapters.loadCoinFramework()).getBalanceRows(descriptorFor(ref.accountId)),
     syncAccountBalances: async ref =>

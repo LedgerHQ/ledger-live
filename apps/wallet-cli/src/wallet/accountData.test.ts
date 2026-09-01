@@ -109,7 +109,7 @@ describe("createAccountDataRuntime", () => {
     expect(String(rows[0].spendableBalance)).toBe("1400"); // 1500 - 100 locked
   });
 
-  it("reads a family beyond evm granularly too — the gate is shared, not evm-only", async () => {
+  it("keeps a family the wallet routes granularly on the full sync — the narrowing is deliberate", async () => {
     getBalanceRows.mockClear();
     syncBalanceRows.mockClear();
     const xrpDescriptor: AccountDescriptor = {
@@ -120,9 +120,11 @@ describe("createAccountDataRuntime", () => {
       derivationMode: "",
       index: 0,
     };
+    // `xrp` is enabled in the wallet's own gate, but this CLI narrows to `evm` until each family's
+    // `balances` output has been compared before and after. Widening is a one-line change.
     const { status } = await readBalance(xrpDescriptor);
-    expect(status.sourceId).toBe("coin-module-api");
-    expect(syncBalanceRows).not.toHaveBeenCalled();
+    expect(status.sourceId).toBe("legacy-bridge");
+    expect(getBalanceRows).not.toHaveBeenCalled();
   });
 
   it("falls back to the full bridge sync outside the narrowed set", async () => {

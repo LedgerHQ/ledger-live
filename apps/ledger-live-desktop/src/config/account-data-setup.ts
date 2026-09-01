@@ -1,15 +1,16 @@
-import { fromEvent, lastValueFrom, NEVER, reduce, takeUntil } from "rxjs";
-import type { Account } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountBalanceRows } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
+import {
+  getAccountBalanceRows,
+  syncAccountBalanceRows,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
 import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
-import { toAccountBalances } from "@domain/entity-account-balance";
 import {
   createAccountDataScheduler,
   createAccountDataSourceRegistry,
   createDefaultAccountDataSources,
   mirrorLegacyAccountBalances,
+  observedBalanceAt,
   type AccountDataHost,
   type AccountDataScheduler,
   type AccountRef,
@@ -39,12 +40,12 @@ function accountDataHost(store: ReduxStore): AccountDataHost {
         accountId: ref.accountId,
         currencyId: ref.currencyId,
         address: ref.address,
+        blacklistedTokenIds: blacklistedTokenIdsSelector(store.getState()),
       }),
 
     // The compatibility half: today's full sync, read out of the legacy store rather than rebuilt, so
     // a family with no granular module behaves exactly as it does now. Deliberately *not* writing the
-    // synced account back into the `accounts` reducer — `BridgeSync` owns that store and a second
-    // writer would race it.
+    // synced account back into the `accounts` reducer — `BridgeSync` owns that store.
     syncAccountBalances: async (ref: AccountRef, signal?: AbortSignal) => {
       const state = store.getState();
       // Always a main account: `createLegacyBridgeSource` refuses a token-account ref, because this
@@ -53,21 +54,12 @@ function accountDataHost(store: ReduxStore): AccountDataHost {
       if (!account) throw new Error(`account ${ref.accountId} is not in the store`);
 
       await prepareCurrency(account.currency);
-      const bridge = await getAccountBridge(account);
-      // A full sync is the expensive path, so honoring the abort matters here more than anywhere:
-      // `takeUntil` unsubscribes the bridge observable, which is what actually stops the requests.
-      const synced = await lastValueFrom(
-        bridge
-          .sync(account, {
-            paginationConfig: {},
-            blacklistedTokenIds: blacklistedTokenIdsSelector(state),
-          })
-          .pipe(
-            takeUntil(signal ? fromEvent(signal, "abort") : NEVER),
-            reduce<(account: Account) => Account, Account>((acc, updater) => updater(acc), account),
-          ),
-      );
-      return toAccountBalances(synced);
+      return syncAccountBalanceRows({
+        account,
+        bridge: await getAccountBridge(account),
+        blacklistedTokenIds: blacklistedTokenIdsSelector(state),
+        signal,
+      });
     },
   };
 }
@@ -86,8 +78,20 @@ export function setupAccountData(store: ReduxStore): AccountDataScheduler {
     createDefaultAccountDataSources(accountDataHost(store)),
   );
   // Desktop keeps `Account[]` directly at `state.accounts`.
-  mirrorLegacyAccountBalances(store, state => state.accounts);
-  scheduler = createAccountDataScheduler({ registry, dispatch: store.dispatch });
+  mirrorLegacyAccountBalances(
+    store,
+    state => state.accounts,
+    (error, accountId) => console.warn(`account-data: could not mirror ${accountId}`, error),
+  );
+  scheduler = createAccountDataScheduler({
+    registry,
+    dispatch: store.dispatch,
+    // `BridgeSync` still owns background syncing, and the mirror stamps what it produces. Reading
+    // that timestamp is what stops the first `useAccountBalance` from re-running a sync that just ran.
+    observedAt: observedBalanceAt(store.getState),
+    onError: (error, { ref, slice }) =>
+      console.warn(`account-data: ${slice} failed for ${ref.accountId}`, error),
+  });
   return scheduler;
 }
 
