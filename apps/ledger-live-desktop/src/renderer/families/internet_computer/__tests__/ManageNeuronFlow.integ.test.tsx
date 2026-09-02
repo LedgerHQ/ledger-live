@@ -190,6 +190,38 @@ describe("manage neuron flow (integration)", () => {
   });
 });
 
+// A crumb the flow has moved past shows a tick in place of its number, so whether the number is
+// still rendered is what separates the current and pending crumbs from the completed ones.
+const crumbNumber = (label: string) =>
+  screen.getByText(label).parentElement?.firstElementChild?.textContent;
+
+describe("the breadcrumb while an input step is open", () => {
+  it.each<StepId>([
+    "setDissolveDelay",
+    "stakeMaturity",
+    "splitNeuron",
+    "addHotKey",
+    "followTopic",
+    "selectFollowees",
+  ])("keeps Manage current on the %s step", stepId => {
+    render(<ControlledBody initialStep={stepId} />);
+
+    expect(crumbNumber("Neurons")).toBeFalsy();
+    expect(crumbNumber("Manage")).toBe("2");
+  });
+
+  it("moves on to Device only once the device step is reached", async () => {
+    const { user } = render(<ControlledBody />);
+
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+
+    expect(crumbNumber("Manage")).toBeFalsy();
+    expect(crumbNumber("Device")).toBe("3");
+  });
+});
+
 describe("modal shells", () => {
   it.each([
     ["manage neurons", ManageNeuronFlowModal],

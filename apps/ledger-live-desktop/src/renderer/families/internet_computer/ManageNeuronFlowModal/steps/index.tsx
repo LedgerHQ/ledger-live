@@ -21,6 +21,12 @@ const backToManage = ({ transitionTo }: StepProps) => transitionTo("manage");
 /**
  * Breadcrumb is Neurons → Manage → Device → Confirmation. The steps that collect input for a single
  * operation are excluded from it: they are detours off the manage screen, not stages of one journey.
+ *
+ * Where each excluded step sits in this array is what decides which crumb stays lit while it is
+ * open, so the order below is load-bearing rather than editorial. Stepper hands an excluded step the
+ * index of the next *visible* one — `indexVisible` counts the visible steps before it — so an input
+ * step has to sit ahead of `manage` to read as Manage, and both device steps behind it to read as
+ * Device. Listing the input steps after `manage`, as they first were, lit "Device" over every form.
  */
 export const steps: Step[] = [
   {
@@ -28,20 +34,6 @@ export const steps: Step[] = [
     label: <Trans i18nKey="internetComputer.manageNeuronFlow.listNeuron.title" />,
     component: StepListNeuron,
     footer: StepListNeuronFooter,
-  },
-  {
-    id: "manage",
-    label: <Trans i18nKey="internetComputer.manageNeuronFlow.manage.title" />,
-    component: StepManage,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("listNeuron"),
-  },
-  {
-    id: "device",
-    label: <Trans i18nKey="internetComputer.manageNeuronFlow.device.title" />,
-    component: ConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("listNeuron"),
-    excludeFromBreadcrumb: true,
-    noScroll: true,
   },
   {
     id: "setDissolveDelay",
@@ -89,6 +81,20 @@ export const steps: Step[] = [
     footer: StepSelectFolloweesFooter,
     onBack: ({ transitionTo }: StepProps) => transitionTo("followTopic"),
     excludeFromBreadcrumb: true,
+  },
+  {
+    id: "manage",
+    label: <Trans i18nKey="internetComputer.manageNeuronFlow.manage.title" />,
+    component: StepManage,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("listNeuron"),
+  },
+  {
+    id: "device",
+    label: <Trans i18nKey="internetComputer.manageNeuronFlow.device.title" />,
+    component: ConnectDevice,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("listNeuron"),
+    excludeFromBreadcrumb: true,
+    noScroll: true,
   },
   {
     id: "manageAction",
