@@ -55,7 +55,10 @@ export type ICPNeuron = {
   // persisted before they were decoded, so every consumer must treat "missing" as "unknown" rather
   // than as zero — see votingPowerNeedsRefresh.
   votingPowerRefreshedTimestampSeconds?: bigint;
-  // Voting power the canister will actually count, after periodic-confirmation decay.
+  // Voting power the canister will actually count, after periodic-confirmation decay. Carried but
+  // not yet read: the screens quote potentialVotingPower, which is the figure the NNS dapp shows and
+  // the one a neuron regains by confirming. Kept decoded so the decayed figure is already persisted
+  // when a surface needs it, rather than waiting on another device-signed read.
   decidingVotingPower?: bigint;
   // Voting power ignoring decay. Equals the locally computed neuronPotentialVotingPower.
   potentialVotingPower?: bigint;
