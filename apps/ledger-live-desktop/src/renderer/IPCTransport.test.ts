@@ -1,4 +1,5 @@
 import { transport as transportBridge } from "~/renderer/bridge";
+import { TransportError } from "@ledgerhq/hw-transport";
 import IPCTransport from "./IPCTransport";
 
 jest.mock("@ledgerhq/logs", () => {
@@ -28,6 +29,7 @@ jest.mock("@ledgerhq/devices", () => {
 const mockTransport = jest.mocked(transportBridge);
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const REQUEST_ID = "test-request-id";
 
 describe("IPCTransport", () => {
   beforeEach(() => {
@@ -44,8 +46,10 @@ describe("IPCTransport", () => {
     it("should listen with a uuid requestId and emit an add descriptor on success", async () => {
       const observer = { next: jest.fn(), error: jest.fn(), complete: jest.fn() };
       mockTransport.listen.mockResolvedValue({
-        type: "listen-success",
-      } as unknown as Awaited<ReturnType<typeof transportBridge.listen>>);
+        type: "listen-response",
+        requestId: REQUEST_ID,
+        data: { type: "add", descriptor: "http-proxy", device: {} },
+      });
 
       const subscription = IPCTransport.listen(observer);
 
@@ -61,14 +65,36 @@ describe("IPCTransport", () => {
       );
       subscription.unsubscribe();
     });
+
+    it("should surface a listen-error as a TransportError instead of a descriptor", async () => {
+      const observer = { next: jest.fn(), error: jest.fn(), complete: jest.fn() };
+      mockTransport.listen.mockResolvedValue({
+        type: "listen-error",
+        requestId: REQUEST_ID,
+        error: { message: "no device found", id: "ListenFailed" },
+      });
+
+      const subscription = IPCTransport.listen(observer);
+
+      await new Promise(resolve => setImmediate(resolve));
+
+      expect(observer.next).not.toHaveBeenCalled();
+      expect(observer.error).toHaveBeenCalledWith(expect.any(TransportError));
+      expect(observer.error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "no device found", id: "ListenFailed" }),
+      );
+      subscription.unsubscribe();
+    });
   });
 
   describe("open", () => {
     it("should open with the descriptor and a uuid requestId and return an IPCTransport", async () => {
       const descriptor = "http-proxy";
       mockTransport.open.mockResolvedValue({
-        type: "open-success",
-      } as unknown as Awaited<ReturnType<typeof transportBridge.open>>);
+        type: "open-response",
+        requestId: REQUEST_ID,
+        data: { descriptor },
+      });
 
       const transport = await IPCTransport.open(descriptor);
 
@@ -78,6 +104,16 @@ describe("IPCTransport", () => {
         descriptor,
         undefined,
       );
+    });
+
+    it("should reject with the main-side message when the bridge resolves with open-error", async () => {
+      mockTransport.open.mockResolvedValue({
+        type: "open-error",
+        requestId: REQUEST_ID,
+        error: { message: "cannot open", id: "OpenFailed" },
+      });
+
+      await expect(IPCTransport.open("http-proxy")).rejects.toThrow("cannot open");
     });
   });
 });
