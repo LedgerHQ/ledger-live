@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getEnv } from "@shared/env";
+import { getEnv, isEnvDefault } from "@shared/env";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import {
   DeviceManagementKitTransport,
@@ -34,14 +34,22 @@ export const MOCK_SERVER_TRANSPORT_STORAGE_KEY = "MOCK_SERVER_TRANSPORT";
  * run before the DMK is built.
  */
 export async function bootstrapMockServerTransport(): Promise<void> {
-  // Restore the persisted toggle state onto all threads before anything reads
-  // the flag (bootstrap below, the DMK build, and socket/index.ts on the
-  // internal thread). Sync both true and false: the internal thread is not
-  // reloaded by reloadRenderer, so a stale value must be overwritten.
-  const persistedEnabled = window.localStorage.getItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY) === "1";
-  setEnvOnAllThreads("MOCK_SERVER_TRANSPORT", persistedEnabled);
+  // Push the flag onto all threads before anything reads it (bootstrap below,
+  // the DMK build, and socket/index.ts on the internal thread). Sync both true
+  // and false: the internal thread is not reloaded by reloadRenderer, so a
+  // stale value must be overwritten.
+  //
+  // A launch env wins over the developer toggle, so e2e can turn the transport
+  // on without a profile to seed. `renderer/experimental` has already pushed
+  // `process.env` into the env by now, so a non-default value can only come
+  // from the launch — the toggle resets to the default on reload and persists
+  // its state in localStorage instead.
+  const enabledAtLaunch = !isEnvDefault("MOCK_SERVER_TRANSPORT");
+  const enabled = enabledAtLaunch
+    ? getEnv("MOCK_SERVER_TRANSPORT")
+    : window.localStorage.getItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY) === "1";
+  setEnvOnAllThreads("MOCK_SERVER_TRANSPORT", enabled);
 
-  const enabled = getEnv("MOCK_SERVER_TRANSPORT");
   const existingToken = getMockServerSessionToken();
 
   if (!enabled) {

@@ -74,6 +74,25 @@ describe("bootstrapMockServerTransport", () => {
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
 
+  it("provisions a session when the transport is enabled at launch only", async () => {
+    window.localStorage.removeItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY);
+    setEnv("MOCK_SERVER_TRANSPORT", true);
+
+    await bootstrapMockServerTransport();
+
+    expect(requestsTo("/auth")).toHaveLength(1);
+    expect(mockSetEnvOnAllThreads).toHaveBeenCalledWith("MOCK_SERVER_TRANSPORT", true);
+  });
+
+  it("lets a launch env override the persisted toggle", async () => {
+    window.localStorage.setItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY, "0");
+    setEnv("MOCK_SERVER_TRANSPORT", true);
+
+    await bootstrapMockServerTransport();
+
+    expect(requestsTo("/auth")).toHaveLength(1);
+  });
+
   it("imports the default session and publishes the token", async () => {
     await bootstrapMockServerTransport();
 
