@@ -106,14 +106,8 @@ export async function executeSwap(
       accounts,
     )) as SwapStartParamsUiRequest;
 
-    const {
-      fromCurrency,
-      fromAccount,
-      fromParentAccount,
-      toCurrency,
-      toAccount,
-      toParentAccount,
-    } = exchangeStartParams.exchange;
+    const { fromCurrency, fromAccount, fromParentAccount, toCurrency, toAccount, toParentAccount } =
+      exchangeStartParams.exchange;
 
     if (!fromAccount || !fromCurrency) {
       throw new ServerError(createAccountNotFound(params.fromAccountId));
@@ -229,10 +223,8 @@ export async function executeSwap(
     const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
 
     if (transaction.family !== mainFromAccount.currency.family) {
-      return Promise.reject(
-        new Error(
-          `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
-        ),
+      throw new Error(
+        `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
       );
     }
 
@@ -435,6 +427,7 @@ export async function extractSwapStartParam(
     ? await getCryptoAssetsStore().findTokenById(params.tokenCurrency)
     : null;
   const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
+  const resolvedToAccount = newTokenAccount ?? toAccount;
 
   return {
     exchangeType: params.exchangeType,
@@ -443,9 +436,9 @@ export async function extractSwapStartParam(
       fromAccount,
       fromParentAccount,
       fromCurrency: getCurrencyForAccount(fromAccount),
-      toAccount: newTokenAccount ? newTokenAccount : toAccount,
-      toParentAccount: toParentAccount,
-      toCurrency: getCurrencyForAccount(newTokenAccount ? newTokenAccount : toAccount),
+      toAccount: resolvedToAccount,
+      toParentAccount,
+      toCurrency: getCurrencyForAccount(resolvedToAccount),
     },
   };
 }

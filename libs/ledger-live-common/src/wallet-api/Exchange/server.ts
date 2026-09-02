@@ -36,7 +36,10 @@ import { getAccountBridge } from "../../bridge";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
-import { getAccountIdFromWalletAccountId, getWalletAPITransactionSignFlowInfos } from "../converters";
+import {
+  getAccountIdFromWalletAccountId,
+  getWalletAPITransactionSignFlowInfos,
+} from "../converters";
 import { AppManifest } from "../types";
 import {
   createAccounIdNotFound,
@@ -55,12 +58,7 @@ import {
   type GetTransactionStatusResponse,
   type GetTransactionStatusWireArgs,
 } from "./transactionStatus";
-import type {
-  CompleteExchangeUiRequest,
-  ExchangeStartParamsUiRequest,
-  ExchangeUiHooks,
-  SwapUiRequest,
-} from "./uiRequests";
+import type { ExchangeStartParamsUiRequest, ExchangeUiHooks } from "./uiRequests";
 
 export { ExchangeType };
 
@@ -80,7 +78,7 @@ type Handlers = {
   >;
 };
 
-export type { CompleteExchangeUiRequest, SwapUiRequest };
+export type { CompleteExchangeUiRequest, SwapUiRequest } from "./uiRequests";
 
 /**
  * Build the wallet-api exchange handlers for a given wallet instance.

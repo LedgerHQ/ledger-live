@@ -7,6 +7,7 @@ import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
+import type Transport from "@ledgerhq/hw-transport";
 import { Device } from "../../hw/actions/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
@@ -64,6 +65,39 @@ export type PerpsSignResult = {
 
 const PERPS_APP_NAME = "Hyperliquid";
 
+async function signActionsOnDevice(
+  transport: Transport,
+  device: Device,
+  derivationPath: string,
+  params: PerpsSignParams,
+): Promise<PerpsSignResult> {
+  if (!isDmkTransport(transport)) {
+    throw new Error("Not DMK transport");
+  }
+  const { dmk, sessionId } = transport;
+
+  const certificate = await calService.getCertificate(device.modelId, "perps_data");
+  const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+  const signatures = await hyperliquidSigner.signActions(
+    derivationPath,
+    convertCertificateToDeviceData(certificate),
+    new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
+    params.actions.map(convertAction),
+  );
+
+  return { signatures };
+}
+
+function createSignFactory(derivationPath: string, params: PerpsSignParams) {
+  return (device: Device): Promise<PerpsSignResult> =>
+    firstValueFrom(
+      withDevice(
+        device.deviceId,
+        device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
+      )(transport => from(signActionsOnDevice(transport, device, derivationPath, params))),
+    );
+}
+
 export const handlers = ({
   accounts,
   uiHooks: { "signing.execute": uiSigningExecute, "deposit.execute": uiDepositExecute },
@@ -102,38 +136,7 @@ export const handlers = ({
         uiSigningExecute({
           appName: PERPS_APP_NAME,
           appOptions: params.options,
-          signFactory: (device: Device) =>
-            firstValueFrom(
-              withDevice(
-                device.deviceId,
-                device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
-              )(transport =>
-                from(
-                  (async () => {
-                    if (!isDmkTransport(transport)) {
-                      throw new Error("Not DMK transport");
-                    }
-                    const { dmk, sessionId } = transport;
-
-                    const certificate = await calService.getCertificate(
-                      device.modelId,
-                      "perps_data",
-                    );
-                    const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-                    const signatures = await hyperliquidSigner.signActions(
-                      derivationPath,
-                      convertCertificateToDeviceData(certificate),
-                      new Uint8Array(
-                        Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex"),
-                      ),
-                      params.actions.map(convertAction),
-                    );
-
-                    return { signatures };
-                  })(),
-                ),
-              ),
-            ),
+          signFactory: createSignFactory(derivationPath, params),
           onSuccess: resolve,
           onError: reject,
           onCancel: () => reject(new Error("User cancelled signing")),
