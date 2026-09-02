@@ -30,16 +30,19 @@ import {
   getStakes,
   getValidators,
   lastBlock,
+  listFeeOptions as listFeeOptionsLogic,
   listOperations as listOperationsLogic,
   validateAddress,
   validateIntent,
 } from "../logic";
+import { TRONIFY_FEE_OPTION_ID } from "../logic/constants";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-export const TRONIFY_FEE_OPTION_ID = "tronify" as const;
+// Re-exported for consumers (the generic fee-picker); canonical definition lives in logic/constants.
+export { TRONIFY_FEE_OPTION_ID };
 
 export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> {
   return {
@@ -68,8 +71,6 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    // listFeeOptions is deferred to LIVE-34996 — the bridge layer currently handles fee-option
-    // discovery; the generic fee-picker will advertise "tronify" once that ticket lands.
     estimateFees: async (context, transactionIntent, options) => {
       const config = await context.config();
       if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
@@ -77,6 +78,10 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
       }
       return estimateFees(config, transactionIntent);
     },
+    // Fee-option discovery (ADR-050 Option 3): advertises [tronify, standard] for eligible TRC-20
+    // sends, [standard] otherwise. The framework passes only the intent — the coin-config is read
+    // from the singleton inside the logic layer (no context here). See logic/feeOptions.ts.
+    listFeeOptions: transactionIntent => listFeeOptionsLogic(transactionIntent),
     getAccountInfo: async (context, address): Promise<AccountInfo> => {
       const config = await context.config();
       return getAccountInfo(config, address);

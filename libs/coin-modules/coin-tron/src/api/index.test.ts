@@ -15,6 +15,7 @@ import {
   getAccountInfo,
   getBalance,
   lastBlock,
+  listFeeOptions,
   listOperations,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from ".";
@@ -27,12 +28,14 @@ jest.mock("../logic", () => ({
   estimateTronifyFees: jest.fn(),
   getAccountInfo: jest.fn(),
   getBalance: jest.fn(),
+  listFeeOptions: jest.fn(),
   listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
   lastBlock: jest.fn(),
 }));
 
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockEstimateTronifyFees = jest.mocked(estimateTronifyFees);
+const mockListFeeOptions = jest.mocked(listFeeOptions);
 
 jest.mock("../network", () => ({
   defaultFetchParams: { minTimestamp: 0 },
@@ -168,6 +171,29 @@ describe("createApi", () => {
 
       expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
       expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("listFeeOptions", () => {
+    const trc20Intent: TransactionIntent<TronMemo, TronTxData> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000),
+      asset: { type: "trc20", assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" },
+      data: { type: "tron" },
+    };
+
+    // The framework's listFeeOptions receives only the intent (no context): coin-config is read from
+    // the singleton inside the logic layer, so the API method is a thin pass-through of the intent.
+    it("delegates to the logic layer with the intent and returns its result", async () => {
+      const feeOptions = [{ id: TRONIFY_FEE_OPTION_ID, feeAsset: { type: "native" as const } }];
+      mockListFeeOptions.mockResolvedValue(feeOptions);
+      const api = createApi();
+
+      await expect(api.listFeeOptions!(trc20Intent)).resolves.toBe(feeOptions);
+      expect(mockListFeeOptions).toHaveBeenCalledWith(trc20Intent);
     });
   });
 
