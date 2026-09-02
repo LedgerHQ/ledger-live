@@ -39,6 +39,11 @@ const Row = styled(TableRow)<{ clickable: boolean }>`
   &:hover {
     background: ${p => (p.clickable ? undefined : "transparent")};
   }
+  // The row takes focus when it is clickable, so it has to show where the focus is.
+  &:focus-visible {
+    outline: 2px solid ${p => p.theme.colors.wallet};
+    outline-offset: -2px;
+  }
 `;
 
 /**
@@ -60,20 +65,36 @@ const NeuronList = ({ neurons, columns, renderCell, onRowClick, emptyState }: Pr
           </Cell>
         ))}
       </HeaderWrapper>
-      {neurons.map(neuron => (
-        <Row
-          key={neuron.id?.toString() ?? neuron.accountIdentifier}
-          clickable={!!onRowClick}
-          onClick={onRowClick ? () => onRowClick(neuron) : undefined}
-          data-testid="icp-neuron-row"
-        >
-          {columns.map(column => (
-            <Cell key={column.key} width={column.width} align={column.align}>
-              {renderCell(neuron, column.key)}
-            </Cell>
-          ))}
-        </Row>
-      ))}
+      {neurons.map(neuron => {
+        const onSelect = onRowClick ? () => onRowClick(neuron) : undefined;
+        return (
+          <Row
+            key={neuron.id?.toString() ?? neuron.accountIdentifier}
+            clickable={!!onSelect}
+            onClick={onSelect}
+            // Selecting a neuron is the entry point to the whole flow, and the table gives us a
+            // styled div, so the row declares the semantics itself rather than being mouse-only.
+            role={onSelect ? "button" : undefined}
+            tabIndex={onSelect ? 0 : undefined}
+            onKeyDown={
+              onSelect &&
+              ((event: React.KeyboardEvent) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                // Space would scroll the step instead of choosing the neuron.
+                event.preventDefault();
+                onSelect();
+              })
+            }
+            data-testid="icp-neuron-row"
+          >
+            {columns.map(column => (
+              <Cell key={column.key} width={column.width} align={column.align}>
+                {renderCell(neuron, column.key)}
+              </Cell>
+            ))}
+          </Row>
+        );
+      })}
     </Box>
   );
 };

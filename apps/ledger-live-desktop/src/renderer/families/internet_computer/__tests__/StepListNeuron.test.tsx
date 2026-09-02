@@ -75,6 +75,28 @@ describe("StepListNeuron", () => {
     expect(props.transitionTo).toHaveBeenCalledWith("manage");
   });
 
+  // The row is a styled div, so choosing a neuron — the entry point to the whole flow — was
+  // reachable by mouse only, and screen readers had nothing to announce it as.
+  it("exposes the row as a button that can be reached by keyboard", () => {
+    const props = makeStepProps({ neurons: [makeNeuron({ id: 42n })] });
+    render(<StepListNeuron {...props} />);
+
+    const row = screen.getByTestId("icp-neuron-row");
+    expect(row).toHaveAttribute("role", "button");
+    expect(row).toHaveAttribute("tabindex", "0");
+  });
+
+  it.each(["{Enter}", " "])("selects the focused neuron on %s", async key => {
+    const props = makeStepProps({ neurons: [makeNeuron({ id: 42n })] });
+    const { user } = render(<StepListNeuron {...props} />);
+
+    screen.getByTestId("icp-neuron-row").focus();
+    await user.keyboard(key);
+
+    expect(props.setSelectedNeuronId).toHaveBeenCalledWith("42");
+    expect(props.transitionTo).toHaveBeenCalledWith("manage");
+  });
+
   it("renders the error instead of the list when the flow has failed", () => {
     const props = makeStepProps({
       neurons: [makeNeuron()],
