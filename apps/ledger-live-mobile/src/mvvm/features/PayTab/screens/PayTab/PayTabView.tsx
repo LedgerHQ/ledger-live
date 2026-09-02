@@ -16,6 +16,7 @@ type PayTabViewProps = {
   readonly cardTitle: string;
   readonly cardBalanceLabel: string;
   readonly formatCountervalue: CardProps["formatCountervalue"];
+  readonly resolveCardWalletCounterValue: CardProps["resolveCounterValue"];
   readonly oauthConfig: CardProps["oauthConfig"];
   readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
@@ -33,6 +34,7 @@ export function PayTabView({
   cardTitle,
   cardBalanceLabel,
   formatCountervalue,
+  resolveCardWalletCounterValue,
   oauthConfig,
   callback,
   featureTour,
@@ -60,6 +62,7 @@ export function PayTabView({
             callback={callback}
             formatCountervalue={formatCountervalue}
             balanceLabel={cardBalanceLabel}
+            resolveCounterValue={resolveCardWalletCounterValue}
           />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
