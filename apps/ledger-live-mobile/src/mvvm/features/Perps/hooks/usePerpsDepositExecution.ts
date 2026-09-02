@@ -22,7 +22,7 @@ import { useFeatureFlags } from "@features/platform-feature-flags";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { shallowAccountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { mevProtectionSelector } from "~/reducers/settings";
 import {
   useCompleteExchangeDeviceAction,
@@ -88,7 +88,8 @@ export function usePerpsDepositExecution(
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
   const dispatch = useDispatch();
-  const accounts = useSelector(shallowAccountsSelector);
+
+  const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
   const featureFlagsMap = useFeatureFlags();
