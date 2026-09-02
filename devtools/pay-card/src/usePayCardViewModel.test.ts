@@ -27,6 +27,7 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
+    interaction: { probes: [], ...overrides.interaction },
     hasSeenFeatureTour: overrides.hasSeenFeatureTour ?? false,
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
     hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,

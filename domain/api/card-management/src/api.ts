@@ -125,6 +125,7 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
   useGetCardLinkedWalletsQuery,
 } = cardManagementApi;

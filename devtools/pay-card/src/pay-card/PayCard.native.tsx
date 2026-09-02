@@ -1,9 +1,24 @@
+import { useState } from "react";
 import { ScrollView } from "react-native";
-import { Box, Button, Divider, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Button,
+  Divider,
+  ListItem,
+  ListItemContent,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+  Spot,
+  Tag,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { ChevronRight, CoinsCrypto, CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
+import { Interaction } from "../components/Interaction/Interaction";
 
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
@@ -11,6 +26,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     onboarding,
+    interaction,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -19,9 +35,42 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPayTab,
     env,
   } = props;
+  const [showInteraction, setShowInteraction] = useState(false);
+
+  if (showInteraction) {
+    return <Interaction {...interaction} onBack={() => setShowInteraction(false)} />;
+  }
 
   return (
     <ScrollView>
+      <Section title="Card Debug">
+        <ListItem onPress={() => setShowInteraction(true)}>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CreditCard} />
+            <ListItemContent>
+              <ListItemTitle>Card interaction</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
+        <ListItem>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CoinsCrypto} />
+            <ListItemContent>
+              <ListItemTitle>Balance</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+      </Section>
+
+      <Divider />
+
       <Section title="Feature flags">
         <ToggleRow
           label="Pay tab"

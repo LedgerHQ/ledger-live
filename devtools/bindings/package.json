@@ -20,8 +20,9 @@
     "lint": "oxlint src"
   },
   "dependencies": {
-    "@devtools/registry": "workspace:*",
     "@devtools/env": "workspace:*",
+    "@devtools/registry": "workspace:*",
+    "@domain/api-card-management": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -44,10 +46,10 @@
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "jest-sonar": "0.2.16",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:",
-    "jest-sonar": "0.2.16"
+    "typescript": "catalog:"
   }
 }

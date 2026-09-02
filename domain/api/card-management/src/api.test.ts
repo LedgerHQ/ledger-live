@@ -4,6 +4,7 @@ import {
   cardManagementApi,
   useGetCardLinkedWalletsQuery,
   useGetCardStatusQuery,
+  useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
   useOrderCardMutation,
 } from "./api";
@@ -150,6 +151,8 @@ describe("cardManagementApi configuration", () => {
   it("exposes the getCardStatus endpoint and its hook", () => {
     expect(cardManagementApi.endpoints.getCardStatus).toBeDefined();
     expect(useGetCardStatusQuery).toBeDefined();
+    // The devtool fetches on press, not on mount, so the lazy hook is part of the surface too.
+    expect(useLazyGetCardStatusQuery).toBeDefined();
   });
 
   it("exposes the wallet endpoints and their hooks", () => {
