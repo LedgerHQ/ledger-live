@@ -964,6 +964,50 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       expect(result).toBe(true);
     });
 
+    // Callers widen a release floor to x.y.z-0 when building the constraint, so
+    // a prerelease build of the required version clears it here.
+    it("should return true when the current app is a prerelease build meeting a widened floor", () => {
+      const application = {
+        name: "TestApp",
+        constraints: [
+          {
+            minVersion: "2.3.4-0",
+            applicableModels: [DeviceModelId.NANO_X],
+          },
+        ],
+      } as ApplicationDependency;
+      const deviceStatus = {
+        currentApp: "TestApp",
+        currentAppVersion: "2.3.4-dev",
+      };
+      const deviceModel = DeviceModelId.NANO_X;
+
+      const result = ConnectAppDeviceAction.isAppOpened(application, deviceStatus, deviceModel);
+
+      expect(result).toBe(true);
+    });
+
+    it("should return false when the current app is a prerelease build of an older version", () => {
+      const application = {
+        name: "TestApp",
+        constraints: [
+          {
+            minVersion: "2.3.4-0",
+            applicableModels: [DeviceModelId.NANO_X],
+          },
+        ],
+      } as ApplicationDependency;
+      const deviceStatus = {
+        currentApp: "TestApp",
+        currentAppVersion: "2.3.3-dev",
+      };
+      const deviceModel = DeviceModelId.NANO_X;
+
+      const result = ConnectAppDeviceAction.isAppOpened(application, deviceStatus, deviceModel);
+
+      expect(result).toBe(false);
+    });
+
     it("should return false when the app does not match", () => {
       const application = {
         name: "TestApp",
@@ -1015,7 +1059,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       deviceModelId: "nanoS" as LLDeviceModelId,
       warningScreen: { date: FUTURE, deprecatedFlow: [] },
       errorScreen: { date: FUTURE, deprecatedFlow: [] },
-      warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
+      warningClearSigningScreen: {
+        date: FUTURE,
+        deprecatedFlow: [],
+        exception: [],
+      },
       ...over,
     });
 
@@ -1024,7 +1072,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: PAST, deprecatedFlow: ["receive"] },
         errorScreen: { date: FUTURE, deprecatedFlow: [] },
-        warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
+        warningClearSigningScreen: {
+          date: FUTURE,
+          deprecatedFlow: [],
+          exception: [],
+        },
       },
     ];
 
@@ -1033,7 +1085,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: FUTURE, deprecatedFlow: [] },
         errorScreen: { date: PAST, deprecatedFlow: ["receive"] },
-        warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
+        warningClearSigningScreen: {
+          date: FUTURE,
+          deprecatedFlow: [],
+          exception: [],
+        },
       },
     ];
 
@@ -1051,11 +1107,16 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("sets warning visible when infoScreen date is past", () => {
       const cfg: DeviceDeprecationConfigs = [
-        baseEntry({ warningScreen: { date: PAST, deprecatedFlow: ["receive"] } }),
+        baseEntry({
+          warningScreen: { date: PAST, deprecatedFlow: ["receive"] },
+        }),
       ];
       const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.warningScreenVisible).toBe(true);
-      expect(res.warningScreenRules).toEqual({ exception: [], deprecatedFlow: ["receive"] });
+      expect(res.warningScreenRules).toEqual({
+        exception: [],
+        deprecatedFlow: ["receive"],
+      });
       expect(res.errorScreenVisible).toBe(false);
       expect(res.clearSigningScreenVisible).toBe(false);
     });
@@ -1076,11 +1137,20 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("sets error visible and date = errorDate when errorScreen is past", () => {
       const cfg: DeviceDeprecationConfigs = [
-        baseEntry({ errorScreen: { date: PAST, deprecatedFlow: ["receive"], exception: ["X"] } }),
+        baseEntry({
+          errorScreen: {
+            date: PAST,
+            deprecatedFlow: ["receive"],
+            exception: ["X"],
+          },
+        }),
       ];
       const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.errorScreenVisible).toBe(true);
-      expect(res.errorScreenRules).toEqual({ exception: ["X"], deprecatedFlow: ["receive"] });
+      expect(res.errorScreenRules).toEqual({
+        exception: ["X"],
+        deprecatedFlow: ["receive"],
+      });
       expect(res.date.toISOString().startsWith("2000-01-01")).toBe(true);
     });
 
@@ -1115,7 +1185,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         baseEntry({
           errorScreen: { date: FUTURE, deprecatedFlow: [] },
           warningScreen: { date: PAST, deprecatedFlow: [] },
-          warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
+          warningClearSigningScreen: {
+            date: FUTURE,
+            deprecatedFlow: [],
+            exception: [],
+          },
         }),
       ];
       const res = extractDeviceDeprecationRules(cfg, MODEL);
