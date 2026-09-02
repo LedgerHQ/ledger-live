@@ -81,6 +81,10 @@ export const MAX_DISSOLVE_DELAY_BONUS = 2;
 export const MAX_AGE_BONUS = 0.25;
 export const MAX_NEURON_AGE_FOR_AGE_BONUS = SECONDS_IN_FOUR_YEARS;
 
+// Followees one topic may hold; past it the canister refuses the whole `follow` call
+// (dfinity/ic governance.rs:213 MAX_FOLLOWEES_PER_TOPIC).
+export const MAX_FOLLOWEES_PER_TOPIC = 15;
+
 // Governance follow topics — id ↔ name mapping (dfinity/ic NNS Topic enum; @dfinity/nns
 // governance.enums.ts). The `follow` command's candid `topic` field is this Int32 id.
 export const KNOWN_TOPICS = {

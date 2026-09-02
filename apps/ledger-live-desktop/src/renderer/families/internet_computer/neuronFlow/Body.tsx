@@ -87,6 +87,7 @@ const Body = ({
   const [lastAction, setLastAction] = useState<ICPTransactionType | null>(
     params.lastAction ?? null,
   );
+  const [followeeDraft, setFolloweeDraft] = useState("");
 
   // What the flow has learned since it opened, if anything. `account` is the payload the modal was
   // opened with and is never re-read from the store, so a refresh performed here has to be held —
@@ -202,6 +203,8 @@ const Body = ({
     setSelectedNeuronId,
     lastAction,
     setLastAction,
+    followeeDraft,
+    setFolloweeDraft,
   };
 
   if (!status) return null;

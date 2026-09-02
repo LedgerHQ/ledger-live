@@ -1,5 +1,6 @@
 import {
   KNOWN_TOPICS,
+  MAX_FOLLOWEES_PER_TOPIC,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
@@ -466,6 +467,15 @@ describe("StepFollowTopic", () => {
     expect(applyUpdate(props.onUpdateTransaction as jest.Mock, base)).toBe(base);
   });
 
+  it("clears a draft left over from a previous visit", async () => {
+    const props = stepProps({ followeeDraft: "8" });
+    const { user } = render(<StepFollowTopic {...props} />);
+
+    await user.click(screen.getByTestId("icp-follow-topic-Governance"));
+
+    expect(props.setFolloweeDraft).toHaveBeenCalledWith("");
+  });
+
   // NeuronManagement is the one topic the canister reserves for the controller, even though hot
   // keys may set following on every other topic.
   const renderTopicsFor = (controller: string) => {
@@ -519,49 +529,71 @@ describe("StepSelectFollowees", () => {
     expect(patched.followeesIds).toEqual(["8"]);
   });
 
-  it("adds the drafted neuron id as a followee", async () => {
-    const props = makeStepProps({
-      neurons: [NEURON],
-      selectedNeuronId: "5",
+  it("reports what is typed without touching the list", () => {
+    const props = stepProps({
       transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+    });
+    render(<StepSelectFollowees {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-followee-input"), { target: { value: "8" } });
+
+    expect(props.setFolloweeDraft).toHaveBeenCalledWith("8");
+    expect(props.onUpdateTransaction).not.toHaveBeenCalled();
+  });
+
+  it("adds the drafted neuron id as a followee and clears the field", async () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+      followeeDraft: "8",
     });
     const { user } = render(<StepSelectFollowees {...props} />);
 
-    await user.type(screen.getByTestId("icp-followee-input"), "8");
     await user.click(screen.getByTestId("icp-followee-add-button"));
 
     const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
     expect(patched.followeesIds).toEqual(["9", "8"]);
+    expect(props.setFolloweeDraft).toHaveBeenCalledWith("");
   });
 
-  // A principal is what a user reaches for when asked for a neuron. Add stayed enabled and the
-  // click was swallowed, because only the draft's emptiness was gated.
-  it("keeps Add disabled for a draft that is not a neuron id", async () => {
-    const props = makeStepProps({
-      neurons: [NEURON],
-      selectedNeuronId: "5",
-      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+  it.each([
+    ["rrkah-fqaaa-cai", /digits only/],
+    ["12a3", /digits only/],
+    ["9", /already a followee/],
+    ["5", /cannot follow itself/],
+  ])("refuses the draft %p and says why", (followeeDraft, copy) => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+      followeeDraft,
     });
-    const { user } = render(<StepSelectFollowees {...props} />);
-
-    await user.type(screen.getByTestId("icp-followee-input"), "rrkah-fqaaa-cai");
+    render(<StepSelectFollowees {...props} />);
 
     expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
+    expect(screen.getByTestId("icp-followee-notice")).toHaveTextContent(copy);
   });
 
-  // Stripping the non-digits would have followed neuron 123 while the field still read `12a3`,
-  // which is a different and entirely valid target rather than a formatting nicety.
-  it("does not offer to add a draft that only contains a neuron id", async () => {
-    const props = makeStepProps({
-      neurons: [NEURON],
-      selectedNeuronId: "5",
-      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+  it("asks for a usable draft to be added rather than refusing it", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+      followeeDraft: "8",
     });
-    const { user } = render(<StepSelectFollowees {...props} />);
+    render(<StepSelectFollowees {...props} />);
 
-    await user.type(screen.getByTestId("icp-followee-input"), "12a3");
+    expect(screen.getByTestId("icp-followee-add-button")).toBeEnabled();
+    expect(screen.getByTestId("icp-followee-notice")).toHaveTextContent(/Select Add/);
+  });
+
+  it("stops accepting followees at the cap the canister enforces", () => {
+    const followeesIds = Array.from({ length: MAX_FOLLOWEES_PER_TOPIC }, (_, i) => String(i + 10));
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds },
+      followeeDraft: "8",
+    });
+    render(<StepSelectFollowees {...props} />);
 
     expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
+    expect(screen.getByTestId("icp-followee-notice")).toHaveTextContent(
+      `at most ${MAX_FOLLOWEES_PER_TOPIC}`,
+    );
   });
 
   it("offers a copy control on every followee in the list", () => {
@@ -571,19 +603,6 @@ describe("StepSelectFollowees", () => {
     render(<StepSelectFollowees {...props} />);
 
     expect(screen.getAllByText("Copy")).toHaveLength(2);
-  });
-
-  it("keeps Add disabled for a followee the list already holds", async () => {
-    const props = makeStepProps({
-      neurons: [NEURON],
-      selectedNeuronId: "5",
-      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
-    });
-    const { user } = render(<StepSelectFollowees {...props} />);
-
-    await user.type(screen.getByTestId("icp-followee-input"), "9");
-
-    expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
   });
 
   // NEURON follows one neuron on Governance already, so an empty submission would clear it — the
@@ -627,6 +646,25 @@ describe("StepSelectFollowees", () => {
       neurons: [NEURON],
       selectedNeuronId: "5",
       transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    render(<StepSelectFolloweesFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+
+  it("keeps continue disabled while an id sits unadded in the field", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+      followeeDraft: "8",
+    });
+    render(<StepSelectFolloweesFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it("allows continue once the field is clear again", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
     });
     render(<StepSelectFolloweesFooter {...props} />);
 
