@@ -44,7 +44,7 @@ export class Layout extends Component {
   }
 
   @step("Wait for accounts sync to be finished")
-  async waitForSyncButtonToBeEnabled() {
-    await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled");
+  async waitForSyncButtonToBeEnabled(timeout?: number) {
+    await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled", { timeout });
   }
 }

@@ -98,9 +98,9 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton() {
+  async startStakingFlowFromMainStakeButton(syncTimeout?: number) {
     // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled();
+    await this.layout.waitForSyncButtonToBeEnabled(syncTimeout);
     await this.stakeButton.click();
   }
 
