@@ -154,7 +154,7 @@ describe("useScanDeviceAccountsViewModel callbacks", () => {
     expect(track).toHaveBeenCalledWith("accounts_added", expect.anything());
   });
 
-  it("resolves inline import with onSuccess before popping and does not cancel", async () => {
+  it("resolves inline import by popping before onSuccess and does not cancel", async () => {
     const callOrder: string[] = [];
     const onSuccess = jest.fn(() => callOrder.push("success"));
     const onCloseNavigation = jest.fn(() => callOrder.push("cancel"));
@@ -173,7 +173,7 @@ describe("useScanDeviceAccountsViewModel callbacks", () => {
       expect.objectContaining({ selected: expect.any(Array) }),
     );
     expect(pop).toHaveBeenCalled();
-    expect(callOrder).toEqual(["success", "pop"]);
+    expect(callOrder).toEqual(["pop", "success"]);
     expect(replace).not.toHaveBeenCalledWith(ScreenName.AddAccountsSuccess, expect.anything());
     pop.mockReset();
   });
