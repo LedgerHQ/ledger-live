@@ -30,6 +30,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCellShared";
 import Text from "~/renderer/components/Text";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import MissingNeuron from "./MissingNeuron";
@@ -145,7 +146,10 @@ const StepManage = ({
       <NeuronSection
         title={
           <Box horizontal alignItems="center" style={{ gap: 8 }}>
-            {t("internetComputer.manageNeuronFlow.manage.neuron", { neuronId })}
+            {t("internetComputer.manageNeuronFlow.manage.neuron")}
+            {/* The id is copied to be pasted into Follow, and shortened from the middle: the tail
+                is what distinguishes two ids sharing a prefix. */}
+            <SplitAddress value={neuronId} />
             {neuronId ? <CopyWithFeedback text={neuronId} /> : null}
           </Box>
         }
