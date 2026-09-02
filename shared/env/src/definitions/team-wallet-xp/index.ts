@@ -29,7 +29,7 @@ const teamWalletXp = {
   CARD_BAANX_API_URL: {
     def: "https://dev.api.baanx.com",
     parser: stringParser,
-    desc: "Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",
+    desc: "Baanx Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",
   },
   CARD_BAANX_CLIENT_KEY: {
     def: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
