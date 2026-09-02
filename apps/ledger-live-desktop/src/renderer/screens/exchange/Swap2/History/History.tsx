@@ -28,7 +28,6 @@ import { useLocation } from "react-router";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { useAutoOpenSwapDialog } from "./useAutoOpenSwapDialog";
-import { getEnv } from "@shared/env";
 
 const Head = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
@@ -63,7 +62,7 @@ const History = () => {
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
       if (!mappedSwapOperations) return;
-      exportOperations(
+      await exportOperations(
         {
           options: {
             title: "Exported swap history",
