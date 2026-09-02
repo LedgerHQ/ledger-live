@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type {
   AddContactDialogLifecycleCallbacks,
   AddContactDialogViewModel,
@@ -76,3 +76,11 @@ export type ContactsViewNativeProps = ContactsNativeProps &
     contacts: readonly Contact[];
     hasMore: boolean;
   }>;
+
+export type ContactAddressPickerProps = Readonly<{
+  isOpen: boolean;
+  contact: Contact | null;
+  onClose: () => void;
+  onSelectAddress: (address: ContactAddress) => void;
+  onAddNewContact?: () => void;
+}>;

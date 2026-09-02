@@ -33,6 +33,30 @@ its Telegram button) calls `onContactPress(contact)`. The row overflow (`...`) m
 **View contact** → `onViewContact(contact)` and **View transactions** → `onViewTransactions(contact)`;
 each item is shown only when its handler is provided.
 
+## Contact address picker (web)
+
+> [!NOTE]
+> Skeleton dialog — no address list UI yet (see LIVE-36373). Native picker lands in a later ticket.
+
+`ContactAddressPicker` is a Lumen dialog that opens after a contact is pressed so the user can pick
+which address to pay. The host owns visibility and the selected contact via
+`useContactAddressPickerViewModel`.
+
+```tsx
+import { ContactAddressPicker, useContactAddressPickerViewModel } from "@features/flow-pay-contact";
+
+const { open, contactAddressPicker } = useContactAddressPickerViewModel({
+  onSelectAddress: address => startPayment(address),
+  onAddNewContact,
+});
+
+<Contacts {...contacts} onContactPress={open} />;
+<ContactAddressPicker {...contactAddressPicker} />;
+```
+
+`onSelectAddress` receives the full `ContactAddress` (currency + recipient). `onAddNewContact` is
+optional.
+
 ## Native
 
 ```tsx
