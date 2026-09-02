@@ -479,7 +479,7 @@ describe("StepSelectFollowees", () => {
     expect(patched.followeesIds).toEqual(["8"]);
   });
 
-  it("adds the digits of the draft as a followee", async () => {
+  it("adds the drafted neuron id as a followee", async () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
@@ -494,9 +494,9 @@ describe("StepSelectFollowees", () => {
     expect(patched.followeesIds).toEqual(["9", "8"]);
   });
 
-  // A principal is what a user reaches for when asked for a neuron, and it has no digits at all.
-  // Add stayed enabled and the click was swallowed, because only the draft's emptiness was gated.
-  it("keeps Add disabled for a draft with no digits in it", async () => {
+  // A principal is what a user reaches for when asked for a neuron. Add stayed enabled and the
+  // click was swallowed, because only the draft's emptiness was gated.
+  it("keeps Add disabled for a draft that is not a neuron id", async () => {
     const props = makeStepProps({
       neurons: [NEURON],
       selectedNeuronId: "5",
@@ -505,6 +505,21 @@ describe("StepSelectFollowees", () => {
     const { user } = render(<StepSelectFollowees {...props} />);
 
     await user.type(screen.getByTestId("icp-followee-input"), "rrkah-fqaaa-cai");
+
+    expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
+  });
+
+  // Stripping the non-digits would have followed neuron 123 while the field still read `12a3`,
+  // which is a different and entirely valid target rather than a formatting nicety.
+  it("does not offer to add a draft that only contains a neuron id", async () => {
+    const props = makeStepProps({
+      neurons: [NEURON],
+      selectedNeuronId: "5",
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+    });
+    const { user } = render(<StepSelectFollowees {...props} />);
+
+    await user.type(screen.getByTestId("icp-followee-input"), "12a3");
 
     expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
   });

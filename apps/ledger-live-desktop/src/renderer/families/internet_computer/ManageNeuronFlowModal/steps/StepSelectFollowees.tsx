@@ -57,10 +57,11 @@ const StepSelectFollowees = (props: StepProps) => {
     [onUpdateTransaction],
   );
 
-  // What gets added is the draft's digits, not the draft. Gating the button on the draft itself let
-  // a principal — which carries no digits at all — enable a click that silently did nothing.
-  const draftId = useMemo(() => draft.replace(/\D/g, ""), [draft]);
-  const canAdd = draftId !== "" && !followeesIds.includes(draftId);
+  // The draft is submitted as written, so it has to be validated rather than repaired. Stripping
+  // non-digits would read `12a3` as neuron 123 and delegate this neuron's voting power to a target
+  // the user never typed, while the field still showed what they did type.
+  const draftId = useMemo(() => draft.trim(), [draft]);
+  const canAdd = /^\d+$/.test(draftId) && !followeesIds.includes(draftId);
 
   const onAdd = useCallback(() => {
     if (!canAdd) return;
