@@ -312,6 +312,22 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
 
       inPhase(result.current, "deviceDisconnected");
     });
+
+    it("WHEN the device disconnects THEN onExecutorStopped is not called", () => {
+      const onExecutorStopped = jest.fn();
+      const { connectionResult } = driveToExecution({
+        intent: makeIntent(() => NEVER),
+        onExecutorStopped,
+      });
+
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+
+      // The job is torn down but the executor stays alive, so a later run can
+      // still report and the caller must not settle.
+      expect(onExecutorStopped).not.toHaveBeenCalled();
+    });
   });
 
   describe("GIVEN the hook is in intentError phase", () => {
@@ -753,6 +769,48 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
 
       unmount();
       expect(instance.stop).toHaveBeenCalled();
+    });
+  });
+
+  describe("onExecutorStopped", () => {
+    it("WHEN the hook unmounts THEN onExecutorStopped is called once", () => {
+      const onExecutorStopped = jest.fn();
+      const { unmount } = renderWithMockSM({ onExecutorStopped });
+
+      expect(onExecutorStopped).not.toHaveBeenCalled();
+
+      unmount();
+      expect(onExecutorStopped).toHaveBeenCalledTimes(1);
+    });
+
+    it("WHEN enabled transitions from true to false THEN onExecutorStopped is called once", () => {
+      const onExecutorStopped = jest.fn();
+      const { rerender, props } = renderWithMockSM({ onExecutorStopped });
+
+      // The cleanup and the disabled branch both run on this render, and only
+      // one of them may report the stop.
+      rerender({ p: { ...props, enabled: false } });
+      expect(onExecutorStopped).toHaveBeenCalledTimes(1);
+    });
+
+    it("WHEN enabled is false from the start THEN onExecutorStopped is never called", () => {
+      const onExecutorStopped = jest.fn();
+      const { unmount } = renderWithMockSM({ enabled: false, onExecutorStopped });
+
+      unmount();
+      expect(onExecutorStopped).not.toHaveBeenCalled();
+    });
+
+    it("WHEN the SM is stopped and restarted THEN each stop is reported once", () => {
+      const onExecutorStopped = jest.fn();
+      const { rerender, props } = renderWithMockSM({ onExecutorStopped });
+
+      rerender({ p: { ...props, enabled: false } });
+      rerender({ p: { ...props, enabled: true } });
+      expect(onExecutorStopped).toHaveBeenCalledTimes(1);
+
+      rerender({ p: { ...props, enabled: false } });
+      expect(onExecutorStopped).toHaveBeenCalledTimes(2);
     });
   });
 

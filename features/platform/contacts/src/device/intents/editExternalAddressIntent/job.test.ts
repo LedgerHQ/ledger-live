@@ -5,7 +5,6 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
-import { ContactDeviceIntentCancelledError } from "../../errors";
 import { editExternalAddressIntentJob } from "./job";
 import type { EditExternalAddressIntentInput, EditExternalAddressJobState } from "./types";
 
@@ -377,7 +376,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(steps).toEqual(["identifier", "scope"]);
     });
 
-    it("GIVEN the user gives up between the two steps THEN it cancels without reporting a partial result", () => {
+    it("GIVEN a teardown between the two steps THEN it reports nothing, not a partial result", () => {
       // GIVEN
       const job = startJob(COMBINED);
       job.emitIdentifier(identifierCompletion([0x07, 0x08]));
@@ -388,11 +387,7 @@ describe("editExternalAddressIntentJob", () => {
       // THEN
       // The device records nothing, so dropping the intermediate proof leaves
       // the stored record untouched and still valid.
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
-      expect(job.onResult).toHaveBeenCalledTimes(1);
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the scope step is running WHEN the caller unsubscribes THEN it tears that step down", () => {
@@ -688,7 +683,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.isCompleted()).toBe(true);
     });
 
-    it("GIVEN a rejection WHEN the user gives up instead THEN it settles as a cancellation", () => {
+    it("GIVEN a rejection WHEN the job is torn down instead of retried THEN it reports nothing", () => {
       // GIVEN
       const job = startJob();
       job.emitIdentifier(REJECTION);
@@ -697,10 +692,9 @@ describe("editExternalAddressIntentJob", () => {
       job.subscription.unsubscribe();
 
       // THEN
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
+      // Giving up is the orchestrator's `onUserCancel`, not a teardown: the
+      // executor also tears jobs down on paths that keep the operation alive.
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
@@ -802,7 +796,7 @@ describe("editExternalAddressIntentJob", () => {
       },
     );
 
-    it("GIVEN an active edit WHEN the caller unsubscribes before completion THEN it cancels the device action and reports cancellation", () => {
+    it("GIVEN an active edit WHEN the caller unsubscribes before completion THEN it cancels the device action without reporting", () => {
       // GIVEN
       const job = startJob();
 
@@ -811,10 +805,9 @@ describe("editExternalAddressIntentJob", () => {
 
       // THEN
       expect(job.identifierCancel(0)).toHaveBeenCalled();
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
+      // The executor tears the job down whenever it leaves intent execution, so a
+      // report here would settle the flow that a later run is meant to finish.
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the device action is stopped WHEN reported THEN it reports failure", () => {

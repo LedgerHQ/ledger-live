@@ -193,5 +193,5 @@ export const renameContactIntentJob: Job<
         return of<RenameContactJobState>({ type: "failed", error: mapped });
       }),
     );
-  }).pipe(reporter.cancelOnUnsubscribe());
+  });
 };

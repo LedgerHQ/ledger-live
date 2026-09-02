@@ -215,5 +215,5 @@ export const registerExternalAddressIntentJob: Job<
         return of<RegisterExternalAddressJobState>({ type: "failed", error: mapped });
       }),
     );
-  }).pipe(reporter.cancelOnUnsubscribe());
+  });
 };

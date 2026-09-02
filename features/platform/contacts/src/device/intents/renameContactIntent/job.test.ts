@@ -5,7 +5,6 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
-import { ContactDeviceIntentCancelledError } from "../../errors";
 import { renameContactIntentJob } from "./job";
 import type { RenameContactIntentInput, RenameContactJobState } from "./types";
 
@@ -294,7 +293,7 @@ describe("renameContactIntentJob", () => {
     expect(job.isCompleted()).toBe(true);
   });
 
-  it("GIVEN a rejection WHEN the user gives up instead THEN it settles as a cancellation", () => {
+  it("GIVEN a rejection WHEN the job is torn down instead of retried THEN it reports nothing", () => {
     // GIVEN
     const job = startJob();
     job.emit(REJECTION);
@@ -303,10 +302,9 @@ describe("renameContactIntentJob", () => {
     job.subscription.unsubscribe();
 
     // THEN
-    expect(job.onResult).toHaveBeenCalledWith({
-      type: "failure",
-      error: expect.any(ContactDeviceIntentCancelledError),
-    });
+    // Giving up is the orchestrator's `onUserCancel`, not a teardown: the
+    // executor also tears jobs down on paths that keep the operation alive.
+    expect(job.onResult).not.toHaveBeenCalled();
   });
 
   it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
@@ -410,7 +408,7 @@ describe("renameContactIntentJob", () => {
     expect(job.states).toContainEqual({ type: "invalid-input", error: expect.any(Error) });
   });
 
-  it("GIVEN an active rename WHEN the caller unsubscribes before completion THEN it cancels the device action and reports cancellation", () => {
+  it("GIVEN an active rename WHEN the caller unsubscribes before completion THEN it cancels the device action without reporting", () => {
     // GIVEN
     const job = startJob();
 
@@ -419,10 +417,9 @@ describe("renameContactIntentJob", () => {
 
     // THEN
     expect(job.cancel).toHaveBeenCalled();
-    expect(job.onResult).toHaveBeenCalledWith({
-      type: "failure",
-      error: expect.any(ContactDeviceIntentCancelledError),
-    });
+    // The executor tears the job down whenever it leaves intent execution, so a
+    // report here would settle the flow that a later run is meant to finish.
+    expect(job.onResult).not.toHaveBeenCalled();
   });
 
   it("GIVEN the device action is stopped WHEN reported THEN it reports failure", () => {

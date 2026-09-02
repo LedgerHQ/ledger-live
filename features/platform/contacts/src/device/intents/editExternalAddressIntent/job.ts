@@ -306,6 +306,5 @@ export const editExternalAddressIntentJob: Job<
       reporter.report({ type: "failure", error: mapped });
       return of<EditExternalAddressJobState>({ type: "failed", error: mapped });
     }),
-    reporter.cancelOnUnsubscribe(),
   );
 };

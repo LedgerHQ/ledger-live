@@ -1222,10 +1222,32 @@ The executor reports progress and lifecycle changes through callback props:
 | `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                            |
 | `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
 | `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
+| `onExecutorStopped()`               | Optional. The executor is destroyed: the component unmounts, or `enabled` flips to `false`. See below.                                                    |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
 identity changes.
+
+##### `onExecutorStopped` and job teardown
+
+The executor terminates the running job on several paths, and only some of them
+end the operation. It tears a job down and **stays alive** when it leaves intent
+execution — handling a device disconnection, or restarting into device
+connection — and in each of those the current intent is kept, so a later run of
+the same job can still report an outcome.
+
+`onExecutorStopped` fires only on the paths where the executor itself goes away
+and no later run is possible. A caller awaiting an intent outcome (e.g. holding
+a promise it resolves from `onResult`) must settle it here, and must **not**
+settle on job teardown alone: doing so rejects the caller before a retry has
+had its chance, and the retry's eventual result is then discarded as a late
+duplicate.
+
+> [!WARNING]
+> The callback is unmount-scoped, so an effect that mounts, cleans up and
+> remounts — React `StrictMode`'s double-invoke — reports a stop for a job that
+> is about to run again. Neither wallet app enables `StrictMode` today; enabling
+> it would need this revisited.
 
 #### Intent-level callbacks (on `Intent`)
 
