@@ -6,6 +6,8 @@ import {
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
+  PayCardDetailsCssSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -127,6 +129,44 @@ describe("PayCardStatusResponseSchema", () => {
     expect(() =>
       PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
     ).toThrow();
+  });
+});
+
+describe("PayCardDetailsTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const detailsToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    imageUrl:
+      "https://card.api.live.ledger.com/details-image?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardDetailsTokenResponseSchema.parse(detailsToken)).toEqual(detailsToken);
+  });
+
+  it("rejects an empty image url, which would render nothing at all", () => {
+    expect(() =>
+      PayCardDetailsTokenResponseSchema.parse({ ...detailsToken, imageUrl: "" }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardDetailsCssSchema", () => {
+  it("takes the documented colours, and takes none at all", () => {
+    const css = {
+      cardBackgroundColor: "#000000",
+      cardTextColor: "#FFFFFF",
+      panBackgroundColor: "#EFEFEF",
+      panTextColor: "#000000",
+    };
+
+    expect(PayCardDetailsCssSchema.parse(css)).toEqual(css);
+    expect(PayCardDetailsCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "white" })).toThrow();
+    expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "#GGGGGG" })).toThrow();
   });
 });
 

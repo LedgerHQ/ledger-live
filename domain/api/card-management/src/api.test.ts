@@ -4,6 +4,7 @@ import {
   cardManagementApi,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
+  useCreateCardDetailsTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
@@ -134,6 +135,7 @@ describe("cardManagementApi configuration", () => {
 
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
+      "createCardDetailsToken",
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
@@ -157,6 +159,11 @@ describe("cardManagementApi configuration", () => {
     expect(useGetCardStatusQuery).toBeDefined();
     // The devtool fetches on press, not on mount, so the lazy hook is part of the surface too.
     expect(useLazyGetCardStatusQuery).toBeDefined();
+  });
+
+  it("exposes the card details token endpoint and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardDetailsToken).toBeDefined();
+    expect(useCreateCardDetailsTokenMutation).toBeDefined();
   });
 
   it("exposes the freeze endpoints and their hooks", () => {
@@ -601,6 +608,57 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("createCardDetailsToken", () => {
+    // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+    const detailsToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      imageUrl: "https://card.test/details-image?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("asks for a token with the bearer token and the client key, and sends no body by default", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/details/token");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      // No colours asked for: the provider paints its own defaults.
+      expect(await request(fetchSpy).clone().text()).toBe("");
+      expect(result.data).toEqual(detailsToken);
+    });
+
+    it("sends the colours the host asked for", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+
+      const store = makeStore(async () => "session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardDetailsToken.initiate({ panTextColor: "#000000" }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
+        customCss: { panTextColor: "#000000" },
+      });
+    });
+
+    it("keeps no cache entry: the provider spends the token on first use", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+
+      const store = makeStore(async () => "session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardDetailsToken.initiate()).unwrap();
+
+      const cached = JSON.stringify(store.getState().cardApi.queries);
+      expect(cached).not.toContain(detailsToken.token);
+      expect(cached).not.toContain("details-image");
     });
   });
 
