@@ -27,8 +27,7 @@
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
-    "@features/platform-contacts": "workspace:^",
-    "uuid": "^9.0.0"
+    "@features/platform-contacts": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -64,7 +63,6 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
