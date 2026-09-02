@@ -31,7 +31,8 @@ export function useNotificationsPromptTriggers() {
     syncOptOutState,
     updatePushNotificationsDataOfUserInStateAndStore,
   } = useNotificationsData();
-  const { openDrawer, isDrawerPending } = useNotificationsPromptDrawerScheduler();
+  const { openDrawer, isDrawerPending, cancelPendingDrawer } =
+    useNotificationsPromptDrawerScheduler();
 
   const initPushNotificationsData =
     useCallback(async (): Promise<InitPushNotificationsDataResult> => {
@@ -180,5 +181,8 @@ export function useNotificationsPromptTriggers() {
     notifyFlowCompleted,
     tryTriggerPushNotificationDrawerAfterInactivity,
     initPushNotificationsData,
+    openDrawer,
+    isDrawerPending,
+    cancelPendingDrawer,
   };
 }

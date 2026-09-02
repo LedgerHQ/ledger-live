@@ -16,16 +16,20 @@ export function useNotificationsPromptDrawerScheduler() {
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const cancelPendingDrawer = useCallback(() => {
+    if (eventTimeoutRef.current) {
+      clearTimeout(eventTimeoutRef.current);
+      eventTimeoutRef.current = null;
+    }
+  }, []);
+
   const openDrawer = useCallback(
     (
       source: NotificationsPromptSource,
       timer = 0,
       drawerPromptTarget?: NotificationPromptTarget,
     ) => {
-      if (eventTimeoutRef.current) {
-        clearTimeout(eventTimeoutRef.current);
-        eventTimeoutRef.current = null;
-      }
+      cancelPendingDrawer();
 
       eventTimeoutRef.current = setTimeout(() => {
         eventTimeoutRef.current = null;
@@ -37,7 +41,7 @@ export function useNotificationsPromptDrawerScheduler() {
         dispatch(setNotificationsModalOpen(true));
       }, timer);
     },
-    [dispatch],
+    [cancelPendingDrawer, dispatch],
   );
 
   const isDrawerPending = useCallback(
@@ -46,16 +50,12 @@ export function useNotificationsPromptDrawerScheduler() {
   );
 
   useEffect(() => {
-    return () => {
-      if (eventTimeoutRef.current) {
-        clearTimeout(eventTimeoutRef.current);
-        eventTimeoutRef.current = null;
-      }
-    };
-  }, []);
+    return cancelPendingDrawer;
+  }, [cancelPendingDrawer]);
 
   return {
     openDrawer,
     isDrawerPending,
+    cancelPendingDrawer,
   };
 }

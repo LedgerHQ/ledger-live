@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useEffect, useMemo } from "react";
 import { AppState } from "react-native";
-import type { InitPushNotificationsDataResult } from "LLM/features/NotificationsPrompt/types";
-import type { NotificationsPromptAfterActionSource } from "LLM/features/NotificationsPrompt/utils/notificationsPromptEngine";
+import type {
+  InitPushNotificationsDataResult,
+  NotificationPromptTarget,
+} from "LLM/features/NotificationsPrompt/types";
+import type {
+  NotificationsPromptAfterActionSource,
+  NotificationsPromptSource,
+} from "LLM/features/NotificationsPrompt/utils/notificationsPromptEngine";
 import { useNotificationsPromptTriggers } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptTriggers";
 
 type NotificationsPromptProviderProps = {
@@ -12,6 +18,13 @@ export type NotificationsPromptContextValue = {
   notifyFlowCompleted: (source: NotificationsPromptAfterActionSource) => void;
   tryTriggerPushNotificationDrawerAfterInactivity: (data: InitPushNotificationsDataResult) => void;
   initPushNotificationsData: () => Promise<InitPushNotificationsDataResult>;
+  openDrawer: (
+    source: NotificationsPromptSource,
+    timer?: number,
+    drawerPromptTarget?: NotificationPromptTarget,
+  ) => void;
+  isDrawerPending: () => boolean;
+  cancelPendingDrawer: () => void;
 };
 
 export const NotificationsPromptContext = createContext<NotificationsPromptContextValue | null>(
@@ -33,6 +46,9 @@ export function NotificationsPromptProvider({ children }: NotificationsPromptPro
     notifyFlowCompleted,
     tryTriggerPushNotificationDrawerAfterInactivity,
     initPushNotificationsData,
+    openDrawer,
+    isDrawerPending,
+    cancelPendingDrawer,
   } = useNotificationsPromptTriggers();
 
   useEffect(() => {
@@ -56,9 +72,15 @@ export function NotificationsPromptProvider({ children }: NotificationsPromptPro
       notifyFlowCompleted,
       tryTriggerPushNotificationDrawerAfterInactivity,
       initPushNotificationsData,
+      openDrawer,
+      isDrawerPending,
+      cancelPendingDrawer,
     }),
     [
       notifyFlowCompleted,
+      openDrawer,
+      isDrawerPending,
+      cancelPendingDrawer,
       tryTriggerPushNotificationDrawerAfterInactivity,
       initPushNotificationsData,
     ],
