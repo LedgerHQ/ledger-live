@@ -32,16 +32,16 @@ const AccountHeaderManageActions: InternetComputerFamily["accountHeaderManageAct
 
   if (!icpAccount) return null;
 
-  // Mirrors the gate AccountHeaderActions puts on "Stake": a platform-app redirect means staking
-  // happens in the partner app, not here.
-  const { id: currencyId } = icpAccount.currency;
-  if (!getCanStakeUsingLedgerLive(currencyId) || getCanStakeUsingPlatformApp(currencyId)) {
-    return null;
-  }
-
   const actions: ManageAction[] = [];
 
-  if (canStakeICP(icpAccount)) {
+  // Mirrors the gate AccountHeaderActions puts on "Stake", and like it applies to that action only:
+  // a platform-app redirect moves staking to the partner app, but the neurons someone already holds
+  // are still managed here, so dissolve, disburse, hot keys and following must survive it.
+  const { id: currencyId } = icpAccount.currency;
+  const canStakeHere =
+    getCanStakeUsingLedgerLive(currencyId) && !getCanStakeUsingPlatformApp(currencyId);
+
+  if (canStakeHere && canStakeICP(icpAccount)) {
     actions.push({
       key: "Stake",
       onClick: onStake,
