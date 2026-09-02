@@ -732,7 +732,7 @@ describe("testing prepareTransaction", () => {
           stakeAccBalance: STALE_WITHDRAWABLE + RENT_EXEMPT_RESERVE,
           rentExemptReserve: RENT_EXEMPT_RESERVE,
           withdrawable: STALE_WITHDRAWABLE,
-          activation: { state: "inactive", active: 0, inactive: STALE_WITHDRAWABLE },
+          activation: { state: "inactive", active: 0, activating: 0, inactive: STALE_WITHDRAWABLE },
           ...stakeOverrides,
         };
         return {
