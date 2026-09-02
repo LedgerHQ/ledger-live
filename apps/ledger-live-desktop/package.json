@@ -211,6 +211,7 @@
     "electron-updater": "6.6.2",
     "embla-carousel-autoplay": "8.4.0",
     "embla-carousel-react": "8.0.0-rc17",
+    "events": "^3.3.0",
     "firebase": "9.23.0",
     "focus-trap": "6.9.4",
     "framer-motion": "11.3.28",
