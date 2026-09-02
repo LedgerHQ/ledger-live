@@ -3,10 +3,12 @@ import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
 export class UndelegateModal extends Modal {
-  private manageButton = (rowIndex: number) =>
-    this.page.getByTestId(`sui-staking-manage-button-${rowIndex}`);
-  private unstakeMenuItem = (rowIndex: number) =>
-    this.page.getByTestId(`sui-staking-unstake-item-${rowIndex}`);
+  // Families holding several positions index their rows; those that delegate once do not.
+  private rowSuffix = (rowIndex?: number) => (rowIndex === undefined ? "" : `-${rowIndex}`);
+  private manageButton = (currencyId: string, rowIndex?: number) =>
+    this.page.getByTestId(`${currencyId}-staking-manage-button${this.rowSuffix(rowIndex)}`);
+  private unstakeMenuItem = (currencyId: string, rowIndex?: number) =>
+    this.page.getByTestId(`${currencyId}-staking-unstake-item${this.rowSuffix(rowIndex)}`);
   private validatorField = this.page.getByTestId("sui-unstake-validator-field");
   private amountInput = this.page.getByTestId("sui-unstake-amount-input");
   private percentageButton = (pct: string) =>
@@ -17,9 +19,9 @@ export class UndelegateModal extends Modal {
   private viewDetailsButton = this.page.getByTestId("sui-unstake-view-details-button");
 
   @step("Open the unstake flow from the staking-section manage menu")
-  async openFromManageMenu(rowIndex = 0) {
-    await this.manageButton(rowIndex).click();
-    await this.unstakeMenuItem(rowIndex).click();
+  async openFromManageMenu(currencyId: string, rowIndex?: number) {
+    await this.manageButton(currencyId, rowIndex).click();
+    await this.unstakeMenuItem(currencyId, rowIndex).click();
   }
 
   @step("Verify validator name on the amount step")
