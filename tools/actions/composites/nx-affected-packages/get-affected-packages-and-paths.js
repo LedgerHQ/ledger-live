@@ -72,9 +72,15 @@ async function getAffectedPackagesAndPaths(options = {}) {
   if (exitCode !== 0) {
     const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
     if (debugEnabled) {
-      console.error("[nx-affected] nx failed. exitCode:", exitCode);
-      console.error("[nx-affected] stderr:", affectedStderr || "<none>");
-      console.error("[nx-affected] stdout:", affectedStdout || "<none>");
+      console.error(
+        "[nx-affected] `pnpm nx show projects --affected --json` failed.",
+        "exitCode:",
+        exitCode,
+        "stderr:",
+        affectedStderr || "<none>",
+        "stdout:",
+        affectedStdout || "<none>",
+      );
     }
     throw new Error(`pnpm nx show projects --affected --json failed with exit code ${exitCode}`);
   }
