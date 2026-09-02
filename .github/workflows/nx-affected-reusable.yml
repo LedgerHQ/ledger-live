@@ -36,6 +36,11 @@ jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
     runs-on: ubuntu-22.04
+    env:
+      # nx 22.7+ copies the .node addon to /tmp before dlopen; GitHub Actions
+      # runners mount /tmp noexec, which causes WorkspaceContext to silently
+      # load as undefined. Skip the cache so nx loads the .node directly.
+      NX_SKIP_NATIVE_FILE_CACHE: true
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
@@ -89,7 +94,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@chore/nx-upgrade-22-latest
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
