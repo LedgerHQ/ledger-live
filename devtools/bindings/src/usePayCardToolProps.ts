@@ -4,6 +4,7 @@ import {
   useGetCardLinkedWalletsQuery,
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
+  useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
 import {
   useCardLinkedWallets,
@@ -21,6 +22,7 @@ import {
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
+import type { PayCardDetailsCss } from "@domain/api-card-management";
 import {
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
@@ -215,7 +217,33 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [cardStatus.isFetching, cardStatus.data, cardStatus.error, runCardStatus],
   );
 
-  const interaction = useMemo(() => ({ probes: [cardStatusProbe] }), [cardStatusProbe]);
+  const [requestCardDetails, cardDetails] = useCreateCardDetailsTokenMutation();
+
+  const { reset: resetCardDetails } = cardDetails;
+  const details = useMemo(
+    () => ({
+      // The URL itself never leaves this object: it is a live, single-use credential.
+      imageUrl: cardDetails.data?.imageUrl,
+      isFetching: cardDetails.isLoading,
+      error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),
+      request: (customCss?: PayCardDetailsCss) => {
+        requestCardDetails(customCss);
+      },
+      clear: resetCardDetails,
+    }),
+    [
+      cardDetails.data,
+      cardDetails.isLoading,
+      cardDetails.error,
+      requestCardDetails,
+      resetCardDetails,
+    ],
+  );
+
+  const interaction = useMemo(
+    () => ({ probes: [cardStatusProbe], details }),
+    [cardStatusProbe, details],
+  );
 
   // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);

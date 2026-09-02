@@ -22,7 +22,16 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
-    interaction: { probes: [] },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+    },
     balance: {
       baanxWallets: [],
       linkedWallets: [],
