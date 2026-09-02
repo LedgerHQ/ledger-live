@@ -580,9 +580,6 @@ patchedDependencies:
   '@hiero-ledger/proto@2.25.0':
     hash: 3db17dbc9a7f2fe6248f2f94d98f3ad73afecaf999c190595e95da9c6a0eff29
     path: patches/@hiero-ledger__proto@2.25.0.patch
-  '@rozenite/redux-devtools-plugin@1.2.0':
-    hash: 1d2c9b61ecfb618b828ef4d7c26592951462df16c2f2f8ab3552ee26717f0e42
-    path: patches/@rozenite__redux-devtools-plugin@1.2.0.patch
   '@taquito/http-utils':
     hash: 74970a17ec07ec4fa7e3a168cec614cd9350646589f9b3dbffee742b2b15d90e
     path: patches/@taquito__http-utils.patch
@@ -2465,7 +2462,7 @@ importers:
         version: 1.2.0(@react-navigation/core@7.12.4(react@19.1.4))(react@19.1.4)
       '@rozenite/redux-devtools-plugin':
         specifier: 1.2.0
-        version: 1.2.0(patch_hash=1d2c9b61ecfb618b828ef4d7c26592951462df16c2f2f8ab3552ee26717f0e42)(@types/react@19.0.14)(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)(redux@5.0.1)
+        version: 1.2.0(@types/react@19.0.14)(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)(redux@5.0.1)
       '@rozenite/repack':
         specifier: 1.2.0
         version: 1.2.0(@callstack/repack@5.2.5(patch_hash=8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60)(@babel/core@7.28.5)(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@swc/core@1.15.11(@swc/helpers@0.5.23))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(tslib@2.6.2))
@@ -51811,7 +51808,7 @@ snapshots:
     transitivePeerDependencies:
       - react
 
-  '@rozenite/redux-devtools-plugin@1.2.0(patch_hash=1d2c9b61ecfb618b828ef4d7c26592951462df16c2f2f8ab3552ee26717f0e42)(@types/react@19.0.14)(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)(redux@5.0.1)':
+  '@rozenite/redux-devtools-plugin@1.2.0(@types/react@19.0.14)(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)(redux@5.0.1)':
     dependencies:
       '@redux-devtools/cli': 4.0.4(@types/react@19.0.14)(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))
       '@redux-devtools/remote': 0.9.5(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)(redux@5.0.1)

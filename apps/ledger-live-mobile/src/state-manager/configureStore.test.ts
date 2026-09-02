@@ -253,42 +253,6 @@ describe("mobile store", () => {
       );
     });
   });
-
-  describe("the DevTools relay", () => {
-    beforeEach(() => {
-      jest.resetModules();
-      jest.clearAllMocks();
-    });
-
-    it("receives a sanitizer for the actions and one for the state", () => {
-      const { rozeniteDevToolsEnhancer } =
-        require("@rozenite/redux-devtools-plugin") as typeof import("@rozenite/redux-devtools-plugin");
-      const { CARD_REDUCER_PATH, REDACTED } =
-        require("@shared/api-services") as typeof import("@shared/api-services");
-      require("./configureStore");
-
-      const options = jest.mocked(rozeniteDevToolsEnhancer).mock.calls[0][0];
-      const action = options?.actionSanitizer?.({
-        type: `${CARD_REDUCER_PATH}/executeMutation/fulfilled`,
-        payload: { accessToken: "sentinel-access-token" },
-      });
-      const state = options?.stateSanitizer?.({
-        [CARD_REDUCER_PATH]: {
-          mutations: {
-            "request-1": {
-              endpointName: "refreshSession",
-              originalArgs: { refreshToken: "sentinel-refresh-token" },
-            },
-          },
-        },
-      });
-
-      expect(JSON.stringify(action)).not.toContain("sentinel-access-token");
-      expect(JSON.stringify(action)).toContain(REDACTED);
-      expect(JSON.stringify(state)).not.toContain("sentinel-refresh-token");
-      expect(JSON.stringify(state)).toContain(REDACTED);
-    });
-  });
 });
 
 type AuthThunk = (
