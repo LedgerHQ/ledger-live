@@ -35,14 +35,17 @@ describe("AccountHeaderManageActions (internet_computer)", () => {
   const renderActions = (account: ReturnType<typeof makeICPAccount>, initialState = stakingOn) =>
     renderHook(() => hook({ account, parentAccount: null }), { initialState });
 
-  it("returns null when internet_computer is absent from stakePrograms", () => {
+  // The staking gate belongs to Stake alone. Managing neurons someone already holds cannot depend
+  // on where new stake is created, or a redirect would strip dissolve, disburse, hot keys and
+  // following along with it.
+  it("keeps Manage when internet_computer is absent from stakePrograms", () => {
     const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
     const { result } = renderActions(account, {});
 
-    expect(result.current).toBeNull();
+    expect(result.current?.map(a => a.key)).toEqual(["ManageNeurons"]);
   });
 
-  it("returns null when internet_computer is redirected to a platform app", () => {
+  it("keeps Manage when internet_computer is redirected to a platform app", () => {
     const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
     const { result } = renderActions(
       account,
@@ -57,7 +60,7 @@ describe("AccountHeaderManageActions (internet_computer)", () => {
       }),
     );
 
-    expect(result.current).toBeNull();
+    expect(result.current?.map(a => a.key)).toEqual(["ManageNeurons"]);
   });
 
   it("exposes Manage even when the account holds no neurons", () => {
