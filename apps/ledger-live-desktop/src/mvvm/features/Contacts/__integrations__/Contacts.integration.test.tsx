@@ -577,24 +577,8 @@ describe("Contacts integration", () => {
     await user.type(addressNameInput, "Exchange");
     await user.click(confirmationButton);
 
-    expect(screen.getByRole("dialog")).toBe(dialog);
-    expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: "Go back" }));
-    expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
-
-    await user.click(screen.getByTestId("contacts-add-address-confirm"));
-    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
-
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       expect(
         within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
       ).toBeVisible();

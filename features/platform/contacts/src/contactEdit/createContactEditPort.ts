@@ -4,22 +4,19 @@ import {
   renameContact as renameContactAction,
   selectContactById,
 } from "@domain/entity-contact";
-import {
-  createMockContactDeviceIntentsPort,
-  type ContactDeviceIntentsPort,
-} from "../contactDeviceIntentsPort";
+import type { ContactDeviceIntentsPort } from "../contactDeviceIntentsPort";
 import type { ContactEditPort } from "./ports";
 
 type CreateContactEditPortDependencies = Readonly<{
   dispatch: (action: { type: string }) => void;
   getState: () => Parameters<typeof selectContactById>[0];
-  deviceIntents?: ContactDeviceIntentsPort;
+  deviceIntents: ContactDeviceIntentsPort;
 }>;
 
 export function createContactEditPort({
   dispatch,
   getState,
-  deviceIntents = createMockContactDeviceIntentsPort(),
+  deviceIntents,
 }: CreateContactEditPortDependencies): ContactEditPort {
   return {
     renameContact: async ({ contactId, name }) => {

@@ -7,10 +7,8 @@ import {
   contactsSlice,
 } from "@domain/entity-contact";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
-import {
-  createMockContactDeviceIntentsPort,
-  type ContactDeviceIntentsPort,
-} from "../contactDeviceIntentsPort";
+import type { ContactDeviceIntentsPort } from "../contactDeviceIntentsPort";
+import { createMockContactDeviceIntentsPort } from "../contactDeviceIntentsPort.mock";
 import { createContactAddressEditPort } from "./createContactAddressEditPort";
 
 function makeStore(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {

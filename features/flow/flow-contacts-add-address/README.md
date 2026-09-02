@@ -17,7 +17,7 @@ Shared Add address flow for Desktop and Mobile.
 
 ## Structure
 
-- `screens/` owns the Address Entry, Address Name, Review, Completion, and Flow UI. Each screen provides
+- `screens/` owns the Address Entry, Address Name, Review, and Flow UI. Each screen provides
   explicit `index.ts` and, where required, `index.native.ts` entry points. Address Entry and
   Address Name group their UI components separately from their view models.
 - `components/` owns UI shared by more than one Add address screen.

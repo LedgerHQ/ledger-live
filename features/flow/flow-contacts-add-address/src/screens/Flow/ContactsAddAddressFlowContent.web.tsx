@@ -3,10 +3,8 @@ import { ContactsAddAddressEntry } from "../AddressEntry/components/ContactsAddA
 import type { SanctionedAddressBannerProps } from "../../components/SanctionedAddressBanner/types";
 import { ContactsAddAddressNameInput } from "../AddressName/components/Input/ContactsAddAddressNameInput";
 import type { ContactsAddAddressNameLabels } from "../AddressName/types";
-import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion";
 import { ContactsAddAddressReview, type ContactsAddAddressReviewLabels } from "../Review";
 import type {
-  AddAddressCompletionLabels,
   AddAddressEntryLabels,
   AddAddressFlowState,
   AddAddressInputSource,
@@ -23,14 +21,11 @@ export type ContactsAddAddressFlowContentProps = Readonly<{
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels?: ContactsAddAddressReviewLabels;
-  completionLabels: AddAddressCompletionLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
-  onCompleteMockConfirmation: () => void;
-  onClose: () => void;
 }>;
 
 export function resolveAddAddressWebFlowStep(
@@ -66,15 +61,12 @@ export function ContactsAddAddressFlowContent({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
-  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
-  onCompleteMockConfirmation,
-  onClose,
-}: ContactsAddAddressFlowContentProps): React.JSX.Element {
+}: ContactsAddAddressFlowContentProps): React.JSX.Element | null {
   switch (state.status) {
     case "enteringAddress":
       return (
@@ -101,14 +93,7 @@ export function ContactsAddAddressFlowContent({
         />
       );
     case "confirmationRequired":
-      return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.continue}
-          onContinue={onCompleteMockConfirmation}
-          testID="contacts-add-address-confirmation"
-          title={completionLabels.title}
-        />
-      );
+      return null;
     case "reviewingAddress":
       if (
         state.entryMode === "prefilled" &&
@@ -125,22 +110,8 @@ export function ContactsAddAddressFlowContent({
           />
         );
       }
-      return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.continue}
-          onContinue={onContinueFromReview}
-          testID="contacts-add-address-review"
-          title={completionLabels.title}
-        />
-      );
+      return null;
     case "success":
-      return (
-        <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.close}
-          onContinue={onClose}
-          testID="contacts-add-address-success"
-          title={completionLabels.successTitle}
-        />
-      );
+      return null;
   }
 }

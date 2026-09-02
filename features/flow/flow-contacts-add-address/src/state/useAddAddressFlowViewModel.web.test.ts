@@ -274,7 +274,7 @@ describe("useAddAddressFlowViewModel", () => {
       },
     });
 
-    act(() => result.current.completeMockConfirmation());
+    act(() => result.current.completeConfirmation());
     expect(result.current.state).toMatchObject({
       status: "success",
       target: { type: "contactDetail", contactId },

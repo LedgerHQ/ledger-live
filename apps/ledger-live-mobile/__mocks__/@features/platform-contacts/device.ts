@@ -1,4 +1,4 @@
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts/test";
 
 const deviceIntents = createMockContactDeviceIntentsPort();
 

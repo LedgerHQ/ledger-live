@@ -15,7 +15,7 @@ import {
   useContactAddressDetailDialog,
   usePopulatedContactDetail,
 } from "@features/flow-contacts";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts/test";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 
 const trackEvent = jest.fn();

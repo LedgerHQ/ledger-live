@@ -15,6 +15,7 @@
     "./web": "./src/web.ts",
     "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
+    "./test": "./src/contactDeviceIntentsPort.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
