@@ -35,9 +35,6 @@ const writeOptions: SetOptions = {
 
 export const secureStore: CardSessionStore = {
   async read(key) {
-    // `false` is an empty slot. A read the OS refused rejects, and the rejection travels: a locked
-    // or unreadable keychain must never pass for an absent session, because an absent session ends
-    // one. The base query reports the failure, and the renewal keeps the session and tries again.
     const entry = await getGenericPassword({ service: key });
     return entry ? entry.password : null;
   },

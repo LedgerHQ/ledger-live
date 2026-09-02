@@ -27,25 +27,12 @@ import type {
   PayCardUser,
 } from "./types";
 
-/**
- * The two OAuth2 grants opt out of the Bearer and out of the renewal. A grant presents its own
- * credential, and a grant that renewed would answer its own 401 with another grant and loop.
- */
 const GRANT = { authenticated: false } as const;
 
-/**
- * Every endpoint but the two grants below is authenticated: the base query adds the Bearer and
- * renews it once on a 401.
- *
- * The grants carry credentials in both directions, so every caller dispatches them with
- * `{ track: false }` and the apps redact Card actions before a logger or DevTools reads one. See
- * `redactCardApiAction` in `@shared/api-services`.
- */
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
     endpoints: build => ({
-      /** The `authorization_code` grant: what the hosted login's redirect is worth. */
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
         query: request => ({
           url: OAUTH2_TOKEN_PATH,
@@ -62,12 +49,6 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardSessionSchema,
       }),
 
-      /**
-       * The `refresh_token` grant: the same path, separated by `grant_type`.
-       *
-       * Baanx rotates the refresh token on every grant, so the one this presents is spent the moment
-       * the call resolves, whatever it resolves to.
-       */
       refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
         query: request => ({
           url: OAUTH2_TOKEN_PATH,
@@ -168,12 +149,6 @@ export const cardManagementApi = cardApi
 
 export type CardManagementApi = typeof cardManagementApi;
 
-/**
- * Neither grant has a hook.
- *
- * A renewal is the base query's decision, and a component that triggered one would rotate the
- * refresh token behind its back. The code exchange belongs to the login machine.
- */
 export const {
   useLogoutMutation,
   useGetUserQuery,

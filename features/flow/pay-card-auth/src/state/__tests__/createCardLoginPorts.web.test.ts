@@ -14,14 +14,11 @@ jest.mock("@features/platform-card", () => ({
 const grant = { code: "a-code", codeVerifier: "a-verifier" };
 const session = { accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" };
 
-// Never called here: these tests only cover the session and exchange ports.
 const openHostedLogin: OpenHostedLogin = jest.fn(
   async (_loginUrl: string, _deepLink?: string) => ({ type: "dismissed" }) as const,
 );
 
 function buildPorts(answer: () => Promise<unknown> = async () => session) {
-  // `initiate` answers with a promise that also carries `unwrap`, and the port awaits `unwrap()`.
-  // `resetApiState` is a plain action, so the fake serves both by carrying the field.
   const dispatch = jest.fn(() => ({ unwrap: answer }));
   const ports = createCardLoginPorts({
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -63,7 +60,6 @@ describe("createCardLoginPorts", () => {
 
       await expect(ports.exchangeAuthorizationCode(grant)).resolves.toEqual(session);
 
-      // `track: false`, so the session never becomes a cache entry the DevTools state carries.
       expect(initiate).toHaveBeenCalledWith(grant, { track: false });
       expect(dispatch).toHaveBeenCalledTimes(1);
     });

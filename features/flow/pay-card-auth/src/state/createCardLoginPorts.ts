@@ -6,11 +6,6 @@ import { createAuthorizeAttempt } from "./authorizeAttempt";
 import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
-/**
- * The app store's `dispatch`, used to run the Card api's `initiate` thunks and the code grant. The
- * Card api reducer must be registered in that store, and `cardApiExtra` supplies its base URL and
- * headers.
- */
 export type CardLoginDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 export type CreateCardLoginPortsConfig = {
@@ -40,12 +35,6 @@ export function createCardLoginPorts({
     forgetUser: () => {
       dispatch(cardManagementApi.util.resetApiState());
     },
-    /**
-     * `track: false`, so the session never becomes a cache entry: the machine hands it to
-     * `persistSession` and drops it. The lifecycle actions the grant still dispatches carry the code,
-     * the PKCE verifier and both tokens, and the apps redact every Card action before a logger or
-     * DevTools reads one.
-     */
     exchangeAuthorizationCode: request =>
       dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request, { track: false }),

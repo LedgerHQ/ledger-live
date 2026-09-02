@@ -26,7 +26,6 @@ function fulfilledSessionAction() {
   };
 }
 
-/** A store state that holds a tracked grant, which is what the sanitizer exists to catch. */
 function stateWithGrant() {
   return {
     settings: { theme: "dark" },
@@ -58,7 +57,6 @@ describe("isCardApiAction", () => {
   it("rejects every other action", () => {
     expect(isCardApiAction({ type: "swapApi/executeQuery/pending" })).toBe(false);
     expect(isCardApiAction({ type: "settings/setTheme" })).toBe(false);
-    // A prefix without the separator is a different api.
     expect(isCardApiAction({ type: "cardApiOther/executeQuery/pending" })).toBe(false);
   });
 });
@@ -128,7 +126,6 @@ describe("redactCardApiState", () => {
     expect(JSON.stringify(redacted)).not.toContain(REFRESH_TOKEN);
     expect(grant.data).toBe(REDACTED);
     expect(grant.originalArgs).toBe(REDACTED);
-    // The entry stays readable: a developer still sees which grant ran, and how it ended.
     expect(grant.endpointName).toBe("refreshSession");
     expect(grant.status).toBe("fulfilled");
   });
@@ -154,7 +151,6 @@ describe("redactCardApiState", () => {
   });
 
   it("returns the state by reference when no grant was tracked", () => {
-    // Both grants run with `track: false`, so this is the normal case.
     const state = {
       settings: { theme: "dark" },
       [CARD_REDUCER_PATH]: { queries: {}, mutations: {} },

@@ -144,8 +144,6 @@ describe("cardManagementApi configuration", () => {
   });
 
   it("names the two grants the redaction knows", () => {
-    // `CARD_GRANT_ENDPOINTS` lives below this package, so the DevTools state sanitizer can read it
-    // without depending on this layer. This holds the two lists together.
     expect([...CARD_GRANT_ENDPOINTS].sort()).toEqual([
       "exchangeAuthorizationCode",
       "refreshSession",
@@ -156,9 +154,6 @@ describe("cardManagementApi configuration", () => {
   });
 
   it("exports no hook for either grant", () => {
-    // RTK Query builds a hook for every endpoint, so the module chooses which ones a component can
-    // reach. A renewal is the base query's decision, and the code exchange belongs to the login
-    // machine: a component that called one would rotate the refresh token behind its back.
     expect(Object.keys(apiModule)).not.toContain("useExchangeAuthorizationCodeMutation");
     expect(Object.keys(apiModule)).not.toContain("useRefreshSessionMutation");
   });
@@ -257,7 +252,6 @@ describe("cardManagementApi requests", () => {
         grant_type: "refresh_token",
         refresh_token: "rt_stored",
       });
-      // A grant carries its own proof, and a renewal that renewed would loop on its own 401.
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
     });
@@ -285,7 +279,6 @@ describe("cardManagementApi requests", () => {
         jsonResponse({
           access_token: "sensitive-access-token",
           refresh_token: "sensitive-refresh-token",
-          // `expires_in` is missing, so the wire schema rejects the body.
         }),
       );
 

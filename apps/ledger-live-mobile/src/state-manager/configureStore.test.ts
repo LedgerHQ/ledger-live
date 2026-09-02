@@ -260,12 +260,6 @@ describe("mobile store", () => {
       jest.clearAllMocks();
     });
 
-    /**
-     * The relay sends every action and every state over a socket. A Card grant carries an
-     * authorization code, a PKCE verifier and two tokens, so the store hands the relay a sanitizer
-     * for each. `@rozenite/redux-devtools-plugin` forwards both to `@redux-devtools/remote` through
-     * `patches/@rozenite__redux-devtools-plugin@1.2.0.patch`.
-     */
     it("receives a sanitizer for the actions and one for the state", () => {
       const { rozeniteDevToolsEnhancer } =
         require("@rozenite/redux-devtools-plugin") as typeof import("@rozenite/redux-devtools-plugin");

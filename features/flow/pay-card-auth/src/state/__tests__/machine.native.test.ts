@@ -357,8 +357,6 @@ describe("cardLoginMachine failures", () => {
     const ports = stubPorts({
       hasSession: jest.fn(async () => true),
       getUser: jest.fn(async () =>
-        // What the base query answers for a request a newer login replaced. Not a 401: the session
-        // on disk belongs to whoever just signed in.
         Promise.reject({ status: "CUSTOM_ERROR", error: "card_stale_request" }),
       ),
     });

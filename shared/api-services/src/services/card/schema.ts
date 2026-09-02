@@ -17,12 +17,6 @@ export const CardApiExtraSchema = z.object({
     isFunction,
     mustBeAFunction("getCardBaanxClientKey"),
   ),
-  /**
-   * Async: the owner reads the session from OS secure storage on every call. It never renews.
-   *
-   * It answers with the session id as well as the token, so the base query can tell the owner which
-   * session a 401 belongs to. See {@link CardSessionSnapshot}.
-   */
   readCardSession: z.custom<() => Promise<CardSessionSnapshot>>(
     isFunction,
     mustBeAFunction("readCardSession"),
@@ -31,11 +25,6 @@ export const CardApiExtraSchema = z.object({
     isFunction,
     mustBeAFunction("isCardSessionCurrent"),
   ),
-  /**
-   * The one renewal entry, called by the base query after a 401. It takes the session id the request
-   * and access token the request was sent with. A request that outlived its session neither renews
-   * nor cleans up, and a delayed 401 can reuse a token another request already refreshed.
-   */
   refreshCardSession: z.custom<
     (sessionId: number, accessToken: string) => Promise<CardSessionRefreshResult>
   >(isFunction, mustBeAFunction("refreshCardSession")),

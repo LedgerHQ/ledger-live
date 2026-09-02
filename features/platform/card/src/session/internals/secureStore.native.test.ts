@@ -67,7 +67,6 @@ describe("secureStore.native", () => {
   it("rejects when the keychain refuses the read, rather than reading it as absent", async () => {
     jest.mocked(getGenericPassword).mockRejectedValue(new Error("Could not decrypt the value"));
 
-    // An absent session ends one, and a locked keychain must never end a session.
     await expect(secureStore.read(KEY)).rejects.toThrow("Could not decrypt the value");
   });
 
