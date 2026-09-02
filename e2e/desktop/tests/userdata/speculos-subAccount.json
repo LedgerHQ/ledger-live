@@ -111,377 +111,1486 @@
     "accounts": [
       {
         "data": {
-          "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-          "seedIdentifier": "040ccf12de0c09ce1c151204a2268a410251d60c75965cf5b3a3fa829ac88a473bebde57c229f39f6bd0aa160ddb6cdffdcc34149c6196b7409c4e00ba3b12a942",
+          "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+          "seedIdentifier": "04535dc8c95acc1793651b99c37c7bd80dc0a260b3dd36c7a457ea528287e8dfe48121b0528ecb2e93227346d3b38b13629e8245ae8b66b802133ec7de3901e922",
           "used": true,
           "derivationMode": "",
           "index": 0,
-          "freshAddress": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "freshAddress": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2",
           "freshAddressPath": "44'/60'/0'/0/0",
-          "blockHeight": 24599526,
-          "syncHash": "0xe1e130ff",
-          "creationDate": "2026-03-05T15:32:23.000Z",
-          "operationsCount": 18,
+          "blockHeight": 25890674,
+          "syncHash": "0x91a316d1",
+          "creationDate": "2026-09-02T08:49:59.000Z",
+          "operationsCount": 57,
           "operations": [
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x5b470e968d5ae1f7dc54c7fde8e9339a54dbfd5df44160b0b8cf204881107229-OUT",
-              "hash": "0x5b470e968d5ae1f7dc54c7fde8e9339a54dbfd5df44160b0b8cf204881107229",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xe65151efbd0db84110bb371cdd3268cde91aca2382b821706aabe13097b72915-OUT",
+              "hash": "0xe65151efbd0db84110bb371cdd3268cde91aca2382b821706aabe13097b72915",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x3f0098e1138a87b10cdb8aecb9ca0213bd8314667063eef4972c93932c90ac69",
-              "blockHeight": 24599456,
-              "extra": {},
-              "date": "2026-03-06T15:57:23.000Z",
-              "value": "1011125776361956",
-              "fee": "111125776361956",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x99E7d29416dFB175E9dc232210c2FD0d4dBC25a1"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xe8a4a82d0c65e15bb7998f499a612b28afca339360a9fd66cecc297c3670a99a",
+              "blockHeight": 25890671,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T16:01:59.000Z",
+              "value": "3665948010065000",
+              "fee": "7848010065000",
+              "transactionSequenceNumber": "28",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xa4cff9b0cd7b2075fd9242163d02bbc91ef0904722ce4da3849256a30ff0697b-OUT",
+              "hash": "0xa4cff9b0cd7b2075fd9242163d02bbc91ef0904722ce4da3849256a30ff0697b",
+              "type": "OUT",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x431C02A3cB8c0c13eB040d9B4cf9Ca7986762D57"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xfe46472dcdde35c745a77b9c8e3998d3bf55d9751b798f817001c56ec1e78030",
+              "blockHeight": 25890638,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T15:55:23.000Z",
+              "value": "3714299925138000",
+              "fee": "8039925138000",
+              "transactionSequenceNumber": "27",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x248e61b8217dec9e43d0967c20d58e50d498c627d56c161ddd652c6c27cf9113-OUT",
+              "hash": "0x248e61b8217dec9e43d0967c20d58e50d498c627d56c161ddd652c6c27cf9113",
+              "type": "OUT",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xb5a693534695bbf196b74b0a149ab5a48afabd939ddb2989b6b6893ae0ac1a76",
+              "blockHeight": 25890554,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T15:38:23.000Z",
+              "value": "1520132958809465",
+              "fee": "20132958809475",
+              "transactionSequenceNumber": "26",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x535daa5b9335eac2d65b338eb6e0b8a0d9f37c756fe72a45afca1e72196c8a76-NONE",
+              "hash": "0x535daa5b9335eac2d65b338eb6e0b8a0d9f37c756fe72a45afca1e72196c8a76",
+              "type": "NONE",
+              "senders": ["0xd5697C5393C781C177E39Dd4725c4a2af61e92B5"],
+              "recipients": ["0xAE2f842EF90C0d5213259Ab82639D5BBF649b08E"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x857652b0f9f5a81371107904e16ebfbaffcd4555f5e9e853a644289a3302c56a",
+              "blockHeight": 25890544,
+              "extra": {
+                "feePayer": "0xd5697C5393C781C177E39Dd4725c4a2af61e92B5"
+              },
+              "date": "2026-09-02T15:36:23.000Z",
+              "value": "0",
+              "fee": "359367158187470",
+              "transactionSequenceNumber": "747",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x96490f70f6f6ebe68aa7b5b1abbc2552d1801441d380ac98238d43aff2d142f1-NONE",
+              "hash": "0x96490f70f6f6ebe68aa7b5b1abbc2552d1801441d380ac98238d43aff2d142f1",
+              "type": "NONE",
+              "senders": ["0x8b55a76afD9D727bBB324F8be442333A27355e7A"],
+              "recipients": ["0x3632DEa96A953C11dac2f00b4A05a32CD1063fAE"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xdcd49bfc3e0a1a078805116693dddc85844a4df33673e10aaa12fab13775eb43",
+              "blockHeight": 25890533,
+              "extra": {
+                "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+              },
+              "date": "2026-09-02T15:34:11.000Z",
+              "value": "0",
+              "fee": "326601981802250",
+              "transactionSequenceNumber": "14",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xabd91de2eb1e2f22a31a086a4e8d202a79469ad552c70eda6ec42ccba2f3b402-NONE",
+              "hash": "0xabd91de2eb1e2f22a31a086a4e8d202a79469ad552c70eda6ec42ccba2f3b402",
+              "type": "NONE",
+              "senders": ["0x8b55a76afD9D727bBB324F8be442333A27355e7A"],
+              "recipients": ["0x050362Ab1072Cb2Ce74d74770E22A3203Ad04ee5"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xca0f042cdbeb5e4b99049ef49485d4ea79a828431fd5514a19eea8b68b21c861",
+              "blockHeight": 25890529,
+              "extra": {
+                "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+              },
+              "date": "2026-09-02T15:33:23.000Z",
+              "value": "0",
+              "fee": "250808412559056",
+              "transactionSequenceNumber": "13",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x7e4fc08687f172059e359656cfb7f6d7d867ca3b470b217d4fdd107c2aefff13-NONE",
+              "hash": "0x7e4fc08687f172059e359656cfb7f6d7d867ca3b470b217d4fdd107c2aefff13",
+              "type": "NONE",
+              "senders": ["0x8b55a76afD9D727bBB324F8be442333A27355e7A"],
+              "recipients": ["0x8aD3c73F833d3F9A523aB01476625F269aEB7Cf0"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x0abd327234cb36743cca5584a530e4afe584003cf4ebed8c5464d08433520285",
+              "blockHeight": 25890528,
+              "extra": {
+                "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+              },
+              "date": "2026-09-02T15:33:11.000Z",
+              "value": "0",
+              "fee": "325312200431268",
+              "transactionSequenceNumber": "12",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x31772ac278935472cc79ad526f7ccc1aca3613844c3dbccdfbfa45139ef5741b-NONE",
+              "hash": "0x31772ac278935472cc79ad526f7ccc1aca3613844c3dbccdfbfa45139ef5741b",
+              "type": "NONE",
+              "senders": ["0x8b55a76afD9D727bBB324F8be442333A27355e7A"],
+              "recipients": ["0xCa468554e5C0423Ee858fe3942c9568C51FcAa79"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x784e68b6e1b6b30f90debacc07612958c45308ffb1d463382bdfc153063e41bb",
+              "blockHeight": 25890520,
+              "extra": {
+                "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+              },
+              "date": "2026-09-02T15:31:35.000Z",
+              "value": "0",
+              "fee": "366011051094234",
+              "transactionSequenceNumber": "11",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xff09f0a0ba8ea7a8e87fa893d037b90177ae59396f516c77022227073f2c4094-NONE",
+              "hash": "0xff09f0a0ba8ea7a8e87fa893d037b90177ae59396f516c77022227073f2c4094",
+              "type": "NONE",
+              "senders": ["0x8b55a76afD9D727bBB324F8be442333A27355e7A"],
+              "recipients": ["0xbb8774FB97436d23d74C1b882E8E9A69322cFD31"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x35f537c05c7044b429863bf9546890ceabb2480aa2137bc7cf9accc4a46a35c6",
+              "blockHeight": 25890513,
+              "extra": {
+                "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+              },
+              "date": "2026-09-02T15:30:11.000Z",
+              "value": "0",
+              "fee": "204015412086078",
               "transactionSequenceNumber": "10",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x23602b8db0502648a6f2385132edddffda1f8f1f5608738a2a573e309b061ce6-OUT",
-              "hash": "0x23602b8db0502648a6f2385132edddffda1f8f1f5608738a2a573e309b061ce6",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x4d34dd3403dcbea429e0a6b9ab7ec262c7d4c8366ac5de9e29ca867d7179c9a6-OUT",
+              "hash": "0x4d34dd3403dcbea429e0a6b9ab7ec262c7d4c8366ac5de9e29ca867d7179c9a6",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xfcd2931f4d4d94b834cdf70540b9e3fd30509867d2e8e8bd35c443787ad89471",
-              "blockHeight": 24599341,
-              "extra": {},
-              "date": "2026-03-06T15:34:11.000Z",
-              "value": "2582849354348724",
-              "fee": "72659354348724",
-              "transactionSequenceNumber": "9",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x6A000F20005980200259B80c5102003040001068"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x43402c92829cbd82eb1ca4f5a49f2b895053eb07622251ff0703118b1fbb5b04",
+              "blockHeight": 25890325,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:52:35.000Z",
+              "value": "23400108578899772",
+              "fee": "61428578899772",
+              "transactionSequenceNumber": "25",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x1a037d580da3221cd57519323164af327952f311786c4b33ba0fca8e1b942da1-OUT",
-              "hash": "0x1a037d580da3221cd57519323164af327952f311786c4b33ba0fca8e1b942da1",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xac9dea7095b0967161bf43c8db9bf51a76fa744715742dd47d389127a0df7e94-NONE",
+              "hash": "0xac9dea7095b0967161bf43c8db9bf51a76fa744715742dd47d389127a0df7e94",
+              "type": "NONE",
+              "senders": ["0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"],
+              "recipients": ["0xAB531C00fa2bAdbcFdfC4D0074EC2436e01Ba1eA"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x9c8eb23cb4cd2f7a2bca365007498549c7f391f278dd14f94100e125c11d2d77",
+              "blockHeight": 25890205,
+              "extra": {
+                "feePayer": "0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"
+              },
+              "date": "2026-09-02T14:28:35.000Z",
+              "value": "0",
+              "fee": "38362443126128",
+              "transactionSequenceNumber": "393855",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xfcb3c6310a1a4deace7c07b8d2ba4d041ffc54aaa92c02fbffe9aaf82c186037-FEES",
+              "hash": "0xfcb3c6310a1a4deace7c07b8d2ba4d041ffc54aaa92c02fbffe9aaf82c186037",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xedfe854e81cfea4f77dfb8c3b41a04b2485ebba5704997007c912acf00edcbe0",
+              "blockHeight": 25890204,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:28:23.000Z",
+              "value": "23615136626598",
+              "fee": "23615136626598",
+              "transactionSequenceNumber": "24",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x87a201b25f5f158eac7dd09ff842f8953fbec02c97ad7eb458d357864917d580-FEES",
+              "hash": "0x87a201b25f5f158eac7dd09ff842f8953fbec02c97ad7eb458d357864917d580",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x82698a6387cdf19b1f8c86960f8f9b1fa1f94bf855ec203fb1b943dcde9ef7f7",
+              "blockHeight": 25890202,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:27:59.000Z",
+              "value": "17821965687867",
+              "fee": "17821965687867",
+              "transactionSequenceNumber": "23",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xdc6cd06504d1a8445b8a77f984f39006bc97caacff2213e081a72af3d958bfbb-FEES",
+              "hash": "0xdc6cd06504d1a8445b8a77f984f39006bc97caacff2213e081a72af3d958bfbb",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xa1aff904acf9737d185c38b621094b2ee5da00750e0ec4c63b9ed47f184c429d",
+              "blockHeight": 25890199,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:27:23.000Z",
+              "value": "9660664069440",
+              "fee": "9660664069440",
+              "transactionSequenceNumber": "22",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x3e12bfdaa04f806ed3200631a8ce9537ff44c6af37edd7c7c7559cdaf39701a6-OUT",
+              "hash": "0x3e12bfdaa04f806ed3200631a8ce9537ff44c6af37edd7c7c7559cdaf39701a6",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x0f75c6d3f007f180c3c0dd7c642e7bcab86dcf79fa7d0d950523089065391fc2",
-              "blockHeight": 24599329,
-              "extra": {},
-              "date": "2026-03-06T15:31:35.000Z",
-              "value": "2072611379084416",
-              "fee": "64401379084416",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x90244836af76b08E2CcC248E7045E8324b630BC5"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xf6e054cd469524a2a278d1256530b7281cff04758a10530719f99b8b7f43489a",
+              "blockHeight": 25890194,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:26:23.000Z",
+              "value": "20782596539618388",
+              "fee": "8210526597000",
+              "transactionSequenceNumber": "21",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x229bb035a114ce51539d3204d8a2f983f950eef6d548da7d49aab1b07d68e6a7-IN",
+              "hash": "0x229bb035a114ce51539d3204d8a2f983f950eef6d548da7d49aab1b07d68e6a7",
+              "type": "IN",
+              "senders": ["0xb3A643D2E7a0644725378fF1D1e61c5180292Db9"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xa46c09ae5260ea00004c390d24088c839eaaf27dacadeb7c5c222f52c75e76c1",
+              "blockHeight": 25890169,
+              "extra": {
+                "feePayer": "0xb3A643D2E7a0644725378fF1D1e61c5180292Db9"
+              },
+              "date": "2026-09-02T14:21:23.000Z",
+              "value": "2098838545028917",
+              "fee": "7377624555000",
+              "transactionSequenceNumber": "2",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x96b9b9f3cd4d87918387a0efa559b9dd9ed895a372e9a1b46843ccf9fc354bb6-IN",
+              "hash": "0x96b9b9f3cd4d87918387a0efa559b9dd9ed895a372e9a1b46843ccf9fc354bb6",
+              "type": "IN",
+              "senders": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x7cbce0ca406dba6309f608360f8749305e8ac28be31ff18a322c5a22ee53d6ec",
+              "blockHeight": 25890145,
+              "extra": {
+                "feePayer": "0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"
+              },
+              "date": "2026-09-02T14:16:23.000Z",
+              "value": "8309835794315010",
+              "fee": "7811710599000",
               "transactionSequenceNumber": "8",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xfe5df0420896e0704fbe9340277b869955d54b92d24719634f6ab274533a2610-OUT",
-              "hash": "0xfe5df0420896e0704fbe9340277b869955d54b92d24719634f6ab274533a2610",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x2560a847bdc9c6f5b785df1842681d3d93836d9cd2ce8445a602d4e3a5c46495-OUT",
+              "hash": "0x2560a847bdc9c6f5b785df1842681d3d93836d9cd2ce8445a602d4e3a5c46495",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0xA4eBaEdffA3F718cAc2d859Bbf2d6Fd493C95115"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x7a324c436d4cad4355c18dfa002d0a5943c6aa20cd99a4caac72da8194a145a9",
-              "blockHeight": 24598933,
-              "extra": {},
-              "date": "2026-03-06T14:12:11.000Z",
-              "value": "4073717150962000",
-              "fee": "73717150962000",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x184295535E50631732E4448298C01730eab2A261"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x4153555d8f34e80ebd425c592067bb2136692b2daf81e25f8c3ac2359470e372",
+              "blockHeight": 25890140,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:15:23.000Z",
+              "value": "3047418028161000",
+              "fee": "47418028161000",
+              "transactionSequenceNumber": "20",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xa53779b7e8d9522f548b7df9a84cac3e4f25e3814f4114c7739cf9a70e650b7b-NONE",
+              "hash": "0xa53779b7e8d9522f548b7df9a84cac3e4f25e3814f4114c7739cf9a70e650b7b",
+              "type": "NONE",
+              "senders": ["0x43B2F01186fdA9814C5f40770554aC68fd8304bD"],
+              "recipients": ["0x60DDa145080B0e2CD21c0a17Da5112613f6113d8"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x864a4f7a1c48bb362ab2d3f3c820e9fcfde2b9c342227e640a8dcac3946bf633",
+              "blockHeight": 25890104,
+              "extra": {
+                "feePayer": "0x43B2F01186fdA9814C5f40770554aC68fd8304bD"
+              },
+              "date": "2026-09-02T14:08:11.000Z",
+              "value": "0",
+              "fee": "13719655255326",
+              "transactionSequenceNumber": "30997",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xf6abaff7acf6954acd727393706cdc900641bb375929cd56ced9bcc3041a3c56-NONE",
+              "hash": "0xf6abaff7acf6954acd727393706cdc900641bb375929cd56ced9bcc3041a3c56",
+              "type": "NONE",
+              "senders": ["0xB84C7AB870C9F54d91F80861d79925d214267E2B"],
+              "recipients": ["0xc48bbA76534159D6D2048600325e316125FDb271"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xfe8eb05c415f6937a44a70888b55c77f3b0f45fdc3797d1cef659aaee0c110d3",
+              "blockHeight": 25890087,
+              "extra": {
+                "feePayer": "0xB84C7AB870C9F54d91F80861d79925d214267E2B"
+              },
+              "date": "2026-09-02T14:04:47.000Z",
+              "value": "0",
+              "fee": "52765933246763",
+              "transactionSequenceNumber": "7938",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x844381bd0ed87c75ba982a60a4c172bfced1603449f9311dd8aa67dd32387abd-NONE",
+              "hash": "0x844381bd0ed87c75ba982a60a4c172bfced1603449f9311dd8aa67dd32387abd",
+              "type": "NONE",
+              "senders": ["0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"],
+              "recipients": ["0xAB531C00fa2bAdbcFdfC4D0074EC2436e01Ba1eA"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x01c4978101ca71189b3eabd3f3d842f8a5af84df6b93b969ba28d8d3fc514eec",
+              "blockHeight": 25890085,
+              "extra": {
+                "feePayer": "0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"
+              },
+              "date": "2026-09-02T14:04:23.000Z",
+              "value": "0",
+              "fee": "28871482464972",
+              "transactionSequenceNumber": "393781",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x81834ed1d74e9dcd61485f9116e01ba169bed5d4a05ff11f3c63fad7235ee7e2-FEES",
+              "hash": "0x81834ed1d74e9dcd61485f9116e01ba169bed5d4a05ff11f3c63fad7235ee7e2",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x5178c32a9d221703965fb607a93bccdbf5a6f0b974a85ba8d4e287bc5a6f7140",
+              "blockHeight": 25890082,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T14:03:47.000Z",
+              "value": "33735079884563",
+              "fee": "33735079884563",
+              "transactionSequenceNumber": "19",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x5022bc8c46ef3ab43a089b7b034fc87f8edbd00181dff623d05b327ec2b0c3e3-FEES",
+              "hash": "0x5022bc8c46ef3ab43a089b7b034fc87f8edbd00181dff623d05b327ec2b0c3e3",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x98df91aa6d4a90b923a7c2630f926378c6cec377a6f56d587a322e86395005a4",
+              "blockHeight": 25890060,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:59:23.000Z",
+              "value": "24152576570403",
+              "fee": "24152576570403",
+              "transactionSequenceNumber": "18",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x79d0c5daab236487e2cc4dc90ded16e24aa80066f442a50d1e1f25bf59bd1107-NONE",
+              "hash": "0x79d0c5daab236487e2cc4dc90ded16e24aa80066f442a50d1e1f25bf59bd1107",
+              "type": "NONE",
+              "senders": ["0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"],
+              "recipients": ["0xAB531C00fa2bAdbcFdfC4D0074EC2436e01Ba1eA"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x895a30d8897c504f20528ec2fd9a75d85d715034223d23eebf0e049ca5c38510",
+              "blockHeight": 25890056,
+              "extra": {
+                "feePayer": "0x5565F17657Cef60A02295eEdaa52d0041cEb52D6"
+              },
+              "date": "2026-09-02T13:58:35.000Z",
+              "value": "0",
+              "fee": "29092860557536",
+              "transactionSequenceNumber": "393766",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x97acceb5d8969b95ad9470145f14f97e43f11af660931d20a7962e8c69fbc8ec-FEES",
+              "hash": "0x97acceb5d8969b95ad9470145f14f97e43f11af660931d20a7962e8c69fbc8ec",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x0673605197b153f6bb982ab7d9ac2986fdb1ac4cca283244a541f42eab412b47",
+              "blockHeight": 25890055,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:58:23.000Z",
+              "value": "32358708846824",
+              "fee": "32358708846824",
+              "transactionSequenceNumber": "17",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x3f446abdb67e62de7be476a5f3c7d9ce12fbdf74979549a63552c56b7911ad57-OUT",
+              "hash": "0x3f446abdb67e62de7be476a5f3c7d9ce12fbdf74979549a63552c56b7911ad57",
+              "type": "OUT",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x4c30039957cb807af93aD20166988d27B35a86FB"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xa2382b304a3c46a6e59907db42c2cac43219269a48765669910a660f35d338c7",
+              "blockHeight": 25890051,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:57:35.000Z",
+              "value": "24998726518678588",
+              "fee": "10699948077000",
+              "transactionSequenceNumber": "16",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x3b2cabd014ca5e20bc846866841522df4553636901885e6a06810119ba023788-FEES",
+              "hash": "0x3b2cabd014ca5e20bc846866841522df4553636901885e6a06810119ba023788",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x7bf8e55cbe9d38cad0db4525dc09e1c94e0cb6ceba87f79583a6d8942882b425",
+              "blockHeight": 25890018,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:50:59.000Z",
+              "value": "27026967840453",
+              "fee": "27026967840453",
+              "transactionSequenceNumber": "15",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xb5d20eb1734a665b02b81f40b6a95550501bcb7774c488273d9372a5c8d921b9-FEES",
+              "hash": "0xb5d20eb1734a665b02b81f40b6a95550501bcb7774c488273d9372a5c8d921b9",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x16bb911a06385ed5e24491c5bea66d54cafb0da279e84380b23515be5294caf9",
+              "blockHeight": 25890015,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:50:23.000Z",
+              "value": "14224297670440",
+              "fee": "14224297670440",
+              "transactionSequenceNumber": "14",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xbdf74e20d976e692384f4bd152cf16f6b8241bdb4699ba7236bc69b58bbd4f7f-FEES",
+              "hash": "0xbdf74e20d976e692384f4bd152cf16f6b8241bdb4699ba7236bc69b58bbd4f7f",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xedfdaa73a58b4b8cd0235ddf04dc8c738c7feced037d9f65128e8e1a486582f9",
+              "blockHeight": 25890006,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:48:35.000Z",
+              "value": "27632227385358",
+              "fee": "27632227385358",
+              "transactionSequenceNumber": "13",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x83fe59a9f68dc5473ec5e2fcbc24477f2a22d0b3153fe993d6cc9f81e2530d27-FEES",
+              "hash": "0x83fe59a9f68dc5473ec5e2fcbc24477f2a22d0b3153fe993d6cc9f81e2530d27",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xb7746e5e837a01aee99956a77f5cda268086d76f1a5e0ce53595fb4af8af4714",
+              "blockHeight": 25890003,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:47:59.000Z",
+              "value": "16144874629960",
+              "fee": "16144874629960",
+              "transactionSequenceNumber": "12",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x7bfc648ec3bd1fb3399af2dac9514dd3a626447fc411badfeae7b8e5bbae9b1c-FEES",
+              "hash": "0x7bfc648ec3bd1fb3399af2dac9514dd3a626447fc411badfeae7b8e5bbae9b1c",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xce46e6743908e97a603d308a24053fd75763c750e541f0d5f753afe480d33375",
+              "blockHeight": 25889991,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:45:35.000Z",
+              "value": "19920638683881",
+              "fee": "19920638683881",
+              "transactionSequenceNumber": "11",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x3c068389353622126e4b6b18fad127cccb0cd5cf059d55100966a2448ad7e884-FEES",
+              "hash": "0x3c068389353622126e4b6b18fad127cccb0cd5cf059d55100966a2448ad7e884",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x784d2d5a9838670ada809bd3a5664fbdaf298a250edf492d153e8e87b8b08c0e",
+              "blockHeight": 25889982,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T13:43:47.000Z",
+              "value": "9750315161120",
+              "fee": "9750315161120",
+              "transactionSequenceNumber": "10",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x4751ac65188eae9c81e749a95d091eb5fb8a0ed6528e0d8d53b5db83dea10834-FEES",
+              "hash": "0x4751ac65188eae9c81e749a95d091eb5fb8a0ed6528e0d8d53b5db83dea10834",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x524502dec2d8bb0bafcef5c8d2736ddff055c5dad4925b8342efdf4a70bb06d7",
+              "blockHeight": 25889765,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:59:59.000Z",
+              "value": "16398656070264",
+              "fee": "16398656070264",
+              "transactionSequenceNumber": "9",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xe7a7e7baf07936bf07344a8cb3ebf371a7766c470a0140349ec369a5a258df41-FEES",
+              "hash": "0xe7a7e7baf07936bf07344a8cb3ebf371a7766c470a0140349ec369a5a258df41",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xdab2cc75fc26d255dce6fc7aee8d595b432518e521c41fd6224e3d1445c05422",
+              "blockHeight": 25889761,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:59:11.000Z",
+              "value": "9452920122000",
+              "fee": "9452920122000",
+              "transactionSequenceNumber": "8",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x0e4f98042724b725d049c612794b92cbdf79f8d8a4a868c932d5eecb4fea6230-FEES",
+              "hash": "0x0e4f98042724b725d049c612794b92cbdf79f8d8a4a868c932d5eecb4fea6230",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x3d3c7c27c7eeaf13683b59bebfce858f3a62ad39ae98f88500b378aeb1911be9",
+              "blockHeight": 25889696,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:46:11.000Z",
+              "value": "14181441304761",
+              "fee": "14181441304761",
               "transactionSequenceNumber": "7",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xfdd33e7cb4588c34e0cc3548246f13478b6456f0429eeae1097ce40e7884e891-OUT",
-              "hash": "0xfdd33e7cb4588c34e0cc3548246f13478b6456f0429eeae1097ce40e7884e891",
-              "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0xd336A71B4b9D55F92cfD335D6478ac75cEEd116d"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x7dbd6e0190e884cf727319a3b4da6c307da51f1239247996ed73d26f42632470",
-              "blockHeight": 24598928,
-              "extra": {},
-              "date": "2026-03-06T14:11:11.000Z",
-              "value": "4073341362661000",
-              "fee": "73341362661000",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x938e82db3d412a6f21f02cb532aa924e301c91090cbc6f852dc00e4f03a977a4-FEES",
+              "hash": "0x938e82db3d412a6f21f02cb532aa924e301c91090cbc6f852dc00e4f03a977a4",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x8b10b68ac84c98b79699ea72bd92e820b0e1fead8eebfd961d42c1a801dfea82",
+              "blockHeight": 25889691,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:45:11.000Z",
+              "value": "7996372708300",
+              "fee": "7996372708300",
               "transactionSequenceNumber": "6",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x62f1fb3eb4fbe8094e082854bfb4ffa961e713244622c3c91f1fe5a3acb4d291-NONE",
-              "hash": "0x62f1fb3eb4fbe8094e082854bfb4ffa961e713244622c3c91f1fe5a3acb4d291",
-              "type": "NONE",
-              "senders": ["0x9BC0EBC9014b16Be06022ACd063B2fCed30e62a5"],
-              "recipients": ["0x3b10D974439B7124C1BF124E1764bB3cC59Cf04f"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x02085117813f4638d614ed2b4392b5e45f65bba95949d66e9e6ab3f330df59ad",
-              "blockHeight": 24598737,
-              "extra": {},
-              "date": "2026-03-06T13:32:59.000Z",
-              "value": "0",
-              "fee": "1096237654099698",
-              "transactionSequenceNumber": "61",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x0770400152d9e1150744de7ce0f3a3d595277bead2cb8503e4189013edb97f05-NONE",
-              "hash": "0x0770400152d9e1150744de7ce0f3a3d595277bead2cb8503e4189013edb97f05",
-              "type": "NONE",
-              "senders": ["0x2e6bEA93b300bc11692B47Ac459BE4a485c656f3"],
-              "recipients": ["0x7F9aCADdfe815921b1228EA3e6eee098ab8E2Cb7"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x02085117813f4638d614ed2b4392b5e45f65bba95949d66e9e6ab3f330df59ad",
-              "blockHeight": 24598737,
-              "extra": {},
-              "date": "2026-03-06T13:32:59.000Z",
-              "value": "0",
-              "fee": "1096237654099698",
-              "transactionSequenceNumber": "61",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x2b1be1831771ac862fb6b50cb6a518df48e69e89521f52563b1f9efd8db9a646-OUT",
-              "hash": "0x2b1be1831771ac862fb6b50cb6a518df48e69e89521f52563b1f9efd8db9a646",
-              "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x6A000F20005980200259B80c5102003040001068"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xfa36c4222dd5bbb9b602bc3031e08b02365c441cec01bcbb982b149e199f8473",
-              "blockHeight": 24598707,
-              "extra": {},
-              "date": "2026-03-06T13:26:59.000Z",
-              "value": "30045803880682476",
-              "fee": "45803880682476",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x10f5e47ea1ef1336bdf569afe1b374438d2489ac445f21a5fb8f41a84f48d19c-FEES",
+              "hash": "0x10f5e47ea1ef1336bdf569afe1b374438d2489ac445f21a5fb8f41a84f48d19c",
+              "type": "FEES",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x54fb3d40f737506607906f27f594fe14eb13611910f659d89d1ff0abec8322cf",
+              "blockHeight": 25889595,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:25:59.000Z",
+              "value": "14008659661278",
+              "fee": "14008659661278",
               "transactionSequenceNumber": "5",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x100056c08e585ad65087424ed28262fb5400a6b8a7093807de431671b42a6c6e-OUT",
-              "hash": "0x100056c08e585ad65087424ed28262fb5400a6b8a7093807de431671b42a6c6e",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xbc7edd060df8eeecdfebc1b4e445363f7467c220f0215b1782e704b9f9bf86ef-OUT",
+              "hash": "0xbc7edd060df8eeecdfebc1b4e445363f7467c220f0215b1782e704b9f9bf86ef",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xb9775204b0fb7fbf0055a212f47762eb8db20ed5560afec93b26f49bf9275710",
-              "blockHeight": 24598687,
-              "extra": {},
-              "date": "2026-03-06T13:22:59.000Z",
-              "value": "30052337854270390",
-              "fee": "52337854270390",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x58721D184d9EBbAF170d0a5c61946Dc21ccb4c90"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xc205e0e78fa5cf0e147ae99b4f98cfe0ce250b5ac544c14fce4233c3409f441e",
+              "blockHeight": 25889590,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T12:24:59.000Z",
+              "value": "1039976694604000",
+              "fee": "39976694604000",
               "transactionSequenceNumber": "4",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xac8855366f5688bebe3de8b7d900b01106ff134128048b6db9309f58587020ab-OUT",
-              "hash": "0xac8855366f5688bebe3de8b7d900b01106ff134128048b6db9309f58587020ab",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xf9baff65d1cfc1f38375ef85661c34864e4c8cb4954b91d7a0b6c83f81ca16df-OUT",
+              "hash": "0xf9baff65d1cfc1f38375ef85661c34864e4c8cb4954b91d7a0b6c83f81ca16df",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0x6A000F20005980200259B80c5102003040001068"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x93f1b88fa818338b2292129db485e131dc7155c754b89dc55c1e2575ba6eb022",
-              "blockHeight": 24598643,
-              "extra": {},
-              "date": "2026-03-06T13:14:11.000Z",
-              "value": "925147563695090",
-              "fee": "25147563695090",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x90244836af76b08E2CcC248E7045E8324b630BC5"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x915b46b38ae2e2d1478a2bcdf1b67aebcdfe9912024643b4209c1f8d06dbe866",
+              "blockHeight": 25889147,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T10:55:59.000Z",
+              "value": "2126252973350313",
+              "fee": "6863527062000",
               "transactionSequenceNumber": "3",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xfdcfd53593f1c34266027ccc7db861c82b4f7934cef38d92fefde0bfed8836ef-NONE",
-              "hash": "0xfdcfd53593f1c34266027ccc7db861c82b4f7934cef38d92fefde0bfed8836ef",
-              "type": "NONE",
-              "senders": ["0xF270bBDc2517c17EA8C3a6b5387cCce720846e78"],
-              "recipients": ["0x5EEc37e9285F6e0eC97E1fdDF45b0d6C75A9D1d0"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x6b3a0c50befc1b2476f6f1a7d6b954dfe3b4965163edcea414f0749d8644a5f6",
-              "blockHeight": 24597728,
-              "extra": {},
-              "date": "2026-03-06T10:09:35.000Z",
-              "value": "0",
-              "fee": "16732369701936",
-              "transactionSequenceNumber": "3374",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xa430b18e54eafb4832f30295166ee07d669e525f051953e8750fd9c88e739fbf-OUT",
-              "hash": "0xa430b18e54eafb4832f30295166ee07d669e525f051953e8750fd9c88e739fbf",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x23e138249ca614f8ff80fc05fba475696e9bf1f2a72b11fcb5f0f7cf4a2182c4-OUT",
+              "hash": "0x23e138249ca614f8ff80fc05fba475696e9bf1f2a72b11fcb5f0f7cf4a2182c4",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0xAEc2BB07c17BBAE0c5C72A5Dc2616285643ADa6E"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x5ba423e2515c1c4fdd45ebe09c05b95df29ced2f88eeffbed9ab0db92c48ecbb",
-              "blockHeight": 24597725,
-              "extra": {},
-              "date": "2026-03-06T10:08:59.000Z",
-              "value": "6002459801274000",
-              "fee": "2459801274000",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xb3A643D2E7a0644725378fF1D1e61c5180292Db9"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x8b68b0951362dc81341c1df3a20d5df76a42695daf3fcf5520ba5ff3a84d584a",
+              "blockHeight": 25889138,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T10:54:11.000Z",
+              "value": "2127723820028480",
+              "fee": "6932001195000",
               "transactionSequenceNumber": "2",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x1df917c779a6df5d5042abf6e649ad78c4e6403235dc01e73bc6924136cbbae3-NONE",
-              "hash": "0x1df917c779a6df5d5042abf6e649ad78c4e6403235dc01e73bc6924136cbbae3",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x300a0bd7b26775c11608b1b23c7c8c36b72f40097d3212905cb831a7c2aa3e9d-NONE",
+              "hash": "0x300a0bd7b26775c11608b1b23c7c8c36b72f40097d3212905cb831a7c2aa3e9d",
               "type": "NONE",
-              "senders": ["0xF270bBDc2517c17EA8C3a6b5387cCce720846e78"],
-              "recipients": ["0x51dC0333Da224648E4DcFE7e8819839991df4De4"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x3800a86b04adabbde136e8a8be92fb5a1f4e8d1e6c2c8d55b14dcdbd52d4a0bf",
-              "blockHeight": 24592506,
-              "extra": {},
-              "date": "2026-03-05T16:36:35.000Z",
+              "senders": ["0x43B2F01186fdA9814C5f40770554aC68fd8304bD"],
+              "recipients": ["0x5dFAd8c4A52C2f5055dCd1D24c81D5EFc6CE3508"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x5167e4f8f62977fc7960abd6e30fff3c1bd657f4cde92056adf735c8ababccbe",
+              "blockHeight": 25888976,
+              "extra": {
+                "feePayer": "0x43B2F01186fdA9814C5f40770554aC68fd8304bD"
+              },
+              "date": "2026-09-02T10:21:35.000Z",
               "value": "0",
-              "fee": "61209960088565",
-              "transactionSequenceNumber": "2648",
+              "fee": "9268834359367",
+              "transactionSequenceNumber": "30956",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xc4aafbd13be949389256bad44f7d9e161f0e8f64b77c89a027f54d1910c3e329-IN",
-              "hash": "0xc4aafbd13be949389256bad44f7d9e161f0e8f64b77c89a027f54d1910c3e329",
-              "type": "IN",
-              "senders": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
-              "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x9778635c4b466705570b35bfe05fcc440aaab3c03b2f4d504a4cce69b67958f7",
-              "blockHeight": 24592503,
-              "extra": {},
-              "date": "2026-03-05T16:35:59.000Z",
-              "value": "11948529811401187",
-              "fee": "7995343755000",
-              "transactionSequenceNumber": "2",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x29486b97c8a36e1f0316f293a104453b071b33f34b498e179a0763766d2ca2c7-NONE",
+              "hash": "0x29486b97c8a36e1f0316f293a104453b071b33f34b498e179a0763766d2ca2c7",
+              "type": "NONE",
+              "senders": ["0x43B2F01186fdA9814C5f40770554aC68fd8304bD"],
+              "recipients": ["0x5cA42c5506b5D25F591047056907c32CdC845d82"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xeed2a9a9ec5bb5a16e5e74386d56ac39e4c7f971d67a9e5a9cbdf4373e467233",
+              "blockHeight": 25888903,
+              "extra": {
+                "feePayer": "0x43B2F01186fdA9814C5f40770554aC68fd8304bD"
+              },
+              "date": "2026-09-02T10:06:59.000Z",
+              "value": "0",
+              "fee": "6770857333247",
+              "transactionSequenceNumber": "30953",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x1a9f6126da457a3be6b4e6ec1e4355d4b69bc2ede82cf10859be08d3d5e3fb99-OUT",
-              "hash": "0x1a9f6126da457a3be6b4e6ec1e4355d4b69bc2ede82cf10859be08d3d5e3fb99",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xa879f9f46f22c8da56a07b4d996b1dba3050e1caec98a66448a22b9560b78f25-OUT",
+              "hash": "0xa879f9f46f22c8da56a07b4d996b1dba3050e1caec98a66448a22b9560b78f25",
               "type": "OUT",
-              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x3a0bf41b6ec7c103286c775c2bfe465796bc35ecd475a86cf2eb0e1c4dc8348f",
-              "blockHeight": 24592457,
-              "extra": {},
-              "date": "2026-03-05T16:26:47.000Z",
-              "value": "24162853210247964",
-              "fee": "16312685109000",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0xee4dD880c50719c2C829DACa2bE57cDAd36599AF"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xca47c0cbb9d92da78c0d641e2e8d7824abb0a2bfd53c0e685c72d22a8bb32446",
+              "blockHeight": 25888889,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T10:03:59.000Z",
+              "value": "9037734718392000",
+              "fee": "37734718392000",
               "transactionSequenceNumber": "1",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xf2f2ad74952fc33561b364ac923918a445c9875918e8f33d0b135e8c27a3796f-OUT",
-              "hash": "0xf2f2ad74952fc33561b364ac923918a445c9875918e8f33d0b135e8c27a3796f",
-              "type": "OUT",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x9c453679f2e5b359417b673111c1ced75f8c3e3152d5e4a4e701883cbcb9dd63-IN",
+              "hash": "0x9c453679f2e5b359417b673111c1ced75f8c3e3152d5e4a4e701883cbcb9dd63",
+              "type": "IN",
               "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "recipients": ["0xf16EB5896E49C33789F7B305193C17c7c41e4eea"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xbec479c4b78320c369d8735d03a46b0bb3de0acda28bfd0c6bb9385ef9726cd5",
-              "blockHeight": 24592227,
-              "extra": {},
-              "date": "2026-03-05T15:40:23.000Z",
-              "value": "43349417689232000",
-              "fee": "29577689232000",
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xd2ff61c45b8522e07f41467c32ff4e973ee9977f0abbf94310fb3ec0c61c7e7a",
+              "blockHeight": 25888705,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:26:47.000Z",
+              "value": "2021851769401969",
+              "fee": "5711169786000",
+              "transactionSequenceNumber": "4168",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xf8edd405845f191c7e6b6c0f43fa6ce8253f2096519fa37011263facdd7e2ce8-NONE",
+              "hash": "0xf8edd405845f191c7e6b6c0f43fa6ce8253f2096519fa37011263facdd7e2ce8",
+              "type": "NONE",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0xA35b1B31Ce002FBF2058D22F30f95D405200A15b"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xa971bd48ec29d88d24bab9477dd01b18e769a568540f3d5d258a82447b2ff6f1",
+              "blockHeight": 25888703,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:26:23.000Z",
+              "value": "0",
+              "fee": "14001381527140",
+              "transactionSequenceNumber": "4167",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xb9e84175e87b27eaff52179d4714aa0bbc14ccc743482b3021e1ea0c03f12cd3-NONE",
+              "hash": "0xb9e84175e87b27eaff52179d4714aa0bbc14ccc743482b3021e1ea0c03f12cd3",
+              "type": "NONE",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0xdC035D45d973E3EC169d2276DDab16f1e407384F"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x23cb6d3d9051eb3338efdf5b404db576da6f799910189553882d0087bfb080a8",
+              "blockHeight": 25888699,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:25:35.000Z",
+              "value": "0",
+              "fee": "10078831151536",
+              "transactionSequenceNumber": "4166",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xe44dfada877bdc9c74ffe7324ef52a4a520c896b8111beeb61243363f8f6a192-NONE",
+              "hash": "0xe44dfada877bdc9c74ffe7324ef52a4a520c896b8111beeb61243363f8f6a192",
+              "type": "NONE",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0x6B175474E89094C44Da98b954EedeAC495271d0F"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xdae659c39d9883756958fab21217fa8b4b2ce1c64cc47a662912e9b65326e18a",
+              "blockHeight": 25888698,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:25:23.000Z",
+              "value": "0",
+              "fee": "8151949329730",
+              "transactionSequenceNumber": "4165",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x7cf0d2de3fa6c3829acd8a5e52a92c01074cc4f542ff0d7148036cecbeb709f7-NONE",
+              "hash": "0x7cf0d2de3fa6c3829acd8a5e52a92c01074cc4f542ff0d7148036cecbeb709f7",
+              "type": "NONE",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0x4c9EDD5852cd905f086C759E8383e09bff1E68B3"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xd2bd240942e00cfd5c9bd74f381a298a57b0517ea573c8ccefdf078c347d3d8c",
+              "blockHeight": 25888696,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:24:59.000Z",
+              "value": "0",
+              "fee": "7240678663100",
+              "transactionSequenceNumber": "4164",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x415254aa73b4146c19f9540b6b94b935755cf829b106e31a094f86c5acdaf920-NONE",
+              "hash": "0x415254aa73b4146c19f9540b6b94b935755cf829b106e31a094f86c5acdaf920",
+              "type": "NONE",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xc00811b9dd5936c67ce59bfdef4a410e09d54b90260eb6d8032a1bb215029881",
+              "blockHeight": 25888688,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T09:23:23.000Z",
+              "value": "0",
+              "fee": "8370772796448",
+              "transactionSequenceNumber": "4163",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x5e7c0145f44b0cc48586919c6f35c0e0fe35f89eb24600c3d3eefe095ee2db81-NONE",
+              "hash": "0x5e7c0145f44b0cc48586919c6f35c0e0fe35f89eb24600c3d3eefe095ee2db81",
+              "type": "NONE",
+              "senders": ["0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x9f04fb0d137a5e2bc50eb87b5c01bee6818908c417e4624677202ee8429a1101",
+              "blockHeight": 25888661,
+              "extra": {
+                "feePayer": "0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"
+              },
+              "date": "2026-09-02T09:17:59.000Z",
+              "value": "0",
+              "fee": "8189850359499",
+              "transactionSequenceNumber": "925",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xa633621977559962ea416b3efa4c88f75ae7a7bba5894f6621ea64909be28d05-NONE",
+              "hash": "0xa633621977559962ea416b3efa4c88f75ae7a7bba5894f6621ea64909be28d05",
+              "type": "NONE",
+              "senders": ["0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"],
+              "recipients": ["0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x1cc309a054ea331e3b9c738201b41411fe5686074de99b4d825f093719859d93",
+              "blockHeight": 25888658,
+              "extra": {
+                "feePayer": "0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"
+              },
+              "date": "2026-09-02T09:17:23.000Z",
+              "value": "0",
+              "fee": "9742277856582",
+              "transactionSequenceNumber": "924",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xca27fa2c5c5b6a9f1ab044657319f92644b731f17d59b64303c93490dcc5db27-NONE",
+              "hash": "0xca27fa2c5c5b6a9f1ab044657319f92644b731f17d59b64303c93490dcc5db27",
+              "type": "NONE",
+              "senders": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x25b7982a0a891be431a2bac2c445afa1a46b8c45a148eb4098ded12ee600d540",
+              "blockHeight": 25888649,
+              "extra": {
+                "feePayer": "0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"
+              },
+              "date": "2026-09-02T09:15:35.000Z",
+              "value": "0",
+              "fee": "8046170572574",
+              "transactionSequenceNumber": "5",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xab73a8bb1b0ccacdfc5d35218ff5d35507eeaa06e3d5962445810c8c5ed25ea3-NONE",
+              "hash": "0xab73a8bb1b0ccacdfc5d35218ff5d35507eeaa06e3d5962445810c8c5ed25ea3",
+              "type": "NONE",
+              "senders": ["0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0xc571c14ef4ed785b1319cca39964acb9b267134124dfa91e16c4d0ee6bcb44ee",
+              "blockHeight": 25888624,
+              "extra": {
+                "feePayer": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"
+              },
+              "date": "2026-09-02T09:10:35.000Z",
+              "value": "0",
+              "fee": "9888854271836",
+              "transactionSequenceNumber": "335",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x1361528d6f78bc458e50c2cfb8829b976801b2b8f304da9764eb6ab3a0c663ce-IN",
+              "hash": "0x1361528d6f78bc458e50c2cfb8829b976801b2b8f304da9764eb6ab3a0c663ce",
+              "type": "IN",
+              "senders": ["0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x3801e28eca989a7db0d2153d7f60e8422f70fa0a97718d79a05cc4ba859341d2",
+              "blockHeight": 25888595,
+              "extra": {
+                "feePayer": "0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"
+              },
+              "date": "2026-09-02T09:04:35.000Z",
+              "value": "10922294252194440",
+              "fee": "5256815508000",
+              "transactionSequenceNumber": "923",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xb201bc8770cd4f78c2e84c75319a00ea75497bb3faf9ce9bfbe023462b05c456-IN",
+              "hash": "0xb201bc8770cd4f78c2e84c75319a00ea75497bb3faf9ce9bfbe023462b05c456",
+              "type": "IN",
+              "senders": ["0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x3e64facf74246ba23d0c8ae92d541a683296dcbcbff62b5c87ad95c65409951f",
+              "blockHeight": 25888592,
+              "extra": {
+                "feePayer": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"
+              },
+              "date": "2026-09-02T09:03:59.000Z",
+              "value": "21959548317936627",
+              "fee": "4991587356000",
+              "transactionSequenceNumber": "334",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xdb84a4b25715209f1953984930e7b19380ca8f19e1927ea31c78c45ee542706e-OUT",
+              "hash": "0xdb84a4b25715209f1953984930e7b19380ca8f19e1927ea31c78c45ee542706e",
+              "type": "OUT",
+              "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "recipients": ["0x6A000F20005980200259B80c5102003040001068"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x50197d96079723ee754a619ecf5a5e84f399a47c7059c7fe763aa68bd13c3ec4",
+              "blockHeight": 25888545,
+              "extra": {
+                "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+              },
+              "date": "2026-09-02T08:54:35.000Z",
+              "value": "29317102811136045",
+              "fee": "72092811136045",
               "transactionSequenceNumber": "0",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x0bb414bd74a8528c1394ed831379ac4da680acc1ebe17b70e7878091c811f2ed-IN",
-              "hash": "0x0bb414bd74a8528c1394ed831379ac4da680acc1ebe17b70e7878091c811f2ed",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x6817215bd8f0090a27f1418dd3a0ed271468764a65ddeeee607bc9dfda8ac4b7-IN",
+              "hash": "0x6817215bd8f0090a27f1418dd3a0ed271468764a65ddeeee607bc9dfda8ac4b7",
               "type": "IN",
               "senders": ["0x04F479967bBc039E060d6292e5dE86f249291bbc"],
-              "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xd574c68d1652bbd6104d4b8ef2705a620d244eaca4a5edc03fefb9fa8989d440",
-              "blockHeight": 24592190,
-              "extra": {},
-              "date": "2026-03-05T15:32:59.000Z",
-              "value": "120000000000000000",
-              "fee": "33514191690000",
-              "transactionSequenceNumber": "141",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xe08945c5b97c78e58f574bc001757264495dbcc72ff45f5d9d8da9734be6c9bb-IN",
-              "hash": "0xe08945c5b97c78e58f574bc001757264495dbcc72ff45f5d9d8da9734be6c9bb",
-              "type": "IN",
-              "senders": ["0x04F479967bBc039E060d6292e5dE86f249291bbc"],
-              "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-              "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x93ba7142701e30cb570c6620274d7327a86216fdec871b0178ced926577ea092",
-              "blockHeight": 24592187,
-              "extra": {},
-              "date": "2026-03-05T15:32:23.000Z",
-              "value": "120000000000000000",
-              "fee": "33802635342000",
-              "transactionSequenceNumber": "140",
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x969f23e47d90b439ea4a0cb09d458a371353c44aebc3ce0e56fd1c803770a9c2",
+              "blockHeight": 25888522,
+              "extra": {
+                "feePayer": "0x04F479967bBc039E060d6292e5dE86f249291bbc"
+              },
+              "date": "2026-09-02T08:49:59.000Z",
+              "value": "170000000000000000",
+              "fee": "4920404475000",
+              "transactionSequenceNumber": "203",
               "hasFailed": false,
               "internalOperations": []
             }
           ],
           "pendingOperations": [],
           "currencyId": "ethereum",
-          "balance": "103596864788581171",
-          "spendableBalance": "103596864788581171",
+          "balance": "90216265599072402",
+          "spendableBalance": "90216265599072402",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
+              "latestDate": 1788364800000,
               "balances": [
                 0,
-                196650582310768000,
-                [184436258911921200, 18],
-                [178433799110647230, 3],
-                117410509811999260,
-                109263451298376270,
-                103596864788581170
+                140682897188863950,
+                175586591528397000,
+                [162294880016626200, 2],
+                161192865272155600,
+                136022928146688580,
+                99116646493084860,
+                93882213609137400
               ]
             },
             "DAY": {
-              "latestDate": 1772751600000,
-              "balances": [0, 184436258911921200]
+              "latestDate": 1788300000000,
+              "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
-          "xpub": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "xpub": "04c674d69ee40d9acca4e025e0367b9f5fa12be405610ff8e7ed6622d1c31a4580ac7fb86592ba05e1276b1b9f322bfeb4f2390b1424ea93fb80540b3361d8ae6d",
           "subAccounts": [
             {
               "type": "TokenAccountRaw",
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
-              "parentId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "tokenId": "ethereum/erc20/usd__coin",
-              "balance": "60892122",
-              "spendableBalance": "60892122",
-              "creationDate": "2026-03-06T13:26:59.000Z",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fsteth",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/steth",
+              "balance": "1499999999999989",
+              "spendableBalance": "1499999999999989",
+              "creationDate": "2026-09-02T15:38:23.000Z",
               "operationsCount": 1,
               "operations": [
                 {
-                  "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x2b1be1831771ac862fb6b50cb6a518df48e69e89521f52563b1f9efd8db9a646-IN",
-                  "hash": "0x2b1be1831771ac862fb6b50cb6a518df48e69e89521f52563b1f9efd8db9a646",
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fsteth-0x248e61b8217dec9e43d0967c20d58e50d498c627d56c161ddd652c6c27cf9113-IN",
+                  "hash": "0x248e61b8217dec9e43d0967c20d58e50d498c627d56c161ddd652c6c27cf9113",
+                  "type": "IN",
+                  "senders": ["0x0000000000000000000000000000000000000000"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fsteth",
+                  "blockHash": "0xb5a693534695bbf196b74b0a149ab5a48afabd939ddb2989b6b6893ae0ac1a76",
+                  "blockHeight": 25890554,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T15:38:23.000Z",
+                  "value": "1499999999999989",
+                  "fee": "20132958809475",
+                  "transactionSequenceNumber": "26",
+                  "hasFailed": false,
+                  "contract": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicrostrategy~!underscore!~xstock~!underscore!~0xae2f842ef90c0d5213259ab82639d5bbf649b08e",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/microstrategy_xstock_0xae2f842ef90c0d5213259ab82639d5bbf649b08e",
+              "balance": "5712539448820982",
+              "spendableBalance": "5712539448820982",
+              "creationDate": "2026-09-02T15:36:23.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicrostrategy~!underscore!~xstock~!underscore!~0xae2f842ef90c0d5213259ab82639d5bbf649b08e-0x535daa5b9335eac2d65b338eb6e0b8a0d9f37c756fe72a45afca1e72196c8a76-IN",
+                  "hash": "0x535daa5b9335eac2d65b338eb6e0b8a0d9f37c756fe72a45afca1e72196c8a76",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicrostrategy~!underscore!~xstock~!underscore!~0xae2f842ef90c0d5213259ab82639d5bbf649b08e",
+                  "blockHash": "0x857652b0f9f5a81371107904e16ebfbaffcd4555f5e9e853a644289a3302c56a",
+                  "blockHeight": 25890544,
+                  "extra": {
+                    "feePayer": "0xd5697C5393C781C177E39Dd4725c4a2af61e92B5"
+                  },
+                  "date": "2026-09-02T15:36:23.000Z",
+                  "value": "5712539448820982",
+                  "fee": "359367158187470",
+                  "transactionSequenceNumber": "747",
+                  "hasFailed": false,
+                  "contract": "0xae2f842ef90c0d5213259ab82639d5bbf649b08e"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fcircle~!underscore!~internet~!underscore!~group~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x3632dea96a953c11dac2f00b4a05a32cd1063fae",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/circle_internet_group_ondo_tokenized_0x3632dea96a953c11dac2f00b4a05a32cd1063fae",
+              "balance": "8073601311976868",
+              "spendableBalance": "8073601311976868",
+              "creationDate": "2026-09-02T15:34:11.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fcircle~!underscore!~internet~!underscore!~group~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x3632dea96a953c11dac2f00b4a05a32cd1063fae-0x96490f70f6f6ebe68aa7b5b1abbc2552d1801441d380ac98238d43aff2d142f1-IN",
+                  "hash": "0x96490f70f6f6ebe68aa7b5b1abbc2552d1801441d380ac98238d43aff2d142f1",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fcircle~!underscore!~internet~!underscore!~group~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x3632dea96a953c11dac2f00b4a05a32cd1063fae",
+                  "blockHash": "0xdcd49bfc3e0a1a078805116693dddc85844a4df33673e10aaa12fab13775eb43",
+                  "blockHeight": 25890533,
+                  "extra": {
+                    "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+                  },
+                  "date": "2026-09-02T15:34:11.000Z",
+                  "value": "8073601311976868",
+                  "fee": "326601981802250",
+                  "transactionSequenceNumber": "14",
+                  "hasFailed": false,
+                  "contract": "0x3632DEa96A953C11dac2f00b4A05a32CD1063fAE"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicron~!underscore!~technology~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x050362ab1072cb2ce74d74770e22a3203ad04ee5",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/micron_technology_ondo_tokenized_0x050362ab1072cb2ce74d74770e22a3203ad04ee5",
+              "balance": "497495399638069",
+              "spendableBalance": "497495399638069",
+              "creationDate": "2026-09-02T15:33:23.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicron~!underscore!~technology~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x050362ab1072cb2ce74d74770e22a3203ad04ee5-0xabd91de2eb1e2f22a31a086a4e8d202a79469ad552c70eda6ec42ccba2f3b402-IN",
+                  "hash": "0xabd91de2eb1e2f22a31a086a4e8d202a79469ad552c70eda6ec42ccba2f3b402",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fmicron~!underscore!~technology~!underscore!~ondo~!underscore!~tokenized~!underscore!~0x050362ab1072cb2ce74d74770e22a3203ad04ee5",
+                  "blockHash": "0xca0f042cdbeb5e4b99049ef49485d4ea79a828431fd5514a19eea8b68b21c861",
+                  "blockHeight": 25890529,
+                  "extra": {
+                    "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+                  },
+                  "date": "2026-09-02T15:33:23.000Z",
+                  "value": "497495399638069",
+                  "fee": "250808412559056",
+                  "transactionSequenceNumber": "13",
+                  "hasFailed": false,
+                  "contract": "0x050362Ab1072Cb2Ce74d74770E22A3203Ad04ee5"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Ftesla~!underscore!~xstock~!underscore!~0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/tesla_xstock_0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+              "balance": "1293553560620921",
+              "spendableBalance": "1293553560620921",
+              "creationDate": "2026-09-02T15:33:11.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Ftesla~!underscore!~xstock~!underscore!~0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0-0x7e4fc08687f172059e359656cfb7f6d7d867ca3b470b217d4fdd107c2aefff13-IN",
+                  "hash": "0x7e4fc08687f172059e359656cfb7f6d7d867ca3b470b217d4fdd107c2aefff13",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Ftesla~!underscore!~xstock~!underscore!~0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+                  "blockHash": "0x0abd327234cb36743cca5584a530e4afe584003cf4ebed8c5464d08433520285",
+                  "blockHeight": 25890528,
+                  "extra": {
+                    "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+                  },
+                  "date": "2026-09-02T15:33:11.000Z",
+                  "value": "1293553560620921",
+                  "fee": "325312200431268",
+                  "transactionSequenceNumber": "12",
+                  "hasFailed": false,
+                  "contract": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fhims~!underscore!~hers~!underscore!~health~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xca468554e5c0423ee858fe3942c9568c51fcaa79",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/hims_hers_health_ondo_tokenized_0xca468554e5c0423ee858fe3942c9568c51fcaa79",
+              "balance": "16348857767965670",
+              "spendableBalance": "16348857767965670",
+              "creationDate": "2026-09-02T15:31:35.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fhims~!underscore!~hers~!underscore!~health~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xca468554e5c0423ee858fe3942c9568c51fcaa79-0x31772ac278935472cc79ad526f7ccc1aca3613844c3dbccdfbfa45139ef5741b-IN",
+                  "hash": "0x31772ac278935472cc79ad526f7ccc1aca3613844c3dbccdfbfa45139ef5741b",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fhims~!underscore!~hers~!underscore!~health~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xca468554e5c0423ee858fe3942c9568c51fcaa79",
+                  "blockHash": "0x784e68b6e1b6b30f90debacc07612958c45308ffb1d463382bdfc153063e41bb",
+                  "blockHeight": 25890520,
+                  "extra": {
+                    "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+                  },
+                  "date": "2026-09-02T15:31:35.000Z",
+                  "value": "16348857767965670",
+                  "fee": "366011051094234",
+                  "transactionSequenceNumber": "11",
+                  "hasFailed": false,
+                  "contract": "0xCa468554e5C0423Ee858fe3942c9568C51FcAa79"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Famazon~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xbb8774fb97436d23d74c1b882e8e9a69322cfd31",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/amazon_ondo_tokenized_0xbb8774fb97436d23d74c1b882e8e9a69322cfd31",
+              "balance": "1874266833410235",
+              "spendableBalance": "1874266833410235",
+              "creationDate": "2026-09-02T15:30:11.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Famazon~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xbb8774fb97436d23d74c1b882e8e9a69322cfd31-0xff09f0a0ba8ea7a8e87fa893d037b90177ae59396f516c77022227073f2c4094-IN",
+                  "hash": "0xff09f0a0ba8ea7a8e87fa893d037b90177ae59396f516c77022227073f2c4094",
+                  "type": "IN",
+                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Famazon~!underscore!~ondo~!underscore!~tokenized~!underscore!~0xbb8774fb97436d23d74c1b882e8e9a69322cfd31",
+                  "blockHash": "0x35f537c05c7044b429863bf9546890ceabb2480aa2137bc7cf9accc4a46a35c6",
+                  "blockHeight": 25890513,
+                  "extra": {
+                    "feePayer": "0x8b55a76afD9D727bBB324F8be442333A27355e7A"
+                  },
+                  "date": "2026-09-02T15:30:11.000Z",
+                  "value": "1874266833410235",
+                  "fee": "204015412086078",
+                  "transactionSequenceNumber": "10",
+                  "hasFailed": false,
+                  "contract": "0xbb8774FB97436d23d74C1b882E8E9A69322cFD31"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/usd__coin",
+              "balance": "55614966",
+              "spendableBalance": "55614966",
+              "creationDate": "2026-09-02T14:52:35.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x4d34dd3403dcbea429e0a6b9ab7ec262c7d4c8366ac5de9e29ca867d7179c9a6-IN",
+                  "hash": "0x4d34dd3403dcbea429e0a6b9ab7ec262c7d4c8366ac5de9e29ca867d7179c9a6",
                   "type": "IN",
                   "senders": ["0x6A000F20005980200259B80c5102003040001068"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
-                  "blockHash": "0xfa36c4222dd5bbb9b602bc3031e08b02365c441cec01bcbb982b149e199f8473",
-                  "blockHeight": 24598707,
-                  "extra": {},
-                  "date": "2026-03-06T13:26:59.000Z",
-                  "value": "60892122",
-                  "fee": "45803880682476",
-                  "transactionSequenceNumber": "5",
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+                  "blockHash": "0x43402c92829cbd82eb1ca4f5a49f2b895053eb07622251ff0703118b1fbb5b04",
+                  "blockHeight": 25890325,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T14:52:35.000Z",
+                  "value": "55614966",
+                  "fee": "61428578899772",
+                  "transactionSequenceNumber": "25",
                   "hasFailed": false,
                   "contract": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
                 }
@@ -490,44 +1599,159 @@
               "swapHistory": [],
               "balanceHistoryCache": {
                 "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, [60892122, 3]]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 }
-              },
-              "starred": false
+              }
             },
             {
               "type": "TokenAccountRaw",
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
-              "parentId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
               "tokenId": "ethereum/erc20/usd_tether__erc20_",
-              "balance": "60730017",
-              "spendableBalance": "60730017",
-              "creationDate": "2026-03-06T13:22:59.000Z",
-              "operationsCount": 1,
+              "balance": "63555007",
+              "spendableBalance": "63555007",
+              "creationDate": "2026-09-02T08:54:35.000Z",
+              "operationsCount": 7,
               "operations": [
                 {
-                  "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x100056c08e585ad65087424ed28262fb5400a6b8a7093807de431671b42a6c6e-IN",
-                  "hash": "0x100056c08e585ad65087424ed28262fb5400a6b8a7093807de431671b42a6c6e",
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0xfcb3c6310a1a4deace7c07b8d2ba4d041ffc54aaa92c02fbffe9aaf82c186037-OUT",
+                  "hash": "0xfcb3c6310a1a4deace7c07b8d2ba4d041ffc54aaa92c02fbffe9aaf82c186037",
+                  "type": "OUT",
+                  "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "recipients": ["0x90244836af76b08E2CcC248E7045E8324b630BC5"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0xedfe854e81cfea4f77dfb8c3b41a04b2485ebba5704997007c912acf00edcbe0",
+                  "blockHeight": 25890204,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T14:28:23.000Z",
+                  "value": "80036977",
+                  "fee": "23615136626598",
+                  "transactionSequenceNumber": "24",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x81834ed1d74e9dcd61485f9116e01ba169bed5d4a05ff11f3c63fad7235ee7e2-OUT",
+                  "hash": "0x81834ed1d74e9dcd61485f9116e01ba169bed5d4a05ff11f3c63fad7235ee7e2",
+                  "type": "OUT",
+                  "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "recipients": ["0xb3A643D2E7a0644725378fF1D1e61c5180292Db9"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x5178c32a9d221703965fb607a93bccdbf5a6f0b974a85ba8d4e287bc5a6f7140",
+                  "blockHeight": 25890082,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T14:03:47.000Z",
+                  "value": "56025492",
+                  "fee": "33735079884563",
+                  "transactionSequenceNumber": "19",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x97acceb5d8969b95ad9470145f14f97e43f11af660931d20a7962e8c69fbc8ec-OUT",
+                  "hash": "0x97acceb5d8969b95ad9470145f14f97e43f11af660931d20a7962e8c69fbc8ec",
+                  "type": "OUT",
+                  "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "recipients": ["0x4c30039957cb807af93aD20166988d27B35a86FB"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x0673605197b153f6bb982ab7d9ac2986fdb1ac4cca283244a541f42eab412b47",
+                  "blockHeight": 25890055,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T13:58:23.000Z",
+                  "value": "3001351",
+                  "fee": "32358708846824",
+                  "transactionSequenceNumber": "17",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x5e7c0145f44b0cc48586919c6f35c0e0fe35f89eb24600c3d3eefe095ee2db81-IN",
+                  "hash": "0x5e7c0145f44b0cc48586919c6f35c0e0fe35f89eb24600c3d3eefe095ee2db81",
                   "type": "IN",
-                  "senders": ["0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
-                  "blockHash": "0xb9775204b0fb7fbf0055a212f47762eb8db20ed5560afec93b26f49bf9275710",
-                  "blockHeight": 24598687,
-                  "extra": {},
-                  "date": "2026-03-06T13:22:59.000Z",
-                  "value": "60730017",
-                  "fee": "52337854270390",
-                  "transactionSequenceNumber": "4",
+                  "senders": ["0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x9f04fb0d137a5e2bc50eb87b5c01bee6818908c417e4624677202ee8429a1101",
+                  "blockHeight": 25888661,
+                  "extra": {
+                    "feePayer": "0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"
+                  },
+                  "date": "2026-09-02T09:17:59.000Z",
+                  "value": "3000794",
+                  "fee": "8189850359499",
+                  "transactionSequenceNumber": "925",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0xca27fa2c5c5b6a9f1ab044657319f92644b731f17d59b64303c93490dcc5db27-IN",
+                  "hash": "0xca27fa2c5c5b6a9f1ab044657319f92644b731f17d59b64303c93490dcc5db27",
+                  "type": "IN",
+                  "senders": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x25b7982a0a891be431a2bac2c445afa1a46b8c45a148eb4098ded12ee600d540",
+                  "blockHeight": 25888649,
+                  "extra": {
+                    "feePayer": "0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"
+                  },
+                  "date": "2026-09-02T09:15:35.000Z",
+                  "value": "56001258",
+                  "fee": "8046170572574",
+                  "transactionSequenceNumber": "5",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0xab73a8bb1b0ccacdfc5d35218ff5d35507eeaa06e3d5962445810c8c5ed25ea3-IN",
+                  "hash": "0xab73a8bb1b0ccacdfc5d35218ff5d35507eeaa06e3d5962445810c8c5ed25ea3",
+                  "type": "IN",
+                  "senders": ["0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0xc571c14ef4ed785b1319cca39964acb9b267134124dfa91e16c4d0ee6bcb44ee",
+                  "blockHeight": 25888624,
+                  "extra": {
+                    "feePayer": "0xD3b4d15c3aB0c0A3Ad3609BF84f6993F7d763A15"
+                  },
+                  "date": "2026-09-02T09:10:35.000Z",
+                  "value": "74114871",
+                  "fee": "9888854271836",
+                  "transactionSequenceNumber": "335",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0xdb84a4b25715209f1953984930e7b19380ca8f19e1927ea31c78c45ee542706e-IN",
+                  "hash": "0xdb84a4b25715209f1953984930e7b19380ca8f19e1927ea31c78c45ee542706e",
+                  "type": "IN",
+                  "senders": ["0x6A000F20005980200259B80c5102003040001068"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x50197d96079723ee754a619ecf5a5e84f399a47c7059c7fe763aa68bd13c3ec4",
+                  "blockHeight": 25888545,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T08:54:35.000Z",
+                  "value": "69501904",
+                  "fee": "72092811136045",
+                  "transactionSequenceNumber": "0",
                   "hasFailed": false,
                   "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
                 }
@@ -536,65 +1760,319 @@
               "swapHistory": [],
               "balanceHistoryCache": {
                 "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, [60730017, 3]]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 }
-              },
-              "starred": false
+              }
             },
             {
               "type": "TokenAccountRaw",
-              "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Finjective~!underscore!~token",
-              "parentId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "tokenId": "ethereum/erc20/injective_token",
-              "balance": "612529030178780645",
-              "spendableBalance": "612529030178780645",
-              "creationDate": "2026-03-06T13:14:11.000Z",
-              "operationsCount": 1,
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fwrapped~!underscore!~bitcoin",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/wrapped_bitcoin",
+              "balance": "0",
+              "spendableBalance": "0",
+              "creationDate": "2026-09-02T09:17:23.000Z",
+              "operationsCount": 2,
               "operations": [
                 {
-                  "id": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Finjective~!underscore!~token-0xac8855366f5688bebe3de8b7d900b01106ff134128048b6db9309f58587020ab-IN",
-                  "hash": "0xac8855366f5688bebe3de8b7d900b01106ff134128048b6db9309f58587020ab",
-                  "type": "IN",
-                  "senders": ["0x6A000F20005980200259B80c5102003040001068"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+ethereum%2Ferc20%2Finjective~!underscore!~token",
-                  "blockHash": "0x93f1b88fa818338b2292129db485e131dc7155c754b89dc55c1e2575ba6eb022",
-                  "blockHeight": 24598643,
-                  "extra": {},
-                  "date": "2026-03-06T13:14:11.000Z",
-                  "value": "612529030178780645",
-                  "fee": "25147563695090",
-                  "transactionSequenceNumber": "3",
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fwrapped~!underscore!~bitcoin-0x5022bc8c46ef3ab43a089b7b034fc87f8edbd00181dff623d05b327ec2b0c3e3-OUT",
+                  "hash": "0x5022bc8c46ef3ab43a089b7b034fc87f8edbd00181dff623d05b327ec2b0c3e3",
+                  "type": "OUT",
+                  "senders": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "recipients": ["0x4c30039957cb807af93aD20166988d27B35a86FB"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fwrapped~!underscore!~bitcoin",
+                  "blockHash": "0x98df91aa6d4a90b923a7c2630f926378c6cec377a6f56d587a322e86395005a4",
+                  "blockHeight": 25890060,
+                  "extra": {
+                    "feePayer": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"
+                  },
+                  "date": "2026-09-02T13:59:23.000Z",
+                  "value": "46648",
+                  "fee": "24152576570403",
+                  "transactionSequenceNumber": "18",
                   "hasFailed": false,
-                  "contract": "0xe28b3B32B6c345A34Ff64674606124Dd5Aceca30"
+                  "contract": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+                },
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fwrapped~!underscore!~bitcoin-0xa633621977559962ea416b3efa4c88f75ae7a7bba5894f6621ea64909be28d05-IN",
+                  "hash": "0xa633621977559962ea416b3efa4c88f75ae7a7bba5894f6621ea64909be28d05",
+                  "type": "IN",
+                  "senders": ["0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fwrapped~!underscore!~bitcoin",
+                  "blockHash": "0x1cc309a054ea331e3b9c738201b41411fe5686074de99b4d825f093719859d93",
+                  "blockHeight": 25888658,
+                  "extra": {
+                    "feePayer": "0xc3ffAe59bedE3971104FcB0c21F65498bCF5097B"
+                  },
+                  "date": "2026-09-02T09:17:23.000Z",
+                  "value": "46648",
+                  "fee": "9742277856582",
+                  "transactionSequenceNumber": "924",
+                  "hasFailed": false,
+                  "contract": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
                 }
               ],
               "pendingOperations": [],
               "swapHistory": [],
               "balanceHistoryCache": {
                 "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, [612529030178780700, 3]]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 }
-              },
-              "starred": false
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fethx",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/ethx",
+              "balance": "82043171172164",
+              "spendableBalance": "82043171172164",
+              "creationDate": "2026-09-02T09:26:23.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fethx-0xf8edd405845f191c7e6b6c0f43fa6ce8253f2096519fa37011263facdd7e2ce8-IN",
+                  "hash": "0xf8edd405845f191c7e6b6c0f43fa6ce8253f2096519fa37011263facdd7e2ce8",
+                  "type": "IN",
+                  "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fethx",
+                  "blockHash": "0xa971bd48ec29d88d24bab9477dd01b18e769a568540f3d5d258a82447b2ff6f1",
+                  "blockHeight": 25888703,
+                  "extra": {
+                    "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  },
+                  "date": "2026-09-02T09:26:23.000Z",
+                  "value": "82043171172164",
+                  "fee": "14001381527140",
+                  "transactionSequenceNumber": "4167",
+                  "hasFailed": false,
+                  "contract": "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusds~!underscore!~stablecoin~!underscore!~0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+              "balance": "1485300292877983156",
+              "spendableBalance": "1485300292877983156",
+              "creationDate": "2026-09-02T09:25:35.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusds~!underscore!~stablecoin~!underscore!~0xdc035d45d973e3ec169d2276ddab16f1e407384f-0xb9e84175e87b27eaff52179d4714aa0bbc14ccc743482b3021e1ea0c03f12cd3-IN",
+                  "hash": "0xb9e84175e87b27eaff52179d4714aa0bbc14ccc743482b3021e1ea0c03f12cd3",
+                  "type": "IN",
+                  "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusds~!underscore!~stablecoin~!underscore!~0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+                  "blockHash": "0x23cb6d3d9051eb3338efdf5b404db576da6f799910189553882d0087bfb080a8",
+                  "blockHeight": 25888699,
+                  "extra": {
+                    "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  },
+                  "date": "2026-09-02T09:25:35.000Z",
+                  "value": "1485300292877983156",
+                  "fee": "10078831151536",
+                  "transactionSequenceNumber": "4166",
+                  "hasFailed": false,
+                  "contract": "0xdc035d45d973e3ec169d2276ddab16f1e407384f"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fdai~!underscore!~stablecoin~!underscore!~v2~!underscore!~0",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/dai_stablecoin_v2_0",
+              "balance": "1998001998001998300",
+              "spendableBalance": "1998001998001998300",
+              "creationDate": "2026-09-02T09:25:23.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fdai~!underscore!~stablecoin~!underscore!~v2~!underscore!~0-0xe44dfada877bdc9c74ffe7324ef52a4a520c896b8111beeb61243363f8f6a192-IN",
+                  "hash": "0xe44dfada877bdc9c74ffe7324ef52a4a520c896b8111beeb61243363f8f6a192",
+                  "type": "IN",
+                  "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fdai~!underscore!~stablecoin~!underscore!~v2~!underscore!~0",
+                  "blockHash": "0xdae659c39d9883756958fab21217fa8b4b2ce1c64cc47a662912e9b65326e18a",
+                  "blockHeight": 25888698,
+                  "extra": {
+                    "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  },
+                  "date": "2026-09-02T09:25:23.000Z",
+                  "value": "1998001998001998300",
+                  "fee": "8151949329730",
+                  "transactionSequenceNumber": "4165",
+                  "hasFailed": false,
+                  "contract": "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusde",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/usde",
+              "balance": "2001693432644017200",
+              "spendableBalance": "2001693432644017200",
+              "creationDate": "2026-09-02T09:24:59.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusde-0x7cf0d2de3fa6c3829acd8a5e52a92c01074cc4f542ff0d7148036cecbeb709f7-IN",
+                  "hash": "0x7cf0d2de3fa6c3829acd8a5e52a92c01074cc4f542ff0d7148036cecbeb709f7",
+                  "type": "IN",
+                  "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fusde",
+                  "blockHash": "0xd2bd240942e00cfd5c9bd74f381a298a57b0517ea573c8ccefdf078c347d3d8c",
+                  "blockHeight": 25888696,
+                  "extra": {
+                    "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  },
+                  "date": "2026-09-02T09:24:59.000Z",
+                  "value": "2001693432644017200",
+                  "fee": "7240678663100",
+                  "transactionSequenceNumber": "4164",
+                  "hasFailed": false,
+                  "contract": "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fgho~!underscore!~token",
+              "parentId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "tokenId": "ethereum/erc20/gho_token",
+              "balance": "2001410994751299600",
+              "spendableBalance": "2001410994751299600",
+              "creationDate": "2026-09-02T09:23:23.000Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fgho~!underscore!~token-0x415254aa73b4146c19f9540b6b94b935755cf829b106e31a094f86c5acdaf920-IN",
+                  "hash": "0x415254aa73b4146c19f9540b6b94b935755cf829b106e31a094f86c5acdaf920",
+                  "type": "IN",
+                  "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+                  "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+                  "accountId": "js:2:ethereum:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:+ethereum%2Ferc20%2Fgho~!underscore!~token",
+                  "blockHash": "0xc00811b9dd5936c67ce59bfdef4a410e09d54b90260eb6d8032a1bb215029881",
+                  "blockHeight": 25888688,
+                  "extra": {
+                    "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+                  },
+                  "date": "2026-09-02T09:23:23.000Z",
+                  "value": "2001410994751299600",
+                  "fee": "8370772796448",
+                  "transactionSequenceNumber": "4163",
+                  "hasFailed": false,
+                  "contract": "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
+              }
             }
           ],
           "swapHistory": [],
@@ -605,195 +2083,117 @@
       },
       {
         "data": {
-          "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-          "seedIdentifier": "c5a8c42abc51d43fdd02db5baffab83e32fe767cf0c73b0e2dec3a3a55562d92",
+          "id": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5",
+          "seedIdentifier": "46ff1e9af194732d1a6184141aa35fd36b8613cb74d9e6a59b9b50bb41e022ba",
           "used": true,
           "derivationMode": "sep5",
           "index": 0,
-          "freshAddress": "GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q",
+          "freshAddress": "GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN",
           "freshAddressPath": "44'/148'/0'",
-          "blockHeight": 61529623,
-          "syncHash": "0xe1e130ff",
-          "creationDate": "2026-03-05T14:39:10.000Z",
-          "operationsCount": 5,
+          "blockHeight": 64241508,
+          "syncHash": "0x91a316d1",
+          "creationDate": "2026-09-02T09:37:57.000Z",
+          "operationsCount": 3,
           "operations": [
             {
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5-858ad654819e8ba0653f17bcec6792271abc4f688949bba37998163b53735426-IN",
-              "hash": "858ad654819e8ba0653f17bcec6792271abc4f688949bba37998163b53735426",
+              "id": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5-d0457d4bfaa47c0393f2c7b205b000df8bb1c58ceddfe227e3c94d2ddcf4f16e-OUT",
+              "hash": "d0457d4bfaa47c0393f2c7b205b000df8bb1c58ceddfe227e3c94d2ddcf4f16e",
+              "type": "OUT",
+              "senders": [
+                "GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN"
+              ],
+              "recipients": [
+                "GDKUWTYX5FXJR6F25TMZNV2UXJKK5YOEWMUFZ53KYH7VIGTI4AYYQDF5"
+              ],
+              "accountId": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5",
+              "blockHash": "",
+              "blockHeight": 64238743,
+              "extra": {
+                "memo": {
+                  "type": "NO_MEMO"
+                },
+                "feePayer": "GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN"
+              },
+              "date": "2026-09-02T11:40:11.000Z",
+              "value": "10000100",
+              "fee": "100",
+              "transactionSequenceNumber": "275897802763010049",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5-e810f4662c247b18689a858ece8d33a6371956b6ca440ba943132fa3e57349e2-IN",
+              "hash": "e810f4662c247b18689a858ece8d33a6371956b6ca440ba943132fa3e57349e2",
               "type": "IN",
-              "senders": ["GBLZ2URPALPQ2XFZKIHXYGUMG57AOUEH5S6WFMIDDKS6LLN2SUH3TRPD"],
-              "recipients": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-              "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "blockHash": "4c77121e6d73e86958e29985475697eaa4211b129d02df6251c0accf3ab77771",
-              "blockHeight": 61513532,
+              "senders": [
+                "GCE4MNYX2FVUZEUEHCYGJI7PPBSQQ4PBVR3TVOW6ANFCA6UCZORDBCIZ"
+              ],
+              "recipients": [
+                "GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN"
+              ],
+              "accountId": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5",
+              "blockHash": "",
+              "blockHeight": 64237475,
               "extra": {
                 "memo": {
                   "type": "NO_MEMO"
-                }
+                },
+                "feePayer": "GCE4MNYX2FVUZEUEHCYGJI7PPBSQQ4PBVR3TVOW6ANFCA6UCZORDBCIZ"
               },
-              "date": "2026-03-05T14:42:32.000Z",
-              "value": "2524972420",
+              "date": "2026-09-02T09:39:04.000Z",
+              "value": "3937603",
               "fee": "100",
-              "transactionSequenceNumber": "263239434630070310",
+              "transactionSequenceNumber": "264198702690729985",
               "hasFailed": false,
               "internalOperations": []
             },
             {
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5-7ea842628394f4e6b093d1eba8ed9a8017dc78eda653889a9d3f43674c941c03-NONE",
-              "hash": "7ea842628394f4e6b093d1eba8ed9a8017dc78eda653889a9d3f43674c941c03",
-              "type": "NONE",
-              "senders": ["GBLZ2URPALPQ2XFZKIHXYGUMG57AOUEH5S6WFMIDDKS6LLN2SUH3TRPD"],
-              "recipients": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-              "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "blockHash": "4801fa5df6847be2858e5806f1d52c4354d370b7c52a0b4711d8ca1df8035eaf",
-              "blockHeight": 61513527,
-              "extra": {
-                "memo": {
-                  "type": "NO_MEMO"
-                }
-              },
-              "date": "2026-03-05T14:42:01.000Z",
-              "value": "100",
-              "fee": "100",
-              "transactionSequenceNumber": "263239434630070309",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5-9a18129438dda581ee6b3410815cc845326dc86802dd0836c45c78f68b55f22b-OPT_IN",
-              "hash": "9a18129438dda581ee6b3410815cc845326dc86802dd0836c45c78f68b55f22b",
-              "type": "OPT_IN",
-              "senders": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-              "recipients": [],
-              "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "blockHash": "2b706d38d89e01803ea01add0ef16c573c5664b8c3c0a3ed49bbb06a1e1caf8a",
-              "blockHeight": 61513517,
-              "extra": {
-                "memo": {
-                  "type": "NO_MEMO"
-                }
-              },
-              "date": "2026-03-05T14:41:05.000Z",
-              "value": "100",
-              "fee": "100",
-              "transactionSequenceNumber": "264198457877594113",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5-3a03ca8b7118c827fd09ea5b0f35c3ee8ff60c3e861b560b506a32601c16870a-IN",
-              "hash": "3a03ca8b7118c827fd09ea5b0f35c3ee8ff60c3e861b560b506a32601c16870a",
+              "id": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5-a3d4728e06172d75fe2255ef66d97731870d6e1f88a9c567c69defa9a3af219e-IN",
+              "hash": "a3d4728e06172d75fe2255ef66d97731870d6e1f88a9c567c69defa9a3af219e",
               "type": "IN",
-              "senders": ["GBLZ2URPALPQ2XFZKIHXYGUMG57AOUEH5S6WFMIDDKS6LLN2SUH3TRPD"],
-              "recipients": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-              "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "blockHash": "7646eb32b10cff925cd33f8212912b61f873feabedd5f033c129b9ec5d2c8cf2",
-              "blockHeight": 61513508,
+              "senders": [
+                "GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"
+              ],
+              "recipients": [
+                "GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN"
+              ],
+              "accountId": "js:2:stellar:GBDP6HU26GKHGLI2MGCBIGVDL7JWXBQTZN2NTZVFTONVBO2B4ARLVKKN:sep5",
+              "blockHash": "",
+              "blockHeight": 64237463,
               "extra": {
                 "memo": {
                   "type": "NO_MEMO"
-                }
+                },
+                "feePayer": "GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"
               },
-              "date": "2026-03-05T14:40:14.000Z",
-              "value": "10000000",
+              "date": "2026-09-02T09:37:57.000Z",
+              "value": "2473433738",
               "fee": "100",
-              "transactionSequenceNumber": "263239434630070308",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5-ce5522598628a2d4fe1483cb2c3ad193aa702819b658a2dbba3fcfc0bcf12625-IN",
-              "hash": "ce5522598628a2d4fe1483cb2c3ad193aa702819b658a2dbba3fcfc0bcf12625",
-              "type": "IN",
-              "senders": ["GBLZ2URPALPQ2XFZKIHXYGUMG57AOUEH5S6WFMIDDKS6LLN2SUH3TRPD"],
-              "recipients": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-              "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "blockHash": "7ead4561581910beae2de45af39e3af65f08e3d86ba7c63c6fe704c5e2712058",
-              "blockHeight": 61513497,
-              "extra": {
-                "memo": {
-                  "type": "NO_MEMO"
-                }
-              },
-              "date": "2026-03-05T14:39:10.000Z",
-              "value": "10000000",
-              "fee": "100",
-              "transactionSequenceNumber": "263239434630070307",
+              "transactionSequenceNumber": "264198457877594660",
               "hasFailed": false,
               "internalOperations": []
             }
           ],
           "pendingOperations": [],
           "currencyId": "stellar",
-          "balance": "2544972320",
-          "spendableBalance": "2529972220",
+          "balance": "2467371241",
+          "spendableBalance": "2457371141",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [0, [2544972320, 26]]
+              "latestDate": 1788364800000,
+              "balances": [0, [2477371341, 2], [2467371241, 5]]
             },
             "DAY": {
-              "latestDate": 1772751600000,
-              "balances": [0, 2544972320]
+              "latestDate": 1788300000000,
+              "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
-          "xpub": "GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q",
-          "subAccounts": [
-            {
-              "type": "TokenAccountRaw",
-              "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5+stellar%2Fasset%2FUSDC%3AGA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-              "parentId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5",
-              "tokenId": "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-              "balance": "6415000",
-              "spendableBalance": "6415000",
-              "creationDate": "2026-03-05T14:42:01.000Z",
-              "operationsCount": 1,
-              "operations": [
-                {
-                  "id": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5+stellar%2Fasset%2FUSDC%3AGA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN-7ea842628394f4e6b093d1eba8ed9a8017dc78eda653889a9d3f43674c941c03-IN",
-                  "hash": "7ea842628394f4e6b093d1eba8ed9a8017dc78eda653889a9d3f43674c941c03",
-                  "type": "IN",
-                  "senders": ["GBLZ2URPALPQ2XFZKIHXYGUMG57AOUEH5S6WFMIDDKS6LLN2SUH3TRPD"],
-                  "recipients": ["GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q"],
-                  "accountId": "js:2:stellar:GDC2RRBKXRI5IP65ALNVXL72XA7DF7TWPTYMOOYOFXWDUOSVKYWZFQ6Q:sep5+stellar%2Fasset%2FUSDC%3AGA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-                  "blockHash": "4801fa5df6847be2858e5806f1d52c4354d370b7c52a0b4711d8ca1df8035eaf",
-                  "blockHeight": 61513527,
-                  "extra": {
-                    "memo": {
-                      "type": "NO_MEMO"
-                    }
-                  },
-                  "date": "2026-03-05T14:42:01.000Z",
-                  "value": "6415000",
-                  "fee": "100",
-                  "transactionSequenceNumber": "263239434630070309",
-                  "hasFailed": false,
-                  "contract": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
-                }
-              ],
-              "pendingOperations": [],
-              "swapHistory": [],
-              "balanceHistoryCache": {
-                "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, [6415000, 26]]
-                },
-                "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0, 6415000]
-                },
-                "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
-                }
-              },
-              "starred": false
-            }
-          ],
+          "xpub": "46ff1e9af194732d1a6184141aa35fd36b8613cb74d9e6a59b9b50bb41e022ba",
+          "subAccounts": [],
           "swapHistory": [],
           "name": "Stellar 1",
           "starred": false
@@ -802,93 +2202,175 @@
       },
       {
         "data": {
-          "id": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui",
-          "seedIdentifier": "261c352b8a6915b25fb40a1d2c437fe52327b3760a2807c9927e0cbfaad909f6",
+          "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+          "seedIdentifier": "e7e21ead709c2388f7f7db3f1493f62bf2a7df28dc1435a117d7557818f61c7b",
           "used": true,
           "derivationMode": "sui",
           "index": 0,
-          "freshAddress": "0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e",
+          "freshAddress": "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db",
           "freshAddressPath": "44'/784'/0'/0'/0'",
           "blockHeight": 5,
-          "syncHash": "9NTjpkzAm9w8jrrzrVNhqhqQ9TgPfEXDHrBehhcvCMQW",
-          "creationDate": "2026-03-06T14:07:19.470Z",
-          "operationsCount": 2,
+          "syncHash": "982rk6brCrg1WVxLtbfUduZsKG3NqKKKqHkqH6axhumg",
+          "creationDate": "2026-09-02T09:53:12.856Z",
+          "operationsCount": 5,
           "operations": [
             {
-              "id": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui-9NTjpkzAm9w8jrrzrVNhqhqQ9TgPfEXDHrBehhcvCMQW-IN",
-              "hash": "9NTjpkzAm9w8jrrzrVNhqhqQ9TgPfEXDHrBehhcvCMQW",
-              "type": "IN",
-              "senders": ["0x00ea18889868519abd2f238966cab9875750bb2859ed3a34debec37781520138"],
-              "recipients": ["0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"],
-              "accountId": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui",
-              "blockHash": "9NTjpkzAm9w8jrrzrVNhqhqQ9TgPfEXDHrBehhcvCMQW",
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-982rk6brCrg1WVxLtbfUduZsKG3NqKKKqHkqH6axhumg-DELEGATE",
+              "hash": "982rk6brCrg1WVxLtbfUduZsKG3NqKKKqHkqH6axhumg",
+              "type": "DELEGATE",
+              "senders": [
+                "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+              ],
+              "recipients": [
+                "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+                "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d"
+              ],
+              "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+              "blockHash": "982rk6brCrg1WVxLtbfUduZsKG3NqKKKqHkqH6axhumg",
               "blockHeight": 5,
-              "extra": {},
-              "date": "2026-03-06T14:14:16.792Z",
-              "value": "8694370006",
-              "fee": "1558760",
+              "extra": {
+                "coinType": "0x2::sui::SUI",
+                "validatorAddress": "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+                "stakedAmount": "10000000000"
+              },
+              "date": "2026-09-02T14:42:52.832Z",
+              "value": "10009696900",
+              "fee": "9696900",
               "hasFailed": false
             },
             {
-              "id": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui-C6DFCEezx4KuCZUbLyyRXJa37kpb9Zue56rD58tW38xF-IN",
-              "hash": "C6DFCEezx4KuCZUbLyyRXJa37kpb9Zue56rD58tW38xF",
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-HtuTmfZXdX3APRhhCdw68CYQKtd5pq8yNMUmArqoe3Yb-IN",
+              "hash": "HtuTmfZXdX3APRhhCdw68CYQKtd5pq8yNMUmArqoe3Yb",
               "type": "IN",
-              "senders": ["0x39124d5f09088c3e57139c5929ccc45ce2b10137371f685038f825c5e3ed37f5"],
-              "recipients": ["0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"],
-              "accountId": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui",
-              "blockHash": "C6DFCEezx4KuCZUbLyyRXJa37kpb9Zue56rD58tW38xF",
+              "senders": [
+                "0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"
+              ],
+              "recipients": [
+                "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+              ],
+              "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+              "blockHash": "HtuTmfZXdX3APRhhCdw68CYQKtd5pq8yNMUmArqoe3Yb",
               "blockHeight": 5,
-              "extra": {},
-              "date": "2026-03-06T14:07:19.470Z",
-              "value": "17567400",
-              "fee": "1548880",
+              "extra": {
+                "coinType": "0x2::sui::SUI"
+              },
+              "date": "2026-09-02T14:40:02.392Z",
+              "value": "14930168691",
+              "fee": "1097880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-2GFzzUjfwugq9Tnm9ckc6G7kWFVWqWF5LAGjMVGVzM8d-OUT",
+              "hash": "2GFzzUjfwugq9Tnm9ckc6G7kWFVWqWF5LAGjMVGVzM8d",
+              "type": "OUT",
+              "senders": [
+                "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+              ],
+              "recipients": [
+                "0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"
+              ],
+              "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+              "blockHash": "2GFzzUjfwugq9Tnm9ckc6G7kWFVWqWF5LAGjMVGVzM8d",
+              "blockHeight": 5,
+              "extra": {
+                "coinType": "0x2::sui::SUI"
+              },
+              "date": "2026-09-02T14:28:40.058Z",
+              "value": "5000119760",
+              "fee": "119760",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-FtHQSfradKgjRTUXQddYBVDriXjFwmrr9pLpizjMGgxC-IN",
+              "hash": "FtHQSfradKgjRTUXQddYBVDriXjFwmrr9pLpizjMGgxC",
+              "type": "IN",
+              "senders": [
+                "0x0a96bf36214ff9c79331a267a06bcb09dab6861cf47aafa116ac391b28d40bd1"
+              ],
+              "recipients": [
+                "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+              ],
+              "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+              "blockHash": "FtHQSfradKgjRTUXQddYBVDriXjFwmrr9pLpizjMGgxC",
+              "blockHeight": 5,
+              "extra": {
+                "coinType": "0x2::sui::SUI"
+              },
+              "date": "2026-09-02T09:56:34.561Z",
+              "value": "529424000",
+              "fee": "-46830000",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-CDMaByFf7e1ThtwdLcry82mkiqeyB7AB8anfiDqKjk15-IN",
+              "hash": "CDMaByFf7e1ThtwdLcry82mkiqeyB7AB8anfiDqKjk15",
+              "type": "IN",
+              "senders": [
+                "0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"
+              ],
+              "recipients": [
+                "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+              ],
+              "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
+              "blockHash": "CDMaByFf7e1ThtwdLcry82mkiqeyB7AB8anfiDqKjk15",
+              "blockHeight": 5,
+              "extra": {
+                "coinType": "0x2::sui::SUI"
+              },
+              "date": "2026-09-02T09:53:12.856Z",
+              "value": "51493664997",
+              "fee": "1097880",
               "hasFailed": false
             }
           ],
           "pendingOperations": [],
           "currencyId": "sui",
-          "balance": "8711937406",
-          "spendableBalance": "8711937406",
+          "balance": "51943441028",
+          "spendableBalance": "51943441028",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [0, [8711937406, 2]]
+              "latestDate": 1788364800000,
+              "balances": [0, [52023088997, 5], [51943441028, 2]]
             },
             "DAY": {
-              "latestDate": 1772751600000,
+              "latestDate": 1788300000000,
               "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
           "subAccounts": [
             {
               "type": "TokenAccountRaw",
-              "id": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
-              "parentId": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui",
+              "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
+              "parentId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui",
               "tokenId": "sui/coin/usdc_0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::usdc",
-              "balance": "7885710",
-              "spendableBalance": "7885710",
-              "creationDate": "2026-03-06T14:14:13.118Z",
+              "balance": "61536382",
+              "spendableBalance": "61536382",
+              "creationDate": "2026-09-02T14:38:23.556Z",
               "operationsCount": 1,
               "operations": [
                 {
-                  "id": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui-5UFrbK58UFDN4rHxmb12Bo6PGAQctQ3Gm6NUzKRe2Qwk-IN",
-                  "hash": "5UFrbK58UFDN4rHxmb12Bo6PGAQctQ3Gm6NUzKRe2Qwk",
+                  "id": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui-4hwi7c2Yzmvzzsrz2QHC9ZwDAuVdGE4YEQW9HoCyWuC5-IN",
+                  "hash": "4hwi7c2Yzmvzzsrz2QHC9ZwDAuVdGE4YEQW9HoCyWuC5",
                   "type": "IN",
-                  "senders": ["0x00ea18889868519abd2f238966cab9875750bb2859ed3a34debec37781520138"],
-                  "recipients": [
+                  "senders": [
                     "0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e"
                   ],
-                  "accountId": "js:2:sui:0x28fac7dc9a26de071ba9127bcc4f39268b5fbcfcfc6e40d2a2f5509d6584ce1e:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
-                  "blockHash": "5UFrbK58UFDN4rHxmb12Bo6PGAQctQ3Gm6NUzKRe2Qwk",
+                  "recipients": [
+                    "0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db"
+                  ],
+                  "accountId": "js:2:sui:0x6d4d4b6cb5cd2a675ab3ec90a8c3483be61cec63a8a1d4aaf98693b332fe42db:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
+                  "blockHash": "4hwi7c2Yzmvzzsrz2QHC9ZwDAuVdGE4YEQW9HoCyWuC5",
                   "blockHeight": 5,
-                  "extra": {},
-                  "date": "2026-03-06T14:14:13.118Z",
-                  "value": "7885710",
-                  "fee": "1896504",
+                  "extra": {
+                    "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+                  },
+                  "date": "2026-09-02T14:38:23.556Z",
+                  "value": "61536382",
+                  "fee": "-841792",
                   "hasFailed": false
                 }
               ],
@@ -896,19 +2378,18 @@
               "swapHistory": [],
               "balanceHistoryCache": {
                 "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, [7885710, 2]]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 },
                 "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
+                  "latestDate": null,
+                  "balances": []
                 }
-              },
-              "starred": false
+              }
             }
           ],
           "suiResources": {},
@@ -920,151 +2401,183 @@
       },
       {
         "data": {
-          "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
-          "seedIdentifier": "17ac6a222eae1482b595adc93968e4e6c60fb0d437ccef2e0c176a25b13cac96",
+          "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+          "seedIdentifier": "219a71f206f659183cfd1fc6c803d533789897b04d3129ebb6e22535bea7a177",
           "used": true,
           "derivationMode": "",
           "index": 0,
-          "freshAddress": "C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM",
+          "freshAddress": "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E",
           "freshAddressPath": "44'/283'/0'/0/0",
-          "blockHeight": 59010411,
-          "creationDate": "2026-03-05T12:58:14.000Z",
-          "operationsCount": 4,
+          "blockHeight": 64662895,
+          "creationDate": "2026-09-02T09:29:51.000Z",
+          "operationsCount": 7,
           "operations": [
             {
-              "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:-6ESQDJHPXCRFSWJOQN5ERJPXIHZBINWVL6ISOVMOT2DNS6QBCMOA-IN",
-              "hash": "6ESQDJHPXCRFSWJOQN5ERJPXIHZBINWVL6ISOVMOT2DNS6QBCMOA",
-              "type": "IN",
-              "senders": ["WIK2KEIKC4XIDBROB5HBGECX4R7HYITG2TY5FVED5OGEU7PITPQ3RRZGCM"],
-              "recipients": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-              "accountId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-7SXZOXP4OAH4UNVYHE5JG4OWMY62PUUL3GMSYP432ZPHJYZ55C7A-OUT",
+              "hash": "7SXZOXP4OAH4UNVYHE5JG4OWMY62PUUL3GMSYP432ZPHJYZ55C7A",
+              "type": "OUT",
+              "senders": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "recipients": [
+                "B3JPYPMUMWQ7HFZMQJUAU6FGDDYEU7M5EBSBRKF37T6VV36Z7CTSBHZRKQ"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
               "blockHash": null,
-              "blockHeight": 59008769,
+              "blockHeight": 64657108,
               "extra": {
                 "rewards": "0"
               },
-              "date": "2026-03-06T14:56:07.000Z",
-              "value": "176351",
+              "date": "2026-09-02T11:37:12.000Z",
+              "value": "101000",
               "fee": "1000"
             },
             {
-              "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:-4I5JZIOTKI5FXHLYIS5WMQKULMOJEHXVP5DLRECEXPGENQMTF46Q-FEES",
-              "hash": "4I5JZIOTKI5FXHLYIS5WMQKULMOJEHXVP5DLRECEXPGENQMTF46Q",
-              "type": "FEES",
-              "senders": ["WIK2KEIKC4XIDBROB5HBGECX4R7HYITG2TY5FVED5OGEU7PITPQ3RRZGCM"],
-              "recipients": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-              "accountId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
-              "blockHash": null,
-              "blockHeight": 59008740,
-              "extra": {
-                "rewards": "0",
-                "assetId": "312769"
-              },
-              "date": "2026-03-06T14:54:47.000Z",
-              "value": "0",
-              "fee": "1000"
-            },
-            {
-              "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:-6NKGKJQUFVMBM42AMMC6SQ4M6LKBCITMVV6ME5F432GHQ2G6AW7A-OPT_IN",
-              "hash": "6NKGKJQUFVMBM42AMMC6SQ4M6LKBCITMVV6ME5F432GHQ2G6AW7A",
-              "type": "OPT_IN",
-              "senders": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-              "recipients": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-              "accountId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
-              "blockHash": null,
-              "blockHeight": 59008654,
-              "extra": {
-                "rewards": "0",
-                "assetId": "312769"
-              },
-              "date": "2026-03-06T14:50:51.000Z",
-              "value": "1000",
-              "fee": "1000"
-            },
-            {
-              "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:-NWDA3YXEKKQOTYCWK3DOWS4RC27THKLRL2B7CTHSOS5PFBDZYI3A-IN",
-              "hash": "NWDA3YXEKKQOTYCWK3DOWS4RC27THKLRL2B7CTHSOS5PFBDZYI3A",
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-W6CRR2TNZWF3LJOVTFLEVITVIBVCUBPHYJ7JIMF464UWTLBFQKIA-IN",
+              "hash": "W6CRR2TNZWF3LJOVTFLEVITVIBVCUBPHYJ7JIMF464UWTLBFQKIA",
               "type": "IN",
-              "senders": ["WIK2KEIKC4XIDBROB5HBGECX4R7HYITG2TY5FVED5OGEU7PITPQ3RRZGCM"],
-              "recipients": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-              "accountId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
+              "senders": [
+                "WARN666I6ITOTBIFMYOOYDAT2JA63QQO2Y6MJCNER5YAF4L6MQO7W6SCAM"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
               "blockHash": null,
-              "blockHeight": 58974864,
+              "blockHeight": 64654473,
+              "extra": {
+                "rewards": "0",
+                "memo": "VGhlIGFkZHJlc3MgRVQ2UkMuLlNBT0xFIHRoYXQganVzdCBzZW50IHlvdSAwLjAwMDAwMSBBTEdPIGlzIGltcGVyc29uYXRpbmcgYW4gYWRkcmVzcyB5b3UgcmVjZW50bHkgaW50ZXJhY3RlZCB3aXRoLiBEbyBub3QgYWNjaWRlbnRhbGx5IHNlbmQgdGhlbSBmdW5kcy4="
+              },
+              "date": "2026-09-02T09:36:51.000Z",
+              "value": "13",
+              "fee": "0"
+            },
+            {
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-DYNFVDEDWZHD4X3JYJMQXOVTW5VGKXTD7KLWWLVXRPP5BYPY2MCA-IN",
+              "hash": "DYNFVDEDWZHD4X3JYJMQXOVTW5VGKXTD7KLWWLVXRPP5BYPY2MCA",
+              "type": "IN",
+              "senders": [
+                "ET6RCXG2EOBXXSKW55ST75HN67M5Y3Z4UTA5VYC5ZUZJZDJBMRBZOSAOLE"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+              "blockHash": null,
+              "blockHeight": 64654464,
               "extra": {
                 "rewards": "0"
               },
-              "date": "2026-03-05T12:58:14.000Z",
-              "value": "62358856",
+              "date": "2026-09-02T09:36:26.000Z",
+              "value": "1",
+              "fee": "1000"
+            },
+            {
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-QSEA3KM4Q4VZF4PWGIBUBREIG5W3IX5BWM4VKRZB6UV3GZ6CP7WQ-IN",
+              "hash": "QSEA3KM4Q4VZF4PWGIBUBREIG5W3IX5BWM4VKRZB6UV3GZ6CP7WQ",
+              "type": "IN",
+              "senders": [
+                "WARN666I6ITOTBIFMYOOYDAT2JA63QQO2Y6MJCNER5YAF4L6MQO7W6SCAM"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+              "blockHash": null,
+              "blockHeight": 64654443,
+              "extra": {
+                "rewards": "0",
+                "memo": "VGhlIGFkZHJlc3MgQzZXR1QuLlJOS0pNIHRoYXQganVzdCBzZW50IHlvdSAwLjAwMDAwMSBBTEdPIGlzIGltcGVyc29uYXRpbmcgYW4gYWRkcmVzcyB5b3UgcmVjZW50bHkgaW50ZXJhY3RlZCB3aXRoLiBEbyBub3QgYWNjaWRlbnRhbGx5IHNlbmQgdGhlbSBmdW5kcy4="
+              },
+              "date": "2026-09-02T09:35:29.000Z",
+              "value": "13",
+              "fee": "0"
+            },
+            {
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-F6YII66QACW3IFDO2KRBFUM72BE3HMRXWJCXZHWUZYOLI7AXBWIA-IN",
+              "hash": "F6YII66QACW3IFDO2KRBFUM72BE3HMRXWJCXZHWUZYOLI7AXBWIA",
+              "type": "IN",
+              "senders": [
+                "C6WGTLE5CHPCBPYFRZII2RIGF2XF2V5NIERCHSOT5AU3B465RBKKIRNKJM"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+              "blockHash": null,
+              "blockHeight": 64654434,
+              "extra": {
+                "rewards": "0"
+              },
+              "date": "2026-09-02T09:35:04.000Z",
+              "value": "1",
+              "fee": "1000"
+            },
+            {
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-FFOASGTF3FMLQTPZ2WU73NJDYMIZMWYNGHSX7PQ65OZBYQORM6BA-IN",
+              "hash": "FFOASGTF3FMLQTPZ2WU73NJDYMIZMWYNGHSX7PQ65OZBYQORM6BA",
+              "type": "IN",
+              "senders": [
+                "ET6RDKIOPARKMNAW2ZXFBDFCJGZOD6P2WGVV7VJZMPTGRVSS5YRLC3B2DE"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+              "blockHash": null,
+              "blockHeight": 64654349,
+              "extra": {
+                "rewards": "0"
+              },
+              "date": "2026-09-02T09:31:12.000Z",
+              "value": "64590466",
+              "fee": "1000"
+            },
+            {
+              "id": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:-E4KMKMPESHE4QULZGUGEREQLI4H42HJQO34DTS63BVESAGLY3RQQ-IN",
+              "hash": "E4KMKMPESHE4QULZGUGEREQLI4H42HJQO34DTS63BVESAGLY3RQQ",
+              "type": "IN",
+              "senders": [
+                "C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"
+              ],
+              "recipients": [
+                "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E"
+              ],
+              "accountId": "js:2:algorand:EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E:",
+              "blockHash": null,
+              "blockHeight": 64654320,
+              "extra": {
+                "rewards": "0"
+              },
+              "date": "2026-09-02T09:29:51.000Z",
+              "value": "367391744",
               "fee": "1000"
             }
           ],
           "pendingOperations": [],
           "currencyId": "algorand",
-          "balance": "62534207",
-          "spendableBalance": "62334207",
+          "balance": "431881238",
+          "spendableBalance": "431781238",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [0, [62358856, 26], [62534207, 2]]
+              "latestDate": 1788364800000,
+              "balances": [0, [431982238, 2], [431881238, 5]]
             },
             "DAY": {
-              "latestDate": 1772751600000,
-              "balances": [0, 62358856]
+              "latestDate": 1788300000000,
+              "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
-          "xpub": "C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM",
-          "subAccounts": [
-            {
-              "type": "TokenAccountRaw",
-              "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:+312769",
-              "parentId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:",
-              "tokenId": "algorand/asa/312769",
-              "balance": "100000",
-              "spendableBalance": "100000",
-              "creationDate": "2026-03-06T14:54:47.000Z",
-              "operationsCount": 1,
-              "operations": [
-                {
-                  "id": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:+312769-4I5JZIOTKI5FXHLYIS5WMQKULMOJEHXVP5DLRECEXPGENQMTF46Q-IN",
-                  "hash": "4I5JZIOTKI5FXHLYIS5WMQKULMOJEHXVP5DLRECEXPGENQMTF46Q",
-                  "type": "IN",
-                  "senders": ["WIK2KEIKC4XIDBROB5HBGECX4R7HYITG2TY5FVED5OGEU7PITPQ3RRZGCM"],
-                  "recipients": ["C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM"],
-                  "accountId": "js:2:algorand:C6WGUIROVYKIFNMVVXETS2HE43DA7MGUG7GO6LQMC5VCLMJ4VSLINZLZPM:+312769",
-                  "blockHash": null,
-                  "blockHeight": 59008740,
-                  "extra": {},
-                  "date": "2026-03-06T14:54:47.000Z",
-                  "value": "100000",
-                  "fee": "1000"
-                }
-              ],
-              "pendingOperations": [],
-              "swapHistory": [],
-              "balanceHistoryCache": {
-                "HOUR": {
-                  "latestDate": null,
-                  "balances": []
-                },
-                "DAY": {
-                  "latestDate": null,
-                  "balances": []
-                },
-                "WEEK": {
-                  "latestDate": null,
-                  "balances": []
-                }
-              },
-              "starred": false
-            }
-          ],
+          "xpub": "EGNHD4QG6ZMRQPH5D7DMQA6VGN4JRF5QJUYST25W4ISTLPVHUF37BPQB6E",
+          "subAccounts": [],
           "algorandResources": {
             "rewards": "0",
-            "nbAssets": 1
+            "nbAssets": 0
           },
           "swapHistory": [],
           "name": "Algorand 1",
@@ -1074,142 +2587,111 @@
       },
       {
         "data": {
-          "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-          "seedIdentifier": "04fcd70e4d2d2168475768f94ec691b75e16aa80f4de393d1c37011943b4dfbd5e86fceedc9cf9e7fcb6552c5545bf315ec94350bb91a896274fee94a3636cd730",
+          "id": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:",
+          "seedIdentifier": "041b8a4fd1f8fa76a33f245fe419163549276cfea2f58118edbc20c7b1445096d9384f0616d986ed516ff13d334c20940c3057402ecd605dacf9d400d4fc081bb6",
           "used": true,
           "derivationMode": "",
           "index": 0,
-          "freshAddress": "TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar",
+          "freshAddress": "TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R",
           "freshAddressPath": "44'/195'/0'/0/0",
-          "blockHeight": 80715591,
-          "creationDate": "2026-03-06T10:10:21.000Z",
+          "blockHeight": 85897791,
+          "syncHash": "0x91a316d1",
+          "creationDate": "2026-09-02T09:34:03.000Z",
           "operationsCount": 4,
           "operations": [
             {
-              "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:-3a4c73c6c07a472fd1379fb34de3cd1eb37232c4e7527cf33efc9ab5a0a3bd47-IN",
-              "hash": "3a4c73c6c07a472fd1379fb34de3cd1eb37232c4e7527cf33efc9ab5a0a3bd47",
+              "id": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:-8c6bfaeb3cb09aca49c98f8b6056fa1db57b373672ca16adc91511090d570ac0-IN",
+              "hash": "8c6bfaeb3cb09aca49c98f8b6056fa1db57b373672ca16adc91511090d570ac0",
               "type": "IN",
-              "senders": ["TQAAayxorqgdGuccTjuR4Tp7SSyTVf141u"],
-              "recipients": ["TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"],
-              "accountId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-              "blockHash": null,
-              "blockHeight": 80714710,
-              "extra": {},
-              "date": "2026-03-06T15:27:24.000Z",
-              "value": "7",
+              "senders": ["TAaR4BXzHsLTxCzC6AbXXwZLTqAXAiQ5B7"],
+              "recipients": ["TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R"],
+              "accountId": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:",
+              "blockHash": "00000000051e93f323e838d59fb5e44c1f5a072be47323611c5494eb71253494",
+              "blockHeight": 85890035,
+              "extra": {
+                "feePayer": "TAaR4BXzHsLTxCzC6AbXXwZLTqAXAiQ5B7"
+              },
+              "date": "2026-09-02T09:35:09.000Z",
+              "value": "1520000",
               "fee": "0",
-              "hasFailed": false
+              "hasFailed": false,
+              "internalOperations": []
             },
             {
-              "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:-c82138deb366a315711cc15d78dd20b3d66d9e4cae1da650cf5536f4ac36a43f-OUT",
-              "hash": "c82138deb366a315711cc15d78dd20b3d66d9e4cae1da650cf5536f4ac36a43f",
-              "type": "OUT",
+              "id": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:-c26d03199122237ee2fc10445ec82e6adbb2c10fb897cd7fd2bc83a2c40cf5ef-IN",
+              "hash": "c26d03199122237ee2fc10445ec82e6adbb2c10fb897cd7fd2bc83a2c40cf5ef",
+              "type": "IN",
+              "senders": ["TC1EcMvq4ErTRTqhEEj251EXt4c8fWDWar"],
+              "recipients": ["TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R"],
+              "accountId": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:",
+              "blockHash": "00000000051e93e49d10038a5f81b60fee0cd77af3be2f2cc95995115858d6a3",
+              "blockHeight": 85890020,
+              "extra": {
+                "feePayer": "TC1EcMvq4ErTRTqhEEj251EXt4c8fWDWar"
+              },
+              "date": "2026-09-02T09:34:24.000Z",
+              "value": "8",
+              "fee": "0",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:-03b7629466d6a2bdb5da8b5b4e285ca86ac1508600b3acfd73bb9936f7e41f93-NONE",
+              "hash": "03b7629466d6a2bdb5da8b5b4e285ca86ac1508600b3acfd73bb9936f7e41f93",
+              "type": "NONE",
+              "senders": ["TQyb4KWf8L3ujoW9EULWsp5FBrM5JFVt2U"],
+              "recipients": ["1005157"],
+              "accountId": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:",
+              "blockHash": "00000000051e93de0c240febb730631edb67625ca9b702b68753d9b5a699a6cc",
+              "blockHeight": 85890014,
+              "extra": {
+                "feePayer": "TQyb4KWf8L3ujoW9EULWsp5FBrM5JFVt2U"
+              },
+              "date": "2026-09-02T09:34:06.000Z",
+              "value": "0",
+              "fee": "0",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:-af6d5438c90016900775323e3cee73823737596629306fa4649656e3b2f97b14-IN",
+              "hash": "af6d5438c90016900775323e3cee73823737596629306fa4649656e3b2f97b14",
+              "type": "IN",
               "senders": ["TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"],
-              "recipients": ["TFZwUMDBX5vQmddqh9Pag7yzrGmFPpp41u"],
-              "accountId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-              "blockHash": null,
-              "blockHeight": 80714703,
-              "extra": {},
-              "date": "2026-03-06T15:27:03.000Z",
-              "value": "26100000",
+              "recipients": ["TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R"],
+              "accountId": "js:2:tron:TN2mncoKRT7qniY1cZ6Ad6D7XRn2akaR7R:",
+              "blockHash": "00000000051e93dd34b7e52efa1dadba00df9bd1fd929157a8d970de317aabb8",
+              "blockHeight": 85890013,
+              "extra": {
+                "feePayer": "TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"
+              },
+              "date": "2026-09-02T09:34:03.000Z",
+              "value": "40832154",
               "fee": "1100000",
-              "hasFailed": false
-            },
-            {
-              "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:-c9e7f2ecf2af439f3863bd852e5701b2cd6c6153033928b8ed71e009fceccc1c-IN",
-              "hash": "c9e7f2ecf2af439f3863bd852e5701b2cd6c6153033928b8ed71e009fceccc1c",
-              "type": "IN",
-              "senders": ["TWt3HC8fE8r9SHxEgHXXcKj7WxjYkCQXW3"],
-              "recipients": ["TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"],
-              "accountId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-              "blockHash": null,
-              "blockHeight": 80709446,
-              "extra": {},
-              "date": "2026-03-06T11:04:06.000Z",
-              "value": "261000",
-              "fee": "0",
-              "hasFailed": false
-            },
-            {
-              "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:-2b11de0309fd92d033d866232fd326da591e9c71c9bea9d5a3ab23a4112bd774-IN",
-              "hash": "2b11de0309fd92d033d866232fd326da591e9c71c9bea9d5a3ab23a4112bd774",
-              "type": "IN",
-              "senders": ["TX5XiRXdyz7sdFwF5mnhT1QoGCpbkncpke"],
-              "recipients": ["TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"],
-              "accountId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-              "blockHash": null,
-              "blockHeight": 80708371,
-              "extra": {},
-              "date": "2026-03-06T10:10:21.000Z",
-              "value": "41184167",
-              "fee": "1000000",
-              "hasFailed": false
+              "hasFailed": false,
+              "internalOperations": []
             }
           ],
           "pendingOperations": [],
           "currencyId": "tron",
-          "balance": "15345174",
-          "spendableBalance": "15345174",
+          "balance": "42352162",
+          "spendableBalance": "42352162",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [0, 41184167, [41445167, 4], 15345174]
+              "latestDate": 1788364800000,
+              "balances": [0, [42352162, 7]]
             },
             "DAY": {
-              "latestDate": 1772751600000,
+              "latestDate": 1788300000000,
               "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
-          "subAccounts": [
-            {
-              "type": "TokenAccountRaw",
-              "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
-              "parentId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:",
-              "tokenId": "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
-              "balance": "5084297",
-              "spendableBalance": "5084297",
-              "creationDate": "2026-03-06T15:28:27.000Z",
-              "operationsCount": 1,
-              "operations": [
-                {
-                  "id": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t-ad2923ac138b5397db8d52e62a767d96b5a25b5e4c76a69f0e6ee6fbc48239f7-IN",
-                  "hash": "ad2923ac138b5397db8d52e62a767d96b5a25b5e4c76a69f0e6ee6fbc48239f7",
-                  "type": "IN",
-                  "senders": ["TX5XiRXdyz7sdFwF5mnhT1QoGCpbkncpke"],
-                  "recipients": ["TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar"],
-                  "accountId": "js:2:tron:TSWtMAvbEoftQEbLEVdqZiDCQaGApWNWar:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
-                  "blockHash": null,
-                  "blockHeight": 80714731,
-                  "extra": {},
-                  "date": "2026-03-06T15:28:27.000Z",
-                  "value": "5084297",
-                  "fee": "0",
-                  "hasFailed": false
-                }
-              ],
-              "pendingOperations": [],
-              "swapHistory": [],
-              "balanceHistoryCache": {
-                "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, 5084297]
-                },
-                "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
-                },
-                "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
-                }
-              },
-              "starred": false
-            }
-          ],
+          "xpub": "0480869d72eb8ef78a23b51cdc59f23d2b9612741deb79c1626680d6ee0e403e76fe809bfddfd16f321fa4939d6c1ace816fe9935683bb104593c17c4580cad41e",
+          "subAccounts": [],
           "tronResources": {
             "frozen": {},
             "delegatedFrozen": {},
@@ -1227,33 +2709,7 @@
               "gainedUsed": "0",
               "gainedLimit": "0"
             },
-            "unwithdrawnReward": "0",
-            "cacheTransactionInfoById": {
-              "c9e7f2ecf2af439f3863bd852e5701b2cd6c6153033928b8ed71e009fceccc1c": [
-                null,
-                80709446,
-                null,
-                null
-              ],
-              "3a4c73c6c07a472fd1379fb34de3cd1eb37232c4e7527cf33efc9ab5a0a3bd47": [
-                null,
-                80714710,
-                null,
-                null
-              ],
-              "2b11de0309fd92d033d866232fd326da591e9c71c9bea9d5a3ab23a4112bd774": [
-                1000000,
-                80708371,
-                null,
-                null
-              ],
-              "c82138deb366a315711cc15d78dd20b3d66d9e4cae1da650cf5536f4ac36a43f": [
-                1100000,
-                80714703,
-                null,
-                null
-              ]
-            }
+            "unwithdrawnReward": "0"
           },
           "swapHistory": [],
           "name": "Tron 1",
@@ -1263,138 +2719,77 @@
       },
       {
         "data": {
-          "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-          "seedIdentifier": "040ccf12de0c09ce1c151204a2268a410251d60c75965cf5b3a3fa829ac88a473bebde57c229f39f6bd0aa160ddb6cdffdcc34149c6196b7409c4e00ba3b12a942",
+          "id": "js:2:polygon:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+          "seedIdentifier": "04535dc8c95acc1793651b99c37c7bd80dc0a260b3dd36c7a457ea528287e8dfe48121b0528ecb2e93227346d3b38b13629e8245ae8b66b802133ec7de3901e922",
           "used": true,
           "derivationMode": "",
           "index": 0,
-          "freshAddress": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "freshAddress": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2",
           "freshAddressPath": "44'/60'/0'/0/0",
-          "blockHeight": 83846728,
-          "syncHash": "0xe1e130ff",
-          "creationDate": "2026-03-06T15:31:47.000Z",
+          "blockHeight": 93106631,
+          "syncHash": "0x91a316d1",
+          "creationDate": "2026-09-02T08:40:16.000Z",
           "operationsCount": 2,
           "operations": [
             {
-              "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xeb39da44764ee273cf4a01b7cdc9e79773f3f497f7914b3c19a1159af24aff9c-NONE",
-              "hash": "0xeb39da44764ee273cf4a01b7cdc9e79773f3f497f7914b3c19a1159af24aff9c",
-              "type": "NONE",
-              "senders": ["0x069885f2A6bdD702943497904FE72A40242634B2"],
-              "recipients": ["0x233c5370CCfb3cD7409d9A3fb98ab94dE94Cb4Cd"],
-              "accountId": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xb6762d5f39ca41d3d9f7cf5bb4d90fa45847883b49530600f8324dd269bdce6a",
-              "blockHeight": 83846353,
-              "extra": {},
-              "date": "2026-03-06T15:58:57.000Z",
-              "value": "0",
-              "fee": "67993476213252912",
-              "transactionSequenceNumber": "75748",
+              "id": "js:2:polygon:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0x41d4890c1f6676d5b91dbc9daeb84801fffbe7e7883d83ee7a04a0f83ba1b4ad-IN",
+              "hash": "0x41d4890c1f6676d5b91dbc9daeb84801fffbe7e7883d83ee7a04a0f83ba1b4ad",
+              "type": "IN",
+              "senders": ["0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:polygon:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x3e396cd6556064351b65fd0080eb2fac0c06a1936be96953fe4068b82571b4f9",
+              "blockHeight": 93089048,
+              "extra": {
+                "feePayer": "0xc79c7a29c40Ce8F5746af2c956F93F27e2820307"
+              },
+              "date": "2026-09-02T08:43:25.000Z",
+              "value": "706204141997807000",
+              "fee": "12514520205390000",
+              "transactionSequenceNumber": "0",
               "hasFailed": false,
-              "internalOperations": [
-                {
-                  "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xeb39da44764ee273cf4a01b7cdc9e79773f3f497f7914b3c19a1159af24aff9c-IN",
-                  "hash": "0xeb39da44764ee273cf4a01b7cdc9e79773f3f497f7914b3c19a1159af24aff9c",
-                  "type": "IN",
-                  "senders": ["0x233c5370CCfb3cD7409d9A3fb98ab94dE94Cb4Cd"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-                  "blockHash": "0xb6762d5f39ca41d3d9f7cf5bb4d90fa45847883b49530600f8324dd269bdce6a",
-                  "blockHeight": 83846353,
-                  "extra": {
-                    "internal": true
-                  },
-                  "date": "2026-03-06T15:58:57.000Z",
-                  "value": "18040816497063653869",
-                  "fee": "67993476213252912",
-                  "hasFailed": false
-                }
-              ]
+              "internalOperations": []
             },
             {
-              "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xb1dfddc83bd34e63b6cc5e87507d34cb1725928c409faa68e99fe7bf4aefd2ee-NONE",
-              "hash": "0xb1dfddc83bd34e63b6cc5e87507d34cb1725928c409faa68e99fe7bf4aefd2ee",
-              "type": "NONE",
-              "senders": ["0x56c262027e0De4aeA31d2489529CB25D23E58a8B"],
-              "recipients": ["0xCcC88a9d1B4ED6b0EABA998850414b24f1c315bE"],
-              "accountId": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0x98ce1c5e35fdad460f81581e382735104836746e05f81cb8cb34dfcca14c74da",
-              "blockHeight": 83845538,
-              "extra": {},
-              "date": "2026-03-06T15:31:47.000Z",
-              "value": "0",
-              "fee": "900069190072228995",
-              "transactionSequenceNumber": "410090",
+              "id": "js:2:polygon:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:-0xaf4cbb5e4b2673709c3dc20ace346fdb13c999ccbfaaa02e5bbc7acecdda4188-IN",
+              "hash": "0xaf4cbb5e4b2673709c3dc20ace346fdb13c999ccbfaaa02e5bbc7acecdda4188",
+              "type": "IN",
+              "senders": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
+              "recipients": ["0x30Fb429E206729962c548b9a8d7E79095cC7E0E2"],
+              "accountId": "js:2:polygon:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+              "blockHash": "0x82ab768da48fe27ea88125024aee42ee42f60488ef14e760ba11d442d224f56e",
+              "blockHeight": 93088922,
+              "extra": {
+                "feePayer": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"
+              },
+              "date": "2026-09-02T08:40:16.000Z",
+              "value": "15621452558592968029",
+              "fee": "13284354944427000",
+              "transactionSequenceNumber": "475",
               "hasFailed": false,
               "internalOperations": []
             }
           ],
           "pendingOperations": [],
           "currencyId": "polygon",
-          "balance": "18040816497063653869",
-          "spendableBalance": "18040816497063653869",
+          "balance": "16327656700590775029",
+          "spendableBalance": "16327656700590775029",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [0, 18040816497063653000]
+              "latestDate": 1788364800000,
+              "balances": [0, [16327656700590774000, 8]]
             },
             "DAY": {
-              "latestDate": 1772751600000,
+              "latestDate": 1788300000000,
               "balances": [0]
             },
             "WEEK": {
-              "latestDate": 1772319600000,
+              "latestDate": 1788040800000,
               "balances": [0]
             }
           },
-          "xpub": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
-          "subAccounts": [
-            {
-              "type": "TokenAccountRaw",
-              "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin",
-              "parentId": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "tokenId": "polygon/erc20/(pos)_dai_stablecoin",
-              "balance": "3789374146826662541",
-              "spendableBalance": "3789374146826662541",
-              "creationDate": "2026-03-06T15:31:47.000Z",
-              "operationsCount": 1,
-              "operations": [
-                {
-                  "id": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin-0xb1dfddc83bd34e63b6cc5e87507d34cb1725928c409faa68e99fe7bf4aefd2ee-IN",
-                  "hash": "0xb1dfddc83bd34e63b6cc5e87507d34cb1725928c409faa68e99fe7bf4aefd2ee",
-                  "type": "IN",
-                  "senders": ["0xb92fe925DC43a0ECdE6c8b1a2709c170Ec4fFf4f"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin",
-                  "blockHash": "0x98ce1c5e35fdad460f81581e382735104836746e05f81cb8cb34dfcca14c74da",
-                  "blockHeight": 83845538,
-                  "extra": {},
-                  "date": "2026-03-06T15:31:47.000Z",
-                  "value": "3789374146826662541",
-                  "fee": "900069190072228995",
-                  "transactionSequenceNumber": "410090",
-                  "hasFailed": false,
-                  "contract": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
-                }
-              ],
-              "pendingOperations": [],
-              "swapHistory": [],
-              "balanceHistoryCache": {
-                "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, 3789374146826662400]
-                },
-                "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
-                },
-                "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
-                }
-              },
-              "starred": false
-            }
-          ],
+          "xpub": "04c674d69ee40d9acca4e025e0367b9f5fa12be405610ff8e7ed6622d1c31a4580ac7fb86592ba05e1276b1b9f322bfeb4f2390b1424ea93fb80540b3361d8ae6d",
+          "subAccounts": [],
           "swapHistory": [],
           "name": "Polygon 1",
           "starred": false
@@ -1403,120 +2798,38 @@
       },
       {
         "data": {
-          "id": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-          "seedIdentifier": "040ccf12de0c09ce1c151204a2268a410251d60c75965cf5b3a3fa829ac88a473bebde57c229f39f6bd0aa160ddb6cdffdcc34149c6196b7409c4e00ba3b12a942",
-          "used": true,
+          "id": "js:2:bsc:0x30Fb429E206729962c548b9a8d7E79095cC7E0E2:",
+          "seedIdentifier": "04535dc8c95acc1793651b99c37c7bd80dc0a260b3dd36c7a457ea528287e8dfe48121b0528ecb2e93227346d3b38b13629e8245ae8b66b802133ec7de3901e922",
+          "used": false,
           "derivationMode": "",
           "index": 0,
-          "freshAddress": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
+          "freshAddress": "0x30Fb429E206729962c548b9a8d7E79095cC7E0E2",
           "freshAddressPath": "44'/60'/0'/0/0",
-          "blockHeight": 85038585,
-          "syncHash": "0xe1e130ff",
-          "creationDate": "2026-03-06T15:16:04.000Z",
-          "operationsCount": 2,
-          "operations": [
-            {
-              "id": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0xc3f60496716511daaae845666051ed2406f6e4cc2526d11dadfab61a0665c3cf-NONE",
-              "hash": "0xc3f60496716511daaae845666051ed2406f6e4cc2526d11dadfab61a0665c3cf",
-              "type": "NONE",
-              "senders": ["0xf70da97812CB96acDF810712Aa562db8dfA3dbEF"],
-              "recipients": ["0xCcC88a9d1B4ED6b0EABA998850414b24f1c315bE"],
-              "accountId": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xd0757f704977dc592cb02a2b907e267bf2f0153ea5fd8bdd1ab025eb78ebca74",
-              "blockHeight": 85033636,
-              "extra": {},
-              "date": "2026-03-06T15:34:17.000Z",
-              "value": "0",
-              "fee": "31273250000000",
-              "transactionSequenceNumber": "3446768",
-              "hasFailed": false,
-              "internalOperations": []
-            },
-            {
-              "id": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:-0x1a6147e3a1d1a0de8597e3cdfb529da3eb6f4917611fc2a4386a09ba636de657-NONE",
-              "hash": "0x1a6147e3a1d1a0de8597e3cdfb529da3eb6f4917611fc2a4386a09ba636de657",
-              "type": "NONE",
-              "senders": ["0x1Dbba1e7fc500ab3b4341Ec4311217547BE93356"],
-              "recipients": ["0xb1e7E7AC8E2494dcF2745938d6A85755903268ee"],
-              "accountId": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "blockHash": "0xe6a69dea9007bc26e1ed375e49a1220ffbb18bbb17f4e86fec4d0b9d26a1c987",
-              "blockHeight": 85031206,
-              "extra": {},
-              "date": "2026-03-06T15:16:04.000Z",
-              "value": "0",
-              "fee": "68443650000000",
-              "transactionSequenceNumber": "738",
-              "hasFailed": false,
-              "internalOperations": []
-            }
-          ],
+          "blockHeight": 0,
+          "syncHash": "0x91a316d1",
+          "creationDate": "2026-09-02T16:02:12.953Z",
+          "operationsCount": 0,
+          "operations": [],
           "pendingOperations": [],
           "currencyId": "bsc",
           "balance": "0",
           "spendableBalance": "0",
           "balanceHistoryCache": {
             "HOUR": {
-              "latestDate": 1772812800000,
-              "balances": [[0, 2]]
+              "latestDate": 1788364800000,
+              "balances": []
             },
             "DAY": {
-              "latestDate": 1772751600000,
-              "balances": [0]
+              "latestDate": 1788300000000,
+              "balances": []
             },
             "WEEK": {
-              "latestDate": 1772319600000,
-              "balances": [0]
+              "latestDate": 1788040800000,
+              "balances": []
             }
           },
-          "xpub": "0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a",
-          "subAccounts": [
-            {
-              "type": "TokenAccountRaw",
-              "id": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~busd~!underscore!~token",
-              "parentId": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:",
-              "tokenId": "bsc/bep20/binance-peg_busd_token",
-              "balance": "4910584900322938989",
-              "spendableBalance": "4910584900322938989",
-              "creationDate": "2026-03-06T15:34:17.000Z",
-              "operationsCount": 1,
-              "operations": [
-                {
-                  "id": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~busd~!underscore!~token-0xc3f60496716511daaae845666051ed2406f6e4cc2526d11dadfab61a0665c3cf-IN",
-                  "hash": "0xc3f60496716511daaae845666051ed2406f6e4cc2526d11dadfab61a0665c3cf",
-                  "type": "IN",
-                  "senders": ["0xb92fe925DC43a0ECdE6c8b1a2709c170Ec4fFf4f"],
-                  "recipients": ["0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a"],
-                  "accountId": "js:2:bsc:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~busd~!underscore!~token",
-                  "blockHash": "0xd0757f704977dc592cb02a2b907e267bf2f0153ea5fd8bdd1ab025eb78ebca74",
-                  "blockHeight": 85033636,
-                  "extra": {},
-                  "date": "2026-03-06T15:34:17.000Z",
-                  "value": "4910584900322938989",
-                  "fee": "31273250000000",
-                  "transactionSequenceNumber": "3446768",
-                  "hasFailed": false,
-                  "contract": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
-                }
-              ],
-              "pendingOperations": [],
-              "swapHistory": [],
-              "balanceHistoryCache": {
-                "HOUR": {
-                  "latestDate": 1772812800000,
-                  "balances": [0, 4910584900322939000]
-                },
-                "DAY": {
-                  "latestDate": 1772751600000,
-                  "balances": [0]
-                },
-                "WEEK": {
-                  "latestDate": 1772319600000,
-                  "balances": [0]
-                }
-              },
-              "starred": false
-            }
-          ],
+          "xpub": "04c674d69ee40d9acca4e025e0367b9f5fa12be405610ff8e7ed6622d1c31a4580ac7fb86592ba05e1276b1b9f322bfeb4f2390b1424ea93fb80540b3361d8ae6d",
+          "subAccounts": [],
           "swapHistory": [],
           "name": "BNB Chain 1",
           "starred": false
