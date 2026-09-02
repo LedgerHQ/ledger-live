@@ -176,11 +176,15 @@ const swaps = [
     xrayTicket: "B2CQA-6592",
     tag: [...deviceTagsWithoutLNS(), "@aleo", "@family-aleo", "@ethereum", "@family-evm"],
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
+    // TODO: remove once NEAR quotes are stable or Changelly is re-enabled
+    skipReason: "For now NEAR is the only available provider and its quotes are flaky",
   },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook } of swaps) {
+for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason } of swaps) {
   test.describe("Swap - accepted", () => {
+    test.skip(!!skipReason, skipReason);
+
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
