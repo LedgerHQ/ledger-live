@@ -639,6 +639,9 @@ importers:
       '@ledgerhq/pnpm-utils':
         specifier: workspace:*
         version: link:tools/pnpm-utils
+      '@nx/nx-linux-x64-gnu':
+        specifier: 22.7.8
+        version: 22.7.8
       '@nx/s3-cache':
         specifier: 5.0.7
         version: 5.0.7(nx@22.7.8)
@@ -690,10 +693,6 @@ importers:
       zx:
         specifier: 8.8.5
         version: 8.8.5
-    optionalDependencies:
-      '@nx/nx-linux-x64-gnu':
-        specifier: 22.7.8
-        version: 22.7.8
 
   apps/cli:
     dependencies:
@@ -22832,7 +22831,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -49931,8 +49929,7 @@ snapshots:
   '@nx/nx-linux-arm64-musl@22.7.8':
     optional: true
 
-  '@nx/nx-linux-x64-gnu@22.7.8':
-    optional: true
+  '@nx/nx-linux-x64-gnu@22.7.8': {}
 
   '@nx/nx-linux-x64-musl@22.7.8':
     optional: true
@@ -66319,9 +66316,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

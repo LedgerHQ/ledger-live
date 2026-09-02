@@ -236,6 +236,7 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@nx/nx-linux-x64-gnu": "22.7.8",
     "@nx/s3-cache": "5.0.7",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@ton/crypto": "^3.3.0",
@@ -371,9 +372,6 @@
       "web3-shh",
       "usb"
     ]
-  },
-  "optionalDependencies": {
-    "@nx/nx-linux-x64-gnu": "22.7.8"
   },
   "packageManager": "pnpm@10.24.0"
 }
