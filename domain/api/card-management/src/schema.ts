@@ -44,9 +44,10 @@ export const PayCardOrderResponseSchema = z.object({
 
 export const PayCardStatusResponseSchema = z.object({
   id: z.string().min(1),
-  holderName: z.string().min(1),
+  // Optional because a live card answered with neither.
+  holderName: z.string().min(1).optional(),
   /** `YYYY/MM`, as the provider formats it. */
-  expiryDate: z.string().min(1),
+  expiryDate: z.string().min(1).optional(),
   panLast4: z.string().min(1),
   status: z.enum(["ACTIVE", "FROZEN", "BLOCKED"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
