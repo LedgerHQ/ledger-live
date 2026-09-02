@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
+import { FF_LWM_WALLET_40_Q2, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
   tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4341", "B2CQA-4340", "B2CQA-4351"],
@@ -17,7 +17,7 @@ describe("Portfolio with account", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: CURRENCY.speculosApp,
-      featureFlags: FF_LWM_WALLET_40_Q2,
+      featureFlags: { ...FF_LWM_WALLET_40_Q2, ...FF_NEW_SEND_FLOW_ENABLED },
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.portfolio.addAccount();
@@ -72,6 +72,6 @@ describe("Portfolio with account", () => {
 
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.pressTransferBottomSheetSendButton();
-    await app.send.expectFirstStep();
+    await app.modularDrawer.checkSelectAssetPage();
   });
 });

@@ -1,10 +1,15 @@
-import { renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
+import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
 import { useQuickActionsCtasViewModel } from "../useQuickActionsCtasViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../../testIds";
+
+const mockNavigate = jest.fn();
+const mockHandleOpenSendFlow = jest.fn();
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   const { defaultIsAccountEmpty } = jest.requireActual(
@@ -21,7 +26,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: jest.fn() }),
+  useNavigation: () => ({ navigate: mockNavigate }),
   useRoute: () => ({ name: "Portfolio", key: "portfolio-key", params: {} }),
 }));
 
@@ -45,6 +50,10 @@ jest.mock("LLM/features/Swap", () => ({
 
 jest.mock("LLM/features/Receive", () => ({
   useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: jest.fn() }),
+}));
+
+jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => ({ handleOpenSendFlow: mockHandleOpenSendFlow }),
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -75,6 +84,10 @@ const withEmptyAccount = (state: State): State => ({
 });
 
 describe("useQuickActionsCtasViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("returns the no_signer CTAs (connect + buy_ledger) when readOnlyModeEnabled", () => {
     const { result } = renderHook(() => useQuickActionsCtasViewModel(), {
       overrideInitialState: withReadOnly,
@@ -125,5 +138,77 @@ describe("useQuickActionsCtasViewModel", () => {
     );
 
     expect(result.current.quickActions.length).toBeGreaterThan(0);
+  });
+
+  it("keeps legacy account selection when the new send flow is disabled", () => {
+    const { result } = renderHook(() => useQuickActionsCtasViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        { lwmQuickActionsCtasVariant: { enabled: true } },
+        withFundedAccount,
+      ),
+    });
+
+    const sendAction = result.current.quickActions.find(action => action.id === "send");
+    expect(sendAction).toBeDefined();
+    act(() => sendAction!.onPress());
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+    });
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: false }),
+    );
+  });
+
+  it("opens the modular account selection when the new send flow is enabled", () => {
+    const { result } = renderHook(() => useQuickActionsCtasViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          lwmQuickActionsCtasVariant: { enabled: true },
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
+          },
+        },
+        withFundedAccount,
+      ),
+    });
+
+    const sendAction = result.current.quickActions.find(action => action.id === "send");
+    expect(sendAction).toBeDefined();
+    act(() => sendAction!.onPress());
+
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: true }),
+    );
+  });
+
+  it("keeps legacy account selection when the new send flow config has no families", () => {
+    const { result } = renderHook(() => useQuickActionsCtasViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          lwmQuickActionsCtasVariant: { enabled: true },
+          newSendFlow: {
+            enabled: true,
+            params: { families: [], excludedCurrencyIds: [] },
+          },
+        },
+        withFundedAccount,
+      ),
+    });
+
+    const sendAction = result.current.quickActions.find(action => action.id === "send");
+    expect(sendAction).toBeDefined();
+    act(() => sendAction!.onPress());
+
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+    });
   });
 });
