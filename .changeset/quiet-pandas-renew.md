@@ -7,4 +7,12 @@
 "live-mobile": patch
 ---
 
-Refresh Baanx Pay Card sessions after 401 responses without exposing credentials in redux actions.
+Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
+
+The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
+renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
+
+The desktop redux logger, both DevTools configurations and the mobile DevTools relay now strip every
+Card action, which also closes a live leak: the code exchange logs its code and its code verifier in
+production, into the file users attach to a support ticket. The mobile relay takes a sanitizer
+through a patch of `@rozenite/redux-devtools-plugin`, which had accepted none.

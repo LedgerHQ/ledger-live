@@ -29,8 +29,8 @@ logout or newer login replaced answers a stale-request error instead and touches
 - `refreshCardSession(sessionId, failedAccessToken)` — renews after a 401.
 - `configureCardSessionRenewal(config)` — installed once by each app store.
 
-The refresh token has **no** public reader. It leaves this package only inside the grant request the
-renewal sends.
+The refresh token has **no** public reader. It leaves this package only as the argument of the
+refresh grant the renewal dispatches.
 
 ## Where the session lives
 
@@ -61,12 +61,17 @@ deliberately signs users out during a token-endpoint outage in exchange for one 
 `card_stale_request` and leaves that session untouched. A keychain read rejection before the request
 is reported without being mistaken for an absent session or clearing it.
 
-## Credentials never travel through redux
+## Credentials never rest in redux
 
-The two OAuth2 grants are plain thunks in `@domain/api-card-management`: they dispatch no lifecycle
-actions containing their credential arguments or token response. The Card base query also drops the
-`Request` metadata whose headers contain the Bearer. This protects desktop support logs and the
-mobile DevTools relay, which has no action sanitizer.
+The renewal dispatches the `refreshSession` endpoint of `@domain/api-card-management` with
+`track: false`, so the rotated tokens never become a cache entry: this package writes them to the
+session store and is their only reader. The Card base query also drops the `Request` metadata whose
+headers contain the Bearer.
+
+RTK Query still dispatches a pending and a settled action for the grant, and both carry a
+credential. Each app strips every Card action with `redactCardApiAction` before its logger and its
+DevTools read one, and strips the state with `redactCardApiState`. The mobile DevTools relay takes
+both sanitizers through `patches/@rozenite__redux-devtools-plugin@1.2.0.patch`.
 
 When renewal ends a session, apps publish signed-out immediately and reset the Card API cache one
 macrotask later so the triggering request can return its 401. A successful replacement login resets

@@ -12,6 +12,8 @@ import {
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
+  redactCardApiState,
   swapApiExtra,
 } from "@shared/api-services";
 import {
@@ -137,7 +139,11 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    devTools: __DEV__,
+    // Both OAuth2 grants are Card endpoints, so their arguments and their answers ride on redux
+    // actions, and DevTools serializes every action and every state it is given.
+    devTools: __DEV__
+      ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+      : false,
   });
 
   // After the store exists, because a renewal dispatches the refresh grant through it. One renewal

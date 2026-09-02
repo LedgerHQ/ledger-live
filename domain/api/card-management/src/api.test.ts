@@ -1,5 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { cardApi, cardApiExtra, type CardApiExtra } from "@shared/api-services";
+import {
+  cardApi,
+  cardApiExtra,
+  CARD_GRANT_ENDPOINTS,
+  type CardApiExtra,
+} from "@shared/api-services";
+import * as apiModule from "./api";
 import {
   cardManagementApi,
   useFreezeCardMutation,
@@ -123,6 +129,7 @@ describe("cardManagementApi configuration", () => {
 
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
+      "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
       "getCardOnboardingStatus",
@@ -131,8 +138,29 @@ describe("cardManagementApi configuration", () => {
       "getUser",
       "logout",
       "orderCard",
+      "refreshSession",
       "unfreezeCard",
     ]);
+  });
+
+  it("names the two grants the redaction knows", () => {
+    // `CARD_GRANT_ENDPOINTS` lives below this package, so the DevTools state sanitizer can read it
+    // without depending on this layer. This holds the two lists together.
+    expect([...CARD_GRANT_ENDPOINTS].sort()).toEqual([
+      "exchangeAuthorizationCode",
+      "refreshSession",
+    ]);
+    for (const name of CARD_GRANT_ENDPOINTS) {
+      expect(Object.keys(cardManagementApi.endpoints)).toContain(name);
+    }
+  });
+
+  it("exports no hook for either grant", () => {
+    // RTK Query builds a hook for every endpoint, so the module chooses which ones a component can
+    // reach. A renewal is the base query's decision, and the code exchange belongs to the login
+    // machine: a component that called one would rotate the refresh token behind its back.
+    expect(Object.keys(apiModule)).not.toContain("useExchangeAuthorizationCodeMutation");
+    expect(Object.keys(apiModule)).not.toContain("useRefreshSessionMutation");
   });
 
   it("exposes the orderCard endpoint and its hook", () => {
@@ -178,6 +206,118 @@ describe("cardManagementApi requests", () => {
 
   afterEach(() => {
     fetchSpy?.mockRestore();
+  });
+
+  describe("the OAuth2 grants", () => {
+    const sessionResponse = {
+      access_token: "at_token",
+      expires_in: 21600,
+      refresh_token: "rt_token",
+    };
+
+    const session = {
+      accessToken: "at_token",
+      expiresIn: 21600,
+      refreshToken: "rt_token",
+    };
+
+    it("posts the code and the verifier, and answers with the session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(
+          { code: "auth-code", codeVerifier: "verifier" },
+          { track: false },
+        ),
+      );
+
+      expect(result.data).toEqual(session);
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
+      await expect(request(fetchSpy).json()).resolves.toEqual({
+        grant_type: "authorization_code",
+        code: "auth-code",
+        code_verifier: "verifier",
+      });
+    });
+
+    it("posts the refresh token to the same path, and answers with the session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      expect(result.data).toEqual(session);
+      await expect(request(fetchSpy).json()).resolves.toEqual({
+        grant_type: "refresh_token",
+        refresh_token: "rt_stored",
+      });
+      // A grant carries its own proof, and a renewal that renewed would loop on its own 401.
+      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+    });
+
+    it("writes no cache entry, because both grants run untracked", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(sessionResponse));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const state = store.getState()[cardApi.reducerPath] as { mutations: object };
+      expect(state.mutations).toEqual({});
+    });
+
+    it("fails, and quotes no token, when the answer is not a session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse({
+          access_token: "sensitive-access-token",
+          refresh_token: "sensitive-refresh-token",
+          // `expires_in` is missing, so the wire schema rejects the body.
+        }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
+      expect(JSON.stringify(result.error)).toContain("rawResponseSchema");
+      expect(JSON.stringify(result.error)).not.toContain("sensitive-access-token");
+      expect(JSON.stringify(result.error)).not.toContain("sensitive-refresh-token");
+    });
+
+    it("reports the status when the provider refuses the grant", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(400, "invalid_grant"));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      expect(result.error).toMatchObject({ status: 400 });
+    });
   });
 
   describe("logout", () => {

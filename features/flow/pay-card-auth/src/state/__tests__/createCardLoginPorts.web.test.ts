@@ -1,4 +1,4 @@
-import { cardManagementApi, exchangeAuthorizationCode } from "@domain/api-card-management";
+import { cardManagementApi } from "@domain/api-card-management";
 import { cardSession, getCardSessionToken } from "@features/platform-card";
 import { createCardLoginPorts, type CardLoginDispatch } from "../createCardLoginPorts";
 import type { OpenHostedLogin } from "../types";
@@ -11,11 +11,6 @@ jest.mock("@features/platform-card", () => ({
   getCardSessionToken: jest.fn(async () => "at_token"),
 }));
 
-jest.mock("@domain/api-card-management", () => ({
-  ...jest.requireActual("@domain/api-card-management"),
-  exchangeAuthorizationCode: jest.fn(() => "the-grant-thunk"),
-}));
-
 const grant = { code: "a-code", codeVerifier: "a-verifier" };
 const session = { accessToken: "at_token", expiresIn: 3600, refreshToken: "rt_token" };
 
@@ -25,7 +20,9 @@ const openHostedLogin: OpenHostedLogin = jest.fn(
 );
 
 function buildPorts(answer: () => Promise<unknown> = async () => session) {
-  const dispatch = jest.fn(() => answer());
+  // `initiate` answers with a promise that also carries `unwrap`, and the port awaits `unwrap()`.
+  // `resetApiState` is a plain action, so the fake serves both by carrying the field.
+  const dispatch = jest.fn(() => ({ unwrap: answer }));
   const ports = createCardLoginPorts({
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     dispatch: dispatch as unknown as CardLoginDispatch,
@@ -57,15 +54,18 @@ describe("createCardLoginPorts", () => {
   });
 
   describe("exchangeAuthorizationCode", () => {
-    it("dispatches the plain grant thunk and answers with the session it returns", async () => {
+    it("dispatches the grant untracked and answers with the session", async () => {
+      const initiate = jest.spyOn(
+        cardManagementApi.endpoints.exchangeAuthorizationCode,
+        "initiate",
+      );
       const { ports, dispatch } = buildPorts();
 
       await expect(ports.exchangeAuthorizationCode(grant)).resolves.toEqual(session);
 
-      // A plain thunk, so the code and the verifier never become an action's argument, and the
-      // session never becomes an action's payload.
-      expect(exchangeAuthorizationCode).toHaveBeenCalledWith(grant);
-      expect(dispatch).toHaveBeenCalledWith("the-grant-thunk");
+      // `track: false`, so the session never becomes a cache entry the DevTools state carries.
+      expect(initiate).toHaveBeenCalledWith(grant, { track: false });
+      expect(dispatch).toHaveBeenCalledTimes(1);
     });
 
     it("lets a refused grant travel to the login machine", async () => {

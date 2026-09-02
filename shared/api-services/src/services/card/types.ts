@@ -36,3 +36,14 @@ export type CardSessionRefreshResult =
    * renewed and nothing was cleared: the request belongs to a session that no longer exists.
    */
   | { readonly kind: "session-replaced" };
+
+/**
+ * The per-endpoint options the Card base query reads.
+ *
+ * `authenticated: false` marks the two OAuth2 grants. They present their own credential, so they
+ * take no Bearer, and they must never renew: a renewal that renewed would answer its own 401 with
+ * another grant and loop.
+ */
+export type CardBaseQueryExtraOptions = Readonly<{
+  authenticated?: boolean;
+}>;

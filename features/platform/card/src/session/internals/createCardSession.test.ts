@@ -62,8 +62,8 @@ type SetupOptions = {
 };
 
 /**
- * The renewal dispatches a plain grant thunk and awaits the session it answers with. Only that
- * promise matters here, so the fake dispatch answers with one and the real grant never runs.
+ * The renewal dispatches the refresh grant and awaits the session `unwrap()` answers with. Only that
+ * promise matters here, so the fake dispatch answers with one and the real endpoint never runs.
  */
 function setup(options: SetupOptions = {}) {
   const { store, slots, writes } = fakeStore(options.initial);
@@ -72,7 +72,7 @@ function setup(options: SetupOptions = {}) {
   );
   const onCardSessionEnded = jest.fn();
 
-  const dispatch = jest.fn(() => renew());
+  const dispatch = jest.fn(() => ({ unwrap: renew }));
   const api = createCardSession(store);
 
   if (options.install !== false) {
@@ -554,9 +554,9 @@ describe("createCardSession renewal failures", () => {
     const api = createCardSession(store);
     api.configureCardSessionRenewal({
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      dispatch: jest.fn(() =>
-        Promise.reject(new Error("the provider answered 400")),
-      ) as unknown as CardRenewalDispatch,
+      dispatch: jest.fn(() => ({
+        unwrap: () => Promise.reject(new Error("the provider answered 400")),
+      })) as unknown as CardRenewalDispatch,
       onCardSessionEnded: () => {
         throw new Error("the store refused to reset");
       },
