@@ -574,6 +574,9 @@ test.describe("Delegate", () => {
 test.describe("Delegate", () => {
   // Mina delegates the whole balance, so the flow carries no amount.
   const account = new Delegate(Account.MINA_1, "N/A", "Kraken");
+  // Broadcasting would leave `Mina 1` delegated, turning the next run into a redelegation: the
+  // continue button would stay disabled on the current delegate, and the operation would be typed
+  // REDELEGATE. `Mina 2` is the account kept delegated, for the undelegate spec.
   setupEnv(true);
   test.use({
     teamOwner: delegateTeamOwner(account.account.currency.id),

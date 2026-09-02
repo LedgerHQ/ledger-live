@@ -9,8 +9,10 @@ import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
-// Mina undelegates the whole balance, so the flow carries no amount.
-const minaAccount = new Delegate(Account.MINA_1, "N/A", "Kraken");
+// Mina undelegates the whole balance, so the flow carries no amount. A mina delegation is
+// all-or-nothing, so one account cannot serve both flows: `Mina 2` stays delegated so this spec
+// always has a position to open, while `Mina 1` stays undelegated for the delegate spec.
+const minaAccount = new Delegate(Account.MINA_2, "N/A", "Kraken");
 
 test.describe("Undelegate", () => {
   test.use({
@@ -58,6 +60,9 @@ test.describe("Undelegate", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: minaAccount.account.currency.speculosApp,
     cliCommands: [liveDataCommand(minaAccount.account)],
+    // Broadcasting would clear the delegation this spec depends on, leaving the next run with no
+    // position to open.
+    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
   });
 
   test(
