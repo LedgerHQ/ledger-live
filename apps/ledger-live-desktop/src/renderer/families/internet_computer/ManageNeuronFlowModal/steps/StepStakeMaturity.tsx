@@ -88,8 +88,7 @@ const StepStakeMaturity = ({
   );
 };
 
-// Gated on the range rather than on mere presence: the bridge rejects 0 too, but its error has no
-// translation, so the banner would read "ICPInvalidPercentage".
+// Gated on the range, not on presence: "0" is a non-empty string the canister rejects.
 export const StepStakeMaturityFooter = (props: StepProps) => (
   <SubmitFooter
     {...props}
