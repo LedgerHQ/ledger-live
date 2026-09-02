@@ -63,6 +63,19 @@ describe("StepRefreshList", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
   });
 
+  // This flow puts its action in a cell, so the row itself does nothing: giving every row a tab stop
+  // would make the list a maze to move through for no gain.
+  it("leaves its rows out of the tab order, since they are not clickable", () => {
+    const neurons = [
+      makeHealthyNeuron({ id: 2n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
+    ];
+    render(<StepRefreshList {...makeStepProps({ neurons })} />);
+
+    const row = screen.getByTestId("icp-neuron-row");
+    expect(row).not.toHaveAttribute("role");
+    expect(row).not.toHaveAttribute("tabindex");
+  });
+
   it("orders the neurons by how soon each loses its voting power", () => {
     const neurons = [
       makeHealthyNeuron({ id: 1n, votingPowerRefreshedTimestampSeconds: refreshedAgo(0) }),
