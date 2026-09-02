@@ -12,15 +12,21 @@ import {
   type ContactsAddAddressNameLabels,
   type ContactsAddAddressReviewLabels,
 } from "@features/flow-contacts-add-address";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
 import { ContactsAddAddressFlowDialog } from "../../screens/Contacts/components/ContactsAddAddressFlowDialog";
 import type { ContactsAddAddressFlowDialogProps } from "../../screens/Contacts/components/ContactsAddAddressFlowDialog/types";
+import { contactsIntentLWDDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsAddressValidationAdapter } from "../useContactsAddressValidationAdapter";
 
 export function PrefillAddAddressFlowRoot(): React.JSX.Element | null {
   const { t } = useTranslation();
   const addressValidation = useContactsAddressValidationAdapter();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWDDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
+  });
   const { state, updateAddressLabel, continueFromName, onBack, onClose, saveFromReview } =
     usePrefillAddAddressFlow({ addressValidation, deviceIntents });
 
@@ -61,6 +67,10 @@ export function PrefillAddAddressFlowRoot(): React.JSX.Element | null {
     }),
     [t],
   );
+
+  if (dieProps?.enabled === true) {
+    return <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />;
+  }
 
   if (!isPrefillAddAddressFlowOpen(state)) {
     return null;

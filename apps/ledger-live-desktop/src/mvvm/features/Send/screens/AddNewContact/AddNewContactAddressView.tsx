@@ -1,5 +1,6 @@
 import React from "react";
 import { ContactsAddAddressFlowContent } from "@features/flow-contacts-add-address";
+import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
 import type { AddNewContactAddressPhase } from "./hooks/useAddNewContactViewModel";
 
 type AddNewContactAddressViewProps = Readonly<{
@@ -26,6 +27,9 @@ export function AddNewContactAddressView({ addressPhase }: AddNewContactAddressV
         onCompleteMockConfirmation={() => undefined}
         onClose={() => undefined}
       />
+      {addressPhase.dieProps?.enabled === true ? (
+        <DeviceIntentExecutorLWD sourceFlow="contacts" {...addressPhase.dieProps} />
+      ) : null}
     </div>
   );
 }
