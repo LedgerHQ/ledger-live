@@ -77,14 +77,17 @@ const renderManage = (
   return { props, ...render(<StepManage {...props} />) };
 };
 
+let nowSpy: jest.SpyInstance<number, []>;
+
 beforeEach(() => {
   jest.clearAllMocks();
   canTopUp = true;
-  jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
+  nowSpy = jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
 });
 
+// Only this file's own spy: restoreAllMocks would reach anything the jest setup had spied on too.
 afterEach(() => {
-  jest.restoreAllMocks();
+  nowSpy.mockRestore();
 });
 
 describe("StepManage", () => {
