@@ -13,6 +13,7 @@ import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import NeuronList, { type NeuronColumn } from "../../components/NeuronList";
 import { toBigNumber } from "../../amounts";
 import { useFormatDuration } from "../../useFormatDuration";
@@ -40,7 +41,7 @@ const StepListNeuron = ({
 }: StepProps) => {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
-  const unit = account.currency.units[0];
+  const unit = useAccountUnit(account);
 
   const onRowClick = useCallback(
     (neuron: ICPNeuron) => {

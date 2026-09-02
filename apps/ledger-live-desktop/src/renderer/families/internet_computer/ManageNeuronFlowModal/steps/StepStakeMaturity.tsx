@@ -4,6 +4,7 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { toBigNumber } from "../../amounts";
 import SubmitFooter from "./SubmitFooter";
 import MissingNeuron from "./MissingNeuron";
@@ -32,6 +33,7 @@ const StepStakeMaturity = ({
   transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
+  const unit = useAccountUnit(account);
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   const percentage = transaction?.percentageToStake ?? "";
 
@@ -75,7 +77,7 @@ const StepStakeMaturity = ({
         </Text>
         <FormattedVal
           val={toBigNumber(selected)}
-          unit={account.currency.units[0]}
+          unit={unit}
           showCode
           disableRounding
           fontSize={3}
