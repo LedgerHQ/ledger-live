@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CardMoreRow } from "./CardMoreRow";
 import type { CardMoreSheetProps } from "./types";
 
 export function CardMoreSheet({ isOpen, title, rows, onClose }: CardMoreSheetProps) {
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        onClose();
+      }
+    },
+    [onClose],
+  );
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    // Radix only ever asks to close while `open` is pinned, so the handler needs no branch of its own.
-    <Dialog open onOpenChange={onClose}>
+    <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
         {/* No `title` here: the design wants it left-aligned and larger, below the header. */}
         <DialogHeader density="compact" onClose={onClose} />
