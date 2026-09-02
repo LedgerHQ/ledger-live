@@ -4,11 +4,12 @@ import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { withMockedArc20Tokens } from "@ledgerhq/live-common/families/aleo/arc20.mock";
 import type { StoreType } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: StoreType) {
   const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
-  setCryptoAssetsStore(cryptoAssetsStore);
+  setCryptoAssetsStore(withMockedArc20Tokens(cryptoAssetsStore));
 }
 
 /**
