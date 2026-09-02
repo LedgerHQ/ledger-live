@@ -1,8 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
-import { InfoState } from "LLD/components/InfoState";
+import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
 import type { PerpsTransactionSignedViewModel } from "./usePerpsTransactionSignedViewModel";
 
 export function PerpsTransactionSignedView({

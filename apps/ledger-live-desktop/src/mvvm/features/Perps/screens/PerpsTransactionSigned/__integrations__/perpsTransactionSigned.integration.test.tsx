@@ -47,6 +47,7 @@ describe("PerpsTransactionSigned integration", () => {
     expect(mockOpenSwapTransactionStatusDialog).toHaveBeenCalledWith({
       swapId: "swap-1",
       provider: "swapkit_hyperliquid",
+      origin: "perps",
     });
     expect(screen.queryByTestId("perps-transaction-signed-cta")).not.toBeInTheDocument();
   });
