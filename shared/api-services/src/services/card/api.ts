@@ -5,6 +5,7 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import type { NamedSchemaError } from "@reduxjs/toolkit/query";
 import { CARD_REDUCER_PATH, HEADER_X_CLIENT_KEY } from "./constants";
 import { CardApiExtraSchema } from "./schema";
 import type { CardApiExtra } from "./types";
@@ -90,12 +91,35 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
   return runWithToken(refreshedToken);
 };
 
+/**
+ * Names the fields a response was rejected on. The thrown error's own `message` is only the first
+ * issue's text — "expected string, received undefined" names nothing — and without a converter RTK
+ * keeps just that message, so a drift between the provider and our schemas is unactionable.
+ *
+ * Only the paths and messages are carried over, never the value that failed: a Card response holds
+ * the cardholder's name and PAN digits, and an error lands in the store and in reports.
+ */
+export function describeSchemaFailure(error: NamedSchemaError): FetchBaseQueryError {
+  const issues = error.issues
+    .map(issue => {
+      const path = issue.path?.map((segment: unknown) => String(segment)).join(".");
+      return path ? `${path}: ${issue.message}` : issue.message;
+    })
+    .join("; ");
+
+  return {
+    status: "CUSTOM_ERROR",
+    error: `${error.schemaName} rejected the response — ${issues}`,
+  };
+}
+
 /** Endpoint-less Card api — use cases inject here. See shared/api-services README. */
 export const cardApi = createApi({
   reducerPath: CARD_REDUCER_PATH,
   baseQuery: cardBaseQuery,
   tagTypes: [],
   endpoints: () => ({}),
+  catchSchemaFailure: describeSchemaFailure,
 });
 
 export type CardApi = typeof cardApi;

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { getCardExtra, cardApi, cardApiExtra } from "./api";
+import { describeSchemaFailure, getCardExtra, cardApi, cardApiExtra } from "./api";
 import type { CardApiExtra } from "./types";
 
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
@@ -22,6 +22,51 @@ describe("cardApi", () => {
 
   it("declares no endpoints of its own", () => {
     expect(OWN_ENDPOINT_NAMES).toHaveLength(0);
+  });
+});
+
+describe("cardApi schema failures", () => {
+  // A real rejection from the Card status response: one required string absent.
+  const holderNameMissing = {
+    issues: [
+      { path: ["holderName"], message: "Invalid input: expected string, received undefined" },
+    ],
+    schemaName: "responseSchema",
+    value: { id: "card-1" },
+  };
+
+  it("names the field the response was rejected on", () => {
+    const error = describeSchemaFailure(holderNameMissing as never);
+
+    expect(error).toEqual({
+      status: "CUSTOM_ERROR",
+      error:
+        "responseSchema rejected the response — holderName: Invalid input: expected string, received undefined",
+    });
+  });
+
+  it("joins every failing field, so one run reports them all", () => {
+    const error = describeSchemaFailure({
+      ...holderNameMissing,
+      issues: [
+        { path: ["holderName"], message: "expected string" },
+        { path: ["panLast4"], message: "expected string" },
+      ],
+    } as never);
+
+    expect(error).toMatchObject({
+      error: expect.stringContaining("holderName: expected string; panLast4: expected string"),
+    });
+  });
+
+  it("keeps the rejected value out of the error: it carries the holder's name and PAN", () => {
+    const error = describeSchemaFailure({
+      ...holderNameMissing,
+      value: { holderName: "Ada Lovelace", panLast4: "4242" },
+    } as never);
+
+    expect(JSON.stringify(error)).not.toContain("Ada Lovelace");
+    expect(JSON.stringify(error)).not.toContain("4242");
   });
 });
 
