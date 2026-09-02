@@ -26,7 +26,7 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "CoinMarketCap API",
   },
-  CARD_API_URL: {
+  CARD_BAANX_API_URL: {
     def: "https://dev.api.baanx.com",
     parser: stringParser,
     desc: "Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",

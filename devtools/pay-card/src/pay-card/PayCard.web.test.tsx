@@ -30,7 +30,7 @@ function buildProps(): PayCardToolProps {
     env: {
       vars: [
         {
-          key: "CARD_API_URL",
+          key: "CARD_BAANX_API_URL",
           value: "https://card.api.live.ledger.com",
           suggestedValue: "https://dev.api.baanx.com",
         },
@@ -93,7 +93,7 @@ describe("PayCard (web)", () => {
     render(<PayCard {...buildProps()} />);
 
     expect(screen.getByText("Env vars")).toBeDefined();
-    expect(screen.getByText("CARD_API_URL=https://card.api.live.ledger.com")).toBeDefined();
+    expect(screen.getByText("CARD_BAANX_API_URL=https://card.api.live.ledger.com")).toBeDefined();
     // An empty client key must read as empty, and not as a missing row.
     expect(screen.getByText("CARD_BAANX_CLIENT_KEY=(empty)")).toBeDefined();
   });
@@ -102,24 +102,27 @@ describe("PayCard (web)", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
 
-    const input = screen.getByLabelText("CARD_API_URL") as HTMLInputElement;
+    const input = screen.getByLabelText("CARD_BAANX_API_URL") as HTMLInputElement;
     expect(input.value).toBe("https://dev.api.baanx.com");
 
     fireEvent.click(screen.getAllByText("Set")[0]!);
-    expect(props.env.setVar).toHaveBeenCalledWith("CARD_API_URL", "https://dev.api.baanx.com");
+    expect(props.env.setVar).toHaveBeenCalledWith(
+      "CARD_BAANX_API_URL",
+      "https://dev.api.baanx.com",
+    );
   });
 
   it("sets what the tester typed", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
 
-    fireEvent.change(screen.getByLabelText("CARD_API_URL"), {
+    fireEvent.change(screen.getByLabelText("CARD_BAANX_API_URL"), {
       target: { value: "https://card.api.live.ledger.com" },
     });
     fireEvent.click(screen.getAllByText("Set")[0]!);
 
     expect(props.env.setVar).toHaveBeenCalledWith(
-      "CARD_API_URL",
+      "CARD_BAANX_API_URL",
       "https://card.api.live.ledger.com",
     );
   });

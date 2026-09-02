@@ -30,7 +30,7 @@ function buildProps(): PayCardToolProps {
     env: {
       vars: [
         {
-          key: "CARD_API_URL",
+          key: "CARD_BAANX_API_URL",
           value: "https://card.api.live.ledger.com",
           suggestedValue: "https://dev.api.baanx.com",
         },
@@ -99,7 +99,7 @@ describe("PayCard (native)", () => {
     render(<PayCard {...buildProps()} />);
 
     expect(screen.getByText("Env vars")).toBeTruthy();
-    expect(screen.getByText("CARD_API_URL=https://card.api.live.ledger.com")).toBeTruthy();
+    expect(screen.getByText("CARD_BAANX_API_URL=https://card.api.live.ledger.com")).toBeTruthy();
     // An empty client key must read as empty, and not as a missing row.
     expect(screen.getByText("CARD_BAANX_CLIENT_KEY=(empty)")).toBeTruthy();
   });
@@ -109,12 +109,15 @@ describe("PayCard (native)", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
 
-    expect(screen.getByTestId("pay-card-env-input-CARD_API_URL").props.value).toBe(
+    expect(screen.getByTestId("pay-card-env-input-CARD_BAANX_API_URL").props.value).toBe(
       "https://dev.api.baanx.com",
     );
 
     await user.press(screen.getAllByText("Set")[0]!);
-    expect(props.env.setVar).toHaveBeenCalledWith("CARD_API_URL", "https://dev.api.baanx.com");
+    expect(props.env.setVar).toHaveBeenCalledWith(
+      "CARD_BAANX_API_URL",
+      "https://dev.api.baanx.com",
+    );
   });
 
   it("sets what the tester typed", async () => {
@@ -122,13 +125,13 @@ describe("PayCard (native)", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
 
-    const input = screen.getByTestId("pay-card-env-input-CARD_API_URL");
+    const input = screen.getByTestId("pay-card-env-input-CARD_BAANX_API_URL");
     await user.clear(input);
     await user.type(input, "https://card.api.live.ledger.com");
     await user.press(screen.getAllByText("Set")[0]!);
 
     expect(props.env.setVar).toHaveBeenCalledWith(
-      "CARD_API_URL",
+      "CARD_BAANX_API_URL",
       "https://card.api.live.ledger.com",
     );
   });

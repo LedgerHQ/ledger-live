@@ -19,7 +19,7 @@ import { usePayCardToolProps } from "./usePayCardToolProps";
  * from `@ledgerhq/live-env`, which this package does not depend on, so CI cannot resolve it.
  */
 const DEFAULT_ENV_VALUES: Record<string, string> = {
-  CARD_API_URL: "https://card.api.live.ledger.com",
+  CARD_BAANX_API_URL: "https://card.api.live.ledger.com",
   CARD_BAANX_CLIENT_KEY: "",
 };
 let envValues: Record<string, string> = { ...DEFAULT_ENV_VALUES };
@@ -197,7 +197,7 @@ describe("usePayCardToolProps", () => {
 
     expect(result.current.env.vars).toEqual([
       {
-        key: "CARD_API_URL",
+        key: "CARD_BAANX_API_URL",
         value: "https://card.api.live.ledger.com",
         suggestedValue: "https://dev.api.baanx.com",
       },
@@ -213,10 +213,13 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     act(() => {
-      result.current.env.setVar("CARD_API_URL", "https://card.staging.test");
+      result.current.env.setVar("CARD_BAANX_API_URL", "https://card.staging.test");
     });
 
-    expect(mockSetEnvUnsafe).toHaveBeenCalledWith("CARD_API_URL", "https://card.staging.test");
+    expect(mockSetEnvUnsafe).toHaveBeenCalledWith(
+      "CARD_BAANX_API_URL",
+      "https://card.staging.test",
+    );
     expect(result.current.env.vars[0]?.value).toBe("https://card.staging.test");
   });
 

@@ -47,7 +47,7 @@ const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase",
  * an empty client key. The suggestions put the development tenant one press away.
  */
 const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
-  { key: "CARD_API_URL", suggestedValue: "https://dev.api.baanx.com" },
+  { key: "CARD_BAANX_API_URL", suggestedValue: "https://dev.api.baanx.com" },
   { key: "CARD_BAANX_CLIENT_KEY", suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6" },
 ];
 
