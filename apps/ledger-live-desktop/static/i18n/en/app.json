@@ -7379,6 +7379,9 @@
     "ZcashAmountBelowDustThreshold": {
       "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },

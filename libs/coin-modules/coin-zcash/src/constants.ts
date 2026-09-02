@@ -65,6 +65,7 @@ export const ZCASH_ACTIVATION_DATE_STRING = "2026-07-28";
 // the note's transaction has this many blocks mined on top of it, the spendable
 // balance can trail the total.
 export const ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS = 12;
+export const ZCASH_MEMO_MAX_BYTES = 512;
 /** @deprecated kept for backward compatibility */
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 /** @deprecated kept for backward compatibility */

@@ -28,6 +28,7 @@ export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
 export type BaseSendFlowConfig = FlowConfig<SendFlowStep, BaseSendStepConfig>;
 
 export type SendFlowUiConfig = Readonly<{
+  /** Whether the currency supports memos. */
   hasMemo: boolean;
   memoType?: string;
   memoMaxLength?: number;

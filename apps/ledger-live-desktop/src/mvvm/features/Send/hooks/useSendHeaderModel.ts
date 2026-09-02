@@ -11,6 +11,7 @@ import { useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SendFlowBusinessContext,
   useSendFlowActions,
@@ -121,9 +122,13 @@ export function useSendHeaderModel({
   const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
   const showRecipientInput =
     (currentStepConfig?.addressInput ?? false) && !isSelectingContactAddress;
+  const recipientSupportsMemo = sendFeatures.hasMemoForRecipient(
+    state.account.currency ?? undefined,
+    recipientSearch.value,
+  );
   const showMemoControls = Boolean(
     showRecipientInput &&
-    uiConfig.hasMemo &&
+    recipientSupportsMemo &&
     recipientSearch.value.length > 0 &&
     isRecipientAddressComplete,
   );

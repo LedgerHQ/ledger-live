@@ -1,15 +1,14 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
-import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
 import { useRecipientScreenContentViewModel } from "../useRecipientScreenContentViewModel";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/analytics");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
-jest.mock("../../../../context/SendFlowContext");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
@@ -18,12 +17,17 @@ jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
 jest.mock("~/logic/keyboardVisible", () => ({
   shouldUseKeyboardAvoidance: jest.fn(() => true),
 }));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: {
+    hasMemoForRecipient: jest.fn(),
+  },
+}));
 
 const mockedTrack = jest.mocked(track);
 const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
-const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
+const mockedSendFeatures = jest.mocked(sendFeatures);
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
@@ -81,9 +85,7 @@ const addressMatchedSectionViewModel = {
 describe("useRecipientScreenContentViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseSendFlowData.mockReturnValue({
-      uiConfig: { hasMemo: true },
-    } as never);
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
     mockedUseRecipientScreenView.mockReturnValue(recipientViewModel);
     mockedUseMemoViewModel.mockReturnValue(memoViewModel);
     mockedUseAddressMatchedSectionViewModel.mockReturnValue(
@@ -124,6 +126,7 @@ describe("useRecipientScreenContentViewModel", () => {
     );
     expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
       address: "resolved-address",
+      hasMemo: true,
       onSkip: expect.any(Function),
     });
     expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenCalledWith(
@@ -134,6 +137,23 @@ describe("useRecipientScreenContentViewModel", () => {
         onAddContact: expect.any(Function),
       }),
     );
+  });
+
+  it("hides memo controls when the recipient does not support memos", () => {
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
+
+    const { result } = renderViewModel();
+
+    expect(mockedSendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+      account.currency,
+      "resolved-address",
+    );
+    expect(result.current.showMemo).toBe(false);
+    expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
+      address: "",
+      hasMemo: false,
+      onSkip: expect.any(Function),
+    });
   });
 
   it("tracks and forwards matched-address selection", () => {
