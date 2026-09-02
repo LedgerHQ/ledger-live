@@ -80,6 +80,9 @@ type FakeState = {
   payCardFeatureTour: {
     hasSeenFeatureTour: boolean;
   };
+  payRequestVerifyHint: {
+    hasSeenReceiveVerifyHint: boolean;
+  };
   trustchain?: unknown;
 };
 
@@ -96,6 +99,7 @@ const baseState = (): FakeState => ({
   largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
+  payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -239,10 +243,11 @@ describe("DBMiddleware - payCard branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists the composed { hasSeenFeatureTour, balanceFilter } blob on payCardFeatureTour/* actions", () => {
+  it("persists the composed { hasSeenFeatureTour, hasSeenReceiveVerifyHint, balanceFilter } blob on payCardFeatureTour/* actions", () => {
     const state: FakeState = {
       ...baseState(),
       payCardFeatureTour: { hasSeenFeatureTour: true },
+      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     };
 
@@ -251,6 +256,25 @@ describe("DBMiddleware - payCard branch", () => {
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
     expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
       hasSeenFeatureTour: true,
+      hasSeenReceiveVerifyHint: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
+  });
+
+  it("persists the composed blob on payRequestVerifyHint/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    };
+
+    runMiddleware([state, state], { type: "payRequestVerifyHint/markReceiveVerifyHintSeen" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
+      hasSeenFeatureTour: true,
+      hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
     });
   });
@@ -259,6 +283,7 @@ describe("DBMiddleware - payCard branch", () => {
     const state: FakeState = {
       ...baseState(),
       payCardFeatureTour: { hasSeenFeatureTour: true },
+      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     };
 
@@ -267,6 +292,7 @@ describe("DBMiddleware - payCard branch", () => {
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
     expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
       hasSeenFeatureTour: true,
+      hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
     });
   });

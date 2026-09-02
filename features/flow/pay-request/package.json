@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@shared/ui-qr-code": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
