@@ -36,7 +36,10 @@ import { getAccountBridge } from "../../bridge";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
-import { getAccountIdFromWalletAccountId, getWalletAPITransactionSignFlowInfos } from "../converters";
+import {
+  getAccountIdFromWalletAccountId,
+  getWalletAPITransactionSignFlowInfos,
+} from "../converters";
 import { AppManifest } from "../types";
 import {
   createAccounIdNotFound,

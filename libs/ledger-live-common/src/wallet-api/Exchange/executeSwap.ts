@@ -106,14 +106,8 @@ export async function executeSwap(
       accounts,
     )) as SwapStartParamsUiRequest;
 
-    const {
-      fromCurrency,
-      fromAccount,
-      fromParentAccount,
-      toCurrency,
-      toAccount,
-      toParentAccount,
-    } = exchangeStartParams.exchange;
+    const { fromCurrency, fromAccount, fromParentAccount, toCurrency, toAccount, toParentAccount } =
+      exchangeStartParams.exchange;
 
     if (!fromAccount || !fromCurrency) {
       throw new ServerError(createAccountNotFound(params.fromAccountId));
