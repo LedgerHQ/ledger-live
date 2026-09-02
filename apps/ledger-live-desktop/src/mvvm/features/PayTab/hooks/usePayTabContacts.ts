@@ -122,27 +122,12 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   return useMemo(
     () => ({
       contacts: {
-        title: t("payTab.contacts.title"),
-        emptyState: {
-          info: t("payTab.contacts.empty.info"),
-          addContactLabel: t("payTab.contacts.empty.addContact"),
-        },
         addContact: {
           labels,
           contactCreation,
           onRequestAddContact,
           onSaveSuccess,
           callbacks,
-        },
-        labels: {
-          name: t("payTab.contacts.table.name"),
-          addresses: t("payTab.contacts.table.addresses"),
-          transactions: t("payTab.contacts.table.transactions"),
-          formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
-          payAction: t("payTab.contacts.actions.pay"),
-          moreAction: t("payTab.contacts.actions.more"),
-          viewContact: t("payTab.contacts.actions.viewContact"),
-          viewTransactions: t("payTab.contacts.actions.viewTransactions"),
         },
         renderAddresses: renderPayContactAddresses,
         onContactPress,

@@ -58,6 +58,7 @@ export function useContactsViewModel({
       formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
       payAction: t("payTab.contacts.actions.pay"),
       moreAction: t("payTab.contacts.actions.more"),
+      viewContact: t("payTab.contacts.actions.viewContact"),
       viewTransactions: t("payTab.contacts.actions.viewTransactions"),
     }),
     [t],

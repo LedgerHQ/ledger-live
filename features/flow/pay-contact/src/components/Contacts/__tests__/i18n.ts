@@ -25,6 +25,7 @@ export const CONTACTS_RESOURCES: I18nResources = {
           actions: {
             pay: "Send to contact",
             more: "More options",
+            viewContact: "View contact",
             viewTransactions: "View transactions",
           },
         },
