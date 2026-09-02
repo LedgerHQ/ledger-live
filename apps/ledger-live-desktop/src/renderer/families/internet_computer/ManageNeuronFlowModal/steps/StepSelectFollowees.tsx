@@ -2,10 +2,11 @@ import {
   KNOWN_TOPICS,
   MAX_FOLLOWEES_PER_TOPIC,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
+import { Button } from "@ledgerhq/react-ui";
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
@@ -16,6 +17,14 @@ import { useGovernanceTopicLabel } from "../../useGovernanceTopicLabel";
 import type { StepProps } from "../../neuronFlow/types";
 
 const EMPTY_FOLLOWEES: string[] = [];
+
+// The slot's own padding leaves 28px inside a 48px input, which is exactly the `xs` button height.
+const InputRight = styled(Box).attrs(() => ({
+  justifyContent: "center",
+  horizontal: true,
+}))`
+  padding: ${p => p.theme.space[2]}px;
+`;
 
 /** How many followees the neuron currently has on the topic being edited. */
 const currentFolloweeCount = ({ neurons, selectedNeuronId, transaction }: StepProps): number => {
@@ -111,20 +120,29 @@ const StepSelectFollowees = (props: StepProps) => {
           values={{ topic: topicLabel(followTopic) }}
         />
       </Text>
-      <Box horizontal style={{ gap: 8 }} alignItems="flex-end">
-        <Box grow>
-          <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c70" mb={1}>
-            <Trans i18nKey="internetComputer.manageNeuronFlow.selectFollowees.neuronId" />
-          </Text>
-          <Input
-            value={followeeDraft}
-            onChange={setFolloweeDraft}
-            data-testid="icp-followee-input"
-          />
-        </Box>
-        <Button primary onClick={onAdd} disabled={!canAdd} data-testid="icp-followee-add-button">
-          <Trans i18nKey="internetComputer.manageNeuronFlow.selectFollowees.add" />
-        </Button>
+      <Box>
+        <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c70" mb={1}>
+          <Trans i18nKey="internetComputer.manageNeuronFlow.selectFollowees.neuronId" />
+        </Text>
+        <Input
+          value={followeeDraft}
+          onChange={setFolloweeDraft}
+          data-testid="icp-followee-input"
+          renderRight={
+            <InputRight>
+              <Button
+                size="xs"
+                variant="color"
+                outline
+                onClick={onAdd}
+                disabled={!canAdd}
+                data-testid="icp-followee-add-button"
+              >
+                {t("internetComputer.manageNeuronFlow.selectFollowees.add")}
+              </Button>
+            </InputRight>
+          }
+        />
       </Box>
       {notice ? (
         <Text
