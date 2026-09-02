@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { reduceShieldedSyncResult, postSync } from "./sync";
+import { reduceShieldedSyncResult, postSync, reconcileLegOperations } from "./sync";
 import {
   reserveNotes,
   getSessionReservedNullifiers,
@@ -474,5 +474,82 @@ describe("postSync", () => {
 
       expect(getSessionReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
     });
+  });
+});
+
+describe("reconcileLegOperations", () => {
+  const op = (overrides: Partial<BtcOperation>): BtcOperation =>
+    ({
+      id: "op-1",
+      hash: "76ec3b38",
+      accountId: "acc-1",
+      type: "OUT",
+      value: new BigNumber(1000),
+      fee: new BigNumber(55),
+      senders: [],
+      recipients: [],
+      blockHeight: 90,
+      blockHash: "hash",
+      date: new Date(),
+      extra: {},
+      ...overrides,
+    }) as BtcOperation;
+
+  const freshLatest = () => ({ transparent: [] as BtcOperation[], shielded: [] as BtcOperation[] });
+
+  // A t->z shield (or z->t deshield) is one real transaction, but the transparent
+  // and shielded legs sync independently and each only knows its own domain (see
+  // this function's own doc comment) -- so each leg produces its own operation for
+  // the very same transaction hash. Naive concatenation of the two legs' buckets
+  // would show it twice in `account.operations`; this is the one place both
+  // buckets are available together, so it is the only place that can catch it.
+  it("keeps only the transparent leg's operation when both legs record the same transaction hash", () => {
+    const latest = freshLatest();
+
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT" })],
+    } as Partial<ZcashAccount>);
+    expect(transparentResult.operations).toHaveLength(1);
+
+    const shieldedResult = reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_IN", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_IN" }),
+      ],
+    } as Partial<ZcashAccount>);
+
+    expect(shieldedResult.operations).toHaveLength(1);
+    expect((shieldedResult.operations as BtcOperation[])[0].type).toBe("OUT");
+  });
+
+  it("keeps both legs' operations when they record different transaction hashes", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT" })],
+    } as Partial<ZcashAccount>);
+    const shieldedResult = reconcileLegOperations(latest, "shielded", {
+      operations: [op({ id: "tx-2-IN", hash: "tx-2", type: "SHIELDED_TX_IRONWOOD_IN" })],
+    } as Partial<ZcashAccount>);
+
+    expect(shieldedResult.operations).toHaveLength(2);
+  });
+
+  // Order must not matter: whichever leg reconciles second is the one that sees
+  // both buckets, regardless of which leg happened to discover the transaction
+  // first.
+  it("keeps only the transparent leg's operation even when the shielded leg reconciles first", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_OUT", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_OUT" }),
+      ],
+    } as Partial<ZcashAccount>);
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-IN", hash: "tx-1", type: "IN" })],
+    } as Partial<ZcashAccount>);
+
+    expect(transparentResult.operations).toHaveLength(1);
+    expect((transparentResult.operations as BtcOperation[])[0].type).toBe("IN");
   });
 });

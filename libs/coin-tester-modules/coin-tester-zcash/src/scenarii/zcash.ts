@@ -399,25 +399,19 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
   },
   afterAll: async account => {
     // Deterministic total, but NOT simply "one operation per transaction":
-    // 1 (the initial coinbase receipt from setup()) + 1 (t→t) + 2 (t→z) +
-    // 2 (z→t) + 1 (z→z) + (NOTE_COUNT_TARGET - 1) (the splits, pure Ironwood,
-    // 1 each) + 2 (the final sweep, itself a z→t).
+    // 1 (the initial coinbase receipt from setup()) + 1 (t→t) + 1 (t→z) +
+    // 1 (z→t) + 1 (z→z) + (NOTE_COUNT_TARGET - 1) (the splits, pure Ironwood,
+    // 1 each) + 1 (the final sweep, itself a z→t).
     //
-    // The "+2" transactions are a known, real bug in `@ledgerhq/coin-zcash`:
-    // any transaction that spends from one pool and pays into the other
-    // (t→z, z→t) gets recorded TWICE -- once by the transparent-leg tracker
-    // (`mapTxToOperations`, sync.ts) and once by the shielded-leg tracker
-    // (`convertShieldedTransactionsToOperations`), both merged into the same
-    // `operations` array with no cross-leg deduplication. Empirically
-    // confirmed: both records share the exact same transaction hash. This
-    // means a real shielding/de-shielding transaction likely shows up twice
-    // in a real account's operation history today, not just in this test.
-    // This assertion documents the current (buggy) count precisely, rather
-    // than asserting the count a fix would produce, so this test keeps
-    // passing until that's fixed elsewhere -- an exact match still catches
-    // any *additional* regression (extra phantom/duplicate operations beyond
-    // this already-known one), which a lower-bound check would miss.
-    expect(account.operations.length).toBe(8 + NOTE_COUNT_TARGET);
+    // A mixed-pool transaction (t→z, z→t) is synced by both the transparent
+    // leg (`mapTxToOperations`, sync.ts) and the shielded leg
+    // (`convertShieldedTransactionsToOperations`), each producing its own
+    // operation for the same transaction hash -- `reconcileLegOperations`
+    // (sync.ts) is what keeps only the transparent leg's record for a hash
+    // both legs see, so this total has exactly one entry per transaction, not
+    // two for every t→z/z→t. An exact match (not a lower bound) still catches
+    // any regression that reintroduces a duplicate, or drops a real operation.
+    expect(account.operations.length).toBe(5 + NOTE_COUNT_TARGET);
     stopIndexer();
   },
   teardown: async () => {
