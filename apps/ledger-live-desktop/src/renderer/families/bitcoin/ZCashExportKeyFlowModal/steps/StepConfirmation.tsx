@@ -72,12 +72,12 @@ export function StepConfirmationFooter({
   handleEnableShieldedBalance,
 }: Readonly<StepProps>) {
   const handleCloseModal = () => {
-    handleEnableShieldedBalance("ready");
+    handleEnableShieldedBalance({ startSyncNow: false });
     closeModal();
   };
 
   const handleStartSync = () => {
-    handleEnableShieldedBalance("running");
+    handleEnableShieldedBalance({ startSyncNow: true });
     closeModal();
   };
 
