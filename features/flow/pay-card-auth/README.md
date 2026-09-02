@@ -16,8 +16,9 @@ import { CardLogin, CardLogout } from "@features/flow-pay-card-auth";
 
 Two components, one for each direction, and each one decides whether it belongs on screen. `CardLogin`
 runs the whole login, and shows nothing once the card holder is signed in. `CardLogout` does the
-opposite: it shows the account id, the verification state and a logout action, and nothing at all while
-nobody is signed in. A caller places both and passes `CardLogout` nothing.
+opposite: it shows a `More` tile-button that opens the `More` sheet, and the sheet's `Logout` row ends
+the session. It shows nothing at all while nobody is signed in. A caller places both and passes
+`CardLogout` nothing.
 
 They agree through one Redux flag, `payCardAuth.isSignedIn`, because two machines would each hydrate the
 session and neither would agree with the other. The login machine writes the flag on entering `ready`,
@@ -126,14 +127,22 @@ pay-card-auth/
     │   │   ├── openHostedLogin.web.ts       # Desktop browsing-context opener
     │   │   ├── types.ts                     # Component contracts
     │   │   └── useCardLoginViewModel.ts     # Shared state and orchestration
-    │   └── CardLogout/
-    │       ├── __tests__/                   # View and ViewModel tests
-    │       ├── CardLogoutView.native.tsx    # Native signed-in UI, with logout
-    │       ├── CardLogoutView.web.tsx       # Web signed-in UI, with logout
-    │       ├── index.native.tsx             # Native component container
-    │       ├── index.web.tsx                # Web component container
-    │       ├── types.ts                     # Component contracts
-    │       └── useCardLogoutViewModel.ts    # The logout itself, and its visibility
+    │   ├── CardLogout/
+    │   │   ├── __tests__/                   # View and ViewModel tests
+    │   │   ├── CardLogoutView.native.tsx    # Native signed-in UI, the More tile
+    │   │   ├── CardLogoutView.web.tsx       # Web signed-in UI, the More tile
+    │   │   ├── index.native.tsx             # Native component container
+    │   │   ├── index.web.tsx                # Web component container
+    │   │   ├── types.ts                     # Component contracts
+    │   │   └── useCardLogoutViewModel.ts    # The logout itself, and its visibility
+    │   └── CardMore/
+    │       ├── __tests__/                    # Sheet and row tests
+    │       ├── CardMoreRow.tsx               # One sheet row, shared by both platforms
+    │       ├── CardMoreRowParts.native.tsx   # Native Lumen row parts, and the row icons
+    │       ├── CardMoreRowParts.web.tsx      # Web Lumen row parts, and the row icons
+    │       ├── CardMoreSheet.native.tsx      # Native More bottom sheet
+    │       ├── CardMoreSheet.web.tsx         # Web More dialog
+    │       └── types.ts                      # Row and sheet contracts
     ├── hooks/                              # Flow-local hooks
     ├── router/                             # Flow-local routing
     ├── state/

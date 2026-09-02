@@ -4,14 +4,17 @@ import { StyleProvider } from "@features/platform-style";
 import { CardLogoutView } from "../CardLogoutView.web";
 
 const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
-  title: "Card",
-  idLabel: "Account",
-  userId: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
-  verificationLabel: "Verification",
-  verificationValue: "Verified",
-  logoutLabel: "Log out",
-  isLoading: false,
-  onLogoutPress: jest.fn(),
+  moreLabel: "More",
+  sheetTitle: "More",
+  rows: [
+    { id: "managePin", title: "Manage PIN Code", onPress: jest.fn() },
+    { id: "accessBaanx", title: "Access to Baanx", onPress: jest.fn() },
+    { id: "help", title: "Help", onPress: jest.fn() },
+    { id: "logout", title: "Logout", onPress: jest.fn() },
+  ],
+  isSheetOpen: false,
+  onMorePress: jest.fn(),
+  onSheetClose: jest.fn(),
 };
 
 function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLogoutView>> = {}) {
@@ -23,20 +26,33 @@ function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLog
 }
 
 describe("CardLogoutView (Web)", () => {
-  it("should render the card holder and the logout action", () => {
+  it("should render the More tile with its label", () => {
     renderCardLogoutView();
 
-    expect(screen.getByText("Account: 3f2504e0-4f89-11d3-9a0c-0305e82c3301")).toBeVisible();
-    expect(screen.getByText("Verification: Verified")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Log out" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "More" })).toBeVisible();
   });
 
-  it("should call the logout handler when the action is pressed", () => {
-    const onLogoutPress = jest.fn();
-    renderCardLogoutView({ onLogoutPress });
+  it("should call the More handler when the tile is clicked", () => {
+    const onMorePress = jest.fn();
+    renderCardLogoutView({ onMorePress });
 
-    screen.getByRole("button", { name: "Log out" }).click();
+    screen.getByRole("button", { name: "More" }).click();
 
-    expect(onLogoutPress).toHaveBeenCalledTimes(1);
+    expect(onMorePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render no sheet while it is closed", () => {
+    renderCardLogoutView();
+
+    expect(screen.queryByTestId("card-more-sheet")).toBeNull();
+  });
+
+  it("should render the sheet while it is open", () => {
+    // The pair of cases is what proves the wiring: on its own, the closed case above still passes
+    // when the open flag never reaches the sheet.
+    renderCardLogoutView({ isSheetOpen: true });
+
+    expect(screen.getByTestId("card-more-sheet")).toBeVisible();
+    expect(screen.getByText("Manage PIN Code")).toBeVisible();
   });
 });

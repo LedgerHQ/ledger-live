@@ -1,16 +1,36 @@
 import React from "react";
+import { View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLogoutView } from "../CardLogoutView.native";
 
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  QueuedBottomSheet: ({
+    children,
+    isRequestingToBeOpened,
+    testID,
+  }: {
+    children: React.ReactNode;
+    isRequestingToBeOpened?: boolean;
+    testID?: string;
+  }) => (
+    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
+      {children}
+    </View>
+  ),
+}));
+
 const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
-  title: "Card",
-  idLabel: "Account",
-  userId: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
-  verificationLabel: "Verification",
-  verificationValue: "In review",
-  logoutLabel: "Log out",
-  isLoading: false,
-  onLogoutPress: jest.fn(),
+  moreLabel: "More",
+  sheetTitle: "More",
+  rows: [
+    { id: "managePin", title: "Manage PIN Code", onPress: jest.fn() },
+    { id: "accessBaanx", title: "Access to Baanx", onPress: jest.fn() },
+    { id: "help", title: "Help", onPress: jest.fn() },
+    { id: "logout", title: "Logout", onPress: jest.fn() },
+  ],
+  isSheetOpen: false,
+  onMorePress: jest.fn(),
+  onSheetClose: jest.fn(),
 };
 
 function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLogoutView>> = {}) {
@@ -22,21 +42,24 @@ describe("CardLogoutView (Native)", () => {
     jest.clearAllMocks();
   });
 
-  it("should render the card holder and the logout action", () => {
+  it("should render the More tile with its label", () => {
     renderCardLogoutView();
 
-    expect(screen.getByText("Card")).toBeTruthy();
-    expect(screen.getByText(/3f2504e0-4f89-11d3-9a0c-0305e82c3301/)).toBeTruthy();
-    expect(screen.getByText(/In review/)).toBeTruthy();
-    expect(screen.getByLabelText("Log out")).toBeTruthy();
+    expect(screen.getByLabelText("More")).toBeTruthy();
   });
 
-  it("should call the logout handler when the action is pressed", () => {
-    const onLogoutPress = jest.fn();
-    renderCardLogoutView({ onLogoutPress });
+  it("should call the More handler when the tile is pressed", () => {
+    const onMorePress = jest.fn();
+    renderCardLogoutView({ onMorePress });
 
-    fireEvent.press(screen.getByLabelText("Log out"));
+    fireEvent.press(screen.getByTestId("card-more-tile"));
 
-    expect(onLogoutPress).toHaveBeenCalledTimes(1);
+    expect(onMorePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should pass the open flag to the sheet", () => {
+    renderCardLogoutView({ isSheetOpen: true });
+
+    expect(screen.getByTestId("card-more-sheet").props.accessibilityState.expanded).toBe(true);
   });
 });

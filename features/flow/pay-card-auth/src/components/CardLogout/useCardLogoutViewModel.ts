@@ -2,19 +2,19 @@ import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
+import { useTranslation } from "@shared/i18n";
 import { createCardLogoutPorts } from "../../state/createCardLogoutPorts";
 import type { CardLoginDispatch } from "../../state/createCardLoginPorts";
 import { selectIsSignedIn } from "../../state/selectors";
 import type { CardLogoutPorts } from "../../state/types";
+import type { CardMoreRow, CardMoreRowId } from "../CardMore/types";
 import type { CardLogoutViewModel } from "./types";
 
-/** Hardcoded English until the Pay tab gets its copy keys. */
-const VERIFICATION_LABELS: Record<PayCardUser["verificationState"], string> = {
-  UNVERIFIED: "Not verified",
-  PENDING: "In review",
-  VERIFIED: "Verified",
-  REJECTED: "Rejected",
-};
+/** The order the design lists the rows in. */
+const ROW_ORDER: readonly CardMoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
+
+/** The three rows that do nothing yet share this. Their tickets replace it one at a time. */
+const noop = () => {};
 
 /**
  * Ends the session, in the order the login machine used before the two components split.
@@ -39,51 +39,136 @@ export async function runLogout(ports: CardLogoutPorts): Promise<void> {
   }
 }
 
+/** One session at a time. `runLogout` reads no flag itself, so the flag lives beside it. */
+const running = new WeakSet<CardLogoutPorts>();
+
+/**
+ * Runs the logout once per session, whatever the number of presses.
+ *
+ * The flag sits here, in module scope, and not in the ViewModel: React state would leave the guard
+ * one render behind, so two presses inside one React batch would both reach the provider, and no
+ * view reads the flag, so it must stay out of the render output. It is cleared when the logout
+ * settles, and `runLogout` never rejects.
+ */
+export function startLogout(ports: CardLogoutPorts): void {
+  if (running.has(ports)) {
+    return;
+  }
+  running.add(ports);
+  void runLogout(ports).finally(() => running.delete(ports));
+}
+
+/** The copy the More tile and the More sheet show. */
+export type CardMoreLabels = Readonly<{
+  more: string;
+  sheetTitle: string;
+  rows: Readonly<Record<CardMoreRowId, string>>;
+}>;
+
+/** `logout` is the only row that must act. The other three are optional until their tickets land. */
+export type CardMoreHandlers = Readonly<
+  Partial<Record<Exclude<CardMoreRowId, "logout">, () => void>> & Record<"logout", () => void>
+>;
+
+type MapUserToViewModelInput = Readonly<{
+  isSignedIn: boolean;
+  user: PayCardUser | undefined;
+  labels: CardMoreLabels;
+  isSheetOpen: boolean;
+  onMorePress: () => void;
+  onSheetClose: () => void;
+  handlers: CardMoreHandlers;
+}>;
+
 /**
  * Turns the signed-in flag, plus the user in the cache, into the view props. Pure, so the mapping can
  * be read and tested without a React tree.
  */
-export function mapUserToViewModel(
-  isSignedIn: boolean,
-  user: PayCardUser | undefined,
-  isLoading: boolean,
-  onLogoutPress: () => void,
-): CardLogoutViewModel {
+export function mapUserToViewModel({
+  isSignedIn,
+  user,
+  labels,
+  isSheetOpen,
+  onMorePress,
+  onSheetClose,
+  handlers,
+}: MapUserToViewModelInput): CardLogoutViewModel {
   // Nobody is signed in, or the user answer is still on its way back from the cache.
   if (!isSignedIn || !user) {
     return null;
   }
 
+  const rows: readonly CardMoreRow[] = ROW_ORDER.map(id => ({
+    id,
+    title: labels.rows[id],
+    onPress: handlers[id] ?? noop,
+  }));
+
   return {
-    title: "Card",
-    idLabel: "Account",
-    userId: user.id,
-    verificationLabel: "Verification",
-    verificationValue: VERIFICATION_LABELS[user.verificationState],
-    logoutLabel: "Log out",
-    isLoading,
-    onLogoutPress,
+    moreLabel: labels.more,
+    sheetTitle: labels.sheetTitle,
+    rows,
+    isSheetOpen,
+    onMorePress,
+    onSheetClose,
   };
 }
 
 export function useCardLogoutViewModel(): CardLogoutViewModel {
+  const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [wasSignedIn, setWasSignedIn] = useState(isSignedIn);
 
   const ports = useMemo(() => createCardLogoutPorts(dispatch), [dispatch]);
 
-  // The login machine filled this cache entry. Subscribing keeps the answer alive while the button is
+  // The login machine filled this cache entry. Subscribing keeps the answer alive while the tile is
   // on screen, and asks for it again if the entry expired first.
   const { data: user } = useGetUserQuery(undefined, { skip: !isSignedIn });
 
+  // The session can end from anywhere: a 401 clears it, or another surface logs out. The caller keeps
+  // this component mounted, so a sheet left open here would open by itself at the next login. This is
+  // React's own "adjust state during render", which it prefers to an effect that only resets state.
+  if (wasSignedIn !== isSignedIn) {
+    setWasSignedIn(isSignedIn);
+    if (!isSignedIn) {
+      setIsSheetOpen(false);
+    }
+  }
+
+  const onMorePress = useCallback(() => setIsSheetOpen(true), []);
+  const onSheetClose = useCallback(() => setIsSheetOpen(false), []);
+
   const onLogoutPress = useCallback(() => {
-    setIsLoading(true);
-    // Lowered again when the logout settles. The caller renders this component at all times and only
-    // its answer turns null, so the component never unmounts and nothing else clears the flag. Left
-    // raised, the next login would show a button stuck loading. `runLogout` never rejects.
-    void runLogout(ports).finally(() => setIsLoading(false));
+    setIsSheetOpen(false);
+    startLogout(ports);
   }, [ports]);
 
-  return mapUserToViewModel(isSignedIn, user, isLoading, onLogoutPress);
+  const labels = useMemo<CardMoreLabels>(
+    () => ({
+      more: t("payTab.cardMore.tile"),
+      sheetTitle: t("payTab.cardMore.title"),
+      rows: {
+        managePin: t("payTab.cardMore.rows.managePin"),
+        accessBaanx: t("payTab.cardMore.rows.accessBaanx"),
+        help: t("payTab.cardMore.rows.help"),
+        logout: t("payTab.cardMore.rows.logout"),
+      },
+    }),
+    [t],
+  );
+
+  // One entry per row that acts. A future ticket adds its own row here, and nothing else changes.
+  const handlers = useMemo<CardMoreHandlers>(() => ({ logout: onLogoutPress }), [onLogoutPress]);
+
+  return mapUserToViewModel({
+    isSignedIn,
+    user,
+    labels,
+    isSheetOpen,
+    onMorePress,
+    onSheetClose,
+    handlers,
+  });
 }

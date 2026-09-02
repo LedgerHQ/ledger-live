@@ -1,38 +1,32 @@
 import React from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { TileButton } from "@ledgerhq/lumen-ui-react";
+import { MoreHorizontal } from "@ledgerhq/lumen-ui-react/symbols";
+import { CardMoreSheet } from "../CardMore/CardMoreSheet";
 import type { CardLogoutViewProps } from "./types";
 
 export function CardLogoutView({
-  title,
-  idLabel,
-  userId,
-  verificationLabel,
-  verificationValue,
-  logoutLabel,
-  isLoading,
-  onLogoutPress,
+  moreLabel,
+  sheetTitle,
+  rows,
+  isSheetOpen,
+  onMorePress,
+  onSheetClose,
 }: CardLogoutViewProps) {
   return (
-    <div className="flex flex-row items-center gap-16">
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
-        <span className="heading-5-semi-bold text-base">{title}</span>
-        <span className="body-3 text-muted">
-          {idLabel}: {userId}
-        </span>
-        <span className="body-3 text-muted">
-          {verificationLabel}: {verificationValue}
-        </span>
-      </div>
-      <Button
-        appearance="gray"
-        size="md"
-        loading={isLoading}
-        disabled={isLoading}
-        onClick={onLogoutPress}
-        aria-label={logoutLabel}
+    <>
+      {/* The design puts three tiles in a row, and `More` is the only one in scope. `isFull` gives
+          the tile the full width, so no wrapper of its own is needed today. */}
+      <TileButton
+        icon={MoreHorizontal}
+        isFull
+        onClick={onMorePress}
+        aria-label={moreLabel}
+        data-testid="card-more-tile"
       >
-        {logoutLabel}
-      </Button>
-    </div>
+        {moreLabel}
+      </TileButton>
+
+      <CardMoreSheet isOpen={isSheetOpen} title={sheetTitle} rows={rows} onClose={onSheetClose} />
+    </>
   );
 }

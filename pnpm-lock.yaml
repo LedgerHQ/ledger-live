@@ -6710,6 +6710,12 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
       '@xstate/react':
         specifier: 'catalog:'
         version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)

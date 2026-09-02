@@ -1,47 +1,32 @@
 import React from "react";
-import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { TileButton } from "@ledgerhq/lumen-ui-rnative";
+import { MoreHorizontal } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { CardMoreSheet } from "../CardMore/CardMoreSheet";
 import type { CardLogoutViewProps } from "./types";
 
 export function CardLogoutView({
-  title,
-  idLabel,
-  userId,
-  verificationLabel,
-  verificationValue,
-  logoutLabel,
-  isLoading,
-  onLogoutPress,
+  moreLabel,
+  sheetTitle,
+  rows,
+  isSheetOpen,
+  onMorePress,
+  onSheetClose,
 }: CardLogoutViewProps) {
   return (
-    <Box
-      lx={{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: "s16",
-        paddingTop: "s16",
-      }}
-    >
-      <Box lx={{ flex: 1, flexDirection: "column", gap: "s4" }} style={{ minWidth: 0 }}>
-        <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-          {title}
-        </Text>
-        <Text typography="body3" lx={{ color: "muted" }}>
-          {idLabel}: {userId}
-        </Text>
-        <Text typography="body3" lx={{ color: "muted" }}>
-          {verificationLabel}: {verificationValue}
-        </Text>
-      </Box>
-      <Button
-        appearance="gray"
-        size="md"
-        loading={isLoading}
-        disabled={isLoading}
-        onPress={onLogoutPress}
-        accessibilityLabel={logoutLabel}
+    <>
+      {/* The design puts three tiles in a row, and `More` is the only one in scope. `isFull` gives
+          the tile the full width, so no wrapper of its own is needed today. */}
+      <TileButton
+        icon={MoreHorizontal}
+        isFull
+        onPress={onMorePress}
+        accessibilityLabel={moreLabel}
+        testID="card-more-tile"
       >
-        {logoutLabel}
-      </Button>
-    </Box>
+        {moreLabel}
+      </TileButton>
+
+      <CardMoreSheet isOpen={isSheetOpen} title={sheetTitle} rows={rows} onClose={onSheetClose} />
+    </>
   );
 }
