@@ -126,9 +126,9 @@ describe("usePerpsDepositSignViewModel", () => {
   it("reports success without reopening the summary", () => {
     const { onDone, onRefused } = renderSignViewModel(device);
 
-    act(() => capturedCallbacks?.onDone());
+    act(() => capturedCallbacks?.onDone({ swapId: "swap-1" }));
 
-    expect(onDone).toHaveBeenCalled();
+    expect(onDone).toHaveBeenCalledWith({ swapId: "swap-1" });
     expect(onRefused).not.toHaveBeenCalled();
   });
 });

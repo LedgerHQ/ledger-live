@@ -5,6 +5,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen } from "@tests/test-renderer";
 import type { PerpsDepositExecutionCallbacks } from "LLM/features/Perps/hooks/usePerpsDepositExecution";
+import { ScreenName } from "~/const";
 import PerpsDepositScreen from "../PerpsDepositScreen";
 
 const mockOpenDrawer = jest.fn();
@@ -67,7 +68,12 @@ function createAccount(id: string, spendableBalance: number): Account {
 const receiverAccount = createAccount("receiver-1", 0);
 const fundingAccount = createAccount("funding-1", 10000);
 
-const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), setOptions: jest.fn() };
+const mockNavigation = {
+  navigate: jest.fn(),
+  replace: jest.fn(),
+  goBack: jest.fn(),
+  setOptions: jest.fn(),
+};
 const mockRoute = { params: { receiverAccount } };
 
 function renderDeposit() {
@@ -167,8 +173,22 @@ describe("PerpsDepositSign integration", () => {
     await user.press(await fillFormAndReview(user));
     await user.press(await screen.findByTestId("select-device"));
 
-    act(() => capturedCallbacks?.onDone());
+    act(() => capturedCallbacks?.onDone({ swapId: "swap-1" }));
 
     expect(screen.queryByTestId("perps-deposit-sign-step")).not.toBeOnTheScreen();
+  });
+
+  it("hands the signed deposit to the receipt", async () => {
+    const { user } = renderDeposit();
+
+    await user.press(await fillFormAndReview(user));
+    await user.press(await screen.findByTestId("select-device"));
+
+    act(() => capturedCallbacks?.onDone({ swapId: "swap-1" }));
+
+    expect(mockNavigation.replace).toHaveBeenCalledWith(
+      ScreenName.PerpsTransactionSigned,
+      expect.objectContaining({ receiveCurrencyTicker: "ETH", swapId: "swap-1" }),
+    );
   });
 });

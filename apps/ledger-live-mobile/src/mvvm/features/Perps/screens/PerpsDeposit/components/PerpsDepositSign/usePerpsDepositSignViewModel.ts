@@ -5,6 +5,7 @@ import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
+  type PerpsDepositOutcome,
 } from "LLM/features/Perps/hooks/usePerpsDepositExecution";
 import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
 
@@ -14,7 +15,7 @@ export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
   Readonly<{
     selectedDevice: Device | null | undefined;
     onSelectDevice: (device: Device | null | undefined) => void;
-    onDone: () => void;
+    onDone: (outcome: PerpsDepositOutcome) => void;
     onRefused: () => void;
   }>;
 

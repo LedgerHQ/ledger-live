@@ -3,7 +3,9 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
 import { act, renderHook } from "@tests/test-renderer";
+import { ScreenName } from "~/const";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
 
 const mockOpenDrawer = jest.fn();
@@ -44,10 +46,11 @@ const fundingAccount = createAccount("funding-1", "ethereum", 10000);
 /** Holds more than the form can ask for, so the balance cap never kicks in. */
 const fundedAccount = createAccount("funding-2", "ethereum", 1e18);
 
-function createProps(navigate = jest.fn()) {
+function createProps(navigate = jest.fn(), replace = jest.fn()) {
   return {
-    props: { navigation: { navigate }, route: { params: { receiverAccount } } } as never,
+    props: { navigation: { navigate, replace }, route: { params: { receiverAccount } } } as never,
     navigate,
+    replace,
   };
 }
 
@@ -382,7 +385,7 @@ describe("usePerpsDepositViewModel", () => {
 
     function renderReviewedDeposit() {
       mockCalculate.mockReturnValue(2.5e16);
-      const { props } = createProps();
+      const { props, replace } = createProps();
       const { result } = renderViewModel(props);
 
       act(() => result.current.pickDepositAccount());
@@ -390,11 +393,11 @@ describe("usePerpsDepositViewModel", () => {
       typeAmount(result.current.pressAmountKey, "20");
       act(() => result.current.handleReview());
 
-      return result;
+      return { result, replace };
     }
 
     it("swaps the summary for the device step once the deposit is handed over", () => {
-      const result = renderReviewedDeposit();
+      const { result } = renderReviewedDeposit();
 
       act(() => result.current.handOverToDevice());
 
@@ -403,7 +406,7 @@ describe("usePerpsDepositViewModel", () => {
     });
 
     it("brings the summary back, amounts intact, when signing is declined", () => {
-      const result = renderReviewedDeposit();
+      const { result } = renderReviewedDeposit();
       const reviewed = result.current.reviewParams;
 
       act(() => result.current.handOverToDevice());
@@ -415,7 +418,7 @@ describe("usePerpsDepositViewModel", () => {
     });
 
     it("keeps the device after a decline, so handing over again skips the device list", () => {
-      const result = renderReviewedDeposit();
+      const { result } = renderReviewedDeposit();
 
       act(() => result.current.handOverToDevice());
       act(() => result.current.selectSigningDevice(device));
@@ -425,15 +428,40 @@ describe("usePerpsDepositViewModel", () => {
     });
 
     it("forgets the device once the deposit lands, so the next one starts at selection", () => {
-      const result = renderReviewedDeposit();
+      const { result } = renderReviewedDeposit();
 
       act(() => result.current.handOverToDevice());
       act(() => result.current.selectSigningDevice(device));
-      act(() => result.current.endSigning());
+      act(() => result.current.endSigning({ swapId: "swap-1" }));
 
       expect(result.current.isSignOpen).toBe(false);
       expect(result.current.isReviewOpen).toBe(false);
       expect(result.current.signingDevice).toBeUndefined();
+    });
+
+    it("replaces the form with the receipt, so back leaves the flow", () => {
+      const { result, replace } = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.endSigning({ swapId: "swap-1" }));
+
+      expect(replace).toHaveBeenCalledWith(ScreenName.PerpsTransactionSigned, {
+        receiveCurrencyTicker: "ETH",
+        swapId: "swap-1",
+        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+      });
+    });
+
+    it("still shows the receipt when the provider issued no swap id", () => {
+      const { result, replace } = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.endSigning({}));
+
+      expect(replace).toHaveBeenCalledWith(
+        ScreenName.PerpsTransactionSigned,
+        expect.objectContaining({ swapId: undefined }),
+      );
     });
   });
 });

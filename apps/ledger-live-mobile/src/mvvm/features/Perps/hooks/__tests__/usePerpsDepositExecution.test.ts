@@ -204,7 +204,8 @@ describe("usePerpsDepositExecution", () => {
 
     expect(mockBroadcast).toHaveBeenCalledWith({ operation });
     expect(onSwapSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
-    expect(onDone).toHaveBeenCalled();
+    // Handed on so the receipt can offer to track the swap that funds the deposit.
+    expect(onDone).toHaveBeenCalledWith({ swapId: "swap-1" });
   });
 
   it("records the swap at the quoted price, not the one the payload implies", async () => {
