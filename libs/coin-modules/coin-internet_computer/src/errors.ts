@@ -49,6 +49,17 @@ export class ICPDissolveDelayLTCurrent extends Error {
   }
 }
 
+// The amount to add to a dissolve delay is not a whole number of days above zero. Distinct from
+// ICPDissolveDelayLTMin: the network minimum is not what was violated — nothing was entered to add.
+export class ICPInvalidDissolveDelayIncrease extends Error {
+  override name = "ICPInvalidDissolveDelayIncrease";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPInvalidDissolveDelayIncrease");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Referenced neuron is absent from the account's synced neuron set.
 export class ICPNeuronNotFound extends Error {
   override name = "ICPNeuronNotFound";

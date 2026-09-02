@@ -8191,6 +8191,10 @@
       "title": "Dissolve delay too short",
       "description": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
     },
+    "ICPInvalidDissolveDelayIncrease": {
+      "title": "Invalid number of days",
+      "description": "Enter a whole number of days greater than zero."
+    },
     "ICPDissolveDelayGTMax": {
       "title": "Dissolve delay too long",
       "description": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."

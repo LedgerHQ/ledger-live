@@ -27,6 +27,7 @@ import {
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
   ICPIncreaseStakeWarning,
+  ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -120,9 +121,9 @@ const validateIncreaseDissolveDelay = (
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   const value = Number(additional);
-  // Any positive amount is accepted here, but the entry is in whole days, so the day count the copy
-  // quotes is 1 while the seconds bound stays truthful.
-  if (!Number.isInteger(value) || value <= 0) return belowMin(1);
+  // Not belowMin: the network minimum is not what an empty or zero entry violates, and quoting it
+  // would name a bound the user never crossed.
+  if (!Number.isInteger(value) || value <= 0) return new ICPInvalidDissolveDelayIncrease();
   if (
     getNeuronDissolveDurationSeconds(neuron) + BigInt(value) >
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)

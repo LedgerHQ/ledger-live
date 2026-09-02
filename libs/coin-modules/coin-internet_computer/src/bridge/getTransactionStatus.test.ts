@@ -13,6 +13,7 @@ import {
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
+  ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -181,13 +182,18 @@ describe("getTransactionStatus", () => {
       },
     );
 
-    it("quotes a one-day minimum when an increase adds nothing", async () => {
-      const status = await getTransactionStatus(
-        accountWith(neuron()),
-        tx({ type: "increase_dissolve_delay", neuronId: "7", additionalDissolveDelay: "0" }),
-      );
-      expect(status.errors.transaction).toMatchObject({ minSeconds: 1, minDays: 1 });
-    });
+    // Reusing ICPDissolveDelayLTMin here quoted a bound the entry never crossed, and rounding its
+    // one-second stand-in up to days put "at least 1 days" on screen.
+    it.each(["0", "-5", "1.5", "", "abc"])(
+      "names the entry rather than the network minimum for an increase of %s",
+      async additionalDissolveDelay => {
+        const status = await getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "increase_dissolve_delay", neuronId: "7", additionalDissolveDelay }),
+        );
+        expect(status.errors.transaction).toBeInstanceOf(ICPInvalidDissolveDelayIncrease);
+      },
+    );
 
     it("rejects a dissolve delay below the neuron's current delay", async () => {
       const status = await getTransactionStatus(
