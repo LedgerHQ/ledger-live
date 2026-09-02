@@ -16,3 +16,18 @@ export const UNAUTHORIZED_STATUS = 401;
  * that belongs to somebody else.
  */
 export const CARD_STALE_REQUEST = "card_stale_request";
+
+/**
+ * The two OAuth2 grant endpoints, by the name they carry in `meta.arg.endpointName`.
+ *
+ * Declared here rather than in `@domain/api-card-management`, because the redaction below the
+ * endpoints must not depend on the layer above it. A test in that package holds the two lists
+ * together.
+ */
+export const CARD_GRANT_ENDPOINTS: ReadonlySet<string> = new Set([
+  "exchangeAuthorizationCode",
+  "refreshSession",
+]);
+
+/** What every redacted field is replaced with, so a reader sees that a value was removed. */
+export const REDACTED = "[REDACTED]";

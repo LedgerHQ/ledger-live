@@ -1,6 +1,6 @@
 ---
 name: card-endpoint-shape
-description: Read this before adding or editing an endpoint in `domain/api/card-management/src/api.ts`, or a credential-bearing call in `grants.ts`.
+description: Read this before adding or editing an endpoint in `domain/api/card-management/src/api.ts`, a credential-bearing one included.
 ---
 
 # Card endpoint shape
@@ -46,11 +46,21 @@ more than it looks:
 Three lines of declaration become twenty of plumbing, and the endpoint stops reading like its
 neighbours.
 
-## An endpoint that handles a credential is not an endpoint
+## An endpoint that handles a credential
 
-RTK Query and `createAsyncThunk` expose arguments and results in lifecycle actions. Credential calls
-therefore use plain thunks in `grants.ts`, which dispatch nothing. They call `postCardJson` without a
-Bearer or renewal, validate and transform the response, and never include the body in an error.
+The two OAuth2 grants are endpoints like any other, plus three rules. RTK Query puts the argument of
+a call on its pending action and the answer on its settled one, so a grant's credential travels
+through redux, and three controls keep it out of every reader:
+
+- `extraOptions: { authenticated: false }`, so the base query sends no Bearer and never renews. A
+  grant presents its own credential, and a grant that renewed would loop on its own 401.
+- **No hook.** Export a hook for every other endpoint, and none for a grant.
+- **`track: false` at every call site**, so the answer never becomes a cache entry in redux state.
+
+The apps add the last control: `redactCardApiAction` strips every Card action before the desktop
+logger, the desktop DevTools or the mobile DevTools relay reads one, and `redactCardApiState` strips
+a grant out of the state. A new grant must be added to `CARD_GRANT_ENDPOINTS` in
+`@shared/api-services`, which a test in `api.test.ts` checks.
 
 ## Where configuration comes from
 
@@ -79,7 +89,9 @@ Use it to map, never to staple a request value back onto the answer.
 
 ## Checklist
 
-- [ ] `query`, not `queryFn` — and a call that handles a credential belongs in `grants.ts` instead
+- [ ] `query`, not `queryFn`
+- [ ] A credential-bearing endpoint: `authenticated: false`, no hook, `track: false`, and its name in
+      `CARD_GRANT_ENDPOINTS`
 - [ ] No `as` and no `try`/`catch` in `api.ts`
 - [ ] Wire shape validated by a schema in `schema.ts`
 - [ ] Mapping in `transforms.ts`, with a test

@@ -1,6 +1,11 @@
 import { cardManagementApi } from "@domain/api-card-management";
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
-import { cardApi, cardApiExtra, CARD_STALE_REQUEST } from "@shared/api-services";
+import {
+  cardApi,
+  cardApiExtra,
+  CARD_STALE_REQUEST,
+  redactCardApiAction,
+} from "@shared/api-services";
 import { createCardSession } from "./internals/createCardSession";
 import type { CardSessionStore } from "./internals/sessionStore";
 import type { CardRenewalDispatch } from "./types";
@@ -94,11 +99,11 @@ function routeFetch(routes: {
 }
 
 /** The body the token endpoint received, so a test can name the token that was spent. */
-function grantBody(spy: jest.SpyInstance): unknown {
-  const call = spy.mock.calls.find(([input]) => String(input).endsWith(TOKEN_PATH));
+async function grantBody(spy: jest.SpyInstance): Promise<unknown> {
+  const call = spy.mock.calls.find(([input]) => String(input?.url ?? input).endsWith(TOKEN_PATH));
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const init = call?.[1] as RequestInit | undefined;
-  return JSON.parse(String(init?.body));
+  const sent = call?.[0] as Request;
+  return sent.json();
 }
 
 const flushTimers = () => new Promise(resolve => setTimeout(resolve, 0));
@@ -146,7 +151,7 @@ describe("the Card session renewal, end to end", () => {
 
     await expect(request.unwrap()).resolves.toEqual(USER);
     // The grant spent the stored refresh token, and both rotated tokens landed on disk.
-    expect(grantBody(fetchSpy)).toEqual({
+    await expect(grantBody(fetchSpy)).resolves.toEqual({
       grant_type: "refresh_token",
       refresh_token: "rt_old",
     });
@@ -288,7 +293,7 @@ describe("the Card session renewal, end to end", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("puts no credential into any action it dispatches", async () => {
+  it("keeps every credential out of the actions a logger or DevTools reads", async () => {
     let userCalls = 0;
     fetchSpy = routeFetch({
       user: () => (++userCalls === 1 ? json({ message: "unauthorized" }, 401) : json(USER)),
@@ -307,12 +312,36 @@ describe("the Card session renewal, end to end", () => {
 
     await store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap();
 
-    // Everything the desktop log export writes to disk and the mobile DevTools relay sends over a
-    // socket. No sanitizer runs first, and none can: the relay takes none.
-    const serialized = JSON.stringify(actions);
+    // A grant is an endpoint, so its argument rides on the pending action and its answer on the
+    // fulfilled one. The desktop logger, the desktop DevTools and the mobile DevTools relay each
+    // read an action only after this redaction.
+    const serialized = JSON.stringify(actions.map(action => redactCardApiAction(action)));
     expect(serialized).not.toContain("at_sentinel");
     expect(serialized).not.toContain("rt_sentinel");
     expect(serialized).not.toContain("at_old");
     expect(serialized).not.toContain("rt_old");
+    // The renewal still reads as a renewal.
+    expect(serialized).toContain("refreshSession");
+  });
+
+  it("keeps the rotated tokens out of the store, because the grant runs untracked", async () => {
+    let userCalls = 0;
+    fetchSpy = routeFetch({
+      user: () => (++userCalls === 1 ? json({ message: "unauthorized" }, 401) : json(USER)),
+      token: () =>
+        json({
+          access_token: "at_sentinel",
+          expires_in: 3600,
+          refresh_token: "rt_sentinel",
+        }),
+    });
+    const { session, store } = setup();
+    await session.cardSession.set({ accessToken: "at_old", refreshToken: "rt_old" });
+
+    await store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap();
+
+    // The one copy of a Card session is the one in the session store.
+    expect(JSON.stringify(store.getState())).not.toContain("at_sentinel");
+    expect(JSON.stringify(store.getState())).not.toContain("rt_sentinel");
   });
 });

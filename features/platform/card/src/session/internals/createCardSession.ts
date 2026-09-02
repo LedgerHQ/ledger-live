@@ -1,4 +1,4 @@
-import { refreshSession } from "@domain/api-card-management";
+import { cardManagementApi } from "@domain/api-card-management";
 import type { CardSessionRefreshResult, CardSessionSnapshot } from "@shared/api-services";
 import {
   CardSessionNotStoredError,
@@ -236,9 +236,14 @@ export function createCardSession(store: CardSessionStore) {
       throw new Error("the Card session holds no refresh token");
     }
 
-    // A plain thunk: dispatching it runs the grant and answers with the session. It dispatches no
-    // action of its own, so no credential reaches redux.
-    return renewal.dispatch(refreshSession(refreshToken));
+    // `track: false`, so the rotated tokens never become a cache entry: this renewal is the only
+    // reader, and it writes them to the store itself. The lifecycle actions the grant still
+    // dispatches are what the apps redact before a logger or DevTools reads one.
+    return renewal
+      .dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate({ refreshToken }, { track: false }),
+      )
+      .unwrap();
   }
 
   /**

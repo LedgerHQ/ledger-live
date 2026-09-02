@@ -7,7 +7,6 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 `createApi`, so one reducer, one middleware and one cache serve every Card use case.
 
 - `api.ts` — `cardManagementApi`: `cardApi.enhanceEndpoints({ addTagTypes }).injectEndpoints(...)`.
-- `grants.ts` — the two OAuth2 grants, as plain thunks. Not endpoints. See below.
 - `schema.ts` — zod wire contracts for the responses below.
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
@@ -19,6 +18,8 @@ shape and the reasons.
 
 | Endpoint | Method | Path | Purpose |
 | -------- | ------ | ---- | ------- |
+| `exchangeAuthorizationCode` | POST | `/v1/auth/oauth2/token` | Turn the redirect's code into a session |
+| `refreshSession` | POST | `/v1/auth/oauth2/token` | Rotate both tokens after a 401 |
 | `logout` | POST | `/v1/auth/logout` | End the session |
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
@@ -28,10 +29,25 @@ shape and the reasons.
 
 ## OAuth2 grants
 
-`exchangeAuthorizationCode` and `refreshSession` are plain thunks in `grants.ts`, not endpoints.
-RTK Query and `createAsyncThunk` expose arguments and results in lifecycle actions; plain thunks
-dispatch nothing, so grant credentials never enter redux. Both use `postCardJson` with the client
-key and no Bearer or renewal, validate the response, and return a `PayCardSession`.
+`exchangeAuthorizationCode` and `refreshSession` are the two token grants. Both post to
+`/v1/auth/oauth2/token`, and `grant_type` separates them. They declare
+`extraOptions: { authenticated: false }`, so the base query sends no Bearer and never renews: a
+grant presents its own credential, and a grant that renewed would answer its own 401 with another
+grant and loop.
+
+Both carry credentials in both directions, so three rules hold them:
+
+1. **No hook.** A renewal is the base query's decision, and the code exchange belongs to the login
+   machine. `api.ts` exports a hook for every other endpoint and none for these two.
+2. **`track: false` at every call site.** The session never becomes a cache entry, so it never
+   reaches redux state, a DevTools state dump or a state export.
+3. **Redaction before any reader.** RTK Query still dispatches a pending and a settled action for
+   each grant, and both carry the credential. The apps pass every Card action through
+   `redactCardApiAction` from `@shared/api-services` before the desktop logger, the desktop DevTools
+   or the mobile DevTools relay reads one. `redactCardApiState` does the same for the state.
+
+`CARD_GRANT_ENDPOINTS` in `@shared/api-services` names both grants for the state redaction. A test
+in `api.test.ts` holds that list and these endpoints together.
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)

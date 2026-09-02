@@ -27,6 +27,8 @@ import {
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
+  redactCardApiState,
   swapApiExtra,
 } from "@shared/api-services";
 import {
@@ -47,7 +49,11 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  devTools: !!Config.DEBUG_RNDEBUGGER,
+  // Both OAuth2 grants are Card endpoints, so their arguments and their answers ride on redux
+  // actions, and DevTools serializes every action and every state it is given.
+  devTools: Config.DEBUG_RNDEBUGGER
+    ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+    : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({
@@ -129,12 +135,17 @@ export const store = configureStore({
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
-    // `rozeniteDevToolsEnhancer` relays every action over a socket to the DevTools panel, and it
-    // takes no `actionSanitizer`. That is why the Card credentials never enter an action: the two
-    // OAuth2 grants are plain thunks, which dispatch nothing.
+    // `rozeniteDevToolsEnhancer` relays every action and every state over a socket to the DevTools
+    // panel, and both carry the Card grants' credentials. It forwards these two options to
+    // `@redux-devtools/remote`, which has supported them all along — see
+    // `patches/@rozenite__redux-devtools-plugin@1.2.0.patch`.
+    const devTools = rozeniteDevToolsEnhancer({
+      actionSanitizer: redactCardApiAction,
+      stateSanitizer: redactCardApiState,
+    });
     // Type assertion needed due to Redux version compatibility types between v4 and v5
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
+    return enhancers.concat(devTools as StoreEnhancer);
   },
 });
 

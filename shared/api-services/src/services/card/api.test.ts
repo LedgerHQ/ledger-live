@@ -1,6 +1,6 @@
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { z } from "zod";
-import { cardApi, cardApiExtra, getCardExtra, postCardJson } from "./api";
+import { cardApi, cardApiExtra, getCardExtra } from "./api";
 import { CARD_STALE_REQUEST } from "./constants";
 import type { CardApiExtra, CardSessionRefreshResult } from "./types";
 
@@ -73,55 +73,6 @@ describe("getCardExtra", () => {
   });
 });
 
-describe("postCardJson", () => {
-  it("sends the client key, no Bearer, and answers with the parsed body", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
-
-    await expect(
-      postCardJson(buildExtra(), "/v1/auth/oauth2/token", {
-        grant_type: "refresh_token",
-      }),
-    ).resolves.toEqual({ ok: true });
-
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const headers = init.headers as Headers;
-    expect(url).toBe("https://card.test/v1/auth/oauth2/token");
-    expect(init.method).toBe("POST");
-    expect(headers.get("x-client-key")).toBe("test-client-key");
-    // A grant carries its own proof. It never renews either, so a dead refresh token cannot loop.
-    expect(headers.get("authorization")).toBeNull();
-  });
-
-  it("throws with the status, and never the body, when the provider refuses", async () => {
-    fetchSpy = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(jsonResponse({ error: "invalid_grant", hint: "rt_secret" }, 400));
-
-    const failure = await postCardJson(buildExtra(), "/v1/auth/oauth2/token", {}).catch(
-      (error: Error) => error,
-    );
-
-    expect(failure).toMatchObject({ name: "CardRequestError" });
-    expect(String(failure)).toContain("400");
-    expect(String(failure)).not.toContain("rt_secret");
-  });
-
-  it("throws, and quotes nothing, when the answer is not JSON", async () => {
-    fetchSpy = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response("<html>rt_secret</html>", { status: 200 }));
-
-    const failure = await postCardJson(buildExtra(), "/v1/auth/oauth2/token", {}).catch(
-      (error: Error) => error,
-    );
-
-    expect(failure).toMatchObject({ name: "CardRequestError" });
-    expect(String(failure)).not.toContain("rt_secret");
-  });
-});
-
 describe("cardBaseQuery", () => {
   // The base query is private, so drive it the way a use case does: through injected endpoints.
   function probeStore(extra: CardApiExtra) {
@@ -131,6 +82,11 @@ describe("cardBaseQuery", () => {
         probeWithSchema: build.query<{ token: string }, void>({
           query: () => "/probe",
           responseSchema: z.object({ token: z.string().min(20) }),
+        }),
+        // Declared the way both OAuth2 grants declare themselves.
+        probeGrant: build.mutation<unknown, void>({
+          query: () => ({ url: "/v1/auth/oauth2/token", method: "POST" }),
+          extraOptions: { authenticated: false },
         }),
       }),
       overrideExisting: true,
@@ -431,6 +387,36 @@ describe("cardBaseQuery", () => {
     const meta = (fulfilled as unknown as { meta: { baseQueryMeta: unknown } }).meta;
     expect(meta.baseQueryMeta).toBeUndefined();
     expect(JSON.stringify(actions)).not.toContain("session-token");
+  });
+
+  describe("an unauthenticated endpoint", () => {
+    it("sends the client key and no Bearer, and reads no session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+      const readCardSession = jest.fn(async () => ({ token: "session-token", sessionId: 1 }));
+
+      const { api, store } = probeStore(cardApiExtra(buildExtra({ readCardSession })));
+      await store.dispatch(api.endpoints.probeGrant.initiate());
+
+      const sent = request(fetchSpy);
+      // A grant presents its own credential.
+      expect(sent.headers.get("authorization")).toBeNull();
+      expect(sent.headers.get("x-client-key")).toBe("test-client-key");
+      expect(readCardSession).not.toHaveBeenCalled();
+    });
+
+    it("renews nothing on a 401, so a dead refresh token cannot loop", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse({ error: "invalid_grant" }, 401));
+      const refreshCardSession = jest.fn(async () => REPLACED);
+
+      const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+      const result = await store.dispatch(api.endpoints.probeGrant.initiate());
+
+      expect(refreshCardSession).not.toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(result.error).toMatchObject({ status: 401 });
+    });
   });
 
   describe("catchSchemaFailure", () => {

@@ -1,4 +1,4 @@
-import { cardManagementApi, exchangeAuthorizationCode } from "@domain/api-card-management";
+import { cardManagementApi } from "@domain/api-card-management";
 import { cardSession, getCardSessionToken } from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
@@ -41,10 +41,15 @@ export function createCardLoginPorts({
       dispatch(cardManagementApi.util.resetApiState());
     },
     /**
-     * A plain thunk, not an endpoint: it takes the code and the PKCE verifier and answers with two
-     * more credentials, and every phase of an endpoint call becomes a redux action.
+     * `track: false`, so the session never becomes a cache entry: the machine hands it to
+     * `persistSession` and drops it. The lifecycle actions the grant still dispatches carry the code,
+     * the PKCE verifier and both tokens, and the apps redact every Card action before a logger or
+     * DevTools reads one.
      */
-    exchangeAuthorizationCode: request => dispatch(exchangeAuthorizationCode(request)),
+    exchangeAuthorizationCode: request =>
+      dispatch(
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request, { track: false }),
+      ).unwrap(),
     getUser: async () => {
       const request = dispatch(cardManagementApi.endpoints.getUser.initiate());
       try {

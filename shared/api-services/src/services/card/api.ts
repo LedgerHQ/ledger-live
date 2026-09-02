@@ -11,9 +11,13 @@ import {
   HEADER_X_CLIENT_KEY,
   UNAUTHORIZED_STATUS,
 } from "./constants";
-import { CardRequestError } from "./errors";
 import { CardApiExtraSchema } from "./schema";
-import type { CardApiExtra, CardSessionRefreshResult, CardSessionSnapshot } from "./types";
+import type {
+  CardApiExtra,
+  CardBaseQueryExtraOptions,
+  CardSessionRefreshResult,
+  CardSessionSnapshot,
+} from "./types";
 
 /**
  * A schema failure, with the value that failed dropped.
@@ -43,43 +47,6 @@ function cardHeaders(extra: CardApiExtra, token?: string | null, headers = new H
     headers.set("authorization", `Bearer ${token}`);
   }
   return headers;
-}
-
-/**
- * One JSON POST against the Card API, outside RTK Query.
- *
- * The two OAuth2 grants send their requests here rather than through an endpoint. Their argument and
- * their answer are both credentials, and RTK Query dispatches an action for every phase of a
- * request: the argument rides on the pending one and the answer on the fulfilled one. The desktop
- * redux logger writes both into the file users attach to a support ticket, in production, and the
- * mobile DevTools relay sends both over a socket and takes no sanitizer.
- *
- * It sends no Bearer and it never renews. A grant carries its own proof, and a renewal that went
- * through the authenticated path would answer 401, renew again, and loop.
- *
- * It throws a {@link CardRequestError} that names the path and the status, and never the body.
- */
-export async function postCardJson(
-  extra: CardApiExtra,
-  path: string,
-  body: unknown,
-): Promise<unknown> {
-  const response = await fetch(`${extra.getCardApiBaseUrl().replace(/\/$/, "")}${path}`, {
-    method: "POST",
-    headers: cardHeaders(extra),
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw new CardRequestError(path, `the provider answered ${response.status}`);
-  }
-
-  try {
-    return await response.json();
-  } catch {
-    // The parse message quotes what it could not read, and that body is a token response.
-    throw new CardRequestError(path, "the provider answered a body that is not JSON");
-  }
 }
 
 /**
@@ -116,11 +83,12 @@ function isUnauthorized(error: FetchBaseQueryError | undefined): boolean {
   );
 }
 
-const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-  args,
-  api,
-  extraOptions,
-) => {
+const cardBaseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError,
+  CardBaseQueryExtraOptions
+> = async (args, api, extraOptions) => {
   const extra = getCardExtra(api);
 
   const send = async (token: string | null) => {
@@ -134,6 +102,12 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
     // rejected action. Nothing in the app reads it, so the Card base query hands out none.
     return answer.error ? { error: answer.error } : { data: answer.data };
   };
+
+  // The two OAuth2 grants. They present their own credential, so they take no Bearer, and they read
+  // no session: a grant that renewed would answer its own 401 with another grant and loop.
+  if (extraOptions?.authenticated === false) {
+    return send(null);
+  }
 
   let session: CardSessionSnapshot;
   try {
