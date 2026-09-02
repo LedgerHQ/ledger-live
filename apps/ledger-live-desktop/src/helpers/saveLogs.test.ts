@@ -55,7 +55,7 @@ describe("saveLogs", () => {
     circularObj.self = circularObj;
     const logs = { log: "test", circularObj };
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue(logs);
-    (files.saveLogs as jest.Mock).mockResolvedValue(true);
+    jest.mocked(files.saveLogs).mockResolvedValue("saved");
 
     // when
     await saveLogs(fakeRequest);
@@ -63,7 +63,7 @@ describe("saveLogs", () => {
     // then
     expect(files.saveLogs).toHaveBeenCalledTimes(1);
     expect(files.saveLogs).toHaveBeenCalledWith(fakeRequest, expect.any(String));
-    const serializedLogs = (files.saveLogs as jest.Mock).mock.calls[0][1];
+    const serializedLogs = jest.mocked(files.saveLogs).mock.calls[0][1];
     expect(serializedLogs).toContain("[Circular]");
   });
 
@@ -71,7 +71,7 @@ describe("saveLogs", () => {
     // given
     const error = new Error("IPC error");
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
-    (files.saveLogs as jest.Mock).mockRejectedValue(error);
+    jest.mocked(files.saveLogs).mockRejectedValue(error);
     const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     // when
