@@ -43,8 +43,8 @@ const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase",
 /**
  * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
  *
- * A release build carries neither, so it starts on the definition defaults: the production URL and
- * an empty client key. The suggestions put the development tenant one press away.
+ * The definition defaults already point at that tenant: the Baanx development URL and the staging
+ * client key. A tester who changes a value gets the tenant back with one press.
  */
 const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
   { key: "CARD_BAANX_API_URL", suggestedValue: "https://dev.api.baanx.com" },
