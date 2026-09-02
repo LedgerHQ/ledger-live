@@ -1,4 +1,4 @@
-name: "[CI] - Danger - PR Conventions"
+name: "[CI] - Check PR Validity"
 
 on:
   pull_request:
@@ -14,6 +14,7 @@ permissions: {} # Deny all permissions by default at workflow level
 
 jobs:
   danger:
+    # Required check on develop (ruleset 1856973) - do not rename.
     name: "Validate PR conventions"
     # Skip on forks — GITHUB_TOKEN on forks has no write access to post comments
     if: ${{ !github.event.pull_request.head.repo.fork }}
@@ -39,7 +40,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm i --filter @tools/danger... --frozen-lockfile
+        run: pnpm i --filter @tools/danger... --frozen-lockfile --ignore-scripts
 
       - name: Run Danger
         working-directory: tools/danger

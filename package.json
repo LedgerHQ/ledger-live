@@ -229,9 +229,9 @@
   "devDependencies": {
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.7",
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
-    "@commitlint/prompt-cli": "17.8.1",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/prompt-cli": "catalog:",
     "@datadog/datadog-ci": "3.11.0",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
