@@ -39,7 +39,7 @@ test.describe("Post-onboarding hub", () => {
         const isLast = actionId === lastActionId;
 
         await app.postOnboarding.expectActionPending(actionId);
-        await app.postOnboarding.tapAction(actionId);
+        await app.postOnboarding.clickAction(actionId);
         await app.postOnboarding.completeMockAction();
 
         if (isLast) break;
