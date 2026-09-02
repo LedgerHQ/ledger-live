@@ -1,6 +1,6 @@
 import React from "react";
 import type { SwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
-import type { SwapTransactionStatusOrigin } from "../types";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { TransactionHeader } from "./TransactionHeader";
 import { StatusSection } from "./Status/StatusSection";
 import { EarnBanner } from "./EarnBanner/EarnBanner";

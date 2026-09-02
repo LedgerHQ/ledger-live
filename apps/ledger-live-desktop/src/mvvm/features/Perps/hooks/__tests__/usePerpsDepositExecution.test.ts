@@ -35,7 +35,7 @@ jest.mock("@ledgerhq/live-common/exchange/platform/completeExchange", () => ({
 
 // The account updater needs a full swap exchange to build its updaters; the
 // deposit only cares about what it is told the swap is worth.
-const mockGetUpdateAccountWithUpdaterParams = jest.fn(() => []);
+const mockGetUpdateAccountWithUpdaterParams = jest.fn((_params: unknown) => []);
 jest.mock("@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams", () => ({
   getUpdateAccountWithUpdaterParams: (params: unknown) =>
     mockGetUpdateAccountWithUpdaterParams(params as never),

@@ -4,7 +4,7 @@ import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
-import type { SwapTransactionStatusOrigin } from "../types";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { formatCreatedAt } from "../utils";
 
 type TransactionHeaderProps = Readonly<{

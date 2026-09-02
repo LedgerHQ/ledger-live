@@ -1,4 +1,4 @@
-import type { SwapTransactionStatusDialogParams } from "./types";
+import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import {
   closeDialogWithData,
   openDialogWithData,
@@ -10,7 +10,7 @@ import type { State } from "~/renderer/reducers";
 
 const DIALOG_ID = "SWAP_TRANSACTION_STATUS" satisfies DialogWithDataId;
 
-export const openSwapTransactionStatusDialog = (params: SwapTransactionStatusDialogParams) =>
+export const openSwapTransactionStatusDialog = (params: SwapTransactionStatusParams) =>
   openDialogWithData({ id: DIALOG_ID, data: params });
 
 export const closeSwapTransactionStatusDialog = () => closeDialogWithData(DIALOG_ID);
