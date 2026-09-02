@@ -1012,14 +1012,20 @@ export async function signSendTransaction(tx: Transaction) {
   }
 }
 
+export async function waitForSendReviewTransaction(
+  tx: Transaction,
+  maxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+): Promise<string> {
+  const { sendVerifyLabel } = getDeviceLabels(tx.accountToDebit.currency.speculosApp);
+  return await waitFor(sendVerifyLabel, maxAttempts);
+}
+
 export async function getSendEvents(
   tx: Transaction,
   verifyMaxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
 ): Promise<string[]> {
-  const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
-    tx.accountToDebit.currency.speculosApp,
-  );
-  await waitFor(sendVerifyLabel, verifyMaxAttempts);
+  const { sendConfirmLabel } = getDeviceLabels(tx.accountToDebit.currency.speculosApp);
+  await waitForSendReviewTransaction(tx, verifyMaxAttempts);
   return await pressUntilTextFound(sendConfirmLabel);
 }
 
