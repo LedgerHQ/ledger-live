@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { act, renderHook } from "@tests/test-renderer";
 import { usePerpsDepositExecution, type PerpsDepositDeviceStep } from "../usePerpsDepositExecution";
 
@@ -117,6 +118,37 @@ describe("usePerpsDepositExecution", () => {
         quoteId: "quote-1",
         feeStrategy: "medium",
       }),
+    );
+  });
+
+  it("hands over the token accounts, which fund most deposits", async () => {
+    const parent = genAccount("funding-parent", { currency: ethereum, operationsSize: 0 });
+    const tokenAccount = genTokenAccount(0, parent, usdcToken);
+    mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
+
+    const { result } = renderHook(
+      () =>
+        usePerpsDepositExecution(
+          { ...params, depositAccount: tokenAccount },
+          { onDone: jest.fn(), onRefused: jest.fn() },
+        ),
+      {
+        overrideInitialState: state => ({
+          ...state,
+          accounts: { ...state.accounts, active: [{ ...parent, subAccounts: [tokenAccount] }] },
+        }),
+      },
+    );
+
+    await act(async () => {
+      await result.current.executeDeposit();
+    });
+
+    expect(mockExecuteSwap).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accounts: expect.arrayContaining([expect.objectContaining({ id: tokenAccount.id })]),
+      }),
+      expect.anything(),
     );
   });
 
