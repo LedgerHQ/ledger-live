@@ -11,7 +11,7 @@ import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import { FF_MINA_STAKING_ENABLED, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -571,6 +571,10 @@ test.describe("Delegate", () => {
   );
 });
 
+// The mina rosetta node answers /search/transactions in 35s or so even for an account holding a
+// handful of operations, which leaves no room under the default expect timeout.
+const MINA_SYNC_TIMEOUT = 120_000;
+
 test.describe("Delegate", () => {
   // Mina delegates the whole balance, so the flow carries no amount.
   const account = new Delegate(Account.MINA_1, "N/A", "Kraken");
@@ -583,6 +587,7 @@ test.describe("Delegate", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
     cliCommands: [liveDataCommand(account.account)],
+    featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
   test(
@@ -601,7 +606,7 @@ test.describe("Delegate", () => {
 
       // The modal opens straight on the validator list, and the whole-balance delegation means
       // there is no amount step between the selection and the device.
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton(MINA_SYNC_TIMEOUT);
       await app.delegate.checkValidatorListIsVisible();
       await app.delegate.inputProvider(account.provider);
       await app.delegate.selectProviderByName(account.provider);
