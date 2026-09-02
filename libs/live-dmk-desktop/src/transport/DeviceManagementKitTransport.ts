@@ -56,10 +56,16 @@ export class DeviceManagementKitTransport extends Transport {
     return subscription;
   };
 
-  static async open(): Promise<DeviceManagementKitTransport> {
+  /**
+   * @param options.deviceId Connect this device rather than the first available
+   *   one, and never reuse the active session — the point of passing an id is to
+   *   move onto that device.
+   */
+  static async open(options?: { deviceId?: DeviceId }): Promise<DeviceManagementKitTransport> {
+    const requestedDeviceId = options?.deviceId;
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
-    if (activeSessionId) {
+    if (!requestedDeviceId && activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
@@ -86,11 +92,17 @@ export class DeviceManagementKitTransport extends Transport {
       getDeviceManagementKit()
         .listenToAvailableDevices({})
         .pipe(
-          filter(devices => devices.length > 0),
+          filter(devices =>
+            requestedDeviceId
+              ? devices.some(device => device.id === requestedDeviceId)
+              : devices.length > 0,
+          ),
           timeout({ first: 10000 }),
         ),
     );
-    const [discoveredDevice] = discoveredDevices;
+    const discoveredDevice = requestedDeviceId
+      ? discoveredDevices.find(device => device.id === requestedDeviceId)!
+      : discoveredDevices[0];
     const connectedSessionId = await getDeviceManagementKit().connect({
       device: discoveredDevice,
       sessionRefresherOptions: { isRefresherDisabled: true },
@@ -127,7 +139,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device added ${id}`);
             observer.next({
               type: "add",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -142,7 +154,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device removed ${id}`);
             observer.next({
               type: "remove",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -167,12 +179,14 @@ export class DeviceManagementKitTransport extends Transport {
     const pendingRemovals = new Map<DeviceId, DiscoveredDevice>();
     const sessionSubscriptions = new Map<DeviceId, Subscription>();
 
+    // Consumers key their device list by the descriptor, so it has to be the
+    // device id: a shared one collapses every device into a single entry.
     const notifyDeviceAdded = (device: DiscoveredDevice) => {
       const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
       tracer.trace(`[listen] device added ${id}`);
       observer.next({
         type: "add",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {
@@ -186,7 +200,7 @@ export class DeviceManagementKitTransport extends Transport {
       tracer.trace(`[listen] device removed ${id}`);
       observer.next({
         type: "remove",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {

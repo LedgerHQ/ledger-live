@@ -17,6 +17,7 @@ import CoinConfigSettings from "./CoinConfigSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
 import EnableMockServerTransportToggle from "./EnableMockServerTransportToggle";
+import MockServerDeviceSettings from "./MockServerDeviceSettings";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
@@ -135,6 +136,7 @@ const Default = () => {
       >
         <EnableMockServerTransportToggle />
       </Row>
+      <MockServerDeviceSettings />
       <RecoverUpsellRow />
 
       <Row

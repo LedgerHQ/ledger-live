@@ -5523,6 +5523,15 @@
       "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
       "enableMockServerTransport": "Mock server transport",
       "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a device mock server instead of a physical device. Uses the shared mock server unless MOCK_SERVER_TRANSPORT_URL points elsewhere. Requires an app restart to take effect.",
+      "mockServerDevice": {
+        "model": "Mock device model",
+        "modelDesc": "Model the mock server reports. Changing it attaches a new device to the session, connects it and removes the previous one, with no app restart. The OS version resets to the latest published for the new model.",
+        "osVersion": "Mock device OS version",
+        "osVersionDesc": "Firmware version the mock device reports. Defaults to the latest published for the model in coin-apps; set a lower one to leave an OS update available and exercise the firmware update flow.",
+        "onboarded": "Mock device onboarded",
+        "onboardedDesc": "Turn off to have the mock device report itself as not onboarded, which starts the onboarding simulation.",
+        "error": "Could not apply the change: the mock server rejected it or is unreachable."
+      },
       "mockServerStatus": {
         "connected": "Mock server connected",
         "disconnected": "Mock server unreachable",
