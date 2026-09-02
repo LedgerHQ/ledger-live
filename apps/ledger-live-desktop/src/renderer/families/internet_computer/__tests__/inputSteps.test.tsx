@@ -47,16 +47,18 @@ const stepProps = (overrides = {}) =>
   makeStepProps({ neurons: [NEURON], selectedNeuronId: "5", ...overrides });
 
 describe("StepSetDissolveDelay", () => {
-  it("converts the entered days into seconds on the increase field", async () => {
+  // Driven with a whole value for the reason documented on StepStakeMaturity below: the input is
+  // controlled by a transaction prop these tests hold fixed, so typing "30" would report the "3".
+  it("converts the entered days into seconds on the increase field", () => {
     const props = stepProps({
       transaction: { type: "increase_dissolve_delay", additionalDissolveDelay: "" },
     });
-    const { user } = render(<StepSetDissolveDelay {...props} />);
+    render(<StepSetDissolveDelay {...props} />);
 
-    await user.type(screen.getByTestId("icp-dissolve-delay-input"), "30");
+    fireEvent.change(screen.getByTestId("icp-dissolve-delay-input"), { target: { value: "30" } });
 
     const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
-    expect(patched.additionalDissolveDelay).toBe(String(3 * SECONDS_IN_DAY));
+    expect(patched.additionalDissolveDelay).toBe(String(30 * SECONDS_IN_DAY));
   });
 
   it("writes to the set field instead when the neuron is setting its delay from zero", async () => {

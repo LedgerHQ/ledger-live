@@ -61,7 +61,7 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
           props.onOperationBroadcasted({
             id: "op-1",
             accountId: "acc-1",
-            type: "FEES",
+            type: "NONE",
             date: new Date(),
             extra: { neurons: [makeNeuron({ id: 9n })] },
           } as unknown as InternetComputerOperation);
@@ -73,7 +73,12 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
       <button
         type="button"
         data-testid="device-fail"
-        onClick={() => props.onTransactionError(new Error("user refused"))}
+        onClick={() => {
+          props.onTransactionError(new Error("user refused"));
+          // The real component transitions on failure too: confirmation is where both outcomes are
+          // reported. Omitting it had these tests asserting the stub stayed on the device step.
+          props.transitionTo("confirmation");
+        }}
       >
         fail
       </button>
@@ -170,7 +175,7 @@ describe("manage neuron flow (integration)", () => {
     expect(screen.getByText("9")).toBeInTheDocument();
   });
 
-  it("surfaces a signing failure without leaving the flow", async () => {
+  it("reports a signing failure on the confirmation step", async () => {
     const { user } = render(<ControlledBody />);
 
     await act(async () => {
@@ -180,7 +185,8 @@ describe("manage neuron flow (integration)", () => {
       await user.click(screen.getByTestId("device-fail"));
     });
 
-    expect(screen.getByTestId("step-device")).toBeInTheDocument();
+    expect(screen.getByText("user refused")).toBeInTheDocument();
+    expect(screen.queryByText("Done")).not.toBeInTheDocument();
   });
 });
 
@@ -191,7 +197,8 @@ describe("modal shells", () => {
   ])("mounts the %s modal without opening it", (_name, Component) => {
     const { container } = render(<Component />);
 
-    expect(container).toBeInTheDocument();
+    // Closed, so it draws nothing: the point is that mounting the registry entry does not throw.
+    expect(container).toBeEmptyDOMElement();
   });
 });
 
