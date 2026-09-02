@@ -133,13 +133,9 @@ export const store = configureStore({
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
-    const devTools = rozeniteDevToolsEnhancer({
-      actionSanitizer: redactCardApiAction,
-      stateSanitizer: redactCardApiState,
-    });
     // Type assertion needed due to Redux version compatibility types between v4 and v5
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return enhancers.concat(devTools as StoreEnhancer);
+    return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
   },
 });
 
