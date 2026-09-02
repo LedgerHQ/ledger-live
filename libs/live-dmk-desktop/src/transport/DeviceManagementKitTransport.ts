@@ -6,12 +6,47 @@ import {
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import Transport, { type DescriptorEvent } from "@ledgerhq/hw-transport";
+import { CantOpenDevice, DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
+import {
+  firstValueFrom,
+  first,
+  Observer,
+  startWith,
+  pairwise,
+  map,
+  Subscription,
+  timeout,
+} from "rxjs";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
+
+const DEFAULT_DISCOVERY_TIMEOUT_MS = 5000;
+
+/**
+ * Waits for the first non empty list of available devices.
+ *
+ * `listenToAvailableDevices` is backed by a BehaviorSubject seeded with an empty array and
+ * populated asynchronously, so its first emission is `[]` as long as no device has been
+ * enumerated yet. Taking that emission blindly hands `undefined` to `dmk.connect`, which then
+ * fails with a `TypeError` instead of a device error.
+ */
+const discoverFirstAvailableDevice = async (
+  timeoutMs: number = DEFAULT_DISCOVERY_TIMEOUT_MS,
+): Promise<DiscoveredDevice> => {
+  const devices = await firstValueFrom(
+    getDeviceManagementKit()
+      .listenToAvailableDevices({})
+      .pipe(
+        first(availableDevices => availableDevices.length > 0),
+        timeout(timeoutMs),
+      ),
+  );
+
+  return devices[0];
+};
 
 export class DeviceManagementKitTransport extends Transport {
   sessionId: string;
@@ -47,7 +82,7 @@ export class DeviceManagementKitTransport extends Transport {
     return subscription;
   };
 
-  static async open(): Promise<DeviceManagementKitTransport> {
+  static async open(timeoutMs?: number): Promise<DeviceManagementKitTransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
     if (activeSessionId) {
@@ -69,9 +104,11 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice] = await firstValueFrom(
-      getDeviceManagementKit().listenToAvailableDevices({}),
-    );
+    const discoveredDevice = await discoverFirstAvailableDevice(timeoutMs).catch(error => {
+      tracer.trace("[open] no available device found", { error });
+      throw new CantOpenDevice("No available device found");
+    });
+
     const connectedSessionId = await getDeviceManagementKit().connect({
       device: discoveredDevice,
       sessionRefresherOptions: { isRefresherDisabled: true },
@@ -262,9 +299,11 @@ export class DeviceManagementKitTransport extends Transport {
 
     // If the device is not connected, connect to new session
     if (!devices.some(device => device.sessionId === this.sessionId)) {
-      const [discoveredDevice] = await firstValueFrom(
-        getDeviceManagementKit().listenToAvailableDevices({}),
-      );
+      const discoveredDevice = await discoverFirstAvailableDevice().catch(error => {
+        tracer.trace("[exchange] no available device found", { error });
+        throw new DisconnectedDevice();
+      });
+
       const connectedSessionId = await getDeviceManagementKit().connect({
         device: discoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },

@@ -90,7 +90,7 @@ export function registerTransportModules(store: Store<State>) {
         },
       });
 
-      return DeviceManagementKitTransport.open();
+      return DeviceManagementKitTransport.open(timeoutMs);
     },
 
     disconnect: () => Promise.resolve(),
