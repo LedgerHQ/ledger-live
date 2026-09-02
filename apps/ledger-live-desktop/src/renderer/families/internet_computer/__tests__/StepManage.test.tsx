@@ -149,6 +149,15 @@ describe("StepManage", () => {
 
   // The key used to be `common.none`, which no translation file defines, so the row read
   // "common.none". Any neuron under the 14-day voting threshold reaches this branch.
+  it("makes the neuron id copyable from its heading", () => {
+    const { container } = renderManage();
+
+    // Asserted on the container because the heading now holds the copy control beside the text, so
+    // no single element's text is the title on its own.
+    expect(bodyText(container)).toContain("Neuron 7");
+    expect(screen.getByText("Copy")).toBeInTheDocument();
+  });
+
   it("names the absence of voting power instead of printing a translation key", () => {
     renderManage(controlled({ dissolveDelaySeconds: 0n }));
 

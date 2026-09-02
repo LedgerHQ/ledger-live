@@ -28,6 +28,7 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -93,6 +94,7 @@ const StepManage = ({
     return <MissingNeuron setSelectedNeuronId={setSelectedNeuronId} transitionTo={transitionTo} />;
   }
 
+  const neuronId = neuron.id?.toString() ?? "";
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);
   const votingPower = neuronDecidingVotingPower(neuron);
@@ -141,9 +143,12 @@ const StepManage = ({
       />
 
       <NeuronSection
-        title={t("internetComputer.manageNeuronFlow.manage.neuron", {
-          neuronId: neuron.id?.toString() ?? "",
-        })}
+        title={
+          <Box horizontal alignItems="center" style={{ gap: 8 }}>
+            {t("internetComputer.manageNeuronFlow.manage.neuron", { neuronId })}
+            {neuronId ? <CopyWithFeedback text={neuronId} /> : null}
+          </Box>
+        }
         value={
           <FormattedVal
             val={toBigNumber(neuronStake(neuron))}

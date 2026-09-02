@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 import { NeuronDetailRow } from "../../components/NeuronDetails";
@@ -118,7 +119,13 @@ const StepSelectFollowees = (props: StepProps) => {
         followeesIds.map(id => (
           <NeuronDetailRow
             key={id}
-            label={id}
+            // Copyable because this is the one screen that asks for a neuron id typed in full.
+            label={
+              <Box horizontal alignItems="center" style={{ gap: 8 }}>
+                {id}
+                <CopyWithFeedback text={id} />
+              </Box>
+            }
             actions={[
               {
                 label: t("internetComputer.manageNeuronFlow.selectFollowees.remove"),
