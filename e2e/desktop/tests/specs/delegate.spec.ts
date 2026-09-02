@@ -570,3 +570,49 @@ test.describe("Delegate", () => {
     },
   );
 });
+
+test.describe("Delegate", () => {
+  // Mina delegates the whole balance, so the flow carries no amount.
+  const account = new Delegate(Account.MINA_1, "N/A", "Kraken");
+  setupEnv(true);
+  test.use({
+    teamOwner: delegateTeamOwner(account.account.currency.id),
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account.account)],
+  });
+
+  test(
+    `[${account.account.currency.testLabel}] - Delegate`,
+    {
+      // The Nano S build of the Mina app stops at 1.4.2 while the other devices ship 1.6.9, the
+      // version the delegation flow was validated against.
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
+      annotation: { type: "TMS", description: "B2CQA-387" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+
+      // The modal opens straight on the validator list, and the whole-balance delegation means
+      // there is no amount step between the selection and the device.
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkValidatorListIsVisible();
+      await app.delegate.inputProvider(account.provider);
+      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.continue();
+
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Delegated");
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
