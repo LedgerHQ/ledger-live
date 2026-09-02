@@ -25,7 +25,7 @@ import { useFeatureFlags } from "@features/platform-feature-flags";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { useStartExchangeAction, useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import type { States } from "~/renderer/components/DeviceAction";
@@ -87,7 +87,7 @@ export function usePerpsDepositExecution(
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
   const dispatch = useDispatch();
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
   const featureFlagsMap = useFeatureFlags();
