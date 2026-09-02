@@ -93,7 +93,7 @@ export async function performPublicSync(
   // Sync hash tracks CAL + blacklist; only meaningful when tokens are enabled.
   // When disabled, preserve the stored hash so CAL changes don't trigger unnecessary full re-syncs.
   const syncHash = config.enableTokens
-    ? await getSyncHash(currency.id, syncConfig.blacklistedTokenIds)
+    ? (await getSyncHash(currency.id, syncConfig.blacklistedTokenIds)) + "mock"
     : initialAccount?.syncHash;
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
