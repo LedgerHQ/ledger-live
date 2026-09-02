@@ -196,6 +196,9 @@ catalog:
   allure-js-commons: 3.9.0
   nx: 22.7.8
   "@nx/devkit": 22.7.8
+  # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
+  "@nx/nx-linux-x64-gnu": 22.7.8
+  "@nx/s3-cache": 5.0.7
   oxlint: 1.79.0
   oxfmt: 0.64.0
   # Modules published by coin-modules
