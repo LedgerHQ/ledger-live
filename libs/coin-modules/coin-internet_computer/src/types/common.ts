@@ -130,7 +130,7 @@ const EXTRA_KEYS = ["memo", "createdNeuronId", "neurons", "outcome", "methodName
 
 // Own properties only: `in` would also answer for anything the prototype chain happens to carry.
 const hasAnyExtraKey = (value: object): boolean =>
-  EXTRA_KEYS.some(key => Object.prototype.hasOwnProperty.call(value, key));
+  EXTRA_KEYS.some(key => Object.hasOwn(value, key));
 
 export function isInternetComputerOperationExtra(
   extra: OperationExtra,
