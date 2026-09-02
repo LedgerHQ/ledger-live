@@ -32,10 +32,6 @@ export function makeContactsWrapper(contacts: Contact[]): FC<{ children: ReactNo
   return ({ children }) => <Provider store={store}>{children}</Provider>;
 }
 
-export function renderWithStyle(ui: ReactElement) {
-  return render(<StyleProvider colorScheme="dark">{ui}</StyleProvider>);
-}
-
 export function renderWithContacts(
   contacts: Contact[],
   ui: ReactElement,

@@ -18,19 +18,25 @@ import {
   isContactsLedgerSyncActivationRequired,
   type ContactsLedgerSyncIntroductionDialogProps,
 } from "@features/flow-contacts-introduction";
-import type { ContactsProps } from "@features/flow-pay-contact";
+import {
+  useContactAddressPickerViewModel,
+  type ContactAddressPickerProps,
+  type ContactsProps,
+} from "@features/flow-pay-contact";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { usePayTabContactOperations } from "./usePayTabContactOperations";
-import { usePayTabNewPayment } from "./usePayTabNewPayment";
 import { renderPayContactAddresses } from "../components/PayContactAddresses";
+
+const noopSelectAddress = () => undefined;
 
 export type UsePayTabContactsResult = Readonly<{
   contacts: ContactsProps;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroductionDialogProps;
+  contactAddressPicker: ContactAddressPickerProps;
 }>;
 
 export function usePayTabContacts(): UsePayTabContactsResult {
@@ -43,7 +49,12 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const operations = usePayTabContactOperations();
-  const { open: openNewPayment } = usePayTabNewPayment();
+
+  const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
+    {
+      onSelectAddress: noopSelectAddress,
+    },
+  );
   const onViewTransactions = useCallback(
     (contact: Contact) => {
       navigate(
@@ -54,8 +65,8 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     [navigate, payTabPath],
   );
   const onContactPress = useCallback(
-    (contact: Contact) => openNewPayment(contact),
-    [openNewPayment],
+    (contact: Contact) => openContactAddressPicker(contact),
+    [openContactAddressPicker],
   );
   const onViewContact = useCallback(
     (contact: Contact) => {
@@ -148,6 +159,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
         onActivate: onActivateLedgerSyncIntroduction,
         onDismiss: onDismissLedgerSyncIntroduction,
       },
+      contactAddressPicker,
     }),
     [
       t,
@@ -163,6 +175,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       isLedgerSyncIntroductionOpen,
       onActivateLedgerSyncIntroduction,
       onDismissLedgerSyncIntroduction,
+      contactAddressPicker,
     ],
   );
 }
