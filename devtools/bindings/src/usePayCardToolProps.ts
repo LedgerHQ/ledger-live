@@ -41,10 +41,11 @@ const NATIVE_ONLY_STEP: OnboardingStep = {
 const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase", done: false };
 
 /**
- * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
+ * The two Card env vars the tool shows. Each entry carries a suggested value for the Baanx
+ * development tenant; `readCardEnvVars` reads the current value from the env next to it.
  *
  * The definition defaults already point at that tenant: the Baanx development URL and the staging
- * client key. A tester who changes a value gets the tenant back with one press.
+ * client key. A tester who overrode a value gets the tenant back with one press.
  */
 const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
   { key: "CARD_BAANX_API_URL", suggestedValue: "https://dev.api.baanx.com" },
