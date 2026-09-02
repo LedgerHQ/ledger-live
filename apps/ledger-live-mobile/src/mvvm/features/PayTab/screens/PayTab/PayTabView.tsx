@@ -1,4 +1,5 @@
 import React from "react";
+import { ScrollView } from "react-native";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
@@ -16,6 +17,7 @@ import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
+  readonly bottom: number;
   readonly cardTitle: string;
   readonly cardBalanceLabel: string;
   readonly formatCountervalue: CardProps["formatCountervalue"];
@@ -33,6 +35,7 @@ type PayTabViewProps = {
 
 export function PayTabView({
   top,
+  bottom,
   cardTitle,
   cardBalanceLabel,
   formatCountervalue,
@@ -50,22 +53,27 @@ export function PayTabView({
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
-      <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
-        <TrackScreen category="Pay" balance_filter={balance.filter} />
-        <Balance {...balance} actionTiles={actionTiles} />
-        {isContactsEnabled && <Contacts {...contacts} />}
-        <ContactAddressPicker {...contactAddressPicker} />
-        <Card
-          title={cardTitle}
-          oauthConfig={oauthConfig}
-          callback={callback}
-          formatCountervalue={formatCountervalue}
-          balanceLabel={cardBalanceLabel}
-        />
-        <FeatureTour {...featureTour} />
-        <DepositOptions {...depositOptions} />
-        <BankTransferIntro {...bankTransferIntro} />
-      </Box>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
+      >
+        <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
+          <TrackScreen category="Pay" balance_filter={balance.filter} />
+          <Balance {...balance} actionTiles={actionTiles} />
+          {isContactsEnabled && <Contacts {...contacts} />}
+          <ContactAddressPicker {...contactAddressPicker} />
+          <Card
+            title={cardTitle}
+            oauthConfig={oauthConfig}
+            callback={callback}
+            formatCountervalue={formatCountervalue}
+            balanceLabel={cardBalanceLabel}
+          />
+          <FeatureTour {...featureTour} />
+          <DepositOptions {...depositOptions} />
+          <BankTransferIntro {...bankTransferIntro} />
+        </Box>
+      </ScrollView>
     </Box>
   );
 }

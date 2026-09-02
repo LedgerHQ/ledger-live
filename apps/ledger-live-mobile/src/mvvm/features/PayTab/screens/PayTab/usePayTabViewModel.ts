@@ -22,7 +22,7 @@ import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
-  const { top } = useNavigationBarHeights();
+  const { top, bottom } = useNavigationBarHeights();
   const { t } = useTranslation();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
   const locale = useSelector(localeSelector);
@@ -77,6 +77,7 @@ export function usePayTabViewModel() {
 
   return {
     top,
+    bottom,
     cardTitle: t("payTab.card.title"),
     cardBalanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
