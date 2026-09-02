@@ -56,16 +56,29 @@ export class DeviceManagementKitTransport extends Transport {
     return subscription;
   };
 
+  /** The device the active session is connected to, if it is still connected. */
+  private static activeSessionDeviceId(activeSessionId: DeviceId): DeviceId | undefined {
+    return getDeviceManagementKit()
+      .listConnectedDevices()
+      .find(device => device.sessionId === activeSessionId)?.id;
+  }
+
   /**
-   * @param options.deviceId Connect this device rather than the first available
-   *   one, and never reuse the active session — the point of passing an id is to
-   *   move onto that device.
+   * @param options.deviceId Open this specific device. The active session is
+   *   reused only when it belongs to it: without that check a caller asking for
+   *   one device gets a transport bound to another, which then dies the moment
+   *   that other device goes away. Omit to keep the legacy behaviour of reusing
+   *   any live session and otherwise connecting the first available device.
    */
   static async open(options?: { deviceId?: DeviceId }): Promise<DeviceManagementKitTransport> {
     const requestedDeviceId = options?.deviceId;
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const activeSessionIsForRequestedDevice =
+      !requestedDeviceId ||
+      (!!activeSessionId &&
+        DeviceManagementKitTransport.activeSessionDeviceId(activeSessionId) === requestedDeviceId);
 
-    if (!requestedDeviceId && activeSessionId) {
+    if (activeSessionIsForRequestedDevice && activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),

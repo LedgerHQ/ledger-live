@@ -68,23 +68,48 @@ describe("DeviceManagementKitTransport.open with a target device", () => {
     );
   });
 
-  it("ignores an active session, since the point is to move off it", async () => {
-    const staleTransport = {
-      sessionId: "stale",
+  it("reconnects when the active session belongs to a different device", async () => {
+    // The exact shape of the reported bug: a job for "new" was handed the
+    // session still bound to "old", and died once "old" was deleted.
+    const otherTransport = {
+      sessionId: "old-session",
     } as unknown as DeviceManagementKitTransport;
     activeDeviceSessionSubject.next({
-      sessionId: "stale",
-      transport: staleTransport,
+      sessionId: "old-session",
+      transport: otherTransport,
     });
-    jest.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(of([device("new")]));
+    jest
+      .spyOn(dmk, "listConnectedDevices")
+      .mockReturnValue([{ id: "old", sessionId: "old-session" }] as never);
+    jest.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(of([device("old"), device("new")]));
 
-    const transport = await DeviceManagementKitTransport.open({
-      deviceId: "new",
-    });
+    const transport = await DeviceManagementKitTransport.open({ deviceId: "new" });
 
-    expect(transport).not.toBe(staleTransport);
+    expect(transport).not.toBe(otherTransport);
     expect(transport.sessionId).toBe("new-session");
+    expect(dmk.connect).toHaveBeenCalledWith(
+      expect.objectContaining({ device: expect.objectContaining({ id: "new" }) }),
+    );
     expect(activeDeviceSessionSubject.value?.sessionId).toBe("new-session");
+  });
+
+  it("reuses the active session when it belongs to the requested device", async () => {
+    const liveTransport = {
+      sessionId: "live-session",
+    } as unknown as DeviceManagementKitTransport;
+    activeDeviceSessionSubject.next({
+      sessionId: "live-session",
+      transport: liveTransport,
+    });
+    jest
+      .spyOn(dmk, "listConnectedDevices")
+      .mockReturnValue([{ id: "wanted", sessionId: "live-session" }] as never);
+    jest.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(of([device("wanted")]));
+
+    const transport = await DeviceManagementKitTransport.open({ deviceId: "wanted" });
+
+    expect(transport).toBe(liveTransport);
+    expect(dmk.connect).not.toHaveBeenCalled();
   });
 
   it("still reuses a live session when no device is requested", async () => {
