@@ -4,8 +4,9 @@ import {
   markPayCardFeatureTourSeen,
   resetPayCardFeatureTourSeen,
   restorePayCardFeatureTour,
+  selectPayCardHasSeenFeatureTour,
+  payCardFeatureTourPersistedSelector,
 } from "../slice";
-import { selectPayCardHasSeenFeatureTour, payCardFeatureTourPersistedSelector } from "../selectors";
 
 const reducer = payCardFeatureTourSlice.reducer;
 const root = (state = payCardFeatureTourInitialState) => ({ payCardFeatureTour: state });
@@ -56,7 +57,7 @@ describe("payCardFeatureTour selectors", () => {
     ).toBe(true);
   });
 
-  it("payCardFeatureTourPersistedSelector returns only the persisted subset", () => {
+  it("payCardFeatureTourPersistedSelector returns the slice", () => {
     const state = reducer(undefined, markPayCardFeatureTourSeen());
     expect(payCardFeatureTourPersistedSelector(root(state))).toEqual({
       hasSeenFeatureTour: true,

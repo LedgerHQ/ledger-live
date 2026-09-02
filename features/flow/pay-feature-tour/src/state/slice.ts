@@ -25,6 +25,10 @@ export const payCardFeatureTourSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectPayCardHasSeenFeatureTour: state => state.hasSeenFeatureTour,
+    payCardFeatureTourPersistedSelector: state => state,
+  },
 });
 
 export const {
@@ -32,3 +36,6 @@ export const {
   resetPayCardFeatureTourSeen,
   restorePayCardFeatureTour,
 } = payCardFeatureTourSlice.actions;
+
+export const { selectPayCardHasSeenFeatureTour, payCardFeatureTourPersistedSelector } =
+  payCardFeatureTourSlice.selectors;

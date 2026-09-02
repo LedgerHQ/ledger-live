@@ -21,6 +21,14 @@ export const payCardAuthSlice = createSlice({
       state.isSignedIn = action.payload;
     },
   },
+  selectors: {
+    selectPayCardAuth: state => state,
+    selectHasCard: state => state.hasCard,
+    /** True while a Card session is live. `CardLogin` hides on it, and `CardLogout` shows on it. */
+    selectIsSignedIn: state => state.isSignedIn,
+  },
 });
 
 export const { setHasCard, setSignedIn } = payCardAuthSlice.actions;
+
+export const { selectPayCardAuth, selectHasCard, selectIsSignedIn } = payCardAuthSlice.selectors;

@@ -3,8 +3,9 @@ import {
   payCardBalanceInitialState,
   setPayCardBalanceFilter,
   restorePayCardBalanceFilter,
+  selectPayCardBalanceFilter,
+  payCardBalancePersistedSelector,
 } from "../slice";
-import { selectPayCardBalanceFilter, payCardBalancePersistedSelector } from "../selectors";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../constants";
 
 const reducer = payCardBalanceSlice.reducer;
@@ -65,7 +66,7 @@ describe("payCardBalance selectors", () => {
     ).toBe("ethereum/erc20/usd__coin");
   });
 
-  it("payCardBalancePersistedSelector returns only the persisted subset", () => {
+  it("payCardBalancePersistedSelector returns the slice", () => {
     const state = reducer(undefined, setPayCardBalanceFilter("ethereum/erc20/usd__coin"));
     expect(payCardBalancePersistedSelector(root(state))).toEqual({
       balanceFilter: "ethereum/erc20/usd__coin",

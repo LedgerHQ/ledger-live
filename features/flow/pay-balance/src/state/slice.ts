@@ -23,6 +23,13 @@ export const payCardBalanceSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectPayCardBalanceFilter: state => state.balanceFilter,
+    payCardBalancePersistedSelector: state => state,
+  },
 });
 
 export const { setPayCardBalanceFilter, restorePayCardBalanceFilter } = payCardBalanceSlice.actions;
+
+export const { selectPayCardBalanceFilter, payCardBalancePersistedSelector } =
+  payCardBalanceSlice.selectors;
