@@ -564,6 +564,15 @@ describe("StepSelectFollowees", () => {
     expect(screen.getByTestId("icp-followee-add-button")).toBeDisabled();
   });
 
+  it("offers a copy control on every followee in the list", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9", "8"] },
+    });
+    render(<StepSelectFollowees {...props} />);
+
+    expect(screen.getAllByText("Copy")).toHaveLength(2);
+  });
+
   it("keeps Add disabled for a followee the list already holds", async () => {
     const props = makeStepProps({
       neurons: [NEURON],
