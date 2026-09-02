@@ -177,6 +177,26 @@ describe("StepSetDissolveDelay", () => {
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 
+  // The bound errors carry the only pluralized copy in the errors block, and i18next selects the
+  // form from `count`, not from minDays. Without it the banner falls back to "Something went wrong".
+  it("renders the quoted day bound in its plural form", () => {
+    const props = stepProps({
+      transaction: { type: "set_dissolve_delay", dissolveDelay: "1" },
+      status: {
+        errors: {
+          transaction: Object.assign(new Error("ICPDissolveDelayLTMin"), {
+            name: "ICPDissolveDelayLTMin",
+            minDays: 7,
+            count: 7,
+          }),
+        },
+      },
+    });
+    render(<StepSetDissolveDelayFooter {...props} />);
+
+    expect(screen.getByText(/at least 7 days/)).toBeInTheDocument();
+  });
+
   it.each([
     ["set_dissolve_delay", { dissolveDelay: String(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE) }],
     ["increase_dissolve_delay", { additionalDissolveDelay: String(SECONDS_IN_DAY) }],
