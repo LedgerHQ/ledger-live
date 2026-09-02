@@ -36,6 +36,7 @@ export default class PortfolioPage {
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
   marketBannerTitle = "market-banner-title";
+  quickActionsCtasContainerId = "quick-actions-ctas";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
   quickActionBuyButtonV4 = "quick-action-buy";
@@ -45,6 +46,7 @@ export default class PortfolioPage {
   portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
   portfolioBalanceDelta = "portfolio-balance-delta";
   borrowEntryPointId = "portfolio-borrow-entry-point";
+  transferDrawerContainerId = "transfer-drawer";
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
@@ -354,18 +356,26 @@ export default class PortfolioPage {
     await waitForElementById(this.quickActionBuyButtonV4);
   }
 
+  // The row mounts only after portfolio data resolves (QAA-1524).
+  private async waitForQuickActionsSettled() {
+    await waitForFullyVisibleById(this.quickActionsCtasContainerId);
+  }
+
   @Step("Press quick action buy button")
   async pressQuickActionBuyButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action swap button")
   async pressQuickActionSwapButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionSwapButtonV4);
   }
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
@@ -403,8 +413,14 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.transferBottomSheetBankTransferButton)).toBeVisible();
   }
 
+  // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
+  private async waitForTransferDrawerSettled() {
+    await waitForFullyVisibleById(this.transferDrawerContainerId);
+  }
+
   @Step("Press transfer bottom sheet receive button")
   async pressTransferBottomSheetReceiveButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetReceiveButton);
   }
 
@@ -416,11 +432,13 @@ export default class PortfolioPage {
 
   @Step("Press transfer bottom sheet send button")
   async pressTransferBottomSheetSendButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetSendButton);
   }
 
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetBankTransferButton);
   }
 

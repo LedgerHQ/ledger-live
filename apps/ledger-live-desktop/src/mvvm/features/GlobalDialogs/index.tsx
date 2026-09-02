@@ -2,7 +2,6 @@ import React, { Suspense, lazy } from "react";
 import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
-import { PrefillAddAddressFlowRoot } from "LLD/features/Contacts";
 
 const PerpsSignRoot = lazy(() => import("LLD/features/Perps/screens/PerpsSign/PerpsSignDialog"));
 const PerpsDepositRoot = lazy(
@@ -37,7 +36,6 @@ const GlobalDialogs = () => (
     <Suspense fallback={null}>
       <SendFlowRoot />
     </Suspense>
-    <PrefillAddAddressFlowRoot />
     <Suspense fallback={null}>
       <PerpsSignRoot />
     </Suspense>

@@ -20,7 +20,7 @@ const activeStake: SolanaStake = {
   stakeAccBalance: 500,
   rentExemptReserve: 10,
   withdrawable: 90,
-  activation: { state: "active", active: 400, inactive: 90 },
+  activation: { state: "active", active: 400, activating: 0, inactive: 90 },
 };
 
 const inactiveStake: SolanaStake = {
@@ -31,7 +31,7 @@ const inactiveStake: SolanaStake = {
   stakeAccBalance: 200,
   rentExemptReserve: 10,
   withdrawable: 200,
-  activation: { state: "inactive", active: 0, inactive: 190 },
+  activation: { state: "inactive", active: 0, activating: 0, inactive: 190 },
 };
 
 const deactivatingStake: SolanaStake = {
@@ -42,7 +42,7 @@ const deactivatingStake: SolanaStake = {
   stakeAccBalance: 320,
   rentExemptReserve: 10,
   withdrawable: 0,
-  activation: { state: "deactivating", active: 300, inactive: 0 },
+  activation: { state: "deactivating", active: 300, activating: 0, inactive: 0 },
 };
 
 const activatingStake: SolanaStake = {
@@ -53,7 +53,7 @@ const activatingStake: SolanaStake = {
   stakeAccBalance: 110,
   rentExemptReserve: 10,
   withdrawable: 0,
-  activation: { state: "activating", active: 0, inactive: 100 },
+  activation: { state: "activating", active: 0, activating: 100, inactive: 100 },
   reward: { amount: 12 },
 };
 

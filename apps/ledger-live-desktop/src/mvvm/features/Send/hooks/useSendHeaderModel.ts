@@ -1,9 +1,10 @@
-import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
+import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
@@ -66,15 +67,17 @@ function resolveHeaderTitle({
   showTitle,
   titleKey,
   currencyName,
+  memoLabel,
 }: Readonly<{
   isSelectingContactAddress: boolean;
   showTitle: boolean;
   titleKey: string;
   currencyName: string;
+  memoLabel: string;
 }>): string {
   if (isSelectingContactAddress) return t("newSendFlow.selectAddress");
   if (!showTitle) return "";
-  return t(titleKey, { currency: currencyName });
+  return t(titleKey, { currency: currencyName, memoLabel });
 }
 
 function resolveHeaderDescription({
@@ -110,6 +113,8 @@ export function useSendHeaderModel({
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
+  const memoCurrencyId = getMemoFamilyCurrencyId(state.account.currency);
+  const memoLabel = t([`families.${memoCurrencyId}.memo`, "common.memo"]);
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
 
   const { navigation, currentStep } = wizard;
@@ -170,6 +175,7 @@ export function useSendHeaderModel({
     showTitle,
     titleKey,
     currencyName,
+    memoLabel,
   });
 
   const descriptionText = resolveHeaderDescription({

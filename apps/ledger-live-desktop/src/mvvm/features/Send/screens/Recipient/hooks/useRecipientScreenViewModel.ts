@@ -1,6 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useMemo, useRef } from "react";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -19,7 +20,12 @@ export type ReadyRecipientScreenViewModel = Readonly<{
   currency: CryptoOrTokenCurrency;
   recipientSupportsDomain: boolean;
   onClose: () => void;
-  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
 }>;
 
 export type RecipientScreenViewModel = RecipientScreenViewModelBase | ReadyRecipientScreenViewModel;
@@ -48,11 +54,12 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   }
 
   const onAddressSelected = useCallback(
-    (address: string, ensName?: string, goToNextStep?: boolean) => {
+    (address: string, ensName?: string, goToNextStep?: boolean, memo?: Memo) => {
       transaction.setRecipient({
         ...state.recipient,
         address,
         ensName,
+        ...(memo ? { memo } : {}),
       });
 
       if (goToNextStep) {

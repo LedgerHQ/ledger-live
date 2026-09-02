@@ -17,10 +17,12 @@ import { AddNewContactScreen } from "./screens/AddNewContact/AddNewContactScreen
 import { AddToExistingContactScreen } from "./screens/AddToExistingContact/AddToExistingContactScreen";
 import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
 import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
+import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
+  [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: SkipMemoConfirmationScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.RECENT_HISTORY]: RecentHistoryScreen,
   [SEND_FLOW_STEP.ADD_CONTACT]: AddContactScreen,

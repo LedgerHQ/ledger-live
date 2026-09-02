@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AddressInput,
   Banner,
   BottomSheetHeader,
   BottomSheetView,
@@ -43,9 +42,8 @@ export function ContactsRenameAddressDialog({
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader density="expanded" title={labels.title} />
           <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
-            <AddressInput
+            <TextInput
               testID="contacts-edit-address-input"
-              prefix=""
               value={addressInput.value}
               placeholder={labels.addressValidation.addressPlaceholder}
               onChangeText={addressInput.onChangeText}
