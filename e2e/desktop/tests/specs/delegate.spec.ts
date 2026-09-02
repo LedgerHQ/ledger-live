@@ -266,6 +266,7 @@ test.describe("Delegate", () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.continue();
 
       await app.delegate.selectProviderByName(account.provider);
       await app.delegate.continue();
