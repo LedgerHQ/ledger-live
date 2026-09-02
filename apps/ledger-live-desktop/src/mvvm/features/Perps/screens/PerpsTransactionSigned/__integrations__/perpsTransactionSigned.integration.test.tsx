@@ -5,7 +5,9 @@ import PerpsTransactionSignedRoot, {
 } from "../PerpsTransactionSignedDialog";
 import type { PerpsTransactionSignedData } from "../usePerpsTransactionSignedViewModel";
 
-const mockOpenSwapTransactionStatusDialog = jest.fn(() => ({ type: "swap/openTransactionStatus" }));
+const mockOpenSwapTransactionStatusDialog = jest.fn((_params: unknown) => ({
+  type: "swap/openTransactionStatus",
+}));
 jest.mock("LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog", () => ({
   openSwapTransactionStatusDialog: (params: unknown) => mockOpenSwapTransactionStatusDialog(params),
 }));
