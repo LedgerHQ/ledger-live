@@ -22,6 +22,7 @@ const StepFollowTopic = ({
   setSelectedNeuronId,
   onUpdateTransaction,
   transitionTo,
+  setFolloweeDraft,
 }: StepProps) => {
   const principal = useICPPrincipal(account);
   const topicLabel = useGovernanceTopicLabel();
@@ -47,9 +48,11 @@ const StepFollowTopic = ({
               ).map(id => id.toString()),
             },
       );
+      // A draft left from a previous visit would arrive holding Continue disabled with no cause.
+      setFolloweeDraft("");
       transitionTo("selectFollowees");
     },
-    [neuron, onUpdateTransaction, transitionTo],
+    [neuron, onUpdateTransaction, setFolloweeDraft, transitionTo],
   );
 
   if (!neuron) {

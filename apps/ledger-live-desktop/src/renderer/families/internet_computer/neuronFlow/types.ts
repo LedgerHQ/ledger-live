@@ -58,6 +58,10 @@ export type StepProps = {
   // The operation the device is about to sign, so the confirmation step can name what happened.
   lastAction: ICPTransactionType | null;
   setLastAction: (action: ICPTransactionType | null) => void;
+  // The followee id being typed. Held here because the footer that gates Continue on it is a
+  // sibling of the step holding the field.
+  followeeDraft: string;
+  setFolloweeDraft: (draft: string) => void;
 };
 
 export type Step = StepperStep<StepId, StepProps>;
