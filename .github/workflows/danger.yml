@@ -40,7 +40,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm i --filter @tools/danger... --frozen-lockfile
+        run: pnpm i --filter @tools/danger... --frozen-lockfile --ignore-scripts
 
       - name: Run Danger
         working-directory: tools/danger
