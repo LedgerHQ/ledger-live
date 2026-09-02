@@ -1,7 +1,6 @@
-import type { ComponentProps } from "react";
-import type { I18nTestProvider } from "@shared/i18n/testing";
+import type { I18nTestProviderProps } from "@shared/i18n/testing";
 
-export type I18nResources = ComponentProps<typeof I18nTestProvider>["resources"];
+export type I18nResources = I18nTestProviderProps["resources"];
 
 export const CONTACTS_RESOURCES: I18nResources = {
   en: {

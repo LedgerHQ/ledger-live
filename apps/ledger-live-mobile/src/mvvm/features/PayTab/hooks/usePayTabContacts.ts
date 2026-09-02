@@ -25,13 +25,11 @@ export function usePayTabContacts(): ContactsNativeProps {
 
   return useMemo(
     () => ({
-      title: t("payTab.contacts.title"),
-      payLabel: t("payTab.contacts.pay"),
       onPay: open,
       onContactPress,
       onSeeAll,
       outgoingOperations,
     }),
-    [t, open, onContactPress, onSeeAll, outgoingOperations],
+    [open, onContactPress, onSeeAll, outgoingOperations],
   );
 }

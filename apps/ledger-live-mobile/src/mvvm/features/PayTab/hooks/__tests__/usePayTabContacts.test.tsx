@@ -19,11 +19,8 @@ describe("usePayTabContacts", () => {
     jest.clearAllMocks();
   });
 
-  it("builds i18n labels and wires the Pay tile to the Send flow", () => {
+  it("wires the Pay tile to the Send flow", () => {
     const { result } = renderHook(() => usePayTabContacts());
-
-    expect(result.current.title).toBeTruthy();
-    expect(result.current.payLabel).toBeTruthy();
 
     act(() => result.current.onPay());
     expect(mockOpen).toHaveBeenCalledTimes(1);
