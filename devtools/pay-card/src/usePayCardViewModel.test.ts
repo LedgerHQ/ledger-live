@@ -27,7 +27,17 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
-    interaction: { probes: [], ...overrides.interaction },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+      ...overrides.interaction,
+    },
     balance: {
       baanxWallets: [],
       linkedWallets: [],
