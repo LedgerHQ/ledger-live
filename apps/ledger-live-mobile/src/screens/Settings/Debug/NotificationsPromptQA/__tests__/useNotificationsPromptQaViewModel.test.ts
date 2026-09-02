@@ -1,76 +1,45 @@
+import React, { type ReactNode } from "react";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { act, renderHook } from "@testing-library/react-native";
+import {
+  FEATURE_FLAGS_DEFAULTS,
+  FEATURE_FLAGS_INITIAL_STATE,
+  featureFlagsReducer,
+  type Features,
+} from "@shared/feature-flags";
 import { createNotificationsPromptFeatureFlags } from "LLM/features/NotificationsPrompt/testUtils";
 import type { DataOfUser } from "LLM/features/NotificationsPrompt";
+import notifications from "~/reducers/notifications";
+import ratings from "~/reducers/ratings";
+import settings from "~/reducers/settings";
 import { NOTIFICATIONS_QA_SCENARIOS } from "../utils";
 import { useNotificationsPromptQaViewModel } from "../useNotificationsPromptQaViewModel";
+
+type PermissionStatus = (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
 
 const mockOpenDrawer = jest.fn();
 const mockNotifyFlowCompleted = jest.fn();
 const mockIsDrawerPending = jest.fn(() => false);
 const mockCancelPendingDrawer = jest.fn();
 
-const qaState = {
-  permissionStatus: AuthorizationStatus.NOT_DETERMINED as
-    | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
-    | null
-    | undefined,
-  areNotificationsAllowed: false,
-  transactionsAlertsCategory: false,
-  hasCompletedOnboarding: true,
-  isRatingsModalOpen: false,
+/** State the ViewModel reads through native-backed hooks rather than Redux. */
+const nativeState = {
+  permissionStatus: AuthorizationStatus.NOT_DETERMINED as PermissionStatus,
   pushNotificationsDataOfUser: undefined as DataOfUser | undefined,
-  brazePushNotifications: createNotificationsPromptFeatureFlags({ inactivityEnabled: true })
-    .brazePushNotifications,
 };
 
-const mockSetPermissionStatus = jest.fn(
-  (status: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]) => {
-    qaState.permissionStatus = status;
-  },
-);
-const mockUpdateUserData = jest.fn((data: DataOfUser) => {
-  qaState.pushNotificationsDataOfUser = data;
+const mockSetPermissionStatus = jest.fn((status: PermissionStatus) => {
+  nativeState.permissionStatus = status;
 });
-
-jest.mock("~/context/hooks", () => ({
-  useDispatch: () => (action: { type?: string; payload?: unknown }) => {
-    if (action.type === "SET_NOTIFICATIONS") {
-      const payload = action.payload as {
-        areNotificationsAllowed?: boolean;
-        transactionsAlertsCategory?: boolean;
-      };
-      if (typeof payload?.areNotificationsAllowed === "boolean") {
-        qaState.areNotificationsAllowed = payload.areNotificationsAllowed;
-      }
-      if (typeof payload?.transactionsAlertsCategory === "boolean") {
-        qaState.transactionsAlertsCategory = payload.transactionsAlertsCategory;
-      }
-    }
-    if (action.type === "SETTINGS_COMPLETE_ONBOARDING" && typeof action.payload === "boolean") {
-      qaState.hasCompletedOnboarding = action.payload;
-    }
-  },
-  useSelector: (selector: (state: never) => unknown) =>
-    selector({
-      settings: {
-        notifications: {
-          areNotificationsAllowed: qaState.areNotificationsAllowed,
-          transactionsAlertsCategory: qaState.transactionsAlertsCategory,
-        },
-        hasCompletedOnboarding: qaState.hasCompletedOnboarding,
-      },
-      ratings: { isRatingsModalOpen: qaState.isRatingsModalOpen },
-    } as never),
-}));
-
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: () => qaState.brazePushNotifications,
-}));
+const mockUpdateUserData = jest.fn((data: DataOfUser) => {
+  nativeState.pushNotificationsDataOfUser = data;
+});
 
 jest.mock("LLM/hooks/useNotificationsPermission", () => ({
   useNotificationsPermission: () => ({
-    permissionStatus: qaState.permissionStatus,
+    permissionStatus: nativeState.permissionStatus,
     setPermissionStatus: mockSetPermissionStatus,
   }),
 }));
@@ -81,36 +50,67 @@ jest.mock("LLM/features/NotificationsPrompt/new/NotificationsPromptProvider", ()
     openDrawer: mockOpenDrawer,
     isDrawerPending: mockIsDrawerPending,
     cancelPendingDrawer: mockCancelPendingDrawer,
-    tryTriggerPushNotificationDrawerAfterInactivity: jest.fn(),
-    initPushNotificationsData: jest.fn(async () => ({})),
   }),
 }));
 
 jest.mock("LLM/features/NotificationsPrompt/hooks/useNotificationsData", () => ({
   useNotificationsData: () => ({
-    pushNotificationsDataOfUser: qaState.pushNotificationsDataOfUser,
+    pushNotificationsDataOfUser: nativeState.pushNotificationsDataOfUser,
     updatePushNotificationsDataOfUserInStateAndStore: mockUpdateUserData,
   }),
 }));
+
+const { brazePushNotifications } = createNotificationsPromptFeatureFlags({
+  inactivityEnabled: true,
+});
+
+/**
+ * Real store seeded with the slices the ViewModel reads, so feature flags resolve
+ * through `useFeature` and `setOverride` instead of being mocked.
+ */
+function createTestStore() {
+  return configureStore({
+    reducer: { featureFlags: featureFlagsReducer, notifications, ratings, settings },
+    preloadedState: {
+      featureFlags: {
+        ...FEATURE_FLAGS_INITIAL_STATE,
+        overrides: { brazePushNotifications },
+        resolved: { ...FEATURE_FLAGS_DEFAULTS, brazePushNotifications } as Features,
+      },
+    },
+  });
+}
+
+function renderViewModel() {
+  const store = createTestStore();
+  const Wrapper = ({ children }: Readonly<{ children?: ReactNode }>) =>
+    React.createElement(Provider, { store }, children);
+
+  return {
+    store,
+    ...renderHook(() => useNotificationsPromptQaViewModel(), { wrapper: Wrapper }),
+  };
+}
+
+function getScenario(id: string) {
+  const scenario = NOTIFICATIONS_QA_SCENARIOS.find(candidate => candidate.id === id);
+  if (!scenario) throw new Error(`Unknown QA scenario: ${id}`);
+  return scenario;
+}
 
 describe("useNotificationsPromptQaViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsDrawerPending.mockReturnValue(false);
-    qaState.permissionStatus = AuthorizationStatus.NOT_DETERMINED;
-    qaState.areNotificationsAllowed = false;
-    qaState.transactionsAlertsCategory = false;
-    qaState.hasCompletedOnboarding = true;
-    qaState.isRatingsModalOpen = false;
-    qaState.pushNotificationsDataOfUser = undefined;
+    nativeState.permissionStatus = AuthorizationStatus.NOT_DETERMINED;
+    nativeState.pushNotificationsDataOfUser = undefined;
   });
 
   it("should report Show drawer for the first prompt scenario", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
-    const firstPrompt = NOTIFICATIONS_QA_SCENARIOS.find(scenario => scenario.id === "first-prompt");
+    const { result } = renderViewModel();
 
     act(() => {
-      result.current.applyScenario(firstPrompt!);
+      result.current.applyScenario(getScenario("first-prompt"));
     });
 
     expect(result.current.verdict).toBe("Show drawer");
@@ -120,38 +120,49 @@ describe("useNotificationsPromptQaViewModel", () => {
   });
 
   it("should report Skip when the already opted in scenario is applied", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
-    const optedIn = NOTIFICATIONS_QA_SCENARIOS.find(scenario => scenario.id === "already-opted-in");
+    const { result, store } = renderViewModel();
 
     act(() => {
-      result.current.applyScenario(optedIn!);
+      result.current.applyScenario(getScenario("already-opted-in"));
     });
 
+    expect(store.getState().settings.notifications.areNotificationsAllowed).toBe(true);
     expect(result.current.verdict).toBe("Skip");
     expect(result.current.reason).toBe("Already opted in");
     expect(result.current.rawReason).toBe("reason: fully_opted_in");
   });
 
-  it("should restore captured baseline on reset", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
-    const optedIn = NOTIFICATIONS_QA_SCENARIOS.find(scenario => scenario.id === "already-opted-in");
+  it("should keep the feature flag enabled through the store when a scenario runs", () => {
+    const { result, store } = renderViewModel();
 
     act(() => {
-      result.current.applyScenario(optedIn!);
+      result.current.applyScenario(getScenario("first-prompt"));
     });
-    expect(qaState.areNotificationsAllowed).toBe(true);
+
+    expect(store.getState().featureFlags.overrides.brazePushNotifications?.enabled).toBe(true);
+  });
+
+  it("should restore captured baseline on reset", () => {
+    const { result, store } = renderViewModel();
+
+    act(() => {
+      result.current.applyScenario(getScenario("too-soon"));
+    });
+    expect(store.getState().settings.notifications.areNotificationsAllowed).toBe(false);
 
     act(() => {
       result.current.onResetAll();
     });
 
+    expect(store.getState().settings.notifications.areNotificationsAllowed).toBe(true);
+    expect(store.getState().featureFlags.overrides.brazePushNotifications).toBeUndefined();
     expect(mockSetPermissionStatus).toHaveBeenCalledWith(AuthorizationStatus.NOT_DETERMINED);
     expect(result.current.selectedSource).toBe("onboarding");
     expect(mockCancelPendingDrawer).toHaveBeenCalled();
   });
 
   it("should force-open the resolved prompt target", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
+    const { result } = renderViewModel();
 
     act(() => {
       result.current.onForceOpenDrawer();
@@ -166,7 +177,7 @@ describe("useNotificationsPromptQaViewModel", () => {
   });
 
   it("should call notifyFlowCompleted for after-action production triggers", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
+    const { result } = renderViewModel();
 
     act(() => {
       result.current.setSelectedSource("send");
@@ -180,11 +191,10 @@ describe("useNotificationsPromptQaViewModel", () => {
   });
 
   it("should open the inactivity drawer when production rules allow it", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
-    const inactive = NOTIFICATIONS_QA_SCENARIOS.find(scenario => scenario.id === "inactive-user");
+    const { result } = renderViewModel();
 
     act(() => {
-      result.current.applyScenario(inactive!);
+      result.current.applyScenario(getScenario("inactive-user"));
     });
     act(() => {
       result.current.onTriggerProductionDrawer();
@@ -199,7 +209,7 @@ describe("useNotificationsPromptQaViewModel", () => {
   });
 
   it("should switch to inactivity after making the user inactive", () => {
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
+    const { result } = renderViewModel();
 
     act(() => {
       result.current.onMarkInactive();
@@ -209,12 +219,12 @@ describe("useNotificationsPromptQaViewModel", () => {
   });
 
   it("should mark after-action as eligible and keep two dismissals", () => {
-    qaState.pushNotificationsDataOfUser = {
+    nativeState.pushNotificationsDataOfUser = {
       dismissedOptInDrawerAtList: [1, 2, 3],
       dismissedPromptAtListByTarget: { globalPushNotifications: [1, 2, 3] },
       lastActionAt: Date.now(),
     };
-    const { result } = renderHook(() => useNotificationsPromptQaViewModel());
+    const { result } = renderViewModel();
 
     act(() => {
       result.current.onMarkRepromptable();
@@ -223,6 +233,9 @@ describe("useNotificationsPromptQaViewModel", () => {
       result.current.onKeepTwoDismissals();
     });
 
-    expect(mockUpdateUserData).toHaveBeenCalled();
+    expect(mockUpdateUserData).toHaveBeenCalledTimes(2);
+    expect(
+      mockUpdateUserData.mock.calls[1][0].dismissedPromptAtListByTarget?.globalPushNotifications,
+    ).toHaveLength(2);
   });
 });

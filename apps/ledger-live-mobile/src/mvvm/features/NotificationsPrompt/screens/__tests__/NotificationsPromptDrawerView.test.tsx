@@ -1,5 +1,9 @@
 import React from "react";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import StyleProvider from "~/StyleProvider";
+import settings from "~/reducers/settings";
 import { NotificationsPromptDrawerView } from "../NotificationsPromptDrawerView";
 
 jest.mock("~/images/illustration/Illustration", () => "Illustration");
@@ -12,50 +16,22 @@ jest.mock("LLM/features/NotificationsPrompt/components/NotificationsDrawerIllust
 jest.mock("LLM/features/NotificationsPrompt/components/NotificationsPromptContent", () => ({
   NotificationsPromptContent: () => null,
 }));
-jest.mock("@ledgerhq/native-ui", () => {
-  const { View, Text, Pressable } = require("react-native");
-  return {
-    Flex: ({ children }: { children?: React.ReactNode }) => <View>{children}</View>,
-    Button: ({
-      children,
-      onPress,
-      testID,
-    }: {
-      children?: React.ReactNode;
-      onPress?: () => void;
-      testID?: string;
-    }) => (
-      <Pressable testID={testID} onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-    Link: ({
-      children,
-      onPress,
-      testID,
-    }: {
-      children?: React.ReactNode;
-      onPress?: () => void;
-      testID?: string;
-    }) => (
-      <Pressable testID={testID} onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-  };
-});
-
 describe("NotificationsPromptDrawerView", () => {
   it("should call onAllow and onLater from the prompt actions", () => {
     const onAllow = jest.fn();
     const onLater = jest.fn();
+    const store = configureStore({ reducer: { settings } });
 
     render(
-      <NotificationsPromptDrawerView
-        promptTarget="globalPushNotifications"
-        onAllow={onAllow}
-        onLater={onLater}
-      />,
+      <Provider store={store}>
+        <StyleProvider selectedPalette="dark">
+          <NotificationsPromptDrawerView
+            promptTarget="globalPushNotifications"
+            onAllow={onAllow}
+            onLater={onLater}
+          />
+        </StyleProvider>
+      </Provider>,
     );
 
     fireEvent.press(screen.getByTestId("notifications-prompt-allow"));

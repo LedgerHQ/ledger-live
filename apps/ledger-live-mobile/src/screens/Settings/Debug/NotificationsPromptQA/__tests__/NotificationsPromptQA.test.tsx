@@ -1,6 +1,10 @@
 import React from "react";
 import { Alert } from "react-native";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import StyleProvider from "~/StyleProvider";
+import settings from "~/reducers/settings";
 import DebugNotificationsPromptQA from "../index";
 import { useNotificationsPromptQaViewModel } from "../useNotificationsPromptQaViewModel";
 import { NOTIFICATIONS_QA_VERDICT_META } from "../utils";
@@ -16,50 +20,6 @@ jest.mock("~/analytics", () => ({
 jest.mock("../../../SettingsNavigationScrollView", () => {
   const { View } = require("react-native");
   return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;
-});
-
-jest.mock("@ledgerhq/lumen-ui-rnative", () => {
-  const { View, Text, Pressable } = require("react-native");
-  const Box = ({ children }: { children?: React.ReactNode }) => <View>{children}</View>;
-  const Button = ({
-    children,
-    onPress,
-    disabled,
-  }: {
-    children?: React.ReactNode;
-    onPress?: () => void;
-    disabled?: boolean;
-  }) => (
-    <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}>
-      <Text>{children}</Text>
-    </Pressable>
-  );
-  const Tag = ({ label }: { label: string }) => <Text>{label}</Text>;
-  const Divider = () => <View />;
-  const SegmentedControl = ({
-    children,
-    onSelectedChange,
-  }: {
-    children?: React.ReactNode;
-    onSelectedChange?: (value: string) => void;
-  }) => (
-    <View>
-      {React.Children.map(children, child => {
-        if (!React.isValidElement<{ value: string; children?: React.ReactNode }>(child)) {
-          return child;
-        }
-        return (
-          <Pressable onPress={() => onSelectedChange?.(child.props.value)}>
-            <Text>{child.props.children}</Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-  const SegmentedControlButton = ({ children }: { children?: React.ReactNode; value: string }) => (
-    <Text>{children}</Text>
-  );
-  return { Box, Button, Divider, SegmentedControl, SegmentedControlButton, Tag, Text };
 });
 
 jest.mock("~/components/QueuedDrawer", () => {
@@ -94,6 +54,18 @@ jest.mock("LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawerVie
 }));
 
 const mockedViewModel = useNotificationsPromptQaViewModel as jest.Mock;
+
+function renderScreen() {
+  const store = configureStore({ reducer: { settings } });
+
+  return render(
+    <Provider store={store}>
+      <StyleProvider selectedPalette="dark">
+        <DebugNotificationsPromptQA />
+      </StyleProvider>
+    </Provider>,
+  );
+}
 
 function buildViewModel(overrides: Record<string, unknown> = {}) {
   return {
@@ -159,7 +131,7 @@ describe("DebugNotificationsPromptQA", () => {
     const onForceOpenDrawer = jest.fn();
     mockedViewModel.mockReturnValue(buildViewModel({ onForceOpenDrawer }));
 
-    render(<DebugNotificationsPromptQA />);
+    renderScreen();
 
     expect(screen.getByText("NOTIFICATIONS PROMPT — QA")).toBeVisible();
     expect(screen.getAllByText("Show drawer").length).toBeGreaterThan(0);
@@ -180,14 +152,14 @@ describe("DebugNotificationsPromptQA", () => {
       apply?.onPress?.();
     });
 
-    render(<DebugNotificationsPromptQA />);
+    renderScreen();
 
     fireEvent.press(screen.getByLabelText("Apply First prompt scenario"));
     expect(applyScenario).toHaveBeenCalledWith(expect.objectContaining({ id: "first-prompt" }));
   });
 
   it("should show inspector fields on the Inspect tab", () => {
-    render(<DebugNotificationsPromptQA />);
+    renderScreen();
 
     fireEvent.press(screen.getByText("Inspect"));
 
@@ -202,7 +174,7 @@ describe("DebugNotificationsPromptQA", () => {
     const onForceOpenDrawer = jest.fn();
     mockedViewModel.mockReturnValue(buildViewModel({ onForceOpenDrawer }));
 
-    render(<DebugNotificationsPromptQA />);
+    renderScreen();
 
     fireEvent.press(screen.getByText("Preview drawer"));
     expect(screen.getByTestId("qa-preview-allow")).toBeVisible();
@@ -220,7 +192,7 @@ describe("DebugNotificationsPromptQA", () => {
       reset?.onPress?.();
     });
 
-    render(<DebugNotificationsPromptQA />);
+    renderScreen();
 
     fireEvent.press(screen.getByText("Reset all"));
     expect(onResetAll).toHaveBeenCalled();

@@ -10,6 +10,7 @@ import type {
   NotificationsPromptRepromptDelay,
   NotificationsPromptSkipReason,
 } from "LLM/features/NotificationsPrompt";
+import type { QaInspectorField, QaInspectorFieldTone } from "LLM/components/QaInspectorRow";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -234,20 +235,27 @@ export type NotificationsQaScenario = {
   userData: "firstPrompt" | "alreadyOptedIn" | "tooSoon" | "eligibleAfterAction" | "inactive";
 };
 
+/** Opted-out user who already went through onboarding: the common QA starting point. */
+const SCENARIO_DEFAULTS = {
+  permissionStatus: AuthorizationStatus.DENIED,
+  areNotificationsAllowed: false,
+  transactionsAlertsCategory: false,
+  hasCompletedOnboarding: true,
+} satisfies Partial<NotificationsQaScenario>;
+
 export const NOTIFICATIONS_QA_SCENARIOS: NotificationsQaScenario[] = [
   {
+    ...SCENARIO_DEFAULTS,
     id: "first-prompt",
     name: "First prompt",
     summary: "No previous dismissal → drawer can show after onboarding",
     expected: "Show drawer",
     source: "onboarding",
     permissionStatus: AuthorizationStatus.NOT_DETERMINED,
-    areNotificationsAllowed: false,
-    transactionsAlertsCategory: false,
-    hasCompletedOnboarding: true,
     userData: "firstPrompt",
   },
   {
+    ...SCENARIO_DEFAULTS,
     id: "already-opted-in",
     name: "Already opted in",
     summary: "OS, app and transaction alerts are on → skip",
@@ -256,43 +264,33 @@ export const NOTIFICATIONS_QA_SCENARIOS: NotificationsQaScenario[] = [
     permissionStatus: AuthorizationStatus.AUTHORIZED,
     areNotificationsAllowed: true,
     transactionsAlertsCategory: true,
-    hasCompletedOnboarding: true,
     userData: "alreadyOptedIn",
   },
   {
+    ...SCENARIO_DEFAULTS,
     id: "too-soon",
     name: "Too soon to ask again",
     summary: "A recent dismissal keeps the drawer inside its cooldown",
     expected: "Skip",
     source: "send",
-    permissionStatus: AuthorizationStatus.DENIED,
-    areNotificationsAllowed: false,
-    transactionsAlertsCategory: false,
-    hasCompletedOnboarding: true,
     userData: "tooSoon",
   },
   {
+    ...SCENARIO_DEFAULTS,
     id: "eligible-after-action",
     name: "Eligible after action",
     summary: "The dismissal cooldown has elapsed → drawer can show",
     expected: "Show drawer",
     source: "send",
-    permissionStatus: AuthorizationStatus.DENIED,
-    areNotificationsAllowed: false,
-    transactionsAlertsCategory: false,
-    hasCompletedOnboarding: true,
     userData: "eligibleAfterAction",
   },
   {
+    ...SCENARIO_DEFAULTS,
     id: "inactive-user",
     name: "Inactive user",
     summary: "The inactivity threshold has elapsed → drawer can show",
     expected: "Show drawer",
     source: "inactivity",
-    permissionStatus: AuthorizationStatus.DENIED,
-    areNotificationsAllowed: false,
-    transactionsAlertsCategory: false,
-    hasCompletedOnboarding: true,
     userData: "inactive",
   },
 ];
@@ -423,14 +421,8 @@ export const SOURCE_LABEL: Record<NotificationsQaTriggerSource, string> = {
   inactivity: "Inactivity",
 };
 
-export type NotificationsQaInspectorFieldTone = "success" | "error" | "warning" | "gray";
-
-export type NotificationsQaInspectorField = {
-  label: string;
-  value: string;
-  raw?: string;
-  status: { label: string; tone: NotificationsQaInspectorFieldTone };
-};
+export type NotificationsQaInspectorFieldTone = QaInspectorFieldTone;
+export type NotificationsQaInspectorField = QaInspectorField;
 
 type BrazePushNotificationsFeature = Features["brazePushNotifications"] | null | undefined;
 

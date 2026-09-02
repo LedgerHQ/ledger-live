@@ -53,6 +53,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
+import { QaInspectorRow, type QaInspectorField } from "LLM/components/QaInspectorRow";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { TrackScreen } from "~/analytics";
 
@@ -60,17 +61,7 @@ const FLAG_KEY = "analyticsOptIn";
 
 type TabId = "scenarios" | "inspect";
 
-type FieldTone = "success" | "error" | "warning" | "gray";
-
-type InspectorField = {
-  label: string;
-  /** Large primary value the tester should read first. */
-  value: string;
-  /** Small secondary line, typically the raw stored form. */
-  raw?: string;
-  /** Tag shown next to the label: Valid, Invalid, Missing, On, Off… */
-  status: { label: string; tone: FieldTone };
-};
+type InspectorField = QaInspectorField;
 
 type ToggleField = {
   label: string;
@@ -191,44 +182,6 @@ function buildInspectorFields(
         : { label: "Invalid", tone: "error" },
     },
   };
-}
-
-function InspectorRow({ field }: Readonly<{ field: InspectorField }>) {
-  return (
-    <Box
-      lx={{
-        paddingHorizontal: "s8",
-        paddingVertical: "s12",
-        borderRadius: "sm",
-        marginBottom: "s8",
-        gap: "s8",
-        borderWidth: "s1",
-        borderColor: "muted",
-      }}
-    >
-      <Box
-        lx={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "s8",
-        }}
-      >
-        <Text typography="body2SemiBold" lx={{ color: "base", flex: 1 }}>
-          {field.label}
-        </Text>
-        <Tag label={field.status.label} size="sm" appearance={field.status.tone} />
-      </Box>
-      <Text typography="body2SemiBold" lx={{ color: "base" }} selectable>
-        {field.value}
-      </Text>
-      {field.raw ? (
-        <Text typography="body3" lx={{ color: "muted" }} selectable>
-          {field.raw}
-        </Text>
-      ) : null}
-    </Box>
-  );
 }
 
 function ToggleRow({ field }: Readonly<{ field: ToggleField }>) {
@@ -402,7 +355,7 @@ function QaTabSection({
             Stored on this device
           </Text>
           {storedFields.map(field => (
-            <InspectorRow key={field.label} field={field} />
+            <QaInspectorRow key={field.label} field={field} />
           ))}
           <Text
             typography="body3SemiBold"
@@ -417,7 +370,7 @@ function QaTabSection({
               onChange: onFlagEnabledChange,
             }}
           />
-          <InspectorRow field={policyVersionField} />
+          <QaInspectorRow field={policyVersionField} />
           <Text
             typography="body3SemiBold"
             lx={{ color: "muted", marginTop: "s16", marginBottom: "s4" }}

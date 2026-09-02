@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt";
 import { NotificationsPromptDrawerView } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawerView";
+import { QaInspectorRow } from "LLM/components/QaInspectorRow";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
@@ -32,44 +33,6 @@ function confirm(title: string, message: string, confirmLabel: string, onConfirm
     { text: "Cancel", style: "cancel" },
     { text: confirmLabel, onPress: onConfirm },
   ]);
-}
-
-function InspectorRow({ field }: Readonly<{ field: NotificationsQaInspectorField }>) {
-  return (
-    <Box
-      lx={{
-        paddingHorizontal: "s8",
-        paddingVertical: "s12",
-        borderRadius: "sm",
-        marginBottom: "s8",
-        gap: "s8",
-        borderWidth: "s1",
-        borderColor: "muted",
-      }}
-    >
-      <Box
-        lx={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "s8",
-        }}
-      >
-        <Text typography="body2SemiBold" lx={{ color: "base", flex: 1 }}>
-          {field.label}
-        </Text>
-        <Tag label={field.status.label} size="sm" appearance={field.status.tone} />
-      </Box>
-      <Text typography="body2SemiBold" lx={{ color: "base" }} selectable>
-        {field.value}
-      </Text>
-      {field.raw ? (
-        <Text typography="body3" lx={{ color: "muted" }} selectable>
-          {field.raw}
-        </Text>
-      ) : null}
-    </Box>
-  );
 }
 
 function ScenariosTab({
@@ -228,7 +191,7 @@ function InspectTab({
         Current user and device state
       </Text>
       {userStateFields.map(field => (
-        <InspectorRow key={field.label} field={field} />
+        <QaInspectorRow key={field.label} field={field} />
       ))}
 
       <Text
@@ -238,7 +201,7 @@ function InspectTab({
         Production decision
       </Text>
       {decisionFields.map(field => (
-        <InspectorRow key={field.label} field={field} />
+        <QaInspectorRow key={field.label} field={field} />
       ))}
 
       <Text
@@ -248,7 +211,7 @@ function InspectTab({
         Feature configuration
       </Text>
       {featureFields.map(field => (
-        <InspectorRow key={field.label} field={field} />
+        <QaInspectorRow key={field.label} field={field} />
       ))}
     </Box>
   );
