@@ -8189,7 +8189,8 @@
     },
     "ICPDissolveDelayLTMin": {
       "title": "Dissolve delay too short",
-      "description": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+      "description_one": "The Internet Computer requires a dissolve delay of at least {{minDays}} day.",
+      "description_other": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
     },
     "ICPInvalidDissolveDelayIncrease": {
       "title": "Invalid number of days",
@@ -8197,7 +8198,8 @@
     },
     "ICPDissolveDelayGTMax": {
       "title": "Dissolve delay too long",
-      "description": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
+      "description_one": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} day.",
+      "description_other": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
     },
     "ICPDissolveDelayLTCurrent": {
       "title": "Dissolve delay cannot be shortened",

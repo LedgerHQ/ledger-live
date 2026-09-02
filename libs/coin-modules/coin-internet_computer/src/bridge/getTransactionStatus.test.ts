@@ -166,10 +166,10 @@ describe("getTransactionStatus", () => {
     // alongside the seconds. The minimum rounds up and the maximum down, so both stay acceptable to
     // the canister — the two-year maximum is 730.5 days, which has to report as 730, not 731.
     it.each([
-      ["1.5", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY, minDays: 7 }],
+      ["1.5", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY, minDays: 7, count: 7 }],
       [
         String(NNS_MAXIMUM_DISSOLVE_DELAY + 1),
-        { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY, maxDays: 730 },
+        { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY, maxDays: 730, count: 730 },
       ],
     ])(
       "reports the offended bound in days as well as seconds (%s)",

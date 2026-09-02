@@ -88,11 +88,17 @@ const validateRecipient = (
 // The bounds are protocol seconds, but every surface that reports them talks in whole days, so each
 // error carries both. A minimum rounds up and a maximum rounds down, keeping the quoted day count
 // one the canister would actually accept.
-const belowMin = (minSeconds: number) =>
-  new ICPDissolveDelayLTMin("", { minSeconds, minDays: Math.ceil(minSeconds / SECONDS_IN_DAY) });
+// `count` repeats the day figure because that is the field i18next selects a plural form on, and the
+// apps hand the whole error to `t()`. Dropping it would fall the copy back to the generic message.
+const belowMin = (minSeconds: number) => {
+  const minDays = Math.ceil(minSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayLTMin("", { minSeconds, minDays, count: minDays });
+};
 
-const aboveMax = (maxSeconds: number) =>
-  new ICPDissolveDelayGTMax("", { maxSeconds, maxDays: Math.floor(maxSeconds / SECONDS_IN_DAY) });
+const aboveMax = (maxSeconds: number) => {
+  const maxDays = Math.floor(maxSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayGTMax("", { maxSeconds, maxDays, count: maxDays });
+};
 
 // New dissolve delay must be >= the current one and within the network bounds (Mission 70).
 const validateSetDissolveDelay = (

@@ -33,8 +33,19 @@ const REACHABLE_ERRORS = [
 // others nest an object under `list`.
 const errors = en.errors as unknown as Record<
   string,
-  { title?: string; description?: string } | undefined
+  | {
+      title?: string;
+      description?: string;
+      // The dissolve-delay bounds quote a day count, so their copy is pluralized.
+      description_one?: string;
+      description_other?: string;
+    }
+  | undefined
 >;
+
+/** The description a reader sees, whichever of the singular or plural forms the entry carries. */
+const describes = (name: string): string | undefined =>
+  errors[name]?.description ?? errors[name]?.description_other;
 
 describe("internet_computer error translations", () => {
   it.each(REACHABLE_ERRORS)("%s has a title of its own", name => {
@@ -64,15 +75,25 @@ describe("internet_computer error translations", () => {
     "ICPInvalidPercentage",
     "ICPInvalidDissolveDelayIncrease",
   ])("%s explains how to correct the value", name => {
-    expect(errors[name]?.description).toBeTruthy();
+    expect(describes(name)).toBeTruthy();
   });
 
   it.each([
     ["ICPDissolveDelayLTMin", "{{minDays}}"],
     ["ICPDissolveDelayGTMax", "{{maxDays}}"],
   ])("%s quotes the bound in days, the unit the input uses", (name, placeholder) => {
-    expect(errors[name]?.description).toContain(placeholder);
+    expect(describes(name)).toContain(placeholder);
   });
+
+  // i18next picks the form off `count`, so both forms have to exist or a bound reads "1 days".
+  it.each(["ICPDissolveDelayLTMin", "ICPDissolveDelayGTMax"])(
+    "%s pluralizes its day count",
+    name => {
+      expect(errors[name]?.description_one).toBeTruthy();
+      expect(errors[name]?.description_other).toBeTruthy();
+      expect(errors[name]?.description).toBeUndefined();
+    },
+  );
 
   // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
   // only part of the message that says what actually went wrong.
