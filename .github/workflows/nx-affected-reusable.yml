@@ -92,17 +92,6 @@ jobs:
       - name: Setup nx config
         run: pnpm nx:write-cache-config
 
-      - name: Debug native binding (temporary)
-        run: |
-          node -e "
-            const path = require('path');
-            const nxRoot = path.dirname(require.resolve('nx/package.json'));
-            console.log('nx root:', nxRoot);
-            try { const g = require('@nx/nx-linux-x64-gnu'); console.log('gnu WorkspaceContext:', typeof g.WorkspaceContext); } catch(e) { console.log('gnu error:', e.message); }
-            try { const n = require(path.join(nxRoot,'dist/src/native/index.js')); console.log('native WorkspaceContext:', typeof n.WorkspaceContext, 'IS_WASM:', n.IS_WASM); } catch(e) { console.log('native error:', e.message); }
-            console.log('NX_SKIP_NATIVE_FILE_CACHE:', process.env.NX_SKIP_NATIVE_FILE_CACHE);
-          " 2>&1 || true
-
       - name: Get affected packages and paths
         id: nx-affected
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop

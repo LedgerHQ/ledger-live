@@ -690,6 +690,10 @@ importers:
       zx:
         specifier: 8.8.5
         version: 8.8.5
+    optionalDependencies:
+      '@nx/nx-linux-x64-gnu':
+        specifier: 22.7.8
+        version: 22.7.8
 
   apps/cli:
     dependencies:
