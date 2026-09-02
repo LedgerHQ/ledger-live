@@ -30,6 +30,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import MissingNeuron from "./MissingNeuron";
 import { NeuronDetailRow, NeuronSection } from "../../components/NeuronDetails";
 import { toBigNumber } from "../../amounts";
@@ -72,7 +73,7 @@ const StepManage = ({
   const formatDuration = useFormatDuration();
   const topicLabel = useGovernanceTopicLabel();
   const principal = useICPPrincipal(account);
-  const unit = account.currency.units[0];
+  const unit = useAccountUnit(account);
 
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   const actions = useNeuronActions({

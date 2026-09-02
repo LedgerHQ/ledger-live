@@ -11,6 +11,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { toBigNumber } from "../../amounts";
 import SubmitFooter from "./SubmitFooter";
 import MissingNeuron from "./MissingNeuron";
@@ -31,7 +32,7 @@ const StepSplitNeuron = ({
   transitionTo,
 }: StepProps) => {
   const { t } = useTranslation();
-  const unit = account.currency.units[0];
+  const unit = useAccountUnit(account);
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
 
   const onChange = useCallback(
