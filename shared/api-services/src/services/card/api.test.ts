@@ -74,7 +74,6 @@ describe("getCardExtra", () => {
 });
 
 describe("cardBaseQuery", () => {
-  // The base query is private, so drive it the way a use case does: through injected endpoints.
   function probeStore(extra: CardApiExtra) {
     const api = cardApi.injectEndpoints({
       endpoints: build => ({
@@ -83,7 +82,6 @@ describe("cardBaseQuery", () => {
           query: () => "/probe",
           responseSchema: z.object({ token: z.string().min(20) }),
         }),
-        // Declared the way both OAuth2 grants declare themselves.
         probeGrant: build.mutation<unknown, void>({
           query: () => ({ url: "/v1/auth/oauth2/token", method: "POST" }),
           extraOptions: { authenticated: false },
@@ -157,7 +155,6 @@ describe("cardBaseQuery", () => {
   });
 
   it("renews nothing when the request carried no token", async () => {
-    // Nothing to renew, and nothing to end: a 401 without a Bearer says only that one is needed.
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
     const refreshCardSession = jest.fn<Promise<CardSessionRefreshResult>, [number, string]>(
       async () => REPLACED,
@@ -195,8 +192,6 @@ describe("cardBaseQuery", () => {
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
-    // The session id names the session the request was sent with, so the owner can tell a renewal
-    // from a request that outlived its session.
     expect(refreshCardSession).toHaveBeenCalledWith(SESSION_ID, "session-token");
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(result.data).toEqual({ ok: true });
@@ -225,7 +220,6 @@ describe("cardBaseQuery", () => {
   });
 
   it("replays only once, so a second 401 is the answer", async () => {
-    // A fresh Response per call: a body can only be read once.
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
       .mockImplementation(async () => jsonResponse({}, 401));
@@ -307,7 +301,6 @@ describe("cardBaseQuery", () => {
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    // A 401 here would end the session a newer login just started, for somebody else.
     expect(result.error).toEqual({
       status: "CUSTOM_ERROR",
       error: CARD_STALE_REQUEST,
@@ -366,7 +359,6 @@ describe("cardBaseQuery", () => {
     );
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
-    // A keychain the OS refused is not an absent session, and an absent session ends one.
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(result.error).toEqual({
       status: "CUSTOM_ERROR",
@@ -380,8 +372,6 @@ describe("cardBaseQuery", () => {
     const { api, store, actions } = probeStore(cardApiExtra(buildExtra()));
     await store.dispatch(api.endpoints.probe.initiate());
 
-    // RTK copies the base query's `meta` into `meta.baseQueryMeta` of the settled action, and a
-    // plain `fetchBaseQuery` reports the whole `Request` there, whose headers carry the Bearer.
     const fulfilled = actions.find(action => action.type.endsWith("/executeQuery/fulfilled"));
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const meta = (fulfilled as unknown as { meta: { baseQueryMeta: unknown } }).meta;
@@ -398,7 +388,6 @@ describe("cardBaseQuery", () => {
       await store.dispatch(api.endpoints.probeGrant.initiate());
 
       const sent = request(fetchSpy);
-      // A grant presents its own credential.
       expect(sent.headers.get("authorization")).toBeNull();
       expect(sent.headers.get("x-client-key")).toBe("test-client-key");
       expect(readCardSession).not.toHaveBeenCalled();

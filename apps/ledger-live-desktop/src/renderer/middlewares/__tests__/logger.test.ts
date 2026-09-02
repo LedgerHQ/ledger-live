@@ -30,11 +30,6 @@ function loggedRecord(): string {
   return JSON.stringify(onReduxAction.mock.calls[0][0]);
 }
 
-/**
- * The records `logger.onReduxAction` writes reach the buffer `ExportLogsButton` saves to the file
- * users attach to a support ticket, and the gate is on in production. No Card credential may reach
- * it, and the reducers must still receive the action whole.
- */
 describe("loggerMiddleware", () => {
   beforeEach(() => {
     onReduxAction.mockReset();

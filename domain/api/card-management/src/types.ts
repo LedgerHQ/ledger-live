@@ -31,13 +31,11 @@ export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 
 export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
 
-/** What the `authorization_code` grant presents: the redirect's code and the PKCE verifier. */
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;
   readonly codeVerifier: string;
 };
 
-/** What the `refresh_token` grant presents. Baanx rotates the token on every grant. */
 export type PayCardRefreshSessionRequest = {
   readonly refreshToken: string;
 };

@@ -139,27 +139,15 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    // Both OAuth2 grants are Card endpoints, so their arguments and their answers ride on redux
-    // actions, and DevTools serializes every action and every state it is given.
     devTools: __DEV__
       ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
       : false,
   });
 
-  // After the store exists, because a renewal dispatches the refresh grant through it. One renewal
-  // is installed per store, and the newest store replaces the one before it: a renderer runs one
-  // store, so the only caller that builds a second one is a test, which wants the newest.
   configureCardSessionRenewal({
     dispatch: store.dispatch,
     onCardSessionEnded: () => {
-      // Published first, and synchronously: no request is waiting on it, and every screen outside
-      // the login machine reads this flag to decide whether it belongs on screen.
       store.dispatch(setSignedIn(false));
-      // Deferred, because `resetApiState` aborts every running query — including the request whose
-      // 401 started this renewal. An aborted request resolves from the uninitialized substate, so
-      // its `unwrap()` would answer `undefined` instead of throwing the 401 the base query is about
-      // to return, and the login machine would read that as a signed-in user. A macrotask is late
-      // enough for the answer to reach its caller first.
       setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
     },
   });

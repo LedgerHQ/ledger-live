@@ -49,8 +49,6 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  // Both OAuth2 grants are Card endpoints, so their arguments and their answers ride on redux
-  // actions, and DevTools serializes every action and every state it is given.
   devTools: Config.DEBUG_RNDEBUGGER
     ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
     : false,
@@ -135,10 +133,6 @@ export const store = configureStore({
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
-    // `rozeniteDevToolsEnhancer` relays every action and every state over a socket to the DevTools
-    // panel, and both carry the Card grants' credentials. It forwards these two options to
-    // `@redux-devtools/remote`, which has supported them all along — see
-    // `patches/@rozenite__redux-devtools-plugin@1.2.0.patch`.
     const devTools = rozeniteDevToolsEnhancer({
       actionSanitizer: redactCardApiAction,
       stateSanitizer: redactCardApiState,
@@ -152,18 +146,10 @@ export const store = configureStore({
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;
 
-// After the store exists, because a renewal dispatches the refresh grant through it.
 configureCardSessionRenewal({
   dispatch: store.dispatch,
   onCardSessionEnded: () => {
-    // Published first, and synchronously: no request is waiting on it, and every screen outside
-    // the login machine reads this flag to decide whether it belongs on screen.
     store.dispatch(setSignedIn(false));
-    // Deferred, because `resetApiState` aborts every running query — including the request whose
-    // 401 started this renewal. An aborted request resolves from the uninitialized substate, so
-    // its `unwrap()` would answer `undefined` instead of throwing the 401 the base query is about
-    // to return, and the login machine would read that as a signed-in user. A macrotask is late
-    // enough for the answer to reach its caller first.
     setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
   },
 });

@@ -11,13 +11,11 @@ const session: StoredCardSession = {
   refreshToken: "rt_token",
 };
 
-/** What a renewal answers with. Every field differs, so a mixed read is visible. */
 const renewedSession: StoredCardSession = {
   accessToken: "at_renewed",
   refreshToken: "rt_renewed",
 };
 
-/** The session a re-login writes over the top. */
 const loginSession: StoredCardSession = {
   accessToken: "at_login",
   refreshToken: "rt_login",
@@ -46,7 +44,6 @@ function deferred<T>() {
     resolve = resolveIt;
     reject = rejectIt;
   });
-  // A rejection nobody has awaited yet must not warn.
   promise.catch(() => undefined);
   return { promise, resolve, reject };
 }
@@ -61,10 +58,6 @@ type SetupOptions = {
   install?: boolean;
 };
 
-/**
- * The renewal dispatches the refresh grant and awaits the session `unwrap()` answers with. Only that
- * promise matters here, so the fake dispatch answers with one and the real endpoint never runs.
- */
 function setup(options: SetupOptions = {}) {
   const { store, slots, writes } = fakeStore(options.initial);
   const renew = jest.fn<Promise<StoredCardSession>, []>(
@@ -104,7 +97,6 @@ function setup(options: SetupOptions = {}) {
   };
 }
 
-/** A live session already on disk. */
 function liveSession(): Record<string, string> {
   return {
     [CARD_SESSION_KEYS.accessToken]: "at_token",
@@ -184,7 +176,6 @@ describe("createCardSession storage", () => {
     const api = createCardSession(store);
 
     const written = api.cardSession.set(session);
-    // The clear lands between the two writes, so the login it was racing stored nothing.
     const cleared = api.cardSession.clear();
     blocked.resolve();
 
@@ -210,7 +201,6 @@ describe("createCardSession storage", () => {
     jest.mocked(store.read).mockRejectedValue(new Error("the keychain is locked"));
     const api = createCardSession(store);
 
-    // An empty store ends a session. A keychain the OS refused says nothing about one.
     await expect(api.getCardSessionToken()).rejects.toThrow("the keychain is locked");
   });
 });
@@ -227,8 +217,6 @@ describe("createCardSession readers", () => {
 
     expect(first).toEqual({ token: "at_token", sessionId: expect.any(Number) });
     expect(second.token).toBe("at_login");
-    // Every login starts a new session, so the base query can tell one request's session from
-    // another's.
     expect(second.sessionId).toBeGreaterThan(first.sessionId);
   });
 
@@ -284,7 +272,6 @@ describe("createCardSession readers", () => {
     const { store, slots } = fakeStore(liveSession());
     const readStarted = deferred<void>();
     const releaseRead = deferred<void>();
-    // The value is taken before the wait, so the store answers what it held when the read began.
     jest.mocked(store.read).mockImplementation(async key => {
       const held = slots.get(key) ?? null;
       readStarted.resolve();
@@ -298,7 +285,6 @@ describe("createCardSession readers", () => {
     const clearing = api.cardSession.clear();
     releaseRead.resolve();
 
-    // The store still answers the token it was asked for. The session it belongs to is over.
     await expect(reading).resolves.toBeNull();
     await clearing;
   });
@@ -307,7 +293,6 @@ describe("createCardSession readers", () => {
     const { store, slots } = fakeStore(liveSession());
     const readStarted = deferred<void>();
     const releaseRead = deferred<void>();
-    // The value is taken before the wait, so the store answers what it held when the read began.
     jest.mocked(store.read).mockImplementation(async key => {
       const held = slots.get(key) ?? null;
       readStarted.resolve();
@@ -321,8 +306,6 @@ describe("createCardSession readers", () => {
     await api.cardSession.set(loginSession);
     releaseRead.resolve();
 
-    // The login finished, so the cleared flag is down again. The read still holds the token of the
-    // session before it, and only the session id tells the two apart.
     await expect(reading).resolves.toBeNull();
     await expect(api.getCardSessionToken()).resolves.toBe("at_login");
   });
@@ -335,7 +318,6 @@ describe("createCardSession readers", () => {
 
     await cardSession.clear();
 
-    // Fail closed: the value is still on disk, and nothing serves it again this process.
     expect(slots.size).toBeGreaterThan(0);
     await expect(getCardSessionToken()).resolves.toBeNull();
     await expect(cardSession.get()).resolves.toBeNull();
@@ -350,7 +332,6 @@ describe("createCardSession renewal", () => {
       kind: "refreshed",
       accessToken: "at_renewed",
     });
-    // Baanx rotates the refresh token on every grant, so the new one must land as well.
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_renewed");
     expect(slots.get(CARD_SESSION_KEYS.refreshToken)).toBe("rt_renewed");
   });
@@ -361,7 +342,6 @@ describe("createCardSession renewal", () => {
 
     await renewNow();
 
-    // No caller outside this module can read that key any more.
     expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.refreshToken);
   });
 
@@ -376,8 +356,6 @@ describe("createCardSession renewal", () => {
       Array.from({ length: 5 }, () => refreshCardSession(current, "at_token")),
     );
 
-    // The common case on mobile: an app opened after an hour away fires several requests against
-    // one expired token at once. One grant answers them all, because Baanx spends the refresh token.
     expect(renew).toHaveBeenCalledTimes(1);
     expect(results).toEqual(Array(5).fill({ kind: "refreshed", accessToken: "at_renewed" }));
     expect(
@@ -449,8 +427,6 @@ describe("createCardSession renewal", () => {
 });
 
 describe("createCardSession renewal failures", () => {
-  // One rule: a renewal that did not put a session on disk ends the session. Nothing reads a status,
-  // and nothing reads a body. See "Renewal" in the README for the trade this makes.
   const failures = [
     {
       name: "a grant the provider refused",
@@ -480,8 +456,6 @@ describe("createCardSession renewal failures", () => {
   );
 
   it("ends the session when the app installed no renewal", async () => {
-    // A wiring mistake reaches the same end as any other failure: no session on disk. There is no
-    // callback to publish it with, because installing one is exactly what was forgotten.
     const { renewNow, slots } = setup({
       initial: liveSession(),
       install: false,
@@ -493,8 +467,6 @@ describe("createCardSession renewal failures", () => {
   });
 
   it("ends the session when a renewed session cannot be stored", async () => {
-    // Baanx no longer accepts the previous refresh token, so a session that cannot be written
-    // leaves nothing to use.
     const { renewNow, store, slots, onCardSessionEnded } = setup({
       initial: liveSession(),
     });
@@ -529,7 +501,6 @@ describe("createCardSession renewal failures", () => {
     });
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
-    // `isCleared` answers the next 401 with no grant at all. One failure must not spend two tokens.
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).toHaveBeenCalledTimes(1);
   });
@@ -587,8 +558,6 @@ describe("createCardSession session id", () => {
     const cleared = cardSession.clear();
     pending.resolve(renewedSession);
 
-    // The request that asked belonged to the session the user just ended. Nothing is replayed, and
-    // nothing is written back over the logout.
     await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
     await cleared;
     expect(slots.size).toBe(0);
@@ -606,8 +575,6 @@ describe("createCardSession session id", () => {
     const login = cardSession.set(loginSession);
     pending.resolve(renewedSession);
 
-    // The new token belongs to whoever just signed in. Handing it to the previous session's request
-    // would replay that request as the new user.
     await expect(renewal).resolves.toEqual({ kind: "session-replaced" });
     await login;
     expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe("at_login");
@@ -660,8 +627,6 @@ describe("createCardSession session id", () => {
       kind: "session-ended",
     });
 
-    // A second request that was in flight at the same time asks with the same id. The clear bumped
-    // the id, so that session is gone: nothing to renew, and nothing left to end.
     await expect(refreshCardSession(current, "at_token")).resolves.toEqual({
       kind: "session-replaced",
     });

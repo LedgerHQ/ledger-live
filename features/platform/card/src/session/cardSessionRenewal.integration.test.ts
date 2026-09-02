@@ -10,14 +10,6 @@ import { createCardSession } from "./internals/createCardSession";
 import type { CardSessionStore } from "./internals/sessionStore";
 import type { CardRenewalDispatch } from "./types";
 
-/**
- * The whole renewal, wired the way an app wires it: the real base query, the real grant, the real
- * session store, and an `onCardSessionEnded` that does what both apps do.
- *
- * The unit tests fake the grant. These do not: the point here is what a caller of a Card endpoint
- * sees when the renewal succeeds and when it ends the session.
- */
-
 const BASE_URL = "https://card.test";
 const TOKEN_PATH = "/v1/auth/oauth2/token";
 const USER = {
@@ -78,8 +70,6 @@ function setup(store: CardSessionStore = memoryStore()) {
     dispatch: reduxStore.dispatch as unknown as CardRenewalDispatch,
     onCardSessionEnded: () => {
       onCardSessionEnded();
-      // Exactly what both apps do, including the deferral that keeps `resetApiState` from aborting
-      // the request whose 401 started the renewal.
       setTimeout(() => reduxStore.dispatch(cardApi.util.resetApiState()), 0);
     },
   });
@@ -87,7 +77,6 @@ function setup(store: CardSessionStore = memoryStore()) {
   return { session, store: reduxStore, actions, onCardSessionEnded };
 }
 
-/** Answers `/v1/user` and the token endpoint separately, so each test states both halves. */
 function routeFetch(routes: {
   user: () => Response | Promise<Response>;
   token: () => Response | Promise<Response>;
@@ -98,7 +87,6 @@ function routeFetch(routes: {
   });
 }
 
-/** The body the token endpoint received, so a test can name the token that was spent. */
 async function grantBody(spy: jest.SpyInstance): Promise<unknown> {
   const call = spy.mock.calls.find(([input]) => String(input?.url ?? input).endsWith(TOKEN_PATH));
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -150,7 +138,6 @@ describe("the Card session renewal, end to end", () => {
     const request = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
     await expect(request.unwrap()).resolves.toEqual(USER);
-    // The grant spent the stored refresh token, and both rotated tokens landed on disk.
     await expect(grantBody(fetchSpy)).resolves.toEqual({
       grant_type: "refresh_token",
       refresh_token: "rt_old",
@@ -174,10 +161,6 @@ describe("the Card session renewal, end to end", () => {
 
     const request = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
-    // `onCardSessionEnded` empties the Card cache, which aborts every running query. Run
-    // synchronously, it would abort this one: the aborted request resolves from the uninitialized
-    // substate, so `unwrap()` would answer `undefined` and the login machine would read a signed-in
-    // user over a wiped keychain.
     await expect(request.unwrap()).rejects.toMatchObject({ status: 401 });
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
     await expect(session.cardSession.get()).resolves.toBeNull();
@@ -197,8 +180,6 @@ describe("the Card session renewal, end to end", () => {
       refreshToken: "rt_old",
     });
 
-    // One rule: a renewal that put no session on disk ends the session, whatever it answered. A
-    // provider outage therefore signs the user out. See "Renewal" in the README.
     await expect(
       store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap(),
     ).rejects.toMatchObject({ status: 401 });
@@ -217,14 +198,12 @@ describe("the Card session renewal, end to end", () => {
       refreshToken: "rt_old",
     });
 
-    // The base query holds the old session id. The login lands before the 401 comes back.
     const stale = store.dispatch(cardManagementApi.endpoints.getUser.initiate());
     await session.cardSession.set({
       accessToken: "at_new",
       refreshToken: "rt_new",
     });
 
-    // Not a 401: that would end the session the new login just started, for somebody else.
     await expect(stale.unwrap()).rejects.toEqual({
       status: "CUSTOM_ERROR",
       error: CARD_STALE_REQUEST,
@@ -283,7 +262,6 @@ describe("the Card session renewal, end to end", () => {
       remove: async () => undefined,
     });
 
-    // A locked keychain is not an absent session, and an absent session ends one.
     await expect(
       store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap(),
     ).rejects.toEqual({
@@ -312,15 +290,11 @@ describe("the Card session renewal, end to end", () => {
 
     await store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap();
 
-    // A grant is an endpoint, so its argument rides on the pending action and its answer on the
-    // fulfilled one. The desktop logger, the desktop DevTools and the mobile DevTools relay each
-    // read an action only after this redaction.
     const serialized = JSON.stringify(actions.map(action => redactCardApiAction(action)));
     expect(serialized).not.toContain("at_sentinel");
     expect(serialized).not.toContain("rt_sentinel");
     expect(serialized).not.toContain("at_old");
     expect(serialized).not.toContain("rt_old");
-    // The renewal still reads as a renewal.
     expect(serialized).toContain("refreshSession");
   });
 
@@ -340,7 +314,6 @@ describe("the Card session renewal, end to end", () => {
 
     await store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap();
 
-    // The one copy of a Card session is the one in the session store.
     expect(JSON.stringify(store.getState())).not.toContain("at_sentinel");
     expect(JSON.stringify(store.getState())).not.toContain("rt_sentinel");
   });

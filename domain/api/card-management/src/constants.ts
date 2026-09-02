@@ -4,5 +4,4 @@
  */
 export const CARD_MANAGEMENT_TAGS = ["CardStatus", "CardOnboardingStatus"] as const;
 
-/** The one path both OAuth2 grants post to. `grant_type` separates them. */
 export const OAUTH2_TOKEN_PATH = "/v1/auth/oauth2/token";
