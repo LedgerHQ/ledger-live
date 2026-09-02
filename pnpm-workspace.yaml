@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "apps/wallet-cli/npm/*"
   - "e2e/*"
+  - "e2e/tooling/*"
   - "features/flow/*"
   - "features/platform/*"
   - "libs/*"
@@ -173,6 +174,7 @@ catalog:
   ws: 8.18.3
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
+  otpauth: 9.5.1
   zod: 4.3.6
   semver: 7.7.3
   "@types/semver": 7.7.1

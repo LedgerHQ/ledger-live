@@ -1,0 +1,32 @@
+{
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "plugins": ["eslint", "import", "typescript", "oxc", "jest"],
+  "ignorePatterns": ["node_modules"],
+  "rules": {
+    "eslint/no-unused-vars": "error",
+    "import/no-duplicates": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-deprecated": "error",
+    "eslint/no-console": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts"],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "eslint/no-console": "off"
+      }
+    }
+  ]
+}
