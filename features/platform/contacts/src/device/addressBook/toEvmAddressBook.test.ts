@@ -5,11 +5,14 @@ import {
   type ContactAddressInput,
   type ContactInput,
 } from "@domain/entity-contact";
+import { mapBytesToGroupHandle, mapBytesToProof } from "../contactsKitMappers";
 import { toEvmAddressBook } from "./toEvmAddressBook";
 
-const GROUP_HANDLE_HEX = "ab".repeat(64);
-const HMAC_PROOF_HEX = "cd".repeat(32);
-const HMAC_REST_HEX = "ef".repeat(32);
+// Proof material reaches this mapper the way it was persisted: 0x-prefixed, as
+// the Contacts kit mappers emit it through the kit's `bufferToHexaString`.
+const GROUP_HANDLE_HEX = `0x${"ab".repeat(64)}`;
+const HMAC_PROOF_HEX = `0x${"cd".repeat(32)}`;
+const HMAC_REST_HEX = `0x${"ef".repeat(32)}`;
 
 const ADDRESS = "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034";
 
@@ -118,6 +121,34 @@ describe("toEvmAddressBook", () => {
     ]);
 
     expect(book?.contactGroups[0]?.contactName).toBe("Me");
+  });
+
+  it("accepts proof material the kit mappers produced", () => {
+    const groupHandle = new Uint8Array(64).fill(0xab);
+    const hmacProof = new Uint8Array(32).fill(0xcd);
+    const hmacRest = new Uint8Array(32).fill(0xef);
+
+    const book = toEvmAddressBook([
+      evmContact({
+        deviceCredentials: {
+          groupHandle: mapBytesToGroupHandle(groupHandle),
+          hmacProof: mapBytesToProof(hmacProof),
+        },
+        addresses: [
+          evmAddress({
+            device: {
+              blockchainFamily: "evm",
+              chainId: 1,
+              hmacRest: mapBytesToProof(hmacRest),
+            },
+          }),
+        ],
+      }),
+    ]);
+
+    expect(book?.contactGroups[0]?.groupHandle).toEqual(groupHandle);
+    expect(book?.contactGroups[0]?.hmacProof).toEqual(hmacProof);
+    expect(book?.contactGroups[0]?.externalAddresses[0]?.hmacRest).toEqual(hmacRest);
   });
 
   it("accepts uppercase hex proof material", () => {
