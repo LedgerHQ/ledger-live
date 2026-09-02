@@ -151,6 +151,9 @@ features/flow/app-lock/                                  @ledgerhq/wallet-xp
 /shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 
+# Wallet — devtools
+devtools/pay-card/                                       @ledgerhq/wallet-xp
+
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
