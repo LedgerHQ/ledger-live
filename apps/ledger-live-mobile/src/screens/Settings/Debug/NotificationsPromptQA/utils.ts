@@ -1,7 +1,12 @@
 import { add, sub } from "date-fns";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import type {
+  AfterActionTriggerDecision,
   DataOfUser,
+  InactivityTriggerDecision,
+  NotificationsPromptAfterActionSource,
   NotificationsPromptRepromptDelay,
+  NotificationsPromptSkipReason,
 } from "LLM/features/NotificationsPrompt";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -209,4 +214,188 @@ export const buildTruncatedDismissalsUserData = (
       globalPushNotifications: dismissedOptInDrawerAtList,
     },
   };
+};
+
+export type NotificationsQaExpectation = "Show drawer" | "Skip" | "Blocked";
+export type NotificationsQaTriggerSource = NotificationsPromptAfterActionSource | "inactivity";
+
+export type NotificationsQaScenario = {
+  id: string;
+  name: string;
+  summary: string;
+  expected: NotificationsQaExpectation;
+  source: NotificationsQaTriggerSource;
+  permissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+  areNotificationsAllowed: boolean;
+  transactionsAlertsCategory: boolean;
+  hasCompletedOnboarding: boolean;
+  userData: "firstPrompt" | "alreadyOptedIn" | "tooSoon" | "eligibleAfterAction" | "inactive";
+};
+
+export const NOTIFICATIONS_QA_SCENARIOS: NotificationsQaScenario[] = [
+  {
+    id: "first-prompt",
+    name: "First prompt",
+    summary: "No previous dismissal → drawer can show after onboarding",
+    expected: "Show drawer",
+    source: "onboarding",
+    permissionStatus: AuthorizationStatus.NOT_DETERMINED,
+    areNotificationsAllowed: false,
+    transactionsAlertsCategory: false,
+    hasCompletedOnboarding: true,
+    userData: "firstPrompt",
+  },
+  {
+    id: "already-opted-in",
+    name: "Already opted in",
+    summary: "OS, app and transaction alerts are on → skip",
+    expected: "Skip",
+    source: "send",
+    permissionStatus: AuthorizationStatus.AUTHORIZED,
+    areNotificationsAllowed: true,
+    transactionsAlertsCategory: true,
+    hasCompletedOnboarding: true,
+    userData: "alreadyOptedIn",
+  },
+  {
+    id: "too-soon",
+    name: "Too soon to ask again",
+    summary: "A recent dismissal keeps the drawer inside its cooldown",
+    expected: "Skip",
+    source: "send",
+    permissionStatus: AuthorizationStatus.DENIED,
+    areNotificationsAllowed: false,
+    transactionsAlertsCategory: false,
+    hasCompletedOnboarding: true,
+    userData: "tooSoon",
+  },
+  {
+    id: "eligible-after-action",
+    name: "Eligible after action",
+    summary: "The dismissal cooldown has elapsed → drawer can show",
+    expected: "Show drawer",
+    source: "send",
+    permissionStatus: AuthorizationStatus.DENIED,
+    areNotificationsAllowed: false,
+    transactionsAlertsCategory: false,
+    hasCompletedOnboarding: true,
+    userData: "eligibleAfterAction",
+  },
+  {
+    id: "inactive-user",
+    name: "Inactive user",
+    summary: "The inactivity threshold has elapsed → drawer can show",
+    expected: "Show drawer",
+    source: "inactivity",
+    permissionStatus: AuthorizationStatus.DENIED,
+    areNotificationsAllowed: false,
+    transactionsAlertsCategory: false,
+    hasCompletedOnboarding: true,
+    userData: "inactive",
+  },
+];
+
+export const NOTIFICATIONS_QA_GROUPS: NotificationsQaExpectation[] = ["Skip", "Show drawer"];
+
+export const NOTIFICATIONS_QA_VERDICT_META: Record<
+  NotificationsQaExpectation,
+  { hint: string; tone: "success" | "warning" | "error" }
+> = {
+  "Show drawer": {
+    hint: "Production eligibility says this drawer can be shown.",
+    tone: "success",
+  },
+  Skip: {
+    hint: "The current user state does not need a drawer.",
+    tone: "warning",
+  },
+  Blocked: {
+    hint: "A configuration or runtime gate prevents the drawer.",
+    tone: "error",
+  },
+};
+
+export const NOTIFICATIONS_PROMPT_REASON_LABEL: Record<NotificationsPromptSkipReason, string> = {
+  feature_disabled: "Feature flag disabled",
+  configuration_missing: "Configuration missing",
+  ratings_modal_open: "Ratings modal is open",
+  drawer_already_pending: "Drawer already pending",
+  fully_opted_in: "Already opted in",
+  reprompt_delay_not_reached: "Too soon to ask again",
+  action_event_disabled: "This action does not trigger the prompt",
+  transactions_alerts_not_eligible: "Transaction alerts not eligible for this action",
+  onboarding_incomplete: "Onboarding incomplete",
+  user_not_inactive: "User is still active",
+  globally_opted_in_no_inactivity_drawer: "Already opted in — no inactivity prompt",
+};
+
+const BLOCKED_REASONS = new Set<NotificationsPromptSkipReason>([
+  "feature_disabled",
+  "configuration_missing",
+  "ratings_modal_open",
+  "drawer_already_pending",
+  "onboarding_incomplete",
+]);
+
+export const mapNotificationsDecisionToQaExpectation = (
+  decision: AfterActionTriggerDecision | InactivityTriggerDecision,
+): NotificationsQaExpectation => {
+  if (decision.kind === "show") {
+    return "Show drawer";
+  }
+
+  return BLOCKED_REASONS.has(decision.reason) ? "Blocked" : "Skip";
+};
+
+export const buildNotificationsQaScenarioUserData = (
+  scenario: NotificationsQaScenario,
+  {
+    repromptSchedule,
+    inactivityReprompt,
+    now,
+  }: {
+    repromptSchedule: NotificationsPromptRepromptDelay[] | null | undefined;
+    inactivityReprompt: NotificationsPromptRepromptDelay | null | undefined;
+    now: number;
+  },
+): DataOfUser => {
+  switch (scenario.userData) {
+    case "firstPrompt":
+      return {
+        dismissedOptInDrawerAtList: [],
+        dismissedPromptAtListByTarget: { globalPushNotifications: [] },
+        lastActionAt: now,
+      };
+    case "alreadyOptedIn":
+      return { lastActionAt: now };
+    case "tooSoon":
+      return {
+        dismissedOptInDrawerAtList: [now],
+        dismissedPromptAtListByTarget: { globalPushNotifications: [now] },
+        lastActionAt: now,
+      };
+    case "eligibleAfterAction":
+      return buildRepromptableUserData(undefined, repromptSchedule, now);
+    case "inactive":
+      return buildInactiveUserData(undefined, inactivityReprompt, now);
+  }
+};
+
+export const formatPermissionStatus = (
+  status: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus] | null | undefined,
+): string => {
+  switch (status) {
+    case AuthorizationStatus.AUTHORIZED:
+      return "Authorized";
+    case AuthorizationStatus.DENIED:
+      return "Denied";
+    case AuthorizationStatus.NOT_DETERMINED:
+      return "Not determined";
+    case AuthorizationStatus.PROVISIONAL:
+      return "Provisional";
+    case AuthorizationStatus.EPHEMERAL:
+      return "Ephemeral";
+    default:
+      return "Unknown";
+  }
 };
