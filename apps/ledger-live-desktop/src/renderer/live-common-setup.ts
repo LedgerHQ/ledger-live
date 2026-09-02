@@ -90,9 +90,7 @@ export function registerTransportModules(store: Store<State>) {
         },
       });
 
-      // The id matters: without it the transport reuses whatever session is
-      // live, so a job for one device can end up talking to another.
-      return DeviceManagementKitTransport.open({ deviceId: id });
+      return DeviceManagementKitTransport.open();
     },
 
     disconnect: () => Promise.resolve(),
