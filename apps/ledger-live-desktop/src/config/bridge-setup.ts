@@ -11,10 +11,11 @@ import {
   type CounterValuesState as MarketCounterValuesState,
 } from "@domain/entity-market-countervalues";
 import type { ReduxStore } from "~/state-manager/configureStore";
+import { withMockedArc20Tokens } from "@ledgerhq/live-common/families/aleo/arc20.mock";
 
 export function setupCryptoAssetsStore(store: ReduxStore): void {
   const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
-  setCryptoAssetsStore(cryptoAssetsStore);
+  setCryptoAssetsStore(withMockedArc20Tokens(cryptoAssetsStore));
 }
 
 /**
