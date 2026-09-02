@@ -44,8 +44,8 @@ export class PostOnboardingPage extends AppPage {
     await expect(row).toContainText(completedLabel);
   }
 
-  @step("Tap post-onboarding action $0")
-  async tapAction(actionId: string) {
+  @step("Click post-onboarding action $0")
+  async clickAction(actionId: string) {
     await this.actionRow(actionId).click();
     await expect(this.finishOnboardingDialog).toBeHidden();
     await expect(this.completeMockActionButton).toBeVisible();
