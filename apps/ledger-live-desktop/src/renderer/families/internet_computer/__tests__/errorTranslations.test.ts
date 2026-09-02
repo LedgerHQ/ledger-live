@@ -16,6 +16,7 @@ const REACHABLE_ERRORS = [
   "ICPNeuronNotFound",
   "ICPInvalidHotKey",
   "ICPHotKeyAlreadyExists",
+  "ICPHotKeyIsController",
   "ICPSplitNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
@@ -74,6 +75,7 @@ describe("internet_computer error translations", () => {
     "ICPDissolveDelayGTMax",
     "ICPInvalidPercentage",
     "ICPInvalidDissolveDelayIncrease",
+    "ICPHotKeyIsController",
   ])("%s explains how to correct the value", name => {
     expect(describes(name)).toBeTruthy();
   });

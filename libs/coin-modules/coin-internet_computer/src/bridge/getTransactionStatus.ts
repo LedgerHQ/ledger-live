@@ -26,6 +26,7 @@ import {
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
+  ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
   ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
@@ -143,6 +144,9 @@ const validateAddHotKey = (neuron: ICPNeuron | undefined, hotKey?: string): Erro
   if (!neuron) return new ICPNeuronNotFound();
   if (!isValidPrincipal(hotKey)) return new ICPInvalidHotKey();
   if (neuron.hotKeys.includes(hotKey!)) return new ICPHotKeyAlreadyExists();
+  // Compared against the neuron's own controller rather than the account's derived principal: the
+  // controller is what the permission actually duplicates, and it is already on the neuron.
+  if (hotKey === neuron.controller) return new ICPHotKeyIsController();
   return undefined;
 };
 

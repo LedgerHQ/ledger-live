@@ -13,6 +13,7 @@ import {
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
+  ICPHotKeyIsController,
   ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
@@ -227,6 +228,14 @@ describe("getTransactionStatus", () => {
         tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
       );
       expect(missing.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
+    });
+
+    it("rejects the neuron's own controller as a hot key", async () => {
+      const status = await getTransactionStatus(
+        accountWith(neuron({ controller: "2vxsx-fae" })),
+        tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
+      );
+      expect(status.errors.transaction).toBeInstanceOf(ICPHotKeyIsController);
     });
 
     it("rejects an out-of-range spawn percentage", async () => {

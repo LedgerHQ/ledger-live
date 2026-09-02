@@ -89,6 +89,17 @@ export class ICPHotKeyAlreadyExists extends Error {
   }
 }
 
+// The canister accepts the controller as a hot key; it just grants nothing, since the controller can
+// already vote and set following.
+export class ICPHotKeyIsController extends Error {
+  override name = "ICPHotKeyIsController";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPHotKeyIsController");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Split would leave less than the minimum stake on either resulting neuron.
 export class ICPSplitNotAllowed extends Error {
   override name = "ICPSplitNotAllowed";
