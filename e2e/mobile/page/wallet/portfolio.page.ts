@@ -36,9 +36,6 @@ export default class PortfolioPage {
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
   marketBannerTitle = "market-banner-title";
-  // The row's own container, from QUICK_ACTIONS_TEST_IDS.ctas.container. Waiting on this at 100%
-  // visibility is what proves the row has mounted and settled; the buttons inside it are laid out
-  // by then, so a tap cannot land on a view that is still arriving.
   quickActionsCtasContainerId = "quick-actions-ctas";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
@@ -49,9 +46,6 @@ export default class PortfolioPage {
   portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
   portfolioBalanceDelta = "portfolio-balance-delta";
   borrowEntryPointId = "portfolio-borrow-entry-point";
-  // The sheet's own container, from QUICK_ACTIONS_TEST_IDS.transferDrawer.container. This is the
-  // anchor to wait on rather than a control inside it: the controls mount before the sheet is
-  // presented, so they are matchable while it is still sliding into place.
   transferDrawerContainerId = "transfer-drawer";
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
@@ -362,10 +356,7 @@ export default class PortfolioPage {
     await waitForElementById(this.quickActionBuyButtonV4);
   }
 
-  // tapById does not wait, so these taps used to be issued the moment the portfolio rendered.
-  // The quick actions mount after the portfolio's own data resolves, which is why the tap could
-  // fail with "No views in hierarchy found matching ... quick-action-buy" (QAA-1524) — the row was
-  // not there yet, rather than being under-visible.
+  // The row mounts only after portfolio data resolves (QAA-1524).
   private async waitForQuickActionsSettled() {
     await waitForFullyVisibleById(this.quickActionsCtasContainerId);
   }
@@ -422,11 +413,7 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.transferBottomSheetBankTransferButton)).toBeVisible();
   }
 
-  // tapById does not wait, so these taps used to be issued the instant the sheet was asked to open.
-  // toBeVisible() is satisfied at 75%, which a bottom sheet meets while still sliding, so the tap
-  // could land on a moving view and Espresso refused the action ("target view does not match one or
-  // more of the following constraints"), or the button was not mounted yet at all ("No views in
-  // hierarchy found matching ... transfer-action-receive"). Both are QAA-1522.
+  // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
   private async waitForTransferDrawerSettled() {
     await waitForFullyVisibleById(this.transferDrawerContainerId);
   }
