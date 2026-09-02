@@ -1,5 +1,5 @@
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -16,7 +16,7 @@ import React, { useEffect, useRef } from "react";
 type RecipientContactAddressSelectionProps = Readonly<{
   contact: Contact;
   network: CryptoCurrency;
-  onAddressSelect: (address: string) => void;
+  onAddressSelect: (address: ContactAddress, addressRank: number) => void;
 }>;
 
 export function RecipientContactAddressSelection({
@@ -41,14 +41,14 @@ export function RecipientContactAddressSelection({
         <p className="body-2 text-muted">{network.name}</p>
       </div>
 
-      {contact.addresses.map(address => {
+      {contact.addresses.map((address, index) => {
         const addressCurrency = findCryptoCurrencyById(address.currencyId);
 
         return (
           <Card
             key={address.id}
             type="interactive"
-            onClick={() => onAddressSelect(address.address)}
+            onClick={() => onAddressSelect(address, index + 1)}
             data-testid={`send-recipient-contact-address-${address.id}`}
           >
             <CardHeader>
