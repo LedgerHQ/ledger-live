@@ -28,6 +28,7 @@ import {
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
+import { paginatedProgramAccounts } from "./rpc/program-accounts";
 import { Awaited } from "../../logic";
 import { SolanaTokenProgram } from "../../types";
 
@@ -56,10 +57,6 @@ export type ChainAPI = Readonly<{
   getParsedToken2022AccountsByOwner: (
     address: string,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
-
-  getStakeAccountsByStakeAuth: (
-    authAddr: string,
-  ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
   getStakeAccountsByWithdrawAuth: (
     authAddr: string,
@@ -178,6 +175,13 @@ export function getChainAPI(
     confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
   });
 
+  const programAccounts = paginatedProgramAccounts(
+    connection,
+    config.endpoint,
+    kyNoTimeout,
+    logger,
+  );
+
   return {
     getBalance: (address: string) =>
       connection.getBalance(new PublicKey(address)).catch(remapErrors),
@@ -208,21 +212,8 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByStakeAuth: (authAddr: string) =>
-      connection
-        .getParsedProgramAccounts(StakeProgram.programId, {
-          filters: [
-            {
-              memcmp: {
-                offset: 12,
-                bytes: authAddr,
-              },
-            },
-          ],
-        })
-        .catch(remapErrors),
     getStakeAccountsByWithdrawAuth: (authAddr: string) =>
-      connection
+      programAccounts
         .getParsedProgramAccounts(StakeProgram.programId, {
           filters: [
             {

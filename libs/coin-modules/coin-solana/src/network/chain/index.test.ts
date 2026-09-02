@@ -1,6 +1,8 @@
 import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
-import { Connection, SendTransactionError } from "@solana/web3.js";
+import { Connection, PublicKey, SendTransactionError, StakeProgram } from "@solana/web3.js";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 
 jest.mock("@solana/web3.js", () => ({
   ...jest.requireActual("@solana/web3.js"),
@@ -8,6 +10,21 @@ jest.mock("@solana/web3.js", () => ({
 }));
 
 const FAKE_CONFIG: Config = { endpoint: "http://fake-endpoint.com" };
+const FIRST_STAKE_ACCOUNT = "FirstStakeAccountPubkey11111111111111111111";
+const SECOND_STAKE_ACCOUNT = "SecondStakeAccountPubkey1111111111111111111";
+const stakeAccount = (pubkey: string) => ({
+  pubkey,
+  account: {
+    lamports: 1000,
+    owner: StakeProgram.programId.toBase58(),
+    executable: false,
+    rentEpoch: 0,
+    space: 200,
+    data: { program: "stake", parsed: { type: "uninitialized" }, space: 200 },
+  },
+});
+const rpcJson = (payload: Record<string, unknown>) =>
+  HttpResponse.json({ jsonrpc: "2.0", id: 1, ...payload });
 
 describe("index", () => {
   beforeEach(() => {
@@ -69,6 +86,84 @@ describe("index", () => {
           });
           expect(mockedConfirmTransaction).not.toHaveBeenCalled();
         }
+      });
+    });
+
+    describe("getStakeAccountsByWithdrawAuth", () => {
+      const mockServer = setupServer();
+      const authAddr = "AuthorityAddress111111111111111111111111111";
+      const filters = [{ memcmp: { offset: 44, bytes: authAddr } }];
+
+      beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+      afterEach(() => mockServer.resetHandlers());
+      afterAll(() => mockServer.close());
+
+      it("follows getProgramAccountsV2 pagination", async () => {
+        const cursors: unknown[] = [];
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, async ({ request }) => {
+            const { params } = (await request.json()) as {
+              params: [string, { paginationKey?: string }];
+            };
+            cursors.push(params[1].paginationKey);
+            return params[1].paginationKey
+              ? rpcJson({
+                  result: { accounts: [stakeAccount(SECOND_STAKE_ACCOUNT)] },
+                })
+              : rpcJson({
+                  result: {
+                    accounts: [stakeAccount(FIRST_STAKE_ACCOUNT)],
+                    paginationKey: "page-2-cursor",
+                  },
+                });
+          }),
+        );
+
+        const result = await getChainAPI(FAKE_CONFIG).getStakeAccountsByWithdrawAuth(authAddr);
+
+        expect(result.map(({ pubkey }) => pubkey.toBase58())).toEqual([
+          FIRST_STAKE_ACCOUNT,
+          SECOND_STAKE_ACCOUNT,
+        ]);
+        // Only the cursor ends the pagination, so it has to be sent back as-is.
+        expect(cursors).toEqual([undefined, "page-2-cursor"]);
+        // The raw RPC sends base58 strings where web3.js parses PublicKeys, so both
+        // paths have to agree on the shape.
+        expect(result[0].account.owner).toBeInstanceOf(PublicKey);
+      });
+
+      it("maps an RPC error to a NetworkError", async () => {
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () =>
+            rpcJson({
+              error: { code: -32005, message: "Request deprioritized" },
+            }),
+          ),
+        );
+
+        await expect(
+          getChainAPI(FAKE_CONFIG).getStakeAccountsByWithdrawAuth(authAddr),
+        ).rejects.toBeInstanceOf(NetworkError);
+      });
+
+      it("falls back to getProgramAccounts when the endpoint has no V2 method", async () => {
+        // devnet, testnet and the local test validator run vanilla agave, which does
+        // not implement getProgramAccountsV2.
+        const v1Accounts = [{ pubkey: new PublicKey(FIRST_STAKE_ACCOUNT), account: {} }];
+        const getParsedProgramAccounts = jest.fn().mockResolvedValue(v1Accounts);
+        jest
+          .mocked(Connection)
+          .mockImplementation(() => ({ getParsedProgramAccounts }) as unknown as Connection);
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () =>
+            rpcJson({ error: { code: -32601, message: "Method not found" } }),
+          ),
+        );
+
+        const result = await getChainAPI(FAKE_CONFIG).getStakeAccountsByWithdrawAuth(authAddr);
+
+        expect(result).toBe(v1Accounts);
+        expect(getParsedProgramAccounts).toHaveBeenCalledWith(StakeProgram.programId, { filters });
       });
     });
   });
