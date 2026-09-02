@@ -27,6 +27,10 @@ import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/User
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
+import {
+  useContactDetailActionParam,
+  type ContactDetailActionHandlers,
+} from "./useContactDetailActionParam";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY } from "LLD/features/CryptoAddresses/utils/cryptoAddressesLocationState";
 
@@ -244,6 +248,15 @@ export function useContactDetailPaneAdapter(
       trackedAddressDetailId.current = undefined;
     }
   }, [isOpen]);
+
+  const contactDetailActions = useMemo<ContactDetailActionHandlers<AddAddressContact>>(
+    () => ({ "add-address": handleAddAddress }),
+    [handleAddAddress],
+  );
+  useContactDetailActionParam(
+    populatedContactDetail?.contact ?? emptyContact,
+    contactDetailActions,
+  );
 
   return {
     detail,

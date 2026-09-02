@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./model": "./src/model.ts",
     "./jest.native": "./src/jest.native.ts",
     "./package.json": "./package.json"
   },

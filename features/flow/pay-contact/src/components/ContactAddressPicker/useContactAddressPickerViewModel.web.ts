@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "@shared/i18n";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { ContactAddressPickerProps } from "../../types";
+import { buildContactAddressPickerGroups } from "./model/buildContactAddressPickerGroups";
 
 export type UseContactAddressPickerViewModelParams = Readonly<{
   onSelectAddress: (address: ContactAddress) => void;
-  onAddNewContact?: () => void;
+  onAddNewAddress?: (contact: Contact) => void;
 }>;
 
 export type UseContactAddressPickerViewModel = Readonly<{
@@ -14,21 +16,45 @@ export type UseContactAddressPickerViewModel = Readonly<{
 
 export function useContactAddressPickerViewModel({
   onSelectAddress,
-  onAddNewContact,
+  onAddNewAddress,
 }: UseContactAddressPickerViewModelParams): UseContactAddressPickerViewModel {
+  const { t } = useTranslation();
   const [contact, setContact] = useState<Contact | null>(null);
 
   const open = useCallback((nextContact: Contact) => setContact(nextContact), []);
   const onClose = useCallback(() => setContact(null), []);
-  const contactAddressPicker = useMemo(
-    (): ContactAddressPickerProps => ({
+
+  const groups = useMemo(
+    () => (contact === null ? [] : buildContactAddressPickerGroups(contact)),
+    [contact],
+  );
+
+  const title = useMemo(
+    () =>
+      contact === null ? "" : t("payTab.contacts.addressPicker.title", { name: contact.name }),
+    [contact, t],
+  );
+
+  const handleAddNewAddress = useMemo(
+    () =>
+      onAddNewAddress !== undefined && contact !== null
+        ? () => onAddNewAddress(contact)
+        : undefined,
+    [onAddNewAddress, contact],
+  );
+
+  const contactAddressPicker = useMemo<ContactAddressPickerProps>(
+    () => ({
       isOpen: contact !== null,
       contact,
+      title,
+      addAddressLabel: t("payTab.contacts.addressPicker.addAddress"),
+      groups,
       onClose,
       onSelectAddress,
-      onAddNewContact,
+      onAddNewAddress: handleAddNewAddress,
     }),
-    [contact, onClose, onSelectAddress, onAddNewContact],
+    [contact, title, groups, t, onClose, onSelectAddress, handleAddNewAddress],
   );
 
   return {

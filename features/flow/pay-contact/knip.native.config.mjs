@@ -5,4 +5,5 @@ export default createDualPlatformKnipConfig({
   platform: "native",
   entry: ["src/index.native.ts"],
   additionalProjectExcludes: ["src/index.ts"],
+  additionalIgnoreDependencies: ["@ledgerhq/crypto-icons"], // update when mobile uses crypto icons
 });
