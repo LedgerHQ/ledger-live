@@ -13,13 +13,15 @@ stateDiagram-v2
   [*] --> Startup
 
   Startup --> NoKnownDevice: no known devices
-  Startup --> Connected: existing session
-  Startup --> WaitingForSelectedDevice: exactly one known device and no session
+  Startup --> Connected: existing session and auto-connect allowed
+  Startup --> WaitingForSelectedDevice: exactly one known device, no session, auto-connect allowed
   Startup --> Discovering: multiple known devices and no session
+  Startup --> Discovering: auto-connect disabled
 
   NoKnownDevice --> [*]
 
   Discovering --> Discovering: DiscoveredNoDevice / DiscoveredManyDevices
+  Discovering --> Discovering: DiscoveredOneDevice and auto-connect disabled
   Discovering --> Connecting: DiscoveredOneDevice matching a known device
   Discovering --> Connecting: UserTapsAvailableDevice
   Discovering --> WaitingForSelectedDevice: UserTapsUnavailableDevice
@@ -55,6 +57,12 @@ stateDiagram-v2
 - If startup receives exactly one known device and no existing session, the
   machine selects that device immediately and waits for it to be discovered
   instead of first rendering the discovery list.
+- `disableAutoConnect` withholds every connection the machine would make on its
+  own initiative: startup ignores an existing `sessionId` and skips preselecting
+  the only known device, and a lone discovery is rendered rather than connected.
+  Startup therefore reaches `NoKnownDevice` or `Discovering`, and only a user tap
+  leaves it. Tapping a device still connects once it is discovered — that choice
+  was explicit.
 - `Discovering` starts the discovery service and renders all known devices as
   available or unavailable depending on the latest matched discoveries.
 - DMK discovery emissions are filtered before reaching the state machine:

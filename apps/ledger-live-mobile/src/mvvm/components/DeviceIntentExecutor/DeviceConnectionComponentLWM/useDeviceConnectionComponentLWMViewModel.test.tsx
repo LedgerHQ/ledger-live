@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import type {
-  DeviceConnectionParams,
+  DeviceConnectionComponentParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import {
@@ -112,8 +112,9 @@ function withViewModelState({
 }
 
 const sourceFlow: SourceFlow = "my_ledger";
-const defaultDeviceConnectionParams: DeviceConnectionParams = {
+const defaultDeviceConnectionParams: DeviceConnectionComponentParams = {
   acceptedDeviceModelIds: [],
+  disableAutoConnect: false,
 };
 
 const layerABaseProperties = {
@@ -197,6 +198,7 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(mockedConnectDevice).toHaveBeenCalledWith({
       knownDevices,
       acceptedDeviceModelIds: [],
+      disableAutoConnect: false,
       dmk: mockDmk,
       onConnected: expect.any(Function),
     });
@@ -208,7 +210,7 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
 
     // WHEN
     renderViewModel({
-      deviceConnectionParams: { acceptedDeviceModelIds },
+      deviceConnectionParams: { acceptedDeviceModelIds, disableAutoConnect: false },
     });
 
     // THEN
@@ -216,6 +218,18 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
       expect.objectContaining({
         acceptedDeviceModelIds: [DeviceModelId.stax],
       }),
+    );
+  });
+
+  it("should pass the executor's auto-connect suppression to the connect device flow", () => {
+    // WHEN
+    renderViewModel({
+      deviceConnectionParams: { acceptedDeviceModelIds: [], disableAutoConnect: true },
+    });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ disableAutoConnect: true }),
     );
   });
 

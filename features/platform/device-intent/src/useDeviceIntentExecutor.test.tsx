@@ -154,7 +154,10 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
 
     it("THEN onExecutorStateChanged is called with connectingDevice", () => {
       const { props } = renderIntegration();
-      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
+      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
     });
   });
 
@@ -620,7 +623,10 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       });
 
       // First callback should have been called on mount
-      expect(firstCallback).toHaveBeenCalledWith({ type: "connectingDevice" });
+      expect(firstCallback).toHaveBeenCalledWith({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
 
       // Update the callback prop
       rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
@@ -921,7 +927,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+        listeners.onExecutorStateChanged({ type: "connectingDevice", disableAutoConnect: false });
       });
 
       inPhase(result.current, "deviceConnection");
@@ -983,10 +989,13 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const { listeners, props } = renderWithMockSM();
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+        listeners.onExecutorStateChanged({ type: "connectingDevice", disableAutoConnect: false });
       });
 
-      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
+      expect(props.onExecutorStateChanged).toHaveBeenCalledWith({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
     });
 
     it("WHEN SM emits onIntentJobStateChanged THEN the prop callback is forwarded", () => {
@@ -1306,7 +1315,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({ type: "connectingDevice" });
+        listeners.onExecutorStateChanged({ type: "connectingDevice", disableAutoConnect: false });
       });
 
       const connectionResult2 = makeConnectionResult("session-2");

@@ -296,7 +296,7 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
 
   describe("GIVEN a non-completing executor state", () => {
     const nonCompleting: ExecutorState[] = [
-      { type: "connectingDevice" },
+      { type: "connectingDevice", disableAutoConnect: false },
       { type: "deviceDisconnected", device: makeConnectionResult().connectedDevice },
       { type: "initializingDeviceContext", connectionResult: makeConnectionResult() },
       { type: "idle" },

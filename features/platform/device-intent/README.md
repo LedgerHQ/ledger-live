@@ -52,6 +52,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [Job completion contract](#job-completion-contract)
   - [Changing `deviceInitializationInput` and `intent` together](#changing-deviceinitializationinput-and-intent-together)
   - [Observability: callbacks](#observability-callbacks)
+  - [Restarting on a different device](#restarting-on-a-different-device)
   - [Cancelling an intent](#cancelling-an-intent)
   - [Enabling / disabling](#enabling--disabling)
   - [Idle state and `lastIntentSnapshot`](#idle-state-and-lastintentsnapshot)
@@ -1287,6 +1288,48 @@ derived address) run before a cross-cutting executor callback reads it.
 Intent-level callbacks are useful for orchestrating multi-intent flows where
 each phase needs its own reaction logic, while executor-level callbacks handle
 cross-cutting concerns (updating global state, logging, debug UI).
+
+### Restarting on a different device
+
+A job whose failure is "this is the wrong device" can send the executor back to
+the connection phase, keeping the current intent. Call the `restartExecutor`
+param the job receives — surface it in a `JobState` so the component can offer
+it as a CTA, the way `device-rejected` states carry a `retry`:
+
+```typescript
+const job: Job<MyState, MyInput> = ({ input, restartExecutor }) =>
+  runDeviceAction(input).pipe(
+    map(state =>
+      state.type === "wrong-device" && restartExecutor
+        ? { ...state, reconnect: restartExecutor }
+        : state,
+    ),
+  );
+```
+
+The executor then:
+
+- disconnects the DMK session of the device it is leaving,
+- tears the job down (see [`onExecutorStopped`](#onexecutorstopped-and-job-teardown):
+  this is a teardown that keeps the operation alive, so awaiting callers must not
+  settle),
+- re-enters device connection with **auto-connect suppressed** — no reusing a live
+  session, no preselecting the only known device, no connecting to a lone
+  discovery — because every one of those would land back on the refused device.
+  Suppression stays on for the rest of the executor's life. Tapping a device still
+  connects: that choice is explicit.
+- runs the same job again once the new device is connected and initialised.
+
+Only accepted while a job is running or from idle. `restartExecutor` is optional
+precisely because a host may have no connection phase to return to (the CLI
+drives jobs directly); guard on it and offer no CTA when it is absent.
+
+> [!NOTE]
+> Desktop identifies known devices by model, not by unit
+> (`knownDevices.ts`: WebHID exposes no stable per-device id worth persisting), so
+> two devices of the same model are one entry in the picker. The restart cannot
+> exclude the refused unit there — it can only stop connecting to it on the
+> executor's own initiative, leaving the choice to the user.
 
 ### Cancelling an intent
 

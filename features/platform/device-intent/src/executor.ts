@@ -1,6 +1,7 @@
 import type React from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import type {
+  DeviceConnectionComponentParams,
   DeviceConnectionParams,
   DeviceConnectionResult,
   DeviceExtractedContext,
@@ -19,7 +20,7 @@ import type {
  * errors, transport setup issues): they never surface to the executor.
  */
 export type DeviceConnectionComponent = React.ComponentType<{
-  deviceConnectionParams: DeviceConnectionParams;
+  deviceConnectionParams: DeviceConnectionComponentParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
@@ -110,7 +111,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
  * - `deviceDisconnected` → the disconnected device from the last successful connection.
  */
 export type ExecutorState =
-  | { type: "connectingDevice" }
+  | { type: "connectingDevice"; disableAutoConnect: boolean }
   | { type: "deviceDisconnected"; device: ConnectedDevice }
   | {
       type: "initializingDeviceContext";

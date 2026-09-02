@@ -72,6 +72,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
   > | null>(null);
   const [executorState, setExecutorState] = useState<ExecutorState>({
     type: "connectingDevice",
+    disableAutoConnect: false,
   });
   const [latestJobState, setLatestJobState] = useState<JobState | undefined>(undefined);
   const [connectionResult, setConnectionResult] = useState<DeviceConnectionResult | null>(null);
@@ -160,7 +161,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
     if (!props.enabled) {
       smRef.current?.stop();
       smRef.current = null;
-      setExecutorState({ type: "connectingDevice" });
+      setExecutorState({ type: "connectingDevice", disableAutoConnect: false });
       setConnectionResult(null);
       setLatestJobState(undefined);
       lastIntentSnapshotRef.current = null;

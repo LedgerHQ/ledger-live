@@ -39,7 +39,9 @@ export const makeIntent = (
 });
 
 export const makeConnectionResult = (sessionId = "session-1"): DeviceConnectionResult => ({
-  dmk: {} as DeviceConnectionResult["dmk"],
+  // `disconnect` is stubbed because restarting the executor calls it on the
+  // device it is leaving behind.
+  dmk: { disconnect: jest.fn(() => Promise.resolve()) } as unknown as DeviceConnectionResult["dmk"],
   sessionId,
   connectedDevice: {} as DeviceConnectionResult["connectedDevice"],
   compatDeviceId: "compat-1",
