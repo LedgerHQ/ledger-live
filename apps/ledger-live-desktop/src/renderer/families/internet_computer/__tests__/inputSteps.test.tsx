@@ -370,6 +370,17 @@ describe("StepFollowTopic", () => {
     expect(screen.getByTestId("icp-follow-topic-NodeAdmin")).toHaveTextContent("0 followees");
   });
 
+  // The keys of KNOWN_TOPICS are wire identifiers, and all 19 used to reach the screen as written.
+  it("names each topic instead of showing its identifier", () => {
+    render(<StepFollowTopic {...stepProps()} />);
+
+    expect(screen.getByTestId("icp-follow-topic-IcOsVersionDeployment")).toHaveTextContent(
+      "IC OS version deployment",
+    );
+    expect(screen.getByTestId("icp-follow-topic-Kyc")).toHaveTextContent("KYC");
+    expect(screen.queryByText("IcOsVersionDeployment")).not.toBeInTheDocument();
+  });
+
   // The topic lives on the transaction and nowhere else: anything the step held separately could
   // disagree with what the device is handed.
   it("records the chosen topic on the transaction and moves on to its followees", async () => {
@@ -457,6 +468,15 @@ describe("StepFollowTopic", () => {
 });
 
 describe("StepSelectFollowees", () => {
+  it("names the topic it is editing rather than interpolating the identifier", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "IcOsVersionDeployment", followeesIds: ["9"] },
+    });
+    render(<StepSelectFollowees {...props} />);
+
+    expect(screen.getByText(/vote on IC OS version deployment/)).toBeInTheDocument();
+  });
+
   it("renders nothing until a topic has been picked", () => {
     const { container } = render(
       <StepSelectFollowees {...stepProps({ transaction: { type: "follow" } })} />,

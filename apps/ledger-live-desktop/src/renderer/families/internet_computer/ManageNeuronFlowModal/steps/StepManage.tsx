@@ -1,6 +1,5 @@
 import {
   ICP_FEES,
-  KNOWN_TOPICS,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   SECONDS_IN_DAY,
@@ -35,6 +34,7 @@ import MissingNeuron from "./MissingNeuron";
 import { NeuronDetailRow, NeuronSection } from "../../components/NeuronDetails";
 import { toBigNumber } from "../../amounts";
 import { useFormatDuration } from "../../useFormatDuration";
+import { useGovernanceTopicLabel } from "../../useGovernanceTopicLabel";
 import { useNeuronActions } from "../../neuronFlow/useNeuronActions";
 import type { StepProps } from "../../neuronFlow/types";
 
@@ -70,6 +70,7 @@ const StepManage = ({
 }: StepProps) => {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
+  const topicLabel = useGovernanceTopicLabel();
   const principal = useICPPrincipal(account);
   const unit = account.currency.units[0];
 
@@ -350,11 +351,7 @@ const StepManage = ({
         {neuron.followees.map(followee => (
           <NeuronDetailRow
             key={followee.topic}
-            label={
-              Object.keys(KNOWN_TOPICS).find(
-                name => KNOWN_TOPICS[name as keyof typeof KNOWN_TOPICS] === followee.topic,
-              ) ?? String(followee.topic)
-            }
+            label={topicLabel(followee.topic)}
             value={followee.followeeIds.map(id => id.toString()).join(", ")}
           />
         ))}
