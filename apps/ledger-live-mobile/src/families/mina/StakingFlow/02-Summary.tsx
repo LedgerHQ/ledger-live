@@ -8,10 +8,9 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
-import Config from "react-native-config";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -27,6 +26,7 @@ import { useSelector } from "~/context/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
+import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 import { MinaStakingFlowParamList } from "./types";
 import { ValidatorImage } from "./ValidatorRow";
 
@@ -68,47 +68,14 @@ function StakingSummary({ navigation, route }: Props) {
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "mina", "transaction mina");
 
-  const [rotateAnim] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    if (!Config.DETOX) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(rotateAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: -1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.delay(1000),
-        ]),
-      ).start();
-    }
-    return () => {
-      rotateAnim.setValue(0);
-    };
-  }, [rotateAnim]);
-
-  const rotate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "30deg"],
-  });
+  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
-    rotateAnim.setValue(0);
+    resetRotation();
     navigation.navigate(ScreenName.MinaStakingValidator, {
       accountId: route.params.accountId,
     });
-  }, [rotateAnim, navigation, route.params.accountId]);
+  }, [resetRotation, navigation, route.params.accountId]);
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);

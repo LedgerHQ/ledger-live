@@ -67,7 +67,7 @@ function Delegations({ account }: Props) {
   const [undelegateError, setUndelegateError] = useState<Error | null>(null);
 
   const { delegateInfo } = account.resources ?? {};
-  const validatorName = delegateInfo?.identityName || delegateInfo?.address || "";
+  const validatorName = delegateInfo?.identityName || delegateInfo?.address || "-";
 
   const onCloseDrawer = useCallback(() => {
     setIsDrawerOpen(false);
@@ -160,7 +160,7 @@ function Delegations({ account }: Props) {
             style={styles.valueText}
             color="live"
           >
-            {validatorName || "-"}
+            {validatorName}
           </Text>
         ),
       },
@@ -215,7 +215,7 @@ function Delegations({ account }: Props) {
   return (
     <View style={styles.root}>
       <DelegationDrawer
-        isOpen={data.length > 0 && isDrawerOpen}
+        isOpen={isDrawerOpen}
         onClose={onCloseDrawer}
         account={account}
         ValidatorImage={ValidatorImageComponent}

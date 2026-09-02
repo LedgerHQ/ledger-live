@@ -226,7 +226,18 @@ describe("Delegations (mina)", () => {
     render(<MinaDelegations account={createDelegatingMinaAccount(null)} />);
 
     expect(screen.queryByText("delegation.validator")).not.toBeOnTheScreen();
+    expect(screen.getByText("image:-")).toBeOnTheScreen();
     expect(screen.getByText("drawer-closed")).toBeOnTheScreen();
+  });
+
+  it("keeps the delegation actions reachable when the delegate metadata is missing", async () => {
+    const user = userEvent.setup();
+    render(<MinaDelegations account={createDelegatingMinaAccount(null)} />);
+
+    await user.press(screen.getByText("delegation-row"));
+
+    expect(screen.getByText("drawer-open")).toBeOnTheScreen();
+    expect(screen.getByText("mina.delegation.undelegate")).toBeOnTheScreen();
   });
 
   it("navigates to the validator step from the redelegate action", async () => {
