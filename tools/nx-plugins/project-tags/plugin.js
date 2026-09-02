@@ -7,7 +7,7 @@ const { combineGlobPatterns } = require("nx/src/utils/globs");
 const {
   buildPackageJsonPatterns,
   buildPackageJsonWorkspacesMatcher,
-} = require("nx/src/plugins/package-json/create-nodes");
+} = require("nx/src/plugins/package-json");
 
 /**
  * @param {string} projectRoot posix-style relative path (e.g. libs/foo)

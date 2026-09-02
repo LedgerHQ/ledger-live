@@ -10,7 +10,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
-    "@nx/devkit": "22.5.1",
+    "@nx/devkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:"
