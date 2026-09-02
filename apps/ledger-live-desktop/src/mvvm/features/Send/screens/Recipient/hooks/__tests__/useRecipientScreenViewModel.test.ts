@@ -11,6 +11,13 @@ jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../context/RecipientScannerContext");
+jest.mock("@features/platform-contacts", () => ({
+  useContacts: jest.fn(() => []),
+  useContactsFeature: jest.fn(() => ({
+    isEnabled: false,
+    eligibleAddressFamilies: [],
+  })),
+}));
 jest.mock("~/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
 }));
@@ -34,7 +41,10 @@ describe("useRecipientScreenViewModel", () => {
     mockedUseSendFlowData.mockReturnValue({
       state: {
         account: { account, parentAccount: null, currency: account.currency },
-        recipient: { address: "previous-address", memo: { type: "MEMO", value: "123" } },
+        recipient: {
+          address: "previous-address",
+          memo: { type: "MEMO", value: "123" },
+        },
       } as never,
       uiConfig: { recipientSupportsDomain: true } as never,
       recipientSearch: { value: "", setValue: jest.fn(), clear: jest.fn() },
@@ -68,7 +78,10 @@ describe("useRecipientScreenViewModel", () => {
     expect(mockedTrackPage).toHaveBeenCalledWith(
       "Modal send - step recipient",
       null,
-      expect.any(Object),
+      expect.objectContaining({
+        hasContacts: false,
+        contactsCount: 0,
+      }),
     );
   });
 

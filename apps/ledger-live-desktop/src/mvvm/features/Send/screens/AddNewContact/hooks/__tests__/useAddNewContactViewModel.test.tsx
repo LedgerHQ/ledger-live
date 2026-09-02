@@ -11,7 +11,7 @@ import {
   mockDeviceContactGroupCredentials,
   mockExternalAddressDeviceContext,
 } from "@domain/entity-contact/schema.mock";
-import { useAddContactDialogAdapter } from "LLD/features/Contacts/screens/Contacts/useAddContactDialogAdapter";
+import { useAddContactDialogViewModel } from "@features/flow-contacts-add-contact";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import {
   AddNewContactHeaderProvider,
@@ -44,12 +44,31 @@ jest.mock("@features/platform-contacts/device", () => ({
   }),
 }));
 
+jest.mock("@features/platform-contacts", () => ({
+  ...jest.requireActual("@features/platform-contacts"),
+  useContacts: () => [],
+  useContactsFeature: () => ({ isEnabled: true }),
+}));
+
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
 }));
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    inputMethod: "manual",
+    resultType: null,
+    recipientType: null,
+    savedContactDuringFlow: false,
+    setInputMethod: jest.fn(),
+    setRecipientResolution: jest.fn(),
+    markContactSaved: jest.fn(),
+  })),
+}));
 
-jest.mock("LLD/features/Contacts/screens/Contacts/useAddContactDialogAdapter", () => ({
-  useAddContactDialogAdapter: jest.fn(),
+jest.mock("@features/flow-contacts-add-contact", () => ({
+  ...jest.requireActual("@features/flow-contacts-add-contact"),
+  createContactCreationPort: jest.fn(() => ({})),
+  useAddContactDialogViewModel: jest.fn(),
 }));
 
 jest.mock("LLD/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
@@ -57,7 +76,7 @@ jest.mock("LLD/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 }));
 
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
-const mockedUseAddContactDialogAdapter = jest.mocked(useAddContactDialogAdapter);
+const mockedUseAddContactDialogViewModel = jest.mocked(useAddContactDialogViewModel);
 const mockedUseContactsAddressValidationAdapter = jest.mocked(useContactsAddressValidationAdapter);
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -80,7 +99,11 @@ describe("useAddNewContactViewModel", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
   const address = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
   const createdContact = mockContact({ id: "contact-ada", addresses: [] });
-  const adapterResult = { labels: { title: "Add contact" } };
+  const adapterResult = {
+    labels: { title: "Add contact" },
+    onOpen: jest.fn(),
+    onClose: jest.fn(),
+  };
 
   const signedAddress = {
     deviceCredentials: mockDeviceContactGroupCredentials(),
@@ -99,7 +122,7 @@ describe("useAddNewContactViewModel", () => {
 
   async function renderAtReviewStep() {
     const rendered = renderViewModel();
-    const onSaveSuccess = mockedUseAddContactDialogAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0].onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -120,7 +143,7 @@ describe("useAddNewContactViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     registerExternalAddress.mockResolvedValue(signedAddress);
-    mockedUseAddContactDialogAdapter.mockReturnValue(adapterResult as never);
+    mockedUseAddContactDialogViewModel.mockReturnValue(adapterResult as never);
     mockedUseContactsAddressValidationAdapter.mockReturnValue({
       validateAddress,
     });
@@ -136,16 +159,20 @@ describe("useAddNewContactViewModel", () => {
   });
 
   it("should return the add contact adapter before the address phase", () => {
-    const { result } = renderHook(() => useAddNewContactViewModel(), { wrapper });
+    const { result } = renderHook(() => useAddNewContactViewModel(), {
+      wrapper,
+    });
 
     expect(result.current).toEqual(expect.objectContaining(adapterResult));
     expect(result.current.addressPhase).toBeNull();
-    expect(mockedUseAddContactDialogAdapter).toHaveBeenCalled();
+    expect(mockedUseAddContactDialogViewModel).toHaveBeenCalled();
   });
 
   it("should start the in-dialog add-address flow after creating a contact", async () => {
-    const { result } = renderHook(() => useAddNewContactViewModel(), { wrapper });
-    const onSaveSuccess = mockedUseAddContactDialogAdapter.mock.calls.at(-1)?.[0];
+    const { result } = renderHook(() => useAddNewContactViewModel(), {
+      wrapper,
+    });
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0].onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -170,7 +197,7 @@ describe("useAddNewContactViewModel", () => {
     } as never);
 
     renderHook(() => useAddNewContactViewModel(), { wrapper });
-    const onSaveSuccess = mockedUseAddContactDialogAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0].onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -184,8 +211,10 @@ describe("useAddNewContactViewModel", () => {
   it("should return to recipient when the add-address flow cannot start", async () => {
     validateAddress.mockResolvedValue({ status: "unavailable" });
 
-    const { result } = renderHook(() => useAddNewContactViewModel(), { wrapper });
-    const onSaveSuccess = mockedUseAddContactDialogAdapter.mock.calls.at(-1)?.[0];
+    const { result } = renderHook(() => useAddNewContactViewModel(), {
+      wrapper,
+    });
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0].onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -200,8 +229,10 @@ describe("useAddNewContactViewModel", () => {
     const deferredValidation = createDeferred<unknown>();
     validateAddress.mockReturnValue(deferredValidation.promise);
 
-    const { unmount } = renderHook(() => useAddNewContactViewModel(), { wrapper });
-    const onSaveSuccess = mockedUseAddContactDialogAdapter.mock.calls.at(-1)?.[0];
+    const { unmount } = renderHook(() => useAddNewContactViewModel(), {
+      wrapper,
+    });
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0].onSaveSuccess;
 
     act(() => {
       onSaveSuccess?.(createdContact);
@@ -209,7 +240,11 @@ describe("useAddNewContactViewModel", () => {
     unmount();
 
     await act(async () => {
-      deferredValidation.resolve({ status: "valid", resolvedAddress: address, isDomain: false });
+      deferredValidation.resolve({
+        status: "valid",
+        resolvedAddress: address,
+        isDomain: false,
+      });
       await new Promise(resolve => setTimeout(resolve, 0));
     });
 

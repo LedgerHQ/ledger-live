@@ -26,6 +26,8 @@ import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
+import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
+import { getSendFlowTrackingPage } from "../utils/contactTracking";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -35,8 +37,10 @@ type UseSendHeaderModelResult = Readonly<{
   addressInputValue: string | undefined;
   descriptionText: string | undefined;
   handleBack: () => void;
+  handleClose: () => void;
   handleRecipientInputClick: () => void;
   handleRecipientInputChange: (value: string) => void;
+  handleRecipientPaste: () => void;
   handleQrCodeClick: () => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
@@ -107,6 +111,7 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
+  const { recipientType, setInputMethod } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("desktop");
@@ -190,6 +195,11 @@ export function useSendHeaderModel({
     closeScanner();
 
     if (isSelectingContactAddress) {
+      track("button_clicked", {
+        button: "back",
+        page: "select contact address",
+        ...trackingProperties,
+      });
       clearSelectedContact();
       return;
     }
@@ -214,7 +224,10 @@ export function useSendHeaderModel({
       // Reset UTXO exclusions so the selection doesn't bleed into the next visit
       transaction.updateTransaction(tx => {
         if (!("utxoStrategy" in tx)) return tx;
-        return { ...tx, utxoStrategy: { ...tx.utxoStrategy, excludeUTXOs: [] } };
+        return {
+          ...tx,
+          utxoStrategy: { ...tx.utxoStrategy, excludeUTXOs: [] },
+        };
       });
     }
 
@@ -239,7 +252,18 @@ export function useSendHeaderModel({
     navigation,
     resetViewState,
     transaction,
+    trackingProperties,
   ]);
+
+  const handleClose = useCallback(() => {
+    track("button_clicked", {
+      button: "close",
+      page: getSendFlowTrackingPage(currentStep, isSelectingContactAddress),
+      recipientType,
+      ...trackingProperties,
+    });
+    close();
+  }, [close, currentStep, isSelectingContactAddress, recipientType, trackingProperties]);
 
   const recipientHeader = useMemo(
     () =>
@@ -276,20 +300,44 @@ export function useSendHeaderModel({
       isScannerOpen ? "Send Flow QR Code Closed" : "Send Flow QR Code Opened",
       trackingProperties,
     );
+    if (!isScannerOpen) {
+      track("button_clicked", {
+        button: "scan qr code",
+        page: "step recipient",
+        ...trackingProperties,
+      });
+    }
     toggleScanner();
   }, [isScannerOpen, toggleScanner, trackingProperties]);
 
+  const pastedInputRef = useRef(false);
+  const handleRecipientPaste = useCallback(() => {
+    pastedInputRef.current = true;
+    setInputMethod("paste");
+    track("button_clicked", {
+      button: "paste",
+      page: "step recipient",
+      ...trackingProperties,
+    });
+  }, [setInputMethod, trackingProperties]);
+
   const handleRecipientInputChange = useCallback(
     (value: string) => {
+      if (pastedInputRef.current) {
+        pastedInputRef.current = false;
+      } else {
+        setInputMethod("manual");
+      }
       recipientSearch.setValue(value);
       if (value.length > 0) closeScanner();
     },
-    [closeScanner, recipientSearch],
+    [closeScanner, recipientSearch, setInputMethod],
   );
 
   const handleScanPicked = useCallback(
     (code: string) => {
       const decoded = decodeURIScheme(code);
+      setInputMethod("qr_code");
       recipientSearch.setValue(decoded.address);
 
       const currentTransaction = state.transaction.transaction;
@@ -302,7 +350,7 @@ export function useSendHeaderModel({
 
       closeScanner();
     },
-    [closeScanner, recipientSearch, state.transaction.transaction, transaction],
+    [closeScanner, recipientSearch, setInputMethod, state.transaction.transaction, transaction],
   );
 
   const transactionError = state.transaction.status?.errors?.transaction;
@@ -322,8 +370,10 @@ export function useSendHeaderModel({
     addressInputValue,
     descriptionText,
     handleBack,
+    handleClose,
     handleRecipientInputClick,
     handleRecipientInputChange,
+    handleRecipientPaste,
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen: showScanner,
