@@ -1,6 +1,24 @@
 import React from "react";
+import { View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLoginView } from "../CardLoginView.native";
+import type { CardLoginIntroViewProps } from "../types";
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  QueuedBottomSheet: ({ children, testID }: { children: React.ReactNode; testID?: string }) => (
+    <View testID={testID}>{children}</View>
+  ),
+}));
+
+const intro: CardLoginIntroViewProps = {
+  isOpen: false,
+  title: "Spend crypto, earn cashback",
+  providedBy: "Card provided by Baanx",
+  rows: [],
+  actions: [],
+  onActionPress: jest.fn(),
+  onClose: jest.fn(),
+};
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Ledger Card",
@@ -9,6 +27,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
+  intro,
 };
 
 function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {

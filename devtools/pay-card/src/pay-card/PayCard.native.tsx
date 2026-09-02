@@ -33,6 +33,8 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetReceiveVerifyHintSeen,
     onNavigateToPortfolio,
     onNavigateToPayTab,
+    hasSeenLoginIntro,
+    resetPayCardLoginIntroSeen,
     env,
   } = props;
   const [showInteraction, setShowInteraction] = useState(false);
@@ -154,6 +156,15 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           </Section>
         </>
       ) : null}
+
+      <Divider />
+
+      <SeenReset
+        title="Card login intro"
+        seen={hasSeenLoginIntro}
+        resetLabel="Reset card login intro"
+        onReset={resetPayCardLoginIntroSeen}
+      />
 
       <Divider />
 

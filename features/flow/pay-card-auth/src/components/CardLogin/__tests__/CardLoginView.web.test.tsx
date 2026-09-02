@@ -2,6 +2,17 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style";
 import { CardLoginView } from "../CardLoginView.web";
+import type { CardLoginIntroViewProps } from "../types";
+
+const intro: CardLoginIntroViewProps = {
+  isOpen: false,
+  title: "Spend crypto, earn cashback",
+  providedBy: "Card provided by Baanx",
+  rows: [],
+  actions: [],
+  onActionPress: jest.fn(),
+  onClose: jest.fn(),
+};
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Ledger Card",
@@ -10,6 +21,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
+  intro,
 };
 
 function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {

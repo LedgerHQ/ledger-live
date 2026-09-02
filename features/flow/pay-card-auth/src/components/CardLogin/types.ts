@@ -13,6 +13,40 @@ export type CardLoginViewModelParams = CardLoginProps & {
   readonly openHostedLogin: OpenHostedLogin;
 };
 
+/** Verified to exist in both Lumen symbol packages. A designer must confirm the choice. */
+export type CardLoginIntroRowIcon = "CoinsAddPlus" | "CreditCard" | "Nano";
+
+export type CardLoginIntroRow = Readonly<{
+  icon: CardLoginIntroRowIcon;
+  title: string;
+  description: string;
+}>;
+
+export type CardLoginIntroActionId = "createAccount" | "logIn";
+
+/**
+ * One button of the intro sheet. Both buttons run the same action today, so the list is what makes
+ * a later cut to a single button a one-line change: remove an entry.
+ */
+export type CardLoginIntroAction = Readonly<{
+  id: CardLoginIntroActionId;
+  label: string;
+  appearance: "base" | "gray";
+}>;
+
+export type CardLoginIntroViewProps = Readonly<{
+  /** True while the sheet must be on screen. The view model owns the value. */
+  isOpen: boolean;
+  title: string;
+  providedBy: string;
+  rows: readonly CardLoginIntroRow[];
+  actions: readonly CardLoginIntroAction[];
+  /** Every action calls this. All the buttons run the same login. */
+  onActionPress: () => void;
+  /** The close button, the backdrop, a drag down or the Escape key. It never marks the flag seen. */
+  onClose: () => void;
+}>;
+
 export type CardLoginViewProps = {
   readonly title: string;
   readonly description: string;
@@ -21,6 +55,7 @@ export type CardLoginViewProps = {
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
   readonly onLoginPress: () => void;
+  readonly intro: CardLoginIntroViewProps;
 };
 
 /**

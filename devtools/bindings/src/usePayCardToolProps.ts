@@ -12,6 +12,10 @@ import {
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
+import {
+  resetPayCardLoginIntroSeen,
+  selectPayCardHasSeenLoginIntro,
+} from "@features/flow-pay-card-auth/state";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -123,6 +127,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     dispatch(resetReceiveVerifyHintSeen());
   }, [dispatch]);
 
+  const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
+
+  const resetLoginIntro = useCallback(() => {
+    dispatch(resetPayCardLoginIntroSeen());
+  }, [dispatch]);
+
   const setStepDone = useCallback((id: string, done: boolean) => {
     setSteps(current => {
       if (id === "all") {
@@ -190,6 +200,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetReceiveVerifyHintSeen: resetVerifyHint,
+      hasSeenLoginIntro,
+      resetPayCardLoginIntroSeen: resetLoginIntro,
       env,
     }),
     [
@@ -200,6 +212,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetVerifyHint,
+      hasSeenLoginIntro,
+      resetLoginIntro,
       env,
     ],
   );

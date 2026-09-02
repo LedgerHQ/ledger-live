@@ -23,6 +23,7 @@
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",

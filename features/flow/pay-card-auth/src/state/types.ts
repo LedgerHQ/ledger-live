@@ -159,3 +159,12 @@ export type PayCardAuthState = Readonly<{
    */
   isSignedIn: boolean;
 }>;
+
+/**
+ * Whether the card holder has already seen the login intro sheet. Fully persisted across app
+ * restarts: the field is stored inside the `payCard` blob, beside the feature tour flag and the
+ * balance filter.
+ */
+export type PayCardLoginIntroState = Readonly<{
+  hasSeenLoginIntro: boolean;
+}>;
