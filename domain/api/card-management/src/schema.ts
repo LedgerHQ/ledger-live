@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
 /**
  * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
  * carries no lifetime for the refresh token itself, only for the access token.
@@ -56,6 +58,19 @@ export const PayCardStatusResponseSchema = z.object({
   status: z.enum(["ACTIVE", "FROZEN", "BLOCKED"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
   orderedAt: z.string().min(1),
+});
+
+/** Hex colours the provider paints the details image with. Its own defaults apply when omitted. */
+export const PayCardDetailsCssSchema = z.object({
+  cardBackgroundColor: z.string().regex(HEX_COLOR).optional(),
+  cardTextColor: z.string().regex(HEX_COLOR).optional(),
+  panBackgroundColor: z.string().regex(HEX_COLOR).optional(),
+  panTextColor: z.string().regex(HEX_COLOR).optional(),
+});
+
+export const PayCardDetailsTokenResponseSchema = z.object({
+  token: z.string().min(1),
+  imageUrl: z.string().min(1),
 });
 
 export const PayCardInternalWalletSchema = z.object({

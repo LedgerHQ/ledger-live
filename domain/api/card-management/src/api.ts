@@ -9,6 +9,7 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -23,6 +24,8 @@ import type {
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
+  PayCardDetailsCss,
+  PayCardDetailsToken,
   PayCardStatus,
   PayCardUser,
 } from "./types";
@@ -102,6 +105,19 @@ export const cardManagementApi = cardApi
         providesTags: ["CardStatus"],
       }),
 
+      /**
+       * A mutation, though it reads: the provider spends the token on first use, so the answer must
+       * never be served from a cache. Mutations are not cached and are not retained.
+       */
+      createCardDetailsToken: build.mutation<PayCardDetailsToken, PayCardDetailsCss | void>({
+        query: customCss => ({
+          url: "/v1/card/details/token",
+          method: "POST",
+          ...(customCss ? { body: { customCss } } : {}),
+        }),
+        responseSchema: PayCardDetailsTokenResponseSchema,
+      }),
+
       freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
@@ -154,6 +170,7 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useCreateCardDetailsTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,
   useUnfreezeCardMutation,
