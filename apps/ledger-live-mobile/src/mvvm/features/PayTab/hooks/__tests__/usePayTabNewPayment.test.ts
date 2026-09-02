@@ -1,33 +1,37 @@
-import { renderHook, act } from "tests/testSetup";
+import { act, renderHook } from "@tests/test-renderer";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   mockContact,
   mockContactWithAddress,
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
-import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { usePayTabNewPayment } from "../usePayTabNewPayment";
 
-jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
+jest.mock("LLM/features/Send/hooks/useOpenSendFlow");
 
-const mockOpenSendFlow = jest.fn();
-const mockUseOpenSendFlow = useOpenSendFlow as jest.MockedFunction<typeof useOpenSendFlow>;
+const mockHandleOpenSendFlow = jest.fn();
+const mockUseOpenSendFlow = jest.mocked(useOpenSendFlow);
 
 describe("usePayTabNewPayment", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseOpenSendFlow.mockReturnValue(mockOpenSendFlow);
+    mockUseOpenSendFlow.mockReturnValue({
+      handleOpenSendFlow: mockHandleOpenSendFlow,
+    });
   });
 
-  it("should open the send flow from the Pay page filtered to stablecoins", () => {
+  it("should configure and open the send flow from the Pay page filtered to stablecoins", () => {
     const { result } = renderHook(() => usePayTabNewPayment());
+
+    expect(mockUseOpenSendFlow).toHaveBeenCalledWith({
+      sourceScreenName: "Pay",
+      categories: [AssetCategory.Stablecoins],
+    });
 
     act(() => result.current.open());
 
-    expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
-      categories: [AssetCategory.Stablecoins],
-    });
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledWith();
   });
 
   it("should prefill the recipient and network for a contact with one address", () => {
@@ -37,8 +41,7 @@ describe("usePayTabNewPayment", () => {
 
     act(() => result.current.open(contact));
 
-    expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledWith({
       currencyIds: [address.currencyId],
       recipient: address.address,
       skipRecipientStep: true,
@@ -53,9 +56,6 @@ describe("usePayTabNewPayment", () => {
 
     act(() => result.current.open(contact));
 
-    expect(mockOpenSendFlow).toHaveBeenCalledWith({
-      source: "Pay",
-      categories: [AssetCategory.Stablecoins],
-    });
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledWith();
   });
 });

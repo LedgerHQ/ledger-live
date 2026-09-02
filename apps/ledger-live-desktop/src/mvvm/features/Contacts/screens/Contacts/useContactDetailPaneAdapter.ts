@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import type { ContactId } from "@domain/entity-contact";
-import { useContactsMeContact, type ContactDeviceIntentsPort } from "@features/platform-contacts";
+import { useNavigate, useSearchParams } from "react-router";
+import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
+import {
+  useContacts,
+  useContactsMeContact,
+  type ContactDeviceIntentsPort,
+} from "@features/platform-contacts";
 import {
   useContactDetailSharedState,
   useEmptyContactDetail,
@@ -42,9 +46,22 @@ export function useContactDetailPaneAdapter(
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
+  const contacts = useContacts();
   const trackedContactDetailId = useRef<ContactId | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
-  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
+  const [searchParams] = useSearchParams();
+
+  const initialDetailContactId = useMemo<ContactId>(() => {
+    const parsed = ContactIdSchema.safeParse(searchParams.get("contactId"));
+    if (parsed.success && contacts.some(contact => contact.id === parsed.data)) {
+      return parsed.data;
+    }
+    return meContact.id;
+  }, [contacts, meContact.id, searchParams]);
+
+  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(
+    initialDetailContactId,
+  );
   const onDeleteSuccess = useCallback(() => {
     setDetailContactId(meContact.id);
   }, [meContact.id]);
