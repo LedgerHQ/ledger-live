@@ -64,10 +64,8 @@ const StepFollowTopic = ({
       <Text ff="Inter|Regular" fontSize={4} color="neutral.c70" mb={3}>
         <Trans i18nKey="internetComputer.manageNeuronFlow.followTopic.description" />
       </Text>
-      {/* All 19 governance topics are shown, so the list scrolls within itself rather than pushing
-          the footer off-screen and making the whole modal scroll. Same shape as aleo's record
-          picker, the nearest fixed-enumeration precedent. */}
-      <Box flow={2} style={{ maxHeight: 320, overflowY: "auto" }}>
+      {/* Scrolls on ModalContent: a scroller of its own would have neither thumb nor fade. */}
+      <Box flow={2}>
         {TOPICS.map(topic => {
           const followees = neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic]);
           const controllerOnly = topic === "NeuronManagement" && !isControlled;
@@ -79,11 +77,13 @@ const StepFollowTopic = ({
               onClick={() => onSelect(topic)}
               data-testid={`icp-follow-topic-${topic}`}
             >
-              <Box horizontal justifyContent="space-between" width="100%" alignItems="center">
+              {/* Not space-between: Button shrink-wraps its children, so the row has no free
+                  space to distribute and the count rendered flush against the topic. */}
+              <Box horizontal alignItems="baseline">
                 <Text ff="Inter|SemiBold" fontSize={4}>
                   {topicLabel(topic)}
                 </Text>
-                <Text ff="Inter|Regular" fontSize={3} color="neutral.c70">
+                <Text ff="Inter|Regular" fontSize={3} color="neutral.c70" ml={3}>
                   <Trans
                     i18nKey="internetComputer.manageNeuronFlow.followTopic.followeeCount"
                     count={followees?.followeeIds.length ?? 0}
