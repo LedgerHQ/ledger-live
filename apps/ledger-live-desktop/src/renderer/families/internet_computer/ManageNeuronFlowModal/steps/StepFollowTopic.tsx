@@ -7,6 +7,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import MissingNeuron from "./MissingNeuron";
+import { useGovernanceTopicLabel } from "../../useGovernanceTopicLabel";
 import type { FollowTopic, StepProps } from "../../neuronFlow/types";
 
 // "Unspecified" is the catch-all default the canister applies when no topic-specific followees are
@@ -23,6 +24,7 @@ const StepFollowTopic = ({
   transitionTo,
 }: StepProps) => {
   const principal = useICPPrincipal(account);
+  const topicLabel = useGovernanceTopicLabel();
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   // Following is a voting action a hot key may take — except on NeuronManagement, which the
   // canister reserves for the controller (governance.rs, `follow`).
@@ -76,7 +78,7 @@ const StepFollowTopic = ({
             >
               <Box horizontal justifyContent="space-between" width="100%" alignItems="center">
                 <Text ff="Inter|SemiBold" fontSize={4}>
-                  {topic}
+                  {topicLabel(topic)}
                 </Text>
                 <Text ff="Inter|Regular" fontSize={3} color="neutral.c70">
                   <Trans

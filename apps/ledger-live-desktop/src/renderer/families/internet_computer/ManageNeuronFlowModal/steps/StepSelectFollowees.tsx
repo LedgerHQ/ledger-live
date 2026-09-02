@@ -8,6 +8,7 @@ import Text from "~/renderer/components/Text";
 import { NeuronDetailRow } from "../../components/NeuronDetails";
 import SubmitFooter from "./SubmitFooter";
 import MissingNeuron from "./MissingNeuron";
+import { useGovernanceTopicLabel } from "../../useGovernanceTopicLabel";
 import type { StepProps } from "../../neuronFlow/types";
 
 const EMPTY_FOLLOWEES: string[] = [];
@@ -42,6 +43,7 @@ const StepSelectFollowees = (props: StepProps) => {
   // neuron, so `some` says all that is needed.
   const hasNeuron = neurons.some(n => n.id?.toString() === selectedNeuronId);
   const { t } = useTranslation();
+  const topicLabel = useGovernanceTopicLabel();
   const [draft, setDraft] = useState("");
   const followTopic = transaction?.followTopic;
   const currentCount = currentFolloweeCount(props);
@@ -80,7 +82,7 @@ const StepSelectFollowees = (props: StepProps) => {
       <Text ff="Inter|Regular" fontSize={4} color="neutral.c70">
         <Trans
           i18nKey="internetComputer.manageNeuronFlow.selectFollowees.description"
-          values={{ topic: followTopic }}
+          values={{ topic: topicLabel(followTopic) }}
         />
       </Text>
       <Box horizontal style={{ gap: 8 }} alignItems="flex-end">
@@ -109,7 +111,7 @@ const StepSelectFollowees = (props: StepProps) => {
                 ? "internetComputer.manageNeuronFlow.selectFollowees.clearsFollowing"
                 : "internetComputer.manageNeuronFlow.selectFollowees.empty"
             }
-            values={{ topic: followTopic, count: currentCount }}
+            values={{ topic: topicLabel(followTopic), count: currentCount }}
           />
         </Text>
       ) : (
