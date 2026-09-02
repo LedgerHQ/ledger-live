@@ -1,8 +1,8 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
-import some from "lodash/some";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { NotEnoughBalance, RbfBuildError } from "./errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
@@ -124,10 +124,27 @@ class Xpub {
   }
 
   async checkAddressesBlock(account: number, index: number, needReorg: boolean): Promise<boolean> {
-    const addressesResults = await Promise.all(
+    const results = await Promise.allSettled(
       range(this.GAP).map((_, key) => this.syncAddress(account, index + key, needReorg)),
     );
-    return some(addressesResults, lastTx => !!lastTx);
+    let hasTx = false;
+    let loggedInvalidXpub = false;
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        hasTx = hasTx || !!result.value;
+      } else if (result.reason instanceof Error && result.reason.name === "InvalidXpub") {
+        if (!loggedInvalidXpub) {
+          log("btcwallet", "checkAddressesBlock: skipping block with undecodable xpub", {
+            account,
+            error: result.reason.message,
+          });
+          loggedInvalidXpub = true;
+        }
+      } else {
+        throw result.reason;
+      }
+    }
+    return hasTx;
   }
 
   async syncAccount(account: number, needReorg: boolean): Promise<number> {
