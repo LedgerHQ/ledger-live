@@ -89,6 +89,39 @@ describe("useRecipientMemoCore", () => {
     expect(result.current.showSkipMemo).toBe(false);
   });
 
+  it("restores the default memo on reset once the skip was confirmed here", () => {
+    const { result, onMemoChange } = setup({ memoDefaultOption: "MEMO_TEXT" });
+    act(() => result.current.onSkipMemoRequestConfirm());
+    act(() => result.current.onSkipMemoConfirm(false));
+    onMemoChange.mockClear();
+
+    act(() => result.current.resetViewState());
+
+    expect(onMemoChange).toHaveBeenLastCalledWith({ value: "", type: "MEMO_TEXT" });
+    expect(result.current.memo).toEqual({ value: "", type: "MEMO_TEXT" });
+    expect(result.current.skipMemoState).toBe("propose");
+  });
+
+  it("re-emits the owned memo on reset so a skip confirmed elsewhere does not survive", () => {
+    const { result, onMemoChange } = setup();
+    onMemoChange.mockClear();
+
+    act(() => result.current.resetViewState());
+
+    expect(onMemoChange).toHaveBeenLastCalledWith({ value: "", type: undefined });
+  });
+
+  it("keeps a filled memo untouched on reset", () => {
+    const { result, onMemoChange } = setup();
+    act(() => result.current.onMemoValueChange("123"));
+    onMemoChange.mockClear();
+
+    act(() => result.current.resetViewState());
+
+    expect(onMemoChange).toHaveBeenLastCalledWith({ value: "123", type: undefined });
+    expect(result.current.memo).toEqual({ value: "123", type: undefined });
+  });
+
   it("resets state when the resetKey changes", () => {
     const { result, onMemoChange, rerender, initialProps } = setup();
     act(() => result.current.onMemoValueChange("123"));

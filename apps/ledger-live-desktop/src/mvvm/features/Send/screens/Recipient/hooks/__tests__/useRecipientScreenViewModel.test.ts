@@ -91,9 +91,17 @@ describe("useRecipientScreenViewModel", () => {
     expect(goToNextStep).not.toHaveBeenCalled();
 
     act(() => {
-      viewModel.onAddressSelected("next-address", "name.eth", true);
+      viewModel.onAddressSelected("next-address", "name.eth", true, {
+        value: "",
+        type: "NO_MEMO",
+      });
     });
     expect(goToNextStep).toHaveBeenCalledTimes(1);
+    expect(setRecipient).toHaveBeenLastCalledWith({
+      address: "next-address",
+      ensName: "name.eth",
+      memo: { value: "", type: "NO_MEMO" },
+    });
   });
 
   it("does not render the modal while the scanner is open", () => {
