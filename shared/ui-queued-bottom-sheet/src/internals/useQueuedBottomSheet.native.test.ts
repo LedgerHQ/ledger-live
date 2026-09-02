@@ -695,6 +695,45 @@ describe("useQueuedBottomSheet", () => {
     expect(dismissKeyboard).toHaveBeenCalled();
   });
 
+  it("retracts the keyboard when a dismissal bypasses the close animation", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(dismissKeyboard).toHaveBeenCalled();
+  });
+
+  it("leaves the keyboard alone when the dismissal lands after the close already handled it", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    const isKeyboardVisible = jest.spyOn(Keyboard, "isVisible").mockReturnValue(false);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    signalClose();
+
+    expect(dismissKeyboard).not.toHaveBeenCalled();
+
+    // The sheet that took over focuses its own input, so the keyboard is up again by the time this
+    // sheet's onDismiss finally arrives.
+    isKeyboardVisible.mockReturnValue(true);
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(dismissKeyboard).not.toHaveBeenCalled();
+  });
+
   it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
     const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     let isRequestingToBeOpened = true;
