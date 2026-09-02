@@ -9,9 +9,28 @@ import { ICrypto } from "./types";
 import bs58 from "bs58";
 import bech32 from "bech32";
 import BIP32 from "./bip32";
+import { InvalidXpub } from "../errors";
 
 // https://developer.bitcoin.org/devguide/transactions.html#null-data
 export const OP_RETURN_DATA_SIZE_LIMIT = 83; // bytes
+
+export const XPUB_PAYLOAD_LENGTH = 78;
+
+export function decodeXpubOrThrow(
+  xpub: string,
+  context: { network: string; account: number; index: number },
+): Buffer {
+  const decoded = bs58.decodeUnsafe(xpub);
+  if (!decoded || decoded.length < XPUB_PAYLOAD_LENGTH) {
+    throw new InvalidXpub("xpub could not be decoded as base58", {
+      network: context.network,
+      account: context.account,
+      index: context.index,
+      length: xpub.length,
+    });
+  }
+  return Buffer.from(decoded);
+}
 
 export function fallbackValidateAddress(address: string): boolean {
   try {
@@ -48,7 +67,11 @@ class Base implements ICrypto {
     const keyRoot = `${this.network.name}-${xpub}`;
     let rootLevel = Base.bip32Cache.get(keyRoot);
     if (!rootLevel) {
-      const buffer: Buffer = bs58.decode(xpub);
+      const buffer: Buffer = decodeXpubOrThrow(xpub, {
+        network: String(this.network.name),
+        account,
+        index,
+      });
       const depth: number = buffer[4];
       const i: number = buffer.readUInt32BE(9);
       const chainCode: Buffer = buffer.slice(13, 45);
