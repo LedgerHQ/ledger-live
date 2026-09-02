@@ -23,6 +23,15 @@ function buildProps(): PayCardToolProps {
       setStepDone: jest.fn(),
     },
     interaction: { probes: [] },
+    balance: {
+      total: 0,
+      isPartialTotal: false,
+      wallets: [],
+      isFetching: false,
+      errors: [],
+      load: jest.fn(),
+      refresh: jest.fn(),
+    },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
@@ -190,6 +199,114 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByText("Card interaction"));
 
     expect(screen.getByText('{ "status": "ACTIVE" }')).toBeTruthy();
+  });
+
+  // One priced wallet and one the rates could not price: the pair the total is built from.
+  const wallets = [
+    {
+      id: "w-usdc",
+      currency: "usdc",
+      network: "ethereum",
+      address: "0xusdc",
+      priority: 0,
+      balance: "125.40",
+      counterValue: 12540,
+    },
+    {
+      id: "w-sol",
+      currency: "sol",
+      network: "solana",
+      address: "sol-addr",
+      priority: 1,
+      balance: "2.5",
+      counterValue: null,
+    },
+  ];
+
+  it("requests the linked wallets when the balance screen opens, and shows the total", async () => {
+    const user = userEvent.setup();
+    const load = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, total: 12540, wallets, load }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Total amount")).toBeTruthy();
+    // Twice: the total, and the one wallet it was summed from.
+    expect(screen.getAllByText("12540")).toHaveLength(2);
+  });
+
+  it("reports an absent total as undefined rather than as a blank", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, total: undefined }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("undefined")).toBeTruthy();
+  });
+
+  it("shows every field of every linked wallet", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, wallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
+    // The provider's own ids, unmapped, so a mapping gap can be read off the screen.
+    expect(screen.getByText("usdc")).toBeTruthy();
+    expect(screen.getByText("ethereum")).toBeTruthy();
+    expect(screen.getByText("sol")).toBeTruthy();
+    expect(screen.getByText("solana")).toBeTruthy();
+    expect(screen.getByText("125.40")).toBeTruthy();
+    expect(screen.getByText("0xusdc")).toBeTruthy();
+    expect(screen.getByText("w-usdc")).toBeTruthy();
+
+    // The unpriced wallet says why it is missing from the total rather than reading as zero.
+    expect(screen.getByText("1. sol / solana")).toBeTruthy();
+    expect(
+      screen.getByText("null — no currency matched this ticker, or no rate for it"),
+    ).toBeTruthy();
+  });
+
+  it("shows which endpoint failed and what it answered", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        balance={{
+          ...props.balance,
+          errors: [
+            {
+              endpoint: "GET /v1/wallet/internal",
+              detail: '{ "status": "CUSTOM_ERROR", "error": "responseSchema rejected" }',
+            },
+          ],
+        }}
+      />,
+    );
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("GET /v1/wallet/internal")).toBeTruthy();
+    expect(
+      screen.getByText('{ "status": "CUSTOM_ERROR", "error": "responseSchema rejected" }'),
+    ).toBeTruthy();
+  });
+
+  it("refetches the linked wallets from the balance screen", async () => {
+    const user = userEvent.setup();
+    const refresh = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, refresh }} />);
+
+    await user.press(screen.getByText("Balance"));
+    await user.press(screen.getByLabelText("Refresh"));
+
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 
   it("wires onboarding actions", async () => {

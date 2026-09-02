@@ -51,6 +51,45 @@ export interface PayCardInteractionProps {
   readonly probes: readonly PayCardProbe[];
 }
 
+/** One card-linked wallet, joined to its balance, exactly as the calculation saw it. */
+export interface PayCardBalanceWallet {
+  readonly id: string;
+  readonly currency: string;
+  readonly network: string;
+  readonly address: string;
+  /** Charging order. The wallets are listed in it. */
+  readonly priority: number;
+  /** `null` when no internal wallet matched this link. */
+  readonly balance: string | null;
+  /** `null` when the balance could not be priced. Those are left out of the total. */
+  readonly counterValue: number | null;
+}
+
+/** What one endpoint answered with, when it failed. */
+export interface PayCardBalanceError {
+  readonly endpoint: string;
+  readonly detail: string;
+}
+
+/**
+ * The card-linked wallets, as the balance calculation returns them.
+ *
+ * `total` is the raw sum the calculation produced, in the counter-value currency's smallest unit,
+ * deliberately unformatted: the tool exists to show what the calculation returned.
+ */
+export interface PayCardBalanceProps {
+  /** Rendered verbatim, `undefined` included: the tool reports what the calculation returned. */
+  readonly total: number | undefined;
+  /** A wallet the rates could not price is left out of `total` rather than counted as zero. */
+  readonly isPartialTotal: boolean;
+  readonly wallets: readonly PayCardBalanceWallet[];
+  readonly isFetching: boolean;
+  readonly errors: readonly PayCardBalanceError[];
+  /** Starts the wallet queries. The screen calls this when it opens. */
+  readonly load: () => void;
+  readonly refresh: () => void;
+}
+
 /**
  * One env var the tool shows, with the value a tester most often wants next.
  *
@@ -81,6 +120,7 @@ export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
   readonly interaction: PayCardInteractionProps;
+  readonly balance: PayCardBalanceProps;
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */

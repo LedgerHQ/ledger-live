@@ -19,6 +19,7 @@ import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 import { Interaction } from "../components/Interaction/Interaction";
+import { BalanceScreen } from "../components/Balance/Balance";
 
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
@@ -27,6 +28,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     flags,
     onboarding,
     interaction,
+    balance,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -35,16 +37,20 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPayTab,
     env,
   } = props;
-  const [showInteraction, setShowInteraction] = useState(false);
+  const [screen, setScreen] = useState<"tool" | "interaction" | "balance">("tool");
 
-  if (showInteraction) {
-    return <Interaction {...interaction} onBack={() => setShowInteraction(false)} />;
+  if (screen === "interaction") {
+    return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "balance") {
+    return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
   }
 
   return (
     <ScrollView>
       <Section title="Card Debug">
-        <ListItem onPress={() => setShowInteraction(true)}>
+        <ListItem onPress={() => setScreen("interaction")}>
           <ListItemLeading>
             <Spot appearance="icon" icon={CreditCard} />
             <ListItemContent>
@@ -56,7 +62,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           </ListItemTrailing>
         </ListItem>
 
-        <ListItem>
+        <ListItem
+          onPress={() => {
+            balance.load();
+            setScreen("balance");
+          }}
+        >
           <ListItemLeading>
             <Spot appearance="icon" icon={CoinsCrypto} />
             <ListItemContent>
