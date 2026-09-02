@@ -13,11 +13,16 @@ import {
   formatDismissalTimestamp,
   formatPermissionStatus,
   getAfterActionRepromptLabel,
+  getForceOpenDrawerLabel,
   getGlobalPushNotificationsDismissals,
   getInactivityRepromptLabel,
+  getNotificationsQaHeadline,
   mapNotificationsDecisionToQaExpectation,
   NOTIFICATIONS_PROMPT_REASON_LABEL,
   NOTIFICATIONS_QA_SCENARIOS,
+  formatDelay,
+  buildDecisionInspectorFields,
+  buildFeatureInspectorFields,
 } from "../utils";
 
 describe("NotificationsPromptQA utils", () => {
@@ -478,6 +483,83 @@ describe("NotificationsPromptQA utils", () => {
       expect(formatPermissionStatus(AuthorizationStatus.DENIED)).toBe("Denied");
       expect(formatPermissionStatus(AuthorizationStatus.NOT_DETERMINED)).toBe("Not determined");
       expect(formatPermissionStatus(undefined)).toBe("Unknown");
+    });
+
+    it("should format delay maps for QA", () => {
+      expect(formatDelay(undefined)).toBe("Not configured");
+      expect(formatDelay({ days: 0, hours: 0, minutes: 0, months: 0, seconds: 0 })).toBe(
+        "Immediately",
+      );
+      expect(formatDelay({ days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 })).toBe("7 days");
+    });
+
+    it("should label force-open with the resolved prompt target", () => {
+      expect(getForceOpenDrawerLabel("globalPushNotifications")).toBe(
+        "Force open globalPushNotifications drawer — bypass rules",
+      );
+      expect(getForceOpenDrawerLabel("transactionsAlertsCategory")).toBe(
+        "Force open transactionsAlertsCategory drawer — bypass rules",
+      );
+    });
+
+    it("should map a show decision to Eligible now", () => {
+      expect(
+        getNotificationsQaHeadline({
+          kind: "show",
+          source: "send",
+          delayMs: 200,
+          drawerPromptTarget: "globalPushNotifications",
+          dismissedCount: 1,
+          nextRepromptDelay: null,
+        }),
+      ).toEqual({
+        verdict: "Show drawer",
+        reason: "Eligible now",
+        rawReason: "kind: show",
+      });
+    });
+
+    it("should put the resolved target in the drawer-target inspector raw line", () => {
+      const [triggerField, targetField] = buildDecisionInspectorFields({
+        selectedSource: "send",
+        decision: {
+          kind: "skip",
+          source: "send",
+          reason: "reprompt_delay_not_reached",
+          dismissedCount: 2,
+          nextRepromptDelay: null,
+        },
+        resolvedPromptTarget: "transactionsAlertsCategory",
+        verdictTone: "warning",
+      });
+
+      expect(triggerField).toMatchObject({
+        label: "Selected trigger",
+        value: "Send",
+        raw: "source: send",
+      });
+      expect(targetField).toMatchObject({
+        label: "Drawer target",
+        value: "transactionsAlertsCategory",
+        raw: "drawerPromptTarget: transactionsAlertsCategory · dismissedCount: 2",
+      });
+    });
+
+    it("should inspect the inactivity config when the source is inactivity", () => {
+      const fields = buildFeatureInspectorFields({
+        selectedSource: "inactivity",
+        brazePushNotifications,
+        afterActionRepromptLabel: "now (eligible)",
+        inactivityRepromptLabel: "in 6 days",
+      });
+
+      expect(fields.map(field => field.label)).toEqual([
+        "Braze notifications prompt",
+        "Inactivity prompt",
+        "After-action reprompt",
+        "Inactivity reprompt",
+      ]);
+      expect(fields[1]?.raw).toContain("inactivity_reprompt:");
     });
   });
 });

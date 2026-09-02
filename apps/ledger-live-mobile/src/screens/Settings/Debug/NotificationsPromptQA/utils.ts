@@ -1,9 +1,11 @@
 import { add, sub } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import type { Features } from "@shared/feature-flags";
 import type {
   AfterActionTriggerDecision,
   DataOfUser,
   InactivityTriggerDecision,
+  NotificationPromptTarget,
   NotificationsPromptAfterActionSource,
   NotificationsPromptRepromptDelay,
   NotificationsPromptSkipReason,
@@ -399,3 +401,246 @@ export const formatPermissionStatus = (
       return "Unknown";
   }
 };
+
+export const TRIGGER_SOURCES: NotificationsQaTriggerSource[] = [
+  "onboarding",
+  "send",
+  "receive",
+  "swap",
+  "stake",
+  "add_favorite_coin",
+  "inactivity",
+];
+
+export const SOURCE_LABEL: Record<NotificationsQaTriggerSource, string> = {
+  onboarding: "Onboarding",
+  send: "Send",
+  receive: "Receive",
+  swap: "Swap",
+  stake: "Stake",
+  add_favorite_coin: "Add favourite coin",
+  dapp_complete: "DApp complete",
+  inactivity: "Inactivity",
+};
+
+export type NotificationsQaInspectorFieldTone = "success" | "error" | "warning" | "gray";
+
+export type NotificationsQaInspectorField = {
+  label: string;
+  value: string;
+  raw?: string;
+  status: { label: string; tone: NotificationsQaInspectorFieldTone };
+};
+
+type BrazePushNotificationsFeature = Features["brazePushNotifications"] | null | undefined;
+
+export function formatDelay(delay: Record<string, number> | null | undefined): string {
+  if (!delay) return "Not configured";
+
+  const parts = Object.entries(delay)
+    .filter(([, value]) => value > 0)
+    .map(([unit, value]) => `${value} ${unit}`);
+  return parts.length > 0 ? parts.join(", ") : "Immediately";
+}
+
+export function getForceOpenDrawerLabel(target: NotificationPromptTarget): string {
+  return `Force open ${target} drawer — bypass rules`;
+}
+
+export function getSelectedActionEvent(
+  selectedSource: NotificationsQaTriggerSource,
+  brazePushNotifications: BrazePushNotificationsFeature,
+) {
+  if (selectedSource === "inactivity") return undefined;
+  const actionEventKey = selectedSource === "onboarding" ? "complete_onboarding" : selectedSource;
+  return brazePushNotifications?.params?.action_events?.[actionEventKey];
+}
+
+export function getNotificationsQaHeadline(
+  decision: AfterActionTriggerDecision | InactivityTriggerDecision,
+): { verdict: NotificationsQaExpectation; reason: string; rawReason: string } {
+  const verdict = mapNotificationsDecisionToQaExpectation(decision);
+  return {
+    verdict,
+    reason:
+      decision.kind === "show"
+        ? "Eligible now"
+        : NOTIFICATIONS_PROMPT_REASON_LABEL[decision.reason],
+    rawReason: decision.kind === "show" ? "kind: show" : `reason: ${decision.reason}`,
+  };
+}
+
+export function buildUserStateInspectorFields({
+  permissionStatus,
+  hasSimulatedPermission,
+  areNotificationsAllowed,
+  transactionsAlertsCategory,
+  hasCompletedOnboarding,
+  globalDismissals,
+  lastActionAt,
+}: {
+  permissionStatus:
+    | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
+    | null
+    | undefined;
+  hasSimulatedPermission: boolean;
+  areNotificationsAllowed: boolean;
+  transactionsAlertsCategory: boolean;
+  hasCompletedOnboarding: boolean;
+  globalDismissals: number[] | undefined;
+  lastActionAt: number | undefined;
+}): NotificationsQaInspectorField[] {
+  return [
+    {
+      label: "OS notification permission",
+      value: formatPermissionStatus(permissionStatus),
+      raw: `permissionStatus: ${String(permissionStatus)}${
+        hasSimulatedPermission ? " · simulated until app foreground sync" : ""
+      }`,
+      status: {
+        label: permissionStatus === AuthorizationStatus.AUTHORIZED ? "On" : "Off",
+        tone: permissionStatus === AuthorizationStatus.AUTHORIZED ? "success" : "gray",
+      },
+    },
+    {
+      label: "App notifications",
+      value: areNotificationsAllowed ? "Enabled" : "Disabled",
+      raw: `areNotificationsAllowed: ${String(areNotificationsAllowed)}`,
+      status: {
+        label: areNotificationsAllowed ? "On" : "Off",
+        tone: areNotificationsAllowed ? "success" : "gray",
+      },
+    },
+    {
+      label: "Transaction alerts",
+      value: transactionsAlertsCategory ? "Enabled" : "Disabled",
+      raw: `transactionsAlertsCategory: ${String(transactionsAlertsCategory)}`,
+      status: {
+        label: transactionsAlertsCategory ? "On" : "Off",
+        tone: transactionsAlertsCategory ? "success" : "gray",
+      },
+    },
+    {
+      label: "Onboarding",
+      value: hasCompletedOnboarding ? "Complete" : "Incomplete",
+      raw: `hasCompletedOnboarding: ${String(hasCompletedOnboarding)}`,
+      status: {
+        label: hasCompletedOnboarding ? "Ready" : "Blocked",
+        tone: hasCompletedOnboarding ? "success" : "error",
+      },
+    },
+    {
+      label: "Stored dismissals",
+      value: `${globalDismissals?.length ?? 0} dismissal(s)`,
+      raw: `globalPushNotifications: ${JSON.stringify(globalDismissals ?? [])}`,
+      status: {
+        label: globalDismissals?.length ? "Saved" : "Empty",
+        tone: "gray",
+      },
+    },
+    {
+      label: "Last activity",
+      value: lastActionAt ? formatDismissalTimestamp(lastActionAt).local : "Missing",
+      raw: `lastActionAt: ${String(lastActionAt)}`,
+      status: {
+        label: lastActionAt ? "Saved" : "Missing",
+        tone: "gray",
+      },
+    },
+  ];
+}
+
+export function buildDecisionInspectorFields({
+  selectedSource,
+  decision,
+  resolvedPromptTarget,
+  verdictTone,
+}: {
+  selectedSource: NotificationsQaTriggerSource;
+  decision: AfterActionTriggerDecision | InactivityTriggerDecision;
+  resolvedPromptTarget: NotificationPromptTarget;
+  verdictTone: NotificationsQaInspectorFieldTone;
+}): NotificationsQaInspectorField[] {
+  return [
+    {
+      label: "Selected trigger",
+      value: SOURCE_LABEL[selectedSource],
+      raw: `source: ${selectedSource}`,
+      status: {
+        label: decision.kind === "show" ? "Show" : "Skip",
+        tone: verdictTone,
+      },
+    },
+    {
+      label: "Drawer target",
+      value: resolvedPromptTarget,
+      raw: `drawerPromptTarget: ${resolvedPromptTarget} · dismissedCount: ${decision.dismissedCount}`,
+      status: { label: "Resolved", tone: "success" },
+    },
+  ];
+}
+
+export function buildFeatureInspectorFields({
+  selectedSource,
+  brazePushNotifications,
+  afterActionRepromptLabel,
+  inactivityRepromptLabel,
+}: {
+  selectedSource: NotificationsQaTriggerSource;
+  brazePushNotifications: BrazePushNotificationsFeature;
+  afterActionRepromptLabel: string;
+  inactivityRepromptLabel: string;
+}): NotificationsQaInspectorField[] {
+  const selectedActionEvent = getSelectedActionEvent(selectedSource, brazePushNotifications);
+  const inactivityField: NotificationsQaInspectorField = {
+    label: "Inactivity prompt",
+    value: brazePushNotifications?.params?.inactivity_enabled ? "Enabled" : "Disabled",
+    raw: `inactivity_reprompt: ${formatDelay(brazePushNotifications?.params?.inactivity_reprompt)}`,
+    status: {
+      label: brazePushNotifications?.params?.inactivity_enabled ? "On" : "Off",
+      tone: brazePushNotifications?.params?.inactivity_enabled ? "success" : "error",
+    },
+  };
+  const actionField: NotificationsQaInspectorField = {
+    label: `${SOURCE_LABEL[selectedSource]} action`,
+    value: selectedActionEvent?.enabled ? "Enabled" : "Disabled",
+    raw: `timer: ${selectedActionEvent?.timer ?? "missing"} ms`,
+    status: {
+      label: selectedActionEvent?.enabled ? "On" : "Off",
+      tone: selectedActionEvent?.enabled ? "success" : "error",
+    },
+  };
+
+  return [
+    {
+      label: "Braze notifications prompt",
+      value: brazePushNotifications?.enabled ? "Enabled" : "Disabled",
+      raw: "feature: brazePushNotifications",
+      status: {
+        label: brazePushNotifications?.enabled ? "On" : "Off",
+        tone: brazePushNotifications?.enabled ? "success" : "error",
+      },
+    },
+    selectedSource === "inactivity" ? inactivityField : actionField,
+    {
+      label: "After-action reprompt",
+      value: afterActionRepromptLabel,
+      raw: `reprompt_schedule: ${
+        brazePushNotifications?.params?.reprompt_schedule?.length ?? 0
+      } step(s)`,
+      status: {
+        label: afterActionRepromptLabel.includes("eligible") ? "Ready" : "Waiting",
+        tone: afterActionRepromptLabel.includes("eligible") ? "success" : "warning",
+      },
+    },
+    {
+      label: "Inactivity reprompt",
+      value: inactivityRepromptLabel,
+      raw: `inactivity_reprompt: ${formatDelay(brazePushNotifications?.params?.inactivity_reprompt)}`,
+      status: {
+        label: inactivityRepromptLabel.includes("eligible") ? "Ready" : "Waiting",
+        tone: inactivityRepromptLabel.includes("eligible") ? "success" : "warning",
+      },
+    },
+  ];
+}

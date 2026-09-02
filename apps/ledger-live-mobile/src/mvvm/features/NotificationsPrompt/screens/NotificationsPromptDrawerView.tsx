@@ -12,7 +12,7 @@ type Props = {
   onLater: () => void;
 };
 
-export function NotificationsPromptDrawerView({ promptTarget, onAllow, onLater }: Props) {
+export function NotificationsPromptDrawerView({ promptTarget, onAllow, onLater }: Readonly<Props>) {
   const { t } = useTranslation();
   const { allowKey, laterKey } = getNotificationsPromptCopy(promptTarget);
 
