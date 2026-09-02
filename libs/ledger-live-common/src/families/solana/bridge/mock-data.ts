@@ -47,11 +47,6 @@ export const getMockedMethods = (): {
     answer: { context: { slot: 131414879 }, value: 83389840 },
   },
   {
-    method: "getStakeAccountsByStakeAuth",
-    params: ["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"],
-    answer: [],
-  },
-  {
     method: "getStakeAccountsByWithdrawAuth",
     params: ["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"],
     answer: [],
@@ -375,11 +370,6 @@ export const getMockedMethods = (): {
     method: "getBalanceAndContext",
     params: ["6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A"],
     answer: { context: { slot: 131414902 }, value: 0 },
-  },
-  {
-    method: "getStakeAccountsByStakeAuth",
-    params: ["6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A"],
-    answer: [],
   },
   {
     method: "getStakeAccountsByWithdrawAuth",
