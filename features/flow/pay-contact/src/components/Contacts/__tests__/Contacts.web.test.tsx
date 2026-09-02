@@ -5,12 +5,10 @@ import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import { Contacts } from "../Contacts.web";
 import {
-  emptyStateLabels,
   makeAddContactProps,
   makeContactsStore,
   renderAddresses,
   renderWithContacts,
-  tableLabels,
 } from "./shared";
 
 function renderContacts(
@@ -20,13 +18,7 @@ function renderContacts(
 ) {
   return renderWithContacts(
     contacts,
-    <Contacts
-      title="Pay contact"
-      emptyState={emptyStateLabels}
-      addContact={addContact}
-      labels={tableLabels}
-      renderAddresses={renderAddresses}
-    />,
+    <Contacts addContact={addContact} renderAddresses={renderAddresses} />,
     store,
   );
 }
@@ -91,5 +83,16 @@ describe("Contacts (Web)", () => {
 
     expect(screen.queryByTestId("pay-contacts-empty-state")).not.toBeInTheDocument();
     expect(screen.getByTestId("pay-contacts-tile-contact-ada")).toBeVisible();
+  });
+
+  it("should resolve its copy from the mounted i18n provider, not from props", () => {
+    renderWithContacts(
+      [mockMeContact()],
+      <Contacts addContact={makeAddContactProps()} renderAddresses={renderAddresses} />,
+      undefined,
+      { en: { translation: { payTab: { contacts: { empty: { info: "Aucun contact" } } } } } },
+    );
+
+    expect(screen.getByText("Aucun contact")).toBeVisible();
   });
 });

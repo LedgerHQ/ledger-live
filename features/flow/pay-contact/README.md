@@ -9,16 +9,30 @@ Pay tile. Both exclude the `me` contact.
 Mount `Contacts` under a Redux `Provider` with `contactsSlice`. Desktop adapter:
 `usePayTabContacts`.
 
+Copy lives with the feature: the container view models resolve their own strings through
+[`@shared/i18n`](../../../shared/i18n), so the host only injects behavior (callbacks, add-contact
+wiring, `renderAddresses`). Keys read from the host app's **default** namespace (`app` on Desktop,
+`common` on Mobile):
+
+| Key | Rendered as |
+| --- | --- |
+| `payTab.contacts.title` | Section title |
+| `payTab.contacts.pay` | Native leading Pay tile |
+| `payTab.contacts.empty.{info,addContact}` | Web empty state |
+| `payTab.contacts.table.{name,addresses,transactions,transactionCount}` | Web table headers + count |
+| `payTab.contacts.actions.{pay,more,viewTransactions}` | Web row actions |
+
+Both apps must carry these keys at the same path until translation keys are colocated per feature
+(a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). The add-contact
+dialog copy stays owned by `@features/flow-contacts-add-contact` and is passed via `addContact.labels`.
+
 ## Web
 
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
 
 <Contacts
-  title={title}
-  emptyState={{ info, addContactLabel }}
   addContact={{ labels, contactCreation, onRequestAddContact, onSaveSuccess, callbacks }}
-  labels={{ name, addresses, transactions, formatTransactionCount, payAction, moreAction, viewContact, viewTransactions }}
   renderAddresses={addresses => <PayContactAddresses addresses={addresses} />}
   onContactPress={openNewPayment}
   onViewContact={openContactDetail}
@@ -62,8 +76,10 @@ optional.
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
 
-<Contacts title={title} payLabel={payLabel} onPay={openSend} onSeeAll={openContactsList} />;
+<Contacts onPay={openSend} onSeeAll={openContactsList} />;
 ```
 
-Caps at 8 contacts. `onSeeAll` opens the full list when there are more. `onContactPress(contact)`
-fires when a contact tile is pressed.
+Caps at 8 contacts. `onSeeAll` opens the full list when there are more. `onContactPress` is optional
+and unused for now.
+
+Tests wrap the component in `I18nTestProvider` from `@shared/i18n/testing`.

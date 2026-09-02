@@ -35,10 +35,7 @@ export type ContactsTableLabels = Readonly<{
 }>;
 
 export type ContactsProps = Readonly<{
-  title: string;
-  emptyState: EmptyStateLabels;
   addContact: PayAddContactProps;
-  labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => ReactNode;
   onContactPress?: (contact: Contact) => void;
   onViewContact?: (contact: Contact) => void;
@@ -53,9 +50,11 @@ export type ContactRowViewModel = Readonly<{
 
 export type ContactsViewProps = Pick<
   ContactsProps,
-  "title" | "labels" | "renderAddresses" | "onContactPress" | "onViewContact" | "onViewTransactions"
+  "renderAddresses" | "onContactPress" | "onViewTransactions" | "onViewContact"
 > &
   Readonly<{
+    title: string;
+    labels: ContactsTableLabels;
     isEmpty: boolean;
     rows: readonly ContactRowViewModel[];
     emptyState: EmptyStateProps;
@@ -63,8 +62,6 @@ export type ContactsViewProps = Pick<
   }>;
 
 export type ContactsNativeProps = Readonly<{
-  title: string;
-  payLabel: string;
   onPay: () => void;
   onContactPress?: (contact: Contact) => void;
   onSeeAll: () => void;
@@ -73,6 +70,8 @@ export type ContactsNativeProps = Readonly<{
 
 export type ContactsViewNativeProps = ContactsNativeProps &
   Readonly<{
+    title: string;
+    payLabel: string;
     contacts: readonly Contact[];
     hasMore: boolean;
   }>;

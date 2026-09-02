@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
 import {
   sortContactsByLastSentThenLastAdded,
   summarizeOutgoingOperationsByContact,
@@ -14,6 +15,7 @@ export function useContactsViewModel({
   outgoingOperations = EMPTY_OPERATIONS,
   ...props
 }: ContactsNativeProps): ContactsViewNativeProps {
+  const { t } = useTranslation();
   const contacts = useContacts();
   const sortedContacts = useMemo(() => {
     const savedContacts = contacts.filter(contact => !contact.isMe);
@@ -28,5 +30,11 @@ export function useContactsViewModel({
     [sortedContacts],
   );
 
-  return { ...props, contacts: displayedContacts, hasMore };
+  return {
+    ...props,
+    title: t("payTab.contacts.title"),
+    payLabel: t("payTab.contacts.pay"),
+    contacts: displayedContacts,
+    hasMore,
+  };
 }
