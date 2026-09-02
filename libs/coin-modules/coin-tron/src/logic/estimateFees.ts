@@ -415,10 +415,13 @@ export async function estimateTronifyFees(
   ]);
 
   // Only TRX-denominated quotes are supported here. USDT-denominated rent (Flow 2) carries amounts
-  // in a different unit than the standard fee and requires separate handling.
-  if (quote.payCoinCode.toUpperCase() !== "TRX") {
+  // in a different unit than the standard fee and requires separate handling. payCoinCode is an
+  // unvalidated API field (typed string, but a missing/non-string value would make toUpperCase()
+  // throw an opaque TypeError) — guard it so a bad response yields the clear error below.
+  const payCoinCode = quote.payCoinCode;
+  if (typeof payCoinCode !== "string" || payCoinCode.toUpperCase() !== "TRX") {
     throw new Error(
-      `Tronify returned unsupported payCoinCode: ${quote.payCoinCode}; only TRX is supported`,
+      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only TRX is supported`,
     );
   }
 

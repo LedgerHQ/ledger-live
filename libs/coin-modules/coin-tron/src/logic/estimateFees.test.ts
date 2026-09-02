@@ -813,6 +813,19 @@ describe("estimateTronifyFees", () => {
     );
   });
 
+  it("should throw a clear error (not a TypeError) when payCoinCode is missing", async () => {
+    // payCoinCode is unvalidated network data; a missing/non-string value must yield the explicit
+    // "unsupported payCoinCode" error rather than a raw TypeError from toUpperCase().
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: undefined as unknown as string,
+    });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      /unsupported payCoinCode/,
+    );
+  });
+
   it("should throw when Tronify returns a non-numeric payCoinAmt", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "not-a-number" });
 
