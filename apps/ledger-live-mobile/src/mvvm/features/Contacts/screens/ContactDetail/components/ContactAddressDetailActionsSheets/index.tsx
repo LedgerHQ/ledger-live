@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { Platform } from "react-native";
 import {
   ContactsDeleteAddressDialog,
-  ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
 } from "@features/flow-contacts";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
@@ -13,13 +12,12 @@ import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts
 
 type ContactAddressDetailActionsSheetsProps = Pick<
   ContactAddressDetailActionsFlowProps,
-  "deleteSheet" | "renameSheet" | "signerSheet" | "signerMismatchSheet"
+  "deleteSheet" | "renameSheet" | "signerMismatchSheet"
 >;
 
 export function ContactAddressDetailActionsSheets({
   deleteSheet,
   renameSheet,
-  signerSheet,
   signerMismatchSheet,
 }: ContactAddressDetailActionsSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -34,9 +32,6 @@ export function ContactAddressDetailActionsSheets({
   const onCloseDelete = useCallback(() => {
     deleteSheet.onCancel();
   }, [deleteSheet]);
-  const onCloseSigner = useCallback(() => {
-    signerSheet.onCancel();
-  }, [signerSheet]);
   const onCloseSignerMismatch = useCallback(() => {
     signerMismatchSheet.onCancel();
   }, [signerMismatchSheet]);
@@ -51,15 +46,6 @@ export function ContactAddressDetailActionsSheets({
         enableDynamicSizing
       >
         <ContactsDeleteAddressDialog {...deleteSheet} bottomInset={bottomInset} />
-      </QueuedBottomSheet>
-      <QueuedBottomSheet
-        isRequestingToBeOpened={signerSheet.isOpen}
-        isForcingToBeOpened={signerSheet.isOpen}
-        onClose={onCloseSigner}
-        testID="contacts-address-detail-signer-sheet"
-        enableDynamicSizing
-      >
-        <ContactsEditSignerDialog {...signerSheet} bottomInset={bottomInset} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}

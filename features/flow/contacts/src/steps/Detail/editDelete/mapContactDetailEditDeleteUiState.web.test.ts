@@ -55,11 +55,12 @@ describe("createContactDetailEditDeleteUiState", () => {
       result.current.onEditPress();
     });
     await act(async () => {
-      await result.current.onSignerConfirm();
+      await result.current.requestSaveApproval();
     });
 
     const uiState = createContactDetailEditDeleteUiState(result.current, renameViewModel, labels);
 
+    expect(uiState.rename.isDeviceRequired).toBe(true);
     expect(uiState.signerMismatch).toEqual({
       isOpen: true,
       labels: labels.signerMismatch,

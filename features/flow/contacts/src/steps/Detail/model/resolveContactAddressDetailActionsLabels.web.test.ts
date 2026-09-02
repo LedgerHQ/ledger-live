@@ -20,7 +20,6 @@ describe("resolveContactAddressDetailActionsLabels", () => {
     expect(labels.rename.addressValidation.addressPlaceholder).toBe(
       "contacts.addAddressEntry.addressPlaceholder",
     );
-    expect(labels.signer.title).toBe("contacts.editSigner.title");
     expect(labels.signerMismatch.title).toBe("contacts.editSignerMismatch.title");
   });
 

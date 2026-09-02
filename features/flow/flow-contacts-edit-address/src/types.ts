@@ -92,14 +92,14 @@ export type ContactsRenameAddressLabels = Readonly<{
 
 export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
   Readonly<{
+    isDeviceRequired: boolean;
     labels: ContactsRenameAddressLabels;
   }>;
 
-export type ContactsRenameAddressDrawerProps = RenameAddressDialogViewModel &
+export type ContactsRenameAddressDrawerProps = ContactsRenameAddressDialogProps &
   Readonly<{
     bottomInset?: number;
     keyboardInset?: number;
-    labels: ContactsRenameAddressLabels;
   }>;
 
 export type RenameAddressController = Readonly<{

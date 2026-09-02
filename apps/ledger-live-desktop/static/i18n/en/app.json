@@ -9712,12 +9712,6 @@
       "applyChanges": "Apply changes",
       "invalidLabelError": "Special characters are not allowed."
     },
-    "editSigner": {
-      "title": "Confirm on your device",
-      "description": "Connect and unlock your Ledger device to confirm this change.",
-      "confirm": "Continue",
-      "cancel": "Cancel"
-    },
     "editSignerMismatch": {
       "title": "Use the same Ledger device you used to add this contact",
       "description": "The connected device isn't a match.",

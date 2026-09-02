@@ -181,7 +181,6 @@ export function useContactDetailPaneAdapter(
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
     const isAddressActionDialogOpen =
       addressDetailActionsDialogs.deleteDialog.isOpen ||
-      addressDetailActionsDialogs.signerDialog.isOpen ||
       addressDetailActionsDialogs.signerMismatchDialog.isOpen ||
       addressDetailActionsDialogs.renameDialog.isOpen;
 
@@ -198,7 +197,6 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.addressDetailDialog,
     addressDetailActionsDialogs.deleteDialog.isOpen,
     addressDetailActionsDialogs.renameDialog.isOpen,
-    addressDetailActionsDialogs.signerDialog.isOpen,
     addressDetailActionsDialogs.signerMismatchDialog.isOpen,
     addressDetailDialogLabels,
     emptyContact?.name,

@@ -46,7 +46,7 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
 }
 
 describe("useContactAddressDetailActionsFlowViewModel", () => {
-  it("should open the edit dialog before asking for the signer", () => {
+  it("should open the edit dialog", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -67,41 +67,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
     expect(result.current.editUiState).toBe("edit-open");
   });
 
-  it("should ask for the signer when the save is confirmed", async () => {
-    const contact = mockContactWithAddress();
-    const address = contact.addresses[0]!;
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () =>
-        useContactAddressDetailActionsFlowViewModel({
-          contactId: contact.id,
-          addressId: address.id,
-          ports: createPorts(),
-        }),
-      { wrapper: Wrapper },
-    );
-    const onApproval = jest.fn();
-    let approval!: Promise<boolean>;
-
-    act(() => {
-      result.current.onEditPress();
-      approval = result.current.requestSaveApproval();
-      void approval.then(onApproval);
-    });
-
-    expect(result.current.editUiState).toBe("signer-open");
-    expect(onApproval).not.toHaveBeenCalled();
-
-    await act(async () => {
-      await result.current.onSignerConfirm();
-      await approval;
-    });
-
-    expect(onApproval).toHaveBeenCalledWith(true);
-    expect(result.current.editUiState).toBe("edit-open");
-  });
-
-  it("should keep edit state open when signer close fires after confirm", async () => {
+  it("should always require the device and approve the save without an intermediate dialog", async () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -117,16 +83,12 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
-      void result.current.requestSaveApproval();
     });
+
+    expect(result.current.isSignerRequiredForEdit).toBe(true);
+
     await act(async () => {
-      await result.current.onSignerConfirm();
-    });
-
-    expect(result.current.editUiState).toBe("edit-open");
-
-    act(() => {
-      result.current.onSignerCancel();
+      await expect(result.current.requestSaveApproval()).resolves.toBe(true);
     });
 
     expect(result.current.editUiState).toBe("edit-open");
@@ -151,19 +113,16 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
-      void result.current.requestSaveApproval();
     });
 
-    expect(result.current.editUiState).toBe("signer-open");
-
     await act(async () => {
-      await result.current.onSignerConfirm();
+      await expect(result.current.requestSaveApproval()).resolves.toBe(false);
     });
 
     expect(result.current.editUiState).toBe("signer-mismatch");
   });
 
-  it("should return to the signer dialog when connecting a different device", async () => {
+  it("should return to the edit dialog when connecting a different device", async () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
@@ -182,10 +141,9 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
-      void result.current.requestSaveApproval();
     });
     await act(async () => {
-      await result.current.onSignerConfirm();
+      await result.current.requestSaveApproval();
     });
 
     expect(result.current.editUiState).toBe("signer-mismatch");
@@ -194,7 +152,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
       result.current.onConnectDifferentDevice();
     });
 
-    expect(result.current.editUiState).toBe("signer-open");
+    expect(result.current.editUiState).toBe("edit-open");
   });
 
   it("should invoke onSend with the send intent", () => {
@@ -326,10 +284,9 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
-      void result.current.requestSaveApproval();
     });
 
-    expect(result.current.editUiState).toBe("signer-open");
+    expect(result.current.editUiState).toBe("edit-open");
 
     rerender({ addressId: undefined });
 
