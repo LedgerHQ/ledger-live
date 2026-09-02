@@ -18092,6 +18092,9 @@ importers:
 
   tools/danger:
     devDependencies:
+      '@commitlint/config-conventional':
+        specifier: 'catalog:'
+        version: 21.2.0
       '@commitlint/lint':
         specifier: 'catalog:'
         version: 21.2.0
@@ -20002,10 +20005,6 @@ packages:
         optional: true
       conventional-commits-parser:
         optional: true
-
-  '@conventional-changelog/template@1.2.1':
-    resolution: {integrity: sha512-TzlTVpKPjaqW6qOYjQcYUDuGsLCNsvFHVBXkYGTAnf5V37jCWrE5haKNXzz0WZUtVHjrpV76L1buANjwXMfT8w==}
-    engines: {node: '>=22'}
 
   '@conventional-changelog/template@1.4.0':
     resolution: {integrity: sha512-aalGyl7dbB5PArRebDIX43ZvBlXrYm9uWzGJ26t+4SzJVPsOuvfILGGbw5X4yX7i50YEmJ8zvbiWnqH/AAnZqg==}
@@ -45758,8 +45757,6 @@ snapshots:
       '@simple-libs/stream-utils': 2.0.0
       semver: 7.8.1
 
-  '@conventional-changelog/template@1.2.1': {}
-
   '@conventional-changelog/template@1.4.0': {}
 
   '@cosmjs/amino@0.36.2':
@@ -60774,7 +60771,7 @@ snapshots:
 
   conventional-changelog-angular@9.2.1:
     dependencies:
-      '@conventional-changelog/template': 1.2.1
+      '@conventional-changelog/template': 1.4.0
 
   conventional-changelog-conventionalcommits@10.4.0:
     dependencies:

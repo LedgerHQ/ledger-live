@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
+    "@commitlint/config-conventional": "catalog:",
     "@commitlint/lint": "catalog:",
     "@commitlint/load": "catalog:",
     "@commitlint/types": "catalog:",
