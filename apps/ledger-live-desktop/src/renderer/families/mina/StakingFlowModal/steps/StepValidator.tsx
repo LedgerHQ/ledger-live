@@ -40,12 +40,18 @@ export function StepValidatorFooter({
   account,
   parentAccount,
   status,
+  bridgePending,
 }: Readonly<StepProps>) {
   const { t } = useTranslation();
   if (!account) return null;
 
+  // Picking a validator only sets the recipient; the fee is resolved by the bridge right after.
+  // Leaving for the device before it lands would sign a zero fee, which the signer rejects outright.
   const canContinue =
-    transaction?.recipient && transaction.recipient !== account.resources?.delegateInfo?.address;
+    !bridgePending &&
+    !Object.keys(status.errors).length &&
+    transaction?.recipient &&
+    transaction.recipient !== account.resources?.delegateInfo?.address;
 
   return (
     <>
@@ -56,6 +62,7 @@ export function StepValidatorFooter({
         </Button>
         <Button
           id="stake-continue-button"
+          isLoading={bridgePending}
           disabled={!canContinue}
           primary
           onClick={() => transitionTo("connectDevice")}
