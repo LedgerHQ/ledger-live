@@ -26,9 +26,10 @@ const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
 /**
- * Mask the mock server session token, which the scriptrunner URL carries both in
- * its `/secure-channel/<token>` path and as a `token=` query param. Keeps the
- * token out of traces and error metadata, which reach monitoring.
+ * Mask a session token carried by a scriptrunner URL, in a
+ * `/secure-channel/<token>` path segment or a `token=` query param. Keeps it out
+ * of traces and error metadata, which reach monitoring. A no-op for URLs that
+ * carry no token.
  */
 export const redactSecureChannelToken = (value: string): string =>
   value.replace(/(\/secure-channel\/)[^/?#]+/, "$1***").replace(/([?&]token=)[^&#]+/, "$1***");
@@ -54,27 +55,14 @@ export function createDeviceSocket(
     function: "createDeviceSocket",
     transportContext: transport.getTraceContext(),
   });
-  // The mock scriptrunner URL carries the session token, so everything that is
-  // traced or attached to an error uses this instead of the raw url.
+  // A scriptrunner URL can carry a session token, so everything that is traced
+  // or attached to an error uses this instead of the raw url.
   const safeUrl = redactSecureChannelToken(url);
 
   tracer.trace("Starting web socket communication", {
     url: safeUrl,
     unresponsiveExpectedDuringBulk,
   });
-
-  // In mock server transport mode, the mock scriptrunner authenticates the
-  // WebSocket via the session token as a query param. The token is embedded in
-  // BASE_SOCKET_URL's `/secure-channel/<token>` path (set at boot), so we lift
-  // it into the query string for every scriptrunner flow (genuine, apps/list,
-  // install, mcu…).
-  let socketUrl = url;
-  if (getEnv("MOCK_SERVER_TRANSPORT")) {
-    const token = socketUrl.match(/\/secure-channel\/([^/?#]+)/)?.[1];
-    if (token && !/[?&]token=/.test(socketUrl)) {
-      socketUrl += `${socketUrl.includes("?") ? "&" : "?"}token=${token}`;
-    }
-  }
 
   return new Observable(o => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
@@ -84,7 +72,7 @@ export function createDeviceSocket(
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
     let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
     let deviceIdCaptured = false; // track if we've already captured the device id
-    const ws = new WS(socketUrl);
+    const ws = new WS(url);
 
     ws.onopen = () => {
       tracer.trace("Socket opened", { url: safeUrl });
