@@ -92,6 +92,9 @@ jobs:
       - name: Setup nx config
         run: pnpm nx:write-cache-config
 
+      - name: Debug nx affected (temporary)
+        run: pnpm nx show projects --affected --json --base origin/develop --head HEAD 2>&1 || true
+
       - name: Get affected packages and paths
         id: nx-affected
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
