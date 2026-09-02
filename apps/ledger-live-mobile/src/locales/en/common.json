@@ -4274,6 +4274,11 @@
             "viewInExplorer": "View in explorer",
             "copied": "Copied"
           },
+          "earnBanner": {
+            "title": "Earn up to {{apy}}% {{type}}",
+            "description": "Explore Earn opportunities",
+            "button": "Explore"
+          },
           "accessibility": {
             "copySwapId": "Copy swap ID"
           }
