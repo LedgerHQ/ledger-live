@@ -268,8 +268,8 @@ catalogs:
       specifier: ^0.4.14
       version: 0.4.14
     '@solana/web3.js':
-      specifier: ^1.98.4
-      version: 1.98.4
+      specifier: ^1.99.0-beta.0
+      version: 1.99.0-beta.0
     '@swc/core':
       specifier: 1.15.11
       version: 1.15.11
@@ -10038,10 +10038,10 @@ importers:
         version: link:../../types-live
       '@solana/spl-token':
         specifier: 'catalog:'
-        version: 0.4.14(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+        version: 0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.98.4(@typescript/typescript6@6.0.2)
+        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11372,10 +11372,10 @@ importers:
         version: link:../../../shared/env
       '@solana/spl-token':
         specifier: 'catalog:'
-        version: 0.4.14(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+        version: 0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.98.4(@typescript/typescript6@6.0.2)
+        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -13031,7 +13031,7 @@ importers:
         version: link:../../shared/api-services
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.98.4(@typescript/typescript6@6.0.2)
+        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -17841,7 +17841,7 @@ importers:
         version: 2.3.3(@ton/crypto@3.3.0)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.98.4(@typescript/typescript6@6.0.2)
+        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -19430,6 +19430,10 @@ packages:
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -22665,7 +22669,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -25441,6 +25444,15 @@ packages:
     peerDependencies:
       typescript: '>=5.3.3'
 
+  '@solana/codecs-core@5.5.1':
+    resolution: {integrity: sha512-TgBt//bbKBct0t6/MpA8ElaOA3sa8eYVvR7LGslCZ84WiAwwjCY0lW/lOYsFHJQzwREMdUyuEyy5YWBKtdh8Rw==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@solana/codecs-data-structures@2.0.0-rc.1':
     resolution: {integrity: sha512-rinCv0RrAVJ9rE/rmaibWJQxMwC5lSaORSZuwjopSUE6T0nb/MVg6Z1siNCXhh/HFTOg0l8bNvZHgBcN/yvXog==}
     peerDependencies:
@@ -25456,6 +25468,15 @@ packages:
     engines: {node: '>=20.18.0'}
     peerDependencies:
       typescript: '>=5.3.3'
+
+  '@solana/codecs-numbers@5.5.1':
+    resolution: {integrity: sha512-rllMIZAHqmtvC0HO/dc/21wDuWaD0B8Ryv8o+YtsICQBuiL/0U4AGwH7Pi5GNFySYk0/crSuwfIqQFtmxNSPFw==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@solana/codecs-strings@2.0.0-rc.1':
     resolution: {integrity: sha512-9/wPhw8TbGRTt6mHC4Zz1RqOnuPTqq1Nb4EyuvpZ39GW6O2t2Q7Q0XxiB3+BdoEjwA2XgPw6e2iRfvYgqty44g==}
@@ -25480,6 +25501,16 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.3.3'
+
+  '@solana/errors@5.5.1':
+    resolution: {integrity: sha512-vFO3p+S7HoyyrcAectnXbdsMfwUzY2zYFUc2DEe5BwpiE9J1IAxPBGjOWO6hL1bbYdBrlmjNx8DXCslqS+Kcmg==}
+    engines: {node: '>=20.18.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@solana/options@2.0.0-rc.1':
     resolution: {integrity: sha512-mLUcR9mZ3qfHlmMnREdIFPf9dpMc/Bl66tLSOOWxw4ml5xMT2ohFn7WGqoKcu/UHkT9CrC6+amEdqCNvUqI7AA==}
@@ -25506,6 +25537,9 @@ packages:
 
   '@solana/web3.js@1.98.4':
     resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
+
+  '@solana/web3.js@1.99.0-beta.0':
+    resolution: {integrity: sha512-hvDoGOocYkrg0YXLHmZe8TOtG2ojJYWJRUCaiQWFH9wmRXLdkALqukqhVRfhN/WFhsLi6Yj+7qPhn/iMipN5vw==}
 
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
@@ -28114,7 +28148,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -28737,6 +28771,9 @@ packages:
 
   bn.js@5.2.2:
     resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==}
+
+  bn.js@5.2.5:
+    resolution: {integrity: sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==}
 
   body-parser@1.20.3:
     resolution: {integrity: sha512-7rAxByjUMqQ3/bHJy7D6OGXvx/MMc4IqBn/X0fcM1QUcAItpZrBEYhWGem+tzXH90c+G01ypMcYJBO9Y30203g==}
@@ -33264,6 +33301,11 @@ packages:
 
   jayson@4.1.2:
     resolution: {integrity: sha512-5nzMWDHy6f+koZOuYsArh2AXs73NfWYVlFyJJuCedr93GpY+Ku8qq10ropSXVfHK+H0T6paA88ww+/dV+1fBNA==}
+    engines: {node: '>=8'}
+    hasBin: true
+
+  jayson@4.3.0:
+    resolution: {integrity: sha512-AauzHcUcqs8OBnCHOkJY280VaTiCm57AbuO7lqzcw7JapGj50BisE3xhksye4zlTSR1+1tAz67wLTl8tEH1obQ==}
     engines: {node: '>=8'}
     hasBin: true
 
@@ -38572,6 +38614,9 @@ packages:
   stream-json@1.8.0:
     resolution: {integrity: sha512-HZfXngYHUAr1exT4fxlbc1IOce1RYxp2ldeaf97LYCOPSoOqY/1Psp7iGvpb+6JIOgkra9zDYnPX01hGAHzEPw==}
 
+  stream-json@1.9.1:
+    resolution: {integrity: sha512-uWkjJ+2Nt/LO9Z/JyKZbMusL8Dkh97uUBTv3AJQ74y07lVahLY4eEFsPsE97pxYBwr8nnjMAIch5eqI0gPShyw==}
+
   stream-log-stats@3.0.2:
     resolution: {integrity: sha512-393j7aeF9iRdHvyANqEQU82UQmpw2CTxgsT83caefh+lOxavVLbVrw8Mr4zjXeZLh2+xeHZMKfVx4T0rJ/EchA==}
     engines: {node: '>=8.0.0'}
@@ -43291,6 +43336,8 @@ snapshots:
       regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.28.4': {}
+
+  '@babel/runtime@7.29.7': {}
 
   '@babel/template@7.27.2':
     dependencies:
@@ -52713,6 +52760,12 @@ snapshots:
       '@solana/errors': 2.3.0(@typescript/typescript6@6.0.2)
       typescript: '@typescript/typescript6@6.0.2'
 
+  '@solana/codecs-core@5.5.1(@typescript/typescript6@6.0.2)':
+    dependencies:
+      '@solana/errors': 5.5.1(@typescript/typescript6@6.0.2)
+    optionalDependencies:
+      typescript: '@typescript/typescript6@6.0.2'
+
   '@solana/codecs-data-structures@2.0.0-rc.1(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs-core': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
@@ -52730,6 +52783,13 @@ snapshots:
     dependencies:
       '@solana/codecs-core': 2.3.0(@typescript/typescript6@6.0.2)
       '@solana/errors': 2.3.0(@typescript/typescript6@6.0.2)
+      typescript: '@typescript/typescript6@6.0.2'
+
+  '@solana/codecs-numbers@5.5.1(@typescript/typescript6@6.0.2)':
+    dependencies:
+      '@solana/codecs-core': 5.5.1(@typescript/typescript6@6.0.2)
+      '@solana/errors': 5.5.1(@typescript/typescript6@6.0.2)
+    optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
 
   '@solana/codecs-strings@2.0.0-rc.1(@typescript/typescript6@6.0.2)':
@@ -52762,6 +52822,13 @@ snapshots:
       commander: 14.0.2
       typescript: '@typescript/typescript6@6.0.2'
 
+  '@solana/errors@5.5.1(@typescript/typescript6@6.0.2)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.2
+    optionalDependencies:
+      typescript: '@typescript/typescript6@6.0.2'
+
   '@solana/options@2.0.0-rc.1(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs-core': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
@@ -52773,29 +52840,29 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
-  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.98.4(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.98.4(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token@0.4.14(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token@0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0(@typescript/typescript6@6.0.2)
-      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
-      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.98.4(@typescript/typescript6@6.0.2)
+      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
     transitivePeerDependencies:
       - bufferutil
@@ -52818,6 +52885,29 @@ snapshots:
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       fast-stable-stringify: 1.0.0
       jayson: 4.1.2
+      node-fetch: 2.7.0
+      rpc-websockets: 9.0.4
+      superstruct: 2.0.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+
+  '@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2)':
+    dependencies:
+      '@babel/runtime': 7.29.7
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@solana/buffer-layout': 4.0.1
+      '@solana/codecs-numbers': 5.5.1(@typescript/typescript6@6.0.2)
+      agentkeepalive: 4.6.0
+      bn.js: 5.2.5
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+      fast-stable-stringify: 1.0.0
+      jayson: 4.3.0
       node-fetch: 2.7.0
       rpc-websockets: 9.0.4
       superstruct: 2.0.2
@@ -57146,6 +57236,8 @@ snapshots:
 
   bn.js@5.2.2: {}
 
+  bn.js@5.2.5: {}
+
   body-parser@1.20.3:
     dependencies:
       bytes: 3.1.2
@@ -57199,7 +57291,7 @@ snapshots:
 
   borsh@0.7.0:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       bs58: 4.0.1
       text-encoding-utf-8: 1.0.2
 
@@ -62472,6 +62564,24 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  jayson@4.3.0:
+    dependencies:
+      '@types/connect': 3.4.38
+      '@types/node': 12.20.55
+      '@types/ws': 7.4.7
+      commander: 2.20.3
+      delay: 5.0.0
+      es6-promisify: 5.0.0
+      eyes: 0.1.8
+      isomorphic-ws: 4.0.1(ws@7.5.10)
+      json-stringify-safe: 5.0.1
+      stream-json: 1.9.1
+      uuid: 8.3.2
+      ws: 7.5.10
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   jest-allure2-reporter@2.2.8(@jest/reporters@30.5.0)(@jest/types@30.5.0)(jest-docblock@30.5.0)(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))):
     dependencies:
       allure-store: 1.1.2
@@ -64740,9 +64850,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -70059,6 +70167,10 @@ snapshots:
       xtend: 4.0.2
 
   stream-json@1.8.0:
+    dependencies:
+      stream-chain: 2.2.5
+
+  stream-json@1.9.1:
     dependencies:
       stream-chain: 2.2.5
 
