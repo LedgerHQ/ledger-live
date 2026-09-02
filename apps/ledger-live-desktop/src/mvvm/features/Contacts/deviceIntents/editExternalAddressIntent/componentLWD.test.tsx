@@ -16,6 +16,7 @@ const COPY = {
 
 const CLOSE_CTA = "contacts-edit-external-address-close";
 const RETRY_CTA = "contacts-edit-external-address-retry";
+const RECONNECT_CTA = "contacts-edit-external-address-wrong-device-reconnect";
 
 const failure = (type: string): EditExternalAddressJobState =>
   ({ type, error: new Error("boom") }) as EditExternalAddressJobState;
@@ -113,5 +114,25 @@ describe("EditExternalAddressComponentLWD", () => {
     });
 
     expect(screen.getByText(COPY.continueOnDevice)).toBeVisible();
+  });
+
+  it("should let the user connect a different device when the wrong device carries a reconnect", async () => {
+    const reconnect = jest.fn();
+    const { user } = renderComponent({
+      type: "existing-group-verification-failed",
+      error: new Error("SWO_SECURITY_CONDITION_NOT_SATISFIED"),
+      reconnect,
+    });
+
+    await user.click(screen.getByTestId(RECONNECT_CTA));
+
+    expect(reconnect).toHaveBeenCalledTimes(1);
+  });
+
+  it("should offer cancel alone when the wrong device carries no reconnect", () => {
+    renderComponent(failure("existing-group-verification-failed"));
+
+    expect(screen.queryByTestId(RECONNECT_CTA)).not.toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeVisible();
   });
 });

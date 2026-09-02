@@ -46,7 +46,10 @@ const COMBINED: EditExternalAddressIntentInput = { ...INPUT, newScope: "Testnet"
  * subject per call, so a chained or replayed edit can be stepped independently:
  * `identifierRun(0)` is the first identifier attempt, `(1)` the retry, and so on.
  */
-function startJob(input: EditExternalAddressIntentInput = INPUT) {
+function startJob(
+  input: EditExternalAddressIntentInput = INPUT,
+  { canReconnect = true }: { canReconnect?: boolean } = {},
+) {
   const runs = { identifier: [] as Subject<unknown>[], scope: [] as Subject<unknown>[] };
   const cancels = { identifier: [] as jest.Mock[], scope: [] as jest.Mock[] };
 
@@ -66,6 +69,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
 
   const states: EditExternalAddressJobState[] = [];
   const onResult = jest.fn();
+  const restartExecutor = jest.fn();
   let error: unknown;
   let completed = false;
 
@@ -86,6 +90,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
     },
     input,
     onResult,
+    ...(canReconnect ? { restartExecutor } : {}),
   }).subscribe({
     next: state => states.push(state),
     error: e => {
@@ -105,6 +110,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
   return {
     states,
     onResult,
+    restartExecutor,
     subscription,
     editExternalAddressIdentifier,
     editExternalAddressScope,
@@ -438,7 +444,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
     });
 
-    it("GIVEN status word 0x6982 on the scope step THEN it reports existing-group-verification-failed", () => {
+    it("GIVEN status word 0x6982 on the scope step THEN it reports existing-group-verification-failed carrying a reconnect handle", () => {
       // GIVEN
       const job = startJob(COMBINED);
       job.emitIdentifier(identifierCompletion([0x07, 0x08]));
@@ -457,7 +463,11 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({
         type: "existing-group-verification-failed",
         error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+        reconnect: expect.any(Function),
       });
+      // A retry replays from the stored proof, so the chain survives the swap.
+      expect(job.isCompleted()).toBe(false);
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the scope step is rejected WHEN the user retries THEN it restarts from the identifier step", () => {
@@ -697,7 +707,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.onResult).not.toHaveBeenCalled();
     });
 
-    it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
+    it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed carrying a reconnect handle", () => {
       // GIVEN
       const job = startJob();
       // An edit always replays the entry's existing proofs, so this is how proofs
@@ -715,7 +725,53 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({
         type: "existing-group-verification-failed",
         error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+        reconnect: expect.any(Function),
       });
+      expect(job.isCompleted()).toBe(false);
+      expect(job.onResult).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN a wrong device WHEN the reconnect handle is called THEN it restarts the executor", () => {
+      // GIVEN
+      const job = startJob();
+      job.emitIdentifier({
+        status: DeviceActionStatus.Error,
+        error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+      });
+      const state = job.states.find(s => s.type === "existing-group-verification-failed");
+
+      // WHEN
+      if (state?.type !== "existing-group-verification-failed") {
+        throw new Error("Expected the job to have reported a wrong device");
+      }
+      state.reconnect?.();
+
+      // THEN
+      expect(job.restartExecutor).toHaveBeenCalled();
+    });
+
+    it("GIVEN no restart affordance WHEN a wrong device is reported THEN it settles as a terminal failure", () => {
+      // GIVEN
+      const job = startJob(INPUT, { canReconnect: false });
+
+      // WHEN
+      job.emitIdentifier({
+        status: DeviceActionStatus.Error,
+        error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+      });
+
+      // THEN
+      // Nothing can send this host back to device selection, so leaving the job
+      // open would hang the caller on a recovery it cannot offer.
+      expect(job.states).toContainEqual({
+        type: "existing-group-verification-failed",
+        error: expect.objectContaining({ message: "wrong device" }),
+      });
+      expect(job.onResult).toHaveBeenCalledWith({
+        type: "failure",
+        error: expect.objectContaining({ message: "wrong device" }),
+      });
+      expect(job.isCompleted()).toBe(true);
     });
 
     it("GIVEN status word 0x6984 WHEN the device action errors THEN it reports unsupported-operation", () => {

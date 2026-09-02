@@ -21,7 +21,14 @@ const INPUT: RenameContactIntentInput = {
   hmacProof: "0x0304",
 };
 
-function startJob(input: RenameContactIntentInput = INPUT) {
+/**
+ * `canReconnect: false` stands in for a host with no connection phase to return
+ * to, which the executor signals by withholding `restartExecutor`.
+ */
+function startJob(
+  input: RenameContactIntentInput = INPUT,
+  { canReconnect = true }: { canReconnect?: boolean } = {},
+) {
   const subject = new Subject<unknown>();
   const cancel = jest.fn();
   const renameContact = jest.fn(() => ({ observable: subject.asObservable(), cancel }));
@@ -31,6 +38,7 @@ function startJob(input: RenameContactIntentInput = INPUT) {
 
   const states: RenameContactJobState[] = [];
   const onResult = jest.fn();
+  const restartExecutor = jest.fn();
   let error: unknown;
   let completed = false;
 
@@ -52,6 +60,7 @@ function startJob(input: RenameContactIntentInput = INPUT) {
     },
     input,
     onResult,
+    ...(canReconnect ? { restartExecutor } : {}),
   }).subscribe({
     next: state => states.push(state),
     error: e => {
@@ -65,6 +74,7 @@ function startJob(input: RenameContactIntentInput = INPUT) {
   return {
     states,
     onResult,
+    restartExecutor,
     cancel,
     renameContact,
     registerExternalAddress,
@@ -307,7 +317,7 @@ describe("renameContactIntentJob", () => {
     expect(job.onResult).not.toHaveBeenCalled();
   });
 
-  it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
+  it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed carrying a reconnect handle", () => {
     // GIVEN
     const job = startJob();
     // Rename always replays the group's existing name proof, so this is how a
@@ -325,6 +335,65 @@ describe("renameContactIntentJob", () => {
     expect(job.states).toContainEqual({
       type: "existing-group-verification-failed",
       error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+      reconnect: expect.any(Function),
+    });
+  });
+
+  it("GIVEN a wrong device WHEN it is reported THEN the job stays open so the operation survives the device swap", () => {
+    // GIVEN
+    const job = startJob();
+
+    // WHEN
+    job.emit({
+      status: DeviceActionStatus.Error,
+      error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+    });
+
+    // THEN
+    expect(job.isCompleted()).toBe(false);
+    // Reporting here would reject the port promise the retried run has to settle.
+    expect(job.onResult).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN a wrong device WHEN the reconnect handle is called THEN it restarts the executor", () => {
+    // GIVEN
+    const job = startJob();
+    job.emit({
+      status: DeviceActionStatus.Error,
+      error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+    });
+    const state = job.states.find(s => s.type === "existing-group-verification-failed");
+
+    // WHEN
+    if (state?.type !== "existing-group-verification-failed") {
+      throw new Error("Expected the job to have reported a wrong device");
+    }
+    state.reconnect?.();
+
+    // THEN
+    expect(job.restartExecutor).toHaveBeenCalled();
+  });
+
+  it("GIVEN no restart affordance WHEN a wrong device is reported THEN it settles as a terminal failure", () => {
+    // GIVEN
+    const job = startJob(INPUT, { canReconnect: false });
+
+    // WHEN
+    job.emit({
+      status: DeviceActionStatus.Error,
+      error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+    });
+
+    // THEN
+    // Nothing can send this host back to device selection, so leaving the job
+    // open would hang the caller on a recovery it cannot offer.
+    expect(job.states).toContainEqual({
+      type: "existing-group-verification-failed",
+      error: expect.objectContaining({ message: "wrong device" }),
+    });
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "failure",
+      error: expect.objectContaining({ message: "wrong device" }),
     });
   });
 
