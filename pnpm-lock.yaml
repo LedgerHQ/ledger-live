@@ -1793,6 +1793,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-wallets
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-widget
@@ -6655,6 +6658,9 @@ importers:
       '@features/flow-pay-card-details':
         specifier: workspace:^
         version: link:../pay-card-details
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:^
+        version: link:../pay-card-wallets
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../pay-card-widget
