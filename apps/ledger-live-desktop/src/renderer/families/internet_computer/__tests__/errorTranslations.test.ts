@@ -12,6 +12,7 @@ const REACHABLE_ERRORS = [
   "ICPDissolveDelayLTMin",
   "ICPDissolveDelayGTMax",
   "ICPDissolveDelayLTCurrent",
+  "ICPInvalidDissolveDelayIncrease",
   "ICPNeuronNotFound",
   "ICPInvalidHotKey",
   "ICPHotKeyAlreadyExists",
@@ -57,12 +58,14 @@ describe("internet_computer error translations", () => {
 
   // Without their own description these fall back to "Something went wrong. Please retry or contact
   // Ledger Support.", which is the wrong instruction for a value the user can simply correct.
-  it.each(["ICPDissolveDelayLTMin", "ICPDissolveDelayGTMax", "ICPInvalidPercentage"])(
-    "%s explains how to correct the value",
-    name => {
-      expect(errors[name]?.description).toBeTruthy();
-    },
-  );
+  it.each([
+    "ICPDissolveDelayLTMin",
+    "ICPDissolveDelayGTMax",
+    "ICPInvalidPercentage",
+    "ICPInvalidDissolveDelayIncrease",
+  ])("%s explains how to correct the value", name => {
+    expect(errors[name]?.description).toBeTruthy();
+  });
 
   it.each([
     ["ICPDissolveDelayLTMin", "{{minDays}}"],
