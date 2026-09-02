@@ -149,12 +149,17 @@ describe("StepManage", () => {
 
   // The key used to be `common.none`, which no translation file defines, so the row read
   // "common.none". Any neuron under the 14-day voting threshold reaches this branch.
-  it("makes the neuron id copyable from its heading", () => {
-    const { container } = renderManage();
+  it("makes a full-length neuron id copyable from its heading", () => {
+    const neuronId = "13194199462915819287";
+    const props = makeStepProps({
+      account: makeICPAccount({ spendableBalance: new BigNumber(MIN_NEURON_STAKE) }),
+      neurons: [controlled({ id: BigInt(neuronId) })],
+      selectedNeuronId: neuronId,
+    });
+    const { container } = render(<StepManage {...props} />);
 
-    // Asserted on the container because the heading now holds the copy control beside the text, so
-    // no single element's text is the title on its own.
-    expect(bodyText(container)).toContain("Neuron 7");
+    // SplitAddress splits the digits across two nodes, hence the assertion on the container.
+    expect(bodyText(container)).toContain(neuronId);
     expect(screen.getByText("Copy")).toBeInTheDocument();
   });
 
