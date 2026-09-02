@@ -70,8 +70,7 @@ headers contain the Bearer.
 
 RTK Query still dispatches a pending and a settled action for the grant, and both carry a
 credential. Each app strips every Card action with `redactCardApiAction` before its logger and its
-DevTools read one, and strips the state with `redactCardApiState`. The mobile DevTools relay takes
-both sanitizers through `patches/@rozenite__redux-devtools-plugin@1.2.0.patch`.
+DevTools read one, and strips the state with `redactCardApiState`.
 
 When renewal ends a session, apps publish signed-out immediately and reset the Card API cache one
 macrotask later so the triggering request can return its 401. A successful replacement login resets
