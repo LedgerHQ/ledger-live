@@ -10,7 +10,7 @@ import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
 
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
 
-ßexport type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
+export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
   Readonly<{
     selectedDevice: Device | null | undefined;
     onSelectDevice: (device: Device | null | undefined) => void;
