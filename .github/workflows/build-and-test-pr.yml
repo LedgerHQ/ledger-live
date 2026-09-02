@@ -42,7 +42,7 @@ jobs:
     name: "Affected"
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@chore/nx-upgrade-22-latest
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
