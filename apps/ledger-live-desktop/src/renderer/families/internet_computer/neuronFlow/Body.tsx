@@ -151,13 +151,17 @@ const Body = ({
 
   const error = transactionError || bridgeError;
   // A signing failure marks the step that was signing; a bridge error belongs to the first step,
-  // since it means the transaction never became valid in the first place.
-  const failedStepIndex = () => {
-    if (transactionError) return steps.findIndex(step => step.id === signingStepId);
-    return bridgeError ? 0 : -1;
-  };
-  const errorStepIndex = failedStepIndex();
-  const errorSteps = errorStepIndex < 0 ? [] : [errorStepIndex];
+  // since it means the transaction never became valid in the first place. Indices address the
+  // breadcrumb's own list, which drops the excluded steps — seven of them in the manage flow.
+  const errorSteps = useMemo(() => {
+    if (transactionError) {
+      const index = steps
+        .filter(step => !step.excludeFromBreadcrumb)
+        .findIndex(step => step.id === signingStepId);
+      return index < 0 ? [] : [index];
+    }
+    return bridgeError ? [0] : [];
+  }, [transactionError, bridgeError, steps, signingStepId]);
 
   const stepperProps: Omit<StepProps, "transitionTo"> & {
     title: string;
