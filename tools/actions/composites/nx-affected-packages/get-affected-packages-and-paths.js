@@ -70,18 +70,10 @@ async function getAffectedPackagesAndPaths(options = {}) {
   // If Nx cannot compute affected projects, fail instead of silently
   // returning an empty list, which could cause CI to skip tests/jobs.
   if (exitCode !== 0) {
-    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
-    if (debugEnabled) {
-      console.error(
-        "[nx-affected] `pnpm nx show projects --affected --json` failed.",
-        "exitCode:",
-        exitCode,
-        "stderr:",
-        affectedStderr || "<none>",
-        "stdout:",
-        affectedStdout || "<none>",
-      );
-    }
+    // Temporary: always log so CI shows the actual nx error without RUNNER_DEBUG=1.
+    console.error("[nx-affected] nx failed. exitCode:", exitCode);
+    console.error("[nx-affected] stderr:", affectedStderr || "<none>");
+    console.error("[nx-affected] stdout:", affectedStdout || "<none>");
     throw new Error(`pnpm nx show projects --affected --json failed with exit code ${exitCode}`);
   }
 
