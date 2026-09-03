@@ -27,6 +27,7 @@ const e2eDelegationAccounts: Array<{
   requiresExpertMode?: boolean;
   supportsLNS?: boolean;
   bugTicket?: string;
+  requiresValidatorSelection?: boolean;
 }> = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
@@ -48,6 +49,7 @@ const e2eDelegationAccounts: Array<{
     delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
+    requiresValidatorSelection: true,
   },
   {
     delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
@@ -131,7 +133,12 @@ for (const account of e2eDelegationAccounts) {
         }
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        if (account.requiresValidatorSelection) {
+          await app.delegate.inputProvider(account.delegate.provider);
+          await app.delegate.selectProviderByName(account.delegate.provider);
+        } else {
+          await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        }
         await app.delegate.continue();
         await app.delegate.fillAmount(account.delegate.amount);
         await app.delegate.continue();
@@ -391,6 +398,8 @@ for (const validator of validators) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
+        const isOsmosis = validator.delegate.account.currency.id === Currency.OSMO.id;
+
         if (validator.delegate.account.currency.name == Currency.MULTIVERS_X.name) {
           await app.delegate.verifyContinueDisabled();
           await app.delegate.checkValidatorListIsVisible();
@@ -407,12 +416,23 @@ for (const validator of validators) {
           // Explicitly (re)select the provider to force a clean, settled transaction update.
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
           await app.delegate.selectProviderByName(validator.delegate.provider);
+        } else if (isOsmosis) {
+          // Osmosis has no Ledger validator pre-selection: the full list is already expanded
+          // and Continue stays disabled until a validator is explicitly picked.
+          await app.delegate.verifyContinueDisabled();
+          await app.delegate.checkValidatorListIsVisible();
+          await app.delegate.inputProvider(validator.delegate.provider);
+          await app.delegate.selectProviderByName(validator.delegate.provider);
         } else {
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
           await app.delegate.verifyContinueEnabled();
         }
         await app.delegate.verifyProvider(1);
-        await app.delegate.openSearchProviderModal();
+        if (isOsmosis) {
+          await app.delegate.clearProviderSearch();
+        } else {
+          await app.delegate.openSearchProviderModal();
+        }
         await app.delegate.checkValidatorListIsVisible();
         await app.delegate.selectProviderOnRow(2);
         await app.delegate.closeProviderList(2);

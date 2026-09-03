@@ -33,6 +33,7 @@ const ValidatorRow = ({
         validatorName: validator.name || validator.validatorAddress,
       }}
       onPress={onPressT}
+      touchableTestID={`provider-row-${validator.name || validator.validatorAddress}`}
     >
       <View style={styles.validator}>
         <ValidatorImage

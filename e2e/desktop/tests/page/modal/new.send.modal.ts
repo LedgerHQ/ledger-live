@@ -15,8 +15,7 @@ export class NewSendModal extends Modal {
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true });
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
-  readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
-  readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
+  readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
@@ -80,12 +79,9 @@ export class NewSendModal extends Modal {
     await expect(this.memoInput).toHaveValue(memo);
   }
 
-  @step("Skip memo")
-  async skipMemo({ confirm = true }: { confirm?: boolean } = {}) {
-    await this.skipMemoLink.click();
-    if (confirm) {
-      await this.skipMemoConfirmButton.click();
-    }
+  @step("Confirm sending without memo")
+  async confirmSkipMemo() {
+    await this.skipMemoConfirmButton.click();
   }
 
   @step("Click View details")
