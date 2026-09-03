@@ -25,7 +25,7 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - `useContactsFeature()` and related resolvers: expose the Contacts feature configuration for both
   applications and Contacts leaf flows.
 - `resolveEligibleAddressCurrencyIds()`: resolves configured Contacts families to production
-  network identifiers.
+  network identifiers, keeping only the networks the device can register an address on.
 - `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
   operation, including device credentials for external contacts.
 - `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared
