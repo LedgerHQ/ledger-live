@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.19.0-next.2
+
+### Minor Changes
+
+- [#21482](https://github.com/LedgerHQ/ledger-live/pull/21482) [`129c4db`](https://github.com/LedgerHQ/ledger-live/commit/129c4db3a130b39c44a40aeefa987989a81d1219) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix theme reverting to dark when navigating from My Ledger to Contacts
+
 ## 4.19.0-next.1
 
 ### Minor Changes
