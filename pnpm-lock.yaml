@@ -16369,12 +16369,6 @@ importers:
       '@ledgerhq/ui-shared':
         specifier: workspace:^
         version: link:packages/shared
-      '@playwright/test':
-        specifier: 'catalog:'
-        version: 1.60.0
-      concurrently:
-        specifier: ^8.0.0
-        version: 8.2.2
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -16722,15 +16716,6 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@rsbuild/core':
-        specifier: 'catalog:'
-        version: 2.1.13
-      '@rsbuild/plugin-node-polyfill':
-        specifier: 'catalog:'
-        version: 1.4.6(@rsbuild/core@2.1.13)
-      '@rsbuild/plugin-react':
-        specifier: 'catalog:'
-        version: 2.1.0(@rsbuild/core@2.1.13)(@rspack/core@2.1.10)
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.1.10
@@ -16806,9 +16791,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0
-      os-browserify:
-        specifier: 0.3.0
-        version: 0.3.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.64.0
@@ -16845,12 +16827,6 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      tty-browserify:
-        specifier: 0.0.1
-        version: 0.0.1
-      util:
-        specifier: ^0.12.5
-        version: 0.12.5
 
   libs/ui/packages/shared:
     devDependencies:
