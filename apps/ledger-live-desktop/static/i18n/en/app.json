@@ -9228,7 +9228,7 @@
         "showBalance": "Show balance",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
-        "upToDate": "Up to date",
+        "upToDate": "Update balance",
         "lastSync": "Last sync: {{date}}",
         "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
         "syncFailed": "Private balance sync failed"
