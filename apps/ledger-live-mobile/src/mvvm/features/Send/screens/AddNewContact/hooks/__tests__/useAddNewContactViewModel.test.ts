@@ -7,7 +7,7 @@ import {
   mockExternalAddressDeviceContext,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { useContactsAddContactDrawerAdapter } from "LLM/features/Contacts/screens/ContactsPage/hooks/useContactsAddContactDrawerAdapter";
+import { useAddContactDialogViewModel } from "@features/flow-contacts-add-contact";
 import { useContactsAddressValidationAdapter } from "LLM/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import { useAddNewContactViewModel } from "../useAddNewContactViewModel";
@@ -21,10 +21,29 @@ const adapterResult = {
   onClose: jest.fn(),
   isOpen: false,
   isSaving: false,
+  invalidNameError: null,
 };
 
 jest.mock("LLM/features/Send/context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
+}));
+
+jest.mock("LLM/features/Send/context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({
+    inputMethod: "manual",
+    resultType: null,
+    recipientType: null,
+    savedContactDuringFlow: false,
+    setInputMethod: jest.fn(),
+    setRecipientResolution: jest.fn(),
+    resetRecipientResolution: jest.fn(),
+    markContactSaved: jest.fn(),
+  }),
+}));
+
+jest.mock("~/analytics", () => ({
+  track: jest.fn(),
+  screen: jest.fn(),
 }));
 
 jest.mock("~/context/hooks", () => ({
@@ -41,19 +60,17 @@ jest.mock("@features/platform-contacts/device", () => ({
   }),
 }));
 
-jest.mock(
-  "LLM/features/Contacts/screens/ContactsPage/hooks/useContactsAddContactDrawerAdapter",
-  () => ({
-    useContactsAddContactDrawerAdapter: jest.fn(),
-  }),
-);
+jest.mock("@features/flow-contacts-add-contact", () => ({
+  ...jest.requireActual("@features/flow-contacts-add-contact"),
+  useAddContactDialogViewModel: jest.fn(),
+}));
 
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: jest.fn(),
 }));
 
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
-const mockedUseContactsAddContactDrawerAdapter = jest.mocked(useContactsAddContactDrawerAdapter);
+const mockedUseAddContactDialogViewModel = jest.mocked(useAddContactDialogViewModel);
 const mockedUseContactsAddressValidationAdapter = jest.mocked(useContactsAddressValidationAdapter);
 
 function countAddAddressDispatches(): number {
@@ -86,7 +103,7 @@ describe("useAddNewContactViewModel", () => {
   async function renderAtReviewStep() {
     const rendered = renderDrawer();
     act(() => rendered.result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -108,7 +125,7 @@ describe("useAddNewContactViewModel", () => {
     jest.clearAllMocks();
     mockDieProps = undefined;
     registerExternalAddress.mockResolvedValue(signedAddress);
-    mockedUseContactsAddContactDrawerAdapter.mockReturnValue(adapterResult as never);
+    mockedUseAddContactDialogViewModel.mockReturnValue(adapterResult as never);
     mockedUseContactsAddressValidationAdapter.mockReturnValue({
       validateAddress,
     });
@@ -129,7 +146,7 @@ describe("useAddNewContactViewModel", () => {
     expect(result.current.drawerStep).toBe("chooser");
     expect(result.current.isDrawerOpen).toBe(true);
     expect(result.current.addressPhase).toBeNull();
-    expect(mockedUseContactsAddContactDrawerAdapter).toHaveBeenCalled();
+    expect(mockedUseAddContactDialogViewModel).toHaveBeenCalled();
   });
 
   it("should close the drawer while the device intent executor is running", () => {
@@ -143,7 +160,7 @@ describe("useAddNewContactViewModel", () => {
   it("should start the add-address flow after creating a contact", async () => {
     const { result } = renderDrawer();
     act(() => result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -169,7 +186,7 @@ describe("useAddNewContactViewModel", () => {
 
     const { result } = renderDrawer();
     act(() => result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     act(() => {
       void onSaveSuccess?.(createdContact);
@@ -206,7 +223,7 @@ describe("useAddNewContactViewModel", () => {
 
     const { result } = renderDrawer();
     act(() => result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     act(() => {
       void onSaveSuccess?.(createdContact);
@@ -242,7 +259,7 @@ describe("useAddNewContactViewModel", () => {
 
     const { result } = renderDrawer();
     act(() => result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);
@@ -347,7 +364,7 @@ describe("useAddNewContactViewModel", () => {
   it("should close the drawer when going back from naming an address after creating a contact", async () => {
     const { result } = renderDrawer();
     act(() => result.current.onAddNewContact());
-    const onSaveSuccess = mockedUseContactsAddContactDrawerAdapter.mock.calls.at(-1)?.[0];
+    const onSaveSuccess = mockedUseAddContactDialogViewModel.mock.calls.at(-1)?.[0]?.onSaveSuccess;
 
     await act(async () => {
       await onSaveSuccess?.(createdContact);

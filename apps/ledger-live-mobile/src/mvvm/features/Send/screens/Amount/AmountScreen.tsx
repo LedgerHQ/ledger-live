@@ -2,28 +2,27 @@ import React, { useEffect, useMemo } from "react";
 import { SendFlowLayout } from "../../components/SendFlowLayout";
 import { AmountScreenInner } from "./components/AmountScreenInner";
 import { useAmountScreen } from "./hooks/useAmountScreen";
-import { track, usePageNameFromRoute } from "~/analytics";
+import { screen } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { useSendFlowData } from "../../context/SendFlowContext";
+import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
 
 export function AmountScreen() {
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
+  const { recipientType } = useSendFlowTracking();
 
-  const trackingProperties = useMemo(() => {
-    return getSendFlowTrackingProperties(account, parentAccount);
-  }, [account, parentAccount]);
-
-  const page = usePageNameFromRoute();
+  const trackingProperties = useMemo(
+    () => ({
+      ...getSendFlowTrackingProperties(account, parentAccount),
+      recipientType,
+    }),
+    [account, parentAccount, recipientType],
+  );
 
   useEffect(() => {
-    track("send_modal", {
-      ...trackingProperties,
-      name: "step amount",
-      page,
-      flow: "send",
-    });
-  }, [page, trackingProperties]);
+    void screen("Modal send - step amount", undefined, trackingProperties);
+  }, [trackingProperties]);
 
   const viewModel = useAmountScreen();
   if (!viewModel.ready) {

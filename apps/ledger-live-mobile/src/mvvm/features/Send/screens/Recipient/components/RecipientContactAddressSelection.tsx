@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
@@ -18,7 +18,7 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 type RecipientContactAddressSelectionProps = Readonly<{
   contact: Contact;
   network: CryptoCurrency;
-  onAddressSelect: (address: string) => void;
+  onAddressSelect: (address: ContactAddress, addressRank: number) => void;
 }>;
 
 export function RecipientContactAddressSelection({
@@ -46,14 +46,14 @@ export function RecipientContactAddressSelection({
       </Box>
 
       <Box lx={{ gap: "s8" }}>
-        {contact.addresses.map(address => {
+        {contact.addresses.map((address, index) => {
           const formattedAddress = formatAddress(address.address, SEND_ADDRESS_FORMAT_OPTIONS);
 
           return (
             <Card
               key={address.id}
               type="interactive"
-              onPress={() => onAddressSelect(address.address)}
+              onPress={() => onAddressSelect(address, index + 1)}
               accessibilityLabel={`${address.label}, ${address.address}`}
               testID={`send-recipient-contact-address-${address.id}`}
             >
