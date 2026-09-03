@@ -3,7 +3,6 @@ import { contactsInitialState } from "@domain/entity-contact";
 import { payCardBalanceInitialState } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintInitialState } from "@features/flow-pay-request/state";
-import { payCardLoginIntroInitialState } from "@features/flow-pay-card-auth/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -91,7 +90,6 @@ const INITIAL_STATE: State = {
   payCardBalance: payCardBalanceInitialState,
   payCardFeatureTour: payCardFeatureTourInitialState,
   payRequestVerifyHint: payRequestVerifyHintInitialState,
-  payCardLoginIntro: payCardLoginIntroInitialState,
   settings: SETTINGS_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
