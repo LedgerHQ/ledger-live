@@ -47,10 +47,10 @@ describe("Card (web)", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
-  it("hides the host title while nobody is signed in", () => {
+  it("shows the host title while nobody is signed in", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.queryByText(title)).not.toBeInTheDocument();
+    expect(screen.getByText(title)).toBeVisible();
   });
 
   it("composes the bare artwork with the auth login and More menu", () => {
