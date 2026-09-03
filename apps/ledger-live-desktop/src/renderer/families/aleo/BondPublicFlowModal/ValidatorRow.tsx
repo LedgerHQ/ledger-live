@@ -25,9 +25,7 @@ import { openURL } from "~/renderer/linking";
  * explorer, but sunk below anything better and not selectable.
  */
 export const isDisabled = (validator: AleoValidator) =>
-  !validator.isOpen ||
-  validator.nonEarningReason === "belowCommitteeMinimum" ||
-  validator.nonEarningReason === "overConcentrated";
+  !validator.isOpen || validator.nonEarningReason === "overConcentrated";
 
 type Props = {
   validator: AleoValidator;
