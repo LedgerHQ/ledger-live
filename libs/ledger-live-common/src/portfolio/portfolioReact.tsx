@@ -1,8 +1,6 @@
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
 import type {
   Account,
   AccountLike,

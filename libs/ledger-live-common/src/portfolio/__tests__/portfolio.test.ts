@@ -336,7 +336,7 @@ describe("Portfolio", () => {
 
     // Builds a state where the "now" rate comes from "latest" and the "then" rate from the fallback,
     // so both endpoints can be controlled independently for the edge cases below.
-    function stateWithRates({ now, then }: { now?: number; then?: number }) {
+    function stateWithRates({ now, past }: { now?: number; past?: number }) {
       const from = getCryptoCurrencyById("bitcoin");
       const to = getFiatCurrencyByTicker("USD");
       const map = new Map<string, number>();
@@ -347,7 +347,7 @@ describe("Portfolio", () => {
         cache: {
           [pairId({ from, to })]: {
             map,
-            fallback: then,
+            fallback: past,
             stats: {
               oldest: null,
               earliest: null,
@@ -363,7 +363,7 @@ describe("Portfolio", () => {
     it("returns a 0% change when the price is flat over the range", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: 100 });
+      const state = stateWithRates({ now: 100, past: 100 });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change.value).toBe(0);
       expect(change.percentage).toBe(0);
@@ -378,7 +378,7 @@ describe("Portfolio", () => {
         spendableBalance: zeroBalance,
       };
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: 80 });
+      const state = stateWithRates({ now: 100, past: 80 });
       const change = getCurrentBalanceCountervalueChange([emptyAccount], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
@@ -386,7 +386,7 @@ describe("Portfolio", () => {
     it("returns a neutral change when the past rate is missing", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: undefined });
+      const state = stateWithRates({ now: 100, past: undefined });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
@@ -394,7 +394,7 @@ describe("Portfolio", () => {
     it("returns a neutral change when the current rate is missing", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: undefined, then: 100 });
+      const state = stateWithRates({ now: undefined, past: 100 });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });

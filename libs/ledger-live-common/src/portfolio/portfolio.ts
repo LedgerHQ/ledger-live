@@ -18,11 +18,9 @@ import type {
   AssetsDistribution,
   ValueChange,
 } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
 import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
 import { defaultAssetsDistribution } from "./assetsDistribution";
 import type { AssetsDistributionOpts } from "./assetsDistribution";
