@@ -338,6 +338,15 @@ function withContactsPageReadyState(
   });
 }
 
+/** Row labels in render order. Disabled rows are only reachable through their explanation wrapper. */
+function getRenderedRowLabels(prefix: "asset-item" | "network-item") {
+  return screen
+    .getAllByTestId(new RegExp(`^${prefix}-`))
+    .map(row =>
+      String(row.props.testID).replace(`${prefix}-explanation-`, "").replace(`${prefix}-`, ""),
+    );
+}
+
 const evmOnlyContactsFeatureFlag: Parameters<typeof withContactsPageReadyState>[0] = {
   lwmContacts: {
     enabled: true,
@@ -985,6 +994,29 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
     });
+  }, 10_000);
+
+  it("should group ineligible assets and networks under a 'Not available yet' section", async () => {
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    await screen.findByTestId("asset-item-explanation-BTC");
+    expect(screen.getByTestId("modular-drawer-unavailable-assets-header")).toBeVisible();
+
+    const assetTickers = getRenderedRowLabels("asset-item");
+    expect(assetTickers.indexOf("USDT")).toBeLessThan(assetTickers.indexOf("BTC"));
+
+    await user.press(screen.getByTestId("asset-item-USDT"));
+
+    await screen.findByTestId("network-item-explanation-Solana");
+    expect(screen.getByTestId("modular-drawer-unavailable-networks-header")).toBeVisible();
+
+    const networkNames = getRenderedRowLabels("network-item");
+    expect(networkNames.indexOf("Ethereum")).toBeLessThan(networkNames.indexOf("Solana"));
   }, 10_000);
 
   it("should return to currency selection without removing the contact detail route", async () => {

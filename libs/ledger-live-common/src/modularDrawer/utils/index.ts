@@ -1,5 +1,7 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 export { groupCurrenciesByAsset } from "./groupCurrenciesByAsset";
+export { partitionByAvailability } from "./partitionByAvailability";
+export type { AvailabilityPartition } from "./partitionByAvailability";
 export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
 const getBaseId = (currency: CryptoOrTokenCurrency) =>

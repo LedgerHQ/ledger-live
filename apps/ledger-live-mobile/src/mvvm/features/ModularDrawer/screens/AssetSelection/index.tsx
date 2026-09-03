@@ -31,12 +31,14 @@ import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
+import { partitionByAvailability } from "@ledgerhq/live-common/modularDrawer/utils/partitionByAvailability";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import {
   getPerpsUiUseCase,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import type { DisabledItemExplanation, DisabledItemsExplanation } from "../../types";
+import { UnavailableSectionHeader } from "../../components/UnavailableSectionHeader";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -54,7 +56,10 @@ export type AssetSelectionStepProps = {
   onDisabledAssetPress?: (explanation: DisabledItemExplanation) => void;
 };
 
+type AssetListRow = { kind: "asset"; asset: AssetRowData } | { kind: "unavailableSectionHeader" };
+
 const SAFE_MARGIN_BOTTOM = 48;
+const UNAVAILABLE_SECTION_HEADER_KEY = "unavailable-section-header";
 
 const AssetSelection = ({
   availableAssets,
@@ -104,7 +109,7 @@ const AssetSelection = ({
     [selectableNetworkIds],
   );
 
-  const formattedAssets = useAssetConfiguration(availableAssets ?? [], {
+  const formattedAssets: AssetRowData[] = useAssetConfiguration(availableAssets ?? [], {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
@@ -122,6 +127,18 @@ const AssetSelection = ({
 
     return { ...asset, disabled: !isSelectable };
   });
+
+  const { available, unavailable } = partitionByAvailability(
+    formattedAssets,
+    asset => !!asset.disabled,
+  );
+  const assetRows: AssetListRow[] = available.map(asset => ({ kind: "asset", asset }));
+  if (unavailable.length > 0) {
+    assetRows.push(
+      { kind: "unavailableSectionHeader" },
+      ...unavailable.map(asset => ({ kind: "asset" as const, asset })),
+    );
+  }
 
   const handleAssetClick = useCallback(
     (asset: AssetRowData) => {
@@ -157,14 +174,22 @@ const AssetSelection = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: AssetRowData }) => (
-      <AssetRow
-        {...item}
-        onClick={handleAssetClick}
-        disabledExplanation={item.disabled ? disabledAssetExplanation?.(item.name) : undefined}
-        onDisabledPress={onDisabledAssetPress}
-      />
-    ),
+    ({ item }: { item: AssetListRow }) => {
+      if (item.kind === "unavailableSectionHeader") {
+        return <UnavailableSectionHeader testID="modular-drawer-unavailable-assets-header" />;
+      }
+
+      const { asset } = item;
+
+      return (
+        <AssetRow
+          {...asset}
+          onClick={handleAssetClick}
+          disabledExplanation={asset.disabled ? disabledAssetExplanation?.(asset.name) : undefined}
+          onDisabledPress={onDisabledAssetPress}
+        />
+      );
+    },
     [disabledAssetExplanation, handleAssetClick, onDisabledAssetPress],
   );
 
@@ -184,10 +209,12 @@ const AssetSelection = ({
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled
-        data={formattedAssets}
-        keyExtractor={(item: AssetRowData) => item.id}
-        getItemCount={(items: AssetRowData[]) => items.length}
-        getItem={(items: AssetRowData[], index: number) => items[index]}
+        data={assetRows}
+        keyExtractor={(item: AssetListRow) =>
+          item.kind === "asset" ? item.asset.id : UNAVAILABLE_SECTION_HEADER_KEY
+        }
+        getItemCount={(items: AssetListRow[]) => items.length}
+        getItem={(items: AssetListRow[], index: number) => items[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"

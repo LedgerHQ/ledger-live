@@ -213,6 +213,38 @@ describe("SelectNetwork Integration Test", () => {
     expect(mockOnNetworkSelected).toHaveBeenCalledWith(expect.objectContaining(ethereumCurrency));
   });
 
+  it("should group ineligible networks under a 'Not available yet' section", () => {
+    render(
+      <NetworkSelectorContent
+        {...defaultProps}
+        selectableNetworkIds={[ethereumCurrency.id, polygonCurrency.id]}
+        networks={[bscCurrency, ethereumCurrency, baseCurrency, polygonCurrency]}
+      />,
+    );
+
+    expect(screen.getByTestId("network-selector-unavailable-networks-header")).toBeInTheDocument();
+    expect(screen.getByText("Not available yet")).toBeInTheDocument();
+
+    const networkNames = screen
+      .getAllByTestId(/network-item-name-/)
+      .map(network => network.getAttribute("data-testid"));
+
+    expect(networkNames).toEqual([
+      "network-item-name-Ethereum",
+      "network-item-name-Polygon",
+      "network-item-name-BNB Chain",
+      "network-item-name-Base",
+    ]);
+  });
+
+  it("should not render the 'Not available yet' section when every network is eligible", () => {
+    render(<NetworkSelectorContent {...defaultProps} />);
+
+    expect(
+      screen.queryByTestId("network-selector-unavailable-networks-header"),
+    ).not.toBeInTheDocument();
+  });
+
   describe("Network Ordering", () => {
     it("should order networks by balance when balance element is configured", () => {
       const balanceOnlyConfig = {
