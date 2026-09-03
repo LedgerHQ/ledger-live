@@ -1,7 +1,8 @@
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
-import { listOperations } from "../listOperations";
+import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -15,13 +16,20 @@ describe("listOperations", () => {
     DeepPartialReturn<ChainAPI["getParsedTransactions"]>
   >;
 
+  const mockGetParsedTokenAccountsByOwner = jest.fn().mockResolvedValue({ value: [] });
+  const mockGetParsedToken2022AccountsByOwner = jest.fn().mockResolvedValue({ value: [] });
+
   const api = {
     getSignaturesForAddress: mockGetSignaturesForAddress,
     getParsedTransactions: mockGetParsedTransactions,
+    getParsedTokenAccountsByOwner: mockGetParsedTokenAccountsByOwner,
+    getParsedToken2022AccountsByOwner: mockGetParsedToken2022AccountsByOwner,
   } as unknown as ChainAPI;
 
   afterEach(() => {
     jest.clearAllMocks();
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+    mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [] });
   });
 
   it("should return empty list when no signatures found", async () => {
@@ -31,6 +39,111 @@ describe("listOperations", () => {
 
     expect(result.items).toEqual([]);
     expect(result.next).toBeUndefined();
+  });
+
+  it("names every account the transaction credited", async () => {
+    const second = "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx";
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+    ]);
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig1"],
+          message: {
+            accountKeys: [
+              { pubkey: new PublicKey(TEST_ADDRESS) },
+              { pubkey: new PublicKey(TEST_RECIPIENT) },
+              { pubkey: new PublicKey(second) },
+            ],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: {
+          fee: 5000,
+          preBalances: [1_000_000_000, 0, 0],
+          postBalances: [799_995_000, 100_000_000, 100_000_000],
+        },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items[0]).toMatchObject({
+      type: "OUT",
+      senders: [TEST_ADDRESS],
+      recipients: [TEST_RECIPIENT, second],
+    });
+  });
+
+  describe("account operations beyond transfers", () => {
+    function singleInstruction(program: string, type: string) {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [{ program, parsed: { type, info: {} } }],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+    }
+
+    it.each([
+      ["spl-associated-token-account", "associate", "OPT_OUT"],
+      ["spl-token", "closeAccount", "OPT_OUT"],
+      ["spl-token", "freezeAccount", "FREEZE"],
+      ["spl-token", "thawAccount", "UNFREEZE"],
+      ["spl-token-2022", "thawAccount", "UNFREEZE"],
+    ])("types a lone %s/%s instruction as %s", async (program, type, expected) => {
+      singleInstruction(program, type);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: expected, value: 5000n });
+    });
+
+    it("leaves a transfer alone", async () => {
+      singleInstruction("system", "transfer");
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FEES" });
+    });
+
+    it("ignores a memo when counting instructions", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [
+                { program: "spl-token", parsed: { type: "freezeAccount", info: {} } },
+                { program: "spl-memo", parsed: { type: "memo", info: {} } },
+              ],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FREEZE" });
+    });
   });
 
   it("should return OUT operations from parsed transactions", async () => {
@@ -121,6 +234,93 @@ describe("listOperations", () => {
     expect(result.items[0].recipients).toEqual([TEST_ADDRESS]);
   });
 
+  it("finds an incoming token transfer through the token account's own history", async () => {
+    const blockTime = 1700000000;
+    const ata = "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi";
+    const mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [{ pubkey: new PublicKey(ata) }],
+    });
+    mockGetSignaturesForAddress.mockImplementation(async (source: string) =>
+      source === ata ? [{ signature: "sig-ata", slot: 100, blockTime, err: null }] : [],
+    );
+
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig-ata"],
+          message: {
+            accountKeys: [
+              { pubkey: new PublicKey(TEST_RECIPIENT) },
+              { pubkey: new PublicKey(ata) },
+            ],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: {
+          fee: 5000,
+          preBalances: [1_000_000_000, 2_039_280],
+          postBalances: [999_995_000, 2_039_280],
+          preTokenBalances: [
+            {
+              accountIndex: 1,
+              mint,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID.toBase58(),
+              uiTokenAmount: { amount: "0" },
+            },
+          ],
+          postTokenBalances: [
+            {
+              accountIndex: 1,
+              mint,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID.toBase58(),
+              uiTokenAmount: { amount: "500" },
+            },
+          ],
+        },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].type).toBe("IN");
+    expect(result.items[0].value).toBe(500n);
+  });
+
+  it("emits a transaction reaching both streams only once", async () => {
+    const blockTime = 1700000000;
+    const ata = "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi";
+
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [{ pubkey: new PublicKey(ata) }],
+    });
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 100, blockTime, err: null },
+    ]);
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig1"],
+          message: {
+            accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }, { pubkey: new PublicKey(ata) }],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: { fee: 5000, preBalances: [1_000_000, 0], postBalances: [995_000, 0] },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(1);
+  });
+
   it("should detect FEES operations when fee payer has zero net change", async () => {
     const blockTime = 1700000000;
     mockGetSignaturesForAddress.mockResolvedValue([
@@ -192,7 +392,31 @@ describe("listOperations", () => {
 
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
-    expect(result.next).toBe("sig-99");
+    mockGetSignaturesForAddress.mockClear();
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
+      TEST_ADDRESS,
+      expect.objectContaining({ before: "sig-99" }),
+    );
+  });
+
+  it("discovers the signature streams once, not on every page", async () => {
+    const blockTime = 1700000000;
+    const sigs = Array.from({ length: 100 }, (_, i) => ({
+      signature: `sig-${i}`,
+      slot: 200 - i,
+      blockTime,
+      err: null,
+    }));
+    mockGetSignaturesForAddress.mockResolvedValue(sigs);
+    mockGetParsedTransactions.mockResolvedValue(sigs.map(() => null));
+
+    const first = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: first.next });
+
+    expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
   });
 
   it("should not set next cursor when result count is less than limit", async () => {
@@ -639,7 +863,12 @@ describe("listOperations", () => {
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
     expect(result.items).toEqual([]);
-    expect(result.next).toBe("sig-99");
+    mockGetSignaturesForAddress.mockClear();
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
+      TEST_ADDRESS,
+      expect.objectContaining({ before: "sig-99" }),
+    );
   });
 
   it("should throw when order is asc", async () => {
@@ -930,6 +1159,85 @@ describe("listOperations", () => {
       };
     }
 
+    it("types a lone burn instruction as BURN", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const tx = makeTxWithTokenBalances(
+        [
+          {
+            accountIndex: 0,
+            mint: USDC_MINT,
+            owner: TEST_ADDRESS,
+            programId: TOKEN_PROGRAM_ID_STR,
+            uiTokenAmount: { amount: "1000" },
+          },
+        ],
+        [
+          {
+            accountIndex: 0,
+            mint: USDC_MINT,
+            owner: TEST_ADDRESS,
+            programId: TOKEN_PROGRAM_ID_STR,
+            uiTokenAmount: { amount: "400" },
+          },
+        ],
+      );
+      tx.transaction.message.instructions = [
+        { program: "spl-token", parsed: { type: "burn", info: {} } },
+      ] as never;
+      mockGetParsedTransactions.mockResolvedValue([tx]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOp = result.items.find(op => op.asset.type !== "native");
+      expect(tokenOp).toMatchObject({ type: "BURN", value: 600n });
+    });
+
+    it.each([
+      ["freezeAccount", "FREEZE"],
+      ["thawAccount", "UNFREEZE"],
+    ])("emits %s on the token account as %s", async (type, expected) => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const balance = {
+        accountIndex: 0,
+        mint: USDC_MINT,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount: "1000" },
+      };
+      const tx = makeTxWithTokenBalances([balance], [balance]);
+      tx.transaction.message.instructions = [
+        { program: "spl-token", parsed: { type, info: {} } },
+      ] as never;
+      mockGetParsedTransactions.mockResolvedValue([tx]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOp = result.items.find(op => op.asset.type !== "native");
+      expect(tokenOp).toMatchObject({ type: expected, value: 0n });
+    });
+
+    it("still skips a token account the transaction left untouched", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const balance = {
+        accountIndex: 0,
+        mint: USDC_MINT,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount: "1000" },
+      };
+      mockGetParsedTransactions.mockResolvedValue([makeTxWithTokenBalances([balance], [balance])]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items.find(op => op.asset.type !== "native")).toBeUndefined();
+    });
+
     it("should detect a fully spent token (present in pre, absent from post)", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
@@ -1091,7 +1399,7 @@ describe("listOperations", () => {
       });
     });
 
-    it("should fall back to accountKeys for counterparty when not in token balances", async () => {
+    it("names no recipient when none appears in the token balances", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime, err: null },
@@ -1125,7 +1433,8 @@ describe("listOperations", () => {
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
       expect(tokenOps[0].type).toBe("OUT");
-      expect(tokenOps[0].recipients).toEqual([TEST_RECIPIENT]);
+      expect(tokenOps[0].recipients).toEqual([]);
+      expect(tokenOps[0].senders).toEqual([TEST_ADDRESS]);
     });
 
     it("should handle token operation with no counterparty (single account)", async () => {
@@ -1282,5 +1591,22 @@ describe("listOperations", () => {
       expect(tokenOps).toHaveLength(1);
       expect(tokenOps[0].details).toEqual(expect.objectContaining({ internal: true }));
     });
+  });
+
+  describe("dropMemoLengthPrefixIfAny", () => {
+    it.each([
+      ["[5] hello", "hello"],
+      ["[6] héllo", "héllo"],
+      ["[11] 🚀 to moon", "🚀 to moon"],
+    ])("drops the length prefix of %s", (raw, expected) => {
+      expect(dropMemoLengthPrefixIfAny(raw)).toBe(expected);
+    });
+
+    it.each(["no prefix at all", "[not a number] x", "[5]no space"])(
+      "leaves %s untouched",
+      memo => {
+        expect(dropMemoLengthPrefixIfAny(memo)).toBe(memo);
+      },
+    );
   });
 });

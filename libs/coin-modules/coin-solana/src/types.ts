@@ -11,6 +11,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { TxData } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
@@ -357,7 +358,13 @@ export type SolanaOperationExtraRaw = {
   stake?: ExtraStakeInfoRaw;
 };
 
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
-};
+/**
+ * A transaction a partner already built, reached through `Transaction.raw`. The intent's `type`,
+ * `recipient` and `amount` describe nothing then: crafting only refreshes the blockhash.
+ */
+export interface SolanaTxData extends TxData {
+  type: "solana";
+  raw?: string;
+  templateId?: string;
+  stakeAccountSeed?: string;
+}

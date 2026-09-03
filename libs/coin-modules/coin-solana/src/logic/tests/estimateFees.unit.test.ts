@@ -20,6 +20,30 @@ const { buildVersionedTransaction } = jest.requireMock("../craftTransaction");
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
 
+function mintAccountInfo(program: string, extensions?: unknown[]) {
+  return {
+    data: {
+      parsed: {
+        type: "mint",
+        info: {
+          decimals: 6,
+          freezeAuthority: null,
+          isInitialized: true,
+          mintAuthority: null,
+          supply: "1000000000000",
+          ...(extensions ? { extensions } : {}),
+        },
+      },
+      program,
+      space: 82,
+    },
+    executable: false,
+    lamports: 1461600,
+    owner: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    rentEpoch: 0,
+  };
+}
+
 function createMockApi(feeResponses: (number | null)[] = [5000]): ChainAPI {
   let callIdx = 0;
   return {
@@ -35,6 +59,9 @@ function createMockApi(feeResponses: (number | null)[] = [5000]): ChainAPI {
       blockhash: "newBlockhash",
       lastValidBlockHeight: 100,
     }),
+    getAccountInfo: jest.fn().mockResolvedValue(null),
+    getEpochInfo: jest.fn().mockResolvedValue({ epoch: 0 }),
+    getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(0),
   } as unknown as ChainAPI;
 }
 
@@ -85,6 +112,7 @@ describe("estimateFees", () => {
 
   it("should use spl-token program for standard SPL token intents", async () => {
     const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
     setupBuildMock();
 
     await estimateFees(api, {
@@ -102,8 +130,9 @@ describe("estimateFees", () => {
     expect(command.extensions).toBeUndefined();
   });
 
-  it("should use spl-token-2022 program and include dummy extensions for Token-2022 intents", async () => {
+  it("should measure a Token-2022 intent with the spl-token dummy transaction", async () => {
     const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token-2022"));
     setupBuildMock();
 
     await estimateFees(api, {
@@ -112,21 +141,154 @@ describe("estimateFees", () => {
       sender: TEST_ADDRESS,
       recipient: TEST_RECIPIENT,
       amount: 1000000n,
-      asset: { type: "spl-token-2022", assetReference: "SomeMintAddress" },
+      asset: { type: "spl", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
     } as TransactionIntent);
 
-    const tx = buildVersionedTransaction.mock.calls[0][1];
-    const command = tx.model.commandDescriptor.command;
-    expect(command.tokenProgram).toBe("spl-token-2022");
-    expect(command.extensions).not.toBeUndefined();
-    expect(command.extensions.transferFee).toEqual({
-      feePercent: 0,
-      maxTransferFee: 0,
-      transferFee: 0,
-      feeBps: 0,
-      transferAmountIncludingFee: 0,
-      transferAmountExcludingFee: 0,
-    });
+    const command = buildVersionedTransaction.mock.calls[0][1].model.commandDescriptor.command;
+    expect(command.tokenProgram).toBe("spl-token");
+    expect(command.extensions).toBeUndefined();
+  });
+
+  it("computes the transfer fee of a Token-2022 mint that levies one", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(
+      mintAccountInfo("spl-token-2022", [
+        {
+          extension: "transferFeeConfig",
+          state: {
+            newerTransferFee: { epoch: 0, maximumFee: 1000000, transferFeeBasisPoints: 100 },
+            olderTransferFee: { epoch: 0, maximumFee: 1000000, transferFeeBasisPoints: 100 },
+          },
+        },
+      ]),
+    );
+    (api.getEpochInfo as jest.Mock).mockResolvedValue({ epoch: 10 });
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+    } as TransactionIntent);
+
+    expect(result.parameters?.transferFee).toMatchObject({ feeBps: 100, maxTransferFee: 1000000 });
+    expect((result.parameters?.transferFee as { transferFee: number }).transferFee).toBeGreaterThan(
+      0,
+    );
+  });
+
+  it("measures a partner-built transaction rather than a dummy one", async () => {
+    const api = createMockApi([7000]);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+      data: {
+        type: "solana",
+        raw: "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDNzWs4isgmR+LEHY8ZcgBBLMnC4ckD1iuhSa2/Y+69I91oyGFaAZ/9w4srgx9KoqiHtPM6Vur7h4D6XVoSgrEhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALt5JNk+MAN8BXYrlkxMEL1C/sM3+ZFYwZw4eofBOKp4BAgIAAQwCAAAAgJaYAAAAAAA=",
+      },
+    } as unknown as TransactionIntent);
+
+    expect(result).toEqual({ value: 7000n });
+    expect(buildVersionedTransaction).not.toHaveBeenCalled();
+  });
+
+  it("adds the recipient's ATA rent when the transfer has to create it", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+    (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+    } as TransactionIntent);
+
+    expect(result.value).toBe(5000n + 2_039_280n);
+  });
+
+  it("charges the rent of the token account it opens", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+    (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "token.createATA",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 0n,
+      asset: {
+        type: "spl",
+        assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        assetOwner: TEST_ADDRESS,
+      },
+    } as unknown as TransactionIntent);
+
+    expect(result.value).toBe(5000n + 2_039_280n);
+  });
+
+  it("charges no rent to approve", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+    (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "token.approve",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000n,
+      asset: {
+        type: "spl",
+        assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        assetOwner: TEST_ADDRESS,
+      },
+    } as unknown as TransactionIntent);
+
+    expect(result.value).toBe(5000n);
+  });
+
+  it("sizes the ATA rent from the mint's extensions", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(
+      mintAccountInfo("spl-token-2022", [
+        {
+          extension: "transferFeeConfig",
+          state: {
+            newerTransferFee: { epoch: 0, maximumFee: 0, transferFeeBasisPoints: 0 },
+            olderTransferFee: { epoch: 0, maximumFee: 0, transferFeeBasisPoints: 0 },
+          },
+        },
+      ]),
+    );
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+    } as TransactionIntent);
+
+    const [dataLength] = (api.getMinimumBalanceForRentExemption as jest.Mock).mock.calls[0];
+    expect(dataLength).toBeGreaterThan(165);
   });
 
   it("should propagate errors from estimateTxFee", async () => {
@@ -158,6 +320,60 @@ describe("estimateFees", () => {
       asset: { type: "native" },
     } as StakingTransactionIntent);
     expect(result.value).toBe(5000n);
+  });
+
+  it("holds back the future undelegate and withdraw on a creation", async () => {
+    const api = createMockApi([5000]);
+    (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_282_880);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "staking",
+      type: "stake.createAccount",
+      mode: "delegate",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      valAddress: TEST_RECIPIENT,
+      amount: 0n,
+      useAllAmount: true,
+      asset: { type: "native" },
+    } as StakingTransactionIntent);
+
+    expect(result.parameters?.reserve).toBe(5000n + 10000n);
+    expect(result.parameters?.stakeAccountRent).toBe(2_282_880n);
+  });
+
+  it("holds nothing back on a split, which opens no new reserve", async () => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "staking",
+      type: "stake.split",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000n,
+      asset: { type: "native" },
+    } as unknown as StakingTransactionIntent);
+
+    expect(result.parameters?.reserve).toBeUndefined();
+  });
+
+  it("resolves the stake account a split opens", async () => {
+    const api = createMockApi([5000]);
+
+    const result = await estimateFees(api, {
+      intentType: "staking",
+      type: "stake.split",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+      data: { type: "solana", stakeAccountSeed: "seed-abc" },
+    } as unknown as StakingTransactionIntent);
+
+    expect(result.parameters?.stakeAccountAddress).toEqual(expect.any(String));
+    expect(result.parameters?.stakeAccountRent).toBeUndefined();
   });
 });
 

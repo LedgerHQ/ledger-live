@@ -638,12 +638,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       else newNonInternalOperations.push(op);
     }
 
+    const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
       accountId,
       allTokenAssetsBalances,
       syncConfig,
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
+      familyShapes,
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts
