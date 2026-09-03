@@ -7,6 +7,10 @@ import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
 } from "@features/flow-pay-feature-tour/state";
+import {
+  payRequestVerifyHintSlice,
+  markReceiveVerifyHintSeen,
+} from "@features/flow-pay-request/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 /**
@@ -45,6 +49,7 @@ function buildStore() {
     reducer: {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
+      payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
     },
     middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
   });
@@ -235,5 +240,26 @@ describe("usePayCardToolProps", () => {
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(false);
     expect(result.current.hasSeenFeatureTour).toBe(false);
+  });
+
+  it("exposes hasSeenReceiveVerifyHint from the request verify hint slice", () => {
+    store.dispatch(markReceiveVerifyHintSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.hasSeenReceiveVerifyHint).toBe(true);
+  });
+
+  it("resetReceiveVerifyHintSeen clears the seen flag", () => {
+    store.dispatch(markReceiveVerifyHintSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetReceiveVerifyHintSeen();
+    });
+
+    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
+    expect(result.current.hasSeenReceiveVerifyHint).toBe(false);
   });
 });

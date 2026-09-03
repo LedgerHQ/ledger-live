@@ -8,7 +8,17 @@ import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen, env } = props;
+  const {
+    flags,
+    onboarding,
+    hasSeenFeatureTour,
+    resetPayCardFeatureTourSeen,
+    hasSeenReceiveVerifyHint,
+    resetReceiveVerifyHintSeen,
+    onNavigateToPortfolio,
+    onNavigateToPayTab,
+    env,
+  } = props;
 
   return (
     <ScrollView>
@@ -60,20 +70,41 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Divider />
 
-      <Section title="Feature tour">
-        <Box style={BUTTON_ROW_STYLE}>
-          <Tag
-            size="sm"
-            appearance={hasSeenFeatureTour ? "success" : "gray"}
-            label={hasSeenFeatureTour ? "Seen" : "Not seen"}
-          />
-        </Box>
-        <Box style={BUTTON_ROW_STYLE}>
-          <Button appearance="gray" size="sm" onPress={resetPayCardFeatureTourSeen}>
-            Reset feature tour
-          </Button>
-        </Box>
-      </Section>
+      <SeenReset
+        title="Feature tour"
+        seen={hasSeenFeatureTour}
+        resetLabel="Reset feature tour"
+        onReset={resetPayCardFeatureTourSeen}
+      />
+
+      <Divider />
+
+      <SeenReset
+        title="Request verify hint"
+        seen={hasSeenReceiveVerifyHint}
+        resetLabel="Reset verify hint"
+        onReset={resetReceiveVerifyHintSeen}
+      />
+
+      {onNavigateToPortfolio || onNavigateToPayTab ? (
+        <>
+          <Divider />
+          <Section title="Quick actions">
+            <Box style={BUTTON_ROW_STYLE}>
+              {onNavigateToPortfolio ? (
+                <Button appearance="gray" size="sm" onPress={onNavigateToPortfolio}>
+                  Go to Portfolio
+                </Button>
+              ) : null}
+              {onNavigateToPayTab ? (
+                <Button appearance="gray" size="sm" onPress={onNavigateToPayTab}>
+                  Go to Pay tab
+                </Button>
+              ) : null}
+            </Box>
+          </Section>
+        </>
+      ) : null}
 
       <Divider />
 
@@ -86,6 +117,31 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         ))}
       </Section>
     </ScrollView>
+  );
+}
+
+function SeenReset({
+  title,
+  seen,
+  resetLabel,
+  onReset,
+}: Readonly<{
+  title: string;
+  seen: boolean;
+  resetLabel: string;
+  onReset: () => void;
+}>) {
+  return (
+    <Section title={title}>
+      <Box style={BUTTON_ROW_STYLE}>
+        <Tag size="sm" appearance={seen ? "success" : "gray"} label={seen ? "Seen" : "Not seen"} />
+      </Box>
+      <Box style={BUTTON_ROW_STYLE}>
+        <Button appearance="gray" size="sm" onPress={onReset}>
+          {resetLabel}
+        </Button>
+      </Box>
+    </Section>
   );
 }
 
