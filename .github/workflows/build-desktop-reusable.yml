@@ -61,8 +61,8 @@ jobs:
       matrix:
         config: >-
           ${{ fromJSON(inputs.linux-only
-          && '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"}]'
-          || '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
+          && '[{"name":"Linux","os":"ledger-wallet-8cpu-aws-public","image":"linux-x86_64.AppImage","output-name":"linux"}]'
+          || '[{"name":"Linux","os":"ledger-wallet-8cpu-aws-public","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 20

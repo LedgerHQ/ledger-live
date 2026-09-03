@@ -106,7 +106,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
     steps:

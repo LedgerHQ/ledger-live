@@ -385,7 +385,7 @@ jobs:
       id-token: write
       contents: read
     needs: [build-android, determine-builds]
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -850,7 +850,7 @@ jobs:
   allure-report-mobile-ui-e2e-smoke:
     name: "Allure Report - Mobile UI E2E Smoke (iOS + Android)"
     continue-on-error: true
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     needs: [detox-ui-e2e-ios, detox-ui-e2e-android]
     if: ${{ !cancelled() && (needs.detox-ui-e2e-ios.outputs.artifact || needs.detox-ui-e2e-android.outputs.artifact) }}
     outputs:
