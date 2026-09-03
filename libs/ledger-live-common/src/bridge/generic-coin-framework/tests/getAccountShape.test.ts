@@ -75,6 +75,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
 const buildSubAccountsMock = jest.fn();
 const mergeSubAccountsMock = jest.fn();
 jest.mock("../buildSubAccounts", () => ({
+  adoptStoredSubAccountIds: jest.requireActual("../buildSubAccounts").adoptStoredSubAccountIds,
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
   mergeSubAccounts: (...a: any[]) => mergeSubAccountsMock(...a),
 }));
@@ -232,6 +233,35 @@ describe("genericGetAccountShape", () => {
       for (const call of inferSubOperationsMock.mock.calls) {
         expect(call[1]).toBe(merged);
       }
+    });
+
+    // A legacy-synced account carries no `syncHash`, so its first generic sync is from scratch --
+    // the path that rebuilds rather than merges. The stored ids still have to survive it, or every
+    // route, star, custom name and swap-history entry keyed on one breaks.
+    it("keeps the stored sub-account id when the sync rebuilds from scratch", async () => {
+      buildSubAccountsMock.mockReturnValue([
+        { id: "framework-id", token: { id: "tok1" }, operations: [], pendingOperations: [] },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result: any = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            subAccounts: [{ id: "legacy-ata-address", token: { id: "tok1" } }],
+            pendingOperations: [],
+            blockHeight: 10,
+            operations: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.subAccounts[0].id).toBe("legacy-ata-address");
+      expect(mergeSubAccountsMock).not.toHaveBeenCalled();
     });
 
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {

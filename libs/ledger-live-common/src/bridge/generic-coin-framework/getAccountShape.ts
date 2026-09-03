@@ -20,7 +20,7 @@ import {
   optionalNumeric,
 } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
-import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
+import { adoptStoredSubAccountIds, buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
@@ -642,9 +642,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
     });
+    const storedSubAccounts = initialAccount?.subAccounts ?? [];
+    // `syncFromScratch` governs which operations are rebuilt, not which identities survive: the
+    // rebuilt list still has to answer to the ids the sub-accounts are stored under.
     const subAccounts = syncFromScratch
-      ? newSubAccounts
-      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
+      ? adoptStoredSubAccountIds(storedSubAccounts, newSubAccounts)
+      : mergeSubAccounts(storedSubAccounts, newSubAccounts);
 
     const newOpsWithSubs = buildParentOperations(
       // The merged list, not the freshly built one: `mergeSubAccounts` keeps the id a sub-account

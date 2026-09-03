@@ -124,6 +124,35 @@ function reKeyOperations(operations: Operation[], accountId: string): Operation[
   }));
 }
 
+/**
+ * Re-keys freshly built sub-accounts onto the id they are already stored under, matching on the
+ * token. A sync from scratch rebuilds the list rather than merging it, but the identities have to
+ * survive: routes, starred accounts, account names and swap history are all keyed by sub-account
+ * id, and a family whose stored ids predate `encodeTokenAccountId` -- Solana's are the token
+ * account's address -- would otherwise see every one of them change on its first generic sync.
+ */
+export function adoptStoredSubAccountIds(
+  oldSubAccounts: Array<TokenAccount>,
+  newSubAccounts: Array<TokenAccount>,
+): Array<TokenAccount> {
+  if (!oldSubAccounts.length) return newSubAccounts;
+
+  const storedIdByTokenId = new Map(
+    oldSubAccounts.map(account => [String(account.token.id), account.id]),
+  );
+
+  return newSubAccounts.map(subAccount => {
+    const storedId = storedIdByTokenId.get(String(subAccount.token.id));
+    if (!storedId || storedId === subAccount.id) return subAccount;
+    return {
+      ...subAccount,
+      id: storedId,
+      operations: reKeyOperations(subAccount.operations, storedId),
+      pendingOperations: reKeyOperations(subAccount.pendingOperations, storedId),
+    };
+  });
+}
+
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
