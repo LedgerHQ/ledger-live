@@ -135,7 +135,7 @@ catalog:
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
-  "@solana/web3.js": ^1.98.4
+  "@solana/web3.js": ^1.99.0-beta.0
   "@polkadot/api": 16.5.4
   "@polkadot/api-augment": 16.5.4
   "@polkadot/api-derive": 16.5.4

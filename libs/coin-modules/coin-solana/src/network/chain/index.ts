@@ -249,7 +249,7 @@ export function getChainAPI(
     getParsedTransactions: (signatures: string[]) =>
       connection
         .getParsedTransactions(signatures, {
-          maxSupportedTransactionVersion: 0,
+          maxSupportedTransactionVersion: 1,
         })
         .catch(remapErrors),
 
