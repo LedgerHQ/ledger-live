@@ -7,6 +7,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
+import type { FamilyAccountShape } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { mergeOps } from "../jsHelpers";
 import { cleanedOperation } from "./utils";
 import { OperationCommon } from "./types";
@@ -65,12 +66,14 @@ export async function buildSubAccounts({
   syncConfig,
   operations,
   getTokenFromAsset,
+  familyShapes,
 }: {
   accountId: string;
   allTokenAssetsBalances: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
+  familyShapes?: Record<string, FamilyAccountShape>;
 }): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
@@ -89,8 +92,9 @@ export async function buildSubAccounts({
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      tokenAccounts.push(
-        buildTokenAccount({
+      tokenAccounts.push({
+        ...familyShapes?.[token.contractAddress],
+        ...buildTokenAccount({
           parentAccountId: accountId,
           assetBalance: balance,
           token,
@@ -109,7 +113,7 @@ export async function buildSubAccounts({
             );
           }),
         }),
-      );
+      });
     }
   }
 

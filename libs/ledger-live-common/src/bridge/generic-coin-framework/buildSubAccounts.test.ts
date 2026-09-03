@@ -2,7 +2,7 @@ import { TokenCurrency } from "@domain/entity-currency-token";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 
 describe("buildSubAccounts", () => {
   it("builds sub accounts from asset operations and balances, preserving operations order", async () => {
@@ -255,6 +255,48 @@ describe("buildSubAccounts", () => {
     });
 
     expect(subAccounts[0].operations.map(op => op.id)).toEqual(["accountId+tokenNoRef-matches-IN"]);
+  });
+});
+
+describe("buildSubAccounts family shapes", () => {
+  const balances: Balance[] = [
+    { value: 20n, asset: { type: "token", assetReference: "usdc", assetOwner: "owner" } },
+    { value: 30n, asset: { type: "token", assetReference: "usdt", assetOwner: "owner" } },
+  ];
+
+  const build = (familyShapes?: Record<string, Record<string, unknown>>) =>
+    buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: balances,
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [],
+      getTokenFromAsset: async asset =>
+        asset.type === "token"
+          ? ({ id: asset.assetReference, contractAddress: asset.assetReference } as TokenCurrency)
+          : undefined,
+      familyShapes,
+    });
+
+  it("puts the family fields on the sub account they belong to", async () => {
+    const subAccounts = await build({ usdc: { state: "frozen" } });
+
+    expect(subAccounts[0]).toMatchObject({ id: expect.any(String), state: "frozen" });
+    expect(subAccounts[1]).not.toHaveProperty("state");
+  });
+
+  it("leaves the accounts untouched when the family contributes nothing", async () => {
+    const subAccounts = await build();
+
+    expect(subAccounts).toHaveLength(2);
+    expect(subAccounts[0]).not.toHaveProperty("state");
+  });
+
+  // The framework owns the account's identity; a family cannot rename it.
+  it("cannot overwrite a framework field", async () => {
+    const subAccounts = await build({ usdc: { id: "hijacked", balance: new BigNumber(999) } });
+
+    expect(subAccounts[0].id).not.toBe("hijacked");
+    expect(subAccounts[0].balance).toEqual(new BigNumber(20));
   });
 });
 

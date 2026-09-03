@@ -208,6 +208,9 @@ export type CoinFrameworkSigner<S = unknown> = {
 export type AccountRawAssignHooks = {
   assignFromAccountRaw?: AccountBridge<GenericTransaction>["assignFromAccountRaw"];
   assignToAccountRaw?: AccountBridge<GenericTransaction>["assignToAccountRaw"];
+  /** The same pair for a token sub-account, without which `buildTokenAccountShapes` is lost on reload. */
+  assignFromTokenAccountRaw?: AccountBridge<GenericTransaction>["assignFromTokenAccountRaw"];
+  assignToTokenAccountRaw?: AccountBridge<GenericTransaction>["assignToTokenAccountRaw"];
   /**
    * Revive/serialize the family-owned part of `Operation.extra` (forwarded through
    * `Operation.details.familyExtra`). Without these the bag is persisted verbatim, so a non-JSON
