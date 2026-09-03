@@ -24,8 +24,7 @@ function setup(overrides: { isOpen?: boolean; verifyHint?: RequestReceiveVerifyH
 
 describe("useRequestReceiveView", () => {
   beforeEach(() => {
-    // React 19 act() schedules work with queueMicrotask. Jest fake timers
-    // mock that API by default, so act() never returns.
+    // React 19 act() waits on queueMicrotask. Faking it hangs the test.
     jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
   });
 
