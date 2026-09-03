@@ -15,6 +15,7 @@ import {
   type DecodedURISchemePayment,
 } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { useSendMemoReset } from "../context/SendMemoResetContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
@@ -76,6 +77,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
+  const { resetViewState } = useSendMemoReset();
   const { displayMode } = useSendAmountDisplayMode();
   const {
     isEnabled: isContactsFeatureEnabled,
@@ -175,6 +177,25 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     return "";
   }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
+  const leaveAmountStep = useCallback(
+    (prefillOverride?: string) => {
+      transaction.updateTransaction(tx => ({
+        ...tx,
+        amount: new BigNumber(0),
+        useAllAmount: false,
+        feesStrategy: null,
+      }));
+      resetViewState();
+
+      const prefillValue =
+        prefillOverride ?? getRecipientSearchPrefillValue(recipientFromTransaction);
+      if (prefillValue) {
+        setRecipientSearchValue(prefillValue);
+      }
+    },
+    [recipientFromTransaction, resetViewState, setRecipientSearchValue, transaction],
+  );
+
   const handleBackPress = useCallback(() => {
     if (isSelectingContactAddress) {
       track("button_clicked", {
@@ -188,12 +209,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
     if (canGoBack) {
       if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-        transaction.updateTransaction(tx => ({
-          ...tx,
-          amount: new BigNumber(0),
-          useAllAmount: false,
-          feesStrategy: null,
-        }));
+        leaveAmountStep();
       }
       navigation.goBack();
     } else {
@@ -205,9 +221,9 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     close,
     currentStep,
     isSelectingContactAddress,
+    leaveAmountStep,
     navigation,
     trackingProperties,
-    transaction,
   ]);
 
   const handleClose = useCallback(() => {
@@ -223,11 +239,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const handleRecipientInputPress = useCallback(() => {
     if (!isAmountStep) return;
 
-    const prefillValue =
-      recipientHeader.contact?.name ?? getRecipientSearchPrefillValue(recipientFromTransaction);
-    if (prefillValue) {
-      setRecipientSearchValue(prefillValue);
-    }
+    leaveAmountStep(recipientHeader.contact?.name);
 
     const { routes, index } = navigation.getState();
     if (routes[index - 1]?.name === ScreenName.SendFlowRecipient) {
@@ -235,13 +247,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       return;
     }
     navigation.navigate(ScreenName.SendFlowRecipient);
-  }, [
-    isAmountStep,
-    navigation,
-    recipientFromTransaction,
-    recipientHeader.contact?.name,
-    setRecipientSearchValue,
-  ]);
+  }, [isAmountStep, leaveAmountStep, navigation, recipientHeader.contact?.name]);
 
   const handleScannedURI = useCallback(
     (decoded: DecodedURISchemePayment) => {

@@ -4,6 +4,7 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -11,15 +12,18 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { screen, track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendMemoReset } from "../../../context/SendMemoResetContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getRecipientResolution } from "../../../utils/contactTracking";
+import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -29,7 +33,12 @@ type UseRecipientScreenViewProps = Readonly<{
   parentAccount?: Account | null;
   transaction?: Transaction | null;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -41,7 +50,7 @@ export function useRecipientScreenView({
   onAddressSelected,
   recipientSupportsDomain,
 }: UseRecipientScreenViewProps) {
-  const { recipientSearch } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
   const {
     isEnabled: isContactsFeatureEnabled,
@@ -51,6 +60,9 @@ export function useRecipientScreenView({
   const { selectedContact } = useRecipientContactSelection();
   const { inputMethod, setInputMethod, setRecipientResolution, resetRecipientResolution } =
     useSendFlowTracking();
+  const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
+  const { markMemoSkipped } = useSendMemoReset();
+  const [isSkipMemoConfirmationOpen, setIsSkipMemoConfirmationOpen] = useState(false);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(
@@ -192,12 +204,39 @@ export function useRecipientScreenView({
     }
   }, [clipboardAddress, recipientSearch, sendFlowTrackingProperties, setInputMethod]);
 
+  const closeSkipMemoConfirmation = useCallback(() => {
+    setIsSkipMemoConfirmationOpen(false);
+  }, []);
+
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      const addressRequiresMemo = sendFeatures.hasMemoForRecipient(currency, address);
+      const memoForSelectedAddress =
+        state.recipient?.address === address ? state.recipient.memo : undefined;
+      const hasFilledMemo = Boolean(
+        memoForSelectedAddress &&
+        (memoForSelectedAddress.type === "NO_MEMO" || memoForSelectedAddress.value.length > 0),
+      );
+      if (addressRequiresMemo && !hasFilledMemo) {
+        if (doNotAskAgainSkipMemo) {
+          committedRecipientRef.current = true;
+          markMemoSkipped();
+          onAddressSelected(address, ensName, true, {
+            value: "",
+            type: "NO_MEMO",
+          });
+          return;
+        }
+
+        onAddressSelected(address, ensName, false);
+        setIsSkipMemoConfirmationOpen(true);
+        return;
+      }
+
       committedRecipientRef.current = true;
-      onAddressSelected(address, ensName);
+      onAddressSelected(address, ensName, true);
     },
-    [onAddressSelected],
+    [currency, doNotAskAgainSkipMemo, markMemoSkipped, onAddressSelected, state.recipient],
   );
 
   // The picker owns the contact being shown and the row order the user actually sees,
@@ -313,6 +352,8 @@ export function useRecipientScreenView({
     handleUnsupportedNetwork,
     handleDismissUnsupportedNetwork,
     recipientResolution,
+    isSkipMemoConfirmationOpen,
+    closeSkipMemoConfirmation,
     isContactsFeatureEnabled,
     featureIntroduction,
     ...searchState,
