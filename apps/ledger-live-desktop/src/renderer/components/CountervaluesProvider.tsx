@@ -40,7 +40,7 @@ export function useCountervaluesBridge() {
         },
         dispatch,
       ),
-      useMarketcapIds: useGetCounterValueIdsPolling,
+      useSupportedCryptoIds: useGetCounterValueIdsPolling,
       usePollingIsPolling: useCountervaluesPollingIsPolling,
       usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,

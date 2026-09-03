@@ -176,9 +176,9 @@ describe("CountervaluesProvider", () => {
     mockLoadCountervalues.mockResolvedValue(initialState);
   });
 
-  it("should filter unsupported tracking pairs before polling when marketcap ids are loaded", async () => {
+  it("should filter unsupported tracking pairs before polling when supported crypto ids are loaded", async () => {
     const bridge = createBridge({
-      marketcapIds: [bitcoin.id],
+      supportedCryptoIds: [bitcoin.id],
       trackingPairs: [supportedPair, unsupportedPair],
     });
 
@@ -188,9 +188,9 @@ describe("CountervaluesProvider", () => {
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toEqual([supportedPair]);
   });
 
-  it("should keep tracking pairs unchanged before marketcap ids are loaded", async () => {
+  it("should keep tracking pairs unchanged before supported crypto ids are loaded", async () => {
     const trackingPairs = [supportedPair, unsupportedPair];
-    const bridge = createBridge({ marketcapIds: [], trackingPairs });
+    const bridge = createBridge({ supportedCryptoIds: [], trackingPairs });
 
     render(React.createElement(CountervaluesProvider, { bridge, children: null }));
 
@@ -204,10 +204,10 @@ function trackingPair(from: Currency): TrackingPair {
 }
 
 function createBridge({
-  marketcapIds,
+  supportedCryptoIds,
   trackingPairs,
 }: {
-  marketcapIds: string[];
+  supportedCryptoIds: string[];
   trackingPairs: TrackingPair[];
 }): CountervaluesBridge {
   const settings: CountervaluesSettings = {
@@ -224,7 +224,7 @@ function createBridge({
     setState: jest.fn(),
     setStateError: jest.fn(),
     setStatePending: jest.fn(),
-    useMarketcapIds: () => marketcapIds,
+    useSupportedCryptoIds: () => supportedCryptoIds,
     usePollingIsPolling: () => false,
     usePollingTriggerLoad: () => true,
     useStateError: () => null,
