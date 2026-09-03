@@ -7,6 +7,10 @@ import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { DEFAULT_PORTFOLIO_RANGE } from "LLD/utils/constants";
 import { SYNC_SETTLE_GUARD_MS } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
 import * as portfolioReact from "@ledgerhq/live-common/portfolio/portfolioReact";
+
+jest.mock("@ledgerhq/live-common/portfolio/portfolioReact", () => ({
+  usePortfolioThrottled: jest.fn(),
+}));
 import { setLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
 import { mockPoll, mockOnUserRefresh, mockBridgeSync, defaultPortfolio } from "./fixtures";
 
@@ -61,7 +65,7 @@ const syncingState = {
 describe("usePortfolioBalance", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(portfolioReact, "usePortfolioThrottled").mockReturnValue({
+    jest.mocked(portfolioReact.usePortfolioThrottled).mockReturnValue({
       ...defaultPortfolio,
       balanceAvailable: true,
     });

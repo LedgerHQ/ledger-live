@@ -21,7 +21,7 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
   useCountervaluesState: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-countervalues/portfolio", () => ({
+jest.mock("@ledgerhq/live-common/portfolio/portfolio", () => ({
   getCurrencyPortfolio: jest.fn(),
   getCurrentBalanceCountervalueChange: jest.fn(),
 }));
