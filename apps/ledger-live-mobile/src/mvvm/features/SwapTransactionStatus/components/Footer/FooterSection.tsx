@@ -3,16 +3,23 @@ import { log } from "@ledgerhq/logs";
 import { Linking } from "react-native";
 import { Box, Button, Skeleton } from "@ledgerhq/lumen-ui-rnative";
 import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { useFooterSectionViewModel } from "../../hooks/useFooterSectionViewModel";
 
 type FooterSectionProps = Readonly<{
   explorerUrl?: string;
   isLoading: boolean;
+  origin?: SwapTransactionStatusOrigin;
+  onReturn?: () => void;
 }>;
 
-export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
-  const { viewInExplorerLabel } = useFooterSectionViewModel();
+type ExplorerButtonProps = Readonly<{
+  explorerUrl?: string;
+  isLoading: boolean;
+  label: string;
+}>;
 
+function ExplorerButton({ explorerUrl, isLoading, label }: ExplorerButtonProps) {
   if (isLoading) {
     return <Skeleton lx={{ height: "s40", width: "full" }} />;
   }
@@ -37,7 +44,29 @@ export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
         })
       }
     >
-      {viewInExplorerLabel}
+      {label}
     </Button>
+  );
+}
+
+export function FooterSection({ explorerUrl, isLoading, origin, onReturn }: FooterSectionProps) {
+  const { viewInExplorerLabel, returnToPerpsLabel } = useFooterSectionViewModel();
+
+  return (
+    <Box lx={{ gap: "s8" }}>
+      {origin === "perps" && onReturn ? (
+        <Button
+          testID="swap-transaction-return-btn"
+          appearance="base"
+          size="md"
+          lx={{ width: "full" }}
+          onPress={onReturn}
+        >
+          {returnToPerpsLabel}
+        </Button>
+      ) : null}
+
+      <ExplorerButton explorerUrl={explorerUrl} isLoading={isLoading} label={viewInExplorerLabel} />
+    </Box>
   );
 }

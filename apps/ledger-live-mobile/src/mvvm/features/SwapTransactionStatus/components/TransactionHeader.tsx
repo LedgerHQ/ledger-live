@@ -1,5 +1,6 @@
 import React from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { Box, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useTransactionHeaderViewModel } from "../hooks/useTransactionHeaderViewModel";
@@ -9,6 +10,7 @@ type TransactionHeaderProps = Readonly<{
   receiveCurrency?: CryptoOrTokenCurrency;
   createdAt?: number;
   locale: string;
+  origin?: SwapTransactionStatusOrigin;
 }>;
 
 export function TransactionHeader({
@@ -16,12 +18,14 @@ export function TransactionHeader({
   receiveCurrency,
   createdAt,
   locale,
+  origin,
 }: TransactionHeaderProps) {
-  const { title, formattedDate } = useTransactionHeaderViewModel({
+  const { title, currencies, formattedDate } = useTransactionHeaderViewModel({
     sendCurrency,
     receiveCurrency,
     createdAt,
     locale,
+    origin,
   });
 
   return (
@@ -52,6 +56,15 @@ export function TransactionHeader({
       ) : (
         <Skeleton lx={{ height: "s24", width: "s176" }} />
       )}
+      {currencies ? (
+        <Text
+          testID="swap-transaction-currencies"
+          typography="heading5SemiBold"
+          lx={{ color: "base", textAlign: "center" }}
+        >
+          {currencies}
+        </Text>
+      ) : null}
       {formattedDate ? (
         <Text
           testID="swap-transaction-date"
