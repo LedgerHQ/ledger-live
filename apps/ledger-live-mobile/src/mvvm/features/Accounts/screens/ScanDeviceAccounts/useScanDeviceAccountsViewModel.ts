@@ -264,13 +264,13 @@ export default function useScanDeviceAccountsViewModel({
     const { onSuccess } = route.params;
 
     if (inline) {
+      popInlineScreens();
       if (onSuccess) {
         onSuccess({
           scannedAccounts,
           selected: accountsToAdd,
         });
       }
-      popInlineScreens();
     } else
       navigation.replace(ScreenName.AddAccountsSuccess, {
         ...route.params,
@@ -414,6 +414,7 @@ export default function useScanDeviceAccountsViewModel({
       } else if (!hasScannedAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
+          onCloseNavigation,
         });
       }
     }
