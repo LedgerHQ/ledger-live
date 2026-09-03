@@ -25,26 +25,26 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/ledger-wallet-framework/types";
 
-export const defaultAssetsDistribution = {
+const defaultAssetsDistribution = {
   minShowFirst: 1,
   maxShowFirst: 6,
   showFirstThreshold: 0.95,
   showEmptyAccounts: false,
   hideEmptyTokenAccount: false,
 };
-export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
+type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 
 const hourIncrement = 60 * 60 * 1000;
 const dayIncrement = 24 * hourIncrement;
 const weekIncrement = 7 * dayIncrement;
 
-export function startOfHour(t: Date): Date {
+function startOfHour(t: Date): Date {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
 }
-export function startOfDay(t: Date): Date {
+function startOfDay(t: Date): Date {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
-export function startOfWeek(t: Date): Date {
+function startOfWeek(t: Date): Date {
   const d = startOfDay(t);
   return new Date(d.getTime() - d.getDay() * dayIncrement);
 }
@@ -82,11 +82,11 @@ const ranges: Record<PortfolioRange, PortfolioRangeConfig> = {
   },
 };
 
-export function getRanges(): string[] {
+function getRanges(): string[] {
   return Object.keys(ranges);
 }
 
-export function getDates(r: PortfolioRange, count: number): Date[] {
+function getDates(r: PortfolioRange, count: number): Date[] {
   const now = new Date(Date.now());
   if (count === 1) return [now];
   const conf = getPortfolioRangeConfig(r);
@@ -100,7 +100,7 @@ export function getDates(r: PortfolioRange, count: number): Date[] {
   return dates;
 }
 
-export function getPortfolioRangeConfig(r: PortfolioRange): PortfolioRangeConfig {
+function getPortfolioRangeConfig(r: PortfolioRange): PortfolioRangeConfig {
   return ranges[r];
 }
 
@@ -121,7 +121,7 @@ export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange
   return getPortfolioCountByDate(oldestDate, range);
 }
 
-export function getPortfolioCountByDate(start: Date, range: PortfolioRange): number {
+function getPortfolioCountByDate(start: Date, range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
   const now = Date.now();
   const count = Math.ceil((now - start.getTime()) / conf.increment) + 2;
