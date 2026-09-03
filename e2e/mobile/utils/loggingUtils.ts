@@ -107,8 +107,9 @@ function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
     "TIMESTAMP                      | LEVEL   | MESSAGE",
     "-------------------------------|---------|--------",
   ];
+  const kept = entries.filter(e => CONSOLE_KEEP_LEVELS.has((e.level ?? "log").toLowerCase()));
 
-  for (const e of entries.filter(e => CONSOLE_KEEP_LEVELS.has((e.level ?? "log").toLowerCase()))) {
+  for (const e of kept) {
     const ts = (e.timestamp ?? "").slice(0, TS_WIDTH).padEnd(TS_WIDTH);
     const level = (e.level ?? "log").toUpperCase().padEnd(LEVEL_WIDTH);
     const raw = (e.text ?? "").replaceAll("\n", " ");
