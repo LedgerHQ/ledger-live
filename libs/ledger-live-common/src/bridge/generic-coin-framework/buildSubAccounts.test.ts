@@ -620,4 +620,50 @@ describe("mergeSubAccounts", () => {
     });
     expect(merged[0].operations).toHaveLength(3);
   });
+
+  // Solana's sub-account ids predate the framework and carry the token account's address, so the
+  // stored id and the one `buildTokenAccount` derives differ. The stored one wins, and the freshly
+  // built operations must follow it.
+  it("re-keys incoming operations onto the stored sub account id when the two differ", () => {
+    const oldSubAccounts = [
+      {
+        id: "accountId+ataAddress",
+        type: "TokenAccount",
+        parentId: "accountId",
+        token: { id: "usdc" },
+        balance: new BigNumber(10),
+        spendableBalance: new BigNumber(10),
+        operations: [],
+        operationsCount: 0,
+      },
+    ] as unknown as Array<TokenAccount>;
+    const newSubAccounts = [
+      {
+        id: "accountId+usdc",
+        type: "TokenAccount",
+        parentId: "accountId",
+        token: { id: "usdc" },
+        balance: new BigNumber(20),
+        spendableBalance: new BigNumber(20),
+        operations: [
+          {
+            id: "accountId+usdc-hash1-OUT",
+            accountId: "accountId+usdc",
+            hash: "hash1",
+            type: "OUT",
+            date: new Date("2019-04-04"),
+          },
+        ],
+        operationsCount: 1,
+      },
+    ] as unknown as Array<TokenAccount>;
+
+    const [merged] = mergeSubAccounts(oldSubAccounts, newSubAccounts);
+
+    expect(merged.id).toBe("accountId+ataAddress");
+    expect(merged.operations[0]).toMatchObject({
+      accountId: "accountId+ataAddress",
+      id: "accountId+ataAddress-hash1-OUT",
+    });
+  });
 });

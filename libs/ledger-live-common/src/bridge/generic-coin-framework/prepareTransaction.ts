@@ -1,4 +1,4 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -67,6 +67,9 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
       if (gasOptions) dest.gasOptions = gasOptions;
       return;
     }
+    case "transferFee":
+      if (value !== undefined) dest.transferFee = value as GenericTransaction["transferFee"];
+      return;
     default:
       return;
   }
@@ -83,7 +86,12 @@ export function genericPrepareTransaction(
 
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
     const { assetReference, assetOwner } = getAssetFromTokenForCurrency
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
+      ? await getAssetInfos(
+          transaction,
+          account.freshAddress,
+          getAssetFromTokenForCurrency,
+          account,
+        )
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
 
@@ -196,6 +204,7 @@ export function genericPrepareTransaction(
       // so the UI can render fee presets without ever fetching them itself.
       // Families that don't produce them leave this untouched.
       "gasOptions",
+      "transferFee",
     ];
 
     for (const field of fieldsToPropagate) {
@@ -206,16 +215,31 @@ export function genericPrepareTransaction(
   };
 }
 
+function findTokenOfSubAccount(
+  account: Account | undefined,
+  subAccountId: string,
+): TokenCurrency | undefined {
+  const subAccount = account?.subAccounts?.find(sub => sub.id === subAccountId);
+  return subAccount && "token" in subAccount ? subAccount.token : undefined;
+}
+
 export async function getAssetInfos(
   tr: GenericTransaction,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  account?: Account,
 ): Promise<{
   assetReference: string;
   assetOwner: string;
 }> {
   if (tr.subAccountId) {
-    const { token } = await decodeTokenAccountId(tr.subAccountId);
+    // Prefer the token the sub-account already carries. Decoding the id only works for ids the
+    // framework minted itself, and `mergeSubAccounts` keeps serving the ids a family stored before
+    // it migrated — Solana's are the recipient ATA's address, which resolves to no token at all.
+    // Falling through to a native asset would validate, and craft, an SPL transfer as a SOL one.
+    const token =
+      findTokenOfSubAccount(account, tr.subAccountId) ??
+      (await decodeTokenAccountId(tr.subAccountId)).token;
 
     if (!token) return assetInfosFallback(tr);
 

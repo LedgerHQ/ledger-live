@@ -51,6 +51,15 @@ export type FeeDataRaw = {
   nextBaseFee: string | null;
 };
 
+export type TransferFee = {
+  maxTransferFee: number;
+  transferFee: number;
+  feePercent: number;
+  feeBps: number;
+  transferAmountIncludingFee: number;
+  transferAmountExcludingFee: number;
+};
+
 export type GasOptions = {
   [key in Strategy]: FeeData;
 };
@@ -102,6 +111,7 @@ export type GenericTransaction = TransactionCommon & {
   maxPriorityFeePerGas?: BigNumber | null;
   additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
+  transferFee?: TransferFee;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;

@@ -13,7 +13,12 @@ import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
-import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
+import {
+  adaptCoreOperationToLiveOperation,
+  cleanedOperation,
+  extractBalance,
+  optionalNumeric,
+} from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
@@ -23,6 +28,7 @@ import type {
   Account,
   AccountReadiness,
   StakingDelegation,
+  StakingPositionDetails,
   StakingResources,
   StakingUnbonding,
   TokenAccount,
@@ -62,17 +68,37 @@ function hasDeactivatingStake(balance: Balance): balance is Balance & {
   stake: Stake;
 } {
   const state = balance.stake?.state;
-  return state === "deactivating" || state === "withdrawable";
-}
-
-function hasStakeDelegate<T extends Balance & { stake: Stake }>(
-  balance: T,
-): balance is T & { stake: Stake & { delegate: string } } {
-  return typeof balance.stake.delegate === "string" && balance.stake.delegate.length > 0;
+  // `inactive` is a fully deactivated stake: the framework declares it, so it must be classified
+  // here rather than left to fall through both lists and vanish from `stakingResources`.
+  return state === "deactivating" || state === "withdrawable" || state === "inactive";
 }
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
+}
+
+/**
+ * Per-position breakdown, for chains that address stakes individually. A chain that stakes at
+ * validator level sets none of these and gets an empty object, as before. Keys are read
+ * defensively, like `validatorId`/`shares` below.
+ */
+function stakingPositionDetails(stake: Stake): StakingPositionDetails {
+  const details = stake.details ?? {};
+  const activeAmount = optionalNumeric(details.activeAmount);
+  const inactiveAmount = optionalNumeric(details.inactiveAmount);
+  const withdrawableAmount = optionalNumeric(details.withdrawableAmount);
+  const lockedReserve = optionalNumeric(details.lockedReserve);
+
+  // `!== undefined`, not truthiness: a zero amount is meaningful.
+  return {
+    ...(stake.uid ? { positionId: stake.uid } : {}),
+    ...(activeAmount !== undefined ? { activeAmount } : {}),
+    ...(inactiveAmount !== undefined ? { inactiveAmount } : {}),
+    ...(withdrawableAmount !== undefined ? { withdrawableAmount } : {}),
+    ...(lockedReserve !== undefined ? { lockedReserve } : {}),
+    ...(typeof details.canStake === "boolean" ? { canStake: details.canStake } : {}),
+    ...(typeof details.canWithdraw === "boolean" ? { canWithdraw: details.canWithdraw } : {}),
+  };
 }
 
 /**
@@ -515,14 +541,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         0n,
       );
 
-      const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => {
+      const delegations: StakingDelegation[] = activeStakes.map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
         const rewarded: bigint = b.stake.amountRewarded ?? 0n;
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
         return {
-          validatorAddress: b.stake.delegate,
+          ...stakingPositionDetails(b.stake),
+          validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
           status: b.stake.state === "activating" ? "activating" : "bonded",
@@ -531,17 +558,21 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
         };
       });
-      const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => {
+      const unbondings: StakingUnbonding[] = deactivatingStakes.map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const withdrawId = b.stake.details?.withdrawId;
 
         return {
-          validatorAddress: b.stake.delegate,
+          ...stakingPositionDetails(b.stake),
+          validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
-          status: b.stake.state === "withdrawable" ? "withdrawable" : "deactivating",
+          status:
+            b.stake.state === "withdrawable" || b.stake.state === "inactive"
+              ? "withdrawable"
+              : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof withdrawId === "number" ? { withdrawId } : {}),

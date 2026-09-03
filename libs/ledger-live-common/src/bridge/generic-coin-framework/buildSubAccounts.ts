@@ -4,7 +4,7 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { mergeOps } from "../jsHelpers";
@@ -116,6 +116,14 @@ export async function buildSubAccounts({
   return tokenAccounts;
 }
 
+function reKeyOperations(operations: Operation[], accountId: string): Operation[] {
+  return operations.map(operation => ({
+    ...operation,
+    accountId,
+    id: encodeOperationId(accountId, operation.hash, operation.type),
+  }));
+}
+
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
@@ -139,8 +147,16 @@ export function mergeSubAccounts(
       continue;
     }
 
-    // New sub account is already known, probably outdated
-    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    // New sub account is already known, probably outdated. The stored id wins, so the freshly
+    // built operations — keyed on the id `buildTokenAccount` just derived — have to be re-keyed
+    // onto it. They match for every family whose stored ids already follow `encodeTokenAccountId`;
+    // Solana's predate the framework and carry the token account's address instead.
+    const operations = mergeOps(
+      existingSubAccount.operations,
+      newSubAccount.id === existingSubAccount.id
+        ? newSubAccount.operations
+        : reKeyOperations(newSubAccount.operations, existingSubAccount.id),
+    );
     oldSubAccountsByTokenId[String(newSubAccount.token.id)] = {
       ...existingSubAccount,
       balance: newSubAccount.balance,
