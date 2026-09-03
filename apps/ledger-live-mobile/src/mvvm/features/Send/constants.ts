@@ -118,6 +118,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  [SEND_FLOW_STEP.PAY_SUCCESS]: {
+    id: SEND_FLOW_STEP.PAY_SUCCESS,
+    canGoBack: false,
+    showHeaderRight: false,
+    showTitle: false,
+  },
 };
 
 export const SEND_FLOW_CONFIG: SendFlowConfig = {

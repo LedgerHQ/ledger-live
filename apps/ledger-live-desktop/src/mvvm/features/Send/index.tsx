@@ -18,6 +18,7 @@ import { AddToExistingContactScreen } from "./screens/AddToExistingContact/AddTo
 import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
 import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
 import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
+import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
@@ -32,6 +33,7 @@ const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+  [SEND_FLOW_STEP.PAY_SUCCESS]: PaySuccessScreen,
 };
 
 type SendWorkflowParams = Readonly<{
@@ -43,6 +45,7 @@ type SendWorkflowParams = Readonly<{
   memo?: string;
   fromMAD?: boolean;
   startWithWarning?: boolean;
+  source?: string;
 }>;
 
 type SendWorkflowProps = Readonly<{
@@ -65,6 +68,7 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
       amount: params?.amount,
       memo: params?.memo,
       fromMAD: params?.fromMAD ?? false,
+      source: params?.source,
     }),
     [params],
   );

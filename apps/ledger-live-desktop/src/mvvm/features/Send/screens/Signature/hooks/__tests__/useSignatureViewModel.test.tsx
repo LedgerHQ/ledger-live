@@ -1,5 +1,6 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup, waitFor } from "tests/testSetup";
+import { SEND_FLOW_SOURCE, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSignatureViewModel } from "../useSignatureViewModel";
 
 declare global {
@@ -16,7 +17,8 @@ jest.mock("LLD/hooks/redux", () => {
     useDispatch: () => reduxDispatchMock,
   };
 });
-const mockNavigation = { goToNextStep: jest.fn() };
+const mockNavigation = { goToNextStep: jest.fn(), goToStep: jest.fn() };
+let mockSource: string | undefined;
 const mockOperation = {
   onTransactionError: jest.fn(),
   onOperationBroadcasted: jest.fn(),
@@ -68,7 +70,7 @@ jest.mock("../../../../context/SendFlowContext", () => ({
     status: mockStatus,
     close: mockClose,
   })),
-  useSendFlowData: jest.fn(() => ({ state: mockState })),
+  useSendFlowData: jest.fn(() => ({ state: mockState, source: mockSource })),
 }));
 
 // eslint-disable-next-line
@@ -106,6 +108,7 @@ describe("useSignatureViewModel", () => {
     jest.clearAllMocks();
     reduxDispatchMock.mockReset();
     mockClose.mockReset();
+    mockSource = undefined;
     mockState = {
       account: {
         account: { id: "acc", type: "Account" },
@@ -301,5 +304,53 @@ describe("useSignatureViewModel", () => {
     ref.current?.finishWithError(new Error("second"));
     expect(mockOperation.onTransactionError).toHaveBeenCalledTimes(2);
     expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(2);
+  });
+
+  test("routes to the Pay success step on success when launched from Pay", async () => {
+    mockSource = SEND_FLOW_SOURCE.PAY;
+    const op = { id: "op-pay" };
+    broadcastFn.mockResolvedValue(op);
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    // @ts-expect-error - providing minimal stub for SignedOperation in tests
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+
+    await waitFor(() => {
+      expect(mockStatus.setSuccess).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.PAY_SUCCESS);
+    });
+    expect(mockNavigation.goToNextStep).not.toHaveBeenCalled();
+  });
+
+  test("routes to confirmation on success for a regular (non-Pay) send", async () => {
+    const op = { id: "op-regular" };
+    broadcastFn.mockResolvedValue(op);
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    // @ts-expect-error - providing minimal stub for SignedOperation in tests
+    ref.current?.onDeviceActionResult({ signedOperation: { raw: "sig" }, device: {} });
+
+    await waitFor(() => {
+      expect(mockStatus.setSuccess).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
+    });
+    expect(mockNavigation.goToStep).not.toHaveBeenCalled();
+  });
+
+  test("routes to confirmation on failure even when launched from Pay", () => {
+    mockSource = SEND_FLOW_SOURCE.PAY;
+    mockState.account.currency = null;
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    ref.current?.finishWithError(new Error("boom"));
+
+    expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
+    expect(mockNavigation.goToStep).not.toHaveBeenCalled();
   });
 });

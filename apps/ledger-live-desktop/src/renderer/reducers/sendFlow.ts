@@ -11,6 +11,7 @@ export type SendFlowParams = {
   memo?: string;
   fromMAD?: boolean;
   startWithWarning?: boolean;
+  source?: string;
 };
 
 export type SendFlowDialogPayload = {
