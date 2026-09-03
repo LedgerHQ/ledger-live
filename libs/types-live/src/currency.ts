@@ -46,8 +46,6 @@ type CurrencyCommon = {
    * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
    */
   disableCountervalue?: boolean;
-  // tells if countervalue need to be disabled (typically because colliding with other coins)
-  delisted?: boolean;
   // keywords to be able to find currency from "obvious" terms
   keywords?: string[];
 };
@@ -65,6 +63,8 @@ export type TokenCurrency = CurrencyCommon & {
   parentCurrencyId: any;
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string;
+  // tells if the token was delisted by the assets API and should be hidden from new flows
+  delisted?: boolean;
 };
 
 /**
