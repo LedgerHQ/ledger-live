@@ -5,7 +5,7 @@ import type { SnapshotFrom } from "xstate";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
-import { selectIsSignedIn } from "../../state/selectors";
+import { selectIsSignedIn } from "../../state/slice";
 import type { CardLoginViewModel, CardLoginViewModelParams } from "./types";
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];

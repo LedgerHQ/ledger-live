@@ -4,10 +4,6 @@ export type PayRequestVerifyHintState = Readonly<{
   hasSeenReceiveVerifyHint: boolean;
 }>;
 
-type PayRequestVerifyHintStateRoot = {
-  payRequestVerifyHint: PayRequestVerifyHintState;
-};
-
 export const payRequestVerifyHintInitialState: PayRequestVerifyHintState = {
   hasSeenReceiveVerifyHint: false,
 };
@@ -32,14 +28,14 @@ export const payRequestVerifyHintSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectHasSeenReceiveVerifyHint: state => state.hasSeenReceiveVerifyHint,
+    payRequestVerifyHintPersistedSelector: state => state,
+  },
 });
 
 export const { markReceiveVerifyHintSeen, resetReceiveVerifyHintSeen, restoreReceiveVerifyHint } =
   payRequestVerifyHintSlice.actions;
 
-export const selectHasSeenReceiveVerifyHint = (state: PayRequestVerifyHintStateRoot): boolean =>
-  state.payRequestVerifyHint.hasSeenReceiveVerifyHint;
-
-export const payRequestVerifyHintPersistedSelector = (
-  state: PayRequestVerifyHintStateRoot,
-): PayRequestVerifyHintState => state.payRequestVerifyHint;
+export const { selectHasSeenReceiveVerifyHint, payRequestVerifyHintPersistedSelector } =
+  payRequestVerifyHintSlice.selectors;

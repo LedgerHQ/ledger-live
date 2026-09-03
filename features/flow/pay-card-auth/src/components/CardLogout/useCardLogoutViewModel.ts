@@ -4,7 +4,7 @@ import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
 import { createCardLogoutPorts } from "../../state/createCardLogoutPorts";
 import type { CardLoginDispatch } from "../../state/createCardLoginPorts";
-import { selectIsSignedIn } from "../../state/selectors";
+import { selectIsSignedIn } from "../../state/slice";
 import type { CardLogoutPorts } from "../../state/types";
 import type { CardLogoutViewModel } from "./types";
 

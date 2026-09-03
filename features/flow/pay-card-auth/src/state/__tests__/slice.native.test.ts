@@ -1,5 +1,12 @@
-import { payCardAuthSlice, payCardAuthInitialState, setHasCard, setSignedIn } from "../slice";
-import { selectPayCardAuth, selectHasCard, selectIsSignedIn } from "../selectors";
+import {
+  payCardAuthSlice,
+  payCardAuthInitialState,
+  setHasCard,
+  setSignedIn,
+  selectPayCardAuth,
+  selectHasCard,
+  selectIsSignedIn,
+} from "../slice";
 
 const reducer = payCardAuthSlice.reducer;
 const root = (state = payCardAuthInitialState) => ({ payCardAuth: state });
