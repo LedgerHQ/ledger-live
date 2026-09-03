@@ -1186,8 +1186,8 @@ importers:
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@segment/analytics-next':
-        specifier: 1.81.1
-        version: 1.81.1
+        specifier: 1.84.1
+        version: 1.84.1
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
@@ -2046,11 +2046,11 @@ importers:
         specifier: 4.5.5
         version: 4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@segment/analytics-react-native':
-        specifier: 2.21.4
-        version: 2.21.4(bb7c3452cb2697ae64ac0d020430b5c4)
+        specifier: 2.24.0
+        version: 2.24.0(80b21f32d3eec5b5e3abb940946456cb)
       '@segment/sovran-react-native':
-        specifier: 1.1.3
-        version: 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        specifier: 1.1.4
+        version: 1.1.4(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
@@ -18695,6 +18695,10 @@ packages:
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/code-frame@7.29.7':
+    resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/code-frame@8.0.0-beta.2':
     resolution: {integrity: sha512-AKiipLsA7UE3vLjLNxBTsAbU39IkC34a7bAPBerVL/SbF71OO//3hxvWoUgYx44rYTj5deeUbuYdttip8dxHLQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -18713,6 +18717,10 @@ packages:
 
   '@babel/generator@7.29.1':
     resolution: {integrity: sha512-qsaF+9Qcm2Qv8SRIMMscAvG4O3lJ0F1GuMo5HR/Bp02LopNgnZBC/EkbevHFeGs4ls/oPz9v+Bsmzbkbe+0dUw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/generator@7.29.8':
+    resolution: {integrity: sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-annotate-as-pure@7.27.3':
@@ -18756,6 +18764,10 @@ packages:
 
   '@babel/helper-globals@7.28.0':
     resolution: {integrity: sha512-+W6cISkXFa1jXsDEdYA8HeevQT/FULhxzR99pxphltZcVaugps53THCeiWA8SguxxpSp3gKPiuYfSWopkLQ4hw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-globals@7.29.7':
+    resolution: {integrity: sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-hoist-variables@7.22.5':
@@ -18808,8 +18820,16 @@ packages:
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/helper-string-parser@7.29.7':
+    resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/helper-validator-identifier@7.28.5':
     resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-identifier@7.29.7':
+    resolution: {integrity: sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-validator-identifier@8.0.0-beta.2':
@@ -18844,6 +18864,11 @@ packages:
 
   '@babel/parser@7.29.2':
     resolution: {integrity: sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/parser@7.29.8':
+    resolution: {integrity: sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -19440,6 +19465,10 @@ packages:
     resolution: {integrity: sha512-YA6Ma2KsCdGb+WC6UpBVFJGXL58MDA6oyONbjyF/+5sBgxY/dwkhLogbMT2GXXyU84/IhRw/2D1Os1B/giz+BQ==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/template@7.29.7':
+    resolution: {integrity: sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/traverse@7.24.1':
     resolution: {integrity: sha512-xuU6o9m68KeqZbQuDt2TcKSxUw/mrsvavlEqQ1leZ/B+C9tk6E4sRWy97WaXgvq5E+nU3cXMxv3WKOCanVMCmQ==}
     engines: {node: '>=6.9.0'}
@@ -19456,6 +19485,10 @@ packages:
     resolution: {integrity: sha512-4HPiQr0X7+waHfyXPZpWPfWL/J7dcN1mx9gL6WdQVMbPnF3+ZhSMs8tCxN7oHddJE9fhNE7+lxdnlyemKfJRuA==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/traverse@7.29.8':
+    resolution: {integrity: sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/types@7.27.0':
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
@@ -19466,6 +19499,10 @@ packages:
 
   '@babel/types@7.29.0':
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.29.8':
+    resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
   '@bcoe/v8-coverage@0.2.3':
@@ -24897,17 +24934,14 @@ packages:
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
 
-  '@segment/analytics-core@1.8.2':
-    resolution: {integrity: sha512-5FDy6l8chpzUfJcNlIcyqYQq4+JTUynlVoCeCUuVz+l+6W0PXg+ljKp34R4yLVCcY5VVZohuW+HH0VLWdwYVAg==}
-
   '@segment/analytics-core@1.8.3':
     resolution: {integrity: sha512-63X8e2DWb2ZnJ9S3H8iSOFnbeDXMkTGhA8kZG4eFAO07QBwBVyWo5BCpv6vmuOMEkv2le6t2FMg1p6ZeJQA/4A==}
 
   '@segment/analytics-generic-utils@1.2.0':
     resolution: {integrity: sha512-DfnW6mW3YQOLlDQQdR89k4EqfHb0g/3XvBXkovH1FstUN93eL1kfW9CsDcVQyH3bAC5ZsFyjA/o/1Q2j0QeoWw==}
 
-  '@segment/analytics-next@1.81.1':
-    resolution: {integrity: sha512-nVHNhriViptjkp4004qBbvmnW9/3brjhBv2P5Cvcg7iWW41fBzUY8FbLi+8wkmSbycT9fH1pTM3TUxB6+h0Fcg==}
+  '@segment/analytics-next@1.84.1':
+    resolution: {integrity: sha512-jcwALgEc4DP6PG6oj0YS0yLiQL2R/N1NAgGGH50898/FNcXLyv/v8c+qoiHJxIpGm3qp8nJZTDeGe1z1Co2NzA==}
 
   '@segment/analytics-node@3.1.0':
     resolution: {integrity: sha512-F3pJmzUxmWZFV2wxJfuGvjLViCrQBFpxLLp4++fkoDsohWwS89T7n0M5nW1zxeYc2X2rA/v7q5ou3JZIw9bl3g==}
@@ -24916,15 +24950,15 @@ packages:
   '@segment/analytics-page-tools@1.0.0':
     resolution: {integrity: sha512-o9OVB91qLB9qb0Bw1HfjmWm5AnrMNULRjx++4lBqLt8InKRX1urrRBparVlpj+yJA0sckN5ZcsfazRLuPgBYDQ==}
 
-  '@segment/analytics-react-native@2.21.4':
-    resolution: {integrity: sha512-jfR07BRKWA2A4926xvSlB0SHjAbNaWKil+U9AKXDYCxxbU38NIM7FsAhDPN8uuh9rZ7lnSMV6eCigfVPQdsXjw==}
+  '@segment/analytics-react-native@2.24.0':
+    resolution: {integrity: sha512-dQGZOrolOg8TCc77wev9hGRSySaiM8fe/JZ3Rl6KBKrz+w+DPw8XoQPIKiecAjfHIFyiQo/JFRUDiNNAtVRZFw==}
     engines: {node: '>=12'}
     peerDependencies:
       '@react-native-async-storage/async-storage': 2.x
       '@segment/sovran-react-native': ^1.1.0
       react: 19.1.4
       react-native: '*'
-      react-native-get-random-values: 1.x
+      react-native-get-random-values: 1.x || 2.x
     peerDependenciesMeta:
       '@react-native-async-storage/async-storage':
         optional: true
@@ -24941,12 +24975,13 @@ packages:
   '@segment/isodate@1.0.3':
     resolution: {integrity: sha512-BtanDuvJqnACFkeeYje7pWULVv8RgZaqKHWwGFnL/g/TH/CcZjkIVTfGDp/MAxmilYHUkrX70SqwnYSTNEaN7A==}
 
-  '@segment/sovran-react-native@1.1.3':
-    resolution: {integrity: sha512-14ZpBJMqq//R/0Br+DgVeVHhX3hFNd71oDhh2wvn2LW6WDuO2JNvkEJwAYbMK4J6X8xRW2xhvtJ1irykTIhxEQ==}
+  '@segment/sovran-react-native@1.1.4':
+    resolution: {integrity: sha512-2dXt7tmLVPMcMRoz8U6f5qbkbffAPFFPVVeqkjaKfVD9+krjpcoVouu4ftZjMZloG+jsFvSoxBl6jvELQEM5uQ==}
     peerDependencies:
       '@react-native-async-storage/async-storage': 2.x
       react: 19.1.4
       react-native: '*'
+      react-native-get-random-values: 1.x || 2.x
     peerDependenciesMeta:
       '@react-native-async-storage/async-storage':
         optional: true
@@ -25915,11 +25950,6 @@ packages:
 
   '@stdlib/number-float64-base-normalize@0.0.8':
     resolution: {integrity: sha512-4P3c7YD0hahCgflxxTWrjR8457o2ViYu32MH/M166Aj6nkPj0ZovYj/X1DdyiYAAMHhVePGGMl0JAL3X141FVQ==}
-    engines: {node: '>=0.10.0', npm: '>2.7.0'}
-    os: [aix, darwin, freebsd, linux, macos, openbsd, sunos, win32, windows]
-
-  '@stdlib/number-float64-base-normalize@0.0.9':
-    resolution: {integrity: sha512-+rm7RQJEj8zHkqYFE2a6DgNQSB5oKE/IydHAajgZl40YB91BoYRYf/ozs5/tTwfy2Fc04+tIpSfFtzDr4ZY19Q==}
     engines: {node: '>=0.10.0', npm: '>2.7.0'}
     os: [aix, darwin, freebsd, linux, macos, openbsd, sunos, win32, windows]
 
@@ -31458,6 +31488,9 @@ packages:
   exponential-backoff@3.1.2:
     resolution: {integrity: sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==}
 
+  exponential-backoff@3.1.3:
+    resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
+
   express@4.22.0:
     resolution: {integrity: sha512-c2iPh3xp5vvCLgaHK03+mWLFPhox7j1LwyxcZwFVApEv5i0X+IjPpbT50SJJwwLpdBVfp45AkK/v+AFgv/XlfQ==}
     engines: {node: '>= 0.10.0'}
@@ -32794,6 +32827,10 @@ packages:
     resolution: {integrity: sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA==}
     engines: {node: '>= 12'}
 
+  ip-address@10.7.0:
+    resolution: {integrity: sha512-BGFsyJd5mpXp3rK6jIdADLNgpJUK1jnjzvYF8lK+VyDab9JAmqN0YOKDdP17HlgKb2+ehPgDc8EtnRLbGCAMhA==}
+    engines: {node: '>= 12'}
+
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
     engines: {node: '>= 0.10'}
@@ -33556,9 +33593,11 @@ packages:
   js-base64@3.7.8:
     resolution: {integrity: sha512-hNngCeKxIUQiEUN3GPJOkz4wF/YvdUdbNL9hsBcMQTkKzboD7T/q3OYOuuPZLUE6dBxSGpwhk5mwuDud7JVAow==}
 
-  js-cookie@3.0.1:
-    resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
-    engines: {node: '>=12'}
+  js-base64@3.9.3:
+    resolution: {integrity: sha512-uwYQp+VJ38FVvtim6qNbit6e9uT6dwWQ4Y1+H9TxhW5hcHjpHwoxlR0nMpqUmIFOmu4VqMxwdJA88gIVuZJQ/g==}
+
+  js-cookie@3.0.8:
+    resolution: {integrity: sha512-yeJd4aNAdYZQjaon2bpD/Gb0B/omw7HQOsynXXcOiWVCacbBcPlgn8S/d1X6blFSaHao7ozqtW7NZW19xpCtIw==}
 
   js-message@1.0.7:
     resolution: {integrity: sha512-efJLHhLjIyKRewNS9EGZ4UpI8NguuL6fKkhRxVuMmrGV2xN/0APGdQYwLFky5w9naebSZ0OwAGp0G6/2Cg90rA==}
@@ -35124,6 +35163,10 @@ packages:
 
   minipass-flush@1.0.5:
     resolution: {integrity: sha512-JmQSYYpPUqX5Jyn1mXaRwOda1uQ8HP5KAT/oDSLCzt1BYRhQU0/hDtsB1ufZfEEzMZ9aAVmsBw8+FWsIXlClWw==}
+    engines: {node: '>= 8'}
+
+  minipass-flush@1.0.7:
+    resolution: {integrity: sha512-TbqTz9cUwWyHS2Dy89P3ocAGUGxKjjLuR9z8w4WUTGAVgEj17/4nhgo2Du56i0Fm3Pm30g4iA8Lcqctc76jCzA==}
     engines: {node: '>= 8'}
 
   minipass-pipeline@1.2.4:
@@ -37053,6 +37096,9 @@ packages:
   react-is@19.2.7:
     resolution: {integrity: sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A==}
 
+  react-is@19.2.8:
+    resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
+
   react-json-tree@0.20.0:
     resolution: {integrity: sha512-h+f9fUNAxzBx1rbrgUF7+zSWKGHDtt2VPYLErIuB0JyKGnWgFMM21ksqQyb3EXwXNnoMW2rdE5kuAaubgGOx2Q==}
     peerDependencies:
@@ -38248,6 +38294,10 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
+  shell-quote@1.10.0:
+    resolution: {integrity: sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==}
+    engines: {node: '>= 0.4'}
+
   shell-quote@1.8.0:
     resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
 
@@ -38392,6 +38442,10 @@ packages:
 
   socks@2.8.7:
     resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
+    engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
+
+  socks@2.8.9:
+    resolution: {integrity: sha512-LJhUYUvItdQ0LkJTmPeaEObWXAqFyfmP85x0tch/ez9cahmhlBBLbIqDFnvBnUJGagb0JbIQrkBs1wJ+yRYpEw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
   sonic-boom@4.0.1:
@@ -39475,8 +39529,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@6.0.2:
-    resolution: {integrity: sha512-bGdAIrZ0wiGDo5l8c++HWtbaNCWTS4UTv7RaTH/ThVIgjkveJt83m74bBHMJkuCbslY8ixgLBVZJIOiQlQTjfQ==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -39907,8 +39961,12 @@ packages:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+  uuid@13.0.2:
+    resolution: {integrity: sha512-vzi9uRZ926x4XV73S/4qQaTwPXM2JBj6/6lI/byHH1jOpCzb0zDbfytgA9LcN/hzb2l7WQSQnxITOVx5un/wGw==}
+    hasBin: true
+
+  uuid@14.0.2:
+    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
 
   uuid@3.4.0:
@@ -41992,6 +42050,12 @@ snapshots:
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
+  '@babel/code-frame@7.29.7':
+    dependencies:
+      '@babel/helper-validator-identifier': 7.29.7
+      js-tokens: 4.0.0
+      picocolors: 1.1.1
+
   '@babel/code-frame@8.0.0-beta.2':
     dependencies:
       '@babel/helper-validator-identifier': 8.0.0-beta.2
@@ -42032,6 +42096,14 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
+      jsesc: 3.1.0
+
+  '@babel/generator@7.29.8':
+    dependencies:
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
@@ -42141,6 +42213,8 @@ snapshots:
 
   '@babel/helper-globals@7.28.0': {}
 
+  '@babel/helper-globals@7.29.7': {}
+
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
       '@babel/types': 7.29.0
@@ -42236,7 +42310,11 @@ snapshots:
 
   '@babel/helper-string-parser@7.27.1': {}
 
+  '@babel/helper-string-parser@7.29.7': {}
+
   '@babel/helper-validator-identifier@7.28.5': {}
+
+  '@babel/helper-validator-identifier@7.29.7': {}
 
   '@babel/helper-validator-identifier@8.0.0-beta.2': {}
 
@@ -42273,6 +42351,10 @@ snapshots:
   '@babel/parser@7.29.2':
     dependencies:
       '@babel/types': 7.29.0
+
+  '@babel/parser@7.29.8':
+    dependencies:
+      '@babel/types': 7.29.8
 
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.28.5(@babel/core@7.28.5)':
     dependencies:
@@ -43304,6 +43386,12 @@ snapshots:
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
 
+  '@babel/template@7.29.7':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
+
   '@babel/traverse@7.24.1':
     dependencies:
       '@babel/code-frame': 7.29.0
@@ -43379,6 +43467,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/traverse@7.29.8':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.8
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.8
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.8
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/types@7.27.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
@@ -43393,6 +43493,11 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@babel/types@7.29.8':
+    dependencies:
+      '@babel/helper-string-parser': 7.29.7
+      '@babel/helper-validator-identifier': 7.29.7
 
   '@bcoe/v8-coverage@0.2.3': {}
 
@@ -44406,13 +44511,13 @@ snapshots:
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     dependencies:
       env-paths: 2.2.1
-      exponential-backoff: 3.1.2
+      exponential-backoff: 3.1.3
       glob: 8.1.0
       graceful-fs: 4.2.11
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.8.1
+      semver: 7.7.3
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -48580,13 +48685,13 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.8.1
+      semver: 7.7.3
     optional: true
 
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.8.1
+      semver: 7.7.3
 
   '@npmcli/move-file@1.1.2':
     dependencies:
@@ -50340,7 +50445,7 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       semver: 6.3.1
-      shell-quote: 1.8.4
+      shell-quote: 1.10.0
     transitivePeerDependencies:
       - encoding
 
@@ -51046,7 +51151,7 @@ snapshots:
       semver: 7.8.1
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
-      uuid: 13.0.0
+      uuid: 13.0.2
     optionalDependencies:
       '@types/react': 19.0.14
     transitivePeerDependencies:
@@ -51881,13 +51986,6 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@segment/analytics-core@1.8.2':
-    dependencies:
-      '@lukeed/uuid': 2.0.1
-      '@segment/analytics-generic-utils': 1.2.0
-      dset: 3.1.4
-      tslib: 2.6.2
-
   '@segment/analytics-core@1.8.3':
     dependencies:
       '@lukeed/uuid': 2.0.1
@@ -51899,16 +51997,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@segment/analytics-next@1.81.1':
+  '@segment/analytics-next@1.84.1':
     dependencies:
       '@lukeed/uuid': 2.0.1
-      '@segment/analytics-core': 1.8.2
+      '@segment/analytics-core': 1.8.3
       '@segment/analytics-generic-utils': 1.2.0
       '@segment/analytics-page-tools': 1.0.0
       '@segment/analytics.js-video-plugins': 0.2.1
       '@segment/facade': 3.4.10
       dset: 3.1.4
-      js-cookie: 3.0.1
+      js-cookie: 3.0.8
       node-fetch: 2.7.0
       tslib: 2.6.2
       unfetch: 4.2.0
@@ -51928,17 +52026,17 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@segment/analytics-react-native@2.21.4(bb7c3452cb2697ae64ac0d020430b5c4)':
+  '@segment/analytics-react-native@2.24.0(80b21f32d3eec5b5e3abb940946456cb)':
     dependencies:
-      '@segment/sovran-react-native': 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@segment/sovran-react-native': 1.1.4(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@segment/tsub': 2.0.0
       '@stdlib/number-float64-base-normalize': 0.0.8
       deepmerge: 4.3.1
-      js-base64: 3.7.8
+      js-base64: 3.9.3
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
-      uuid: 9.0.1
+      uuid: 14.0.2
     optionalDependencies:
       '@react-native-async-storage/async-storage': 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
     transitivePeerDependencies:
@@ -51961,7 +52059,7 @@ snapshots:
 
   '@segment/isodate@1.0.3': {}
 
-  '@segment/sovran-react-native@1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+  '@segment/sovran-react-native@1.1.4(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native-get-random-values@1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
     dependencies:
       ansi-regex: 5.0.1
       deepmerge: 4.3.1
@@ -51969,7 +52067,7 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       shell-quote: 1.8.0
-      uuid: 9.0.1
+      uuid: 14.0.2
     optionalDependencies:
       '@react-native-async-storage/async-storage': 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
 
@@ -53327,7 +53425,7 @@ snapshots:
       '@stdlib/math-base-special-copysign': 0.0.7
       '@stdlib/number-float64-base-exponent': 0.0.6
       '@stdlib/number-float64-base-from-words': 0.0.6
-      '@stdlib/number-float64-base-normalize': 0.0.9
+      '@stdlib/number-float64-base-normalize': 0.0.8
       '@stdlib/number-float64-base-to-words': 0.0.7
     transitivePeerDependencies:
       - supports-color
@@ -53370,18 +53468,6 @@ snapshots:
       '@stdlib/math-base-special-abs': 0.0.6
       '@stdlib/types': 0.0.14
       '@stdlib/utils-define-nonenumerable-read-only-property': 0.0.7
-    transitivePeerDependencies:
-      - supports-color
-
-  '@stdlib/number-float64-base-normalize@0.0.9':
-    dependencies:
-      '@stdlib/constants-float64-smallest-normal': 0.0.8
-      '@stdlib/math-base-assert-is-infinite': 0.0.9
-      '@stdlib/math-base-assert-is-nan': 0.0.8
-      '@stdlib/math-base-special-abs': 0.0.6
-      '@stdlib/types': 0.0.14
-      '@stdlib/utils-define-nonenumerable-read-only-property': 0.0.7
-      '@stdlib/utils-library-manifest': 0.0.8
     transitivePeerDependencies:
       - supports-color
 
@@ -54999,7 +55085,7 @@ snapshots:
 
   '@typescript/typescript6@6.0.2':
     dependencies:
-      '@typescript/old': typescript@6.0.2
+      '@typescript/old': typescript@6.0.3
 
   '@uiw/codemirror-extensions-basic-setup@4.25.4(@codemirror/view@6.39.5)':
     dependencies:
@@ -57559,7 +57645,7 @@ snapshots:
       lru-cache: 7.18.3
       minipass: 3.3.6
       minipass-collect: 1.0.2
-      minipass-flush: 1.0.5
+      minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
       mkdirp: 1.0.4
       p-map: 4.0.0
@@ -60331,6 +60417,8 @@ snapshots:
 
   exponential-backoff@3.1.2: {}
 
+  exponential-backoff@3.1.3: {}
+
   express@4.22.0:
     dependencies:
       accepts: 1.3.8
@@ -62000,7 +62088,10 @@ snapshots:
       '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
-  ip-address@10.0.1: {}
+  ip-address@10.0.1:
+    optional: true
+
+  ip-address@10.7.0: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -62333,7 +62424,7 @@ snapshots:
 
   isomorphic-fetch@3.0.0:
     dependencies:
-      node-fetch: 2.7.0
+      node-fetch: 2.6.13
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
@@ -63300,7 +63391,9 @@ snapshots:
 
   js-base64@3.7.8: {}
 
-  js-cookie@3.0.1: {}
+  js-base64@3.9.3: {}
+
+  js-cookie@3.0.8: {}
 
   js-message@1.0.7: {}
 
@@ -63758,7 +63851,7 @@ snapshots:
   launch-editor@2.14.0:
     dependencies:
       picocolors: 1.1.1
-      shell-quote: 1.8.4
+      shell-quote: 1.10.0
 
   lazy-cache@1.0.4: {}
 
@@ -64351,7 +64444,7 @@ snapshots:
       minipass: 3.3.6
       minipass-collect: 1.0.2
       minipass-fetch: 2.1.2
-      minipass-flush: 1.0.5
+      minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
       negotiator: 0.6.4
       promise-retry: 2.0.1
@@ -64740,9 +64833,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -64789,7 +64880,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
@@ -64896,7 +64989,7 @@ snapshots:
   metro-source-map@0.81.5:
     dependencies:
       '@babel/traverse': 7.29.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.0'
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -64911,7 +65004,7 @@ snapshots:
   metro-source-map@0.83.3:
     dependencies:
       '@babel/traverse': 7.29.0
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8'
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -65655,6 +65748,11 @@ snapshots:
       encoding: 0.1.13
 
   minipass-flush@1.0.5:
+    dependencies:
+      minipass: 3.3.6
+    optional: true
+
+  minipass-flush@1.0.7:
     dependencies:
       minipass: 3.3.6
 
@@ -67481,7 +67579,7 @@ snapshots:
   pretty-format@30.5.0:
     dependencies:
       '@jest/react-is-18': react-is@18.3.1
-      '@jest/react-is-19': react-is@19.2.7
+      '@jest/react-is-19': react-is@19.2.8
       '@jest/schemas': 30.5.0
       ansi-styles: 5.2.0
 
@@ -67831,7 +67929,7 @@ snapshots:
 
   react-devtools-core@6.1.5:
     dependencies:
-      shell-quote: 1.8.4
+      shell-quote: 1.10.0
       ws: 7.5.10
     transitivePeerDependencies:
       - bufferutil
@@ -67945,6 +68043,8 @@ snapshots:
   react-is@19.1.1: {}
 
   react-is@19.2.7: {}
+
+  react-is@19.2.8: {}
 
   react-json-tree@0.20.0(@types/react@19.0.14)(react@19.1.4):
     dependencies:
@@ -69645,6 +69745,8 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
+  shell-quote@1.10.0: {}
+
   shell-quote@1.8.0: {}
 
   shell-quote@1.8.4: {}
@@ -69834,13 +69936,19 @@ snapshots:
     dependencies:
       agent-base: 6.0.2
       debug: 4.4.3
-      socks: 2.8.7
+      socks: 2.8.9
     transitivePeerDependencies:
       - supports-color
 
   socks@2.8.7:
     dependencies:
       ip-address: 10.0.1
+      smart-buffer: 4.2.0
+    optional: true
+
+  socks@2.8.9:
+    dependencies:
+      ip-address: 10.7.0
       smart-buffer: 4.2.0
 
   sonic-boom@4.0.1:
@@ -71142,7 +71250,7 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  typescript@6.0.2: {}
+  typescript@6.0.3: {}
 
   typescript@7.0.2:
     optionalDependencies:
@@ -71569,7 +71677,9 @@ snapshots:
 
   uuid@11.1.0: {}
 
-  uuid@13.0.0: {}
+  uuid@13.0.2: {}
+
+  uuid@14.0.2: {}
 
   uuid@3.4.0: {}
 

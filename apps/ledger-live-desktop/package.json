@@ -178,7 +178,7 @@
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
-    "@segment/analytics-next": "1.81.1",
+    "@segment/analytics-next": "1.84.1",
     "@shared/api-services": "workspace:^",
     "@shared/auth": "workspace:*",
     "@shared/cloud-sync": "workspace:^",
