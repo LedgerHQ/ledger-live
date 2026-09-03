@@ -1,16 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+import { createElement, type ReactNode } from "react";
 import { renderHook } from "@testing-library/react";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { usePickDefaultCurrency } from "./usePickDefaultCurrency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
-// useCurrenciesByMarketcap depends on Redux; return currencies unchanged (no-DADA fallback).
-jest.mock("../../../currencies/hooks", () => ({
-  useCurrenciesByMarketcap: <C>(currencies: C[]) => currencies,
-}));
+// Minimal store: assetsDataApi has no cached DADA data, so useCurrenciesByMarketcap
+// returns currencies in their original order (the no-DADA-cache fallback path).
+const store = configureStore({ reducer: { assetsDataApi: () => ({ queries: {} }) } });
+const wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(Provider, { store }, children);
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();
@@ -26,13 +30,25 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("bsc"),
     ];
 
-    renderHook(() =>
-      usePickDefaultCurrency(currencies, getCryptoCurrencyById("ethereum"), setCurrency),
+    renderHook(
+      () => usePickDefaultCurrency(currencies, getCryptoCurrencyById("ethereum"), setCurrency),
+      { wrapper },
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
   });
 
+  // NOTE: the two tests below are EXPECTED TO FAIL.
+  //
+  // When the currency list contains neither ETH nor BTC, the original code called
+  //   currenciesByMarketcap(currencies).then(sorted => setCurrency(sorted[0]))
+  // That promise resolved in production (users got a default), but tests never saw it
+  // because renderHook completes synchronously before .then() fires.
+  //
+  // The synchronous hook version makes the behaviour visible: the fallback now fires
+  // synchronously and these tests fail. This surfaces an existing contradiction between
+  // the test intent ("do nothing") and the original production intent ("pick top-sorted").
+  // Which behaviour is correct is a product decision for reviewers; it is not resolved here.
   test("do nothing if the currency is undefined/null and the currencies list don't include eth/btc", () => {
     const currencies: (CryptoCurrency | TokenCurrency)[] = [
       getCryptoCurrencyById("solana"),
@@ -40,7 +56,7 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("bsc"),
     ];
 
-    renderHook(() => usePickDefaultCurrency(currencies, undefined, setCurrency));
+    renderHook(() => usePickDefaultCurrency(currencies, undefined, setCurrency), { wrapper });
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
   });
@@ -52,8 +68,9 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("bsc"),
     ];
 
-    renderHook(() =>
-      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+    renderHook(
+      () => usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+      { wrapper },
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
@@ -69,8 +86,9 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("polkadot"),
     ];
 
-    renderHook(() =>
-      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+    renderHook(
+      () => usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+      { wrapper },
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(1);
@@ -87,8 +105,9 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("polkadot"),
     ];
 
-    renderHook(() =>
-      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+    renderHook(
+      () => usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
+      { wrapper },
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(1);
