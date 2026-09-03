@@ -37,7 +37,11 @@ type StepHeading = {
 };
 
 /** Translation keys for a step's title and description, given the perps use case. */
-function getStepHeading(step: ModularDialogStep, uiUseCase?: string): StepHeading {
+function getStepHeading(
+  step: ModularDialogStep,
+  uiUseCase: string | undefined,
+  hasAccounts: boolean,
+): StepHeading {
   const perpsUseCase = getPerpsUiUseCase(uiUseCase);
 
   if (step === MODULAR_DIALOG_STEP.ASSET_SELECTION && perpsUseCase === PERPS_UI_USE_CASE.fund) {
@@ -53,7 +57,9 @@ function getStepHeading(step: ModularDialogStep, uiUseCase?: string): StepHeadin
   ) {
     return {
       titleKey: "modularAssetDrawer.selectAccountPerpsTitle",
-      descriptionKey: "modularAssetDrawer.selectAccountPerpsDescription",
+      descriptionKey: hasAccounts
+        ? "modularAssetDrawer.selectAccountPerpsDescription"
+        : "modularAssetDrawer.selectAccountPerpsEmptyDescription",
     };
   }
 
@@ -181,10 +187,9 @@ export function ModularDialogFlow({
         })
       : undefined;
 
-  const { titleKey, descriptionKey } = getStepHeading(currentStep, uiUseCase);
+  const { titleKey, descriptionKey } = getStepHeading(currentStep, uiUseCase, hasAccounts);
   const title = t(titleKey);
-  const description =
-    accountSelectionDescription ?? (descriptionKey ? t(descriptionKey) : undefined);
+  const description = descriptionKey ? t(descriptionKey) : accountSelectionDescription;
 
   return (
     <>
