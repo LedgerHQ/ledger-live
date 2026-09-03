@@ -3,6 +3,7 @@ import {
   adaptCoreOperationToLiveOperation,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
+  toTransferFeeFromUnknown,
   cleanedOperation,
   extractBalance,
   extractBalances,
@@ -12,6 +13,7 @@ import {
   isOperationType,
   mergeExtra,
   nextSequenceWithPending,
+  optionalNumeric,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -209,6 +211,49 @@ describe("coin-framework utils", () => {
       ],
     ])("replaces BigNumbers with BigInts (%j)", (input, output) => {
       expect(bigNumberToBigIntDeep(input)).toStrictEqual(output);
+    });
+  });
+
+  describe("buildOptimisticOperation memo", () => {
+    const account = {
+      id: "acc",
+      freshAddress: "sender",
+      currency: { units: [{ magnitude: 9 }] },
+      subAccounts: [],
+      pendingOperations: [],
+    } as unknown as Account;
+    const transaction = {
+      recipient: "dest",
+      amount: new BigNumber(1),
+      fees: new BigNumber(5000),
+      memoType: "TEXT",
+      memoValue: "a memo",
+    } as unknown as GenericTransaction;
+
+    it("carries the memo of a plain transfer", () => {
+      const op = buildOptimisticOperation(account, transaction, undefined, () => undefined);
+
+      expect(op.extra).toMatchObject({ memo: "a memo" });
+    });
+
+    it("leaves the memo out when the mode alone types the operation", () => {
+      const op = buildOptimisticOperation(account, {
+        ...transaction,
+        mode: "delegate",
+      } as unknown as GenericTransaction);
+
+      expect(op.extra).not.toHaveProperty("memo");
+    });
+
+    it("drops it when the family typed the operation itself", () => {
+      const op = buildOptimisticOperation(
+        account,
+        { ...transaction, mode: "split" } as unknown as GenericTransaction,
+        undefined,
+        () => ({ type: "FEES", value: new BigNumber(5000) }),
+      );
+
+      expect(op.extra).not.toHaveProperty("memo");
     });
   });
 
@@ -1011,6 +1056,23 @@ describe("coin-framework utils", () => {
 
     it("does not find non existing currencies", () => {
       expect(findCryptoCurrencyByNetwork("non_existing_currency")).toBeUndefined();
+    });
+  });
+
+  describe("optionalNumeric", () => {
+    it.each([Infinity, -Infinity, "Infinity", NaN, "abc", null, undefined, {}])(
+      "rejects %p",
+      (value: unknown) => {
+        expect(optionalNumeric(value)).toBeUndefined();
+      },
+    );
+
+    it.each([
+      [10n, "10"],
+      [10, "10"],
+      ["10", "10"],
+    ])("reads %p", (value: unknown, expected: string) => {
+      expect(optionalNumeric(value)?.toFixed()).toBe(expected);
     });
   });
 
@@ -1869,5 +1931,115 @@ describe("coin-framework utils", () => {
         expect(isOperationType(type)).toBe(false);
       },
     );
+  });
+});
+
+describe("toTransferFeeFromUnknown", () => {
+  const fee = {
+    maxTransferFee: 1,
+    transferFee: 2,
+    feePercent: 3,
+    feeBps: 4,
+    transferAmountIncludingFee: 5,
+    transferAmountExcludingFee: 6,
+  };
+
+  it("accepts a fee whose fields are all numbers", () => {
+    expect(toTransferFeeFromUnknown(fee)).toBe(fee);
+  });
+
+  it.each([
+    null,
+    undefined,
+    42,
+    "fee",
+    {},
+    { ...fee, feeBps: "4" },
+    { ...fee, transferFee: NaN },
+    { ...fee, maxTransferFee: Infinity },
+  ])("rejects %p", (value: unknown) => {
+    expect(toTransferFeeFromUnknown(value)).toBeUndefined();
+  });
+});
+
+const account = {
+  balance: new BigNumber(10_000),
+  spendableBalance: new BigNumber(10_000),
+  freshAddress: "owner",
+  stakingResources: {
+    delegations: [
+      {
+        positionId: "stake-acc-1",
+        validatorAddress: "vote-acc",
+        amount: new BigNumber(1_000),
+        pendingRewards: new BigNumber(0),
+        status: "bonded",
+        activeAmount: new BigNumber(1_000),
+        lockedReserve: new BigNumber(2_282_880),
+        canStake: true,
+        canWithdraw: true,
+      },
+    ],
+    unbondings: [
+      {
+        positionId: "stake-acc-2",
+        validatorAddress: "",
+        amount: new BigNumber(500),
+        completionDate: new Date(0),
+        status: "withdrawable",
+        canWithdraw: false,
+      },
+    ],
+  },
+} as unknown as Account;
+
+describe("extractBalances", () => {
+  it("reconstructs the staking positions the account carries", () => {
+    const [native, delegation, unbonding] = extractBalances(account);
+
+    expect(native.stake).toBeUndefined();
+    expect(native.value).toBe(10_000n);
+
+    expect(delegation.stake).toMatchObject({
+      uid: "stake-acc-1",
+      state: "active",
+      delegate: "vote-acc",
+      amount: 1_000n,
+      details: { activeAmount: 1_000, lockedReserve: 2_282_880, canStake: true, canWithdraw: true },
+    });
+
+    expect(unbonding.stake).toMatchObject({ uid: "stake-acc-2", state: "withdrawable" });
+    expect(unbonding.stake?.delegate).toBeUndefined();
+  });
+
+  it("carries an amount too large for a double as a string, not a rounded number", () => {
+    const huge = new BigNumber("9007199254740993"); // Number.MAX_SAFE_INTEGER + 2
+    const [, delegation] = extractBalances({
+      balance: new BigNumber(10_000),
+      spendableBalance: new BigNumber(10_000),
+      freshAddress: "owner",
+      stakingResources: {
+        delegations: [
+          {
+            positionId: "stake-acc-1",
+            validatorAddress: "vote-acc",
+            amount: huge,
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: huge,
+          },
+        ],
+        unbondings: [],
+      },
+    } as unknown as Account);
+
+    expect(delegation.stake?.details?.activeAmount).toBe("9007199254740993");
+    expect(optionalNumeric(delegation.stake?.details?.activeAmount)?.toFixed()).toBe(
+      "9007199254740993",
+    );
+  });
+
+  it("returns only the native balance for an account with no staking resources", () => {
+    expect(extractBalances({ ...account, stakingResources: undefined } as Account)).toHaveLength(1);
   });
 });
