@@ -10,7 +10,10 @@ import BigNumber from "bignumber.js";
 import { isSolanaStakingTransactionIntent } from "../logic";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { getStakeAccountAddressWithSeed } from "../network/chain/web3";
+import { getMaybeTokenMint, getStakeAccountAddressWithSeed } from "../network/chain/web3";
+import type { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
+import { transferFeeForIntent } from "../helpers/token";
+import type { TransferFeeCalculated } from "../types";
 import { UserInputType } from "../signer";
 import type { SolanaTokenProgram, TokenTransferCommand } from "../types";
 import { Transaction, TransactionModel } from "../types";
@@ -42,7 +45,36 @@ export async function estimateFees(
   const kind = mapIntentToTxKind(intent);
   const tokenProgram = resolveTokenProgramFromAsset(intent.asset);
   const fee = await estimateTxFee(api, intent.sender, kind, tokenProgram);
-  return { value: BigInt(fee) };
+  const transferFee = await getMaybeTransferFee(api, intent);
+  return {
+    value: BigInt(fee),
+    ...(transferFee ? { parameters: { transferFee } } : {}),
+  };
+}
+
+/** The fee a Token-2022 mint levies on transfers; it changes at epoch boundaries. */
+async function getMaybeTransferFee(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+): Promise<TransferFeeCalculated | undefined> {
+  const mintAddress = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
+  if (intent.asset.type !== PARSED_PROGRAMS.SPL_TOKEN_2022 || !mintAddress) return undefined;
+
+  const mint = await getMaybeTokenMint(mintAddress, api);
+  if (!mint || mint instanceof Error) return undefined;
+
+  const transferFeeConfigExt = mint.info.extensions?.find(
+    tokenExt => tokenExt.extension === "transferFeeConfig",
+  ) as TransferFeeConfigExt | undefined;
+  if (!transferFeeConfigExt) return undefined;
+
+  const { epoch } = await api.getEpochInfo();
+  return transferFeeForIntent(
+    intent.amount,
+    intent.useAllAmount,
+    transferFeeConfigExt.state,
+    epoch,
+  );
 }
 
 export async function estimateTxFee(

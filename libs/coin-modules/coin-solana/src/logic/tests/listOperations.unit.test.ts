@@ -1,7 +1,7 @@
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
-import { listOperations } from "../listOperations";
+import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -1282,5 +1282,23 @@ describe("listOperations", () => {
       expect(tokenOps).toHaveLength(1);
       expect(tokenOps[0].details).toEqual(expect.objectContaining({ internal: true }));
     });
+  });
+
+  describe("dropMemoLengthPrefixIfAny", () => {
+    // The RPC prefixes the memo with its length in *bytes*, which cannot index a UTF-16 string.
+    it.each([
+      ["[5] hello", "hello"],
+      ["[6] héllo", "héllo"],
+      ["[11] 🚀 to moon", "🚀 to moon"],
+    ])("drops the length prefix of %s", (raw, expected) => {
+      expect(dropMemoLengthPrefixIfAny(raw)).toBe(expected);
+    });
+
+    it.each(["no prefix at all", "[not a number] x", "[5]no space"])(
+      "leaves %s untouched",
+      memo => {
+        expect(dropMemoLengthPrefixIfAny(memo)).toBe(memo);
+      },
+    );
   });
 });

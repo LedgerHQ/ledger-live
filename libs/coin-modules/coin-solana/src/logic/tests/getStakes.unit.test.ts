@@ -97,10 +97,15 @@ describe("getStakes", () => {
     expect(stake.delegate).toBe(VOTER_PUBKEY.toBase58());
     expect(stake.state).toBe("active");
     expect(stake.asset).toEqual({ type: "native" });
-    expect(stake.amount).toBe(BigInt(5_000_000_000));
+    // `amount` is the delegated principal, not the stake account's 5_000_000_000 lamports:
+    // the 2_282_880 rent-exempt reserve is not delegated and must not count as a reward.
+    expect(stake.amount).toBe(BigInt(4_997_717_120));
     expect(stake.amountDeposited).toBe(BigInt(4_997_717_120));
-    expect(stake.details?.rentExemptReserve).toBe("2282880");
-    expect(stake.details?.activeStake).toBe(4_997_717_120);
+    expect(stake.amountRewarded).toBe(0n);
+    expect(stake.details?.lockedReserve).toBe(2_282_880);
+    expect(stake.details?.activeAmount).toBe(4_997_717_120);
+    expect(stake.details?.canStake).toBe(true);
+    expect(stake.details?.canWithdraw).toBe(true);
   });
 
   it("should map a deactivating stake account", async () => {
@@ -111,7 +116,7 @@ describe("getStakes", () => {
     const result = await getStakes(api, TEST_ADDRESS);
 
     expect(result.items[0].state).toBe("deactivating");
-    expect(result.items[0].details?.inactiveStake).toBe(2_997_717_120);
+    expect(result.items[0].details?.inactiveAmount).toBe(2_997_717_120);
   });
 
   it("should propagate errors from getStakeAccounts", async () => {

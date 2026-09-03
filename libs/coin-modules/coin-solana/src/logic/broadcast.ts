@@ -1,4 +1,5 @@
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
+import { log } from "@ledgerhq/logs";
 import {
   BlockhashWithExpiryBlockHeight,
   TransactionError,
@@ -71,6 +72,9 @@ export async function broadcast(
   });
 
   if (value.err !== null) {
+    // The user-facing error is deliberately generic, so keep the chain's own verdict — the only
+    // thing that says *why* a well-formed transaction was refused — in the logs.
+    log("solana", "transaction simulation failed", { err: value.err, logs: value.logs });
     throw classifySimulationError(value.err);
   }
 

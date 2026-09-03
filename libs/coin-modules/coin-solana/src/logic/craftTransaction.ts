@@ -15,14 +15,10 @@ import {
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
 } from "@solana/web3.js";
-import BigNumber from "bignumber.js";
-import { bpsToPercent, calculateToken2022TransferFees } from "../helpers/token";
+import { transferFeeForIntent } from "../helpers/token";
 import { isValidBase58Address } from "../logic";
 import type { ChainAPI } from "../network";
-import type {
-  TransferFeeConfigExt,
-  TransferFeeConfigState,
-} from "../network/chain/account/tokenExtensions";
+import type { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
   buildTransferInstructions,
@@ -52,7 +48,6 @@ import type {
   StakeWithdrawCommand,
   TokenTransferCommand,
   TransferCommand,
-  TransferFeeCalculated,
   Transaction,
   SolanaTokenProgram,
 } from "../types";
@@ -479,67 +474,16 @@ async function resolveTokenTransferCommand(
     );
     if (transferFeeConfigExt) {
       const { epoch } = await api.getEpochInfo();
-      if (intent.useAllAmount) {
-        command.extensions = {
-          transferFee: computeTransferFeeFromTotal(
-            intent.amount.toString(),
-            transferFeeConfigExt.state,
-            epoch,
-          ),
-        };
-      } else {
-        command.extensions = {
-          transferFee: calculateToken2022TransferFees({
-            transferAmount: Number(intent.amount),
-            transferFeeConfigState: transferFeeConfigExt.state,
-            currentEpoch: epoch,
-          }),
-        };
-      }
+      command.extensions = {
+        transferFee: transferFeeForIntent(
+          intent.amount,
+          intent.useAllAmount,
+          transferFeeConfigExt.state,
+          epoch,
+        ),
+      };
     }
   }
 
   return command;
-}
-
-/**
- * Computes Token-2022 transfer fees for the "send all" case.
- *
- * Unlike `calculateToken2022TransferFees` which works from net → gross, this
- * function works from gross → net: the total deducted from the sender's ATA
- * equals the full token balance, and the fee is derived from that total.
- *
- * Formula: `fee = min( ceil(total × bps / 10 000), maximumFee )`
- *
- * Selects the active fee schedule based on `currentEpoch` vs the
- * `newerTransferFee.epoch` threshold.
- */
-function computeTransferFeeFromTotal(
-  totalAmount: BigNumber.Value,
-  config: Pick<TransferFeeConfigState, "newerTransferFee" | "olderTransferFee">,
-  currentEpoch: number,
-): TransferFeeCalculated {
-  const { newerTransferFee, olderTransferFee } = config;
-  const feeConfig = currentEpoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
-  const { maximumFee, transferFeeBasisPoints } = feeConfig;
-  const feePercent = bpsToPercent(transferFeeBasisPoints);
-
-  const totalBn = BigNumber(totalAmount);
-  const maxFeeBn = BigNumber(maximumFee);
-  let transferFeeBn = totalBn
-    .times(transferFeeBasisPoints)
-    .div(10000)
-    .decimalPlaces(0, BigNumber.ROUND_CEIL);
-  if (transferFeeBn.gt(maxFeeBn)) {
-    transferFeeBn = maxFeeBn;
-  }
-
-  return {
-    feePercent,
-    maxTransferFee: maximumFee,
-    transferFee: transferFeeBn.toNumber(),
-    feeBps: transferFeeBasisPoints,
-    transferAmountIncludingFee: totalBn.toNumber(),
-    transferAmountExcludingFee: totalBn.minus(transferFeeBn).toNumber(),
-  };
 }

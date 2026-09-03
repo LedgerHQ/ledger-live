@@ -84,8 +84,9 @@ describe("validateIntent (integration)", () => {
       );
 
       expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      // The message carries a human-readable amount, not raw lamports.
       const fees = (result.errors.gasPrice as Error & { fees?: string }).fees;
-      expect(BigInt(fees ?? "0")).toBeGreaterThan(2_044_280n);
+      expect(Number(fees)).toBeGreaterThan(2_044_280 / 1e9);
     });
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {

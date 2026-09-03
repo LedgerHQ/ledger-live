@@ -84,6 +84,7 @@ function indexTransactionsBySignature(
 }
 
 type TxMeta = {
+  memo?: string;
   hash: string;
   slot: number;
   blockTime: number;
@@ -97,8 +98,19 @@ type TxMeta = {
  * normalising types (e.g. fee → bigint) so downstream helpers don't depend on RPC shapes.
  * Callers guarantee that `sig.blockTime` and `tx.meta` are non-null before calling.
  */
+/**
+ * The RPC prefixes a memo with its byte length (`[5] hello`); the user only typed what follows.
+ *
+ * The declared length counts bytes while `String` indexes UTF-16 units, so it cannot be used to
+ * slice: on `[6] héllo` it would leave a leading space. Drop the matched prefix instead.
+ */
+export function dropMemoLengthPrefixIfAny(memo: string): string {
+  return memo.replace(/^\[\d+\]\s/, "");
+}
+
 function buildTxMeta(sig: ConfirmedSignatureInfo, tx: ParsedTransactionWithMeta): TxMeta {
   return {
+    ...(sig.memo ? { memo: dropMemoLengthPrefixIfAny(sig.memo) } : {}),
     hash: sig.signature,
     slot: sig.slot,
     blockTime: sig.blockTime!,
@@ -132,7 +144,11 @@ function makeOperation(params: MakeOperationParams): Operation {
     recipients,
     value,
     asset,
-    ...(details ? { details } : {}),
+    // The memo belongs to the whole transaction, so every operation it produces carries it — the
+    // same shape the account details drawer reads (`extra.memo`).
+    ...(details || meta.memo
+      ? { details: { ...details, ...(meta.memo ? { memo: meta.memo } : {}) } }
+      : {}),
     tx: {
       hash: meta.hash,
       block: {

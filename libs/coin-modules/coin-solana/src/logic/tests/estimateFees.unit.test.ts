@@ -35,6 +35,7 @@ function createMockApi(feeResponses: (number | null)[] = [5000]): ChainAPI {
       blockhash: "newBlockhash",
       lastValidBlockHeight: 100,
     }),
+    getAccountInfo: jest.fn().mockResolvedValue(null),
   } as unknown as ChainAPI;
 }
 
