@@ -394,6 +394,11 @@ describe("PayTab integration", () => {
       expect(screen.getByTestId("pay-request-receive")).toBeVisible();
     }
 
+    function useHintFakeTimers() {
+      // React 19 act() waits on queueMicrotask. Faking it hangs the test.
+      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
+    }
+
     function flushHintTimers() {
       act(() => {
         jest.runOnlyPendingTimers();
@@ -412,7 +417,7 @@ describe("PayTab integration", () => {
       const { user } = renderHintPayTab();
 
       expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
+      useHintFakeTimers();
       await openRequestReceiveNow(user);
       expect(mockedTrack).not.toHaveBeenCalledWith("hint_impression", expect.anything());
       flushHintTimers();
@@ -446,7 +451,7 @@ describe("PayTab integration", () => {
       const { user } = renderHintPayTab();
 
       expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
+      useHintFakeTimers();
       await openRequestReceiveNow(user);
       flushHintTimers();
       expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
@@ -461,7 +466,7 @@ describe("PayTab integration", () => {
       const { user } = renderHintPayTab();
 
       expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
+      useHintFakeTimers();
       await openRequestReceiveNow(user);
       await user.click(screen.getByTestId("pay-request-receive-verify"));
       flushHintTimers();

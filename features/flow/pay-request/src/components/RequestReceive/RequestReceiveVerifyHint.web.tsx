@@ -21,7 +21,7 @@ export function RequestReceiveVerifyHint({
   return (
     <Popover open={open} onOpenChange={() => undefined}>
       <PopoverTrigger render={<div className="relative z-menu flex-1">{children}</div>} />
-      {/* The dialog sets pointer-events: none on body. Restore them here so the portaled popover stays clickable. */}
+      {/* Request dialog sets pointer-events: none on body. */}
       <PopoverContent side="top" align="end" className="pointer-events-auto max-w-256">
         <div className="flex flex-col gap-12" data-testid="pay-request-receive-verify-hint">
           <p className="body-2 whitespace-pre-line text-base">{message}</p>
