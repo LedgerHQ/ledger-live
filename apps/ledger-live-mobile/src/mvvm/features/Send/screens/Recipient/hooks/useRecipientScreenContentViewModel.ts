@@ -1,8 +1,8 @@
-import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";
@@ -19,9 +19,13 @@ export type UseRecipientScreenContentViewModelProps = Readonly<{
   parentAccount?: Account | null;
   transaction?: Transaction | null;
   currency: CryptoOrTokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
-  onMemoProceed: () => void;
   onAddContact: () => void;
 }>;
 
@@ -32,7 +36,6 @@ export function useRecipientScreenContentViewModel({
   currency,
   onAddressSelected,
   recipientSupportsDomain,
-  onMemoProceed,
   onAddContact,
 }: UseRecipientScreenContentViewModelProps) {
   const recipient = useRecipientScreenView({
@@ -52,29 +55,15 @@ export function useRecipientScreenContentViewModel({
     [account, parentAccount],
   );
 
-  const handleSkipMemo = useCallback(() => {
-    track("button_clicked", {
-      ...trackingProperties,
-      button: "skip",
-      page: "step memo",
-    });
-    onMemoProceed();
-  }, [onMemoProceed, trackingProperties]);
-
   const resolvedAddress = recipient.result.resolvedAddress ?? recipient.searchValue;
   const hasMemo = sendFeatures.hasMemoForRecipient(currency, resolvedAddress);
   const showMemo = hasMemo && recipient.isAddressValid;
   const memo = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
     hasMemo,
-    onSkip: handleSkipMemo,
   });
-  const showMatched = shouldShowMatchedAddress({
-    showMatchedAddress: recipient.showMatchedAddress,
-    hasMemo,
-    hasFilledMemo: memo.hasFilledMemo,
-    hasMemoError: Boolean(memo.memoError),
-  });
+  const hasMemoValidationError = hasMemo && Boolean(memo.memoError);
+  const showMatched = recipient.showMatchedAddress && !hasMemoValidationError;
 
   const handleAddressSelect = recipient.handleAddressSelect;
   const handleMatchedAddress = useCallback(

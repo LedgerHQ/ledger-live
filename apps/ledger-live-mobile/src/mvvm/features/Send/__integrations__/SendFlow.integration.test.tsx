@@ -534,6 +534,65 @@ describe("Send flow integration tests", () => {
 
       expect(await screen.findByText(/Balance cannot be below/)).toBeOnTheScreen();
     });
+
+    it("should ask to confirm before sending without a memo", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+
+      expect(await screen.findByTestId("send-skip-memo-confirm")).toBeOnTheScreen();
+      await user.press(screen.getByTestId("send-skip-memo-confirm"));
+
+      expect(await screen.findByText("Review")).toBeOnTheScreen();
+    });
+
+    it("should stay on recipient when refusing to skip the memo", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+
+      expect(await screen.findByTestId("send-skip-memo-cancel")).toBeOnTheScreen();
+      await user.press(screen.getByTestId("send-skip-memo-cancel"));
+
+      expect(await screen.findByTestId("send-memo-input")).toBeOnTheScreen();
+      expect(screen.queryByText("Review")).toBeNull();
+    });
+
+    it("should restore the memo field when going back from amount after skipping", async () => {
+      const { user } = renderForAccount(accountStellar);
+
+      await user.paste(
+        await screen.findByPlaceholderText("Enter address"),
+        VALID_STELLAR_RECIPIENT,
+      );
+      await flushTimers();
+      await user.press(await screen.findByText(/^Send to /));
+      await user.press(await screen.findByTestId("send-skip-memo-confirm"));
+      expect(await screen.findByText("Review")).toBeOnTheScreen();
+
+      await user.press(screen.getByLabelText("Back"));
+
+      // The "no memo" choice made when skipping is dropped: the field comes back empty and
+      // validating the recipient again asks for the confirmation instead of moving straight on.
+      // The confirmation sheet stays mounted (the gorhom mock renders its content inline), so
+      // staying on the recipient step is what tells us the memo state was reset.
+      expect(await screen.findByTestId("send-memo-input")).toHaveDisplayValue("");
+
+      await user.press(await screen.findByText(/^Send to /));
+      await flushTimers();
+
+      expect(screen.queryByText("Review")).toBeNull();
+    });
   });
 
   describe("Bitcoin custom fees (sat/vbyte)", () => {

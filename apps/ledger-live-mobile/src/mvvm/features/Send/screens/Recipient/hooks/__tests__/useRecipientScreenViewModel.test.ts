@@ -79,11 +79,10 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: { type: "MEMO", value: "123" },
     });
-    expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
 
-  it("clears the recipient search before proceeding after memo", () => {
+  it("updates the recipient without navigating when goToNextStep is false", () => {
     const { result } = renderHook(() => useRecipientScreenViewModel());
     if (!result.current.ready) {
       throw new Error("Expected a ready recipient screen");
@@ -91,10 +90,36 @@ describe("useRecipientScreenViewModel", () => {
     const viewModel = result.current;
 
     act(() => {
-      viewModel.onMemoProceed();
+      viewModel.onAddressSelected("destination", "name.eth", false);
     });
 
-    expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
+    expect(setRecipient).toHaveBeenCalledWith({
+      address: "destination",
+      ensName: "name.eth",
+      memo: { type: "MEMO", value: "123" },
+    });
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("sets the provided memo and continues to amount", () => {
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("destination", undefined, true, {
+        value: "",
+        type: "NO_MEMO",
+      });
+    });
+
+    expect(setRecipient).toHaveBeenCalledWith({
+      address: "destination",
+      ensName: undefined,
+      memo: { value: "", type: "NO_MEMO" },
+    });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
 

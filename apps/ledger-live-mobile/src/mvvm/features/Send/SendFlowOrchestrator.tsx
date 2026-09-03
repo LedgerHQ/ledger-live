@@ -11,6 +11,7 @@ import { FlowStackNavigator } from "../FlowWizard/FlowStackNavigator";
 import { SendFlowProvider } from "./context/SendFlowContext";
 import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
 import { RecipientInputFocusProvider } from "./context/RecipientInputFocusContext";
+import { SendMemoResetProvider } from "./context/SendMemoResetContext";
 import { SendSignatureProvider, useSendSignature } from "./context/SendSignatureContext";
 import { SignatureOverlayHost } from "./components/SignatureOverlayHost";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
@@ -80,15 +81,17 @@ export function SendFlowOrchestrator({
     <SendFlowProvider value={businessContext} onClose={onClose}>
       <RecipientContactSelectionProvider>
         <RecipientInputFocusProvider>
-          <SendSignatureProvider>
-            <SendFlowNavigator
-              stepRegistry={stepRegistry}
-              flowConfig={configuredFlowConfig}
-              onClose={onClose}
-            />
-            <SignatureOverlayHost />
-            {children}
-          </SendSignatureProvider>
+          <SendMemoResetProvider>
+            <SendSignatureProvider>
+              <SendFlowNavigator
+                stepRegistry={stepRegistry}
+                flowConfig={configuredFlowConfig}
+                onClose={onClose}
+              />
+              <SignatureOverlayHost />
+              {children}
+            </SendSignatureProvider>
+          </SendMemoResetProvider>
         </RecipientInputFocusProvider>
       </RecipientContactSelectionProvider>
     </SendFlowProvider>

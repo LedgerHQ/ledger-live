@@ -1,5 +1,6 @@
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -8,10 +9,13 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { useCallback, useMemo, useState } from "react";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendMemoReset } from "../../../context/SendMemoResetContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
+import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -21,7 +25,12 @@ type UseRecipientScreenViewProps = Readonly<{
   parentAccount?: Account | null;
   transaction?: Transaction | null;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -33,11 +42,14 @@ export function useRecipientScreenView({
   onAddressSelected,
   recipientSupportsDomain,
 }: UseRecipientScreenViewProps) {
-  const { recipientSearch } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("mobile");
   const { selectedContact } = useRecipientContactSelection();
+  const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
+  const { markMemoSkipped } = useSendMemoReset();
+  const [isSkipMemoConfirmationOpen, setIsSkipMemoConfirmationOpen] = useState(false);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
@@ -102,11 +114,37 @@ export function useRecipientScreenView({
     }
   }, [clipboardAddress, recipientSearch]);
 
+  const resolvedAddress = result.resolvedAddress ?? recipientSearch.value;
+  const hasMemo = sendFeatures.hasMemoForRecipient(currency, resolvedAddress);
+  const hasFilledMemo = useMemo(() => {
+    if (!hasMemo) return true;
+    const memo = state.recipient?.memo;
+    if (!memo) return false;
+    if (memo.type === "NO_MEMO") return true;
+    return memo.value.length > 0;
+  }, [hasMemo, state.recipient?.memo]);
+
+  const closeSkipMemoConfirmation = useCallback(() => {
+    setIsSkipMemoConfirmationOpen(false);
+  }, []);
+
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName);
+      if (hasMemo && !hasFilledMemo) {
+        if (doNotAskAgainSkipMemo) {
+          markMemoSkipped();
+          onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
+          return;
+        }
+
+        onAddressSelected(address, ensName, false);
+        setIsSkipMemoConfirmationOpen(true);
+        return;
+      }
+
+      onAddressSelected(address, ensName, true);
     },
-    [onAddressSelected],
+    [doNotAskAgainSkipMemo, hasFilledMemo, hasMemo, markMemoSkipped, onAddressSelected],
   );
 
   const handleContactAddressSelect = useCallback(
@@ -158,6 +196,8 @@ export function useRecipientScreenView({
     handleAddressSelect,
     handleContactSelect,
     contactAddressPicker,
+    isSkipMemoConfirmationOpen,
+    closeSkipMemoConfirmation,
     isContactsFeatureEnabled,
     featureIntroduction,
     ...searchState,
