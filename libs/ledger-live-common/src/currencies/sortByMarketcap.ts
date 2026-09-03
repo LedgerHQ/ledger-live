@@ -1,6 +1,7 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network";
+import { getEnv } from "@shared/env";
 import type { Currency } from "@domain/entity-currency";
-import api from "@ledgerhq/live-countervalues/api/index";
 
 // sort currencies by ids provided
 export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: string[]): C[] => {
@@ -23,18 +24,27 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
   return [...all];
 };
 
-/**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
- */
-export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(() =>
-  api.fetchIdsSortedByMarketcap(),
-);
+// DADA coverage is partial: major cryptos, stablecoins and xStocks are ranked;
+// unknown currencies fall to the end via the sortCurrenciesByIds fallback.
+const fetchMarketcapIdsFromDada: () => Promise<string[]> = makeLRUCache(async () => {
+  const { data } = await network<{
+    cryptoAssets: Record<string, { assetsIds?: Record<string, string> }>;
+    currenciesOrder: { metaCurrencyIds: string[] };
+  }>({
+    method: "GET",
+    url: `${getEnv("DADA_API_PROD")}/assets`,
+    params: { product: "lld", minVersion: "1.0.0", pageSize: 100 },
+  });
+  return data.currenciesOrder.metaCurrencyIds.flatMap(metaId =>
+    Object.values(data.cryptoAssets[metaId]?.assetsIds ?? {}),
+  );
+});
 
-/**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
- */
-export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
-  fetchMarketcapIds().then(
+// Async sort for non-React callers (e.g. listApps). Falls back to original
+// order on error. DADA coverage is partial; sortCurrenciesByIds appends unknowns.
+export function sortCurrenciesByDada<C extends Currency>(currencies: C[]): Promise<C[]> {
+  return fetchMarketcapIdsFromDada().then(
     ids => sortCurrenciesByIds(currencies, ids),
     () => currencies,
   );
+}

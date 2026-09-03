@@ -13,6 +13,6 @@ export {
 export { getCurrencyColor, type ColorableCurrency } from "./color";
 export { formatShort } from "./formatShort";
 export * from "./helpers";
-export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
+export { sortCurrenciesByIds, sortCurrenciesByDada } from "./sortByMarketcap";
 export { OFAC_CURRENCIES } from "./support";
 export { valueFromUnit } from "./valueFromUnit";
