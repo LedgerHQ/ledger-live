@@ -600,6 +600,7 @@
     "src/families/ton/setup.ts",
     "src/families/ton/types.ts",
     "src/families/tron/descriptor/index.ts",
+    "src/families/tron/getAddress.ts",
     "src/families/tron/getVotesCount.ts",
     "src/families/tron/platformAdapter.ts",
     "src/families/tron/setup.ts",

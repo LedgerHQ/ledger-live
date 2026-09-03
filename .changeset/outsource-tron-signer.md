@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-tron": major
 "@ledgerhq/live-common": patch
 ---
 
