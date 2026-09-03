@@ -194,6 +194,46 @@ describe("genericGetAccountShape", () => {
       );
     }
 
+    // A sub-account stored under a pre-migration id keeps that id through the merge, and its
+    // operations are re-keyed onto it. Reading the pre-merge list would leave the parent operation
+    // pointing at an id no sub-account carries, and `OperationDetails` drops what it cannot resolve.
+    it("infers sub-operations from the merged sub-accounts, not the freshly built ones", async () => {
+      const fresh = [{ id: "fresh-id", token: { id: "tok1" } }];
+      const merged = [{ id: "stored-id", token: { id: "tok1" } }];
+      buildSubAccountsMock.mockReturnValue(fresh);
+      mergeSubAccountsMock.mockReturnValue(merged);
+      listOperationsMock.mockResolvedValue({ items: [{ tx: { hash: "h1" } }], next: undefined });
+      adaptCoreOperationToLiveOperationMock.mockImplementation(() => ({
+        id: "op1",
+        hash: "h1",
+        type: "OUT",
+        extra: {},
+      }));
+
+      // A resumed sync, not one from scratch: that is the only path where the merge matters.
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            subAccounts: [{ token: { id: "tok1" } }],
+            pendingOperations: [],
+            blockHeight: 10,
+            syncHash: "sync-hash",
+            operations: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(inferSubOperationsMock).toHaveBeenCalled();
+      for (const call of inferSubOperationsMock.mock.calls) {
+        expect(call[1]).toBe(merged);
+      }
+    });
+
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
       await callWithSubAccountToken();
 

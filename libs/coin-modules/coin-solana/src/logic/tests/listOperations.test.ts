@@ -412,6 +412,17 @@ describe("listOperations (MSW integration)", () => {
                         uiAmount: 1.0,
                       },
                     },
+                    {
+                      accountIndex: 0,
+                      mint: USDC_MINT,
+                      owner: TEST_RECIPIENT,
+                      programId: TOKEN_PROGRAM_ID,
+                      uiTokenAmount: {
+                        amount: "9000000",
+                        decimals: 6,
+                        uiAmount: 9.0,
+                      },
+                    },
                   ],
                   postTokenBalances: [
                     {

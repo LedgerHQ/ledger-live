@@ -11,6 +11,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { TxData } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
@@ -356,3 +357,19 @@ export type SolanaOperationExtraRaw = {
   memo?: string | undefined;
   stake?: ExtraStakeInfoRaw;
 };
+
+/**
+ * Carries a transaction a partner already built — today LiFi's swap payload, reached through
+ * `Transaction.raw`. The intent's `type`, `recipient` and `amount` describe nothing in that case:
+ * the bytes are the transaction, and crafting only refreshes their blockhash.
+ *
+ * `type: "solana"` satisfies the framework's `TxData` discriminant; the send/staking intents keep
+ * emitting `{ type: "none" }`.
+ */
+export interface SolanaTxData extends TxData {
+  type: "solana";
+  /** Base64 `VersionedTransaction`. */
+  raw: string;
+  /** Round-trip carrier for the partner's template id; nothing in coin-solana reads it. */
+  templateId?: string;
+}

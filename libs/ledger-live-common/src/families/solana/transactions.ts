@@ -42,6 +42,37 @@ export function withdrawTransaction(stakeAccAddr: string, amount: BigNumber) {
   };
 }
 
+/**
+ * The four commands only a live app submits. Each names the token or stake account it acts on the
+ * same way the flows above do: `subAccountId` for a token, the stake-account memo for a stake.
+ */
+export function optInTransaction(subAccountId: string) {
+  return { mode: "opt-in" as const, subAccountId };
+}
+
+export function approveTransaction(subAccountId: string, delegate: string, amount?: BigNumber) {
+  return {
+    mode: "approve" as const,
+    subAccountId,
+    recipient: delegate,
+    ...(amount ? { amount } : {}),
+  };
+}
+
+export function revokeTransaction(subAccountId: string) {
+  return { mode: "revoke" as const, subAccountId };
+}
+
+export function splitStakeTransaction(stakeAccAddr: string, amount: BigNumber) {
+  return {
+    mode: "split" as const,
+    recipient: stakeAccAddr,
+    memoType: STAKE_ACCOUNT_MEMO_TYPE,
+    memoValue: stakeAccAddr,
+    amount,
+  };
+}
+
 export const TEXT_MEMO_TYPE = "TEXT";
 
 /** Stake account this transaction acts on: the memo when delegating, the recipient otherwise. */
@@ -51,7 +82,7 @@ export function getTransactionStakeAccount({
   memoValue,
 }: Pick<Transaction, "mode" | "recipient" | "memoValue">): string | undefined {
   if (mode === "delegate") return memoValue ?? undefined;
-  return mode === "undelegate" || mode === "unstake" ? recipient : undefined;
+  return mode === "undelegate" || mode === "unstake" || mode === "split" ? recipient : undefined;
 }
 
 /** Vote account of the validator this transaction delegates to, if any. */

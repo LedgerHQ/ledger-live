@@ -647,7 +647,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
 
     const newOpsWithSubs = buildParentOperations(
-      newSubAccounts,
+      // The merged list, not the freshly built one: `mergeSubAccounts` keeps the id a sub-account
+      // was stored under and re-keys its operations onto it. Reading the pre-merge list would put a
+      // `subOperations[].accountId` on the parent that no sub-account carries, and
+      // `OperationDetails` drops the row it cannot resolve.
+      subAccounts,
       newNonInternalOperations,
       newInternalOperations,
       accountId,

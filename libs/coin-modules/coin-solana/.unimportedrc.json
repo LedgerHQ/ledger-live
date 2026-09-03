@@ -27,7 +27,6 @@
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts",
     "src/supportedFeatures.ts",
-    "src/test/bridge.dataset.ts",
     "src/tests/preload.fixtures.ts"
   ],
   "ignoreUnused": []

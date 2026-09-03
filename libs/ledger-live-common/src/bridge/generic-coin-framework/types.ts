@@ -112,6 +112,10 @@ export type GenericTransaction = TransactionCommon & {
   additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
   transferFee?: TransferFee;
+  /** Rent a chain charges to open an account the transaction creates, in the native unit. */
+  stakeAccountRent?: BigNumber;
+  /** Account the transaction acts on, when the chain derives it rather than the wallet. */
+  ownerTokenAccount?: string;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;

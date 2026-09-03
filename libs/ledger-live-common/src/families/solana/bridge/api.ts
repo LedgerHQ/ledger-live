@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, TxData } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type {
   BridgeApi,
@@ -8,6 +8,7 @@ import type { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { SolanaTxData } from "../types";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -44,21 +45,38 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
       return "stake.undelegate";
     case "unstake":
       return "stake.withdraw";
+    // Reached only through the wallet API: no first-party screen builds these.
+    case "opt-in":
+      return "token.createATA";
+    case "approve":
+      return "token.approve";
+    case "revoke":
+      return "token.revoke";
+    case "split":
+      return "stake.split";
     default:
       throw new Error(`Unsupported Solana transaction mode: ${mode}`);
   }
 }
 
 /**
- * Solana's staking modes do not map onto the framework's default operation types, and the pending
- * row must read the same as the row the next sync produces (`coin-solana/logic/listOperations.ts`):
- * creating a stake account is three instructions that resolve to `DELEGATE`, and a withdrawal
- * resolves to `WITHDRAW_UNBONDED`, not `UNSTAKE`.
- *
- * All four record the fee as their value: none of them sends funds anywhere, they move the
- * account's own lamports in or out of a stake account.
+ * Carries a transaction a partner already built (`raw`) to the coin module. Without it the generic
+ * bridge crafts from the intent and signs a plain transfer in place of the partner's bytes.
+ */
+export function buildIntentData(transaction: Record<string, unknown>): TxData {
+  const { raw, templateId } = transaction as { raw?: string; templateId?: string };
+  if (!raw) return { type: "none" };
+  const data: SolanaTxData = { type: "solana", raw, ...(templateId ? { templateId } : {}) };
+  return data;
+}
+
+/**
+ * The types the next sync will produce (`coin-solana/logic/listOperations.ts`), so the pending row
+ * matches: a stake creation resolves to `DELEGATE`, a withdrawal to `WITHDRAW_UNBONDED`. All four
+ * carry the fee as their value -- none sends funds anywhere.
  */
 const STAKING_OPERATION_TYPES: Record<string, OperationType> = {
+  "opt-in": "OPT_IN",
   stake: "DELEGATE",
   delegate: "DELEGATE",
   undelegate: "UNDELEGATE",
@@ -78,15 +96,13 @@ export function describeOptimisticOperation(
 
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
-    // Solana surfaces its stake accounts through `getBalance`, so the framework builds
-    // `stakingResources` itself. Declared rather than left to the framework's fallback
-    // (`delegationsCount > 0 || unbondingsCount > 0`), which is false for an account that has
-    // never staked — `stakingResources` would then be left undefined, and opening the delegation
-    // flow throws on `assertStakingResources`. The legacy bridge always set an empty object.
+    // Declared rather than left to the framework's `delegationsCount > 0` fallback, which is false
+    // for an account that never staked -- the delegation flow then throws on `assertStakingResources`.
     stakingSupported: true,
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
+    buildIntentData,
     describeOptimisticOperation,
   };
 }

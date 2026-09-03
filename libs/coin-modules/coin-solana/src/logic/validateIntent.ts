@@ -17,7 +17,6 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { formatAPIValue, formatAPIValueWithCode, solanaUnit } from "../common";
-import { NotEnoughGas, SolanaStakeAccountAmountTooLow } from "../errors";
 import {
   isEd25519Address,
   isSolanaStakingTransactionIntent,
@@ -26,6 +25,8 @@ import {
 } from "../logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./validateMemo";
 import {
+  NotEnoughGas,
+  SolanaStakeAccountAmountTooLow,
   SolanaAccountNotFunded,
   SolanaRecipientAccountNotFunded,
   SolanaTokenNonTransferable,
@@ -51,7 +52,6 @@ import {
   SolanaTokenRecipientIsSenderATA,
   SolanaValidatorRequired,
 } from "../errors";
-import { getAtaDataLengthForMint } from "../helpers/token";
 import type { TokenAccountInfo } from "../network/chain/account/token";
 import type { MemoTransferExt } from "../network/chain/account/tokenExtensions";
 import { UserInputType } from "../signer";
@@ -62,12 +62,13 @@ import {
   getMaybeVoteAccount,
   getStakeAccountMinimumBalanceForRentExemption,
 } from "../network/chain/web3";
+import { estimateTxFee } from "./estimateFees";
 import type { SolanaTokenAccount, SolanaTokenProgram, TokenRecipientDescriptor } from "../types";
 import type { ChainAPI } from "../network";
 
 export async function validateIntent(
   api: ChainAPI,
-  transactionIntent: TransactionIntent<StringMemo | MemoNotSupported>,
+  transactionIntent: TransactionIntent<StringMemo | MemoNotSupported> & { data?: { type: string } },
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
@@ -75,10 +76,24 @@ export async function validateIntent(
   const warnings: Record<string, Error> = {};
 
   const estimatedFees = customFees?.value ?? 0n;
+
+  // A partner-built transaction describes itself; the intent's recipient and amount are
+  // placeholders, so validating them would reject a perfectly good payload. Legacy did the same.
+  if (transactionIntent.data?.type === "solana") {
+    return { errors, warnings, estimatedFees, amount: 0n, totalSpent: estimatedFees };
+  }
+
   const isTokenTransfer = transactionIntent.asset.type !== "native";
 
-  if (isSolanaStakingTransactionIntent(transactionIntent)) {
+  if (
+    isSolanaStakingTransactionIntent(transactionIntent) ||
+    transactionIntent.type === "stake.split"
+  ) {
     return validateStakingIntent(api, transactionIntent, balances, estimatedFees);
+  }
+
+  if (transactionIntent.type.startsWith("token.") && transactionIntent.type !== "token.transfer") {
+    return validateTokenAuthorityIntent(transactionIntent, balances, estimatedFees);
   }
 
   await validateRecipientCommon(
@@ -105,9 +120,16 @@ export async function validateIntent(
     await validateUnfundedRecipientAmount(api, amount, warnings, errors);
   }
 
-  checkFeeTooHigh(amount, estimatedFees, warnings);
+  // Native only: `amount` is in the token's own units on the other branch, and comparing it to
+  // lamports is meaningless -- it flagged every first transfer to a recipient, whose fee carries
+  // the new account's rent.
+  if (!isTokenTransfer) {
+    checkFeeTooHigh(amount, estimatedFees, warnings);
+  }
 
-  const totalSpent = isTokenTransfer ? amount : amount + estimatedFees;
+  const totalSpent = isTokenTransfer
+    ? tokenAmountLeavingTheAccount(amount, customFees)
+    : amount + estimatedFees;
 
   return {
     errors,
@@ -158,13 +180,8 @@ function validateTransactionMemo(
 }
 
 /**
- * Everything an SPL transfer needs the chain for, in one pass: where the transfer lands, whether
- * that destination accepts it, and whether the sender holds enough native SOL for the fee and for
- * the recipient's associated token account when it has to be created.
- *
- * The mint and the derived addresses are fetched once and shared: the mint-aware ATA size matters
- * for Token-2022 mints with extensions, whose account is larger than the classic 165-byte one and
- * rents more SOL on-chain.
+ * Everything an SPL transfer needs the chain for, in one pass: where it lands, whether that
+ * destination accepts it, and whether the sender holds enough SOL for the fee.
  */
 async function validateTokenTransfer(
   api: ChainAPI,
@@ -212,11 +229,8 @@ async function validateTokenTransfer(
     warnings.recipient = new SolanaRecipientAssociatedTokenAccountWillBeFunded();
   }
 
-  const ataRent = descriptor.shouldCreateAsAssociatedTokenAccount
-    ? BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError)))
-    : 0n;
-
-  const requiredSol = ataRent + estimatedFees;
+  // `estimateFees` already folds the recipient's ATA rent into the fee, so it is counted here.
+  const requiredSol = estimatedFees;
   const native = balances.find(b => b.asset.type === "native");
   const spendable = (native?.value ?? 0n) - (native?.locked ?? 0n);
 
@@ -232,6 +246,44 @@ async function validateTokenTransfer(
   }
 }
 
+/**
+ * The three token-authority commands, which only a live app submits. Opening or closing an account
+ * moves no token, so only the native fee is at stake; approving one also names a delegate and an
+ * amount.
+ */
+function validateTokenAuthorityIntent(
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+  balances: Balance[],
+  estimatedFees: bigint,
+): TransactionValidation {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  if (intent.type === "token.approve") {
+    if (!intent.recipient) {
+      errors.recipient = new RecipientRequired();
+    } else if (!isValidBase58Address(intent.recipient)) {
+      errors.recipient = new InvalidAddress();
+    } else if (intent.recipient === intent.sender) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
+    if (intent.amount <= 0n) {
+      errors.amount = new AmountRequired();
+    }
+  }
+
+  validateFeeCoverage(estimatedFees, liquidBalance(balances), errors);
+
+  return {
+    errors,
+    warnings,
+    estimatedFees,
+    // No token leaves the account: approving grants an allowance, it does not spend it.
+    amount: 0n,
+    totalSpent: estimatedFees,
+  };
+}
+
 async function validateStakingIntent(
   api: ChainAPI,
   intent: TransactionIntent,
@@ -245,7 +297,7 @@ async function validateStakingIntent(
 
   const nativeBalance = balances.find(b => b.asset.type === "native");
   const available = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
-  const nativeValue = nativeBalance?.value ?? 0n;
+  const liquid = liquidBalance(balances);
 
   let amount: bigint;
   let totalSpent: bigint;
@@ -261,19 +313,26 @@ async function validateStakingIntent(
       await validateDelegate(api, intent, balances, errors);
       amount = 0n;
       totalSpent = estimatedFees;
-      validateFeeCoverage(estimatedFees, available, errors);
+      validateFeeCoverage(estimatedFees, liquid, errors);
       break;
     case "stake.undelegate":
       validateUndelegate(intent, balances, errors);
       amount = 0n;
       totalSpent = estimatedFees;
-      validateFeeCoverage(estimatedFees, nativeValue, errors);
+      validateFeeCoverage(estimatedFees, liquid, errors);
       break;
     case "stake.withdraw":
       await validateWithdraw(api, intent, balances, errors);
       amount = clampPositive(intent.amount);
       totalSpent = estimatedFees;
-      validateFeeCoverage(estimatedFees, nativeValue, errors);
+      validateFeeCoverage(estimatedFees, liquid, errors);
+      break;
+    case "stake.split":
+      // Splitting moves lamports between two accounts the wallet owns; only the fee leaves it.
+      resolveStakeAccount(intentMemo(intent) || intent.recipient, balances, errors);
+      amount = clampPositive(intent.amount);
+      totalSpent = estimatedFees;
+      validateFeeCoverage(estimatedFees, liquid, errors);
       break;
     default:
       amount = intent.amount;
@@ -290,11 +349,7 @@ async function validateStakingIntent(
   };
 }
 
-/**
- * The stake account an intent acts on, as `getBalance` reported it. Replaces the legacy bridge's
- * `findSolanaStakingPosition`, which read `account.stakingResources` — a shape `validateIntent`
- * does not receive.
- */
+/** The stake account an intent acts on, as `getBalance` reported it. */
 function findStakeBalance(balances: Balance[], stakeAccAddr: string): Stake | undefined {
   return balances.find(b => b.stake?.uid === stakeAccAddr)?.stake;
 }
@@ -492,8 +547,14 @@ async function computeCreateAccountAmount(
     }
   };
 
+  // `unstakeReserve` only covers the stake accounts the account already has (it is 0 when there
+  // are none), so the one being created needs its own or a first-time staker cannot unstake.
+  const unstakeReserve = await fetchUnstakeReserve(api, intent.sender);
+
   if (intent.useAllAmount) {
-    const allAmount = clampPositive(available - estimatedFees);
+    // The rent exemption is already inside this amount: `craftCreateStakeAccountFromIntent`
+    // subtracts it to get the delegated part.
+    const allAmount = clampPositive(available - estimatedFees - unstakeReserve);
     if (!errors.recipient && !errors.amount && allAmount > 0n) {
       const [stakeMinimumDelegation, stakeAccRentExempt] = await Promise.all([
         fetchStakeMinimumDelegation(),
@@ -512,7 +573,11 @@ async function computeCreateAccountAmount(
   }
   if (intent.amount <= 0n) {
     errors.amount = new AmountRequired();
-  } else if (intent.amount + estimatedFees > available) {
+  } else if (
+    // A typed amount is the delegated part; the stake account's rent sits on top of it.
+    intent.amount + estimatedFees + unstakeReserve + ((await fetchStakeAccountRentExempt()) ?? 0n) >
+    available
+  ) {
     errors.amount = new NotEnoughBalance();
   } else if (!errors.recipient) {
     const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
@@ -523,13 +588,52 @@ async function computeCreateAccountAmount(
   return intent.amount;
 }
 
+/** Fees the future undelegate and withdraw of a freshly created stake account will cost. */
+async function fetchUnstakeReserve(api: ChainAPI, sender: string): Promise<bigint> {
+  try {
+    const [undelegateFee, withdrawFee] = await Promise.all([
+      estimateTxFee(api, sender, "stake.undelegate"),
+      estimateTxFee(api, sender, "stake.withdraw"),
+    ]);
+    return BigInt(undelegateFee + withdrawFee);
+  } catch {
+    return 0n;
+  }
+}
+
+/**
+ * What a token transfer really costs the sender: a Token-2022 mint levies its fee on top of the
+ * amount received, and both leave this account. `estimateFees` already computed it.
+ */
+function tokenAmountLeavingTheAccount(amount: bigint, customFees?: FeeEstimation): bigint {
+  const transferFee = customFees?.parameters?.transferFee as
+    | { feeBps?: number; transferAmountIncludingFee?: number }
+    | undefined;
+  if (!transferFee?.feeBps || transferFee.transferAmountIncludingFee === undefined) return amount;
+  return BigInt(transferFee.transferAmountIncludingFee);
+}
+
+/**
+ * Lamports the account actually holds, stake accounts excluded. `value` counts them in and `locked`
+ * takes out the reserve that exists to pay these very fees, so neither answers "can this account
+ * afford the fee". The account's rent exemption is not deducted -- it is not exposed here, and
+ * erring on the permissive side only risks a chain-side failure, where erring the other way would
+ * block a legitimate undelegate.
+ */
+function liquidBalance(balances: Balance[]): bigint {
+  const native = balances.find(b => b.asset.type === "native");
+  const staked = balances.reduce((sum, b) => (b.stake ? sum + b.value : sum), 0n);
+  return (native?.value ?? 0n) - staked;
+}
+
+/** Keyed on `fee`, which is what the staking screens render (`StepValidator`, `StepAmount`). */
 function validateFeeCoverage(
   estimatedFees: bigint,
   balance: bigint,
   errors: Record<string, Error>,
 ): void {
   if (estimatedFees > balance) {
-    errors.amount = new NotEnoughBalance();
+    errors.fee = new NotEnoughBalance();
   }
 }
 
@@ -633,7 +737,7 @@ function validateRecipientRequiredMemo(
 ): void {
   if (!recipientAccInfo.extensions) return;
 
-  const isRecipientMemoRequired = recipientAccInfo.extensions.find(
+  const isRecipientMemoRequired = recipientAccInfo.extensions.some(
     ext =>
       ext.extension === "memoTransfer" &&
       (ext as MemoTransferExt).state.requireIncomingTransferMemos,

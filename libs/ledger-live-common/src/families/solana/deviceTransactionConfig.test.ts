@@ -12,7 +12,10 @@ import BigNumber from "bignumber.js";
 const account = {
   type: "Account",
   freshAddress: "owner-addr",
-  currency: { family: "solana" },
+  currency: {
+    family: "solana",
+    units: [{ code: "SOL", magnitude: 9, name: "SOL" }],
+  },
 } as unknown as Account;
 
 const run = (transaction: unknown, accountLike: AccountLike = account) =>
@@ -53,12 +56,37 @@ describe("solana deviceTransactionConfig", () => {
     ).toContainEqual({ type: "solana.token.transferFee", label: "Transfer fee" });
   });
 
-  it("describes a stake account creation", async () => {
-    expect(await run(createStakeAccountTransaction("vote-acc", new BigNumber(1)))).toEqual([
-      { type: "amount", label: "Deposit" },
+  // The device signs the delegated amount plus the stake account's rent, so the wallet must show
+  // the sum -- an `amount` field would render `status.amount` and understate it by the rent.
+  it("describes a stake account creation, rent included in the deposit", async () => {
+    const transaction = {
+      ...createStakeAccountTransaction("vote-acc", new BigNumber(1_000_000_000)),
+      stakeAccountRent: new BigNumber(2_282_880),
+    };
+
+    const fields = await run(transaction);
+
+    // The separator between figure and ticker is a non-breaking space, so match on the figure.
+    expect(fields[0]).toMatchObject({ type: "text", label: "Deposit" });
+    expect((fields[0] as { value: string }).value).toContain("1.00228288");
+    expect(fields.slice(1)).toEqual([
       { type: "address", label: "New authority", address: "owner-addr" },
       { type: "address", label: "Vote account", address: "vote-acc" },
     ]);
+  });
+
+  it("falls back to the amount alone when the rent is not known yet", async () => {
+    const fields = await run(
+      createStakeAccountTransaction("vote-acc", new BigNumber(1_000_000_000)),
+    );
+
+    expect((fields[0] as { value: string }).value).toContain("1");
+    expect((fields[0] as { value: string }).value).not.toContain("1.0022");
+  });
+
+  // A partner built the transaction; nothing in the intent describes what the device will show.
+  it("claims nothing about a partner-built transaction", async () => {
+    expect(await run({ mode: "send", recipient: "dest", raw: "AQID" })).toEqual([]);
   });
 
   it("describes a delegation, whose stake account travels as a memo", async () => {

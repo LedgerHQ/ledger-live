@@ -4,6 +4,7 @@ import {
   TransactionError,
   VersionedTransaction,
 } from "@solana/web3.js";
+import { SolanaTxConfirmationTimeout } from "../../errors";
 import type { ChainAPI } from "../../network";
 import { broadcast } from "../broadcast";
 
@@ -127,5 +128,24 @@ describe("broadcast", () => {
 
     await expectInvalidTransactionError(broadcast(api, txBase64), message);
     expect(sendRawTransaction).not.toHaveBeenCalled();
+  });
+
+  // The blockhash expired before the network confirmed; the transaction may still land, so the
+  // user must not be told it failed.
+  it("maps a confirmation timeout to SolanaTxConfirmationTimeout", async () => {
+    const { api, sendRawTransaction } = buildApi({ simulateValues: [{ err: null }] });
+    sendRawTransaction.mockRejectedValueOnce(
+      new Error("Transaction was not confirmed in 30.00 seconds."),
+    );
+
+    await expect(broadcast(api, txBase64)).rejects.toThrow(SolanaTxConfirmationTimeout);
+  });
+
+  it("lets any other broadcast failure through untouched", async () => {
+    const { api, sendRawTransaction } = buildApi({ simulateValues: [{ err: null }] });
+    const original = new Error("node unreachable");
+    sendRawTransaction.mockRejectedValueOnce(original);
+
+    await expect(broadcast(api, txBase64)).rejects.toBe(original);
   });
 });

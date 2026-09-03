@@ -11,6 +11,7 @@ import { getChainAPI } from "../../network";
 import type { ChainAPI } from "../../network";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { endpointByCurrencyId } from "../../utils";
+import { estimateFees } from "../estimateFees";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 import type { SolanaCoinConfig } from "../../config";
 
@@ -75,11 +76,16 @@ describe("validateIntent (integration)", () => {
   jest.setTimeout(30_000);
 
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
+    // The rent is sized from the mint by `estimateFees`, whose result `prepareTransaction` puts on
+    // the transaction -- so the chain under test is estimate-then-validate, not validate alone.
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
+      const intent = makeTokenIntent(VIBECODOOR_MINT);
+      const estimation = await estimateFees(api, intent);
+
       const result = await validateIntent(
-        makeTokenIntent(VIBECODOOR_MINT),
+        intent,
         [makeNativeBalance(BALANCE_AT_BUG_THRESHOLD), makeTokenBalance(VIBECODOOR_MINT)],
-        { value: NETWORK_FEE },
+        estimation,
         api,
       );
 
@@ -90,10 +96,13 @@ describe("validateIntent (integration)", () => {
     });
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
+      const intent = makeTokenIntent(VIBECODOOR_MINT);
+      const estimation = await estimateFees(api, intent);
+
       const result = await validateIntent(
-        makeTokenIntent(VIBECODOOR_MINT),
+        intent,
         [makeNativeBalance(1_000_000_000n), makeTokenBalance(VIBECODOOR_MINT)],
-        { value: NETWORK_FEE },
+        estimation,
         api,
       );
 

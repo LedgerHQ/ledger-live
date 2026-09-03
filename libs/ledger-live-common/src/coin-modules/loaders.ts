@@ -332,7 +332,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/solana/setup"),
     loadLocalApi: () =>
       import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
-    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("../families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/solana/walletApiAdapter").then(m => m.default),
@@ -340,6 +340,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSigner: () => import("../families/solana/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/solana/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/solana/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/solana/bridgeExtensions").then(m => m.default),
   },
   {
     family: "stacks",

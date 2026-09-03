@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import solanaBridge, {
+  buildIntentData,
   computeIntentType,
   describeOptimisticOperation,
   getAssetFromToken,
@@ -197,6 +198,24 @@ describe("solana bridge", () => {
 
     it("falls back to a zero value when the fee is not loaded", () => {
       expect(describeOptimisticOperation("stake", account, {})?.value).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("buildIntentData", () => {
+    it("carries a partner-built transaction so the bytes reach the coin module", () => {
+      expect(buildIntentData({ raw: "AQID", templateId: "tpl-1" })).toEqual({
+        type: "solana",
+        raw: "AQID",
+        templateId: "tpl-1",
+      });
+    });
+
+    it("omits an absent template id", () => {
+      expect(buildIntentData({ raw: "AQID" })).toEqual({ type: "solana", raw: "AQID" });
+    });
+
+    it("leaves every other transaction to the coin module", () => {
+      expect(buildIntentData({ mode: "send", recipient: "addr" })).toEqual({ type: "none" });
     });
   });
 });

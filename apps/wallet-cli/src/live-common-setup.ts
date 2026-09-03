@@ -87,7 +87,8 @@ const walletCliLoaders: CoinModuleLoader[] = [
         setup.setSolanaLdmkEnabled(true);
         return setup;
       }),
-    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/live-common/families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>

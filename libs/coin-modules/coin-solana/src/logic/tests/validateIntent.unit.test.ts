@@ -48,6 +48,12 @@ const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
 
 const STAKE_ACC_RENT_EXEMPT = 2_282_880;
 
+// Undelegate + withdraw both cost this; the reserve a fresh stake account needs is twice it.
+const UNSTAKE_TX_FEE = 5000;
+jest.mock("../estimateFees", () => ({
+  estimateTxFee: jest.fn().mockResolvedValue(5000),
+}));
+
 jest.mock("../../network/chain/web3", () => ({
   __esModule: true,
   getMaybeTokenMint: jest.fn(),
@@ -161,6 +167,35 @@ function makeBalances(native = 5_000_000_000n, locked = 890_880n): Balance[] {
 }
 
 describe("validateIntent", () => {
+  // A partner-built transaction describes itself; the intent's recipient and amount are
+  // placeholders, so validating them would reject a perfectly good payload.
+  describe("partner-built transaction", () => {
+    const prebuilt = makeIntent({
+      recipient: "",
+      amount: 0n,
+    }) as TransactionIntent & { data: { type: string; raw: string } };
+    prebuilt.data = { type: "solana", raw: "AQID" };
+
+    it("reports no error and no warning", async () => {
+      const result = await validateIntent(prebuilt, makeBalances(), { value: 5000n });
+
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+    });
+
+    it("spends exactly the fee", async () => {
+      const result = await validateIntent(prebuilt, makeBalances(), { value: 5000n });
+
+      expect(result).toMatchObject({ amount: 0n, estimatedFees: 5000n, totalSpent: 5000n });
+    });
+
+    it("still validates a transaction that carries no partner payload", async () => {
+      const result = await validateIntent(makeIntent({ recipient: "" }), makeBalances());
+
+      expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+    });
+  });
+
   // Recipient lookups default to "a plain wallet address"; individual tests override them.
   beforeEach(() => {
     mockedGetMaybeTokenAccount.mockImplementation(async (address: string) =>
@@ -295,6 +330,32 @@ describe("validateIntent", () => {
         expect(result.totalSpent).toBe(1_000_000_000n + 5000n);
       });
 
+      // Legacy set aside the stake account's rent plus the fees of the eventual undelegate and
+      // withdraw (`estimateMaxSpendable.ts`), so the account is never left unable to unstake.
+      it("reserves the future undelegate and withdraw fees when sending all", async () => {
+        const available = 5_000_000_000n - 890_880n;
+
+        const result = await validateIntent(
+          makeStakeIntent({ useAllAmount: true }),
+          makeBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.amount).toBe(available - 5000n - BigInt(2 * UNSTAKE_TX_FEE));
+      });
+
+      it("counts the stake account rent and that reserve against a typed amount", async () => {
+        const available = 5_000_000_000n - 890_880n;
+        // Just affordable without the reserve and the rent, short once both are counted.
+        const amount = available - 5000n - 1n;
+
+        const result = await validateIntent(makeStakeIntent({ amount }), makeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
+
       it("should error when recipient is missing", async () => {
         const result = await validateIntent(makeStakeIntent({ recipient: "" }), makeBalances(), {
           value: 5000n,
@@ -339,7 +400,7 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors).toEqual({});
-        expect(result.amount).toBe(2_000_000_000n - 890_880n - 5000n);
+        expect(result.amount).toBe(2_000_000_000n - 890_880n - 5000n - BigInt(2 * UNSTAKE_TX_FEE));
       });
 
       it("should clamp amount to 0 when useAllAmount and balance is insufficient", async () => {
@@ -518,14 +579,15 @@ describe("validateIntent", () => {
         expect(result.totalSpent).toBe(5000n);
       });
 
-      it("should error when fees exceed available balance (value - locked)", async () => {
+      it("should error when fees exceed the liquid balance", async () => {
         const result = await validateIntent(
           makeDelegateIntent(),
           makeStakeBalances({ state: "inactive" }, 10_000n),
           { value: 5000n },
         );
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        // Keyed on `fee`: that is what the staking screens render.
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
       });
     });
 
@@ -556,12 +618,48 @@ describe("validateIntent", () => {
         expect(result.totalSpent).toBe(5000n);
       });
 
-      it("should error when fees exceed total native value (not available)", async () => {
+      it("should error when fees exceed the liquid balance", async () => {
         const result = await validateIntent(makeUndelegateIntent(), makeStakeBalances({}, 3000n), {
           value: 5000n,
         });
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      // A fully deactivated stake delegates nothing, so `stake.amount` is 0 while the account still
+      // holds its lamports. Subtracting the principal rather than the position's value would count
+      // the whole stake account as liquid.
+      it("does not let a deactivated stake's lamports pay the fee", async () => {
+        const staked = 10_000_000_000n;
+        const balances: Balance[] = [
+          { value: staked, asset: { type: "native" }, locked: staked },
+          {
+            value: staked,
+            asset: { type: "native" },
+            stake: {
+              uid: RECIPIENT,
+              address: RECIPIENT,
+              state: "inactive",
+              asset: { type: "native" },
+              amount: 0n,
+              actions: [],
+            },
+          },
+        ];
+
+        const result = await validateIntent(makeUndelegateIntent(), balances, { value: 5000n });
+
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      // `getBalance` reports the native value as liquid + staked, so comparing the fee against it
+      // could never fail: any stake account dwarfs a 5000-lamport fee.
+      it("does not let staked lamports pay the fee", async () => {
+        const balances = makeStakeBalances({}, 1_000_003_000n);
+
+        const result = await validateIntent(makeUndelegateIntent(), balances, { value: 5000n });
+
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
       });
     });
 
@@ -739,12 +837,12 @@ describe("validateIntent", () => {
         expect(result.amount).toBe(0n);
       });
 
-      it("should error when fees exceed total native value", async () => {
+      it("should error when fees exceed the liquid balance", async () => {
         const result = await validateIntent(makeWithdrawIntent(), makeBalances(3000n, 0n), {
           value: 5000n,
         });
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
       });
 
       it("keeps the returned amount clamped to 0 even when errors are set", async () => {
@@ -754,7 +852,7 @@ describe("validateIntent", () => {
           { value: 5000n },
         );
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
         expect(result.amount).toBe(0n);
         expect(result.totalSpent).toBe(5000n);
       });
@@ -1017,6 +1115,16 @@ describe("validateIntent", () => {
       expect(result.amount).toBe(0n);
     });
 
+    // Lamports against token units is meaningless, and the recipient's ATA rent rides in the fee,
+    // so this fired on every first transfer to a given recipient.
+    it("never warns that fees are too high on a token transfer", async () => {
+      const result = await validateIntent(makeTokenIntent({ amount: 1n }), makeBalances(), {
+        value: 2_044_280n,
+      });
+
+      expect(result.warnings.feeTooHigh).toBeUndefined();
+    });
+
     describe("native SOL coverage for ATA rent + fee (via api)", () => {
       const FEE = 5000n;
       const CLASSIC_ATA_RENT = 2_039_280n;
@@ -1058,19 +1166,18 @@ describe("validateIntent", () => {
         mockedGetMaybeTokenMint.mockReset();
       });
 
-      it("packs NotEnoughGas when spendable equals classic ATA rent + fee but the Token-2022 ATA needs more SOL", async () => {
+      // `estimateFees` sizes the rent from the mint and folds it into the fee; this only checks
+      // that the fee it hands over is what the coverage check compares against.
+      it("packs NotEnoughGas when spendable cannot cover the fee the estimation reported", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(2_935_160n),
-          { value: FEE },
+          { value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE },
           api,
         );
 
@@ -1083,36 +1190,30 @@ describe("validateIntent", () => {
         });
       });
 
-      it("does not pack NotEnoughGas when spendable covers mint-aware ATA rent + fee", async () => {
+      it("does not pack NotEnoughGas when spendable covers that fee", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE + 890_880n),
-          { value: FEE },
+          { value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE },
           api,
         );
 
         expect(result.errors.gasPrice).toBeUndefined();
       });
 
-      it("packs NotEnoughGas when classic SPL ATA needs to be created and spendable can't cover rent + fee", async () => {
+      it("packs NotEnoughGas when a classic SPL ATA has to be created and funds fall one short", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(CLASSIC_ATA_RENT),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(CLASSIC_ATA_RENT + FEE - 1n + 890_880n),
-          { value: FEE },
+          { value: CLASSIC_ATA_RENT + FEE },
           api,
         );
 

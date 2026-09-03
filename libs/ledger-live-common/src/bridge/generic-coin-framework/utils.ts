@@ -23,7 +23,6 @@ import type {
   FeeEstimation,
   MapMemo,
   MemoNotSupported,
-  Stake,
   StakeState,
   StakingOperation,
   StringMemo,
@@ -299,12 +298,9 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
 }
 
 /**
- * The staking positions, back in the `Balance` shape `getBalance` reported them in. Without this
- * the account-to-balances reconstruction silently drops every stake, and a family validating a
- * staking intent against these balances finds no position at all.
- *
- * Appended after the account's own native balance, which stays first: consumers resolve the
- * spendable balance with `find(b => b.asset.type === "native")`.
+ * The staking positions, back in the `Balance` shape `getBalance` reported them in -- without them
+ * a family validating a staking intent finds no position at all. Appended after the native balance,
+ * which stays first: consumers resolve it with `find(b => b.asset.type === "native")`.
  */
 function stakingBalances(account: Account): Balance[] {
   // `isStakingAccount` only tests that the key is present, so the value can still be undefined.
@@ -316,7 +312,9 @@ function stakingBalances(account: Account): Balance[] {
     state: StakeState,
     delegate: string | undefined,
   ): Balance => ({
-    value: BigInt(position.amount.toFixed()),
+    // What the position holds, rent-exempt reserve included -- a consumer subtracts it from the
+    // account balance to learn what is liquid. `stake.amount` keeps the delegated principal.
+    value: BigInt(position.amount.plus(position.lockedReserve ?? 0).toFixed()),
     asset: { type: "native" },
     stake: {
       uid: position.positionId ?? "",

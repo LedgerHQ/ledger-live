@@ -33,6 +33,115 @@ describe("listOperations", () => {
     expect(result.next).toBeUndefined();
   });
 
+  // A batched transfer credits several accounts; keeping only the first silently dropped the rest.
+  it("names every account the transaction credited", async () => {
+    const second = "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx";
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+    ]);
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig1"],
+          message: {
+            accountKeys: [
+              { pubkey: new PublicKey(TEST_ADDRESS) },
+              { pubkey: new PublicKey(TEST_RECIPIENT) },
+              { pubkey: new PublicKey(second) },
+            ],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: {
+          fee: 5000,
+          preBalances: [1_000_000_000, 0, 0],
+          postBalances: [799_995_000, 100_000_000, 100_000_000],
+        },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items[0]).toMatchObject({
+      type: "OUT",
+      senders: [TEST_ADDRESS],
+      recipients: [TEST_RECIPIENT, second],
+    });
+  });
+
+  // Ported from the legacy `getMainAccOperationTypeFromTx`: without these an ATA creation reads as
+  // a plain fee payment, and a freeze as nothing at all.
+  describe("account operations beyond transfers", () => {
+    function singleInstruction(program: string, type: string) {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [{ program, parsed: { type, info: {} } }],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+    }
+
+    it.each([
+      ["spl-associated-token-account", "associate", "OPT_OUT"],
+      ["spl-token", "closeAccount", "OPT_OUT"],
+      ["spl-token", "freezeAccount", "FREEZE"],
+      ["spl-token", "thawAccount", "UNFREEZE"],
+      ["spl-token-2022", "thawAccount", "UNFREEZE"],
+    ])("types a lone %s/%s instruction as %s", async (program, type, expected) => {
+      singleInstruction(program, type);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: expected, value: 5000n });
+    });
+
+    it("leaves a transfer alone", async () => {
+      singleInstruction("system", "transfer");
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FEES" });
+    });
+
+    // A memo rides alongside the real instruction; counting it would hide the operation's nature.
+    it("ignores a memo when counting instructions", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              instructions: [
+                { program: "spl-token", parsed: { type: "freezeAccount", info: {} } },
+                { program: "spl-memo", parsed: { type: "memo", info: {} } },
+              ],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FREEZE" });
+    });
+  });
+
   it("should return OUT operations from parsed transactions", async () => {
     const blockTime = 1700000000;
     mockGetSignaturesForAddress.mockResolvedValue([
@@ -930,6 +1039,89 @@ describe("listOperations", () => {
       };
     }
 
+    // A burn empties the account like a send does, but the tokens go nowhere. Legacy typed it
+    // `BURN` (`getTokenAccOperationType`); without it the history shows a transfer to no one.
+    it("types a lone burn instruction as BURN", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const tx = makeTxWithTokenBalances(
+        [
+          {
+            accountIndex: 0,
+            mint: USDC_MINT,
+            owner: TEST_ADDRESS,
+            programId: TOKEN_PROGRAM_ID_STR,
+            uiTokenAmount: { amount: "1000" },
+          },
+        ],
+        [
+          {
+            accountIndex: 0,
+            mint: USDC_MINT,
+            owner: TEST_ADDRESS,
+            programId: TOKEN_PROGRAM_ID_STR,
+            uiTokenAmount: { amount: "400" },
+          },
+        ],
+      );
+      tx.transaction.message.instructions = [
+        { program: "spl-token", parsed: { type: "burn", info: {} } },
+      ] as never;
+      mockGetParsedTransactions.mockResolvedValue([tx]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOp = result.items.find(op => op.asset.type !== "native");
+      expect(tokenOp).toMatchObject({ type: "BURN", value: 600n });
+    });
+
+    // Freezing moves nothing, so the change carries a zero delta and is normally skipped. Only a
+    // freeze or a thaw lifts that guard -- legacy also emitted a `NONE` for every idle touch.
+    it.each([
+      ["freezeAccount", "FREEZE"],
+      ["thawAccount", "UNFREEZE"],
+    ])("emits %s on the token account as %s", async (type, expected) => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const balance = {
+        accountIndex: 0,
+        mint: USDC_MINT,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount: "1000" },
+      };
+      const tx = makeTxWithTokenBalances([balance], [balance]);
+      tx.transaction.message.instructions = [
+        { program: "spl-token", parsed: { type, info: {} } },
+      ] as never;
+      mockGetParsedTransactions.mockResolvedValue([tx]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOp = result.items.find(op => op.asset.type !== "native");
+      expect(tokenOp).toMatchObject({ type: expected, value: 0n });
+    });
+
+    it("still skips a token account the transaction left untouched", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      const balance = {
+        accountIndex: 0,
+        mint: USDC_MINT,
+        owner: TEST_ADDRESS,
+        programId: TOKEN_PROGRAM_ID_STR,
+        uiTokenAmount: { amount: "1000" },
+      };
+      mockGetParsedTransactions.mockResolvedValue([makeTxWithTokenBalances([balance], [balance])]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items.find(op => op.asset.type !== "native")).toBeUndefined();
+    });
+
     it("should detect a fully spent token (present in pre, absent from post)", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
@@ -1091,7 +1283,9 @@ describe("listOperations", () => {
       });
     });
 
-    it("should fall back to accountKeys for counterparty when not in token balances", async () => {
+    // No fallback to `accountKeys`: an account absent from the token balances did not receive
+    // anything, and the first one that isn't the owner is usually a program id.
+    it("names no recipient when none appears in the token balances", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime, err: null },
@@ -1125,7 +1319,8 @@ describe("listOperations", () => {
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
       expect(tokenOps[0].type).toBe("OUT");
-      expect(tokenOps[0].recipients).toEqual([TEST_RECIPIENT]);
+      expect(tokenOps[0].recipients).toEqual([]);
+      expect(tokenOps[0].senders).toEqual([TEST_ADDRESS]);
     });
 
     it("should handle token operation with no counterparty (single account)", async () => {

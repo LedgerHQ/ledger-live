@@ -91,6 +91,15 @@ describe("extractBalances", () => {
     expect(unbonding.stake?.delegate).toBeUndefined();
   });
 
+  // `value` answers "how much does this position hold", which a consumer subtracts from the account
+  // balance to learn what is liquid; `stake.amount` stays the delegated principal.
+  it("counts the rent-exempt reserve in the position's value, not in its delegated amount", () => {
+    const [, delegation] = extractBalances(account);
+
+    expect(delegation.value).toBe(1_000n + 2_282_880n);
+    expect(delegation.stake?.amount).toBe(1_000n);
+  });
+
   it("returns only the native balance for an account with no staking resources", () => {
     expect(extractBalances({ ...account, stakingResources: undefined } as Account)).toHaveLength(1);
   });
