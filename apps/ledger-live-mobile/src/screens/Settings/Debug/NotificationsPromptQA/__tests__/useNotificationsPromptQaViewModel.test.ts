@@ -1,19 +1,7 @@
-import React, { type ReactNode } from "react";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { act, renderHook } from "@testing-library/react-native";
-import {
-  FEATURE_FLAGS_DEFAULTS,
-  FEATURE_FLAGS_INITIAL_STATE,
-  featureFlagsReducer,
-  type Features,
-} from "@shared/feature-flags";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { createNotificationsPromptFeatureFlags } from "LLM/features/NotificationsPrompt/testUtils";
 import type { DataOfUser } from "LLM/features/NotificationsPrompt";
-import notifications from "~/reducers/notifications";
-import ratings from "~/reducers/ratings";
-import settings from "~/reducers/settings";
 import { NOTIFICATIONS_QA_SCENARIOS } from "../utils";
 import { useNotificationsPromptQaViewModel } from "../useNotificationsPromptQaViewModel";
 
@@ -60,36 +48,18 @@ jest.mock("LLM/features/NotificationsPrompt/hooks/useNotificationsData", () => (
   }),
 }));
 
-const { brazePushNotifications } = createNotificationsPromptFeatureFlags({
+const notificationsPromptFlags = createNotificationsPromptFeatureFlags({
   inactivityEnabled: true,
 });
 
 /**
- * Real store seeded with the slices the ViewModel reads, so feature flags resolve
+ * Real store seeded with the notifications prompt flags, so feature flags resolve
  * through `useFeature` and `setOverride` instead of being mocked.
  */
-function createTestStore() {
-  return configureStore({
-    reducer: { featureFlags: featureFlagsReducer, notifications, ratings, settings },
-    preloadedState: {
-      featureFlags: {
-        ...FEATURE_FLAGS_INITIAL_STATE,
-        overrides: { brazePushNotifications },
-        resolved: { ...FEATURE_FLAGS_DEFAULTS, brazePushNotifications } as Features,
-      },
-    },
-  });
-}
-
 function renderViewModel() {
-  const store = createTestStore();
-  const Wrapper = ({ children }: Readonly<{ children?: ReactNode }>) =>
-    React.createElement(Provider, { store }, children);
-
-  return {
-    store,
-    ...renderHook(() => useNotificationsPromptQaViewModel(), { wrapper: Wrapper }),
-  };
+  return renderHook(() => useNotificationsPromptQaViewModel(), {
+    overrideInitialState: withFlagOverrides(notificationsPromptFlags),
+  });
 }
 
 function getScenario(id: string) {

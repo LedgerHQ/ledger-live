@@ -1,21 +1,9 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { render, screen } from "@testing-library/react-native";
-import StyleProvider from "~/StyleProvider";
-import settings from "~/reducers/settings";
+import { render, screen } from "@tests/test-renderer";
 import { QaInspectorRow, type QaInspectorField } from ".";
 
 function renderRow(field: QaInspectorField) {
-  const store = configureStore({ reducer: { settings } });
-
-  return render(
-    <Provider store={store}>
-      <StyleProvider selectedPalette="dark">
-        <QaInspectorRow field={field} />
-      </StyleProvider>
-    </Provider>,
-  );
+  return render(<QaInspectorRow field={field} />);
 }
 
 describe("QaInspectorRow", () => {

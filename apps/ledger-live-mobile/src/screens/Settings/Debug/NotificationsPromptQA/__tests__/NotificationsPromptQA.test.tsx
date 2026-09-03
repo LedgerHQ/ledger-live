@@ -1,10 +1,6 @@
 import React from "react";
 import { Alert } from "react-native";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { fireEvent, render, screen } from "@testing-library/react-native";
-import StyleProvider from "~/StyleProvider";
-import settings from "~/reducers/settings";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import DebugNotificationsPromptQA from "../index";
 import { useNotificationsPromptQaViewModel } from "../useNotificationsPromptQaViewModel";
 import { NOTIFICATIONS_QA_VERDICT_META } from "../utils";
@@ -56,15 +52,7 @@ jest.mock("LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawerVie
 const mockedViewModel = useNotificationsPromptQaViewModel as jest.Mock;
 
 function renderScreen() {
-  const store = configureStore({ reducer: { settings } });
-
-  return render(
-    <Provider store={store}>
-      <StyleProvider selectedPalette="dark">
-        <DebugNotificationsPromptQA />
-      </StyleProvider>
-    </Provider>,
-  );
+  return render(<DebugNotificationsPromptQA />);
 }
 
 function buildViewModel(overrides: Record<string, unknown> = {}) {

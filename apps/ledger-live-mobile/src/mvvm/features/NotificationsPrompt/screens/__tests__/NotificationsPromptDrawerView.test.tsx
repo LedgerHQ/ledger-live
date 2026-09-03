@@ -1,15 +1,7 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { fireEvent, render, screen } from "@testing-library/react-native";
-import StyleProvider from "~/StyleProvider";
-import settings from "~/reducers/settings";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import { NotificationsPromptDrawerView } from "../NotificationsPromptDrawerView";
 
-jest.mock("~/images/illustration/Illustration", () => "Illustration");
-jest.mock("~/context/Locale", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
 jest.mock("LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration", () => ({
   NotificationsDrawerIllustration: () => null,
 }));
@@ -20,18 +12,13 @@ describe("NotificationsPromptDrawerView", () => {
   it("should call onAllow and onLater from the prompt actions", () => {
     const onAllow = jest.fn();
     const onLater = jest.fn();
-    const store = configureStore({ reducer: { settings } });
 
     render(
-      <Provider store={store}>
-        <StyleProvider selectedPalette="dark">
-          <NotificationsPromptDrawerView
-            promptTarget="globalPushNotifications"
-            onAllow={onAllow}
-            onLater={onLater}
-          />
-        </StyleProvider>
-      </Provider>,
+      <NotificationsPromptDrawerView
+        promptTarget="globalPushNotifications"
+        onAllow={onAllow}
+        onLater={onLater}
+      />,
     );
 
     fireEvent.press(screen.getByTestId("notifications-prompt-allow"));
