@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-live-common": minor
+"@ledgerhq/live-common": minor
 ---
 
 Replace CVS-backed marketcap sort helpers with DADA-backed equivalents.
