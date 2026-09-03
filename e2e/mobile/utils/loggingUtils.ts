@@ -99,7 +99,6 @@ function splitSummaryAndJson(text: string): { summary: string; body: string | nu
   }
 }
 
-// Console levels worth attaching: warnings + errors only (mirrors desktop PageLogCollector).
 const CONSOLE_KEEP_LEVELS = new Set(["warn", "warning", "error"]);
 
 function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
@@ -134,11 +133,7 @@ type ParsedLogsPayload = {
   webviewLoadErrors?: unknown[];
 };
 
-/**
- * Parse a serialized logs payload and attach all available sections to Allure:
- * App Logs, App Network Logs, App Network Summary, Webview Network Logs,
- * Webview Console Logs (warn/error only), and Webview Load Errors.
- */
+/** Parse a serialized logs payload and attach each section it carries to Allure. */
 export async function attachFailureLogsToAllure(logsPayload: string): Promise<void> {
   let parsed: ParsedLogsPayload;
   try {
@@ -147,8 +142,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     parsed = { appLogs: logsPayload };
   }
 
-  // When the payload is not valid JSON, `appLogs` is a raw string — attach as text/plain
-  // so it renders legibly instead of as a single escaped JSON line.
+  // A raw (non-JSON) payload renders legibly as text/plain, not as one escaped JSON line.
   const appLogsValue = parsed.appLogs ?? logsPayload;
   const appLogsIsString = typeof appLogsValue === "string";
   await allure.attachment(

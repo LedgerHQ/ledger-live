@@ -4,7 +4,7 @@
  * Also stores WebView load errors when the live app fails to load (for debugging).
  */
 
-import { isNoiseNetworkUrl } from "./appNetworkLogStore";
+import { shouldKeepNetworkLog } from "./appNetworkLogStore";
 
 export interface WebviewNetworkLog {
   timestamp: string;
@@ -38,9 +38,7 @@ const loadErrors: WebviewLoadError[] = [];
 
 export const webviewLogStore = {
   addNetworkLog(entry: WebviewNetworkLog) {
-    // Always keep failures; drop asset / telemetry / CDN noise (QAA-1514).
-    const isFailure = (entry.status !== undefined && entry.status >= 400) || !!entry.failureText;
-    if (!isFailure && isNoiseNetworkUrl(entry.url)) return;
+    if (!shouldKeepNetworkLog(entry)) return;
     networkLogs.unshift(entry);
     while (networkLogs.length > MAX_NETWORK_LOGS) {
       networkLogs.pop();
