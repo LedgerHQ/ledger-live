@@ -375,7 +375,6 @@ describe("listOperations", () => {
 
     // The cursor carries one `before` per signature stream, so assert what it resumes rather than
     // how it is encoded.
-    expect(result.next).toBeDefined();
     mockGetSignaturesForAddress.mockClear();
     await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
     expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
@@ -848,7 +847,6 @@ describe("listOperations", () => {
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
     expect(result.items).toEqual([]);
-    expect(result.next).toBeDefined();
     mockGetSignaturesForAddress.mockClear();
     await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
     expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(

@@ -111,9 +111,15 @@ export function describeOptimisticOperation(
 
 /** The frozen state and Token-2022 extensions `AccountSubHeader` renders from the sub-account. */
 async function buildTokenAccountShapes(currency: CryptoCurrency, address: string) {
-  const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
-  const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
-  return getTokenAccountShapes(api, address);
+  try {
+    const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
+    const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
+    return await getTokenAccountShapes(api, address);
+  } catch {
+    // Caught here, as the hook's contract asks: these fields only decorate the account, so a bad
+    // round trip must not cost the sync its balances and operations.
+    return {};
+  }
 }
 
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {

@@ -113,7 +113,8 @@ export type BridgeApi = {
   /**
    * The same for token sub-accounts, keyed by contract address — `Balance` has no room for what a
    * chain's token accounts hold beyond an amount. Declare `assignFrom/ToTokenAccountRaw` alongside
-   * it, or what this builds is lost on reload.
+   * it, or what this builds is lost on reload. A rejection fails the sync, as for
+   * `buildAccountShape`: catch inside the hook for fields the accounts are correct without.
    */
   buildTokenAccountShapes?: (
     address: string,
