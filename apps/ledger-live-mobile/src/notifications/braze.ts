@@ -14,21 +14,33 @@ const mobileBrazeSdk: BrazeIdentityLifecycleSdk = {
   refreshContentCards: () => Braze.requestContentCardsRefresh(),
 };
 
-export const applyBrazeConsentTransition = async ({
-  isTrackedUser,
-  userId,
-}: {
-  isTrackedUser: boolean;
-  userId: UserId;
-}): Promise<void> => {
+export const applyBrazeConsentTransition = async (
+  {
+    isTrackedUser,
+    userId,
+  }: {
+    isTrackedUser: boolean;
+    userId: UserId;
+  },
+  {
+    prepareForIdentityTransition,
+    refreshContentCards = mobileBrazeSdk.refreshContentCards,
+  }: {
+    prepareForIdentityTransition?: () => void;
+    refreshContentCards?: BrazeIdentityLifecycleSdk["refreshContentCards"];
+  } = {},
+): Promise<void> => {
   if (isDummyUserId(userId)) return;
 
+  prepareForIdentityTransition?.();
+  const sdk = { ...mobileBrazeSdk, refreshContentCards };
+
   if (!isTrackedUser) {
-    await runBrazeOptOutTransition(mobileBrazeSdk);
+    await runBrazeOptOutTransition(sdk);
     return;
   }
 
-  await runBrazeOptInTransition(mobileBrazeSdk, {
+  await runBrazeOptInTransition(sdk, {
     userId: userId.exportUserIdForBraze(),
   });
 };

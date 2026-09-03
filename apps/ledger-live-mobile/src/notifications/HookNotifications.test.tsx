@@ -85,10 +85,16 @@ describe("HookNotifications", () => {
 
     expect(mockedStart).toHaveBeenCalledTimes(1);
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
-      isTrackedUser: false,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith(
+      {
+        isTrackedUser: false,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
   });
 
   it("should run the opt-in lifecycle when consent changes from opt-out to opt-in", () => {
@@ -100,10 +106,16 @@ describe("HookNotifications", () => {
 
     expect(mockedStart).toHaveBeenCalledTimes(1);
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
-      isTrackedUser: true,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith(
+      {
+        isTrackedUser: true,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
   });
 
   it("should re-sync Braze identity with start when the cleanup flag is off and consent changes", () => {
@@ -304,10 +316,16 @@ describe("HookNotifications", () => {
     rerender(<HookNotifications />);
 
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
-      isTrackedUser: false,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith(
+      {
+        isTrackedUser: false,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
 
     mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
     rerender(<HookNotifications />);
@@ -319,10 +337,16 @@ describe("HookNotifications", () => {
     });
 
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(2);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith({
-      isTrackedUser: true,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith(
+      {
+        isTrackedUser: true,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
     expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, true, {
       brazeOptOutIdentityCleanup: true,
     });
@@ -343,10 +367,16 @@ describe("HookNotifications", () => {
     rerender(<HookNotifications />);
 
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(1);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith({
-      isTrackedUser: true,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledWith(
+      {
+        isTrackedUser: true,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
 
     mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
     rerender(<HookNotifications />);
@@ -358,10 +388,16 @@ describe("HookNotifications", () => {
     });
 
     expect(mockedApplyBrazeConsentTransition).toHaveBeenCalledTimes(2);
-    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith({
-      isTrackedUser: false,
-      userId: REAL_USER_ID,
-    });
+    expect(mockedApplyBrazeConsentTransition).toHaveBeenLastCalledWith(
+      {
+        isTrackedUser: false,
+        userId: REAL_USER_ID,
+      },
+      {
+        prepareForIdentityTransition: expect.any(Function),
+        refreshContentCards: expect.any(Function),
+      },
+    );
     expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, false, {
       brazeOptOutIdentityCleanup: true,
     });

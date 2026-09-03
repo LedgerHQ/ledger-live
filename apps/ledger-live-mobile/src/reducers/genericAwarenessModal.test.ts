@@ -3,6 +3,7 @@ import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/gen
 import reducer, {
   appendGenericAwarenessModalContentCards,
   clearLocalGenericAwarenessModalContentCards,
+  replaceBrazeGenericAwarenessModalContentCards,
   setGenericAwarenessModalContentCards,
   type GenericAwarenessModalMobileContentCard,
 } from "./genericAwarenessModal";
@@ -49,6 +50,26 @@ describe("genericAwarenessModal reducer", () => {
     );
 
     expect(nextState.contentCards).toEqual([buildCarouselCard("same-id")]);
+  });
+
+  it("should replace stale Braze cards and preserve local cards on refresh", () => {
+    const initialState = reducer(
+      undefined,
+      setGenericAwarenessModalContentCards([
+        buildCarouselCard("stale-braze-card"),
+        buildLocalCarouselCard("local-card"),
+      ]),
+    );
+
+    const nextState = reducer(
+      initialState,
+      replaceBrazeGenericAwarenessModalContentCards([buildCarouselCard("fresh-braze-card")]),
+    );
+
+    expect(nextState.contentCards).toEqual([
+      buildLocalCarouselCard("local-card"),
+      buildCarouselCard("fresh-braze-card"),
+    ]);
   });
 
   it("should clear local content cards only", () => {
