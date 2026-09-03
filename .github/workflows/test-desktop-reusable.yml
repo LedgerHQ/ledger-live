@@ -222,6 +222,11 @@ jobs:
           skip_ruby: true
           install_playwright: true
 
+      - name: Install mitmproxy build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: pipx
+
       - name: Start mitmproxy
         continue-on-error: true
         run: |
