@@ -1,12 +1,12 @@
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 /**
  * Every suite that boots into a pre-seeded trustchain needs this flag on: the app reads the
  * environment from it to build its trustchain SDK, and Ledger Sync stays unavailable without it.
  */
-export const LEDGER_SYNC_FEATURE_FLAGS: OptionalFeatureMap = {
+export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
   llmWalletSync: {
     enabled: true,
     params: {

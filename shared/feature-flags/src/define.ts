@@ -36,7 +36,9 @@ export function flagWith<P extends z.ZodRawShape>(
   return FeatureSchema.extend({ params: z.object(params).optional() }).default({
     enabled: false,
     ...defaults,
-  });
+  }) as z.ZodDefault<
+    z.ZodType<z.infer<typeof FeatureSchema> & { params?: z.output<z.ZodObject<P>> }>
+  >;
 }
 
 /**

@@ -14,7 +14,7 @@ test.describe("My Wallet", () => {
       protectServicesDesktop: { enabled: true },
       referralProgramDesktopSidebar: {
         enabled: true,
-        params: { path: "/refer-a-friend" },
+        params: { path: "/refer-a-friend", isNew: true, amount: "$20" },
       },
       lwdBackupHub: { enabled: false },
     },

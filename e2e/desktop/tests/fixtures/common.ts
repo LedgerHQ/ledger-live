@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
@@ -53,7 +53,7 @@ type TestFixtures = {
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
-  featureFlags: OptionalFeatureMap;
+  featureFlags: PartialFeatures;
   simulateCamera: string;
   app: Application;
   cliCommands?: CliCommand[];

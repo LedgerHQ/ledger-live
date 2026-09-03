@@ -291,7 +291,14 @@ function unactivatedFeatureFlags() {
       },
       lldLedgerSyncEntryPoints: {
         enabled: true,
-        params: { settings: true },
+        params: {
+          manager: true,
+          accounts: true,
+          settings: true,
+          onboarding: true,
+          postOnboarding: true,
+          sendFlow: false,
+        },
       },
       lwdLedgerSyncOptimisation: { enabled: true },
     },

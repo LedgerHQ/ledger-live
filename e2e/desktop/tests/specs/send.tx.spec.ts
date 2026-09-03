@@ -656,7 +656,7 @@ test.describe("Send", () => {
       featureFlags: {
         ...FF_NEW_SEND_FLOW_DISABLED,
         currencyConcordiumTestnet: { enabled: true },
-        analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
+        analyticsOptIn: { enabled: true, params: { policyVersion: 1 } },
       },
     });
 

@@ -1,7 +1,7 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { getFlags } from "@e2e/bridge/server";
 
-import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
+import type { PartialFeatures, Features } from "@shared/feature-flags";
 
 const FF_LWM_WALLET_40_Q1 = {
   lwmWallet40: {
@@ -14,14 +14,14 @@ const FF_LWM_WALLET_40_Q1 = {
       operationsList: false,
       aggregatedAssets: false,
       myWallet: false,
+      pnl: false,
       earnUpselling: false,
       earnSimulator: false,
-      onboardingWidget: false,
       assetDiscoverability: false,
       q2Tour: false,
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_LWM_WALLET_40_Q2 = {
   lwmWallet40: {
@@ -34,14 +34,14 @@ export const FF_LWM_WALLET_40_Q2 = {
       operationsList: true,
       aggregatedAssets: true,
       myWallet: true,
+      pnl: true,
       earnUpselling: true,
       earnSimulator: true,
-      onboardingWidget: true,
       assetDiscoverability: true,
       q2Tour: false,
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_BORROW_ENABLED = {
   ...FF_LWM_WALLET_40_Q2,
@@ -57,15 +57,15 @@ export const FF_BORROW_ENABLED = {
   lwmWallet40: {
     ...FF_LWM_WALLET_40_Q2.lwmWallet40,
     params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40?.params,
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       pnl: true,
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_ENABLED = {
   newSendFlow: {
@@ -77,12 +77,12 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   },
   useDeviceActionSignatureSend: { enabled: true }, // Note: Prevent usage of DIE, which is not Speculos ready yet.
   ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const getMergedFeatureFlags = ({
   testFlags,
-}: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
-  const ffPresetMap: Record<string, OptionalFeatureMap> = {
+}: { testFlags?: PartialFeatures } = {}): PartialFeatures => {
+  const ffPresetMap: Record<string, PartialFeatures> = {
     /*
      * The keys here are the values of the `E2E_MOBILE_FEATURE_FLAGS` environment variable.
      * We can add more mappings here in the future to test different feature flag combinations.
@@ -93,7 +93,7 @@ export const getMergedFeatureFlags = ({
     "wallet40-q1": FF_LWM_WALLET_40_Q1,
   };
 
-  const defaultFlags: OptionalFeatureMap = {
+  const defaultFlags: PartialFeatures = {
     // explicit defaults
     onboardingWidget: {
       enabled: true,
@@ -120,7 +120,7 @@ export const getMergedFeatureFlags = ({
   };
 
   // parse JSON override flags for any overrides
-  const jsonOverrideFlags: OptionalFeatureMap = parseExtraFeatureFlags(
+  const jsonOverrideFlags: PartialFeatures = parseExtraFeatureFlags<PartialFeatures>(
     process.env.E2E_FEATURE_FLAGS_JSON,
   );
 
@@ -133,7 +133,7 @@ export const getMergedFeatureFlags = ({
 };
 
 const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
-  getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined;
+  getMergedFeatureFlags().lwmWallet40;
 
 export const isQ2WithAggregatedAssets = (): boolean => {
   const lwmWallet40 = getLwmWallet40StaticFlag();
@@ -147,10 +147,8 @@ export const isQ2WithOperationsList = (): boolean => {
 
 const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
   const flags = await getFlags();
-  if (!flags.trim()) {
-    return undefined; // avoid parse errors
-  }
-  return JSON.parse(flags).lwmWallet40 as Features["lwmWallet40"];
+  const parsed = parseExtraFeatureFlags<PartialFeatures>(flags);
+  return parsed.lwmWallet40;
 };
 
 export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
