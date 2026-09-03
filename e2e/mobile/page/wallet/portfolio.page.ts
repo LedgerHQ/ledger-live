@@ -115,6 +115,7 @@ export default class PortfolioPage {
 
   @Step("Expect total balance value {{{0}}}")
   async expectTotalBalanceCounterValue(counterValue: string) {
+    await waitForElementById(this.portfolioBalanceNormal);
     const label = await getLabelOfElement(this.portfolioBalanceAmount);
     jestExpect(label).toContain(counterValue);
   }
