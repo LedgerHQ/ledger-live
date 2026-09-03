@@ -15,6 +15,9 @@ import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
 import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { withMemberCredentialRepository } from "./key-ring/member-credential-repository";
+import { nativeMemberCredentialRepository } from "./key-ring/native-member-credential-repository";
+import { createWalletCliStore } from "./state-manager/configureStore";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -76,7 +79,12 @@ if (import.meta.main) {
   const argv = normalizeNegatedFlags(process.argv.slice(2));
   try {
     startAnalytics();
-    process.exitCode = await withCommandLifecycleAnalytics(argv, () => runMain(argv));
+    process.exitCode = await withMemberCredentialRepository(nativeMemberCredentialRepository, () =>
+      withCommandLifecycleAnalytics(argv, () => {
+        createWalletCliStore();
+        return runMain(argv);
+      }),
+    );
   } finally {
     await disposeWalletCliDmkTransportFully();
     await disposeAnalytics();

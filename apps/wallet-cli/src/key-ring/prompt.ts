@@ -1,5 +1,6 @@
 import { openSync } from "node:fs";
 import { ReadStream } from "node:tty";
+import { withSuspendedSpinner } from "../shared/ui";
 
 /**
  * Where a password came from, so `ring destroy` can tell a deliberate empty skip (typed at the tty)
@@ -72,13 +73,23 @@ function openControllingTty(): { stream: NodeJS.ReadStream; close: () => void } 
   };
 }
 
+function promptFromTty(
+  label: string,
+  stream: NodeJS.ReadStream,
+  onClose: () => void,
+): Promise<PromptResult> {
+  return withSuspendedSpinner(() => {
+    process.stderr.write(label);
+    return readRawHidden(stream, onClose);
+  });
+}
+
 export async function promptHidden(label: string): Promise<PromptResult> {
   const envPass = process.env.WALLET_PASS;
   if (envPass !== undefined) return { source: "env", value: envPass };
 
   if (process.stdin.isTTY) {
-    process.stderr.write(label);
-    return readRawHidden(process.stdin, () => process.stdin.pause());
+    return promptFromTty(label, process.stdin, () => process.stdin.pause());
   }
 
   // stdin is piped/redirected (`echo … | wallet-cli ring encrypt`), so reading the password from it
@@ -86,8 +97,7 @@ export async function promptHidden(label: string): Promise<PromptResult> {
   // in CI; those must inject WALLET_PASS.
   const tty = openControllingTty();
   if (tty) {
-    process.stderr.write(label);
-    return readRawHidden(tty.stream, tty.close);
+    return promptFromTty(label, tty.stream, tty.close);
   }
 
   throw new Error(

@@ -25,3 +25,17 @@ export function makeSessionDir(entries: SessionEntry[]): {
     cleanup: () => rmSync(tmpDir, { recursive: true, force: true }),
   };
 }
+
+export async function withStateDir<T>(stateDir: string, task: () => Promise<T>): Promise<T> {
+  const previousStateDir = process.env.XDG_STATE_HOME;
+  process.env.XDG_STATE_HOME = stateDir;
+  try {
+    return await task();
+  } finally {
+    if (previousStateDir === undefined) {
+      delete process.env.XDG_STATE_HOME;
+    } else {
+      process.env.XDG_STATE_HOME = previousStateDir;
+    }
+  }
+}

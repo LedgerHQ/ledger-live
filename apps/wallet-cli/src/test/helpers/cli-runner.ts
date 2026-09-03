@@ -23,7 +23,10 @@
 
 import path from "node:path";
 import { getCliProcessExitCode } from "../../cli-process-exit-error";
+import { withMemberCredentialRepository } from "../../key-ring/member-credential-repository";
 import { installOutputCapture } from "../../shared/ui";
+import { createWalletCliStore } from "../../state-manager/configureStore";
+import { inMemoryMemberCredentialRepository } from "./in-memory-member-credential-repository";
 
 // ---------------------------------------------------------------------------
 // Lazy CLI loader — deferred until first runCliInProcess() call
@@ -320,7 +323,10 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
 
   let exitCode = 0;
   try {
-    exitCode = await runMain(args);
+    exitCode = await withMemberCredentialRepository(inMemoryMemberCredentialRepository, () => {
+      createWalletCliStore();
+      return runMain(args);
+    });
   } catch (e) {
     const code = getCliProcessExitCode(e);
     if (code === null) throw e;
