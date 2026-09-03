@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
+import { getProviderTermsOfUseUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Trans } from "~/context/Locale";
-
-const SWAPKIT_TERMS_URL = "https://swapkit.dev/terms-of-service/";
+import { PERPS_DEPOSIT_PROVIDER_ID } from "LLM/features/Perps/constants/depositFunding";
 
 export function PerpsDepositSignTerms() {
+  const termsUrl = getProviderTermsOfUseUrl(PERPS_DEPOSIT_PROVIDER_ID);
   const openTerms = useCallback(() => {
-    Linking.openURL(SWAPKIT_TERMS_URL);
-  }, []);
+    if (termsUrl) Linking.openURL(termsUrl);
+  }, [termsUrl]);
 
   return (
     <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
@@ -19,9 +20,9 @@ export function PerpsDepositSignTerms() {
             <Text
               typography="body4"
               lx={{ color: "muted" }}
-              style={styles.link}
-              onPress={openTerms}
-              accessibilityRole="link"
+              style={termsUrl ? styles.link : undefined}
+              onPress={termsUrl ? openTerms : undefined}
+              accessibilityRole={termsUrl ? "link" : undefined}
             />
           ),
         }}
