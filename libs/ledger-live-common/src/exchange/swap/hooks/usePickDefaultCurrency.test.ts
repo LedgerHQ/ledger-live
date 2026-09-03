@@ -24,8 +24,10 @@ const store = configureStore({
   reducer: { [counterValuesApi.reducerPath]: counterValuesApi.reducer },
   middleware: getDefault => getDefault().concat(counterValuesApi.middleware),
 });
-const wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(Provider, { store }, children);
+function wrapper({ children }: { children: ReactNode }) {
+  // eslint-disable-next-line react/no-children-prop
+  return createElement(Provider, { store, children });
+}
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();

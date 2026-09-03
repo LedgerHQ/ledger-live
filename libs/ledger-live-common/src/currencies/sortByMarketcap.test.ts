@@ -43,6 +43,7 @@ describe("sortCurrenciesByDada", () => {
 
   test("sorts currencies by DADA marketcap order on success", async () => {
     mockNetwork.mockResolvedValue({
+      status: 200,
       data: {
         currenciesOrder: { metaCurrencyIds: ["btc-meta", "eth-meta"] },
         cryptoAssets: {
