@@ -181,7 +181,10 @@ function Effect({
   // manage the auto polling loop
   const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
-    if (!isPolling) return;
+    // Both apps initialise refreshRate to 0 and overwrite it from LiveConfig once it resolves.
+    // Re-arming at 0 is a zero-delay self-rescheduling loop, so wait for a real rate; the effect
+    // re-runs when one arrives.
+    if (!isPolling || refreshRate <= 0) return;
     let pollingTimeout: ReturnType<typeof setTimeout>;
     function pollingLoop() {
       bridge.setPollingTriggerLoad(true);
