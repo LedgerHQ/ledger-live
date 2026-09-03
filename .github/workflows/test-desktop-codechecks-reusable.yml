@@ -108,7 +108,7 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests (4cpu #${{ matrix.repeat }})"
+    name: "Desktop Unit Tests (16cpu, 4 workers #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
@@ -121,9 +121,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-4cpu-aws-public
-      JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-wallet-4cpu-aws-public]
+      CI_OS: ledger-wallet-16cpu-aws-public
+      JEST_MAX_WORKERS: 4
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
