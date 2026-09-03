@@ -67,6 +67,9 @@ export const getProviderName = (provider: string): string => {
   return displayName;
 };
 
+export const getProviderTermsOfUseUrl = (provider: string): string | undefined =>
+  SWAP_DATA_CDN[provider]?.termsOfUseUrl;
+
 export const getNoticeType = (provider: string): { message: string; learnMore: boolean } => {
   switch (provider) {
     case "cic":
