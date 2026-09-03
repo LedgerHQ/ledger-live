@@ -12,7 +12,11 @@ import { SendFlowProvider } from "./context/SendFlowContext";
 import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
 import { RecipientInputFocusProvider } from "./context/RecipientInputFocusContext";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
-import { SendSignatureProvider, useSendSignature } from "./context/SendSignatureContext";
+import { SendMemoResetProvider } from "./context/SendMemoResetContext";
+import {
+  SendSignatureProvider,
+  useSendSignature,
+} from "./context/SendSignatureContext";
 import { SignatureOverlayHost } from "./components/SignatureOverlayHost";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import type { SendStepConfig, SendFlowConfig } from "./types";
@@ -31,7 +35,11 @@ type SendFlowNavigatorProps = Readonly<{
   onClose: () => void;
 }>;
 
-function SendFlowNavigator({ stepRegistry, flowConfig, onClose }: SendFlowNavigatorProps) {
+function SendFlowNavigator({
+  stepRegistry,
+  flowConfig,
+  onClose,
+}: SendFlowNavigatorProps) {
   const { isSigning } = useSendSignature();
 
   const getScreenName = useCallback(
@@ -39,12 +47,15 @@ function SendFlowNavigator({ stepRegistry, flowConfig, onClose }: SendFlowNaviga
       const stepConfig = flowConfig.stepConfigs[step];
       return stepConfig?.screenName ?? `SendFlow${step}`;
     },
-    [flowConfig.stepConfigs],
+    [flowConfig.stepConfigs]
   );
 
-  const getScreenOptions = useCallback((_step: SendFlowStep, config: SendStepConfig) => {
-    return config?.screenOptions ?? {};
-  }, []);
+  const getScreenOptions = useCallback(
+    (_step: SendFlowStep, config: SendStepConfig) => {
+      return config?.screenOptions ?? {};
+    },
+    []
+  );
 
   return (
     <FlowStackNavigator<SendFlowStep, SendStepConfig>
@@ -74,7 +85,7 @@ export function SendFlowOrchestrator({
         ? SEND_FLOW_STEP.AMOUNT
         : SEND_FLOW_STEP.RECIPIENT,
     }),
-    [businessContext.uiConfig, flowConfig, initParams],
+    [businessContext.uiConfig, flowConfig, initParams]
   );
 
   return (
@@ -82,15 +93,17 @@ export function SendFlowOrchestrator({
       <SendFlowTrackingProvider>
         <RecipientContactSelectionProvider>
           <RecipientInputFocusProvider>
-            <SendSignatureProvider>
-              <SendFlowNavigator
-                stepRegistry={stepRegistry}
-                flowConfig={configuredFlowConfig}
-                onClose={onClose}
-              />
-              <SignatureOverlayHost />
-              {children}
-            </SendSignatureProvider>
+            <SendMemoResetProvider>
+              <SendSignatureProvider>
+                <SendFlowNavigator
+                  stepRegistry={stepRegistry}
+                  flowConfig={configuredFlowConfig}
+                  onClose={onClose}
+                />
+                <SignatureOverlayHost />
+                {children}
+              </SendSignatureProvider>
+            </SendMemoResetProvider>
           </RecipientInputFocusProvider>
         </RecipientContactSelectionProvider>
       </SendFlowTrackingProvider>
