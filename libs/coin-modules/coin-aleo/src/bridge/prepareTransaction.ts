@@ -190,7 +190,10 @@ export const prepareTransaction: AccountBridge<
     return updateTransaction(transaction, {
       amount: calculatedAmount.amount,
       fees: estimatedFees,
-      withdrawal: transaction.withdrawal || account.freshAddress,
+      // `unbond_public` asserts the caller is `withdraw[staker]`, so a foreign withdrawal
+      // address permanently removes this account's ability to unbond; the value cannot be
+      // corrected by a later bond. The bridge decides it, never the caller.
+      withdrawal: account.freshAddress,
     });
   }
 
