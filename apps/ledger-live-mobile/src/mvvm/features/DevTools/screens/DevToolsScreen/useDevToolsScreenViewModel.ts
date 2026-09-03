@@ -1,6 +1,10 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import type {
+  NativeStackNavigationOptions,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import {
@@ -9,11 +13,35 @@ import {
   useEnvDevToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
+import { navigateToPayTab } from "~/navigation/navigateToPayTab";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
+type BaseNavigation = NativeStackNavigationProp<
+  BaseNavigatorStackParamList,
+  keyof BaseNavigatorStackParamList,
+  typeof BASE_NAVIGATOR_ID
+>;
+
 export function useDevToolsScreenViewModel() {
+  const navigation = useNavigation<BaseNavigation>();
+  const tabNavigation = navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation;
   const featureFlagsProps = useFeatureFlagsToolProps();
-  const payCardToolProps = usePayCardToolProps({ platform: "native" });
+  const boundPayCard = usePayCardToolProps({ platform: "native" });
+  const onNavigateToPortfolio = useCallback(() => {
+    tabNavigation.dispatch(
+      StackActions.replace(NavigatorName.Main, {
+        screen: NavigatorName.Portfolio,
+        params: { screen: ScreenName.Portfolio },
+      }),
+    );
+  }, [tabNavigation]);
+  const onNavigateToPayTab = useCallback(() => navigateToPayTab(tabNavigation), [tabNavigation]);
+  const payCardToolProps = useMemo(
+    () => ({ ...boundPayCard, onNavigateToPortfolio, onNavigateToPayTab }),
+    [boundPayCard, onNavigateToPortfolio, onNavigateToPayTab],
+  );
   const envToolProps = useEnvDevToolProps();
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
