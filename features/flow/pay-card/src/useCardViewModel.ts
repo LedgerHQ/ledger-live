@@ -16,11 +16,12 @@ export function useCardViewModel({
   callback,
   formatCountervalue,
   balanceLabel,
+  onTrackEvent,
 }: CardProps): CardViewProps {
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
     if (!formatCountervalue || balanceLabel === undefined) return undefined;
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, cardVisual };
+  return { title, oauthConfig, callback, onTrackEvent, cardVisual };
 }

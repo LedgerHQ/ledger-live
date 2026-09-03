@@ -45,6 +45,18 @@ const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" |
   { id: "logIn", appearance: "gray" },
 ];
 
+export const CARD_LOGIN_INTRO_PAGE_EVENT = "Page card login intro";
+export const CARD_LOGIN_INTRO_PAGE = "card login intro";
+export const CARD_LOGIN_INTRO_FLOW = "card";
+
+const TRACK_BUTTON = {
+  getCard: "get card",
+  login: "login",
+  createAccount: "create an account",
+  logIn: "log in to baanx",
+  close: "close",
+} as const;
+
 /**
  * Turns one machine snapshot into the view props. It is a pure function so the mapping can be read,
  * and tested, without a React tree.
@@ -75,6 +87,7 @@ export function useCardLoginViewModel({
   mobileWallet,
   oauthConfig,
   callback,
+  onTrackEvent,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
@@ -121,28 +134,47 @@ export function useCardLoginViewModel({
     send({ type: "LOGIN" });
   }, [send]);
 
+  const trackCta = useCallback(
+    (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
+      onTrackEvent?.("button_clicked", {
+        button,
+        flow: CARD_LOGIN_INTRO_FLOW,
+        page: CARD_LOGIN_INTRO_PAGE,
+      });
+    },
+    [onTrackEvent],
+  );
+
   const onLoginPress = useCallback(() => {
     if (hasSeenLoginIntro) {
+      trackCta(TRACK_BUTTON.login);
       startLogin();
       return;
     }
+    trackCta(TRACK_BUTTON.getCard);
+    onTrackEvent?.(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
     setIsIntroRequested(true);
-  }, [hasSeenLoginIntro, startLogin]);
+  }, [hasSeenLoginIntro, onTrackEvent, startLogin, trackCta]);
 
-  const onIntroActionPress = useCallback(() => {
-    if (!isIntroOpen) {
-      return;
-    }
-    setIsIntroRequested(false);
-    startLogin();
-  }, [isIntroOpen, startLogin]);
+  const onIntroActionPress = useCallback(
+    (id: CardLoginIntroActionId) => {
+      if (!isIntroOpen) {
+        return;
+      }
+      trackCta(id === "createAccount" ? TRACK_BUTTON.createAccount : TRACK_BUTTON.logIn);
+      setIsIntroRequested(false);
+      startLogin();
+    },
+    [isIntroOpen, startLogin, trackCta],
+  );
 
   const onIntroClose = useCallback(() => {
     if (!isIntroOpen) {
       return;
     }
+    trackCta(TRACK_BUTTON.close);
     setIsIntroRequested(false);
-  }, [isIntroOpen]);
+  }, [isIntroOpen, trackCta]);
 
   const introRows = useMemo(() => {
     const wallet = t(`${INTRO_KEY_PREFIX}.wallets.${mobileWallet}`);

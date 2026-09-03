@@ -83,7 +83,7 @@ export function CardLoginIntroView({
                 appearance={action.appearance}
                 size="lg"
                 className="w-full"
-                onClick={onActionPress}
+                onClick={() => onActionPress(action.id)}
                 data-testid={`pay-card-login-intro-${action.id}`}
               >
                 {action.label}

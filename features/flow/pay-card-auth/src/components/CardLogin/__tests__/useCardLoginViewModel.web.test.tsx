@@ -9,7 +9,13 @@ import {
   payCardLoginIntroSlice,
   resetPayCardLoginIntroSeen,
 } from "../../../state/loginIntroSlice";
-import { mapSnapshotToViewModel, useCardLoginViewModel } from "../useCardLoginViewModel";
+import {
+  CARD_LOGIN_INTRO_FLOW,
+  CARD_LOGIN_INTRO_PAGE,
+  CARD_LOGIN_INTRO_PAGE_EVENT,
+  mapSnapshotToViewModel,
+  useCardLoginViewModel,
+} from "../useCardLoginViewModel";
 import type { CardLoginCopy, CardLoginIntroViewProps, MobileWallet } from "../types";
 import type { CardLoginOauthConfig, CardLoginPorts, HostedLoginResult } from "../../../state/types";
 import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
@@ -144,6 +150,7 @@ function withProviders(store: ReturnType<typeof buildStore>) {
 async function renderIdleLogin(
   store: ReturnType<typeof buildStore>,
   mobileWallet: MobileWallet = "both",
+  onTrackEvent?: jest.Mock,
 ) {
   const rendered = renderHook(
     () =>
@@ -151,6 +158,7 @@ async function renderIdleLogin(
         openHostedLogin: mockPorts.openHostedLogin,
         mobileWallet,
         oauthConfig,
+        onTrackEvent,
       }),
     { wrapper: withProviders(store) },
   );
@@ -169,7 +177,7 @@ async function completeLogin(
   mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
 
   act(() => result.current?.onLoginPress());
-  act(() => result.current?.intro.onActionPress());
+  act(() => result.current?.intro.onActionPress("createAccount"));
 
   await waitFor(() => expect(store.getState().payCardAuth.isSignedIn).toBe(true));
 }
@@ -261,7 +269,7 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    act(() => result.current?.intro.onActionPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
@@ -271,8 +279,8 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    act(() => result.current?.intro.onActionPress());
-    act(() => result.current?.intro.onActionPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    act(() => result.current?.intro.onActionPress("createAccount"));
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
@@ -339,9 +347,73 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    act(() => result.current?.intro.onActionPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
 
     await waitFor(() => expect(result.current?.isLoading).toBe(false));
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
+  });
+
+  it("tracks Get card and the intro page when the intro opens", async () => {
+    const onTrackEvent = jest.fn();
+    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+
+    act(() => result.current?.onLoginPress());
+
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "get card",
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
+    expect(onTrackEvent).toHaveBeenCalledWith(CARD_LOGIN_INTRO_PAGE_EVENT, {
+      flow: CARD_LOGIN_INTRO_FLOW,
+    });
+  });
+
+  it("tracks Login and starts the login once the intro has been seen", async () => {
+    const onTrackEvent = jest.fn();
+    store.dispatch(markPayCardLoginIntroSeen());
+    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+
+    act(() => result.current?.onLoginPress());
+
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "login",
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
+    expect(onTrackEvent).not.toHaveBeenCalledWith(CARD_LOGIN_INTRO_PAGE_EVENT, expect.anything());
+  });
+
+  it.each([
+    ["createAccount", "create an account"],
+    ["logIn", "log in to baanx"],
+  ] as const)("tracks the %s intro action", async (id, button) => {
+    const onTrackEvent = jest.fn();
+    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+
+    act(() => result.current?.onLoginPress());
+    onTrackEvent.mockClear();
+    act(() => result.current?.intro.onActionPress(id));
+
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button,
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
+  });
+
+  it("tracks close when the intro is dismissed", async () => {
+    const onTrackEvent = jest.fn();
+    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+
+    act(() => result.current?.onLoginPress());
+    onTrackEvent.mockClear();
+    act(() => result.current?.intro.onClose());
+
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
   });
 });

@@ -85,7 +85,7 @@ export function CardLoginIntroView({
                   appearance={action.appearance}
                   size="lg"
                   isFull
-                  onPress={onActionPress}
+                  onPress={() => onActionPress(action.id)}
                   accessibilityLabel={action.label}
                   testID={`pay-card-login-intro-${action.id}`}
                 >

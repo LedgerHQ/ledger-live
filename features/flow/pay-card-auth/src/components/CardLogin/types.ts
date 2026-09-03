@@ -1,5 +1,7 @@
 import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
 
+export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
+
 export type CardLoginProps = {
   readonly oauthConfig: CardLoginOauthConfig;
   /**
@@ -7,6 +9,7 @@ export type CardLoginProps = {
    * the flow the `code` and `state` it already parsed.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
 export type MobileWallet = "applePay" | "googlePay" | "both";
@@ -38,7 +41,7 @@ export type CardLoginIntroViewProps = Readonly<{
   providedBy: string;
   rows: readonly CardLoginIntroRow[];
   actions: readonly CardLoginIntroAction[];
-  onActionPress: () => void;
+  onActionPress: (id: CardLoginIntroActionId) => void;
   onClose: () => void;
 }>;
 

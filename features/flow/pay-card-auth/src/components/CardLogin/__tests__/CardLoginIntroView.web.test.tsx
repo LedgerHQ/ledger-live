@@ -92,6 +92,7 @@ describe("CardLoginIntroView (Web)", () => {
     fireEvent.click(screen.getByTestId(`pay-card-login-intro-${id}`));
 
     expect(onActionPress).toHaveBeenCalledTimes(1);
+    expect(onActionPress).toHaveBeenCalledWith(id);
   });
 
   it("reports every click, because the view model drops the second one", () => {

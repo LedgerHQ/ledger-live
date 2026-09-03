@@ -24,3 +24,6 @@ Desktop keeps its host-provided title.
 The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
 see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
 description over as many lines as the copy needs, instead of cutting both off at the first.
+
+Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
+opening the intro also fires `Page card login intro`.

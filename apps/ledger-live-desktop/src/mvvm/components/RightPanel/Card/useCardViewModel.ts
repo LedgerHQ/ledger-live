@@ -6,6 +6,7 @@ import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
 import type { CardViewModel } from "./types";
 
 export function useCardViewModel(): CardViewModel {
@@ -37,10 +38,15 @@ export function useCardViewModel(): CardViewModel {
     [apiUrl, clientId, redirectUri],
   );
 
+  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
+    track(event, params);
+  }, []);
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
     oauthConfig,
+    onTrackEvent,
   };
 }

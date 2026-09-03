@@ -1,4 +1,8 @@
-import type { CardLoginOauthConfig, PayCardAuthCallback } from "@features/flow-pay-card-auth";
+import type {
+  CardLoginOauthConfig,
+  PayCardAuthCallback,
+  PayCardLoginTrackEvent,
+} from "@features/flow-pay-card-auth";
 import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
 
 /** Host input for the Pay Card flow. */
@@ -18,6 +22,7 @@ export type CardProps = {
   readonly formatCountervalue?: (value: number) => FormattedValue;
   /** Localized caption shown above the balance. i18n stays with the host, so the app passes the string. */
   readonly balanceLabel?: string;
+  readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
 /** Props the presentational view renders, resolved by {@link useCardViewModel}. */
@@ -25,6 +30,7 @@ export type CardViewProps = {
   readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;
+  readonly onTrackEvent?: PayCardLoginTrackEvent;
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
 };

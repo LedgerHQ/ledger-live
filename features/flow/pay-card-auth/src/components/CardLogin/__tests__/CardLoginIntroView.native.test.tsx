@@ -106,6 +106,7 @@ describe("CardLoginIntroView (Native)", () => {
     fireEvent.press(screen.getByTestId(`pay-card-login-intro-${id}`));
 
     expect(onActionPress).toHaveBeenCalledTimes(1);
+    expect(onActionPress).toHaveBeenCalledWith(id);
   });
 
   it("reports every press, because the view model drops the second one", () => {
