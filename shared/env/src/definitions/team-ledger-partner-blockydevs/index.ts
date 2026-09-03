@@ -27,12 +27,12 @@ const teamLedgerPartnerBlockydevs = {
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://api.ledger-aleo.blockydevs.dev/network/mainnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },
   ALEO_TESTNET_SDK_ENDPOINT: {
-    def: "https://api.ledger-aleo.blockydevs.dev/network/testnet",
+    def: "https://aleo-backend.api.live.ledger.com/network/testnet",
     parser: stringParser,
     desc: "Aleo testnet SDK URL",
   },
