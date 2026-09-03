@@ -67,34 +67,6 @@ const idleResult: AddressSearchResult = {
   matchedContact: undefined,
 };
 
-function mockContactAddressValidation() {
-  let searchValue = "";
-  let validationResult: AddressSearchResult = idleResult;
-  const setValue = jest.fn((value: string) => {
-    searchValue = value;
-  });
-  mockedUseSendFlowData.mockImplementation(() => ({
-    recipientSearch: { ...mockRecipientSearch, value: searchValue, setValue },
-    state: {} as never,
-    uiConfig: {} as never,
-  }));
-  mockedUseAddressValidation.mockImplementation(() => ({
-    result: validationResult,
-    isLoading: false,
-    validateAddress: jest.fn(),
-  }));
-  return {
-    setValue,
-    markAddressValid() {
-      validationResult = {
-        ...idleResult,
-        status: "valid",
-        hasBridgeValidationResult: true,
-      };
-    },
-  };
-}
-
 describe("useRecipientScreenView", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -318,9 +290,8 @@ describe("useRecipientScreenView", () => {
     });
   });
 
-  it("validates the address matching the current currency among network addresses", () => {
+  it("advances with the address matching the current currency among network addresses", () => {
     const onAddressSelected = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
     const contact = mockContact({
       addresses: [
         mockContactAddress({
@@ -336,7 +307,7 @@ describe("useRecipientScreenView", () => {
       ],
     });
 
-    const { result, rerender } = renderHook(() =>
+    const { result } = renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
         currency: createMockTokenCurrency(),
@@ -347,19 +318,12 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(setValue).toHaveBeenCalledWith("0xusdt");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
     expect(onAddressSelected).toHaveBeenCalledWith("0xusdt", undefined);
   });
 
-  it("validates the only compatible contact address before continuing", () => {
+  it("advances straight to the next step for a contact with one address", () => {
     const onAddressSelected = jest.fn();
     const selectContact = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
     mockedUseRecipientContactSelection.mockReturnValue({
       selectedContact: undefined,
       selectContact,
@@ -374,57 +338,6 @@ describe("useRecipientScreenView", () => {
       ],
     });
 
-    const { result, rerender } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: createMockCurrency({ id: "ethereum" }),
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    act(() => result.current.handleContactSelect(contact));
-
-    expect(setValue).toHaveBeenCalledWith("0x1234567890123456789012345678901234567890");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-    expect(selectContact).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
-    expect(onAddressSelected).toHaveBeenCalledWith(
-      "0x1234567890123456789012345678901234567890",
-      undefined,
-    );
-  });
-
-  it.each([
-    ["invalid", "incorrect_format"],
-    ["sanctioned", "sanctioned"],
-  ] as const)("does not continue with a %s contact address", (status, error) => {
-    const onAddressSelected = jest.fn();
-    let searchValue = "";
-    const setValue = jest.fn((value: string) => {
-      searchValue = value;
-    });
-    mockedUseSendFlowData.mockImplementation(() => ({
-      recipientSearch: { ...mockRecipientSearch, value: searchValue, setValue },
-      state: {} as never,
-      uiConfig: {} as never,
-    }));
-    mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status, error },
-      isLoading: false,
-      validateAddress: jest.fn(),
-    });
-    const contact = mockContact({
-      addresses: [
-        mockContactAddress({
-          currencyId: "ethereum",
-          address: "0x1234567890123456789012345678901234567890",
-        }),
-      ],
-    });
     const { result } = renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
@@ -436,8 +349,11 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(setValue).toHaveBeenCalledWith("0x1234567890123456789012345678901234567890");
-    expect(onAddressSelected).not.toHaveBeenCalled();
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0x1234567890123456789012345678901234567890",
+      undefined,
+    );
+    expect(selectContact).not.toHaveBeenCalled();
   });
 
   it("opens address selection when a contact has several compatible addresses", () => {
@@ -508,17 +424,16 @@ describe("useRecipientScreenView", () => {
     expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
-  it("validates the chosen address after contact address selection", () => {
+  it("advances with the chosen address after contact address selection", () => {
     const onAddressSelected = jest.fn();
     const clearSelectedContact = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
     mockedUseRecipientContactSelection.mockReturnValue({
       selectedContact: undefined,
       selectContact: jest.fn(),
       clearSelectedContact,
     });
 
-    const { result, rerender } = renderHook(() =>
+    const { result } = renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
         currency: createMockCurrency({ id: "ethereum" }),
@@ -530,12 +445,6 @@ describe("useRecipientScreenView", () => {
     act(() => result.current.handleContactAddressSelect("0x456"));
 
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(setValue).toHaveBeenCalledWith("0x456");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
     expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined);
   });
 

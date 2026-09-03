@@ -9,7 +9,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
@@ -38,7 +38,6 @@ export function useRecipientScreenView({
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("mobile");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
-  const [pendingContactAddress, setPendingContactAddress] = useState<string>();
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
@@ -105,39 +104,30 @@ export function useRecipientScreenView({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      setPendingContactAddress(undefined);
       onAddressSelected(address, ensName);
     },
     [onAddressSelected],
-  );
-
-  const validateContactAddress = useCallback(
-    (address: string) => {
-      setPendingContactAddress(address);
-      recipientSearch.setValue(address);
-    },
-    [recipientSearch],
   );
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
       const address = pickContactAddressForCurrency(contact.addresses, currency.id);
       if (address) {
-        validateContactAddress(address.address);
+        handleAddressSelect(address.address);
         return;
       }
 
       selectContact(contact);
     },
-    [currency.id, selectContact, validateContactAddress],
+    [currency.id, handleAddressSelect, selectContact],
   );
 
   const handleContactAddressSelect = useCallback(
     (address: string) => {
       clearSelectedContact();
-      validateContactAddress(address);
+      handleAddressSelect(address);
     },
-    [clearSelectedContact, validateContactAddress],
+    [clearSelectedContact, handleAddressSelect],
   );
 
   const featureIntroduction = useContactsFeatureIntroductionViewModel({
@@ -150,25 +140,6 @@ export function useRecipientScreenView({
     isLoading,
     recipientSupportsDomain,
   });
-
-  useEffect(() => {
-    const selectedAddressIsValidated =
-      Boolean(pendingContactAddress) &&
-      pendingContactAddress === recipientSearch.value &&
-      searchState.isAddressValid &&
-      !searchState.showBridgeSenderError &&
-      !searchState.showBridgeRecipientWarning;
-    if (selectedAddressIsValidated && pendingContactAddress) {
-      handleAddressSelect(pendingContactAddress);
-    }
-  }, [
-    handleAddressSelect,
-    pendingContactAddress,
-    recipientSearch.value,
-    searchState.isAddressValid,
-    searchState.showBridgeRecipientWarning,
-    searchState.showBridgeSenderError,
-  ]);
 
   const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
 
