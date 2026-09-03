@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import type { ConcordiumResources, RawOperation } from "../types";
+import type {
+  ConcordiumAccount,
+  ConcordiumAccountRaw,
+  ConcordiumResources,
+  RawOperation,
+} from "../types";
 import {
   createTestAccount,
   createTestConcordiumAccount,
@@ -120,7 +125,7 @@ describe("assignToAccountRaw", () => {
     expect("concordiumResources" in accountRaw).toBe(false);
   });
 
-  it("should handle undefined values in resources", () => {
+  it("should materialize missing fields as undefined rather than aliasing the source", () => {
     const resources = {
       isOnboarded: false,
     } as ConcordiumResources;
@@ -129,11 +134,16 @@ describe("assignToAccountRaw", () => {
 
     assignToAccountRaw(account, accountRaw);
 
-    expect("concordiumResources" in accountRaw).toBe(true);
-    if ("concordiumResources" in accountRaw) {
-      expect(accountRaw.concordiumResources).not.toBeUndefined();
-      expect((accountRaw.concordiumResources as any)?.isOnboarded).toBe(false);
-    }
+    // toStrictEqual, not toEqual: toEqual ignores undefined-valued keys and so
+    // passes against the old Object.assign too.
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).toStrictEqual({
+      isOnboarded: false,
+      credId: undefined,
+      publicKey: undefined,
+      identityIndex: undefined,
+      credNumber: undefined,
+      ipIdentity: undefined,
+    });
   });
 });
 
@@ -197,6 +207,102 @@ describe("roundtrip serialization", () => {
     if ("concordiumResources" in restoredAccount) {
       expect(restoredAccount.concordiumResources).toEqual(originalResources);
     }
+  });
+
+  it("should preserve the per-token map, including through JSON storage", () => {
+    const originalResources: ConcordiumResources = {
+      isOnboarded: true,
+      credId: "roundtrip-cred",
+      publicKey: "roundtrip-key",
+      identityIndex: 10,
+      credNumber: 20,
+      ipIdentity: 30,
+      tokens: {
+        PLT: { transferStatus: "allowed", paused: false },
+        "EUR.e": { transferStatus: "blocked", paused: true },
+        UNKNOWN: { transferStatus: "unknown" },
+      },
+    };
+    const account = createTestConcordiumAccount({ concordiumResources: originalResources });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    const stored = JSON.parse(JSON.stringify(accountRaw));
+    const restoredAccount = createTestAccount();
+    assignFromAccountRaw(stored, restoredAccount);
+
+    expect("concordiumResources" in restoredAccount).toBe(true);
+    if ("concordiumResources" in restoredAccount) {
+      expect(restoredAccount.concordiumResources).toEqual(originalResources);
+    }
+  });
+
+  it("should omit tokens entirely for an account that has none", () => {
+    const account = createTestConcordiumAccount({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "no-tokens",
+        publicKey: "no-tokens-key",
+        identityIndex: 1,
+        credNumber: 2,
+        ipIdentity: 3,
+      },
+    });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    expect("tokens" in (accountRaw as ConcordiumAccountRaw).concordiumResources).toBe(false);
+  });
+
+  it("should drop keys it does not know about in both directions", () => {
+    // Storage can hold a key written by a newer app version. Carrying it back
+    // out would make it self-propagating, so the converter is an allowlist.
+    const withStrayKey = {
+      isOnboarded: true,
+      credId: "c",
+      publicKey: "p",
+      identityIndex: 1,
+      credNumber: 2,
+      ipIdentity: 3,
+      stray: "should not survive",
+    } as unknown as ConcordiumResources;
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(
+      createTestConcordiumAccount({ concordiumResources: withStrayKey }),
+      accountRaw,
+    );
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toHaveProperty("stray");
+
+    const account = createTestAccount();
+    assignFromAccountRaw(
+      createTestConcordiumAccountRaw({ concordiumResources: withStrayKey }),
+      account,
+    );
+    expect((account as ConcordiumAccount).concordiumResources).not.toHaveProperty("stray");
+  });
+
+  it("should rebuild the resources object rather than aliasing it", () => {
+    const account = createTestConcordiumAccount({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "alias-check",
+        publicKey: "alias-key",
+        identityIndex: 1,
+        credNumber: 2,
+        ipIdentity: 3,
+        tokens: { PLT: { transferStatus: "allowed", paused: false } },
+      },
+    });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toBe(
+      account.concordiumResources,
+    );
   });
 });
 

@@ -36,6 +36,8 @@ export async function craftTransaction(
       sender: AccountAddress.fromBase58(account.address),
       nonce: BigInt(account.nextSequenceNumber || 0),
       expiry: BigInt(expiryEpochSeconds),
+      // Drop this fallback when signing reads the persisted energy (LIVE-28337):
+      // 0 NRG is rejected at broadcast, after the device ceremony has completed.
       energyAmount: transaction.energy ?? BigInt(0),
     },
     payload: {

@@ -1,7 +1,12 @@
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, AccountRaw, Operation, OperationType } from "@ledgerhq/types-live";
-import type { ConcordiumAccount, ConcordiumAccountRaw, RawOperation } from "../types";
+import type {
+  ConcordiumAccount,
+  ConcordiumAccountRaw,
+  ConcordiumResources,
+  RawOperation,
+} from "../types";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
   return account.currency?.family === "concordium" && "concordiumResources" in account;
@@ -12,35 +17,51 @@ function isConcordiumAccountRaw(accountRaw: AccountRaw): accountRaw is Concordiu
 }
 
 /**
- * Copies concordiumResources from Account to AccountRaw.
+ * Serves both directions: the runtime and raw shapes are identical, so a
+ * separate converter per direction would be the same function twice. Split it
+ * the day a field needs converting.
  *
- * Note: ConcordiumResources contains only primitives (boolean, string, number),
- * so no transformation is needed - the object can be directly assigned.
+ * Naming the fields makes this an allowlist: a key on the input that is not
+ * listed here is dropped rather than carried to disk. The `satisfies` line is
+ * compile-time only — it turns a field added to the type but forgotten here
+ * into an error instead of data silently lost on save.
+ *
+ * `tokens` is copied by reference, as Canton does with its own keyed map:
+ * nothing mutates an entry in place, so a deep copy would protect nothing.
  */
+function copyResources(r: ConcordiumResources): ConcordiumResources {
+  const { isOnboarded, credId, publicKey, identityIndex, credNumber, ipIdentity, tokens, ...rest } =
+    r;
+  void (rest satisfies Record<string, never>);
+  return {
+    isOnboarded,
+    credId,
+    publicKey,
+    identityIndex,
+    credNumber,
+    ipIdentity,
+    ...(tokens === undefined ? {} : { tokens }),
+  };
+}
+
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
   if (!isConcordiumAccount(account) || !account.concordiumResources) {
     return;
   }
 
-  Object.assign(accountRaw, {
-    concordiumResources: account.concordiumResources,
-  });
+  (accountRaw as ConcordiumAccountRaw).concordiumResources = copyResources(
+    account.concordiumResources,
+  );
 }
 
-/**
- * Copies concordiumResources from AccountRaw to Account.
- *
- * Note: ConcordiumResources contains only primitives (boolean, string, number),
- * so no transformation is needed - the object can be directly assigned.
- */
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
   if (!isConcordiumAccountRaw(accountRaw) || !accountRaw.concordiumResources) {
     return;
   }
 
-  Object.assign(account, {
-    concordiumResources: accountRaw.concordiumResources,
-  });
+  (account as ConcordiumAccount).concordiumResources = copyResources(
+    accountRaw.concordiumResources,
+  );
 }
 
 export function mapRawOperationToBridgeOperation(op: RawOperation, accountId: string): Operation {

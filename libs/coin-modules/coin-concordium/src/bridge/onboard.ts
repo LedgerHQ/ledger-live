@@ -14,6 +14,7 @@ import {
 import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
 import {
+  type ConcordiumAccount,
   type ConcordiumSigner,
   type ConcordiumOnboardProgress,
   type ConcordiumOnboardResult,
@@ -133,7 +134,10 @@ export const buildOnboardAccount =
               freshAddress: accountAddress,
               xpub: publicKey,
               seedIdentifier: publicKey,
+              // Spread first so a field this function does not know about is
+              // carried rather than dropped.
               concordiumResources: {
+                ...(account as Partial<ConcordiumAccount>).concordiumResources,
                 credId: credentialDeploymentTransaction.credId,
                 credNumber,
                 identityIndex,
