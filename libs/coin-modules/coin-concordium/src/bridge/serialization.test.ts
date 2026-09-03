@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import type { ConcordiumAccountRaw, ConcordiumResources, RawOperation } from "../types";
+import type {
+  ConcordiumAccount,
+  ConcordiumAccountRaw,
+  ConcordiumResources,
+  RawOperation,
+} from "../types";
 import {
   createTestAccount,
   createTestConcordiumAccount,
@@ -249,6 +254,34 @@ describe("roundtrip serialization", () => {
     assignToAccountRaw(account, accountRaw);
 
     expect("tokens" in (accountRaw as ConcordiumAccountRaw).concordiumResources).toBe(false);
+  });
+
+  it("should drop keys it does not know about in both directions", () => {
+    // Storage can hold a key written by a newer app version. Carrying it back
+    // out would make it self-propagating, so the converter is an allowlist.
+    const withStrayKey = {
+      isOnboarded: true,
+      credId: "c",
+      publicKey: "p",
+      identityIndex: 1,
+      credNumber: 2,
+      ipIdentity: 3,
+      stray: "should not survive",
+    } as unknown as ConcordiumResources;
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(
+      createTestConcordiumAccount({ concordiumResources: withStrayKey }),
+      accountRaw,
+    );
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toHaveProperty("stray");
+
+    const account = createTestAccount();
+    assignFromAccountRaw(
+      createTestConcordiumAccountRaw({ concordiumResources: withStrayKey }),
+      account,
+    );
+    expect((account as ConcordiumAccount).concordiumResources).not.toHaveProperty("stray");
   });
 
   it("should rebuild the resources object rather than aliasing it", () => {

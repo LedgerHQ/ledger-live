@@ -5,7 +5,6 @@ import type {
   ConcordiumAccount,
   ConcordiumAccountRaw,
   ConcordiumResources,
-  ConcordiumResourcesRaw,
   RawOperation,
 } from "../types";
 
@@ -17,33 +16,23 @@ function isConcordiumAccountRaw(accountRaw: AccountRaw): accountRaw is Concordiu
   return "concordiumResources" in accountRaw;
 }
 
-/** Fails to compile when a resources field is declared but not mapped below. */
-function assertNoUnmappedFields(_rest: Record<string, never>): void {}
-
 /**
- * Naming the fields keeps what reaches disk an allowlist. `tokens` is copied by
- * reference, as Canton does with its own keyed map: nothing mutates an entry in
- * place, so a deep copy would protect nothing.
+ * Serves both directions: the runtime and raw shapes are identical, so a
+ * separate converter per direction would be the same function twice. Split it
+ * the day a field needs converting.
+ *
+ * Naming the fields makes this an allowlist: a key on the input that is not
+ * listed here is dropped rather than carried to disk. The `satisfies` line is
+ * compile-time only — it turns a field added to the type but forgotten here
+ * into an error instead of data silently lost on save.
+ *
+ * `tokens` is copied by reference, as Canton does with its own keyed map:
+ * nothing mutates an entry in place, so a deep copy would protect nothing.
  */
-function toResourcesRaw(r: ConcordiumResources): ConcordiumResourcesRaw {
+function copyResources(r: ConcordiumResources): ConcordiumResources {
   const { isOnboarded, credId, publicKey, identityIndex, credNumber, ipIdentity, tokens, ...rest } =
     r;
-  assertNoUnmappedFields(rest);
-  return {
-    isOnboarded,
-    credId,
-    publicKey,
-    identityIndex,
-    credNumber,
-    ipIdentity,
-    ...(tokens === undefined ? {} : { tokens }),
-  };
-}
-
-function fromResourcesRaw(r: ConcordiumResourcesRaw): ConcordiumResources {
-  const { isOnboarded, credId, publicKey, identityIndex, credNumber, ipIdentity, tokens, ...rest } =
-    r;
-  assertNoUnmappedFields(rest);
+  void (rest satisfies Record<string, never>);
   return {
     isOnboarded,
     credId,
@@ -60,7 +49,7 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
     return;
   }
 
-  (accountRaw as ConcordiumAccountRaw).concordiumResources = toResourcesRaw(
+  (accountRaw as ConcordiumAccountRaw).concordiumResources = copyResources(
     account.concordiumResources,
   );
 }
@@ -70,7 +59,7 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
     return;
   }
 
-  (account as ConcordiumAccount).concordiumResources = fromResourcesRaw(
+  (account as ConcordiumAccount).concordiumResources = copyResources(
     accountRaw.concordiumResources,
   );
 }
