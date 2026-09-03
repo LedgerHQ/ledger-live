@@ -593,6 +593,10 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
     .map(id => trackingPairs[id]);
 }
 
+// supportedCryptoIds is the allowlist of crypto ids returned by /v3/supported/crypto.
+// Pairs whose "from" currency is NOT in this list will receive a 422 from the CVS API, so
+// removing this filter (or passing an empty list) silently re-enables those requests and
+// produces 422 errors for accounts holding unsupported currencies.
 export function filterSupportedTrackingPairs(
   pairs: TrackingPair[],
   supportedCryptoIds?: string[],
