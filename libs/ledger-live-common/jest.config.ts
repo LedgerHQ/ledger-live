@@ -10,6 +10,7 @@ const testPathIgnorePatterns = [
   ".yalc",
   "cli/",
   "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
+  "src/portfolio/__tests__/currencies\\.ts$",
 ];
 
 // Dependencies shipped as ESM that jest has to transform. Matched against pnpm's store directory
@@ -73,6 +74,12 @@ const reporters = [
 if (process.env.CI) {
   reporters.push("github-actions");
 }
+
+// portfolio tests use local-time Date constructors (new Date(year, month, date)) and their
+// snapshots were generated in America/New_York. Setting TZ here propagates to all workers via
+// process inheritance (the only reliable mechanism — setting it inside a worker or setupFiles
+// does not flush the C library's tzset cache reliably on macOS).
+process.env.TZ = "America/New_York";
 
 // Since jest 30.5 the `^buffer$` moduleNameMapper below also captures `node:buffer`, so
 // jest.buffer-shim.js cannot reach the builtin itself. Capture what it needs here, in

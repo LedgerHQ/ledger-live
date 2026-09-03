@@ -5,7 +5,7 @@ import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
-} from "@ledgerhq/live-countervalues/portfolio";
+} from "@ledgerhq/live-common/portfolio/portfolio";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import type { AssetTableItem } from "../types";
 

@@ -1,5 +1,5 @@
-import type { CounterValuesState } from "./types";
-import { calculate, calculateMany } from "./logic";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenAccounts,
   getAccountCurrency,
@@ -23,9 +23,9 @@ import type {
   Currency,
   TokenCurrency,
 } from "@ledgerhq/ledger-wallet-framework/types";
-import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./internal/ranges";
-import { defaultAssetsDistribution } from "./internal/assetsDistribution";
-import type { AssetsDistributionOpts } from "./internal/assetsDistribution";
+import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
+import { defaultAssetsDistribution } from "./assetsDistribution";
+import type { AssetsDistributionOpts } from "./assetsDistribution";
 
 export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
@@ -179,8 +179,14 @@ export function getPortfolio(
   const accounts = flattenSourceAccounts ? flattenAccounts(topAccounts) : topAccounts;
   const count = getPortfolioCount(accounts, range);
 
-  const availables = [];
-  const unavailableAccounts = [];
+  type AvailableEntry = Pick<
+    ReturnType<typeof getBalanceHistoryWithChanges>,
+    "history" | "changes"
+  > & {
+    account: AccountLike;
+  };
+  const availables: AvailableEntry[] = [];
+  const unavailableAccounts: AccountLike[] = [];
 
   for (const account of accounts) {
     const p = getBalanceHistoryWithChanges(account, range, count, cvState, cvCurrency);

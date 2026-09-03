@@ -14,7 +14,7 @@ import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/ordering";
-import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
+import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   useAssetDistribution,
   type DistributionOpts,
