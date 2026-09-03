@@ -218,6 +218,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             validator={chosenValidator}
             account={account}
             amount={transaction.amount}
+            currencyId={mainAccount.currency.family}
           />
         </View>
       </View>
@@ -333,12 +334,14 @@ function SummaryWords({
   validator,
   account,
   amount,
+  currencyId,
   onChangeValidator,
   onChangeAmount,
 }: {
   validator?: CosmosValidatorItem;
   account: AccountLike;
   amount: BigNumber;
+  currencyId: string;
   onChangeValidator: () => void;
   onChangeAmount: () => void;
 }) {
@@ -354,18 +357,27 @@ function SummaryWords({
         <Words>
           <Trans i18nKey={`cosmos.delegation.iDelegate`} />
         </Words>
-        <Touchable onPress={onChangeAmount}>
-          <Selectable name={formattedAmount} testID="cosmos-delegation-summary-amount" />
+        <Touchable
+          onPress={onChangeAmount}
+          touchableTestID={`${currencyId}-delegation-summary-amount`}
+        >
+          <Selectable
+            name={formattedAmount}
+            testID={`${currencyId}-delegation-summary-amount-text`}
+          />
         </Touchable>
       </Line>
       <Line>
         <Words>
           <Trans i18nKey="delegation.to" />
         </Words>
-        <Touchable onPress={onChangeValidator}>
+        <Touchable
+          onPress={onChangeValidator}
+          touchableTestID={`${currencyId}-delegation-summary-validator-touchable`}
+        >
           <Selectable
             name={validator?.name ?? validator?.validatorAddress ?? "-"}
-            testID="cosmos-delegation-summary-validator"
+            testID={`${currencyId}-delegation-summary-validator`}
           />
         </Touchable>
       </Line>

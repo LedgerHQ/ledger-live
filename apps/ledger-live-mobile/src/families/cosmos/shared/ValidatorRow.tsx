@@ -32,6 +32,7 @@ const ValidatorRow = ({
       eventProperties={{
         validatorName: validator.name || validator.validatorAddress,
       }}
+      touchableTestID={`provider-row-${validator.name || validator.validatorAddress}`}
       onPress={onPressT}
     >
       <View style={styles.validator}>
