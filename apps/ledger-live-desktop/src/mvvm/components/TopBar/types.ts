@@ -41,6 +41,8 @@ type TopBarAction = {
   tooltipClassName?: string;
   /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
   onTooltipShow?: () => void;
+  /** When set, right-clicking the button calls this instead of opening the native context menu. */
+  onContextMenu?: () => void;
   /** When set, renders a Button (icon + text label) instead of an IconButton. */
   cta?: string;
 };

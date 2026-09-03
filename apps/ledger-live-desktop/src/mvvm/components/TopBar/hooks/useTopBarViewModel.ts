@@ -45,6 +45,7 @@ const useTopBarViewModel = () => {
   const {
     isVisible: isMockServerVisible,
     handleMockServer,
+    handleOpenConfigurationUi: handleMockServerConfigurationUi,
     icon: mockServerIcon,
     tooltip: mockServerTooltip,
     className: mockServerClassName,
@@ -95,6 +96,7 @@ const useTopBarViewModel = () => {
               icon: mockServerIcon,
               isInteractive: true,
               onClick: handleMockServer,
+              onContextMenu: handleMockServerConfigurationUi,
               appearance: "accent" as const,
               className: mockServerClassName,
             },

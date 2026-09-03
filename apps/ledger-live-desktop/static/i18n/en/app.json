@@ -5553,7 +5553,7 @@
       "enableMockServerTransport": "Mock server transport",
       "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a device mock server instead of a physical device. Uses the shared mock server unless MOCK_SERVER_TRANSPORT_URL points elsewhere. Requires an app restart to take effect.",
       "mockServerStatus": {
-        "connected": "Mock server connected · click to copy the session token",
+        "connected": "Mock server connected · click to copy the session token, right-click to open the configuration UI",
         "disconnected": "Mock server unreachable"
       },
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",

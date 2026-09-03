@@ -52,6 +52,7 @@ const defaults = {
   mockServer: {
     isVisible: false,
     handleMockServer: jest.fn(),
+    handleOpenConfigurationUi: jest.fn(),
     icon: Devices,
     tooltip: "Mock server connected",
     className: "bg-success-strong hover:bg-success-strong active:bg-success-strong",

@@ -191,6 +191,7 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 | Feedback survey             | `form.typeform.com`                                                                                   | Swap completed feedback (LLD); ratings modal (LLM).          |
 | Tezos baker directory       | `baking-bad.org`                                                                                      | Delegation flow (both apps).                                 |
 | Bitwise ToS                 | `onchain.bitwiseinvestments.com`                                                                      | "Ledger by Bitwise" terms of service link.                   |
+| Mock server config UI       | `device-mock-server.aws.ldg-ps-default.ldg-tech.com`                                                  | Right-click the dev mock server indicator; `#token=…`.       |
 
 ---
 
