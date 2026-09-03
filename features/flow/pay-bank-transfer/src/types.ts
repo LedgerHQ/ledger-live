@@ -12,18 +12,13 @@ export type BankTransferHandoff = "createAccount" | "logIn";
 
 export type BankTransferIntroHeroImage = number | { readonly uri: string };
 
-export type BankTransferIntroLabels = Readonly<{
-  title: string;
-  description: string;
-  createAccountLabel: string;
-  logInLabel: string;
-  providedBy: string;
-  rows: readonly BankTransferIntroRow[];
-}>;
-
+/**
+ * Copy is resolved inside this package through `@shared/i18n`; the host only injects
+ * analytics, open state, and partner handoff. Keys live under `payTab.bankTransferIntro.*`
+ * in each app's default namespace.
+ */
 export type BankTransferIntroProps = Readonly<{
   isOpen: boolean;
-  labels: BankTransferIntroLabels;
   /** Host-bundled image source. Re.pack only resolves assets required from the app. */
   heroImage?: BankTransferIntroHeroImage;
   bottomInset?: number;

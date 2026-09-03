@@ -1,42 +1,50 @@
 import { renderHook } from "@testing-library/react";
 import { useBankTransferIntroViewModel } from "../useBankTransferIntroViewModel";
 import type { BankTransferIntroProps } from "../../../types";
-
-const LABELS: BankTransferIntroProps["labels"] = {
-  title: "Convert cash to stablecoins",
-  description: "Transfer USD or EUR from your bank.",
-  createAccountLabel: "Create an account",
-  logInLabel: "Log in",
-  providedBy: "Provided by Noah",
-  rows: [
-    { icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." },
-    { icon: "Coins", title: "No hidden fees", description: "Direct from bank to blockchain." },
-    { icon: "Chart5", title: "Put your money to work", description: "Swap or earn stablecoin." },
-  ],
-};
+import { I18nWrapper } from "./i18nWrapper";
 
 function setup(overrides: Partial<BankTransferIntroProps> = {}) {
   const props: BankTransferIntroProps = {
     isOpen: true,
-    labels: LABELS,
     onBankTransfer: jest.fn(),
     onClose: jest.fn(),
     onTrackEvent: jest.fn(),
     ...overrides,
   };
-  const { result } = renderHook(() => useBankTransferIntroViewModel(props));
+  const { result } = renderHook(() => useBankTransferIntroViewModel(props), {
+    wrapper: I18nWrapper,
+  });
   return { props, result };
 }
 
 describe("useBankTransferIntroViewModel", () => {
-  it("exposes the injected labels", () => {
+  it("resolves copy from the mounted i18n provider", () => {
     const { result } = setup();
 
-    expect(result.current.title).toBe(LABELS.title);
-    expect(result.current.description).toBe(LABELS.description);
-    expect(result.current.createAccountLabel).toBe(LABELS.createAccountLabel);
-    expect(result.current.logInLabel).toBe(LABELS.logInLabel);
-    expect(result.current.rows).toEqual(LABELS.rows);
+    expect(result.current.title).toBe("Send cash, receive stablecoin");
+    expect(result.current.description).toBe(
+      "Transfer cash and receive stablecoins straight to your Ledger Wallet™.",
+    );
+    expect(result.current.createAccountLabel).toBe("Create an account");
+    expect(result.current.logInLabel).toBe("Log in to Noah");
+    expect(result.current.providedBy).toBe("Provided by Noah");
+    expect(result.current.rows).toEqual([
+      {
+        icon: "Bank",
+        title: "Receive transfers from any bank",
+        description: "Get salary, payments, deposits via SEPA or ACH.",
+      },
+      {
+        icon: "Coins",
+        title: "No hidden fees",
+        description: "Direct from bank to blockchain for 0.25% fees.",
+      },
+      {
+        icon: "Chart5",
+        title: "Put your money to work right away",
+        description: "You can swap or earn with your stablecoin.",
+      },
+    ]);
   });
 
   it("tracks the cash-to-stable page when shown", () => {
@@ -58,6 +66,20 @@ describe("useBankTransferIntroViewModel", () => {
       page: "cash to stable",
     });
     expect(props.onBankTransfer).toHaveBeenCalledWith("createAccount");
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("tracks log in, emits onBankTransfer, then closes", () => {
+    const { props, result } = setup();
+
+    result.current.onLogInPress();
+
+    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "log in to noah",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+    expect(props.onBankTransfer).toHaveBeenCalledWith("logIn");
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -87,6 +109,6 @@ describe("useBankTransferIntroViewModel", () => {
 
     expect(() => result.current.onShown()).not.toThrow();
     expect(() => result.current.onCreateAccountPress()).not.toThrow();
-    expect(props.onBankTransfer).toHaveBeenCalledTimes(1);
+    expect(props.onBankTransfer).toHaveBeenCalledWith("createAccount");
   });
 });
