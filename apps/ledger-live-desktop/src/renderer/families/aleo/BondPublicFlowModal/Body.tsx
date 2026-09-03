@@ -58,8 +58,7 @@ export default createStakingFlowBody<StepId>({
     return networkType ? DEFAULT_ALEO_VALIDATOR[networkType] : "";
   },
   // The withdrawal address is fixed to the user's own account and never exposed as a step.
-  // prepareTransaction now pins it unconditionally in the coin module, so this seed is
-  // redundant rather than load-bearing; it is kept only until the flag is removed from the
-  // shared factory.
+  // This seeds it at transaction-creation time so getTransactionStatus — which validates the
+  // field — never sees it empty; prepareTransaction re-pins it on every update as a backstop.
   withdrawalFromFresh: true,
 });

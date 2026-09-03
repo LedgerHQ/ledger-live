@@ -49,10 +49,7 @@ export type AleoAccountInfo = {
   scannedHeight: number;
 };
 
-export type AleoValidatorNonEarningReason =
-  | "belowCommitteeMinimum"
-  | "overConcentrated"
-  | "fullCommission";
+export type AleoValidatorNonEarningReason = "overConcentrated" | "fullCommission";
 
 export type AleoValidator = {
   address: string;

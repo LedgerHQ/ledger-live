@@ -115,8 +115,6 @@ export const MICROCREDITS_PER_CREDIT = 1_000_000;
 // Below this bonded total the protocol pays a delegator nothing at all.
 export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
 
-// A validator holding less than this is below the committee minimum and earns nothing,
-// so neither do the delegators bonded to it.
 export const MIN_VALIDATOR_STAKE_MICROCREDITS = 10_000_000 * MICROCREDITS_PER_CREDIT;
 
 // snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
