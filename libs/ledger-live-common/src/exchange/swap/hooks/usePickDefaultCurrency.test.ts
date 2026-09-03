@@ -7,6 +7,11 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
+// useCurrenciesByMarketcap depends on Redux; return currencies unchanged (no-DADA fallback).
+jest.mock("../../../currencies/hooks", () => ({
+  useCurrenciesByMarketcap: <C>(currencies: C[]) => currencies,
+}));
+
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();
 

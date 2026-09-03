@@ -1,6 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useEffect } from "react";
-import { currenciesByMarketcap } from "../../../currencies";
+import { useCurrenciesByMarketcap } from "../../../currencies/hooks";
 
 // Pick a default currency target if none are selected.
 export const usePickDefaultCurrency = (
@@ -8,21 +8,17 @@ export const usePickDefaultCurrency = (
   currency: CryptoOrTokenCurrency | null | undefined,
   setCurrency: (currency: CryptoOrTokenCurrency) => void,
 ): void => {
+  const sortedCurrencies = useCurrenciesByMarketcap(currencies);
+
   useEffect(() => {
     // Keep the same currency target if it is still valid.
     const isCurrencyValid = currency && currencies.indexOf(currency) >= 0;
     if (!currency || !isCurrencyValid) {
-      const defaultCurrency = currencies.find(
-        currency => currency.id === "ethereum" || currency.id === "bitcoin",
-      );
+      const defaultCurrency = sortedCurrencies.find(c => c.id === "ethereum" || c.id === "bitcoin");
 
       if (defaultCurrency) {
         setCurrency(defaultCurrency);
-      } else if (currencies.length > 0) {
-        currenciesByMarketcap(currencies).then(sortedCurrencies => {
-          setCurrency(sortedCurrencies[0]);
-        });
       }
     }
-  }, [currency, currencies, setCurrency]);
+  }, [currency, sortedCurrencies, setCurrency]);
 };
