@@ -91,6 +91,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
+          skip_ruby: true
 
       - name: format check
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
