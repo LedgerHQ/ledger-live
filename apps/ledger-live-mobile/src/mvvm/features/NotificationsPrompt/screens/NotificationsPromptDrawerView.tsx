@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Link as TextLink, Button } from "@ledgerhq/native-ui";
+import { Box, Button, Link } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
 import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
@@ -17,17 +17,29 @@ export function NotificationsPromptDrawerView({ promptTarget, onAllow, onLater }
   const { allowKey, laterKey } = getNotificationsPromptCopy(promptTarget);
 
   return (
-    <Flex mb={4}>
-      <Flex alignItems="center">
+    <Box lx={{ marginBottom: "s12" }}>
+      <Box lx={{ alignItems: "center" }}>
         <NotificationsDrawerIllustration promptTarget={promptTarget} />
         <NotificationsPromptContent promptTarget={promptTarget} />
-      </Flex>
-      <Button type="main" mt={8} mb={7} onPress={onAllow} testID="notifications-prompt-allow">
+      </Box>
+      <Button
+        appearance="base"
+        size="lg"
+        isFull
+        lx={{ marginTop: "s32", marginBottom: "s24" }}
+        onPress={onAllow}
+        testID="notifications-prompt-allow"
+      >
         {t(allowKey)}
       </Button>
-      <TextLink type="shade" onPress={onLater} testID="notifications-prompt-later">
+      <Link
+        appearance="base"
+        underline={false}
+        onPress={onLater}
+        testID="notifications-prompt-later"
+      >
         {t(laterKey)}
-      </TextLink>
-    </Flex>
+      </Link>
+    </Box>
   );
 }
