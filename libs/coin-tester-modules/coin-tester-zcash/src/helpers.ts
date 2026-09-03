@@ -33,7 +33,18 @@ async function callZebraRpc<T>(method: string, params: unknown[] = []): Promise<
     }),
   });
 
-  const body = (await response.json()) as { result?: T; error?: { message: string } };
+  const rawText = await response.text();
+  if (!response.ok) {
+    throw new Error(`zebra RPC ${method} → HTTP ${response.status}: ${rawText}`);
+  }
+
+  let body: { result?: T; error?: { message: string } };
+  try {
+    body = JSON.parse(rawText) as { result?: T; error?: { message: string } };
+  } catch {
+    throw new Error(`zebra RPC ${method} returned non-JSON response: ${rawText}`);
+  }
+
   if (body.error) {
     throw new Error(`zebra RPC ${method} failed: ${body.error.message}`);
   }
