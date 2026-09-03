@@ -566,6 +566,18 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
+async function acceptTransactionCheckPrompt(screenTexts: string): Promise<boolean> {
+  if (!isTouchDevice() || !screenTexts.includes(DeviceLabels.YES_ENABLE)) return false;
+
+  try {
+    await pressAndRelease(DeviceLabels.YES_ENABLE);
+    return true;
+  } catch (err) {
+    console.warn(`[waitFor] failed to accept the Transaction Check prompt: ${sanitizeError(err)}`);
+    return false;
+  }
+}
+
 export async function waitFor(
   text: string,
   maxAttempts = 60,
@@ -573,11 +585,16 @@ export async function waitFor(
 ): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
+  let transactionCheckAccepted = false;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     texts = await fetchCurrentScreenTexts(port);
 
     if (texts.toLowerCase().includes(text.toLowerCase())) {
       return texts;
+    }
+
+    if (!transactionCheckAccepted) {
+      transactionCheckAccepted = await acceptTransactionCheckPrompt(texts);
     }
 
     await sleep(SCREEN_POLL_INTERVAL_MS);
@@ -615,35 +632,14 @@ export async function waitForReviewTransaction(
   maxAttempts = 60,
   { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
 ): Promise<void> {
-  if (!isTouchDevice()) {
-    try {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
-    } catch (error) {
-      if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
-        error.message += SWAP_INIT_STALL_HINT;
-      }
-      throw error;
+  try {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
+  } catch (error) {
+    if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
+      error.message += SWAP_INIT_STALL_HINT;
     }
-    return;
+    throw error;
   }
-
-  const port = getEnv("SPECULOS_API_PORT");
-  let texts = "";
-  let enabled = false;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    texts = await fetchCurrentScreenTexts(port);
-    if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
-      return;
-    }
-    if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
-      await pressAndRelease(DeviceLabels.YES_ENABLE);
-      enabled = true; // press once, then keep polling for review within the same budget
-    }
-    await sleep(SCREEN_POLL_INTERVAL_MS);
-  }
-
-  const base = `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`;
-  throw new Error(isExchangeAppReadyStall(texts) ? base + SWAP_INIT_STALL_HINT : base);
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
