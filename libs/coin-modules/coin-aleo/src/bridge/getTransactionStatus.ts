@@ -322,15 +322,6 @@ async function handleTransferTransaction({
   }
 
   if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
-    const withdrawalError = await validateRecipient({
-      account,
-      recipient: transaction.withdrawal,
-      allowSelfTransfer: true,
-    });
-    if (withdrawalError) {
-      errors.withdrawal = withdrawalError;
-    }
-
     if (!recipientError) {
       // One validator per address: a bond to any other one is rejected on-chain, so
       // that takes precedence over whether the target happens to be open.
