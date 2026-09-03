@@ -34,7 +34,6 @@ import {
   MAX_VALIDATOR_STAKE_SHARE,
   MICROCREDITS_PER_CREDIT,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
-  MIN_VALIDATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
@@ -1569,9 +1568,6 @@ export function getValidatorNonEarningReason({
   validatorStakeMicrocredits: BigNumber;
   commissionPercent: BigNumber;
 }): AleoValidatorNonEarningReason | null {
-  if (validatorStakeMicrocredits.isLessThan(MIN_VALIDATOR_STAKE_MICROCREDITS)) {
-    return "belowCommitteeMinimum";
-  }
   if (
     validatorStakeMicrocredits
       .dividedBy(totalStakeMicrocredits)
