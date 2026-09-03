@@ -555,10 +555,30 @@ describe("StepSelectFollowees", () => {
     expect(props.setFolloweeDraft).toHaveBeenCalledWith("");
   });
 
+  // Leading zeros survived into the list as a distinct entry, which the canister reads as the same
+  // neuron: the optimistic snapshot then held two rows for it and one Remove dropped both.
+  it("stores the neuron id in the form the canister reads it in", async () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: [] },
+      followeeDraft: "008",
+    });
+    const { user } = render(<StepSelectFollowees {...props} />);
+
+    await user.click(screen.getByTestId("icp-followee-add-button"));
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.followeesIds).toEqual(["8"]);
+  });
+
   it.each([
     ["rrkah-fqaaa-cai", /digits only/],
     ["12a3", /digits only/],
+    ["0", /not a valid neuron ID/],
+    // A real 20-digit id starts with 1, so mistyping that digit clears the nat64 ceiling.
+    ["23194199462915819287", /not a valid neuron ID/],
     ["9", /already a followee/],
+    // Same neuron as the "9" the list already holds, so the check has to compare canonically.
+    ["009", /already a followee/],
     ["5", /cannot follow itself/],
   ])("refuses the draft %p and says why", (followeeDraft, copy) => {
     const props = stepProps({
@@ -665,6 +685,21 @@ describe("StepSelectFollowees", () => {
   it("allows continue once the field is clear again", () => {
     const props = stepProps({
       transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+    });
+    render(<StepSelectFolloweesFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+
+  /*
+   * Blocking on any non-empty draft left the user nowhere: Add greyed out because the id is already
+   * a followee, Continue greyed out too, and no copy saying to clear the field. Nothing is dropped
+   * by continuing here — the id is in the list already.
+   */
+  it("allows continue when the draft is already a followee", () => {
+    const props = stepProps({
+      transaction: { type: "follow", followTopic: "Governance", followeesIds: ["9"] },
+      followeeDraft: "9",
     });
     render(<StepSelectFolloweesFooter {...props} />);
 

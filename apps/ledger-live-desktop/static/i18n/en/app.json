@@ -10295,6 +10295,7 @@
         "empty": "No followees yet. Your neuron will not vote on this topic.",
         "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}.",
         "notANeuronId": "A neuron ID is digits only.",
+        "outOfRange": "This is not a valid neuron ID.",
         "duplicate": "This neuron is already a followee on this topic.",
         "self": "A neuron cannot follow itself.",
         "unadded": "Select Add to include this neuron ID, or clear the field.",
