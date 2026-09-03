@@ -37,7 +37,6 @@ export const linea_sepolia = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   isTestnetFor: "linea",
   ethereumLikeInfo: {
     chainId: 59141,

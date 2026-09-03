@@ -11,7 +11,6 @@ export const sui_testnet = currency({
   color: "#000",
   family: "sui",
   isTestnetFor: "sui",
-  disableCountervalue: true,
   units: [
     {
       name: "Sui",

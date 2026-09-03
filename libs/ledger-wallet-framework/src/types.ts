@@ -50,7 +50,6 @@ export interface CryptoCurrency {
     XPUBVersion?: number;
   };
   symbol?: string;
-  disableCountervalue?: boolean;
   keywords?: string[];
   explorerId?: string;
   tokenTypes?: string[];

@@ -37,7 +37,6 @@ export const base_sepolia = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: true,
   isTestnetFor: "base",
   ethereumLikeInfo: {
     chainId: 84532,

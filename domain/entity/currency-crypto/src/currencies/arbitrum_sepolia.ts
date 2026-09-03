@@ -38,7 +38,6 @@ export const arbitrum_sepolia = currency({
     },
   ],
   isTestnetFor: "arbitrum",
-  disableCountervalue: true,
   ethereumLikeInfo: {
     chainId: 421614,
   },

@@ -35,7 +35,6 @@ export const bitcoin_regtest = currency({
   supportsSegwit: true,
   supportsNativeSegwit: true,
   isTestnetFor: "bitcoin",
-  disableCountervalue: true,
   family: "bitcoin",
   blockAvgTime: 900,
   bitcoinLikeInfo: {

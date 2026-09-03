@@ -41,11 +41,6 @@ type CurrencyCommon = {
   units: Unit[];
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string;
-  /**
-   * tells if countervalue need to be disabled (typically because colliding with other coins)
-   * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
-   */
-  disableCountervalue?: boolean;
   // keywords to be able to find currency from "obvious" terms
   keywords?: string[];
 };
@@ -65,6 +60,11 @@ export type TokenCurrency = CurrencyCommon & {
   tokenType: string;
   // tells if the token was delisted by the assets API and should be hidden from new flows
   delisted?: boolean;
+  /**
+   * tells if countervalue need to be disabled (typically because colliding with other coins)
+   * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
+   */
+  disableCountervalue?: boolean;
 };
 
 /**

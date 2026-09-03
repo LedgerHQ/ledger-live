@@ -37,7 +37,6 @@ export const ethereum_sepolia = currency({
     },
   ],
   isTestnetFor: "ethereum",
-  disableCountervalue: true,
   family: "evm",
   blockAvgTime: 15,
   ethereumLikeInfo: {
