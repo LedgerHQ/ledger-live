@@ -40,6 +40,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     fee: tr.fee ? new BigNumber(tr.fee) : null,
     memo: tr.memo,
+    ...(tr.tokenId === undefined ? {} : { tokenId: tr.tokenId }),
+    ...(tr.energy === undefined ? {} : { energy: tr.energy }),
   };
 };
 
@@ -50,6 +52,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     fee: t.fee ? t.fee.toString() : null,
     memo: t.memo,
+    ...(t.tokenId === undefined ? {} : { tokenId: t.tokenId }),
+    ...(t.energy === undefined ? {} : { energy: t.energy }),
   };
 };
 

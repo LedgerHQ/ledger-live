@@ -335,6 +335,25 @@ export interface PltAccountToken {
 }
 
 /**
+ * Result of checking a token's allow/deny lists against one account.
+ *
+ * `unknown` is not a soft `allowed`: it means the module state or the account's
+ * membership could not be read, so nothing can be concluded. A caller gating a
+ * send must treat it as a blocker and say the restrictions could not be
+ * verified, rather than letting the transfer reach the chain to be rejected.
+ */
+export type PltListStatus = "allowed" | "blocked" | "unknown";
+
+/**
+ * Whether this account may transfer a token: pause state and both list rules
+ * folded into one verdict, resolved once by the producer.
+ *
+ * Gate on `!== "allowed"`, not `=== "blocked"` — a value from a corrupted store
+ * or a newer app version is off-union, and only the first form fails closed.
+ */
+export type PltTransferStatus = "allowed" | "blocked" | "unknown";
+
+/**
  * Details of a token-module rejection, carried by a `TokenUpdateTransactionFailed`
  * reject reason. `type` is a module-defined string, not a closed set.
  */

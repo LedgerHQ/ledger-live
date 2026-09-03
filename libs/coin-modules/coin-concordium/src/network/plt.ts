@@ -2,6 +2,7 @@ import type {
   PltAccountModuleState,
   PltAccountToken,
   PltEncodedState,
+  PltListStatus,
   PltModuleState,
   PltRejectReason,
   PltTokenModuleRejectReason,
@@ -21,16 +22,6 @@ export function isDecodedPltState<T extends PltModuleState | PltAccountModuleSta
 ): state is T {
   return typeof state === "object" && state !== null && !Array.isArray(state);
 }
-
-/**
- * Result of checking a token's allow/deny lists against one account.
- *
- * `unknown` is not a soft `allowed`: it means the module state or the account's
- * membership could not be read, so nothing can be concluded. A caller gating a
- * send must treat it as a blocker and say the restrictions could not be
- * verified, rather than letting the transfer reach the chain to be rejected.
- */
-export type PltListStatus = "allowed" | "blocked" | "unknown";
 
 /**
  * Checks whether the token's own lists block this account from transacting.

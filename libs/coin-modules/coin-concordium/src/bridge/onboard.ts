@@ -2,6 +2,7 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { LockedDeviceError } from "../errors";
 import { ConcordiumPairingExpiredError, ConcordiumSessionExpiredError } from "../types/errors";
+import type { ConcordiumAccount } from "../types";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
@@ -133,7 +134,10 @@ export const buildOnboardAccount =
               freshAddress: accountAddress,
               xpub: publicKey,
               seedIdentifier: publicKey,
+              // Spread first so a field this function does not know about is
+              // carried rather than dropped.
               concordiumResources: {
+                ...(account as Partial<ConcordiumAccount>).concordiumResources,
                 credId: credentialDeploymentTransaction.credId,
                 credNumber,
                 identityIndex,
