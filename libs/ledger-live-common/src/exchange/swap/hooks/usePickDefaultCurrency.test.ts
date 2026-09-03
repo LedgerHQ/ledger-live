@@ -5,14 +5,25 @@ import { createElement, type ReactNode } from "react";
 import { renderHook } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
+import { counterValuesApi } from "../../../counterValues/state-manager/api";
 import { usePickDefaultCurrency } from "./usePickDefaultCurrency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
-// Minimal store: assetsDataApi has no cached DADA data, so useCurrenciesByMarketcap
-// returns currencies in their original order (the no-DADA-cache fallback path).
-const store = configureStore({ reducer: { assetsDataApi: () => ({ queries: {} }) } });
+// Suppress the inevitable network error (countervalues API is not available in tests).
+beforeAll(() => {
+  jest.spyOn(global, "fetch").mockResolvedValue(new Response("[]", { status: 503 }));
+});
+afterAll(() => jest.restoreAllMocks());
+
+// Real store with the counterValues RTK Query reducer.
+// useGetCounterValueIdsSortedByMarketCapQuery returns { data: undefined } initially,
+// so useCurrenciesByMarketcap falls back to original currency order.
+const store = configureStore({
+  reducer: { [counterValuesApi.reducerPath]: counterValuesApi.reducer },
+  middleware: getDefault => getDefault().concat(counterValuesApi.middleware),
+});
 const wrapper = ({ children }: { children: ReactNode }) =>
   createElement(Provider, { store, children });
 
