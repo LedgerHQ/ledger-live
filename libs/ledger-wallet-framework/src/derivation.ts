@@ -403,6 +403,8 @@ const disableBIP44: Record<string, boolean> = {
   assethub_westend: true,
   bittensor: true,
   solana: true,
+  solana_testnet: true,
+  solana_devnet: true,
   hedera: true,
   hedera_testnet: true,
   cardano: true,
@@ -445,6 +447,8 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "mina":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`;
     case "solana":
+    case "solana_testnet":
+    case "solana_devnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'`;
     case "hedera":
     case "hedera_testnet":

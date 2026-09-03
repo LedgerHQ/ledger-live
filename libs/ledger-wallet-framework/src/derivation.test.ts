@@ -85,6 +85,8 @@ describe("getDerivationModesForCurrency", () => {
     ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
     ["tezos", ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"]], // disableBIP44
     ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
+    ["solana_testnet", ["solanaMain", "solanaSub"]], // disableBIP44 - no generic "" mode, all components hardened
+    ["solana_devnet", ["solanaMain", "solanaSub"]], // disableBIP44 - no generic "" mode, all components hardened
     ["celo", ["celo", "celoMM", "celoEvm"]], // backward compatible change in getDerivationModesForCurrency
     ["bittensor", ["polkadotbip44"]], // disableBIP44 ⇒ no default "" mode
   ];
@@ -149,6 +151,26 @@ describe("getSeedIdentifierDerivation", () => {
     {
       currencyId: "solana",
       mode: asDerivationMode("solanaBip44Change"),
+      expectedSeedPath: `44'/501'`,
+    },
+    {
+      currencyId: "solana_testnet",
+      mode: asDerivationMode("solanaMain"),
+      expectedSeedPath: `44'/501'`,
+    },
+    {
+      currencyId: "solana_testnet",
+      mode: asDerivationMode("solanaSub"),
+      expectedSeedPath: `44'/501'`,
+    },
+    {
+      currencyId: "solana_devnet",
+      mode: asDerivationMode("solanaMain"),
+      expectedSeedPath: `44'/501'`,
+    },
+    {
+      currencyId: "solana_devnet",
+      mode: asDerivationMode("solanaSub"),
       expectedSeedPath: `44'/501'`,
     },
     {
