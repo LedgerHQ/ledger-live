@@ -24,6 +24,9 @@ jest.mock(
   { virtual: true },
 );
 jest.mock("@devtools/transport-panel", () => ({ TransportPanel: () => null }), { virtual: true });
+jest.mock("@features/flow-pay-card-auth", () => ({
+  openHostedLoginInSecureBrowser: jest.fn().mockResolvedValue({ type: "dismissed" }),
+}));
 jest.mock(
   "@devtools/wire",
   () => {
@@ -56,6 +59,10 @@ function withBottomInset(children: React.ReactNode) {
 }
 
 describe("DevToolsScreen", () => {
+  beforeEach(() => {
+    devToolsSpy.mockClear();
+  });
+
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
     render(withBottomInset(<DevToolsScreen />));
 
@@ -65,14 +72,7 @@ describe("DevToolsScreen", () => {
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
       { id: "env", config: { marker: "env-props" } },
-      {
-        id: "pay-card",
-        config: {
-          marker: "pay-card-props",
-          onNavigateToPortfolio: expect.any(Function),
-          onNavigateToPayTab: expect.any(Function),
-        },
-      },
+      { id: "pay-card", config: { marker: "pay-card-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });

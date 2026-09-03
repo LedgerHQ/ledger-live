@@ -144,6 +144,16 @@ describe("PayCard (native)", () => {
     );
   });
 
+  it("hides the secure browser section on a host that has no browser", () => {
+    render(<PayCard {...buildProps()} />);
+    expect(screen.queryByText("Secure browser")).toBeNull();
+  });
+
+  it("shows the secure browser section when the host built one", () => {
+    render(<PayCard {...buildProps()} openSecureBrowser={jest.fn()} />);
+    expect(screen.getByText("Secure browser")).toBeTruthy();
+  });
+
   it("opens the interaction screen and runs a probe", async () => {
     const user = userEvent.setup();
     const run = jest.fn();
