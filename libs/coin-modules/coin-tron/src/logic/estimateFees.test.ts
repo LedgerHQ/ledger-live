@@ -1,4 +1,4 @@
-import type { TronCoinConfig } from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import {
@@ -24,9 +24,11 @@ import {
   estimateEnergy,
   estimatedTxSize,
   estimateFees,
+  estimateTronifyFees,
   type TronResourceBreakdown,
 } from "./estimateFees";
 import { getBalance } from "./getBalance";
+import { getEnergyRentQuote } from "./energyRent";
 
 jest.mock("../network", () => ({
   fetchTronAccount: jest.fn(),
@@ -36,12 +38,15 @@ jest.mock("../network", () => ({
 }));
 
 jest.mock("./getBalance", () => ({ getBalance: jest.fn() }));
+jest.mock("./energyRent", () => ({ getEnergyRentQuote: jest.fn() }));
 
 const mockGetBalance = jest.mocked(getBalance);
+
 const mockGetTronAccountNetwork = jest.mocked(getTronAccountNetwork);
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockGetChainParameters = jest.mocked(getChainParameters);
 const mockTriggerConstantContract = jest.mocked(triggerConstantContract);
+const mockGetEnergyRentQuote = jest.mocked(getEnergyRentQuote);
 
 const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
@@ -631,8 +636,258 @@ describe("estimateFees", () => {
       expect(BigInt(breakdown.energyRequired)).toBeGreaterThan(BigInt(breakdown.energyAvailable));
     });
   });
+
+  it("should not call getEnergyRentQuote when invoked directly (no feeOption routing)", async () => {
+    // no free resources → full standard burn applies
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+
+    const result = await estimateFees(mockConfig, sendTrc20);
+
+    expect(result.value).toBe(STANDARD_BURN);
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
 });
 
 function breakdownOf(estimation: { parameters?: Record<string, unknown> }): TronResourceBreakdown {
   return estimation.parameters as TronResourceBreakdown;
 }
+
+// Expected standard burn for sendTrc20 with no free resources:
+//   bandwidth: 350 * transactionFee(1000) = 350_000
+//   energy:    31_895 * energyFee(210)    = 6_697_950
+//   activation: 0 (TRC-20 send)
+//   total: 7_047_950n
+const STANDARD_BURN = 7_047_950n;
+const ENERGY_USED = 31_895;
+const TRX_QUOTE_AMT = "3.5"; // → 3_500_000 SUN
+const TRONIFY_VALUE = 3_500_000n;
+
+const trxQuote = {
+  energy: BigInt(ENERGY_USED),
+  durationSeconds: 600,
+  payCoinCode: "TRX",
+  payCoinAmt: TRX_QUOTE_AMT,
+  fees: { energy: "2.727", trx: "0.773", bandwidth: "0", activateAccount: "0" },
+};
+
+describe("estimateTronifyFees", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // energyRent must be configured for the Tronify path; rental params omitted here so the
+    // defaults apply (overridden explicitly in the coin-config test below).
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive" },
+      },
+    }));
+    // no free bandwidth or energy → full standard burn applies
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockGetChainParameters.mockResolvedValue(chainParams);
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+    mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
+  });
+
+  it("should return value, originalValue, savings and a resource breakdown when the quote is TRX-denominated", async () => {
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result.value).toBe(TRONIFY_VALUE);
+    expect(result.originalValue).toBe(STANDARD_BURN);
+    expect(result.savings).toBe(STANDARD_BURN - TRONIFY_VALUE);
+    expect(result.parameters).toMatchObject({
+      energyRequired: String(ENERGY_USED),
+      energyEstimated: true,
+    });
+  });
+
+  it("should pass the raw estimateEnergy result as the energy pledge without a client-side minimum", async () => {
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: 5_000 });
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ energy: 5_000n }),
+    );
+  });
+
+  it("should delegate energy to the sender address, not the recipient", async () => {
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payerAddress: SENDER,
+        receiverAddress: SENDER,
+      }),
+    );
+  });
+
+  it("should default to the 10-min fastTrade duration and 0.8 TRX top-up when coin-config omits them", async () => {
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
+    );
+  });
+
+  it("should use the rental duration and extra TRX from coin-config when provided", async () => {
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: "https://open.tronify.io",
+          sourceFlag: "ledgerLive",
+          rentalDurationSeconds: 1200,
+          rentalExtraTrx: 1.5,
+        },
+      },
+    }));
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 1200, extraTrx: 1.5 }),
+    );
+  });
+
+  it("should fall back to defaults when coin-config rental params are invalid", async () => {
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: "https://open.tronify.io",
+          sourceFlag: "ledgerLive",
+          rentalDurationSeconds: -5,
+          rentalExtraTrx: Number.NaN,
+        },
+      },
+    }));
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
+    );
+  });
+
+  it("should compute savings as originalValue - value", async () => {
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result.originalValue).toBe(STANDARD_BURN);
+    const originalValue = result.originalValue as bigint;
+    expect(result.savings).toBe(originalValue - result.value);
+  });
+
+  it("should throw when the intent is a native TRX send", async () => {
+    await expect(estimateTronifyFees(mockConfig, sendNative)).rejects.toThrow(
+      /only available for TRC-20/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("should throw when the intent is a TRC-10 send", async () => {
+    await expect(estimateTronifyFees(mockConfig, sendTrc10)).rejects.toThrow(
+      /only available for TRC-20/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("should throw when the recipient is empty", async () => {
+    await expect(estimateTronifyFees(mockConfig, { ...sendTrc20, recipient: "" })).rejects.toThrow(
+      /requires a recipient/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("should throw when Tronify returns a USDT-denominated quote", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      /unsupported payCoinCode/,
+    );
+  });
+
+  it("should throw a clear error (not a TypeError) when payCoinCode is missing", async () => {
+    // payCoinCode is unvalidated network data; a missing/non-string value must yield the explicit
+    // "unsupported payCoinCode" error rather than a raw TypeError from toUpperCase().
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: undefined as unknown as string,
+    });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      /unsupported payCoinCode/,
+    );
+  });
+
+  it("should throw when Tronify returns a non-numeric payCoinAmt", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "not-a-number" });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(/invalid payCoinAmt/);
+  });
+
+  it("should propagate TronifyApiError from getEnergyRentQuote without silent fallback", async () => {
+    const apiError = Object.assign(new Error("quota exceeded"), {
+      name: "TronifyApiError",
+      resCode: 429,
+    });
+    mockGetEnergyRentQuote.mockRejectedValue(apiError);
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toMatchObject({
+      name: "TronifyApiError",
+      resCode: 429,
+    });
+  });
+
+  it("should propagate an estimateEnergy failure without silent fallback", async () => {
+    mockTriggerConstantContract.mockRejectedValue(new Error("node unreachable"));
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow("node unreachable");
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("should propagate a getChainParameters failure without silent fallback to pessimistic originalValue", async () => {
+    mockGetChainParameters.mockRejectedValue(new Error("chain params unavailable"));
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      "chain params unavailable",
+    );
+  });
+
+  it("should clamp savings to 0n when the Tronify quote exceeds the standard burn", async () => {
+    // 10 TRX (10_000_000 SUN) > STANDARD_BURN (7_047_950n)
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "10" });
+
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result.savings).toBe(0n);
+    expect(result.value).toBe(10_000_000n);
+    expect(result.originalValue).toBe(STANDARD_BURN);
+  });
+
+  it("should propagate the Tronify API response when simulation returns energyNeeded=0", async () => {
+    // triggerConstantContract returns 0 — estimateEnergy reports 0, simulation did run.
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: 0 });
+
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+    expect(result.value).toBe(TRONIFY_VALUE);
+  });
+
+  it("should pass energyNeeded=0 to getEnergyRentQuote when the amount-guard short-circuits the simulation", async () => {
+    // amount === 0n && !useAllAmount → estimateEnergy returns 0 without calling triggerConstantContract
+    const zeroAmountIntent = { ...sendTrc20, amount: 0n };
+
+    await estimateTronifyFees(mockConfig, zeroAmountIntent);
+
+    expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+  });
+});

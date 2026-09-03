@@ -19,6 +19,7 @@ import {
   combine,
   craftTransaction,
   estimateFees,
+  estimateTronifyFees,
   getAccountInfo,
   getBalance,
   getBlock,
@@ -34,6 +35,8 @@ import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
+
+export const TRONIFY_FEE_OPTION_ID = "tronify" as const;
 
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
@@ -55,8 +58,11 @@ export function createApi() {
       const config = await context.config();
       return craftTransaction(config, transactionIntent, options?.customFees);
     },
-    estimateFees: async (context, transactionIntent, _options?) => {
+    estimateFees: async (context, transactionIntent, options) => {
       const config = await context.config();
+      if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
+        return estimateTronifyFees(config, transactionIntent);
+      }
       return estimateFees(config, transactionIntent);
     },
     getAccountInfo: async (context, address): Promise<AccountInfo> => {

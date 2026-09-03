@@ -12,22 +12,28 @@ import {
   combine,
   craftTransaction,
   estimateFees,
+  estimateTronifyFees,
   getAccountInfo,
   getBalance,
   lastBlock,
   listOperations,
 } from "../logic";
+import { TRONIFY_FEE_OPTION_ID } from ".";
 
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
+  estimateTronifyFees: jest.fn(),
   getAccountInfo: jest.fn(),
   getBalance: jest.fn(),
   listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
   lastBlock: jest.fn(),
 }));
+
+const mockEstimateFees = jest.mocked(estimateFees);
+const mockEstimateTronifyFees = jest.mocked(estimateTronifyFees);
 
 jest.mock("../network", () => ({
   defaultFetchParams: { minTimestamp: 0 },
@@ -96,7 +102,7 @@ describe("createApi", () => {
     // Test that each of the methods was called with correct arguments, threading the config
     expect(broadcast).toHaveBeenCalledWith(mockTronConfig, "transaction");
     expect(combine).toHaveBeenCalledWith("tx", ["signature"]);
-    expect(estimateFees).toHaveBeenCalledWith(mockTronConfig, intent);
+    expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, intent);
     expect(craftTransaction).toHaveBeenCalledWith(mockTronConfig, intent, undefined);
     expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");
     expect(getAccountInfo).toHaveBeenCalledWith(mockTronConfig, "address");
@@ -130,6 +136,51 @@ describe("createApi", () => {
       "address",
       expect.objectContaining({ limit: 200, minTimestamp: 0 }),
     );
+  });
+
+  describe("estimateFees routing", () => {
+    const mockFeeEstimation = { value: 1_000_000n };
+
+    beforeEach(() => {
+      mockEstimateFees.mockResolvedValue(mockFeeEstimation);
+      mockEstimateTronifyFees.mockResolvedValue(mockFeeEstimation);
+    });
+
+    const trc20Intent: TransactionIntent<TronMemo, TronTxData> = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000),
+      asset: { type: "trc20", assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" },
+      data: { type: "tron" },
+    };
+
+    it("should call estimateFees when no feeOption is provided", async () => {
+      const api = createApi();
+      await api.estimateFees(context, trc20Intent);
+
+      expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
+    });
+
+    it("should call estimateTronifyFees when feeOptionId is TRONIFY_FEE_OPTION_ID", async () => {
+      const api = createApi();
+      await api.estimateFees(context, trc20Intent, {
+        feeOption: { feeOptionId: TRONIFY_FEE_OPTION_ID },
+      });
+
+      expect(mockEstimateTronifyFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should call estimateFees when feeOptionId is an unknown value", async () => {
+      const api = createApi();
+      await api.estimateFees(context, trc20Intent, { feeOption: { feeOptionId: "unknown" } });
+
+      expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
+    });
   });
 
   describe("getBalance", () => {
