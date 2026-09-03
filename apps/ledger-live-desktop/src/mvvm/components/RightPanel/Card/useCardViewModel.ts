@@ -25,6 +25,7 @@ export function useCardViewModel(): CardViewModel {
   // login must take the new values without a restart of the app.
   const apiUrl = useEnv("CARD_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
+  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -32,10 +33,11 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       apiUrl,
       clientId,
+      hostedUiUrl,
       // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
       redirectUri,
     }),
-    [apiUrl, clientId, redirectUri],
+    [apiUrl, clientId, hostedUiUrl, redirectUri],
   );
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {

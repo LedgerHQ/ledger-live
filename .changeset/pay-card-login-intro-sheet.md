@@ -1,4 +1,5 @@
 ---
+"@shared/env": minor
 "@features/flow-pay-card-auth": minor
 "@features/flow-pay-card": minor
 "@devtools/pay-card": minor
@@ -8,7 +9,8 @@
 ---
 
 Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
-buttons, "Create an account" and "Log in to Baanx", and both run the same OAuth2 hosted login. The
+buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
+own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
 intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
 started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
 session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
@@ -27,3 +29,7 @@ description over as many lines as the copy needs, instead of cutting both off at
 
 Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
 opening the intro also fires `Page card login intro`.
+
+`CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
+`useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
+to another tenant without a restart.

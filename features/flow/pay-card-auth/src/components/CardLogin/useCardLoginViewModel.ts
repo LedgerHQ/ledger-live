@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { useTranslation } from "@shared/i18n";
+import { buildSignupUrl } from "../../state/buildSignupUrl";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
@@ -95,6 +96,7 @@ export function useCardLoginViewModel({
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
   const [hasStartedLogin, setHasStartedLogin] = useState(false);
+  const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
     () => createCardLoginPorts({ dispatch, openHostedLogin }),
@@ -130,9 +132,22 @@ export function useCardLoginViewModel({
   const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
 
   const startLogin = useCallback(() => {
+    setHasSignupFailed(false);
     setHasStartedLogin(true);
     send({ type: "LOGIN" });
   }, [send]);
+
+  const openSignup = useCallback(() => {
+    setHasSignupFailed(false);
+
+    void (async () => {
+      try {
+        await openHostedLogin(buildSignupUrl(oauthConfig), oauthConfig.deepLink);
+      } catch {
+        setHasSignupFailed(true);
+      }
+    })();
+  }, [openHostedLogin, oauthConfig]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
@@ -163,9 +178,15 @@ export function useCardLoginViewModel({
       }
       trackCta(id === "createAccount" ? TRACK_BUTTON.createAccount : TRACK_BUTTON.logIn);
       setIsIntroRequested(false);
+
+      if (id === "createAccount") {
+        openSignup();
+        return;
+      }
+
       startLogin();
     },
-    [isIntroOpen, startLogin, trackCta],
+    [isIntroOpen, openSignup, startLogin, trackCta],
   );
 
   const onIntroClose = useCallback(() => {
@@ -221,7 +242,7 @@ export function useCardLoginViewModel({
 
   return mapSnapshotToViewModel(
     snapshot.value,
-    snapshot.context.errorKind,
+    hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
     copy,
     onLoginPress,
     intro,

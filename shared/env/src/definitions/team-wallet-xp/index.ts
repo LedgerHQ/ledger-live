@@ -36,6 +36,11 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
   },
+  CARD_BAANX_HOSTED_UI: {
+    def: "https://ledger-ew1uat.baanxapi.com",
+    parser: stringParser,
+    desc: "Baanx hosted UI base URL; the intro opens its signup page in the secure browser",
+  },
   CARD_OAUTH_REDIRECT_URI: {
     def: "https://go.ledger.com/ledger/card-baanx",
     parser: stringParser,

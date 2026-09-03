@@ -127,6 +127,7 @@ jest.mock("../../../state/createCardLoginPorts", () => ({
 const oauthConfig: CardLoginOauthConfig = {
   apiUrl: "https://card.test",
   clientId: "client-key",
+  hostedUiUrl: "https://hosted.test",
   redirectUri: "https://go.test/ledger/card",
 };
 
@@ -177,7 +178,7 @@ async function completeLogin(
   mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
 
   act(() => result.current?.onLoginPress());
-  act(() => result.current?.intro.onActionPress("createAccount"));
+  act(() => result.current?.intro.onActionPress("logIn"));
 
   await waitFor(() => expect(store.getState().payCardAuth.isSignedIn).toBe(true));
 }
@@ -265,22 +266,62 @@ describe("useCardLoginViewModel intro", () => {
     expect(result.current?.intro.isOpen).toBe(false);
   });
 
-  it("closes the intro and starts the login from an action press", async () => {
+  it("closes the intro and starts the login from the log in action", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+    expect(result.current?.intro.isOpen).toBe(false);
+  });
+
+  it("opens the provider's signup page from the create account action", async () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mockPorts.openHostedLogin).toHaveBeenCalledWith(
+        "https://hosted.test/onboarding/signup",
+        undefined,
+      ),
+    );
     expect(result.current?.intro.isOpen).toBe(false);
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
+  });
+
+  it("reports a browser that refuses the signup page", async () => {
+    mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+  });
+
+  it("clears the signup error when the login starts", async () => {
+    mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBeNull());
   });
 
   it("drops a second action press, so one press starts one login", async () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    act(() => result.current?.intro.onActionPress("createAccount"));
-    act(() => result.current?.intro.onActionPress("createAccount"));
+    act(() => result.current?.intro.onActionPress("logIn"));
+    act(() => result.current?.intro.onActionPress("logIn"));
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
@@ -347,7 +388,7 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
-    act(() => result.current?.intro.onActionPress("createAccount"));
+    act(() => result.current?.intro.onActionPress("logIn"));
 
     await waitFor(() => expect(result.current?.isLoading).toBe(false));
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);

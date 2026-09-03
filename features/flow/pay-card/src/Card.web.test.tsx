@@ -22,6 +22,7 @@ const title = "Crypto card";
 const oauthConfig: CardProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
+  hostedUiUrl: "https://hosted.example",
   redirectUri: "https://card.example/callback",
 };
 
