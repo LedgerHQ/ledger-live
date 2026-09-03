@@ -1,3 +1,4 @@
+import path from "node:path";
 import { readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import * as compose from "docker-compose";
@@ -6,7 +7,11 @@ import { toRegtestAddress } from "./regtestAddress";
 export const ZEBRA_RPC_URL = "http://127.0.0.1:18232";
 export const ZAINO_GRPC_URL = "http://127.0.0.1:8137";
 
-const DOCKER_DIR = `${__dirname}/docker`;
+// docker-compose.yml + its templates live at src/docker/, never copied by tsc
+// (outDir only compiles .ts), so this always resolves there whether this
+// module runs from src/ (ts-jest) or from its compiled lib/ counterpart --
+// same pattern as coin-tester-cosmos's babylond.ts.
+const DOCKER_DIR = path.resolve(__dirname, "..", "src", "docker");
 
 /**
  * Materializes `zebra.toml` from its template, substituting the tester's own
