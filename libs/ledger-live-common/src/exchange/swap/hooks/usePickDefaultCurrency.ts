@@ -18,6 +18,8 @@ export const usePickDefaultCurrency = (
 
       if (defaultCurrency) {
         setCurrency(defaultCurrency);
+      } else if (sortedCurrencies.length > 0) {
+        setCurrency(sortedCurrencies[0]);
       }
     }
   }, [currency, sortedCurrencies, setCurrency]);
