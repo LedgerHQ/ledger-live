@@ -9796,6 +9796,7 @@
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
+    "notAvailableYet": "Not available yet",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
