@@ -31,14 +31,6 @@ type CliCommand = ((
 
 export let isMyWalletEnabled = false;
 
-/** Last merged feature-flag set computed by setFeatureFlags — read by the failure hook. */
-let lastMergedFeatureFlags: object | null = null;
-
-/** Returns the last merged feature flags, or null if setFeatureFlags hasn't run yet. */
-export function getLastMergedFeatureFlags(): object | null {
-  return lastMergedFeatureFlags;
-}
-
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
@@ -388,8 +380,7 @@ export class InitializationManager {
     const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
-    // Store for the failure hook — only attached on failure (QAA-1514).
-    lastMergedFeatureFlags = mergedFeatureFlags;
+    globalThis.mergedFeatureFlags = mergedFeatureFlags;
 
     await setFeatureFlags(mergedFeatureFlags);
   }
