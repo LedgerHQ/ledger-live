@@ -46,6 +46,9 @@ export async function listOperations(
 
   const signatures: ConfirmedSignatureInfo[] = [];
   const seen = new Set<string>();
+  // A transaction the wallet takes part in belongs to the wallet's stream, whichever stream reaches
+  // it first here. Any other would emit it a second time, on another page.
+  const fromTokenStreamOnly = new Set<string>();
   const nextCursors: Record<string, string> = {};
   for (const { source, signatures: sourceSignatures } of perSource) {
     if (sourceSignatures.length === 0) continue;
@@ -55,11 +58,10 @@ export async function listOperations(
     if (sourceSignatures.length === rpcLimit && !(minHeight > 0 && last.slot < minHeight)) {
       nextCursors[source] = last.signature;
     }
-    // The same transaction reaches several streams -- one we sent names both the wallet and its
-    // token account -- and must yield one operation, not one per stream.
     for (const signature of sourceSignatures) {
       if (seen.has(signature.signature)) continue;
       seen.add(signature.signature);
+      if (source !== address) fromTokenStreamOnly.add(signature.signature);
       signatures.push(signature);
     }
   }
@@ -79,6 +81,9 @@ export async function listOperations(
 
     if (minHeight > 0 && sig.slot < minHeight) continue;
 
+    // The wallet's own stream owns it, and returns it on a page of its own.
+    if (fromTokenStreamOnly.has(sig.signature) && mentions(tx, address)) continue;
+
     const txMeta = buildTxMeta(sig, tx);
 
     const nativeOps = parseNativeOperations(address, tx, txMeta);
@@ -88,6 +93,10 @@ export async function listOperations(
   }
 
   return { items, next: encodeCursor(nextCursors) };
+}
+
+function mentions(tx: ParsedTransactionWithMeta, address: string): boolean {
+  return tx.transaction.message.accountKeys.some(key => key.pubkey.toBase58() === address);
 }
 
 /**

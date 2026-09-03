@@ -302,6 +302,37 @@ describe("listOperations", () => {
     expect(result.items[0].value).toBe(500n);
   });
 
+  // Both streams return a transaction the wallet signed. It belongs to the wallet's, or the token
+  // stream would emit it again on another page.
+  it("emits a transaction reaching both streams only once", async () => {
+    const blockTime = 1700000000;
+    const ata = "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi";
+
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [{ pubkey: new PublicKey(ata) }],
+    });
+    mockGetSignaturesForAddress.mockResolvedValue([
+      { signature: "sig1", slot: 100, blockTime, err: null },
+    ]);
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig1"],
+          message: {
+            accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }, { pubkey: new PublicKey(ata) }],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: { fee: 5000, preBalances: [1_000_000, 0], postBalances: [995_000, 0] },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(1);
+  });
+
   it("should detect FEES operations when fee payer has zero net change", async () => {
     const blockTime = 1700000000;
     mockGetSignaturesForAddress.mockResolvedValue([
