@@ -96,6 +96,11 @@ export class DelegateModal extends Modal {
     await this.inputSearchField.fill(providerTicker);
   }
 
+  @step("Clear provider search field")
+  async clearProviderSearch() {
+    await this.inputSearchField.clear();
+  }
+
   @step("Get selected provider name ")
   async getSelectedProviderName() {
     const selectedProviderElement = this.rowProvider.filter({
