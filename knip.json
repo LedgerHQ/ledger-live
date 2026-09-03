@@ -60,6 +60,7 @@
         "@electron/fuses",
         "embla-carousel-autoplay",
         "embla-carousel-react",
+        "events",
         "@ledgerhq/zcash-utils"
       ]
     },
