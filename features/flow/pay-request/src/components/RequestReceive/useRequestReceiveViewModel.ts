@@ -6,7 +6,6 @@ import type {
 } from "../../types";
 import { splitAddress } from "../../utils/splitAddress";
 
-// Analytics button names per the Pay Tracking Plan.
 const TRACK_BUTTON: Readonly<Record<RequestReceiveActionId, string>> = {
   share: "share",
   copy: "copy address",
@@ -52,7 +51,6 @@ export function useRequestReceiveViewModel({
     network,
     address,
     addressParts,
-    // Plain address payload for now; a URI scheme (amount/label) can be layered in later if needed.
     qrPayload: address,
     onShare: handleShare,
     onCopy: handleCopy,

@@ -60,6 +60,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -75,10 +76,14 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {

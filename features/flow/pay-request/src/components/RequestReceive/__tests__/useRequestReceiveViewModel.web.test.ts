@@ -61,7 +61,6 @@ describe("useRequestReceiveViewModel", () => {
     expect(props.onCopy).toHaveBeenCalledWith(ADDRESS);
   });
 
-  // Share is mobile-only and Save is desktop-only, so each platform omits the other's callback.
   it.each(["onShare", "onSave"] as const)(
     "neither tracks nor throws when the optional %s callback is omitted",
     handler => {
