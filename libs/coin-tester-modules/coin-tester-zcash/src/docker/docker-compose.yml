@@ -21,7 +21,7 @@
 # pair of services.
 services:
   zebra:
-    image: zfnd/zebra:latest
+    image: zfnd/zebra:latest@sha256:52a67e543906c98a0ed1599e2ce3ee238fc05b40592ae26ee5914ddb6ede51e3
     platform: linux/amd64
     volumes:
       - "./zebra.toml:/etc/zebrad.toml:ro"

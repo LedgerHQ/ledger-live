@@ -552,4 +552,55 @@ describe("reconcileLegOperations", () => {
     expect(transparentResult.operations).toHaveLength(1);
     expect((transparentResult.operations as BtcOperation[])[0].type).toBe("IN");
   });
+
+  // The shielded record is the only one carrying a memo (see
+  // `convertShieldedTransactionsToOperations`) -- dropping it outright for a
+  // shared-hash transaction would silently lose the memo attached to a
+  // shielding/de-shielding send.
+  it("copies the shielded twin's memo onto the surviving transparent operation", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({
+          id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
+          hash: "tx-1",
+          type: "SHIELDED_TX_IRONWOOD_IN",
+          extra: { memo: "thanks for shielding" },
+        }),
+      ],
+    } as Partial<ZcashAccount>);
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT", extra: {} })],
+    } as Partial<ZcashAccount>);
+
+    expect(transparentResult.operations).toHaveLength(1);
+    expect((transparentResult.operations as BtcOperation[])[0].extra).toEqual({
+      memo: "thanks for shielding",
+    });
+  });
+
+  it("never overwrites a memo the transparent operation already has", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({
+          id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
+          hash: "tx-1",
+          type: "SHIELDED_TX_IRONWOOD_IN",
+          extra: { memo: "shielded memo" },
+        }),
+      ],
+    } as Partial<ZcashAccount>);
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [
+        op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT", extra: { memo: "transparent memo" } }),
+      ],
+    } as Partial<ZcashAccount>);
+
+    expect((transparentResult.operations as BtcOperation[])[0].extra).toEqual({
+      memo: "transparent memo",
+    });
+  });
 });

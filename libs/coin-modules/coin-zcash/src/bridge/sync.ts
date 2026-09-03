@@ -997,13 +997,23 @@ export function reconcileLegOperations(
   // value moved (see `mapTxToOperations`), so the shielded leg's record of that
   // same hash is a duplicate, not a second real event -- dropped here (the only
   // place both legs' buckets are available together) rather than shown twice in
-  // `account.operations`.
+  // `account.operations`. The shielded record is the only one carrying a memo
+  // (`convertShieldedTransactionsToOperations`; the transparent leg's `extra`
+  // only ever has UTXO inputs), so that memo is copied onto the surviving
+  // transparent operation before the shielded one is dropped -- otherwise a
+  // memo attached to a shielding/de-shielding send would silently vanish.
+  const shieldedByHash = new Map(latest.shielded.map(op => [op.hash, op]));
+  const transparent = latest.transparent.map(op => {
+    const twinMemo = (shieldedByHash.get(op.hash)?.extra as ZcashOperationExtra | undefined)?.memo;
+    if (!twinMemo || (op.extra as ZcashOperationExtra | undefined)?.memo) return op;
+    return { ...op, extra: { ...(op.extra as ZcashOperationExtra | undefined), memo: twinMemo } };
+  });
   const transparentHashes = new Set(latest.transparent.map(op => op.hash));
   const shielded = latest.shielded.filter(op => !transparentHashes.has(op.hash));
 
   return {
     ...result,
-    operations: [...latest.transparent, ...shielded].sort(
+    operations: [...transparent, ...shielded].sort(
       (a, b) => b.date.valueOf() - a.date.valueOf(),
     ) as BtcOperation[],
   };
