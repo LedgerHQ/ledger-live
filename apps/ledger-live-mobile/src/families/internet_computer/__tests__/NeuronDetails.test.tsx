@@ -82,9 +82,11 @@ const renderDetails = () =>
     />,
   );
 
+let nowSpy: jest.SpyInstance<number, []>;
+
 describe("NeuronDetails", () => {
   beforeEach(() => {
-    jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
+    nowSpy = jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
     neuron = makeHealthyNeuron({ controller: CONTROLLER });
     principal = CONTROLLER;
     spendableBalance = new BigNumber(MIN_NEURON_STAKE);
@@ -92,8 +94,9 @@ describe("NeuronDetails", () => {
     mockNavigate.mockClear();
   });
 
+  // Only this file's own spy: restoreAllMocks would reach anything the jest setup had spied on too.
   afterEach(() => {
-    jest.restoreAllMocks();
+    nowSpy.mockRestore();
   });
 
   it("offers the controller-only actions when the account controls the neuron", () => {
