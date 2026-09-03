@@ -6,6 +6,7 @@ import type {
   AccountsReorderPayload,
   AccountsReplacePayload,
   AccountsUpdateAccountWithUpdaterPayload,
+  AccountsUpdateAccountsWithUpdatersPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
@@ -64,6 +65,9 @@ export const addOneAccount = createAction<Account>(AccountsActionTypes.ADD_ACCOU
 
 export const updateAccountWithUpdater = createAction<AccountsUpdateAccountWithUpdaterPayload>(
   AccountsActionTypes.UPDATE_ACCOUNT,
+);
+export const updateAccountsWithUpdaters = createAction<AccountsUpdateAccountsWithUpdatersPayload>(
+  AccountsActionTypes.UPDATE_ACCOUNTS,
 );
 export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =>
   updateAccountWithUpdater({

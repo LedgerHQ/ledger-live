@@ -5,7 +5,10 @@ import FloatingDebugButton from "~/components/FloatingDebugButton";
 import { useJsThreadMonitor } from "./useJsThreadMonitor";
 
 export function JsThreadMonitor() {
-  if (!useEnv("JS_THREAD_MONITOR")) return null;
+  // Always on in dev builds (perf comparisons); QA builds toggle via the JS_THREAD_MONITOR flag.
+  // useEnv is called first so the hook is never conditionally skipped.
+  const enabled = useEnv("JS_THREAD_MONITOR") || __DEV__;
+  if (!enabled) return null;
   return (
     <FloatingDebugButton onPress={noop} Icon={<BadgeContent />} boxWidth={44} boxHeight={36} />
   );
