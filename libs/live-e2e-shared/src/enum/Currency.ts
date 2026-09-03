@@ -13,11 +13,6 @@ export class Currency {
     public readonly contractAddress?: string,
     public readonly aggregatedName?: string,
     public readonly market?: { readonly id: string; readonly name: string },
-    /**
-     * The token's CAL id, needed to rebuild a sub-account id. Stored rather than derived: the
-     * scheme is not uniform (`solana/spl/gigachad_<mint>`, but `solana/spl/<mint>` for DOGWIFHAT).
-     */
-    public readonly tokenId?: string,
   ) {}
 
   toString(): string {
@@ -202,9 +197,6 @@ export class Currency {
     AppInfos.SOLANA,
     [Network.SOLANA],
     "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
-    undefined,
-    undefined,
-    "solana/spl/gigachad_63lfdmnb3mq8mw9mtz2to9bea2m71kzuugq5tijxcqj9",
   );
   static readonly SOL_WIF = new Currency(
     "DOGWIFHAT",
@@ -213,9 +205,6 @@ export class Currency {
     AppInfos.SOLANA,
     [Network.SOLANA],
     "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
-    undefined,
-    undefined,
-    "solana/spl/ekpqgsjtjmfqkz9kqansqyxrcf8fbopzlhyxdm65zcjm",
   );
 
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [

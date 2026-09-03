@@ -1,4 +1,3 @@
-import { safeEncodeTokenId } from "@ledgerhq/ledger-wallet-framework/account";
 import { Addresses } from "./Addresses";
 import { Currency } from "./Currency";
 import { TokenType } from "./TokenType";
@@ -15,25 +14,6 @@ export class Account {
     public readonly parentAccount?: Account,
     public address?: string,
   ) {}
-
-  /**
-   * The wallet-side id of this account's sub-account, as Ledger Live builds it.
-   *
-   * Families on the generic coin framework key it by the token's CAL id
-   * (`encodeTokenAccountId`); the ones still on a legacy bridge use their own scheme — Solana's
-   * was the token account's own address.
-   */
-  get subAccountId(): string {
-    const parentAddress = this.parentAccount ? this.parentAccount.address : this.address;
-    const { tokenId } = this.currency;
-    const suffix = tokenId ? safeEncodeTokenId(tokenId) : this.address;
-    // `address` is only filled once the account is synced. Building the id anyway would embed the
-    // string "undefined" and surface much later as an account the app cannot find.
-    if (!parentAddress || !suffix) {
-      throw new Error(`Cannot build the sub-account id of ${this.accountName}: address is not set`);
-    }
-    return `js:2:${this.currency.id}:${parentAddress}:${this.currency.id}Sub+${suffix}`;
-  }
 
   static readonly ADA_1 = new Account(Currency.ADA, "Cardano 1", 0, "1852'/1815'/0'/0/3");
   static readonly ADA_2 = new Account(Currency.ADA, "Cardano 2", 1, "1852'/1815'/1'/0/2");

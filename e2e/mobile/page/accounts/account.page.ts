@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
@@ -204,12 +205,23 @@ export default class AccountPage {
     await tapById(subAccountId);
   }
 
+  /**
+   * Reaches a token sub-account through its parent, then reads back the id the app gave it.
+   * Rebuilding that id here would mean picking one of the two formats in the wild: an account
+   * synced before the generic coin framework keeps the one it was stored under, a newer one gets
+   * `encodeTokenAccountId`.
+   */
   @Step("Navigate to sub account {{{0.accountName}}}")
   async navigateToSubAccount(account: AccountType) {
-    const subAccountId = account.subAccountId;
+    const { parentAccount } = account;
+    invariant(parentAccount, `${account.accountName} has no parent account`);
+
     await this.openViaDeeplink();
-    await this.goToAccountById(subAccountId);
-    await waitForElement(this.accountGraph(subAccountId));
+    await this.goToAccountByName(parentAccount.accountName);
+    await this.navigateToTokenInAccount(account);
+
+    const graphId = await getIdByRegexp(new RegExp(`${this.accountGraphId("")}.+`));
+    return graphId.replace(this.accountGraphId(""), "");
   }
 
   @Step("Scroll to history and click on last operation {{{0}}}")

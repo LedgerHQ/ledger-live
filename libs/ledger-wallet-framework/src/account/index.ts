@@ -4,7 +4,6 @@ export {
   encodeTokenAccountId,
   decodeTokenAccountId,
   decodeTokenAccountIdSync,
-  safeEncodeTokenId,
 } from "./accountId";
 export {
   createEmptyHistoryCache,
