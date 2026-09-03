@@ -177,8 +177,8 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
+            // no shrinkResources: one shrunk-resources per splits.abi ABI breaks bundleRelease https://issuetracker.google.com/402800800
             minifyEnabled enableProguardInReleaseBuilds
-            shrinkResources enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ['debug']
         }
