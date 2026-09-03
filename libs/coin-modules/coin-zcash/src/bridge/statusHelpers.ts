@@ -4,6 +4,7 @@ import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
+import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 
 // Transfer types that actually spend transparent UTXOs as inputs. A pure
 // shielded send ("shielded" / "shielded-to-transparent") spends Ironwood notes
@@ -27,7 +28,38 @@ export const isTransparentInputTransfer = (transferType: Transaction["transferTy
  */
 export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction): BitcoinOutput[] {
   if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return [];
-  return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+  const utxos = tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+  // Largest-first, then bounded to the device's per-PCZT input ceiling: picking
+  // the largest N maximizes the amount a single send can carry (ZIP-317 prices
+  // per input, so more of the account's value per spent input is strictly
+  // better) and mirrors the "largest-first stays" selection strategy already
+  // used on the shielded side (logic/coin-selection.ts's selectNotes).
+  return [...utxos]
+    .sort((a, b) => b.value.comparedTo(a.value))
+    .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+}
+
+/**
+ * True when the transparent-input bound is the reason `totalSpent` cannot be
+ * covered -- the account's full transparent balance covers it, only the
+ * bounded PCZT (device-safe) selection does not. Lets the caller raise a
+ * "too large for one send" error instead of NotEnoughBalance in exactly that
+ * case, and never in a genuine-shortfall case.
+ */
+export function hasBoundedTransparentShortfall(
+  account: ZcashAccount,
+  tx: Transaction,
+  totalSpent: BigNumber,
+): boolean {
+  if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return false;
+  const allUtxos = tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+  if (allUtxos.length <= ZCASH_MAX_TRANSPARENT_INPUTS) return false; // nothing was bounded
+  const fullBalance = allUtxos.reduce((sum, u) => sum.plus(u.value), new BigNumber(0));
+  const boundedBalance = resolveTransparentUtxos(account, tx).reduce(
+    (sum, u) => sum.plus(u.value),
+    new BigNumber(0),
+  );
+  return totalSpent.gt(boundedBalance) && totalSpent.lte(fullBalance);
 }
 
 /**

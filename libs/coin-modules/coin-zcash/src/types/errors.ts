@@ -86,6 +86,25 @@ export class ZcashMemoTooLong extends Error {
 }
 
 /**
+ * Raised when a bounded selection cannot cover the requested amount + fee
+ * while the account's full (unbounded) balance could -- the device refuses a
+ * PCZT past its per-pool action/input ceiling, so the wallet must stop short
+ * of it rather than offer a total it cannot sign in one transaction. Distinct
+ * from a genuine `NotEnoughBalance`/"Insufficient shielded balance": the funds
+ * exist, they are just not reachable in a single send (see
+ * bridge/statusHelpers.ts's `hasBoundedTransparentShortfall` and
+ * logic/account/spendability.ts's `hasBoundedIronwoodShortfall`).
+ */
+export class ZcashSendTooLarge extends Error {
+  constructor(
+    message = "This amount is too large to send in one transaction: try sending it in smaller amounts",
+  ) {
+    super(message);
+    this.name = "ZcashSendTooLarge";
+  }
+}
+
+/**
  * Raised when the builder rejects a selected note because its leaf position is
  * at or past the number of leaves the Ironwood tree held at its anchor -- the
  * note exists on-chain but is not yet inside the tree the transaction is built

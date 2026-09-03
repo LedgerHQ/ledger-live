@@ -2,11 +2,15 @@ import { BigNumber } from "bignumber.js";
 import {
   collectSelectableIronwoodNotes,
   getSpendableIronwoodBalance,
+  hasBoundedIronwoodShortfall,
   hasMaturingIronwoodNotes,
   isMatureAtHeight,
   resolveReferenceHeight,
 } from "./spendability";
-import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../../constants";
+import {
+  ZCASH_MAX_IRONWOOD_ACTIONS,
+  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+} from "../../constants";
 import type { ZcashAccount } from "../../types/bridge";
 
 const REFERENCE_HEIGHT = 3_450_000;
@@ -196,6 +200,91 @@ describe("collectSelectableIronwoodNotes", () => {
     const selectable = collectSelectableIronwoodNotes(acc, reserved);
 
     expect(selectable.map(n => n.amount.toNumber())).toEqual([30_000]);
+  });
+});
+
+describe("collectSelectableIronwoodNotes, bounding", () => {
+  const matureBlockHeight = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+
+  it("returns every mature, unreserved note, unbounded and unsorted-input-order-independent, when at most the bound", () => {
+    const amounts = Array.from({ length: ZCASH_MAX_IRONWOOD_ACTIONS }, (_, i) => (i + 1) * 1_000);
+    const acc = account({
+      notes: amounts.map(amount => ({ amount, blockHeight: matureBlockHeight })),
+    });
+
+    const selectable = collectSelectableIronwoodNotes(acc, noReservations);
+
+    expect(selectable.map(n => n.amount.toNumber()).sort((a, b) => a - b)).toEqual(
+      [...amounts].sort((a, b) => a - b),
+    );
+  });
+
+  it("returns the largest ZCASH_MAX_IRONWOOD_ACTIONS mature, unreserved notes when more are available", () => {
+    const extra = 5;
+    const amounts = Array.from(
+      { length: ZCASH_MAX_IRONWOOD_ACTIONS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const acc = account({
+      notes: amounts.map(amount => ({ amount, blockHeight: matureBlockHeight })),
+    });
+
+    const selectable = collectSelectableIronwoodNotes(acc, noReservations);
+
+    expect(selectable).toHaveLength(ZCASH_MAX_IRONWOOD_ACTIONS);
+    const expectedLargest = [...amounts].sort((a, b) => b - a).slice(0, ZCASH_MAX_IRONWOOD_ACTIONS);
+    expect(selectable.map(n => n.amount.toNumber())).toEqual(expectedLargest);
+  });
+});
+
+describe("hasBoundedIronwoodShortfall", () => {
+  const matureBlockHeight = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+
+  it("is false when the pool holds at most the bound, regardless of totalSpent", () => {
+    const amounts = Array.from({ length: ZCASH_MAX_IRONWOOD_ACTIONS }, (_, i) => (i + 1) * 1_000);
+    const acc = account({
+      notes: amounts.map(amount => ({ amount, blockHeight: matureBlockHeight })),
+    });
+    const total = amounts.reduce((sum, v) => sum + v, 0);
+
+    expect(hasBoundedIronwoodShortfall(acc, noReservations, new BigNumber(total * 10))).toBe(false);
+  });
+
+  it("is true when totalSpent exceeds the bounded pool but not the full pool", () => {
+    const extra = 5;
+    const amounts = Array.from(
+      { length: ZCASH_MAX_IRONWOOD_ACTIONS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const acc = account({
+      notes: amounts.map(amount => ({ amount, blockHeight: matureBlockHeight })),
+    });
+    const fullTotal = amounts.reduce((sum, v) => sum + v, 0);
+    const boundedTotal = [...amounts]
+      .sort((a, b) => b - a)
+      .slice(0, ZCASH_MAX_IRONWOOD_ACTIONS)
+      .reduce((sum, v) => sum + v, 0);
+
+    expect(hasBoundedIronwoodShortfall(acc, noReservations, new BigNumber(boundedTotal + 1))).toBe(
+      true,
+    );
+    expect(fullTotal).toBeGreaterThan(boundedTotal + 1);
+  });
+
+  it("is false when totalSpent exceeds even the full pool -- genuine insufficiency", () => {
+    const extra = 5;
+    const amounts = Array.from(
+      { length: ZCASH_MAX_IRONWOOD_ACTIONS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const acc = account({
+      notes: amounts.map(amount => ({ amount, blockHeight: matureBlockHeight })),
+    });
+    const fullTotal = amounts.reduce((sum, v) => sum + v, 0);
+
+    expect(hasBoundedIronwoodShortfall(acc, noReservations, new BigNumber(fullTotal + 1))).toBe(
+      false,
+    );
   });
 });
 

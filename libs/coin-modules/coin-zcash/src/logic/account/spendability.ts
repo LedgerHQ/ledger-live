@@ -1,7 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { ZcashAccount } from "../../types/bridge";
 import type { SpendableNote, ZcashPrivateInfo } from "../../network/types";
-import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../../constants";
+import {
+  ZCASH_MAX_IRONWOOD_ACTIONS,
+  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+} from "../../constants";
 import { collectIronwoodSpendableNotes } from "../../bridge/operations";
 
 /**
@@ -68,19 +71,55 @@ function collectIronwoodNotesWithMaturity(account: SpendabilityAccount): Ironwoo
   });
 }
 
-/**
- * The spendable pool: mature, unreserved Ironwood notes. Note selection
- * (`prepareTransaction`) and max-spendable (`estimateMaxSpendable`) both go
- * through this so a selection and the figure offered as "Max" can never
- * disagree.
- */
-export function collectSelectableIronwoodNotes(
+/** Mature, unreserved notes, largest-first, unbounded. Private: callers use
+ * either the bounded export below or the shortfall check, never this directly. */
+function collectAllSelectableIronwoodNotes(
   account: SpendabilityAccount,
   reserved: ReadonlySet<string>,
 ): SpendableNote[] {
   return collectIronwoodNotesWithMaturity(account)
     .filter(({ note, mature }) => mature && !reserved.has(note.nullifier))
-    .map(({ note }) => note);
+    .map(({ note }) => note)
+    .sort((a, b) => b.amount.comparedTo(a.amount));
+}
+
+/**
+ * The spendable pool: mature, unreserved Ironwood notes. Note selection
+ * (`prepareTransaction`) and max-spendable (`estimateMaxSpendable`) both go
+ * through this so a selection and the figure offered as "Max" can never
+ * disagree.
+ *
+ * Bounded to the device's per-PCZT Ironwood action ceiling: N spent notes
+ * produce exactly N actions once N >= 2 (the native builder pads to
+ * max(2, max(n_spends, n_outputs)), and a send's output count never exceeds
+ * 2), so bounding the note count bounds the action count exactly -- no
+ * off-by-one.
+ */
+export function collectSelectableIronwoodNotes(
+  account: SpendabilityAccount,
+  reserved: ReadonlySet<string>,
+): SpendableNote[] {
+  return collectAllSelectableIronwoodNotes(account, reserved).slice(0, ZCASH_MAX_IRONWOOD_ACTIONS);
+}
+
+/**
+ * True when the Ironwood action bound is the reason `totalSpent` cannot be
+ * covered -- the account's full spendable pool covers it, only the bounded
+ * (device-safe) pool does not. Mirrors `hasBoundedTransparentShortfall`
+ * (bridge/statusHelpers.ts) for the shielded pool.
+ */
+export function hasBoundedIronwoodShortfall(
+  account: SpendabilityAccount,
+  reserved: ReadonlySet<string>,
+  totalSpent: BigNumber,
+): boolean {
+  const all = collectAllSelectableIronwoodNotes(account, reserved);
+  if (all.length <= ZCASH_MAX_IRONWOOD_ACTIONS) return false;
+  const boundedTotal = all
+    .slice(0, ZCASH_MAX_IRONWOOD_ACTIONS)
+    .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+  const fullTotal = all.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+  return totalSpent.gt(boundedTotal) && totalSpent.lte(fullTotal);
 }
 
 /** Sum of the spendable pool -- the figure presented as spendable. */

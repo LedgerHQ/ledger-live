@@ -3,18 +3,26 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
-import { ZcashAmountBelowDustThreshold, ZcashMemoTooLong } from "../types/errors";
+import {
+  ZcashAmountBelowDustThreshold,
+  ZcashMemoTooLong,
+  ZcashSendTooLarge,
+} from "../types/errors";
 import { ZCASH_MEMO_MAX_BYTES } from "../constants";
 import {
   computeAmountError,
   computeRecipientError,
+  hasBoundedTransparentShortfall,
   hasShieldedKey,
   isTransparentInputTransfer,
   isTransparentOutputDust,
   resolveTransparentUtxos,
 } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
-import { getSpendableIronwoodBalance } from "../logic/account/spendability";
+import {
+  getSpendableIronwoodBalance,
+  hasBoundedIronwoodShortfall,
+} from "../logic/account/spendability";
 
 const encoder = new TextEncoder();
 
@@ -54,7 +62,9 @@ function getTransparentInputStatus(
   if (tx.amount.lte(0) && !tx.useAllAmount) {
     errors.amount = new Error("Amount must be positive");
   } else if (totalSpent.gt(transparentBalance)) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = hasBoundedTransparentShortfall(account, tx, totalSpent)
+      ? new ZcashSendTooLarge()
+      : new NotEnoughBalance();
   } else if (tx.transferType === "transparent" && isTransparentOutputDust(tx.amount)) {
     errors.amount = new ZcashAmountBelowDustThreshold();
   }
@@ -99,7 +109,8 @@ export const getTransactionStatus: AccountBridge<
   // Shielded sends spend the Ironwood pool, so validate the amount against the
   // mature, unreserved figure -- the same one selection draws from, so the
   // status can never accept an amount selection cannot cover.
-  const poolBalance = getSpendableIronwoodBalance(account, getReservedNullifiers(account));
+  const reserved = getReservedNullifiers(account);
+  const poolBalance = getSpendableIronwoodBalance(account, reserved);
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 
@@ -110,16 +121,20 @@ export const getTransactionStatus: AccountBridge<
   );
   if (recipientError) errors.recipient = recipientError;
 
-  const amountError = computeAmountError(transaction, totalSpent, poolBalance);
-  if (amountError) {
-    errors.amount = amountError;
-  } else if (
-    transaction.transferType === "shielded-to-transparent" &&
-    isTransparentOutputDust(transaction.amount)
-  ) {
-    // A shielded-to-transparent (z->t) recipient is also a transparent
-    // output, so it needs the same dust check as a t->t send.
-    errors.amount = new ZcashAmountBelowDustThreshold();
+  if (hasBoundedIronwoodShortfall(account, reserved, totalSpent)) {
+    errors.amount = new ZcashSendTooLarge();
+  } else {
+    const amountError = computeAmountError(transaction, totalSpent, poolBalance);
+    if (amountError) {
+      errors.amount = amountError;
+    } else if (
+      transaction.transferType === "shielded-to-transparent" &&
+      isTransparentOutputDust(transaction.amount)
+    ) {
+      // A shielded-to-transparent (z->t) recipient is also a transparent
+      // output, so it needs the same dust check as a t->t send.
+      errors.amount = new ZcashAmountBelowDustThreshold();
+    }
   }
 
   return {
