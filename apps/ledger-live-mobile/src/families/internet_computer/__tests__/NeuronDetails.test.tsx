@@ -100,6 +100,14 @@ describe("NeuronDetails", () => {
     nowSpy.mockRestore();
   });
 
+  it("shows the whole neuron id, whatever its length", () => {
+    neuron = makeHealthyNeuron({ controller: CONTROLLER, id: 13194199462915819287n });
+
+    renderDetails();
+
+    expect(screen.getByTestId("icp-neuron-id")).toHaveTextContent("13194199462915819287");
+  });
+
   // A neuron's own followees arrive as the numbers the canister reports, not as topic names, so this
   // is the reverse half of the lookup and the only thing that exercises it.
   it("names the topic of a followee the neuron already holds", () => {

@@ -1,5 +1,6 @@
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
+import { CopyableIdentifier } from "./CopyableIdentifier";
 
 export type NeuronDetailAction = {
   // A plain string, not a node: it doubles as the React key, and every caller passes translated text.
@@ -50,6 +51,10 @@ type DetailRowProps = {
   label?: React.ReactNode;
   hint?: React.ReactNode;
   value?: React.ReactNode;
+  /** A long identifier the row is about, such as a neuron id, rendered with its copy control. */
+  identifier?: string;
+  /** Named by the caller: a row is rendered once per list entry, so a fixed id would collide. */
+  identifierCopyTestID?: string;
   actions?: readonly NeuronDetailAction[];
 };
 
@@ -60,11 +65,18 @@ type DetailRowProps = {
  * and which apply depends on the neuron's state and on whether the account controls it, so a flat
  * list would leave the user guessing which stat each one acts on.
  */
-export const NeuronDetailRow = ({ label, hint, value, actions }: DetailRowProps) => {
+export const NeuronDetailRow = ({
+  label,
+  hint,
+  value,
+  identifier,
+  identifierCopyTestID,
+  actions,
+}: DetailRowProps) => {
   // An action-only row's label is an instruction to act ("Split this neuron into two"), so without
   // its button it tells the user nothing. A row carrying a value stays even at zero: the section
   // total is its rows added up, and dropping a component leaves a heading nothing reconciles with.
-  if (!value && !actions?.length) return null;
+  if (!value && !identifier && !actions?.length) return null;
 
   return (
     <Flex
@@ -75,6 +87,9 @@ export const NeuronDetailRow = ({ label, hint, value, actions }: DetailRowProps)
       style={{ gap: 12 }}
     >
       <Flex flex={1} style={{ gap: 2 }}>
+        {identifier ? (
+          <CopyableIdentifier text={identifier} copyTestID={identifierCopyTestID} />
+        ) : null}
         {value ? (
           <Text variant="body" fontWeight="semiBold" color="neutral.c100">
             {value}

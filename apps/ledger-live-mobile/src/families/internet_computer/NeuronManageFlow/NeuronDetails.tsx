@@ -38,6 +38,7 @@ import { useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { toBigNumber } from "../amounts";
+import { CopyableIdentifier } from "../components/CopyableIdentifier";
 import { NeuronDetailRow, NeuronSection } from "../components/NeuronDetails";
 import { useFormatDuration } from "../useFormatDuration";
 import { useGovernanceTopicLabel } from "../useGovernanceTopicLabel";
@@ -109,6 +110,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
   // Disburse and a refresh both drop a neuron from the snapshot while this screen may still name it.
   if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
+  const neuronId = neuron.id?.toString() ?? "";
   const permissions = getNeuronActionPermissions(neuron);
   const isControlled = isDeviceControlledNeuron(neuron, principal);
   const votingPower = neuronDecidingVotingPower(neuron);
@@ -158,9 +160,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
       />
       <ScrollContainer contentContainerStyle={{ padding: 16 }}>
         <NeuronSection
-          title={t("internetComputer.manageNeuronFlow.manage.neuron", {
-            neuronId: neuron.id?.toString() ?? "",
-          })}
+          title={t("internetComputer.manageNeuronFlow.manage.neuron")}
           value={
             <CurrencyUnitValue
               disableRounding
@@ -170,6 +170,15 @@ export default function NeuronDetails({ navigation, route }: Props) {
             />
           }
         >
+          {/* Its own row rather than part of the heading: a real id is 19-20 digits, so it needs the
+              width and the control that lifts it, which is what Follow asks to have pasted. */}
+          <Flex mb={2}>
+            <CopyableIdentifier
+              text={neuronId}
+              testID="icp-neuron-id"
+              copyTestID="icp-copy-neuron-id"
+            />
+          </Flex>
           {isControlled ? null : (
             <Text variant="small" color="neutral.c70">
               {t("internetComputer.manageNeuronFlow.manage.hotKeyOnly")}

@@ -1,4 +1,5 @@
 import { MAX_FOLLOWEES_PER_TOPIC } from "@ledgerhq/live-common/families/internet_computer/consts";
+import Clipboard from "@react-native-clipboard/clipboard";
 import type {
   ICPNeuron,
   Transaction,
@@ -170,6 +171,26 @@ describe("Followees", () => {
     fireEvent.changeText(screen.getByTestId("icp-followee-input"), "7");
 
     expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
+  });
+
+  it("puts each followee id on the clipboard rather than leaving it to be retyped", () => {
+    const id = "13194199462915819287";
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: [id] };
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId(`icp-copy-followee-${id}`));
+
+    expect(Clipboard.setString).toHaveBeenCalledWith(id);
+  });
+
+  // One row per followee, so a fixed testID would collide and `getBy*` would throw on two.
+  it("names each followee's copy control after its own id", () => {
+    transaction = { type: "follow", followTopic: "Governance", followeesIds: ["7", "8"] };
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-copy-followee-7")).toBeVisible();
+    expect(screen.getByTestId("icp-copy-followee-8")).toBeVisible();
   });
 
   // There is no per-followee delete call: removing one means submitting the rest.

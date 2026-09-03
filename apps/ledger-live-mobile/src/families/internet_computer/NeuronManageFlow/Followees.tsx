@@ -180,7 +180,9 @@ export default function Followees({ navigation, route }: Props) {
             followeesIds.map(id => (
               <NeuronDetailRow
                 key={id}
-                label={id}
+                // Copyable because this is the one screen that asks for a neuron id typed in full.
+                identifier={id}
+                identifierCopyTestID={`icp-copy-followee-${id}`}
                 actions={[
                   {
                     label: t("internetComputer.manageNeuronFlow.selectFollowees.remove"),
