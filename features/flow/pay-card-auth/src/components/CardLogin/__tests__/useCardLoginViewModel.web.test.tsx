@@ -91,8 +91,6 @@ describe("mapSnapshotToViewModel", () => {
   });
 });
 
-/* --- The intro, driven through the real machine with stub ports ------------------------------ */
-
 const session = { accessToken: "at_token", expiresIn: 21600, refreshToken: "rt_token" };
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
 
@@ -116,7 +114,6 @@ const mockPorts: { [K in keyof CardLoginPorts]: jest.Mock } = {
   ),
 };
 
-// The real ports reach for RTK Query, the keychain and the OS browser. The machine stays real.
 jest.mock("../../../state/createCardLoginPorts", () => ({
   createCardLoginPorts: () => mockPorts,
 }));
@@ -158,24 +155,17 @@ async function renderIdleLogin(
     { wrapper: withProviders(store) },
   );
 
-  // The machine hydrates on mount. Wait for the state that offers a login before pressing one.
   await waitFor(() => expect(rendered.result.current?.isLoading).toBe(false));
   return rendered;
 }
 
-/** The redirect a completed hosted login stops on. `parseCallbackUrl` reads the code off it. */
 const SUCCESS_REDIRECT = "https://go.test/ledger/card?code=authorization-code";
 
-/**
- * Drives one whole login, from the first press to `ready`: the browser answers with a code, the
- * machine exchanges it, stores the session and fetches the user.
- */
 async function completeLogin(
   store: ReturnType<typeof buildStore>,
   result: { current: ReturnType<typeof useCardLoginViewModel> },
 ) {
   mockPorts.openHostedLogin.mockResolvedValue({ type: "success", url: SUCCESS_REDIRECT });
-  // The attempt is on disk from `preparingAttempt` onwards, so the exchange finds its verifier.
   mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
 
   act(() => result.current?.onLoginPress());
@@ -193,8 +183,6 @@ describe("useCardLoginViewModel intro", () => {
     mockPorts.loadAttempt.mockResolvedValue(null);
     mockPorts.openHostedLogin.mockResolvedValue({ type: "dismissed" });
     store = buildStore();
-    // The real port writes the flag the machine publishes. Without it the view model reads a
-    // signed-out store while the machine says `ready`, and ends the session it just opened.
     mockPorts.setSignedIn.mockImplementation((value: boolean) =>
       store.dispatch(setSignedIn(value)),
     );
@@ -216,7 +204,7 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.title).toBe("Crypto Card");
-    expect(result.current?.description).toBe("Get 1% cashback everytime you spend");
+    expect(result.current?.description).toBe("Get 1% cashback every time you spend");
     expect(result.current?.loginLabel).toBe("Get card");
   });
 
@@ -280,7 +268,6 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it("drops a second action press, so one press starts one login", async () => {
-    // The guard lives here, and not in either view: a second LOGIN would mint a second PKCE attempt.
     const { result } = await renderIdleLogin(store);
 
     act(() => result.current?.onLoginPress());
@@ -300,7 +287,6 @@ describe("useCardLoginViewModel intro", () => {
     expect(result.current?.intro.isOpen).toBe(false);
     expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
-    // The login is still on offer, so the next press shows the intro again.
     act(() => result.current?.onLoginPress());
     expect(result.current?.intro.isOpen).toBe(true);
   });
@@ -311,7 +297,6 @@ describe("useCardLoginViewModel intro", () => {
 
     await completeLogin(store, result);
 
-    // The whole authentication ran: the code was exchanged, the session stored, the user fetched.
     expect(mockPorts.exchangeAuthorizationCode).toHaveBeenCalledWith({
       code: "authorization-code",
       codeVerifier: "verifier-value",
@@ -322,7 +307,6 @@ describe("useCardLoginViewModel intro", () => {
   });
 
   it("leaves the intro unseen when a stored session is hydrated at mount", async () => {
-    // A card holder who logged in on an earlier launch. No login starts here, so nothing is seen.
     mockPorts.hasSession.mockResolvedValue(true);
 
     renderHook(
@@ -344,7 +328,6 @@ describe("useCardLoginViewModel intro", () => {
     await completeLogin(store, result);
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(true);
 
-    // What a tester does from the Pay Card devtool, with the Card session still live.
     await act(async () => {
       store.dispatch(resetPayCardLoginIntroSeen());
     });

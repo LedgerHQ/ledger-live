@@ -1,5 +1,3 @@
-// The value is read once at import time, because `Platform.OS` cannot change under a running app.
-// Each case therefore needs its own module registry, and a `Platform` mocked before that import.
 describe("mobileWallet", () => {
   it.each([
     ["ios", "applePay"],

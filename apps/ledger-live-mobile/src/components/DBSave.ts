@@ -194,10 +194,6 @@ export const payCardPersistedSelector = (state: State) => ({
   ...payCardLoginIntroPersistedSelector(state),
 });
 
-/**
- * What makes the save fire. `useDBSaveEffect` lists this object in its effect dependencies, so a
- * slice missing from the inputs would keep the same identity and never trigger a write.
- */
 export const payCardDbSaveSliceSelector = createSelector(
   (state: State) => state.payCardBalance,
   (state: State) => state.payCardFeatureTour,

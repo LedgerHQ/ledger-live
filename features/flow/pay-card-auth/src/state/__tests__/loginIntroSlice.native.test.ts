@@ -52,7 +52,6 @@ describe("restorePayCardLoginIntro", () => {
 
   it("leaves a seen flag alone when the blob carries no field of its own", () => {
     const seen = reducer(undefined, markPayCardLoginIntroSeen());
-    // The `payCard` blob is shared, so a restore for a neighbour slice reaches this reducer too.
     const state = reducer(seen, restorePayCardLoginIntro({ balanceFilter: "all" } as never));
     expect(state.hasSeenLoginIntro).toBe(true);
   });

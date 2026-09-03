@@ -94,7 +94,7 @@ Card flow no longer draws a section title of its own there:
 
 | `hasSeenLoginIntro` | Subtitle | Button | The press |
 | --- | --- | --- | --- |
-| Down | Get 1% cashback everytime you spend | `Get card` | Opens the intro sheet |
+| Down | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
 | Up | Log in to access your card | `Login` | Starts the login |
 
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,

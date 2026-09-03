@@ -8,7 +8,6 @@ export function selectPayCardHasSeenLoginIntro(state: PayCardLoginIntroStateRoot
   return state.payCardLoginIntro.hasSeenLoginIntro;
 }
 
-/** Returns the persisted pay card login intro state (its whole state is persisted). */
 export function payCardLoginIntroPersistedSelector(
   state: PayCardLoginIntroStateRoot,
 ): PayCardLoginIntroState {

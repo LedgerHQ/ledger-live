@@ -48,13 +48,12 @@ describe("CardLoginView (Native)", () => {
   });
 
   it("should render the copy it is handed, whichever it is", () => {
-    // The view model swaps both on the intro flag, and the view shows what it is given.
     renderCardLoginView({
-      description: "Get 1% cashback everytime you spend",
+      description: "Get 1% cashback every time you spend",
       loginLabel: "Get card",
     });
 
-    expect(screen.getByText("Get 1% cashback everytime you spend")).toBeTruthy();
+    expect(screen.getByText("Get 1% cashback every time you spend")).toBeTruthy();
     expect(screen.getByLabelText("Get card")).toBeTruthy();
   });
 

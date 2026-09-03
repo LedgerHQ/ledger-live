@@ -4,17 +4,12 @@ import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-react/s
 import heroImage from "./payCardLoginIntro.webp";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
-/** Static, so the row icon stays a name the type system checks and never a computed lookup. */
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
   CreditCard,
   LedgerLogo,
 };
 
-/**
- * The intro the card holder sees on the first `Login` press. It draws and it reports, and nothing
- * more: `useCardLoginViewModel` owns how many logins a press may start.
- */
 export function CardLoginIntroView({
   isOpen,
   title,
@@ -56,11 +51,6 @@ export function CardLoginIntroView({
               draggable={false}
             />
             <h2 className="heading-3-semi-bold text-base">{title}</h2>
-            {/*
-              Lumen's `ListItem` holds a row at one fixed height and cuts both of its lines off at
-              the first, which suits a list of names and values. This copy is a sentence, and a
-              translation of it is longer, so the rows are composed here to let it wrap instead.
-            */}
             <div className="flex flex-col gap-16">
               {rows.map(row => {
                 const RowIcon = ROW_ICONS[row.icon];

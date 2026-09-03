@@ -11,7 +11,6 @@ import {
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
-/** Lets long copy shrink the text column instead of pushing the button off the row. */
 const SUBHEADER_STYLE = { minWidth: 0 } as const;
 
 export function CardLoginView({

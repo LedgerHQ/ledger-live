@@ -3,10 +3,6 @@ import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-de
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
-  /**
-   * Desktop-only section title. Mobile ignores it: there the login block carries its own Lumen
-   * `Subheader`, so the title sits under the card face rather than above it.
-   */
   readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   /**
@@ -26,7 +22,6 @@ export type CardProps = {
 
 /** Props the presentational view renders, resolved by {@link useCardViewModel}. */
 export type CardViewProps = {
-  /** See {@link CardProps.title}: the native view does not render it. */
   readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;

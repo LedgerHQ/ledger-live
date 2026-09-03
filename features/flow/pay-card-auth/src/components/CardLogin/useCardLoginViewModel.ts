@@ -34,14 +34,12 @@ const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
 
-/** Icon per row, paired with the translation sub-key that carries its copy. */
 const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "CoinsAddPlus", key: "cashback" },
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
 ];
 
-/** Both buttons run the same action. Drop an entry to cut the sheet down to one button. */
 const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
   { id: "createAccount", appearance: "base" },
   { id: "logIn", appearance: "gray" },
@@ -83,12 +81,6 @@ export function useCardLoginViewModel({
   const { t } = useTranslation();
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  /**
-   * True once this mount has started a login. It is the only thing that tells a login apart from a
-   * stored session the machine merely hydrated. It is state and not a ref, because both handlers
-   * that would write a ref are handed back to the view, and `react(refs)` counts that as a
-   * render-time ref access.
-   */
   const [hasStartedLogin, setHasStartedLogin] = useState(false);
 
   const ports = useMemo(
@@ -117,28 +109,19 @@ export function useCardLoginViewModel({
   }, [isSignedIn, snapshot.value, send]);
 
   useEffect(() => {
-    // `ready` asserts a live session, but it does not say where that session came from: the machine
-    // also reaches it by hydrating a stored one, and it sits there while a tester lowers the flag
-    // from the Pay Card devtool. So the flag goes up only for a login this mount started. The flag
-    // itself is deliberately not a dependency here — that is what lets a reset stay down.
     if (snapshot.value === "ready" && hasStartedLogin) {
       dispatch(markPayCardLoginIntroSeen());
     }
   }, [snapshot.value, hasStartedLogin, dispatch]);
 
-  // The sheet belongs to `idle` and `error` only. The machine half of the test is defensive: every
-  // path that starts a login lowers the request first, so no live path holds a requested intro over
-  // a working machine. Derived, not stored, so the sheet cannot outlive its state by a render.
   const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
 
   const startLogin = useCallback(() => {
-    // The one door to a login, so the one place that records that this mount started one.
     setHasStartedLogin(true);
     send({ type: "LOGIN" });
   }, [send]);
 
   const onLoginPress = useCallback(() => {
-    // The intro is an intermediate step, not a rival screen: it only defers the same LOGIN event.
     if (hasSeenLoginIntro) {
       startLogin();
       return;
@@ -147,8 +130,6 @@ export function useCardLoginViewModel({
   }, [hasSeenLoginIntro, startLogin]);
 
   const onIntroActionPress = useCallback(() => {
-    // Every button runs the same login. The double press is dropped here, and not in either view,
-    // because "how many logins may a press start" is this model's rule to hold.
     if (!isIntroOpen) {
       return;
     }
@@ -157,7 +138,6 @@ export function useCardLoginViewModel({
   }, [isIntroOpen, startLogin]);
 
   const onIntroClose = useCallback(() => {
-    // Closing is not completing. The flag stays down, so the next press shows the sheet again.
     if (!isIntroOpen) {
       return;
     }
@@ -165,7 +145,6 @@ export function useCardLoginViewModel({
   }, [isIntroOpen]);
 
   const introRows = useMemo(() => {
-    // Only the virtual card row names a wallet, and it reads the name off the host it runs on.
     const wallet = t(`${INTRO_KEY_PREFIX}.wallets.${mobileWallet}`);
 
     return INTRO_ROWS.map(({ icon, key }) => ({
@@ -186,7 +165,6 @@ export function useCardLoginViewModel({
   );
 
   const copy = useMemo<CardLoginCopy>(() => {
-    // The same press hides behind both sets: `onLoginPress` shows the intro while the flag is down.
     const stage = hasSeenLoginIntro ? "afterIntro" : "beforeIntro";
 
     return {

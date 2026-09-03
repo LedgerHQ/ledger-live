@@ -1,4 +1,3 @@
-/** The `payTab.cardLogin*` copy each app ships, mirrored here for the container tests. */
 export const CARD_LOGIN_INTRO_RESOURCES = {
   en: {
     translation: {
@@ -6,7 +5,7 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
         cardLogin: {
           title: "Crypto Card",
           beforeIntro: {
-            description: "Get 1% cashback everytime you spend",
+            description: "Get 1% cashback every time you spend",
             action: "Get card",
           },
           afterIntro: {

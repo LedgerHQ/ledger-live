@@ -15,7 +15,7 @@ session raises nothing. A tester resets the flag from the Pay Card devtool, and 
 on the next press.
 
 The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
-sells the card while the flag is down — "Get 1% cashback everytime you spend" under a `Get card`
+sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
 button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
 under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
 `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.

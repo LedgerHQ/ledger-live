@@ -57,8 +57,6 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
     "payCardBalance",
     "payCardLoginIntro",
   ] as const)("re-triggers the save when only %s changes", slice => {
-    // A slice missing from the selector inputs would return the same object here, the effect
-    // would not re-run, and the flag would never reach disk.
     const next = { ...base, [slice]: {} } as unknown as State;
 
     expect(payCardDbSaveSliceSelector(next)).not.toBe(payCardDbSaveSliceSelector(base));

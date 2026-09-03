@@ -27,7 +27,7 @@ import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/st
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 
-/** Persisted pay card flow state stored under one key. */
+/** Persisted pay card blob: tour, request verify hint, and balance filter, stored under one key. */
 type PayCardPersistedState = PayCardFeatureTourState &
   PayRequestVerifyHintState &
   PayCardBalanceState &

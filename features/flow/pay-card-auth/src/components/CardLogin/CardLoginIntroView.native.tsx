@@ -6,27 +6,16 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import heroImage from "./payCardLoginIntro.webp";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
-/** The hero fills its `Box`, which carries every design value. `flex` is layout, not a token. */
 const FILL_STYLE = { flex: 1 } as const;
 
-/**
- * `BottomSheetView` insets its own content by `s16` on every side. The design asks for `s24` at the
- * bottom, so the value is set here to replace that default rather than on a child, which would add
- * to it. Android's navigation bar is already cleared by `QueuedBottomSheet`.
- */
 const CONTENT_STYLE = { paddingBottom: 24 } as const;
 
-/** Static, so the row icon stays a name the type system checks and never a computed lookup. */
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
   CreditCard,
   LedgerLogo,
 };
 
-/**
- * The intro the card holder sees on the first `Login` press. It draws and it reports, and nothing
- * more: `useCardLoginViewModel` owns how many logins a press may start.
- */
 export function CardLoginIntroView({
   isOpen,
   title,
@@ -60,11 +49,6 @@ export function CardLoginIntroView({
             <Text accessibilityRole="header" typography="heading3SemiBold" lx={{ color: "base" }}>
               {title}
             </Text>
-            {/*
-              Lumen's `ListItem` holds a row at one fixed height and cuts both of its lines off at
-              the first, which suits a list of names and values. This copy is a sentence, and a
-              translation of it is longer, so the rows are composed here to let it wrap instead.
-            */}
             <Box lx={{ flexDirection: "column", gap: "s16" }}>
               {rows.map(row => {
                 const RowIcon = ROW_ICONS[row.icon];

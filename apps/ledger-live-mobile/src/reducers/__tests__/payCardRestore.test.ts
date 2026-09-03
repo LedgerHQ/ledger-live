@@ -5,12 +5,6 @@ import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import rootReducer from "..";
 
-/**
- * The read half of the pay card round trip. `LedgerStore.tsx` reads one `payCard` blob off disk and
- * hands the same object to four restore actions, one per flow that owns a field in it. Nothing else
- * covers those dispatches, so this holds the app store to the contract: each action picks its
- * own field, and no action clobbers a neighbour's.
- */
 describe("the payCard blob restored into the mobile store", () => {
   const blob = {
     hasSeenFeatureTour: true,
@@ -41,7 +35,6 @@ describe("the payCard blob restored into the mobile store", () => {
   });
 
   it("leaves a slice at its initial state when an older blob carries no field for it", () => {
-    // A blob written before the login intro shipped. The two fields it does carry still load.
     const state = restoreAll({ hasSeenFeatureTour: true, balanceFilter: "all" });
 
     expect(state.payCardFeatureTour.hasSeenFeatureTour).toBe(true);
@@ -49,7 +42,6 @@ describe("the payCard blob restored into the mobile store", () => {
   });
 
   it("keeps the runtime auth slice out of the restore", () => {
-    // `payCardAuth` is never persisted, so no restore action may write it.
     const state = restoreAll(blob);
 
     expect(state.payCardAuth).toEqual({ hasCard: false, isSignedIn: false });
