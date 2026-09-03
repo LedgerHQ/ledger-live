@@ -163,6 +163,8 @@ jobs:
           CPUS="$(nproc 2>/dev/null || echo "?")"
           echo "::group::Jest CI metrics (desktop coverage)"
           echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e 'const os=require("os");console.log("available_parallelism="+(os.availableParallelism?os.availableParallelism():"n/a")+" os_cpus_length="+os.cpus().length)'
+          echo "cgroup_cpu_max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null || echo none)"
           node -e '
             const os = require("os");
             const n = os.cpus().length;
