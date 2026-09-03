@@ -7,6 +7,8 @@ import type {
   ConcordiumResources,
   RawOperation,
 } from "../types";
+import coinConfig from "../config";
+import { applyTokensToResources } from "./tokens";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
   return account.currency?.family === "concordium" && "concordiumResources" in account;
@@ -54,14 +56,43 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
   );
 }
 
+/**
+ * Reads the token flag, treating an unreadable config as off.
+ *
+ * `getCoinConfig` throws when unset, but that does not mean "too early":
+ * `fromAccountRaw` awaits `getAccountBridgeByFamily`, which loads the family
+ * setup, and concordium's setup seeds the config at module initialization. A
+ * throw therefore signals abnormal config resolution, where failing closed is
+ * right — exposing token UI for a feature that is off by default is worse than
+ * rebuilding sub-accounts from chain on the next sync.
+ */
+function tokensEnabled(currencyId: string): boolean {
+  try {
+    return coinConfig.getCoinConfig(currencyId).enableTokens === true;
+  } catch {
+    return false;
+  }
+}
+
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
   if (!isConcordiumAccountRaw(accountRaw) || !accountRaw.concordiumResources) {
     return;
   }
 
-  (account as ConcordiumAccount).concordiumResources = copyResources(
-    accountRaw.concordiumResources,
-  );
+  const resources = copyResources(accountRaw.concordiumResources);
+
+  // The only account-producing path no `postSync` covers: the framework assigns
+  // the raw token sub-accounts just before calling this hook, so without a strip
+  // here disabling the flag would hold only until the next app start.
+  if (!tokensEnabled(account.currency.id)) {
+    (account as ConcordiumAccount).concordiumResources = applyTokensToResources(resources, {
+      kind: "cleared",
+    });
+    delete account.subAccounts;
+    return;
+  }
+
+  (account as ConcordiumAccount).concordiumResources = resources;
 }
 
 export function mapRawOperationToBridgeOperation(op: RawOperation, accountId: string): Operation {

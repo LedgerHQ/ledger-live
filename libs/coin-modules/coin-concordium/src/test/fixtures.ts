@@ -30,6 +30,8 @@ export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
   networkType: "testnet",
   proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
   minReserve: 100000,
+  // Matches the shipped default. Token tests opt in through `setupTestnetCoinConfig`.
+  enableTokens: false,
 };
 
 export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {

@@ -20,6 +20,12 @@ jest.mock("../logic/history/listOperations", () => ({
   listOperations: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
+  getCryptoAssetsStore: () => {
+    throw new Error("the CAL must not be consulted while tokens are off");
+  },
+}));
+
 jest.mock("../config", () => ({
   __esModule: true,
   default: {
@@ -54,6 +60,56 @@ function createRawOpFixture(overrides?: Record<string, unknown>) {
     ...overrides,
   };
 }
+
+describe("getBalance token list authority", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("reports the token list alongside the balance, from one request", async () => {
+    const accountTokens = [{ token: { tokenId: "t-USDT" } }];
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "1", accountAtDisposal: "1", accountTokens },
+    });
+
+    const result = await getBalance(CURRENCY_ID, VALID_ADDRESS);
+
+    expect(result.accountTokens).toBe(accountTokens);
+    expect(getAccountBalance).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports no token list when the request fails, so the caller can tell that apart from empty", async () => {
+    getAccountBalance.mockRejectedValue(new Error("network error"));
+
+    const result = await getBalance(CURRENCY_ID, VALID_ADDRESS);
+
+    // A zeroed balance is synthetic here; treating an absent list as authoritative
+    // would delete the account's token sub-accounts on one bad response.
+    expect(result.balance).toEqual(new BigNumber(0));
+    expect(result.accountTokens).toBeUndefined();
+  });
+
+  it("reports no token list when the field is present but not an array", async () => {
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "1", accountAtDisposal: "1", accountTokens: null },
+    });
+
+    const result = await getBalance(CURRENCY_ID, VALID_ADDRESS);
+
+    // Normalised at this boundary so the declared type holds for every caller.
+    expect(result.accountTokens).toBeUndefined();
+  });
+
+  it("reports no token list when the response omits the field", async () => {
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "1", accountAtDisposal: "1" },
+    });
+
+    const result = await getBalance(CURRENCY_ID, VALID_ADDRESS);
+
+    expect(result.accountTokens).toBeUndefined();
+  });
+});
 
 describe("getBalances", () => {
   beforeEach(() => {
@@ -365,5 +421,67 @@ describe("getAccountShape", () => {
     expect(getAccountBalance).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalled();
     expect(getConsensusInfo).toHaveBeenCalledWith(config, currency.id);
+  });
+});
+
+/**
+ * `enableTokens` is the shipping default of `false`, and this file's coin config
+ * mock omits the flag, so no extra setup is needed to exercise it.
+ *
+ * The chain response carries a PLT throughout, so the flag rather than an empty
+ * chain is what has to keep tokens out.
+ */
+describe("getAccountShape with tokens disabled", () => {
+  const PLT_ENTRY = {
+    token: { tokenId: "t-USDT", tokenState: { decimals: 6, moduleState: {} } },
+    tokenAccountState: { balance: { value: "500000", decimals: 6 } },
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getAccountsByPublicKey.mockResolvedValue([{ address: VALID_ADDRESS }]);
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: {
+        accountAmount: "10000000",
+        accountAtDisposal: "9900000",
+        accountTokens: [PLT_ENTRY],
+      },
+    });
+    listOperations.mockResolvedValue({ items: [], next: undefined });
+    getConsensusInfo.mockResolvedValue({ lastFinalizedBlockHeight: 5000 });
+  });
+
+  const shape = () =>
+    getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+  it("reports the native balance unchanged", async () => {
+    const result = await shape();
+
+    expect(result.balance).toEqual(new BigNumber(10000000));
+    expect(result.spendableBalance).toEqual(new BigNumber(9900000));
+  });
+
+  it("never consults the CAL, so a CAL outage cannot affect a tokens-off sync", async () => {
+    // The store mock throws on access; reaching it would fail this test.
+    await expect(shape()).resolves.toBeDefined();
+  });
+
+  it("stores no per-token state", async () => {
+    const result = await shape();
+
+    expect(result.concordiumResources).not.toHaveProperty("tokens");
+  });
+
+  it("empties subAccounts so a previous tokens-on sync leaves nothing behind", async () => {
+    const result = await shape();
+
+    // `postSync` then removes the key entirely; see bridge/index.test.ts.
+    expect(result.subAccounts).toEqual([]);
   });
 });
