@@ -225,7 +225,13 @@
         "add": "Add",
         "remove": "Remove",
         "empty": "No followees yet. Your neuron will not vote on this topic.",
-        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}."
+        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}.",
+        "notANeuronId": "A neuron ID is digits only.",
+        "outOfRange": "This is not a valid neuron ID.",
+        "duplicate": "This neuron is already a followee on this topic.",
+        "self": "A neuron cannot follow itself.",
+        "unadded": "Tap Add to include this neuron ID, or clear the field.",
+        "atCapacity": "A topic can follow at most {{max}} neurons. Remove one to add another."
       }
     },
     "governanceTopic": {
