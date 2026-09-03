@@ -4,6 +4,7 @@ import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
@@ -32,6 +33,7 @@ export function usePerpsReviewViewModel(
 ): PerpsReviewViewModel {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
+  const locale = useSelector(localeSelector);
 
   const sentUnit = getAccountCurrency(data.depositAccount).units[0];
   const receivedUnit = getAccountCurrency(data.receiverAccount).units[0];
@@ -40,16 +42,18 @@ export function usePerpsReviewViewModel(
     () =>
       formatCurrencyUnit(sentUnit, parseCurrencyUnit(sentUnit, data.amountSent), {
         showCode: true,
+        locale,
       }),
-    [data.amountSent, sentUnit],
+    [data.amountSent, sentUnit, locale],
   );
 
   const formattedAmountReceived = useMemo(
     () =>
       formatCurrencyUnit(receivedUnit, parseCurrencyUnit(receivedUnit, data.amountTo), {
         showCode: true,
+        locale,
       }),
-    [data.amountTo, receivedUnit],
+    [data.amountTo, receivedUnit, locale],
   );
 
   const approximateAmountReceived = useMemo(

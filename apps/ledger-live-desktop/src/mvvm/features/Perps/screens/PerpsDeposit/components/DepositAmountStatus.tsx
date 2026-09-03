@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
-import { PERPS_DEPOSIT_PROVIDER_NAME } from "LLD/features/Perps/constants/depositFunding";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { PERPS_DEPOSIT_PROVIDER_ID } from "LLD/features/Perps/constants/depositFunding";
 import type { DepositFormError } from "../utils/validateDepositFlow";
 
 type DepositAmountStatusProps = Readonly<{
@@ -16,12 +17,18 @@ function QuotedAmount({
   formattedAmount,
   currencyTicker,
   isQuoteLoading,
-}: Pick<DepositAmountStatusProps, "formattedAmount" | "currencyTicker" | "isQuoteLoading">) {
+}: Pick<
+  DepositAmountStatusProps,
+  "formattedAmount" | "currencyTicker" | "isQuoteLoading"
+>) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
     return (
-      <Skeleton className="h-16 w-144 rounded-sm" data-testid="perps-deposit-quote-skeleton" />
+      <Skeleton
+        className="h-16 w-144 rounded-sm"
+        data-testid="perps-deposit-quote-skeleton"
+      />
     );
   }
 
@@ -45,16 +52,17 @@ export function DepositAmountStatus({
   error,
 }: DepositAmountStatusProps) {
   const { t } = useTranslation();
+  const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
   const errorMessage = error ? (
     <p className="body-3 text-error" data-testid="perps-deposit-form-error">
-      {t(error.labelKey, { provider: PERPS_DEPOSIT_PROVIDER_NAME })}
+      {t(error.labelKey, { provider })}
     </p>
   ) : null;
 
   const providerNotice = hasAmount ? (
     <p className="body-2 text-base">
-      {t("perpsDeposit.inputSubText", { provider: PERPS_DEPOSIT_PROVIDER_NAME })}
+      {t("perpsDeposit.inputSubText", { provider })}
     </p>
   ) : null;
 
