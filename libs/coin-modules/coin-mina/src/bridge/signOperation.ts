@@ -13,7 +13,12 @@ import invariant from "invariant";
 import { Observable } from "rxjs";
 import { MINA_CANCEL_RETURN_CODE } from "../consts";
 import { reEncodeRawSignature } from "../logic/utils";
-import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
+import type {
+  MinaAccount,
+  MinaOperation,
+  MinaSignedTransaction,
+  Transaction,
+} from "../types/common";
 import { MinaSigner } from "../types/signer";
 import { buildTransaction } from "./buildTransaction";
 
@@ -30,7 +35,9 @@ export const buildOptimisticOperation = (
 
   let type: OperationType = "OUT";
   if (transaction.txType === "stake") {
-    type = "DELEGATE";
+    // Staking while already delegating switches validator, which the synchronisation will
+    // report as a REDELEGATE — type the pending operation the same way to avoid a label flip.
+    type = (account as MinaAccount).resources?.stakingActive ? "REDELEGATE" : "DELEGATE";
   } else if (transaction.txType === "unstake") {
     type = "UNDELEGATE";
   }

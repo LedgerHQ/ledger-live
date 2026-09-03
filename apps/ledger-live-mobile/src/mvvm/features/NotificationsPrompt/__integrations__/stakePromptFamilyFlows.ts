@@ -12,6 +12,7 @@ const familyModuleNameByAccountKey: Record<StakePromptCase["accountKey"], string
   cosmos: "cosmos",
   ethereum: "evm",
   hedera: "hedera",
+  mina: "mina",
   multiversx: "multiversx",
   near: "near",
   polkadot: "polkadot",

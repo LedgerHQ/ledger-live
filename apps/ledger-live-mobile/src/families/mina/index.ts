@@ -1,3 +1,2 @@
-import * as MinaEditMemo from "./ScreenEditMemo";
-
-export { MinaEditMemo };
+export * as MinaEditMemo from "./ScreenEditMemo";
+export * as MinaStakingFlow from "./StakingFlow";
