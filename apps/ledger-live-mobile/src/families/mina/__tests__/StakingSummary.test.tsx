@@ -1,9 +1,8 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { render, screen } from "@tests/test-renderer";
 import StakingSummary from "../StakingFlow/02-Summary";
 import { createMockMinaAccount, createMockTransaction, mockValidators } from "./testUtils";
 import { ScreenName } from "~/const";
-import { useSelector } from "~/context/hooks";
 
 const navigate = jest.fn();
 const createTransaction = jest.fn(() => ({ family: "mina" }));
@@ -21,10 +20,15 @@ let bridgeTransactionState: {
   bridgeError: Error | null;
 };
 
-jest.mock("~/context/hooks", () => ({ useSelector: jest.fn() }));
+// The screen is rendered on its own rather than through the staking navigator, so `useIsFocused`
+// has no screen to report on. The rest of the module, the theme in particular, stays real.
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useIsFocused: () => true,
+}));
 
-jest.mock("~/reducers/accounts", () => ({ accountScreenSelector: jest.fn(() => jest.fn()) }));
-
+// The real bridge resolves the mina family and talks to the network, and the real hook drives
+// the whole screen off it.
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({ createTransaction, updateTransaction }),
 }));
@@ -33,122 +37,6 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
   default: () => bridgeTransactionState,
 }));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  getAccountCurrency: jest.fn(() => ({ id: "mina", ticker: "MINA", color: "#E39844" })),
-}));
-
-jest.mock("@ledgerhq/live-common/currencies/index", () => ({
-  formatCurrencyUnit: jest.fn(() => "10 MINA"),
-  getCurrencyColor: jest.fn(() => "#E39844"),
-}));
-
-jest.mock("LLM/hooks/useAccountUnit", () => ({
-  useAccountUnit: () => ({ name: "MINA", code: "MINA", magnitude: 9 }),
-}));
-
-jest.mock("@react-navigation/native", () => ({
-  useTheme: () => ({
-    colors: { background: "#000", card: "#111", primary: "#0f0", white: "#fff" },
-  }),
-}));
-
-jest.mock("react-native-safe-area-context", () => {
-  const { View } = require("react-native");
-  return { SafeAreaView: View };
-});
-
-jest.mock("@ledgerhq/native-ui", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    Text: ({ children, ...props }: { children?: React.ReactNode }) =>
-      React.createElement(Text, props, children),
-    Icons: new Proxy({}, { get: () => () => null }),
-  };
-});
-
-jest.mock("~/context/Locale", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    Trans: ({ i18nKey }: { i18nKey: string }) => React.createElement(Text, null, i18nKey),
-  };
-});
-
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
-
-jest.mock("../../../colors", () => ({ rgba: () => "rgba(0,0,0,0.2)" }));
-
-jest.mock("../../tezos/DelegatingContainer", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ left, right }: { left: React.ReactNode; right: React.ReactNode }) =>
-      React.createElement(View, null, left, right),
-  };
-});
-
-jest.mock("~/components/Circle", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("~/components/CurrencyIcon", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("~/components/CurrencyUnitValue", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return { __esModule: true, default: () => React.createElement(Text, null, "10 MINA") };
-});
-
-jest.mock("~/components/Touchable", () => {
-  const React = require("react");
-  const { TouchableOpacity } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ children, onPress }: { children: React.ReactNode; onPress?: () => void }) =>
-      React.createElement(TouchableOpacity, { onPress }, children),
-  };
-});
-
-jest.mock("~/components/TranslatedError", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ error }: { error?: Error }) =>
-      error ? React.createElement(Text, null, `error:${error.message}`) : null,
-  };
-});
-
-jest.mock("~/components/Button", () => {
-  const React = require("react");
-  const { Text, TouchableOpacity } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({
-      onPress,
-      disabled,
-      testID,
-    }: {
-      onPress: () => void;
-      disabled?: boolean;
-      testID?: string;
-    }) =>
-      React.createElement(
-        TouchableOpacity,
-        { onPress, disabled, testID, accessibilityState: { disabled: !!disabled } },
-        React.createElement(Text, null, "continue"),
-      ),
-  };
-});
-
-const useSelectorMock = useSelector as unknown as jest.Mock;
 
 const account = createMockMinaAccount();
 const validator = mockValidators[0];
@@ -161,11 +49,14 @@ function renderSummary(params: Record<string, unknown> = {}) {
     params: { accountId: account.id, validator, ...params },
   };
   return render(
-    <StakingSummary
-      // The screen only reads `navigate` off the navigation prop.
-      navigation={{ navigate } as never}
-      route={route as never}
-    />,
+    // The screen only reads `navigate` off the navigation prop.
+    <StakingSummary navigation={{ navigate } as never} route={route as never} />,
+    {
+      overrideInitialState: state => ({
+        ...state,
+        accounts: { ...state.accounts, active: [account] },
+      }),
+    },
   );
 }
 
@@ -179,14 +70,13 @@ describe("StakingFlow/02-Summary", () => {
       bridgePending: false,
       bridgeError: null,
     };
-    useSelectorMock.mockReturnValue({ account, parentAccount: undefined });
   });
 
   it("summarises the delegated amount and the chosen validator", () => {
     renderSummary();
 
-    expect(screen.getByText("mina.delegation.iDelegate")).toBeOnTheScreen();
-    expect(screen.getByText("delegation.to")).toBeOnTheScreen();
+    expect(screen.getByText("I delegate")).toBeOnTheScreen();
+    expect(screen.getByText("to")).toBeOnTheScreen();
     expect(screen.getByTestId("mina-delegation-summary-validator")).toHaveTextContent(
       validator.name,
     );
@@ -208,10 +98,9 @@ describe("StakingFlow/02-Summary", () => {
   });
 
   it("continues to the device step with the prepared transaction", async () => {
-    const user = userEvent.setup();
-    renderSummary();
+    const { user } = renderSummary();
 
-    await user.press(screen.getByTestId("mina-summary-continue-button"));
+    await user.press(screen.getByTestId("enabled-mina-summary-continue-button"));
 
     expect(navigate).toHaveBeenCalledWith(ScreenName.MinaStakingSelectDevice, {
       accountId: account.id,
@@ -223,8 +112,7 @@ describe("StakingFlow/02-Summary", () => {
   });
 
   it("goes back to the validator step when the delegator is changed", async () => {
-    const user = userEvent.setup();
-    renderSummary();
+    const { user } = renderSummary();
 
     await user.press(screen.getByTestId("mina-delegation-summary-validator"));
 
@@ -240,21 +128,21 @@ describe("StakingFlow/02-Summary", () => {
     };
     renderSummary();
 
-    expect(screen.getByText("error:NotEnoughBalance")).toBeOnTheScreen();
-    expect(screen.getByTestId("mina-summary-continue-button")).toBeDisabled();
+    expect(screen.getByText("NotEnoughBalance")).toBeOnTheScreen();
+    expect(screen.getByTestId("disabled-mina-summary-continue-button")).toBeDisabled();
   });
 
   it("blocks the continue button while the bridge is pending", () => {
     bridgeTransactionState.bridgePending = true;
     renderSummary();
 
-    expect(screen.getByTestId("mina-summary-continue-button")).toBeDisabled();
+    expect(screen.getByTestId("disabled-mina-summary-continue-button")).toBeDisabled();
   });
 
   it("blocks the continue button when the bridge errored", () => {
     bridgeTransactionState.bridgeError = new Error("bridge down");
     renderSummary();
 
-    expect(screen.getByTestId("mina-summary-continue-button")).toBeDisabled();
+    expect(screen.getByTestId("disabled-mina-summary-continue-button")).toBeDisabled();
   });
 });

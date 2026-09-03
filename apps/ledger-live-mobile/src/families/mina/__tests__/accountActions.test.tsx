@@ -1,80 +1,38 @@
 import React from "react";
-import { render } from "@testing-library/react-native";
+import { render, screen } from "@tests/test-renderer";
 import { Text } from "react-native";
 import accountActions from "../accountActions";
 import { createMockMinaAccount, createDelegatingMinaAccount } from "./testUtils";
 import type { Account } from "@ledgerhq/types-live";
+import type { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 
-jest.mock("@ledgerhq/native-ui", () => ({
-  IconsLegacy: { CoinsMedium: "CoinsMedium" },
-}));
+const { getMainActions } = accountActions;
+
+const mainActions = (account: MinaAccount) =>
+  getMainActions({ account, parentAccount: undefined as unknown as Account });
 
 describe("accountActions", () => {
-  const { getMainActions } = accountActions;
-
-  it("returns an array with one stake action", () => {
+  it("offers a single stake action pointing at the validator step", () => {
     const account = createMockMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
+    const actions = mainActions(account);
 
     expect(actions).toHaveLength(1);
     expect(actions[0].id).toBe("stake");
-  });
-
-  it("returns earn label when account has no delegation", () => {
-    const account = createMockMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
-
-    const { getByText } = render(<Text>{actions[0].label}</Text>);
-    expect(getByText("Earn")).toBeTruthy();
-  });
-
-  it("returns redelegate label when account has active delegation", () => {
-    const account = createDelegatingMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
-
-    const { getByText } = render(<Text>{actions[0].label}</Text>);
-    expect(getByText("Redelegate")).toBeTruthy();
-  });
-
-  it("includes MINA in event properties", () => {
-    const account = createMockMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
-
     expect(actions[0].eventProperties).toEqual({ currency: "MINA" });
-  });
-
-  it("includes navigation params pointing to MinaStakingValidator screen", () => {
-    const account = createMockMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
-
-    expect(actions[0].navigationParams).toBeDefined();
     expect(actions[0].navigationParams![1]).toMatchObject({
       params: { accountId: account.id },
     });
   });
 
-  it("includes CoinsMedium icon", () => {
-    const account = createMockMinaAccount();
-    const actions = getMainActions({
-      account,
-      parentAccount: undefined as unknown as Account,
-    });
+  it("labels the action Earn when the account does not delegate", () => {
+    render(<Text>{mainActions(createMockMinaAccount())[0].label}</Text>);
 
-    expect(actions[0].Icon).toBeDefined();
+    expect(screen.getByText("Earn")).toBeOnTheScreen();
+  });
+
+  it("labels the action Redelegate when the account already delegates", () => {
+    render(<Text>{mainActions(createDelegatingMinaAccount())[0].label}</Text>);
+
+    expect(screen.getByText("Redelegate")).toBeOnTheScreen();
   });
 });

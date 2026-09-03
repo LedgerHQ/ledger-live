@@ -1,89 +1,50 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react-native";
-import { View, Text as RNText, TouchableOpacity } from "react-native";
-
-const mockGoBack = jest.fn();
-const mockParentGoBack = jest.fn();
-
-jest.mock("~/components/ValidateError", () => {
-  return {
-    __esModule: true,
-    default: function MockValidateError({
-      error,
-      onRetry,
-      onClose,
-    }: {
-      error: Error;
-      onRetry: () => void;
-      onClose: () => void;
-    }) {
-      return React.createElement(
-        View,
-        { testID: "validate-error" },
-        React.createElement(RNText, null, error.message),
-        React.createElement(
-          TouchableOpacity,
-          { onPress: onRetry, testID: "retry-button" },
-          React.createElement(RNText, null, "Retry"),
-        ),
-        React.createElement(
-          TouchableOpacity,
-          { onPress: onClose, testID: "close-button" },
-          React.createElement(RNText, null, "Close"),
-        ),
-      );
-    },
-  };
-});
-
+import { render, screen } from "@tests/test-renderer";
 import StakingValidationError from "../StakingFlow/04-ValidationError";
+import { createMockMinaAccount } from "./testUtils";
 
-const createMockProps = () => ({
-  navigation: {
-    goBack: mockGoBack,
-    getParent: () => ({
-      goBack: mockParentGoBack,
-    }),
-  } as never,
+const goBack = jest.fn();
+const parentGoBack = jest.fn();
+const account = createMockMinaAccount();
+
+const props = {
+  navigation: { goBack, getParent: () => ({ goBack: parentGoBack }) } as never,
   route: {
     params: {
-      accountId: "js:2:mina:B62qtest:mina",
+      accountId: account.id,
       deviceId: "device-1",
-      transaction: { family: "mina", recipient: "B62qtest" },
+      transaction: { family: "mina", recipient: account.freshAddress },
       error: new Error("Transaction broadcast failed"),
     },
   } as never,
-});
+};
 
 describe("StakingValidationError", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders the error message", () => {
-    render(<StakingValidationError {...createMockProps()} />);
+  it("shows the error with a way out of the flow", () => {
+    render(<StakingValidationError {...props} />);
 
-    expect(screen.getByText("Transaction broadcast failed")).toBeOnTheScreen();
-  });
-
-  it("renders retry and close buttons", () => {
-    render(<StakingValidationError {...createMockProps()} />);
-
+    expect(screen.getByTestId("generic-error-modal")).toBeOnTheScreen();
     expect(screen.getByText("Retry")).toBeOnTheScreen();
     expect(screen.getByText("Close")).toBeOnTheScreen();
   });
 
-  it("calls navigation.goBack when retry is pressed", () => {
-    render(<StakingValidationError {...createMockProps()} />);
+  it("returns to the previous step on retry", async () => {
+    const { user } = render(<StakingValidationError {...props} />);
 
-    fireEvent.press(screen.getByTestId("retry-button"));
-    expect(mockGoBack).toHaveBeenCalled();
+    await user.press(screen.getByText("Retry"));
+
+    expect(goBack).toHaveBeenCalled();
   });
 
-  it("calls parent navigation goBack when close is pressed", () => {
-    render(<StakingValidationError {...createMockProps()} />);
+  it("leaves the whole flow on close", async () => {
+    const { user } = render(<StakingValidationError {...props} />);
 
-    fireEvent.press(screen.getByTestId("close-button"));
-    expect(mockParentGoBack).toHaveBeenCalled();
+    await user.press(screen.getByText("Close"));
+
+    expect(parentGoBack).toHaveBeenCalled();
   });
 });

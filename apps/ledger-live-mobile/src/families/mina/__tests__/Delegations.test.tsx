@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import MinaDelegations from "../Delegations";
 import { createMockMinaAccount, createDelegatingMinaAccount, mockValidators } from "./testUtils";
 import { NavigatorName, ScreenName } from "~/const";
@@ -15,27 +15,16 @@ const prepareTransaction = jest.fn(async (_account: unknown, tx: object) => ({
 }));
 const getTransactionStatus = jest.fn(async () => preparedStatus);
 
-jest.mock("@ledgerhq/native-ui", () => {
-  const React = require("react");
-  const { Text, View } = require("react-native");
-  return {
-    Box: ({ children }: { children?: React.ReactNode }) =>
-      React.createElement(View, null, children),
-    Text: ({ children, ...props }: { children?: React.ReactNode }) =>
-      React.createElement(Text, props, children),
-  };
-});
-
+// The section is rendered on its own rather than through the account screen, so `useNavigation`
+// has no navigator to reach and `useIsFocused` no screen to report on. The rest of the module,
+// the theme in particular, stays real.
 jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate }),
-  useTheme: () => ({ colors: { card: "#fff", fog: "#eee", alert: "#f00", live: "#0f0" } }),
+  useIsFocused: () => true,
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  getAccountCurrency: jest.fn(() => ({ id: "mina", ticker: "MINA" })),
-  getMainAccount: jest.fn((account: unknown) => account),
-}));
-
+// The real bridge resolves the mina family and talks to the network.
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
     createTransaction,
@@ -45,130 +34,21 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   }),
 }));
 
-jest.mock("~/components/GenericErrorBottomModal", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ error }: { error: Error | null }) =>
-      error ? React.createElement(Text, null, `error:${error.message}`) : null,
-  };
+// Both drawers on this screen sit on the bottom-sheet host, which takes seconds to start and
+// needs real timers. Standing it in keeps the drawers themselves, and their contents, real.
+jest.mock("~/components/QueuedDrawer", () => {
+  const { View } = jest.requireActual("react-native");
+  return ({
+    isRequestingToBeOpened,
+    children,
+  }: {
+    isRequestingToBeOpened?: boolean;
+    children: React.ReactNode;
+  }) => (isRequestingToBeOpened ? <View>{children}</View> : null);
 });
 
-jest.mock("LLM/hooks/useAccountUnit", () => ({
-  useAccountUnit: () => ({ name: "MINA", code: "MINA", magnitude: 9 }),
-}));
-
-jest.mock("~/context/Locale", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
-
-jest.mock("../../../colors", () => ({ rgba: () => "rgba(0,0,0,0.2)" }));
-
-jest.mock("~/components/AccountSectionLabel", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ name }: { name: string }) => React.createElement(Text, null, name),
-  };
-});
-
-jest.mock("~/components/AccountDelegationInfo", () => {
-  const React = require("react");
-  const { Text, TouchableOpacity } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ ctaTitle, onPress }: { ctaTitle: string; onPress: () => void }) =>
-      React.createElement(TouchableOpacity, { onPress }, React.createElement(Text, null, ctaTitle)),
-  };
-});
-
-jest.mock("~/components/Circle", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("~/icons/Delegate", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("~/icons/Undelegate", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("~/icons/images/Rewards", () => {
-  const { View } = require("react-native");
-  return { __esModule: true, default: View };
-});
-
-jest.mock("../Delegations/Row", () => {
-  const React = require("react");
-  const { Text, TouchableOpacity } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ onPress }: { onPress: () => void }) =>
-      React.createElement(
-        TouchableOpacity,
-        { onPress },
-        React.createElement(Text, null, "delegation-row"),
-      ),
-  };
-});
-
-jest.mock("../StakingFlow/ValidatorRow", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    ValidatorImage: ({ name }: { name: string }) =>
-      React.createElement(Text, null, `image:${name}`),
-  };
-});
-
-/**
- * Renders the drawer payload flat so the test can assert on the rows the
- * component builds and trigger the actions it wires up.
- */
-jest.mock("~/components/DelegationDrawer", () => {
-  const React = require("react");
-  const { Text, TouchableOpacity, View } = require("react-native");
-  type Row = { label: string; Component: React.ReactNode };
-  type Action = { label: string; onPress: () => void; Icon: React.ComponentType<object> };
-  return {
-    __esModule: true,
-    default: ({
-      isOpen,
-      data,
-      actions,
-      ValidatorImage,
-    }: {
-      isOpen: boolean;
-      data: Row[];
-      actions: Action[];
-      ValidatorImage: React.ComponentType<{ size: number }>;
-    }) =>
-      React.createElement(
-        View,
-        null,
-        React.createElement(Text, null, isOpen ? "drawer-open" : "drawer-closed"),
-        React.createElement(ValidatorImage, { size: 32 }),
-        ...data.map((row, i) =>
-          React.createElement(View, { key: `row-${i}` }, [
-            React.createElement(Text, { key: "label" }, row.label),
-            React.createElement(View, { key: "value" }, row.Component),
-          ]),
-        ),
-        ...actions.map((action, i) =>
-          React.createElement(TouchableOpacity, { key: `action-${i}`, onPress: action.onPress }, [
-            React.createElement(Text, { key: "label" }, action.label),
-            React.createElement(action.Icon, { key: "icon" }),
-          ]),
-        ),
-      ),
-  };
-});
+const banner =
+  "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.";
 
 describe("Delegations (mina)", () => {
   beforeEach(() => {
@@ -176,8 +56,9 @@ describe("Delegations (mina)", () => {
   });
 
   it("renders nothing when the account has no staking resources", () => {
-    const account = createMockMinaAccount({ resources: undefined });
-    const { toJSON } = render(<MinaDelegations account={account} />);
+    const { toJSON } = render(
+      <MinaDelegations account={createMockMinaAccount({ resources: undefined })} />,
+    );
 
     expect(toJSON()).toBeNull();
   });
@@ -185,15 +66,14 @@ describe("Delegations (mina)", () => {
   it("offers the delegation call to action when the account does not delegate", () => {
     render(<MinaDelegations account={createMockMinaAccount()} />);
 
-    expect(screen.getByText("account.delegation.info.cta")).toBeOnTheScreen();
-    expect(screen.queryByText("delegation-row")).not.toBeOnTheScreen();
+    expect(screen.getByText(banner)).toBeOnTheScreen();
+    expect(screen.queryByText("See more")).not.toBeOnTheScreen();
   });
 
   it("navigates to the validator step from the delegation call to action", async () => {
-    const user = userEvent.setup();
-    render(<MinaDelegations account={createMockMinaAccount()} />);
+    const { user } = render(<MinaDelegations account={createMockMinaAccount()} />);
 
-    await user.press(screen.getByText("account.delegation.info.cta"));
+    await user.press(screen.getByTestId("proceed-button"));
 
     expect(navigate).toHaveBeenCalledWith(NavigatorName.MinaStakingFlow, {
       screen: ScreenName.MinaStakingValidator,
@@ -201,50 +81,46 @@ describe("Delegations (mina)", () => {
     });
   });
 
-  it("lists the current delegation and its validator details", () => {
+  it("lists the current delegation and its validator", () => {
     render(<MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />);
 
-    expect(screen.getByText("mina.delegation.listHeader")).toBeOnTheScreen();
-    expect(screen.getByText("delegation-row")).toBeOnTheScreen();
-    expect(screen.getByText("delegation.validator")).toBeOnTheScreen();
-    expect(screen.getByText("mina.summaryFooter.producerAddress")).toBeOnTheScreen();
+    expect(screen.getByText("Delegation")).toBeOnTheScreen();
+    expect(screen.getByText("See more")).toBeOnTheScreen();
     expect(screen.getByText(mockValidators[0].identityName)).toBeOnTheScreen();
+    expect(screen.queryByText(banner)).not.toBeOnTheScreen();
   });
 
-  it("keeps the drawer closed until the delegation row is pressed", async () => {
-    const user = userEvent.setup();
-    render(<MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />);
+  it("opens the drawer on the delegation row and details the validator there", async () => {
+    const { user } = render(
+      <MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />,
+    );
 
-    expect(screen.getByText("drawer-closed")).toBeOnTheScreen();
+    expect(screen.queryByText("Validator")).not.toBeOnTheScreen();
 
-    await user.press(screen.getByText("delegation-row"));
+    await user.press(screen.getByText("See more"));
 
-    expect(screen.getByText("drawer-open")).toBeOnTheScreen();
-  });
-
-  it("builds no drawer rows when the delegate metadata is missing", () => {
-    render(<MinaDelegations account={createDelegatingMinaAccount(null)} />);
-
-    expect(screen.queryByText("delegation.validator")).not.toBeOnTheScreen();
-    expect(screen.getByText("image:-")).toBeOnTheScreen();
-    expect(screen.getByText("drawer-closed")).toBeOnTheScreen();
+    expect(screen.getByText("Validator")).toBeOnTheScreen();
+    expect(screen.getByText("Producer Address")).toBeOnTheScreen();
+    expect(screen.getByText(mockValidators[0].address)).toBeOnTheScreen();
   });
 
   it("keeps the delegation actions reachable when the delegate metadata is missing", async () => {
-    const user = userEvent.setup();
-    render(<MinaDelegations account={createDelegatingMinaAccount(null)} />);
+    const { user } = render(<MinaDelegations account={createDelegatingMinaAccount(null)} />);
 
-    await user.press(screen.getByText("delegation-row"));
+    await user.press(screen.getByText("See more"));
 
-    expect(screen.getByText("drawer-open")).toBeOnTheScreen();
-    expect(screen.getByText("mina.delegation.undelegate")).toBeOnTheScreen();
+    expect(screen.queryByText("Validator")).not.toBeOnTheScreen();
+    expect(screen.getByText("Undelegate")).toBeOnTheScreen();
+    expect(screen.getByText("Redelegate")).toBeOnTheScreen();
   });
 
   it("navigates to the validator step from the redelegate action", async () => {
-    const user = userEvent.setup();
-    render(<MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />);
+    const { user } = render(
+      <MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />,
+    );
 
-    await user.press(screen.getByText("mina.delegation.redelegate"));
+    await user.press(screen.getByText("See more"));
+    await user.press(screen.getByText("Redelegate"));
 
     expect(navigate).toHaveBeenCalledWith(NavigatorName.MinaStakingFlow, {
       screen: ScreenName.MinaStakingValidator,
@@ -253,11 +129,11 @@ describe("Delegations (mina)", () => {
   });
 
   it("prepares the unstake transaction before skipping to the device step", async () => {
-    const user = userEvent.setup();
     const account = createDelegatingMinaAccount(mockValidators[0]);
-    render(<MinaDelegations account={account} />);
+    const { user } = render(<MinaDelegations account={account} />);
 
-    await user.press(screen.getByText("mina.delegation.undelegate"));
+    await user.press(screen.getByText("See more"));
+    await user.press(screen.getByText("Undelegate"));
 
     expect(createTransaction).toHaveBeenCalledWith(account);
     expect(updateTransaction).toHaveBeenCalledWith(expect.anything(), {
@@ -287,13 +163,15 @@ describe("Delegations (mina)", () => {
   });
 
   it("surfaces the error and stays put when the unstake transaction cannot be prepared", async () => {
-    const user = userEvent.setup();
     prepareTransaction.mockRejectedValueOnce(new Error("fees unavailable"));
-    render(<MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />);
+    const { user } = render(
+      <MinaDelegations account={createDelegatingMinaAccount(mockValidators[0])} />,
+    );
 
-    await user.press(screen.getByText("mina.delegation.undelegate"));
+    await user.press(screen.getByText("See more"));
+    await user.press(screen.getByText("Undelegate"));
 
-    await waitFor(() => expect(screen.getByText("error:fees unavailable")).toBeOnTheScreen());
+    await waitFor(() => expect(screen.getByTestId("generic-error-modal")).toBeOnTheScreen());
     expect(navigate).not.toHaveBeenCalled();
   });
 });
