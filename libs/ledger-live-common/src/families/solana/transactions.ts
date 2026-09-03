@@ -1,6 +1,7 @@
 import type { TransferFee } from "../../bridge/generic-coin-framework/types";
 import type { Transaction } from "./types";
 import type BigNumber from "bignumber.js";
+import { createStakeAccountSeed } from "@ledgerhq/coin-solana/stakeAccountSeed";
 
 /**
  * The Solana transaction shape the generic coin framework reads, in one place so screens never
@@ -14,6 +15,7 @@ export function createStakeAccountTransaction(voteAccAddr: string, amount?: BigN
   return {
     mode: "stake" as const,
     recipient: voteAccAddr,
+    familySpecificData: { stakeAccountSeed: createStakeAccountSeed() },
     ...(amount ? { amount } : {}),
   };
 }
@@ -66,6 +68,7 @@ export function revokeTransaction(subAccountId: string) {
 export function splitStakeTransaction(stakeAccAddr: string, amount: BigNumber) {
   return {
     mode: "split" as const,
+    familySpecificData: { stakeAccountSeed: createStakeAccountSeed() },
     recipient: stakeAccAddr,
     memoType: STAKE_ACCOUNT_MEMO_TYPE,
     memoValue: stakeAccAddr,

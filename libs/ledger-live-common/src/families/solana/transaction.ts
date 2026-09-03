@@ -21,6 +21,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => ({
   ...(tr.mode ? { mode: tr.mode } : {}),
   ...(tr.memoType ? { memoType: tr.memoType } : {}),
   ...(tr.memoValue ? { memoValue: tr.memoValue } : {}),
+  ...(tr.familySpecificData ? { familySpecificData: tr.familySpecificData } : {}),
 });
 
 export const toTransactionRaw = (t: Transaction): TransactionRaw => ({
@@ -29,6 +30,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => ({
   ...(t.mode ? { mode: t.mode } : {}),
   ...(t.memoType ? { memoType: t.memoType } : {}),
   ...(t.memoValue ? { memoValue: t.memoValue } : {}),
+  ...(t.familySpecificData ? { familySpecificData: t.familySpecificData } : {}),
 });
 
 const formatAmount = (t: Transaction, account: AccountLike): string => {

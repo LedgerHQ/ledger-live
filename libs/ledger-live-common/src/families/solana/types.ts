@@ -35,6 +35,12 @@ export type Transaction = TransactionCommon & {
   mode?: SolanaTransactionMode;
   memoType?: string | null;
   memoValue?: string | null;
+  /** Mint of the token being acted on, resolved by `getAssetInfos`. */
+  assetReference?: string;
+  /** Fields this family owns and the generic transaction has no place for (ADR-047). */
+  familySpecificData?: { stakeAccountSeed?: string };
+  /** What the last estimation resolved on chain (ADR-050). */
+  feeParameters?: { stakeAccountAddress?: string };
   /**
    * Token-2022 transfer fee for the last estimation, written by the generic `prepareTransaction`.
    * Derived, so `TransactionRaw` deliberately omits it.
@@ -65,6 +71,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode?: SolanaTransactionMode;
   memoType?: string | null;
   memoValue?: string | null;
+  familySpecificData?: { stakeAccountSeed?: string };
 };
 
 export type TransactionStatus = TransactionStatusCommon;

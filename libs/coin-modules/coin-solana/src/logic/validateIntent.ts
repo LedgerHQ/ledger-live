@@ -62,13 +62,15 @@ import {
   getMaybeVoteAccount,
   getStakeAccountMinimumBalanceForRentExemption,
 } from "../network/chain/web3";
-import { estimateTxFee } from "./estimateFees";
+import { unstakeReserve } from "./estimateFees";
 import type { SolanaTokenAccount, SolanaTokenProgram, TokenRecipientDescriptor } from "../types";
 import type { ChainAPI } from "../network";
 
 export async function validateIntent(
   api: ChainAPI,
-  transactionIntent: TransactionIntent<StringMemo | MemoNotSupported> & { data?: { type: string } },
+  transactionIntent: TransactionIntent<StringMemo | MemoNotSupported> & {
+    data?: { type: string; raw?: string };
+  },
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
@@ -79,7 +81,9 @@ export async function validateIntent(
 
   // A partner-built transaction describes itself; the intent's recipient and amount are
   // placeholders, so validating them would reject a perfectly good payload. Legacy did the same.
-  if (transactionIntent.data?.type === "solana") {
+  // Keyed on `raw`, not on the family tag: `data` also carries the stake account seed of an intent
+  // the wallet built itself, which must still be validated.
+  if (transactionIntent.data?.type === "solana" && transactionIntent.data.raw) {
     return { errors, warnings, estimatedFees, amount: 0n, totalSpent: estimatedFees };
   }
 
@@ -93,7 +97,7 @@ export async function validateIntent(
   }
 
   if (transactionIntent.type.startsWith("token.") && transactionIntent.type !== "token.transfer") {
-    return validateTokenAuthorityIntent(transactionIntent, balances, estimatedFees);
+    return validateTokenAuthorityIntent(api, transactionIntent, balances, estimatedFees);
   }
 
   await validateRecipientCommon(
@@ -251,22 +255,29 @@ async function validateTokenTransfer(
  * moves no token, so only the native fee is at stake; approving one also names a delegate and an
  * amount.
  */
-function validateTokenAuthorityIntent(
+async function validateTokenAuthorityIntent(
+  api: ChainAPI,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   estimatedFees: bigint,
-): TransactionValidation {
+): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
   if (intent.type === "token.approve") {
-    if (!intent.recipient) {
-      errors.recipient = new RecipientRequired();
-    } else if (!isValidBase58Address(intent.recipient)) {
-      errors.recipient = new InvalidAddress();
-    } else if (intent.recipient === intent.sender) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    }
+    // The same chain checks a transfer recipient gets: a delegate that is a mint or an off-curve
+    // address is rejected here rather than at broadcast, as the legacy bridge did.
+    await validateRecipientCommon(
+      {
+        sender: intent.sender,
+        recipient: intent.recipient,
+        currencyName: intent.asset?.name ?? "Solana",
+        allowATA: true,
+      },
+      errors,
+      warnings,
+      api,
+    );
     if (intent.amount <= 0n) {
       errors.amount = new AmountRequired();
     }
@@ -547,14 +558,14 @@ async function computeCreateAccountAmount(
     }
   };
 
-  // `unstakeReserve` only covers the stake accounts the account already has (it is 0 when there
+  // The reserve only covers the stake accounts the account already has (it is 0 when there
   // are none), so the one being created needs its own or a first-time staker cannot unstake.
-  const unstakeReserve = await fetchUnstakeReserve(api, intent.sender);
+  const reserve = await unstakeReserve(api, intent.sender);
 
   if (intent.useAllAmount) {
     // The rent exemption is already inside this amount: `craftCreateStakeAccountFromIntent`
     // subtracts it to get the delegated part.
-    const allAmount = clampPositive(available - estimatedFees - unstakeReserve);
+    const allAmount = clampPositive(available - estimatedFees - reserve);
     if (!errors.recipient && !errors.amount && allAmount > 0n) {
       const [stakeMinimumDelegation, stakeAccRentExempt] = await Promise.all([
         fetchStakeMinimumDelegation(),
@@ -575,7 +586,7 @@ async function computeCreateAccountAmount(
     errors.amount = new AmountRequired();
   } else if (
     // A typed amount is the delegated part; the stake account's rent sits on top of it.
-    intent.amount + estimatedFees + unstakeReserve + ((await fetchStakeAccountRentExempt()) ?? 0n) >
+    intent.amount + estimatedFees + reserve + ((await fetchStakeAccountRentExempt()) ?? 0n) >
     available
   ) {
     errors.amount = new NotEnoughBalance();
@@ -586,19 +597,6 @@ async function computeCreateAccountAmount(
     }
   }
   return intent.amount;
-}
-
-/** Fees the future undelegate and withdraw of a freshly created stake account will cost. */
-async function fetchUnstakeReserve(api: ChainAPI, sender: string): Promise<bigint> {
-  try {
-    const [undelegateFee, withdrawFee] = await Promise.all([
-      estimateTxFee(api, sender, "stake.undelegate"),
-      estimateTxFee(api, sender, "stake.withdraw"),
-    ]);
-    return BigInt(undelegateFee + withdrawFee);
-  } catch {
-    return 0n;
-  }
 }
 
 /**

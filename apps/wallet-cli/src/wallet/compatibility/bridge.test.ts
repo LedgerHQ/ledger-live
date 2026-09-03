@@ -116,15 +116,17 @@ describe("buildSolanaTransactionPatch", () => {
   });
 
   it("maps stake.createAccount to the validator as recipient", () => {
-    expect(
-      buildSolanaTransactionPatch({
-        family: "solana",
-        recipient: "",
-        amount: "1 SOL",
-        mode: "stake.createAccount",
-        validator: "voteAcc123",
-      }),
-    ).toEqual({ mode: "stake", recipient: "voteAcc123" });
+    const patch = buildSolanaTransactionPatch({
+      family: "solana",
+      recipient: "",
+      amount: "1 SOL",
+      mode: "stake.createAccount",
+      validator: "voteAcc123",
+    });
+
+    expect(patch).toMatchObject({ mode: "stake", recipient: "voteAcc123" });
+    // The address the confirmation screen names derives from it, so it has to be there.
+    expect(patch.familySpecificData).toMatchObject({ stakeAccountSeed: expect.any(String) });
   });
 
   // Delegating overloads the memo to carry the stake account; the recipient is the validator.

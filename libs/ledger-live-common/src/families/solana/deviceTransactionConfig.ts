@@ -53,6 +53,11 @@ async function getDeviceTransactionConfig({
 
   const owner = getMainAccount(account, parentAccount).freshAddress;
   const tokenAccount = transaction.ownerTokenAccount;
+  const { stakeAccountSeed } = transaction.familySpecificData ?? {};
+  const stakeAccountAddress =
+    typeof transaction.feeParameters?.stakeAccountAddress === "string"
+      ? transaction.feeParameters.stakeAccountAddress
+      : undefined;
 
   // The three commands only a live app submits. Ported from the legacy `fieldsForCreate*`, which
   // read the same addresses off the command descriptor.
@@ -61,6 +66,11 @@ async function getDeviceTransactionConfig({
       return [
         ...(tokenAccount
           ? ([{ type: "address", label: "Create token acct", address: tokenAccount }] as const)
+          : []),
+        ...(transaction.assetReference
+          ? ([
+              { type: "address", label: "From mint", address: transaction.assetReference },
+            ] as const)
           : []),
         { type: "address", label: "Owned by", address: owner },
         { type: "address", label: "Funded by", address: owner },
@@ -90,6 +100,9 @@ async function getDeviceTransactionConfig({
   switch (transaction.mode) {
     case "stake":
       fields.push(
+        ...(stakeAccountAddress
+          ? ([{ type: "address", label: "Delegate from", address: stakeAccountAddress }] as const)
+          : []),
         // Not an `amount` field: the device shows the delegated amount plus the stake account's
         // rent, which is what actually leaves the wallet.
         {
@@ -118,14 +131,19 @@ async function getDeviceTransactionConfig({
     case "unstake":
       fields.push({ type: "amount", label: "Stake withdraw" });
       break;
-    // "To" and "Seed" are missing: both come from a seed drawn at craft time, as for `stake`.
     case "split":
       fields.push(
         { type: "amount", label: "Split stake" },
         ...(stakeAccount
           ? ([{ type: "address", label: "From", address: stakeAccount }] as const)
           : []),
+        ...(stakeAccountAddress
+          ? ([{ type: "address", label: "To", address: stakeAccountAddress }] as const)
+          : []),
         { type: "address", label: "Base", address: owner },
+        ...(stakeAccountSeed
+          ? ([{ type: "text", label: "Seed", value: stakeAccountSeed }] as const)
+          : []),
         { type: "address", label: "Authorized by", address: owner },
         { type: "address", label: "Fee payer", address: owner },
       );

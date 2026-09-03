@@ -1,4 +1,5 @@
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";
 import { dropMemoLengthPrefixIfAny, listOperations } from "../listOperations";
@@ -15,13 +16,22 @@ describe("listOperations", () => {
     DeepPartialReturn<ChainAPI["getParsedTransactions"]>
   >;
 
+  // The wallet owns no token account by default, so the only signature stream is its own and the
+  // cases below read exactly as they did before token accounts were queried too.
+  const mockGetParsedTokenAccountsByOwner = jest.fn().mockResolvedValue({ value: [] });
+  const mockGetParsedToken2022AccountsByOwner = jest.fn().mockResolvedValue({ value: [] });
+
   const api = {
     getSignaturesForAddress: mockGetSignaturesForAddress,
     getParsedTransactions: mockGetParsedTransactions,
+    getParsedTokenAccountsByOwner: mockGetParsedTokenAccountsByOwner,
+    getParsedToken2022AccountsByOwner: mockGetParsedToken2022AccountsByOwner,
   } as unknown as ChainAPI;
 
   afterEach(() => {
     jest.clearAllMocks();
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+    mockGetParsedToken2022AccountsByOwner.mockResolvedValue({ value: [] });
   });
 
   it("should return empty list when no signatures found", async () => {
@@ -230,6 +240,68 @@ describe("listOperations", () => {
     expect(result.items[0].recipients).toEqual([TEST_ADDRESS]);
   });
 
+  // A third party sending SPL into an existing token account names neither the recipient wallet nor
+  // its fee payer, so the transaction is absent from the wallet's own signature history. The legacy
+  // bridge queried each token account for exactly this reason.
+  it("finds an incoming token transfer through the token account's own history", async () => {
+    const blockTime = 1700000000;
+    const ata = "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi";
+    const mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [{ pubkey: new PublicKey(ata) }],
+    });
+    // Empty for the wallet, one signature for its token account.
+    mockGetSignaturesForAddress.mockImplementation(async (source: string) =>
+      source === ata ? [{ signature: "sig-ata", slot: 100, blockTime, err: null }] : [],
+    );
+
+    mockGetParsedTransactions.mockResolvedValue([
+      {
+        transaction: {
+          signatures: ["sig-ata"],
+          message: {
+            accountKeys: [
+              { pubkey: new PublicKey(TEST_RECIPIENT) },
+              { pubkey: new PublicKey(ata) },
+            ],
+            recentBlockhash: TEST_BLOCKHASH,
+            instructions: [],
+          },
+        },
+        meta: {
+          fee: 5000,
+          preBalances: [1_000_000_000, 2_039_280],
+          postBalances: [999_995_000, 2_039_280],
+          preTokenBalances: [
+            {
+              accountIndex: 1,
+              mint,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID.toBase58(),
+              uiTokenAmount: { amount: "0" },
+            },
+          ],
+          postTokenBalances: [
+            {
+              accountIndex: 1,
+              mint,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID.toBase58(),
+              uiTokenAmount: { amount: "500" },
+            },
+          ],
+        },
+      },
+    ]);
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].type).toBe("IN");
+    expect(result.items[0].value).toBe(500n);
+  });
+
   it("should detect FEES operations when fee payer has zero net change", async () => {
     const blockTime = 1700000000;
     mockGetSignaturesForAddress.mockResolvedValue([
@@ -301,7 +373,35 @@ describe("listOperations", () => {
 
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
-    expect(result.next).toBe("sig-99");
+    // The cursor carries one `before` per signature stream, so assert what it resumes rather than
+    // how it is encoded.
+    expect(result.next).toBeDefined();
+    mockGetSignaturesForAddress.mockClear();
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
+      TEST_ADDRESS,
+      expect.objectContaining({ before: "sig-99" }),
+    );
+  });
+
+  // The cursor names the streams still to walk, so a paged sync must not re-read the token accounts.
+  it("discovers the signature streams once, not on every page", async () => {
+    const blockTime = 1700000000;
+    const sigs = Array.from({ length: 100 }, (_, i) => ({
+      signature: `sig-${i}`,
+      slot: 200 - i,
+      blockTime,
+      err: null,
+    }));
+    mockGetSignaturesForAddress.mockResolvedValue(sigs);
+    mockGetParsedTransactions.mockResolvedValue(sigs.map(() => null));
+
+    const first = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
+
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: first.next });
+
+    expect(mockGetParsedTokenAccountsByOwner).toHaveBeenCalledTimes(1);
   });
 
   it("should not set next cursor when result count is less than limit", async () => {
@@ -748,7 +848,13 @@ describe("listOperations", () => {
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
     expect(result.items).toEqual([]);
-    expect(result.next).toBe("sig-99");
+    expect(result.next).toBeDefined();
+    mockGetSignaturesForAddress.mockClear();
+    await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc", cursor: result.next });
+    expect(mockGetSignaturesForAddress).toHaveBeenCalledWith(
+      TEST_ADDRESS,
+      expect.objectContaining({ before: "sig-99" }),
+    );
   });
 
   it("should throw when order is asc", async () => {

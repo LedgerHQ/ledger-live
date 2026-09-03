@@ -38,6 +38,8 @@ import {
   getStakeAccountMinimumBalanceForRentExemption,
 } from "../network/chain/web3";
 import { UserInputType } from "../signer";
+import { withdrawableFromStake } from "../logic";
+import { getStakeAccounts } from "../network/chain/stake-activation/rpc";
 import { createStakeAccountSeed } from "../stakeAccountSeed";
 import type {
   Command,
@@ -70,7 +72,10 @@ export async function craftTransaction(
   }
 
   if (intent.data?.type === "solana") {
-    return craftPrebuiltTransaction(api, intent.data as SolanaTxData, intent.sender, customFees);
+    const data = intent.data as SolanaTxData;
+    if (data.raw) {
+      return craftPrebuiltTransaction(api, { ...data, raw: data.raw }, intent.sender, customFees);
+    }
   }
 
   if (intent.type === "stake.withdraw") {
@@ -119,7 +124,7 @@ export async function craftTransaction(
  */
 async function craftPrebuiltTransaction(
   api: ChainAPI,
-  data: SolanaTxData,
+  data: SolanaTxData & { raw: string },
   sender: string,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -161,17 +166,43 @@ async function craftPrebuiltTransaction(
   };
 }
 
+/**
+ * Read live: withdrawing the synced amount off a grown account leaves a residue under the
+ * rent-exempt reserve, which the stake program rejects. `undefined` if the account is gone.
+ */
+async function liveWithdrawable(
+  api: ChainAPI,
+  intent: StakingTransactionIntent,
+): Promise<number | undefined> {
+  const stakeAccounts = await getStakeAccounts(api, intent.sender);
+  const stakeAccount = stakeAccounts.find(
+    ({ account }) => account.onChainAcc.pubkey.toBase58() === intent.recipient,
+  );
+  if (!stakeAccount) return undefined;
+
+  const { account, activation } = stakeAccount;
+  return Math.max(
+    0,
+    withdrawableFromStake({
+      stakeAccBalance: account.onChainAcc.account.lamports,
+      activation,
+      rentExemptReserve: account.info.meta.rentExemptReserve.toNumber(),
+    }),
+  );
+}
+
 async function craftWithdrawTransaction(
   api: ChainAPI,
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
+  const withdrawable = await liveWithdrawable(api, intent);
   const command: StakeWithdrawCommand = {
     kind: "stake.withdraw",
     authorizedAccAddr: intent.sender,
     stakeAccAddr: intent.recipient,
     toAccAddr: intent.sender,
-    amount: Number(intent.amount),
+    amount: withdrawable ?? Number(intent.amount),
   };
   const instructions = await buildInstructionsForCommand(api, command);
   const recentBlockhash = await api.getLatestBlockhash();
@@ -207,7 +238,7 @@ async function craftCreateStakeAccountFromIntent(
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const seed = createStakeAccountSeed();
+  const seed = stakeAccountSeedOfIntent(intent) ?? createStakeAccountSeed();
   const stakeAccAddress = await getStakeAccountAddressWithSeed({
     fromAddress: intent.sender,
     seed,
@@ -279,7 +310,7 @@ async function craftSplitStakeFromIntent(
     throw new Error("stake.split requires a stake account address");
   }
 
-  const seed = createStakeAccountSeed();
+  const seed = stakeAccountSeedOfIntent(intent) ?? createStakeAccountSeed();
   const command: StakeSplitCommand = {
     kind: "stake.split",
     authorizedAccAddr: intent.sender,
@@ -555,6 +586,11 @@ function resolveNativeTransferCommand(intent: TransactionIntent, memo?: string):
     amount: Number(intent.amount),
     memo,
   };
+}
+
+export function stakeAccountSeedOfIntent(intent: unknown): string | undefined {
+  const data = (intent as { data?: SolanaTxData } | undefined)?.data;
+  return data?.type === "solana" ? data.stakeAccountSeed : undefined;
 }
 
 function getTokenMintAddress(intent: TransactionIntent): string | undefined {

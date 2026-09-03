@@ -27,6 +27,29 @@ import {
 import type { SolanaTokenProgram, Transaction } from "../../types";
 import { DUMMY_SIGNATURE } from "../../utils";
 import { buildVersionedTransaction, craftTransaction } from "../craftTransaction";
+import BigNumber from "bignumber.js";
+import { getStakeAccounts, type StakeAccount } from "../../network/chain/stake-activation/rpc";
+
+/** The slice `liveWithdrawable` reads; inactive unless told otherwise. */
+function stakeAccountFixture({
+  address,
+  lamports,
+  rentExemptReserve,
+  activation = { state: "inactive", active: 0, activating: 0 },
+}: {
+  address: string;
+  lamports: number;
+  rentExemptReserve: number;
+  activation?: { state: string; active: number; activating: number };
+}): StakeAccount {
+  return {
+    account: {
+      onChainAcc: { pubkey: new PublicKey(address), account: { lamports } },
+      info: { meta: { rentExemptReserve: new BigNumber(rentExemptReserve) } },
+    },
+    activation,
+  } as unknown as StakeAccount;
+}
 
 jest.mock("../../network/chain/web3", () => ({
   ...jest.requireActual("../../network/chain/web3"),
@@ -49,6 +72,11 @@ jest.mock("../../network/chain/web3", () => ({
 
 jest.mock("../../stakeAccountSeed", () => ({
   createStakeAccountSeed: jest.fn().mockReturnValue("test-seed-123"),
+}));
+
+// No account resolves by default, so the intent's amount stands.
+jest.mock("../../network/chain/stake-activation/rpc", () => ({
+  getStakeAccounts: jest.fn().mockResolvedValue([]),
 }));
 
 const mockedBuildTransferInstructions = jest.mocked(buildTransferInstructions);
@@ -1088,6 +1116,56 @@ describe("craftTransaction – staking", () => {
           toAccAddr: TEST_ADDRESS,
           amount: 3_000_000_000,
         }),
+      );
+    });
+
+    // Observed on mainnet: the stale figure left 4_507 lamports behind, under the reserve.
+    it("empties an inactive stake account whose lamports grew since the last sync", async () => {
+      jest.mocked(getStakeAccounts).mockResolvedValueOnce([
+        stakeAccountFixture({
+          address: "StakeAccAddr1111111111111111111111111111111",
+          lamports: 24_552_851,
+          rentExemptReserve: 2_282_880,
+        }),
+      ]);
+
+      await craftTransaction(api, {
+        intentType: "transaction",
+        type: "stake.withdraw",
+        sender: TEST_ADDRESS,
+        recipient: "StakeAccAddr1111111111111111111111111111111",
+        amount: 24_548_344n,
+        asset: { type: "native" },
+      } as StakingTransactionIntent);
+
+      expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
+        api,
+        expect.objectContaining({ amount: 24_552_851 }),
+      );
+    });
+
+    it("withdraws only the excess of an active stake account", async () => {
+      jest.mocked(getStakeAccounts).mockResolvedValueOnce([
+        stakeAccountFixture({
+          address: "StakeAccAddr1111111111111111111111111111111",
+          lamports: 24_552_851,
+          rentExemptReserve: 2_282_880,
+          activation: { state: "active", active: 20_000_000, activating: 0 },
+        }),
+      ]);
+
+      await craftTransaction(api, {
+        intentType: "transaction",
+        type: "stake.withdraw",
+        sender: TEST_ADDRESS,
+        recipient: "StakeAccAddr1111111111111111111111111111111",
+        amount: 24_552_851n,
+        asset: { type: "native" },
+      } as StakingTransactionIntent);
+
+      expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
+        api,
+        expect.objectContaining({ amount: 24_552_851 - 2_282_880 - 20_000_000 }),
       );
     });
   });

@@ -30,13 +30,39 @@ export async function listOperations(
   }
 
   const rpcLimit = limit ?? 100;
-  const opts: SignaturesForAddressOptions = { limit: rpcLimit };
+  const before = decodeCursor(cursor, address);
+  // The cursor names the streams that still have pages, so only the first call has to discover them.
+  const activeSources = cursor ? Object.keys(before) : await signatureSources(api, address);
 
-  if (cursor) {
-    opts.before = cursor;
+  const perSource = await Promise.all(
+    activeSources.map(async source => ({
+      source,
+      signatures: await api.getSignaturesForAddress(source, {
+        limit: rpcLimit,
+        ...(before[source] ? { before: before[source] } : {}),
+      } satisfies SignaturesForAddressOptions),
+    })),
+  );
+
+  const signatures: ConfirmedSignatureInfo[] = [];
+  const seen = new Set<string>();
+  const nextCursors: Record<string, string> = {};
+  for (const { source, signatures: sourceSignatures } of perSource) {
+    if (sourceSignatures.length === 0) continue;
+
+    const last = sourceSignatures[sourceSignatures.length - 1];
+    // A stream carries on only while it fills a page and stays above the resume height.
+    if (sourceSignatures.length === rpcLimit && !(minHeight > 0 && last.slot < minHeight)) {
+      nextCursors[source] = last.signature;
+    }
+    // The same transaction reaches several streams -- one we sent names both the wallet and its
+    // token account -- and must yield one operation, not one per stream.
+    for (const signature of sourceSignatures) {
+      if (seen.has(signature.signature)) continue;
+      seen.add(signature.signature);
+      signatures.push(signature);
+    }
   }
-
-  const signatures = await api.getSignaturesForAddress(address, opts);
 
   if (signatures.length === 0) {
     return { items: [], next: undefined };
@@ -61,12 +87,48 @@ export async function listOperations(
     items.push(...nativeOps, ...tokenOps);
   }
 
-  const lastSig = signatures[signatures.length - 1];
-  const hasMore = signatures.length === rpcLimit;
-  const reachedMinHeightBoundary = minHeight > 0 && lastSig.slot < minHeight;
-  const next = hasMore && !reachedMinHeightBoundary ? lastSig.signature : undefined;
+  return { items, next: encodeCursor(nextCursors) };
+}
 
-  return { items, next };
+/**
+ * Every signature stream the account shows up in: the wallet, plus each of its token accounts. An
+ * SPL transfer into an existing token account names neither the recipient wallet nor its fee payer,
+ * so the wallet's own history never sees it -- which is why the legacy bridge queried each token
+ * account separately (`synchronization.ts:100`).
+ */
+async function signatureSources(api: ChainAPI, address: string): Promise<string[]> {
+  const [splTokenAccounts, token2022Accounts] = await Promise.all([
+    api.getParsedTokenAccountsByOwner(address).then(res => res.value),
+    api.getParsedToken2022AccountsByOwner(address).then(res => res.value),
+  ]);
+
+  return [
+    address,
+    ...[...splTokenAccounts, ...token2022Accounts].map(({ pubkey }) => pubkey.toBase58()),
+  ];
+}
+
+/**
+ * One `before` signature per stream. The framework only feeds the cursor back, so its shape is ours
+ * to choose; a bare signature is read as the wallet's, so a cursor from before this existed still
+ * resumes rather than restarting the history.
+ */
+function decodeCursor(cursor: string | undefined, address: string): Record<string, string> {
+  if (!cursor) return {};
+  try {
+    const parsed: unknown = JSON.parse(Buffer.from(cursor, "base64").toString("utf8"));
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as Record<string, string>;
+    }
+  } catch {
+    // Not one of ours: fall through to the bare-signature reading.
+  }
+  return { [address]: cursor };
+}
+
+function encodeCursor(cursors: Record<string, string>): string | undefined {
+  if (Object.keys(cursors).length === 0) return undefined;
+  return Buffer.from(JSON.stringify(cursors)).toString("base64");
 }
 
 /** JSON-RPC batch responses are not order-guaranteed, so pairing by array position is unsafe. */

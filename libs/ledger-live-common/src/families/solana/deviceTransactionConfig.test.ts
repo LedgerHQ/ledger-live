@@ -4,6 +4,7 @@ import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import {
   createStakeAccountTransaction,
   delegateTransaction,
+  splitStakeTransaction,
   undelegateTransaction,
   withdrawTransaction,
 } from "./transactions";
@@ -75,6 +76,20 @@ describe("solana deviceTransactionConfig", () => {
     ]);
   });
 
+  it("names the stake account being opened, as the legacy bridge did", async () => {
+    const fields = await run({
+      ...createStakeAccountTransaction("vote-acc", new BigNumber(1_000_000_000)),
+      stakeAccountRent: new BigNumber(2_282_880),
+      feeParameters: { stakeAccountAddress: "new-stake-acc" },
+    });
+
+    expect(fields[0]).toEqual({
+      type: "address",
+      label: "Delegate from",
+      address: "new-stake-acc",
+    });
+  });
+
   it("falls back to the amount alone when the rent is not known yet", async () => {
     const fields = await run(
       createStakeAccountTransaction("vote-acc", new BigNumber(1_000_000_000)),
@@ -99,6 +114,30 @@ describe("solana deviceTransactionConfig", () => {
   it("describes a deactivation", async () => {
     expect(await run(undelegateTransaction("stake-acc"))).toEqual([
       { type: "address", label: "Deactivate stake", address: "stake-acc" },
+    ]);
+  });
+
+  // The device shows the stake account the split opens; without `stakeAccountAddress` the app
+  // omitted the row and the user confirmed an address never shown.
+  it("describes a split, the account it opens included", async () => {
+    const split = splitStakeTransaction("stake-acc", new BigNumber(1));
+    const fields = await run({
+      ...split,
+      feeParameters: { stakeAccountAddress: "new-stake-acc" },
+    });
+
+    expect(fields).toEqual([
+      { type: "amount", label: "Split stake" },
+      { type: "address", label: "From", address: "stake-acc" },
+      { type: "address", label: "To", address: "new-stake-acc" },
+      { type: "address", label: "Base", address: "owner-addr" },
+      {
+        type: "text",
+        label: "Seed",
+        value: split.familySpecificData.stakeAccountSeed,
+      },
+      { type: "address", label: "Authorized by", address: "owner-addr" },
+      { type: "address", label: "Fee payer", address: "owner-addr" },
     ]);
   });
 

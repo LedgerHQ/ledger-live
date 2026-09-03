@@ -8,6 +8,7 @@ import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { isSolanaStakingTransactionIntent } from "../logic";
+import { stakeAccountSeedOfIntent } from "./craftTransaction";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
@@ -54,8 +55,9 @@ export async function estimateFees(
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   // A partner-built transaction is measured as-is; there is nothing to derive from the intent.
-  if (intent.data?.type === "solana") {
-    const { raw } = intent.data as SolanaTxData;
+  const solanaData = intent.data?.type === "solana" ? (intent.data as SolanaTxData) : undefined;
+  if (solanaData?.raw) {
+    const { raw } = solanaData;
     const message = OnChainTransaction.deserialize(Buffer.from(raw, "base64")).message;
     return { value: BigInt((await api.getFeeForMessage(message)) ?? DEFAULT_TX_FEE) };
   }
@@ -67,19 +69,43 @@ export async function estimateFees(
   // -- it is derived from the chain, so the wallet cannot work it out on its own.
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
     const ownerTokenAccount = await ownerAssociatedTokenAccount(api, intent);
+    // Opening an account costs its rent, which leaves the wallet like the fee does and is an order
+    // of magnitude larger. Approving and revoking open nothing. The legacy bridge charged the same
+    // (`estimateMaxSpendable.ts`, `token.createATA`).
+    const ataRent = intent.type === "token.createATA" ? await ownerAtaRent(api, intent) : 0n;
     return {
-      value: BigInt(fee),
+      value: BigInt(fee) + ataRent,
       ...(ownerTokenAccount ? { parameters: { ownerTokenAccount } } : {}),
     };
   }
 
-  // Creating a stake account costs its rent on top of the delegated amount, and that is the sum the
-  // device shows -- so the wallet has to know it to display the same figure.
-  if (kind === "stake.createAccount") {
+  // Both open a stake account at an address derived from a seed, and the device names it, so the
+  // wallet has to derive the same one to show the same row. Keyed on `intent.type`: a split is
+  // priced as a plain transfer, so it never reaches `kind`.
+  const opensStakeAccount = intent.type === "stake.createAccount" || intent.type === "stake.split";
+  if (opensStakeAccount) {
+    const isCreation = intent.type === "stake.createAccount";
+    const seed = stakeAccountSeedOfIntent(intent);
+    const [stakeAccountAddress, stakeAccountRent, reserve] = await Promise.all([
+      seed ? getStakeAccountAddressWithSeed({ fromAddress: intent.sender, seed }) : undefined,
+      isCreation ? getStakeAccountMinimumBalanceForRentExemption(api) : undefined,
+      isCreation ? unstakeReserve(api, intent.sender) : 0n,
+    ]);
     return {
       value: BigInt(fee),
       parameters: {
-        stakeAccountRent: BigInt(await getStakeAccountMinimumBalanceForRentExemption(api)),
+        // Only a creation pays the rent on top of the delegated amount; a split moves lamports that
+        // already cover it.
+        ...(stakeAccountRent !== undefined
+          ? {
+              stakeAccountRent: BigInt(stakeAccountRent),
+              // Send-max has to leave the future undelegate and withdraw affordable, or a first-time
+              // staker signs away every lamport and cannot unstake. The rent is not held back: it
+              // rides inside the amount, which `craftCreateStakeAccountFromIntent` splits.
+              reserve: BigInt(fee) + reserve,
+            }
+          : {}),
+        ...(stakeAccountAddress ? { stakeAccountAddress } : {}),
       },
     };
   }
@@ -93,6 +119,32 @@ export async function estimateFees(
     value: BigInt(fee) + ataRent,
     ...(transferFee ? { parameters: { transferFee } } : {}),
   };
+}
+
+/**
+ * What the eventual undelegate and withdraw of a stake account will cost. Read from the chain, so a
+ * failure here must not block the flow -- it only makes send-max marginally less generous.
+ */
+export async function unstakeReserve(api: ChainAPI, sender: string): Promise<bigint> {
+  try {
+    const [undelegateFee, withdrawFee] = await Promise.all([
+      estimateTxFee(api, sender, "stake.undelegate"),
+      estimateTxFee(api, sender, "stake.withdraw"),
+    ]);
+    return BigInt(undelegateFee + withdrawFee);
+  } catch {
+    return 0n;
+  }
+}
+
+/** Rent for the associated token account the sender is opening for itself. */
+async function ownerAtaRent(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+): Promise<bigint> {
+  const mint = await getMaybeMintOfIntent(api, intent);
+  if (!mint) return 0n;
+  return BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)));
 }
 
 /**

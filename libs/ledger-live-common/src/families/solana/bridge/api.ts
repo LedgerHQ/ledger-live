@@ -64,9 +64,19 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
  * bridge crafts from the intent and signs a plain transfer in place of the partner's bytes.
  */
 export function buildIntentData(transaction: Record<string, unknown>): TxData {
-  const { raw, templateId } = transaction as { raw?: string; templateId?: string };
-  if (!raw) return { type: "none" };
-  const data: SolanaTxData = { type: "solana", raw, ...(templateId ? { templateId } : {}) };
+  const { raw, templateId, familySpecificData } = transaction as {
+    raw?: string;
+    templateId?: string;
+    familySpecificData?: { stakeAccountSeed?: string };
+  };
+  const { stakeAccountSeed } = familySpecificData ?? {};
+  if (!raw && !stakeAccountSeed) return { type: "none" };
+  const data: SolanaTxData = {
+    type: "solana",
+    ...(raw ? { raw } : {}),
+    ...(templateId ? { templateId } : {}),
+    ...(stakeAccountSeed ? { stakeAccountSeed } : {}),
+  };
   return data;
 }
 

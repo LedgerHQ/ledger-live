@@ -52,6 +52,9 @@ const STAKE_ACC_RENT_EXEMPT = 2_282_880;
 const UNSTAKE_TX_FEE = 5000;
 jest.mock("../estimateFees", () => ({
   estimateTxFee: jest.fn().mockResolvedValue(5000),
+  // The undelegate and the withdraw it stands for, at the fee above; `jest.mock` is hoisted
+  // above the constants, so the figure is inlined.
+  unstakeReserve: jest.fn().mockResolvedValue(10000n),
 }));
 
 jest.mock("../../network/chain/web3", () => ({
@@ -304,6 +307,56 @@ describe("validateIntent", () => {
     expect(result.totalSpent).toBe(1_000_000_000n);
   });
 
+  // Only a live app submits these. Legacy ran the same recipient checks a transfer gets; the
+  // generic bridge had narrowed them to a base58 test.
+  describe("token authority intents", () => {
+    const makeApproveIntent = (overrides?: Partial<TransactionIntent>): TransactionIntent => ({
+      ...makeIntent({ amount: 1000n, ...overrides }),
+      type: "token.approve",
+    });
+
+    it("rejects a mint address as the delegate", async () => {
+      mockedGetMaybeMintAccount.mockResolvedValueOnce(
+        {} as unknown as Awaited<ReturnType<typeof getMaybeMintAccount>>,
+      );
+
+      const result = await validateIntent(makeApproveIntent(), makeBalances(), { value: 5000n });
+
+      expect(result.errors.recipient).toBeInstanceOf(SolanaMintAccountNotAllowed);
+    });
+
+    it("rejects the sender as its own delegate", async () => {
+      const result = await validateIntent(
+        makeApproveIntent({ recipient: SENDER }),
+        makeBalances(),
+        {
+          value: 5000n,
+        },
+      );
+
+      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+    });
+
+    it("requires an amount to approve", async () => {
+      const result = await validateIntent(makeApproveIntent({ amount: 0n }), makeBalances(), {
+        value: 5000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
+    // Revoking names no delegate, so the recipient is not checked -- only the fee is at stake.
+    it("accepts a revoke with no recipient", async () => {
+      const result = await validateIntent(
+        { ...makeIntent({ recipient: "", amount: 0n }), type: "token.revoke" },
+        makeBalances(),
+        { value: 5000n },
+      );
+
+      expect(result.errors).toEqual({});
+    });
+  });
+
   describe("staking intents", () => {
     describe("stake.createAccount", () => {
       function makeStakeIntent(
@@ -328,6 +381,21 @@ describe("validateIntent", () => {
         expect(result.errors).toEqual({});
         expect(result.amount).toBe(1_000_000_000n);
         expect(result.totalSpent).toBe(1_000_000_000n + 5000n);
+      });
+
+      // The seed rides in `data`, which also flags a partner-built payload; only the latter skips
+      // validation, or a delegation would be checked against nothing.
+      it("still validates an intent carrying the stake account seed", async () => {
+        const result = await validateIntent(
+          makeStakeIntent({
+            amount: 100_000_000_000n,
+            data: { type: "solana", stakeAccountSeed: "seed" },
+          } as Partial<StakingTransactionIntent>),
+          makeBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
       });
 
       // Legacy set aside the stake account's rent plus the fees of the eventual undelegate and

@@ -368,8 +368,10 @@ export type SolanaOperationExtraRaw = {
  */
 export interface SolanaTxData extends TxData {
   type: "solana";
-  /** Base64 `VersionedTransaction`. */
-  raw: string;
+  /** Base64 `VersionedTransaction`. Absent when the data only carries the seed below. */
+  raw?: string;
   /** Round-trip carrier for the partner's template id; nothing in coin-solana reads it. */
   templateId?: string;
+  /** Seed the fee estimation drew, so the craft derives the address the wallet displayed. */
+  stakeAccountSeed?: string;
 }
