@@ -23,6 +23,7 @@
     "@devtools/registry": "workspace:*",
     "@devtools/env": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
+    "@features/flow-pay-request": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*"

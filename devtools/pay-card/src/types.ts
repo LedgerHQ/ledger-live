@@ -65,6 +65,14 @@ export interface PayCardToolProps {
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */
   readonly resetPayCardFeatureTourSeen: () => void;
+  /** Whether the user has already dismissed the Request Verify hint. */
+  readonly hasSeenReceiveVerifyHint: boolean;
+  /** Resets the Request Verify hint so it shows again on the next Request. */
+  readonly resetReceiveVerifyHintSeen: () => void;
+  /** Host-only: jump to Portfolio. Omitted when the host cannot navigate. */
+  readonly onNavigateToPortfolio?: () => void;
+  /** Host-only: jump to the Pay tab. Omitted when the host cannot navigate. */
+  readonly onNavigateToPayTab?: () => void;
   /** The Card backend env vars, read live and set from the tool. */
   readonly env: PayCardEnvProps;
 }

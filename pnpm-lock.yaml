@@ -3163,6 +3163,9 @@ importers:
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour
+      '@features/flow-pay-request':
+        specifier: workspace:*
+        version: link:../../features/flow/pay-request
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags

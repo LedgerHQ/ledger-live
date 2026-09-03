@@ -7,6 +7,10 @@ import {
   resetPayCardFeatureTourSeen,
   selectPayCardHasSeenFeatureTour,
 } from "@features/flow-pay-feature-tour/state";
+import {
+  resetReceiveVerifyHintSeen,
+  selectHasSeenReceiveVerifyHint,
+} from "@features/flow-pay-request/state";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -100,9 +104,14 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   );
 
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
+  const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
 
   const resetFeatureTour = useCallback(() => {
     dispatch(resetPayCardFeatureTourSeen());
+  }, [dispatch]);
+
+  const resetVerifyHint = useCallback(() => {
+    dispatch(resetReceiveVerifyHintSeen());
   }, [dispatch]);
 
   const setStepDone = useCallback((id: string, done: boolean) => {
@@ -151,8 +160,18 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       onboarding,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
+      hasSeenReceiveVerifyHint,
+      resetReceiveVerifyHintSeen: resetVerifyHint,
       env,
     }),
-    [flags, onboarding, hasSeenFeatureTour, resetFeatureTour, env],
+    [
+      flags,
+      onboarding,
+      hasSeenFeatureTour,
+      resetFeatureTour,
+      hasSeenReceiveVerifyHint,
+      resetVerifyHint,
+      env,
+    ],
   );
 }
