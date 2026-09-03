@@ -8,6 +8,7 @@ import { useSendHeaderViewModel } from "../../hooks/useSendHeaderViewModel";
 import { useSendFlowData } from "../../context/SendFlowContext";
 
 jest.mock("../../hooks/useSendHeaderViewModel");
+jest.mock("../../hooks/useRecipientInputAutoFocus");
 jest.mock("../../context/SendFlowContext");
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),

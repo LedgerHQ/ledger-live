@@ -12,6 +12,7 @@ import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "./useRecipientScreenView";
+import { useSettleRecipientInputFocus } from "./useSettleRecipientInputFocus";
 
 export type UseRecipientScreenContentViewModelProps = Readonly<{
   account: AccountLike;
@@ -119,6 +120,16 @@ export function useRecipientScreenContentViewModel({
       recipient.showSanctionedBanner ||
       recipient.showBridgeRecipientError ||
       recipient.showBridgeRecipientWarning);
+
+  const hasContent =
+    !recipient.showInitialState ||
+    recipient.isLoading ||
+    recipient.showContactsList ||
+    recipient.showEmptyContactsState ||
+    recipient.featureIntroduction.isOpen ||
+    Boolean(recipient.clipboardAddress);
+
+  useSettleRecipientInputFocus(hasContent);
 
   const keyboardBehavior: KeyboardAvoidingViewProps["behavior"] = shouldUseKeyboardAvoidance(
     Platform.OS,
