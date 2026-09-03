@@ -21,7 +21,7 @@ describe("meaningfulPercentage", () => {
     expect(meaningfulPercentage(100001, 1)).toBeUndefined();
   });
 
-  it("returns the percentage when it exactly equals the threshold minus epsilon", () => {
+  it("returns the percentage when it is one below the threshold", () => {
     expect(meaningfulPercentage(99999, 1)).toBe(99999);
   });
 
