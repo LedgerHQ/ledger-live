@@ -31,11 +31,11 @@ permissions:
 jobs:
   enforce-boundaries:
     name: Enforce Module Boundaries
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 10
     env:
       NODE_OPTIONS: "--max-old-space-size=4096"
-      CI_OS: ubuntu-22.04
+      CI_OS: ledger-wallet-4cpu-aws-public
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

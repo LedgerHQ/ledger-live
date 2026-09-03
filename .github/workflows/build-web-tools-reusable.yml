@@ -63,7 +63,7 @@ jobs:
       id-token: write
       contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:

@@ -39,7 +39,7 @@ permissions:
 jobs:
   build-wallet-cli:
     name: "Build (all platforms)"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 30
     continue-on-error: true
     outputs:
