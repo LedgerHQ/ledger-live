@@ -23,6 +23,7 @@ import DelegationRow from "./Row";
 import { ValidatorImage } from "../StakingFlow/ValidatorRow";
 import { rgba } from "../../../colors";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type Props = Readonly<{
   account: MinaAccount;
@@ -61,6 +62,7 @@ function Delegations({ account }: Props) {
   const unit = useAccountUnit(account);
   const navigation = useNavigation();
   const bridge = useAccountBridge<Transaction>(account, undefined);
+  const stakingUrl = useLocalizedUrl(urls.minaStaking);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isPreparingUndelegate, setIsPreparingUndelegate] = useState(false);
@@ -231,7 +233,7 @@ function Delegations({ account }: Props) {
           title={t("account.delegation.info.title")}
           image={<IlluRewards style={styles.illustration} />}
           description={t("mina.stakeBanner.description")}
-          infoUrl={urls.minaStaking}
+          infoUrl={stakingUrl}
           infoTitle={t("account.delegation.info.title")}
           onPress={onDelegate}
           ctaTitle={t("account.delegation.info.cta")}
