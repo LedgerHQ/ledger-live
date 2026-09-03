@@ -20,6 +20,8 @@ interface ProviderConfig {
   parseAddress?: (value: string) => string;
 }
 
+const toSeconds = (ms: number) => `${ms / 1000}s`;
+
 export class BuyAndSellPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "buy";
 
@@ -113,10 +115,13 @@ export class BuyAndSellPage extends WebViewAppPage {
    */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForWebviewReady(testId: string) {
-    const readyTimeout = 30_000;
-    const maxReloads = 2;
+    const attemptTimeouts = [90_000, 60_000];
+    // Kept short and independent of the attempt budget: the reload is best-effort (its failure
+    // is ignored), so letting it inherit a 90s deadline would only make the worst case
+    // unpredictable without improving recovery.
+    const reloadTimeout = 15_000;
 
-    for (let attempt = 0; ; attempt++) {
+    for (const [attempt, readyTimeout] of attemptTimeouts.entries()) {
       // Re-fetch the webview on every attempt: it can be torn down and recreated
       // while we wait, and reloading a stale handle throws
       // "Target page, context or browser has been closed".
@@ -126,10 +131,14 @@ export class BuyAndSellPage extends WebViewAppPage {
         await expect(selector).toBeVisible({ timeout: readyTimeout });
         return;
       } catch (error) {
-        if (attempt >= maxReloads) {
+        if (attempt === attemptTimeouts.length - 1) {
+          const waits = attemptTimeouts.map(toSeconds).join(" + ");
+          const reloadBudget = reloadTimeout * (attemptTimeouts.length - 1);
+          const worstCase = attemptTimeouts.reduce((total, t) => total + t, reloadBudget);
           throw new Error(
-            `Buy/Sell web app did not render "${testId}" after ${maxReloads + 1} attempts — ` +
-              `webview stuck loading.`,
+            `Buy/Sell web app did not render "${testId}" after ${attemptTimeouts.length} attempts ` +
+              `(${waits} waiting + up to ${toSeconds(reloadBudget)} reloading, ` +
+              `${toSeconds(worstCase)} worst case) — webview stuck loading.`,
             { cause: error },
           );
         }
@@ -139,7 +148,7 @@ export class BuyAndSellPage extends WebViewAppPage {
         // aborting the whole retry loop.
         try {
           const freshWebview = await this.getWebView();
-          await freshWebview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+          await freshWebview.reload({ timeout: reloadTimeout, waitUntil: "domcontentloaded" });
         } catch {
           // Ignore: target likely closed mid-wait; next attempt re-resolves the webview.
         }
