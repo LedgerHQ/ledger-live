@@ -108,7 +108,7 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests (${{ matrix.pool }}cpu, ${{ matrix.jest_max_workers }}w #${{ matrix.repeat }})"
+    name: "Desktop Unit Tests (4cpu #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
@@ -117,15 +117,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pool: [4, 16]
-        jest_max_workers: [2, 3, 4]
         repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-${{ matrix.pool }}cpu-aws-public
-      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
-    runs-on: ledger-wallet-${{ matrix.pool }}cpu-aws-public
+      CI_OS: ledger-wallet-4cpu-aws-public
+      JEST_MAX_WORKERS: "95%"
+    runs-on: [ledger-wallet-4cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
