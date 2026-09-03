@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -10,6 +10,7 @@ import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-commo
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 
 function getConfirmationStatus(
   operation: SendFlowOperationResult,
@@ -36,10 +37,14 @@ export function useConfirmationViewModel() {
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { close, status: statusActions, operation } = useSendFlowActions();
   const { state } = useSendFlowData();
+  const { recipientType, savedContactDuringFlow } = useSendFlowTracking();
   const { account, parentAccount } = state.account;
   const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
+    () => ({
+      ...getSendFlowTrackingProperties(account, parentAccount),
+      recipientType,
+    }),
+    [account, parentAccount, recipientType],
   );
 
   const status = useMemo(
@@ -55,16 +60,19 @@ export function useConfirmationViewModel() {
 
   const transactionError = state.operation.transactionError;
 
-  useMemo(() => {
+  useEffect(() => {
     switch (status) {
       case FLOW_STATUS.SUCCESS:
-        trackPage("Modal send - transaction sent", null, sendFlowTrackingProperties);
+        trackPage("Modal send - transaction sent", null, {
+          ...sendFlowTrackingProperties,
+          savedContactDuringFlow,
+        });
         break;
       case FLOW_STATUS.IDLE:
         trackPage("Modal send - action rejected", null, sendFlowTrackingProperties);
         break;
     }
-  }, [status, sendFlowTrackingProperties]);
+  }, [savedContactDuringFlow, status, sendFlowTrackingProperties]);
 
   const onViewDetails = useCallback(() => {
     close();
@@ -103,8 +111,13 @@ export function useConfirmationViewModel() {
   }, [navigation, operation, statusActions]);
 
   const onClose = useCallback(() => {
+    track("button_clicked", {
+      button: "close",
+      page: "step confirmation",
+      ...sendFlowTrackingProperties,
+    });
     close();
-  }, [close]);
+  }, [close, sendFlowTrackingProperties]);
 
   return {
     status,

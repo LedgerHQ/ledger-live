@@ -10,16 +10,40 @@ import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 
 jest.mock("../../hooks/useSendHeaderModel");
-jest.mock("../../../FlowWizard/FlowWizardContext", () => ({ useFlowWizard: jest.fn() }));
+jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: jest.fn(),
+}));
 jest.mock("../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
   useSendFlowActions: jest.fn(),
 }));
-jest.mock("../../hooks/useAvailableBalance", () => ({ useAvailableBalance: () => "" }));
+jest.mock("../../hooks/useAvailableBalance", () => ({
+  useAvailableBalance: () => "",
+}));
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
-  useSendAmountDisplayMode: () => ({ displayMode: "fiat", setDisplayMode: jest.fn() }),
+  useSendAmountDisplayMode: () => ({
+    displayMode: "fiat",
+    setDisplayMode: jest.fn(),
+  }),
 }));
 jest.mock("../AddressDisclaimer", () => ({ AddressDisclaimer: () => null }));
+jest.mock("../../hooks/useSendHeaderMemo", () => ({
+  useSendHeaderMemo: () => ({
+    currencyId: undefined,
+    hasMemoTypeOptions: false,
+    memo: { value: "", type: undefined },
+    memoTypeOptions: [],
+    onMemoTypeChange: jest.fn(),
+    showMemoValueInput: false,
+    onMemoValueChange: jest.fn(),
+    showSkipMemo: false,
+    skipMemoState: "idle",
+    onSkipMemoRequestConfirm: jest.fn(),
+    onSkipMemoCancelConfirm: jest.fn(),
+    onSkipMemoConfirm: jest.fn(),
+    resetViewState: jest.fn(),
+  }),
+}));
 jest.mock("@ledgerhq/lumen-ui-react", () => ({
   ...jest.requireActual("@ledgerhq/lumen-ui-react"),
   DialogHeader: ({ title }: { title?: string }) => <div>{title}</div>,
@@ -31,8 +55,10 @@ const baseModel = {
   addressInputValue: "0x123456...12345678",
   descriptionText: "Base 1 · $5,969.83",
   handleBack: jest.fn(),
+  handleClose: jest.fn(),
   handleRecipientInputClick: jest.fn(),
   handleRecipientInputChange: jest.fn(),
+  handleRecipientPaste: jest.fn(),
   handleQrCodeClick: jest.fn(),
   handleScanPicked: jest.fn(),
   isScannerOpen: false,
@@ -114,7 +140,10 @@ describe("SendHeader", () => {
       currentStepConfig: { addressInput: true },
       navigation: { goToNextStep: jest.fn() },
     });
-    mockedUseSendHeaderModel.mockReturnValue({ ...baseModel, addressInputValue: "" });
+    mockedUseSendHeaderModel.mockReturnValue({
+      ...baseModel,
+      addressInputValue: "",
+    });
 
     render(<SendHeader />);
 

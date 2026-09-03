@@ -12,7 +12,10 @@ jest.mock("@ledgerhq/crypto-icons", () => {
     CryptoIcon: jest.fn(({ ledgerId, network, ticker }) =>
       React.createElement(
         "span",
-        { "data-network": network ?? "", "data-testid": `crypto-icon-${ledgerId}` },
+        {
+          "data-network": network ?? "",
+          "data-testid": `crypto-icon-${ledgerId}`,
+        },
         ticker,
       ),
     ),
@@ -59,7 +62,7 @@ describe("RecipientContactAddressSelection", () => {
     expect(screen.getByTestId("send-recipient-contact-address-address-main")).toHaveFocus();
 
     await user.click(screen.getByTestId("send-recipient-contact-address-address-coinbase"));
-    expect(onAddressSelect).toHaveBeenCalledWith("0xabcdef01234567890abcdef1234567890abcdef0");
+    expect(onAddressSelect).toHaveBeenCalledWith(contact.addresses[1], 2);
   });
 
   it("should derive each address icon from the address currency and omit a redundant network badge", () => {

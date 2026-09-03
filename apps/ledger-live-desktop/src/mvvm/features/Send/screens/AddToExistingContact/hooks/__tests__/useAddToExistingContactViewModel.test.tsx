@@ -33,11 +33,23 @@ jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),
   createMockContactDeviceIntentsPort: () => ({ registerExternalAddress }),
   useContacts: () => [me, ada],
+  useContactsFeature: () => ({ isEnabled: true }),
   useContactsMeContact: () => me,
 }));
 
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
+}));
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    inputMethod: "manual",
+    resultType: null,
+    recipientType: null,
+    savedContactDuringFlow: false,
+    setInputMethod: jest.fn(),
+    setRecipientResolution: jest.fn(),
+    markContactSaved: jest.fn(),
+  })),
 }));
 
 jest.mock("LLD/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
@@ -72,7 +84,9 @@ describe("useAddToExistingContactViewModel", () => {
   });
 
   it("should start the name address flow after selecting a contact", async () => {
-    const { result } = renderHook(() => useAddToExistingContactViewModel(), { wrapper });
+    const { result } = renderHook(() => useAddToExistingContactViewModel(), {
+      wrapper,
+    });
 
     await act(async () => {
       result.current.onSelectContact(ada.id);
