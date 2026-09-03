@@ -61,11 +61,11 @@ catalogs:
       specifier: 0.4.0
       version: 0.4.0
     '@ledgerhq/device-management-kit':
-      specifier: 1.9.0
-      version: 1.9.0
+      specifier: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
+      version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
     '@ledgerhq/device-mockserver-client':
-      specifier: 0.0.0-develop-20260828024102
-      version: 0.0.0-develop-20260828024102
+      specifier: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
+      version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
     '@ledgerhq/device-signer-kit-aleo':
       specifier: 0.4.0
       version: 0.4.0
@@ -91,8 +91,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@ledgerhq/device-transport-kit-mockserver':
-      specifier: 0.0.0-develop-20260828024102
-      version: 0.0.0-develop-20260828024102
+      specifier: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
+      version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.2
       version: 1.3.2
@@ -1055,16 +1055,16 @@ importers:
         version: link:../../libs/coin-modules/coin-zcash
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.27)(@ledgerhq/lumen-ui-react@0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -1882,7 +1882,7 @@ importers:
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.27)(@ledgerhq/lumen-ui-rnative@0.1.59(95a5529a40b265321b5bf1b94e2a2591))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -1891,13 +1891,13 @@ importers:
         version: link:../../libs/device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
+        version: 1.0.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -2672,13 +2672,13 @@ importers:
         version: link:../../libs/coin-modules/coin-solana
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-exchange
@@ -2882,10 +2882,10 @@ importers:
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.27)(@ledgerhq/lumen-ui-react@0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.4(@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
+        version: 1.2.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
@@ -7635,10 +7635,10 @@ importers:
         version: link:../feature-flags
       '@ledgerhq/device-contacts-kit':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.4.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
@@ -7651,7 +7651,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.56(@ledgerhq/lumen-design-core@0.1.27)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -7879,7 +7879,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8072,7 +8072,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12753,16 +12753,16 @@ importers:
         version: link:../coin-modules/coin-zcash
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -13937,7 +13937,7 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -15045,16 +15045,16 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-mockserver-client':
         specifier: 'catalog:'
-        version: 0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-mockserver':
         specifier: 'catalog:'
-        version: 0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.2.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15121,10 +15121,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 1.3.2(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -15149,7 +15149,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 1.0.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -15203,10 +15203,10 @@ importers:
     dependencies:
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/dmk-ledger-wallet':
         specifier: 'catalog:'
-        version: 0.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15234,7 +15234,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -15282,10 +15282,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 1.2.1(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15294,7 +15294,7 @@ importers:
         version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -15355,7 +15355,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -15385,7 +15385,7 @@ importers:
         version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -15560,13 +15560,13 @@ importers:
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15710,13 +15710,13 @@ importers:
         version: link:../concordium-core
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
-        version: 0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -15756,10 +15756,10 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-cosmos':
         specifier: 'catalog:'
-        version: 1.0.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.0.1(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
@@ -15811,13 +15811,13 @@ importers:
     dependencies:
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
@@ -15872,10 +15872,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -15921,10 +15921,10 @@ importers:
         version: link:../coin-modules/coin-internet_computer
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-icp':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.2.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -15970,13 +15970,13 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/context-module':
         specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.13.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(@typescript/typescript6@6.0.2)
+        version: 1.13.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(@typescript/typescript6@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -16055,10 +16055,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-xrp':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.2.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@ledgerhq/hw-app-xrp':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
@@ -16101,10 +16101,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
         specifier: 0.6.0
-        version: 0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.6.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -22065,8 +22065,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.9.0
 
-  '@ledgerhq/device-management-kit@1.9.0':
-    resolution: {integrity: sha512-M9M8Uy8c6diJ0pdK/85oP1u2+S6iO8WQcQ8V5FCWu/LyjXKrmTakQ9GRwWYNOp79nbcO+oXcLxJpvZtvpgquIg==}
+  '@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701':
+    resolution: {integrity: sha512-Z7BK/6StGHM9fWHhUOtKBUvXm4c45jqcOmkRIVuNrX5LMqG8aS4Nxs9LJvOIdpriQMr6SrDe8hG0RYJW2+8y1Q==}
     peerDependencies:
       rxjs: 7.8.2
 
@@ -22074,6 +22074,11 @@ packages:
     resolution: {integrity: sha512-BwgN7meOBCKNX5yb5qAZiTcNIEhO2Q4YC/xHYserRHaMf9Sq/m9zD/urHmCrkL06dBfd8sOu4Nn+OK0J9QnssQ==}
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.0.0-develop-20260828024102
+
+  '@ledgerhq/device-mockserver-client@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701':
+    resolution: {integrity: sha512-fGaqKoofff74YXaYCVYp1qkKHrAhopHziECYAO72hdKTbNXcbDc70a9yMpirZ9j7M6ITVlY+NTAoQyxqjvHfkw==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
 
   '@ledgerhq/device-signer-kit-aleo@0.4.0':
     resolution: {integrity: sha512-GeWvln9TY/EAVxnxmMTPITxOstZLD5tiwupFih2avIayoeYa3Q8Gh8gkW77wd/Sd9oQLmwLQByHdcwRmMcSLrQ==}
@@ -22123,10 +22128,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.1
 
-  '@ledgerhq/device-transport-kit-mockserver@0.0.0-develop-20260828024102':
-    resolution: {integrity: sha512-bjKi7AxkFFjSWgwrjQGSPUkbd4bXwXSQUqwvllUQK9K2MecPi4UIAugkbrSGBKWgoP9r49qup1zHJojngC8w1w==}
+  '@ledgerhq/device-transport-kit-mockserver@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701':
+    resolution: {integrity: sha512-m0viLYU/HkGY85xZKNzcuCjdV+JC4VlLHCdxZo5UEyBqcn2KMyzPQbnhkpD9r8tUxAxtBC0utuzH3KdkexJeag==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20260828024102
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
       rxjs: 7.8.2
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
@@ -47419,9 +47424,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       bs58: 6.0.0
       crypto-js: 4.2.0
       ethers: 6.15.0
@@ -47488,17 +47493,17 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
-  '@ledgerhq/device-contacts-kit@0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-contacts-kit@0.4.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-management-kit@1.9.0':
+  '@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47514,7 +47519,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)':
+  '@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47531,7 +47536,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)':
+  '@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47548,46 +47553,51 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-mockserver-client@0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-mockserver-client@0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       purify-ts: 2.1.0
 
-  '@ledgerhq/device-signer-kit-aleo@0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-mockserver-client@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      purify-ts: 2.1.0
+
+  '@ledgerhq/device-signer-kit-aleo@0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -47598,11 +47608,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -47613,11 +47623,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -47626,20 +47636,20 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-icp@0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-icp@0.2.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-solana@1.13.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(@typescript/typescript6@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@1.13.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(@typescript/typescript6@6.0.2)':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@solana/web3.js': 1.98.4(@typescript/typescript6@6.0.2)
       bs58: 6.0.0
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -47654,36 +47664,36 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@noble/hashes': 1.8.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-transport-kit-mockserver@0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-mockserver@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/device-mockserver-client': 0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/device-mockserver-client': 0.0.0-develop-20260828024102(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.8
       purify-ts: 2.1.0
@@ -47692,51 +47702,51 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@1.2.1(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@sentry/minimal': 6.19.7
-      purify-ts: 2.1.0
-      rxjs: 7.8.2
-      uuid: 11.0.3
-
-  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/dmk-ledger-wallet@0.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@sentry/minimal': 6.19.7
+      purify-ts: 2.1.0
+      rxjs: 7.8.2
+      uuid: 11.0.3
+
+  '@ledgerhq/dmk-ledger-wallet@0.5.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))
       pako: 2.1.0
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -48184,24 +48194,24 @@ snapshots:
       react: 19.1.4
       tailwind-merge: 2.6.0
 
-  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/signer-utils@1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
 
   '@ledgerhq/wallet-api-client-react@1.4.34(@ton/crypto@3.3.0)(react@19.1.4)':

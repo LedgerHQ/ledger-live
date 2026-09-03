@@ -31,7 +31,7 @@ catalog:
   "@ledgerhq/context-module": 2.5.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-contacts-kit": 0.4.0
-  "@ledgerhq/device-management-kit": 1.9.0
+  "@ledgerhq/device-management-kit": 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
   "@ledgerhq/dmk-ledger-wallet": 0.5.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.5.0
@@ -43,8 +43,8 @@ catalog:
   "@ledgerhq/device-signer-kit-xrp": 0.2.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
-  "@ledgerhq/device-mockserver-client": 0.0.0-develop-20260828024102
-  "@ledgerhq/device-transport-kit-mockserver": 0.0.0-develop-20260828024102
+  "@ledgerhq/device-mockserver-client": 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
+  "@ledgerhq/device-transport-kit-mockserver": 0.0.0-feat-no-issue-mock-server-configuration-ui-20260903093701
   "@ledgerhq/device-transport-kit-speculos": 1.2.1
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
