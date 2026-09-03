@@ -4,6 +4,7 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -11,15 +12,18 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { screen, track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendMemoReset } from "../../../context/SendMemoResetContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getRecipientResolution } from "../../../utils/contactTracking";
+import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -29,7 +33,12 @@ type UseRecipientScreenViewProps = Readonly<{
   parentAccount?: Account | null;
   transaction?: Transaction | null;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -41,7 +50,7 @@ export function useRecipientScreenView({
   onAddressSelected,
   recipientSupportsDomain,
 }: UseRecipientScreenViewProps) {
-  const { recipientSearch } = useSendFlowData();
+  const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
   const {
     isEnabled: isContactsFeatureEnabled,
@@ -49,18 +58,26 @@ export function useRecipientScreenView({
     excludedCurrencyIds,
   } = useContactsFeature("mobile");
   const { selectedContact } = useRecipientContactSelection();
-  const { inputMethod, setInputMethod, setRecipientResolution, resetRecipientResolution } =
-    useSendFlowTracking();
+  const {
+    inputMethod,
+    setInputMethod,
+    setRecipientResolution,
+    resetRecipientResolution,
+  } = useSendFlowTracking();
+  const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
+  const { markMemoSkipped } = useSendMemoReset();
+  const [isSkipMemoConfirmationOpen, setIsSkipMemoConfirmationOpen] =
+    useState(false);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(
     eligibleAddressFamilies,
     currency,
-    excludedCurrencyIds,
+    excludedCurrencyIds
   );
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
-    [account, parentAccount],
+    [account, parentAccount]
   );
 
   const { result, isLoading } = useAddressValidation({
@@ -76,7 +93,7 @@ export function useRecipientScreenView({
 
   const contactsOnNetwork = useMemo(
     () => filterContactsByNetwork(contacts, currency.id),
-    [contacts, currency.id],
+    [contacts, currency.id]
   );
   const hasSearchValue = recipientSearch.value.length > 0;
   const contactSearchResult = useMemo(() => {
@@ -90,22 +107,38 @@ export function useRecipientScreenView({
     }
 
     return contactsOnNetwork.find(
-      contact =>
-        contact.addresses.length > 1 && contact.name.trim().toLowerCase() === normalizedSearchValue,
+      (contact) =>
+        contact.addresses.length > 1 &&
+        contact.name.trim().toLowerCase() === normalizedSearchValue
     );
-  }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
+  }, [
+    contactsOnNetwork,
+    hasAddressBook,
+    isContactsFeatureEnabled,
+    recipientSearch.value,
+  ]);
   const showContactSearchResult =
-    hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;
+    hasSearchValue &&
+    selectedContact === undefined &&
+    contactSearchResult !== undefined;
   const showInitialState = !hasSearchValue && selectedContact === undefined;
   const showContactsList =
-    showInitialState && isContactsFeatureEnabled && hasAddressBook && contactsOnNetwork.length > 0;
+    showInitialState &&
+    isContactsFeatureEnabled &&
+    hasAddressBook &&
+    contactsOnNetwork.length > 0;
   const showEmptyContactsState = useMemo(() => {
     if (!showInitialState || !isContactsFeatureEnabled || !hasAddressBook) {
       return false;
     }
 
     return contactsOnNetwork.length === 0;
-  }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
+  }, [
+    contactsOnNetwork.length,
+    hasAddressBook,
+    isContactsFeatureEnabled,
+    showInitialState,
+  ]);
 
   const { clipboardAddress } = useClipboardRecipient({
     enabled: showInitialState,
@@ -118,8 +151,13 @@ export function useRecipientScreenView({
   });
 
   const recipientResolution = useMemo(
-    () => getRecipientResolution(recipientSearch.value, result, showContactSearchResult),
-    [recipientSearch.value, result, showContactSearchResult],
+    () =>
+      getRecipientResolution(
+        recipientSearch.value,
+        result,
+        showContactSearchResult
+      ),
+    [recipientSearch.value, result, showContactSearchResult]
   );
   const trackedResolutionRef = useRef("");
   useEffect(() => {
@@ -150,7 +188,10 @@ export function useRecipientScreenView({
       queryLength: recipientSearch.value.length,
       addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
     });
-    setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
+    setRecipientResolution(
+      recipientResolution.resultType,
+      recipientResolution.recipientType
+    );
   }, [
     hasSearchValue,
     inputMethod,
@@ -190,14 +231,56 @@ export function useRecipientScreenView({
       });
       recipientSearch.setValue(clipboardAddress);
     }
-  }, [clipboardAddress, recipientSearch, sendFlowTrackingProperties, setInputMethod]);
+  }, [
+    clipboardAddress,
+    recipientSearch,
+    sendFlowTrackingProperties,
+    setInputMethod,
+  ]);
+
+  const hasFilledMemo = useMemo(() => {
+    const memo = state.recipient?.memo;
+    if (!memo) return false;
+    if (memo.type === "NO_MEMO") return true;
+    return memo.value.length > 0;
+  }, [state.recipient?.memo]);
+
+  const closeSkipMemoConfirmation = useCallback(() => {
+    setIsSkipMemoConfirmationOpen(false);
+  }, []);
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      const addressRequiresMemo = sendFeatures.hasMemoForRecipient(
+        currency,
+        address
+      );
+      if (addressRequiresMemo && !hasFilledMemo) {
+        if (doNotAskAgainSkipMemo) {
+          committedRecipientRef.current = true;
+          markMemoSkipped();
+          onAddressSelected(address, ensName, true, {
+            value: "",
+            type: "NO_MEMO",
+          });
+          return;
+        }
+
+        onAddressSelected(address, ensName, false);
+        setIsSkipMemoConfirmationOpen(true);
+        return;
+      }
+
       committedRecipientRef.current = true;
-      onAddressSelected(address, ensName);
+      onAddressSelected(address, ensName, true);
     },
-    [onAddressSelected],
+    [
+      currency,
+      doNotAskAgainSkipMemo,
+      hasFilledMemo,
+      markMemoSkipped,
+      onAddressSelected,
+    ]
   );
 
   // The picker owns the contact being shown and the row order the user actually sees,
@@ -208,8 +291,8 @@ export function useRecipientScreenView({
     (address: ContactAddress) => {
       const pickedContact = pickerRef.current?.contact;
       const rowIndex = (pickerRef.current?.groups ?? [])
-        .flatMap(group => group.rows)
-        .findIndex(row => row.addressId === address.id);
+        .flatMap((group) => group.rows)
+        .findIndex((row) => row.addressId === address.id);
       track("button_clicked", {
         button: "contact address",
         page: "select contact address",
@@ -221,7 +304,7 @@ export function useRecipientScreenView({
       });
       setRecipientResolution(
         pickedContact?.isMe ? "my account" : "contact address match",
-        pickedContact?.isMe ? "my account" : "contact",
+        pickedContact?.isMe ? "my account" : "contact"
       );
       handleAddressSelect(address.address);
     },
@@ -230,7 +313,7 @@ export function useRecipientScreenView({
       mainAccount.currency.id,
       sendFlowTrackingProperties,
       setRecipientResolution,
-    ],
+    ]
   );
   const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
     onSelectAddress: handleContactAddressSelect,
@@ -253,7 +336,7 @@ export function useRecipientScreenView({
         myContact: contact.isMe,
       });
     },
-    [openPicker, sendFlowTrackingProperties],
+    [openPicker, sendFlowTrackingProperties]
   );
 
   const handleUnsupportedNetwork = useCallback(() => {
@@ -289,7 +372,8 @@ export function useRecipientScreenView({
     recipientSupportsDomain,
   });
 
-  const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
+  const shouldHideRegularSearchState =
+    showContactSearchResult || selectedContact !== undefined;
 
   return {
     searchValue: recipientSearch.value,
@@ -313,20 +397,28 @@ export function useRecipientScreenView({
     handleUnsupportedNetwork,
     handleDismissUnsupportedNetwork,
     recipientResolution,
+    isSkipMemoConfirmationOpen,
+    closeSkipMemoConfirmation,
     isContactsFeatureEnabled,
     featureIntroduction,
     ...searchState,
-    showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
-    showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,
+    showSearchResults:
+      !shouldHideRegularSearchState && searchState.showSearchResults,
+    showMatchedAddress:
+      !shouldHideRegularSearchState && searchState.showMatchedAddress,
     showAddressValidationError:
       !shouldHideRegularSearchState && searchState.showAddressValidationError,
     showEmptyState: !shouldHideRegularSearchState && searchState.showEmptyState,
-    showBridgeSenderError: !shouldHideRegularSearchState && searchState.showBridgeSenderError,
-    showSanctionedBanner: !shouldHideRegularSearchState && searchState.showSanctionedBanner,
-    showBridgeRecipientError: !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
+    showBridgeSenderError:
+      !shouldHideRegularSearchState && searchState.showBridgeSenderError,
+    showSanctionedBanner:
+      !shouldHideRegularSearchState && searchState.showSanctionedBanner,
+    showBridgeRecipientError:
+      !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
     showBridgeRecipientWarning:
       !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
-    isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
+    isAddressComplete:
+      !shouldHideRegularSearchState && searchState.isAddressComplete,
     isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
   };
 }
