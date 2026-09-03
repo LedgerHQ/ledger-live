@@ -4,6 +4,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
+import { localeSelector } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 
 export type PerpsReviewDetailItem = Readonly<{
@@ -38,6 +39,7 @@ export function usePerpsReviewViewModel({
 }: PerpsReviewProps): PerpsReviewViewModel {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
+  const locale = useSelector(localeSelector);
 
   const sentUnit = getAccountCurrency(depositAccount).units[0];
   const receivedUnit = getAccountCurrency(receiverAccount).units[0];
@@ -46,16 +48,18 @@ export function usePerpsReviewViewModel({
     () =>
       formatCurrencyUnit(sentUnit, parseCurrencyUnit(sentUnit, amountSent), {
         showCode: true,
+        locale,
       }),
-    [amountSent, sentUnit],
+    [amountSent, sentUnit, locale],
   );
 
   const formattedAmountReceived = useMemo(
     () =>
       formatCurrencyUnit(receivedUnit, parseCurrencyUnit(receivedUnit, amountTo), {
         showCode: true,
+        locale,
       }),
-    [amountTo, receivedUnit],
+    [amountTo, receivedUnit, locale],
   );
 
   const approximateAmountReceived = useMemo(
