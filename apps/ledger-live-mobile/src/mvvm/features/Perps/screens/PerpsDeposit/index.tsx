@@ -2,7 +2,9 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useTranslation } from "~/context/Locale";
+import { PERPS_DEPOSIT_PROVIDER_ID } from "../../constants/depositFunding";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
@@ -45,11 +47,12 @@ function AmountMessage({
   depositAmount,
 }: Pick<PerpsDepositViewModel, "statusError" | "depositAmount">) {
   const { t } = useTranslation();
+  const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
   if (statusError) {
     return (
       <Text typography="body3" lx={{ color: "error" }} testID="perps-deposit-form-error">
-        {t(statusError.labelKey)}
+        {t(statusError.labelKey, { provider })}
       </Text>
     );
   }
@@ -57,7 +60,7 @@ function AmountMessage({
   if (depositAmount > 0) {
     return (
       <Text typography="body3" lx={{ color: "base" }}>
-        {t("perpsDeposit.inputSubText")}
+        {t("perpsDeposit.inputSubText", { provider })}
       </Text>
     );
   }
