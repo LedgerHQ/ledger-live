@@ -108,18 +108,24 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests"
+    name: "Desktop Unit Tests (v8-pool ${{ matrix.v8_pool }} #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 10
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        v8_pool: ["default", "2"]
+        repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
+      CI_OS: ledger-wallet-16cpu-aws-public
       JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+      V8_POOL: ${{ matrix.v8_pool }}
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -158,6 +164,8 @@ jobs:
           CPUS="$(nproc 2>/dev/null || echo "?")"
           echo "::group::Jest CI metrics (desktop coverage)"
           echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e 'const os=require("os");console.log("available_parallelism="+(os.availableParallelism?os.availableParallelism():"n/a")+" os_cpus_length="+os.cpus().length)'
+          echo "cgroup_cpu_max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null || echo none)"
           node -e '
             const os = require("os");
             const n = os.cpus().length;
@@ -173,17 +181,23 @@ jobs:
             console.log("effective_max_workers_estimate=" + m);
           '
           echo "::endgroup::"
+          # test:jest:coverage is `NODE_OPTIONS=--max-old-space-size=8192 jest --ci --coverage`, and that
+          # assignment replaces whatever the workflow exports. Reproduce it verbatim so the v8 flag is the
+          # only difference between arms.
+          V8_FLAG=""
+          if [ "${V8_POOL}" != "default" ]; then V8_FLAG=" --v8-pool-size=${V8_POOL}"; fi
+          echo "v8_pool=${V8_POOL} effective_node_options=--max-old-space-size=8192${V8_FLAG}"
           START_TS=$(date +%s)
-          pnpm desktop test:jest:coverage
+          (cd apps/ledger-live-desktop && NODE_OPTIONS="--max-old-space-size=8192${V8_FLAG}" pnpm exec jest --ci --coverage)
           END_TS=$(date +%s)
-          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-} v8_pool=${V8_POOL}"
 
       - name: Upload unit test coverage
         id: generate_coverage
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: coverage-desktop
+          name: coverage-desktop-${{ strategy.job-index }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   report:
