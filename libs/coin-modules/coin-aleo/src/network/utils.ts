@@ -8,6 +8,7 @@ import {
   DEFAULT_TOKENS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
+  TRANSACTION_TYPE,
 } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type {
@@ -28,7 +29,9 @@ import type {
 import {
   hasPublicAddress,
   findTransferArguments,
+  isAleoAddressPlaintext,
   isParsableTransferFunction,
+  normalizeAleoPlaintext,
   parseAmount,
   parseMicrocredits,
   toStakingPosition,
@@ -452,6 +455,51 @@ function getRecordTransition(
 
 function getInputValue(input: AleoTransition["inputs"][number]): string | null {
   return "value" in input && input.value ? input.value : null;
+}
+
+/**
+ * Reads the validator and bonded amount of every `bond_public` transaction in `transactions`,
+ * keyed by transaction id; a transaction whose transition cannot be read is simply absent.
+ *
+ * The explorer's per-address listing blanks both sides and reports `amount: 0` for every staking
+ * call, so they have to be read back from the transaction. Unlike a transfer these are plain
+ * public inputs of a fixed signature — `bond_public(validator, withdrawal, amount)` — so they are
+ * taken positionally and no view key is involved.
+ */
+export async function resolveBondArguments({
+  config,
+  transactions,
+}: {
+  config: AleoCoinConfig;
+  transactions: AleoPublicTransaction[];
+}): Promise<Map<string, { validator: string; amount: BigNumber }>> {
+  const resolved = new Map<string, { validator: string; amount: BigNumber }>();
+
+  await promiseAllBatched(4, transactions, async tx => {
+    const transactionId = tx.transaction_id;
+    const { execution } = await apiClient.getTransactionById(config, transactionId);
+    // A staking call may be wrapped by another program (Pondo and friends), so match the
+    // credits.aleo transition rather than trusting position in the transition list.
+    const transition = execution?.transitions.find(
+      ts => ts.program === PROGRAM_ID.CREDITS && ts.function === TRANSACTION_TYPE.BOND_PUBLIC,
+    );
+    if (!transition) return;
+
+    const validator = getInputValue(transition.inputs[0]);
+    const amount = getInputValue(transition.inputs[2]);
+
+    if (!validator || !amount || !isAleoAddressPlaintext(validator)) {
+      log("aleo/sync", `resolveBondArguments: unreadable bond_public inputs for ${transactionId}`);
+      return;
+    }
+
+    resolved.set(transactionId, {
+      validator: normalizeAleoPlaintext(validator),
+      amount: parseAmount(amount),
+    });
+  });
+
+  return resolved;
 }
 
 /**
