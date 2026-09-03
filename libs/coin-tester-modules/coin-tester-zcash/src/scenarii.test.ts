@@ -10,7 +10,12 @@ import { scenarioZcash } from "./scenarii/zcash";
 import { killRegtestNode } from "./regtestNode";
 
 global.console = console;
-jest.setTimeout(1_000_000);
+// zaino has no published image -- its own docker-compose service builds it from
+// source on every run (cargo install, see docker-compose.yml's own comment), which
+// on a cold CI cache can take well past this file's previous 1_000_000ms (16.7 min)
+// budget before the stack even reports healthy (confirmed: ~25 min on a cold run).
+// Matches coin-tester-stacks' own 50-minute budget for a similarly build-heavy stack.
+jest.setTimeout(50 * 60 * 1000);
 
 describe("Zcash Deterministic Tester", () => {
   it("scenario Zcash", async () => {
