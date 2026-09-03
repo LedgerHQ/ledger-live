@@ -9267,7 +9267,11 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
       "stakedBalance": "Staked",
-      "stakedBalanceTooltip": "Balance that is bonded, unbonding, or ready to be claimed",
+      "stakedBalanceTooltip": "Balance that is bonded to a validator and earning rewards",
+      "unstakingBalance": "Unstaking",
+      "unstakingBalanceTooltip": "Balance that is unbonding and not yet claimable",
+      "claimableBalance": "Claimable",
+      "claimableBalanceTooltip": "Balance that has finished unbonding and can be claimed back to your available balance",
       "syncButton": {
         "startSync": "Start sync",
         "stopSync": "Stop sync",
@@ -9281,12 +9285,36 @@
         "status": "Status",
         "validator": "Validator",
         "amount": "Amount",
+        "staked": "Staked",
+        "rate": "Est. rewards rate",
+        "completion": "Completion",
+        "source": "Source",
+        "estimatedRate": "{{rate}}% est.",
+        "unknownValidator": "Unknown validator",
         "manage": "Manage"
       },
       "status": {
-        "staked": "Staked",
-        "unstaking": "Unstaking",
-        "claimable": "Claimable"
+        "earningTooltip": "This position is earning rewards."
+      },
+      "nonEarning": {
+        "belowCommitteeMinimum": "This validator holds less than the 10,000,000 ALEO committee minimum, so it earns no rewards and neither do you.",
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again."
+      },
+      "unstaking": {
+        "header": "Unstaking",
+        "headerTooltip": "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "source": "Aleo",
+        "sourceTooltip": "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip": "Still unbonding - not yet claimable.",
+        "claimableTooltip": "Unbonding is complete. You can claim these funds.",
+        "settling": "Almost there…",
+        "settlingTooltip": "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending": "Claiming…",
+        "claimPendingTooltip": "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending": "Unstaking…",
+        "unbondPendingTooltip": "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
       },
       "unstake": "Unstake",
       "claim": "Claim",
@@ -9301,6 +9329,13 @@
       "type": {
         "public": "Public",
         "private": "Private"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
       }
     },
     "operationTypes": {
@@ -9344,7 +9379,7 @@
           },
           "amount": {
             "title": "Amount",
-            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked — convert your private balance to public first if you want to stake it."
+            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it."
           },
           "connectDevice": {
             "title": "Device",
@@ -9376,7 +9411,9 @@
       "claim": {
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
-      }
+      },
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingTooltip": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through."
     },
     "unbond": {
       "flow": {

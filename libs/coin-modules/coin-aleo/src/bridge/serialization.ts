@@ -40,9 +40,6 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     ...(typeof resources.hasMigratedPrivateTokens === "boolean" && {
       hasMigratedPrivateTokens: resources.hasMigratedPrivateTokens,
     }),
-    ...(typeof resources.hasBackfilledStakingSenders === "boolean" && {
-      hasBackfilledStakingSenders: resources.hasBackfilledStakingSenders,
-    }),
   };
 }
 
@@ -66,9 +63,6 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     }),
     ...(typeof rawResources.hasMigratedPrivateTokens === "boolean" && {
       hasMigratedPrivateTokens: rawResources.hasMigratedPrivateTokens,
-    }),
-    ...(typeof rawResources.hasBackfilledStakingSenders === "boolean" && {
-      hasBackfilledStakingSenders: rawResources.hasBackfilledStakingSenders,
     }),
   };
 }
@@ -130,6 +124,10 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
     ...(extra.patched !== undefined && { patched: extra.patched }),
     ...(extra.programId !== undefined && { programId: extra.programId }),
     ...(extra.transitionId !== undefined && { transitionId: extra.transitionId }),
+    ...(extra.validator !== undefined && { validator: extra.validator }),
+    // toFixed, not toString: BigNumber switches to exponential notation above 1e21, which has no
+    // business being written into persisted state.
+    ...(extra.stakedAmount !== undefined && { stakedAmount: extra.stakedAmount.toFixed() }),
   };
 
   return extraRaw;
@@ -146,6 +144,10 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
     ...(extraRaw.patched !== undefined && { patched: extraRaw.patched }),
     ...(extraRaw.programId !== undefined && { programId: extraRaw.programId }),
     ...(extraRaw.transitionId !== undefined && { transitionId: extraRaw.transitionId }),
+    ...(extraRaw.validator !== undefined && { validator: extraRaw.validator }),
+    ...(extraRaw.stakedAmount !== undefined && {
+      stakedAmount: new BigNumber(extraRaw.stakedAmount),
+    }),
   };
 
   return extra;

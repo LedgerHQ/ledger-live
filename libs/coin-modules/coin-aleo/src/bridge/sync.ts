@@ -18,7 +18,7 @@ import { AleoApiConfigurationResetError } from "../errors";
 import { lastBlock } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
 import {
-  backfillStakingSenders,
+  stripStakingCounterparties,
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
@@ -115,14 +115,9 @@ export async function performPublicSync(
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOpsRaw] = splitPrivateAndPublicOperations(allOldOperations);
 
-  // One-time cache repair: only accounts synced before the resolveSenderAddress fallback
-  // existed can have blank-sender staking ops cached, so once backfilled there is nothing
-  // left to fix and this expensive full-list mapping can be skipped on every later sync.
-  const hasBackfilledStakingSenders =
-    initialAccount?.aleoResources?.hasBackfilledStakingSenders === true;
-  const oldPublicOps = hasBackfilledStakingSenders
-    ? (oldPublicOpsRaw as AleoOperation[])
-    : backfillStakingSenders(oldPublicOpsRaw as AleoOperation[], address);
+  // Cache repair for staking ops built before both counterparties were emptied; incremental
+  // sync never refetches them, so it cannot be left to a resync.
+  const oldPublicOps = stripStakingCounterparties(oldPublicOpsRaw as AleoOperation[]);
   const lastBlockHeight =
     shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
@@ -242,7 +237,6 @@ export async function performPublicSync(
       unbondingBalance: stakingPosition.unbondingBalance,
       unbondingHeight: stakingPosition.unbondingHeight,
       ...(config.enableTokens && { hasMigratedPublicTokens: true }),
-      hasBackfilledStakingSenders: true,
     },
   };
 }
@@ -284,10 +278,7 @@ export function createPublicSyncObservable(
  * @param freshStakingPosition - The staking fields fetched by the current public
  *   sync cycle. The combined-sync emission spreads the private shape last, so it
  *   must carry the fresh staking values or it would clobber them with the stale
- *   initialAccount ones — same reasoning as freshTransparentBalance. Also carries
- *   hasBackfilledStakingSenders for the same reason: without it, a public sync that
- *   just performed the one-time backfill would have that fact immediately clobbered
- *   by the chained private step, forcing the backfill to run again every cycle.
+ *   initialAccount ones — same reasoning as freshTransparentBalance.
  */
 export async function performPrivateSync({
   info,
@@ -306,11 +297,7 @@ export async function performPrivateSync({
   freshTransparentBalance?: BigNumber;
   freshStakingPosition?: Pick<
     AleoResources,
-    | "bondedBalance"
-    | "bondedValidator"
-    | "unbondingBalance"
-    | "unbondingHeight"
-    | "hasBackfilledStakingSenders"
+    "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
   >;
   onProgress?: (progress: number) => void;
   signal?: AbortSignal;
@@ -544,7 +531,6 @@ export async function performPrivateSync({
   const bondedValidator = staking?.bondedValidator ?? null;
   const unbondingBalance = staking?.unbondingBalance ?? new BigNumber(0);
   const unbondingHeight = staking?.unbondingHeight ?? null;
-  const hasBackfilledStakingSenders = staking?.hasBackfilledStakingSenders === true;
   const liquidBalance = transparentBalance.plus(privateBalance);
   const totalBalance = liquidBalance.plus(bondedBalance).plus(unbondingBalance);
 
@@ -610,7 +596,6 @@ export async function performPrivateSync({
       bondedValidator,
       unbondingBalance,
       unbondingHeight,
-      hasBackfilledStakingSenders,
       ...(config.enableTokens && {
         hasMigratedPublicTokens: true,
         hasMigratedPrivateTokens: true,
@@ -628,11 +613,7 @@ export function createPrivateSyncObservable(
   freshSyncHash?: string,
   freshStakingPosition?: Pick<
     AleoResources,
-    | "bondedBalance"
-    | "bondedValidator"
-    | "unbondingBalance"
-    | "unbondingHeight"
-    | "hasBackfilledStakingSenders"
+    "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
   >,
 ): Observable<Partial<AleoAccount>> {
   const { initialAccount } = info;
