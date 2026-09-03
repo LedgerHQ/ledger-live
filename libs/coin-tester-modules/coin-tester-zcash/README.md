@@ -1,7 +1,7 @@
 # @ledgerhq/coin-tester-zcash
 
 > [!CAUTION]
-> **Status: UNSTABLE** — depends on an unpublished @ledgerhq/zcash-utils build and on @ledgerhq/coin-zcash itself being UNSTABLE.
+> **Status: UNSTABLE** — depends on @ledgerhq/coin-zcash itself being UNSTABLE.
 
 This package contains the deterministic testing infrastructure for Zcash in Ledger Live: transparent
 (t→t), shielding (t→z), de-shielding (z→t) and shielded (z→z) sends against a local `zebra` (Regtest
@@ -22,16 +22,8 @@ consensus node) + `zaino` (shielded gRPC indexer) stack.
 Run the tests with `pnpm coin:tester:zcash test` from the repo root, or `pnpm start` from this
 package's directory (both require Docker running locally).
 
-## Development
-
-The `@ledgerhq/zcash-utils` build this package depends on is not published yet. `pnpm link` corrupts
-the root `package.json`/`pnpm-lock.yaml` in the pnpm version this repo pins, so link it manually
-instead: symlink `node_modules/@ledgerhq/zcash-utils` to the local `ledger-zcash-utils` clone's root
-in **both** this package's own `node_modules` and `@ledgerhq/coin-zcash`'s (each package resolves its
-own dependency tree independently under pnpm), after running that clone's own NAPI build.
-
 ## Dependencies
 
 - @ledgerhq/coin-tester
 - @ledgerhq/coin-zcash
-- @ledgerhq/zcash-utils (via `pnpm link`)
+- @ledgerhq/zcash-utils

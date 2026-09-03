@@ -142,8 +142,8 @@ catalogs:
       specifier: 2.3.3
       version: 2.3.3
     '@ledgerhq/zcash-utils':
-      specifier: 2.2.0
-      version: 2.2.0
+      specifier: 2.4.0
+      version: 2.4.0
     '@nx/devkit':
       specifier: 22.7.8
       version: 22.7.8
@@ -1157,7 +1157,7 @@ importers:
         version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.2.0
+        version: 2.4.0
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.1.4)
@@ -10713,7 +10713,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.2.0
+        version: 2.4.0
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0
@@ -12051,7 +12051,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.2.0
+        version: 2.4.0
       '@noble/curves':
         specifier: 1.9.7
         version: 1.9.7
@@ -22450,8 +22450,8 @@ packages:
   '@ledgerhq/wallet-api-simulator@2.3.3':
     resolution: {integrity: sha512-gtSepkiGXvwIyvMC0DhNNYfZKt2BXFZ7IeFIY7h3Edz9ya5LxaRWWe3Zczo5Ex2CHgH2ALfXew+tZOod9Hd6Rg==}
 
-  '@ledgerhq/zcash-utils@2.2.0':
-    resolution: {integrity: sha512-8ghTxspNrXUWaJBnoW/NuWF4sDlzH7E8/lg7iZc1BQ0RGZMEh3XiM0yF9mz5oB7Hqudb9UQNEg7Xu3q32J4YGQ==}
+  '@ledgerhq/zcash-utils@2.4.0':
+    resolution: {integrity: sha512-lsAydrDeudztkKIfgbVPV+3n0oYyWj+cjq5HlVDea6nuhGs1RvE5RYwe0grixfpZ3BUOSD2ebpLgfV76L35qEg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils/-/@ledgerhq/zcash-utils-2.4.0.tgz}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -48422,7 +48422,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ledgerhq/zcash-utils@2.2.0': {}
+  '@ledgerhq/zcash-utils@2.4.0': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
@@ -65155,7 +65155,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
