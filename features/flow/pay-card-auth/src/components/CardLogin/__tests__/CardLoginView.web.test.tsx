@@ -39,6 +39,12 @@ describe("CardLoginView (Web)", () => {
     expect(screen.getByRole("button", { name: "Login" })).toBeVisible();
   });
 
+  it("should render the login subtitle when copy is provided", () => {
+    renderCardLoginView();
+
+    expect(screen.getByText("Log in to access your card")).toBeVisible();
+  });
+
   it("should render a login error when provided", () => {
     renderCardLoginView({
       errorMessage: "Unable to start login. Please try again.",

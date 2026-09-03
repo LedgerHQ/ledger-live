@@ -4,6 +4,7 @@ import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
 export function CardLoginView({
+  description,
   loginLabel,
   isLoading,
   errorMessage,
@@ -12,18 +13,21 @@ export function CardLoginView({
 }: CardLoginViewProps) {
   return (
     <>
-      <div className="flex flex-col items-end gap-4">
-        <Button
-          appearance="base"
-          size="md"
-          loading={isLoading}
-          disabled={isLoading}
-          onClick={onLoginPress}
-          aria-label={loginLabel}
-        >
-          {loginLabel}
-        </Button>
-        {errorMessage ? <span className="body-3 text-error">{errorMessage}</span> : null}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-row items-center justify-between gap-16">
+          <span className="body-3 min-w-0 flex-1 text-muted">{description}</span>
+          <Button
+            appearance="base"
+            size="md"
+            loading={isLoading}
+            disabled={isLoading}
+            onClick={onLoginPress}
+            aria-label={loginLabel}
+          >
+            {loginLabel}
+          </Button>
+        </div>
+        {errorMessage ? <span className="body-3 self-end text-error">{errorMessage}</span> : null}
       </div>
       <CardLoginIntroView {...intro} />
     </>
