@@ -32,7 +32,6 @@ export const bitcoin_regtest = currency({
       magnitude: 0,
     },
   ],
-  deviceTicker: "TEST",
   supportsSegwit: true,
   supportsNativeSegwit: true,
   isTestnetFor: "bitcoin",

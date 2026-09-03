@@ -7,7 +7,6 @@ export const arc_testnet = currency({
   name: "Arc Testnet",
   managerAppName: "Ethereum",
   ticker: "USDC",
-  deviceTicker: "USDC",
   scheme: "arc_testnet",
   color: "#6B7280",
   family: "evm",

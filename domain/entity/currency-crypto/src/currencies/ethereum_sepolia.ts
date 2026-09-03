@@ -7,7 +7,6 @@ export const ethereum_sepolia = currency({
   name: "Ethereum Sepolia",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "eth_sepolia",
   color: "#ff0000",
   units: [

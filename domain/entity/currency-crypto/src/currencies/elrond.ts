@@ -11,7 +11,6 @@ export const elrond = currency({
   color: "#23F7DD",
   family: "multiversx",
   blockAvgTime: 6,
-  deviceTicker: "EGLD",
   units: [
     {
       name: "EGLD",

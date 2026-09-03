@@ -7,7 +7,6 @@ export const assethub_polkadot = currency({
   name: "Polkadot",
   managerAppName: "Polkadot",
   ticker: "DOT",
-  deviceTicker: "DOT",
   scheme: "assethub_polkadot",
   color: "#E6007A",
   family: "polkadot",

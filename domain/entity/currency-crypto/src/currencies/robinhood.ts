@@ -7,7 +7,6 @@ export const robinhood = currency({
   name: "Robinhood Chain",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "robinhood",
   color: "#00C805",
   family: "evm",
