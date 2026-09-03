@@ -18,8 +18,8 @@ shape and the reasons.
 
 | Endpoint | Method | Path | Purpose |
 | -------- | ------ | ---- | ------- |
-| `exchangeAuthorizationCode` | POST | `/v1/auth/oauth/token` | Exchange the authorization code for a session |
-| `refreshSession` | POST | `/v1/auth/oauth/token` | Same endpoint, `refresh_token` grant |
+| `exchangeAuthorizationCode` | POST | `/v1/auth/oauth2/token` | Exchange the authorization code for a session |
+| `refreshSession` | POST | `/v1/auth/oauth2/token` | Same endpoint, `refresh_token` grant |
 | `logout` | POST | `/v1/auth/logout` | End the session |
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |

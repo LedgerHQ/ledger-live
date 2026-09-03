@@ -1,6 +1,6 @@
 import {
   PayCardErrorResponseSchema,
-  PayCardFreezeResponseSchema,
+  PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
@@ -74,9 +74,14 @@ describe("PayCardOrderResponseSchema", () => {
   });
 });
 
-describe("PayCardFreezeResponseSchema", () => {
-  it("reads the documented freeze response", () => {
-    expect(PayCardFreezeResponseSchema.parse({ success: true })).toEqual({ success: true });
+describe("PayCardFreezeStateResponseSchema", () => {
+  it("reads the documented response, which freeze and unfreeze share", () => {
+    expect(PayCardFreezeStateResponseSchema.parse({ success: true })).toEqual({ success: true });
+    expect(PayCardFreezeStateResponseSchema.parse({ success: false })).toEqual({ success: false });
+  });
+
+  it("rejects a success the provider sent as anything but a boolean", () => {
+    expect(() => PayCardFreezeStateResponseSchema.parse({ success: "yes" })).toThrow();
   });
 });
 

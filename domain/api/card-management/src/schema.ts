@@ -42,7 +42,7 @@ export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
 
-export const PayCardFreezeResponseSchema = z.object({
+export const PayCardFreezeStateResponseSchema = z.object({
   success: z.boolean(),
 });
 

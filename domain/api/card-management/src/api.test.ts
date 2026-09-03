@@ -111,7 +111,7 @@ const makeStore = (
 ) =>
   configureStore({
     reducer: {
-      [cardApi.reducerPath]: cardApi.reducer,
+      [cardManagementApi.reducerPath]: cardManagementApi.reducer,
     },
     middleware: gdm =>
       gdm({
@@ -123,7 +123,7 @@ const makeStore = (
             refreshCardSession: () => Promise.resolve(null),
           }),
         },
-      }).concat(cardApi.middleware),
+      }).concat(cardManagementApi.middleware),
   });
 
 describe("cardManagementApi configuration", () => {
@@ -421,23 +421,29 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
 
       expect(result.data).toBeUndefined();
-      expect(result.error).toMatchObject({ status: 400 });
+      expect(result.error).toMatchObject({
+        status: 400,
+        data: { message: "Card is already frozen" },
+      });
     });
 
     it("refetches the card status, because freezing moves it to FROZEN", async () => {
+      let cardState = "ACTIVE";
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
-        .mockImplementation(async (input: RequestInfo | URL) =>
-          new URL((input as Request).url).pathname === "/v1/card/freeze"
-            ? jsonResponse({ success: true })
-            : jsonResponse(cardStatus),
-        );
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/freeze") {
+            cardState = "FROZEN";
+            return jsonResponse({ success: true });
+          }
+          return jsonResponse({ ...cardStatus, status: cardState });
+        });
 
       const store = makeStore(async () => "session-token");
-      const status = store.dispatch(
+      const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
-      await status;
+      await subscription;
       await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
       await flushPendingRequests();
 
@@ -445,8 +451,11 @@ describe("cardManagementApi requests", () => {
         ([input]) => new URL((input as Request).url).pathname === "/v1/card/status",
       );
       expect(statusRequests).toHaveLength(2);
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("FROZEN");
 
-      status.unsubscribe();
+      subscription.unsubscribe();
     });
   });
 
@@ -473,23 +482,26 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
 
       expect(result.data).toBeUndefined();
-      expect(result.error).toMatchObject({ status: 400 });
+      expect(result.error).toMatchObject({ status: 400, data: { message: "Card is not frozen" } });
     });
 
     it("refetches the card status, because unfreezing moves it back to ACTIVE", async () => {
+      let cardState = "FROZEN";
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
-        .mockImplementation(async (input: RequestInfo | URL) =>
-          new URL((input as Request).url).pathname === "/v1/card/unfreeze"
-            ? jsonResponse({ success: true })
-            : jsonResponse({ ...cardStatus, status: "FROZEN" }),
-        );
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/unfreeze") {
+            cardState = "ACTIVE";
+            return jsonResponse({ success: true });
+          }
+          return jsonResponse({ ...cardStatus, status: cardState });
+        });
 
       const store = makeStore(async () => "session-token");
-      const status = store.dispatch(
+      const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
-      await status;
+      await subscription;
       await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
       await flushPendingRequests();
 
@@ -497,8 +509,11 @@ describe("cardManagementApi requests", () => {
         ([input]) => new URL((input as Request).url).pathname === "/v1/card/status",
       );
       expect(statusRequests).toHaveLength(2);
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("ACTIVE");
 
-      status.unsubscribe();
+      subscription.unsubscribe();
     });
   });
 

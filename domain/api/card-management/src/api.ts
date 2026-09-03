@@ -1,7 +1,7 @@
 import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
-  PayCardFreezeResponseSchema,
+  PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
   PayCardLogoutResponseSchema,
@@ -14,7 +14,7 @@ import {
 import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
-  PayCardFreezeResult,
+  PayCardFreezeStateResult,
   PayCardInternalWallet,
   PayCardLinkedWallet,
   PayCardLogoutResult,
@@ -100,21 +100,21 @@ export const cardManagementApi = cardApi
         providesTags: ["CardStatus"],
       }),
 
-      freezeCard: build.mutation<PayCardFreezeResult, void>({
+      freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
           method: "POST",
         }),
-        responseSchema: PayCardFreezeResponseSchema,
+        responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
 
-      unfreezeCard: build.mutation<PayCardFreezeResult, void>({
+      unfreezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/unfreeze",
           method: "POST",
         }),
-        responseSchema: PayCardFreezeResponseSchema,
+        responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
 
