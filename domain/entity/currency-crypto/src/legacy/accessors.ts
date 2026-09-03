@@ -31,17 +31,16 @@ export function hasCryptoCurrencyId(id: string): boolean {
 /**
  * Return all known crypto currencies.
  *
- * By default (`withDevCrypto = false`) returns production currencies only: entries where both
- * `isTestnetFor` and `delisted` are falsy. Pass `true` to get the full unfiltered list, which
- * includes testnet and delisted entries.
+ * By default (`withDevCrypto = false`) returns production currencies only: entries where
+ * `isTestnetFor` is falsy. Pass `true` to get the full unfiltered list, which includes testnets.
  */
 export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
   return withDevCrypto ? allCurrencies : prodCurrencies;
 }
 
 /**
- * Return the first crypto currency (including testnets and delisted entries) that satisfies the
- * predicate, or `undefined` when none matches.
+ * Return the first crypto currency (including testnets) that satisfies the predicate, or
+ * `undefined` when none matches.
  */
 export function findCryptoCurrency(f: (c: CryptoCurrency) => boolean): CryptoCurrency | undefined {
   return allCurrencies.find(f);
@@ -107,7 +106,7 @@ function findByManagerApp(managerAppName: string): CryptoCurrency | undefined {
 
 const allCurrencies: CryptoCurrency[] = Object.values(CRYPTO_CURRENCIES_REGISTRY);
 
-const prodCurrencies: CryptoCurrency[] = allCurrencies.filter(c => !c.isTestnetFor && !c.delisted);
+const prodCurrencies: CryptoCurrency[] = allCurrencies.filter(c => !c.isTestnetFor);
 
 const byScheme: Record<string, CryptoCurrency> = Object.fromEntries(
   allCurrencies.map(c => [c.scheme, c]),

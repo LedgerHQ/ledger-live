@@ -65,8 +65,6 @@ export const CryptoCurrencySchema = z.object({
   symbol: z.string().optional(),
   /** When `true`, countervalue display is disabled (e.g. colliding tickers). */
   disableCountervalue: z.boolean().optional(),
-  /** When `true`, the currency has been delisted and should not appear in new flows. */
-  delisted: z.boolean().optional(),
   /** Search keywords (e.g. `["btc", "bitcoin"]`). */
   keywords: z.array(z.string()).optional(),
   /** Id of the currency this was forked from (e.g. `"bitcoin"` for Bitcoin Cash). */

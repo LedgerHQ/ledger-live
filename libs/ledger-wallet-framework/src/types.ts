@@ -52,7 +52,6 @@ export interface CryptoCurrency {
   };
   symbol?: string;
   disableCountervalue?: boolean;
-  delisted?: boolean;
   keywords?: string[];
   explorerId?: string;
   tokenTypes?: string[];

@@ -19,9 +19,7 @@ describe("resolveEligibleAddressCurrencyIds", () => {
       .filter(network => network.family === "evm" && network.managerAppName === "Ethereum")
       .map(network => network.id);
     const excludedNetworkIds = listCryptoCurrencies(true)
-      .filter(
-        network => network.family === "evm" && Boolean(network.isTestnetFor || network.delisted),
-      )
+      .filter(network => network.family === "evm" && Boolean(network.isTestnetFor))
       .map(network => network.id);
     const networkIds = resolveEligibleAddressCurrencyIds(["evm"]);
 
