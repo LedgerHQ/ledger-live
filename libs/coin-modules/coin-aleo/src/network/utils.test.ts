@@ -8,6 +8,7 @@ import {
   DEFAULT_TOKENS_PAGE_SIZE,
   PROGRAM_ID,
   TOKEN_RECORD_NAME,
+  TRANSACTION_TYPE,
 } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { sdkClient } from "../network/sdk";
@@ -36,6 +37,7 @@ import {
   decryptRecordAmount,
   sumUnspentRecords,
   getStakingPosition,
+  resolveBondArguments,
 } from "./utils";
 
 jest.mock("./api");
@@ -3395,5 +3397,121 @@ describe("getStakingPosition", () => {
       .mockRejectedValue(new LedgerAPI5xx("Internal Server Error"));
 
     await expect(getStakingPosition(config, ADDRESS)).rejects.toThrow("Internal Server Error");
+  });
+});
+
+describe("resolveBondArguments", () => {
+  const config = getMockedConfig("mainnet");
+  const VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+  const WITHDRAWAL = "aleo1zmpnd8p29h0296uxpnmn4qqu9hukr6p4glwk6cpwln8huvdn7q9sl4vr7k";
+  const TX_ID = "at12na88lvmd509653sf4j9c7u4nq2rakd0l6302hfxpq3j9ff5m5zq36aax2";
+
+  const bondTx = () =>
+    getMockedPublicTransaction({
+      transaction_id: TX_ID,
+      function_id: TRANSACTION_TYPE.BOND_PUBLIC,
+      // the indexer blanks all three on staking calls; that is what makes the lookup necessary
+      amount: 0,
+      sender_address: "",
+      recipient_address: "",
+    });
+
+  // bond_public(validator, withdrawal, amount) — all public inputs
+  const bondTransition = (inputs: string[]) => ({
+    id: "au1bond",
+    scm: "cm1abc",
+    tcm: "cm1def",
+    tpk: "tpk1ghi",
+    inputs: inputs.map((value, index) => ({ id: `input${index}`, type: "public" as const, value })),
+    outputs: [],
+    program: PROGRAM_ID.CREDITS,
+    function: TRANSACTION_TYPE.BOND_PUBLIC,
+  });
+
+  beforeEach(() => jest.clearAllMocks());
+
+  it("reads the validator and amount positionally from the credits.aleo transition", async () => {
+    jest.mocked(apiClient.getTransactionById).mockResolvedValue(
+      getMockedTransactionDetails(TX_ID, {
+        execution: {
+          transitions: [bondTransition([VALIDATOR, WITHDRAWAL, "2982828466682u64"])],
+        },
+      }),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx()] });
+
+    expect(resolved.get(TX_ID)?.validator).toBe(VALIDATOR);
+    expect(resolved.get(TX_ID)?.amount.toString()).toBe("2982828466682");
+  });
+
+  it("strips the plaintext suffix from the validator address", async () => {
+    jest.mocked(apiClient.getTransactionById).mockResolvedValue(
+      getMockedTransactionDetails(TX_ID, {
+        execution: {
+          transitions: [
+            bondTransition([`${VALIDATOR}.public`, WITHDRAWAL, "2982828466682u64.public"]),
+          ],
+        },
+      }),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx()] });
+
+    expect(resolved.get(TX_ID)?.validator).toBe(VALIDATOR);
+    expect(resolved.get(TX_ID)?.amount.toString()).toBe("2982828466682");
+  });
+
+  // Pondo and friends wrap the staking call, so the credits.aleo transition is not the first one.
+  it("finds the credits.aleo transition behind a wrapper program", async () => {
+    jest.mocked(apiClient.getTransactionById).mockResolvedValue(
+      getMockedTransactionDetails(TX_ID, {
+        execution: {
+          transitions: [
+            {
+              ...bondTransition([VALIDATOR, "1000u64"]),
+              program: "delegator4.aleo",
+              function: "bond",
+            },
+            bondTransition([VALIDATOR, WITHDRAWAL, "2982828466682u64"]),
+          ],
+        },
+      }),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx()] });
+
+    expect(resolved.get(TX_ID)?.amount.toString()).toBe("2982828466682");
+  });
+
+  it("omits a transaction with no credits.aleo bond_public transition", async () => {
+    jest.mocked(apiClient.getTransactionById).mockResolvedValue(getMockedTransactionDetails(TX_ID));
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx()] });
+
+    expect(resolved.size).toBe(0);
+  });
+
+  it("omits a transaction whose inputs are not readable", async () => {
+    jest.mocked(apiClient.getTransactionById).mockResolvedValue(
+      getMockedTransactionDetails(TX_ID, {
+        execution: { transitions: [bondTransition(["not-an-address", WITHDRAWAL, "1u64"])] },
+      }),
+    );
+
+    const resolved = await resolveBondArguments({ config, transactions: [bondTx()] });
+
+    expect(resolved.size).toBe(0);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/sync",
+      `resolveBondArguments: unreadable bond_public inputs for ${TX_ID}`,
+    );
+  });
+
+  it("performs no lookup when there are no bond transactions", async () => {
+    const resolved = await resolveBondArguments({ config, transactions: [] });
+
+    expect(resolved.size).toBe(0);
+    expect(apiClient.getTransactionById).not.toHaveBeenCalled();
   });
 });

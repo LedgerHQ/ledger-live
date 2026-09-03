@@ -171,4 +171,62 @@ describe("buildOptimisticOperation", () => {
       },
     });
   });
+
+  describe("staking operations", () => {
+    const VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+
+    it("should keep the bond validator and amount in extra, not as a counterparty", () => {
+      const transaction = getMockedTransaction({
+        amount: new BigNumber(2_982_828_466_682),
+        fees: new BigNumber(217_641),
+        recipient: VALIDATOR,
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: account.freshAddress,
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation.type).toBe("BOND");
+      expect(operation.senders).toEqual([]);
+      expect(operation.recipients).toEqual([]);
+      expect(operation.extra.validator).toBe(VALIDATOR);
+      expect(operation.extra.stakedAmount).toEqual(transaction.amount);
+      // staking only moves funds between the account's own balances
+      expect(operation.value).toEqual(transaction.fees);
+    });
+
+    it("should keep the unbond amount in extra and name no validator", () => {
+      const transaction = getMockedTransaction({
+        amount: new BigNumber(6_939_080_344),
+        fees: new BigNumber(10_813),
+        recipient: account.freshAddress,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation.type).toBe("UNBOND");
+      expect(operation.senders).toEqual([]);
+      expect(operation.recipients).toEqual([]);
+      expect(operation.extra.stakedAmount).toEqual(transaction.amount);
+      expect(operation.extra.validator).toBeUndefined();
+    });
+
+    it("should carry neither field for a claim", () => {
+      const transaction = getMockedTransaction({
+        amount: new BigNumber(0),
+        fees: new BigNumber(3_066),
+        recipient: account.freshAddress,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation.type).toBe("WITHDRAW_UNBONDED");
+      expect(operation.senders).toEqual([]);
+      expect(operation.recipients).toEqual([]);
+      expect(operation.extra.stakedAmount).toBeUndefined();
+      expect(operation.extra.validator).toBeUndefined();
+    });
+  });
 });

@@ -317,7 +317,9 @@ function toOperationAsset(
 }
 
 /** Staking calls only exist on credits.aleo, so the function id alone cannot type one. */
-function resolveStakingOperationType(rawTx: AleoPublicTransaction): OperationType | undefined {
+export function resolveStakingOperationType(
+  rawTx: AleoPublicTransaction,
+): OperationType | undefined {
   return rawTx.program_id === PROGRAM_ID.CREDITS
     ? getStakingOperationType(rawTx.function_id)
     : undefined;
@@ -345,22 +347,23 @@ function resolveSenderAddress(
 }
 
 /**
- * Incremental sync only refetches transactions above the previous sync's cursor, so a staking
- * op cached before the resolveSenderAddress fallback existed (blank sender_address) never gets
- * refetched and stays blank forever. Backfill it in place from the already-cached operations
- * instead of relying on a full resync.
+ * Normalizes cached staking operations to empty senders/recipients.
  *
- * This is a one-time cache repair: callers should gate it on a persisted per-account flag
- * (see `hasBackfilledStakingSenders` in bridge/sync.ts) rather than invoking it on every sync.
+ * The indexer blanks both sides of every staking call, so ops built before that was handled
+ * carry `[""]` — which the details drawer treats as a present-but-empty From address and renders
+ * as a blank row (it filters recipients with Boolean but not senders). Incremental sync only
+ * refetches above the previous cursor, so those ops are never rebuilt and would stay broken.
+ *
+ * Cheap enough to run on every sync: one pass over already-in-memory operations, and only
+ * staking ops that still carry a counterparty are copied.
  */
-export function backfillStakingSenders(ops: AleoOperation[], address: string): AleoOperation[] {
+export function stripStakingCounterparties(ops: AleoOperation[]): AleoOperation[] {
   return ops.map(op => {
     const functionId = op.extra?.functionId;
-    const hasBlankSender = op.senders.every(isBlankSenderValue);
-    if (!hasBlankSender || !functionId || getStakingOperationType(functionId) === undefined) {
-      return op;
-    }
-    return { ...op, senders: [address] };
+    if (!functionId || getStakingOperationType(functionId) === undefined) return op;
+    if (op.senders.length === 0 && op.recipients.length === 0) return op;
+
+    return { ...op, senders: [], recipients: [] };
   });
 }
 
@@ -999,6 +1002,18 @@ export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
     return new BigNumber(0);
   return account.blockHeight >= unbondingHeight ? unbondingBalance : new BigNumber(0);
 }
+
+/**
+ * True while an operation of that type is still in the pending pool.
+ *
+ * The staking figures in `aleoResources` are read straight from the `credits.aleo` mappings
+ * on each sync and carry no optimistic adjustment, so between broadcast and the next sync
+ * `bondedBalance` and `unbondingBalance` still describe the pre-transaction chain state.
+ * A CTA driven by them alone would keep offering an amount the chain has already committed
+ * away — hence the guard on the pending pool rather than on the balances.
+ */
+export const hasPendingOperationType = (account: AleoAccount, type: OperationType): boolean =>
+  (account.pendingOperations ?? []).some(op => op.type === type);
 
 /**
  * Returns the spendable balance for a given Aleo transaction mode.

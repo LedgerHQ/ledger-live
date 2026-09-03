@@ -153,7 +153,6 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
-  hasBackfilledStakingSenders?: boolean;
   bondedBalance?: BigNumber;
   bondedValidator?: string | null;
   unbondingBalance?: BigNumber;
@@ -168,7 +167,6 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
-  hasBackfilledStakingSenders?: boolean;
   bondedBalance?: string;
   bondedValidator?: string | null;
   unbondingBalance?: string;
@@ -215,6 +213,13 @@ export type AleoOperationExtra = {
   // on-chain transition id of the tx; stable join key used to correlate a pending op
   // (keyed by execution/broadcast id) with its confirmed listing row (keyed by transaction id)
   transitionId?: string;
+  // BOND only: unbond_public/claim_unbond_public name no validator on-chain — the `bonded`
+  // mapping holds one entry per staker, so the validator is implied by bonded state, and no
+  // historical read can recover which one it was at the time of an old operation.
+  validator?: string;
+  // BOND/UNBOND only: the bonded/unbonded principal. Absent on claim_unbond_public, which
+  // records no amount anywhere in the transaction.
+  stakedAmount?: BigNumber;
 };
 
 export type AleoOperationExtraRaw = {
@@ -223,6 +228,8 @@ export type AleoOperationExtraRaw = {
   patched?: boolean;
   programId?: string;
   transitionId?: string;
+  validator?: string;
+  stakedAmount?: string;
 };
 
 export type OperationDetailsExtraField = {
