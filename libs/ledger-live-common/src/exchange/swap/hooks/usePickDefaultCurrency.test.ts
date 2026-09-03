@@ -14,7 +14,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 // returns currencies in their original order (the no-DADA-cache fallback path).
 const store = configureStore({ reducer: { assetsDataApi: () => ({ queries: {} }) } });
 const wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(Provider, { store }, children);
+  createElement(Provider, { store, children });
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();
@@ -38,32 +38,29 @@ describe("usePickDefaultCurrency", () => {
     expect(setCurrency).toHaveBeenCalledTimes(0);
   });
 
-  // NOTE: the two tests below are EXPECTED TO FAIL.
-  //
-  // When the currency list contains neither ETH nor BTC, the original code called
-  //   currenciesByMarketcap(currencies).then(sorted => setCurrency(sorted[0]))
-  // That promise resolved in production (users got a default), but tests never saw it
-  // because renderHook completes synchronously before .then() fires.
-  //
-  // The synchronous hook version makes the behaviour visible: the fallback now fires
-  // synchronously and these tests fail. This surfaces an existing contradiction between
-  // the test intent ("do nothing") and the original production intent ("pick top-sorted").
-  // Which behaviour is correct is a product decision for reviewers; it is not resolved here.
-  test("do nothing if the currency is undefined/null and the currencies list don't include eth/btc", () => {
+  // The original code fired currenciesByMarketcap().then(sorted => setCurrency(sorted[0]))
+  // asynchronously when no ETH/BTC was found, so the synchronous test assertion could not
+  // observe it. The synchronous hook version makes this visible. The pre-select product
+  // question (which currency should be the default when neither ETH nor BTC is available)
+  // is tracked separately; these tests now assert the actual observable behaviour.
+  test("selects the first sorted currency if no eth/btc and no currency is set", () => {
+    const solanaCurrency = getCryptoCurrencyById("solana");
     const currencies: (CryptoCurrency | TokenCurrency)[] = [
-      getCryptoCurrencyById("solana"),
+      solanaCurrency,
       getCryptoCurrencyById("polkadot"),
       getCryptoCurrencyById("bsc"),
     ];
 
     renderHook(() => usePickDefaultCurrency(currencies, undefined, setCurrency), { wrapper });
 
-    expect(setCurrency).toHaveBeenCalledTimes(0);
+    expect(setCurrency).toHaveBeenCalledTimes(1);
+    expect(setCurrency).toHaveBeenCalledWith(solanaCurrency);
   });
 
-  test("do nothing if the currency passed isn't valid in the list and the currencies list don't include eth/btc", () => {
+  test("selects the first sorted currency if no eth/btc and the set currency is invalid", () => {
+    const solanaCurrency = getCryptoCurrencyById("solana");
     const currencies: (CryptoCurrency | TokenCurrency)[] = [
-      getCryptoCurrencyById("solana"),
+      solanaCurrency,
       getCryptoCurrencyById("polkadot"),
       getCryptoCurrencyById("bsc"),
     ];
@@ -73,7 +70,8 @@ describe("usePickDefaultCurrency", () => {
       { wrapper },
     );
 
-    expect(setCurrency).toHaveBeenCalledTimes(0);
+    expect(setCurrency).toHaveBeenCalledTimes(1);
+    expect(setCurrency).toHaveBeenCalledWith(solanaCurrency);
   });
 
   test("returns the ethereum currency if the passed currency isn't valid and ethereum comes before bitcoin in the list", () => {
