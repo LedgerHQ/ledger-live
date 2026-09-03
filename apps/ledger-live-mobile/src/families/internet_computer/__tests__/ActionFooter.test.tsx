@@ -34,7 +34,7 @@ describe("ActionFooter", () => {
 
   it("interpolates the fields the error carries into its description", () => {
     renderFooter({
-      staking: makeError("ICPDissolveDelayLTMin", { minSeconds: 604800, minDays: 7 }),
+      staking: makeError("ICPDissolveDelayLTMin", { minSeconds: 604800, minDays: 7, count: 7 }),
     });
 
     expect(screen.getByText(/at least 7 days/)).toBeVisible();

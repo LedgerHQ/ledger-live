@@ -1601,11 +1601,17 @@
     },
     "ICPDissolveDelayLTMin": {
       "title": "Dissolve delay too short",
-      "description": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+      "description_one": "The Internet Computer requires a dissolve delay of at least {{minDays}} day.",
+      "description_other": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+    },
+    "ICPInvalidDissolveDelayIncrease": {
+      "title": "Invalid number of days",
+      "description": "Enter a whole number of days greater than zero."
     },
     "ICPDissolveDelayGTMax": {
       "title": "Dissolve delay too long",
-      "description": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
+      "description_one": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} day.",
+      "description_other": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
     },
     "ICPDissolveDelayLTCurrent": {
       "title": "Dissolve delay cannot be shortened",
@@ -1622,6 +1628,10 @@
     "ICPHotKeyAlreadyExists": {
       "title": "Hot key already added",
       "description": "This principal is already a hot key on this neuron."
+    },
+    "ICPHotKeyIsController": {
+      "title": "This principal already controls the neuron",
+      "description": "Enter a different principal. A hot key can only vote and set following, which the controller can already do."
     },
     "ICPSplitNotAllowed": {
       "title": "Amount outside the range this neuron can split",
