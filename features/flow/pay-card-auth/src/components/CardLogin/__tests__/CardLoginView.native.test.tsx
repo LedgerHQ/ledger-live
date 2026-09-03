@@ -21,8 +21,8 @@ const intro: CardLoginIntroViewProps = {
 };
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
-  title: "Ledger Card",
-  description: "Log in to manage your Ledger Card",
+  title: "Crypto Card",
+  description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
   errorMessage: null,
@@ -42,9 +42,20 @@ describe("CardLoginView (Native)", () => {
   it("should render the login action", () => {
     renderCardLoginView();
 
-    expect(screen.getByText("Ledger Card")).toBeTruthy();
-    expect(screen.getByText("Log in to manage your Ledger Card")).toBeTruthy();
+    expect(screen.getByText("Crypto Card")).toBeTruthy();
+    expect(screen.getByText("Log in to access your card")).toBeTruthy();
     expect(screen.getByLabelText("Login")).toBeTruthy();
+  });
+
+  it("should render the copy it is handed, whichever it is", () => {
+    // The view model swaps both on the intro flag, and the view shows what it is given.
+    renderCardLoginView({
+      description: "Get 1% cashback everytime you spend",
+      loginLabel: "Get card",
+    });
+
+    expect(screen.getByText("Get 1% cashback everytime you spend")).toBeTruthy();
+    expect(screen.getByLabelText("Get card")).toBeTruthy();
   });
 
   it("should call the login handler when the action is pressed", () => {

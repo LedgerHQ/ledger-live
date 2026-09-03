@@ -82,11 +82,23 @@ App composition and DevTools consume shared Pay Card entity state through
 | `payCardAuth` | `hasCard` and `isSignedIn` | **No.** It is runtime state, so it stays out of every persisted blob. |
 | `payCardLoginIntro` | `hasSeenLoginIntro` | **Yes**, in the shared `payCard` blob, beside the balance filter and the feature-tour flag. |
 
-`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet, which
-`CardLogin` shows on the first `Login` press. The flag goes up only when a login this session
-started reaches `ready`, so neither a hydrated session nor a reset from the Pay Card devtool raises
-it. Other Pay Card UI state is owned by the flow it belongs to: the balance filter by
-`@features/flow-pay-balance` and the feature-tour flag by `@features/flow-pay-feature-tour`.
+`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet. The flag
+goes up only when a login this session started reaches `ready`, so neither a hydrated session nor a
+reset from the Pay Card devtool raises it. Other Pay Card UI state is owned by the flow it belongs
+to: the balance filter by `@features/flow-pay-balance` and the feature-tour flag by
+`@features/flow-pay-feature-tour`.
+
+The flag also picks what the login block says, from the app's `payTab.cardLogin.*` keys. The title
+is `Crypto Card` either way, and on mobile it is a Lumen `Subheader` under the card face — the Pay
+Card flow no longer draws a section title of its own there:
+
+| `hasSeenLoginIntro` | Subtitle | Button | The press |
+| --- | --- | --- | --- |
+| Down | Get 1% cashback everytime you spend | `Get card` | Opens the intro sheet |
+| Up | Log in to access your card | `Login` | Starts the login |
+
+One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
+and the sheet's own buttons send the same `LOGIN` afterwards.
 
 ## Card API
 

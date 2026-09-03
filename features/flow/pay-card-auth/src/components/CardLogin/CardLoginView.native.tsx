@@ -1,7 +1,18 @@
 import React from "react";
-import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Button,
+  Subheader,
+  SubheaderDescription,
+  SubheaderRow,
+  SubheaderTitle,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
+
+/** Lets long copy shrink the text column instead of pushing the button off the row. */
+const SUBHEADER_STYLE = { minWidth: 0 } as const;
 
 export function CardLoginView({
   title,
@@ -22,14 +33,12 @@ export function CardLoginView({
         }}
       >
         <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
-          <Box lx={{ flex: 1, flexDirection: "column", gap: "s4" }} style={{ minWidth: 0 }}>
-            <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-              {title}
-            </Text>
-            <Text typography="body2" lx={{ color: "muted" }}>
-              {description}
-            </Text>
-          </Box>
+          <Subheader lx={{ flex: 1 }} style={SUBHEADER_STYLE}>
+            <SubheaderRow>
+              <SubheaderTitle>{title}</SubheaderTitle>
+            </SubheaderRow>
+            <SubheaderDescription>{description}</SubheaderDescription>
+          </Subheader>
           <Button
             appearance="base"
             size="md"

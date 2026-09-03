@@ -9,12 +9,19 @@ export type CardLoginProps = {
   readonly callback?: PayCardAuthCallback | null;
 };
 
+/**
+ * The wallet the virtual card can be added to. `both` is for a host that cannot know the phone the
+ * card will land on, which is every desktop.
+ */
+export type MobileWallet = "applePay" | "googlePay" | "both";
+
 export type CardLoginViewModelParams = CardLoginProps & {
   readonly openHostedLogin: OpenHostedLogin;
+  readonly mobileWallet: MobileWallet;
 };
 
 /** Verified to exist in both Lumen symbol packages. A designer must confirm the choice. */
-export type CardLoginIntroRowIcon = "CoinsAddPlus" | "CreditCard" | "Nano";
+export type CardLoginIntroRowIcon = "CoinsAddPlus" | "CreditCard" | "LedgerLogo";
 
 export type CardLoginIntroRow = Readonly<{
   icon: CardLoginIntroRowIcon;
@@ -47,10 +54,18 @@ export type CardLoginIntroViewProps = Readonly<{
   onClose: () => void;
 }>;
 
-export type CardLoginViewProps = {
-  readonly title: string;
-  readonly description: string;
-  readonly loginLabel: string;
+/**
+ * The copy of the login block. The title never moves, while the subtitle and the button label
+ * switch on the intro flag: they sell the card until the intro has been seen, and offer a login
+ * after. The press behind them is the same one, and it shows the intro first while the flag is down.
+ */
+export type CardLoginCopy = Readonly<{
+  title: string;
+  description: string;
+  loginLabel: string;
+}>;
+
+export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
   readonly errorMessage: string | null;

@@ -1,17 +1,6 @@
 import React, { useCallback } from "react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemTitle,
-} from "@ledgerhq/lumen-ui-react";
-import { CoinsAddPlus, CreditCard, Nano } from "@ledgerhq/lumen-ui-react/symbols";
+import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import heroImage from "./payCardLoginIntro.webp";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
@@ -19,7 +8,7 @@ import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
   CreditCard,
-  Nano,
+  LedgerLogo,
 };
 
 /**
@@ -67,23 +56,26 @@ export function CardLoginIntroView({
               draggable={false}
             />
             <h2 className="heading-3-semi-bold text-base">{title}</h2>
-            <div className="flex flex-col">
+            {/*
+              Lumen's `ListItem` holds a row at one fixed height and cuts both of its lines off at
+              the first, which suits a list of names and values. This copy is a sentence, and a
+              translation of it is longer, so the rows are composed here to let it wrap instead.
+            */}
+            <div className="flex flex-col gap-16">
               {rows.map(row => {
                 const RowIcon = ROW_ICONS[row.icon];
                 return (
-                  <ListItem
+                  <div
                     key={row.icon}
-                    className="px-0"
+                    className="flex items-center gap-12"
                     data-testid={`pay-card-login-intro-row-${row.icon}`}
                   >
-                    <ListItemLeading className="p-0">
-                      {RowIcon ? <RowIcon size={24} /> : null}
-                      <ListItemContent>
-                        <ListItemTitle>{row.title}</ListItemTitle>
-                        <ListItemDescription>{row.description}</ListItemDescription>
-                      </ListItemContent>
-                    </ListItemLeading>
-                  </ListItem>
+                    {RowIcon ? <RowIcon size={24} className="shrink-0" /> : null}
+                    <div className="flex min-w-0 flex-col gap-4">
+                      <p className="body-2-semi-bold text-base">{row.title}</p>
+                      <p className="body-3 text-muted">{row.description}</p>
+                    </div>
+                  </div>
                 );
               })}
             </div>

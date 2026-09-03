@@ -35,10 +35,15 @@ describe("Card (native)", () => {
   it("composes the bare artwork with the auth login and More menu", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.getByText(title)).toBeVisible();
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
     expect(screen.getByTestId("card-more")).toBeVisible();
+  });
+
+  it("leaves the title to the login block, which carries its own subheader", () => {
+    render(<Card title={title} oauthConfig={oauthConfig} />);
+
+    expect(screen.queryByText(title)).toBeNull();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {

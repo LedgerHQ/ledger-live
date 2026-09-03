@@ -35,7 +35,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
       description: "Add to Apple Pay or Google Pay, ready instantly.",
     },
     {
-      icon: "Nano",
+      icon: "LedgerLogo",
       title: "Securely top up via Ledger Wallet",
       description: "Every transfer approved with your Ledger signer.",
     },
@@ -89,7 +89,7 @@ describe("CardLoginIntroView (Native)", () => {
 
     expect(screen.getByTestId("pay-card-login-intro-row-CoinsAddPlus")).toBeTruthy();
     expect(screen.getByTestId("pay-card-login-intro-row-CreditCard")).toBeTruthy();
-    expect(screen.getByTestId("pay-card-login-intro-row-Nano")).toBeTruthy();
+    expect(screen.getByTestId("pay-card-login-intro-row-LedgerLogo")).toBeTruthy();
   });
 
   it("renders both buttons, in the order the actions arrive", () => {
