@@ -91,4 +91,10 @@ describe("TransactionHeader", () => {
 
     expect(screen.queryByText("Swap BTC → ETH")).toBeNull();
   });
+
+  it("should name the perps deposit before the currencies resolve", () => {
+    render(<TransactionHeader locale="en-US" origin="perps" />);
+
+    expect(screen.getByText("Fund Perpetuals")).toBeVisible();
+  });
 });
