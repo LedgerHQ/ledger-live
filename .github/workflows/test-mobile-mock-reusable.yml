@@ -135,7 +135,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-2cpu-aws-public]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
