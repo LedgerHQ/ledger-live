@@ -566,8 +566,16 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
+function isTransactionCheckPrompt(screenTexts: string): boolean {
+  const texts = screenTexts.toLowerCase();
+  return (
+    texts.includes(DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase()) &&
+    texts.includes(DeviceLabels.YES_ENABLE.toLowerCase())
+  );
+}
+
 async function acceptTransactionCheckPrompt(screenTexts: string): Promise<boolean> {
-  if (!isTouchDevice() || !screenTexts.includes(DeviceLabels.YES_ENABLE)) return false;
+  if (!isTouchDevice() || !isTransactionCheckPrompt(screenTexts)) return false;
 
   try {
     await pressAndRelease(DeviceLabels.YES_ENABLE);
