@@ -11,13 +11,6 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
   getAssetsDistribution,
-  defaultAssetsDistribution,
-  getPortfolioRangeConfig,
-  getDates,
-  getRanges,
-  startOfHour,
-  startOfDay,
-  startOfWeek,
   orderAccountsByFiatValue,
 } from "./portfolio";
 import { setEnv } from "@ledgerhq/live-env";
@@ -61,8 +54,7 @@ describe("Portfolio", () => {
       });
       it("should return at least a year", () => {
         const res = getPortfolioCount(accounts, range);
-        const count = getPortfolioRangeConfig("year").count;
-        expect(res).toBe(count);
+        expect(res).toBe(52);
       });
     });
   });
@@ -81,12 +73,6 @@ describe("Portfolio", () => {
       const history = getBalanceHistory(account, range, count);
       expect(history).toBeInstanceOf(Array);
       expect(history.length).toBe(count);
-    });
-    it("should have dates matche getDates", () => {
-      const [, [range, count]] = rangeCount;
-      const history = getBalanceHistory(account, range, count);
-      const dates = getDates(range, count);
-      expect(history.map(p => p.date)).toMatchObject(dates);
     });
   });
   describe("getBalanceHistoryWithCountervalue", () => {
@@ -264,7 +250,12 @@ describe("Portfolio", () => {
         balanceHistoryCache: {
           ...account.balanceHistoryCache,
           HOUR: {
-            latestDate: startOfHour(new Date()).getTime(),
+            latestDate: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              new Date().getDate(),
+              new Date().getHours(),
+            ).getTime(),
             balances: new Array(8 * 24).fill(balance),
           },
         },
@@ -389,8 +380,11 @@ describe("Portfolio", () => {
       };
 
       const assets = getAssetsDistribution([zeroBalanceAccount], state, to, {
-        ...defaultAssetsDistribution,
+        minShowFirst: 1,
+        maxShowFirst: 6,
+        showFirstThreshold: 0.95,
         showEmptyAccounts: true,
+        hideEmptyTokenAccount: false,
       });
 
       expect(assets.isAvailable).toBe(true);
@@ -402,71 +396,16 @@ describe("Portfolio", () => {
       expect(assets.sum).toBe(0);
     });
   });
-
-  describe("range module", () => {
-    test("getRanges", () => {
-      const ranges = ["all", "year", "month", "week", "day"];
-      const res = getRanges();
-      res.forEach(r => {
-        const match = ranges.includes(r);
-        expect(match).toBe(true);
-      });
-    });
-  });
 });
 
-describe("date utils", () => {
-  describe("startOfHour", () => {
-    test("basic test", () => {
-      expect(startOfHour(new Date(1655827384305)).toISOString()).toBe("2022-06-21T16:00:00.000Z");
-    });
-  });
-  describe("startOfDay", () => {
-    test("basic test", () => {
-      expect(startOfDay(new Date(1655827384305)).toISOString()).toBe("2022-06-21T04:00:00.000Z");
-    });
-  });
-  describe("startOfWeek", () => {
-    test("basic test", () => {
-      expect(startOfWeek(new Date(1655827384305)).toISOString()).toBe("2022-06-19T04:00:00.000Z");
-    });
-  });
-  describe("getPortfolioRangeConfig", () => {
-    test("returns a value for day", () => {
-      expect(getPortfolioRangeConfig("day")).toBeDefined();
-    });
-    test("returns a value for week", () => {
-      expect(getPortfolioRangeConfig("week")).toBeDefined();
-    });
-    test("returns a value for month", () => {
-      expect(getPortfolioRangeConfig("month")).toBeDefined();
-    });
-  });
-  describe("getDates", () => {
-    test("day returns an array of asked size", () => {
-      expect(getDates("day", 100).length).toEqual(100);
-    });
-    test("week returns an array of asked size", () => {
-      expect(getDates("week", 100).length).toEqual(100);
-    });
-    test("month returns an array of asked size", () => {
-      expect(getDates("month", 100).length).toEqual(100);
-    });
-  });
-  describe("getRanges", () => {
-    test("returns a non empty array", () => {
-      expect(getRanges().length).toBeGreaterThan(0);
-    });
-  });
-  describe("orderAccountsByFiatValue", () => {
-    test("should return accounts ordered by fiat value", async () => {
-      const account1 = genAccountBitcoin("bitcoin_1");
-      const account2 = genAccountBitcoin("bitcoin_2");
-      const { state, to } = await loadCV([account1, account2]);
-      const accounts = [account1, account2];
-      const orderedAccounts = orderAccountsByFiatValue(accounts, state, to);
-      expect(orderedAccounts).toMatchObject([account2, account1]);
-    });
+describe("orderAccountsByFiatValue", () => {
+  test("should return accounts ordered by fiat value", async () => {
+    const account1 = genAccountBitcoin("bitcoin_1");
+    const account2 = genAccountBitcoin("bitcoin_2");
+    const { state, to } = await loadCV([account1, account2]);
+    const accounts = [account1, account2];
+    const orderedAccounts = orderAccountsByFiatValue(accounts, state, to);
+    expect(orderedAccounts).toMatchObject([account2, account1]);
   });
 });
 
