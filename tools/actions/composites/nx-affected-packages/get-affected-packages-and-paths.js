@@ -67,10 +67,13 @@ async function getAffectedPackagesAndPaths(options = {}) {
   let packageNames = [];
   const { stdout: affectedStdout, stderr: affectedStderr, exitCode } = await runPnpm(args, exec);
 
+  // Continuation lines are indented so none can start with `::` and be parsed as a
+  // workflow command.
   const clip = value => {
     const text = (value || "").trim();
     if (!text) return "<none>";
-    return text.length > 4000 ? `${text.slice(0, 4000)}… (truncated)` : text;
+    const clipped = text.length > 4000 ? `${text.slice(0, 4000)}… (truncated)` : text;
+    return clipped.replace(/\r?\n/g, "\n  ");
   };
 
   const diagnostics = () =>
