@@ -1,6 +1,5 @@
 import {
   ICP_FEES,
-  KNOWN_TOPICS,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   SECONDS_IN_DAY,
@@ -41,6 +40,7 @@ import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { toBigNumber } from "../amounts";
 import { NeuronDetailRow, NeuronSection } from "../components/NeuronDetails";
 import { useFormatDuration } from "../useFormatDuration";
+import { useGovernanceTopicLabel } from "../useGovernanceTopicLabel";
 import MissingNeuron from "./MissingNeuron";
 import { useNeuronActions, type NeuronScreen } from "./useNeuronActions";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
@@ -70,14 +70,10 @@ const bonusPercent = (multiplier: number) => String(Number(((multiplier - 1) * 1
 // only two things a hot key is for.
 const voting = (onPress: () => void, label: string) => [{ label, onPress }];
 
-const topicName = (topic: number) =>
-  Object.keys(KNOWN_TOPICS).find(
-    name => KNOWN_TOPICS[name as keyof typeof KNOWN_TOPICS] === topic,
-  ) ?? String(topic);
-
 export default function NeuronDetails({ navigation, route }: Props) {
   const { t } = useTranslation();
   const formatDuration = useFormatDuration();
+  const topicLabel = useGovernanceTopicLabel();
   const { account } = useAccountScreen(route);
   invariant(account?.type === "Account", "internet_computer account required");
 
@@ -373,7 +369,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
           {neuron.followees.map(followee => (
             <NeuronDetailRow
               key={followee.topic}
-              label={topicName(followee.topic)}
+              label={topicLabel(followee.topic)}
               value={followee.followeeIds.map(id => id.toString()).join(", ")}
             />
           ))}

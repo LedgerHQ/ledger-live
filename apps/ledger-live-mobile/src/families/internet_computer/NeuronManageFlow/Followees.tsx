@@ -9,6 +9,7 @@ import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import ActionFooter from "../components/ActionFooter";
 import { NeuronDetailRow } from "../components/NeuronDetails";
+import { useGovernanceTopicLabel } from "../useGovernanceTopicLabel";
 import { useNeuronAction } from "./useNeuronAction";
 import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
@@ -29,6 +30,7 @@ const EMPTY_FOLLOWEES: string[] = [];
  */
 export default function Followees({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const topicLabel = useGovernanceTopicLabel();
   const [draft, setDraft] = useState("");
   const {
     neuron,
@@ -40,6 +42,7 @@ export default function Followees({ navigation, route }: Props) {
     continueToDevice,
   } = useNeuronAction(navigation, route);
   const followTopic = transaction?.followTopic;
+  const topicName = followTopic ? topicLabel(followTopic) : "";
   // How many followees the neuron currently has on the topic being edited.
   const currentCount = followTopic
     ? (neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])?.followeeIds.length ?? 0)
@@ -78,7 +81,7 @@ export default function Followees({ navigation, route }: Props) {
         <ScrollContainer contentContainerStyle={{ padding: 16 }}>
           <Text variant="body" color="neutral.c70" mb={5}>
             {t("internetComputer.manageNeuronFlow.selectFollowees.description", {
-              topic: followTopic,
+              topic: topicName,
             })}
           </Text>
           <Text variant="small" fontWeight="semiBold" color="neutral.c70" mb={2}>
@@ -110,7 +113,7 @@ export default function Followees({ navigation, route }: Props) {
             <Text variant="small" color={currentCount > 0 ? "warning.c70" : "neutral.c70"}>
               {currentCount > 0
                 ? t("internetComputer.manageNeuronFlow.selectFollowees.clearsFollowing", {
-                    topic: followTopic,
+                    topic: topicName,
                     count: currentCount,
                   })
                 : t("internetComputer.manageNeuronFlow.selectFollowees.empty")}
