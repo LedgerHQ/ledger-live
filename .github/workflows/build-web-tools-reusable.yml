@@ -113,7 +113,7 @@ jobs:
     name: "Post build status to PR"
     needs: [build-web-tools]
     if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public
     permissions:
       contents: read
       pull-requests: write
