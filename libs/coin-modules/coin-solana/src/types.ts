@@ -356,8 +356,3 @@ export type SolanaOperationExtraRaw = {
   memo?: string | undefined;
   stake?: ExtraStakeInfoRaw;
 };
-
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
-};

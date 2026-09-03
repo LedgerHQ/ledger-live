@@ -8,8 +8,19 @@ import { CreateSigner, executeWithSigner } from "../../bridge/setup";
 import { isDmkTransport } from "../../hw/dmkUtils";
 import bs58 from "bs58";
 
+/**
+ * The generic coin framework calls `getAddress` with an options object rather than a boolean, and
+ * reads `publicKey` off the result; `hw-app-solana` takes a boolean `display` and returns only the
+ * raw address. `SignerContext<S>` erases the signer's shape at the framework's call sites, so a
+ * mismatch is not a type error but a runtime one: forwarding the options object straight into
+ * `display` sets P1=0x01, which makes the app ask the user to verify their address in the middle
+ * of signing.
+ */
 export type SolanaSigner = {
-  getAddress: (path: string, verify?: boolean) => Promise<{ address: Buffer }>;
+  getAddress: (
+    path: string,
+    verify?: boolean | { verify?: boolean; derivationMode?: string },
+  ) => Promise<{ address: Buffer; publicKey: string }>;
   signTransaction: (path: string, txBase64: string) => Promise<string>;
 };
 
@@ -24,8 +35,11 @@ const createLiveSigner: CreateSigner<CoinSolanaSigner> = (transport: Transport) 
 export const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   const signer = createLiveSigner(transport);
   return {
-    getAddress: (path: string, verify?: boolean) =>
-      verify !== undefined ? signer.getAddress(path, verify) : signer.getAddress(path),
+    getAddress: async (path: string, verify?: boolean | { verify?: boolean }) => {
+      const display = typeof verify === "boolean" ? verify : !!verify?.verify;
+      const { address } = await signer.getAddress(path, display);
+      return { address, publicKey: bs58.encode(address) };
+    },
     signTransaction: async (path: string, txBase64: string) => {
       const txBuffer = Buffer.from(txBase64, "base64");
       const { signature } = await signer.signTransaction(path, txBuffer);

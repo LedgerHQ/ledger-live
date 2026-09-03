@@ -1,6 +1,11 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type {
+  BridgeApi,
+  OptimisticOperationDescriptor,
+} from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Account, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
@@ -44,10 +49,44 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
   }
 }
 
+/**
+ * Solana's staking modes do not map onto the framework's default operation types, and the pending
+ * row must read the same as the row the next sync produces (`coin-solana/logic/listOperations.ts`):
+ * creating a stake account is three instructions that resolve to `DELEGATE`, and a withdrawal
+ * resolves to `WITHDRAW_UNBONDED`, not `UNSTAKE`.
+ *
+ * All four record the fee as their value: none of them sends funds anywhere, they move the
+ * account's own lamports in or out of a stake account.
+ */
+const STAKING_OPERATION_TYPES: Record<string, OperationType> = {
+  stake: "DELEGATE",
+  delegate: "DELEGATE",
+  undelegate: "UNDELEGATE",
+  unstake: "WITHDRAW_UNBONDED",
+};
+
+export function describeOptimisticOperation(
+  mode: string,
+  _account: Account,
+  transaction: Record<string, unknown>,
+): OptimisticOperationDescriptor | undefined {
+  const type = STAKING_OPERATION_TYPES[mode];
+  if (!type) return undefined;
+  const fees = transaction.fees as BigNumber | null | undefined;
+  return { type, value: fees ?? new BigNumber(0) };
+}
+
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
+    // Solana surfaces its stake accounts through `getBalance`, so the framework builds
+    // `stakingResources` itself. Declared rather than left to the framework's fallback
+    // (`delegationsCount > 0 || unbondingsCount > 0`), which is false for an account that has
+    // never staked — `stakingResources` would then be left undefined, and opening the delegation
+    // flow throws on `assertStakingResources`. The legacy bridge always set an empty object.
+    stakingSupported: true,
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
+    describeOptimisticOperation,
   };
 }

@@ -334,7 +334,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
     loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+      import("../families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/solana/walletApiAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/solana/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/solana/signer").then(m => m.default),

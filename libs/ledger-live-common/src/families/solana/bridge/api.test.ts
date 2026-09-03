@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import BigNumber from "bignumber.js";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
+import solanaBridge, {
+  computeIntentType,
+  describeOptimisticOperation,
+  getAssetFromToken,
+  getTokenFromAsset,
+} from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
@@ -18,6 +24,14 @@ const mockToken = {
 const solana = getCryptoCurrencyById("solana");
 
 describe("solana bridge", () => {
+  describe("staking", () => {
+    // The framework otherwise infers staking support from a non-empty delegation list, which is
+    // empty for an account whose only stake account has not been delegated yet.
+    it("declares staking support explicitly", () => {
+      expect(solanaBridge(solana).stakingSupported).toBe(true);
+    });
+  });
+
   describe("computeIntentType", () => {
     it.each([
       [{ mode: "send" }, "send"],
@@ -156,6 +170,33 @@ describe("solana bridge", () => {
       const result = getAssetFromToken(mockToken, owner);
 
       expect(result.name).toBe(mockToken.name);
+    });
+  });
+
+  describe("describeOptimisticOperation", () => {
+    const account = {} as Parameters<typeof describeOptimisticOperation>[1];
+    const fees = new BigNumber(5000);
+
+    // The pending row must read the same as the row the next sync produces; see
+    // coin-solana/logic/listOperations.ts for the types that sync resolves.
+    it.each([
+      ["stake", "DELEGATE"],
+      ["delegate", "DELEGATE"],
+      ["undelegate", "UNDELEGATE"],
+      ["unstake", "WITHDRAW_UNBONDED"],
+    ])("types a %s as %s, valued at the fee", (mode, expected) => {
+      expect(describeOptimisticOperation(mode, account, { fees })).toEqual({
+        type: expected,
+        value: fees,
+      });
+    });
+
+    it("leaves a plain send to the generic mapping", () => {
+      expect(describeOptimisticOperation("send", account, { fees })).toBeUndefined();
+    });
+
+    it("falls back to a zero value when the fee is not loaded", () => {
+      expect(describeOptimisticOperation("stake", account, {})?.value).toEqual(new BigNumber(0));
     });
   });
 });

@@ -89,7 +89,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
       }),
     loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+      import("@ledgerhq/live-common/families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/solana/walletApiAdapter").then(m => m.default),
     loadSigner: () => import("@ledgerhq/live-common/families/solana/signer").then(m => m.default),
