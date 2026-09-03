@@ -199,6 +199,10 @@
     "CeloAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
+    "CeloEpochProcessingActive" : {
+      "title" : "このアクションは一時的にご利用いただけません。",
+      "description" : "Celoは現在、エポック更新を処理しています。この短いオンチェーン期間中、投票、有効化、解除済み、ロック、ロック解除などのステーキングアクションは、ネットワークによって一時的にブロックされます。エポック処理が完了してから、もう一度お試しください。"
+    },
     "CeloGroupNotVotable" : {
       "title" : "このバリデータグループは投票を受け取ることができません。満額であるか、または対象外となる場合があります。"
     },
@@ -3830,6 +3834,23 @@
           "entriesLabel" : "エントリー（{{count}}）",
           "untitledEntry" : "無題のエントリー"
         }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "デバイスシミュレーション（QA）",
+        "description" : "物理的なデバイスなしでNanoユーザー向けのアップセル領域をテストするために、デバイス履歴をシミュレートします。",
+        "currentHistory" : "アクティブなQAデバイス：{{devices}}",
+        "resetWarning" : "リセットすると、6つのQAデバイス切り替えのみが消去されます。その他のデバイス履歴は変更されません；シミュレーションエンジンがない場合、実際の履歴は復元できません。",
+        "reset" : "デバイス履歴をリセット",
+        "none" : "なし",
+        "deviceDesc" : "QAテスト用に、このデバイスを以前に接続されたものとしてマークします。",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
+        }
       }
     }
   },
@@ -4539,6 +4560,7 @@
   "send" : {
     "newSendFlow" : {
       "title" : "{{currency}}を送付",
+      "selectAddress" : "アドレスを選択",
       "available" : "利用可能: {{amount}}",
       "to" : "宛先：",
       "addressDisclaimer" : {
@@ -4553,6 +4575,15 @@
       "pasteFromClipboard" : {
         "title" : "クリップボードから貼り付け",
         "cta" : "貼り付け"
+      },
+      "addContact" : {
+        "newContact" : "新しい連絡先を追加",
+        "existingContact" : "既存の連絡先に追加",
+        "selectContact" : "連絡先を選択",
+        "syncWallet" : {
+          "title" : "連絡先を追加するには、ウォレットを同期してください",
+          "description" : "連絡先はエンドツーエンドで暗号化され、お使いのすべてのスマートフォンやコンピューターのLedger Wallet間で同期されます。"
+        }
       },
       "contactsWillAppear" : "連絡先がここに表示されます",
       "editRecipientAccessibilityLabel" : "受取人を編集",
@@ -5174,6 +5205,10 @@
         "deviceOutOfStorageSpace" : {
           "title" : "Ledgerデバイスのメモリを確保するために、いくつかのアプリをアンインストールしてください。",
           "description" : "デバイスのメモリが不足しています。"
+        },
+        "invalidProvider" : {
+          "title" : "プロバイダーが無効です",
+          "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Walletの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
         }
       },
       "cta" : {
@@ -5182,7 +5217,8 @@
         "setupDevice" : "Ledgerデバイスのセットアップ",
         "updateLedgerOs" : "Ledger OSを更新する",
         "cancelOperation" : "操作をキャンセル",
-        "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
+        "contactLedgerSupport" : "Ledgerサポートへ問い合わせ",
+        "goToSettings" : "設定を開く"
       }
     },
     "connectDevice" : {
@@ -9207,6 +9243,10 @@
         "title" : "Ledger Sync",
         "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
         "cta" : "Ledger Syncをオンにする"
+      },
+      "sendFlow" : {
+        "title" : "ウォレットを同期する",
+        "later" : "後で"
       }
     },
     "activation" : {
@@ -9692,6 +9732,14 @@
     "accountCount_other" : "{{count}}アカウント",
     "emptyAccounts" : "{{network}}アカウントがまだありません。続行するために追加してください。",
     "addAccount" : "アカウントを追加",
+    "unsupportedAssetExplanation" : {
+      "title" : "{{asset}}には、未対応です。",
+      "description" : "{{asset}}アドレスはまだ連絡先に追加できません。今後も暗号資産を随時追加していく予定です。"
+    },
+    "unsupportedNetworkExplanation" : {
+      "title" : "{{network}}ネットワークには未対応です。",
+      "description" : "{{asset}}には{{network}}ネットワークを選択できません。今後もネットワークを随時追加していく予定です。"
+    },
     "errors" : {
       "title" : "接続に失敗しました。",
       "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
@@ -10080,9 +10128,43 @@
         "confirm" : "確認"
       }
     },
+    "card" : {
+      "title" : "暗号資産カード"
+    },
     "actions" : {
       "deposit" : "ステーブルコインを追加",
       "request" : "リクエスト"
+    },
+    "request" : {
+      "title" : "リクエスト{{asset}}",
+      "networkLabel" : "{{network}}ネットワーク",
+      "actions" : {
+        "share" : "共有する",
+        "copy" : "コピー",
+        "copied" : "コピー済み",
+        "save" : "保存",
+        "verify" : "認証する"
+      },
+      "verifyAddress" : {
+        "introTitle" : "アドレスを認証する",
+        "introDescription" : "アドレス置き換え攻撃を防ぐため、Ledgerデバイスのセキュアスクリーンでアドレスを確認してください。",
+        "verifyCta" : "アドレスの認証",
+        "successTitle" : "デバイスのセキュアスクリーンに表示されているアドレス",
+        "nextStepsLabel" : "次のステップ",
+        "nextStepShare" : "ご希望のアプリでアドレスを共有してください",
+        "nextStepMatch" : "共有アドレスが、Ledgerデバイスのアドレスと一致していることを確認してください。",
+        "gotItCta" : "了解",
+        "device" : {
+          "cancelledTitle" : "アドレスの検証がキャンセルされました",
+          "cancelledDescription" : "デバイスでアドレスを拒否しました。再度表示して確認することができます。",
+          "mismatchTitle" : "アドレスが一致しません",
+          "mismatchDescription" : "デバイスに表示されているアドレスが、リクエストされたアドレスと異なります。このアドレスは共有しないでください。",
+          "unsupportedTitle" : "検証は利用できません",
+          "unsupportedDescription" : "このデバイスのアプリでは、デバイス上での検証用アドレスを表示できません。",
+          "retryCta" : "アドレスをもう一度表示",
+          "closeCta" : "閉じる"
+        }
+      }
     },
     "deposit" : {
       "title" : "ステーブルコインを追加する",
@@ -10104,6 +10186,11 @@
           "description" : "クレジットカードでステーブルコインを購入する。"
         }
       }
+    },
+    "contacts" : {
+      "title" : "支払う",
+      "pay" : "新着",
+      "seeAllTitle" : "連絡先に支払う"
     }
   },
   "syncIndicator" : {
@@ -10325,6 +10412,27 @@
     }
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Ledgerデバイスの準備中"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
+          "description" : "接続されたデバイスが一致しません。"
+        },
+        "invalidData" : {
+          "title" : "このアドレスは保存できません",
+          "description" : "お使いのLedgerデバイスが連絡先情報を拒否しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+        },
+        "appVersionTooLow" : {
+          "title" : "アプリのアップデートが必要です。",
+          "description" : "連絡先を保存するには、Ledgerデバイスのアプリをアップデートして、再度お試しください。"
+        }
+      }
+    },
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
     "addAddress" : "アドレスを追加",
@@ -10454,19 +10562,18 @@
     },
     "featureIntroduction" : {
       "title" : "「連絡先」のご紹介",
-      "description" : "暗号資産用のアドレス帳 — 送信先のウォレットをすべて1か所に保存。",
-      "primaryAction" : "「連絡先」を試す",
+      "primaryAction" : "今すぐチェック",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "アドレスを一度保存するだけ",
-          "description" : "送信先のアドレスを1か所で管理。"
+          "title" : "任意の名前でアドレスを保存",
+          "description" : "取引、友人、ご自身の外部アカウント。"
         },
         "sendToRightAddress" : {
           "title" : "正しいアドレスに送信",
-          "description" : "資金は常に正しいウォレットに届きます。"
+          "description" : "アドレスではなく、信頼できる名前を確認しましょう。"
         },
         "privateAcrossDevices" : {
-          "title" : "デバイス間でプライバシーを保護",
+          "title" : "Ledger Wallet™経由で安全にチャージ",
           "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
         }
       }
