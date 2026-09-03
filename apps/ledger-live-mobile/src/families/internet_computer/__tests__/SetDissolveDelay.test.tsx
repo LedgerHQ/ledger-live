@@ -1,5 +1,6 @@
 import {
   NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
@@ -20,11 +21,15 @@ let status: { errors: Record<string, Error>; warnings: Record<string, Error> } =
 };
 
 // Shaped like the coin module's error classes: the message defaults to the class name, and the bound
-// travels as an enumerable field for the copy to interpolate.
+// travels as enumerable fields for the copy to interpolate. `count` repeats the day figure because
+// that is what i18next selects the plural form on.
+const MIN_DAYS = NNS_MINIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY;
+
 const tooShort = Object.assign(new Error("ICPDissolveDelayLTMin"), {
   name: "ICPDissolveDelayLTMin",
-  minSeconds: 1,
-  minDays: 1,
+  minSeconds: NNS_MINIMUM_DISSOLVE_DELAY,
+  minDays: MIN_DAYS,
+  count: MIN_DAYS,
 });
 
 // The fixture neuron is already locked for the 14-day voting minimum, so an increase may only add
@@ -91,6 +96,22 @@ describe("SetDissolveDelay", () => {
     renderScreen();
 
     expect(screen.getByText("Dissolve delay too short")).toBeVisible();
+  });
+
+  it("quotes the bound in days in the fault it reports", () => {
+    transaction = {
+      type: "increase_dissolve_delay",
+      additionalDissolveDelay: String(SECONDS_IN_DAY),
+    };
+    status = { errors: { transaction: tooShort }, warnings: {} };
+
+    renderScreen();
+
+    expect(
+      screen.getByText(
+        `The Internet Computer requires a dissolve delay of at least ${MIN_DAYS} days.`,
+      ),
+    ).toBeVisible();
   });
 
   it("stores the entered days as seconds", () => {

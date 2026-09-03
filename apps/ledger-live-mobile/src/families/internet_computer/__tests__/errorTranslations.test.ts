@@ -12,9 +12,11 @@ const REACHABLE_ERRORS = [
   "ICPDissolveDelayLTMin",
   "ICPDissolveDelayGTMax",
   "ICPDissolveDelayLTCurrent",
+  "ICPInvalidDissolveDelayIncrease",
   "ICPNeuronNotFound",
   "ICPInvalidHotKey",
   "ICPHotKeyAlreadyExists",
+  "ICPHotKeyIsController",
   "ICPSplitNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
@@ -32,8 +34,18 @@ const REACHABLE_ERRORS = [
 // others nest an object under `list`.
 const errors = en.errors as unknown as Record<
   string,
-  { title?: string; description?: string } | undefined
+  | {
+      title?: string;
+      description?: string;
+      // The dissolve-delay bounds quote a day count, so their copy is pluralized.
+      description_one?: string;
+      description_other?: string;
+    }
+  | undefined
 >;
+
+const descriptionOf = (name: string): string | undefined =>
+  errors[name]?.description ?? errors[name]?.description_other;
 
 describe("internet_computer error translations", () => {
   it.each(REACHABLE_ERRORS)("%s has a title of its own", name => {
@@ -49,11 +61,33 @@ describe("internet_computer error translations", () => {
     },
   );
 
+  // Without their own description these fall back to "Something went wrong. Please retry or contact
+  // Ledger Support.", which is the wrong instruction for a value the user can simply correct.
+  it.each([
+    "ICPDissolveDelayLTMin",
+    "ICPDissolveDelayGTMax",
+    "ICPInvalidPercentage",
+    "ICPInvalidDissolveDelayIncrease",
+    "ICPHotKeyIsController",
+  ])("%s explains how to correct the value", name => {
+    expect(descriptionOf(name)).toBeTruthy();
+  });
+
   // The dissolve-delay bounds are protocol seconds, but the copy quotes whole days, so the errors
   // carry both and the description has to interpolate the day count rather than the seconds.
   it("quotes the dissolve-delay bounds in days", () => {
-    expect(errors.ICPDissolveDelayLTMin?.description).toContain("{{minDays}}");
-    expect(errors.ICPDissolveDelayGTMax?.description).toContain("{{maxDays}}");
+    expect(descriptionOf("ICPDissolveDelayLTMin")).toContain("{{minDays}}");
+    expect(descriptionOf("ICPDissolveDelayGTMax")).toContain("{{maxDays}}");
+  });
+
+  // i18next picks the form off `count`, so both forms have to exist or a bound reads "1 days".
+  it.each([
+    ["ICPDissolveDelayLTMin", "{{minDays}}"],
+    ["ICPDissolveDelayGTMax", "{{maxDays}}"],
+  ])("%s pluralizes its day count, both forms quoting the bound", (name, placeholder) => {
+    expect(errors[name]?.description_one).toContain(placeholder);
+    expect(errors[name]?.description_other).toContain(placeholder);
+    expect(errors[name]?.description).toBeUndefined();
   });
 
   // A read that returned nothing changed nothing, and the copy has to say so: reusing
