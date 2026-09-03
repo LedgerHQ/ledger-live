@@ -63,8 +63,6 @@ export const CryptoCurrencySchema = z.object({
   units: z.array(UnitSchema).min(1),
   /** Optional currency symbol (e.g. `"Ƀ"`). Not all currencies have one. */
   symbol: z.string().optional(),
-  /** When `true`, countervalue display is disabled (e.g. colliding tickers). */
-  disableCountervalue: z.boolean().optional(),
   /** Search keywords (e.g. `["btc", "bitcoin"]`). */
   keywords: z.array(z.string()).optional(),
   /** Id of the currency this was forked from (e.g. `"bitcoin"` for Bitcoin Cash). */

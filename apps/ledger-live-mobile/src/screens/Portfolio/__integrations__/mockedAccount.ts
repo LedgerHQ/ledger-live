@@ -549,7 +549,6 @@ export const MockedAccounts: AccountsState = {
           { name: "Kwei", code: "Kwei", magnitude: 3 },
           { name: "wei", code: "wei", magnitude: 0 },
         ],
-        disableCountervalue: false,
         ethereumLikeInfo: { chainId: 59144 },
         explorerViews: [
           {

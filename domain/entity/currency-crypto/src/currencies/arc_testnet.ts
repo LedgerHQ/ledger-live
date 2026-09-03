@@ -38,7 +38,6 @@ export const arc_testnet = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: true,
   ethereumLikeInfo: {
     chainId: 5042002,
   },

@@ -12,7 +12,6 @@ export const polygon_amoy = currency({
   color: "#6d29de",
   family: "evm",
   isTestnetFor: "polygon",
-  disableCountervalue: true,
   ethereumLikeInfo: {
     chainId: 80002,
   },

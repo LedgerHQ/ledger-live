@@ -38,7 +38,6 @@ export const polygon_zk_evm_testnet = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: true,
   isTestnetFor: "polygon_zk_evm",
   ethereumLikeInfo: {
     chainId: 1442,

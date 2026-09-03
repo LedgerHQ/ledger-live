@@ -44,7 +44,6 @@ export function convertApiAssets(
           family: asset.family ?? asset.id,
           explorerViews: [],
           symbol: asset.symbol,
-          disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
           ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
         });

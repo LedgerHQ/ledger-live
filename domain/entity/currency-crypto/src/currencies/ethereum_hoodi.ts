@@ -38,7 +38,6 @@ export const ethereum_hoodi = currency({
     },
   ],
   isTestnetFor: "ethereum",
-  disableCountervalue: true,
   family: "evm",
   blockAvgTime: 15,
   ethereumLikeInfo: {

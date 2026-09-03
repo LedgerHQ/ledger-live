@@ -38,7 +38,6 @@ export const robinhood_testnet = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: true,
   isTestnetFor: "robinhood",
   ethereumLikeInfo: {
     chainId: 46630,

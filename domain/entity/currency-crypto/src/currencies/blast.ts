@@ -37,7 +37,6 @@ export const blast = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   ethereumLikeInfo: {
     chainId: 81457,
   },
