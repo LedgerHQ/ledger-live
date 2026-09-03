@@ -69,7 +69,7 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await app.operationDetails.checkOperationInfos(transaction, true, "OUT");
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        const subAccountId = app.account.subAccountId(transaction.accountToCredit);
+        const subAccountId = transaction.accountToCredit.subAccountId;
         await app.account.navigateToSubAccount(transaction.accountToCredit);
         await app.account.expectAccountBalanceVisible(subAccountId);
         await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);

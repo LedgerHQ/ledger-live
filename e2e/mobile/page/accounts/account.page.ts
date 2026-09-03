@@ -36,8 +36,6 @@ export default class AccountPage {
   accountRenameRow = () => getElementById("account-settings-rename-row");
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
-  subAccountId = (account: Account) =>
-    `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Wait for account screen and verify account name {{{0}}}")
@@ -208,7 +206,7 @@ export default class AccountPage {
 
   @Step("Navigate to sub account {{{0.accountName}}}")
   async navigateToSubAccount(account: AccountType) {
-    const subAccountId = this.subAccountId(account);
+    const subAccountId = account.subAccountId;
     await this.openViaDeeplink();
     await this.goToAccountById(subAccountId);
     await waitForElement(this.accountGraph(subAccountId));
