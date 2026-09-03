@@ -54,4 +54,25 @@ describe("FooterSection", () => {
 
     expect(screen.queryByText("View in explorer")).toBeNull();
   });
+
+  it("should offer a way back to perps once it has funded a deposit", async () => {
+    const onReturn = jest.fn();
+    const { user } = render(<FooterSection isLoading={false} origin="perps" onReturn={onReturn} />);
+
+    await user.press(screen.getByText("Return to Perps"));
+
+    expect(onReturn).toHaveBeenCalled();
+  });
+
+  it("should keep the way back to perps while the explorer link is still loading", () => {
+    render(<FooterSection isLoading origin="perps" onReturn={jest.fn()} />);
+
+    expect(screen.getByText("Return to Perps")).toBeVisible();
+  });
+
+  it("should offer no way back to perps for a plain swap", () => {
+    render(<FooterSection explorerUrl="https://explorer.test/tx/1" isLoading={false} />);
+
+    expect(screen.queryByText("Return to Perps")).toBeNull();
+  });
 });
