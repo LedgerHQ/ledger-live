@@ -17,18 +17,12 @@ function QuotedAmount({
   formattedAmount,
   currencyTicker,
   isQuoteLoading,
-}: Pick<
-  DepositAmountStatusProps,
-  "formattedAmount" | "currencyTicker" | "isQuoteLoading"
->) {
+}: Pick<DepositAmountStatusProps, "formattedAmount" | "currencyTicker" | "isQuoteLoading">) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
     return (
-      <Skeleton
-        className="h-16 w-144 rounded-sm"
-        data-testid="perps-deposit-quote-skeleton"
-      />
+      <Skeleton className="h-16 w-144 rounded-sm" data-testid="perps-deposit-quote-skeleton" />
     );
   }
 
@@ -61,9 +55,7 @@ export function DepositAmountStatus({
   ) : null;
 
   const providerNotice = hasAmount ? (
-    <p className="body-2 text-base">
-      {t("perpsDeposit.inputSubText", { provider })}
-    </p>
+    <p className="body-2 text-base">{t("perpsDeposit.inputSubText", { provider })}</p>
   ) : null;
 
   return (
