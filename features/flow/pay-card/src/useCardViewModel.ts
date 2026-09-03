@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import type { CardProps, CardViewProps } from "./Card.types";
 
 /** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
@@ -18,10 +19,12 @@ export function useCardViewModel({
   balanceLabel,
   onTrackEvent,
 }: CardProps): CardViewProps {
+  const isSignedIn = useIsCardSignedIn();
+
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
     if (!formatCountervalue || balanceLabel === undefined) return undefined;
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, cardVisual };
+  return { title, oauthConfig, callback, onTrackEvent, isSignedIn, cardVisual };
 }

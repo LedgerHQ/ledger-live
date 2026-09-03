@@ -31,6 +31,8 @@ export type CardViewProps = {
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
+  /** True while a Card session is live. The title only shows to a signed-in card holder. */
+  readonly isSignedIn: boolean;
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
 };

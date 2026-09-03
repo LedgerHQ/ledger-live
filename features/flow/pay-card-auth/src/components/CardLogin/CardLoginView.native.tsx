@@ -11,8 +11,6 @@ import {
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
-const SUBHEADER_STYLE = { minWidth: 0 } as const;
-
 export function CardLoginView({
   title,
   description,
@@ -32,7 +30,7 @@ export function CardLoginView({
         }}
       >
         <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
-          <Subheader lx={{ flex: 1 }} style={SUBHEADER_STYLE}>
+          <Subheader lx={{ flex: 1 }} style={{ minWidth: 0 }}>
             <SubheaderRow>
               <SubheaderTitle>{title}</SubheaderTitle>
             </SubheaderRow>
