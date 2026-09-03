@@ -108,18 +108,23 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests"
+    name: "Desktop Unit Tests (${{ matrix.jest_max_workers }}w #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 10
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        jest_max_workers: [4, 8, 16, 24]
+        repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+      CI_OS: ledger-wallet-16cpu-aws-public
+      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -158,6 +163,8 @@ jobs:
           CPUS="$(nproc 2>/dev/null || echo "?")"
           echo "::group::Jest CI metrics (desktop coverage)"
           echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e 'const os=require("os");console.log("available_parallelism="+(os.availableParallelism?os.availableParallelism():"n/a")+" os_cpus_length="+os.cpus().length)'
+          echo "cgroup_cpu_max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null || echo none)"
           node -e '
             const os = require("os");
             const n = os.cpus().length;
@@ -183,7 +190,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: coverage-desktop
+          name: coverage-desktop-${{ strategy.job-index }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   report:
