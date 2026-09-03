@@ -101,23 +101,17 @@ jobs:
         run: pnpm exec nx run live-mobile:typecheck
 
   unit-tests:
-    name: "Mobile Unit Tests (${{ matrix.jest_max_workers }} #${{ matrix.repeat }})"
+    name: "Mobile Unit Tests"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        jest_max_workers: [8, 16, 24, 30]
-        repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-16cpu-aws-public
-      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
-    runs-on: [ledger-wallet-16cpu-aws-public]
+      CI_OS: ledger-live-linux-16CPU-64RAM
+      JEST_MAX_WORKERS: "95%"
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -156,10 +150,6 @@ jobs:
           CPUS="$(nproc 2>/dev/null || echo "?")"
           echo "::group::Jest CI metrics (mobile coverage)"
           echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
-          node -e 'const os=require("os");console.log("available_parallelism="+(os.availableParallelism?os.availableParallelism():"n/a")+" os_cpus_length="+os.cpus().length)'
-          echo "cgroup_cpu_max=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null || echo none)"
-          echo "cgroup_v1_quota=$(cat /sys/fs/cgroup/cpu/cpu.cfs_quota_us 2>/dev/null || echo none)/$(cat /sys/fs/cgroup/cpu/cpu.cfs_period_us 2>/dev/null || echo none)"
-          echo "mem_total_kb=$(awk '/MemTotal/{print $2}' /proc/meminfo)"
           node -e '
             const os = require("os");
             const n = os.cpus().length;
@@ -185,5 +175,5 @@ jobs:
         if: ${{ !cancelled() }}
         id: generate_coverage
         with:
-          name: coverage-mobile-${{ strategy.job-index }}
+          name: coverage-mobile
           path: ${{ github.workspace }}/apps/ledger-live-mobile/coverage

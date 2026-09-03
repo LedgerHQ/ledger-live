@@ -108,25 +108,22 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests (${{ matrix.jest_max_workers }} #${{ matrix.repeat }})"
+    name: "Desktop Unit Tests (4cpu #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
-    # Raised from 10 for the benchmark: a slower worker setting must produce a
-    # measurement rather than a timeout.
-    timeout-minutes: 25
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        jest_max_workers: [8, 16, 24, 30]
         repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-16cpu-aws-public
-      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
-    runs-on: [ledger-wallet-16cpu-aws-public]
+      CI_OS: ledger-wallet-4cpu-aws-public
+      JEST_MAX_WORKERS: "95%"
+    runs-on: [ledger-wallet-4cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
