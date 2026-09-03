@@ -137,7 +137,7 @@ function getBalanceHistoryWithChanges(
   };
 }
 
-export function meaningfulPercentage(
+function meaningfulPercentage(
   deltaChange: number | null | undefined,
   balanceDivider: number | null | undefined,
   percentageHighThreshold = 100000,
