@@ -112,7 +112,7 @@ export type PayCardRefreshSessionRequest = {
 
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
-/** Which custodial wallet to link to the card. */
+/** Which custodial wallet to link to, or unlink from, the card. */
 export type PayCardLinkWalletRequest = z.infer<typeof PayCardLinkWalletRequestSchema>;
 
 export type PayCardLinkWalletResult = z.infer<typeof PayCardLinkWalletResponseSchema>;

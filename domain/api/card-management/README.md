@@ -35,6 +35,7 @@ shape and the reasons.
 | `getRewardWallet` | GET | `/v1/wallet/reward` | Read the wallet the card's rewards are paid into |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
 | `linkWalletToCard` | POST | `/v1/wallet/internal/card_linked` | Link a custodial wallet to the card as a funding source |
+| `unlinkWalletFromCard` | DELETE | `/v1/wallet/internal/card_linked` | Drop a wallet as a funding source, leaving it and its funds alone |
 | `updateCardWalletPriorities` | PUT | `/v1/wallet/internal/card_linked/priority` | Rewrite the order the linked wallets are charged in |
 | `getWalletHistory` | GET | `/v1/wallet/history` | Read one wallet's own history, newest first |
 
