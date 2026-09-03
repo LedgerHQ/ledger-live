@@ -24,13 +24,12 @@ export function useTransactionHeaderViewModel({
     ? { sendTicker: sendCurrency.ticker, receiveTicker: receiveCurrency.ticker }
     : undefined;
 
-  // Perps leads with the deposit it is funding, and keeps the swapped pair on its own line.
   const isPerps = origin === "perps";
-  const title = tickers
-    ? isPerps
-      ? t("perpsTransactionStatus.title")
-      : t("transfer.swap2.modals.transactionStatus.title", tickers)
-    : undefined;
+  const title = isPerps
+    ? t("perpsTransactionStatus.title")
+    : tickers
+      ? t("transfer.swap2.modals.transactionStatus.title", tickers)
+      : undefined;
   const currencies =
     tickers && isPerps ? t("perpsTransactionStatus.currencies", tickers) : undefined;
 
