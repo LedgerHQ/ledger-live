@@ -152,6 +152,8 @@ export function useNotificationsPromptQaViewModel() {
 
   const applyScenario = useCallback(
     (scenario: NotificationsQaScenario) => {
+      if (initialStateRef.current === null) return;
+
       const now = Date.now();
       const userData = buildNotificationsQaScenarioUserData(scenario, {
         repromptSchedule: brazePushNotifications?.params?.reprompt_schedule,
@@ -273,6 +275,8 @@ export function useNotificationsPromptQaViewModel() {
   }, [cancelPendingDrawer, openDrawer, resolvedPromptTarget, selectedSource]);
 
   const onMarkInactive = useCallback(() => {
+    if (initialStateRef.current === null) return;
+
     const now = Date.now();
     updatePushNotificationsDataOfUserInStateAndStore(
       buildInactiveUserData(
@@ -290,6 +294,8 @@ export function useNotificationsPromptQaViewModel() {
   ]);
 
   const onMarkRepromptable = useCallback(() => {
+    if (initialStateRef.current === null) return;
+
     const now = Date.now();
     updatePushNotificationsDataOfUserInStateAndStore(
       buildRepromptableUserData(
@@ -306,6 +312,8 @@ export function useNotificationsPromptQaViewModel() {
   ]);
 
   const onKeepTwoDismissals = useCallback(() => {
+    if (initialStateRef.current === null) return;
+
     updatePushNotificationsDataOfUserInStateAndStore(
       buildTruncatedDismissalsUserData(pushNotificationsDataOfUser, 2),
     );

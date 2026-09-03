@@ -13,9 +13,12 @@ const mockIsDrawerPending = jest.fn(() => false);
 const mockCancelPendingDrawer = jest.fn();
 
 /** State the ViewModel reads through native-backed hooks rather than Redux. */
-const nativeState = {
-  permissionStatus: AuthorizationStatus.NOT_DETERMINED as PermissionStatus,
-  pushNotificationsDataOfUser: undefined as DataOfUser | undefined,
+const nativeState: {
+  permissionStatus: PermissionStatus | undefined;
+  pushNotificationsDataOfUser: DataOfUser | undefined;
+} = {
+  permissionStatus: AuthorizationStatus.NOT_DETERMINED,
+  pushNotificationsDataOfUser: undefined,
 };
 
 const mockSetPermissionStatus = jest.fn((status: PermissionStatus) => {
@@ -87,6 +90,21 @@ describe("useNotificationsPromptQaViewModel", () => {
     expect(result.current.reason).toBe("Eligible now");
     expect(result.current.forceOpenDrawerLabel).toContain(result.current.resolvedPromptTarget);
     expect(mockCancelPendingDrawer).toHaveBeenCalled();
+  });
+
+  it("should not apply a scenario before the baseline is captured", () => {
+    nativeState.permissionStatus = undefined;
+    const { result, store } = renderViewModel();
+
+    act(() => {
+      result.current.applyScenario(getScenario("already-opted-in"));
+    });
+
+    expect(result.current.isBaselineCaptured).toBe(false);
+    expect(store.getState().settings.notifications.areNotificationsAllowed).toBe(true);
+    expect(mockSetPermissionStatus).not.toHaveBeenCalled();
+    expect(mockUpdateUserData).not.toHaveBeenCalled();
+    expect(mockCancelPendingDrawer).not.toHaveBeenCalled();
   });
 
   it("should report Skip when the already opted in scenario is applied", () => {
