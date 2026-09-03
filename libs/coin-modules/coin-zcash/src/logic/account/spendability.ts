@@ -122,12 +122,26 @@ export function hasBoundedIronwoodShortfall(
   return totalSpent.gt(boundedTotal) && totalSpent.lte(fullTotal);
 }
 
-/** Sum of the spendable pool -- the figure presented as spendable. */
+/**
+ * Sum of the spendable pool -- the figure presented as the account's Private
+ * balance (`ZcashTransferFromSelector`, `AccountBalanceSummaryFooter`).
+ *
+ * Deliberately **unbounded** by the per-PCZT action ceiling: a note past that
+ * ceiling is real, owned, mature, unreserved value -- it just cannot be spent
+ * in a *single* transaction, which is a fact about one send, not about the
+ * account's balance. Reporting less than the true mature total here would
+ * make funds silently vanish from the figure a user reads as "what I have",
+ * the same failure mode `getMaturingIronwoodBalance` exists to avoid for
+ * immature notes. `collectSelectableIronwoodNotes` (bounded) stays the right
+ * pool for selection and max-spendable; a send that needs more than the bound
+ * covers is caught at that point by `hasBoundedIronwoodShortfall`, not by
+ * understating the balance here.
+ */
 export function getSpendableIronwoodBalance(
   account: SpendabilityAccount,
   reserved: ReadonlySet<string>,
 ): BigNumber {
-  return collectSelectableIronwoodNotes(account, reserved).reduce(
+  return collectAllSelectableIronwoodNotes(account, reserved).reduce(
     (sum, note) => sum.plus(note.amount),
     new BigNumber(0),
   );

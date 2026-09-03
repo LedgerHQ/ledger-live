@@ -314,6 +314,31 @@ describe("getSpendableIronwoodBalance", () => {
 
     expect(getSpendableIronwoodBalance(acc, noReservations)).toEqual(new BigNumber(0));
   });
+
+  it("counts every mature note even past the per-PCZT bound -- it's the real balance, not a max-per-send figure", () => {
+    // A note past ZCASH_MAX_IRONWOOD_ACTIONS is real, owned, mature, unreserved
+    // value: not spendable in one transaction, but still part of what the
+    // account holds. Regression guard: getSpendableIronwoodBalance must not
+    // silently drop it just because collectSelectableIronwoodNotes bounds the
+    // per-transaction selection pool.
+    const extra = 5;
+    const notes = Array.from({ length: ZCASH_MAX_IRONWOOD_ACTIONS + extra }, (_, i) => ({
+      amount: (i + 1) * 1_000,
+      blockHeight: REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+    }));
+    const acc = account({ notes });
+
+    const fullTotal = notes.reduce((sum, n) => sum + n.amount, 0);
+    const boundedTotal = collectSelectableIronwoodNotes(acc, noReservations).reduce(
+      (sum, n) => sum.plus(n.amount),
+      new BigNumber(0),
+    );
+
+    expect(getSpendableIronwoodBalance(acc, noReservations)).toEqual(new BigNumber(fullTotal));
+    // The bound is real (selection is smaller) -- otherwise this test would
+    // not actually exercise the regression it guards against.
+    expect(boundedTotal.lt(fullTotal)).toBe(true);
+  });
 });
 
 describe("hasMaturingIronwoodNotes", () => {
