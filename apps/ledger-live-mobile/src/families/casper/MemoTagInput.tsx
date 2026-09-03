@@ -11,7 +11,14 @@ export default (props: MemoTagInputProps<CasperTransaction>) => {
     <GenericMemoTagInput
       {...props}
       textToValue={text => text.replace(/\D/g, "")}
-      valueToTxPatch={value => tx => ({ ...tx, transferId: value || undefined })}
+      // Matches descriptor/send/memo.ts casper handler: memoType is always "transferId" for
+      // this family; memoValue carries the value or undefined when cleared.
+      valueToTxPatch={value => tx => ({
+        ...tx,
+        transferId: value || undefined,
+        memoType: "transferId",
+        memoValue: value || undefined,
+      })}
       placeholder={t("send.summary.transferId")}
     />
   );

@@ -125,6 +125,85 @@ describe("transaction", () => {
       expect(result.family).toBe("casper");
       expect(result.transferId).toBeUndefined();
     });
+
+    test("should include memoType and memoValue when present as strings", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        transferId: TEST_TRANSFER_IDS.VALID,
+        memoType: "transferId",
+        memoValue: TEST_TRANSFER_IDS.VALID,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.memoType).toBe("transferId");
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+    });
+
+    test("should derive transferId from memoValue when memoType is 'transferId' and transferId is absent", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        memoType: "transferId",
+        memoValue: TEST_TRANSFER_IDS.VALID,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.transferId).toBe(TEST_TRANSFER_IDS.VALID);
+      expect(result.memoType).toBe("transferId");
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+    });
+
+    test("should preserve null memoType and memoValue from raw", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        memoType: null,
+        memoValue: null,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.memoType).toBeNull();
+      expect(result.memoValue).toBeNull();
+    });
+
+    test("should handle null fees from raw (generic bridge default)", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: null,
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.fees).toBeNull();
+    });
+
+    test("should include mode and nonce when present", () => {
+      const raw: TransactionRaw = {
+        family: "casper",
+        recipient: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+        useAllAmount: false,
+        amount: "50000000",
+        fees: "1000000",
+        mode: "send",
+        nonce: "42",
+      };
+
+      const result = fromTransactionRaw(raw);
+      expect(result.mode).toBe("send");
+      expect(result.nonce?.toFixed()).toBe("42");
+    });
   });
 
   describe("toTransactionRaw", () => {
@@ -158,6 +237,36 @@ describe("transaction", () => {
       expect(result.transferId).toBeUndefined();
     });
 
+    test("should handle null fees (generic bridge createTransaction default)", () => {
+      const tx = { ...createMockTransaction(), fees: null };
+      const result = transaction.toTransactionRaw(tx);
+      expect(result.fees).toBeNull();
+    });
+
+    test("should include memoType and memoValue when present as strings", () => {
+      const tx = createMockTransaction({
+        transferId: TEST_TRANSFER_IDS.VALID,
+        memoType: "transferId",
+        memoValue: TEST_TRANSFER_IDS.VALID,
+      });
+
+      const result = transaction.toTransactionRaw(tx);
+      expect(result.memoType).toBe("transferId");
+      expect(result.memoValue).toBe(TEST_TRANSFER_IDS.VALID);
+    });
+
+    test("should preserve null memoType and memoValue in raw", () => {
+      const tx = {
+        ...createMockTransaction(),
+        memoType: null,
+        memoValue: null,
+      };
+
+      const result = transaction.toTransactionRaw(tx);
+      expect(result.memoType).toBeNull();
+      expect(result.memoValue).toBeNull();
+    });
+
     test("should handle different transaction scenarios", () => {
       // Test with useAllAmount = true
       const maxTx = createMockTransaction({
@@ -176,6 +285,18 @@ describe("transaction", () => {
 
       const largeResult = transaction.toTransactionRaw(largeTx);
       expect(largeResult.amount).toBe("9999000000000");
+    });
+
+    test("should include mode and nonce when present", () => {
+      const tx = {
+        ...createMockTransaction(),
+        mode: "send",
+        nonce: new BigNumber(42),
+      };
+
+      const result = transaction.toTransactionRaw(tx);
+      expect(result.mode).toBe("send");
+      expect(result.nonce).toBe("42");
     });
   });
 });

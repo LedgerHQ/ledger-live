@@ -16,8 +16,7 @@ import { validateIntent } from "../logic/validateIntent";
 import { validateAddress } from "../bridge/validateAddress";
 import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 
-// ADR-019: caller builds {@link CasperContext} and passes it to each method.
-// `satisfies` (not `as`) preserves the concrete return types of each method for callers.
+// ADR-019: caller builds CasperContext. `satisfies` (not `as`) preserves concrete return types.
 export function createApi() {
   return {
     lastBlock,

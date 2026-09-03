@@ -144,7 +144,8 @@ const casper: CurrenciesData<Transaction> = {
             recipient: RECIPIENT_ADDRESS_SECP256k1,
             fees: getEstimatedFees().toString(),
             amount: "3",
-            transferId: "afdsaf1",
+            memoType: "transferId",
+            memoValue: "afdsaf1",
           }),
           expectedStatus: {
             amount: new BigNumber("3"),

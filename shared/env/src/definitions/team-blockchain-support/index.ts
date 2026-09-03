@@ -26,6 +26,11 @@ const teamBlockchainSupport = {
     parser: boolParser,
     desc: "Enable tokens on Aptos",
   },
+  CASPER_GENERIC_BRIDGE: {
+    def: true,
+    parser: boolParser,
+    desc: "Route Casper through the generic coin framework bridge. Set false to fall back to the legacy bridge.",
+  },
   APTOS_ENABLE_STAKING: {
     def: false,
     parser: boolParser,

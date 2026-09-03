@@ -42,6 +42,17 @@ import {
 } from "@ledgerhq/transaction-observability";
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
+
+// CASPER_GENERIC_BRIDGE=false falls back to the legacy bridge for incident recovery.
+// Casper shipped on the old bridge before LIVE-35912; seedIdentifier format changed
+// (raw pubkey → tagged address). sameAccountIdentity's freshAddress fallback handles
+// re-scans, but id-keyed settings (account name, etc.) reset on the first rescan.
+function shouldUseGenericCoinFrameworkBridge(family: string) {
+  return (
+    isGenericCoinFrameworkFamily(family) && (family !== "casper" || getEnv("CASPER_GENERIC_BRIDGE"))
+  );
+}
+
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
 const accountBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
 const mockBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>> | undefined> = {};
@@ -93,7 +104,7 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
     });
   }
 
-  if (isGenericCoinFrameworkFamily(family)) {
+  if (shouldUseGenericCoinFrameworkBridge(family)) {
     return getCoinFrameworkCurrencyBridge(family, "local");
   }
 
@@ -116,7 +127,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBri
 
 async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAccountBridge<any>> {
   let rawBridge: AccountBridge<any>;
-  if (isGenericCoinFrameworkFamily(family)) {
+  if (shouldUseGenericCoinFrameworkBridge(family)) {
     rawBridge = await getCoinFrameworkAccountBridge(family, "local");
   } else {
     const setup = await loadSetupForFamily(family);

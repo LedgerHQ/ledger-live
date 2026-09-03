@@ -32,10 +32,6 @@ describe("createApi", () => {
     }
   });
 
-  // The capabilities Casper does not expose are omitted now rather than stubbed one by one,
-  // and the resolver's `withDefaults` supplies them — which is also what makes them
-  // reportable: a consumer can ask, where a throwing placeholder used to be
-  // indistinguishable from an implementation.
   it("omits the capabilities Casper does not expose", () => {
     const resolved = withDefaults(api);
     for (const capability of [

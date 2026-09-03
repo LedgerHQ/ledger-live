@@ -34,28 +34,24 @@ export const buildSignOperation =
               memo: { type: "string" as const, kind: "transferId" as const, value: transferId },
             }),
           },
-          { value: BigInt(fees.toFixed(0)) },
+          fees === null ? undefined : { value: BigInt(fees.toFixed(0)) },
         );
         const casperTx = CasperTransaction.fromJSON(crafted.transaction);
 
-        // Serialize tx
         const txBytes = casperTx.toBytes();
         log("debug", `[signOperation] serialized transaction: [${txBytes.toString()}]`);
         o.next({
           type: "device-signature-requested",
         });
 
-        // Sign by device
-        const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.sign(derivationPath, Buffer.from(txBytes));
-          return { r };
-        });
+        const { r } = await signerContext(deviceId, async signer => ({
+          r: await signer.sign(derivationPath, Buffer.from(txBytes)),
+        }));
 
         o.next({
           type: "device-signature-granted",
         });
 
-        // signature verification
         const txHash = casperTx.hash.getHash()?.toHex() ?? "";
         const signature = tagSignature(r.signatureRS);
 

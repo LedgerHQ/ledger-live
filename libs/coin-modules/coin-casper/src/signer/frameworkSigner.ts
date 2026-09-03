@@ -22,6 +22,11 @@ export function createFrameworkSigner(signer: CasperSigner): CasperFrameworkSign
 
       const address = addressFromDeviceResponse(r);
       // The generic flow feeds this `publicKey` to `combine`, which only accepts the tagged form.
+      // Casper shipped on the old bridge with seedIdentifier = raw pubkey (038c8c…, 66 chars).
+      // The new format is the tagged address (02038c8c…, 68 chars). freshAddress is unchanged,
+      // so sameAccountIdentity's address fallback preserves accounts on rescan, but id-keyed
+      // settings (account name, etc.) reset on the first rescan after migrating. CASPER_GENERIC_BRIDGE
+      // env var gates this path for incident recovery (see bridge/impl.ts).
       return { path, address, publicKey: address };
     },
     async signTransaction(path, txJson) {

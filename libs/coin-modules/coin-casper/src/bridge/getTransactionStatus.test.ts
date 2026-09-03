@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import {
+  CASPER_FEES_MOTES,
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   InvalidMinimumAmountError,
   MayBlockAccountError,
@@ -47,7 +48,19 @@ describe("getTransactionStatus", () => {
     expect(status.warnings).toEqual({});
     expect(status.estimatedFees).toEqual(validTransaction.fees);
     expect(status.amount).toEqual(validTransaction.amount);
-    expect(status.totalSpent).toEqual(validTransaction.amount.plus(validTransaction.fees));
+    expect(status.totalSpent).toEqual(
+      validTransaction.amount.plus(validTransaction.fees ?? new BigNumber(0)),
+    );
+  });
+
+  test("should use getEstimatedFees() fallback when fees is null", async () => {
+    const txWithNullFees = { ...validTransaction, fees: null };
+    const expectedFees = new BigNumber(CASPER_FEES_MOTES);
+
+    const status = await getTransactionStatus(mockAccount, txWithNullFees);
+
+    expect(status.estimatedFees).toEqual(expectedFees);
+    expect(status.totalSpent).toEqual(txWithNullFees.amount.plus(expectedFees));
   });
 
   test("should return error when recipient is missing", async () => {
@@ -94,7 +107,9 @@ describe("getTransactionStatus", () => {
 
     const status = await getTransactionStatus(mockAccount, useAllAmountTx);
 
-    expect(status.amount).toEqual(mockAccount.spendableBalance.minus(useAllAmountTx.fees));
+    expect(status.amount).toEqual(
+      mockAccount.spendableBalance.minus(useAllAmountTx.fees ?? new BigNumber(0)),
+    );
     expect(status.totalSpent).toEqual(mockAccount.spendableBalance);
     expect(status.errors).toEqual({});
   });
@@ -187,7 +202,9 @@ describe("getTransactionStatus", () => {
         account: createMockAccount(),
         transaction: createMockTransaction({
           amount: new BigNumber(
-            createMockAccount().balance.minus(createMockTransaction().fees).toString(),
+            createMockAccount()
+              .balance.minus(createMockTransaction().fees ?? new BigNumber(0))
+              .toString(),
           ),
         }),
         expectedStatus: {
