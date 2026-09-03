@@ -857,6 +857,7 @@
     "@ledgerhq/live-signer-evm",
     "@ledgerhq/live-signer-icp",
     "@ledgerhq/live-signer-solana",
+    "@ledgerhq/live-signer-xrp",
     "@ledgerhq/live-signer-zcash",
     "@reduxjs/toolkit",
     "@stellar/stellar-sdk",

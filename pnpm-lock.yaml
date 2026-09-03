@@ -84,6 +84,9 @@ catalogs:
     '@ledgerhq/device-signer-kit-solana':
       specifier: 1.13.0
       version: 1.13.0
+    '@ledgerhq/device-signer-kit-xrp':
+      specifier: 0.2.0
+      version: 0.2.0
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.2
       version: 1.3.2
@@ -12818,6 +12821,9 @@ importers:
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
+      '@ledgerhq/live-signer-xrp':
+        specifier: workspace:^
+        version: link:../live-signer-xrp
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../live-signer-zcash
@@ -15955,6 +15961,52 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+
+  libs/live-signer-xrp:
+    dependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-xrp':
+        specifier: 'catalog:'
+        version: 0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/hw-app-xrp':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-xrp
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -22208,6 +22260,11 @@ packages:
     resolution: {integrity: sha512-rP1entTQsavEbhsOuKhsB5hS4JTs0BM5U1jdD+6iVbgghxy4NYESjS0Szq+iq7JI48EdyX65JE4rhz6WAoRHOQ==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.8.0
+
+  '@ledgerhq/device-signer-kit-xrp@0.2.0':
+    resolution: {integrity: sha512-7tRV20TvSVWjy1iRALzWf+1RGrDlwVlAsW+SUzeMc0vTed26967gdW0fXjN489kEmxxfTU2EIkIsIf7SuI8qcA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.9.0
 
   '@ledgerhq/device-signer-kit-zcash@0.6.0':
     resolution: {integrity: sha512-RASZEFtPKW+PY8N8Q5NMUT3OF3PkVX0UGLS05GKpbkS5w1eGwtsbXXcgv67oR1DwtJpfPW+98ifdWi42RHalHw==}
@@ -48720,6 +48777,15 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+
   '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
@@ -66124,7 +66190,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
