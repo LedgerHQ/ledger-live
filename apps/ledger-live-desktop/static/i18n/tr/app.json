@@ -152,7 +152,8 @@
     "memoTag" : {
       "learnMore" : "Etiket/Memo hakkında daha fazla bilgi edinin"
     },
-    "memo" : "Memo"
+    "memo" : "Memo",
+    "stake" : "Stake edin"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -901,6 +902,30 @@
         "confirm" : "Onayla"
       }
     },
+    "card" : {
+      "title" : "Kripto kartı",
+      "balanceLabel" : "Bakiye"
+    },
+    "contacts" : {
+      "title" : "Kişiye ödeme yapın",
+      "empty" : {
+        "info" : "Henüz bir kişiniz yok",
+        "addContact" : "Kişi ekle"
+      },
+      "table" : {
+        "name" : "Name",
+        "addresses" : "Addresses",
+        "transactions" : "Transactions",
+        "transactionCount_zero" : "No transaction",
+        "transactionCount_one" : "{{count}} transaction",
+        "transactionCount_other" : "{{count}} transactions"
+      },
+      "actions" : {
+        "pay" : "Send to contact",
+        "more" : "More options",
+        "viewTransactions" : "View transactions"
+      }
+    },
     "actions" : {
       "deposit" : "Stabil coin ekle",
       "request" : "Talep et",
@@ -924,6 +949,38 @@
         "buy" : {
           "title" : "Satın alın",
           "description" : "Kredi kartıyla stabil coin satın alın."
+        }
+      }
+    },
+    "request" : {
+      "title" : "{{asset}} talep et",
+      "networkLabel" : "{{network}} ağı",
+      "saveDialogTitle" : "Talep kartını kaydet",
+      "actions" : {
+        "share" : "Paylaş",
+        "copy" : "Kopyala",
+        "copied" : "Kopyalandı",
+        "save" : "Kaydet",
+        "verify" : "Doğrula"
+      },
+      "verifyAddress" : {
+        "introTitle" : "Adresinizi doğrulayın",
+        "introDescription" : "Adres değiştirme saldırılarına karşı korunmak için adresinizi Ledger cihazınızın Güvenli Ekranında doğrulayın.",
+        "verifyCta" : "Adresi doğrula",
+        "successTitle" : "Adres, cihazınızın Güvenli Ekranında görüntüleniyor",
+        "nextStepsLabel" : "Sonraki adımlar",
+        "nextStepShare" : "Adresinizi dilediğiniz uygulama üzerinden paylaşın",
+        "nextStepMatch" : "Paylaşılan adresin Ledger cihazınızdaki adresle eşleştiğinden emin olun.",
+        "gotItCta" : "Anladım",
+        "device" : {
+          "cancelledTitle" : "Adres doğrulaması iptal edildi",
+          "cancelledDescription" : "Cihazınızdaki adresi reddettiniz. Doğrulamak için tekrar görüntüleyebilirsiniz.",
+          "mismatchTitle" : "Adresler eşleşmiyor",
+          "mismatchDescription" : "Cihazınızda gösterilen adres, talep edilenden farklı. Bu adresi paylaşmayın.",
+          "unsupportedTitle" : "Doğrulama kullanılamıyor",
+          "unsupportedDescription" : "Bu cihaz uygulaması, cihaz üzerinde doğrulama için adresi görüntüleyemiyor.",
+          "retryCta" : "Adresi tekrar göster",
+          "closeCta" : "Kapat"
         }
       }
     }
@@ -2530,6 +2587,8 @@
     },
     "placeholder" : "Adres ya da ENS adı girin",
     "placeholderNoENS" : "Adresi girin",
+    "placeholderWithContacts" : "Adres, ENS veya kişi adı girin",
+    "placeholderNoEnsWithContacts" : "Adres veya kişi adı girin",
     "recent" : "Son kullanılanlar",
     "myAccounts" : "Hesaplarım",
     "sendTo" : "{{address}} adresine gönder",
@@ -2539,6 +2598,7 @@
     "addressBookUnsupported" : "{{family}} henüz desteklenmiyor",
     "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
     "contactsWillAppear" : "Kişileriniz burada görünecektir",
+    "selectAddress" : "Adres seçin",
     "securityInfo" : {
       "title" : "Güvenli bir şekilde nasıl gönderilir?",
       "items" : {
@@ -2559,7 +2619,12 @@
     },
     "addContact" : {
       "newContact" : "Yeni bir kişi ekleyin",
-      "existingContact" : "Mevcut bir kişiye ekleyin"
+      "existingContact" : "Mevcut bir kişiye ekleyin",
+      "selectContact" : "Kişi seç",
+      "syncWallet" : {
+        "title" : "Bir kişi eklemek için cüzdanınızı senkronize edin",
+        "description" : "Kişiler uçtan uca şifrelenir ve tüm telefonlarınız ile bilgisayarlarınızdaki Ledger Wallet genelinde senkronize edilir"
+      }
     },
     "relativeDate" : {
       "justNow" : "Yalnızca şimdilik",
@@ -5252,6 +5317,7 @@
         "applyFamilies" : "Uygula",
         "contactsData" : "Kişi verileri",
         "loadPopulatedContacts" : "Örnek kişileri yükle",
+        "loadFromSendHistory" : "Load contacts from send history",
         "resetContacts" : "Kişileri sıfırla",
         "resetOverride" : "Uygulamayı sıfırla",
         "featureIntroduction" : {
@@ -5259,6 +5325,22 @@
           "label" : "Kişileri Göster özellikleri tanıtımı",
           "dismissed" : "Kapatıldı: Tanıtımı Kişiler bölümünde tekrar göstermek için açın.",
           "willShow" : "Kapatılana kadar Kişiler bölümünde gösterilir."
+        }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "Cihaz simülasyonu (QA)",
+        "description" : "Fiziksel cihazlara ihtiyaç duymadan Nano kullanıcılarına üst model satışı alanlarını test etmek için cihaz geçmişini simüle edin.",
+        "currentHistory" : "Aktif QA cihazları: {{devices}}",
+        "resetWarning" : "Sıfırlama işlemi yalnızca simüle edilen QA cihaz listesini temizler. Gerçek cihaz geçmişi, simülasyon motoru olmadan geri yüklenemez.",
+        "reset" : "Cihaz geçmişini sıfırla",
+        "none" : "Yok",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
         }
       },
       "cryptoAssetsList" : {
@@ -6510,7 +6592,7 @@
           },
           "dualValidator" : {
             "title" : "Çift doğrulayıcılı güvenlik",
-            "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Taraflardan hiçbiri, sizin adınıza tek başına işlem yapamaz."
+            "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Hiçbiri tek başına sizin adınıza hareket edemez."
           },
           "tokenLiability" : {
             "title" : "Standart token sorumluluğu ⚠️",
@@ -6747,6 +6829,10 @@
     },
     "CeloAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "CeloEpochProcessingActive" : {
+      "title" : "Bu işlem geçici olarak kullanılamıyor",
+      "description" : "Celo şu anda bir epoch güncellemesi gerçekleştiriyor. Zincir üzerinde gerçekleşen bu kısa zaman aralığında; oy verme, etkinleştirme, iptal etme, kilitleme ve kilit açma gibi staking işlemleri ağ tarafından geçici olarak askıya alınır. Lütfen epoch güncellemesi tamamlandıktan sonra tekrar deneyin."
     },
     "CeloGroupNotVotable" : {
       "title" : "Bu doğrulayıcı grubu oy alamaz. Dolu olabilir veya artık uygun olmayabilir."
@@ -7226,6 +7312,9 @@
     },
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "Sapling adreslerine gönderim desteklenmiyor"
+    },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "Tutar, yayımlanmak için çok az (en az {{minimumZatoshis}} zatoshi gerekir)"
     },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
@@ -7866,10 +7955,20 @@
       "title" : "Minimum tutar 1 SUI’dir"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "En az 1 SUI stake'te bırakılmalıdır"
+      "title" : "Tüm tutar için stake etmeyi durdurun veya en az 1 SUI'yi stake edilmiş olarak bırakın"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "Stake bilgilerine ulaşılamıyor. Lütfen hesabınızı yeniden senkronize edin ve tekrar deneyin"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "Tutar, seçilen stake'i aşıyor"
     },
     "SomeSuiForUnstake" : {
       "title" : "İleride gerekecek ağ ücretlerini karşılamak ve stake’inizin yetki devrini sonlandırmak üzere cüzdanınızda en az 0,1 SUI bulunduğundan lütfen emin olun"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Sui uygulamanızı güncelleyin",
+      "description" : "Ledger Sui uygulamanız, SUI adres bakiyenizden bir transferi imzalayamıyor. Ledger cihazınızdaki Sui uygulamasını güncelleyin ve tekrar deneyin."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor.",
@@ -8018,6 +8117,56 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Etiket / Memo girin",
     "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Ücret",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Yetki devret",
+      "earn" : "Kazan"
+    },
+    "stakeBanner" : {
+      "title" : "MINA ile ödüller kazanın",
+      "altTitle" : "MINA yetki devrinizi yönetin",
+      "description" : "MINA’larınızın yetkisini bir Blok Üreticiye devredin ve blok üretiminden ödüller kazanın. Ödüller, yetkisini devrettiğiniz miktara göre dağıtılır.",
+      "altDescription" : "Yetki devri ayarlarınızı değiştirin veya MINA token’larınızın yetki devrini sonlandırın.",
+      "changeCTA" : "Yeniden yetki devret"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Yetkiyi devralan taraf",
+      "stakedBalance" : "Yetki Devrinde Kullanılan Bakiye",
+      "producerAddress" : "Üretici Adresi",
+      "delegatedToTooltip" : "Yetki devrettiğiniz blok üreticisinin adı",
+      "stakedBalanceTooltip" : "Bu doğrulayıcıya yetki devretmek için kullanılmış toplam MINA tutarı",
+      "producerAddressTooltip" : "Yetki devrettiğiniz blok üreticisinin açık adresi"
+    },
+    "delegators" : "Yetki Devredenler",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Doğrulayıcı Seçin",
+        "connectDevice" : "Cihazı Bağlayın",
+        "confirmation" : "Onaylayın"
+      },
+      "title" : "MINA ile Yetki Devredin",
+      "help" : "MINA token’larınızın yetkisini devretmek için aşağıdaki listeden bir doğrulayıcı seçin.",
+      "success" : {
+        "title" : "İşlem başarıyla yayınlandı",
+        "description" : "Yetki devrini değiştirme talebiniz yayınlandı.",
+        "viewDetails" : "Ayrıntıları gör"
+      },
+      "error" : {
+        "title" : "İşlem yayınlanırken bir hata oluştu"
+      },
+      "undelegateTitle" : "MINA Yetki Devrini Sonlandırın"
+    },
+    "delegation" : {
+      "listHeader" : "Yetki Devri",
+      "amount" : "Miktar",
+      "redelegate" : "Yeniden yetki devret",
+      "undelegate" : "Yetki devrini iptal et",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon"
+    }
   },
   "hedera" : {
     "name" : "hedera",
@@ -8476,6 +8625,10 @@
       },
       "onboarding" : {
         "title" : "Başka bir Ledger Wallet uygulamasıyla senkronize edin"
+      },
+      "sendFlow" : {
+        "title" : "Cüzdanınızı senkronize edin",
+        "later" : "Şimdi değil"
       }
     },
     "manage" : {
@@ -8632,6 +8785,11 @@
       "title" : "Daha fazla güvenlik ve kontrol",
       "description" : "Güvenlik özellikleri hakkında daha fazla bilgi edinin.",
       "cta" : "Daha fazla bilgi"
+    },
+    "profile" : {
+      "title" : "Cihazınızı Yükseltin",
+      "description" : "Daha büyük ekran, daha iyi güvenlik. %{{discount}} indirimi kaçırmayın.",
+      "cta" : "Keşfet"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8802,12 @@
       "title" : "Dolandırıcılıkları imzalamadan önce fark edin",
       "subtitle" : "Gerçek zamanlı tehdit tespiti sağlayan gelişmiş güvenlik özellikleri hakkında daha fazla bilgi edinin.",
       "cta" : "Daha fazla bilgi"
+    },
+    "recoverTrigger" : {
+      "title" : "Huzurlu bir kurtarma çözümü?",
+      "subtitle" : "Nano S'iniz tamamen güvenli olsa da Ledger Recover ile uyumlu değildir. Güvenli, kimlik bazlı bir cüzdan yedeklemesine erişmek için cihazınızı yeni bir modele yükseltin.",
+      "cta" : "Daha fazla bilgi",
+      "dismiss" : "Şimdi değil"
     }
   },
   "modularAssetDrawer" : {
@@ -8710,6 +8874,8 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
+    "unsupportedAssetTooltip" : "{{asset}} isn't supported yet.",
+    "unsupportedNetworkTooltip" : "{{network}} network isn't supported yet.",
     "selectAccount" : "Hesap seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
     "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
@@ -8747,7 +8913,8 @@
     "title" : "Ana Sayfa",
     "today" : "Bugün",
     "carousel" : {
-      "title" : "Sizin için"
+      "title" : "Sizin için",
+      "closeAll" : "Tümünü kapat"
     },
     "addAccountCta" : "Kripto hesabı ekle",
     "noBalanceTitle" : "Cüzdanınıza fon aktararak başlayın.",
@@ -8930,7 +9097,7 @@
       "privateBalance" : "Gizli bakiye",
       "privateBalanceTooltip" : "Herkese açık olmayan bakiye",
       "privateBalanceWarning" : "Gizli bakiye, Sapling ve Orchard korumalı fonlarını hariç tutar.",
-      "privateBalanceMaturing" : "{{spendable}} harcanabilir · {{maturing}} hazırlanıyor"
+      "privateBalanceMaturing" : "Gizli bakiye: {{spendable}} harcanabilir · {{maturing}} hazırlanıyor"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9130,10 @@
             "message" : "Gizli bakiye senkronize edilmedi",
             "cta" : "Senkronizasyonu sürdür"
           },
+          "failed" : {
+            "message" : "Gizli bakiye senkronizasyonu başarısız oldu",
+            "cta" : "Senkronizasyonu sürdür"
+          },
           "running" : {
             "message" : "Gizli bakiye senkronize ediliyor (%{{progress}})",
             "timeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}"
@@ -8985,7 +9156,8 @@
         "stopSync" : "Senkronizasyonu durdur",
         "upToDate" : "Güncel",
         "lastSync" : "Son senkronizasyon: {{date}}",
-        "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}",
+        "syncFailed" : "Gizli bakiye senkronizasyonu başarısız oldu"
       },
       "datepicker" : {
         "label" : "Doğum günü yüksekliği",
@@ -9042,7 +9214,8 @@
       "transparentTx" : "Şeffaf",
       "shieldedSaplingTx" : "🛡 Özel (Sapling)",
       "shieldedOrchardTx" : "🛡 Özel (Orchard)",
-      "shieldedIronwoodTx" : "🛡 Gizli (Ironwood)"
+      "shieldedIronwoodTx" : "🛡 Gizli (Ironwood)",
+      "memo" : "Memo"
     }
   },
   "aleo" : {
@@ -9332,6 +9505,27 @@
     "explore" : "Tüm Ledger cihazlarını keşfedin"
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
+          "description" : "Bağlı cihaz eşleşmiyor."
+        },
+        "invalidData" : {
+          "title" : "Bu adres kaydedilemiyor",
+          "description" : "Ledger cihazınız iletişim bilgilerini reddetti. Tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
+        },
+        "appVersionTooLow" : {
+          "title" : "Uygulama güncellemesi gerekli",
+          "description" : "Kişileri kaydetmek için Ledger cihazınızdaki uygulamayı güncelleyin, ardından tekrar deneyin."
+        }
+      }
+    },
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
     "addAddress" : "Adres ekle",
@@ -9363,6 +9557,10 @@
     },
     "addAddressReview" : {
       "title" : "Adresi inceleyin",
+      "addressLabel" : "Adres",
+      "currencyLabel" : "Para birimi",
+      "networkLabel" : "Ağ",
+      "nameLabel" : "Adres adı",
       "continue" : "Adresi onayla",
       "successTitle" : "Adres kaydedildi",
       "close" : "Kapat"
@@ -9388,7 +9586,7 @@
         "meTitle" : "Sizin için kayıtlı adres bulunmuyor",
         "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
         "meDescription" : "Bir sonraki işleminizde doğrudan isimle kripto almak için cüzdan adreslerinizi kaydedin.",
-        "contactDescription" : "Bir sonraki işleminizde doğrudan ismiyle kripto almak için cüzdan adresini kaydedin."
+        "contactDescription" : "Bir sonraki işlemde onlara isimleriyle gönderim yapabilmek için cüzdan adreslerini kaydedin"
       }
     },
     "addressDetail" : {
@@ -9443,23 +9641,23 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
+      "activate" : "Ledger Sync'i etkinleştir",
       "dismiss" : "Anladım"
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "description" : "Kripto adres defteriniz: Gönderim yaptığınız cüzdanları kaydedin, hepsi tek bir yerde.",
-      "primaryAction" : "Kişileri deneyin",
+      "primaryAction" : "Explore now",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Adresleri bir kez kaydedin",
-          "description" : "Gönderim yaptığınız adresleri tek bir yerde tutun."
+          "title" : "Save addresses by a name you choose",
+          "description" : "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "Fonlar her seferinde doğru cüzdana ulaşır."
+          "description" : "See a name you trust, not an address."
         },
         "privateAcrossDevices" : {
-          "title" : "Tüm cihazlarınızda gizli kalır",
+          "title" : "Securely top up via Ledger Wallet™",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
@@ -9532,8 +9730,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "Cihaz kilitli",
-        "description" : "Devam etmek için cihazınızın kilidini açın."
+        "title" : "Ledger cihazınızın kilidini açın ve ardından aşağıdaki Tekrar Dene seçimini uygulayın"
       },
       "unlockDevice" : {
         "title" : "{{productName}} kilidini açın"
@@ -9545,16 +9742,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "Cihaz bağlantısı kesildi",
-        "description" : "Ledger cihazınız artık bağlı değil. Cihazınızın açık olduğundan ve bağlı olduğundan emin olun."
+        "title" : "Ledger cihazı bağlantısı kesildi",
+        "description" : "Cihazınızın açık olduğundan ve bağlı olduğundan emin olun."
       },
       "intentError" : {
         "title" : "Bilinmeyen hata",
-        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+        "description" : "Sorun devam ederse tekrar deneyin veya Ledger Destek ile iletişime geçin."
       },
       "invalidOperation" : {
-        "title" : "Geçersiz durum",
-        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+        "title" : "Bir hata oluştu",
+        "description" : "Tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
       }
     },
     "initialization" : {
@@ -9570,46 +9767,51 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "İşlem cihazda reddedildi"
+          "title" : "İşlem Ledger cihazında reddedildi"
         },
         "deviceBusy" : {
-          "title" : "Ledger cihazınızda eylem bekliyor",
-          "description" : "Tamamlayın ve ardından \"Tekrar Dene\" seçimini uygulayın."
+          "title" : "Ledger cihazınızda eylem gerekiyor",
+          "description" : "Cihazınızda işlemi tamamlayın, ardından aşağıdaki “Tekrar Dene” seçimini uygulayın."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Ledger'ınız henüz kullanılmaya hazır değil",
-          "description" : "Öncelikle {{productName}} cihazınızın kurulumunu yapmanız gerekiyor. Cihaz kurulum sürecinde size yardımcı olacağız"
+          "title" : "Ledger cihazınızın kurulması gerekiyor",
+          "description" : "Devam etmek için kurulumu yapın."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS güncellemesi gerekli"
         },
         "unsupportedApplication" : {
           "title" : "Desteklenmeyen özellik",
-          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+          "description" : "Bu işlem için gereken uygulama, Ledger cihazınız tarafından desteklenmiyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
         },
         "unsupportedFeature" : {
           "title" : "Desteklenmeyen özellik",
-          "description" : "Bu işlem için gerekli uygulama an itibarıyla Ledger cihazınızda kullanılamıyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
+          "description" : "Bu işlem için gereken uygulama, Ledger cihazınız tarafından desteklenmiyor. Ayrıntılar için lütfen Ledger Destek ile iletişime geçin."
         },
         "wrongDeviceForAccount" : {
-          "title" : "Yanlış Gizli Kurtarma İfadesi",
-          "description" : "Bu Ledger, seçilen hesapla ilişkili kurtarma ifadesi ile ayarlanmadı. Doğru cihazı kullandığınızdan emin olun."
+          "title" : "Bu hesabı ilk başta kurarken kullandığınız Ledger cihazını kullanın",
+          "description" : "Bu Ledger, seçilen kripto hesabıyla ilişkili Gizli Kurtarma İfadesi ile ayarlanmadı."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "Cihaz depolama alanı yetersiz",
-          "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin.",
+          "title" : "Ledger cihazı belleğinde yer açmak için bazı uygulamaları kaldırın",
+          "description" : "Cihazınızda yeterli bellek yok.",
           "apps" : "Yönetilecek uygulamalar: {{appNames}}"
+        },
+        "invalidProvider" : {
+          "title" : "Geçersiz Sağlayıcı",
+          "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledger'ı Aç",
         "goToMyLedger" : "My Ledger'a Git",
-        "setupDevice" : "Cihaz kurulumu",
+        "setupDevice" : "Ledger cihazını kur",
         "updateLedgerOs" : "Ledger OS'i güncelleyin",
         "cancelOperation" : "İşlemi iptal et",
-        "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+        "contactLedgerSupport" : "Ledger Destek ile iletişime geçin",
+        "goToSettings" : "Ayarlara git"
       }
     },
     "connectDevice" : {
@@ -9623,7 +9825,7 @@
           "title" : "Yükleniyor"
         },
         "connecting" : {
-          "title" : "Yükleniyor"
+          "title" : "Ledger cihazınıza bağlanılıyor"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9857,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledger cihazı gerekli",
-          "description" : "Devam etmek için imzalayıcınızı kurun veya bağlayın.",
+          "description" : "Devam etmek için Ledger cihazınızı kurun veya bağlayın.",
           "connectLedgerDevice" : "Ledger cihazı bağlayın",
           "noLedgerDevice" : "Ledger cihazım yok"
         },

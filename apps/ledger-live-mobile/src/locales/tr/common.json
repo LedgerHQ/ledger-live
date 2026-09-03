@@ -199,6 +199,10 @@
     "CeloAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
     },
+    "CeloEpochProcessingActive" : {
+      "title" : "Bu işlem geçici olarak kullanılamıyor",
+      "description" : "Celo şu anda bir epoch güncellemesi gerçekleştiriyor. Zincir üzerinde gerçekleşen bu kısa zaman aralığında; oy verme, etkinleştirme, iptal etme, kilitleme ve kilit açma gibi staking işlemleri ağ tarafından geçici olarak askıya alınır. Lütfen epoch güncellemesi tamamlandıktan sonra tekrar deneyin."
+    },
     "CeloGroupNotVotable" : {
       "title" : "Bu doğrulayıcı grubu oy alamaz. Dolu olabilir veya artık uygun olmayabilir."
     },
@@ -3830,6 +3834,23 @@
           "entriesLabel" : "Girdiler ({{count}})",
           "untitledEntry" : "Adsız girdi"
         }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "Cihaz simülasyonu (QA)",
+        "description" : "Fiziksel cihazlar olmadan Nano kullanıcılarına yönelik üst model satış alanlarını test etmek için cihaz geçmişini simüle edin.",
+        "currentHistory" : "Aktif QA cihazları: {{devices}}",
+        "resetWarning" : "Sıfırlama işlemi yalnızca 6 adet QA cihazı geçiş anahtarını temizler. Diğer cihaz geçmişi kayıtları değişmeden kalır; gerçek geçmiş, simülasyon motoru olmadan geri yüklenemez.",
+        "reset" : "Cihaz geçmişini sıfırla",
+        "none" : "Yok",
+        "deviceDesc" : "Bu cihazı QA testleri için daha önce bağlanmış olarak işaretleyin.",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
+        }
       }
     }
   },
@@ -4539,6 +4560,7 @@
   "send" : {
     "newSendFlow" : {
       "title" : "{{currency}} gönder",
+      "selectAddress" : "Adres seçin",
       "available" : "Mevcut: {{amount}}",
       "to" : "Alıcı:",
       "addressDisclaimer" : {
@@ -4548,11 +4570,20 @@
       },
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
-      "placeholderWithContacts" : "Enter address, ENS or contact",
-      "placeholderNoEnsWithContacts" : "Enter address or contact",
+      "placeholderWithContacts" : "Adres, ENS veya kişi adı girin",
+      "placeholderNoEnsWithContacts" : "Adres veya kişi adı girin",
       "pasteFromClipboard" : {
         "title" : "Panodan yapıştır",
         "cta" : "Yapıştır"
+      },
+      "addContact" : {
+        "newContact" : "Yeni bir kişi ekle",
+        "existingContact" : "Mevcut bir kişiye ekle",
+        "selectContact" : "Kişi seçin",
+        "syncWallet" : {
+          "title" : "Bir kişi eklemek için cüzdanınızı senkronize edin",
+          "description" : "Kişiler uçtan uca şifrelenmiştir ve tüm telefonlarınız ile bilgisayarlarınızdaki Ledger Wallet üzerinde senkronize edilir."
+        }
       },
       "contactsWillAppear" : "Kişileriniz burada görünecektir",
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
@@ -5174,6 +5205,10 @@
         "deviceOutOfStorageSpace" : {
           "title" : "Ledger cihazı belleğinde yer açmak için bazı uygulamaları kaldırın",
           "description" : "Cihazınızda yeterli bellek yok."
+        },
+        "invalidProvider" : {
+          "title" : "Geçersiz Sağlayıcı",
+          "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Wallet'ta \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
         }
       },
       "cta" : {
@@ -5182,7 +5217,8 @@
         "setupDevice" : "Ledger cihazını kur",
         "updateLedgerOs" : "Ledger OS'i güncelleyin",
         "cancelOperation" : "İşlemi iptal et",
-        "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+        "contactLedgerSupport" : "Ledger Destek ile iletişime geçin",
+        "goToSettings" : "Ayarlara git"
       }
     },
     "connectDevice" : {
@@ -9207,6 +9243,10 @@
         "title" : "Ledger Sync",
         "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
         "cta" : "Ledger Sync'i Aç"
+      },
+      "sendFlow" : {
+        "title" : "Cüzdanınızı senkronize edin",
+        "later" : "Şimdi değil"
       }
     },
     "activation" : {
@@ -9692,6 +9732,14 @@
     "accountCount_other" : "{{count}} hesap",
     "emptyAccounts" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
     "addAccount" : "Hesap ekle",
+    "unsupportedAssetExplanation" : {
+      "title" : "{{asset}} isn't supported yet",
+      "description" : "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
+    },
+    "unsupportedNetworkExplanation" : {
+      "title" : "{{network}} Network isn't supported yet",
+      "description" : "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
+    },
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
@@ -10080,9 +10128,43 @@
         "confirm" : "Onayla"
       }
     },
+    "card" : {
+      "title" : "Kripto kartı"
+    },
     "actions" : {
       "deposit" : "Stabil coin ekle",
       "request" : "Talep et"
+    },
+    "request" : {
+      "title" : "{{asset}} talep et",
+      "networkLabel" : "{{network}} ağı",
+      "actions" : {
+        "share" : "Paylaş",
+        "copy" : "Kopyala",
+        "copied" : "Kopyalandı",
+        "save" : "Kaydet",
+        "verify" : "Doğrula"
+      },
+      "verifyAddress" : {
+        "introTitle" : "Adresinizi doğrulayın",
+        "introDescription" : "Adres değiştirme saldırılarına karşı korunmak için adresinizi Ledger cihazınızın Güvenli Ekranında doğrulayın.",
+        "verifyCta" : "Adresi doğrula",
+        "successTitle" : "Adres, cihazınızın Güvenli Ekranında görüntüleniyor",
+        "nextStepsLabel" : "Sonraki adımlar",
+        "nextStepShare" : "Adresinizi dilediğiniz uygulama üzerinden paylaşın.",
+        "nextStepMatch" : "Paylaşılan adresin Ledger cihazınızdaki adresle eşleştiğinden emin olun.",
+        "gotItCta" : "Anladım",
+        "device" : {
+          "cancelledTitle" : "Adres doğrulaması iptal edildi",
+          "cancelledDescription" : "Cihazınızdaki adresi reddettiniz. Doğrulamak için tekrar görüntüleyebilirsiniz.",
+          "mismatchTitle" : "Adresler eşleşmiyor",
+          "mismatchDescription" : "Cihazınızda gösterilen adres, talep edilenden farklı. Bu adresi paylaşmayın.",
+          "unsupportedTitle" : "Doğrulama kullanılamıyor",
+          "unsupportedDescription" : "Bu cihaz uygulaması, cihaz üzerinde doğrulama için adresi görüntüleyemiyor.",
+          "retryCta" : "Adresi tekrar göster",
+          "closeCta" : "Kapat"
+        }
+      }
     },
     "deposit" : {
       "title" : "Stabil coin ekle",
@@ -10104,6 +10186,11 @@
           "description" : "Kredi kartıyla stabil coin satın alın."
         }
       }
+    },
+    "contacts" : {
+      "title" : "Ödeme yapın",
+      "pay" : "Yeni",
+      "seeAllTitle" : "Kişiye ödeme yapın"
     }
   },
   "syncIndicator" : {
@@ -10325,6 +10412,27 @@
     }
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
+          "description" : "Bağlı cihaz eşleşmiyor."
+        },
+        "invalidData" : {
+          "title" : "Bu adres kaydedilemiyor",
+          "description" : "Ledger cihazınız iletişim bilgilerini reddetti. Tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
+        },
+        "appVersionTooLow" : {
+          "title" : "Uygulama güncellemesi gerekli",
+          "description" : "Kişileri kaydetmek için Ledger cihazınızdaki uygulamayı güncelleyin, ardından tekrar deneyin."
+        }
+      }
+    },
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
     "addAddress" : "Adres ekle",
@@ -10454,19 +10562,18 @@
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "description" : "Kripto adres defteriniz: Gönderim yaptığınız cüzdanları kaydedin, hepsi tek bir yerde.",
-      "primaryAction" : "Kişileri deneyin",
+      "primaryAction" : "Explore now",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Adresleri bir kez kaydedin",
-          "description" : "Gönderim yaptığınız adresleri tek bir yerde tutun."
+          "title" : "Save addresses by a name you choose",
+          "description" : "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "Fonlar her seferinde doğru cüzdana ulaşır."
+          "description" : "See a name you trust, not an address."
         },
         "privateAcrossDevices" : {
-          "title" : "Tüm cihazlarınızda gizli kalır",
+          "title" : "Securely top up via Ledger Wallet™",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
