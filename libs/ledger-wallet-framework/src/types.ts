@@ -31,7 +31,6 @@ export interface CryptoCurrency {
   id: CryptoCurrencyId;
   name: string;
   ticker: string;
-  deviceTicker?: string;
   color: string;
   coinType: number;
   family: string;

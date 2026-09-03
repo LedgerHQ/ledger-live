@@ -7,7 +7,6 @@ export const polygon_zk_evm_testnet = currency({
   name: "Polygon zkEVM Testnet",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "polygon_zk_evm_testnet",
   color: "#E58247",
   family: "evm",

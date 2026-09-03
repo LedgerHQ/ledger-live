@@ -7,7 +7,6 @@ export const polygon_amoy = currency({
   name: "Polygon Amoy",
   managerAppName: "Ethereum",
   ticker: "POL",
-  deviceTicker: "POL",
   scheme: "polygon_amoy",
   color: "#6d29de",
   family: "evm",

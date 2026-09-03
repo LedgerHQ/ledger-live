@@ -116,7 +116,6 @@ export type CryptoCurrency = CurrencyCommon & {
   bitcoinLikeInfo?: BitcoinLikeInfo;
   ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
-  deviceTicker?: string;
   /**
    * Used to connect to the right endpoint url since it is different from currencyId and ticker.
    * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.

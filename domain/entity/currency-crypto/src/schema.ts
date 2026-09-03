@@ -98,8 +98,6 @@ export const CryptoCurrencySchema = z.object({
   ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
-  /** Ticker displayed on the device (when different from `ticker`). */
-  deviceTicker: z.string().optional(),
   /**
    * Id used to connect to the Ledger explorer endpoint (when different from the currency id and ticker).
    * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.

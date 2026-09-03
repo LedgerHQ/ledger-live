@@ -7,7 +7,6 @@ export const westend = currency({
   name: "Westend",
   managerAppName: "Polkadot",
   ticker: "WND",
-  deviceTicker: "DOT",
   scheme: "westend",
   color: "#00ff00",
   units: [

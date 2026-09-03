@@ -7,7 +7,6 @@ export const arbitrum_sepolia = currency({
   name: "Arbitrum Sepolia",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "arbitrum_sepolia",
   color: "#ff0000",
   family: "evm",
