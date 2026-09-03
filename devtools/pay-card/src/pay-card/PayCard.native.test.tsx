@@ -25,8 +25,6 @@ function buildProps(): PayCardToolProps {
     interaction: { probes: [] },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
-    hasSeenReceiveVerifyHint: false,
-    resetReceiveVerifyHintSeen: jest.fn(),
     env: {
       vars: [
         {
@@ -50,7 +48,6 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Feature flags")).toBeTruthy();
     expect(screen.getByText("Onboarding")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
-    expect(screen.getByText("Request verify hint")).toBeTruthy();
   });
 
   it("resets the feature tour", async () => {
@@ -60,39 +57,6 @@ describe("PayCard (native)", () => {
 
     await user.press(screen.getByText("Reset feature tour"));
     expect(props.resetPayCardFeatureTourSeen).toHaveBeenCalledTimes(1);
-  });
-
-  it("resets the request verify hint", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    await user.press(screen.getByText("Reset verify hint"));
-    expect(props.resetReceiveVerifyHintSeen).toHaveBeenCalledTimes(1);
-  });
-
-  it("hides quick actions when the host does not pass navigation", () => {
-    render(<PayCard {...buildProps()} />);
-    expect(screen.queryByText("Quick actions")).toBeNull();
-  });
-
-  it("navigates to Portfolio and Pay when the host wires the actions", async () => {
-    const user = userEvent.setup();
-    const onNavigateToPortfolio = jest.fn();
-    const onNavigateToPayTab = jest.fn();
-    render(
-      <PayCard
-        {...buildProps()}
-        onNavigateToPortfolio={onNavigateToPortfolio}
-        onNavigateToPayTab={onNavigateToPayTab}
-      />,
-    );
-
-    expect(screen.getByText("Quick actions")).toBeTruthy();
-    await user.press(screen.getByText("Go to Portfolio"));
-    await user.press(screen.getByText("Go to Pay tab"));
-    expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
-    expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
   });
 
   it("shows both Card env vars, and the value the app reads now", () => {
@@ -131,6 +95,16 @@ describe("PayCard (native)", () => {
       "CARD_API_URL",
       "https://card.api.live.ledger.com",
     );
+  });
+
+  it("hides the secure browser section on a host that has no browser", () => {
+    render(<PayCard {...buildProps()} />);
+    expect(screen.queryByText("Secure browser")).toBeNull();
+  });
+
+  it("shows the secure browser section when the host built one", () => {
+    render(<PayCard {...buildProps()} openSecureBrowser={jest.fn()} />);
+    expect(screen.getByText("Secure browser")).toBeTruthy();
   });
 
   it("opens the interaction screen and runs a probe", async () => {

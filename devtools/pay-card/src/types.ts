@@ -32,6 +32,48 @@ export interface PayCardOnboardingProps {
   readonly setStepDone: (id: string, done: boolean) => void;
 }
 
+export interface PayCardSessionSnapshot {
+  readonly accessToken: string;
+  readonly refreshToken: string;
+}
+
+export interface PayCardMockResponse {
+  readonly id: string;
+  readonly label: string;
+  readonly hint: string;
+}
+
+export interface PayCardRenewalMockProps {
+  readonly available: boolean;
+  readonly response: string;
+  readonly responses: readonly PayCardMockResponse[];
+  readonly setResponse: (id: string) => void;
+  readonly renewals: number;
+  readonly resetRenewals: () => void;
+  readonly armUnauthorized: () => void;
+}
+
+export interface PayCardActionResult {
+  readonly id: number;
+  readonly message: string;
+  readonly failed: boolean;
+}
+
+export interface PayCardAuthProps {
+  readonly session: PayCardSessionSnapshot | null;
+  readonly sessionError: string | null;
+  readonly busy: boolean;
+  readonly lastResult: PayCardActionResult | null;
+  readonly readTokens: () => void;
+  readonly renewNow: () => void;
+  readonly breakAccessToken: () => void;
+  readonly breakRefreshToken: () => void;
+  readonly clearSession: () => void;
+  readonly fetchUser: () => void;
+  readonly openPayTab?: () => void;
+  readonly mock: PayCardRenewalMockProps;
+}
+
 /** One Card endpoint the tool can call on demand, with the last thing it returned. */
 export interface PayCardProbe {
   readonly id: string;
@@ -71,6 +113,8 @@ export interface PayCardEnvProps {
   readonly setVar: (key: string, value: string) => void;
 }
 
+export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
+
 /**
  * Props contract for the Card / Pay DevTool.
  *
@@ -95,4 +139,6 @@ export interface PayCardToolProps {
   readonly onNavigateToPayTab?: () => void;
   /** The Card backend env vars, read live and set from the tool. */
   readonly env: PayCardEnvProps;
+  readonly auth?: PayCardAuthProps;
+  readonly openSecureBrowser?: PayCardOpenSecureBrowser;
 }

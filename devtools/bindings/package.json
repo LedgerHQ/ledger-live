@@ -25,7 +25,9 @@
     "@domain/api-card-management": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
+    "@features/platform-card": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@shared/api-services": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*"
   },
