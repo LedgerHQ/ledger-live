@@ -7,7 +7,7 @@ import {
   usePortfolio as usePortfolioRaw,
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueRaw,
   useCurrencyPortfolio as useCurrencyPortfolioRaw,
-} from "@ledgerhq/live-countervalues-react/portfolio";
+} from "@ledgerhq/live-common/portfolio/portfolioReact";
 import { filterAccountsExcludingBlacklisted } from "@ledgerhq/live-common/account/filterAccountsExcludingBlacklisted";
 import {
   blacklistedTokenIdsSelector,

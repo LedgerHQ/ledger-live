@@ -6,7 +6,7 @@ import i18next from "~/renderer/i18n/init";
 import PortfolioPage from "../index";
 import type { Portfolio as PortfolioType } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
-import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
+import * as portfolioReact from "@ledgerhq/live-common/portfolio/portfolioReact";
 import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";

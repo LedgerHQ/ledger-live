@@ -74,6 +74,13 @@ if (process.env.CI) {
   reporters.push("github-actions");
 }
 
+// portfolio tests use local-time Date constructors (new Date(year, month, date)) and their
+// snapshots were generated in America/New_York. Setting TZ here propagates to all workers via
+// process inheritance (the only reliable mechanism — setting it inside a worker or setupFiles
+// does not flush the C library's tzset cache reliably on macOS). The full suite was verified
+// to produce no regressions under this TZ — see PR description.
+process.env.TZ = "America/New_York";
+
 // Since jest 30.5 the `^buffer$` moduleNameMapper below also captures `node:buffer`, so
 // jest.buffer-shim.js cannot reach the builtin itself. Capture what it needs here, in
 // real Node, and pass it through the environment.
