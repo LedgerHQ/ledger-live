@@ -65,7 +65,7 @@ describe("CardMoreSheet (Web)", () => {
     expect(onPress.help).not.toHaveBeenCalled();
   });
 
-  it("closes from the header close button", () => {
+  it("calls onClose once when the header close also notifies Dialog", () => {
     const onClose = jest.fn();
     render(<CardMoreSheet {...defaultProps} onClose={onClose} />);
 

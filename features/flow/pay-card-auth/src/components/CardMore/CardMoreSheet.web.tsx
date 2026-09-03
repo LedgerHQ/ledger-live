@@ -1,16 +1,32 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CardMoreRow } from "./CardMoreRow";
 import type { CardMoreSheetProps } from "./types";
 
 export function CardMoreSheet({ isOpen, title, rows, onClose }: CardMoreSheetProps) {
+  const dismissed = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      dismissed.current = false;
+    }
+  }, [isOpen]);
+
+  const handleDismiss = useCallback(() => {
+    if (dismissed.current) {
+      return;
+    }
+    dismissed.current = true;
+    onClose();
+  }, [onClose]);
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
-        onClose();
+        handleDismiss();
       }
     },
-    [onClose],
+    [handleDismiss],
   );
 
   if (!isOpen) {
@@ -21,7 +37,7 @@ export function CardMoreSheet({ isOpen, title, rows, onClose }: CardMoreSheetPro
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
         {/* No `title` here: the design wants it left-aligned and larger, below the header. */}
-        <DialogHeader density="compact" onClose={onClose} />
+        <DialogHeader density="compact" onClose={handleDismiss} />
         {/*
           `DialogBody` keeps its own `px-24`, so the title sits level with the close button in the
           header. The rows pull back by 8, and a row's own padding of 8 then puts its icon at 24 too.
