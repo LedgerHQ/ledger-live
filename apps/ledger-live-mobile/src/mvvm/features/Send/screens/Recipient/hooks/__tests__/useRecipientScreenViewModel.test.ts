@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
+import { screen as trackScreen } from "~/analytics";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
 import { createMockAccount } from "./accounts";
 import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
@@ -9,6 +10,14 @@ import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@react-navigation/native");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("~/analytics", () => ({
+  screen: jest.fn(),
+  track: jest.fn(),
+}));
+jest.mock("@features/platform-contacts", () => ({
+  useContacts: jest.fn(() => []),
+  useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: [] })),
+}));
 
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseNavigation = jest.mocked(useNavigation);
@@ -56,6 +65,14 @@ describe("useRecipientScreenViewModel", () => {
       transaction: null,
     });
     expect(mockedGetAccountCurrency).toHaveBeenCalledWith(account);
+    expect(jest.mocked(trackScreen)).toHaveBeenCalledWith(
+      "Modal send - step recipient",
+      undefined,
+      expect.objectContaining({
+        hasContacts: false,
+        contactsCount: 0,
+      }),
+    );
   });
 
   it("updates the recipient and navigates to amount", () => {

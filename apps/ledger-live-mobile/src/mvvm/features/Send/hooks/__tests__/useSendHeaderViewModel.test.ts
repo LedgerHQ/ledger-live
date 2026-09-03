@@ -15,6 +15,8 @@ import { useSelector } from "~/context/hooks";
 import { useContactsFeature } from "@features/platform-contacts";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
+import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
+import { track } from "~/analytics";
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
@@ -28,10 +30,15 @@ jest.mock("~/context/Locale", () => ({
 jest.mock("~/reducers/wallet");
 jest.mock("../../context/SendFlowContext");
 jest.mock("../../context/RecipientContactSelectionContext");
+jest.mock("../../context/SendFlowTrackingContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
 jest.mock("~/context/hooks");
+jest.mock("~/analytics", () => ({
+  track: jest.fn(),
+  screen: jest.fn(),
+}));
 jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: ["evm"] })),
 }));
@@ -43,6 +50,9 @@ const mockedUseSendAmountDisplayMode = jest.mocked(useSendAmountDisplayMode);
 const mockedUseAvailableBalance = jest.mocked(useAvailableBalance);
 const mockedUseCurrentSendFlowStep = jest.mocked(useCurrentSendFlowStep);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
+const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
+const mockedTrack = jest.mocked(track);
+const setInputMethod = jest.fn();
 
 const mockAccount = {
   type: "Account",
@@ -70,6 +80,7 @@ describe("useSendHeaderViewModel", () => {
   const mockAddListener = jest.fn(() => jest.fn());
   const mockClearRecipientSearch = jest.fn();
   const mockSetRecipientSearchValue = jest.fn();
+  const mockClose = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -101,6 +112,17 @@ describe("useSendHeaderViewModel", () => {
       selectContact: jest.fn(),
       clearSelectedContact: jest.fn(),
     });
+    mockRecipientSearch.value = "";
+    mockedUseSendFlowTracking.mockReturnValue({
+      inputMethod: "manual",
+      resultType: null,
+      recipientType: "external address",
+      savedContactDuringFlow: false,
+      setInputMethod,
+      setRecipientResolution: jest.fn(),
+      resetRecipientResolution: jest.fn(),
+      markContactSaved: jest.fn(),
+    });
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: {
         recipientSupportsDomain: true,
@@ -129,7 +151,7 @@ describe("useSendHeaderViewModel", () => {
       },
     } as never);
     mockedUseSendFlowActions.mockReturnValue({
-      close: jest.fn(),
+      close: mockClose,
       transaction: {
         updateTransaction: jest.fn(),
       },
@@ -165,6 +187,10 @@ describe("useSendHeaderViewModel", () => {
 
     result.current.handleBackPress();
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "back", page: "select contact address" }),
+    );
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
     expect(mockGoBack).not.toHaveBeenCalled();
   });
@@ -207,6 +233,10 @@ describe("useSendHeaderViewModel", () => {
 
     result.current.handleQrCodeClick();
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "scan qr code", page: "step recipient" }),
+    );
     expect(mockClearRecipientSearch).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
       ScreenName.ScanRecipient,
@@ -223,7 +253,44 @@ describe("useSendHeaderViewModel", () => {
     };
     onScannedURI({ address: "0xscanned" });
 
+    expect(setInputMethod).toHaveBeenCalledWith("qr_code");
     expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+  });
+
+  it("tracks close with the current send page and recipient type", () => {
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleClose();
+
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        page: "step recipient",
+        recipientType: "external address",
+      }),
+    );
+    expect(mockClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a multi-character recipient change as a paste", () => {
+    mockRecipientSearch.value = "";
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleRecipientInputChange("0xabcdef");
+
+    expect(setInputMethod).toHaveBeenCalledWith("paste");
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0xabcdef");
+  });
+
+  it("treats a single-character recipient change as manual typing", () => {
+    mockRecipientSearch.value = "";
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleRecipientInputChange("0");
+
+    expect(setInputMethod).toHaveBeenCalledWith("manual");
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0");
   });
 
   it("prefills the transaction amount from a scanned EIP681 URI while staying on recipient", () => {

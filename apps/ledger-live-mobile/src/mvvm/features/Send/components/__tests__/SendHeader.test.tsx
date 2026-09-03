@@ -49,6 +49,7 @@ const baseViewModel = {
   setRecipientSearchValue: jest.fn(),
   clearRecipientSearch: jest.fn(),
   handleQrCodeClick: jest.fn(),
+  handleRecipientInputChange: jest.fn(),
 };
 
 describe("SendHeader", () => {

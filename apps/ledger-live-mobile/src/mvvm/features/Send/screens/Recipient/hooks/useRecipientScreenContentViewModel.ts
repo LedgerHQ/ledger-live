@@ -10,6 +10,7 @@ import { track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "./useRecipientScreenView";
 
@@ -42,10 +43,10 @@ export function useRecipientScreenContentViewModel({
     onAddressSelected,
     recipientSupportsDomain,
   });
+  const { setRecipientResolution } = useSendFlowTracking();
   const trackingProperties = useMemo(
     () => ({
       ...getSendFlowTrackingProperties(account, parentAccount),
-      button: "my accounts",
       page: "step recipient",
     }),
     [account, parentAccount],
@@ -78,11 +79,34 @@ export function useRecipientScreenContentViewModel({
   const handleAddressSelect = recipient.handleAddressSelect;
   const handleMatchedAddress = useCallback(
     (address: string, ensName?: string) => {
-      track("button_clicked", trackingProperties);
+      track("button_clicked", {
+        ...trackingProperties,
+        button: "send",
+        resultType: recipient.recipientResolution.resultType,
+        recipientType: recipient.recipientResolution.recipientType,
+      });
+      setRecipientResolution(
+        recipient.recipientResolution.resultType,
+        recipient.recipientResolution.recipientType,
+      );
       handleAddressSelect(address, ensName);
     },
-    [trackingProperties, handleAddressSelect],
+    [
+      handleAddressSelect,
+      recipient.recipientResolution,
+      setRecipientResolution,
+      trackingProperties,
+    ],
   );
+
+  const handleAddContact = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "add contact",
+      addressAlreadyUsed: recipient.recipientResolution.addressAlreadyUsed,
+    });
+    onAddContact();
+  }, [onAddContact, recipient.recipientResolution.addressAlreadyUsed, trackingProperties]);
 
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: recipient.result,
@@ -94,7 +118,9 @@ export function useRecipientScreenContentViewModel({
     isContactsFeatureEnabled: recipient.isContactsFeatureEnabled,
     hasAddressBook: recipient.hasAddressBook,
     addressBookFamilyName: recipient.addressBookFamilyName,
-    onAddContact,
+    onAddContact: handleAddContact,
+    onUnsupportedNetwork: recipient.handleUnsupportedNetwork,
+    onDismissUnsupportedNetwork: recipient.handleDismissUnsupportedNetwork,
   });
 
   useEffect(() => {

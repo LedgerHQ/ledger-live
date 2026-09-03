@@ -61,6 +61,8 @@ export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps)
             sendLabel={suggestion.sendLabel}
             onAddContact={suggestion.onAddContact}
             onSend={suggestion.onSend}
+            onUnsupportedNetwork={suggestion.onUnsupportedNetwork}
+            onDismissUnsupportedNetwork={suggestion.onDismissUnsupportedNetwork}
           />
         ) : suggestion.kind === "matched-ledger-accounts" ? (
           suggestion.matchedAccounts.map(({ account }) => (
