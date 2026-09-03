@@ -70,7 +70,7 @@ const myDefinitions = {
 injectDefinitions(myDefinitions);
 
 // 3. Use the API
-const timeout = getEnv("MY_TIMEOUT"); // unknown at framework level — cast as needed
+const timeout = getEnv("MY_TIMEOUT"); // any at framework level — wrap it to type it
 setEnv("MY_DEBUG", true);
 changes.subscribe(({ name, value }) => console.log(`${name} changed to`, value));
 ```
