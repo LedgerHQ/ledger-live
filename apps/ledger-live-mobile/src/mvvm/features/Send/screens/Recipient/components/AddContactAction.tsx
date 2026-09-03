@@ -11,6 +11,7 @@ import {
 import React, { useCallback } from "react";
 import { Keyboard, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "~/context/Locale";
 
 type AddContactActionProps = Readonly<{
   hasAddressBook: boolean;
@@ -18,6 +19,8 @@ type AddContactActionProps = Readonly<{
   unsupportedTitle: string;
   unsupportedDescription: string;
   onAddContact: () => void;
+  onUnsupportedNetwork: () => void;
+  onDismissUnsupportedNetwork: () => void;
 }>;
 
 export function AddContactAction({
@@ -26,14 +29,23 @@ export function AddContactAction({
   unsupportedTitle,
   unsupportedDescription,
   onAddContact,
+  onUnsupportedNetwork,
+  onDismissUnsupportedNetwork,
 }: AddContactActionProps) {
+  const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const unsupportedSheetRef = useBottomSheetRef();
 
   const openUnsupportedSheet = useCallback(() => {
     Keyboard.dismiss();
+    onUnsupportedNetwork();
     unsupportedSheetRef.current?.present();
-  }, [unsupportedSheetRef]);
+  }, [onUnsupportedNetwork, unsupportedSheetRef]);
+
+  const dismissUnsupportedSheet = useCallback(() => {
+    onDismissUnsupportedNetwork();
+    unsupportedSheetRef.current?.dismiss();
+  }, [onDismissUnsupportedNetwork, unsupportedSheetRef]);
 
   const handleAddContact = useCallback(() => {
     Keyboard.dismiss();
@@ -59,7 +71,6 @@ export function AddContactAction({
 
   return (
     <>
-      {/* A disabled button never receives touches, so the explanation is triggered by a wrapper */}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
@@ -92,6 +103,15 @@ export function AddContactAction({
             <Text typography="body1" lx={{ color: "base" }}>
               {unsupportedDescription}
             </Text>
+            <Button
+              appearance="base"
+              size="lg"
+              onPress={dismissUnsupportedSheet}
+              testID="send-address-book-unsupported-got-it"
+              isFull
+            >
+              {t("common.gotit")}
+            </Button>
           </BottomSheetContent>
         </BottomSheetView>
       </BottomSheet>

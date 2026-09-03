@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { screen } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowData } from "../../../../../context/SendFlowContext";
+import { useSendFlowTracking } from "../../../../../context/SendFlowTrackingContext";
 import { SimplifiedTransactionConfirm } from "../../SimplifiedTransactionConfirm";
 import { SignatureCancelledState } from "./SignatureCancelledState";
 import { SignatureErrorState } from "./SignatureErrorState";
@@ -18,6 +22,8 @@ type SigningBodyProps = Readonly<{
 }>;
 
 export function SigningBody({ device, action, request, onResult, onClose }: SigningBodyProps) {
+  const { state } = useSendFlowData();
+  const { recipientType } = useSendFlowTracking();
   const status = action.useHook(device, request);
   const payload = action.mapResult(status);
 
@@ -31,11 +37,20 @@ export function SigningBody({ device, action, request, onResult, onClose }: Sign
   }, [signedOperation, device, onResult]);
 
   const signError = status.transactionSignError ?? status.error ?? undefined;
+  const isUserRefused =
+    signError?.name === "UserRefusedOnDevice" || signError?.name === "TransactionRefusedOnDevice";
+
+  useEffect(() => {
+    if (!isUserRefused) {
+      return;
+    }
+    void screen("Modal send - action rejected", undefined, {
+      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      recipientType,
+    });
+  }, [isUserRefused, recipientType, state.account.account, state.account.parentAccount]);
 
   if (signError) {
-    const isUserRefused =
-      signError?.name === "UserRefusedOnDevice" || signError?.name === "TransactionRefusedOnDevice";
-
     return isUserRefused ? (
       <SignatureCancelledState onClose={onClose} onRetry={status.onRetry} />
     ) : (

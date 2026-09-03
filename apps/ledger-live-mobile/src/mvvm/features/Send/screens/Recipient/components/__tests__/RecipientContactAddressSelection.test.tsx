@@ -36,6 +36,6 @@ describe("RecipientContactAddressSelection", () => {
 
     await user.press(screen.getByTestId("send-recipient-contact-address-address-coinbase"));
 
-    expect(onAddressSelect).toHaveBeenCalledWith("0xabcdef01234567890abcdef1234567890abcdef0");
+    expect(onAddressSelect).toHaveBeenCalledWith(contact.addresses[1], 2);
   });
 });

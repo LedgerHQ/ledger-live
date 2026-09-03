@@ -14,7 +14,9 @@ import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recip
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
+import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
+import { screen as trackScreen, track } from "~/analytics";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
@@ -25,7 +27,12 @@ jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(),
 }));
 jest.mock("../../../../context/RecipientContactSelectionContext");
+jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
+jest.mock("~/analytics", () => ({
+  track: jest.fn(),
+  screen: jest.fn(),
+}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
@@ -34,9 +41,15 @@ const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
+const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
+const mockedTrackScreen = jest.mocked(trackScreen);
+const mockedTrack = jest.mocked(track);
+const setRecipientResolution = jest.fn();
+const resetRecipientResolution = jest.fn();
+const setInputMethod = jest.fn();
 
 const mockAccount = createMockAccount({
   id: "account_1",
@@ -124,6 +137,16 @@ describe("useRecipientScreenView", () => {
       selectContact: jest.fn(),
       clearSelectedContact: jest.fn(),
     });
+    mockedUseSendFlowTracking.mockReturnValue({
+      inputMethod: "manual",
+      resultType: null,
+      recipientType: null,
+      savedContactDuringFlow: false,
+      setInputMethod,
+      setRecipientResolution,
+      resetRecipientResolution,
+      markContactSaved: jest.fn(),
+    });
     mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
       isOpen: false,
       title: "",
@@ -175,6 +198,78 @@ describe("useRecipientScreenView", () => {
     expect(result.current.showInitialState).toBe(true);
     expect(result.current.showEmptyContactsState).toBe(false);
     expect(result.current.showSearchResults).toBe(false);
+  });
+
+  it("tracks a settled recipient result without exposing the raw query", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "0x123" },
+      state: {} as never,
+      uiConfig: {} as never,
+    });
+    mockedUseAddressValidation.mockReturnValue({
+      result: { ...idleResult, status: "valid", resolvedAddress: "0x123" },
+      isLoading: false,
+      validateAddress: jest.fn(),
+    });
+
+    renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      "Modal send - recipient result",
+      undefined,
+      expect.objectContaining({
+        queryType: "address",
+        resultType: "unknown address",
+        inputMethod: "manual",
+        queryLength: 5,
+        addressAlreadyUsed: false,
+      }),
+    );
+    expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
+    expect(mockedTrackScreen.mock.calls[0]?.[2]).not.toHaveProperty("query");
+  });
+
+  it("clears the tracked recipient resolution when the search input becomes empty", () => {
+    let searchValue = "0x123";
+    mockedUseSendFlowData.mockImplementation(() => ({
+      recipientSearch: { ...mockRecipientSearch, value: searchValue },
+      state: {} as never,
+      uiConfig: {} as never,
+    }));
+    mockedUseAddressValidation.mockReturnValue({
+      result: { ...idleResult, status: "valid", resolvedAddress: "0x123" },
+      isLoading: false,
+      validateAddress: jest.fn(),
+    });
+
+    const { rerender } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(setRecipientResolution).toHaveBeenCalledTimes(1);
+    expect(resetRecipientResolution).not.toHaveBeenCalled();
+
+    searchValue = "";
+    rerender(undefined);
+
+    expect(resetRecipientResolution).toHaveBeenCalledTimes(1);
+
+    searchValue = "0x123";
+    rerender(undefined);
+
+    expect(setRecipientResolution).toHaveBeenCalledTimes(2);
   });
 
   it("shows empty contacts state when the contacts feature is enabled and no contact matches the network", () => {
@@ -466,6 +561,19 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "contact",
+        page: "step recipient",
+        addressCount: 2,
+      }),
+    );
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      "Modal send - select contact address",
+      undefined,
+      expect.objectContaining({ addressCount: 2 }),
+    );
     expect(selectContact).toHaveBeenCalledWith(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
   });
@@ -527,8 +635,18 @@ describe("useRecipientScreenView", () => {
       }),
     );
 
-    act(() => result.current.handleContactAddressSelect("0x456"));
+    act(() =>
+      result.current.handleContactAddressSelect(mockContactAddress({ address: "0x456" }), 1),
+    );
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "contact address",
+        page: "select contact address",
+        addressRank: 1,
+      }),
+    );
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
     expect(setValue).toHaveBeenCalledWith("0x456");
     expect(onAddressSelected).not.toHaveBeenCalled();
@@ -803,6 +921,11 @@ describe("useRecipientScreenView", () => {
 
     result.current.handlePasteFromClipboard();
 
+    expect(setInputMethod).toHaveBeenCalledWith("paste");
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "paste", page: "step recipient" }),
+    );
     expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0xClipboardAddress");
   });
 

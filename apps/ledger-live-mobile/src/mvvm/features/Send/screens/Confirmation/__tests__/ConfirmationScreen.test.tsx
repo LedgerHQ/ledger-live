@@ -40,6 +40,14 @@ function buildViewModel(overrides: Partial<ConfirmationViewModel> = {}): Confirm
     onSaveLogs,
     onRetry,
     onClose,
+    trackingProperties: {
+      recipientType: null,
+      flow: "send",
+      newSendFlow: true,
+      blockchain: "bitcoin",
+      currency: "BTC",
+      currency_id: "bitcoin",
+    } satisfies ConfirmationViewModel["trackingProperties"],
     ...overrides,
   };
 }

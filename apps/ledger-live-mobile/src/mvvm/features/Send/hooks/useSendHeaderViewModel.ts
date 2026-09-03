@@ -5,6 +5,8 @@ import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
+import { track } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
@@ -28,6 +30,8 @@ import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
+import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
+import { getSendFlowTrackingPage } from "../utils/contactTracking";
 
 export type SendHeaderViewModel = {
   title: string;
@@ -52,6 +56,7 @@ export type SendHeaderViewModel = {
   setRecipientSearchValue: (value: string) => void;
   clearRecipientSearch: () => void;
   handleQrCodeClick: () => void;
+  handleRecipientInputChange: (value: string) => void;
 };
 
 function getRecipientPlaceholderKey({
@@ -77,6 +82,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
+  const { recipientType, setInputMethod } = useSendFlowTracking();
 
   const accountName = useMaybeAccountName(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
@@ -113,6 +119,10 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const canGoBack =
     isSelectingContactAddress || Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
   const showRecipientInput = Boolean(currentStepConfig?.addressInput) && !isSelectingContactAddress;
+  const trackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+    [state.account.account, state.account.parentAccount],
+  );
 
   useEffect(() => {
     if (!isSelectingContactAddress) {
@@ -121,9 +131,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
     return navigation.addListener("beforeRemove", event => {
       event.preventDefault();
+      track("button_clicked", {
+        button: "back",
+        page: "select contact address",
+        ...trackingProperties,
+      });
       clearSelectedContact();
     });
-  }, [clearSelectedContact, isSelectingContactAddress, navigation]);
+  }, [clearSelectedContact, isSelectingContactAddress, navigation, trackingProperties]);
 
   const recipientFromTransaction = useMemo(() => {
     const address = state.transaction.transaction?.recipient;
@@ -160,6 +175,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const handleBackPress = useCallback(() => {
     if (isSelectingContactAddress) {
+      track("button_clicked", {
+        button: "back",
+        page: "select contact address",
+        ...trackingProperties,
+      });
       clearSelectedContact();
       return;
     }
@@ -184,12 +204,19 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     currentStep,
     isSelectingContactAddress,
     navigation,
+    trackingProperties,
     transaction,
   ]);
 
   const handleClose = useCallback(() => {
+    track("button_clicked", {
+      button: "close",
+      page: getSendFlowTrackingPage(currentStep, isSelectingContactAddress),
+      recipientType,
+      ...trackingProperties,
+    });
     close();
-  }, [close]);
+  }, [close, currentStep, isSelectingContactAddress, recipientType, trackingProperties]);
 
   const handleRecipientInputPress = useCallback(() => {
     if (!isAmountStep) return;
@@ -208,6 +235,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const handleScannedURI = useCallback(
     (decoded: DecodedURISchemePayment) => {
+      setInputMethod("qr_code");
       setRecipientSearchValue(decoded.address);
 
       const currentTransaction = state.transaction.transaction;
@@ -218,12 +246,17 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
         }
       }
     },
-    [setRecipientSearchValue, state.transaction.transaction, transaction],
+    [setInputMethod, setRecipientSearchValue, state.transaction.transaction, transaction],
   );
 
   const handleQrCodeClick = useCallback(() => {
     if (!state.account.account) return;
 
+    track("button_clicked", {
+      button: "scan qr code",
+      page: "step recipient",
+      ...trackingProperties,
+    });
     clearRecipientSearch();
     navigation.navigate(ScreenName.ScanRecipient, {
       accountId: state.account.account.id,
@@ -238,7 +271,17 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     state.account.account,
     state.account.parentAccount?.id,
     state.transaction.transaction,
+    trackingProperties,
   ]);
+
+  const handleRecipientInputChange = useCallback(
+    (value: string) => {
+      const addedLength = value.length - recipientSearch.value.length;
+      setInputMethod(addedLength > 1 ? "paste" : "manual");
+      recipientSearch.setValue(value);
+    },
+    [recipientSearch, setInputMethod],
+  );
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
@@ -269,5 +312,6 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     setRecipientSearchValue,
     clearRecipientSearch,
     handleQrCodeClick,
+    handleRecipientInputChange,
   };
 }

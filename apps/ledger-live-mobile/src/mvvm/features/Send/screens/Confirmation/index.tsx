@@ -11,6 +11,7 @@ export function ConfirmationScreen() {
     status,
     transactionError,
     canViewTransaction,
+    trackingProperties,
     onViewTransaction,
     onSaveLogs,
     onRetry,
@@ -38,6 +39,7 @@ export function ConfirmationScreen() {
       viewTransactionLabel={t("send.newSendFlow.confirmation.viewTransaction")}
       closeLabel={t("common.close")}
       canViewTransaction={canViewTransaction}
+      trackingProperties={trackingProperties}
       onViewTransaction={onViewTransaction}
       onClose={onClose}
     />

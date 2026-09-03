@@ -29,6 +29,8 @@ type RecipientCardProps = Readonly<{
   sendLabel: string;
   onAddContact: () => void;
   onSend: () => void;
+  onUnsupportedNetwork: () => void;
+  onDismissUnsupportedNetwork: () => void;
 }>;
 
 export function RecipientCard({
@@ -44,6 +46,8 @@ export function RecipientCard({
   sendLabel,
   onAddContact,
   onSend,
+  onUnsupportedNetwork,
+  onDismissUnsupportedNetwork,
 }: RecipientCardProps) {
   return (
     <Card type="info" testID="send-recipient-card" lx={{ marginHorizontal: "s8" }}>
@@ -88,6 +92,8 @@ export function RecipientCard({
               unsupportedTitle={addressBookUnsupportedTitle}
               unsupportedDescription={addressBookUnsupportedDescription}
               onAddContact={onAddContact}
+              onUnsupportedNetwork={onUnsupportedNetwork}
+              onDismissUnsupportedNetwork={onDismissUnsupportedNetwork}
             />
           )}
           <Button
