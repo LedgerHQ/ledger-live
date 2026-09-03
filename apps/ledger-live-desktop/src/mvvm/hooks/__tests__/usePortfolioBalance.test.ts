@@ -6,7 +6,7 @@ import { bitcoinCurrency } from "LLD/features/__mocks__/useSelectAssetFlow.mock"
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { DEFAULT_PORTFOLIO_RANGE } from "LLD/utils/constants";
 import { SYNC_SETTLE_GUARD_MS } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
-import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
+import * as portfolioReact from "@ledgerhq/live-common/portfolio/portfolioReact";
 import { setLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
 import { mockPoll, mockOnUserRefresh, mockBridgeSync, defaultPortfolio } from "./fixtures";
 

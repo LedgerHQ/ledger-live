@@ -6,7 +6,7 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
-} from "@ledgerhq/live-countervalues/portfolio";
+} from "@ledgerhq/live-common/portfolio/portfolio";
 import { useThrottledValue } from "@ledgerhq/live-hooks/useThrottledFunction";
 import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
