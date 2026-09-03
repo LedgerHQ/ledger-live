@@ -1,6 +1,7 @@
 const React = require("react");
 const TooltipOpenContext = React.createContext();
 const DialogOpenContext = React.createContext();
+const PopoverOpenContext = React.createContext();
 
 function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
@@ -98,6 +99,26 @@ function TooltipTrigger({ children }) {
   return React.createElement(React.Fragment, undefined, children);
 }
 
+function Popover({ children, open }) {
+  return React.createElement(PopoverOpenContext.Provider, { value: open }, children);
+}
+
+function PopoverTrigger({ render, children }) {
+  if (typeof render === "function") {
+    return render({});
+  }
+  if (React.isValidElement(render)) {
+    return render;
+  }
+  return React.createElement(React.Fragment, undefined, children);
+}
+
+function PopoverContent({ children, ...props }) {
+  if (React.useContext(PopoverOpenContext) === false) return null;
+
+  return React.createElement("div", props, children);
+}
+
 function TooltipContent({ children, ...props }) {
   if (React.useContext(TooltipOpenContext) === false) return null;
 
@@ -150,6 +171,9 @@ module.exports = new Proxy(
     Tooltip,
     TooltipContent,
     TooltipTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
   },
   {
     get(target, prop) {

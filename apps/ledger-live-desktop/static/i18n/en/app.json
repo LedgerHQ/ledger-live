@@ -994,6 +994,10 @@
         "save": "Save",
         "verify": "Verify"
       },
+      "verifyHint": {
+        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+        "gotIt": "Got it"
+      },
       "verifyAddress": {
         "introTitle": "Verify your address",
         "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
