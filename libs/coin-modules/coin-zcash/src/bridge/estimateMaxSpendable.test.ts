@@ -1,14 +1,37 @@
 import { BigNumber } from "bignumber.js";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { computeShieldedSpendFee } from "../logic/coin-selection";
-import type { Transaction, ZcashAccount } from "../types/bridge";
-import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
+import { computeShieldedSpendFee, estimateMaxSpendableTransparent } from "../logic/coin-selection";
+import type { BitcoinOutput, Transaction, ZcashAccount } from "../types/bridge";
+import {
+  ZCASH_MAX_TRANSPARENT_INPUTS,
+  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+} from "../constants";
 
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const REFERENCE_HEIGHT = 3_450_000;
 const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
 const IMMATURE_BLOCK = REFERENCE_HEIGHT - 3;
+
+const utxo = (value: number, outputIndex: number): BitcoinOutput => ({
+  hash: "aa".repeat(32),
+  outputIndex,
+  blockHeight: 3_425_800,
+  address: T_ADDRESS,
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
+
+function accountWithUtxos(values: number[]): ZcashAccount {
+  return {
+    type: "Account",
+    id: "js:2:zcash:xpub6D:",
+    currency: { id: "zcash", name: "Zcash" },
+    bitcoinResources: { utxos: values.map((v, i) => utxo(v, i)) },
+  } as unknown as ZcashAccount;
+}
 
 const nullifierAt = (index: number) => index.toString(16).padStart(2, "0").repeat(32);
 
@@ -108,5 +131,87 @@ describe("estimateMaxSpendable, note maturity", () => {
 
     const fee = computeShieldedSpendFee(2, false, "shielded");
     expect(await max(acc)).toEqual(BigNumber.max(new BigNumber(50_000).minus(fee), 0));
+  });
+});
+
+describe("estimateMaxSpendable, transparent-input bound", () => {
+  // A "Max" this returns must always be an amount a real transparent send
+  // (bounded to ZCASH_MAX_TRANSPARENT_INPUTS) can actually carry -- whether or
+  // not a transaction is passed to resolve the bound through.
+
+  it("bounds the transparent pool when called WITHOUT a transaction (no-tx fallback)", async () => {
+    const extra = 5;
+    const values = Array.from(
+      { length: ZCASH_MAX_TRANSPARENT_INPUTS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const acc = accountWithUtxos(values);
+
+    const result = await estimateMaxSpendable({ account: acc } as never);
+
+    // The defect this guards: before the fix, this path summed every UTXO
+    // account.bitcoinResources holds instead of resolving through the bounded
+    // funnel, so it could disagree with the bounded (with-transaction) figure
+    // below -- either over- or under-stating it, since ZIP-317 fees scale
+    // with input count and a dropped dust UTXO can raise the net figure.
+    const boundedValues = [...values].sort((a, b) => b - a).slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+    const expected = estimateMaxSpendableTransparent(
+      boundedValues.map(v => new BigNumber(v)),
+      "transparent",
+    );
+    expect(result).toEqual(expected);
+  });
+
+  it("bounds the transparent pool when called WITH a transparent transaction", async () => {
+    const extra = 5;
+    const values = Array.from(
+      { length: ZCASH_MAX_TRANSPARENT_INPUTS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const acc = accountWithUtxos(values);
+    const transparentTransaction = {
+      family: "zcash",
+      transferType: "transparent",
+      amount: new BigNumber(0),
+      recipient: T_ADDRESS,
+      useAllAmount: true,
+    } as Transaction;
+
+    const result = await estimateMaxSpendable({
+      account: acc,
+      transaction: transparentTransaction,
+    } as never);
+
+    const boundedValues = [...values].sort((a, b) => b - a).slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+    const expected = estimateMaxSpendableTransparent(
+      boundedValues.map(v => new BigNumber(v)),
+      "transparent",
+    );
+    expect(result).toEqual(expected);
+  });
+
+  it("returns the naive full-sum figure when the account holds at most the bound (no-tx and with-tx agree)", async () => {
+    const values = Array.from({ length: ZCASH_MAX_TRANSPARENT_INPUTS }, (_, i) => (i + 1) * 1_000);
+    const acc = accountWithUtxos(values);
+    const transparentTransaction = {
+      family: "zcash",
+      transferType: "transparent",
+      amount: new BigNumber(0),
+      recipient: T_ADDRESS,
+      useAllAmount: true,
+    } as Transaction;
+
+    const withoutTx = await estimateMaxSpendable({ account: acc } as never);
+    const withTx = await estimateMaxSpendable({
+      account: acc,
+      transaction: transparentTransaction,
+    } as never);
+
+    const expected = estimateMaxSpendableTransparent(
+      values.map(v => new BigNumber(v)),
+      "transparent",
+    );
+    expect(withoutTx).toEqual(expected);
+    expect(withTx).toEqual(expected);
   });
 });
