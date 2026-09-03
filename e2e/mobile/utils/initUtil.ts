@@ -109,7 +109,7 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
     );
     throw new Error(
       `Failed to launch ${failures.length}/${toStart.length} Speculos device(s): ${failures
-        .map(sanitizeError)
+        .map(err => sanitizeError(err))
         .join("; ")}`,
     );
   }
