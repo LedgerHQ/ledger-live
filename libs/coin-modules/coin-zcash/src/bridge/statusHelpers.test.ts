@@ -68,22 +68,24 @@ describe("resolveTransparentUtxos, bounding", () => {
     expect(resolved.map(u => u.value.toNumber())).toEqual(expectedLargest);
   });
 
-  it("applies the same bound to a caller-supplied selectedUtxos override", () => {
+  it("passes a caller-supplied selectedUtxos override through unbounded and in caller order", () => {
+    // A future coin-control caller picks its own UTXOs deliberately; silently
+    // reordering or truncating that explicit selection would spend a
+    // different set than the caller asked for. The device ceiling is only
+    // enforced on the account-synced default set above, which the wallet is
+    // free to choose from.
     const extra = 3;
     const values = Array.from(
       { length: ZCASH_MAX_TRANSPARENT_INPUTS + extra },
       (_, i) => (i + 1) * 1_000,
     );
-    const selectedUtxos = utxosOfValues(values);
+    const selectedUtxos = utxosOfValues(values); // increasing order, on purpose
     const acc = account([]);
 
     const resolved = resolveTransparentUtxos(acc, transaction({ selectedUtxos }));
 
-    expect(resolved).toHaveLength(ZCASH_MAX_TRANSPARENT_INPUTS);
-    const expectedLargest = [...values]
-      .sort((a, b) => b - a)
-      .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
-    expect(resolved.map(u => u.value.toNumber())).toEqual(expectedLargest);
+    expect(resolved).toBe(selectedUtxos);
+    expect(resolved.map(u => u.value.toNumber())).toEqual(values);
   });
 
   it.each(["shielded", "shielded-to-transparent"] as ZcashTransferType[])(
@@ -158,5 +160,24 @@ describe("hasBoundedTransparentShortfall", () => {
     expect(hasBoundedTransparentShortfall(acc, transaction(), new BigNumber(fullBalance + 1))).toBe(
       false,
     );
+  });
+
+  it("is false for a selectedUtxos override past the bound -- the ceiling isn't enforced there", () => {
+    const extra = 3;
+    const values = Array.from(
+      { length: ZCASH_MAX_TRANSPARENT_INPUTS + extra },
+      (_, i) => (i + 1) * 1_000,
+    );
+    const selectedUtxos = utxosOfValues(values);
+    const acc = account([]);
+    const fullBalance = values.reduce((sum, v) => sum + v, 0);
+
+    expect(
+      hasBoundedTransparentShortfall(
+        acc,
+        transaction({ selectedUtxos }),
+        new BigNumber(fullBalance),
+      ),
+    ).toBe(false);
   });
 });

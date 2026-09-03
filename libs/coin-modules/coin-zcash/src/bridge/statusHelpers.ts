@@ -28,13 +28,18 @@ export const isTransparentInputTransfer = (transferType: Transaction["transferTy
  */
 export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction): BitcoinOutput[] {
   if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return [];
-  const utxos = tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
-  // Largest-first, then bounded to the device's per-PCZT input ceiling: picking
-  // the largest N maximizes the amount a single send can carry (ZIP-317 prices
-  // per input, so more of the account's value per spent input is strictly
-  // better) and mirrors the "largest-first stays" selection strategy already
-  // used on the shielded side (logic/coin-selection.ts's selectNotes).
-  return [...utxos]
+  // A caller-supplied override is an explicit UTXO selection (coin control),
+  // not a pool the wallet is free to pick from -- reordering or truncating it
+  // would silently spend a different set than the caller asked for, so it
+  // passes through exactly as it did before this ceiling existed. Only the
+  // account-synced default set is sorted largest-first and bounded to the
+  // device's per-PCZT input ceiling: picking the largest N maximizes the
+  // amount a single send can carry (ZIP-317 prices per input, so more of the
+  // account's value per spent input is strictly better) and mirrors the
+  // "largest-first stays" selection strategy already used on the shielded
+  // side (logic/coin-selection.ts's selectNotes).
+  if (tx.selectedUtxos) return tx.selectedUtxos;
+  return [...(account.bitcoinResources?.utxos ?? [])]
     .sort((a, b) => b.value.comparedTo(a.value))
     .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
 }
