@@ -3,15 +3,37 @@ import { combineCardLinkedWallets } from "../logic/combineCardLinkedWallets";
 import type { ResolveWalletCounterValue } from "../types";
 
 const internal: PayCardInternalWallet[] = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
-  { id: "w-usdt", balance: "10.00", currency: "usdt", address: "0xusdt", addressMemo: null },
-  { id: "w-sol", balance: "2.5", currency: "sol", address: "sol-addr", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+    addressId: "addr-w-usdc",
+  },
+  {
+    id: "w-usdt",
+    balance: "10.00",
+    currency: "usdt",
+    address: "0xusdt",
+    addressMemo: null,
+    addressId: "addr-w-usdt",
+  },
+  {
+    id: "w-sol",
+    balance: "2.5",
+    currency: "sol",
+    address: "sol-addr",
+    addressMemo: null,
+    addressId: "addr-w-sol",
+  },
   {
     id: "w-unlinked",
     balance: "999.99",
     currency: "usdc",
     address: "0xunlinked",
     addressMemo: null,
+    addressId: "addr-w-unlinked",
   },
 ];
 
@@ -154,7 +176,14 @@ describe("combineCardLinkedWallets", () => {
     const { wallets, isPartialTotal } = combineCardLinkedWallets({
       linked: [linked[1]],
       internal: [
-        { id: "w-usdc", balance: "0.00", currency: "usdc", address: "0xusdc", addressMemo: null },
+        {
+          id: "w-usdc",
+          balance: "0.00",
+          currency: "usdc",
+          address: "0xusdc",
+          addressMemo: null,
+          addressId: "addr-w-usdc",
+        },
       ],
       resolveCounterValue,
     });

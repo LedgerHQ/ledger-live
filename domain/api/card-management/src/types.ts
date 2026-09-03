@@ -9,6 +9,7 @@ import {
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
+  PayCardLinkedWalletMutationResponseSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
@@ -49,5 +50,14 @@ export type PayCardRefreshSessionRequest = {
 };
 
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
+
+export type PayCardLinkedWalletMutationResult = z.infer<
+  typeof PayCardLinkedWalletMutationResponseSchema
+>;
+
+/** Both endpoints identify the wallet by its `addressId`, which `getInternalWallets` returns. */
+export type PayCardLinkedWalletRequest = {
+  readonly addressId: string;
+};
 
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;

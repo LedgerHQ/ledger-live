@@ -4,6 +4,8 @@ import {
   cardManagementApi,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
+  useLinkCardWalletMutation,
+  useUnlinkCardWalletMutation,
   useCreateCardDetailsTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
@@ -11,6 +13,7 @@ import {
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
+import { CARD_MANAGEMENT_TAGS } from "./constants";
 import { PayCardErrorResponseSchema } from "./schema";
 
 function jsonResponse(body: unknown): Response {
@@ -85,9 +88,7 @@ const internalWalletsOnTheWire = [
   },
 ];
 
-const internalWallets = internalWalletsOnTheWire.map(
-  ({ addressId: _addressId, type: _type, ...wallet }) => wallet,
-);
+const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
 const linkedWallets = [
   {
@@ -142,10 +143,12 @@ describe("cardManagementApi configuration", () => {
       "getCardStatus",
       "getInternalWallets",
       "getUser",
+      "linkCardWallet",
       "logout",
       "orderCard",
       "refreshSession",
       "unfreezeCard",
+      "unlinkCardWallet",
     ]);
   });
 
@@ -171,6 +174,13 @@ describe("cardManagementApi configuration", () => {
     expect(useFreezeCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.unfreezeCard).toBeDefined();
     expect(useUnfreezeCardMutation).toBeDefined();
+  });
+
+  it("exposes the link endpoints and their hooks", () => {
+    expect(cardManagementApi.endpoints.linkCardWallet).toBeDefined();
+    expect(useLinkCardWalletMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.unlinkCardWallet).toBeDefined();
+    expect(useUnlinkCardWalletMutation).toBeDefined();
   });
 
   it("exposes the wallet endpoints and their hooks", () => {
@@ -557,7 +567,7 @@ describe("cardManagementApi requests", () => {
       expect(result.data?.[0].balance).toBe("9007199254740993.000001");
     });
 
-    it("drops the keys the wire contract does not declare", async () => {
+    it("drops the constant type, and keeps the address id links are made with", async () => {
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse([internalWalletsOnTheWire[0]]));
@@ -608,6 +618,62 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("linkCardWallet and unlinkCardWallet", () => {
+    // The provider's own example: the address id of the second documented internal wallet.
+    const addressId = "7c1839ee-918e-4787-b74f-deeb48ead58b";
+
+    it("links a wallet by its address id, with the bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkCardWallet.initiate({ addressId }),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/wallet/internal/card_linked");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({ addressId });
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("unlinks with the same body, on DELETE", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+
+      const store = makeStore(async () => "session-token");
+      await store
+        .dispatch(cardManagementApi.endpoints.unlinkCardWallet.initiate({ addressId }))
+        .unwrap();
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/wallet/internal/card_linked");
+      expect(request(fetchSpy).method).toBe("DELETE");
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({ addressId });
+    });
+
+    it("reports the provider refusing a sixth wallet", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(422, "Maximum 5 wallets can be linked"));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkCardWallet.initiate({ addressId }),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toMatchObject({ status: 422 });
+    });
+
+    it("both invalidate the linked wallets, so the charging order reloads", () => {
+      for (const endpoint of ["linkCardWallet", "unlinkCardWallet"] as const) {
+        expect(cardManagementApi.endpoints[endpoint]).toBeDefined();
+      }
+      // Provider and invalidator are a pair: a tag only one side names is dead config.
+      expect(CARD_MANAGEMENT_TAGS).toContain("CardLinkedWallets");
     });
   });
 

@@ -29,6 +29,8 @@ shape and the reasons.
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
+| `linkCardWallet` | POST | `/v1/wallet/internal/card_linked` | Link a custodial wallet as a funding source, by `addressId` |
+| `unlinkCardWallet` | DELETE | `/v1/wallet/internal/card_linked` | Drop a wallet as a funding source, leaving it and its funds alone |
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)
