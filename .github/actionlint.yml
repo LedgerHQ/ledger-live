@@ -6,6 +6,11 @@ self-hosted-runner:
     - ledger-live-linux-16CPU-64RAM
     - ledger-live-linux-e2e-speculos-32CPU-128RAM
     - ledger-live-linux-e2e-8CPU-32RAM
+    - ledger-wallet-1cpu-aws-public
+    - ledger-wallet-2cpu-aws-public
+    - ledger-wallet-4cpu-aws-public
+    - ledger-wallet-8cpu-aws-public
+    - ledger-wallet-16cpu-aws-public
     - performance-pool
     - general-pool
     - qaa

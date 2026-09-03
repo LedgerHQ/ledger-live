@@ -110,9 +110,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
+      CI_OS: ledger-wallet-16cpu-aws-public
       JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
