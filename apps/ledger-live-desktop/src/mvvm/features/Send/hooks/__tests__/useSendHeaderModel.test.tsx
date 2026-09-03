@@ -982,6 +982,27 @@ describe("useSendHeaderModel", () => {
       expect(goToPreviousStep).toHaveBeenCalled();
     });
 
+    it("resets the memo before the amount so the memo patch cannot restore the old amount", () => {
+      mockNavigation();
+      const calls: string[] = [];
+      mockActions({ updateTransaction: jest.fn(() => calls.push("updateTransaction")) });
+      const resetViewState = jest.fn(() => calls.push("resetViewState"));
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.AMOUNT,
+        currentStepConfig: {},
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+
+      renderHook("", resetViewState);
+      latestVM?.handleBack();
+
+      expect(calls).toEqual(["resetViewState", "updateTransaction"]);
+    });
+
     it("leaves transaction unchanged when COIN_CONTROL step but tx has no utxoStrategy", () => {
       const { goToPreviousStep } = mockNavigation();
       const { updateTransaction } = mockActions();
