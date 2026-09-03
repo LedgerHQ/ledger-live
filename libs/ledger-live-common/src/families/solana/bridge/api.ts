@@ -8,6 +8,11 @@ import type { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
+import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
+import { getTokenAccountShapes } from "@ledgerhq/coin-solana/logic/tokenAccountShapes";
+import { getCurrencyConfiguration } from "../../../config";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import type { SolanaTxData } from "../types";
 
 export async function getTokenFromAsset(
@@ -104,6 +109,13 @@ export function describeOptimisticOperation(
   return { type, value: fees ?? new BigNumber(0) };
 }
 
+/** The frozen state and Token-2022 extensions `AccountSubHeader` renders from the sub-account. */
+async function buildTokenAccountShapes(currency: CryptoCurrency, address: string) {
+  const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
+  const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
+  return getTokenAccountShapes(api, address);
+}
+
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     // Declared rather than left to the framework's `delegationsCount > 0` fallback, which is false
@@ -113,6 +125,7 @@ export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     buildIntentData,
+    buildTokenAccountShapes: (address: string) => buildTokenAccountShapes(currency, address),
     describeOptimisticOperation,
   };
 }
