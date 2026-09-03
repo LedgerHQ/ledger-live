@@ -25,7 +25,7 @@ const store = configureStore({
   middleware: getDefault => getDefault().concat(counterValuesApi.middleware),
 });
 const wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(Provider, { store, children });
+  createElement(Provider, { store }, children);
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();
