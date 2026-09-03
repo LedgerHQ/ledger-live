@@ -23,7 +23,7 @@ permissions:
 jobs:
   test-desktop-e2e-lint:
     name: "Desktop E2E Lint & Typecheck"
-    runs-on: ledger-wallet-4cpu-aws-public
+    runs-on: ubuntu-22.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3

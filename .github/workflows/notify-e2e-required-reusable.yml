@@ -15,7 +15,7 @@ permissions:
 jobs:
   notify:
     name: "Analyze and notify"
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-latest
     steps:
       - name: Analyze E2E requirements
         id: analyze

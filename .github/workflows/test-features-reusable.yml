@@ -42,7 +42,7 @@ permissions:
 jobs:
   test-features:
     name: "Features Test"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@ci-runner-test
+    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@ci-runner-baseline
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}

@@ -80,7 +80,7 @@ jobs:
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
-    runs-on: [ledger-wallet-16cpu-aws-public]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -194,7 +194,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-wallet-16cpu-aws-public]
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -289,7 +289,7 @@ jobs:
   report:
     name: "Desktop E2E & Mock > Report"
     needs: [e2e-tests-linux, speculos-e2e-tests-linux]
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

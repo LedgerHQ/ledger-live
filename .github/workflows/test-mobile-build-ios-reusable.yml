@@ -201,7 +201,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ledger-wallet-8cpu-aws-public]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -274,6 +274,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ledger-wallet-1cpu-aws-public]
+    runs-on: [ubuntu-22.04]
     steps:
       - run: echo "Skipping"

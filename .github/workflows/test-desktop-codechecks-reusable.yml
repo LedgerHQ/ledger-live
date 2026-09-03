@@ -66,8 +66,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-4cpu-aws-public
-    runs-on: ledger-wallet-4cpu-aws-public
+      CI_OS: ubuntu-22.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -118,9 +118,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-wallet-16cpu-aws-public
+      CI_OS: ledger-live-linux-16CPU-64RAM
       JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-wallet-16cpu-aws-public]
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -191,7 +191,7 @@ jobs:
   report:
     name: "Desktop Lint & Unit Tests > Report"
     needs: [codechecks, unit-tests]
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-22.04
     # Only report on push events (e.g. develop, main, release, hotfix).
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:

@@ -35,7 +35,7 @@ permissions:
 jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ubuntu-22.04
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}

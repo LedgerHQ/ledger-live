@@ -50,7 +50,7 @@ permissions:
 jobs:
   scan-sonar:
     name: "Sonar Cloud"
-    runs-on: [ledger-wallet-4cpu-aws-public]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:

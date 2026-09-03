@@ -24,7 +24,7 @@ permissions:
 jobs:
   changeset-validation:
     name: Changeset Validation
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -47,7 +47,7 @@ jobs:
   changes:
     name: Detect Workflow File Changes
     if: ${{ !inputs.skip-ci-sast }}
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-24.04
     outputs:
       workflow-files: ${{ steps.filter.outputs.workflow-files }}
     steps:
@@ -74,7 +74,7 @@ jobs:
 
   ci-sast:
     name: Test CI Scripts
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ubuntu-24.04
     needs: changes
     if: needs.changes.outputs.workflow-files == 'true'
     permissions:
