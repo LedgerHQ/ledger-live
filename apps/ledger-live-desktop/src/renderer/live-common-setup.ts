@@ -1,4 +1,4 @@
-import "~/live-common-setup-base";
+import "./live-common-setup-renderer";
 import "~/live-common-set-supported-currencies";
 import "./families";
 

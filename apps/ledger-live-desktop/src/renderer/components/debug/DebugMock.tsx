@@ -26,7 +26,7 @@ import {
   type FeatureId,
   type WithFeatureFlags,
 } from "@shared/feature-flags";
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { memoryLogger } from "~/renderer/logger";
 import { getJSONStringifyReplacer } from "~/helpers/saveLogs";
 
@@ -235,18 +235,12 @@ window.saveLogs = async (path: string): Promise<void> => {
   const memoryLogs = memoryLogger.getMemoryLogs();
 
   try {
-    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
-    //Uses getJSONStringifyReplacer to replace circular references with "[Circular]"
+    // Stringified here, not by Electron's IPC serialiser, which cannot carry the circular
+    // references the in-memory logs contain.
     const memoryLogsStr = JSON.stringify(memoryLogs, getJSONStringifyReplacer(), 2);
-    // Requests the main process to save logs in a file
-    await ipcRenderer.invoke(
-      "save-logs",
-      {
-        canceled: false,
-        filePath: path,
-      },
-      memoryLogsStr,
-    );
+    // `path` is written straight through only under PLAYWRIGHT_RUN; otherwise main opens
+    // the save dialog pre-filled with it.
+    await files.saveLogs({ options: { defaultPath: path }, e2ePath: path }, memoryLogsStr);
   } catch (error) {
     console.warn("Failed to save logs:", error);
   }

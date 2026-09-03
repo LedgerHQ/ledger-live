@@ -7,7 +7,12 @@ import type {
   FindBlockHeightArgs,
 } from "./ipc/contract";
 import { ZCASH_IPC } from "./ipc/contract";
-import { createZCashClient, createZCashIPCClient, type IpcRendererLike } from "./ZCashIPC";
+import {
+  createZCashClient,
+  createZCashIPCClient,
+  setZCashIpcRenderer,
+  type IpcRendererLike,
+} from "./ZCashIPC";
 
 // ── Suppress log output ─────────────────────────────────────────────────
 
@@ -15,10 +20,9 @@ jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
 }));
 
-// electron is not a dependency of this lib — provide a virtual mock so the
-// production factory's lazy `require("electron")` resolves in tests.
-const mockElectronIpcRenderer = { invoke: jest.fn(), on: jest.fn(), removeListener: jest.fn() };
-jest.mock("electron", () => ({ ipcRenderer: mockElectronIpcRenderer }), { virtual: true });
+// The host injects the channel it exposes over its preload bridge, so tests inject the same
+// way rather than mocking `electron`.
+const mockInjectedIpcRenderer = { invoke: jest.fn(), on: jest.fn(), removeListener: jest.fn() };
 
 // ── Constants ───────────────────────────────────────────────────────────
 
@@ -573,8 +577,9 @@ describe("createZCashIPCClient", () => {
   // -- Production factory -------------------------------------------------
 
   describe("createZCashClient (production factory)", () => {
-    it("wires the real Electron ipcRenderer and produces a working client", async () => {
-      mockElectronIpcRenderer.invoke.mockResolvedValueOnce(999);
+    it("uses the injected ipcRenderer and produces a working client", async () => {
+      setZCashIpcRenderer(mockInjectedIpcRenderer);
+      mockInjectedIpcRenderer.invoke.mockResolvedValueOnce(999);
       const client = createZCashClient({ grpcUrl: GRPC_URL });
 
       expect(client.grpcUrl).toBe(GRPC_URL);
@@ -582,10 +587,24 @@ describe("createZCashIPCClient", () => {
 
       const tip = await client.getChainTip();
       expect(tip).toBe(999);
-      expect(mockElectronIpcRenderer.invoke).toHaveBeenCalledWith(
+      expect(mockInjectedIpcRenderer.invoke).toHaveBeenCalledWith(
         ZCASH_IPC.getChainTip,
         expect.objectContaining({ grpcUrl: GRPC_URL }),
       );
+    });
+
+    // The channel is cached in module scope, so this needs a module registry the other cases
+    // have not already injected into.
+    it("throws when nothing was injected during startup", () => {
+      jest.isolateModules(() => {
+        const { createZCashClient: freshFactory } =
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          require("./ZCashIPC") as typeof import("./ZCashIPC");
+
+        expect(() => freshFactory({ grpcUrl: GRPC_URL })).toThrow(
+          "ZCashIPC: no IPC channel configured",
+        );
+      });
     });
   });
 

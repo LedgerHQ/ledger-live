@@ -15,7 +15,9 @@ import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import i18n from "~/renderer/i18n/init";
-import { webFrame, ipcRenderer } from "electron";
+import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
+import { deeplink } from "~/renderer/bridge";
+import { setupZCashIpc } from "~/renderer/zcash";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
@@ -27,14 +29,13 @@ import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
-import logger, { enableDebugLogger } from "./logger";
+import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
@@ -55,7 +56,6 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
@@ -84,6 +84,9 @@ import { initHistory } from "~/renderer/reducers/history";
 const rootNode = document.getElementById("react-root");
 
 async function init() {
+  // ZCash sync talks over IPC; give the coin module its channel before anything uses it.
+  setupZCashIpc();
+
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
 
@@ -107,7 +110,9 @@ async function init() {
         filters,
       })}`,
     );
-    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+    enableDebugLogger(
+      (log: LogEntry) => everyLogs || Boolean(log?.type && filters.includes(log.type)),
+    );
   }
 
   checkLibs({
@@ -120,7 +125,7 @@ async function init() {
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
-      global.localStorage.setItem(key, value);
+      window.localStorage.setItem(key, value);
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
@@ -178,7 +183,10 @@ async function init() {
     deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
     store.dispatch(setDeepLinkUrl(deepLinkUrl));
   }
-  ipcRenderer.once("deep-linking", (_, url: string) => {
+  // Once-only: the bridge exposes a persistent subscription, so cancel it on first
+  // delivery rather than relying on a once-only listener.
+  const stopInitialDeepLinkListener = deeplink.onOpen((url: string) => {
+    stopInitialDeepLinkListener();
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
@@ -363,13 +371,10 @@ async function init() {
     store.dispatch(importMarketBannerState(marketBannerState));
   }
 
-  webFrame.setVisualZoomLevelLimits(1, 1);
+  setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
   matcher.addEventListener("change", updateOSTheme);
-  events({
-    store,
-  });
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Tab") {
       if (!isGlobalTabEnabled()) enableGlobalTab();

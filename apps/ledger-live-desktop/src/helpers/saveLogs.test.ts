@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { memoryLogger } from "~/renderer/logger";
 import { getJSONStringifyReplacer, saveLogs } from "./saveLogs";
-
-jest.mock("electron", () => ({
-  ipcRenderer: {
-    invoke: jest.fn(),
-  },
-}));
 
 jest.mock("~/renderer/logger", () => ({
   memoryLogger: {
@@ -49,39 +43,39 @@ describe("getJSONStringifyReplacer", () => {
 });
 
 describe("saveLogs", () => {
-  const fakePath = { filePath: "/fake/path" } as Electron.SaveDialogReturnValue;
+  const fakeRequest = { options: { defaultPath: "/fake/path" } };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should serialize logs and call ipcRenderer.invoke with correct arguments", async () => {
+  it("should serialize logs and hand them to the bridge with correct arguments", async () => {
     // given
     const circularObj: any = { name: "circularObj" };
     circularObj.self = circularObj;
     const logs = { log: "test", circularObj };
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue(logs);
-    (ipcRenderer.invoke as jest.Mock).mockResolvedValue(undefined);
+    jest.mocked(files.saveLogs).mockResolvedValue("saved");
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
-    expect(ipcRenderer.invoke).toHaveBeenCalledTimes(1);
-    expect(ipcRenderer.invoke).toHaveBeenCalledWith("save-logs", fakePath, expect.any(String));
-    const serializedLogs = (ipcRenderer.invoke as jest.Mock).mock.calls[0][2];
+    expect(files.saveLogs).toHaveBeenCalledTimes(1);
+    expect(files.saveLogs).toHaveBeenCalledWith(fakeRequest, expect.any(String));
+    const serializedLogs = jest.mocked(files.saveLogs).mock.calls[0][1];
     expect(serializedLogs).toContain("[Circular]");
   });
 
-  it("should log an error if ipcRenderer.invoke rejects", async () => {
+  it("should log an error if the bridge call rejects", async () => {
     // given
     const error = new Error("IPC error");
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
-    (ipcRenderer.invoke as jest.Mock).mockRejectedValue(error);
+    jest.mocked(files.saveLogs).mockRejectedValue(error);
     const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
     expect(consoleWarnSpy).toHaveBeenCalledWith("Failed to save logs:", error);

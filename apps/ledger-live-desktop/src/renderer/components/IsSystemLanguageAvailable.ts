@@ -8,10 +8,10 @@ import { useSupportedLanguages } from "../hooks/useSupportedLanguages";
 // To reset os language proposition, change this date !
 const lastAskedLanguageAvailable = "2022-09-23";
 export function hasAnsweredLanguageAvailable() {
-  return global.localStorage.getItem("hasAnsweredLanguageAvailable") === lastAskedLanguageAvailable;
+  return window.localStorage.getItem("hasAnsweredLanguageAvailable") === lastAskedLanguageAvailable;
 }
 export function answerLanguageAvailable() {
-  return global.localStorage.setItem("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
+  return window.localStorage.setItem("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
 }
 const IsSystemLanguageAvailable = () => {
   const dispatch = useDispatch();

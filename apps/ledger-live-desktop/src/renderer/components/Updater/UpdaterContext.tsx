@@ -1,4 +1,5 @@
-import { ipcRenderer, IpcRendererEvent } from "electron";
+import { updater } from "~/renderer/bridge";
+import type { UpdaterStatusEvent } from "~/bridge/contract";
 import React, { Component } from "react";
 
 export type UpdateStatus =
@@ -39,9 +40,9 @@ export const UpdaterContext = React.createContext<MaybeUpdateContextType>(null);
 class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
   constructor(props: UpdaterProviderProps) {
     super(props);
-    ipcRenderer.on("updater", this.listener);
+    this.unsubscribe = updater.onStatus(this.listener);
     if (!__DEV__) {
-      ipcRenderer.send("updater", "init");
+      updater.init();
     }
     this.state = {
       status: "idle",
@@ -52,19 +53,20 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener("updater", this.listener);
+    this.unsubscribe?.();
   }
 
-  listener = (
-    _e: IpcRendererEvent,
-    args: {
+  /** Returned by `onStatus`; the listener itself cannot be passed back across the bridge. */
+  private unsubscribe?: () => void;
+
+  // The bridge types `status` as a plain string, because the contract cannot import
+  // renderer types. Narrowing back to UpdateStatus happens here.
+  listener = (event: UpdaterStatusEvent) => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const args = event as {
       status: UpdateStatus;
-      payload?: {
-        percent?: number;
-        version?: string;
-      };
-    },
-  ) => {
+      payload?: { percent?: number; version?: string };
+    };
     if (args.status === "download-progress") {
       const downloadProgress =
         args.payload && args.payload.percent ? +args.payload.percent.toFixed(0) : 0;
@@ -93,7 +95,7 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
       downloadProgress,
     });
 
-  quitAndInstall = () => ipcRenderer.send("updater", "quit-and-install");
+  quitAndInstall = () => updater.quitAndInstall();
 
   render() {
     const { status, downloadProgress, error, version } = this.state;

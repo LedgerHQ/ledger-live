@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from "react";
-import { ipcRenderer, IpcRendererEvent } from "electron";
+import { deeplink } from "~/renderer/bridge";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 
@@ -22,7 +22,7 @@ function useDeeplink() {
   const pendingBackgroundDeepLink = useRef<string | null>(null);
 
   const handleBackgroundDeeplink = useCallback(
-    (_event: IpcRendererEvent, url: string) => {
+    (url: string) => {
       if (isDeeplinkOpenHardeningEnabled && isLocked) {
         pendingBackgroundDeepLink.current = url;
         return;
@@ -34,10 +34,9 @@ function useDeeplink() {
   );
 
   useEffect(() => {
-    ipcRenderer.on("deep-linking", handleBackgroundDeeplink);
-    return () => {
-      ipcRenderer.removeListener("deep-linking", handleBackgroundDeeplink);
-    };
+    // onOpen returns its own unsubscribe: the listener cannot be passed back across the
+    // bridge to be removed by identity.
+    return deeplink.onOpen(handleBackgroundDeeplink);
   }, [handleBackgroundDeeplink]);
 
   useEffect(() => {

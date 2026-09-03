@@ -1,12 +1,6 @@
 import { createDeeplinkOpenHandler } from "../CustomHandlers";
 import { track } from "~/renderer/analytics/segment";
 
-jest.mock("electron", () => ({
-  ipcRenderer: {
-    send: jest.fn(),
-  },
-}));
-
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));

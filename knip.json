@@ -43,6 +43,7 @@
       "entry": [
         "src/index.ts",
         "src/renderer/index.ts",
+        "src/renderer/bootstrap/process.ts",
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
@@ -59,6 +60,7 @@
         "@electron/fuses",
         "embla-carousel-autoplay",
         "embla-carousel-react",
+        "events",
         "@ledgerhq/zcash-utils"
       ]
     },

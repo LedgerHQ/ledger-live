@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { clipboard } from "electron";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Wrapper, Illustration, Number, Title, Content, BulletRowIcon } from "./shared";
@@ -8,6 +7,7 @@ import BulletRow from "~/renderer/components/BulletRow";
 import Text from "~/renderer/components/Text";
 import IconCopy from "~/renderer/icons/Copy";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
+import { writeText } from "~/renderer/clipboard";
 
 const Pre = styled(Box).attrs({
   selectable: true,
@@ -31,7 +31,7 @@ const snippet =
 const UpdateUdevRulesSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
   const onCopy = useCallback(() => {
-    clipboard.writeText(snippet);
+    writeText(snippet);
   }, []);
   return (
     <Wrapper>

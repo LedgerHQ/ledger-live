@@ -1,7 +1,9 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
+import { gcm } from "@noble/ciphers/aes";
+import { hmac } from "@noble/hashes/hmac";
+import { sha256 } from "@noble/hashes/sha2";
+import { randomBytes as nobleRandomBytes } from "@noble/hashes/utils";
 import { BIP32Factory } from "bip32";
-import hmac from "create-hmac";
-import * as crypto from "crypto";
 
 import { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
 
@@ -157,14 +159,15 @@ function bigIntToBytes(value: bigint): Uint8Array {
 }
 
 const bip32 = BIP32Factory(eccWrapper);
-const AES_BLOCK_SIZE = 16;
+/** AES-GCM authentication tag length, in bytes. */
+const AES_GCM_TAG_SIZE = 16;
 const PRIVATE_KEY_SIZE = 32;
 
 export class NobleCryptoSecp256k1 implements Crypto {
   randomKeypair(): KeyPair {
     let pk: Uint8Array;
     do {
-      pk = crypto.randomBytes(PRIVATE_KEY_SIZE);
+      pk = nobleRandomBytes(PRIVATE_KEY_SIZE);
     } while (!secp256k1.utils.isValidPrivateKey(pk));
     return this.keypairFromSecretKey(pk);
   }
@@ -284,25 +287,17 @@ export class NobleCryptoSecp256k1 implements Crypto {
 
   encrypt(secret: Uint8Array, nonce: Uint8Array, message: Uint8Array): Uint8Array {
     const normalizedSecret = this.normalizeKey(secret);
-    const normalizeNonce = this.normalizeNonce(nonce);
-    const cipher = crypto.createCipheriv("aes-256-gcm", normalizedSecret, normalizeNonce);
-    cipher.setAutoPadding(false);
-    let result = cipher.update(this.to_hex(message), "hex", "hex");
-    result += cipher.final("hex");
-    const bytes = this.from_hex(result);
-    return this.concat(bytes, cipher.getAuthTag());
+    const normalizedNonce = this.normalizeNonce(nonce);
+    // `gcm().encrypt` returns ciphertext followed by the 16-byte auth tag, which is the
+    // exact layout this method has always produced.
+    return gcm(normalizedSecret, normalizedNonce).encrypt(message);
   }
 
   decrypt(secret: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array): Uint8Array {
     const normalizedSecret = this.normalizeKey(secret);
-    const normalizeNonce = this.normalizeNonce(nonce);
-    const encryptedData = ciphertext.slice(0, ciphertext.length - AES_BLOCK_SIZE);
-    const authTag = ciphertext.slice(encryptedData.length);
-    const decipher = crypto.createDecipheriv("aes-256-gcm", normalizedSecret, normalizeNonce);
-    decipher.setAuthTag(authTag);
-    let result = decipher.update(this.to_hex(encryptedData), "hex", "hex");
-    result += decipher.final("hex");
-    return this.from_hex(result);
+    const normalizedNonce = this.normalizeNonce(nonce);
+    // Throws when the auth tag does not verify, matching the previous `decipher.final()`.
+    return gcm(normalizedSecret, normalizedNonce).decrypt(ciphertext);
   }
 
   /**
@@ -331,13 +326,13 @@ variable : Encrypted data
     const aesKey = this.computeSymmetricKey(sharedSecret, new Uint8Array());
 
     // Generate a random IV (nonce)
-    const iv = crypto.randomBytes(16);
+    const iv = this.randomBytes(16);
 
-    // Encrypt the data using AES-256-GCM
-    const cipher = crypto.createCipheriv("aes-256-gcm", aesKey, iv);
-    let encryptedData = cipher.update(data);
-    encryptedData = Buffer.concat([encryptedData, cipher.final()]);
-    const tag = cipher.getAuthTag();
+    // Encrypt the data using AES-256-GCM. `gcm().encrypt` appends the auth tag, but the
+    // envelope below stores the tag before the ciphertext, so split them back apart.
+    const sealed = gcm(aesKey, iv).encrypt(data);
+    const encryptedData = sealed.slice(0, sealed.length - AES_GCM_TAG_SIZE);
+    const tag = sealed.slice(sealed.length - AES_GCM_TAG_SIZE);
 
     // Serialize the format
     const result = new Uint8Array(
@@ -371,16 +366,13 @@ variable : Encrypted data
     // Normalize the shared secret to be used as AES key
     const aesKey = this.computeSymmetricKey(sharedSecret, new Uint8Array());
 
-    // Decrypt the data using AES-256-GCM
-    const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
-    decipher.setAuthTag(tag);
-    let decryptedData = decipher.update(encryptedData);
-    decryptedData = Buffer.concat([decryptedData, decipher.final()]);
-    return new Uint8Array(decryptedData.buffer, decryptedData.byteOffset, decryptedData.byteLength);
+    // Decrypt the data using AES-256-GCM. The envelope stores the tag separately, so
+    // reassemble the ciphertext||tag layout `gcm().decrypt` expects.
+    return gcm(aesKey, iv).decrypt(this.concat(encryptedData, tag));
   }
 
   randomBytes(size: number): Uint8Array {
-    return crypto.randomBytes(size);
+    return nobleRandomBytes(size);
   }
 
   ecdh(keyPair: KeyPair, publicKey: Uint8Array): Uint8Array {
@@ -393,12 +385,12 @@ variable : Encrypted data
   }
 
   computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array) {
-    const digest = hmac("sha256", Buffer.from(extra)).update(Buffer.from(privateKey)).digest();
-    return digest;
+    // HMAC-SHA256 keyed on `extra`, over `privateKey`.
+    return hmac(sha256, extra, privateKey);
   }
 
   hash(message: Uint8Array): Uint8Array {
-    return crypto.createHash("sha256").update(Buffer.from(message)).digest();
+    return sha256(message);
   }
 
   from_hex(hex: string): Uint8Array {

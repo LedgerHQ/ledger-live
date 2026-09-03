@@ -2,8 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, session, type BrowserWindow, dialog, protocol } from "electron";
-import Store from "electron-store";
+import { app, Menu, ipcMain, type BrowserWindow, protocol } from "electron";
 import menu from "./menu";
 import {
   createEarlyMainWindow,
@@ -32,8 +31,6 @@ console.timeEnd("T-imports");
 console.time("T-init");
 
 setUserDataPath();
-
-Store.initRenderer();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
@@ -122,14 +119,6 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  /**
-   * Clears the session’s HTTP cache
-   * Used to remove third party cached auth tokens, among other things
-   */
-  ipcMain.handle("clearStorageData", () => {
-    const defaultSession = session.defaultSession;
-    return defaultSession.clearStorageData();
-  });
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });
@@ -247,9 +236,6 @@ ipcMain.once("app-relaunch", () => {
   app.relaunch();
   app.quit();
 });
-
-ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
-ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
 
 ipcMain.on("deep-linking", (_, l) => {
   const win = getMainWindow();

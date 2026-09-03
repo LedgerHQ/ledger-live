@@ -1,6 +1,8 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ProcessReadGuard = require("./processReadGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -11,15 +13,16 @@ import {
   isRsdoctorEnabled,
 } from "./utils";
 
-/**
- * Creates the rspack configuration for the Electron renderer process
- */
+// Supplies the `process.*` stand-ins the DefinePlugin entries below rewrite reads to.
+const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
+
 export function createRendererConfig(
   mode: "development" | "production",
   options?: { devServer?: boolean },
 ): RspackOptions {
   const isDev = mode === "development";
   const useDevServer = options?.devServer ?? isDev;
+  const devtool = isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map";
 
   // Ensure single instance of styled-components (avoid theme context issues)
   const styledComponentsPath = require.resolve("styled-components");
@@ -28,18 +31,25 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // Use electron-renderer target - ElectronTargetPlugin handles node builtins
-    target: "electron-renderer",
+    // "es2022" pins output.environment: with no browserslist config a bare "web" target
+    // falls back to conservative codegen. Electron 43 ships Chromium 150.
+    target: ["web", "es2022"],
     entry: {
-      renderer: path.resolve(rootFolder, "src", "renderer", "index.ts"),
+      // The shim must run before the application's first module, which reads process.env at
+      // module scope.
+      renderer: [rendererProcessShim, path.resolve(rootFolder, "src", "renderer", "index.ts")],
     },
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
+      // Without this the chunk-loading runtime emits `global[...]` and the first chunk load
+      // throws "ReferenceError: global is not defined". DefinePlugin cannot reach it: that
+      // is the bundler's own runtime, not source.
+      globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
+    devtool,
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -71,6 +81,32 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
+      // mainFields only covers the string form of `browser`; without this the object form
+      // ({"crypto": false}) is ignored and packages resolve their Node entry instead.
+      aliasFields: ["browser"],
+      // Listed one by one rather than via a blanket polyfill plugin, so each addition shows
+      // up as a bundle-size regression in review. `os` is absent on purpose — see
+      // src/system/index.ts.
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("readable-stream"),
+        string_decoder: require.resolve("string_decoder/"),
+        url: require.resolve("url/"),
+        querystring: require.resolve("querystring-es3"),
+        path: require.resolve("path-browserify"),
+        util: require.resolve("util/"),
+        assert: require.resolve("assert/"),
+        buffer: require.resolve("buffer/"),
+        // Unreachable: live-network gates its keep-alive agent on process.release, which is
+        // defined away below.
+        http: false,
+        https: false,
+        net: false,
+        tls: false,
+        zlib: false,
+        fs: false,
+        child_process: false,
+      },
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
       // Module resolution paths - needed for features folder to find react, etc.
@@ -91,20 +127,9 @@ export function createRendererConfig(
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
-        // Force rspack to use node/esm builds for these packages to reduce bundle size
-        // These packages have browser field pointing to larger UMD/web bundles
-        "icon-sdk-js": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "icon-sdk-js@1.5.2",
-          "node_modules",
-          "icon-sdk-js",
-          "build",
-          "icon-sdk-js.node.min.js",
-        ),
+        // NB icon-sdk-js was aliased to its .node.min.js build for bundle size. That build
+        // pulls in net, tls, os, http, https, util and zlib, so it resolves to its browser
+        // entry again under a web target. Costs size; correctness wins.
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
         "@stellar/stellar-sdk": path.resolve(
           rootFolder,
@@ -268,34 +293,41 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
-        // JSON files in src/ - emit as assets and load via require() at runtime (prod only)
-        // In dev mode, rspack's default JSON handler inlines them for HMR compatibility
-        // In prod mode, this replicates esbuild's JsonPlugin behavior for reduced bundle size
-        ...(isDev
-          ? []
-          : [
-              {
-                test: /\.json$/,
-                include: [
-                  path.resolve(rootFolder, "src"),
-                  // Animation JSON owned by a new-architecture package (e.g.
-                  // @features/platform-device-action-content) resolves outside the app, so it
-                  // needs the same treatment or it gets inlined into the renderer bundle.
-                  /[\\/]features[\\/].*[\\/]animations[\\/]/,
-                ],
-                type: "javascript/auto" as const,
-                use: [path.resolve(__dirname, "animationJsonLoader.cjs")],
-              },
-            ]),
+        // Dependencies that call `process.cwd()`/`process.nextTick()` without
+        // feature-detecting first — see processShimLoader.cjs. processReadGuard.cjs fails
+        // the build when an unguarded read appears outside this list.
+        {
+          test: /\.js$/,
+          include:
+            /[\\/]node_modules[\\/](vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
+          use: [path.resolve(__dirname, "processShimLoader.cjs")],
+        },
       ],
     },
     plugins: [
       ...getRsdoctorPlugin("renderer"),
-      // ElectronTargetPlugin for proper node/electron module handling
-      new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
+        // Rewritten to globals assigned by src/renderer/bootstrap/process.ts. The more
+        // specific keys above (process.env.NODE_ENV, the dotenv entries) still win for those
+        // exact expressions; these catch everything else.
+        "process.env": "globalThis.__LLD_PROCESS_ENV__",
+        "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
+        "process.mas": "globalThis.__LLD_PROCESS_MAS__",
+        "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
+        "process.type": JSON.stringify("renderer"),
+        // Undefined, not absent: libs/live-network gates a `require("https")` keep-alive
+        // agent on `process.release?.name === "node"`, and defining it away drops that
+        // branch from a browser-shaped bundle.
+        "process.release": "undefined",
+        "process.browser": "true",
+        global: "globalThis",
+      }),
+      // ProvidePlugin works for `Buffer` — a genuine free variable it sees while parsing —
+      // but not for the identifiers above, which DefinePlugin introduces afterwards.
+      new rspack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
       }),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(rootFolder, "src", "renderer", "index.html"),
@@ -306,6 +338,10 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
+      // Production only: scanning the emitted assets is slow and noisy against an unminified
+      // dev bundle, and it needs the source map (see `devtool` above). Dev is
+      // "eval-source-map", so this subsumes the isDev check.
+      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,
