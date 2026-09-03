@@ -74,7 +74,7 @@ jobs:
 
   ci-sast:
     name: Test CI Scripts
-    runs-on: ledger-wallet-1cpu-aws-public
+    runs-on: ledger-wallet-1cpu-aws-public-docker
     needs: changes
     if: needs.changes.outputs.workflow-files == 'true'
     permissions:
