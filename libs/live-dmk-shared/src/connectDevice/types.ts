@@ -127,6 +127,13 @@ export type ConnectDeviceStateMachineInput<
 > = {
   knownDevices: Array<KnownDevice>;
   sessionId: string | null;
+  /**
+   * Require an explicit device choice instead of connecting on the machine's own
+   * initiative: no reuse of an existing session, no preselecting the only known
+   * device, no connecting to a lone discovery. Use it when the caller knows the
+   * device that would be picked is the wrong one — after refusing it, say.
+   */
+  disableAutoConnect?: boolean;
   dmk: DeviceManagementKit;
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   observer: Observer<ConnectDeviceUIState<TDiscoveryError, TConnectionError>>;

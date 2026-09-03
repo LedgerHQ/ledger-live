@@ -16,6 +16,15 @@ export type DeviceConnectionParams = {
 };
 
 /**
+ * What the connection component receives: the caller's params plus the executor's
+ * own flags. `disableAutoConnect` is owned by the executor — it sets it when a job
+ * sent it back here to pick a different device — so callers cannot configure it.
+ */
+export type DeviceConnectionComponentParams = DeviceConnectionParams & {
+  disableAutoConnect: boolean;
+};
+
+/**
  * Result of a successful device connection, providing everything needed to
  * interact with the device during intent execution.
  */
@@ -65,6 +74,17 @@ export type Job<JobState, Input = undefined, Result = undefined> = (params: {
   deviceExtractedContext: DeviceExtractedContext;
   input: Input;
   onResult: (result: Result) => void;
+  /**
+   * Sends the executor back to device connection, keeping this intent. The job is
+   * torn down and re-run once another device is connected and initialised, so the
+   * same operation continues there. The current session is disconnected and that
+   * pass requires an explicit device choice.
+   *
+   * Optional because a host may drive a job with no connection phase to return to
+   * (the CLI). Surface it in a `JobState` only when present, so such a host renders
+   * no reconnect affordance rather than a dead one.
+   */
+  restartExecutor?: () => void;
 }) => Observable<JobState>;
 
 /**

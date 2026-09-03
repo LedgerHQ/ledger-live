@@ -9599,7 +9599,8 @@
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
-          "description": "The connected device isn't a match."
+          "description": "The connected device isn't a match.",
+          "connectDifferentDevice": "Connect a different device"
         },
         "invalidData": {
           "title": "This address can't be saved",

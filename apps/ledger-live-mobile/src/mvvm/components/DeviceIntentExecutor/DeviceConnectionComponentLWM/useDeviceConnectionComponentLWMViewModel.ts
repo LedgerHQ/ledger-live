@@ -3,7 +3,7 @@ import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type {
-  DeviceConnectionParams,
+  DeviceConnectionComponentParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import { log } from "@ledgerhq/logs";
@@ -35,7 +35,7 @@ import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 const LOG_TYPE = "DeviceConnectionComponentLWM";
 
 type UseDeviceConnectionComponentLWMViewModelParams = {
-  deviceConnectionParams: DeviceConnectionParams;
+  deviceConnectionParams: DeviceConnectionComponentParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
 };
 
@@ -181,12 +181,19 @@ export function useDeviceConnectionComponentLWMViewModel({
       acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
         deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
       ),
+      disableAutoConnect: deviceConnectionParams.disableAutoConnect,
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({ next: setState });
 
     return () => subscription.unsubscribe();
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, knownDevices, wrappedOnConnected]);
+  }, [
+    deviceConnectionParams.acceptedDeviceModelIds,
+    deviceConnectionParams.disableAutoConnect,
+    dmk,
+    knownDevices,
+    wrappedOnConnected,
+  ]);
 
   return {
     state,

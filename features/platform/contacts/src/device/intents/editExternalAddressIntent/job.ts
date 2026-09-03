@@ -64,6 +64,17 @@ const OPEN_JOB_STATE_TYPES = new Set<EditExternalAddressJobState["type"]>([
   "device-rejected",
 ]);
 
+/**
+ * A wrong device only keeps the job open where the executor can be sent back to
+ * pick another one. Without that, the state is terminal and the job settles, so
+ * the caller is not left waiting on a recovery the host cannot offer.
+ */
+function openJobStateTypes(canReconnect: boolean): Set<EditExternalAddressJobState["type"]> {
+  return canReconnect
+    ? new Set([...OPEN_JOB_STATE_TYPES, "existing-group-verification-failed" as const])
+    : OPEN_JOB_STATE_TYPES;
+}
+
 /** Pairs the kit's `cancel` with unsubscription, so teardown is one concern. */
 function createDeviceActionObservable<State>(
   call: () => { observable: Observable<State>; cancel: () => void },
@@ -81,6 +92,7 @@ function createDeviceActionObservable<State>(
 
 function createStepOutcomeMapper(
   awaitingConfirmation: EditExternalAddressJobState,
+  canReconnect: boolean,
 ): (state: DeviceActionState) => StepOutcome {
   return state => {
     switch (state.status) {
@@ -115,7 +127,12 @@ function createStepOutcomeMapper(
 
       case DeviceActionStatus.Error: {
         const jobState = mapDeviceActionErrorToFailureJobState(state.error);
-        const isReplayableByTheUser = jobState.type === "device-rejected";
+        // A rejection replays on this device, a wrong device on whichever one the
+        // user connects next. Both stay open and are handed their callback by the
+        // tail `map`, rather than settling the port promise.
+        const isReplayableByTheUser =
+          jobState.type === "device-rejected" ||
+          (jobState.type === "existing-group-verification-failed" && canReconnect);
 
         return isReplayableByTheUser
           ? { kind: "state", jobState, terminal: false }
@@ -140,11 +157,12 @@ export const editExternalAddressIntentJob: Job<
   EditExternalAddressJobState,
   EditExternalAddressIntentInput,
   ContactIntentResult<EditExternalAddressResult>
-> = ({ deviceConnectionResult, deviceExtractedContext, input, onResult }) => {
+> = ({ deviceConnectionResult, deviceExtractedContext, input, onResult, restartExecutor }) => {
   const reporter = createContactIntentResultReporter(onResult);
   const retries = new Subject<void>();
   const deviceModelId = deviceConnectionResult.connectedDevice.modelId;
   const deviceName = deviceConnectionResult.compatDeviceName;
+  const openStateTypes = openJobStateTypes(restartExecutor !== undefined);
 
   const scopeChanges = input.newScope !== input.previousScope;
   const identifierChanges = input.newAddress !== input.previousAddress;
@@ -200,7 +218,10 @@ export const editExternalAddressIntentJob: Job<
       awaitingConfirmation: EditExternalAddressJobState,
       next: (hmacRest: Uint8Array) => Observable<EditExternalAddressJobState>,
     ): Observable<EditExternalAddressJobState> {
-      const toOutcome = createStepOutcomeMapper(awaitingConfirmation);
+      const toOutcome = createStepOutcomeMapper(
+        awaitingConfirmation,
+        restartExecutor !== undefined,
+      );
 
       return deviceAction.pipe(
         map(toOutcome),
@@ -292,12 +313,18 @@ export const editExternalAddressIntentJob: Job<
       // still accepts: it never recorded the intermediate step.
       switchMap(runEdit),
       // `retries` never completes, so the job's end has to come from its states.
-      takeWhile(jobState => OPEN_JOB_STATE_TYPES.has(jobState.type), true),
+      takeWhile(jobState => openStateTypes.has(jobState.type), true),
     );
   }).pipe(
-    map(jobState =>
-      jobState.type === "device-rejected" ? { ...jobState, retry: () => retries.next() } : jobState,
-    ),
+    map(jobState => {
+      if (jobState.type === "device-rejected") {
+        return { ...jobState, retry: () => retries.next() };
+      }
+      if (jobState.type === "existing-group-verification-failed" && restartExecutor) {
+        return { ...jobState, reconnect: restartExecutor };
+      }
+      return jobState;
+    }),
     // Jobs report failures as a terminal JobState rather than erroring the
     // observable, which would drop the executor into its generic fallback
     // instead of this intent's own InfoState.
@@ -306,6 +333,5 @@ export const editExternalAddressIntentJob: Job<
       reporter.report({ type: "failure", error: mapped });
       return of<EditExternalAddressJobState>({ type: "failed", error: mapped });
     }),
-    reporter.cancelOnUnsubscribe(),
   );
 };

@@ -43,6 +43,12 @@ type MachineContext<JobState, Input, ExtraProps, Result> = {
   currentIntent: Intent<JobState, Input, ExtraProps, Result>;
   deviceConnectionResult: DeviceConnectionResult | null;
   deviceExtractedContext: DeviceExtractedContext | null;
+  /**
+   * Set once a `RESTART` has sent the machine back to device connection, and
+   * never cleared: after the user has asked to change device, picking the next
+   * one stays their explicit choice for the rest of this executor's life.
+   */
+  disableAutoConnect: boolean;
   error: unknown;
 };
 
@@ -53,7 +59,8 @@ type MachineEvent<JobState, Input, ExtraProps, Result> =
   | { type: "RETRY" }
   | { type: "SET_INTENT"; intent: Intent<JobState, Input, ExtraProps, Result> }
   | { type: "REINITIALIZE" }
-  | { type: "STOP_INTENT" };
+  | { type: "STOP_INTENT" }
+  | { type: "RESTART" };
 
 type MachineInput<JobState, Input, ExtraProps, Result> = {
   deviceConnectionParams: DeviceConnectionParams;
@@ -67,11 +74,13 @@ type JobInvokeInput<JobState, Input, Result> = {
     deviceExtractedContext: DeviceExtractedContext;
     input: Input;
     onResult: (result: Result) => void;
+    restartExecutor?: () => void;
   }) => Observable<JobState>;
   deviceConnectionResult: DeviceConnectionResult;
   deviceExtractedContext: DeviceExtractedContext;
   intentInput: Input;
   onResult: (result: Result) => void;
+  restartExecutor: () => void;
 };
 
 // ---- Machine factory ----
@@ -91,6 +100,7 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
           deviceExtractedContext: input.deviceExtractedContext,
           input: input.intentInput,
           onResult: input.onResult,
+          restartExecutor: input.restartExecutor,
         }),
       ),
     },
@@ -106,6 +116,17 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
         deviceExtractedContext: () => null,
         error: () => null,
       }),
+      // Ordered before `resetConnection`, which clears what this reads. Leaving the
+      // session live would let the connection phase reuse the very device the job
+      // just refused; the machine is already leaving `intentExecution`, so the
+      // resulting NOT_CONNECTED lands on `deviceConnection`, which ignores it.
+      disconnectCurrentDevice: ({ context }) => {
+        const connection = context.deviceConnectionResult;
+        if (!connection) return;
+        connection.dmk.disconnect({ sessionId: connection.sessionId }).catch((error: unknown) => {
+          log(LOG_TYPE, "failed to disconnect the refused device", { error });
+        });
+      },
     },
   }).createMachine({
     id: "DeviceIntentExecutor",
@@ -116,13 +137,17 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
       currentIntent: input.intent,
       deviceConnectionResult: null,
       deviceExtractedContext: null,
+      disableAutoConnect: false,
       error: null,
     }),
     states: {
       deviceConnection: {
         entry: ({ context }) => {
           log(LOG_TYPE, "state: deviceConnection");
-          context.listeners.onExecutorStateChanged({ type: "connectingDevice" });
+          context.listeners.onExecutorStateChanged({
+            type: "connectingDevice",
+            disableAutoConnect: context.disableAutoConnect,
+          });
         },
         on: {
           DEVICE_CONNECTED: {
@@ -131,6 +156,10 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
               deviceConnectionResult: ({ event }) => event.result,
             }),
           },
+          // Already where a restart leads. Handled explicitly so a second request
+          // is a stated no-op rather than an event the machine silently drops,
+          // and so it cannot re-enter and reset the connection component.
+          RESTART: {},
         },
       },
       deviceDisconnected: {
@@ -189,12 +218,13 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
         },
         invoke: {
           src: "executeJob",
-          input: ({ context }) => ({
+          input: ({ context, self }) => ({
             job: context.currentIntent.job,
             deviceConnectionResult: context.deviceConnectionResult!,
             deviceExtractedContext: context.deviceExtractedContext!,
             intentInput: context.currentIntent.input,
             onResult: context.currentIntent.onResult ?? (() => undefined),
+            restartExecutor: () => self.send({ type: "RESTART" }),
           }),
           onSnapshot: {
             actions: ({ event, context }) => {
@@ -240,6 +270,14 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
             actions: assign({
               error: () => new Error("REINITIALIZE received during intent execution"),
             }),
+          },
+          RESTART: {
+            target: "deviceConnection",
+            actions: [
+              "disconnectCurrentDevice",
+              "resetConnection",
+              assign({ disableAutoConnect: () => true }),
+            ],
           },
         },
       },
@@ -303,6 +341,14 @@ function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
             actions: assign({
               deviceExtractedContext: () => null,
             }),
+          },
+          RESTART: {
+            target: "deviceConnection",
+            actions: [
+              "disconnectCurrentDevice",
+              "resetConnection",
+              assign({ disableAutoConnect: () => true }),
+            ],
           },
         },
       },

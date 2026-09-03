@@ -315,6 +315,45 @@ describe("useContactsIntentsOrchestrator", () => {
     expect(result.current.dieProps).toBeUndefined();
   });
 
+  it("GIVEN an active operation WHEN the executor reports it stopped THEN it rejects the active request", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+
+    // WHEN
+    act(() => {
+      dieProps.onExecutorStopped?.();
+    });
+
+    // THEN
+    await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
+  });
+
+  it("GIVEN a stopped executor WHEN a later run reports success THEN it keeps the rejection", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+    act(() => {
+      dieProps.onExecutorStopped?.();
+    });
+
+    // WHEN
+    act(() => {
+      dieProps.intent.onResult?.(registerExternalAddressSuccessResult(request));
+    });
+
+    // THEN
+    await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentCancelledError);
+  });
+
   it("GIVEN a job has not started WHEN the Contacts surface unmounts THEN it rejects the active request", async () => {
     // GIVEN
     const { result, unmount } = renderHook(() => useContactsIntentsOrchestrator({ intents }));

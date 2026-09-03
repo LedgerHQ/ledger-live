@@ -10,8 +10,19 @@ export type ContactDeviceIntentFailureJobState =
   | { readonly type: "invalid-input"; readonly error: Error }
   /** 0x5501 (`ActionRefusedError`) from the dashboard, or 0x6A80 (SWO_INCORRECT_DATA) from the Contacts app, which buckets a refusal with malformed TLV and an invalid group handle. */
   | { readonly type: "device-rejected"; readonly error: Error; readonly retry?: () => void }
-  /** 0x6982 (SWO_SECURITY_CONDITION_NOT_SATISFIED): HMAC_PROOF/HMAC_REST verification failed — only reachable when replaying an existing group. */
-  | { readonly type: "existing-group-verification-failed"; readonly error: Error }
+  /**
+   * 0x6982 (SWO_SECURITY_CONDITION_NOT_SATISFIED): HMAC_PROOF/HMAC_REST
+   * verification failed — only reachable when replaying an existing group.
+   * Devices are stateless and keep honouring the proofs they minted, so this
+   * means the connected device is not the one that minted them. `reconnect`
+   * sends the executor back to device selection to replay on another device; it
+   * is absent when the host has no connection phase to return to.
+   */
+  | {
+      readonly type: "existing-group-verification-failed";
+      readonly error: Error;
+      readonly reconnect?: () => void;
+    }
   /** 0x6984 (SWO_CONDITIONS_NOT_SATISFIED): unknown sub-command or unsupported configuration. */
   | { readonly type: "unsupported-operation"; readonly error: Error }
   /**

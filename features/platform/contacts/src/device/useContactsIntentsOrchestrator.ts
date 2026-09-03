@@ -137,9 +137,9 @@ export function useContactsIntentsOrchestrator({
         setActiveIntent({
           intent: intent as unknown as ContactDeviceIntent,
           initializationInput: operation.initializationInput,
-          // Dismissed (or unmounted) before the job settled: nothing else will
-          // settle the promise. Clearing `activeIntent` is the dismissal's own
-          // job, not this callback's.
+          // Dismissed, unmounted, or the executor stopped before the job
+          // settled: nothing else will settle the promise. Clearing
+          // `activeIntent` is the dismissal's own job, not this callback's.
           cancel: () => fail(new ContactDeviceIntentCancelledError()),
         });
       }),
@@ -190,6 +190,9 @@ export function useContactsIntentsOrchestrator({
       intentComponentExtraProps: undefined,
       onExecutorStateChanged: () => undefined,
       onUserCancel: cancel,
+      // Jobs no longer settle on their own teardown, so this is what keeps the
+      // promise from hanging once no later run can report.
+      onExecutorStopped: activeIntent.cancel,
       cancelIntentRequestId: undefined,
       initializerConfig: { dependencies: { getMinVersion } },
     };

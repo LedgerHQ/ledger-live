@@ -19,6 +19,14 @@ const knownDevice: KnownDevice = {
   name: "Ledger Nano X",
 };
 
+/** Pairs with `knownDevice` so startup reaches Discovering rather than preselecting. */
+const secondKnownDevice: KnownDevice = {
+  transport: "RN_BLE",
+  deviceModelId: DeviceModelId.nanoSP,
+  id: "known-device-b",
+  name: "Ledger Nano S Plus",
+};
+
 type SetupTestOptions = {
   readonly knownDevices?: Array<KnownDevice>;
   readonly acceptedDeviceModelIds?: Array<DeviceModelId>;
@@ -37,6 +45,7 @@ const setupTest = ({
 
   const dmk = {
     listConnectedDevices: jest.fn(() => []),
+    getConnectedDevice: jest.fn(() => ({ id: "connected-device-a", name: "Ledger Nano X" })),
   } as unknown as DeviceManagementKit;
 
   const input = {} as ConnectDeviceUseCaseInput;
@@ -126,9 +135,7 @@ describe("connectDeviceUseCase", () => {
     });
 
     //Assert
-    expect(states).toEqual([
-      { type: ConnectDeviceUIStateTypes.UnknownError, error: thrown },
-    ]);
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error: thrown }]);
     expect(errorHandler).not.toHaveBeenCalled();
     expect(completeHandler).toHaveBeenCalledTimes(1);
 
@@ -157,6 +164,44 @@ describe("connectDeviceUseCase", () => {
       type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
       device: knownDevice,
     });
+
+    subscription.unsubscribe();
+  });
+
+  it("should ignore a lone live session when auto-connect is disabled", () => {
+    // Arrange
+    const { input } = setupTest({ knownDevices: [knownDevice, secondKnownDevice] });
+    (input.dmk.listConnectedDevices as jest.Mock).mockReturnValue([
+      { sessionId: "existing-session-id" },
+    ]);
+    input.disableAutoConnect = true;
+    const states: Array<ConnectDeviceUIState> = [];
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Assert
+    // Otherwise the machine goes straight to Connected on the very device the
+    // caller is trying to get away from.
+    expect(states[0]?.type).toBe(ConnectDeviceUIStateTypes.Discovering);
+    expect(input.onConnected).not.toHaveBeenCalled();
+
+    subscription.unsubscribe();
+  });
+
+  it("should reuse a lone live session when auto-connect is allowed", () => {
+    // Arrange
+    const { input } = setupTest({ knownDevices: [knownDevice, secondKnownDevice] });
+    (input.dmk.listConnectedDevices as jest.Mock).mockReturnValue([
+      { sessionId: "existing-session-id" },
+    ]);
+    const states: Array<ConnectDeviceUIState> = [];
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+
+    // Assert
+    expect(states[0]).toEqual({ type: ConnectDeviceUIStateTypes.Connected });
 
     subscription.unsubscribe();
   });
