@@ -5,12 +5,14 @@ import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionVi
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
 import { useRecipientScreenContentViewModel } from "../useRecipientScreenContentViewModel";
+import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/analytics");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
+jest.mock("../useSettleRecipientInputFocus");
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: jest.fn(() => ({ currency: "bitcoin" })),
 }));
@@ -28,6 +30,7 @@ const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
 const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFocus);
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
@@ -36,6 +39,9 @@ const onMemoProceed = jest.fn();
 const recipientViewModel = {
   isLoading: false,
   showInitialState: false,
+  showContactsList: false,
+  showEmptyContactsState: false,
+  featureIntroduction: { isOpen: false },
   showMatchedAddress: true,
   result: {
     status: "valid",
@@ -169,6 +175,36 @@ describe("useRecipientScreenContentViewModel", () => {
       expect.objectContaining({ button: "my accounts", page: "step recipient" }),
     );
     expect(handleAddressSelect).toHaveBeenCalledWith("destination", "name.eth");
+  });
+
+  it.each([
+    ["a contacts list", { showInitialState: true, showContactsList: true }],
+    ["a clipboard suggestion", { showInitialState: true, clipboardAddress: "clipboard-address" }],
+    [
+      "the contacts introduction",
+      { showInitialState: true, featureIntroduction: { isOpen: true } },
+    ],
+    ["search results", { showInitialState: false }],
+  ])("reports %s as content the user has to deal with first", (_, overrides) => {
+    mockedUseRecipientScreenView.mockReturnValue({
+      ...(recipientViewModel as object),
+      ...overrides,
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(true);
+  });
+
+  it("reports an empty initial step as free for the address input to focus", () => {
+    mockedUseRecipientScreenView.mockReturnValue({
+      ...(recipientViewModel as object),
+      showInitialState: true,
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(false);
   });
 
   it("tracks memo skipping before proceeding", () => {
