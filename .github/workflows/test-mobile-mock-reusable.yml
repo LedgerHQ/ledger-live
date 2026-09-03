@@ -347,7 +347,7 @@ jobs:
 
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
     needs: [build-ios, build-android]
     steps:

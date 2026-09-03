@@ -17,7 +17,7 @@ jobs:
       actions: write
     name: "Skip Check"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    runs-on: ubuntu-latest
+    runs-on: ledger-wallet-1cpu-aws-public
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
     env:
@@ -444,7 +444,7 @@ jobs:
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
       - determine-affected
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     if: always() && !cancelled() && needs.determine-affected.result == 'success'
     steps:
       - name: Check result

@@ -261,6 +261,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     steps:
       - run: echo "Skipping"

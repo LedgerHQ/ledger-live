@@ -289,7 +289,7 @@ jobs:
   report:
     name: "Desktop E2E & Mock > Report"
     needs: [e2e-tests-linux, speculos-e2e-tests-linux]
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

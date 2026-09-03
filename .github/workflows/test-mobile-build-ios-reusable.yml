@@ -274,6 +274,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     steps:
       - run: echo "Skipping"

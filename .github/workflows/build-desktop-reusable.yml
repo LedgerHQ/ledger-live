@@ -155,7 +155,7 @@ jobs:
     permissions:
       contents: read
     needs: build-desktop-app
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     timeout-minutes: 5
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' || github.event_name == 'push') && needs.build-desktop-app.outputs.linux == 'success' && needs.build-desktop-app.outputs.win == 'success' && needs.build-desktop-app.outputs.mac == 'success' }}
     steps:

@@ -191,7 +191,7 @@ jobs:
   report:
     name: "Desktop Lint & Unit Tests > Report"
     needs: [codechecks, unit-tests]
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     # Only report on push events (e.g. develop, main, release, hotfix).
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:
