@@ -1,3 +1,4 @@
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { BigNumber } from "bignumber.js";
 import React, { Fragment, useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
@@ -157,10 +158,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   const mainAccount = getMainAccount(account, parentAccount);
   const familySendFlow = getCustomSendFlow(mainAccount.currency.family);
 
-  const transferFee =
-    "model" in transaction && transaction.model.commandDescriptor?.command.kind === "token.transfer"
-      ? transaction.model.commandDescriptor.command.extensions?.transferFee
-      : undefined;
+  const { transferFee } = transaction as GenericTransaction;
 
   // Guards AmountInput's height when a family widget renders below it.
   const AmountInputWrapper = familySendFlow?.AfterAmountInput ? AmountInputHeightGuard : Fragment;

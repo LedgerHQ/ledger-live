@@ -16,7 +16,8 @@ describe("applyMemoToTransaction", () => {
 
     it("solana: empty string clears the memo", () => {
       expect(applyMemoToTransaction("solana", "")).toEqual({
-        model: { uiState: { memo: undefined } },
+        memoType: "TEXT",
+        memoValue: "",
       });
     });
 
@@ -69,15 +70,13 @@ describe("buildRecipientTransactionPatch", () => {
   it("applies memo through the family memo registry", () => {
     expect(
       buildRecipientTransactionPatch(
-        { family: "solana", model: { kind: "transfer", uiState: {} } },
+        { family: "solana" },
         { address: "solana-address", memo: { value: "solana memo" } },
       ),
     ).toEqual({
       recipient: "solana-address",
-      model: {
-        kind: "transfer",
-        uiState: { memo: "solana memo" },
-      },
+      memoType: "TEXT",
+      memoValue: "solana memo",
     });
   });
 
