@@ -132,14 +132,6 @@ export default class PortfolioPage {
 
   @Step("Expect total balance value {{{0}}}")
   async expectTotalBalanceCounterValue(counterValue: string) {
-    // The balance section renders a skeleton in place of the amount until the counter values
-    // resolve, and carries portfolio-balance-loading rather than portfolio-balance-normal while
-    // it does. So after a counter-value change portfolio-balance-amount does not exist yet.
-    // Reading it straight away left getLabelOfElement polling a missing element through
-    // retryUntilTimeout, which failed after 60s with a message naming neither the element nor
-    // the reason (QAA-1523). Waiting on the section's resolved state gives the budget to the
-    // thing that is actually slow, and tells the two failures apart: balance never resolved
-    // versus resolved in the wrong currency.
     await waitForElementById(this.portfolioBalanceNormal);
     const label = await getLabelOfElement(this.portfolioBalanceAmount);
     jestExpect(label).toContain(counterValue);
