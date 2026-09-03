@@ -12,6 +12,8 @@ export default class StakePage {
 
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;
+  delegationSummaryValidatorTouchableId = (currencyId: string) =>
+    `${currencyId}-delegation-summary-validator-touchable`;
   delegationSummaryValidator = (currencyId: string) =>
     getTextOfElement(this.delegationSummaryValidatorId(currencyId));
   delegationSummaryAmountId = (currencyId: string) => `${currencyId}-delegation-summary-amount`;
@@ -71,10 +73,17 @@ export default class StakePage {
   @Step("Select new provider {{{1}}}")
   async selectValidator(currencyId: string, provider: string) {
     const ticker = provider.split(" - ")[0];
-    await tapById(this.delegationSummaryValidatorId(currencyId));
+    const touchableId = this.delegationSummaryValidatorTouchableId(currencyId);
+    const baseId = this.delegationSummaryValidatorId(currencyId);
+    if (await IsIdVisible(touchableId)) {
+      await tapById(touchableId);
+    } else {
+      await tapById(baseId);
+    }
     await typeTextById(this.searchPoolInput, ticker);
     await waitForElementById(this.searchPoolInput);
     await tapById(this.providerRow(ticker));
+    await waitForElementById(baseId);
   }
 
   @Step("Verify fees visible in summary {{{0}}}")
