@@ -20,7 +20,7 @@ const mockedToPng = jest.mocked(toPng);
 const mockedInvoke = jest.mocked(ipcRenderer.invoke);
 const mockedLoggerError = jest.mocked(logger.error);
 
-const SUMMARY_HTML = '<div data-testid="pay-card-request-receive-summary">card</div>';
+const SUMMARY_HTML = '<div data-testid="pay-request-receive-summary">card</div>';
 const DATA_URL = "data:image/png;base64,ABC123";
 
 describe("saveRequestReceive", () => {

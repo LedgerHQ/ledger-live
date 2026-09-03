@@ -68,14 +68,6 @@ async function expectDeviceIntentExecutor() {
   });
 }
 
-async function confirmSigner(user: Awaited<ReturnType<typeof render>>["user"]) {
-  await waitFor(() => {
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-  });
-
-  await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-}
-
 describe("Contacts device intents integration", () => {
   beforeEach(() => {
     jest.mocked(useActivationDrawer).mockReturnValue({
@@ -100,8 +92,6 @@ describe("Contacts device intents integration", () => {
       target: { value: "Main ETH" },
     });
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
-
-    await confirmSigner(user);
 
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
@@ -143,8 +133,6 @@ describe("Contacts device intents integration", () => {
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
 
-    await confirmSigner(user);
-
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
   });
@@ -158,8 +146,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    await confirmSigner(user);
     await expectDeviceIntentExecutor();
 
     await user.click(screen.getByRole("button", { name: "Close" }));

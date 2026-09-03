@@ -10,7 +10,6 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import hederaCoinConfig from "../config";
 import { HEDERA_DUMMY_ADDRESS } from "../constants";
-import { getPreloadStrategy, hydrate, preload } from "../preload";
 import resolver from "../signer/index";
 import type {
   Transaction,
@@ -40,9 +39,6 @@ function buildCurrencyBridge(signerContext: SignerContext<HederaSigner>): Curren
   });
 
   return {
-    preload,
-    hydrate,
-    getPreloadStrategy,
     scanAccounts,
   };
 }

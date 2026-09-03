@@ -15,6 +15,7 @@ import CheckCircle from "~/renderer/icons/CheckCircle";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
+import { PlaceholderLine } from "~/renderer/components/Placeholder";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -30,6 +31,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  min-height: 24px;
   padding: 16px 20px;
 `;
 
@@ -91,6 +93,18 @@ const ManageDropDownItem = ({
   );
 };
 
+const FetchErrorIcon = () => (
+  <Box color="alertRed" pl={2}>
+    <ToolTip
+      content={
+        <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.fetchErrorTooltip" />
+      }
+    >
+      <ExclamationCircleThin size={14} />
+    </ToolTip>
+  </Box>
+);
+
 const DelegationStatus = ({ status }: { status: HEDERA_DELEGATION_STATUS }) => {
   if (status === HEDERA_DELEGATION_STATUS.Inactive) {
     return (
@@ -150,7 +164,7 @@ export function Row({
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
-  const isValidatorRemoved =
+  const validatorRemoved =
     !enrichedDelegation.validator.address && typeof enrichedDelegation.nodeId === "number";
 
   const formatConfig = {
@@ -196,27 +210,46 @@ export function Row({
     [onManageAction],
   );
 
+  let statusColumn: React.ReactNode;
+  let validatorColumn: React.ReactNode;
+
+  if (enrichedDelegation.loading) {
+    validatorColumn = (
+      <Column>
+        <PlaceholderLine width={80} />
+      </Column>
+    );
+  } else if (enrichedDelegation.error || validatorRemoved) {
+    validatorColumn = <Column />;
+  } else {
+    validatorColumn = (
+      <Column
+        strong
+        clickable
+        onClick={() => {
+          onExternalLink(enrichedDelegation);
+        }}
+      >
+        <Box mr={2}>
+          <ValidatorIcon validator={enrichedDelegation.validator} />
+        </Box>
+        <Ellipsis>{enrichedDelegation.validator.name}</Ellipsis>
+      </Column>
+    );
+  }
+
+  if (enrichedDelegation.loading) {
+    statusColumn = <PlaceholderLine width={14} height={14} />;
+  } else if (enrichedDelegation.error) {
+    statusColumn = <FetchErrorIcon />;
+  } else {
+    statusColumn = <DelegationStatus status={enrichedDelegation.status} />;
+  }
+
   return (
     <Wrapper>
-      {isValidatorRemoved ? (
-        <Column />
-      ) : (
-        <Column
-          strong
-          clickable
-          onClick={() => {
-            onExternalLink(enrichedDelegation);
-          }}
-        >
-          <Box mr={2}>
-            <ValidatorIcon validator={enrichedDelegation.validator} />
-          </Box>
-          <Ellipsis>{enrichedDelegation.validator.name}</Ellipsis>
-        </Column>
-      )}
-      <Column>
-        <DelegationStatus status={enrichedDelegation.status} />
-      </Column>
+      {validatorColumn}
+      <Column>{statusColumn}</Column>
       <Column>
         <Ellipsis>
           <Discreet>{formattedDelegatedAssets}</Discreet>

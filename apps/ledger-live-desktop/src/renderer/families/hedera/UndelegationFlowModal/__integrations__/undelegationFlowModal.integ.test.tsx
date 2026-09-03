@@ -2,6 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { act, render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import UndelegationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
@@ -13,8 +14,8 @@ import {
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
 
-jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
+const mockValidatorsQuery: HederaValidatorsQuery = {
+  validators: [
     {
       id: "0",
       name: "Hedera Node 0",
@@ -25,8 +26,15 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       activeStake: new BigNumber(0),
       activeStakePercentage: new BigNumber(0),
       overstaked: false,
+      isLedgerNode: false,
     },
-  ]),
+  ],
+  loading: false,
+  error: null,
+};
+
+jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(
     () => require("../../__mocks__/delegation.mock").mockEnrichedDelegation,
   ),

@@ -12,16 +12,6 @@ import {
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
-
-// Mock preloadData module before importing
-jest.mock("../preload-data", () => ({
-  ...jest.requireActual("../preload-data"),
-  getCurrentHederaPreloadData: jest.fn(),
-}));
-
-import * as preloadData from "../preload-data";
-
-const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedEnrichedERC20Transfer } from "../test/fixtures/common.fixture";
@@ -31,15 +21,8 @@ import {
 } from "../test/fixtures/currency.fixture";
 import { getMockedMirrorTransaction } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
-import { getMockedValidator } from "../test/fixtures/validator.fixture";
-import type {
-  HederaAccount,
-  HederaMemo,
-  HederaPreloadData,
-  HederaTxData,
-  HederaValidator,
-  Transaction,
-} from "../types";
+import { getMockedMirrorNode, getMockedValidator } from "../test/fixtures/validator.fixture";
+import type { HederaMemo, HederaTxData, HederaValidator, Transaction } from "../types";
 import {
   serializeSignature,
   deserializeSignature,
@@ -63,7 +46,6 @@ import {
   isStakingTransaction,
   extractCompanyFromNodeDescription,
   sortValidators,
-  getValidatorFromAccount,
   getDefaultValidator,
   getDelegationStatus,
   filterValidatorBySearchTerm,
@@ -82,6 +64,7 @@ import {
   resolveConfig,
   base64ToUrlSafeBase64,
   getHederaTransactionBodyBytes,
+  mapMirrorNodesToValidators,
 } from "./utils";
 
 jest.mock("../config");
@@ -729,32 +712,64 @@ describe("logic utils", () => {
     });
   });
 
-  describe("getValidatorFromAccount", () => {
-    const mockValidator = { id: "1" };
-    const mockPreload = { validators: [mockValidator] } as HederaPreloadData;
+  describe("mapMirrorNodesToValidators", () => {
+    it("maps mirror nodes to validators", () => {
+      const [validator] = mapMirrorNodesToValidators([getMockedMirrorNode()], "1");
 
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
+      expect(validator).toMatchObject({
+        id: "0",
+        address: "0.0.3",
+        minStake: new BigNumber(1000),
+        maxStake: new BigNumber(100000),
+        activeStake: new BigNumber(30000),
+        overstaked: false,
+        isLedgerNode: false,
+      });
     });
 
-    it("returns validator matching delegation nodeId", () => {
-      const mockAccount = {
-        currency: "hedera",
-        hederaResources: { delegation: { nodeId: 1 } },
-      } as unknown as HederaAccount;
+    it("sets isLedgerNode for the configured node id and clears it otherwise", () => {
+      const validators = mapMirrorNodesToValidators(
+        [
+          getMockedMirrorNode({ node_id: 0 }),
+          getMockedMirrorNode({ node_id: 1, node_account_id: "0.0.4" }),
+        ],
+        "1",
+      );
 
-      expect(getValidatorFromAccount(mockAccount)).toEqual(mockValidator);
+      expect(validators.find(v => v.id === "0")?.isLedgerNode).toBe(false);
+      expect(validators.find(v => v.id === "1")?.isLedgerNode).toBe(true);
     });
 
-    it("returns null if no delegation", () => {
-      const mockAccount = {
-        currency: "hedera",
-        hederaResources: {},
-      } as unknown as HederaAccount;
+    it("sets activeStakePercentage to 0 when maxStake is 0", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [getMockedMirrorNode({ max_stake: 0, stake_rewarded: 0 })],
+        "1",
+      );
 
-      expect(getValidatorFromAccount(mockAccount)).toBeNull();
+      expect(validator.activeStakePercentage).toEqual(new BigNumber(0));
+    });
+
+    it("rounds activeStakePercentage up (ROUND_CEIL)", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [getMockedMirrorNode({ max_stake: 300, stake_rewarded: 100 })],
+        "1",
+      );
+
+      // 100 / 300 * 100 = 33.33... -> rounds up to 34
+      expect(validator.activeStakePercentage).toEqual(new BigNumber(34));
+    });
+
+    it("marks validator as overstaked when activeStake >= maxStake", () => {
+      const [validator] = mapMirrorNodesToValidators(
+        [getMockedMirrorNode({ max_stake: 1000, stake_rewarded: 2000 })],
+        "1",
+      );
+
+      expect(validator.overstaked).toBe(true);
+    });
+
+    it("returns an empty array for an empty node list", () => {
+      expect(mapMirrorNodesToValidators([], "1")).toEqual([]);
     });
   });
 

@@ -12,3 +12,4 @@ export { getTokenFromAsset } from "./getTokenFromAsset";
 export { getValidators } from "./getValidators";
 export { getRewards } from "./getRewards";
 export { getStakes } from "./getStakes";
+export { validateIntent } from "./validateIntent";

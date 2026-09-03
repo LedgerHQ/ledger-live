@@ -11,6 +11,7 @@ import {
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -137,6 +138,10 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(importBle(msg.payload));
         break;
       }
+      case "importPostOnboarding": {
+        store.dispatch(importPostOnboardingState({ newState: msg.payload }));
+        break;
+      }
       case "overrideFeatureFlags": {
         store.dispatch(setAllOverrides(msg.payload as PartialFeatures));
         break;
@@ -230,7 +235,10 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "swapSetup":
         setEnv("SWAP_DISABLE_APPS_INSTALL", true);
-        setEnv("SWAP_API_BASE", msg.swapApiBase ?? "https://swap-stg.ledger-test.com/v5");
+        setEnv(
+          "SWAP_API_BASE",
+          msg.swapApiBase ?? "https://global.api.stg.ledger-test.com/swap/v5",
+        );
         postMessage({ type: "swapSetupDone" });
         break;
       default:

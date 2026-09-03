@@ -10,11 +10,16 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import {
+  SEND_FLOW_STEP,
+  type Memo,
+  type SendFlowStep,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
+import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
@@ -24,7 +29,12 @@ type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -37,6 +47,7 @@ export function useRecipientAddressModalViewModel({
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
+  const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("desktop");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
@@ -94,7 +105,7 @@ export function useRecipientAddressModalViewModel({
     return contactsOnNetwork.length === 0;
   }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
-  const hasMemo = sendFeatures.hasMemo(currency);
+  const hasMemo = sendFeatures.hasMemoForRecipient(currency, recipientSearch.value);
   const memoType = sendFeatures.getMemoType(currency);
   const memoTypeOptions = sendFeatures.getMemoOptions(currency);
   const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);
@@ -113,6 +124,17 @@ export function useRecipientAddressModalViewModel({
     return memo.value.length > 0;
   }, [hasMemo, state.recipient?.memo]);
 
+  // Coming back to this step remounts the screen, which restarts the sanction and
+  // bridge validations from scratch. Trust the recipient already stored in the flow
+  // so dependent UI (memo field) doesn't blink while it revalidates.
+  const isAlreadyValidatedRecipient = useMemo(() => {
+    const searchedValue = recipientSearch.value.trim().toLowerCase();
+    if (!searchedValue) return false;
+    const validatedAddress = state.recipient?.address?.trim().toLowerCase();
+    const validatedEnsName = state.recipient?.ensName?.trim().toLowerCase();
+    return searchedValue === validatedAddress || searchedValue === validatedEnsName;
+  }, [recipientSearch.value, state.recipient?.address, state.recipient?.ensName]);
+
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
       track("button_clicked", {
@@ -120,9 +142,28 @@ export function useRecipientAddressModalViewModel({
         page: "step recipient",
         ...sendFlowTrackingProperties,
       });
+
+      if (hasMemo && !hasFilledMemo) {
+        if (doNotAskAgainSkipMemo) {
+          onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
+          return;
+        }
+
+        onAddressSelected(address, ensName);
+        navigation.goToStep(SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION);
+        return;
+      }
+
       onAddressSelected(address, ensName, true);
     },
-    [onAddressSelected, sendFlowTrackingProperties],
+    [
+      doNotAskAgainSkipMemo,
+      hasFilledMemo,
+      hasMemo,
+      navigation,
+      onAddressSelected,
+      sendFlowTrackingProperties,
+    ],
   );
 
   const handleContactSelect = useCallback(
@@ -212,6 +253,7 @@ export function useRecipientAddressModalViewModel({
     showBridgeRecipientWarning:
       !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
     isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
-    isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
+    isAddressValid:
+      isAlreadyValidatedRecipient || (!shouldHideRegularSearchState && searchState.isAddressValid),
   };
 }

@@ -270,6 +270,7 @@ export type SolanaStake = {
     state: "active" | "inactive" | "activating" | "deactivating";
     active: number;
     inactive: number;
+    activating: number;
   };
   reward?:
     | {

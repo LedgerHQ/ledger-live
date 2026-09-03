@@ -832,6 +832,10 @@ async function deriveStakeWithdrawCommandDescriptor(
           activation: {
             state: solanaActivationState(stake),
             active: stake.activeAmount?.toNumber() ?? 0,
+            activating: Math.max(
+              0,
+              (stake.amount?.toNumber() ?? 0) - (stake.activeAmount?.toNumber() ?? 0),
+            ),
           },
           rentExemptReserve: stake.lockedReserve?.toNumber() ?? 0,
         }),

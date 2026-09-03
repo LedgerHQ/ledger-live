@@ -23,9 +23,13 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
   isVisible: true,
   title: "Pay and get paid",
   description: "Stablecoin closes the gap between crypto and real life spending",
-  ctaLabel: "Got it",
+  ctaLabel: "Explore Pay",
   rows: [
-    { icon: "Globe", title: "Spend everywhere", description: "Use your balance around the world" },
+    {
+      icon: "Contact",
+      title: "Spend everywhere",
+      description: "Use your balance around the world",
+    },
   ],
   onShown: jest.fn(),
   onDismiss: jest.fn(),
@@ -56,7 +60,7 @@ describe("FeatureTourView (Native)", () => {
     render(<FeatureTourView {...defaultProps} isVisible={false} />);
 
     const sheet = screen.getByTestId("pay-feature-tour-sheet");
-    expect(sheet).toBeTruthy();
+    expect(sheet).toBeVisible();
     expect(sheet.props.accessibilityState.expanded).toBe(false);
     expect(screen.queryByText("Pay and get paid")).toBeNull();
   });
@@ -66,15 +70,15 @@ describe("FeatureTourView (Native)", () => {
 
     const sheet = screen.getByTestId("pay-feature-tour-sheet");
     expect(sheet.props.accessibilityState.expanded).toBe(true);
-    expect(screen.getByText("Pay and get paid")).toBeTruthy();
-    expect(screen.getByLabelText("Got it")).toBeTruthy();
+    expect(screen.getByText("Pay and get paid")).toBeVisible();
+    expect(screen.getByLabelText("Explore Pay")).toBeVisible();
   });
 
   it("dismisses once even if the CTA is pressed repeatedly", () => {
     const onDismiss = jest.fn();
     render(<FeatureTourView {...defaultProps} onDismiss={onDismiss} />);
 
-    const cta = screen.getByLabelText("Got it");
+    const cta = screen.getByLabelText("Explore Pay");
     fireEvent.press(cta);
     fireEvent.press(cta);
 
@@ -84,7 +88,7 @@ describe("FeatureTourView (Native)", () => {
   it("hides its content after being dismissed", () => {
     render(<FeatureTourView {...defaultProps} />);
 
-    fireEvent.press(screen.getByLabelText("Got it"));
+    fireEvent.press(screen.getByLabelText("Explore Pay"));
 
     const sheet = screen.getByTestId("pay-feature-tour-sheet");
     expect(sheet.props.accessibilityState.expanded).toBe(false);

@@ -1,12 +1,8 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
-import {
-  Balance,
-  type ActionTilesProps,
-  type BalanceData,
-  type BalanceLabels,
-} from "@features/flow-pay-balance";
+import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
+import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
@@ -20,10 +16,11 @@ type PayTabViewProps = {
   readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
-  readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
+  readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
+  readonly bankTransferIntro: BankTransferIntroProps;
 };
 
 export function PayTabView({
@@ -33,21 +30,23 @@ export function PayTabView({
   callback,
   featureTour,
   balance,
-  balanceLabels,
   actionTiles,
   contacts,
+  isContactsEnabled,
   depositOptions,
+  bankTransferIntro,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
       <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
         <TrackScreen category="Pay" balance_filter={balance.filter} />
-        <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
-        <Contacts {...contacts} />
+        <Balance {...balance} actionTiles={actionTiles} />
+        {isContactsEnabled && <Contacts {...contacts} />}
         <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />
         <DepositOptions {...depositOptions} />
+        <BankTransferIntro {...bankTransferIntro} />
       </Box>
     </Box>
   );

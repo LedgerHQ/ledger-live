@@ -6,6 +6,7 @@ import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 import { getTokenCurrencyFromCAL } from "../test/fixtures/currency.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMirrorTransaction } from "../types/mirror";
+import type { HederaValidator } from "../types/bridge";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
@@ -15,6 +16,7 @@ import {
   checkAccountTokenAssociationStatus,
   enrichERC20Transfers,
   getCurrencyToUSDRate,
+  getHederaValidators,
   toEVMAddress,
 } from "./utils";
 
@@ -109,18 +111,20 @@ describe("checkAccountTokenAssociationStatus", () => {
   const usdcToken = getTokenCurrencyFromCAL(0); // HTS USDC "0.0.456858"
 
   it("returns true when account has the HTS token associated", async () => {
-    const result = await checkAccountTokenAssociationStatus(
-      MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-      usdcToken,
-    );
+    const result = await checkAccountTokenAssociationStatus({
+      configOrCurrencyId: coinConfig,
+      address: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+      tokenId: usdcToken.contractAddress,
+    });
     expect(result).toBe(true);
   });
 
   it("returns false when account does not have the HTS token associated", async () => {
-    const result = await checkAccountTokenAssociationStatus(
-      MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-      usdcToken,
-    );
+    const result = await checkAccountTokenAssociationStatus({
+      configOrCurrencyId: coinConfig,
+      address: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+      tokenId: usdcToken.contractAddress,
+    });
     expect(result).toBe(false);
   });
 });
@@ -162,6 +166,41 @@ describe("enrichERC20Transfers", () => {
       expect(e.mirrorTransaction).not.toBeUndefined();
       expect(typeof e.mirrorTransaction.consensus_timestamp).toBe("string");
       expect(typeof e.mirrorTransaction.transaction_hash).toBe("string");
+    }
+  });
+});
+
+describe("getHederaValidators", () => {
+  let validators: HederaValidator[];
+
+  beforeAll(async () => {
+    validators = await getHederaValidators({ currencyId: "hedera" });
+  });
+
+  it("fetches every page and returns a non-empty list", () => {
+    expect(validators.length).toBeGreaterThan(0);
+  });
+
+  it("returns validators with the correct shape", () => {
+    const [first] = validators;
+    expect(first).toMatchObject({
+      id: expect.any(String),
+      address: expect.stringMatching(/^\d+\.\d+\.\d+$/),
+      name: expect.any(String),
+      minStake: expect.any(BigNumber),
+      maxStake: expect.any(BigNumber),
+      activeStake: expect.any(BigNumber),
+      activeStakePercentage: expect.any(BigNumber),
+      overstaked: expect.any(Boolean),
+    });
+    // addressChecksum is null for some nodes
+    expect(first.addressChecksum === null || typeof first.addressChecksum === "string").toBe(true);
+  });
+
+  it("all returned validators have a non-negative, non-NaN activeStakePercentage", () => {
+    for (const v of validators) {
+      expect(v.activeStakePercentage.isNaN()).toBe(false);
+      expect(v.activeStakePercentage.isGreaterThanOrEqualTo(0)).toBe(true);
     }
   });
 });

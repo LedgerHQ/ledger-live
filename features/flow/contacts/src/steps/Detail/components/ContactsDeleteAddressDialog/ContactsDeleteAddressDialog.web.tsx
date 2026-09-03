@@ -1,12 +1,12 @@
 import React from "react";
-import { ContactsDeleteConfirmationDialog } from "../ContactsDeleteConfirmationDialog/ContactsDeleteConfirmationDialog.web";
+import { ContactConfirmationDialog } from "@features/platform-contacts";
 import type { ContactsDeleteAddressDialogProps } from "./types";
 
 export function ContactsDeleteAddressDialog(
   props: ContactsDeleteAddressDialogProps,
 ): React.ReactNode {
   return (
-    <ContactsDeleteConfirmationDialog
+    <ContactConfirmationDialog
       {...props}
       dialogTestId="contacts-delete-address-dialog"
       confirmTestId="contacts-delete-address-confirm"

@@ -27,6 +27,7 @@ import {
   broadcast as logicBroadcast,
   estimateFees as logicEstimateFees,
   listOperationsV2 as logicListOperationsV2,
+  validateIntent as logicValidateIntent,
 } from "../logic";
 import {
   extractInitiator,
@@ -54,8 +55,6 @@ import type {
 // proxy-stakes to a node, so `getStakes`, `getRewards` and `getValidators` are all real.
 //
 // Omitted rather than stubbed, and why:
-//   - `validateIntent`      — intent validation still lives in the account bridge's
-//                             `getTransactionStatus`; the api path has none of its own yet.
 //   - `getNextSequence`     — no per-account nonce: a Hedera transaction is identified by its
 //                             payer plus a valid-start timestamp (`createTransactionId`).
 //   - `craftRawTransaction` — the module accepts no externally-built transaction.
@@ -242,6 +241,16 @@ export function createApi(currencyId: string) {
     getRewards: async (context: HederaContext, address, options?) => {
       const coinConfig = await context.config();
       return getRewards({ configOrCurrencyId: coinConfig, address, cursor: options?.cursor });
+    },
+    validateIntent: async (context: HederaContext, transactionIntent, balances, options?) => {
+      const coinConfig = await context.config();
+      return logicValidateIntent({
+        config: coinConfig,
+        currencyId,
+        intent: transactionIntent,
+        balances,
+        customFees: options?.customFees,
+      });
     },
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),

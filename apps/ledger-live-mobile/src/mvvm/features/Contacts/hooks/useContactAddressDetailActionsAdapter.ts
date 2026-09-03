@@ -2,7 +2,6 @@ import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/
 import {
   type ContactAddressDetailSendIntent,
   type ContactsDeleteAddressDrawerProps,
-  type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
   type ContactAddressDetailDialogNativeProps,
   CONTACTS_EVENT_SOURCE,
@@ -43,7 +42,6 @@ export type ContactAddressDetailActionsFlowProps = Readonly<{
   >;
   deleteSheet: ContactsDeleteAddressDrawerProps;
   renameSheet: ContactsRenameAddressDrawerProps;
-  signerSheet: ContactsEditSignerDrawerProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
 }>;
 
@@ -54,7 +52,6 @@ function mapUiStateToFlowProps(
     addressDetailDialog: uiState.addressDetailDialog,
     deleteSheet: uiState.delete,
     renameSheet: uiState.rename,
-    signerSheet: uiState.signer,
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

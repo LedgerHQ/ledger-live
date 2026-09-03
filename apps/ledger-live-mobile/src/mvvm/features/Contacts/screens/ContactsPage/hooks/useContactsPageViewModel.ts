@@ -21,11 +21,12 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 import { useContactsFeatureIntroductionPreference } from "../../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsLedgerSyncStatus } from "../../../hooks/useContactsLedgerSyncStatus";
+import { useContactsLedgerSyncActivationDrawer } from "../../../hooks/useContactsLedgerSyncActivationDrawer";
 import type { ContactsPageViewModel } from "../types";
 
 type NavigationProp = BaseNavigationComposite<
@@ -67,7 +68,9 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   );
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
-  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
+  const { ledgerSyncActivationDrawer, openLedgerSyncActivationDrawer } =
+    useContactsLedgerSyncActivationDrawer();
+  const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const viewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
@@ -81,22 +84,21 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
     dismissPendingIntent();
-    setIsLedgerSyncIntroductionDismissed(true);
+    setIsLedgerSyncIntroductionRequested(false);
   }, [analytics, dismissPendingIntent]);
   const onActivateIntroduction = useCallback(() => {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
-    navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncActivationInit,
-    });
-  }, [analytics, dismissPendingIntent, navigation]);
+    setIsLedgerSyncIntroductionRequested(false);
+    openLedgerSyncActivationDrawer();
+  }, [analytics, dismissPendingIntent, openLedgerSyncActivationDrawer]);
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {
       const result = requestMutation({ kind: "addContact" }, ledgerSyncStatus);
       if (result.status === "allowed") {
         onAllowed();
       } else if (result.status === "blocked") {
-        setIsLedgerSyncIntroductionDismissed(false);
+        setIsLedgerSyncIntroductionRequested(true);
       }
     },
     [ledgerSyncStatus, requestMutation],
@@ -111,14 +113,14 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();
-      setIsLedgerSyncIntroductionDismissed(false);
+      setIsLedgerSyncIntroductionRequested(false);
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: featureIntroductionState.isRequested,
     ledgerSyncStatus,
-    isLedgerSyncIntroductionDismissed,
+    isLedgerSyncIntroductionRequested,
   });
   const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
 
@@ -140,7 +142,6 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
       title: t("contacts.featureIntroduction.title"),
-      description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: onCompleteFeatureIntroduction,
@@ -148,15 +149,14 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
+      title: t("contacts.ledgerSyncIntroduction.title"),
       description: t("contacts.ledgerSyncIntroduction.description"),
+      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
+      onActivate: onActivateIntroduction,
       onDismiss: onDismissLedgerSyncIntroduction,
     },
-    ledgerSyncIntroductionContent: {
-      title: t("contacts.ledgerSyncIntroduction.title"),
-      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
-      onActivate: onActivateIntroduction,
-    },
+    ledgerSyncActivationDrawer,
     onRequestAddContact,
   };
 }

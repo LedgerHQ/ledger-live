@@ -21,31 +21,38 @@ packages:
   - "support/*"
 
 catalog:
-  "@jest/globals": 30.4.1
+  "@commitlint/cli": 21.2.0
+  "@commitlint/config-conventional": 21.2.0
+  "@commitlint/lint": 21.2.0
+  "@commitlint/load": 21.2.2
+  "@commitlint/prompt-cli": 21.2.0
+  "@commitlint/types": 21.2.0
+  "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.5.0
   "@ledgerhq/crypto-icons": "2.0.4"
-  "@ledgerhq/device-contacts-kit": 0.2.0
-  "@ledgerhq/device-management-kit": 1.8.0
+  "@ledgerhq/device-contacts-kit": 0.4.0
+  "@ledgerhq/device-management-kit": 1.9.0
   "@ledgerhq/dmk-ledger-wallet": 0.5.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
-  "@ledgerhq/device-signer-kit-concordium": 0.4.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.17.0
+  "@ledgerhq/device-signer-kit-concordium": 0.5.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.18.0
   "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
-  "@ledgerhq/device-signer-kit-solana": 1.12.1
+  "@ledgerhq/device-signer-kit-solana": 1.13.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-signer-kit-icp": 0.2.0
+  "@ledgerhq/device-signer-kit-xrp": 0.2.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
   "@ledgerhq/device-transport-kit-speculos": 1.2.1
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
-  "@ledgerhq/logs": 6.17.0
-  "@ledgerhq/lumen-design-core": 0.1.26
-  "@ledgerhq/lumen-ui-react": 0.1.55
-  "@ledgerhq/lumen-ui-rnative": 0.1.58
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.36
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.36
+  "@ledgerhq/logs": 6.19.0
+  "@ledgerhq/lumen-design-core": 0.1.27
+  "@ledgerhq/lumen-ui-react": 0.1.56
+  "@ledgerhq/lumen-ui-rnative": 0.1.59
+  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.37
+  "@ledgerhq/lumen-ui-react-visualization": 0.1.37
   "@ledgerhq/lumen-utils-shared": 0.1.11
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
@@ -85,8 +92,8 @@ catalog:
   expo-keep-awake: 15.0.8
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
-  "@jest/reporters": 30.4.1
-  "@jest/test-result": 30.4.1
+  "@jest/reporters": 30.5.0
+  "@jest/test-result": 30.5.0
   "@reduxjs/toolkit": 2.11.2
   "@rsbuild/core": 2.1.13
   "@rsbuild/plugin-node-polyfill": 1.4.6
@@ -99,32 +106,6 @@ catalog:
   "@rspack/plugin-react-refresh": 2.0.2
   "@rslib/core": 0.23.2
   react-refresh: 0.18.0
-  storybook: 10.4.1
-  "@storybook/react": 10.4.1
-  "@storybook/react-native": 10.4.4
-  "@storybook/react-webpack5": 10.4.1
-  "@storybook/core": 8.6.14
-  "@storybook/addon-essentials": 8.6.14
-  "@storybook/addon-interactions": 8.6.14
-  "@storybook/addon-actions": 9.0.8
-  "@storybook/addon-docs": 10.4.1
-  "@storybook/addon-links": 10.4.1
-  "@storybook/addon-controls": 9.0.8
-  "@storybook/addon-ondevice-actions": 10.4.4
-  "@storybook/addon-ondevice-backgrounds": 10.4.4
-  "@storybook/addon-ondevice-controls": 10.4.4
-  "@storybook/addon-ondevice-notes": 10.4.4
-  "@storybook/addon-react-native-web": 0.0.29
-  "@storybook/blocks": 8.6.14
-  "@storybook/docs-tools": 8.6.14
-  "@storybook/global": 5.0.0
-  "@storybook/jest": 0.2.3
-  "@storybook/manager-api": 8.6.14
-  "@storybook/test": 8.6.15
-  "@storybook/testing-library": 0.2.2
-  "@storybook/theming": 8.6.14
-  storybook-dark-mode: 4.0.2
-  storybook-react-rsbuild: 3.3.4
   "@swc/core": 1.15.11
   "@swc/helpers": 0.5.23
   "@swc/jest": 0.2.39
@@ -144,7 +125,7 @@ catalog:
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.5
-  babel-jest: 30.4.1
+  babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
   class-variance-authority: 0.7.1
@@ -163,18 +144,18 @@ catalog:
   "@polkadot/rpc-provider": 16.5.4
   "@polkadot/util": 14.0.1
   "@polkadot/util-crypto": 14.0.1
-  expect: 30.4.1
+  expect: 30.5.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
   lodash: 4.17.21
   msw: ^2.7.3
-  jest: 30.4.1
-  jest-circus: 30.4.1
-  jest-docblock: 30.4.0
-  jest-environment-jsdom: 30.4.1
-  jest-environment-node: 30.4.1
+  jest: 30.5.0
+  jest-circus: 30.5.0
+  jest-docblock: 30.5.0
+  jest-environment-jsdom: 30.5.0
+  jest-environment-node: 30.5.0
   jest-file-snapshot: 0.7.0
-  jest-util: 30.4.1
+  jest-util: 30.5.0
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
@@ -220,9 +201,15 @@ catalog:
   playwright: 1.60.0
   allure-playwright: 3.9.0
   allure-js-commons: 3.9.0
+  nx: 22.7.8
+  "@nx/devkit": 22.7.8
+  # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
+  "@nx/nx-linux-x64-gnu": 22.7.8
+  "@nx/s3-cache": 5.0.7
   oxlint: 1.79.0
   oxfmt: 0.64.0
   # Modules published by coin-modules
+  "@ledgerhq/coin-evm": 5.2.0
   "@ledgerhq/coin-hypercore": 2.0.1
   "@ledgerhq/coin-module-framework": 8.2.0
   "@ledgerhq/coin-stellar": 9.4.0

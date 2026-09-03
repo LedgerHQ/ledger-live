@@ -32,7 +32,6 @@ describe("ContactsView", () => {
         featureIntroduction={{
           isOpen: false,
           title: "Add contacts",
-          description: "Save recipient addresses.",
           highlights: [],
           primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
@@ -40,8 +39,11 @@ describe("ContactsView", () => {
         }}
         ledgerSyncIntroduction={{
           isOpen: false,
+          title: "Sync your wallet to add a contact",
           description: "Keep contacts in sync.",
-          dismissLabel: "Got it",
+          activateLabel: "Sync my wallet",
+          dismissLabel: "Not now",
+          onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
       />,
@@ -70,7 +72,6 @@ describe("ContactsView", () => {
         featureIntroduction={{
           isOpen: false,
           title: "Add contacts",
-          description: "Save recipient addresses.",
           highlights: [],
           primaryActionLabel: "Try contacts",
           onComplete: jest.fn(),
@@ -78,8 +79,11 @@ describe("ContactsView", () => {
         }}
         ledgerSyncIntroduction={{
           isOpen: true,
+          title: "Sync your wallet to add a contact",
           description: "Keep contacts in sync.",
-          dismissLabel: "Got it",
+          activateLabel: "Sync my wallet",
+          dismissLabel: "Not now",
+          onActivate: jest.fn(),
           onDismiss: jest.fn(),
         }}
       />,

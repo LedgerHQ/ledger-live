@@ -52,4 +52,7 @@ export type InfoStateBaseProps = Readonly<{
 
   /** Optional test identifier applied to the root container. */
   testID?: string;
+
+  /** Optional body below the title, used for structured content like next-step lists. */
+  content?: ReactNode;
 }>;

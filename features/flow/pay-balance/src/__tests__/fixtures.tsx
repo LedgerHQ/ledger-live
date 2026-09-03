@@ -43,7 +43,32 @@ export const fundedStateProps = {
 
 export const depositActionTiles: ActionTilesProps = {
   page: "Pay",
-  tiles: [{ id: "deposit", label: "Deposit", onPress: () => undefined, appearance: "base" }],
+  tiles: [{ id: "deposit", onPress: () => undefined, appearance: "base" }],
+};
+
+export const BALANCE_RESOURCES = {
+  en: {
+    translation: {
+      payTab: {
+        balance: {
+          emptyTitle: "Pay and get paid",
+          emptyDescription: "Start by depositing stablecoin to your wallet",
+          filter: {
+            allStablecoins: "All stablecoins",
+            dialogTitle: "Filter balance",
+            dialogDescription: "Select a stablecoin to filter your balance",
+            dialogBanner: "USDC and USDT are always shown",
+            confirm: "Confirm",
+          },
+        },
+        actions: {
+          deposit: "Add stablecoin",
+          request: "Request",
+          pay: "New payment",
+        },
+      },
+    },
+  },
 };
 
 export const USDC_ID = "ethereum/erc20/usd__coin";

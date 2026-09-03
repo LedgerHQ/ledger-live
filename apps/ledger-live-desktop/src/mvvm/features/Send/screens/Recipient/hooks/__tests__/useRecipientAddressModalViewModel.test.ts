@@ -23,13 +23,13 @@ import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recip
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
+import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
+import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../../../../context/SendFlowContext");
-jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
-  useFlowWizard: () => ({ navigation: { goToStep: jest.fn() } }),
-}));
+jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts", () => ({
@@ -38,6 +38,7 @@ jest.mock("@features/platform-contacts", () => ({
 }));
 jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
+jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),
@@ -55,6 +56,10 @@ const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelect
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
+const mockedUseDoNotAskAgainSkipMemo = jest.mocked(useDoNotAskAgainSkipMemo);
+const mockedUseFlowWizard = jest.mocked(useFlowWizard);
+const setDoNotAskAgainSkipMemo = jest.fn();
+const goToStep = jest.fn();
 
 const mockAccount = createMockAccount({
   id: "account_1",
@@ -105,7 +110,11 @@ describe("useRecipientAddressModalViewModel", () => {
       if (!account) return mockAccount;
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
-    mockedSendFeatures.hasMemo.mockReturnValue(false);
+    mockedUseFlowWizard.mockReturnValue({
+      navigation: { goToStep },
+    } as never);
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
+    mockedUseDoNotAskAgainSkipMemo.mockReturnValue([false, setDoNotAskAgainSkipMemo]);
     mockedUseContacts.mockReturnValue([]);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: false,
@@ -138,7 +147,6 @@ describe("useRecipientAddressModalViewModel", () => {
     mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
       isOpen: false,
       title: "",
-      description: "",
       highlights: [],
       primaryActionLabel: "",
       onComplete: jest.fn(),
@@ -562,6 +570,47 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
   });
 
+  it("asks for confirmation before sending without a memo", () => {
+    const onAddressSelected = jest.fn();
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address", "ens_name"));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+    expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
+  });
+
+  it("sends without confirmation when the memo warning was dismissed permanently", () => {
+    const onAddressSelected = jest.fn();
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+    mockedUseDoNotAskAgainSkipMemo.mockReturnValue([true, setDoNotAskAgainSkipMemo]);
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address"));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", undefined, true, {
+      value: "",
+      type: "NO_MEMO",
+    });
+  });
+
   it("passes the current transaction to address validation", () => {
     const transaction = { family: "bitcoin", recipient: "" } as Transaction;
     mockedUseSendFlowData.mockReturnValue({
@@ -719,6 +768,64 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(result.current.showMatchedAddress).toBe(true);
     expect(result.current.showEmptyState).toBe(false);
     expect(result.current.isAddressValid).toBe(true);
+  });
+
+  it("keeps the recipient valid while the flow recipient is revalidated", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "valid_address" },
+      state: {
+        ...DEFAULT_STATE,
+        recipient: { address: "Valid_Address" },
+      } as unknown as SendFlowState,
+      uiConfig: {} as never,
+      isRecipientAddressComplete: true,
+    });
+
+    mockedUseAddressValidation.mockReturnValue({
+      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      isLoading: true,
+      validateAddress: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(true);
+  });
+
+  it("does not consider the address valid when the search differs from the flow recipient", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "another_address" },
+      state: {
+        ...DEFAULT_STATE,
+        recipient: { address: "valid_address" },
+      } as unknown as SendFlowState,
+      uiConfig: {} as never,
+      isRecipientAddressComplete: true,
+    });
+
+    mockedUseAddressValidation.mockReturnValue({
+      result: createAddressSearchResult({ status: "idle", hasBridgeValidationResult: false }),
+      isLoading: true,
+      validateAddress: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(false);
   });
 
   it("identifies self-transfer error correctly", () => {

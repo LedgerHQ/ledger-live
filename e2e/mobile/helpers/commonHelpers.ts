@@ -47,10 +47,6 @@ export function isSpeculosRemote(): boolean {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
-export function isRemoteIos(): boolean {
-  return isSpeculosRemote() && isIos();
-}
-
 /**
  * Creates a regex string for Detox URL blacklisting
  * @returns Formatted regex string for Detox

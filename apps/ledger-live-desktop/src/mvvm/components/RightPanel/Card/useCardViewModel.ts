@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
-import { getEnv } from "@shared/env";
+import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { CardViewModel } from "./types";
@@ -20,15 +20,21 @@ export function useCardViewModel(): CardViewModel {
     [unit, locale],
   );
 
+  // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
+  // login must take the new values without a restart of the app.
+  const apiUrl = useEnv("CARD_API_URL");
+  const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
+  const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
+
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardViewModel["oauthConfig"] = useMemo(
     () => ({
-      apiUrl: getEnv("CARD_API_URL"),
-      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      apiUrl,
+      clientId,
       // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
-      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+      redirectUri,
     }),
-    [],
+    [apiUrl, clientId, redirectUri],
   );
 
   return {

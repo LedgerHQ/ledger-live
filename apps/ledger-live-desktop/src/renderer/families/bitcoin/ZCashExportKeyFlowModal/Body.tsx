@@ -17,7 +17,6 @@ import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { ContinueFooter } from "./shared/ContinueFooter";
 import StepUfvk from "./steps/StepUfvk";
 import StepDevice, { StepDeviceFooter } from "./steps/StepDevice";
-import { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 
 export type Data = {
   account: BitcoinAccount;
@@ -37,7 +36,7 @@ type OwnProps = {
   syncFromZero: boolean;
   handleBirthdayChange: (value: string) => void;
   handleSyncFromZero: () => void;
-  handleEnableShieldedBalance: (nextSyncState: ZcashSyncState) => void;
+  handleEnableShieldedBalance: (options: { startSyncNow: boolean }) => void;
 };
 
 type StateProps = {

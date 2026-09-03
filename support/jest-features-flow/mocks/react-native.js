@@ -8,6 +8,7 @@ module.exports = {
     flatten: style => (Array.isArray(style) ? Object.assign({}, ...style) : style || {}),
   },
   View: "View",
+  Pressable: "Pressable",
   Text: "Text",
   Image: "Image",
   ScrollView: "ScrollView",

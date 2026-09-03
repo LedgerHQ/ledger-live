@@ -24,9 +24,15 @@ if (process.env.NODE_ENV !== "production") {
       rawTransactionType: event.rawTransactionType,
       earnTransactionType: event.earnTransactionType,
       dataSource: event.dataSource,
+      // Attribution belongs on both outcomes: a sign event is always a failure, so reporting
+      // the manifest only on success hid it for exactly the dApp case.
+      manifestId: event.manifestId,
+      stakingMethod: event.stakingMethod,
+      dappContract: event.dappContract,
+      outputCurrency: event.outputCurrency,
       ...(event.status === "failure"
         ? { errorCategory: event.errorCategory, errorName: event.error.name }
-        : { validators: event.validators, manifestId: event.manifestId }),
+        : { validators: event.validators }),
     });
   });
 }

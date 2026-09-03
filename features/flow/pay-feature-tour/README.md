@@ -7,56 +7,35 @@ mobile and a dialog on desktop, shown once until the user dismisses it.
 
 ## Usage
 
-This package is **copy-agnostic**: it renders whatever strings the host passes in and never
-imports an i18n library. The app owns the translation keys and resolves them with its own
-`useTranslation()`/`t()` before mounting the tour (same pattern as `@features/flow-contacts`).
+Copy lives with the feature: the tour resolves its own strings through
+[`@shared/i18n`](../../../shared/i18n), so the host only injects analytics.
 
 ```tsx
-import {
-  FeatureTour,
-  type FeatureTourContent,
-} from "@features/flow-pay-feature-tour";
-import { useTranslation } from "~/context/Locale";
+import { FeatureTour } from "@features/flow-pay-feature-tour";
 
-const { t } = useTranslation();
-
-const content: FeatureTourContent = {
-  title: t("payCardFeatureTour.title"),
-  description: t("payCardFeatureTour.description"),
-  ctaLabel: t("payCardFeatureTour.cta"),
-  rows: [
-    {
-      icon: "Globe",
-      title: t("payCardFeatureTour.rows.global.title"),
-      description: t("payCardFeatureTour.rows.global.description"),
-    },
-    {
-      icon: "Chart5",
-      title: t("payCardFeatureTour.rows.volatility.title"),
-      description: t("payCardFeatureTour.rows.volatility.description"),
-    },
-    {
-      icon: "CreditCard",
-      title: t("payCardFeatureTour.rows.card.title"),
-      description: t("payCardFeatureTour.rows.card.description"),
-    },
-  ],
-};
-
-<FeatureTour
-  {...content}
-  onTrackScreen={trackScreen}
-  onTrackEvent={trackEvent}
-/>;
+<FeatureTour onTrackScreen={trackScreen} onTrackEvent={trackEvent} />;
 ```
 
-The `icon` field is a Lumen symbol name resolved per platform, so the app picks the glyph
-while the copy stays translatable. Translation keys and the app-side wiring live in the host
-app (tracked separately in the mount ticket), keeping this package free of hardcoded strings.
+The keys it reads, in the host app's **default** namespace (`app` on Desktop, `common` on Mobile):
+
+| Key | Rendered as |
+| --- | --- |
+| `payTab.featureTour.title` | Sheet title |
+| `payTab.featureTour.description` | Sheet subtitle |
+| `payTab.featureTour.cta` | Dismiss button |
+| `payTab.featureTour.rows.global.{title,description}` | Row 1 (`Contact`) |
+| `payTab.featureTour.rows.volatility.{title,description}` | Row 2 (`Link`) |
+| `payTab.featureTour.rows.card.{title,description}` | Row 3 (`CreditCard`) |
+
+Both apps must carry these keys at the same path until translation keys are colocated per feature
+(a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). The row icons are
+Lumen symbol names resolved per platform and stay owned by this package.
+
+Tests wrap the component in `I18nTestProvider` from `@shared/i18n/testing`.
 
 Visibility is derived from this flow's `payCardFeatureTour` slice (`hasSeenFeatureTour`),
 exposed through `@features/flow-pay-feature-tour/state`. Store, persistence and test
-setup should import that entry so they do not load the tour UI. Dismissing the tour (Got it, close
+setup should import that entry so they do not load the tour UI. Dismissing the tour (Explore Pay, close
 button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. Analytics are injected via the
 optional `onTrackScreen` / `onTrackEvent` props so the flow stays decoupled from any app analytics
 package.
@@ -100,10 +79,10 @@ pay-feature-tour/
             ├── FeatureTourView.web.tsx        # Web presentational UI (Dialog)
             ├── index.ts                       # Barrel
             ├── payTabTour.webp                # Hero image
-            ├── types.ts                       # Public props and content types
+            ├── types.ts                       # Public props and row types
             └── useFeatureTourViewModel.ts     # Shared state and orchestration
 ```
 
 The view shows a hero image, title, subtitle, and three Lumen `ListItem` feature rows
-(Globe / Chart5 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
-with a single "Got it" CTA to dismiss.
+(Contact / Link / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
+with a single "Explore Pay" CTA to dismiss.

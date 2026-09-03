@@ -61,14 +61,21 @@ export function withdrawableFromStake({
 }: {
   stakeAccBalance: number;
   // Structural, not `SolanaStake["activation"]`, so a generic staking position fits too.
-  activation: { state: SolanaStake["activation"]["state"]; active: number };
+  activation: { state: SolanaStake["activation"]["state"]; active: number; activating: number };
   rentExemptReserve: number;
 }) {
   switch (activation.state) {
     case "active":
-    case "activating":
-      // Allow withdrawal of inactive stake (e.g., Jito MEV rewards) without deactivating
+      // Allow withdrawal of excess lamports above active stake (e.g. Jito MEV rewards).
       return stakeAccBalance - rentExemptReserve - activation.active;
+    case "activating":
+      // Per Solana docs: only lamports in excess of (effective + activating) may be withdrawn.
+      // Without subtracting activating, effective=0 early in warmup makes the full principal
+      // appear withdrawable — the on-chain tx would fail.
+      return Math.max(
+        0,
+        stakeAccBalance - rentExemptReserve - activation.active - activation.activating,
+      );
     case "deactivating":
       return stakeAccBalance - rentExemptReserve - activation.active;
     case "inactive":

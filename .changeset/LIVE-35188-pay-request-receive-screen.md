@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-request": minor
+"@features/flow-pay-request": minor
 "live-mobile": minor
 ---
 

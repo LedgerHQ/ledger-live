@@ -83,7 +83,13 @@ function invokeHandler(
 }
 
 export function rpcHandler(methodHandlers: RpcMethodHandlers) {
-  const handlers = methodHandlers as Record<string, (params: unknown[]) => unknown>;
+  const handlers = { ...methodHandlers } as Record<string, (params: unknown[]) => unknown>;
+  // Stake discovery asks for the paginated getProgramAccountsV2 (see
+  // network/chain/rpc/program-accounts.ts); serve the declared V1 result as a single page.
+  const programAccounts = handlers.getProgramAccounts;
+  if (programAccounts) {
+    handlers.getProgramAccountsV2 = params => ({ accounts: programAccounts(params) });
+  }
   return http.post(TEST_ENDPOINT, async ({ request }: { request: Request }) => {
     const body = (await request.json()) as RpcRequest | RpcRequest[];
 

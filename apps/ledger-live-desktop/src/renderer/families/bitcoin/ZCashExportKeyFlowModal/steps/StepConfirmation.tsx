@@ -6,8 +6,13 @@ import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
 import { Container } from "../shared/Container";
 import type { StepProps } from "../types";
+
+// Placeholder support article; content owners plan to swap this for a dedicated one later.
+const UFVK_LEARN_MORE_URL = "https://support.ledger.com/article/115005177269-zd";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
@@ -33,11 +38,13 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
               color="neutral.c100"
               fontSize={13}
             >
-              <Trans i18nKey="zcash.shielded.flows.export.steps.confirmation.success.info.text" />
-              <b>
-                {" "}
-                <Trans i18nKey="zcash.shielded.flows.export.steps.confirmation.success.info.cta" />
-              </b>
+              <Trans i18nKey="zcash.shielded.flows.export.steps.confirmation.success.info.text" />{" "}
+              <LinkWithExternalIcon
+                label={
+                  <Trans i18nKey="zcash.shielded.flows.export.steps.confirmation.success.info.cta" />
+                }
+                onClick={() => openURL(UFVK_LEARN_MORE_URL)}
+              />
             </Text>
           )}
         />
@@ -65,12 +72,12 @@ export function StepConfirmationFooter({
   handleEnableShieldedBalance,
 }: Readonly<StepProps>) {
   const handleCloseModal = () => {
-    handleEnableShieldedBalance("ready");
+    handleEnableShieldedBalance({ startSyncNow: false });
     closeModal();
   };
 
   const handleStartSync = () => {
-    handleEnableShieldedBalance("running");
+    handleEnableShieldedBalance({ startSyncNow: true });
     closeModal();
   };
 

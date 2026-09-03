@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router";
 import {
   formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
 import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
@@ -40,6 +43,7 @@ export type HistoryViewModel = {
   hideSmallValueTokenOperations: boolean;
   dustFilterThreshold: string;
   onToggleHideSmallValueTokenOperations: () => void;
+  contact?: Contact;
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
@@ -53,7 +57,15 @@ export function useHistoryViewModel(): HistoryViewModel {
 
   const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
 
-  const operations = useHistoryOperations();
+  const [searchParams] = useSearchParams();
+  const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
+  const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
+  const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
+  const contact = useSelector(state =>
+    contactId ? selectContactById(state, contactId) : undefined,
+  );
+
+  const operations = useHistoryOperations(contact);
   const table = useHistoryTable(operations);
   const { parentRef, rowVirtualizer, flatItems } = useHistoryVirtualization(table);
 
@@ -132,5 +144,6 @@ export function useHistoryViewModel(): HistoryViewModel {
     hideSmallValueTokenOperations,
     dustFilterThreshold,
     onToggleHideSmallValueTokenOperations,
+    contact,
   };
 }

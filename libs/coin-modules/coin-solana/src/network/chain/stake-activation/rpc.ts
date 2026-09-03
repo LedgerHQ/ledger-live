@@ -29,6 +29,7 @@ export interface StakeActivationData {
   state: StakeActivationState;
   active: number;
   inactive: number;
+  activating: number;
 }
 
 export interface StakeAccount {
@@ -75,6 +76,7 @@ function toStakeAccount(
       state: getStakeActivationState({ effective, activating, deactivating }),
       active: effective.toNumber(),
       inactive: inactive.toNumber(),
+      activating: activating.toNumber(),
     } as StakeActivationData,
     reward: null,
   };

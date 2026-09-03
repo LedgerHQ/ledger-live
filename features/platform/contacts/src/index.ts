@@ -1,6 +1,6 @@
 export * from "./useContacts";
 export * from "./analytics";
-export * from "./outgoingOperations";
+export * from "./contactOperations";
 export * from "./utils/getContactInitial";
 export * from "./hooks/useContactsMeContact";
 export * from "./utils/formatMeDisplayName";
@@ -25,3 +25,4 @@ export * from "./contactAddressEdit/ports";
 export * from "./contactAddressEdit/createContactAddressEditPort";
 export * from "./components/ContactNameInput";
 export * from "./components/ContactNameDisclaimer";
+export * from "./components/ContactConfirmationDialog";

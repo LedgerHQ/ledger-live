@@ -1,24 +1,12 @@
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { selectContactById, type ContactId } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { ContactAddressCurrencyPort } from "./model/ports";
+import { defaultContactAddressCurrencyPort } from "./model/defaultContactAddressCurrencyPort";
 import { createPopulatedContactDetailViewModel } from "./model/viewModel";
 import type { PopulatedContactDetailViewModel } from "./types";
 
 type ContactsStateRoot = Parameters<typeof selectContactById>[0];
-
-const defaultContactAddressCurrencyPort: ContactAddressCurrencyPort = {
-  resolveNetworkId: currencyId => {
-    const currency = findCryptoCurrencyById(currencyId);
-
-    if (currency !== undefined) {
-      return currency.id;
-    }
-
-    return findCryptoCurrencyById(currencyId.split("/")[0])?.id;
-  },
-};
 
 export function usePopulatedContactDetail(
   contactId: ContactId | undefined,

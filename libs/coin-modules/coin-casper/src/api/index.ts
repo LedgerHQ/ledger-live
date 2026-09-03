@@ -3,8 +3,8 @@ import type {
   BalanceOptions,
   CoinModuleImpl,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { notSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -16,14 +16,8 @@ import { validateIntent } from "../logic/validateIntent";
 import { validateAddress } from "../bridge/validateAddress";
 import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 
-// The caller builds the {@link CasperContext} (config + logger) and passes it to each method (ADR-019).
-//
-// Casper supports everything the contract requires but `craftTransactionData`, so it declares
-// the authoring type and omits its unsupported *capabilities* — block queries, `call`,
-// `register`, staking and raw crafting — rather than stubbing each one. That distinction is
-// the point: eight omissions are capabilities this chain does not expose, while the stub
-// below is a required method this module does not implement, which the type will not let us
-// omit and which therefore stays visible here.
+// ADR-019: caller builds {@link CasperContext} and passes it to each method.
+// `satisfies` (not `as`) preserves the concrete return types of each method for callers.
 export function createApi() {
   return {
     lastBlock,
@@ -46,6 +40,6 @@ export function createApi() {
     // per-account nonce, so getNextSequence has no meaningful value here.
     getNextSequence: async (_context: CasperContext, _address: string) => 0n,
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
-    craftTransactionData: notSupported("craftTransactionData"),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<CasperConfig, CasperMemo>;
 }

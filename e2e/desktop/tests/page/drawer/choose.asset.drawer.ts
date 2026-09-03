@@ -1,6 +1,5 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { expect } from "@playwright/test";
 
 export class ChooseAssetDrawer extends Drawer {
   private searchInputTestId = "select-asset-drawer-search-input";
@@ -40,11 +39,5 @@ export class ChooseAssetDrawer extends Drawer {
 
     const row = await this.findAssetRow(assetName, networkName);
     await row.click();
-  }
-
-  @step("Verify choose asset drawer is visible")
-  async verifyChooseAssetDrawer() {
-    await expect(this.selectAssetTitle).toBeVisible();
-    await expect(this.searchInput).toBeVisible();
   }
 }

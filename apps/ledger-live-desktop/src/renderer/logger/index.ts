@@ -326,7 +326,11 @@ export default {
       stack: err.stack,
       ...err,
     });
-    datadog.captureException(err);
+    // anything else has no type and no stack of its own: in Datadog it becomes an unsearchable
+    // "null" / "[object Object]" issue merged with every other caller, so we keep it local
+    if (error instanceof Error || typeof error === "string") {
+      datadog.captureException(err);
+    }
   },
   add,
   onLog: (log: LogEntry | string) => {

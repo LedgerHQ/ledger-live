@@ -29,11 +29,6 @@ export default class PortfolioPage {
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
-  walletTabSelectorBase = "wallet-tab-";
-  selectAssetsPageTitle = "select-crypto-header-step1-title";
-  baseBigCurrency = "big-currency";
-  bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
-  tabBarEarnButton = "tab-bar-earn";
   marketBannerList = "market-banner-list";
   marketBannerTileBase = "market-banner-tile-";
   marketBannerViewAll = "market-banner-view-all";
@@ -41,6 +36,7 @@ export default class PortfolioPage {
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
   marketBannerTitle = "market-banner-title";
+  quickActionsCtasContainerId = "quick-actions-ctas";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
   quickActionBuyButtonV4 = "quick-action-buy";
@@ -50,6 +46,7 @@ export default class PortfolioPage {
   portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
   portfolioBalanceDelta = "portfolio-balance-delta";
   borrowEntryPointId = "portfolio-borrow-entry-point";
+  transferDrawerContainerId = "transfer-drawer";
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
@@ -77,8 +74,6 @@ export default class PortfolioPage {
   assetItemExactRegExp = (currencyName: string) =>
     new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
-  walletTabSelector = (id: "Wallet" | "Market") =>
-    getElementById(`${this.walletTabSelectorBase}${id}`);
   operationByType = (operationType: string | RegExp, accountName?: string) =>
     accountName
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
@@ -98,18 +93,6 @@ export default class PortfolioPage {
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
     await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
-  }
-
-  @Step("Expect Portfolio read only")
-  async expectPortfolioReadOnly() {
-    await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
-    await waitForElementById(this.readOnlyItemsId);
-    await waitForElementById(this.connectButtonId);
-  }
-
-  @Step("Expect asset row to be visible {{{0}}}")
-  async expectAssetRowToBeVisible(asset: string) {
-    await detoxExpect(getElementById(this.assetItemBalanceId(asset))).toBeVisible();
   }
 
   @Step("Expect asset row {{{0}}} to have the correct counter value {{{1}}}")
@@ -146,7 +129,7 @@ export default class PortfolioPage {
   }
 
   @Step("Expect operation row to be visible")
-  async expectOperationRowToBeVisible() {
+  private async expectOperationRowToBeVisible() {
     await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
@@ -295,28 +278,10 @@ export default class PortfolioPage {
     await tapByElement(this.tabSelector(id));
   }
 
-  @Step("Tap on {{{0}}} tab selector")
-  async tapWalletTabSelector(id: "Wallet" | "Market") {
-    await tapByElement(this.walletTabSelector(id));
-  }
-
   @Step("Tap on (Show All Accounts) button")
-  async tapShowAllAccountsButton() {
+  private async tapShowAllAccountsButton() {
     await scrollToId(this.showAllAccountsButton, this.accountsListView);
     await tapById(this.showAllAccountsButton);
-  }
-
-  @Step("Expect (Select Asset) page")
-  async checkSelectAssetPage() {
-    await waitForElementById(this.selectAssetsPageTitle);
-    await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
-    await app.common.expectSearchBarVisible();
-    jestExpect(await countElements(getElementsById(this.bigCurrencyRowRegex))).toBeGreaterThan(6);
-  }
-
-  @Step("Open Earn tab from navigation bar")
-  async openEarnTab() {
-    await tapById(this.tabBarEarnButton);
   }
 
   @Step("Tap on (Add new or existing account) button")
@@ -391,18 +356,26 @@ export default class PortfolioPage {
     await waitForElementById(this.quickActionBuyButtonV4);
   }
 
+  // The row mounts only after portfolio data resolves (QAA-1524).
+  private async waitForQuickActionsSettled() {
+    await waitForFullyVisibleById(this.quickActionsCtasContainerId);
+  }
+
   @Step("Press quick action buy button")
   async pressQuickActionBuyButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action swap button")
   async pressQuickActionSwapButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionSwapButtonV4);
   }
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
+    await this.waitForQuickActionsSettled();
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
@@ -440,8 +413,14 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.transferBottomSheetBankTransferButton)).toBeVisible();
   }
 
+  // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
+  private async waitForTransferDrawerSettled() {
+    await waitForFullyVisibleById(this.transferDrawerContainerId);
+  }
+
   @Step("Press transfer bottom sheet receive button")
   async pressTransferBottomSheetReceiveButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetReceiveButton);
   }
 
@@ -453,11 +432,13 @@ export default class PortfolioPage {
 
   @Step("Press transfer bottom sheet send button")
   async pressTransferBottomSheetSendButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetSendButton);
   }
 
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
+    await this.waitForTransferDrawerSettled();
     await tapById(this.transferBottomSheetBankTransferButton);
   }
 

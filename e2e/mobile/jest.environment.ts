@@ -46,6 +46,35 @@ import { withTimeout } from "@e2e/utils/withTimeout";
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 
+// Set by the patched Detox retry (patches/detox@20.51.3.patch) to the exact full names of the
+// tests that failed in the previous attempt.
+const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
+  ? new Set<string>(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
+  : undefined;
+
+/**
+ * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
+ * Skipped tests write no Allure result, so the previous attempt's verdict remains.
+ */
+const skipToRetrySet = (
+  block: Circus.DescribeBlock,
+  names: Set<string>,
+  path: string[] = [],
+): number => {
+  let kept = 0;
+  for (const child of block.children) {
+    if (child.type === "describeBlock") {
+      kept += skipToRetrySet(child, names, [...path, child.name]);
+      // Mirrors jest-circus getTestID: the names path minus the root block, space-joined.
+    } else if (names.has([...path, child.name].join(" "))) {
+      kept++;
+    } else {
+      child.mode = "skip";
+    }
+  }
+  return kept;
+};
+
 async function captureFailureDiagnostics(): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
@@ -323,6 +352,18 @@ export default class TestEnvironment extends DetoxEnvironment {
     }
 
     if (event.name === "run_start") {
+      if (retryTestNames) {
+        const kept = skipToRetrySet(state.rootDescribeBlock, retryTestNames);
+        // Detox only retries spec files that failed, and narrowing is all-or-nothing, so every
+        // retried file contributed at least one name. Matching none means the names and the tree
+        // disagree — fail loudly rather than skip the whole file and report a green pass.
+        if (kept === 0) {
+          throw new Error(
+            `E2E_RETRY_TEST_NAMES matched no test in this file, so the retry would run nothing. ` +
+              `Expected one of: ${[...retryTestNames].join(" | ")}`,
+          );
+        }
+      }
       resetStderrCaptureForCurrentTest();
       installConsoleCapture();
       await logMemoryUsage();

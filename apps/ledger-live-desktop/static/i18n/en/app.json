@@ -152,7 +152,8 @@
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
     },
-    "memo": "Memo"
+    "memo": "Memo",
+    "stake": "Stake"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -433,6 +434,11 @@
         "actions": {
           "viewInExplorer": "View in explorer",
           "copied": "Copied"
+        },
+        "earnBanner": {
+          "title": "Earn up to {{apy}}% {{type}}",
+          "description": "Explore Earn opportunities",
+          "button": "Explore"
         },
         "accessibility": {
           "copySwapId": "Copy swap ID"
@@ -872,21 +878,21 @@
   },
   "payTab": {
     "featureTour": {
-      "title": "Pay and get paid",
-      "description": "Stablecoin closes the gap between crypto and real life spending",
-      "cta": "Got it",
+      "title": "All your payments, in one place",
+      "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
+      "cta": "Explore Pay",
       "rows": {
         "global": {
-          "title": "Pay and get paid globally",
-          "description": "Benefits from low networks fees"
+          "title": "Pay your contacts",
+          "description": "Send crypto to saved addresses."
         },
         "volatility": {
-          "title": "Minimal volatility",
-          "description": "Stablecoin are based on fiat"
+          "title": "Request payments",
+          "description": "Ask Contacts to send funds straight to you."
         },
         "card": {
-          "title": "Spend with a card and get 1% cashback",
-          "description": "Pay in USDC, USDT, BTC, ETH and more"
+          "title": "Shop worldwide with crypto card",
+          "description": "And earn uncapped 1% cashback."
         }
       }
     },
@@ -921,7 +927,13 @@
       },
       "actions": {
         "pay": "Send to contact",
-        "more": "More options"
+        "more": "More options",
+        "viewContact": "View contact",
+        "viewTransactions": "View transactions"
+      },
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
       }
     },
     "actions": {
@@ -947,6 +959,27 @@
         "buy": {
           "title": "Buy",
           "description": "Buy stablecoins with credit card."
+        }
+      }
+    },
+    "bankTransferIntro": {
+      "title": "Send cash, receive stablecoin",
+      "description": "Transfer cash and receive stablecoins straight to your Ledger Wallet™.",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Noah",
+      "providedBy": "Provided by Noah",
+      "rows": {
+        "bank": {
+          "title": "Receive transfers from any bank",
+          "description": "Get salary, payments, deposits via SEPA or ACH."
+        },
+        "fees": {
+          "title": "No hidden fees",
+          "description": "Direct from bank to blockchain for 0.25% fees."
+        },
+        "earn": {
+          "title": "Put your money to work right away",
+          "description": "You can swap or earn with your stablecoin."
         }
       }
     },
@@ -2618,7 +2651,11 @@
     "addContact": {
       "newContact": "Add a new contact",
       "existingContact": "Add to an existing contact",
-      "selectContact": "Select contact"
+      "selectContact": "Select contact",
+      "syncWallet": {
+        "title": "Sync your wallet to add a contact",
+        "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers"
+      }
     },
     "relativeDate": {
       "justNow": "Just now",
@@ -2646,11 +2683,12 @@
       "walletNotExist": "Wallet doesn’t exist"
     },
     "skipMemo": {
-      "title": "Skip adding {{memoLabel}}?",
-      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
+      "title": "Send without a {{memoLabel}}?",
+      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient.",
       "notRequired": "{{memoLabel}} not required by recipient?",
-      "confirm": "Yes skip",
-      "neverAskAgain": "Don't show this warning again"
+      "confirm": "Yes, send without a {{memoLabel}}",
+      "cancel": "No, go back",
+      "neverAskAgain": "Don't ask again"
     },
     "tagHelp": {
       "inputLabel": "Enter {{memoLabel}}",
@@ -7346,6 +7384,9 @@
     "ZcashAmountBelowDustThreshold": {
       "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -8148,6 +8189,56 @@
     "memoPlaceholder": "Enter Tag / Memo",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
+  "mina": {
+    "percentageSymbol": "%",
+    "fee": "Fee",
+    "accountHeaderManageActions": {
+      "changeDelegation": "Redelegate",
+      "earn": "Earn"
+    },
+    "stakeBanner": {
+      "title": "Earn rewards with MINA",
+      "altTitle": "Manage your MINA delegation",
+      "description": "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription": "Change your delegation settings or undelegate your MINA tokens.",
+      "changeCTA": "Redelegate"
+    },
+    "summaryFooter": {
+      "delegatedTo": "Delegated to",
+      "stakedBalance": "Delegated Balance",
+      "producerAddress": "Producer Address",
+      "delegatedToTooltip": "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip": "Total amount of MINA currently delegated to this validator",
+      "producerAddressTooltip": "Public address of the block producer you are delegating to"
+    },
+    "delegators": "Delegators",
+    "selectValidator": {
+      "stepLabels": {
+        "chooseValidator": "Choose Validator",
+        "connectDevice": "Connect Device",
+        "confirmation": "Confirmation"
+      },
+      "title": "Delegate MINA",
+      "help": "Select a validator from the list below to delegate your MINA tokens.",
+      "success": {
+        "title": "Transaction successfully broadcasted",
+        "description": "Your delegation change request has been broadcasted.",
+        "viewDetails": "View details"
+      },
+      "error": {
+        "title": "An error occurred while broadcasting the transaction"
+      },
+      "undelegateTitle": "Undelegate MINA"
+    },
+    "delegation": {
+      "listHeader": "Delegation",
+      "amount": "Amount",
+      "redelegate": "Redelegate",
+      "undelegate": "Undelegate",
+      "totalStake": "Total Stake",
+      "commission": "Commission"
+    }
+  },
   "hedera": {
     "name": "hedera",
     "createHederaAccountHelp": {
@@ -8210,6 +8301,7 @@
             "inactiveTooltip": "Validator not found",
             "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
             "activeTooltip": "Delegated amount generates rewards",
+            "fetchErrorTooltip": "Couldn't load validator data. Please try again.",
             "delegated": "Delegated",
             "rewards": "Rewards"
           },
@@ -8288,6 +8380,8 @@
             "newValidatorLabel": "New delegation",
             "newValidatorSelectPlaceholder": "Select validator",
             "removedValidatorSelectPlaceholder": "Previously selected validator is no longer available",
+            "unableToLoadSelectPlaceholder": "Unable to load validators",
+            "loadingValidatorPlaceholder": "Loading validators...",
             "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
             "amountLabel": "Amount to redelegate",
             "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
@@ -8605,6 +8699,10 @@
       },
       "onboarding": {
         "title": "Sync with another Ledger Wallet app"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "manage": {
@@ -9099,7 +9197,7 @@
         "memo": {
           "label": "Memo (optional)",
           "placeholder": "Enter a memo",
-          "tooltip": "Attach a private message to this shielded transaction. Only the recipient can read it. Up to 512 bytes."
+          "tooltip": "Add an encrypted memo to this shielded payment. Only the recipient can read it. Max 512 bytes."
         },
         "syncBanner": {
           "stopped": {
@@ -9130,7 +9228,7 @@
         "showBalance": "Show balance",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
-        "upToDate": "Up to date",
+        "upToDate": "Update balance",
         "lastSync": "Last sync: {{date}}",
         "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
         "syncFailed": "Private balance sync failed"
@@ -9486,6 +9584,41 @@
     "explore": "Explore all Ledger devices"
   },
   "contacts": {
+    "deviceIntents": {
+      "registerExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "editExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "errors": {
+        "wrongDevice": {
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
+        },
+        "invalidData": {
+          "title": "This address can't be saved",
+          "description": "Your Ledger device rejected the contact details. Try again or contact Ledger Support if the issue continues."
+        },
+        "appVersionTooLow": {
+          "title": "App update required",
+          "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
+        }
+      }
+    },
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
@@ -9587,12 +9720,6 @@
       "applyChanges": "Apply changes",
       "invalidLabelError": "Special characters are not allowed."
     },
-    "editSigner": {
-      "title": "Confirm on your device",
-      "description": "Connect and unlock your Ledger device to confirm this change.",
-      "confirm": "Continue",
-      "cancel": "Cancel"
-    },
     "editSignerMismatch": {
       "title": "Use the same Ledger device you used to add this contact",
       "description": "The connected device isn't a match.",
@@ -9600,25 +9727,25 @@
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
-      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "activate": "Turn on Ledger Sync",
-      "dismiss": "Got it"
+      "title": "Sync your wallet to add a contact",
+      "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      "activate": "Sync my wallet",
+      "dismiss": "Not now"
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
-      "primaryAction": "Try contacts",
+      "primaryAction": "Explore now",
       "highlights": {
         "saveAddresses": {
-          "title": "Save addresses once",
-          "description": "Keep the addresses you send to in one place."
+          "title": "Save addresses by a name you choose",
+          "description": "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress": {
           "title": "Send to the right address",
-          "description": "Funds reach the right wallet every time."
+          "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Private across your devices",
+          "title": "Securely top up via Ledger Wallet™",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

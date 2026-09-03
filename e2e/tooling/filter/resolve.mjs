@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { joinFilter, splitFilter } from "./escaping.mjs";
+import { isRuntimeGeneratedTag } from "./generatedTags.mjs";
 import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
 
 const currentFile = fileURLToPath(import.meta.url);
@@ -98,10 +99,23 @@ function warnZeroMatches(checkDir, baseFilter, expandedTags, runner) {
     ? pattern => filterTestFiles(files, pattern).length > 0
     : pattern => hasMatch(files, pattern);
 
+  // Only the playwright check is an approximation (a regex over spec path/content), so it alone
+  // can miss tags that buildTags() attaches at collection time. The detox check *is* how the
+  // mobile runner selects specs, so a 0-match there is a real empty run and must stay a warning.
+  const isUnverifiableTag = tag => !isDetox && isRuntimeGeneratedTag(tag);
+
   for (const tag of expandedTags) {
-    if (!selectsSomething(tag)) {
-      console.warn(`::warning title=Missing E2E tag::${tag} has no matching specs in ${checkDir}`);
+    if (selectsSomething(tag)) continue;
+    // Family tags are attached by buildTags() at collection time, so a spec that carries one
+    // never spells it out. Only flag a tag that isn't a real family either.
+    if (isUnverifiableTag(tag)) {
+      // stderr, like every other message here: stdout carries the resolved filter to the workflow.
+      console.warn(
+        `::notice title=E2E tag not statically verifiable::${tag} is generated at runtime (buildTags); its specs can't be detected before the run`,
+      );
+      continue;
     }
+    console.warn(`::warning title=Missing E2E tag::${tag} has no matching specs in ${checkDir}`);
   }
 
   // filterTestFiles already splits on whitespace/","/"|"; the playwright regex needs "|" alternation.
@@ -109,6 +123,15 @@ function warnZeroMatches(checkDir, baseFilter, expandedTags, runner) {
     ? baseFilter
     : baseFilter.split(/\s+/).filter(Boolean).join("|");
   if (baseFilter && !selectsSomething(baseFilterPattern)) {
+    // The filter is an OR: one runtime-generated tag is enough for the run to select specs,
+    // so "0 matches" here would be an artefact of the static check, not a real empty run.
+    const runtimeTags = splitFilter(baseFilter).filter(isUnverifiableTag);
+    if (runtimeTags.length > 0) {
+      console.warn(
+        `::notice title=E2E filter not statically verifiable::${runtimeTags.join(", ")} ${runtimeTags.length === 1 ? "is" : "are"} generated at runtime (buildTags); matching specs can't be detected before the run`,
+      );
+      return;
+    }
     console.warn(
       `::warning title=E2E filter has no matches::${baseFilter} matched 0 specs in ${checkDir}`,
     );

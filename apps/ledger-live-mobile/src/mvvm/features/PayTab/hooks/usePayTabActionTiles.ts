@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useTranslation } from "~/context/Locale";
 import type { ActionTilesProps } from "@features/flow-pay-balance";
 
 export function usePayTabActionTiles(
@@ -7,17 +6,15 @@ export function usePayTabActionTiles(
   onDeposit: () => void,
   onRequest: () => void,
 ): ActionTilesProps {
-  const { t } = useTranslation();
-
   return useMemo(
     () => ({
       tiles: [
-        { id: "deposit", label: t("payTab.actions.deposit"), onPress: onDeposit },
-        { id: "request", label: t("payTab.actions.request"), onPress: onRequest },
+        { id: "deposit", onPress: onDeposit },
+        { id: "request", onPress: onRequest },
       ],
       page: "Pay",
       onTrackEvent,
     }),
-    [t, onTrackEvent, onDeposit, onRequest],
+    [onTrackEvent, onDeposit, onRequest],
   );
 }

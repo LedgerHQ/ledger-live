@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import type { ContactId } from "@domain/entity-contact";
-import { useContactsMeContact, type ContactDeviceIntentsPort } from "@features/platform-contacts";
+import { useNavigate, useSearchParams } from "react-router";
+import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
+import {
+  useContacts,
+  useContactsMeContact,
+  type ContactDeviceIntentsPort,
+} from "@features/platform-contacts";
 import {
   useContactDetailSharedState,
   useEmptyContactDetail,
@@ -23,6 +27,10 @@ import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/User
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
+import {
+  useContactDetailActionParam,
+  type ContactDetailActionHandlers,
+} from "./useContactDetailActionParam";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY } from "LLD/features/CryptoAddresses/utils/cryptoAddressesLocationState";
 
@@ -36,14 +44,28 @@ export function useContactDetailPaneAdapter(
   addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
   onOpenMe: ContactsViewProps["onOpenMe"];
   onOpenContact: ContactsViewProps["onOpenContact"];
+  onSelectContact: (contactId: ContactId) => void;
 }> {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
+  const contacts = useContacts();
   const trackedContactDetailId = useRef<ContactId | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
-  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
+  const [searchParams] = useSearchParams();
+
+  const initialDetailContactId = useMemo<ContactId>(() => {
+    const parsed = ContactIdSchema.safeParse(searchParams.get("contactId"));
+    if (parsed.success && contacts.some(contact => contact.id === parsed.data)) {
+      return parsed.data;
+    }
+    return meContact.id;
+  }, [contacts, meContact.id, searchParams]);
+
+  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(
+    initialDetailContactId,
+  );
   const onDeleteSuccess = useCallback(() => {
     setDetailContactId(meContact.id);
   }, [meContact.id]);
@@ -107,13 +129,19 @@ export function useContactDetailPaneAdapter(
       buildNavigationBackState(CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY, "/contacts"),
     );
   }, [navigate]);
-  const openContact = useCallback(
+  const selectContact = useCallback(
     (contactId: ContactId) => {
-      trackContactsListContactOpen(analytics, contactId, meContact.id);
       setDetailContactId(contactId);
       clearSelection();
     },
-    [analytics, clearSelection, meContact.id],
+    [clearSelection],
+  );
+  const openContact = useCallback(
+    (contactId: ContactId) => {
+      trackContactsListContactOpen(analytics, contactId, meContact.id);
+      selectContact(contactId);
+    },
+    [analytics, meContact.id, selectContact],
   );
   const handleAddAddress = useCallback(
     (contact: AddAddressContact) => {
@@ -157,7 +185,6 @@ export function useContactDetailPaneAdapter(
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
     const isAddressActionDialogOpen =
       addressDetailActionsDialogs.deleteDialog.isOpen ||
-      addressDetailActionsDialogs.signerDialog.isOpen ||
       addressDetailActionsDialogs.signerMismatchDialog.isOpen ||
       addressDetailActionsDialogs.renameDialog.isOpen;
 
@@ -174,7 +201,6 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.addressDetailDialog,
     addressDetailActionsDialogs.deleteDialog.isOpen,
     addressDetailActionsDialogs.renameDialog.isOpen,
-    addressDetailActionsDialogs.signerDialog.isOpen,
     addressDetailActionsDialogs.signerMismatchDialog.isOpen,
     addressDetailDialogLabels,
     emptyContact?.name,
@@ -223,6 +249,15 @@ export function useContactDetailPaneAdapter(
     }
   }, [isOpen]);
 
+  const contactDetailActions = useMemo<ContactDetailActionHandlers<AddAddressContact>>(
+    () => ({ "add-address": handleAddAddress }),
+    [handleAddAddress],
+  );
+  useContactDetailActionParam(
+    populatedContactDetail?.contact ?? emptyContact,
+    contactDetailActions,
+  );
+
   return {
     detail,
     addressDetailDialog,
@@ -230,5 +265,6 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs,
     onOpenMe: openContact,
     onOpenContact: openContact,
+    onSelectContact: selectContact,
   };
 }

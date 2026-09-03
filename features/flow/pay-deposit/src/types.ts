@@ -7,18 +7,8 @@ export type DepositOptionContent = Readonly<{
   description: string;
 }>;
 
-/**
- * User-facing copy injected by the host app. This package stays i18n-agnostic: the app
- * resolves translations and passes the strings in.
- */
-export type DepositOptionsLabels = Readonly<{
-  title: string;
-  options: Readonly<Record<DepositOptionId, DepositOptionContent>>;
-}>;
-
 export type DepositOptionsProps = Readonly<{
   isOpen: boolean;
-  labels: DepositOptionsLabels;
   page: string;
   bottomInset?: number;
   onClose: () => void;
@@ -30,6 +20,7 @@ export type DepositOptionsProps = Readonly<{
 export type DepositOption = DepositOptionContent & Readonly<{ id: DepositOptionId }>;
 
 export type DepositOptionsViewModel = Readonly<{
+  title: string;
   options: readonly DepositOption[];
   onSelectOption: (id: DepositOptionId) => void;
 }>;

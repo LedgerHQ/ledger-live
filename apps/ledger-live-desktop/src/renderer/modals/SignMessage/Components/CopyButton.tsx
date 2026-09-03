@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import { Icons, Button, Flex } from "@ledgerhq/react-ui";
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 
 type Props = {
   readonly text: string;

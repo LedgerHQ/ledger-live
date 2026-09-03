@@ -28,7 +28,7 @@ export function setupEnv(disableBroadcast: boolean = false): void {
   });
 }
 
-export async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
+async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.clickSyncBtnForAccount(swap.accountToDebit.accountName);
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);

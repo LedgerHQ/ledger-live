@@ -38,6 +38,7 @@ import {
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { NetworkErrorScreen } from "./NetworkError";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -50,15 +51,21 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
-    const { webviewState, webviewRef, setWebviewRef, webviewProps, webviewPartition } =
-      useWebviewState(
-        {
-          manifest,
-          inputs,
-          manifestDomainCheckEnabled,
-        },
-        ref,
-      );
+    const {
+      webviewState,
+      webviewRef,
+      setWebviewRef,
+      webviewProps,
+      webviewPartition,
+      handleRefresh,
+    } = useWebviewState(
+      {
+        manifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
+      ref,
+    );
 
     const tracking = useMemo(
       () =>
@@ -443,6 +450,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [handleLoad, handleDomReady]);
 
+    const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
+
     const webviewStyle = useMemo(() => {
       return {
         opacity: widgetLoaded ? 1 : 0,
@@ -450,11 +459,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         width: "100%",
         flex: 1,
         transition: "opacity 200ms ease-out",
+        ...(isNetworkErrorVisible ? { display: "none" } : {}),
       };
-    }, [widgetLoaded]);
+    }, [widgetLoaded, isNetworkErrorVisible]);
 
     return (
       <>
+        {isNetworkErrorVisible && <NetworkErrorScreen refresh={handleRefresh} />}
         <webview
           ref={setWebviewRef}
           /**
@@ -478,7 +489,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!widgetLoaded ? (
+        {!widgetLoaded && !isNetworkErrorVisible ? (
           <Loader>
             <BigSpinner size={50} />
           </Loader>

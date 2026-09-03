@@ -1,6 +1,6 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-card-request";
+import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-request";
 
 export type RequestReceiveData = Readonly<{
   address: string;

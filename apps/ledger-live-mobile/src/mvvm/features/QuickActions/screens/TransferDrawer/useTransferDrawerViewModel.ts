@@ -89,7 +89,7 @@ export const useTransferDrawerViewModel = ({
     handleOpenReceiveDrawer();
   }, [closeDrawer, handleOpenReceiveDrawer, sourceScreenName]);
 
-  const { isEnabled: isNewSendFlowEnabled, isEnabledForFamily } = useNewSendFlowFeature();
+  const { isEnabledForFamily } = useNewSendFlowFeature();
   const { handleOpenSendFlow } = useOpenSendFlow({
     currency,
     currencyIds: ledgerIds,
@@ -104,13 +104,11 @@ export const useTransferDrawerViewModel = ({
     () => (assetCurrencyId ? getFamilyByCurrencyId(assetCurrencyId) : undefined),
     [assetCurrencyId],
   );
-  const canOpenNewSendFlowFromEntry = Boolean(currency || ledgerIds?.length);
-  const isNewSendFlowEnabledForAsset =
-    canOpenNewSendFlowFromEntry && isEnabledForFamily(assetFamily, assetCurrencyId);
+  const shouldOpenNewSendFlow = isEnabledForFamily(assetFamily, assetCurrencyId);
 
   const trackingProperties = useMemo(() => {
-    return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabledForAsset);
-  }, [isNewSendFlowEnabledForAsset]);
+    return getSendFlowTrackingProperties(null, null, shouldOpenNewSendFlow);
+  }, [shouldOpenNewSendFlow]);
 
   const handleSendPress = useCallback(() => {
     track("button_clicked", {
@@ -120,7 +118,7 @@ export const useTransferDrawerViewModel = ({
       page: sourceScreenName,
     });
     closeDrawer();
-    if (isNewSendFlowEnabled && canOpenNewSendFlowFromEntry) {
+    if (shouldOpenNewSendFlow) {
       handleOpenSendFlow();
       return;
     }
@@ -139,13 +137,12 @@ export const useTransferDrawerViewModel = ({
       });
     }
   }, [
-    canOpenNewSendFlowFromEntry,
     closeDrawer,
     currency,
     handleOpenSendFlow,
-    isNewSendFlowEnabled,
     ledgerIds,
     navigation,
+    shouldOpenNewSendFlow,
     sourceScreenName,
     trackingProperties,
   ]);

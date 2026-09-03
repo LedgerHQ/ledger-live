@@ -8,6 +8,7 @@ import {
   Button,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { ContactsRenameContactDrawerProps } from "./types";
 
 export function ContactsRenameContactDrawer({
@@ -16,8 +17,10 @@ export function ContactsRenameContactDrawer({
   isSaving,
   draftName,
   invalidNameError,
+  isDeviceRequired,
   bottomInset = 0,
   keyboardInset = 0,
+  autoFocus = false,
   labels,
   onDraftNameChange,
   onConfirm,
@@ -39,6 +42,7 @@ export function ContactsRenameContactDrawer({
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}
+              autoFocus={autoFocus}
               onChangeText={onDraftNameChange}
             />
             <Banner appearance="info" description={labels.namingDisclaimer} />
@@ -48,8 +52,9 @@ export function ContactsRenameContactDrawer({
             size="lg"
             isFull
             disabled={!isConfirmEnabled}
+            icon={isDeviceRequired ? LedgerLogo : undefined}
             loading={isSaving}
-            onPress={onConfirm}
+            onPress={() => void onConfirm()}
             testID="contacts-rename-contact-confirm"
           >
             {labels.confirmName}

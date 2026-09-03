@@ -45,7 +45,7 @@ describe("usePayTabRequestReceiveViewModel", () => {
       overrideInitialState: withAccount,
     });
 
-    act(() => result.current.onCopy(account.freshAddress));
+    act(() => result.current.requestReceive.onCopy(account.freshAddress));
 
     expect(Clipboard.setString).toHaveBeenCalledWith(account.freshAddress);
   });
@@ -55,9 +55,11 @@ describe("usePayTabRequestReceiveViewModel", () => {
       overrideInitialState: withAccount,
     });
 
-    await act(async () => result.current.onShare?.(account.freshAddress));
+    await act(async () => result.current.requestReceive.onShare?.(account.freshAddress));
 
-    expect(captureRef).toHaveBeenCalledWith(result.current.cardRef, { format: "png" });
+    expect(captureRef).toHaveBeenCalledWith(result.current.requestReceive.cardRef, {
+      format: "png",
+    });
     expect(Share.open).toHaveBeenCalledWith({
       url: "file://mock.png",
       message: account.freshAddress,
@@ -82,7 +84,7 @@ describe("usePayTabRequestReceiveViewModel", () => {
       overrideInitialState: withAccount,
     });
 
-    act(() => result.current.onClose());
+    act(() => result.current.requestReceive.onClose());
 
     expect(mockGoBack).toHaveBeenCalledTimes(1);
   });
@@ -113,8 +115,8 @@ describe("usePayTabRequestReceiveViewModel", () => {
     });
 
     expect(mockGoBack).not.toHaveBeenCalled();
-    expect(result.current.address).toBe(parentAccount.freshAddress);
-    expect(result.current.asset).toEqual({ name: "USD Coin", ticker: "USDC" });
+    expect(result.current.requestReceive.address).toBe(parentAccount.freshAddress);
+    expect(result.current.requestReceive.asset).toEqual({ name: "USD Coin", ticker: "USDC" });
   });
 
   it("should not go back when the account is not in the store", () => {
@@ -123,6 +125,6 @@ describe("usePayTabRequestReceiveViewModel", () => {
     const { result } = renderHook(() => usePayTabRequestReceiveViewModel());
 
     expect(mockGoBack).not.toHaveBeenCalled();
-    expect(result.current.address).toBe("");
+    expect(result.current.requestReceive.address).toBe("");
   });
 });

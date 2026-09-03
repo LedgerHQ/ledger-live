@@ -45,15 +45,6 @@ export class AccountPage extends AppPage {
     return new RegExp(`^(${escaped.join("|")})$`);
   }
 
-  @step("Navigate to token")
-  async navigateToToken(account: AccountType) {
-    const tokenRow = this.tokenValue(account.currency.name).or(
-      this.tokenRowByTicker(account.currency.ticker),
-    );
-    await expect(tokenRow).toBeVisible();
-    await tokenRow.click();
-  }
-
   @step("Click `Receive` button")
   async clickReceive() {
     await this.receiveButton.click();
@@ -130,7 +121,7 @@ export class AccountPage extends AppPage {
   }
 
   @step("Scroll to operations")
-  async scrollToOperations() {
+  private async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
     // Wait for the operation list to be attached and stable before scrolling (React 19 deferred rendering)
     await operationList.waitFor({ state: "attached" });
@@ -235,15 +226,5 @@ export class AccountPage extends AppPage {
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
     await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
-  }
-
-  @step("Check account chart is visible")
-  async checkAccountChart() {
-    await expect(this.accountChart).toBeVisible();
-  }
-
-  @step("Click on selected ($0) last operation")
-  async selectAndClickOnLastOperation(operation: string) {
-    await this.selectSpecificOperation(operation).first().click();
   }
 }

@@ -5,6 +5,7 @@ export * from "./ldmkCosmosSigner";
 export * from "./ldmkSolanaSigner";
 export * from "./ldmkSolanaSignerIsTxcActive";
 export * from "./ldmkTransport";
+export * from "./ldmkXrpSigner";
 export * from "./llmNanoSDeprecation";
 export * from "./myLedgerDisplayAppDeveloperName";
 export * from "./onboardingIgnoredOsUpdates";

@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { toPng } from "html-to-image";
 import logger from "~/renderer/logger";
 
-const SUMMARY_SELECTOR = '[data-testid="pay-card-request-receive-summary"]';
+const SUMMARY_SELECTOR = '[data-testid="pay-request-receive-summary"]';
 const BASE64_PNG_PREFIX = /^data:image\/png;base64,/;
 
 /**

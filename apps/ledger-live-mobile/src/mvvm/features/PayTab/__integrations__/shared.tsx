@@ -26,8 +26,8 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 
 export const EMPTY_TITLE = "Pay and get paid";
 export const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
-export const FEATURE_TOUR_ROW = "Minimal volatility";
-export const FEATURE_TOUR_CTA = "Got it";
+export const FEATURE_TOUR_ROW = "Request payments";
+export const FEATURE_TOUR_CTA = "Explore Pay";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usd = getFiatCurrencyByTicker("USD");
@@ -59,7 +59,7 @@ type TestStackParamList = {
   PayTabTest: undefined;
   [NavigatorName.ReceiveFunds]: {
     screen: ScreenName.ReceiveProvider;
-    params: { manifestId: string; fromMenu: boolean };
+    params: { manifestId: string; fromMenu: boolean; noahAuth?: "createAccount" | "logIn" };
   };
   [NavigatorName.MyWallet]:
     | {
@@ -104,6 +104,7 @@ type RenderPayTabOptions = Readonly<{
   holdsUni?: boolean;
   cryptoOnly?: boolean;
   contacts?: Contact[];
+  contactsEnabled?: boolean;
 }>;
 
 function withUsdcHoldings(state: State): State {
@@ -200,6 +201,7 @@ export function renderPayTab({
   holdsUni = false,
   cryptoOnly = false,
   contacts,
+  contactsEnabled = false,
 }: RenderPayTabOptions = {}) {
   return render(
     <>
@@ -217,6 +219,9 @@ export function renderPayTab({
             enabled: true,
             params: { enableModularization: true, searchDebounceTime: 0 },
           },
+          ...(contactsEnabled
+            ? { lwmContacts: { enabled: true, params: { newBadge: false } } }
+            : {}),
         },
         state => {
           const next: State = {

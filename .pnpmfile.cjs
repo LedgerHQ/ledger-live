@@ -19,8 +19,6 @@ const {
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
-  const major = parseInt(pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0");
-
   /*
     Fix packages using wrong @types/react versions by making it a peer dependency.
     So ultimately it uses our types package instead of their own which can conflict.
@@ -49,19 +47,7 @@ function readPackage(pkg, context) {
         kind: "peerDependencies",
       }),
 
-      /* Storybook packages */
-      addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-      addDependencies("@storybook/addon-knobs", {
-        // Match the major version of the package
-        "@storybook/client-api": major ? "" + major : "*",
-      }),
-      addPeerDependencies("@storybook/addon-ondevice-backgrounds", {
-        "@emotion/native": "*",
-      }),
-      addPeerDependencies("@storybook/addon-react-native-web", {
-        webpack: "*",
-      }),
       /* @celo/* packages */
       addDependencies("@celo/connect", {
         web3: pkg.peerDependencies?.web3 ?? "1.10",

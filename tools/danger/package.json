@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
-    "@commitlint/lint": "21.2.0",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/lint": "catalog:",
+    "@commitlint/load": "catalog:",
+    "@commitlint/types": "catalog:",
     "danger": "13.0.10"
   }
 }

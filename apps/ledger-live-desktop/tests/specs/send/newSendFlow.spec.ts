@@ -274,11 +274,28 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
         await app.newSendFlow.confirmSkipMemo();
 
         await expect(app.newSendFlow.amountInput).toBeVisible();
+      });
+
+      test("should go back to the recipient step when refusing to skip memo", async ({
+        app,
+        page,
+      }) => {
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+
+        await app.newSendFlow.clickOnSendToButton();
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
+        await app.newSendFlow.cancelSkipMemo();
+
+        await expect(app.newSendFlow.skipMemoConfirmButton).toBeHidden();
+        await expect(app.newSendFlow.memoInput).toBeVisible();
+        await expect(app.newSendFlow.amountInput).toBeHidden();
       });
 
       test("should not need to confirm skipping memo when parameter is enabled from send modal", async ({
@@ -289,8 +306,8 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
-        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.clickOnSendToButton();
+        await expect(app.newSendFlow.neverAskAgainSkipMemoCheckbox).toBeVisible();
         await app.newSendFlow.checkNeverAskAgainSkipMemo();
         await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
         await app.newSendFlow.confirmSkipMemo();
@@ -303,7 +320,7 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible();
       });
 
@@ -319,7 +336,7 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
+        await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible();
       });
 
@@ -331,8 +348,8 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
-        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.clickOnSendToButton();
+        await expect(app.newSendFlow.neverAskAgainSkipMemoCheckbox).toBeVisible();
         await app.newSendFlow.checkNeverAskAgainSkipMemo();
         await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
         await app.newSendFlow.confirmSkipMemo();
@@ -349,8 +366,8 @@ test.describe("New Send Flow", () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
-        await app.newSendFlow.skipMemo({ confirm: false });
-        await expect(app.newSendFlow.neverAskAgainSkipMemoButton).toBeVisible();
+        await app.newSendFlow.clickOnSendToButton();
+        await expect(app.newSendFlow.neverAskAgainSkipMemoCheckbox).toBeVisible();
         await app.newSendFlow.checkNeverAskAgainSkipMemo();
         await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
       });

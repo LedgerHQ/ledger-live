@@ -21,6 +21,7 @@ export function InfoState(props: InfoStateProps) {
   const {
     title,
     description,
+    content,
     primaryCta,
     secondaryCta,
     banner,
@@ -51,6 +52,8 @@ export function InfoState(props: InfoStateProps) {
             </Box>
           ) : null}
         </Box>
+
+        {content ? <Box lx={fullWidthStyle}>{content}</Box> : null}
 
         {banner ? (
           <Box lx={fullWidthStyle}>

@@ -15,6 +15,10 @@ const DEFAULT_FEE_BY_TRANSACTION_TYPE: Record<TransactionType, number> = {
   [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE]: 2308,
   [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC]: 18494,
   [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE]: 17972,
+  // measured from single-transition testnet transactions (credits.aleo, fee_public, priority fee 0),
+  [TRANSACTION_TYPE.BOND_PUBLIC]: 5621,
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: 10813,
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: 3066,
 };
 
 const DEFAULT_FEE_SAFETY_MULTIPLIER = 1;
@@ -46,6 +50,11 @@ const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "auto";
  */
 const ENABLE_TOKENS = false;
 
+/**
+ * Controls whether Aleo staking features (bond/unbond/claim) are enabled.
+ */
+const ENABLE_STAKING = false;
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -62,6 +71,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
       enableTokens: ENABLE_TOKENS,
+      enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },
@@ -81,6 +91,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
       enableTokens: ENABLE_TOKENS,
+      enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },

@@ -11,6 +11,7 @@ export * from "./ptxBorrowLiveApp";
 export * from "./ptxCard";
 export * from "./ptxEarnDrawerConfiguration";
 export * from "./ptxEarnLiveApp";
+export * from "./ptxEarnTransactionSuccessBanner";
 export * from "./ptxEarnUi";
 export * from "./ptxPerpsLiveApp";
 export * from "./ptxPerpsLiveAppMobile";

@@ -96,6 +96,7 @@ export function StepRewardsFooter({
       </Button>
       <Button
         id="claim-rewards-continue-button"
+        isLoading={bridgePending}
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}

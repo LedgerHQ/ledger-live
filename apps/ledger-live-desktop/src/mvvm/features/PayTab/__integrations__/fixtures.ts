@@ -14,7 +14,8 @@ import { USDC, USDT } from "../hooks/__tests__/fixtures";
 
 export const EMPTY_TITLE = "Pay and get paid";
 export const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
-export const FEATURE_TOUR_ROW = "Minimal volatility";
+export const FEATURE_TOUR_ROW = "Request payments";
+export const FEATURE_TOUR_CTA = "Explore Pay";
 
 export const onboardedState = { settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" } };
 

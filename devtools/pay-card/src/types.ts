@@ -33,6 +33,26 @@ export interface PayCardOnboardingProps {
 }
 
 /**
+ * One env var the tool shows, with the value a tester most often wants next.
+ *
+ * The app reads the two Card env vars on every request, so a value set here applies without a
+ * restart. Nothing saves it: after a restart the app reads the build's value again.
+ */
+export interface PayCardEnvVar {
+  readonly key: string;
+  /** The value the app reads right now. */
+  readonly value: string;
+  /** What the input starts with, so one press is enough to change the tenant. */
+  readonly suggestedValue: string;
+}
+
+/** The Card env vars the tool reads, and the one way it changes them. */
+export interface PayCardEnvProps {
+  readonly vars: readonly PayCardEnvVar[];
+  readonly setVar: (key: string, value: string) => void;
+}
+
+/**
  * Props contract for the Card / Pay DevTool.
  *
  * Built by `@devtools/bindings` (`usePayCardToolProps`) from the host's Redux
@@ -45,4 +65,6 @@ export interface PayCardToolProps {
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */
   readonly resetPayCardFeatureTourSeen: () => void;
+  /** The Card backend env vars, read live and set from the tool. */
+  readonly env: PayCardEnvProps;
 }

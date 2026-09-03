@@ -27,6 +27,11 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   decodeURIScheme: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: {
+    hasMemoForRecipient: jest.fn(() => true),
+  },
+}));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
   useRecipientContactSelection: jest.fn(),
 }));
@@ -47,6 +52,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../../context/AddNewContactHeaderContext";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -101,12 +107,14 @@ const mockData = (
   state: unknown,
   uiConfig: Record<string, unknown> = { hasMemo: false },
   recipientSearch = { value: "" },
+  isRecipientAddressComplete = false,
 ) => {
   const search = { ...recipientSearch, setValue: jest.fn(), clear: jest.fn() };
   (useSendFlowData as jest.Mock).mockReturnValue({
     state,
     uiConfig,
     recipientSearch: search,
+    isRecipientAddressComplete,
   });
   return search;
 };
@@ -289,6 +297,44 @@ describe("useSendHeaderModel", () => {
       });
 
       expect(latestVM?.recipientPlaceholder).toBe("Enter address");
+    });
+  });
+
+  describe("memo visibility", () => {
+    it("hides memo controls when the recipient does not support memos", () => {
+      jest.mocked(sendFeatures.hasMemoForRecipient).mockReturnValue(false);
+      mockActions();
+      mockData(
+        {
+          account: {
+            currency: {
+              type: "CryptoCurrency",
+              ticker: "ZEC",
+              id: "zcash",
+              family: "bitcoin",
+            },
+            account: {},
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        { hasMemo: true },
+        { value: "t1-recipient" },
+        true,
+      );
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook();
+
+      expect(sendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "zcash" }),
+        "t1-recipient",
+      );
+      expect(latestVM?.showMemoControls).toBe(false);
     });
   });
 

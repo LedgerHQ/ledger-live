@@ -47,6 +47,7 @@ import { identitiesSlice } from "@domain/entity-client-identity";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
+import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
 import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
 import { contactsSlice } from "@domain/entity-contact";
 import type { UnknownAction } from "@reduxjs/toolkit";
@@ -91,6 +92,7 @@ const appReducer = combineReducers({
   sendFlow,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
+  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   toasts,
   trustchain,

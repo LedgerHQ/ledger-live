@@ -2,11 +2,6 @@ import { HEDERA_DUMMY_ADDRESS } from "../constants";
 import { createBridges } from "./index";
 
 jest.mock("../config");
-jest.mock("../preload", () => ({
-  preload: jest.fn(),
-  hydrate: jest.fn(),
-  getPreloadStrategy: jest.fn(),
-}));
 jest.mock("../signer/index", () => jest.fn(() => jest.fn()));
 jest.mock("./signOperation", () => ({ buildSignOperation: jest.fn(() => jest.fn()) }));
 jest.mock("./synchronisation", () => ({

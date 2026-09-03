@@ -1,7 +1,5 @@
 import { type ContactId } from "@domain/entity-contact";
 import {
-  type ContactsDeleteContactDrawerProps,
-  type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
   type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
@@ -10,6 +8,7 @@ import {
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import type { ContactsDeleteContactDrawerProps } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useMemo } from "react";
@@ -27,7 +26,6 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
   }>;
   renameDrawer: ContactsRenameContactDrawerProps;
   deleteDrawer: ContactsDeleteContactDrawerProps;
-  signerDrawer: ContactsEditSignerDrawerProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
   onOpenActionsMenu: () => void;
 }>;
@@ -80,7 +78,6 @@ export function useContactDetailEditDeleteAdapter(
     },
     renameDrawer: uiState.rename,
     deleteDrawer: uiState.delete,
-    signerDrawer: uiState.signer,
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

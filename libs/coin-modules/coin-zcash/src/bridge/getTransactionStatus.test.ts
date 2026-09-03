@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 import {
   computeAmountError,
   computeRecipientError,
@@ -659,6 +660,96 @@ describe("getTransactionStatus, note-spending flows", () => {
     expect(errorNames(status.errors)).toEqual({
       recipient: "ZcashSaplingRecipientNotSupported",
     });
+  });
+});
+
+// The fee is resolved by prepareTransaction and only carried by
+// getTransactionStatus, so the two are chained here -- setting `zcashFee` by hand
+// would assert nothing about the ZIP-317 computation behind the figure the flow
+// shows. Each row spells out its logical-action count, so a fee pinned to the
+// 2-action floor passes the first row and fails the rest.
+describe("getTransactionStatus, ZIP-317 fee surfaced by the flow", () => {
+  it.each([
+    [
+      "a t->t send over one UTXO (max(1 in, 2 out) = 2 actions)",
+      "10000",
+      account({ utxos: [100_000] }),
+      transaction({ amount: new BigNumber(30_000) }),
+    ],
+    [
+      "a t->t send over three UTXOs (max(3 in, 2 out) = 3 actions)",
+      "15000",
+      account({ utxos: [50_000, 50_000, 50_000] }),
+      transaction({ amount: new BigNumber(30_000) }),
+    ],
+    [
+      "a shielding send (1 transparent in + Orchard floor of 2 = 3 actions)",
+      "15000",
+      account({ utxos: [100_000] }),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(30_000),
+      }),
+    ],
+    [
+      "a z->t send (Orchard floor of 2 + 1 transparent out = 3 actions)",
+      "15000",
+      account({ ironwoodNotes: [50_000] }),
+      transaction({
+        transferType: "shielded-to-transparent",
+        recipient: T_ADDRESS,
+        amount: new BigNumber(20_000),
+      }),
+    ],
+  ] as [string, string, ZcashAccount, Transaction][])(
+    "prices %s at %s zatoshi",
+    async (_label, expectedFee, acc, tx) => {
+      const prepared = await prepareTransaction(acc, tx);
+      const status = await getTransactionStatus(acc, prepared);
+
+      expect(status.errors).toEqual({});
+      expect(status.estimatedFees.toString()).toBe(expectedFee);
+      expect(status.totalSpent).toEqual(prepared.amount.plus(new BigNumber(expectedFee)));
+    },
+  );
+
+  // The same layout priced above at 15_000 must not fall back to the floor, which
+  // is what a constant fee would surface.
+  it("does not surface the minimum for a 3-action layout", async () => {
+    const acc = account({ utxos: [50_000, 50_000, 50_000] });
+
+    const prepared = await prepareTransaction(acc, transaction({ amount: new BigNumber(30_000) }));
+    const status = await getTransactionStatus(acc, prepared);
+
+    expect(status.estimatedFees.toNumber()).not.toBe(ZIP317_MINIMUM_FEE);
+  });
+});
+
+describe("getTransactionStatus, memo byte limit", () => {
+  it.each([
+    [
+      "transparent-input",
+      transaction({ transferType: "transparent-to-shielded", recipient: U_ADDRESS }),
+    ],
+    ["note-spending", transaction({ transferType: "shielded", recipient: U_ADDRESS })],
+  ])("rejects an oversized UTF-8 memo for %s flows", async (_label, tx) => {
+    const status = await getTransactionStatus(account(), { ...tx, memo: "😀".repeat(129) });
+
+    expect(status.errors.transaction?.name).toBe("ZcashMemoTooLong");
+  });
+
+  it("accepts a memo at exactly 512 UTF-8 bytes", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        memo: "😀".repeat(128),
+      }),
+    );
+
+    expect(status.errors.transaction).toBeUndefined();
   });
 });
 

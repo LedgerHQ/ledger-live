@@ -7,6 +7,28 @@ import {
 import { ContactsRenameContactDrawer } from ".";
 import type { ContactsRenameContactDrawerProps } from "./types";
 
+const mockFocus = jest.fn();
+
+// The shared Lumen passthrough renders host elements whose refs stay null, so the focus call is
+// unobservable. Override just TextInput to expose a controllable imperative handle.
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const actual = jest.requireActual<Record<string, unknown>>("@ledgerhq/lumen-ui-rnative");
+  const ReactActual = jest.requireActual<typeof import("react")>("react");
+
+  return new Proxy(actual, {
+    get(target, prop) {
+      if (prop !== "TextInput") {
+        return target[prop as string];
+      }
+
+      return ({ ref, ...props }: { ref?: React.Ref<{ focus: () => void }> }) => {
+        ReactActual.useImperativeHandle(ref, () => ({ focus: mockFocus }));
+        return ReactActual.createElement("TextInput", props);
+      };
+    },
+  });
+});
+
 function createViewModel(
   overrides: Partial<ContactsRenameContactDrawerProps> = {},
 ): ContactsRenameContactDrawerProps {
@@ -16,6 +38,7 @@ function createViewModel(
     isSaving: false,
     draftName: "",
     invalidNameError: null,
+    isDeviceRequired: false,
     labels: {
       title: "Edit contact",
       namePlaceholder: "Contact name",
@@ -80,6 +103,16 @@ describe("ContactsRenameContactDrawer", () => {
 
     expect(onDraftNameChange).toHaveBeenCalledWith("Ada Lovelace");
     expect(onConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it("should withhold focus until the host grants it", () => {
+    const { rerender } = render(<ContactsRenameContactDrawer {...createViewModel()} />);
+
+    expect(mockFocus).not.toHaveBeenCalled();
+
+    rerender(<ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />);
+
+    expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
   it("should not render its content while closed", () => {

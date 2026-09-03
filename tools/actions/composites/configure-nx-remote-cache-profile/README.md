@@ -2,6 +2,8 @@
 
 Resolves **one** IAM role ARN and the Nx S3 **`cacheKeyPrefix`** from `github.ref`, then runs [`tools/nx/write-nx-cache-config.mjs`](../../../../tools/nx/write-nx-cache-config.mjs) so **gitignored** `nx.cache-config.json` is generated with the right prefix. Tracked root [`nx.json`](../../../../nx.json) only `extends` that file and is never patched in CI.
 
+The resolved prefix is also exported as **`NX_CACHE_KEY_PREFIX`** to `$GITHUB_ENV`, so any later step that regenerates the config lands on the same prefix. `pnpm clean` (`git clean -fdX`) deletes `nx.cache-config.json` along with every other gitignored file, and the mobile install-retry paths call it, so `clean` regenerates the config itself — without this env export it would silently fall back to prefix `local` on CI.
+
 ## Edge cases
 
 - **Pull requests:** `github.ref` is `refs/pull/<n>/merge`, so jobs use the **branch** profile (`cacheKeyPrefix: branch` and the branch OIDC role when both profile ARNs are set).

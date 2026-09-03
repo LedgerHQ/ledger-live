@@ -2,6 +2,7 @@ import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
+import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
 import {
   calApi,
   cardApi,
@@ -23,6 +24,7 @@ const APIs = {
   [countervaluesApi.reducerPath]: countervaluesApi,
   [counterValuesApi.reducerPath]: counterValuesApi,
   [cgApi.reducerPath]: cgApi,
+  [hederaApi.reducerPath]: hederaApi,
   [marketApi.reducerPath]: marketApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,

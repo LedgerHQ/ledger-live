@@ -10,6 +10,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import { useStake } from "LLD/hooks/useStake";
 import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   account: BitcoinAccount | TokenAccount;
@@ -55,7 +56,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
     navigate(routeToPlatformApp?.pathname ?? "/", {
       state: {
-        returnTo: `/account/${account.id}`,
+        returnTo: getAccountUrl(account.id),
         ...routeToPlatformApp?.state,
       },
     });

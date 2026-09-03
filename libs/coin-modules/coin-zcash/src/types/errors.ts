@@ -75,6 +75,16 @@ export class ZcashAmountBelowDustThreshold extends Error {
   }
 }
 
+export class ZcashMemoTooLong extends Error {
+  maxBytes: number;
+
+  constructor(maxBytes: number, message = `Memo exceeds the ${maxBytes}-byte limit`) {
+    super(message);
+    this.name = "ZcashMemoTooLong";
+    this.maxBytes = maxBytes;
+  }
+}
+
 /**
  * Raised when the builder rejects a selected note because its leaf position is
  * at or past the number of leaves the Ironwood tree held at its anchor -- the

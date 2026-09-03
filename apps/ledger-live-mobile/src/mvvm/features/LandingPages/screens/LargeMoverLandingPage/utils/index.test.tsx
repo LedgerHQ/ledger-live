@@ -1,19 +1,9 @@
-import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
+import i18next from "~/i18n/instance";
 import { getTimeAgoCode } from ".";
-import en from "~/locales/en/common.json";
 
-beforeAll(async () => {
-  await i18next.use(initReactI18next).init({
-    lng: "en",
-    fallbackLng: "en",
-    resources: {
-      en: {
-        translation: en,
-      },
-    },
-  });
-});
+// The app instance already carries `en/common.json`; it just has no language until
+// `LocaleProvider` picks one at runtime.
+beforeAll(() => i18next.changeLanguage("en"));
 
 describe("getTimeAgoCode", () => {
   it("returns the translated string for seconds (plural)", () => {

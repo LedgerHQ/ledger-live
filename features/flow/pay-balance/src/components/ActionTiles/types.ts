@@ -1,14 +1,17 @@
 export type ActionTileId = "deposit" | "request" | "pay";
 
-export type ActionTile = Readonly<{
+/** Host-provided tile: copy is resolved inside the feature from the tile `id`. */
+export type ActionTileInput = Readonly<{
   id: ActionTileId;
-  label: string;
   onPress: () => void;
   appearance?: "base" | "transparent";
 }>;
 
+/** A tile with its resolved copy, consumed by the views. */
+export type ActionTile = ActionTileInput & Readonly<{ label: string }>;
+
 export type ActionTilesProps = Readonly<{
-  tiles: readonly ActionTile[];
+  tiles: readonly ActionTileInput[];
   page: string;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;

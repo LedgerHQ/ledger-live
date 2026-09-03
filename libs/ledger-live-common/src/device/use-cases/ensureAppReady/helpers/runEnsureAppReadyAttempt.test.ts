@@ -190,7 +190,7 @@ describe("runEnsureAppReadyAttempt", () => {
       name: "Ethereum",
       constraints: [
         {
-          minVersion: "1.2.3",
+          minVersion: "1.2.3-0",
           applicableModels: [DeviceModelId.NANO_X],
         },
       ],
@@ -200,7 +200,7 @@ describe("runEnsureAppReadyAttempt", () => {
         name: "1inch",
         constraints: [
           {
-            minVersion: "1.2.3",
+            minVersion: "1.2.3-0",
             applicableModels: [DeviceModelId.NANO_X],
           },
         ],

@@ -54,10 +54,6 @@ async function expectDeviceIntentExecutor() {
   });
 }
 
-async function confirmSigner(user: Awaited<ReturnType<typeof render>>["user"]) {
-  await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
-}
-
 describe("Contacts device intents integration", () => {
   beforeEach(() => {
     mockedUseDeviceManagementKit.mockReturnValue(
@@ -87,7 +83,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Main ETH");
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
-    await confirmSigner(user);
 
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-address-sheet")).toBeNull();
@@ -127,7 +122,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Benjamin");
     await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
-    await confirmSigner(user);
 
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-contact-sheet")).toBeNull();
@@ -145,7 +139,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(renameInput);
     await user.type(renameInput, "Benjamin");
     await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
-    await confirmSigner(user);
     await expectDeviceIntentExecutor();
 
     await user.press(screen.getByTestId("bottom-sheet-header-close-button"));

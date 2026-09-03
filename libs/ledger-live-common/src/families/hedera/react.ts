@@ -1,52 +1,48 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useMemo } from "react";
-import {
-  getCurrentHederaPreloadData,
-  getHederaPreloadData,
-} from "@ledgerhq/coin-hedera/preload-data";
-import { getDelegationStatus, filterValidatorBySearchTerm } from "./utils";
-import { useObservable } from "../../observable";
+import { useGetValidatorsQuery } from "./state-manager/api";
+import { filterValidatorBySearchTerm, getDelegationStatus } from "./utils";
 import type {
   HederaAccount,
-  HederaPreloadData,
   HederaValidator,
   HederaDelegation,
   HederaEnrichedDelegation,
 } from "./types";
 
-export function useHederaPreloadData(
-  currency: CryptoCurrency,
-): HederaPreloadData | undefined | null {
-  return useObservable(getHederaPreloadData(currency), getCurrentHederaPreloadData(currency));
-}
+export type HederaValidatorsQuery = {
+  validators: HederaValidator[];
+  loading: boolean;
+  error: Error | null;
+};
 
-export function useHederaValidators(currency: CryptoCurrency, search?: string): HederaValidator[] {
-  const data = useHederaPreloadData(currency);
+export function useHederaValidators(currencyId: string, search?: string): HederaValidatorsQuery {
+  const { data, isLoading, error } = useGetValidatorsQuery(currencyId);
 
-  return useMemo(() => {
-    const validators = data?.validators ?? [];
-
-    if (validators.length === 0 || !search || search === "") {
-      return validators;
-    }
-
-    return validators.filter(validator => {
-      return filterValidatorBySearchTerm(validator, search);
-    });
+  const validators = useMemo(() => {
+    const all = data ?? [];
+    return search ? all.filter(v => filterValidatorBySearchTerm(v, search)) : all;
   }, [data, search]);
+
+  return {
+    validators,
+    loading: isLoading,
+    // an error while validators are already cached is not worth showing, the list still renders
+    error: data === undefined && error instanceof Error ? error : null,
+  };
 }
 
 export function useHederaEnrichedDelegation(
   account: HederaAccount,
   delegation: HederaDelegation,
 ): HederaEnrichedDelegation {
-  const validators = useHederaValidators(account.currency);
+  const { validators, loading, error } = useHederaValidators(account.currency.id);
   const validatorById = new Map(validators.map(v => [v.id, v]));
   const validator = validatorById.get(String(delegation.nodeId)) ?? null;
 
   return {
     ...delegation,
+    loading,
+    error,
     status: getDelegationStatus(validator),
     validator: {
       name: validator?.name ?? "",

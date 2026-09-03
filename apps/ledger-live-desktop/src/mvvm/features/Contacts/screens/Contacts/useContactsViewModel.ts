@@ -72,6 +72,7 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
     addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
     onClearSearch: () => void;
     onRequestAddContact: (onAllowed: () => void) => void;
+    onSelectContact: (contactId: ContactId) => void;
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {
@@ -202,7 +203,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   );
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
-  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
+  const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const onAddAddress = useCallback(
     (contact: AddAddressContact) => {
       const result = requestMutation(
@@ -211,7 +212,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       );
       if (result.status !== "allowed") {
         if (result.status === "blocked") {
-          setIsLedgerSyncIntroductionDismissed(false);
+          setIsLedgerSyncIntroductionRequested(true);
         }
         return;
       }
@@ -343,6 +344,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailActionsDialogs,
     onOpenMe,
     onOpenContact,
+    onSelectContact,
   } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
   const preference = useContactsFeatureIntroductionPreference();
   const featureIntroductionState = useContactsFeatureIntroductionState({
@@ -388,13 +390,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
     dismissPendingIntent();
-    setIsLedgerSyncIntroductionDismissed(true);
+    setIsLedgerSyncIntroductionRequested(false);
   }, [analytics, dismissPendingIntent]);
   const onActivateLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
-    setIsLedgerSyncIntroductionDismissed(true);
-    openDrawer();
+    setIsLedgerSyncIntroductionRequested(false);
+    openDrawer({ startOnSyncMethod: true });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {
@@ -402,7 +404,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       if (result.status === "allowed") {
         onAllowed();
       } else if (result.status === "blocked") {
-        setIsLedgerSyncIntroductionDismissed(false);
+        setIsLedgerSyncIntroductionRequested(true);
       }
     },
     [ledgerSyncStatus, requestMutation],
@@ -411,14 +413,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();
-      setIsLedgerSyncIntroductionDismissed(false);
+      setIsLedgerSyncIntroductionRequested(false);
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: featureIntroductionState.isRequested,
     ledgerSyncStatus,
-    isLedgerSyncIntroductionDismissed,
+    isLedgerSyncIntroductionRequested,
   });
   const onCompleteFeatureIntroduction = useCallback(() => {
     featureIntroductionState.dismiss();
@@ -450,13 +452,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onRequestAddContact,
     onOpenMe,
     onOpenContact,
+    onSelectContact,
     detail,
     ledgerSyncStatus,
     dieProps,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
       title: t("contacts.featureIntroduction.title"),
-      description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: onCompleteFeatureIntroduction,
@@ -464,6 +466,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
+      title: t("contacts.ledgerSyncIntroduction.title"),
       description: t("contacts.ledgerSyncIntroduction.description"),
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),

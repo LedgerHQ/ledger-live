@@ -42,7 +42,7 @@ export default class DiscoverPage {
     await openDeeplink(this.baseLink + (appName ?? ""));
   }
 
-  getAppUrl(name: DiscoverAppName) {
+  private getAppUrl(name: DiscoverAppName) {
     const app = this.discoverApps.find(app => app.name === name)!;
     return app.url;
   }

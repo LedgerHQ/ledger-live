@@ -114,8 +114,8 @@ const makeStore = (
       gdm({
         thunk: {
           extraArgument: cardApiExtra({
-            cardApiBaseUrl: "https://card.test",
-            cardBaanxClientKey: "client-key",
+            getCardApiBaseUrl: () => "https://card.test",
+            getCardBaanxClientKey: () => "client-key",
             getCardSessionToken,
             refreshCardSession: () => Promise.resolve(null),
           }),

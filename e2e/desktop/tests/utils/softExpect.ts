@@ -8,7 +8,7 @@ export type SoftExpectOptions = {
   timeout?: number;
 };
 
-export type SoftExpectParams = {
+type SoftExpectParams = {
   page: Page;
   assertion: (soft: SoftExpectMatcher) => Promise<void>;
 };

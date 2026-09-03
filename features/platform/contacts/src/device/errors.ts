@@ -13,3 +13,7 @@ export class ContactDeviceIntentMissingResultError extends Error {
     super("The Contacts device intent completed without a result");
   }
 }
+
+export class ContactDeviceIntentInputError extends Error {
+  override name = "ContactDeviceIntentInputError" as const;
+}

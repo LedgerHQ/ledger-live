@@ -9,7 +9,7 @@ import {
   type RenameContactJobState,
   type RenameContactResult as RenameContactIntentResult,
 } from "../intents";
-import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
+import { CONTACTS_DASHBOARD_INITIALIZATION_INPUT } from "../resolveContactDeviceContext";
 import type { ContactOperation } from "../types";
 import type { IntentPlatformDefinition } from "@features/platform-device-intent";
 
@@ -40,11 +40,12 @@ export function createRenameExternalContactOperation(
   IntentResult,
   RenameExternalContactResult
 > {
-  const address = input.contact.addresses[0];
   const credentials = input.contact.deviceCredentials;
 
-  if (address === undefined || credentials === undefined) {
-    throw new Error("A contact with device credentials and an address is required");
+  // Rename is name-only and blockchain-agnostic: the group's own credentials are
+  // the whole input, so a contact with no address is still renameable.
+  if (credentials === undefined) {
+    throw new Error("A contact with device credentials is required");
   }
 
   return {
@@ -55,7 +56,7 @@ export function createRenameExternalContactOperation(
       groupHandle: credentials.groupHandle,
       hmacProof: credentials.hmacProof,
     },
-    initializationInput: resolveContactDeviceContext(address.currencyId).initializationInput,
+    initializationInput: CONTACTS_DASHBOARD_INITIALIZATION_INPUT,
     mapIntentResultToResult,
   };
 }

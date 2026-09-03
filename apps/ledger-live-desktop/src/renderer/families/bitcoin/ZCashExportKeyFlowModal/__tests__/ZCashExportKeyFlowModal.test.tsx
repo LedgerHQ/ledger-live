@@ -232,6 +232,37 @@ describe("ZCash Export UFVK Flow", () => {
     });
   });
 
+  it("opens the support article when Learn more is clicked on confirmation step", async () => {
+    const stepId: StepId = "confirmation";
+
+    render(
+      <Body
+        stepId={stepId}
+        ufvk={ufvk}
+        ufvkExportError={ufvkExportError}
+        onStepIdChanged={jest.fn()}
+        onUfvkChanged={jest.fn()}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        birthday={birthday}
+        invalidBirthday={invalidBirthday}
+        syncFromZero={syncFromZero}
+        handleBirthdayChange={jest.fn()}
+        handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
+        params={{ account }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/ufvk successfully imported/i)).toBeVisible();
+    });
+
+    await userEvent.click(screen.getByText(/learn more/i));
+
+    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article/115005177269-zd");
+  });
+
   it("should show confirmation step", async () => {
     const stepId: StepId = "confirmation";
 

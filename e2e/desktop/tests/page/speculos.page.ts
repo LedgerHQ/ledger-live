@@ -9,9 +9,7 @@ import {
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
   activateExpertMode,
-  activateContractData,
   removeMemberLedgerSync,
-  providePublicKey,
   exportUfvk,
   shareViewKey,
   approveToken,
@@ -85,16 +83,6 @@ export class SpeculosPage extends AppPage {
   @step("Activate expert mode")
   async activateExpertMode() {
     await activateExpertMode();
-  }
-
-  @step("Activate contract data")
-  async activateContractData() {
-    await activateContractData();
-  }
-
-  @step("Provide Public Key")
-  async providePublicKey() {
-    await providePublicKey();
   }
 
   @step("Export UFVK")

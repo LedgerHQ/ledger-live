@@ -1,11 +1,6 @@
 import { track } from "~/renderer/analytics/segment";
-import electron from "electron";
+import { shell } from "electron";
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
-
-let shell: Electron.Shell | undefined;
-if (!process.env.STORYBOOK_ENV) {
-  shell = electron.shell;
-}
 
 export const openURL = (url: string, customEventName = "OpenURL", extraParams: object = {}) => {
   if (!isUrlSafe(url)) {
@@ -18,5 +13,5 @@ export const openURL = (url: string, customEventName = "OpenURL", extraParams: o
       url,
     });
   }
-  return shell?.openExternal(url);
+  return shell.openExternal(url);
 };

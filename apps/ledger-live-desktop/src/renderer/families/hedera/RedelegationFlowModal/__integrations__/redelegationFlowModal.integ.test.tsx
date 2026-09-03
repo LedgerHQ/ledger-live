@@ -13,9 +13,13 @@ import {
   cleanupHederaModalTest,
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
+import {
+  useHederaEnrichedDelegation,
+  type HederaValidatorsQuery,
+} from "@ledgerhq/live-common/families/hedera/react";
 
-jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
+const mockValidatorsQuery: HederaValidatorsQuery = {
+  validators: [
     {
       id: "0",
       name: "Hedera Node 0",
@@ -26,6 +30,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       activeStake: new BigNumber(0),
       activeStakePercentage: new BigNumber(0),
       overstaked: false,
+      isLedgerNode: false,
     },
     {
       id: "5",
@@ -37,12 +42,21 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       activeStake: new BigNumber(0),
       activeStakePercentage: new BigNumber(0),
       overstaked: false,
+      isLedgerNode: false,
     },
-  ]),
+  ],
+  loading: false,
+  error: null,
+};
+
+jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(() => ({
     nodeId: 0,
     delegated: new BigNumber(5_000_000_000),
     pendingReward: new BigNumber(500_000),
+    loading: false,
+    error: null,
     status: HEDERA_DELEGATION_STATUS.Active,
     validator: {
       id: "0",
@@ -74,6 +88,9 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getAccountBridge: () => require("../../__mocks__/bridge.mock").resolvedAccountBridge,
   getCurrencyBridge: () => require("../../__mocks__/bridge.mock").resolvedCurrencyBridge,
 }));
+
+const mockUseHederaEnrichedDelegation = jest.mocked(useHederaEnrichedDelegation);
+
 beforeEach(async () => {
   await setupHederaModalTest();
 });
@@ -124,5 +141,36 @@ describe("Hedera RedelegationFlowModal (integration)", () => {
     });
 
     await waitFor(() => expect(screen.getByRole("button", { name: /retry/i })).toBeVisible());
+  });
+
+  it("does not show the removed-validator placeholder when the validators fetch fails", async () => {
+    mockUseHederaEnrichedDelegation.mockReturnValueOnce({
+      nodeId: 0,
+      delegated: new BigNumber(5_000_000_000),
+      pendingReward: new BigNumber(500_000),
+      loading: false,
+      error: new Error("network down"),
+      status: HEDERA_DELEGATION_STATUS.Inactive,
+      validator: {
+        id: "0",
+        name: "",
+        address: "",
+        addressChecksum: null,
+        minStake: new BigNumber(0),
+        maxStake: new BigNumber(0),
+        activeStake: new BigNumber(0),
+        activeStakePercentage: new BigNumber(0),
+        overstaked: false,
+        isLedgerNode: false,
+      },
+    });
+
+    setupModal();
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText(/previously selected validator is no longer available/i),
+      ).not.toBeInTheDocument(),
+    );
   });
 });

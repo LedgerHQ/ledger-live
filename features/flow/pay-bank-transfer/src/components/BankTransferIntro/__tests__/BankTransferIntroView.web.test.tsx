@@ -7,12 +7,16 @@ const defaultProps: BankTransferIntroViewProps = {
   isOpen: true,
   title: "Convert cash to stablecoins",
   description: "Transfer USD or EUR from your bank.",
-  continueLabel: "Continue",
+  createAccountLabel: "Create an account",
+  logInLabel: "Log in",
+  providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
   bottomInset: 0,
   onShown: jest.fn(),
-  onContinuePress: jest.fn(),
+  onCreateAccountPress: jest.fn(),
+  onLogInPress: jest.fn(),
   onClosePress: jest.fn(),
+  onDismiss: jest.fn(),
 };
 
 describe("BankTransferIntroView (Web)", () => {
@@ -36,13 +40,13 @@ describe("BankTransferIntroView (Web)", () => {
     expect(onShown).not.toHaveBeenCalled();
   });
 
-  it("continues once even if the CTA is clicked repeatedly", () => {
-    const onContinuePress = jest.fn();
-    render(<BankTransferIntroView {...defaultProps} onContinuePress={onContinuePress} />);
+  it("creates an account once even if the CTA is clicked repeatedly", () => {
+    const onCreateAccountPress = jest.fn();
+    render(<BankTransferIntroView {...defaultProps} onCreateAccountPress={onCreateAccountPress} />);
 
-    fireEvent.click(screen.getByTestId("pay-bank-transfer-intro-continue"));
-    fireEvent.click(screen.getByTestId("pay-bank-transfer-intro-continue"));
+    fireEvent.click(screen.getByTestId("pay-bank-transfer-intro-create-account"));
+    fireEvent.click(screen.getByTestId("pay-bank-transfer-intro-create-account"));
 
-    expect(onContinuePress).toHaveBeenCalledTimes(1);
+    expect(onCreateAccountPress).toHaveBeenCalledTimes(1);
   });
 });

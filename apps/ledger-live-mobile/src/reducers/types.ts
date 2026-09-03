@@ -41,6 +41,7 @@ import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
+import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
@@ -424,6 +425,7 @@ export type WalletSyncState = {
   isManageKeyDrawerOpen: boolean;
   isActivateDrawerOpen: boolean;
   activateDrawerStep: Steps;
+  returnsToEntryScreen: boolean;
 };
 
 // === LARGEMOVER STATE ===
@@ -479,6 +481,7 @@ export type State = LLMRTKApiState & {
   sendFlow: SendFlowState;
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
+  payRequestVerifyHint: PayRequestVerifyHintState;
   payCardAuth: PayCardAuthState;
   settings: SettingsState;
   toasts: ToastState;

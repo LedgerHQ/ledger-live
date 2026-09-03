@@ -2,8 +2,6 @@ import React from "react";
 import {
   ContactAddressDetailDialog,
   ContactsDeleteAddressDialog,
-  ContactsDeleteContactDialog,
-  ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
   ContactsView as ContactsFlowView,
   type ContactAddressDetailDialogProps,
@@ -11,6 +9,7 @@ import {
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
 import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
+import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import {
@@ -53,11 +52,9 @@ export function ContactsView({
           <ContactsAddAddressFlowDialog {...addAddressFlowDialog} />
           <ContactsRenameContactDialog {...editDeleteDialogs.renameDialog} />
           <ContactsDeleteContactDialog {...editDeleteDialogs.deleteDialog} />
-          <ContactsEditSignerDialog {...editDeleteDialogs.signerDialog} />
           <ContactsEditSignerMismatchDialog {...editDeleteDialogs.signerMismatchDialog} />
           <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
           <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
-          <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
           <ContactsEditSignerMismatchDialog {...addressDetailActionsDialogs.signerMismatchDialog} />
         </>
       )}

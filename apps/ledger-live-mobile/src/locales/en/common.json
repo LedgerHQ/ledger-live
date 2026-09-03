@@ -129,6 +129,9 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
       "description": "The network fee might be too low. Please increase"
@@ -3172,7 +3175,8 @@
       "previousStakingNodeId": "Previous node ID",
       "gasConsumed": "Gas consumed",
       "gasUsed": "Gas used",
-      "functionId": "Function ID"
+      "functionId": "Function ID",
+      "inputs": "Inputs"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -4274,6 +4278,11 @@
             "viewInExplorer": "View in explorer",
             "copied": "Copied"
           },
+          "earnBanner": {
+            "title": "Earn up to {{apy}}% {{type}}",
+            "description": "Explore Earn opportunities",
+            "button": "Explore"
+          },
           "accessibility": {
             "copySwapId": "Copy swap ID"
           }
@@ -4579,7 +4588,11 @@
       "addContact": {
         "newContact": "Add a new contact",
         "existingContact": "Add to an existing contact",
-        "selectContact": "Select contact"
+        "selectContact": "Select contact",
+        "syncWallet": {
+          "title": "Sync your wallet to add a contact",
+          "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers."
+        }
       },
       "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
@@ -8694,7 +8707,9 @@
           "inactive": "Inactive",
           "inactiveTooltip": "Validator not found",
           "overstaked": "Overstaked",
-          "overstakedTooltip": "This node is overstaked, APY is lower than optimal"
+          "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+          "fetchError": "Unable to load",
+          "fetchErrorTooltip": "Couldn't load validator data. Please try again."
         },
         "rewards": "Rewards",
         "actions": {
@@ -9245,6 +9260,10 @@
         "title": "Ledger Sync",
         "description": "Sync your accounts automatically, even when switching to a new phone.",
         "cta": "Turn on Ledger Sync"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "activation": {
@@ -9730,6 +9749,14 @@
     "accountCount_other": "{{count}} accounts",
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
     "addAccount": "Add account",
+    "unsupportedAssetExplanation": {
+      "title": "{{asset}} isn't supported yet",
+      "description": "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
+    },
+    "unsupportedNetworkExplanation": {
+      "title": "{{network}} Network isn't supported yet",
+      "description": "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
+    },
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
@@ -10089,21 +10116,21 @@
   },
   "payTab": {
     "featureTour": {
-      "title": "Pay and get paid",
-      "description": "Stablecoin closes the gap between crypto and real life spending",
-      "cta": "Got it",
+      "title": "All your payments, in one place",
+      "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
+      "cta": "Explore Pay",
       "rows": {
         "global": {
-          "title": "Pay and get paid globally",
-          "description": "Benefits from low networks fees"
+          "title": "Pay your contacts",
+          "description": "Send crypto to saved addresses."
         },
         "volatility": {
-          "title": "Minimal volatility",
-          "description": "Stablecoin are based on fiat"
+          "title": "Request payments",
+          "description": "Ask Contacts to send funds straight to you."
         },
         "card": {
-          "title": "Spend with a card and get 1% cashback",
-          "description": "Pay in USDC, USDT, BTC, ETH and more"
+          "title": "Shop worldwide with crypto card",
+          "description": "And earn uncapped 1% cashback."
         }
       }
     },
@@ -10134,6 +10161,26 @@
         "copied": "Copied",
         "save": "Save",
         "verify": "Verify"
+      },
+      "verifyAddress": {
+        "introTitle": "Verify your address",
+        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
+        "verifyCta": "Verify address",
+        "successTitle": "Address displayed on the device's Secure Screen",
+        "nextStepsLabel": "Next steps",
+        "nextStepShare": "Share your address via your desired app.",
+        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "gotItCta": "Got it",
+        "device": {
+          "cancelledTitle": "Address verification cancelled",
+          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
+          "mismatchTitle": "Addresses don't match",
+          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
+          "unsupportedTitle": "Verification not available",
+          "unsupportedDescription": "This device app can't display the address for on-device verification.",
+          "retryCta": "Show address again",
+          "closeCta": "Close"
+        }
       }
     },
     "deposit": {
@@ -10154,6 +10201,27 @@
         "buy": {
           "title": "Buy",
           "description": "Buy stablecoins with credit card."
+        }
+      }
+    },
+    "bankTransferIntro": {
+      "title": "Send cash, receive stablecoin",
+      "description": "Transfer cash and receive stablecoins straight to your Ledger Wallet™.",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Noah",
+      "providedBy": "Provided by Noah",
+      "rows": {
+        "bank": {
+          "title": "Receive transfers from any bank",
+          "description": "Get salary, payments, deposits via SEPA or ACH."
+        },
+        "fees": {
+          "title": "No hidden fees",
+          "description": "Direct from bank to blockchain for 0.25% fees."
+        },
+        "earn": {
+          "title": "Put your money to work right away",
+          "description": "You can swap or earn with your stablecoin."
         }
       }
     },
@@ -10387,6 +10455,41 @@
     }
   },
   "contacts": {
+    "deviceIntents": {
+      "registerExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "editExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "errors": {
+        "wrongDevice": {
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
+        },
+        "invalidData": {
+          "title": "This address can't be saved",
+          "description": "Your Ledger device rejected the contact details. Try again or contact Ledger Support if the issue continues."
+        },
+        "appVersionTooLow": {
+          "title": "App update required",
+          "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
+        }
+      }
+    },
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
@@ -10495,12 +10598,6 @@
       "applyChanges": "Apply changes",
       "invalidLabelError": "Special characters are not allowed."
     },
-    "editSigner": {
-      "title": "Confirm on your device",
-      "description": "Connect and unlock your Ledger device to confirm this change.",
-      "confirm": "Continue",
-      "cancel": "Cancel"
-    },
     "editSignerMismatch": {
       "title": "Use the same Ledger device you used to add this contact",
       "description": "The connected device isn't a match.",
@@ -10508,27 +10605,26 @@
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
-      "title": "Turn on Ledger Sync to save contacts",
-      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "activate": "Turn on Ledger Sync",
-      "dismiss": "Got it",
+      "title": "Sync your wallet to add a contact",
+      "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      "activate": "Sync my wallet",
+      "dismiss": "Not now",
       "checkingAccessibilityLabel": "Checking Ledger Sync status"
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
-      "primaryAction": "Try contacts",
+      "primaryAction": "Explore now",
       "highlights": {
         "saveAddresses": {
-          "title": "Save addresses once",
-          "description": "Keep the addresses you send to in one place."
+          "title": "Save addresses by a name you choose",
+          "description": "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress": {
           "title": "Send to the right address",
-          "description": "Funds reach the right wallet every time."
+          "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Private across your devices",
+          "title": "Securely top up via Ledger Wallet™",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

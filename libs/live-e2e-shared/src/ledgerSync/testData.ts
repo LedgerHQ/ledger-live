@@ -30,29 +30,3 @@ export const secondEthAccount: LedgerSyncAccountDescriptor = {
   derivationMode: "",
   freshAddress: "0x1aB2c3D4e5F60718293A4b5C6d7E8f90A1b2C3d4",
 };
-
-/** Named accounts the mobile suite pushes and then asserts on by name in the accounts list. */
-export const dogecoinAccount: LedgerSyncAccountDescriptor = {
-  id: "mock:1:dogecoin:0.790010769447963:",
-  currencyId: "dogecoin",
-  index: 1,
-  seedIdentifier: "mock",
-  derivationMode: "",
-  freshAddress: "1uVnrWAzycYqKUXSuNXt3XSjJ8",
-};
-
-export const bitcoinGoldAccount: LedgerSyncAccountDescriptor = {
-  id: "mock:1:bitcoin_gold:0.8027791663782486:",
-  currencyId: "bitcoin_gold",
-  index: 1,
-  seedIdentifier: "mock",
-  derivationMode: "",
-  freshAddress: "1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R",
-};
-
-export const namedAccounts: LedgerSyncAccountDescriptor[] = [dogecoinAccount, bitcoinGoldAccount];
-
-export const namedAccountNames: Record<string, string> = {
-  [dogecoinAccount.id]: "Dogecoin 2",
-  [bitcoinGoldAccount.id]: "Bitcoin Gold 2",
-};

@@ -119,6 +119,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const arcTestnet = useFeature("currencyArcTestnet");
   const robinhood = useFeature("currencyRobinhood");
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+  const gonka = useFeature("currencyGonka");
 
   const featureFlaggedCurrencies = useMemo(
     (): FeatureFlaggedCurrencies => ({
@@ -214,6 +215,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       arc_testnet: arcTestnet,
       robinhood,
       robinhood_testnet: robinhoodTestnet,
+      gonka,
     }),
     [
       adi,
@@ -308,6 +310,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       arcTestnet,
       robinhood,
       robinhoodTestnet,
+      gonka,
     ],
   );
 

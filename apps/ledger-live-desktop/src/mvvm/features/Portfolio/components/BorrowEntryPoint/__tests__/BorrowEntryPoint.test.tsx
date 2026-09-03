@@ -1,5 +1,5 @@
 import React from "react";
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 import { render, screen } from "tests/testSetup";
 import { useBorrowEntryPointViewModel } from "../../../hooks/useBorrowEntryPointViewModel";
 import { BorrowEntryPoint } from "../index";

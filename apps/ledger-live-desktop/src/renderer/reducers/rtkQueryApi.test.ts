@@ -16,6 +16,7 @@ const EXPECTED_REDUCER_PATHS = [
   "coinMarketCapApi",
   "counterValuesApi",
   "countervaluesApi",
+  "hederaApi",
   "marketApi",
   "ofacGeoBlockApi",
   "pushDevicesApi",

@@ -55,5 +55,6 @@ describe("useCurrenciesUnderFeatureFlag", () => {
     expect(currencies).toHaveProperty("aptos");
     expect(currencies).toHaveProperty("stacks");
     expect(currencies).toHaveProperty("optimism");
+    expect(currencies).toHaveProperty("gonka");
   });
 });

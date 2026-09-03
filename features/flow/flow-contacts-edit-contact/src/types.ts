@@ -39,12 +39,14 @@ export type ContactsRenameContactLabels = Readonly<{
 
 export type ContactsRenameContactDialogProps = RenameContactDialogViewModel &
   Readonly<{
+    isDeviceRequired: boolean;
     labels: ContactsRenameContactLabels;
   }>;
 
-export type ContactsRenameContactDrawerProps = RenameContactDialogViewModel &
+export type ContactsRenameContactDrawerProps = ContactsRenameContactDialogProps &
   Readonly<{
     bottomInset?: number;
     keyboardInset?: number;
-    labels: ContactsRenameContactLabels;
+    /** Set once the hosting drawer has settled, so the keyboard does not interrupt it opening. */
+    autoFocus?: boolean;
   }>;

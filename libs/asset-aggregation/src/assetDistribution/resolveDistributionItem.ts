@@ -8,6 +8,14 @@ export type DistributionLookup = {
 
 export type MarketStateSlice = { ledgerIds?: string[] } | undefined;
 
+/** Case-insensitive matcher for a group of ids. */
+type IdMatcher = { readonly size: number; matches: (id: string) => boolean };
+
+function createIdMatcher(...ids: Array<string | undefined>): IdMatcher {
+  const set = new Set(ids.filter((id): id is string => id != null).map(id => id.toLowerCase()));
+  return { size: set.size, matches: id => set.has(id.toLowerCase()) };
+}
+
 export type ResolveDistributionItemParams = {
   /** The id (or slug) coming from the route / caller. */
   routeAssetId: string | undefined;
@@ -42,15 +50,21 @@ export function resolveDistributionItem({
   if (!routeAssetId) return undefined;
   const decoded = decodedAssetId ?? routeAssetId;
   const marketLedgerId = marketState?.ledgerIds?.[0];
-  const targetIds = new Set(
-    [decoded, marketLedgerId].filter((id): id is string => id != null).map(id => id.toLowerCase()),
-  );
-  const matchesId = (id: string): boolean => targetIds.has(id.toLowerCase());
+  const primaryMatcher = createIdMatcher(decoded, marketLedgerId);
+
+  // Network matching only uses ledger ids, never a bare market id that can collide
+  // with a chain id (e.g. "arbitrum" is a market id and the Arbitrum One chain id).
+  const decodedLedgerId = decoded.includes("/") ? decoded : undefined;
+  const networkMatcher = createIdMatcher(decodedLedgerId, marketLedgerId);
 
   return (
     distribution.bySlug?.[decoded] ??
     (marketLedgerId ? distribution.bySlug?.[toSlug(marketLedgerId)] : undefined) ??
-    distribution.list.find(item => matchesId(item.currency.id)) ??
-    distribution.list.find(item => item.networks?.some(n => matchesId(n.currency.id)))
+    distribution.list.find(item => primaryMatcher.matches(item.currency.id)) ??
+    (networkMatcher.size > 0
+      ? distribution.list.find(item =>
+          item.networks?.some(n => networkMatcher.matches(n.currency.id)),
+        )
+      : undefined)
   );
 }

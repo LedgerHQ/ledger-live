@@ -2,7 +2,6 @@ import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   type ContactsDeleteAddressDialogProps,
-  type ContactsEditSignerDialogProps,
   type ContactsEditSignerMismatchDialogProps,
   type ContactAddressDetailDialogProps,
   type ContactAddressDetailSendIntent,
@@ -39,7 +38,6 @@ export type ContactAddressDetailActionsDialogProps = Readonly<{
   >;
   deleteDialog: ContactsDeleteAddressDialogProps;
   renameDialog: ContactsRenameAddressDialogProps;
-  signerDialog: ContactsEditSignerDialogProps;
   signerMismatchDialog: ContactsEditSignerMismatchDialogProps;
 }>;
 
@@ -50,7 +48,6 @@ function mapUiStateToDialogProps(
     addressDetailDialog: uiState.addressDetailDialog,
     deleteDialog: uiState.delete,
     renameDialog: uiState.rename,
-    signerDialog: uiState.signer,
     signerMismatchDialog: uiState.signerMismatch,
   };
 }

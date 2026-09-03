@@ -17,6 +17,8 @@ export { getRawTransactionType, getStakeTarget, type TransactionLike } from "./t
 
 export { rememberSignContext, type SignContext } from "./signContext";
 
+export { isStakingApp, knownStakingApps, stakingMethodOf, type StakingMethod } from "./stakingApps";
+
 export {
   buildBroadcastCommonEvent,
   buildSignCommonEvent,

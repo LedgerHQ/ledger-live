@@ -46,24 +46,21 @@ function createViewModel({
       ? {
           isOpen: true,
           title: "Introducing Contacts",
-          description: "Your address book for crypto.",
           highlights: [],
-          primaryActionLabel: "Try contacts",
+          primaryActionLabel: "Explore now",
           onComplete: jest.fn(),
           onClose: jest.fn(),
         }
       : createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
       isOpen: isFeatureIntroductionOpen ? false : isIntroductionOpen,
+      title: "Sync your wallet to add a contact",
       description:
-        "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      dismissLabel: "Got it",
-      onDismiss,
-    },
-    ledgerSyncIntroductionContent: {
-      title: "Turn on Ledger Sync to save contacts",
-      activateLabel: "Turn on Ledger Sync",
+        "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      activateLabel: "Sync my wallet",
+      dismissLabel: "Not now",
       onActivate,
+      onDismiss,
     },
     addContactDrawer: {
       isOpen: false,
@@ -88,22 +85,26 @@ function createViewModel({
       onConfirm: jest.fn(),
       reset: jest.fn(),
     },
+    ledgerSyncActivationDrawer: {
+      isOpen: false,
+      onClose: jest.fn(),
+    },
   };
 }
 
 describe("ContactsPageContent", () => {
-  it("should render the inactive introduction with the Figma labels", () => {
+  it("should render the introduction with the Contacts production labels", () => {
     render(<ContactsPageContent {...createViewModel()} />);
 
     expect(screen.getByTestId("contacts-screen")).toBeVisible();
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
     expect(
       screen.getByText(
-        "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+        "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
       ),
     ).toBeVisible();
-    expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Got it" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Sync my wallet" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Not now" })).toBeEnabled();
   });
 
   it("should keep the introduction open when activating Ledger Sync", async () => {
@@ -113,18 +114,18 @@ describe("ContactsPageContent", () => {
       <ContactsPageContent {...createViewModel({ onActivate, onDismiss })} />,
     );
 
-    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+    await user.press(screen.getByRole("button", { name: "Sync my wallet" }));
 
     expect(onActivate).toHaveBeenCalledTimes(1);
     expect(onDismiss).not.toHaveBeenCalled();
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
   });
 
   it("should dismiss the introduction from the secondary action", async () => {
     const onDismiss = jest.fn();
     const { user } = render(<ContactsPageContent {...createViewModel({ onDismiss })} />);
 
-    await user.press(screen.getByRole("button", { name: "Got it" }));
+    await user.press(screen.getByRole("button", { name: "Not now" }));
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
@@ -136,7 +137,7 @@ describe("ContactsPageContent", () => {
       />,
     );
 
-    expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
 
     rerender(
       <ContactsPageContent
@@ -145,7 +146,7 @@ describe("ContactsPageContent", () => {
     );
     rerender(<ContactsPageContent {...createViewModel({ ledgerSyncStatus: "inactive" })} />);
 
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
   });
 
   it("should defer the Ledger Sync introduction while the feature introduction is open", () => {
@@ -161,7 +162,7 @@ describe("ContactsPageContent", () => {
       />,
     );
 
-    expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
     expect(screen.getByTestId("contacts-feature-introduction-primary")).toBeVisible();
 
     rerender(
@@ -175,6 +176,6 @@ describe("ContactsPageContent", () => {
       />,
     );
 
-    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.getByText("Sync your wallet to add a contact")).toBeVisible();
   });
 });

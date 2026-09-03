@@ -1,6 +1,10 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { Keyboard, type KeyboardEvent } from "react-native";
-import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "./keyboardVisible";
+import {
+  resolveKeyboardBottomOffset,
+  shouldUseKeyboardAvoidance,
+  useKeyboardVisible,
+} from "./keyboardVisible";
 
 describe("shouldUseKeyboardAvoidance", () => {
   it("should enable JavaScript keyboard avoidance on iOS and Android 35+", () => {
@@ -10,6 +14,52 @@ describe("shouldUseKeyboardAvoidance", () => {
 
   it("should keep native Android resize below API 35", () => {
     expect(shouldUseKeyboardAvoidance("android", 34)).toBe(false);
+  });
+});
+
+describe("resolveKeyboardBottomOffset", () => {
+  it("should add the iOS gap when the keyboard is visible", () => {
+    expect(
+      resolveKeyboardBottomOffset({
+        isKeyboardVisible: true,
+        keyboardHeight: 300,
+        platform: "ios",
+        version: "18.0",
+      }),
+    ).toBe(332);
+  });
+
+  it("should use the keyboard height without a gap on Android 35+", () => {
+    expect(
+      resolveKeyboardBottomOffset({
+        isKeyboardVisible: true,
+        keyboardHeight: 300,
+        platform: "android",
+        version: 35,
+      }),
+    ).toBe(300);
+  });
+
+  it("should reserve nothing when the keyboard is hidden", () => {
+    expect(
+      resolveKeyboardBottomOffset({
+        isKeyboardVisible: false,
+        keyboardHeight: 300,
+        platform: "ios",
+        version: "18.0",
+      }),
+    ).toBe(0);
+  });
+
+  it("should reserve nothing when native Android resize handles the keyboard", () => {
+    expect(
+      resolveKeyboardBottomOffset({
+        isKeyboardVisible: true,
+        keyboardHeight: 300,
+        platform: "android",
+        version: 34,
+      }),
+    ).toBe(0);
   });
 });
 

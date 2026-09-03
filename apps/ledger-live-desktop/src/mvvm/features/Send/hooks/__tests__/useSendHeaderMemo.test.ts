@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientMemo } from "../../screens/Recipient/hooks/useRecipientMemo";
 import { useSendHeaderMemo } from "../useSendHeaderMemo";
 
@@ -16,6 +17,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
+    hasMemoForRecipient: jest.fn(() => true),
     getMemoDefaultOption: jest.fn(() => undefined),
   },
 }));
@@ -144,6 +146,24 @@ describe("useSendHeaderMemo", () => {
     renderHook(() => useSendHeaderMemo());
 
     expect(resetKey).toBe("ripple-account|ripple|rNewRecipient");
+  });
+
+  it("should disable memo state when the recipient does not support memos", () => {
+    jest.mocked(sendFeatures.hasMemoForRecipient).mockReturnValue(false);
+    mockFlow({
+      searchValue: "rTransparentRecipient",
+      recipient: null,
+    });
+
+    renderHook(() => useSendHeaderMemo());
+
+    expect(sendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "ripple" }),
+      "rTransparentRecipient",
+    );
+    expect(mockedUseRecipientMemo).toHaveBeenCalledWith(
+      expect.objectContaining({ hasMemo: false }),
+    );
   });
 
   it("should go to the next step when skipping memo", () => {

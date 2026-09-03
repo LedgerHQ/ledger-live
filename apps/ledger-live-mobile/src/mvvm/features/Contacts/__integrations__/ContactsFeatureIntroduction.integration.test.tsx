@@ -64,10 +64,10 @@ describe("Contacts feature introduction integration", () => {
       expect(screen.getByText("Introducing Contacts")).toBeVisible();
       expect(screen.getByTestId("contacts-feature-introduction-primary")).toBeVisible();
     });
-    expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
   });
 
-  it("should persist dismissal from Try contacts and keep the Contacts page available", async () => {
+  it("should persist dismissal from Explore now and keep the Contacts page available", async () => {
     const { user, store } = render(<ContactsFeatureIntroductionTestApp />, {
       navigationInitialState: contactsNavigationState,
       overrideInitialState: withFlagOverrides(

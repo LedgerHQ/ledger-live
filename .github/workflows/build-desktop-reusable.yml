@@ -73,6 +73,7 @@ jobs:
 
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      NX_POWERPACK_CACHE_MODE: ${{ matrix.config.name == 'Windows' && 'read-only' || '' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:

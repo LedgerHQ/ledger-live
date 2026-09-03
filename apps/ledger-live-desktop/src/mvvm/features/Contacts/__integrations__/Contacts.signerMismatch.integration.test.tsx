@@ -47,13 +47,7 @@ function renderContactsScreen(extraInitialState: Record<string, unknown> = {}) {
   );
 }
 
-async function expectSignerMismatchDialog(user: Awaited<ReturnType<typeof render>>["user"]) {
-  await waitFor(() => {
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-  });
-
-  await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
+async function expectSignerMismatchDialog() {
   await waitFor(() => {
     expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-edit-signer-mismatch-dialog")).toBeVisible();
@@ -81,7 +75,7 @@ describe("Contacts signer mismatch integration", () => {
     await user.type(labelInput, "Main ETH");
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
 
-    await expectSignerMismatchDialog(user);
+    await expectSignerMismatchDialog();
   });
 
   it("should show the signer mismatch dialog when contact edit validation fails", async () => {
@@ -99,7 +93,7 @@ describe("Contacts signer mismatch integration", () => {
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
 
-    await expectSignerMismatchDialog(user);
+    await expectSignerMismatchDialog();
   });
 
   it("should return to the edit dialog with the draft intact when the mismatch is cancelled", async () => {
@@ -117,7 +111,7 @@ describe("Contacts signer mismatch integration", () => {
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
 
-    await expectSignerMismatchDialog(user);
+    await expectSignerMismatchDialog();
 
     await user.click(screen.getByTestId("contacts-edit-signer-mismatch-cancel"));
 

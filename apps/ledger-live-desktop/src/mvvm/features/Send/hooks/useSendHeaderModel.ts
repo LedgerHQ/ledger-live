@@ -1,9 +1,10 @@
-import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
+import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
@@ -11,6 +12,7 @@ import { useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SendFlowBusinessContext,
   useSendFlowActions,
@@ -60,6 +62,42 @@ function getRecipientPlaceholderKey({
   return supportsDomain ? "newSendFlow.placeholder" : "newSendFlow.placeholderNoENS";
 }
 
+function resolveHeaderTitle({
+  isSelectingContactAddress,
+  showTitle,
+  titleKey,
+  currencyName,
+  memoLabel,
+}: Readonly<{
+  isSelectingContactAddress: boolean;
+  showTitle: boolean;
+  titleKey: string;
+  currencyName: string;
+  memoLabel: string;
+}>): string {
+  if (isSelectingContactAddress) return t("newSendFlow.selectAddress");
+  if (!showTitle) return "";
+  return t(titleKey, { currency: currencyName, memoLabel });
+}
+
+function resolveHeaderDescription({
+  isSelectingContactAddress,
+  selectedContactName,
+  showTitle,
+  showAvailable,
+  accountSummary,
+}: Readonly<{
+  isSelectingContactAddress: boolean;
+  selectedContactName: string | undefined;
+  showTitle: boolean;
+  showAvailable: boolean;
+  accountSummary: string;
+}>): string {
+  if (isSelectingContactAddress) return selectedContactName ?? "";
+  if (showTitle && showAvailable && accountSummary) return accountSummary;
+  return "";
+}
+
 export function useSendHeaderModel({
   availableText,
   resetViewState,
@@ -75,6 +113,8 @@ export function useSendHeaderModel({
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
+  const memoCurrencyId = getMemoFamilyCurrencyId(state.account.currency);
+  const memoLabel = t([`families.${memoCurrencyId}.memo`, "common.memo"]);
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
 
   const { navigation, currentStep } = wizard;
@@ -87,9 +127,13 @@ export function useSendHeaderModel({
   const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
   const showRecipientInput =
     (currentStepConfig?.addressInput ?? false) && !isSelectingContactAddress;
+  const recipientSupportsMemo = sendFeatures.hasMemoForRecipient(
+    state.account.currency ?? undefined,
+    recipientSearch.value,
+  );
   const showMemoControls = Boolean(
     showRecipientInput &&
-    uiConfig.hasMemo &&
+    recipientSupportsMemo &&
     recipientSearch.value.length > 0 &&
     isRecipientAddressComplete,
   );
@@ -126,17 +170,21 @@ export function useSendHeaderModel({
   });
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
-  const title = isSelectingContactAddress
-    ? t("newSendFlow.selectAddress")
-    : showTitle
-      ? t(titleKey, { currency: currencyName })
-      : "";
+  const title = resolveHeaderTitle({
+    isSelectingContactAddress,
+    showTitle,
+    titleKey,
+    currencyName,
+    memoLabel,
+  });
 
-  const descriptionText = isSelectingContactAddress
-    ? selectedContact.name
-    : showTitle && showAvailable && accountSummary
-      ? accountSummary
-      : "";
+  const descriptionText = resolveHeaderDescription({
+    isSelectingContactAddress,
+    selectedContactName: selectedContact?.name,
+    showTitle,
+    showAvailable,
+    accountSummary,
+  });
 
   const handleBack = useCallback(() => {
     closeScanner();

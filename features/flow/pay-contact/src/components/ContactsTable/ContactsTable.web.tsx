@@ -12,15 +12,16 @@ import type { ContactsViewProps } from "../../types";
 
 type ContactsTableProps = Pick<
   ContactsViewProps,
-  "rows" | "labels" | "renderAddresses" | "onPayContact" | "onContactMore"
+  "rows" | "labels" | "renderAddresses" | "onContactPress" | "onViewContact" | "onViewTransactions"
 >;
 
 export function ContactsTable({
   rows,
   labels,
   renderAddresses,
-  onPayContact,
-  onContactMore,
+  onContactPress,
+  onViewContact,
+  onViewTransactions,
 }: ContactsTableProps) {
   return (
     <TableRoot appearance="plain" data-testid="pay-contacts-list">
@@ -41,8 +42,9 @@ export function ContactsTable({
               transactionCount={transactionCount}
               labels={labels}
               renderAddresses={renderAddresses}
-              onPay={onPayContact}
-              onMore={onContactMore}
+              onContactPress={onContactPress}
+              onViewContact={onViewContact}
+              onViewTransactions={onViewTransactions}
             />
           ))}
         </TableBody>

@@ -35,7 +35,7 @@ export type CliCommand = ((
 };
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
-export type SpeculosFixtureHandle = {
+type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
   get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
@@ -70,7 +70,10 @@ type TestFixtures = {
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+setEnv(
+  "SWAP_API_BASE",
+  process.env.SWAP_API_BASE || "https://global.api.stg.ledger-test.com/swap/v5",
+);
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   // Factories tag commands via `named(...)`; treat the inferred "cmd" (from `const cmd = …`

@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./model": "./src/model.ts",
     "./jest.native": "./src/jest.native.ts",
     "./package.json": "./package.json"
   },
@@ -30,6 +31,7 @@
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/flow-contacts-edit-address": "workspace:^",
     "@features/flow-contacts-edit-contact": "workspace:^",
+    "@features/flow-contacts-delete-contact": "workspace:^",
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",
     "@features/platform-contacts": "workspace:^",

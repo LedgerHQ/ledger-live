@@ -29,8 +29,11 @@
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
+    "@features/flow-contacts": "workspace:^",
     "@features/flow-contacts-add-contact": "workspace:^",
-    "@features/platform-contacts": "workspace:^"
+    "@features/platform-contacts": "workspace:^",
+    "@shared/i18n": "workspace:*",
+    "@ledgerhq/crypto-icons": "catalog:"
   },
   "devDependencies": {
     "@features/platform-style": "workspace:*",

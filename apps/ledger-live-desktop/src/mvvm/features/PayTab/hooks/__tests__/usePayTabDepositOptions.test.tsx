@@ -36,16 +36,10 @@ describe("usePayTabDepositOptions", () => {
     });
   });
 
-  it("builds i18n labels for the title and the four options", () => {
+  it("exposes the deposit page to the feature", () => {
     const { result } = render();
 
-    const { labels, page } = result.current.depositOptions;
-    expect(page).toBe("Pay");
-    expect(labels.title).toBeTruthy();
-    (["bankTransfer", "swap", "receive", "buy"] as const).forEach(id => {
-      expect(labels.options[id].title).toBeTruthy();
-      expect(labels.options[id].description).toBeTruthy();
-    });
+    expect(result.current.depositOptions.page).toBe("Pay");
   });
 
   it("passes the host tracking callback through", () => {
@@ -67,12 +61,35 @@ describe("usePayTabDepositOptions", () => {
     expect(result.current.depositOptions.isOpen).toBe(false);
   });
 
-  it("navigates to the bank flow for bankTransfer", () => {
+  it("should open the cash-to-stable intro for bankTransfer without navigating", () => {
     const { result } = render();
 
     act(() => result.current.depositOptions.onSelect("bankTransfer"));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/bank");
+    expect(result.current.bankTransferIntro.isOpen).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should navigate to Noah signup when the intro creates an account", () => {
+    const { result } = render();
+
+    act(() => result.current.bankTransferIntro.onBankTransfer("createAccount"));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=createAccount",
+    });
+  });
+
+  it("should navigate to Noah sign-in when the intro logs in", () => {
+    const { result } = render();
+
+    act(() => result.current.bankTransferIntro.onBankTransfer("logIn"));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=logIn",
+    });
   });
 
   it("navigates to the swap tab for swap", () => {

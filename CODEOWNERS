@@ -125,6 +125,7 @@ features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-contact/                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-edit-address/                 @ledgerhq/wallet-xp
 features/flow/flow-contacts-edit-contact/                 @ledgerhq/wallet-xp
+features/flow/flow-contacts-delete-contact/               @ledgerhq/wallet-xp
 features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp
 features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 
@@ -134,8 +135,9 @@ features/flow/pay-balance/                               @ledgerhq/wallet-xp
 features/flow/pay-deposit/                               @ledgerhq/wallet-xp
 features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
 features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
-features/flow/pay-card-request/                          @ledgerhq/wallet-xp
+features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
+features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
 features/flow/pay-contact/                               @ledgerhq/wallet-xp
 
 # Wallet — Intents
@@ -149,6 +151,9 @@ features/flow/app-lock/                                  @ledgerhq/wallet-xp
 # Wallet — shared UI
 /shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
+
+# Wallet — devtools
+devtools/pay-card/                                       @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -234,7 +239,6 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 libs/coin-modules/coin-module-boilerplate/                               @ledgerhq/coin-integration
 libs/coin-modules/coin-bitcoin/                                          @ledgerhq/coin-integration
 libs/coin-modules/coin-cosmos/                                           @ledgerhq/coin-integration
-libs/coin-modules/coin-evm/                                              @ledgerhq/coin-integration
 libs/coin-modules/coin-polkadot/                                         @ledgerhq/coin-integration
 libs/coin-modules/coin-solana/                                           @ledgerhq/coin-integration
 libs/coin-modules/coin-tron/                                             @ledgerhq/coin-integration
@@ -428,6 +432,7 @@ libs/live-signer-zcash/                                            @ledgerhq/liv
 libs/live-signer-celo/                                             @ledgerhq/live-devices
 libs/live-signer-cosmos/                                           @ledgerhq/live-devices
 libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
+libs/live-signer-xrp/                                              @ledgerhq/live-devices
 libs/ledgerjs/packages/hw-transport/                               @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices

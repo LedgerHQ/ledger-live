@@ -26,6 +26,13 @@ export type InputDescriptor = Readonly<{
   options?: readonly string[];
   defaultOption?: string;
   supportsDomain?: boolean; // Whether the field supports domain names (ENS for EVM)
+  /**
+   * Restricts the input to the recipients that can actually carry it (ex: a Zcash
+   * memo rides in a shielded output, so a transparent recipient has nowhere to put
+   * it). Evaluated against the address currently entered in the flow; the UI hides
+   * the input when it returns false. Omit when the input applies to every recipient.
+   */
+  appliesToRecipient?: (recipient: string) => boolean;
 }>;
 
 export type FeeUnitLabel = string | ((currency: CryptoOrTokenCurrency) => string | undefined);

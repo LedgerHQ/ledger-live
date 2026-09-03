@@ -7,8 +7,9 @@ import {
   TableCellItem,
   TableRow,
 } from "@ledgerhq/lumen-ui-react";
-import { MoreHorizontal, Telegram } from "@ledgerhq/lumen-ui-react/symbols";
+import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactAvatar } from "@features/platform-contacts";
+import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsTableLabels } from "../../types";
 
@@ -17,8 +18,9 @@ type ContactTileProps = Readonly<{
   transactionCount: number;
   labels: ContactsTableLabels;
   renderAddresses: (addresses: Contact["addresses"]) => React.ReactNode;
-  onPay?: (contact: Contact) => void;
-  onMore?: (contact: Contact) => void;
+  onContactPress?: (contact: Contact) => void;
+  onViewContact?: (contact: Contact) => void;
+  onViewTransactions?: (contact: Contact) => void;
 }>;
 
 export function ContactTile({
@@ -26,11 +28,16 @@ export function ContactTile({
   transactionCount,
   labels,
   renderAddresses,
-  onPay,
-  onMore,
+  onContactPress,
+  onViewContact,
+  onViewTransactions,
 }: ContactTileProps) {
   return (
-    <TableRow data-testid={`pay-contacts-tile-${contact.id}`}>
+    <TableRow
+      clickable={Boolean(onContactPress)}
+      onClick={onContactPress ? () => onContactPress(contact) : undefined}
+      data-testid={`pay-contacts-tile-${contact.id}`}
+    >
       <TableCell>
         <TableCellItem>
           <ContactAvatar contactId={contact.id} name={contact.name} size="sm" ariaHidden />
@@ -42,24 +49,25 @@ export function ContactTile({
       <TableCell align="end">{renderAddresses(contact.addresses)}</TableCell>
       <TableCell align="end">{labels.formatTransactionCount(transactionCount)}</TableCell>
       <TableCell align="end">
-        <div className="flex items-center justify-end gap-8">
+        <div
+          className="flex items-center justify-end gap-8"
+          onClick={e => e.stopPropagation()}
+          role="presentation"
+        >
           <IconButton
             appearance="gray"
             size="sm"
             icon={Telegram}
             aria-label={labels.payAction}
-            disabled={!onPay}
-            onClick={() => onPay?.(contact)}
+            disabled={!onContactPress}
+            onClick={() => onContactPress?.(contact)}
             data-testid={`pay-contacts-pay-action-${contact.id}`}
           />
-          <IconButton
-            appearance="gray"
-            size="sm"
-            icon={MoreHorizontal}
-            aria-label={labels.moreAction}
-            disabled={!onMore}
-            onClick={() => onMore?.(contact)}
-            data-testid={`pay-contacts-more-action-${contact.id}`}
+          <ContactMoreMenu
+            contact={contact}
+            labels={labels}
+            onViewContact={onViewContact}
+            onViewTransactions={onViewTransactions}
           />
         </div>
       </TableCell>

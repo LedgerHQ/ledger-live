@@ -1,10 +1,10 @@
-import lint from "@commitlint/lint";
-import config from "../../../commitlint.config.js";
+import { lintPrTitle } from "../commitlint";
+import { isMergeConflictsPr, stripPlatformPrefix } from "../pull-request";
 
 async function validatePrTitle() {
-  if (isMergeConflictsPR(danger.github.pr.title)) return;
+  if (isMergeConflictsPr(danger.github.pr.title)) return;
 
-  const report = await lint(stripPlatformPrefix(danger.github.pr.title), config.rules);
+  const report = await lintPrTitle(stripPlatformPrefix(danger.github.pr.title));
 
   const { errors, input, valid, warnings } = report;
 
@@ -30,24 +30,6 @@ async function validatePrTitle() {
         `See [Git conventions](https://github.com/LedgerHQ/ledger-live/blob/develop/docs/contributing/git-conventions.md).\n\n`,
     );
   }
-}
-
-function isMergeConflictsPR(title: string): boolean {
-  const RELEASE_CONFLICTS_TITLE = ":rotating_light: Release merge conflicts";
-  const HOTFIX_CONFLICTS_TITLE = ":rotating_light: Hotfix merge conflicts";
-  const HOTFIX_RELEASE_CONFLICTS_TITLE = ":rotating_light: Hotfix Release merge conflicts";
-
-  const normalizedTitle = title.trimEnd();
-
-  return (
-    normalizedTitle.endsWith(RELEASE_CONFLICTS_TITLE) ||
-    normalizedTitle.endsWith(HOTFIX_CONFLICTS_TITLE) ||
-    normalizedTitle.endsWith(HOTFIX_RELEASE_CONFLICTS_TITLE)
-  );
-}
-
-function stripPlatformPrefix(title: string) {
-  return title.replace(/^\[(LWDM|LWD|LWM)\]\s*/, "");
 }
 
 export default validatePrTitle;

@@ -1,3 +1,5 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+
 // Which module serves a Zcash account: the standalone @ledgerhq/coin-zcash, or
 // coin-bitcoin's Zcash chain-adapter.
 //
@@ -20,3 +22,8 @@ export const setZcashShieldedEnabled = (enabled: boolean): void => {
 
 /** Whether Zcash accounts are served by @ledgerhq/coin-zcash. */
 export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
+
+/** Bridge family for `currency`: `zcash` when shielded, otherwise `currency.family`. */
+export function resolveFamily(currency: CryptoCurrency): string {
+  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
+}

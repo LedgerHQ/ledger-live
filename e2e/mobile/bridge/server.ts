@@ -120,6 +120,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importTrustchain", id: uniqueId(), payload: data.trustchain });
   }
 
+  if (data.postOnboarding) {
+    postMessage({ type: "importPostOnboarding", id: uniqueId(), payload: data.postOnboarding });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }

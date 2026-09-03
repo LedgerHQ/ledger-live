@@ -7,7 +7,7 @@ import { getAmountFromUSD } from "./currencyUtils";
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
 
-const SWAP_QUOTE_URL = "https://swap-stg.ledger-test.com/v5/quote";
+const SWAP_QUOTE_URL = "https://global.api.stg.ledger-test.com/swap/v5/quote";
 
 /** Smallest amount sent to the quote API to discover minimum thresholds. */
 const PROBE_AMOUNT = 0.0001;

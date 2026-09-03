@@ -24,6 +24,7 @@ import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
@@ -36,6 +37,10 @@ import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
+import {
+  payRequestVerifyHintSlice,
+  type PayRequestVerifyHintState,
+} from "@features/flow-pay-request/state";
 import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
@@ -58,6 +63,7 @@ import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverr
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
+  accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
   countervalues: CountervaluesState;
@@ -96,10 +102,12 @@ export type State = LLDRTKApiState & {
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
+  payRequestVerifyHint: PayRequestVerifyHintState;
   payCardAuth: PayCardAuthState;
 };
 
 const appReducer = combineReducers({
+  accountAliases: accountAliasSlice.reducer,
   accounts,
   application,
   countervalues,
@@ -138,6 +146,7 @@ const appReducer = combineReducers({
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
+  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && {

@@ -11,7 +11,7 @@ Devtools tool that displays the current transport connection state and message h
 
 The native `<TransportPanel />` uses `BottomSheet` from `@ledgerhq/lumen-ui-rnative`, which requires a `BottomSheetModalProvider` somewhere above it in the tree. This is already provided by `@devtools/shell`'s `<DevTools />` root — no additional setup is needed when rendering through the shell.
 
-If you render `<TransportPanel />` outside of `@devtools/shell` (e.g. standalone, tests, Storybook), you must wrap it yourself:
+If you render `<TransportPanel />` outside of `@devtools/shell` (e.g. standalone, tests), you must wrap it yourself:
 
 ```tsx
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";

@@ -84,7 +84,7 @@ def enableSeparateBuildPerCPUArchitecture = true
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -135,6 +135,7 @@ android {
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testProguardFiles "proguard-rules-androidTest.pro"
     }
 
     configurations.all {
@@ -177,8 +178,8 @@ android {
         }
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            shrinkResources enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ['debug']
         }
         stagingRelease {
@@ -190,11 +191,15 @@ android {
         detox {
             initWith(buildTypes.stagingRelease)
             applicationIdSuffix ".detox"
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            proguardFile "proguard-rules-detox.pro"
             matchingFallbacks = ['stagingRelease', 'release']
         }
         detoxPreRelease {
             initWith(buildTypes.release)
             signingConfig signingConfigs.stagingRelease
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            proguardFile "proguard-rules-detox.pro"
             matchingFallbacks = ['release']
         }
     }

@@ -12,7 +12,6 @@ export default class CommonPage {
   successViewDetailsButtonId = "enabled-success-view-details-button";
   validateSuccessScreenId = "validate-success-screen";
   proceedButtonId = "proceed-button";
-  accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
@@ -31,7 +30,6 @@ export default class CommonPage {
   backButton = () => getElementById("navigation-header-back-button");
   seeAllOperationsButtonElement = () => getElementById(this.seeAllTransactionButton);
   assetScreenFlatlistElement = () => getElementById(this.assetScreenFlatlistId);
-  accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
@@ -42,11 +40,6 @@ export default class CommonPage {
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text);
-  }
-
-  @Step("Expect Search Bar to be visible")
-  async expectSearchBarVisible() {
-    await detoxExpect(this.searchBar()).toBeVisible();
   }
 
   @Step("Select currency to debit {{{0.accountName}}}")
@@ -81,11 +74,6 @@ export default class CommonPage {
     await tapById(this.successViewDetailsButtonId);
   }
 
-  @Step("Select the first displayed account")
-  async selectFirstAccount() {
-    await tapById(this.accountCardRegExp());
-  }
-
   @Step("Go to the account {{{0}}}")
   async goToAccount(accountId: string, currencyId: string) {
     if (await isAggregatedAssetsEnabled()) {
@@ -108,11 +96,6 @@ export default class CommonPage {
   async tapCloseWithConfirmationButton() {
     await waitForElementById(this.closeWithConfirmationButtonId);
     await tapById(this.closeWithConfirmationButtonId);
-  }
-
-  @Step("Check number of account rows {{{0}}}")
-  async checkAccountRowNumber(nbr: number) {
-    jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }
 
   @Step("Get the account name at index {{{0}}}")

@@ -14,6 +14,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
 import ValidatorsSelect from "../../shared/staking/ValidatorsSelect";
+import { isValidatorRemoved } from "../../shared/utils";
 
 function StepSummary({
   t,
@@ -26,9 +27,14 @@ function StepSummary({
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const currentValidatorNodeId = account.hederaResources?.delegation?.nodeId;
-  const validators = useHederaValidators(account.currency);
-  const validator = validators.find(v => v.id === String(currentValidatorNodeId));
-  const isValidatorRemoved = !validator && typeof currentValidatorNodeId === "number";
+  const queryValidators = useHederaValidators(account.currency.id);
+  const validator = queryValidators.validators.find(v => v.id === String(currentValidatorNodeId));
+  const validatorRemoved = isValidatorRemoved({
+    loading: queryValidators.loading,
+    error: !!queryValidators.error,
+    hasValidator: !!validator,
+    nodeId: currentValidatorNodeId,
+  });
   const feeError = status.errors.fee;
 
   return (
@@ -43,7 +49,7 @@ function StepSummary({
           disabled
           account={account}
           selectedValidatorId={validator?.id ?? null}
-          showRemovedPlaceholder={isValidatorRemoved}
+          showRemovedPlaceholder={validatorRemoved}
         />
       </Box>
       <Box>
@@ -85,6 +91,7 @@ export function StepSummaryFooter({
       </Button>
       <Button
         id="undelegation-continue-button"
+        isLoading={bridgePending}
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}

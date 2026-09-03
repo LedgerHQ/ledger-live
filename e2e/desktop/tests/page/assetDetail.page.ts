@@ -134,7 +134,7 @@ export class AssetDetailPage extends AppPage {
   }
 
   @step("Open the asset options menu")
-  async openOptionsMenu() {
+  private async openOptionsMenu() {
     await this.optionsTrigger.click();
   }
 

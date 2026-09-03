@@ -39,7 +39,7 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
 }
 
 describe("useContactAddressDetailActionsFlowBindings", () => {
-  it("should open the rename address dialog after signer confirmation", async () => {
+  it("should open the rename address dialog with the current label", () => {
     const contact = mockContactWithAddress({ id: "contact-ben", name: "Ben" });
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -56,16 +56,13 @@ describe("useContactAddressDetailActionsFlowBindings", () => {
     act(() => {
       result.current.flow.onEditPress();
     });
-    await act(async () => {
-      await result.current.flow.onSignerConfirm();
-    });
 
     expect(result.current.flow.editUiState).toBe("edit-open");
     expect(result.current.renameViewModel.isOpen).toBe(true);
     expect(result.current.renameViewModel.draftLabel).toBe(address.label);
   });
 
-  it("should exclude the current address label from duplicate validation", async () => {
+  it("should exclude the current address label from duplicate validation", () => {
     const contact = mockContactWithMultipleAddresses({ id: "contact-ben", name: "Ben" });
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -81,9 +78,6 @@ describe("useContactAddressDetailActionsFlowBindings", () => {
 
     act(() => {
       result.current.flow.onEditPress();
-    });
-    await act(async () => {
-      await result.current.flow.onSignerConfirm();
     });
 
     expect(result.current.renameViewModel.isConfirmEnabled).toBe(false);

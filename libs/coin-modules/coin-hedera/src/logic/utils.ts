@@ -13,6 +13,7 @@ import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-li
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import coinConfig from "../config";
+import type { HederaMirrorNode } from "../types/mirror";
 import {
   HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
@@ -23,7 +24,6 @@ import {
   HEDERA_TRANSACTION_NAMES,
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
-import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
   HederaCoinConfig,
   EnrichedERC20Transfer,
@@ -362,6 +362,36 @@ export const extractCompanyFromNodeDescription = (description: string): string =
     .trim();
 };
 
+export function mapMirrorNodesToValidators(
+  nodes: HederaMirrorNode[],
+  ledgerNodeId: string,
+): HederaValidator[] {
+  const validators: HederaValidator[] = nodes.map(mirrorNode => {
+    const id = mirrorNode.node_id.toString();
+    const minStake = new BigNumber(mirrorNode.min_stake);
+    const maxStake = new BigNumber(mirrorNode.max_stake);
+    const activeStake = new BigNumber(mirrorNode.stake_rewarded);
+    const activeStakePercentage = maxStake.gt(0)
+      ? activeStake.dividedBy(maxStake).multipliedBy(100).dp(0, BigNumber.ROUND_CEIL)
+      : new BigNumber(0);
+
+    return {
+      id,
+      address: mirrorNode.node_account_id,
+      addressChecksum: getChecksum(mirrorNode.node_account_id),
+      name: extractCompanyFromNodeDescription(mirrorNode.description),
+      minStake,
+      maxStake,
+      activeStake,
+      activeStakePercentage,
+      overstaked: activeStake.gte(maxStake),
+      isLedgerNode: id === ledgerNodeId,
+    };
+  });
+
+  return sortValidators(validators);
+}
+
 export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
   // sort validators by active stake in DESC order, with Ledger node first if it exists
   return [...validators].sort((a, b) => {
@@ -386,19 +416,6 @@ export const filterValidatorBySearchTerm = (
     validator.name.toLowerCase().includes(lowercaseSearch) ||
     addressWithChecksum.toLowerCase().includes(lowercaseSearch)
   );
-};
-
-export const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null => {
-  const { delegation } = account.hederaResources ?? {};
-
-  if (!delegation) {
-    return null;
-  }
-
-  const validators = getCurrentHederaPreloadData(account.currency);
-  const validator = validators.validators.find(v => v.id === String(delegation.nodeId)) ?? null;
-
-  return validator;
 };
 
 export const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {

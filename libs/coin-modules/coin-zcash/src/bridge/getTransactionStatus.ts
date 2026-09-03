@@ -3,7 +3,8 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
-import { ZcashAmountBelowDustThreshold } from "../types/errors";
+import { ZcashAmountBelowDustThreshold, ZcashMemoTooLong } from "../types/errors";
+import { ZCASH_MEMO_MAX_BYTES } from "../constants";
 import {
   computeAmountError,
   computeRecipientError,
@@ -14,6 +15,14 @@ import {
 } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
 import { getSpendableIronwoodBalance } from "../logic/account/spendability";
+
+const encoder = new TextEncoder();
+
+function computeMemoError(memo: string | undefined): Error | null {
+  return memo !== undefined && encoder.encode(memo).length > ZCASH_MEMO_MAX_BYTES
+    ? new ZcashMemoTooLong(ZCASH_MEMO_MAX_BYTES)
+    : null;
+}
 
 /**
  * Transaction status for a transparent-input (Public→*) send: the recipient
@@ -28,6 +37,8 @@ function getTransparentInputStatus(
 ): TransactionStatus {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
+  const memoError = computeMemoError(tx.memo);
+  if (memoError) errors.transaction = memoError;
 
   const transparentBalance = resolveTransparentUtxos(account, tx).reduce(
     (sum, utxo) => sum.plus(utxo.value),
@@ -69,6 +80,8 @@ export const getTransactionStatus: AccountBridge<
 
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
+  const memoError = computeMemoError(transaction.memo);
+  if (memoError) errors.transaction = memoError;
 
   const privateInfo = account.privateInfo;
   if (!privateInfo) {

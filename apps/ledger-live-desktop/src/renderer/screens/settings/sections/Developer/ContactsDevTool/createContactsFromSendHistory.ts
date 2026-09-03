@@ -8,12 +8,15 @@ import {
 
 const MAX_SEND_HISTORY_CONTACTS = 15;
 
+/** Cycled so the generated list mixes single-address contacts with multi-address ones. */
+const SEND_HISTORY_ADDRESS_COUNTS = [1, 2, 1, 3] as const;
+
 type SendHistoryEntry = { address: string; currencyId: string; label: string; date: number };
 
 /**
- * Builds one contact per distinct address the accounts have sent to, most recent first, so the Pay
- * contacts list can be exercised against real `last sent-to` ordering instead of synthetic addresses
- * that no operation targets.
+ * Builds contacts from the distinct addresses the accounts have sent to, most recent first, so the
+ * Pay contacts list can be exercised against real `last sent-to` ordering instead of synthetic
+ * addresses that no operation targets.
  */
 export function createContactsFromSendHistory(accounts: readonly AccountLike[]): Contact[] {
   const latestByAddress = new Map<string, SendHistoryEntry>();
@@ -43,26 +46,36 @@ export function createContactsFromSendHistory(accounts: readonly AccountLike[]):
     }
   }
 
-  return [...latestByAddress.values()]
-    .sort((left, right) => right.date - left.date)
-    .slice(0, MAX_SEND_HISTORY_CONTACTS)
-    .map((entry, index) => {
-      const id = `contact-send-history-${index + 1}`;
+  const entries = [...latestByAddress.values()].sort((left, right) => right.date - left.date);
+  const contacts: Contact[] = [];
+  let cursor = 0;
 
-      return contact({
+  while (cursor < entries.length && contacts.length < MAX_SEND_HISTORY_CONTACTS) {
+    const index = contacts.length;
+    const id = `contact-send-history-${index + 1}`;
+    const addressCount = SEND_HISTORY_ADDRESS_COUNTS[index % SEND_HISTORY_ADDRESS_COUNTS.length];
+    const group = entries.slice(cursor, cursor + addressCount);
+
+    cursor += group.length;
+
+    contacts.push(
+      contact({
         id,
         isMe: false,
         name: `Payee ${index + 1}`,
-        addresses: [
+        addresses: group.map((entry, addressIndex) =>
           contactAddress({
-            id: `${id}-address-1`,
+            id: `${id}-address-${addressIndex + 1}`,
             currencyId: entry.currencyId,
-            label: entry.label,
+            label: group.length > 1 ? `${entry.label} ${addressIndex + 1}` : entry.label,
             address: entry.address,
             device: mockExternalAddressDeviceContext(),
           }),
-        ],
+        ),
         deviceCredentials: mockDeviceContactGroupCredentials(),
-      });
-    });
+      }),
+    );
+  }
+
+  return contacts;
 }

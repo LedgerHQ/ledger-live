@@ -1,13 +1,17 @@
+import Transport from "@ledgerhq/hw-transport";
 import resolver from "./getAddress";
+import { createSigner as createXrpSigner } from "./setup";
 import { executeWithSigner } from "../../bridge/setup";
 import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/types";
-import Xrp from "@ledgerhq/hw-app-xrp";
-import Transport from "@ledgerhq/hw-transport";
 
+/**
+ * Adapts the shapes the generic coin framework calls with onto the `XrpSigner` contract:
+ * `getAddress` receives `boolean | { verify?, derivationMode? }` where the signer wants a
+ * `display` flag, and `signTransaction` receives the framework's device-options object where
+ * the signer wants `ed25519`. Which signer is behind it — DMK or legacy — is `setup.ts`'s call.
+ */
 export const createSigner = (transport: Transport) => {
-  const xrp = new Xrp(transport);
-  const originalGetAddress = xrp.getAddress.bind(xrp);
-  const originalSignTransaction = xrp.signTransaction.bind(xrp);
+  const xrp = createXrpSigner(transport);
   return {
     getAddress: async (
       path: string,
@@ -16,8 +20,7 @@ export const createSigner = (transport: Transport) => {
       ed25519?: boolean,
     ) => {
       const display = typeof options === "boolean" ? options : Boolean(options?.verify);
-      const extra = [chainCode, ed25519].filter((v): v is boolean => v !== undefined);
-      return originalGetAddress(path, display, ...(extra as [boolean?, boolean?]));
+      return xrp.getAddress(path, display, chainCode, ed25519);
     },
     signTransaction: async (
       path: string,
@@ -25,7 +28,7 @@ export const createSigner = (transport: Transport) => {
       options?: boolean | { derivationMode?: string },
     ) => {
       const ed25519 = typeof options === "boolean" ? options : undefined;
-      return originalSignTransaction(path, rawTxHex, ed25519);
+      return xrp.signTransaction(path, rawTxHex, ed25519);
     },
   };
 };

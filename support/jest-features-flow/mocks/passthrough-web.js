@@ -68,6 +68,14 @@ function Tag({ label, children, ...props }) {
   return React.createElement("span", { ...props, label }, label, children);
 }
 
+// `MenuTrigger` takes its trigger element through `render`, not through children, so the generic
+// stub would drop it and the consumer's button would never reach the DOM.
+function MenuTrigger({ render, children, ...props }) {
+  if (React.isValidElement(render)) return React.cloneElement(render, props);
+
+  return React.createElement("button", { type: "button", ...props }, children);
+}
+
 function Tooltip({ children, onOpenChange, open }) {
   return React.createElement(
     TooltipOpenContext.Provider,
@@ -136,6 +144,7 @@ module.exports = new Proxy(
     DialogContent,
     DialogHeader,
     InteractiveIcon,
+    MenuTrigger,
     Tag,
     resolveAvatarColor,
     Tooltip,

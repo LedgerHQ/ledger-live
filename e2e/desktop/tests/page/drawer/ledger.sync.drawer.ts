@@ -23,7 +23,7 @@ export class LedgerSyncDrawer extends Drawer {
     "walletsync-activate-success-title",
   );
 
-  async waitForDeleteSyncButton() {
+  private async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
   }
 
@@ -56,13 +56,13 @@ export class LedgerSyncDrawer extends Drawer {
   }
 
   @step("Delete Sync")
-  async deleteSync() {
+  private async deleteSync() {
     await this.waitForDeleteSyncButton();
     await this.deleteSyncButton.click();
   }
 
   @step("Confirm the deletion of the data")
-  async confirmBackupDeletion() {
+  private async confirmBackupDeletion() {
     await expect(this.confirmBackupDeletionButton).toBeVisible();
     await this.confirmBackupDeletionButton.click();
   }
@@ -80,7 +80,7 @@ export class LedgerSyncDrawer extends Drawer {
     );
   }
 
-  async waitForManageInstancesButton() {
+  private async waitForManageInstancesButton() {
     await this.displayInstances.waitFor({ state: "visible" });
   }
 

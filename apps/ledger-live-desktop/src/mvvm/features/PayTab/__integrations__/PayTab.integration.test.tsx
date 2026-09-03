@@ -7,6 +7,7 @@ import {
   waitFor,
   render,
   within,
+  withFlagOverrides,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -23,6 +24,7 @@ import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   EMPTY_DESCRIPTION,
   EMPTY_TITLE,
+  FEATURE_TOUR_CTA,
   FEATURE_TOUR_ROW,
   INIT_INPUT,
   USDC_TOKEN,
@@ -33,6 +35,12 @@ import {
   onboardedState,
   tourSeenState,
 } from "./fixtures";
+import {
+  aliceContact,
+  CONTACT_HISTORY_ID,
+  CONTACT_HISTORY_NAME,
+  createEthAccountWithContactTransfers,
+} from "../../History/__integrations__/contactHistory.fixtures";
 
 const mockNavigate = jest.fn();
 
@@ -61,6 +69,17 @@ function mockFundedPayStablecoins() {
   mockPayStablecoins({
     stablecoins: [makeItem(USDC.id, USDC.ticker, USDC.name, 1000)],
   });
+}
+
+async function openBankTransferIntro() {
+  mockFundedPayStablecoins();
+  const { user } = renderWithMockedCounterValuesProvider(<PayTab />, {
+    initialState: fundedState,
+  });
+  await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
+  await user.click(await screen.findByText("Bank transfer"));
+  await screen.findByRole("heading", { name: "Send cash, receive stablecoin" });
+  return user;
 }
 
 type CapturedExecutor = {
@@ -110,10 +129,10 @@ describe("PayTab integration", () => {
     });
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
-    expect(screen.getByRole("button", { name: "Got it" })).toBeVisible();
+    expect(screen.getByRole("button", { name: FEATURE_TOUR_CTA })).toBeVisible();
   });
 
-  it("should persist dismissal and hide the tour after clicking Got it", async () => {
+  it("should persist dismissal and hide the tour after clicking Explore Pay", async () => {
     const { user, store } = render(<PayTab />, {
       initialState: {
         payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: false },
@@ -122,7 +141,7 @@ describe("PayTab integration", () => {
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: "Got it" }));
+    await user.click(screen.getByRole("button", { name: FEATURE_TOUR_CTA }));
 
     await waitFor(() => {
       expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
@@ -136,7 +155,7 @@ describe("PayTab integration", () => {
     });
 
     expect(screen.queryByText(FEATURE_TOUR_ROW)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Got it" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: FEATURE_TOUR_CTA })).not.toBeInTheDocument();
   });
 
   it("should render the empty hero when the user holds no stablecoins", async () => {
@@ -218,6 +237,68 @@ describe("PayTab integration", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
+  it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
+    await openBankTransferIntro();
+
+    expect(screen.getByRole("heading", { name: "Send cash, receive stablecoin" })).toBeVisible();
+    expect(
+      screen.getByText("Transfer cash and receive stablecoins straight to your Ledger Wallet™."),
+    ).toBeVisible();
+    expect(screen.getByText("Receive transfers from any bank")).toBeVisible();
+    expect(screen.getByText("No hidden fees")).toBeVisible();
+    expect(screen.getByText("Put your money to work right away")).toBeVisible();
+    expect(screen.getByText("Provided by Noah")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Create an account" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Log in to Noah" })).toBeVisible();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
+    await openBankTransferIntro();
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "bank transfer",
+      buttonLocation: "deposit",
+      page: "Pay",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+  });
+
+  it("should navigate to Noah when Create an account is clicked", async () => {
+    const user = await openBankTransferIntro();
+    await user.click(screen.getByRole("button", { name: "Create an account" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=createAccount",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "create an account",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+    expect(mockedTrack).not.toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+  });
+
+  it("should navigate to Noah when Log in to Noah is clicked", async () => {
+    const user = await openBankTransferIntro();
+    await user.click(screen.getByRole("button", { name: "Log in to Noah" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/bank",
+      search: "?noahAuth=logIn",
+    });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "log in to noah",
+      flow: "C2S",
+      page: "cash to stable",
+    });
+  });
+
   it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {
     mockFundedPayStablecoins();
 
@@ -281,7 +362,7 @@ describe("PayTab integration", () => {
     };
     act(() => onSuccess(USDC_TOKEN, ETH_ACCOUNT_WITH_USDC));
 
-    await user.click(await screen.findByTestId("pay-card-request-receive-verify"));
+    await user.click(await screen.findByTestId("pay-request-receive-verify"));
     await user.click(await screen.findByTestId("pay-card-verify-address-verify-cta"));
 
     await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
@@ -295,7 +376,53 @@ describe("PayTab integration", () => {
       });
     });
 
-    expect(await screen.findByTestId("pay-card-request-receive")).toBeVisible();
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
+  });
+
+  it("should not render the contacts section when lwdContacts is disabled", async () => {
+    const account = createEthAccountWithContactTransfers();
+    render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [account],
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByTestId("pay-contacts")).not.toBeInTheDocument();
+  });
+
+  it("should count send and receive transfers with a contact and open History from View transactions", async () => {
+    const account = createEthAccountWithContactTransfers();
+    const { user } = render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [account],
+        contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdContacts: { enabled: true, params: { newBadge: false } } }),
+      },
+    });
+
+    expect(await screen.findByTestId(`pay-contacts-tile-${CONTACT_HISTORY_ID}`)).toBeVisible();
+    expect(screen.getByText(CONTACT_HISTORY_NAME)).toBeVisible();
+    expect(screen.getByText("2 transactions")).toBeVisible();
+
+    const moreButton = screen.getByRole("button", { name: "More options" });
+    expect(moreButton).toBeEnabled();
+    await user.click(moreButton);
+    await user.click(await screen.findByRole("menuitem", { name: "View transactions" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/history?contactId=${CONTACT_HISTORY_ID}`,
+      expect.objectContaining({
+        state: { historyBackPath: "/paytab" },
+      }),
+    );
   });
 });

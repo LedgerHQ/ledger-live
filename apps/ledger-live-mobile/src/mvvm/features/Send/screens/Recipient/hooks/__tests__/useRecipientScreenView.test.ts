@@ -127,7 +127,6 @@ describe("useRecipientScreenView", () => {
     mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
       isOpen: false,
       title: "",
-      description: "",
       highlights: [],
       primaryActionLabel: "",
       onComplete: jest.fn(),

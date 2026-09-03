@@ -16,7 +16,7 @@ export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewP
           face shows once the holder is signed in and has a card, while the login shows only while
           nobody is signed in. Right now each child decides on its own, so they can overlap. */}
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-      <CardLogin oauthConfig={oauthConfig} callback={callback} />
+      <CardLogin key={`${oauthConfig.apiUrl}`} oauthConfig={oauthConfig} callback={callback} />
       <CardLogout />
     </Box>
   );

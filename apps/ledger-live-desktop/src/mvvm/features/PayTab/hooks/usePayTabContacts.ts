@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
 import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
+  type Contact,
 } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import {
@@ -16,29 +18,69 @@ import {
   isContactsLedgerSyncActivationRequired,
   type ContactsLedgerSyncIntroductionDialogProps,
 } from "@features/flow-contacts-introduction";
-import type { ContactsProps } from "@features/flow-pay-contact";
+import {
+  useContactAddressPickerViewModel,
+  type ContactAddressPickerProps,
+  type ContactsProps,
+} from "@features/flow-pay-contact";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
 import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
-import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
-import { usePayTabNewPayment } from "./usePayTabNewPayment";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { usePayTabContactOperations } from "./usePayTabContactOperations";
 import { renderPayContactAddresses } from "../components/PayContactAddresses";
+
+const noopSelectAddress = () => undefined;
 
 export type UsePayTabContactsResult = Readonly<{
   contacts: ContactsProps;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroductionDialogProps;
+  contactAddressPicker: ContactAddressPickerProps;
 }>;
 
 export function usePayTabContacts(): UsePayTabContactsResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { pathname: payTabPath } = useLocation();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
-  const outgoingOperations = usePayTabOutgoingOperations();
-  const { open: openNewPayment } = usePayTabNewPayment();
+  const operations = usePayTabContactOperations();
+
+  const onAddContactAddress = useCallback(
+    (contact: Contact) => {
+      navigate(`/contacts?contactId=${encodeURIComponent(contact.id)}&action=add-address`);
+    },
+    [navigate],
+  );
+  const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
+    {
+      onSelectAddress: noopSelectAddress,
+      onAddNewAddress: onAddContactAddress,
+    },
+  );
+  const onViewTransactions = useCallback(
+    (contact: Contact) => {
+      navigate(
+        `/history?contactId=${encodeURIComponent(contact.id)}`,
+        buildNavigationBackState("historyBackPath", payTabPath),
+      );
+    },
+    [navigate, payTabPath],
+  );
+  const onContactPress = useCallback(
+    (contact: Contact) => openContactAddressPicker(contact),
+    [openContactAddressPicker],
+  );
+  const onViewContact = useCallback(
+    (contact: Contact) => {
+      navigate(`/contacts?contactId=${encodeURIComponent(contact.id)}`);
+    },
+    [navigate],
+  );
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
@@ -73,7 +115,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer();
+    openDrawer({ startOnSyncMethod: true });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
@@ -87,11 +129,6 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   return useMemo(
     () => ({
       contacts: {
-        title: t("payTab.contacts.title"),
-        emptyState: {
-          info: t("payTab.contacts.empty.info"),
-          addContactLabel: t("payTab.contacts.empty.addContact"),
-        },
         addContact: {
           labels,
           contactCreation,
@@ -99,26 +136,22 @@ export function usePayTabContacts(): UsePayTabContactsResult {
           onSaveSuccess,
           callbacks,
         },
-        labels: {
-          name: t("payTab.contacts.table.name"),
-          addresses: t("payTab.contacts.table.addresses"),
-          transactions: t("payTab.contacts.table.transactions"),
-          formatTransactionCount: count => t("payTab.contacts.table.transactionCount", { count }),
-          payAction: t("payTab.contacts.actions.pay"),
-          moreAction: t("payTab.contacts.actions.more"),
-        },
         renderAddresses: renderPayContactAddresses,
-        onPayContact: () => openNewPayment(),
-        outgoingOperations,
+        onContactPress,
+        onViewContact,
+        onViewTransactions,
+        operations,
       },
       ledgerSyncIntroduction: {
         open: isLedgerSyncIntroductionOpen,
+        title: t("contacts.ledgerSyncIntroduction.title"),
         description: t("contacts.ledgerSyncIntroduction.description"),
         activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
         dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
         onActivate: onActivateLedgerSyncIntroduction,
         onDismiss: onDismissLedgerSyncIntroduction,
       },
+      contactAddressPicker,
     }),
     [
       t,
@@ -127,11 +160,14 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       onRequestAddContact,
       onSaveSuccess,
       callbacks,
-      outgoingOperations,
-      openNewPayment,
+      operations,
+      onContactPress,
+      onViewContact,
+      onViewTransactions,
       isLedgerSyncIntroductionOpen,
       onActivateLedgerSyncIntroduction,
       onDismissLedgerSyncIntroduction,
+      contactAddressPicker,
     ],
   );
 }

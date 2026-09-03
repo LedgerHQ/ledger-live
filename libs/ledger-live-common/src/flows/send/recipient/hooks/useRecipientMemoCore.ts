@@ -134,8 +134,10 @@ export function useRecipientMemoCore({
       setMemo(defaultMemo);
       onMemoChange(defaultMemo);
       setSkipMemoState("propose");
+      return;
     }
-  }, [memoDefaultOption, onMemoChange, skipMemoState]);
+    onMemoChange(memo);
+  }, [memo, memoDefaultOption, onMemoChange, skipMemoState]);
 
   return {
     memo,

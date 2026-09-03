@@ -85,7 +85,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://rpc.scroll.io", signer.exportMnemonic());
+    await spawnAnvil("https://scroll-rpc.publicnode.com", signer.exportMnemonic());
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 

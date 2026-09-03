@@ -44,6 +44,20 @@ const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 export const sendFeatures = {
   canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
   hasMemo: fromDescriptor(d => d.inputs.memo != null, false),
+  /**
+   * Whether to offer a memo input for `recipient`. The recipient is required rather
+   * than optional because a coin may restrict its memo to the recipients that can
+   * carry one (Zcash's rides in a shielded output), and answering on the currency
+   * alone is what offers an undeliverable memo.
+   */
+  hasMemoForRecipient: (
+    currency: CryptoOrTokenCurrency | undefined,
+    recipient: string,
+  ): boolean => {
+    const memo = getSendDescriptor(currency)?.inputs.memo;
+    if (!memo) return false;
+    return memo.appliesToRecipient?.(recipient) ?? true;
+  },
   hasFeePresets: fromDescriptor(d => d.fees.hasPresets, false),
   hasCustomFees: fromDescriptor(d => d.fees.hasCustom, false),
   getCustomFeeConfig: fromDescriptor(d => d.fees.custom, noCustomFeeConfig),

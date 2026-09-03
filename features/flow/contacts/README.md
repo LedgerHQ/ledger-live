@@ -48,6 +48,9 @@ dialog or Native drawer directly; the aggregate composes its state with Contact 
 `@features/flow-contacts-edit-address` owns the Edit address journey. Applications import its Web
 dialog or Native drawer directly; the aggregate composes its state with Contact Detail.
 
+`@features/flow-contacts-delete-contact` owns Contact deletion. Applications import its Web dialog
+or Native drawer directly; the aggregate coordinates its invocation from Contact Detail.
+
 Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split
 used by the app features (View + ViewModel + types + colocated components). Web and React Native
 export their respective `ContactsView` and `ContactDetailView` implementations through the root

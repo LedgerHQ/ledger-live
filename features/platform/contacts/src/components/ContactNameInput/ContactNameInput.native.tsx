@@ -10,9 +10,9 @@ type ContactNameInputProps = Readonly<{
   errorMessage?: string;
   isEditable?: boolean;
   /**
-   * Focuses the field whenever this turns true, rather than only on mount. Hosts inside an
-   * animating drawer can keep it false until the drawer has settled, so the keyboard does not
-   * resize the drawer while it is still opening.
+   * Focuses the field whenever this turns true, rather than only on mount. Defaults to off so a
+   * host inside an animating drawer never raises the keyboard by accident: it opts in once the
+   * drawer has settled, instead of the keyboard fighting the drawer's opening animation.
    */
   autoFocus?: boolean;
   /** Namespaces the test ids, so each host drawer identifies its own input. */
@@ -25,7 +25,7 @@ export function ContactNameInput({
   placeholder,
   errorMessage,
   isEditable = true,
-  autoFocus = true,
+  autoFocus = false,
   testIDPrefix = "contacts-add-contact",
   onChangeText,
 }: ContactNameInputProps): React.JSX.Element {

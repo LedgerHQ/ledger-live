@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
 import type { ContactsNativeProps } from "@features/flow-pay-contact";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { usePayTabNewPayment } from "./usePayTabNewPayment";
@@ -20,15 +21,15 @@ export function usePayTabContacts(): ContactsNativeProps {
       params: { title: t("payTab.contacts.seeAllTitle") },
     });
   }, [navigation, t]);
+  const onContactPress = useCallback((contact: Contact) => open(contact), [open]);
 
   return useMemo(
     () => ({
-      title: t("payTab.contacts.title"),
-      payLabel: t("payTab.contacts.pay"),
       onPay: open,
+      onContactPress,
       onSeeAll,
       outgoingOperations,
     }),
-    [t, open, onSeeAll, outgoingOperations],
+    [open, onContactPress, onSeeAll, outgoingOperations],
   );
 }

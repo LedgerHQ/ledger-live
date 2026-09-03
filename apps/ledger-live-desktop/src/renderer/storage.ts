@@ -24,9 +24,12 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
+import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 
-/** Persisted pay card blob: the tour flag and the balance filter, stored under one key. */
-type PayCardPersistedState = PayCardFeatureTourState & PayCardBalanceState;
+/** Persisted pay card blob: tour, request verify hint, and balance filter, stored under one key. */
+type PayCardPersistedState = PayCardFeatureTourState &
+  PayRequestVerifyHintState &
+  PayCardBalanceState;
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.

@@ -13,7 +13,7 @@ export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewP
           nobody is signed in. Right now each child decides on its own, so they can overlap. */}
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       <Divider />
-      <CardLogin oauthConfig={oauthConfig} callback={callback} />
+      <CardLogin key={`${oauthConfig.apiUrl}`} oauthConfig={oauthConfig} callback={callback} />
       <CardLogout />
     </div>
   );

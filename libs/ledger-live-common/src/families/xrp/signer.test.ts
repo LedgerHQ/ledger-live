@@ -37,7 +37,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0", { derivationMode: "xrp" });
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false, undefined, undefined);
     });
 
     it("should NOT display address on device when called without options", async () => {
@@ -45,7 +45,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0");
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false, undefined, undefined);
     });
 
     it("should NOT display address on device when called with verify: false", async () => {
@@ -53,7 +53,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0", { verify: false });
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", false, undefined, undefined);
     });
 
     it("should display address on device when called with boolean true (receive flow)", async () => {
@@ -61,7 +61,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0", true);
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true, undefined, undefined);
     });
 
     it("should display address on device when called with verify: true", async () => {
@@ -69,7 +69,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0", { verify: true });
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true, undefined, undefined);
     });
 
     it("should forward chainCode arg to the underlying signer (receive flow)", async () => {
@@ -77,7 +77,7 @@ describe("createSigner (XRP)", () => {
 
       await signer.getAddress("44'/144'/0'/0/0", true, false);
 
-      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true, false);
+      expect(mockGetAddress).toHaveBeenCalledWith("44'/144'/0'/0/0", true, false, undefined);
     });
   });
 

@@ -12,9 +12,9 @@ import TrustchainPage from "@e2e/page/trustchain.page";
 import ManagerPage from "@e2e/page/manager/manager.page";
 import MarketPage from "@e2e/page/market/market.page";
 import OnboardingStepsPage from "@e2e/page/onboarding/onboardingSteps.page";
+import PostOnboardingHubPage from "@e2e/page/postOnboarding/postOnboardingHub.page";
 import OperationDetailsPage from "@e2e/page/trade/operationDetails.page";
 import PasswordEntryPage from "@e2e/page/passwordEntry.page";
-import PortfolioEmptyStatePage from "@e2e/page/wallet/portfolioEmptyState.page";
 import PortfolioPage from "@e2e/page/wallet/portfolio.page";
 import AssetDetailPage from "@e2e/page/wallet/assetDetail.page";
 import ReceivePage from "@e2e/page/trade/receive.page";
@@ -36,7 +36,6 @@ import OperationPage from "@e2e/page/wallet/operation.page";
 import TopBarSearchPage from "@e2e/page/wallet/topBarSearch.page";
 import CeloManageAssetsPage from "@e2e/page/trade/celoManageAssets.page";
 import BorrowPage from "@e2e/page/trade/borrow.page";
-import TransferMenuDrawer from "@e2e/page/wallet/transferMenu.drawer";
 import BuySellPage from "@e2e/page/trade/buySell.page";
 import EarnV2DashboardPage from "@e2e/page/trade/earnV2Dashboard.page";
 import ModularDrawer from "@e2e/page/drawer/modular.drawer";
@@ -77,9 +76,9 @@ export class Application {
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private postOnboardingHubPageInstance = lazyInit(PostOnboardingHubPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
-  private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
@@ -99,7 +98,6 @@ export class Application {
   private operationPageInstance = lazyInit(OperationPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private readonly borrowPageInstance = lazyInit(BorrowPage);
-  private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
@@ -173,6 +171,10 @@ export class Application {
     return this.onboardingPageInstance();
   }
 
+  public get postOnboardingHub() {
+    return this.postOnboardingHubPageInstance();
+  }
+
   public get operationDetails() {
     return this.operationDetailsPageInstance();
   }
@@ -187,10 +189,6 @@ export class Application {
 
   public get assetDetail() {
     return this.assetDetailPageInstance();
-  }
-
-  public get portfolioEmptyState() {
-    return this.portfolioEmptyStatePageInstance();
   }
 
   public get receive() {
@@ -255,10 +253,6 @@ export class Application {
 
   public get celoManageAssets() {
     return this.celoManageAssetsPageInstance();
-  }
-
-  public get transferMenuDrawer() {
-    return this.TransferMenuDrawerInstance();
   }
 
   public get buySell() {

@@ -20,7 +20,7 @@ jest.mock("~/logic/keyboardVisible", () => ({
 
 type SheetsProps = Pick<
   ContactAddressDetailActionsFlowProps,
-  "deleteSheet" | "renameSheet" | "signerSheet" | "signerMismatchSheet"
+  "deleteSheet" | "renameSheet" | "signerMismatchSheet"
 >;
 
 function createProps(isRenameOpen = true): SheetsProps {
@@ -31,7 +31,6 @@ function createProps(isRenameOpen = true): SheetsProps {
   return {
     deleteSheet: uiState.delete,
     renameSheet: { ...uiState.rename, isOpen: isRenameOpen },
-    signerSheet: uiState.signer,
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

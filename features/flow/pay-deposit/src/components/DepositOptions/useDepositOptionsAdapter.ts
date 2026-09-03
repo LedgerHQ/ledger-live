@@ -1,13 +1,7 @@
 import { useCallback, useState } from "react";
-import type {
-  DepositOptionId,
-  DepositOptionsLabels,
-  DepositOptionsProps,
-  PayCardTrackEvent,
-} from "../../types";
+import type { DepositOptionId, DepositOptionsProps, PayCardTrackEvent } from "../../types";
 
 export type UseDepositOptionsAdapterParams = Readonly<{
-  labels: DepositOptionsLabels;
   page: string;
   onSelect: (id: DepositOptionId) => void;
   onTrackEvent?: PayCardTrackEvent;
@@ -19,7 +13,6 @@ export type UseDepositOptionsAdapter = Readonly<{
 }>;
 
 export function useDepositOptionsAdapter({
-  labels,
   page,
   onSelect,
   onTrackEvent,
@@ -34,7 +27,6 @@ export function useDepositOptionsAdapter({
     depositOptions: {
       isOpen,
       page,
-      labels,
       onClose,
       onSelect,
       onTrackEvent,

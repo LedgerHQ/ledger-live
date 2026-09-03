@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-card-request";
+import type { RequestReceiveAsset, RequestReceiveIconProps } from "@features/flow-pay-request";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getFreshAccountAddress } from "~/utils/address";
 

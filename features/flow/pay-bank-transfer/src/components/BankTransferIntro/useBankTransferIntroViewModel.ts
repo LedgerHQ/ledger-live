@@ -1,18 +1,24 @@
 import { useCallback } from "react";
-import type { BankTransferIntroProps, BankTransferIntroViewModel } from "../../types";
+import type {
+  BankTransferHandoff,
+  BankTransferIntroProps,
+  BankTransferIntroViewModel,
+} from "../../types";
 
 export const BANK_TRANSFER_INTRO_PAGE_EVENT = "Page cash to stable";
 export const BANK_TRANSFER_INTRO_PAGE = "cash to stable";
 export const BANK_TRANSFER_INTRO_FLOW = "C2S";
 
 const TRACK_BUTTON = {
-  continue: "continue",
+  createAccount: "create an account",
+  logIn: "log in to noah",
   close: "close",
 } as const;
 
 export function useBankTransferIntroViewModel({
   isOpen,
   labels,
+  heroImage,
   bottomInset = 0,
   onBankTransfer,
   onClose,
@@ -33,26 +39,46 @@ export function useBankTransferIntroViewModel({
     [onTrackEvent],
   );
 
-  const onContinuePress = useCallback(() => {
-    trackCta(TRACK_BUTTON.continue);
-    onBankTransfer();
-    onClose();
-  }, [trackCta, onBankTransfer, onClose]);
+  const handOffToPartner = useCallback(
+    (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON], handoff: BankTransferHandoff) => {
+      trackCta(button);
+      onBankTransfer(handoff);
+      onClose();
+    },
+    [trackCta, onBankTransfer, onClose],
+  );
+
+  const onCreateAccountPress = useCallback(() => {
+    handOffToPartner(TRACK_BUTTON.createAccount, "createAccount");
+  }, [handOffToPartner]);
+
+  const onLogInPress = useCallback(() => {
+    handOffToPartner(TRACK_BUTTON.logIn, "logIn");
+  }, [handOffToPartner]);
 
   const onClosePress = useCallback(() => {
     trackCta(TRACK_BUTTON.close);
     onClose();
   }, [trackCta, onClose]);
 
+  const onDismiss = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
   return {
     isOpen,
     title: labels.title,
     description: labels.description,
-    continueLabel: labels.continueLabel,
+    createAccountLabel: labels.createAccountLabel,
+    logInLabel: labels.logInLabel,
+    providedBy: labels.providedBy,
+    heroImage,
     rows: labels.rows,
     bottomInset,
     onShown,
-    onContinuePress,
+    onCreateAccountPress,
+    onLogInPress,
     onClosePress,
+    onDismiss,
   };
 }

@@ -52,6 +52,7 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
+import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { scrubAccountId } from "../helpers/scrubAccountId";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
@@ -345,6 +346,7 @@ const extraProperties = (store: ReduxStore) => {
     "lwd",
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
+  const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
 
   return {
     ...mandatoryProperties,
@@ -392,6 +394,7 @@ const extraProperties = (store: ReduxStore) => {
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
+    ...remoteABTestingAttributes,
   };
 };
 

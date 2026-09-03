@@ -6,6 +6,7 @@ export enum EntryPoint {
   manager = "manager",
   accounts = "accounts",
   settings = "settings",
+  sendFlow = "sendFlow",
 }
 
 export type EntryPointsData = Record<

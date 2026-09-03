@@ -2,10 +2,11 @@ export type ContactsLedgerSyncStatus = "ready" | "checking" | "inactive" | "unav
 
 export type ContactsLedgerSyncIntroduction = Readonly<{
   isOpen: boolean;
+  title: string;
   description: string;
-  activateLabel?: string;
+  activateLabel: string;
   dismissLabel: string;
-  onActivate?: () => void;
+  onActivate: () => void;
   onDismiss: () => void;
 }>;
 
@@ -20,7 +21,6 @@ export type ContactsFeatureIntroductionHighlight = Readonly<{
 export type ContactsFeatureIntroduction = Readonly<{
   isOpen: boolean;
   title: string;
-  description: string;
   highlights: readonly ContactsFeatureIntroductionHighlight[];
   primaryActionLabel: string;
   heroImageSrc?: string;

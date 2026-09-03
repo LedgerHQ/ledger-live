@@ -26,6 +26,7 @@ function createViewModel(
       resolvedAddress: address,
       inputMethod: "manual",
     },
+    isDeviceRequired: true,
     labels: {
       title: "Edit address",
       inputLabel: "Address label",

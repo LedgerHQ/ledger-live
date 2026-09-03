@@ -13,6 +13,8 @@ import {
   isPostOnboardingFlowSelector,
   onboardingTypeSelector,
 } from "~/reducers/settings";
+import { returnsToEntryScreenSelector } from "~/reducers/walletSync";
+import { setLedgerSyncReturnsToEntryScreen } from "~/actions/walletSync";
 import { OnboardingType } from "~/reducers/types";
 
 export function useClose() {
@@ -21,6 +23,7 @@ export function useClose() {
   const isFromLedgerSyncOnboarding = useSelector(isFromLedgerSyncOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
   const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
+  const returnsToEntryScreen = useSelector(returnsToEntryScreenSelector);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
 
@@ -33,6 +36,13 @@ export function useClose() {
         navigationOnbarding.goBack();
         return;
       }
+    }
+
+    if (returnsToEntryScreen) {
+      dispatch(setLedgerSyncReturnsToEntryScreen(false));
+      navigationOnbarding.popToTop();
+      navigationOnbarding.goBack();
+      return;
     }
 
     if (isPostOnboardingFlow) {

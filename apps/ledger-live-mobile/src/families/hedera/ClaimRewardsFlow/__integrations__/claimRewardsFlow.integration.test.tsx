@@ -63,7 +63,7 @@ function ClaimRewardsFlowHarness() {
   );
 }
 
-function renderFlow() {
+function renderFlow(selectedDelegation = mockEnrichedDelegation) {
   return render(<ClaimRewardsFlowHarness />, {
     navigationInitialState: {
       index: 0,
@@ -77,7 +77,7 @@ function renderFlow() {
                 name: ScreenName.HederaClaimRewardsClaim,
                 params: {
                   accountId: HEDERA_ACCOUNT_1.id,
-                  selectedDelegation: mockEnrichedDelegation,
+                  selectedDelegation,
                 },
               },
             ],
@@ -133,5 +133,18 @@ describe("Hedera ClaimRewardsFlow (integration)", () => {
 
     await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
     expect(screen.queryByTestId("validate-success-screen")).toBeNull();
+  });
+
+  it("renders without crashing when the enriched delegation has a fetch error and blank validator name", async () => {
+    renderFlow({
+      ...mockEnrichedDelegation,
+      error: new Error("network down"),
+      validator: { ...mockEnrichedDelegation.validator, name: "" },
+    });
+
+    await waitFor(
+      () => expect(screen.getByTestId("enabled-hedera-claim-continue-button")).toBeVisible(),
+      { timeout: 10000 },
+    );
   });
 });

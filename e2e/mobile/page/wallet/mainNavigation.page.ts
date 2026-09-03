@@ -21,19 +21,14 @@ export default class MainNavigationPage {
   topBarSettingsId = "topbar-settings";
   topBarNotificationsId = "topbar-notifications";
   topBarTransactionHistoryId = "topbar-transaction-history";
-  headerBackButtonId = "header-back-button";
   myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
 
   // --- Legacy bottom tabs ---
-  legacyPortfolioTabId = "tab-bar-portfolio";
-  legacyEarnTabId = "tab-bar-earn";
   legacyTransferButtonId = "transfer-button";
-  legacyDiscoverTabId = "tab-bar-discover";
   legacyMyLedgerTabId = "TabBarManager";
 
   // --- Destination page verification IDs ---
   portfolioScreenId = "portfolio-screen";
-  swapFormId = "swap-form-tab";
   earnScreenId = "earn-screen";
   cardScreenId = "card-landing-screen";
   discoverHeaderTitle = "Discover";
@@ -60,11 +55,6 @@ export default class MainNavigationPage {
       timeout,
       600,
     );
-  }
-
-  @Step("Wait for Legacy navigation to be ready")
-  async waitForLegacyReady() {
-    await waitForElementById(this.legacyMyLedgerTabId);
   }
 
   // =====================
@@ -114,30 +104,6 @@ export default class MainNavigationPage {
   }
 
   // =====================
-  // Legacy Tab Actions
-  // =====================
-
-  @Step("Tap Portfolio tab (Legacy)")
-  async tapLegacyPortfolioTab() {
-    await tapById(this.legacyPortfolioTabId);
-  }
-
-  @Step("Tap Earn tab (Legacy)")
-  async tapLegacyEarnTab() {
-    await tapById(this.legacyEarnTabId);
-  }
-
-  @Step("Tap Discover tab (Legacy)")
-  async tapLegacyDiscoverTab() {
-    await tapById(this.legacyDiscoverTabId);
-  }
-
-  @Step("Tap My Ledger tab (Legacy)")
-  async tapLegacyMyLedgerTab() {
-    await tapById(this.legacyMyLedgerTabId);
-  }
-
-  // =====================
   // Wallet 4.0 Expectations
   // =====================
 
@@ -169,28 +135,6 @@ export default class MainNavigationPage {
   }
 
   // =====================
-  // Legacy Expectations
-  // =====================
-
-  @Step("Expect legacy bottom tabs to be visible")
-  async expectLegacyBottomTabsVisible() {
-    await detoxExpect(getElementById(this.legacyPortfolioTabId)).toBeVisible();
-    await detoxExpect(getElementById(this.legacyEarnTabId)).toBeVisible();
-    await detoxExpect(getElementById(this.legacyTransferButtonId)).toBeVisible();
-    await detoxExpect(getElementById(this.legacyDiscoverTabId)).toBeVisible();
-    await detoxExpect(getElementById(this.legacyMyLedgerTabId)).toBeVisible();
-  }
-
-  @Step("Expect Wallet 4.0 top bar NOT visible")
-  async expectWallet40TopBarNotVisible() {
-    if (isMyWalletEnabled) {
-      await detoxExpect(getElementById(this.topBarMyWalletId)).not.toBeVisible();
-    } else {
-      await detoxExpect(getElementById(this.topBarMyLedgerId)).not.toBeVisible();
-    }
-  }
-
-  // =====================
   // Destination Page Expectations
   // =====================
 
@@ -205,11 +149,6 @@ export default class MainNavigationPage {
     await waitForElementById(this.portfolioScreenId);
   }
 
-  @Step("Expect Swap page visible")
-  async expectSwapPageVisible() {
-    await waitForElementById(this.swapFormId);
-  }
-
   @Step("Expect Earn page visible")
   async expectEarnPageVisible() {
     await waitForElementById(this.earnScreenId);
@@ -218,11 +157,6 @@ export default class MainNavigationPage {
   @Step("Expect Card page visible")
   async expectCardPageVisible() {
     await waitForElementById(this.cardScreenId);
-  }
-
-  @Step("Go back via header back button")
-  async tapHeaderBackButton() {
-    await tapById(this.headerBackButtonId);
   }
 
   @Step("Expect Discover page visible")

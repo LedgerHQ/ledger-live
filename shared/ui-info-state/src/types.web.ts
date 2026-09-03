@@ -11,20 +11,14 @@ type LumenIconSpotProps = Extract<LumenSpotProps, { icon?: unknown }>;
 /** Props forwarded to the Lumen Spot for the custom spot preset (web). */
 export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon" | "size">;
 
-type InfoStateWebBaseProps = InfoStateBaseProps &
-  Readonly<{
-    /** Optional full-width custom content rendered between the copy and the banner. Web only. */
-    content?: ReactNode;
-  }>;
-
 /** Props for the web InfoState layout. */
 export type InfoStateProps =
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders a caller-provided illustration in a 208px visual slot. */
       preset: "illustration";
       illustration: ReactNode;
     })
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders a Lumen Spot with caller-provided icon props. */
       preset: "spot";
       spotProps: InfoStateSpotProps;
@@ -36,19 +30,19 @@ export type InfoStateProps =
        */
       backgroundTone?: DialogBackgroundTone;
     })
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders a success status Spot. */
       preset: "success";
     })
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders an error status Spot. */
       preset: "error";
     })
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders an info status Spot. */
       preset: "info";
     })
-  | (InfoStateWebBaseProps & {
+  | (InfoStateBaseProps & {
       /** Renders only title, description, banner, and actions without visual spacing. */
       preset: "text";
     });

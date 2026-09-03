@@ -77,7 +77,6 @@ export type BalanceData = BalanceAggregate &
 
 export type BalanceProps = BalanceData &
   Readonly<{
-    labels: BalanceLabels;
     actionTiles?: ActionTilesProps;
   }>;
 

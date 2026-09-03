@@ -1,13 +1,18 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import {
+  useContactsIntentsOrchestrator,
+  type ContactsDeviceIntentExecutorProps,
+} from "@features/platform-contacts/device";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
   isPrefillAddAddressFlowOpen,
   useAddAddressFlowViewModel,
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
+import { contactsIntentLWMDefinitions } from "LLM/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsAddressValidationAdapter } from "LLM/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import { useDispatch } from "~/context/hooks";
@@ -21,6 +26,7 @@ export type SendPrefillAddAddressPhase = Readonly<{
 
 export type SendPrefillAddAddressFlow = Readonly<{
   addressPhase: SendPrefillAddAddressPhase | null;
+  dieProps: ContactsDeviceIntentExecutorProps | undefined;
   isOpeningAddressFlow: boolean;
   startForContact: (contact: Contact) => Promise<void>;
   goBackFromAddressPhase: () => void;
@@ -41,7 +47,10 @@ export function useSendPrefillAddAddressFlow({
   const saveRequestId = useRef(0);
   const isSaving = useRef(false);
   const addressValidation = useContactsAddressValidationAdapter();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWMDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
+  });
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -57,11 +66,15 @@ export function useSendPrefillAddAddressFlow({
     isSaving.current = false;
   }, []);
 
+  /**
+   * Closing does not cancel a registration already handed to the device: the drawer also
+   * closes to free the queue for the executor, and the signed address must still be saved.
+   * Cancelling on the device rejects the intent, which the save path already handles.
+   */
   const closeAddressFlow = useCallback(() => {
-    cancelPendingSave();
     setIsOpeningAddressFlow(false);
     close();
-  }, [cancelPendingSave, close]);
+  }, [close]);
 
   const goBackFromAddressPhase = useCallback(() => {
     cancelPendingSave();
@@ -166,6 +179,7 @@ export function useSendPrefillAddAddressFlow({
 
   return {
     addressPhase,
+    dieProps,
     isOpeningAddressFlow,
     startForContact,
     goBackFromAddressPhase,
