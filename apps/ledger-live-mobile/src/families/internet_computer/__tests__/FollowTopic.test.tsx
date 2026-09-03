@@ -55,6 +55,15 @@ describe("FollowTopic", () => {
     mockNavigate.mockClear();
   });
 
+  it("names each topic rather than printing its wire identifier", () => {
+    renderScreen();
+
+    expect(screen.getByText("IC OS version deployment")).toBeVisible();
+    expect(screen.getByText("All other topics")).toBeVisible();
+    expect(screen.queryByText("IcOsVersionDeployment")).toBeNull();
+    expect(screen.queryByText("Unspecified")).toBeNull();
+  });
+
   /*
    * The topic used to live in navigation state while the transaction was seeded elsewhere, so the two
    * could disagree: picking a topic, going back and picking another showed the second and signed the

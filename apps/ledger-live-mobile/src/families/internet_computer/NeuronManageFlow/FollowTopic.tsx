@@ -9,6 +9,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
+import { useGovernanceTopicLabel } from "../useGovernanceTopicLabel";
 import { useNeuronAction } from "./useNeuronAction";
 import MissingNeuron from "./MissingNeuron";
 import type { FollowTopic as Topic, InternetComputerNeuronManageFlowParamList } from "./types";
@@ -25,6 +26,7 @@ const TOPICS = Object.keys(KNOWN_TOPICS) as Topic[];
 /** Picks the governance topic whose followees the next screen edits. */
 export default function FollowTopic({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const topicLabel = useGovernanceTopicLabel();
   const { account, neuron, backToList, transaction, bridge } = useNeuronAction(navigation, route);
   const principal = useICPPrincipal(account);
 
@@ -93,7 +95,7 @@ export default function FollowTopic({ navigation, route }: Props) {
                 mb={3}
               >
                 <Text variant="body" fontWeight="semiBold" color="neutral.c100">
-                  {topic}
+                  {topicLabel(topic)}
                 </Text>
                 <Text variant="small" color="neutral.c70">
                   {t("internetComputer.manageNeuronFlow.followTopic.followeeCount", {

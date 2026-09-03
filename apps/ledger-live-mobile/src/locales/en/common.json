@@ -228,6 +228,27 @@
         "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}."
       }
     },
+    "governanceTopic": {
+      "Unspecified": "All other topics",
+      "NeuronManagement": "Neuron management",
+      "ExchangeRate": "Exchange rate",
+      "NetworkEconomics": "Network economics",
+      "Governance": "Governance",
+      "NodeAdmin": "Node admin",
+      "ParticipantManagement": "Participant management",
+      "SubnetManagement": "Subnet management",
+      "NetworkCanisterManagement": "Network canister management",
+      "Kyc": "KYC",
+      "NodeProviderRewards": "Node provider rewards",
+      "SnsDecentralizationSale": "SNS decentralization sale",
+      "IcOsVersionDeployment": "IC OS version deployment",
+      "IcOsVersionElection": "IC OS version election",
+      "SnsAndCommunityFund": "SNS & Community Fund",
+      "ApiBoundaryNodeManagement": "API boundary node management",
+      "SubnetRental": "Subnet rental",
+      "ProtocolCanisterManagement": "Protocol canister management",
+      "ServiceNervousSystemManagement": "Service Nervous System management"
+    },
     "refreshVotingPowerFlow": {
       "title": "Confirm following",
       "description": "Confirming your following restores a neuron's voting power for another six months.",

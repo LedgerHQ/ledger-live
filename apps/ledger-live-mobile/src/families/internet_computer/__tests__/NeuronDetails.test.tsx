@@ -1,6 +1,7 @@
 import {
   E8S_PER_ICP,
   ICP_FEES,
+  KNOWN_TOPICS,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -97,6 +98,20 @@ describe("NeuronDetails", () => {
   // Only this file's own spy: restoreAllMocks would reach anything the jest setup had spied on too.
   afterEach(() => {
     nowSpy.mockRestore();
+  });
+
+  // A neuron's own followees arrive as the numbers the canister reports, not as topic names, so this
+  // is the reverse half of the lookup and the only thing that exercises it.
+  it("names the topic of a followee the neuron already holds", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      followees: [{ topic: KNOWN_TOPICS.NodeAdmin, followeeIds: [7n] }],
+    });
+
+    renderDetails();
+
+    expect(screen.getByText("Node admin")).toBeVisible();
+    expect(screen.queryByText("NodeAdmin")).toBeNull();
   });
 
   it("offers the controller-only actions when the account controls the neuron", () => {
