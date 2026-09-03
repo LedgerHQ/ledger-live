@@ -45,12 +45,19 @@ describe("resolveBaseUrl", () => {
 
 describe("fetchAssetsPage", () => {
   let baseQuery: jest.Mock;
+  let warn: jest.SpyInstance;
 
   const request = () =>
     baseQuery.mock.calls[0][0] as { url: string; params: Record<string, unknown> };
 
   beforeEach(() => {
     baseQuery = jest.fn().mockResolvedValue({ data: emptyRaw });
+    warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  /* In afterEach, so a failing assertion cannot leak the spy into the next test. */
+  afterEach(() => {
+    warn.mockRestore();
   });
 
   it("targets the /assets path on the resolved base url", async () => {
@@ -81,6 +88,24 @@ describe("fetchAssetsPage", () => {
 
     expect(result.cryptoOrTokenCurrencies).toEqual({});
     expect(result.currenciesOrder).toEqual(emptyRaw.currenciesOrder);
+  });
+
+  /* The chunked endpoint merges pages from here, so validation has to cover this path too. */
+  it("drops an invalid asset rather than carrying it into a merged chunk", async () => {
+    baseQuery.mockResolvedValue({
+      data: {
+        ...emptyRaw,
+        cryptoAssets: {
+          btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} },
+          broken: { id: 42 },
+        },
+      },
+    });
+
+    const result = await fetchAssetsPage(baseQuery, params());
+
+    expect(Object.keys(result.cryptoAssets)).toEqual(["btc"]);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("cryptoAssets=1"));
   });
 
   /*

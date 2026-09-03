@@ -1,3 +1,4 @@
+import { InterestRateSchema } from "@domain/entity-interest-rate";
 import { mergeAssetsDataPages } from "./pagination";
 import type { AssetsDataWithPagination } from "./types";
 
@@ -38,7 +39,12 @@ describe("mergeAssetsDataPages", () => {
           cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
           networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
           interestRates: {
-            btc: { currencyId: "btc", rate: 1, type: "APY", fetchAt: "2026-01-01" },
+            btc: InterestRateSchema.parse({
+              currencyId: "btc",
+              rate: 1,
+              type: "APY",
+              fetchAt: "2026-01-01T00:00:00.000Z",
+            }),
           },
           markets: { btc: { price: 1 } },
         }),
@@ -46,7 +52,12 @@ describe("mergeAssetsDataPages", () => {
           cryptoAssets: { eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: {} } },
           networks: { ethereum: { id: "ethereum", name: "Ethereum" } },
           interestRates: {
-            eth: { currencyId: "eth", rate: 2, type: "APR", fetchAt: "2026-01-01" },
+            eth: InterestRateSchema.parse({
+              currencyId: "eth",
+              rate: 2,
+              type: "APR",
+              fetchAt: "2026-01-01T00:00:00.000Z",
+            }),
           },
           markets: { eth: { price: 2 } },
         }),

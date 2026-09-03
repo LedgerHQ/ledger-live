@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
 
 /**
  * The rate kinds the apps understand.
@@ -17,12 +19,17 @@ export const ApySchema = z.object({
 
 /** An interest rate attached to one currency. */
 export const InterestRateSchema = z.object({
-  /** Currency identifier */
-  currencyId: z.string(),
+  /** Crypto or token id: DADA keys rates by both, so the crypto form alone would reject tokens. */
+  currencyId: CryptoOrTokenCurrencyIdSchema,
   /** Interest rate value */
   rate: z.number(),
   /** Type of rate (NRR, APR, APY, etc.) — intentionally wider than ApyType, see above */
   type: z.string(),
-  /** Timestamp when the rate was fetched */
-  fetchAt: z.string(),
+  /**
+   * When the rate was read, as an ISO datetime with offset.
+   *
+   * Optional because nothing reads it: DADA omitting it, or sending a date without a time, must
+   * not cost an otherwise usable rate.
+   */
+  fetchAt: DateTimeIsoSchema.optional(),
 });

@@ -13,6 +13,12 @@ export const CryptoAssetMetaSchema = z.object({
   ticker: z.string(),
   /** Asset display name */
   name: z.string(),
-  /** Map of network IDs to their corresponding asset IDs */
+  /**
+   * Network id to the currency id representing this asset there.
+   *
+   * Ids stay unbranded for now: branding the values costs 23 fixture sites across three packages
+   * and 31 more in the apps, for no production change, since every caller only reads them and a
+   * branded string is already assignable to string. Worth doing on its own, not inside another task.
+   */
   assetsIds: z.record(z.string(), z.string()),
 });

@@ -3,6 +3,7 @@ import { CryptoCurrencySchema, findCryptoCurrencyById } from "@domain/entity-cur
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { convertApiToken } from "@domain/api-currency-token";
 import type { ApiAsset, RawApiResponse } from "./schema";
+import { validateAssetsResponse } from "./internals/validate";
 import type { AssetsDataWithPagination } from "./types";
 
 /**
@@ -46,7 +47,9 @@ export function convertApiAssets(
           symbol: asset.symbol,
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
-          ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
+          ...(asset.chainId
+            ? { ethereumLikeInfo: { chainId: Number.parseInt(asset.chainId, 10) } }
+            : {}),
         });
       }
     }
@@ -58,12 +61,13 @@ export function transformAssetsResponse(
   response: RawApiResponse,
   meta?: FetchBaseQueryMeta,
 ): AssetsDataWithPagination {
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(response.cryptoOrTokenCurrencies);
+  const validated = validateAssetsResponse(response);
+  const enrichedCryptoOrTokenCurrencies = convertApiAssets(validated.cryptoOrTokenCurrencies);
 
   const nextCursor = meta?.response?.headers.get("x-ledger-next") || undefined;
 
   return {
-    ...response,
+    ...validated,
     cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
     pagination: {
       nextCursor,

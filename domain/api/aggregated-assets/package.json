@@ -41,7 +41,9 @@
     "@domain/entity-interest-rate": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
-    "@shared/env": "workspace:*"
+    "@shared/env": "workspace:*",
+    "@shared/schema-primitives": "workspace:*",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
