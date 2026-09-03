@@ -36,21 +36,37 @@ const currentFolloweeCount = ({ neurons, selectedNeuronId, transaction }: StepPr
   );
 };
 
-// `follow` checks only the cap and that the topic exists, so none of this is caught anywhere else.
-type DraftIssue = "notANeuronId" | "duplicate" | "self" | "unadded";
+type DraftIssue = "notANeuronId" | "outOfRange" | "duplicate" | "self" | "unadded";
 
-const draftIssueOf = (
-  draftId: string,
+// A followee id is a nat64. Bounding it here rather than letting Candid refuse it keeps the fault on
+// the form: encoding happens inside signOperation, which would surface a developer string instead.
+const MAX_NEURON_ID = 2n ** 64n - 1n;
+
+/**
+ * Reads the draft, reporting what is wrong with it and the id to add when nothing is.
+ *
+ * The draft is submitted as written, so it is validated rather than repaired: stripping non-digits
+ * read `12a3` as neuron 123 and would delegate this neuron's voting power to a target the user never
+ * typed. `follow` checks only the cap and that the topic exists, so nothing else catches any of it.
+ */
+const readDraft = (
+  draft: string,
   followeesIds: readonly string[],
   selectedNeuronId: string | null,
-): DraftIssue | undefined => {
-  if (!draftId) return undefined;
-  if (!/^\d+$/.test(draftId)) return "notANeuronId";
-  if (followeesIds.includes(draftId)) return "duplicate";
+): { issue?: DraftIssue; id?: string } => {
+  const entry = draft.trim();
+  if (!entry) return {};
+  if (!/^\d+$/.test(entry)) return { issue: "notANeuronId" };
+  const value = BigInt(entry);
+  if (value === 0n || value > MAX_NEURON_ID) return { issue: "outOfRange" };
+  // Canonical, which is not the repair refused above: `0123` and `123` are the same neuron, so
+  // comparing the entry as typed let a leading zero past both checks below and submitted it twice.
+  const id = value.toString();
+  if (followeesIds.includes(id)) return { issue: "duplicate", id };
   // The canister accepts a neuron following itself; it just gains nothing by it, since a neuron
   // never sees its own ballot as a followee's.
-  if (draftId === selectedNeuronId) return "self";
-  return "unadded";
+  if (id === selectedNeuronId) return { issue: "self", id };
+  return { issue: "unadded", id };
 };
 
 /**
@@ -90,16 +106,12 @@ const StepSelectFollowees = (props: StepProps) => {
     [onUpdateTransaction],
   );
 
-  // The draft is submitted as written, so it has to be validated rather than repaired. Stripping
-  // non-digits would read `12a3` as neuron 123 and delegate this neuron's voting power to a target
-  // the user never typed, while the field still showed what they did type.
-  const draftId = followeeDraft.trim();
+  const { issue, id: draftId } = readDraft(followeeDraft, followeesIds, selectedNeuronId);
   const isFull = followeesIds.length >= MAX_FOLLOWEES_PER_TOPIC;
-  const issue = draftIssueOf(draftId, followeesIds, selectedNeuronId);
   const canAdd = !isFull && issue === "unadded";
 
   const onAdd = useCallback(() => {
-    if (!canAdd) return;
+    if (!canAdd || !draftId) return;
     setFollowees([...followeesIds, draftId]);
     setFolloweeDraft("");
   }, [canAdd, draftId, followeesIds, setFollowees, setFolloweeDraft]);
@@ -110,7 +122,10 @@ const StepSelectFollowees = (props: StepProps) => {
 
   if (!followTopic) return null;
 
-  const notice = isFull ? "atCapacity" : issue;
+  const isMalformed = issue === "notANeuronId" || issue === "outOfRange";
+  // A malformed entry is the fault worth reporting even at capacity: removing a followee would not
+  // make it addable.
+  const notice = isFull && !isMalformed ? "atCapacity" : issue;
 
   return (
     <Box flow={3} px={4}>
@@ -202,12 +217,15 @@ const StepSelectFollowees = (props: StepProps) => {
 // Submitting an empty list clears the topic, which is worth allowing but not worth signing for when
 // there is nothing to clear: empty over empty is a device confirmation that changes nothing.
 export const StepSelectFolloweesFooter = (props: StepProps) => {
-  const submitted = props.transaction?.followeesIds?.length ?? 0;
-  // An id still in the field is not in the list `follow` submits, so signing would drop it silently.
+  const followeesIds = props.transaction?.followeesIds ?? EMPTY_FOLLOWEES;
+  const { issue } = readDraft(props.followeeDraft, followeesIds, props.selectedNeuronId);
+  // Only an addable id blocks: it is absent from the list `follow` submits, so signing would drop it
+  // silently, while any other entry adds nothing and must not hold the submission the user already
+  // has.
   const canContinue =
     !!props.transaction?.followTopic &&
-    props.followeeDraft.trim() === "" &&
-    (submitted > 0 || currentFolloweeCount(props) > 0);
+    issue !== "unadded" &&
+    (followeesIds.length > 0 || currentFolloweeCount(props) > 0);
 
   return <SubmitFooter {...props} canContinue={canContinue} />;
 };
