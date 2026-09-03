@@ -8,6 +8,7 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { screen } from "~/analytics";
@@ -27,8 +28,12 @@ export type ReadyRecipientScreenViewModel = Readonly<{
   transaction: Transaction | null;
   currency: CryptoOrTokenCurrency;
   recipientSupportsDomain: boolean;
-  onAddressSelected: (address: string, ensName?: string) => void;
-  onMemoProceed: () => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
 }>;
 
 export type RecipientScreenViewModel = RecipientScreenViewModelBase | ReadyRecipientScreenViewModel;
@@ -90,23 +95,21 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     navigation.navigate(ScreenName.SendFlowAmount);
   }, [navigation]);
 
-  const onMemoProceed = useCallback(() => {
-    recipientSearch.clear();
-    goToAmount();
-  }, [recipientSearch, goToAmount]);
-
   const onAddressSelected = useCallback(
-    (address: string, ensName?: string) => {
+    (address: string, ensName?: string, goToNextStep = true, memo?: Memo) => {
       transaction.setRecipient({
         address,
         ensName,
-        memo: state.recipient?.memo,
+        memo: memo ?? (state.recipient?.address === address ? state.recipient.memo : undefined),
         displayLabel: undefined,
       });
-      recipientSearch.clear();
-      goToAmount();
+
+      if (goToNextStep) {
+        recipientSearch.clear();
+        goToAmount();
+      }
     },
-    [transaction, state.recipient?.memo, recipientSearch, goToAmount],
+    [transaction, state.recipient, recipientSearch, goToAmount],
   );
 
   if (!account || !currency) {
@@ -121,6 +124,5 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     currency,
     recipientSupportsDomain: uiConfig.recipientSupportsDomain,
     onAddressSelected,
-    onMemoProceed,
   };
 }
