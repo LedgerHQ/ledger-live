@@ -200,7 +200,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ledger-wallet-4cpu-aws-public]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:

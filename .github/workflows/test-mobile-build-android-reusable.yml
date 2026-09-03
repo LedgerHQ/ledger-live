@@ -185,7 +185,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-wallet-4cpu-aws-public]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
