@@ -1,52 +1,19 @@
-import type {
-  ApplicationConstraint,
-  ApplicationDependency,
-  ApplicationVersionConstraint,
-  DeviceManagementKit,
-} from "@ledgerhq/device-management-kit";
-import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { ConnectAppDAInput } from "@ledgerhq/live-dmk-shared";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  buildApplicationDependency,
+  type GetMinVersion,
+} from "../../../buildApplicationDependency";
 import getAddress from "../../../../hw/getAddress";
 import type { EnsureAppReadyInput } from "../types";
 
-export type GetMinVersion = (appName: string, model?: DeviceModelId) => string | undefined;
+export type { GetMinVersion };
 export type GetDeprecationConfig = (
   appName: string,
   dependencies?: string[],
 ) => ConnectAppDAInput["deprecationConfig"];
-
-function isApplicationVersionConstraint(version: string): version is ApplicationVersionConstraint {
-  return (
-    version === "latest" || /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(version)
-  );
-}
-
-function appNameToDependency(appName: string, getMinVersion: GetMinVersion): ApplicationDependency {
-  const constraints = Object.values(DeviceModelId).reduce<ApplicationConstraint[]>(
-    (result, model) => {
-      const minVersion = getMinVersion(appName, model);
-
-      if (!minVersion || !isApplicationVersionConstraint(minVersion)) {
-        return result;
-      }
-
-      result.push({
-        minVersion,
-        applicableModels: [model],
-      });
-
-      return result;
-    },
-    [],
-  );
-
-  return {
-    name: appName,
-    constraints,
-  };
-}
 
 function createRequiredDerivation(params: {
   dmk: DeviceManagementKit;
@@ -97,9 +64,9 @@ export function buildConnectAppDeviceActionInput(params: {
   } = params;
 
   return {
-    application: appNameToDependency(ensureAppReadyInput.appName, getMinVersion),
+    application: buildApplicationDependency(ensureAppReadyInput.appName, getMinVersion),
     dependencies: ensureAppReadyInput.dependencies.map(appName =>
-      appNameToDependency(appName, getMinVersion),
+      buildApplicationDependency(appName, getMinVersion),
     ),
     requireLatestFirmware: ensureAppReadyInput.requireLatestFirmware,
     allowMissingApplication: false,
