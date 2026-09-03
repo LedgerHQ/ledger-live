@@ -125,7 +125,7 @@
       },
       "manage": {
         "title": "Manage",
-        "neuron": "Neuron {{neuronId}}",
+        "neuron": "Neuron",
         "hotKeyOnly": "You hold a hot key on this neuron. You can vote and set following, but not move its stake.",
         "missingNeuron": "This neuron is no longer in your synced snapshot. Go back to your neurons and sync to pick another.",
         "votingPower": {
