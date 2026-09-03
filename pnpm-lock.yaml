@@ -22451,7 +22451,7 @@ packages:
     resolution: {integrity: sha512-gtSepkiGXvwIyvMC0DhNNYfZKt2BXFZ7IeFIY7h3Edz9ya5LxaRWWe3Zczo5Ex2CHgH2ALfXew+tZOod9Hd6Rg==}
 
   '@ledgerhq/zcash-utils@2.4.0':
-    resolution: {integrity: sha512-lsAydrDeudztkKIfgbVPV+3n0oYyWj+cjq5HlVDea6nuhGs1RvE5RYwe0grixfpZ3BUOSD2ebpLgfV76L35qEg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green/@ledgerhq/zcash-utils/-/@ledgerhq/zcash-utils-2.4.0.tgz}
+    resolution: {integrity: sha512-lsAydrDeudztkKIfgbVPV+3n0oYyWj+cjq5HlVDea6nuhGs1RvE5RYwe0grixfpZ3BUOSD2ebpLgfV76L35qEg==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
