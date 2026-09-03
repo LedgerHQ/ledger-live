@@ -108,17 +108,24 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests"
+    name: "Desktop Unit Tests (${{ matrix.jest_max_workers }} #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 10
+    # Raised from 10 for the benchmark: a slower worker setting must produce a
+    # measurement rather than a timeout.
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        jest_max_workers: ["50%", "95%"]
+        repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
+      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
     runs-on: [ledger-live-linux-16CPU-64RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -183,7 +190,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: coverage-desktop
+          name: coverage-desktop-${{ strategy.job-index }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   report:

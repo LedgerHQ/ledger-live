@@ -101,16 +101,22 @@ jobs:
         run: pnpm exec nx run live-mobile:typecheck
 
   unit-tests:
-    name: "Mobile Unit Tests"
+    name: "Mobile Unit Tests (${{ matrix.jest_max_workers }} #${{ matrix.repeat }})"
     if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        jest_max_workers: ["50%", "95%"]
+        repeat: [1, 2, 3]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
+      JEST_MAX_WORKERS: ${{ matrix.jest_max_workers }}
     runs-on: [ledger-live-linux-16CPU-64RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -175,5 +181,5 @@ jobs:
         if: ${{ !cancelled() }}
         id: generate_coverage
         with:
-          name: coverage-mobile
+          name: coverage-mobile-${{ strategy.job-index }}
           path: ${{ github.workspace }}/apps/ledger-live-mobile/coverage
