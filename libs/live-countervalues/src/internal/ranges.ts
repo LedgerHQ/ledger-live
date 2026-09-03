@@ -15,7 +15,6 @@ export function startOfWeek(t: Date): Date {
   return new Date(d.getTime() - d.getDay() * dayIncrement);
 }
 
-// TODO Portfolio: this would require to introduce Account#olderOperationDate
 const ranges: Record<PortfolioRange, PortfolioRangeConfig> = {
   all: {
     increment: weekIncrement,
@@ -74,7 +73,5 @@ export function getPortfolioCountByDate(start: Date, range: PortfolioRange): num
   const conf = getPortfolioRangeConfig(range);
   const now = Date.now();
   const count = Math.ceil((now - start.getTime()) / conf.increment) + 2;
-  const defaultYearCount = getPortfolioRangeConfig("year").count ?? 0; // just for type casting
-
-  return count < defaultYearCount ? defaultYearCount : count;
+  return Math.max(count, getPortfolioRangeConfig("year").count ?? 0);
 }
