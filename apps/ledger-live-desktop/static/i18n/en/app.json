@@ -930,6 +930,10 @@
         "more": "More options",
         "viewContact": "View contact",
         "viewTransactions": "View transactions"
+      },
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
       }
     },
     "actions": {

@@ -50,9 +50,16 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const operations = usePayTabContactOperations();
 
+  const onAddContactAddress = useCallback(
+    (contact: Contact) => {
+      navigate(`/contacts?contactId=${encodeURIComponent(contact.id)}&action=add-address`);
+    },
+    [navigate],
+  );
   const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
     {
       onSelectAddress: noopSelectAddress,
+      onAddNewAddress: onAddContactAddress,
     },
   );
   const onViewTransactions = useCallback(

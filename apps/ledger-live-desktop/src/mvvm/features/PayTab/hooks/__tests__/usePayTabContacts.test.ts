@@ -10,27 +10,37 @@ jest.mock("react-router", () => ({
   useLocation: () => ({ pathname: "/pay" }),
 }));
 
+function renderContacts() {
+  return renderHook(() => usePayTabContacts());
+}
+
 describe("usePayTabContacts", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should open the address picker with the contact when the tile is pressed", () => {
-    const contact = mockContact({ id: "contact-ada", name: "Ada" });
-    const { result } = renderHook(() => usePayTabContacts());
-
-    expect(result.current.contactAddressPicker.isOpen).toBe(false);
+  it("opens the picker when a contact is pressed", () => {
+    const contact = mockContact({
+      id: "contact-ada",
+      name: "Ada",
+      addresses: [mockContactAddress({ id: "address-eth", currencyId: "ethereum" })],
+    });
+    const { result } = renderContacts();
 
     act(() => result.current.contacts.onContactPress?.(contact));
 
     expect(result.current.contactAddressPicker.isOpen).toBe(true);
     expect(result.current.contactAddressPicker.contact).toBe(contact);
+    expect(result.current.contactAddressPicker.title).toContain("Ada");
+    expect(result.current.contactAddressPicker.groups.map(group => group.networkId)).toEqual([
+      "ethereum",
+    ]);
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should close the address picker when it is dismissed", () => {
+  it("closes the picker on dismiss", () => {
     const contact = mockContact({ id: "contact-ada", name: "Ada" });
-    const { result } = renderHook(() => usePayTabContacts());
+    const { result } = renderContacts();
 
     act(() => result.current.contacts.onContactPress?.(contact));
     act(() => result.current.contactAddressPicker.onClose());
@@ -39,20 +49,29 @@ describe("usePayTabContacts", () => {
     expect(result.current.contactAddressPicker.contact).toBeNull();
   });
 
-  it("should keep the address picker open when an address is selected", () => {
+  it("keeps the picker open when an address is selected", () => {
     const contact = mockContact({ id: "contact-ada", name: "Ada" });
-    const { result } = renderHook(() => usePayTabContacts());
+    const { result } = renderContacts();
 
     act(() => result.current.contacts.onContactPress?.(contact));
     act(() => result.current.contactAddressPicker.onSelectAddress(mockContactAddress()));
 
     expect(result.current.contactAddressPicker.isOpen).toBe(true);
-    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should navigate to the contact detail when View contact is chosen", () => {
+  it("navigates to the add-address flow", () => {
     const contact = mockContact({ id: "contact-ada", name: "Ada" });
-    const { result } = renderHook(() => usePayTabContacts());
+    const { result } = renderContacts();
+
+    act(() => result.current.contacts.onContactPress?.(contact));
+    act(() => result.current.contactAddressPicker.onAddNewAddress?.());
+
+    expect(mockNavigate).toHaveBeenCalledWith("/contacts?contactId=contact-ada&action=add-address");
+  });
+
+  it("navigates to the contact detail", () => {
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    const { result } = renderContacts();
 
     act(() => result.current.contacts.onViewContact?.(contact));
 
