@@ -6,9 +6,12 @@
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBalance } from "@domain/entity-account-balance";
+import type { AccountOperation } from "@domain/entity-account-operations";
 import {
   readAccountBalances,
+  readAccountOperations,
   type AccountBalanceSource,
+  type AccountOperationsSource,
   type AccountRef,
 } from "@features/platform-account-data";
 import { AccountIdSchema } from "@shared/schema-primitives";
@@ -72,6 +75,7 @@ export type AccountDataAdapters = {
   }>;
   loadBridge: () => Promise<{
     getBalanceRows: (descriptor: AccountDescriptor) => Promise<AccountBalance[]>;
+    getOperationRows: (descriptor: AccountDescriptor) => Promise<AccountOperation[]>;
   }>;
 };
 
@@ -117,4 +121,46 @@ export async function readDescriptorBalances(
   const own = balances.filter(row => row.accountId === ref.accountId);
   const subs = balances.filter(row => row.parentId === ref.accountId);
   return [...own, ...subs];
+}
+
+/**
+ * The history sources this CLI can read from.
+ *
+ * Only the full sync, and that is not an omission. `listOperations` was disabled here for **every**
+ * family after observing missing internal operations and unreliable pagination — the parity question
+ * [LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923) exists to answer. Routing the
+ * command through the layer while keeping the source list at one entry is the point: the shape is
+ * proven, the behaviour is unchanged, and a parity run is a second entry in this array.
+ */
+export function accountOperationsSources(
+  descriptor: AccountDescriptor,
+  adapters: AccountDataAdapters = defaultAdapters,
+): AccountOperationsSource[] {
+  const family = findCryptoCurrencyById(descriptor.currencyId)?.family;
+
+  return [
+    {
+      id: "full-sync",
+      priority: 0,
+      // A bridge sync returns the whole history or nothing: there is no page to resume.
+      paginated: false,
+      supports: () => family !== undefined,
+      getOperations: async () => {
+        const operations = await (await adapters.loadBridge()).getOperationRows(descriptor);
+        return { operations, complete: true, total: operations.length };
+      },
+    },
+  ];
+}
+
+/** One account's history, newest first. A CLI process serves a single request — no cache, no cursor. */
+export async function readDescriptorOperations(
+  descriptor: AccountDescriptor,
+  adapters?: AccountDataAdapters,
+): Promise<AccountOperation[]> {
+  const { operations } = await readAccountOperations(
+    accountRefOf(descriptor),
+    accountOperationsSources(descriptor, adapters),
+  );
+  return [...operations].sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : 0));
 }

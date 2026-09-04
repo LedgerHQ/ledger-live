@@ -9,6 +9,11 @@ import {
   type AccountRefLike,
 } from "../bridge/generic-coin-framework/accountBalances";
 import { getEnabledGenericCoinFrameworkFamilies } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
+import {
+  getAccountOperationPage,
+  syncAccountOperations,
+  type AccountOperationsPageLike,
+} from "./operations";
 
 /**
  * The shape `@features/platform-account-data` registers.
@@ -108,6 +113,97 @@ export function createAccountBalanceSources(
         if (!account) throw new Error(`account ${ref.accountId} is not in the store`);
         await prepareCurrency(account.currency);
         return syncAccountBalanceRows({
+          account,
+          bridge: await getAccountBridge(account),
+          blacklistedTokenIds: blacklistedTokenIds(),
+          signal,
+        });
+      },
+    },
+  ];
+}
+
+/** The shape `@features/platform-account-data` registers for history reads. */
+export type AccountOperationsSourceLike = {
+  readonly id: string;
+  readonly priority: number;
+  readonly paginated: boolean;
+  supports(ref: AccountRefLike): boolean;
+  getOperations(
+    ref: AccountRefLike,
+    query: { cursor?: string; limit?: number },
+    signal?: AbortSignal,
+  ): Promise<AccountOperationsPageLike>;
+};
+
+export type AccountOperationsSourcesConfig = AccountBalanceSourcesConfig & {
+  /**
+   * Families whose coin module may serve the **history** granularly.
+   *
+   * Defaults to **none**, and that is the finding rather than an oversight: `listOperations` parity
+   * with a bridge sync is unproven — wallet-cli disabled the granular path for every family after
+   * observing missing internal operations and unreliable pagination. A balance is one number that is
+   * either right or wrong; a history is a set, and a source that silently omits from it is worse
+   * than one that is slow.
+   *
+   * So the two data have different gates, read from different places, and a family being granular
+   * for `balance` says nothing about `operations`. See
+   * [LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923).
+   */
+  granularOperationFamilies?(): Iterable<string>;
+};
+
+/**
+ * The two history sources a host registers.
+ *
+ * Same selection rule, same priorities, a separate list. What changes is `paginated`: the granular
+ * source resumes from a cursor, the full-sync one cannot, and the layer has to know which it is
+ * talking to before it hands a cursor over.
+ */
+export function createAccountOperationsSources(
+  config: AccountOperationsSourcesConfig,
+): AccountOperationsSourceLike[] {
+  const {
+    getAccount,
+    prepareCurrency,
+    blacklistedTokenIds = () => [],
+    granularOperationFamilies = () => [],
+  } = config;
+
+  const granular = new Set(granularOperationFamilies());
+  const familyOf = (currencyId: string) => findCryptoCurrencyById(currencyId)?.family;
+
+  return [
+    {
+      id: GRANULAR_SOURCE_ID,
+      priority: 10,
+      paginated: true,
+      supports: ref => {
+        const family = familyOf(ref.currencyId);
+        return !ref.parentId && family !== undefined && granular.has(family);
+      },
+      getOperations: (ref, query) =>
+        getAccountOperationPage({
+          accountId: ref.accountId,
+          currencyId: ref.currencyId,
+          address: ref.address,
+          cursor: query.cursor,
+          limit: query.limit,
+        }),
+    },
+    {
+      id: FULL_SYNC_SOURCE_ID,
+      priority: 0,
+      // The asymmetry the balance slice never surfaced: a bridge sync returns the whole history or
+      // nothing, so there is no page to resume. "Load more" on a legacy family is not slow — it does
+      // not exist, because the first read already returned everything.
+      paginated: false,
+      supports: ref => !ref.parentId && familyOf(ref.currencyId) !== undefined,
+      getOperations: async (ref, _query, signal) => {
+        const account = getAccount(ref.accountId);
+        if (!account) throw new Error(`account ${ref.accountId} is not in the store`);
+        await prepareCurrency(account.currency);
+        return syncAccountOperations({
           account,
           bridge: await getAccountBridge(account),
           blacklistedTokenIds: blacklistedTokenIds(),

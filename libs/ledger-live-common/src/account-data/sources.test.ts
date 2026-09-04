@@ -1,11 +1,13 @@
 import type { Account } from "@ledgerhq/types-live";
 import { AccountIdSchema } from "@shared/schema-primitives";
-import { createAccountBalanceSources } from "./sources";
+import { createAccountBalanceSources, createAccountOperationsSources } from "./sources";
 import type { AccountRefLike } from "../bridge/generic-coin-framework/accountBalances";
 
 const getAccountBalanceRows = jest.fn();
 const syncAccountBalanceRows = jest.fn();
 const getAccountBridge = jest.fn();
+const getAccountOperationPage = jest.fn();
+const syncAccountOperations = jest.fn();
 
 jest.mock("../bridge/generic-coin-framework/accountBalances", () => ({
   getAccountBalanceRows: (...args: unknown[]) => getAccountBalanceRows(...args),
@@ -13,6 +15,10 @@ jest.mock("../bridge/generic-coin-framework/accountBalances", () => ({
 }));
 jest.mock("../bridge", () => ({
   getAccountBridge: (...args: unknown[]) => getAccountBridge(...args),
+}));
+jest.mock("./operations", () => ({
+  getAccountOperationPage: (...args: unknown[]) => getAccountOperationPage(...args),
+  syncAccountOperations: (...args: unknown[]) => syncAccountOperations(...args),
 }));
 
 const ETH_ID = AccountIdSchema.parse("js:2:ethereum:0xabc:");
@@ -134,5 +140,70 @@ describe("createAccountBalanceSources", () => {
     it("declines a token-account ref", () => {
       expect(build()[1].supports(ref({ parentId: ETH_ID, accountId: TOKEN_ID }))).toBe(false);
     });
+  });
+});
+
+describe("createAccountOperationsSources", () => {
+  const buildOps = (over: Partial<Parameters<typeof createAccountOperationsSources>[0]> = {}) =>
+    createAccountOperationsSources({
+      getAccount: id => (id === ETH_ID ? account : undefined),
+      prepareCurrency,
+      ...over,
+    });
+
+  it("keeps every family on the full sync by default — listOperations parity is unproven", () => {
+    const [granular, fullSync] = buildOps();
+    expect(granular.supports(ref())).toBe(false);
+    expect(fullSync.supports(ref())).toBe(true);
+  });
+
+  it("uses a gate of its own, not the balance one", () => {
+    // A family being granular for `balance` says nothing about `operations`, which is the whole
+    // reason the two are separate lists rather than one source declaring capabilities.
+    const [balanceGranular] = build();
+    const [operationsGranular] = buildOps();
+    expect(balanceGranular.supports(ref())).toBe(true);
+    expect(operationsGranular.supports(ref())).toBe(false);
+  });
+
+  it("serves a family the host has opted in granularly", async () => {
+    getAccountOperationPage.mockResolvedValue({ operations: [], complete: false });
+    const [granular] = buildOps({ granularOperationFamilies: () => ["evm"] });
+
+    expect(granular.supports(ref())).toBe(true);
+    await granular.getOperations(ref(), { cursor: "c1", limit: 25 });
+    expect(getAccountOperationPage).toHaveBeenCalledWith({
+      accountId: ETH_ID,
+      currencyId: "ethereum",
+      address: "0xabc",
+      cursor: "c1",
+      limit: 25,
+    });
+  });
+
+  it("declares the granular source as resumable and the full sync as not", () => {
+    const [granular, fullSync] = buildOps();
+    expect(granular.paginated).toBe(true);
+    // A bridge sync returns the whole history or nothing: there is no page to resume.
+    expect(fullSync.paginated).toBe(false);
+  });
+
+  it("declines a token-account ref on both sources", () => {
+    const token = ref({ parentId: ETH_ID, accountId: TOKEN_ID });
+    for (const source of buildOps({ granularOperationFamilies: () => ["evm"] })) {
+      expect(source.supports(token)).toBe(false);
+    }
+  });
+
+  it("full-syncs the whole history, and fails clearly without an account", async () => {
+    syncAccountOperations.mockResolvedValue({ operations: [], complete: true, total: 0 });
+    const [, fullSync] = buildOps();
+
+    await fullSync.getOperations(ref(), {});
+    expect(prepareCurrency).toHaveBeenCalledWith(account.currency);
+
+    await expect(fullSync.getOperations(ref({ accountId: BTC_ID }), {})).rejects.toThrow(
+      `account ${BTC_ID} is not in the store`,
+    );
   });
 });

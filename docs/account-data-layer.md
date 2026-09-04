@@ -33,6 +33,10 @@ Three consequences fall out of that, and they are the three things this layer ex
 | **A read needs the answer to ask the question.** | You cannot get an account's balance until something else has already synced that account into the store. |
 | **Freshness is per account, not per datum.** | A balance and a two-year-old operation page share one `lastSyncDate`, so neither can be refreshed on its own cadence. |
 
+> [!NOTE]
+> Two slices exist today: `balance` and `operations`. The second was built specifically to falsify
+> the first's design — [what survived and what broke](#the-second-slice-what-survived-and-what-broke).
+
 The second one is the one that actually hurts, and it is why this is an architecture problem rather
 than a performance problem. Because a read needs a synced `Account`, every consumer becomes a
 consumer of *the whole account store*, and the whole account store becomes a thing that must be
@@ -284,6 +288,108 @@ Two placements follow from review decisions:
 
 ---
 
+## The second slice: what survived, and what broke
+
+[LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923) asked for a second datum
+specifically to break the design if the design was wrong, and picked `operations` because it is the
+one with real unknowns. Its deliverable was: *either the shape survives a non-cheap slice unchanged,
+or the place it breaks.* Both happened. Here is the split.
+
+### What survived unchanged
+
+| | |
+| --- | --- |
+| `AccountRef` | The same five strings. A history read needs no more identity than a balance read. |
+| `pickSource` | One generic type parameter, zero logic change — selection reads `supports` and `priority`, neither of which knows what is being read. |
+| Registration | A second module-level list. Same call shape, same composition-root ownership. |
+| Entity per datum | Slice owns rows, status and selectors; `getSelectors()` still lets wallet-cli run it over a local variable. |
+| Plain function + plain thunk | `readAccountOperations` works with no store, exactly as `readAccountBalances` does. |
+| Legacy mappers in live-common | A second mapper, same folder, same argument. |
+
+### Where it broke
+
+**1. One source type does not generalize.** `getBalances(ref)` and `getOperations(ref, query)` differ
+in arity, in return shape and in whether a cursor means anything. Widening one type to cover both is
+the `capabilities` set this exploration deleted. Two source types and two registries is the smaller
+price.
+
+**2. Freshness moved off the data.** A balance row's `at` *is* its freshness. An operation's `date`
+is when it happened, which says nothing about when we last looked for newer ones. So the operations
+entry carries `at` on the **account**, not on the row — the balance slice's rule does not transfer.
+
+**3. One `maxAge` guard is not enough.** "Is the head stale?" and "is there more below?" are
+different questions. A user scrolling to the bottom of a history is always inside any sensible
+max-age window, so a freshness-guarded "load more" would return a page it already has. Two thunks:
+`fetchAccountOperations` (freshness-guarded) and `fetchMoreAccountOperations` (cursor-guarded, and
+deliberately not freshness-guarded).
+
+**4. Replace and merge are both needed.** The balance reducer replaces an account's rows atomically,
+which is the only correct thing for a set a chain reports by omission. A history needs both: a head
+read **replaces** the window (a merge would keep operations a reorg has since dropped), a page read
+**appends** and deduplicates (a paginated source can repeat a boundary operation).
+
+**5. The two sources stopped being interchangeable.** A bridge sync has no notion of a page: it
+returns the whole history or nothing. The source declares `paginated: false`, and the layer must not
+hand it a cursor another source issued. "Load more" on a full-sync family is not slow — it does not
+exist, because the first read already returned everything.
+
+**6. `operationsCount` is not knowable from a page.** The full sync can report a total because it
+holds everything; a paginated read cannot, and reporting the page size would turn every
+"N transactions" label into a lie. `selectAccountOperationsTotal` returns `undefined` on a partial
+window, and every consumer has to handle it. **This is a real behaviour change from
+`account.operationsCount`, which ~88 call sites read today.**
+
+**7. A per-datum entity leaks.** An operation row needs `assetId` to render its amount. The balance
+entity already holds one per account, but deriving it would mean either decoding a token account id —
+which cannot be decoded — or joining against the balance table, which makes a history unrenderable
+until a balance has been read. The field is duplicated onto the row, deliberately: independent
+loadability is the point of the slicing, and a mandatory cross-slice dependency would defeat it.
+
+**8. The granular path has to fan token operations out by hand.** A module's `listOperations` reports
+against the *address*, token transfers included, while the full sync gets the split from
+`inferSubOperations`. Without `encodeTokenAccountId` in the granular reader, every token account's
+history comes back empty on one source and full on the other. Fixed here — and it is the concrete
+shape of the parity risk that made wallet-cli disable the granular path in the first place.
+
+### Parity is still unproven, and the gate says so
+
+`granularOperationFamilies` defaults to **empty**: every family reads its history through the full
+sync, in both wallets and in wallet-cli. A balance is one number that is either right or wrong; a
+history is a set, and a source that silently omits from it is worse than one that is slow. web-tools
+turns the granular path on — it is a developer playground whose job is to make the difference
+observable.
+
+So the two data have different gates, read from different places, and **a family being granular for
+`balance` says nothing about `operations`**. That per-datum, per-family asymmetry is the strongest
+argument this exercise has produced for slicing at all.
+
+### The graph, and why it is a third slice
+
+The open question was: the portfolio graph is derived client-side from the full history, so
+*"don't load operations"* and *"show the graph"* pull opposite ways. Reading
+`generateHistoryFromOperationsG` settles it, and the answer is better than expected.
+
+The derivation walks **backwards from the current balance**, subtracting each operation's amount, and
+stops at `maxDatapoints`:
+
+| Granularity | Datapoints | Operations it actually needs |
+| --- | --- | --- |
+| `HOUR` | 8 × 24 | the last **week** |
+| `DAY` | 400 | the last **~13 months** |
+| `WEEK` | 1000 | ~19 years — effectively everything |
+
+So the graph does not need "all operations". It needs operations back to a **horizon set by the
+granularity**, which is exactly expressible as *page until the oldest loaded operation is older than
+X* — a loop over `fetchMoreAccountOperations` with a stop condition, not a new capability. Only the
+`WEEK` series genuinely needs the whole history, and it is also the one whose oldest points move
+least.
+
+That makes `balanceHistory` a **derived** slice whose input is bounded, rather than a reason to keep
+loading everything. It takes the current balance (slice one) and a bounded window of operations
+(slice two) — which is the first time in this exploration that two slices compose into a third.
+
+---
+
 ## Accepted trade-offs
 
 Settled in review — recorded here so they are not relitigated.
@@ -300,10 +406,11 @@ Settled in review — recorded here so they are not relitigated.
 
 - **No product screen consumes the table yet.** The devtool and web-tools `/sync` are the only
   readers. Until a real surface does, the win is architectural, not measured.
-- **Operations parity is unproven.** wallet-cli disabled coin-framework `getOperations` for every
-  family. This is precisely the argument for per-datum capability: take the balance win now, leave
-  operations on the full sync, same family, no contradiction. Tracked as
-  [LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923).
+- **Operations parity is still unproven**, and the gate reflects it: every family reads its history
+  through the full sync in both wallets. See
+  [the second slice](#the-second-slice-what-survived-and-what-broke).
+- **`operationsCount` has ~88 read sites** that assume a number always exists. A paginated history
+  cannot always give one, so those sites need a decision before any of them moves over.
 - **A token account's balance is not independently readable.** One chain call returns every asset at
   an *address*, so a token row arrives with its parent's read. Sources take the main-account ref.
 - **`AccountId` is an unbranded string outside this branch.** Branding it repo-wide needs Coin team

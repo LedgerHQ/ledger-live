@@ -78,8 +78,29 @@ A token account's balance is not independently readable: one chain call returns 
 an *address*, so a token row arrives with its parent's read. Sources take the **main account's** ref;
 `useAccountBalance` on a token ref reads its row and triggers nothing.
 
+## The second datum: operations
+
+`useAccountOperations(ref)` reads an account's history one page at a time, through
+`AccountOperationsSource` and its own registry. It was built to falsify the shape above — see
+[what survived and what broke](../../../docs/account-data-layer.md#the-second-slice-what-survived-and-what-broke).
+
+Three differences worth knowing before using it:
+
+- **two verbs, two guards.** `fetchAccountOperations` reads the head and is freshness-guarded;
+  `fetchMoreAccountOperations` reads the next page and is deliberately **not** — a user reaching the
+  bottom of a list is always inside any sensible max-age window.
+- **`paginated` on the source.** A full bridge sync returns the whole history or nothing, so it
+  declares `paginated: false` and never receives a cursor. "Load more" on such a family does not
+  exist rather than being slow.
+- **`total` can be `undefined`.** A paginated read cannot know how many operations an account has.
+  Every "N transactions" label has to handle that.
+
+The history gate defaults to **empty**: every family reads through the full sync, because
+`listOperations` parity is unproven. A family being granular for `balance` says nothing about
+`operations`.
+
 ## Not here yet
 
-`operations`, `balanceHistory`, `staking` and the family resource bags. Adding one is a new entity
-slice and a new source method — not a change to this selection rule. Second slice:
-[LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923).
+`balanceHistory`, `staking` and the family resource bags. `balanceHistory` should be a *derived*
+slice: the graph walks back from the current balance over a window of operations bounded by its
+granularity, so it composes the two slices that exist rather than needing a third source.

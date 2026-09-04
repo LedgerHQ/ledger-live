@@ -1,6 +1,6 @@
 import { AccountIdSchema } from "@shared/schema-primitives";
 import { mockAccountBalance } from "@domain/entity-account-balance/schema.mock";
-import { NoAccountBalanceSourceError } from "./errors";
+import { NoAccountSourceError } from "./errors";
 import {
   pickSource,
   readAccountBalances,
@@ -58,7 +58,7 @@ describe("readAccountBalances", () => {
   });
 
   it("throws when nothing supports the ref", async () => {
-    await expect(readAccountBalances(ref, [])).rejects.toThrow(NoAccountBalanceSourceError);
+    await expect(readAccountBalances(ref, [])).rejects.toThrow(NoAccountSourceError);
   });
 
   it("passes the abort signal down to the source", async () => {

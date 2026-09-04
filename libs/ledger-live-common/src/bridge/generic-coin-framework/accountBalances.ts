@@ -1,5 +1,3 @@
-import { NEVER, fromEvent, lastValueFrom, race, throwError, type Observable } from "rxjs";
-import { mergeMap, reduce } from "rxjs/operators";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import {
   AccountBalanceSchema,
@@ -7,6 +5,7 @@ import {
   type AccountBalance,
 } from "@domain/entity-account-balance";
 import { toAccountBalances } from "../../legacy-mapping/accountBalance";
+import { syncAccountOnce } from "../../account-data/fullSync";
 import {
   decodeAccountId,
   encodeTokenAccountId,
@@ -195,10 +194,8 @@ export function accountRefOf(account: AccountForRef, parent?: AccountForRef): Ac
 /**
  * Run a full `AccountBridge.sync()` and keep only what the balance table needs.
  *
- * The compatibility path, shared by every host so the abort semantics are right in one place:
- * `takeUntil` upstream of `reduce` would *complete* the stream, making `reduce` emit its seed — the
- * **un-synced** account — which the caller would then store as a fresh balance. Aborting has to
- * reject, so the caller records an error rather than stale data stamped as current.
+ * The compatibility path: one whole account synced — history, balance-history cache, family
+ * resource bag — of which the balance rows are kept. `syncAccountOnce` owns the abort semantics.
  */
 export async function syncAccountBalanceRows({
   account,
@@ -211,18 +208,5 @@ export async function syncAccountBalanceRows({
   blacklistedTokenIds?: string[];
   signal?: AbortSignal;
 }): Promise<AccountBalance[]> {
-  if (signal?.aborted) throw new DOMException("aborted before the sync started", "AbortError");
-
-  const synced$ = bridge
-    .sync(account, { paginationConfig: {}, blacklistedTokenIds })
-    .pipe(reduce((acc: Account, updater: (a: Account) => Account) => updater(acc), account));
-
-  const aborted$: Observable<Account> = signal
-    ? fromEvent(signal, "abort").pipe(
-        mergeMap(() => throwError(() => new DOMException("sync aborted", "AbortError"))),
-      )
-    : NEVER;
-
-  // `race` resolves on whichever settles first: the reduced account, or the abort's error.
-  return toAccountBalances(await lastValueFrom(race(synced$, aborted$)));
+  return toAccountBalances(await syncAccountOnce({ account, bridge, blacklistedTokenIds, signal }));
 }
