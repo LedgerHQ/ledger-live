@@ -9,7 +9,6 @@ export function CardView({
   oauthConfig,
   callback,
   onTrackEvent,
-  isSignedIn: _isSignedIn,
   cardVisual,
 }: CardViewProps) {
   return (
