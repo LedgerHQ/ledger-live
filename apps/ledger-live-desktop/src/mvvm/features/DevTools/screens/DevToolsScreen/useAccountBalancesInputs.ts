@@ -12,7 +12,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
  *
  * Only the host can do this: it alone knows how its store holds accounts and how to name them, and
  * `accountRefOf` needs the account object. Everything the tool shows *about* a balance is read in
- * `@devtools/bindings` from the entity table and the scheduler.
+ * `@devtools/bindings` from the entity slice.
  */
 export function useAccountBalancesInputs(): AccountBalancesInput[] {
   const accounts = useSelector(shallowAccountsSelector);

@@ -1,28 +1,18 @@
 // The CLI's composition root for the account-data layer.
 //
-// No React, no Redux store: the layer's core is framework-free, so the entity reducer is driven
-// directly over a local variable and the scheduler is used through its imperative `fetch`.
+// No React, no Redux store: `readAccountBalances` is a plain function, so the CLI calls it directly
+// and never needs a store, a provider or a thunk.
 
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { AccountBalance } from "@domain/entity-account-balance";
 import {
-  accountBalancesSlice,
-  initialAccountBalancesState,
-  type AccountBalance,
-  type AccountBalancesState,
-} from "@domain/entity-account-balance";
-import {
-  createAccountDataScheduler,
-  createAccountDataSourceRegistry,
-  createDefaultAccountDataSources,
-  type AccountDataHost,
-  type AccountDataScheduler,
+  readAccountBalances,
+  type AccountBalanceSource,
   type AccountRef,
-  type AssetBalanceRow,
 } from "@features/platform-account-data";
 import { AccountIdSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor } from "./models";
-import { walletCliDebug } from "../shared/log";
 
 /**
  * Families this CLI reads granularly.
@@ -48,27 +38,6 @@ export function accountRefOf(descriptor: AccountDescriptor): AccountRef {
   };
 }
 
-/**
- * The balance table, driven by the entity reducer with no store around it.
- *
- * `accountBalancesSlice.reducer` is the whole contract — `configureStore`, middleware and
- * `react-redux` are Redux conveniences the CLI has no use for.
- */
-function createBalanceTable() {
-  let state: AccountBalancesState = initialAccountBalancesState;
-  return {
-    dispatch: (action: { type: string }) => {
-      state = accountBalancesSlice.reducer(state, action);
-    },
-    rowsOf: (accountId: string): AccountBalance[] => {
-      const id = AccountIdSchema.parse(accountId);
-      const own = state[id];
-      const subs = Object.values(state).filter(row => row.parentId === id);
-      return own ? [own, ...subs] : subs;
-    },
-  };
-}
-
 // Both adapters are loaded through a memoised dynamic `import()`, as `WalletAdapter` already does:
 // `live-common/bridge/index` costs ~328ms and the local EVM api ~105ms, and a `balances` run must not
 // pay for the one it does not use. Rejections evict the cache so a transient failure can be retried.
@@ -90,12 +59,6 @@ const loadBridge = lazy(() =>
   import("./compatibility/bridge").then(({ BridgeAdapter }) => new BridgeAdapter()),
 );
 
-export type AccountDataRuntime = {
-  scheduler: AccountDataScheduler;
-  /** Rows the scheduler wrote for this account: its own balance first, then its token accounts. */
-  rowsOf: (accountId: string) => AccountBalance[];
-};
-
 /**
  * The two compatibility adapters, as loaders.
  *
@@ -105,55 +68,53 @@ export type AccountDataRuntime = {
  */
 export type AccountDataAdapters = {
   loadCoinFramework: () => Promise<{
-    getBalanceRows: (descriptor: AccountDescriptor) => Promise<AssetBalanceRow[]>;
+    getBalanceRows: (descriptor: AccountDescriptor) => Promise<AccountBalance[]>;
   }>;
   loadBridge: () => Promise<{
     getBalanceRows: (descriptor: AccountDescriptor) => Promise<AccountBalance[]>;
   }>;
 };
 
-const defaultAdapters: AccountDataAdapters = {
-  loadCoinFramework,
-  loadBridge,
-};
+const defaultAdapters: AccountDataAdapters = { loadCoinFramework, loadBridge };
+
+/** The sources this CLI can read a balance from, in the same shape the wallet apps register. */
+export function accountBalanceSources(
+  descriptor: AccountDescriptor,
+  adapters: AccountDataAdapters = defaultAdapters,
+): AccountBalanceSource[] {
+  // `findCryptoCurrencyById`, not `getCryptoCurrencyById`: the latter throws, which would turn an
+  // unknown currency into a crash inside a `supports` check rather than a source that declines.
+  const family = findCryptoCurrencyById(descriptor.currencyId)?.family;
+
+  return [
+    {
+      id: "granular",
+      priority: 10,
+      supports: () => family !== undefined && GRANULAR_FAMILIES.has(family),
+      getBalances: async () => (await adapters.loadCoinFramework()).getBalanceRows(descriptor),
+    },
+    {
+      id: "full-sync",
+      priority: 0,
+      supports: () => family !== undefined,
+      getBalances: async () => (await adapters.loadBridge()).getBalanceRows(descriptor),
+    },
+  ];
+}
 
 /**
- * One runtime per command invocation: a CLI process serves a single request, so there is nothing to
- * share and nothing to keep warm between calls.
+ * Read every balance of one account: its own first, then its token accounts.
+ *
+ * A CLI process serves a single request, so there is nothing to cache and nothing to keep warm —
+ * hence no store and no freshness check, just the read.
  */
-export function createAccountDataRuntime({
-  descriptorById,
-  adapters = defaultAdapters,
-}: {
-  descriptorById: (accountId: string) => AccountDescriptor | undefined;
-  adapters?: AccountDataAdapters;
-}): AccountDataRuntime {
-  const table = createBalanceTable();
-  const descriptorFor = (accountId: string): AccountDescriptor => {
-    const descriptor = descriptorById(accountId);
-    if (!descriptor) throw new Error(`unknown account ${accountId}`);
-    return descriptor;
-  };
-
-  const host: AccountDataHost = {
-    granularFamilies: () => GRANULAR_FAMILIES,
-    // `findCryptoCurrencyById`, not `getCryptoCurrencyById`: the latter throws, which would turn an
-    // unknown currency into a crash inside a capability check instead of an unservable slice.
-    familyOf: currencyId => findCryptoCurrencyById(currencyId)?.family,
-    readAssetBalances: async ref =>
-      (await adapters.loadCoinFramework()).getBalanceRows(descriptorFor(ref.accountId)),
-    syncAccountBalances: async ref =>
-      (await adapters.loadBridge()).getBalanceRows(descriptorFor(ref.accountId)),
-  };
-
-  const registry = createAccountDataSourceRegistry(createDefaultAccountDataSources(host));
-
-  const scheduler = createAccountDataScheduler({
-    registry,
-    dispatch: table.dispatch,
-    onError: (error, { ref, slice }) =>
-      walletCliDebug(`account-data: ${slice} failed for ${ref.accountId}: ${String(error)}`),
-  });
-
-  return { scheduler, rowsOf: table.rowsOf };
+export async function readDescriptorBalances(
+  descriptor: AccountDescriptor,
+  adapters?: AccountDataAdapters,
+): Promise<AccountBalance[]> {
+  const ref = accountRefOf(descriptor);
+  const { balances } = await readAccountBalances(ref, accountBalanceSources(descriptor, adapters));
+  const own = balances.filter(row => row.accountId === ref.accountId);
+  const subs = balances.filter(row => row.parentId === ref.accountId);
+  return [...own, ...subs];
 }

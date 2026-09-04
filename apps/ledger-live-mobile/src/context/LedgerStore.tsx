@@ -1,5 +1,3 @@
-import { AccountDataProvider } from "@features/platform-account-data/react";
-import { getAccountDataScheduler } from "~/config/account-data-setup";
 import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
@@ -293,14 +291,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
     init();
   }, [init]);
 
-  // Built by `setupAccountData` at store creation; null only if boot has not reached it yet.
-  const accountDataScheduler = getAccountDataScheduler();
-
   return (
     <Provider store={store}>
-      <AccountDataProvider scheduler={accountDataScheduler}>
-        {children({ ready, initialCountervalues, currencyInitialized })}
-      </AccountDataProvider>
+      {children({ ready, initialCountervalues, currencyInitialized })}
     </Provider>
   );
 };

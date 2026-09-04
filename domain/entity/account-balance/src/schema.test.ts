@@ -1,6 +1,6 @@
 import {
   AccountBalanceSchema,
-  AccountBalancesStateSchema,
+  AccountBalanceRowsSchema,
   initialAccountBalancesState,
 } from "./schema";
 import { mockAccountBalance, mockTokenAccountBalance } from "./schema.mock";
@@ -42,27 +42,27 @@ describe("AccountBalanceSchema", () => {
   });
 });
 
-describe("AccountBalancesStateSchema", () => {
+describe("AccountBalanceRowsSchema", () => {
   it("starts empty", () => {
-    expect(AccountBalancesStateSchema.parse(initialAccountBalancesState)).toEqual({});
+    expect(AccountBalanceRowsSchema.parse(initialAccountBalancesState.rows)).toEqual({});
   });
 
   it("accepts a populated table", () => {
     const main = mockAccountBalance();
     const token = mockTokenAccountBalance();
     const table = { [main.accountId]: main, [token.accountId]: token };
-    expect(AccountBalancesStateSchema.parse(table)).toEqual(table);
+    expect(AccountBalanceRowsSchema.parse(table)).toEqual(table);
   });
 
   it("rejects a row that does not match the schema", () => {
     const main = mockAccountBalance();
     expect(() =>
-      AccountBalancesStateSchema.parse({ [main.accountId]: { ...main, balance: "oops" } }),
+      AccountBalanceRowsSchema.parse({ [main.accountId]: { ...main, balance: "oops" } }),
     ).toThrow();
   });
 
   it("rejects a blank key, which no lookup could ever hit", () => {
     const main = mockAccountBalance();
-    expect(() => AccountBalancesStateSchema.parse({ "": main })).toThrow();
+    expect(() => AccountBalanceRowsSchema.parse({ "": main })).toThrow();
   });
 });

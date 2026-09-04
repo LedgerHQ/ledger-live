@@ -30,7 +30,7 @@ import { contactsSyncModule, type Contact } from "@domain/entity-contact";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account, ScanAccountEvent } from "@ledgerhq/types-live";
-import type { SliceStatus } from "@features/platform-account-data";
+import type { AccountBalanceStatus } from "@domain/entity-account-balance";
 import { useAccountBalance } from "@features/platform-account-data/react";
 import { bridgeCache } from "../../logic/syncAccount";
 import { accountRefOf } from "../../logic/accountData";
@@ -481,9 +481,9 @@ function AccountRow({
  * error, an error over a source, and "from sync" is what is left when the layer has not read it —
  * the amount then comes off the `Account` the legacy sync produced.
  */
-function statusLine(status: SliceStatus): string {
+function statusLine(status: AccountBalanceStatus): string {
   if (status.pending) return "reading balance…";
-  if (status.error) return status.error.message;
+  if (status.error) return status.error;
   return status.sourceId ? `via ${status.sourceId}` : "from sync";
 }
 
@@ -491,8 +491,8 @@ function statusLine(status: SliceStatus): string {
  * The balance, read from `@domain/entity-account-balance` rather than off the `Account`.
  *
  * Two things this makes visible that the god-object read could not: which source answered
- * (`coin-module-api` = one chain call, `legacy-bridge` = a full sync), and the token balances that
- * came back in that *same* single call — the property that makes the granular path worth having.
+ * (`granular` = one chain call, `full-sync` = the whole account), and the token balances that came
+ * back in that *same* single call — the property that makes the granular path worth having.
  */
 function AccountBalanceCell({ account }: Readonly<{ account: Account }>) {
   const ref = useMemo(

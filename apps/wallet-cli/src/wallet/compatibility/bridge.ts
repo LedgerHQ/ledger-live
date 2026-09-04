@@ -9,7 +9,8 @@ import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridg
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
-import { toAccountBalances, type AccountBalance } from "@domain/entity-account-balance";
+import type { AccountBalance } from "@domain/entity-account-balance";
+import { toAccountBalances } from "@ledgerhq/live-common/legacy-mapping/accountBalance";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
@@ -133,7 +134,7 @@ export class BridgeAdapter {
   /**
    * The account's balances, obtained the only way a legacy bridge can: a **full** sync — the whole
    * operation history, the balance-history cache, the family resource bag — of which one number is
-   * kept. `toAccountBalances` projects the synced account onto the rows `AccountDataSource` consumes.
+   * kept. `toAccountBalances` projects the synced account onto the rows a source must return.
    */
   async getBalanceRows(descriptor: AccountDescriptor): Promise<AccountBalance[]> {
     return toAccountBalances(await this.sync(descriptor));

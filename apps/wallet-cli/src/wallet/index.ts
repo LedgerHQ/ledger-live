@@ -15,7 +15,7 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { Network } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
-import { accountRefOf, createAccountDataRuntime } from "./accountData";
+import { readDescriptorBalances } from "./accountData";
 
 export class WalletAdapter {
   private _bridge: Promise<BridgeAdapter> | null = null;
@@ -57,27 +57,14 @@ export class WalletAdapter {
   /**
    * Return all balances (native + tokens) for the given account descriptor.
    *
-   * Routed through `@features/platform-account-data`: the request asks for the `balance` slice and
-   * nothing else, and the router picks the cheapest source that can serve it — a single `getBalance`
-   * on a family with a granular coin module, a full bridge sync on the others. The per-family
-   * decision that used to live in this method is now a declared capability (see `GRANULAR_FAMILIES`
-   * in `./accountData`), which is the same shape the wallet apps use.
+   * Routed through `@features/platform-account-data`: the highest-priority source that supports the
+   * account answers — a single `getBalance` on a family with a granular coin module, a full bridge
+   * sync on the others. The per-family decision that used to live in this method is now a declared
+   * `supports` (see `GRANULAR_FAMILIES` in `./accountData`), the same shape the wallet apps use.
    */
   async getAccountBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
-    const { scheduler, rowsOf } = createAccountDataRuntime({
-      descriptorById: id => (id === descriptor.id ? descriptor : undefined),
-    });
-    const ref = accountRefOf(descriptor);
-    // `maxAge: 0`: a CLI process is a single request, so there is never a cached value worth serving.
-    await scheduler.fetch({ ref, slices: ["balance"], reason: "balances-command", maxAge: 0 });
-
-    const { error } = scheduler.getStatus(ref.accountId, "balance");
-    if (error) throw error;
-
-    return rowsOf(descriptor.id).map(row => ({
-      assetId: row.assetId,
-      balance: row.balance,
-    }));
+    const rows = await readDescriptorBalances(descriptor);
+    return rows.map(row => ({ assetId: row.assetId, balance: row.balance }));
   }
 
   /**
@@ -88,10 +75,9 @@ export class WalletAdapter {
    * need investigation first. `cursor` is not supported in bridge mode (the bridge always returns the
    * full history); `limit` slices the result.
    *
-   * This is exactly why capabilities are per slice and not per family: `balance` goes granular
+   * This is exactly why the capability is per datum and not per family: `balance` goes granular
    * (see `getAccountBalances`) while `operations` stays on the bridge, for the same family, with no
-   * contradiction. Re-enabling means declaring `operations` on the coin-module source in
-   * `./accountData` and routing this method through the scheduler the same way.
+   * contradiction. Re-enabling means an `operations` entity and its own source, not a change here.
    */
   async getAccountOperations(
     descriptor: AccountDescriptor,

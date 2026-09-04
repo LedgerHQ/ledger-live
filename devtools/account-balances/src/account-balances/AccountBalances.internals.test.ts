@@ -70,17 +70,17 @@ describe("statusLine", () => {
   });
 
   it("names the source, and its age once a balance carries one", () => {
-    expect(statusLine(row({ status: { pending: false, sourceId: "coin-module-api" } }))).toBe(
-      "served by coin-module-api",
+    expect(statusLine(row({ status: { pending: false, sourceId: "granular" } }))).toBe(
+      "served by granular",
     );
     const at = new Date(Date.now() - 5_000).toISOString();
     expect(
       statusLine(
         row({
-          status: { pending: false, sourceId: "legacy-bridge" },
+          status: { pending: false, sourceId: "full-sync" },
           balance: { assetId: "tron", value: "1", spendable: "1", at },
         }),
       ),
-    ).toBe("served by legacy-bridge · observed 5s ago");
+    ).toBe("served by full-sync · observed 5s ago");
   });
 });

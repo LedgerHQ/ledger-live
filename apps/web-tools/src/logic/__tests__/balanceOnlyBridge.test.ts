@@ -4,18 +4,15 @@ import type { Account } from "@ledgerhq/types-live";
 import type { AccountBalance } from "@domain/entity-account-balance";
 import { balanceOnlyAccountBridge } from "../balanceOnlyBridge";
 
-const fetchMock = jest.fn();
-const getStatusMock = jest.fn();
+const dispatchMock = jest.fn();
+const statusMock = jest.fn();
 const rowsMock = jest.fn();
 const rememberMock = jest.fn();
+const fetchAccountBalanceMock = jest.fn();
 
 // The composition root pulls in live-common's bridge and coin-module registries; the bridge under
-// test only cares that it asks the scheduler for `balance` and applies what lands in the table.
+// test only cares that it dispatches a forced balance read and applies what lands in the table.
 jest.mock("../accountData", () => ({
-  accountDataScheduler: {
-    fetch: (...args: unknown[]) => fetchMock(...args),
-    getStatus: (...args: unknown[]) => getStatusMock(...args),
-  },
   accountBalanceRowsOf: (...args: unknown[]) => rowsMock(...args),
   accountRefOf: (account: Account) => ({
     accountId: account.id,
@@ -24,6 +21,23 @@ jest.mock("../accountData", () => ({
     derivationMode: account.derivationMode,
   }),
   rememberShapedAccount: (...args: unknown[]) => rememberMock(...args),
+}));
+
+jest.mock("../../store", () => ({
+  store: {
+    dispatch: (...args: unknown[]) => dispatchMock(...args),
+    getState: () => ({ accountBalances: { rows: {}, status: {} } }),
+  },
+}));
+
+jest.mock("@features/platform-account-data", () => ({
+  fetchAccountBalance: (...args: unknown[]) => fetchAccountBalanceMock(...args),
+}));
+
+jest.mock("@domain/entity-account-balance", () => ({
+  accountBalancesSlice: {
+    selectors: { selectAccountBalanceStatus: (...args: unknown[]) => statusMock(...args) },
+  },
 }));
 
 const ACCOUNT_ID = "js:2:ethereum:0xabc:";
@@ -55,27 +69,26 @@ const runSync = () => lastValueFrom(balanceOnlyAccountBridge().sync(account, SYN
 
 beforeEach(() => {
   jest.clearAllMocks();
-  fetchMock.mockResolvedValue(undefined);
-  getStatusMock.mockReturnValue({ pending: false });
+  fetchAccountBalanceMock.mockReturnValue({ type: "thunk" });
+  dispatchMock.mockResolvedValue(undefined);
+  statusMock.mockReturnValue({ pending: false });
   rowsMock.mockReturnValue([row()]);
 });
 
 describe("balanceOnlyAccountBridge", () => {
-  it("asks the scheduler for the balance slice only", async () => {
+  it("dispatches exactly one balance read", async () => {
     await runSync();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0][0]).toMatchObject({
-      slices: ["balance"],
-      reason: "ledger-sync-resolve",
-    });
+    expect(fetchAccountBalanceMock).toHaveBeenCalledTimes(1);
+    expect(dispatchMock).toHaveBeenCalledTimes(1);
+    expect(fetchAccountBalanceMock.mock.calls[0][0]).toMatchObject({ accountId: ACCOUNT_ID });
   });
 
-  it("forces a round-trip rather than serving a cached balance", async () => {
+  it("forces a round-trip rather than serving what is in the table", async () => {
     await runSync();
-    expect(fetchMock.mock.calls[0][0].maxAge).toBe(0);
+    expect(fetchAccountBalanceMock.mock.calls[0][1]).toEqual({ maxAge: 0 });
   });
 
-  it("hands the shaped account over so the legacy fallback syncs the real derivation", async () => {
+  it("hands the shaped account over so the full-sync fallback uses the real derivation", async () => {
     await runSync();
     expect(rememberMock).toHaveBeenCalledWith(account);
   });
@@ -101,9 +114,8 @@ describe("balanceOnlyAccountBridge", () => {
     expect(updated.balance.toFixed()).toBe("1500");
   });
 
-  it("fails when the slice errored, so the descriptor is recorded as non-imported", async () => {
-    const boom = new Error("chain unreachable");
-    getStatusMock.mockReturnValue({ pending: false, error: boom });
+  it("fails when the read errored, so the descriptor is recorded as non-imported", async () => {
+    statusMock.mockReturnValue({ pending: false, error: "chain unreachable" });
     await expect(runSync()).rejects.toThrow("chain unreachable");
   });
 

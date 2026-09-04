@@ -1,32 +1,27 @@
 import BigNumber from "bignumber.js";
 import { from, type Observable } from "rxjs";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
-import {
-  accountBalanceRowsOf,
-  accountDataScheduler,
-  accountRefOf,
-  rememberShapedAccount,
-} from "./accountData";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
+import { fetchAccountBalance } from "@features/platform-account-data";
+import { store } from "../store";
+import { accountBalanceRowsOf, accountRefOf, rememberShapedAccount } from "./accountData";
 
 /**
  * Resolve just the balance of an account, through the account-data layer.
  *
- * `maxAge: 0` because this runs when a descriptor first arrives and the point is to read the chain:
- * the scheduler treats it as a forced read, so it neither serves a cached value nor joins a run
- * already in flight under some other freshness policy.
+ * `maxAge: 0` because this runs when a descriptor first arrives and the point is to read the chain,
+ * not to serve whatever happens to be in the table.
  */
 async function resolveBalanceUpdater(account: Account): Promise<(_: Account) => Account> {
   rememberShapedAccount(account);
   const ref = accountRefOf(account);
-  await accountDataScheduler.fetch({
-    ref,
-    slices: ["balance"],
-    reason: "ledger-sync-resolve",
-    maxAge: 0,
-  });
+  await store.dispatch(fetchAccountBalance(ref, { maxAge: 0 }));
 
-  const { error } = accountDataScheduler.getStatus(ref.accountId, "balance");
-  if (error) throw error;
+  const { error } = accountBalancesSlice.selectors.selectAccountBalanceStatus(
+    store.getState(),
+    ref.accountId,
+  );
+  if (error) throw new Error(error);
 
   const own = accountBalanceRowsOf(account.id).find(row => row.accountId === account.id);
   if (!own) throw new Error(`no balance could be resolved for ${account.id}`);
@@ -48,9 +43,9 @@ async function resolveBalanceUpdater(account: Account): Promise<(_: Account) => 
  * at all, so the sync is paid for one number.
  *
  * Dropping this bridge into the accounts cloud-sync module's resolution context replaces that with a
- * `{ balance }` request through the account-data layer: one `getBalance` call on a family with a
- * granular coin module, and the same full sync as before on families without one — the router
- * decides, per account, and `sourceId` on the slice status records which one answered.
+ * one balance read through the account-data layer: a single `getBalance` call on a family with a
+ * granular coin module, and the same full sync as before on families without one — the source is
+ * picked per account, and `sourceId` on the status records which one answered.
  *
  * Two honest caveats:
  * - `integrateNewAccountDescriptor` used the full sync as a *validation* pass too. A balance read

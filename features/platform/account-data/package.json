@@ -2,7 +2,7 @@
   "name": "@features/platform-account-data",
   "version": "0.1.0",
   "private": true,
-  "description": "Capability-routed account data layer: the AccountDataSource port, its router, scheduler and React hooks",
+  "description": "Account balance reads: the source contract, the fetch thunk and the React hook",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -11,9 +11,6 @@
     },
     "./react": {
       "default": "./src/react.ts"
-    },
-    "./sourceRequirements": {
-      "default": "./src/sourceRequirements.ts"
     },
     "./package.json": "./package.json"
   },

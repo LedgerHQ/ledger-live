@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { accountRefOf, createAccountDataRuntime } from "./accountData";
+import { accountRefOf, readDescriptorBalances } from "./accountData";
 import { AccountIdSchema, BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
@@ -28,31 +28,32 @@ const btcDescriptor: AccountDescriptor = {
   index: 0,
 };
 
-const getBalanceRows = mock(async () => [
-  {
-    accountId: AccountIdSchema.parse(EVM_ID),
-    assetId: CryptoCurrencyIdSchema.parse("ethereum"),
-    value: "1500",
-    locked: "100",
-  },
-  {
-    accountId: AccountIdSchema.parse(`${EVM_ID}+ethereum%2Ferc20%2Fusd__coin`),
-    assetId: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
-    value: "42",
-    parentId: AccountIdSchema.parse(EVM_ID),
-  },
-]);
-
-const bridgeRow = (accountId: string, assetId: string, balance: string): AccountBalance =>
+const row = (
+  accountId: string,
+  assetId: string,
+  balance: string,
+  extra: Partial<AccountBalance> = {},
+): AccountBalance =>
   ({
     accountId: AccountIdSchema.parse(accountId),
     assetId: CryptoCurrencyIdSchema.parse(assetId),
     balance: BigNumberStrSchema.parse(balance),
     spendableBalance: BigNumberStrSchema.parse(balance),
     at: DateTimeIsoSchema.parse("2026-01-31T12:00:00.000Z"),
+    ...extra,
   }) as AccountBalance;
 
-const syncBalanceRows = mock(async () => [bridgeRow(BTC_ID, "bitcoin", "7")]);
+const getBalanceRows = mock(async () => [
+  row(EVM_ID, "ethereum", "1500", {
+    spendableBalance: BigNumberStrSchema.parse("1400"),
+  } as Partial<AccountBalance>),
+  row(`${EVM_ID}+ethereum%2Ferc20%2Fusd__coin`, "ethereum", "42", {
+    assetId: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
+    parentId: AccountIdSchema.parse(EVM_ID),
+  } as Partial<AccountBalance>),
+]);
+
+const syncBalanceRows = mock(async () => [row(BTC_ID, "bitcoin", "7")]);
 
 // Injected, never `mock.module`: the command tests run the CLI in process, so a module mock on a
 // shared module bleeds into them (see the warning in src/test/helpers/cli-runner.ts).
@@ -61,18 +62,7 @@ const adapters = {
   loadBridge: async () => ({ getBalanceRows: syncBalanceRows }),
 };
 
-const runtimeFor = (descriptor: AccountDescriptor) =>
-  createAccountDataRuntime({
-    descriptorById: id => (id === descriptor.id ? descriptor : undefined),
-    adapters,
-  });
-
-const readBalance = async (descriptor: AccountDescriptor) => {
-  const { scheduler, rowsOf } = runtimeFor(descriptor);
-  const ref = accountRefOf(descriptor);
-  await scheduler.fetch({ ref, slices: ["balance"], reason: "test", maxAge: 0 });
-  return { rows: rowsOf(descriptor.id), status: scheduler.getStatus(ref.accountId, "balance") };
-};
+const read = (descriptor: AccountDescriptor) => readDescriptorBalances(descriptor, adapters);
 
 describe("accountRefOf", () => {
   it("uses the fresh address when the descriptor carries one", () => {
@@ -89,24 +79,25 @@ describe("accountRefOf", () => {
   });
 });
 
-describe("createAccountDataRuntime", () => {
+describe("readDescriptorBalances", () => {
   it("reads a granular family straight from the coin module, with no full sync", async () => {
     getBalanceRows.mockClear();
     syncBalanceRows.mockClear();
-    const { rows, status } = await readBalance(evmDescriptor);
+    const rows = await read(evmDescriptor);
     expect(getBalanceRows).toHaveBeenCalledTimes(1);
     expect(syncBalanceRows).not.toHaveBeenCalled();
-    expect(status.sourceId).toBe("coin-module-api");
     expect(rows.map(row => [String(row.assetId), String(row.balance)])).toEqual([
       ["ethereum", "1500"],
       ["ethereum/erc20/usd__coin", "42"],
     ]);
   });
 
-  it("returns native and token balances from that single call", async () => {
-    const { rows } = await readBalance(evmDescriptor);
+  it("returns native and token balances from that single call, account row first", async () => {
+    const rows = await read(evmDescriptor);
     expect(rows).toHaveLength(2);
-    expect(String(rows[0].spendableBalance)).toBe("1400"); // 1500 - 100 locked
+    expect(rows[0].parentId).toBeUndefined();
+    expect(String(rows[0].spendableBalance)).toBe("1400");
+    expect(String(rows[1].parentId)).toBe(EVM_ID);
   });
 
   it("keeps a family the wallet routes granularly on the full sync — the narrowing is deliberate", async () => {
@@ -122,39 +113,37 @@ describe("createAccountDataRuntime", () => {
     };
     // `xrp` is enabled in the wallet's own gate, but this CLI narrows to `evm` until each family's
     // `balances` output has been compared before and after. Widening is a one-line change.
-    const { status } = await readBalance(xrpDescriptor);
-    expect(status.sourceId).toBe("legacy-bridge");
+    await read(xrpDescriptor);
+    expect(syncBalanceRows).toHaveBeenCalledTimes(1);
     expect(getBalanceRows).not.toHaveBeenCalled();
   });
 
   it("falls back to the full bridge sync outside the narrowed set", async () => {
     getBalanceRows.mockClear();
     syncBalanceRows.mockClear();
-    const { rows, status } = await readBalance(btcDescriptor);
+    const rows = await read(btcDescriptor);
     expect(syncBalanceRows).toHaveBeenCalledTimes(1);
     expect(getBalanceRows).not.toHaveBeenCalled();
-    expect(status.sourceId).toBe("legacy-bridge");
     expect(rows.map(row => String(row.balance))).toEqual(["7"]);
   });
 
-  it("records the error on the slice when a source fails", async () => {
+  it("propagates a source failure rather than reporting an empty balance", async () => {
     syncBalanceRows.mockClear();
     syncBalanceRows.mockImplementationOnce(async () => {
       throw new Error("explorer unreachable");
     });
-    const { status } = await readBalance(btcDescriptor);
-    expect(status.error?.message).toBe("explorer unreachable");
+    expect(read(btcDescriptor)).rejects.toThrow("explorer unreachable");
   });
 
-  it("keeps each invocation isolated — no state shared between runtimes", async () => {
-    const first = runtimeFor(evmDescriptor);
-    await first.scheduler.fetch({
-      ref: accountRefOf(evmDescriptor),
-      slices: ["balance"],
-      reason: "test",
-      maxAge: 0,
-    });
-    expect(first.rowsOf(EVM_ID)).toHaveLength(2);
-    expect(runtimeFor(evmDescriptor).rowsOf(EVM_ID)).toEqual([]);
+  it("throws when no source supports the currency", async () => {
+    const unknown: AccountDescriptor = {
+      id: "js:2:nope:0x0:",
+      currencyId: "nope",
+      freshAddress: "0x0",
+      seedIdentifier: "0x0",
+      derivationMode: "",
+      index: 0,
+    };
+    expect(read(unknown)).rejects.toThrow("No account balance source");
   });
 });

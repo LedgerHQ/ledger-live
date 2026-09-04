@@ -5,10 +5,8 @@ import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
 import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
-import {
-  getAccountBalanceRows,
-  type AssetBalanceRow,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
+import { getAccountBalanceRows } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
+import type { AccountBalance } from "@domain/entity-account-balance";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import { adaptCoreOperationToLiveOperation } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
@@ -28,7 +26,7 @@ export class CoinFrameworkAdapter {
    * `createLocalEvmApi` and `evmBridge` directly, which is why the CLI could only read EVM
    * granularly. That was an implementation limit, not a capability one.
    */
-  getBalanceRows(descriptor: AccountDescriptor): Promise<AssetBalanceRow[]> {
+  getBalanceRows(descriptor: AccountDescriptor): Promise<AccountBalance[]> {
     const { xpubOrAddress } = decodeAccountId(descriptor.id);
     return getAccountBalanceRows({
       accountId: descriptor.id,

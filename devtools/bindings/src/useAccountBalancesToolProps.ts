@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
-import type { AccountRef } from "@features/platform-account-data";
-import { useAccountDataScheduler, useSliceStatuses } from "@features/platform-account-data/react";
 import {
-  accountBalanceSelector,
-  subAccountBalancesSelector,
-  type WithAccountBalances,
-} from "@domain/entity-account-balance";
+  fetchAccountBalance,
+  getAccountBalanceSources,
+  type AccountRef,
+} from "@features/platform-account-data";
+import { accountBalancesSlice, type WithAccountBalances } from "@domain/entity-account-balance";
 
 type AccountBalancesToolProps = Extract<
   DevToolsConfig[number],
@@ -29,12 +29,15 @@ export type AccountBalancesInput = {
   units: Readonly<Record<string, { code: string; magnitude: number }>>;
 };
 
+const { selectAccountBalance, selectSubAccountBalances, selectAccountBalanceStatus } =
+  accountBalancesSlice.selectors;
+
 /**
  * Props for the Account Balances devtool.
  *
  * The host passes its accounts already shaped as `AccountRef`s — only it knows how its store holds
- * accounts, and only it can build a ref. Everything else is read here: the balance table through the
- * entity selectors, and the per-slice status through the scheduler the app mounted.
+ * accounts, and only it can build a ref. Everything else, rows and status alike, is read from the
+ * slice: since the status moved into Redux there is nothing else to subscribe to.
  *
  * Reads use `maxAge: 0` so the button always hits the network. `onReadAll` does not, on purpose: it
  * reproduces what a portfolio mount does, and skipping what is already fresh is the behaviour worth
@@ -43,59 +46,41 @@ export type AccountBalancesInput = {
 export function useAccountBalancesToolProps(
   inputs: readonly AccountBalancesInput[],
 ): AccountBalancesToolProps {
-  const scheduler = useAccountDataScheduler();
+  const dispatch = useDispatch<ThunkDispatch<WithAccountBalances, unknown, UnknownAction>>();
+  const state = useSelector((state: WithAccountBalances) => state);
 
-  const table = useSelector((state: WithAccountBalances) => state.accountBalances);
+  const accounts = useMemo<Row[]>(
+    () =>
+      inputs.map(({ ref, name, granular, units }) => {
+        const balance = selectAccountBalance(state, ref.accountId);
+        const subs = selectSubAccountBalances(state, ref.accountId);
+        const status = selectAccountBalanceStatus(state, ref.accountId);
 
-  const accountIds = useMemo(() => inputs.map(({ ref }) => ref.accountId), [inputs]);
-  // Subscribed, not read inside the memo below: statuses live outside Redux, so nothing would
-  // invalidate the memo when one changes — `Reading…` would never appear, and a failure that writes
-  // no balance would never be shown at all.
-  const statuses = useSliceStatuses(accountIds, "balance");
-
-  const accounts = useMemo<Row[]>(() => {
-    // One wrapper for the whole pass: the selectors read `state.accountBalances`, and the memoized
-    // parent index keys off that table's identity, so a literal per row would only add garbage.
-    const state: WithAccountBalances = { accountBalances: table };
-
-    return inputs.map(({ ref, name, granular, units }, index) => {
-      const balance = accountBalanceSelector(state, {
-        accountId: ref.accountId,
-      });
-      const subs = subAccountBalancesSelector(state, {
-        accountId: ref.accountId,
-      });
-      const status = statuses[index];
-
-      return {
-        accountId: ref.accountId,
-        name,
-        currencyId: ref.currencyId,
-        address: ref.address,
-        granular,
-        balance: balance && {
-          assetId: balance.assetId,
-          unit: units[balance.assetId],
-          value: balance.balance,
-          spendable: balance.spendableBalance,
-          at: balance.at,
-        },
-        tokens: subs.map(sub => ({
-          assetId: sub.assetId,
-          unit: units[sub.assetId],
-          value: sub.balance,
-          spendable: sub.spendableBalance,
-          at: sub.at,
-        })),
-        status: {
-          pending: status?.pending ?? false,
-          sourceId: status?.sourceId,
-          error: status?.error?.message,
-          lastFetchedAt: status?.lastFetchedAt,
-        },
-      };
-    });
-  }, [inputs, table, statuses]);
+        return {
+          accountId: ref.accountId,
+          name,
+          currencyId: ref.currencyId,
+          address: ref.address,
+          granular,
+          balance: balance && {
+            assetId: balance.assetId,
+            unit: units[balance.assetId],
+            value: balance.balance,
+            spendable: balance.spendableBalance,
+            at: balance.at,
+          },
+          tokens: subs.map(sub => ({
+            assetId: sub.assetId,
+            unit: units[sub.assetId],
+            value: sub.balance,
+            spendable: sub.spendableBalance,
+            at: sub.at,
+          })),
+          status,
+        };
+      }),
+    [inputs, state],
+  );
 
   const refsById = useMemo(
     () => new Map(inputs.map(({ ref }) => [String(ref.accountId), ref])),
@@ -105,23 +90,15 @@ export function useAccountBalancesToolProps(
   const onRead = useCallback(
     (accountId: string) => {
       const ref = refsById.get(accountId);
-      if (!scheduler || !ref) return;
-      void scheduler.fetch({
-        ref,
-        slices: ["balance"],
-        reason: "devtool",
-        maxAge: 0,
-      });
+      if (!ref) return;
+      void dispatch(fetchAccountBalance(ref, { maxAge: 0 }));
     },
-    [scheduler, refsById],
+    [dispatch, refsById],
   );
 
   const onReadAll = useCallback(() => {
-    if (!scheduler) return;
-    for (const { ref } of inputs) {
-      void scheduler.fetch({ ref, slices: ["balance"], reason: "devtool-all" });
-    }
-  }, [scheduler, inputs]);
+    for (const { ref } of inputs) void dispatch(fetchAccountBalance(ref));
+  }, [dispatch, inputs]);
 
-  return { accounts, onRead, onReadAll, ready: scheduler !== null };
+  return { accounts, onRead, onReadAll, ready: getAccountBalanceSources().length > 0 };
 }

@@ -6,7 +6,7 @@ import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Account } from "@ledgerhq/types-live";
 import { Button, Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
-import type { SliceStatus } from "@features/platform-account-data";
+import type { AccountBalanceStatus } from "@domain/entity-account-balance";
 import { useAccountBalance } from "@features/platform-account-data/react";
 import { ToolPage } from "../components/ToolPage";
 import { inferAccount, syncAccount } from "../logic/syncAccount";
@@ -122,8 +122,8 @@ function App() {
  * One line saying where the number came from, flattened out of a ternary chain: an error wins over
  * a source, and "no read yet" is the only case left.
  */
-function sourceLine(status: SliceStatus, assetCount: number): string {
-  if (status.error) return status.error.message;
+function sourceLine(status: AccountBalanceStatus, assetCount: number): string {
+  if (status.error) return status.error;
   if (!status.sourceId) return "no read yet";
   const extra = assetCount > 1 ? ` — ${assetCount} assets in one read` : "";
   return `served by ${status.sourceId}${extra}`;
@@ -132,10 +132,10 @@ function sourceLine(status: SliceStatus, assetCount: number): string {
 /**
  * The balance, and only the balance.
  *
- * `useAccountBalance` registers demand for the `balance` slice alone, so on a family with a granular
- * coin module this is one `getBalance` call — no operation history, no balance-history derivation.
- * `sourceId` says which source the router picked, which is the whole point of the panel: it is the
- * cheapest way to see the hybrid routing decide.
+ * `useAccountBalance` reads the balance and nothing else, so on a family with a granular coin module
+ * this is one `getBalance` call — no operation history, no balance-history derivation. `sourceId`
+ * says which source answered, which is the whole point of the panel: it is the cheapest way to watch
+ * the hybrid selection happen.
  */
 function BalancePanel({ accountId }: Readonly<{ accountId: string }>) {
   const account = useMemo(() => {

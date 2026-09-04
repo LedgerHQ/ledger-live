@@ -17,14 +17,12 @@ export interface StoredBalance {
   readonly at: string;
 }
 
-/** Freshness and outcome of the `balance` slice for one account. */
+/** Outcome of the last balance read for one account. */
 export interface BalanceStatus {
   readonly pending: boolean;
-  /** Which source last answered — `coin-module-api` (one chain call) or `legacy-bridge` (full sync). */
+  /** Which source last answered — `granular` (one chain call) or `full-sync`. */
   readonly sourceId?: string;
   readonly error?: string;
-  /** Epoch ms of the last read by the scheduler; absent when only a background sync has produced it. */
-  readonly lastFetchedAt?: number;
 }
 
 export interface AccountBalanceRow {
@@ -50,8 +48,8 @@ export interface AccountBalancesToolProps {
   /** Read every listed account's balance, respecting freshness — what a portfolio mount does. */
   readonly onReadAll: () => void;
   /**
-   * Whether the host wired a scheduler. `false` means the layer is not running, so reads do nothing
-   * and only what a background sync mirrored is visible.
+   * Whether the host registered any source. `false` means the layer is not wired, so reads only ever
+   * report that nothing can serve the account.
    */
   readonly ready: boolean;
 }

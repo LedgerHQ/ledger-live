@@ -53,7 +53,7 @@ export const AccountBalanceSchema = z.object({
  * The key is validated too, not only the row: this schema is what a persisted (so untrusted) table
  * is read back through, and a blank key would sail through `z.string()` only to fail every lookup.
  */
-export const AccountBalancesStateSchema = z.record(AccountIdSchema, AccountBalanceSchema);
+export const AccountBalanceRowsSchema = z.record(AccountIdSchema, AccountBalanceSchema);
 
 export type BalanceAssetId = z.infer<typeof BalanceAssetIdSchema>;
 export type AccountBalance = z.infer<typeof AccountBalanceSchema>;
@@ -62,9 +62,32 @@ export type AccountBalance = z.infer<typeof AccountBalanceSchema>;
  * Declared by hand rather than inferred: the table's contract — only an {@link AccountId} may index
  * it — is what every consumer types against, and it must hold whether or not the schema is in play.
  */
-export type AccountBalancesState = Record<AccountId, AccountBalance>;
+export type AccountBalanceRows = Record<AccountId, AccountBalance>;
+
+/**
+ * Outcome of the last read of one account's balance.
+ *
+ * In the store, next to the rows it describes, rather than in a side channel: a shimmer and a
+ * retry button are ordinary derived state, and keeping them in Redux is what removed the bespoke
+ * subscription layer this slice used to need. `error` is a message, not an `Error`, so the state
+ * stays serializable.
+ */
+export type AccountBalanceStatus = {
+  pending: boolean;
+  error?: string;
+  /** Id of the source that last answered — which world served this account. */
+  sourceId?: string;
+};
+
+export const IDLE_ACCOUNT_BALANCE_STATUS: AccountBalanceStatus = { pending: false };
+
+export type AccountBalancesState = {
+  rows: AccountBalanceRows;
+  /** Keyed by main-account id: a read is always addressed to a main account. */
+  status: Record<AccountId, AccountBalanceStatus>;
+};
 
 /** Redux state contract: apps must mount {@link accountBalancesSlice} under this exact key. */
 export type WithAccountBalances = { accountBalances: AccountBalancesState };
 
-export const initialAccountBalancesState: AccountBalancesState = {};
+export const initialAccountBalancesState: AccountBalancesState = { rows: {}, status: {} };

@@ -78,16 +78,16 @@ export function AccountBalances(props: Readonly<AccountBalancesToolProps>) {
   return (
     <div className="flex flex-col gap-16 overflow-y-auto p-16">
       <p className="body-3 text-muted m-0">
-        Reads go through <code>@features/platform-account-data</code>, asking for the{" "}
-        <code>balance</code> slice and nothing else. <strong>granular</strong> means a coin module
-        serves it directly; <strong>full sync only</strong> means the router falls back to{" "}
-        <code>AccountBridge.sync()</code>, which costs the same as today.
+        Reads go through <code>@features/platform-account-data</code>, asking for the balance and
+        nothing else. <strong>granular</strong> means a coin module serves it directly;{" "}
+        <strong>full sync only</strong> means it falls back to <code>AccountBridge.sync()</code>,
+        which costs the same as today.
       </p>
 
       {ready ? null : (
         <p className="body-3 text-warning m-0">
-          No scheduler is wired in this host, so reads do nothing. What you see is whatever a
-          background sync has already mirrored into the balance table.
+          No source is registered in this host, so a read can only report that nothing can serve the
+          account.
         </p>
       )}
 

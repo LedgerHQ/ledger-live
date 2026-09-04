@@ -6,13 +6,8 @@ import {
 } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
 import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import {
-  createAccountDataScheduler,
-  createAccountDataSourceRegistry,
-  createDefaultAccountDataSources,
-  mirrorLegacyAccountBalances,
-  observedBalanceAt,
-  type AccountDataHost,
-  type AccountDataScheduler,
+  registerAccountBalanceSources,
+  type AccountBalanceSource,
   type AccountRef,
 } from "@features/platform-account-data";
 import { prepareCurrency } from "~/renderer/bridge/cache";
@@ -23,33 +18,47 @@ import type { ReduxStore } from "~/state-manager/configureStore";
 export { accountRefOf } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBalances";
 
 /**
- * This app's coin layer, as the account-data layer needs it.
+ * Wire the account-data layer for this app.
  *
- * The capability decision is `getEnabledGenericCoinFrameworkFamilies()` — the wallet's own gate, read
- * rather than copied, so no app carries a list of its own. Replacing it with a per-module declaration
- * is a change to this one line.
+ * Same shape as `setupCryptoAssetsStore` — the app composition root owns the wiring, the package
+ * owns the contract. Called once at boot; nothing else in the app registers a source.
  */
-function accountDataHost(store: ReduxStore): AccountDataHost {
-  return {
-    granularFamilies: getEnabledGenericCoinFrameworkFamilies,
+export function setupAccountData(store: ReduxStore): void {
+  // Resolved once: the set is static for the life of the app, and asking on every `supports` check
+  // would put a lookup on the hot path of every portfolio row. It is the *wallet's* own gate, read
+  // rather than copied — no app carries a family list of its own.
+  const granularFamilies = new Set(getEnabledGenericCoinFrameworkFamilies());
+  const familyOf = (currencyId: string) => findCryptoCurrencyById(currencyId)?.family;
 
-    familyOf: currencyId => findCryptoCurrencyById(currencyId)?.family,
-
-    readAssetBalances: ref =>
+  const granular: AccountBalanceSource = {
+    id: "granular",
+    priority: 10,
+    supports: ref => {
+      const family = familyOf(ref.currencyId);
+      return !ref.parentId && family !== undefined && granularFamilies.has(family);
+    },
+    getBalances: ref =>
       getAccountBalanceRows({
         accountId: ref.accountId,
         currencyId: ref.currencyId,
         address: ref.address,
         blacklistedTokenIds: blacklistedTokenIdsSelector(store.getState()),
       }),
+  };
 
-    // The compatibility half: today's full sync, read out of the legacy store rather than rebuilt, so
-    // a family with no granular module behaves exactly as it does now. Deliberately *not* writing the
-    // synced account back into the `accounts` reducer — `BridgeSync` owns that store.
-    syncAccountBalances: async (ref: AccountRef, signal?: AbortSignal) => {
+  /**
+   * Today's full sync, behind the same contract — the guarantee that this layer is never worse than
+   * what it replaces.
+   *
+   * Deliberately *not* writing the synced account back into the `accounts` reducer: `BridgeSync`
+   * owns that store, and a second writer racing it is exactly what this exploration exists to avoid.
+   */
+  const fullSync: AccountBalanceSource = {
+    id: "full-sync",
+    priority: 0,
+    supports: ref => !ref.parentId && familyOf(ref.currencyId) !== undefined,
+    getBalances: async (ref: AccountRef, signal?: AbortSignal) => {
       const state = store.getState();
-      // Always a main account: `createLegacyBridgeSource` refuses a token-account ref, because this
-      // source projects the parent's whole balance set and a token id must never key it.
       const account = accountSelector(state, { accountId: ref.accountId });
       if (!account) throw new Error(`account ${ref.accountId} is not in the store`);
 
@@ -62,40 +71,6 @@ function accountDataHost(store: ReduxStore): AccountDataHost {
       });
     },
   };
-}
 
-let scheduler: AccountDataScheduler | null = null;
-
-/**
- * Wire the account-data layer for this app: register the standard sources, start mirroring the legacy
- * account store, and keep the scheduler for `<AccountDataProvider>` to pick up.
- *
- * Same shape as `setupCryptoAssetsStore` — the app composition root owns the wiring, the package owns
- * the contract.
- */
-export function setupAccountData(store: ReduxStore): AccountDataScheduler {
-  const registry = createAccountDataSourceRegistry(
-    createDefaultAccountDataSources(accountDataHost(store)),
-  );
-  // Desktop keeps `Account[]` directly at `state.accounts`.
-  mirrorLegacyAccountBalances(
-    store,
-    state => state.accounts,
-    (error, accountId) => console.warn(`account-data: could not mirror ${accountId}`, error),
-  );
-  scheduler = createAccountDataScheduler({
-    registry,
-    dispatch: store.dispatch,
-    // `BridgeSync` still owns background syncing, and the mirror stamps what it produces. Reading
-    // that timestamp is what stops the first `useAccountBalance` from re-running a sync that just ran.
-    observedAt: observedBalanceAt(store.getState),
-    onError: (error, { ref, slice }) =>
-      console.warn(`account-data: ${slice} failed for ${ref.accountId}`, error),
-  });
-  return scheduler;
-}
-
-/** The scheduler `setupAccountData` built, or `null` before boot has reached it. */
-export function getAccountDataScheduler(): AccountDataScheduler | null {
-  return scheduler;
+  registerAccountBalanceSources([granular, fullSync]);
 }

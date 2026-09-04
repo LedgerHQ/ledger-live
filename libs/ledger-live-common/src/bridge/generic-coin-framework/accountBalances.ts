@@ -1,37 +1,56 @@
 import { NEVER, fromEvent, lastValueFrom, race, throwError, type Observable } from "rxjs";
 import { mergeMap, reduce } from "rxjs/operators";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
-import { toAccountBalances, type AccountBalance } from "@domain/entity-account-balance";
+import {
+  AccountBalanceSchema,
+  AmountStrSchema,
+  type AccountBalance,
+} from "@domain/entity-account-balance";
+import { toAccountBalances } from "../../legacy-mapping/accountBalance";
 import {
   decodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import { AccountIdSchema, type AccountId } from "@shared/schema-primitives";
+import { AccountIdSchema, DateTimeIsoSchema, type AccountId } from "@shared/schema-primitives";
 import { getCoinModuleApi } from "./api/index";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 
 /**
- * One asset held at an account's address.
+ * An amount reported by a coin module, projected onto the entity's encoding.
  *
- * Keyed by account id rather than by asset: the encoding of a token account id belongs to the
- * account layer, so callers never have to learn it. Structurally identical to
- * `AssetBalanceRow` in `@features/platform-account-data`, which this feeds — declared here rather
- * than imported, because `libs/` must not depend on `features/`.
+ * `locked` is the non-spendable part — minimum balance, rent reserve, locked stake — so the
+ * subtraction that produces `spendableBalance` happens here, once, next to the module that reported
+ * both numbers. Clamped at zero: a module over-reporting `locked` must not produce a negative
+ * balance, which the entity schema rejects outright.
  */
-export type AssetBalanceRow = {
+const toBalanceRow = ({
+  accountId,
+  assetId,
+  value,
+  locked,
+  parentId,
+  at,
+}: {
   accountId: AccountId;
-  assetId:
-    | ReturnType<typeof CryptoCurrencyIdSchema.parse>
-    | ReturnType<typeof TokenCurrencyIdSchema.parse>;
-  /** Total held, decimal-encoded, in the asset's smallest unit. */
-  value: string;
-  /** Non-spendable part of `value` — minimum balance, rent reserve, locked stake. */
-  locked?: string;
-  /** Set for a token account; absent for the account's native balance. */
+  assetId: AccountBalance["assetId"];
+  value: bigint;
+  locked: bigint | undefined;
   parentId?: AccountId;
+  at: string;
+}): AccountBalance => {
+  const balance = AmountStrSchema.parse(value.toString());
+  const spendable = locked === undefined ? value : value - locked;
+  return AccountBalanceSchema.parse({
+    accountId,
+    assetId,
+    balance,
+    spendableBalance: AmountStrSchema.parse((spendable < 0n ? 0n : spendable).toString()),
+    ...(parentId ? { parentId } : {}),
+    at: DateTimeIsoSchema.parse(at),
+  });
 };
 
 /**
@@ -66,7 +85,7 @@ export async function getAccountBalanceRows({
    * granular read replaced the account's row set.
    */
   blacklistedTokenIds?: readonly string[];
-}): Promise<AssetBalanceRow[]> {
+}): Promise<AccountBalance[]> {
   const currency = getCryptoCurrencyById(currencyId);
   const parentId = AccountIdSchema.parse(accountId);
   const [api, bridgeApi] = await Promise.all([
@@ -84,33 +103,38 @@ export async function getAccountBalanceRows({
   const tokens = balances.filter(balance => balance.asset.type !== "native");
 
   const blacklisted = new Set(blacklistedTokenIds);
+  const at = new Date().toISOString();
   // Resolved in parallel, as `buildSubAccounts` already does: awaiting one token at a time turns an
   // account holding a dozen assets into a dozen sequential CAL lookups.
   const tokenRows = await Promise.all(
-    tokens.map(async ({ asset, value, locked }): Promise<AssetBalanceRow | null> => {
+    tokens.map(async ({ asset, value, locked }): Promise<AccountBalance | null> => {
       // A token asset becomes a row only once the family can name the token behind it: a token
       // account's id is derived from the token, so an unresolvable asset has nowhere to go.
       const token = await bridgeApi.getTokenFromAsset?.(asset);
       if (!token || blacklisted.has(token.id)) return null;
-      return {
+      return toBalanceRow({
         accountId: AccountIdSchema.parse(encodeTokenAccountId(accountId, token)),
         assetId: TokenCurrencyIdSchema.parse(token.id),
-        value: value.toString(),
-        ...(locked === undefined ? {} : { locked: locked.toString() }),
+        value,
+        locked,
         parentId,
-      };
+        at,
+      });
     }),
   );
 
-  const rows: AssetBalanceRow[] = native.map(({ value, locked }) => ({
-    accountId: parentId,
-    assetId: CryptoCurrencyIdSchema.parse(currency.id),
-    value: value.toString(),
-    ...(locked === undefined ? {} : { locked: locked.toString() }),
-  }));
-  rows.push(...tokenRows.filter((row): row is AssetBalanceRow => row !== null));
-
-  return rows;
+  return [
+    ...native.map(({ value, locked }) =>
+      toBalanceRow({
+        accountId: parentId,
+        assetId: CryptoCurrencyIdSchema.parse(currency.id),
+        value,
+        locked,
+        at,
+      }),
+    ),
+    ...tokenRows.filter((row): row is AccountBalance => row !== null),
+  ];
 }
 
 /**
@@ -174,7 +198,7 @@ export function accountRefOf(account: AccountForRef, parent?: AccountForRef): Ac
  * The compatibility path, shared by every host so the abort semantics are right in one place:
  * `takeUntil` upstream of `reduce` would *complete* the stream, making `reduce` emit its seed — the
  * **un-synced** account — which the caller would then store as a fresh balance. Aborting has to
- * reject, so the scheduler records an error rather than stale data stamped as current.
+ * reject, so the caller records an error rather than stale data stamped as current.
  */
 export async function syncAccountBalanceRows({
   account,
