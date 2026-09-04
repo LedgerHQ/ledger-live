@@ -70,6 +70,7 @@ import type {
   AleoTokenType,
   EnrichedPrivateRecord,
   AleoStakingPosition,
+  AleoStakingMode,
   AleoValidatorNonEarningReason,
 } from "../types";
 
@@ -571,7 +572,7 @@ function getAmountToSpend({
 
   // unbonding spends the bonded position; the fee is paid from the transparent balance
   if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
-    return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    return getAvailableBalance(account, transaction);
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -637,6 +638,22 @@ export function isTokenTransaction(transaction: Pick<Transaction, "mode">): bool
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
 }
 
+export function isStakingTransaction(transaction: Pick<Transaction, "mode">): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+  );
+}
+
+/** Unbond and claim move funds within the account itself, so the recipient is legitimately the sender. */
+export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+  );
+}
+
 export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
@@ -652,9 +669,7 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC ||
+    isStakingTransaction(transaction) ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -686,12 +701,7 @@ export function derivePublicTransactionMode({
 }: {
   isTokenTx: boolean;
   isSelfTransfer: boolean;
-}): Exclude<
-  TransactionPublic["mode"],
-  | typeof TRANSACTION_TYPE.BOND_PUBLIC
-  | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
-  | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
-> {
+}): Exclude<TransactionPublic["mode"], AleoStakingMode> {
   if (isTokenTx) {
     return isSelfTransfer
       ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
