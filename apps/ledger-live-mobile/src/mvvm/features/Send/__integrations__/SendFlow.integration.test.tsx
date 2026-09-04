@@ -266,8 +266,8 @@ describe("Send flow integration tests", () => {
     await user.press(screen.getByLabelText(`Ethereum, ${VALID_ETHEREUM_RECIPIENT}`));
 
     expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
-    expect(screen.queryByLabelText("Back")).not.toBeOnTheScreen();
-    expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Back")).not.toBeVisible();
+    expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeVisible();
   });
 
   it("should keep add contact enabled when the network supports the address book", async () => {
