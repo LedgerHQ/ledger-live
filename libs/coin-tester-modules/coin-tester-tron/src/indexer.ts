@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import bs58 from "bs58";
-import { http, HttpResponse } from "msw";
+import { http, HttpResponse, bypass, passthrough } from "msw";
 import { setupServer } from "msw/node";
 import { TRON_LOCAL_RPC } from "./fixtures";
 
@@ -63,6 +63,15 @@ const trc20ByAddress = new Map<string, Trc20Transfer[]>();
 const trc20Contracts = new Map<string, Trc20Contract>();
 let lastIndexedBlock = 0;
 
+// When set, the getaccountresource handler reports this much available ENERGY (with none used),
+// overriding the devnet's real value. The devnet never credits a real `EnergyLimit`, so this is the
+// only way to put the account in the energy-covered state a mainnet USDT holder reaches — where a
+// TRC-20 estimate nets to 0. `null` reports the devnet's real resources unchanged.
+let energyLimitOverride: number | null = null;
+export function setEnergyLimitOverride(energyLimit: number | null): void {
+  energyLimitOverride = energyLimit;
+}
+
 export function registerTrc20Contract(c: Trc20Contract): void {
   trc20Contracts.set(c.contractAddress, c);
 }
@@ -72,6 +81,7 @@ export function resetIndexer(): void {
   trc20ByAddress.clear();
   trc20Contracts.clear();
   lastIndexedBlock = 0;
+  energyLimitOverride = null;
 }
 
 function hexToTronAddress(hex: string): string | null {
@@ -291,6 +301,17 @@ async function fetchTrc20Balance(contract: string, owner: string): Promise<strin
 
 export function initMswHandlers(): () => void {
   const server = setupServer(
+    http.get(`${TRON_LOCAL_RPC}/wallet/getaccountresource`, async ({ request }) => {
+      // Untouched unless a scenario opts in: report the devnet's real resources verbatim.
+      if (energyLimitOverride === null) return passthrough();
+      // Proxy the real node (bypass so this handler doesn't intercept its own proxy call); bandwidth is
+      // left as the devnet reports it, so only the energy pool is forced to "covered".
+      const real = (await fetch(bypass(request))
+        .then(res => (res.ok ? res.json() : {}))
+        .catch(() => ({}))) as Record<string, unknown>;
+      return HttpResponse.json({ ...real, EnergyLimit: energyLimitOverride, EnergyUsed: 0 });
+    }),
+
     http.get(`${TRON_LOCAL_RPC}/v1/accounts/:address`, async ({ params }) => {
       const address = params.address as string;
       const account = await nodeFetch<Record<string, unknown>>("/wallet/getaccount", {

@@ -101,7 +101,14 @@ async function craftSend(
   const { amount, asset, recipient, sender, expiration } = transactionIntent;
 
   if (asset.type === "trc20" && asset.assetReference) {
-    const fees = customFees?.value;
+    // `fee_limit` caps what the TVM may burn for energy, not a charge — unused energy is never taken —
+    // so it must cover the worst-case burn. Only a deliberate override sets it, and the framework marks
+    // one with `customFees.parameters.fees` (see the generic `signOperation`); it is honoured verbatim,
+    // including a below-default or `0` cap (VSD-5287/LIVE-36391). `customFees.value` alone is the
+    // auto-resolved display fee — net of the account's own energy and `0` when energy is covered — so
+    // pinning `fee_limit` to it reverts OUT_OF_ENERGY (LIVE-36865). Absent an override,
+    // `craftTrc20Transaction` applies its `DEFAULT_TRC20_FEES_LIMIT` ceiling.
+    const fees = customFees?.parameters?.fees !== undefined ? customFees?.value : undefined;
     if (fees !== undefined && (fees < 0n || fees > BigInt(Number.MAX_SAFE_INTEGER))) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
@@ -112,12 +119,6 @@ async function craftSend(
       throw new Error("Memo cannot be used with smart contract transactions");
     }
 
-    // `fee_limit` caps what the TVM may burn, not a charge — unused energy is never taken. When the
-    // caller passes a custom fee we honour it verbatim, including a value below
-    // `DEFAULT_TRC20_FEES_LIMIT` or `0`: a low cap can OUT_OF_ENERGY-revert with the fee still burned,
-    // but that trade-off is the caller's to make and the coin module must not silently override it
-    // (LIVE-36391). Only when no custom fee is given does the default apply, and `craftTrc20Transaction`
-    // owns that fallback (`customFees ?? DEFAULT_TRC20_FEES_LIMIT`).
     const feeLimit = feesToNumber(fees);
 
     return toCrafted(
