@@ -969,6 +969,9 @@ importers:
       '@features/flow-pay-card-details':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-details
+      '@features/flow-pay-card-widget':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-widget
       '@features/flow-pay-contact':
         specifier: workspace:^
         version: link:../../features/flow/pay-contact
@@ -6643,6 +6646,9 @@ importers:
       '@features/flow-pay-card-details':
         specifier: workspace:^
         version: link:../pay-card-details
+      '@features/flow-pay-card-widget':
+        specifier: workspace:^
+        version: link:../pay-card-widget
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'

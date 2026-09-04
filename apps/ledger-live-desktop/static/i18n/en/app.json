@@ -1047,6 +1047,17 @@
           "closeCta": "Close"
         }
       }
+    },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Set up your card",
+        "stepComplete": "Complete",
+        "gotIt": "Got it"
+      }
     }
   },
   "lend": {
