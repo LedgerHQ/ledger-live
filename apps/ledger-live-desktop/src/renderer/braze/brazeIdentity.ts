@@ -7,13 +7,18 @@ type ResolveDesktopBrazeUserIdArgs = {
   brazeOptOutIdentityCleanup: boolean;
 };
 
+export function exportDesktopBrazeUserId(userId: UserId): string | null {
+  if (isDummyUserId(userId)) return null;
+  return userId.exportUserIdForBraze();
+}
+
 export function resolveDesktopBrazeUserId({
   isTrackedUser,
   userId,
   anonymousBrazeId,
   brazeOptOutIdentityCleanup,
 }: ResolveDesktopBrazeUserIdArgs): string | null {
+  if (isTrackedUser) return exportDesktopBrazeUserId(userId);
   if (isDummyUserId(userId)) return null;
-  if (isTrackedUser) return userId.exportUserIdForBraze();
   return brazeOptOutIdentityCleanup ? null : anonymousBrazeId;
 }
