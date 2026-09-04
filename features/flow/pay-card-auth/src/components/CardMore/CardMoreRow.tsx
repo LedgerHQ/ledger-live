@@ -6,7 +6,6 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "./CardMoreRowParts";
-// The row component and the row model share one name, so the model takes an alias here.
 import type { CardMoreRow as CardMoreRowModel } from "./types";
 
 type CardMoreRowProps = Readonly<{ row: CardMoreRowModel }>;

@@ -6,16 +6,10 @@ import { CardMoreIcon, CardMoreListItem } from "../CardMoreRowParts.native";
 type SpotIcon = typeof Asterisk;
 type RowId = React.ComponentProps<typeof CardMoreIcon>["rowId"];
 
-/** `Spot` hands the symbol on as a prop, so the element is read before it reaches the tree. */
 function iconOf(rowId: RowId): SpotIcon {
   return (CardMoreIcon({ rowId }) as React.ReactElement<{ icon: SpotIcon }>).props.icon;
 }
 
-/**
- * The Lumen stub hands back a fresh function on every symbol read, so an identity check never
- * matches. It does render each symbol as a host element named after the symbol, so both sides are
- * rendered together and read by name.
- */
 function iconNames(rowId: RowId, expected: SpotIcon): readonly string[] {
   const tree = render(
     <>

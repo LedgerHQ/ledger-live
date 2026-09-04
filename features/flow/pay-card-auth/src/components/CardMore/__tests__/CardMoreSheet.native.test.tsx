@@ -3,8 +3,6 @@ import { Pressable, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { CardMoreSheet } from "../CardMoreSheet.native";
 
-// The extra pressable stands in for every way gorhom dismisses a sheet: the handle, the backdrop and
-// the close button all land on the same `onClose`.
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
     children,

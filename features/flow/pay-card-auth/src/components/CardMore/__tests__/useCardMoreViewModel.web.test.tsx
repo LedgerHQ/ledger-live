@@ -34,7 +34,6 @@ function mapWith(overrides: Partial<Parameters<typeof mapUserToViewModel>[0]> = 
 
 type Ports = { [K in keyof CardLogoutPorts]: jest.Mock };
 
-/** `runLogout` awaits four promises, so the queue needs a full turn to drain. */
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
 
 function stubPorts(overrides: Partial<Ports> = {}): Ports {
@@ -112,7 +111,6 @@ describe("startLogout", () => {
     startLogout(ports as unknown as CardLogoutPorts);
     await settle();
 
-    // React state cannot hold this guard: both presses would read the same stale flag.
     expect(ports.logout).toHaveBeenCalledTimes(1);
   });
 
@@ -158,7 +156,6 @@ describe("mapUserToViewModel", () => {
   it("gives a real handler only to the logout row", () => {
     const rows = mapWith()?.rows ?? [];
 
-    // The other three are pressable on purpose. Their own tickets give them an action.
     for (const row of rows) {
       row.onPress();
     }

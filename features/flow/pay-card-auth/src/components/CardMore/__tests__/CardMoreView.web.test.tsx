@@ -48,8 +48,6 @@ describe("CardMoreView (Web)", () => {
   });
 
   it("should render the sheet while it is open", () => {
-    // The pair of cases is what proves the wiring: on its own, the closed case above still passes
-    // when the open flag never reaches the sheet.
     renderCardMoreView({ isSheetOpen: true });
 
     expect(screen.getByTestId("card-more-sheet")).toBeVisible();

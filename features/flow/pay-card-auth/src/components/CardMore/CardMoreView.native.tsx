@@ -14,8 +14,6 @@ export function CardMoreView({
 }: CardMoreViewProps) {
   return (
     <>
-      {/* The design puts three tiles in a row, and `More` is the only one in scope. `isFull` gives
-          the tile the full width, so no wrapper of its own is needed today. */}
       <TileButton
         icon={MoreHorizontal}
         isFull

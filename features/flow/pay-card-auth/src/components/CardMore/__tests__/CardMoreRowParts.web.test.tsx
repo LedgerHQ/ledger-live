@@ -5,10 +5,6 @@ import { CardMoreIcon, CardMoreListItem } from "../CardMoreRowParts.web";
 
 type SpotIcon = typeof Asterisk;
 
-/**
- * `Spot` hands the symbol to the DOM as a prop it cannot render, so the element is read before it
- * reaches the tree. The Lumen stub keeps one component per symbol name, so the identity holds.
- */
 function iconOf(rowId: React.ComponentProps<typeof CardMoreIcon>["rowId"]): SpotIcon {
   return (CardMoreIcon({ rowId }) as React.ReactElement<{ icon: SpotIcon }>).props.icon;
 }

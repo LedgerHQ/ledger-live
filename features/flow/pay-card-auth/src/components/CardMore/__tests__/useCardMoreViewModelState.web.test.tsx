@@ -14,7 +14,6 @@ jest.mock("../../../state/createCardLogoutPorts", () => ({ createCardLogoutPorts
 
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
 
-/** The row the ViewModel gives a real action to. The other three run a shared no-op. */
 function pressLogoutRow(model: ReturnType<typeof useCardMoreViewModel>) {
   model?.rows.find(row => row.id === "logout")?.onPress();
 }
@@ -89,8 +88,6 @@ describe("useCardMoreViewModel", () => {
   });
 
   it("closes the sheet as soon as the logout starts", async () => {
-    // The sheet holds the row that started the logout, so it has to leave the screen at the press,
-    // not when the request settles.
     const { view, logoutReached, release } = setUp();
 
     act(() => view.result.current?.onMorePress());
@@ -142,7 +139,6 @@ describe("useCardMoreViewModel", () => {
   });
 
   it("forgets an open sheet when the session ends", () => {
-    // The component stays mounted, so a sheet left open here would open by itself at the next login.
     const { store, view } = setUp();
 
     act(() => view.result.current?.onMorePress());

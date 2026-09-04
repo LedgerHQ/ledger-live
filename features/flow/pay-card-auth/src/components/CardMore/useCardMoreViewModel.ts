@@ -9,10 +9,8 @@ import { selectIsSignedIn } from "../../state/selectors";
 import type { CardLogoutPorts } from "../../state/types";
 import type { CardMoreRow, CardMoreRowId, CardMoreViewModel } from "./types";
 
-/** The order the design lists the rows in. */
 const ROW_ORDER: readonly CardMoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
 
-/** The three rows that do nothing yet share this. Their tickets replace it one at a time. */
 const noop = () => {};
 
 /**
@@ -38,17 +36,8 @@ export async function runLogout(ports: CardLogoutPorts): Promise<void> {
   }
 }
 
-/** One session at a time. `runLogout` reads no flag itself, so the flag lives beside it. */
 const running = new WeakSet<CardLogoutPorts>();
 
-/**
- * Runs the logout once per session, whatever the number of presses.
- *
- * The flag sits here, in module scope, and not in the ViewModel: React state would leave the guard
- * one render behind, so two presses inside one React batch would both reach the provider, and no
- * view reads the flag, so it must stay out of the render output. It is cleared when the logout
- * settles, and `runLogout` never rejects.
- */
 export function startLogout(ports: CardLogoutPorts): void {
   if (running.has(ports)) {
     return;
@@ -57,14 +46,12 @@ export function startLogout(ports: CardLogoutPorts): void {
   void runLogout(ports).finally(() => running.delete(ports));
 }
 
-/** The copy the More tile and the More sheet show. */
 export type CardMoreLabels = Readonly<{
   more: string;
   sheetTitle: string;
   rows: Readonly<Record<CardMoreRowId, string>>;
 }>;
 
-/** `logout` is the only row that must act. The other three are optional until their tickets land. */
 export type CardMoreHandlers = Readonly<
   Partial<Record<Exclude<CardMoreRowId, "logout">, () => void>> & Record<"logout", () => void>
 >;
@@ -126,9 +113,6 @@ export function useCardMoreViewModel(): CardMoreViewModel {
   // on screen, and asks for it again if the entry expired first.
   const { data: user } = useGetUserQuery(undefined, { skip: !isSignedIn });
 
-  // The session can end from anywhere: a 401 clears it, or another surface logs out. The caller keeps
-  // this component mounted, so a sheet left open here would open by itself at the next login. This is
-  // React's own "adjust state during render", which it prefers to an effect that only resets state.
   if (wasSignedIn !== isSignedIn) {
     setWasSignedIn(isSignedIn);
     if (!isSignedIn) {
@@ -158,7 +142,6 @@ export function useCardMoreViewModel(): CardMoreViewModel {
     [t],
   );
 
-  // One entry per row that acts. A future ticket adds its own row here, and nothing else changes.
   const handlers = useMemo<CardMoreHandlers>(() => ({ logout: onLogoutPress }), [onLogoutPress]);
 
   return mapUserToViewModel({
