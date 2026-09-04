@@ -304,12 +304,13 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       linkedWallets: linked ?? [],
       // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
+        ({ id, address, currency, network, priority, ledgerId, balance: walletBalance }) => ({
           id,
           address,
           currency,
           network,
           priority,
+          ledgerId,
           balance: walletBalance,
         }),
       ),

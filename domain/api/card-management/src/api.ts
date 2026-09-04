@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
+  PayCardLinkedWalletsCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
@@ -13,7 +14,7 @@ import {
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardSessionResponse } from "./transforms";
+import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -181,7 +182,9 @@ export const cardManagementApi = cardApi
           method: "GET",
         }),
         providesTags: ["CardLinkedWallets"],
-        responseSchema: PayCardLinkedWalletsResponseSchema,
+        rawResponseSchema: PayCardLinkedWalletsResponseSchema,
+        transformResponse: transformPayCardLinkedWallets,
+        responseSchema: PayCardLinkedWalletsCanonicalSchema,
       }),
     }),
   });

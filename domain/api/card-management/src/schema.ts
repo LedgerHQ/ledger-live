@@ -100,3 +100,13 @@ export const PayCardLinkedWalletSchema = z.object({
 });
 
 export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
+
+/**
+ * The wire wallet plus the Ledger currency its `currency`/`network` pair resolves to. Optional
+ * because the catalog does not cover every asset the provider may answer with.
+ */
+export const PayCardLinkedWalletCanonicalSchema = PayCardLinkedWalletSchema.extend({
+  ledgerId: z.string().min(1).optional(),
+});
+
+export const PayCardLinkedWalletsCanonicalSchema = z.array(PayCardLinkedWalletCanonicalSchema);

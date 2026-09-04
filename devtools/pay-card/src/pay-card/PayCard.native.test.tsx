@@ -225,7 +225,15 @@ describe("PayCard (native)", () => {
 
   // The second link has no Baanx wallet behind it, which is what the join has to show.
   const linkedWallets = [
-    { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
+    {
+      id: "w-usdc",
+      address: "0xusdc",
+      currency: "usdc",
+      network: "ethereum",
+      priority: 0,
+      ledgerId: "ethereum/erc20/usd__coin",
+    },
+    // Resolved to nothing, so the screen has to say the pair is unmapped rather than blank.
     { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
   ];
 
@@ -314,6 +322,17 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("ethereum")).toBeTruthy();
     expect(screen.getByText("sol")).toBeTruthy();
     expect(screen.getByText("solana")).toBeTruthy();
+  });
+
+  it("shows the Ledger currency each link resolved to, and says when one did not", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, linkedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("ethereum/erc20/usd__coin")).toBeTruthy();
+    expect(screen.getByText("undefined — this pair is not mapped")).toBeTruthy();
   });
 
   it("says a joined row has no balance rather than showing it as zero", async () => {

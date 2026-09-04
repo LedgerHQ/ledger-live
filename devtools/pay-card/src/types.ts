@@ -96,6 +96,8 @@ export interface PayCardLinkedWallet {
   readonly network: string;
   /** Charging order. The wallets are listed in it. */
   readonly priority: number;
+  /** The Ledger currency the pair above resolves to, absent when the catalog does not cover it. */
+  readonly ledgerId?: string;
 }
 
 /** One item of the join the app builds from the two responses above. */
@@ -105,6 +107,7 @@ export interface PayCardCombinedWallet {
   readonly currency: string;
   readonly network: string;
   readonly priority: number;
+  readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
 }

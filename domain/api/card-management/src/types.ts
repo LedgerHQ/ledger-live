@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
+  PayCardLinkedWalletCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
@@ -60,4 +61,8 @@ export type PayCardLinkedWalletRequest = {
   readonly addressId: string;
 };
 
-export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;
+/** One card-linked wallet exactly as the wire sent it. */
+export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;
+
+/** The same wallet, resolved to its Ledger currency once so every consumer reads one answer. */
+export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletCanonicalSchema>;
