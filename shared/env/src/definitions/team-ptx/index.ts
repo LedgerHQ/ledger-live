@@ -1,6 +1,11 @@
 import { boolParser, stringParser } from "@ledgerhq/live-env";
 
 const teamPtx = {
+  EXCHANGE_FUND_API_URL: {
+    def: "https://exchange-tx-manager.ledger.com",
+    parser: stringParser,
+    desc: "Exchange transaction manager, which brokers signed fund payloads from the provider",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v5",
     parser: stringParser,

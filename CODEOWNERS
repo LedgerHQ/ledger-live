@@ -278,7 +278,9 @@ libs/transaction-observability/                                           @ledge
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
+domain/api/exchange-fund/                                                @ledgerhq/ptx
 /shared/api-services/src/services/card/                                  @ledgerhq/ptx
+/shared/api-services/src/services/exchange-fund/                         @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
