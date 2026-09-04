@@ -1,5 +1,6 @@
-import type { CryptoCurrency, FiatCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 
 // Minimal currency fixtures so tests don't pull the full currency registry.
 // Only the fields consumed by the countervalues logic and the account mocks are populated.
