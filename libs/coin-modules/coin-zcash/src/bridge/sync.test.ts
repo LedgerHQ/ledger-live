@@ -566,7 +566,7 @@ describe("reconcileLegOperations", () => {
           id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
           hash: "tx-1",
           type: "SHIELDED_TX_IRONWOOD_IN",
-          extra: { memo: "thanks for shielding" },
+          extra: { memo: "thanks for shielding" } as ZcashOperationExtra,
         }),
       ],
     } as Partial<ZcashAccount>);
@@ -589,13 +589,18 @@ describe("reconcileLegOperations", () => {
           id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
           hash: "tx-1",
           type: "SHIELDED_TX_IRONWOOD_IN",
-          extra: { memo: "shielded memo" },
+          extra: { memo: "shielded memo" } as ZcashOperationExtra,
         }),
       ],
     } as Partial<ZcashAccount>);
     const transparentResult = reconcileLegOperations(latest, "transparent", {
       operations: [
-        op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT", extra: { memo: "transparent memo" } }),
+        op({
+          id: "tx-1-OUT",
+          hash: "tx-1",
+          type: "OUT",
+          extra: { memo: "transparent memo" } as ZcashOperationExtra,
+        }),
       ],
     } as Partial<ZcashAccount>);
 
