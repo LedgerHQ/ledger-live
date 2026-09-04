@@ -12,6 +12,12 @@ import {
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
+import {
+  resetCardOnboardingCompleted,
+  selectHasCompletedCardOnboarding,
+} from "@features/flow-pay-card-widget/state";
+import { cardManagementApi } from "@domain/api-card-management";
+import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -26,19 +32,23 @@ export type UsePayCardToolPropsOptions = {
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
-  { id: "kyc", label: "Kyc", done: false },
-  { id: "claim", label: "Claim card", done: false },
-  { id: "topup", label: "Top up", done: false },
+  { id: "create-account", label: "Create account", done: true },
+  { id: "choose-card-type", label: "Choose card type", done: false },
+  { id: "top-up-card", label: "Top up card", done: false },
 ];
 
 // Mobile-only, injected just before the final purchase step.
 const NATIVE_ONLY_STEP: OnboardingStep = {
-  id: "walletPay",
+  id: "apple-google-pay",
   label: "Apple/Google Pay",
   done: false,
 };
 
-const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase", done: false };
+const PURCHASE_STEP: OnboardingStep = {
+  id: "first-purchase",
+  label: "First purchase",
+  done: false,
+};
 
 /**
  * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
@@ -114,6 +124,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
   const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
+  const hasCompletedCardOnboarding = useSelector(selectHasCompletedCardOnboarding);
 
   const resetFeatureTour = useCallback(() => {
     dispatch(resetPayCardFeatureTourSeen());
@@ -123,14 +134,25 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     dispatch(resetReceiveVerifyHintSeen());
   }, [dispatch]);
 
-  const setStepDone = useCallback((id: string, done: boolean) => {
-    setSteps(current => {
-      if (id === "all") {
-        return current.map(step => (step.done === done ? step : { ...step, done }));
-      }
-      return current.map(step => (step.id === id && step.done !== done ? { ...step, done } : step));
-    });
-  }, []);
+  const resetCardOnboarding = useCallback(() => {
+    dispatch(resetCardOnboardingCompleted());
+  }, [dispatch]);
+
+  const setStepDone = useCallback(
+    (id: string, done: boolean) => {
+      setSteps(current => {
+        if (id === "all") {
+          return current.map(step => (step.done === done ? step : { ...step, done }));
+        }
+        return current.map(step =>
+          step.id === id && step.done !== done ? { ...step, done } : step,
+        );
+      });
+      setMockOnboardingStepDone(id, done);
+      dispatch(cardManagementApi.util.invalidateTags(["CardOnboardingStatus"]));
+    },
+    [dispatch],
+  );
 
   const flags = useMemo(
     () => ({
@@ -190,6 +212,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetReceiveVerifyHintSeen: resetVerifyHint,
+      hasCompletedCardOnboarding,
+      resetCardOnboarding,
       env,
     }),
     [
@@ -200,6 +224,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetVerifyHint,
+      hasCompletedCardOnboarding,
+      resetCardOnboarding,
       env,
     ],
   );

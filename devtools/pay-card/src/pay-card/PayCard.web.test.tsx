@@ -27,6 +27,8 @@ function buildProps(): PayCardToolProps {
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
     resetReceiveVerifyHintSeen: jest.fn(),
+    hasCompletedCardOnboarding: false,
+    resetCardOnboarding: jest.fn(),
     env: {
       vars: [
         {

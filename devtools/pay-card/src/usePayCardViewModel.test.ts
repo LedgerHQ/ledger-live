@@ -2,13 +2,12 @@ import { renderHook } from "@testing-library/react";
 import { formatId, usePayCardViewModel } from "./usePayCardViewModel";
 import type { OnboardingStep, PayCardToolProps } from "./types";
 
-// Desktop step set. The `walletPay` (Apple/Google Pay) step is mobile-only and
-// is injected by the native binding, so it never appears here.
+// Desktop step set. The Apple/Google Pay step is mobile-only.
 const DEFAULT_STEPS: OnboardingStep[] = [
-  { id: "kyc", label: "Kyc", done: false },
-  { id: "claim", label: "Claim card", done: false },
-  { id: "topup", label: "Top up", done: false },
-  { id: "purchase", label: "First Purchase", done: false },
+  { id: "create-account", label: "Create account", done: false },
+  { id: "choose-card-type", label: "Choose card type", done: false },
+  { id: "top-up-card", label: "Top up card", done: false },
+  { id: "first-purchase", label: "First purchase", done: false },
 ];
 
 function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps {
@@ -32,6 +31,8 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
     hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,
     resetReceiveVerifyHintSeen: overrides.resetReceiveVerifyHintSeen ?? jest.fn(),
+    hasCompletedCardOnboarding: overrides.hasCompletedCardOnboarding ?? false,
+    resetCardOnboarding: overrides.resetCardOnboarding ?? jest.fn(),
     env: overrides.env ?? { vars: [], setVar: jest.fn() },
   };
 }
@@ -74,16 +75,18 @@ describe("usePayCardViewModel", () => {
   it("toggleStep flips a not-done step to done", () => {
     const props = buildProps();
     const { result } = renderHook(() => usePayCardViewModel(props));
-    result.current.toggleStep("kyc");
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("kyc", true);
+    result.current.toggleStep("create-account");
+    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("create-account", true);
   });
 
   it("toggleStep flips a done step back to not-done", () => {
-    const steps = DEFAULT_STEPS.map(step => (step.id === "kyc" ? { ...step, done: true } : step));
+    const steps = DEFAULT_STEPS.map(step =>
+      step.id === "create-account" ? { ...step, done: true } : step,
+    );
     const props = buildProps({ onboarding: { steps, setStepDone: jest.fn() } });
     const { result } = renderHook(() => usePayCardViewModel(props));
-    result.current.toggleStep("kyc");
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("kyc", false);
+    result.current.toggleStep("create-account");
+    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("create-account", false);
   });
 
   it("toggleStep ignores unknown step ids", () => {
@@ -94,13 +97,15 @@ describe("usePayCardViewModel", () => {
   });
 
   it("setAllSteps only updates steps whose state changes", () => {
-    const steps = DEFAULT_STEPS.map(step => (step.id === "kyc" ? { ...step, done: true } : step));
+    const steps = DEFAULT_STEPS.map(step =>
+      step.id === "create-account" ? { ...step, done: true } : step,
+    );
     const props = buildProps({ onboarding: { steps, setStepDone: jest.fn() } });
     const { result } = renderHook(() => usePayCardViewModel(props));
 
     result.current.setAllSteps(true);
     expect(props.onboarding.setStepDone).toHaveBeenCalledTimes(3);
-    expect(props.onboarding.setStepDone).not.toHaveBeenCalledWith("kyc", true);
+    expect(props.onboarding.setStepDone).not.toHaveBeenCalledWith("create-account", true);
   });
 
   it("setAllSteps(false) clears the steps that were done", () => {
@@ -110,6 +115,6 @@ describe("usePayCardViewModel", () => {
 
     result.current.setAllSteps(false);
     expect(props.onboarding.setStepDone).toHaveBeenCalledTimes(4);
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("kyc", false);
+    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("create-account", false);
   });
 });
