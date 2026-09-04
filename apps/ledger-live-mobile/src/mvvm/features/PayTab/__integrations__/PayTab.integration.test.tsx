@@ -520,6 +520,7 @@ describe("PayTab integration", () => {
         isOpen: true,
         flow: "send",
         source: "Pay",
+        uiUseCase: "pay",
         preselectedCurrencies: [address.currencyId],
       });
       expect(
@@ -547,6 +548,7 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer).toMatchObject({
         isOpen: true,
         flow: "send",
+        uiUseCase: "pay",
         preselectedCurrencies: [address.currencyId],
       });
     });
@@ -581,6 +583,7 @@ describe("PayTab integration", () => {
       await user.press(await screen.findByTestId("pay-contacts-pay-tile"));
 
       expect(store.getState().modularDrawer.isOpen).toBe(true);
+      expect(store.getState().modularDrawer.uiUseCase).not.toBe("pay");
     });
   });
 });

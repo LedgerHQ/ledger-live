@@ -21,6 +21,7 @@ import {
   getPerpsUiUseCase,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { PAY_ACCOUNT_UI_USE_CASE } from "../../types";
 
 type DescribeHeaderParams = {
   isPerpsReceive: boolean;
@@ -93,7 +94,9 @@ const AccountSelectionContent = ({
 
   const headerTitle = isPerpsReceive
     ? t("modularDrawer.selectAccountPerpsTitle")
-    : t("modularDrawer.selectAccount");
+    : uiUseCase === PAY_ACCOUNT_UI_USE_CASE
+      ? t("modularDrawer.selectAccountToPayFrom")
+      : t("modularDrawer.selectAccount");
 
   const headerDescription = describeHeader(t, {
     isPerpsReceive,

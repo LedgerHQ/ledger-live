@@ -129,6 +129,14 @@ describe("useOpenSendFlow", () => {
     );
 
     act(() => result.current.handleOpenSendFlow({ recipient, skipRecipientStep: true }));
+
+    expect(mockOpenDrawer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flow: "send",
+        uiUseCase: "pay",
+      }),
+    );
+
     const onAccountSelected = mockOpenDrawer.mock.calls[0][0].onAccountSelected;
     act(() => onAccountSelected(account));
 
