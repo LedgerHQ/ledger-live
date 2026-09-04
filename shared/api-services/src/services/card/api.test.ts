@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { NamedSchemaError } from "@reduxjs/toolkit/query";
+import { z } from "zod";
 import { describeSchemaFailure, getCardExtra, cardApi, cardApiExtra } from "./api";
 import type { CardApiExtra } from "./types";
 
@@ -82,6 +83,47 @@ describe("cardApi schema failures", () => {
 
     expect(JSON.stringify(error)).not.toContain("Ada Lovelace");
     expect(JSON.stringify(error)).not.toContain("4242");
+  });
+});
+
+describe("cardApi schema failure wiring", () => {
+  let fetchSpy: jest.SpyInstance;
+
+  afterEach(() => {
+    fetchSpy?.mockRestore();
+  });
+
+  /**
+   * `catchSchemaFailure` is the only RTK Query hook that can change what a caller receives:
+   * `onSchemaFailure` runs beside it for its side effect and its return value is discarded. Drive a
+   * real response through a real endpoint, so the wiring is proven rather than assumed — if the
+   * option is ever renamed or dropped, this fails instead of quietly reporting the old message.
+   */
+  it("hands a rejected response to the converter, and returns what it built", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: 42 }));
+
+    const api = cardApi.injectEndpoints({
+      endpoints: build => ({
+        schemaProbe: build.query<{ ok: string }, void>({
+          query: () => "/probe",
+          responseSchema: z.object({ ok: z.string() }),
+        }),
+      }),
+      overrideExisting: true,
+    });
+    const store = configureStore({
+      reducer: { [cardApi.reducerPath]: cardApi.reducer },
+      middleware: gdm =>
+        gdm({ thunk: { extraArgument: cardApiExtra(buildExtra()) } }).concat(cardApi.middleware),
+    });
+
+    const result = await store.dispatch(api.endpoints.schemaProbe.initiate());
+
+    expect(result.data).toBeUndefined();
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("responseSchema rejected the response — ok:"),
+    });
   });
 });
 
