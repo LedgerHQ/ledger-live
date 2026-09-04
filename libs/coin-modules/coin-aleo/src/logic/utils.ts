@@ -571,7 +571,7 @@ function getAmountToSpend({
 
   // unbonding spends the bonded position; the fee is paid from the transparent balance
   if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
-    return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    return getAvailableBalance(account, transaction);
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
