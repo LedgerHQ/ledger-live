@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Point the Solana GIGA 1 token account constant at the account that exists on-chain

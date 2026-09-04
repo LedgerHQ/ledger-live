@@ -1,5 +1,11 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.10.0-next.4
+
+### Minor Changes
+
+- [#21570](https://github.com/LedgerHQ/ledger-live/pull/21570) [`368b26e`](https://github.com/LedgerHQ/ledger-live/commit/368b26e4908c8d8956b0739938fc3607ac6d9435) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Point the Solana GIGA 1 token account constant at the account that exists on-chain
+
 ## 0.10.0-next.3
 
 ### Patch Changes
