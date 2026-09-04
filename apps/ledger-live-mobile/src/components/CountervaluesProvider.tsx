@@ -41,7 +41,7 @@ export function useCountervaluesBridge() {
       setState: flow(setCountervaluesState, dispatch),
       setStateError: flow(setCountervaluesStateError, dispatch),
       setStatePending: flow(setCountervaluesStatePending, dispatch),
-      useMarketcapIds: useGetCounterValueIdsPolling,
+      useSupportedCryptoIds: useGetCounterValueIdsPolling,
       usePollingIsPolling: useCountervaluesPollingIsPolling,
       usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,
