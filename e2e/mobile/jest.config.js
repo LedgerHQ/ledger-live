@@ -40,10 +40,17 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
   ? new Set(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
   : undefined;
 
+// jest-allure2-reporter appends descriptions rather than replacing — QAA-1547
+const dedupeParagraphs = paragraphs => [...new Set(paragraphs ?? [])];
+
 const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
+    description: ({ testCaseMetadata }) =>
+      dedupeParagraphs(testCaseMetadata.description).join("\n\n"),
+    descriptionHtml: ({ testCaseMetadata }) =>
+      dedupeParagraphs(testCaseMetadata.descriptionHtml).join("\n"),
     links: {
       issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
       tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
