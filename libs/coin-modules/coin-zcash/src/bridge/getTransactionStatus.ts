@@ -106,9 +106,13 @@ export const getTransactionStatus: AccountBridge<
     };
   }
 
-  // Shielded sends spend the Ironwood pool, so validate the amount against the
-  // mature, unreserved figure -- the same one selection draws from, so the
-  // status can never accept an amount selection cannot cover.
+  // Shielded sends spend the Ironwood pool. `poolBalance` is the account's
+  // full mature, unreserved total -- deliberately unbounded (see
+  // `getSpendableIronwoodBalance`), so a genuine shortfall below is checked
+  // against everything owned, not against the smaller, per-PCZT-bounded
+  // selection pool. `hasBoundedIronwoodShortfall` (below) is what catches the
+  // case selection can't cover even though this balance can, before this
+  // check ever runs.
   const reserved = getReservedNullifiers(account);
   const poolBalance = getSpendableIronwoodBalance(account, reserved);
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
