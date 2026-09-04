@@ -6,10 +6,14 @@ import { CosmosDelegationInfo, CosmosOperation, CosmosOperationExtra, CosmosTx }
 
 type CosmosOperationType = "IN" | "OUT" | "DELEGATE" | "UNDELEGATE" | "REDELEGATE" | "REWARD";
 
-/** Cosmos-specific op details carried through the parser — no `@types/live` `OperationExtra`. */
-type CosmosParsedExtra = {
+type CosmosFamilyExtra = {
   validators?: CosmosDelegationInfo[];
   sourceValidator?: string;
+};
+
+/** Cosmos-specific op details carried through the parser — no `@types/live` `OperationExtra`. */
+type CosmosParsedExtra = {
+  familyExtra?: CosmosFamilyExtra;
   memo?: string;
 };
 
@@ -163,7 +167,7 @@ const handleMsgWithdrawDelegatorReward = (
     }
   }
   op.value = txRewardValue;
-  op.extra.validators = rewardShards;
+  op.extra.familyExtra = { validators: rewardShards };
 };
 
 const handleMsgDelegate = (
@@ -187,7 +191,7 @@ const handleMsgDelegate = (
       });
     }
   }
-  op.extra.validators = delegateShards;
+  op.extra.familyExtra = { validators: delegateShards };
 };
 
 const handleMsgBeginRedelegate = (
@@ -199,19 +203,23 @@ const handleMsgBeginRedelegate = (
   op.type = "REDELEGATE";
   op.value = new BigNumber(fees);
   const redelegateShards: { amount: BigNumber; address: string }[] = [];
+  let sourceValidator: string | undefined;
   for (const message of correspondingMessages) {
     const amount = message["amount"];
     const validatorDst = message["validator_dst_address"];
     const validatorSrc = message["validator_src_address"];
     if (amount && validatorDst && validatorSrc && amount.denom === unitCode) {
-      op.extra.sourceValidator = validatorSrc;
+      sourceValidator = validatorSrc;
       redelegateShards.push({
         amount: new BigNumber(amount.amount),
         address: validatorDst,
       });
     }
   }
-  op.extra.validators = redelegateShards;
+  op.extra.familyExtra = {
+    validators: redelegateShards,
+    ...(sourceValidator !== undefined ? { sourceValidator } : {}),
+  };
 };
 
 const handleMsgUndelegate = (
@@ -233,7 +241,7 @@ const handleMsgUndelegate = (
       });
     }
   }
-  op.extra.validators = unbondShards;
+  op.extra.familyExtra = { validators: unbondShards };
 };
 
 const getBlankOperation = (tx: CosmosTx, fees: BigNumber): CosmosParsedOperation => {
@@ -328,6 +336,10 @@ export const txToOps = (
   txs: CosmosTx[],
 ): CosmosOperation[] =>
   parseCosmosOperations(info, txs).map(op => {
+    const extra: CosmosOperationExtra = { ...op.extra.familyExtra };
+    if (op.extra.memo !== undefined) {
+      extra.memo = op.extra.memo;
+    }
     const cosmosOp: CosmosOperation = {
       id: encodeOperationId(accountId, op.hash, op.type),
       hash: op.hash,
@@ -340,7 +352,7 @@ export const txToOps = (
       recipients: op.recipients,
       accountId,
       date: op.date,
-      extra: op.extra as CosmosOperationExtra,
+      extra,
       transactionSequenceNumber: op.transactionSequenceNumber,
     };
     cosmosOp.hasFailed = op.hasFailed;
