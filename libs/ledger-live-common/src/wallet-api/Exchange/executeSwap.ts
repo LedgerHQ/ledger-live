@@ -421,12 +421,13 @@ export async function extractSwapStartParam(
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
+  const toParentAccount = getParentAccount(toAccount, accounts);
 
   const currency = params.tokenCurrency
     ? await getCryptoAssetsStore().findTokenById(params.tokenCurrency)
     : null;
-  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
+  
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toParentAccount, currency) : null;
   const resolvedToAccount = newTokenAccount ?? toAccount;
 
   return {
