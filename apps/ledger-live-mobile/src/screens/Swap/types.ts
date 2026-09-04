@@ -50,6 +50,7 @@ export type SwapPendingOperation = {
 
 export type SwapHistoryParams = {
   swapId?: string;
+  provider?: string;
 };
 
 export interface DefaultAccountSwapParamList {

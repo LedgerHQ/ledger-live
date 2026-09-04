@@ -19,6 +19,7 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import type { SwapHistoryParams } from "../../types";
 import { openSwapSubScreens, type SwapBaseNavigation } from "../../navigation/openSwapSubScreens";
 
@@ -99,8 +100,25 @@ export function useSwapCustomHandlers(
       // it to its initial URL. The Swap tab is already blurred here, hence the reset is
       // re-asserted on focus by useSwapLiveAppState.
       resetWebview();
+
+      // Open the transaction status drawer directly, mirroring the native
+      // SwapPendingOperation success screen. The multi-step flow reaches history
+      // through this webview redirect (not the native success screen), so relying
+      // on route-param matching against the synced swap history is racy on mobile —
+      // the just-broadcast operation may not yet be in the history list. Dispatching
+      // here opens the drawer immediately; useAutoOpenSwapDrawer still covers the
+      // fallback once the operation resolves. Independent of the navigation strategy
+      // above: the status drawer is a global drawer, mounted outside the navigators.
+      if (params?.swapId) {
+        dispatch(
+          openSwapTransactionStatusDrawer({
+            swapId: params.swapId,
+            provider: params.provider,
+          }),
+        );
+      }
     },
-    [navigation, resetWebview],
+    [navigation, resetWebview, dispatch],
   );
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({

@@ -19,6 +19,12 @@ import type { AccountLike } from "@ledgerhq/types-live";
 const SOFT_DEADLINE_MS = 5_000;
 const ACCOUNT_SYNC_INTERVAL_MS = 10_000;
 const STATUS_POLL_INTERVAL_MS = 60_000;
+// While the swap operation is not yet resolved from local history (e.g. right
+// after opening the status UI for a just-broadcast swap), the status section is
+// stuck on skeletons. Retry quickly so it fills in within seconds of the
+// operation being synced, instead of waiting a full STATUS_POLL_INTERVAL_MS.
+const UNRESOLVED_STATUS_POLL_INTERVAL_MS = 3_000;
+const UNRESOLVED_ACCOUNT_SYNC_INTERVAL_MS = 10_000;
 const STATUS_QUERY_KEY = "swap-transaction-status";
 
 export type SwapTransactionStatusControllerViewModel = {
@@ -91,8 +97,10 @@ export function useSwapTransactionStatusController({
     };
 
     const scheduleNextPoll = (response: GetTransactionStatusResponse | undefined) => {
-      if (!cancelled && shouldRetryTransactionStatus(response)) {
-        timeout = setTimeout(pollTransactionStatus, STATUS_POLL_INTERVAL_MS);
+      if (cancelled) return;
+      const delay = getNextStatusPollDelay(response);
+      if (delay !== null) {
+        timeout = setTimeout(pollTransactionStatus, delay);
       }
     };
 
@@ -123,6 +131,13 @@ export function useSwapTransactionStatusController({
     onLegStatusesChanged: legStatuses => {
       setDetails(current => (current ? { ...current, ...legStatuses } : current));
     },
+  });
+
+  useUnresolvedSwapOperationSync({
+    accounts,
+    swapId: params.swapId,
+    isResolved: isSwapOperationResolved(details),
+    enabled: state.phase !== "settled_visible",
   });
 
   useEffect(() => {
@@ -158,6 +173,87 @@ function shouldRetryTransactionStatus(response: GetTransactionStatusResponse | u
     !response.status ||
     shouldPollSwapTransactionStatus(response.status)
   );
+}
+
+/**
+ * A swap is considered resolved once its operation has been found in local
+ * history, which is what surfaces the send/receive accounts and unblocks the
+ * status section from its skeleton state.
+ */
+function isSwapOperationResolved(response: GetTransactionStatusResponse | undefined): boolean {
+  return Boolean(response?.status && response.fromAccountId && response.toAccountId);
+}
+
+/**
+ * How long to wait before the next status poll, or `null` to stop polling.
+ * Unresolved swaps are retried on a short interval so the UI stops showing
+ * skeletons quickly; resolved (still pending) swaps fall back to the slower
+ * steady-state interval.
+ */
+function getNextStatusPollDelay(response: GetTransactionStatusResponse | undefined): number | null {
+  if (!shouldRetryTransactionStatus(response)) return null;
+  return isSwapOperationResolved(response)
+    ? STATUS_POLL_INTERVAL_MS
+    : UNRESOLVED_STATUS_POLL_INTERVAL_MS;
+}
+
+/**
+ * Asks the bridge to sync the account holding this swap until its on-chain operation
+ * shows up in local history.
+ *
+ * `getCompleteSwapHistory` drops any swap whose operation is not yet in `operations` /
+ * `pendingOperations`, which leaves the status UI on skeletons (and the swap missing
+ * from the history list) until some unrelated sync happens to run. The confirmation
+ * signal below cannot cover this: it is keyed on `operationHash`, which is only known
+ * once the operation has already been found.
+ *
+ * Only the account that already holds the swap in `swapHistory` is synced — without
+ * such an entry syncing cannot resolve the swap anyway, since the history mapper only
+ * walks `swapHistory`, so we stay idle rather than sync accounts for nothing.
+ */
+function useUnresolvedSwapOperationSync({
+  accounts,
+  swapId,
+  isResolved,
+  enabled,
+}: {
+  accounts: AccountLike[];
+  swapId: string;
+  isResolved: boolean;
+  enabled: boolean;
+}): void {
+  const sync = useBridgeSync();
+  const flattenedAccounts = useMemo(() => flattenAccounts(accounts), [accounts]);
+  const syncAccountId = useMemo(
+    () =>
+      resolveSyncAccountId(flattenedAccounts, findSwapHistoryAccountId(flattenedAccounts, swapId)),
+    [flattenedAccounts, swapId],
+  );
+
+  useEffect(() => {
+    if (!enabled || isResolved || !syncAccountId) return;
+
+    const requestSync = () =>
+      sync({
+        type: "SYNC_SOME_ACCOUNTS",
+        accountIds: [syncAccountId],
+        priority: 100,
+        reason: STATUS_QUERY_KEY,
+      });
+
+    // Sync straight away so a just-broadcast swap resolves in one round trip instead of
+    // waiting out the first interval, then keep retrying until it resolves.
+    requestSync();
+    const handle = setInterval(requestSync, UNRESOLVED_ACCOUNT_SYNC_INTERVAL_MS);
+    return () => clearInterval(handle);
+  }, [enabled, isResolved, sync, syncAccountId]);
+}
+
+/** Id of the account whose `swapHistory` holds `swapId`, if any. */
+function findSwapHistoryAccountId(accounts: AccountLike[], swapId: string): string | undefined {
+  return accounts.find(account =>
+    account.swapHistory?.some(swapOperation => swapOperation.swapId === swapId),
+  )?.id;
 }
 
 function useOnChainConfirmationSignal({
