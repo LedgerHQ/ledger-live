@@ -12,12 +12,13 @@ export function CardOnboardingWidget() {
     onboardingCompleted,
     hasCompletedOnboarding,
     isLoading,
+    isError,
     handleOpen,
     handleClose,
     handleGotIt,
   } = useCardOnboardingViewModel();
 
-  if (isLoading || hasCompletedOnboarding) return null;
+  if (isLoading || isError || hasCompletedOnboarding) return null;
 
   return (
     <>
