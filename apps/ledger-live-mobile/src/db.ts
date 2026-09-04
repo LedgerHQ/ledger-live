@@ -34,11 +34,12 @@ import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
+import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 
-/** Persisted pay card blob: tour, request verify hint, and balance filter, stored under one key. */
 type PayCardPersistedState = PayCardFeatureTourState &
   PayRequestVerifyHintState &
-  PayCardBalanceState;
+  PayCardBalanceState &
+  PayCardOnboardingWidgetState;
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";

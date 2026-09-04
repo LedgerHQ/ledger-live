@@ -10297,6 +10297,17 @@
         "title": "Select {{name}}'s address",
         "addAddress": "Add address"
       }
+    },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card to start spending",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Set up your card",
+        "stepComplete": "Complete",
+        "gotIt": "Got it"
+      }
     }
   },
   "syncIndicator": {

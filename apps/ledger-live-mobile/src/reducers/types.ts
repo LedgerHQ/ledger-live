@@ -43,6 +43,7 @@ import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardAuthState } from "@features/flow-pay-card-auth/state";
+import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
@@ -482,6 +483,7 @@ export type State = LLMRTKApiState & {
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
+  payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   settings: SettingsState;
   toasts: ToastState;
