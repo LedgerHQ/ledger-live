@@ -23,6 +23,15 @@ function buildProps(): PayCardToolProps {
       setStepDone: jest.fn(),
     },
     interaction: { probes: [] },
+    balance: {
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+      load: jest.fn(),
+      refresh: jest.fn(),
+    },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
@@ -190,6 +199,159 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByText("Card interaction"));
 
     expect(screen.getByText('{ "status": "ACTIVE" }')).toBeTruthy();
+  });
+
+  const baanxWallets = [
+    {
+      id: "w-usdc",
+      balance: "125.40",
+      currency: "usdc",
+      address: "0xusdc",
+      addressMemo: null,
+    },
+  ];
+
+  // The second link has no Baanx wallet behind it, which is what the join has to show.
+  const linkedWallets = [
+    { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
+    { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
+  ];
+
+  const combinedWallets = [
+    {
+      id: "w-usdc",
+      address: "0xusdc",
+      currency: "usdc",
+      network: "ethereum",
+      priority: 0,
+      balance: "125.40",
+    },
+    {
+      id: "w-sol",
+      address: "sol-addr",
+      currency: "sol",
+      network: "solana",
+      priority: 1,
+      balance: null,
+    },
+  ];
+
+  it("requests the wallets when the balance screen opens", async () => {
+    const user = userEvent.setup();
+    const load = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, load }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the two responses and the join under a section each", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        balance={{ ...props.balance, baanxWallets, linkedWallets, combinedWallets }}
+      />,
+    );
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("Baanx wallets")).toBeTruthy();
+    expect(screen.getByText("Card linked wallets")).toBeTruthy();
+    expect(screen.getByText("Card linked combined wallets")).toBeTruthy();
+    expect(screen.getAllByText("count")).toHaveLength(3);
+  });
+
+  it("counts an empty section, so no answer does not read as no section", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, baanxWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    // One Baanx wallet read, and nothing from the other two endpoints.
+    expect(screen.getByText("1")).toBeTruthy();
+    expect(screen.getAllByText("0")).toHaveLength(2);
+  });
+
+  it("shows every field the Baanx response carried, memo included", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, baanxWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("125.40")).toBeTruthy();
+    expect(screen.getByText("0xusdc")).toBeTruthy();
+    // An absent memo has to read as `null`, not as a blank.
+    expect(screen.getByText("null")).toBeTruthy();
+  });
+
+  it("shows the provider's own unmapped currency and network for every link", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, linkedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    // Unmapped: what a currency mapping would have to be keyed on.
+    expect(screen.getByText("usdc")).toBeTruthy();
+    expect(screen.getByText("ethereum")).toBeTruthy();
+    expect(screen.getByText("sol")).toBeTruthy();
+    expect(screen.getByText("solana")).toBeTruthy();
+  });
+
+  it("says a joined row has no balance rather than showing it as zero", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, combinedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
+    expect(screen.getByText("1. sol / solana")).toBeTruthy();
+    expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeTruthy();
+  });
+
+  it("shows which endpoint failed and what it answered", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        balance={{
+          ...props.balance,
+          errors: [
+            {
+              endpoint: "GET /v1/wallet/internal",
+              detail: '{ "status": "CUSTOM_ERROR", "error": "responseSchema rejected" }',
+            },
+          ],
+        }}
+      />,
+    );
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("GET /v1/wallet/internal")).toBeTruthy();
+    expect(
+      screen.getByText('{ "status": "CUSTOM_ERROR", "error": "responseSchema rejected" }'),
+    ).toBeTruthy();
+  });
+
+  it("refetches the linked wallets from the balance screen", async () => {
+    const user = userEvent.setup();
+    const refresh = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, refresh }} />);
+
+    await user.press(screen.getByText("Balance"));
+    await user.press(screen.getByLabelText("Refresh"));
+
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 
   it("wires onboarding actions", async () => {

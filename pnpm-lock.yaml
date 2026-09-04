@@ -3160,6 +3160,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:*
+        version: link:../../features/flow/pay-card-wallets
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour

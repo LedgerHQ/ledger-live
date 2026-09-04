@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLazyGetCardStatusQuery } from "@domain/api-card-management";
+import {
+  useGetCardLinkedWalletsQuery,
+  useGetInternalWalletsQuery,
+  useLazyGetCardStatusQuery,
+} from "@domain/api-card-management";
+import {
+  useCardLinkedWallets,
+  type ResolveWalletCounterValue,
+} from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
 import { changes, getEnv, setEnvUnsafe, type EnvName } from "@shared/env";
@@ -64,6 +72,10 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
     ? [...LEADING_ONBOARDING_STEPS, NATIVE_ONLY_STEP, PURCHASE_STEP]
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
 }
+
+/** Never called: the wallet queries are skipped whenever the host omits its own resolver. */
+/** The tool reports what the endpoints answer, not what it is worth. The join needs one anyway. */
+const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
 /** Reads what an endpoint answered, whatever shape the failure arrives in. */
 function describeError(error: unknown): string {
@@ -181,11 +193,73 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const interaction = useMemo(() => ({ probes: [cardStatusProbe] }), [cardStatusProbe]);
 
+  // The wallets are read when the balance screen opens, not when the tool mounts.
+  const [walletsRequested, setWalletsRequested] = useState(false);
+  const skipWallets = !walletsRequested;
+
+  const linkedWallets = useCardLinkedWallets({
+    resolveCounterValue: NO_COUNTER_VALUE,
+    skip: skipWallets,
+  });
+
+  const loadWallets = useCallback(() => setWalletsRequested(true), []);
+
+  const { refetch: refetchWallets } = linkedWallets;
+  const refreshWallets = useCallback(() => {
+    setWalletsRequested(true);
+    refetchWallets();
+  }, [refetchWallets]);
+
+  // `useCardLinkedWallets` hands back only the join, and reports no more than that something
+  // failed. Reading the same cache entries again costs no request and gives the tool both
+  // responses as they arrived, which is what the screen is for.
+  const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
+  const { data: internal, error: internalError } = useGetInternalWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
+
+  const errors = useMemo(
+    () =>
+      [
+        { endpoint: "GET /v1/wallet/internal/card_linked", error: linkedError },
+        { endpoint: "GET /v1/wallet/internal", error: internalError },
+      ]
+        .filter(({ error }) => error !== undefined)
+        .map(({ endpoint, error }) => ({ endpoint, detail: describeError(error) })),
+    [linkedError, internalError],
+  );
+
+  const balance = useMemo(
+    () => ({
+      baanxWallets: internal ?? [],
+      linkedWallets: linked ?? [],
+      // Without the counter value, which this tool does not price.
+      combinedWallets: linkedWallets.wallets.map(
+        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
+          id,
+          address,
+          currency,
+          network,
+          priority,
+          balance: walletBalance,
+        }),
+      ),
+      isFetching: linkedWallets.isFetching,
+      errors,
+      load: loadWallets,
+      refresh: refreshWallets,
+    }),
+    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets],
+  );
+
   return useMemo(
     () => ({
       flags,
       onboarding,
       interaction,
+      balance,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
@@ -196,6 +270,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       flags,
       onboarding,
       interaction,
+      balance,
       hasSeenFeatureTour,
       resetFeatureTour,
       hasSeenReceiveVerifyHint,

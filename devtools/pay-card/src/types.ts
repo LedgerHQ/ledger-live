@@ -51,6 +51,63 @@ export interface PayCardInteractionProps {
   readonly probes: readonly PayCardProbe[];
 }
 
+/** One card-linked wallet, joined to its balance, exactly as the calculation saw it. */
+/** One wallet exactly as `GET /v1/wallet/internal` answered. */
+export interface PayCardBaanxWallet {
+  readonly id: string;
+  readonly balance: string;
+  readonly currency: string;
+  readonly address: string;
+  /** Absent when the provider sent no key at all, `null` when it sent one: the tool shows which. */
+  readonly addressMemo?: string | null;
+}
+
+/** One wallet exactly as `GET /v1/wallet/internal/card_linked` answered. */
+export interface PayCardLinkedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  /** Charging order. The wallets are listed in it. */
+  readonly priority: number;
+}
+
+/** One item of the join the app builds from the two responses above. */
+export interface PayCardCombinedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  readonly priority: number;
+  /** `null` when no Baanx wallet matched this link, and while they are still being read. */
+  readonly balance: string | null;
+}
+
+export interface PayCardBalanceError {
+  readonly endpoint: string;
+  readonly detail: string;
+}
+
+/**
+ * What the two wallet endpoints answered, and the join the app builds from them.
+ *
+ * All three are shown side by side and unformatted: the screen exists to compare what the provider
+ * sent with what the app made of it.
+ */
+export interface PayCardBalanceProps {
+  /** Raw `GET /v1/wallet/internal`. */
+  readonly baanxWallets: readonly PayCardBaanxWallet[];
+  /** Raw `GET /v1/wallet/internal/card_linked`. */
+  readonly linkedWallets: readonly PayCardLinkedWallet[];
+  /** What the app joins the two into. */
+  readonly combinedWallets: readonly PayCardCombinedWallet[];
+  readonly isFetching: boolean;
+  readonly errors: readonly PayCardBalanceError[];
+  /** Starts the wallet queries. The screen calls this when it opens. */
+  readonly load: () => void;
+  readonly refresh: () => void;
+}
+
 /**
  * One env var the tool shows, with the value a tester most often wants next.
  *
@@ -81,6 +138,7 @@ export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
   readonly interaction: PayCardInteractionProps;
+  readonly balance: PayCardBalanceProps;
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */
