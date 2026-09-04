@@ -15,7 +15,8 @@ import { NeuronDetailRow } from "../components/NeuronDetails";
 import { useGovernanceTopicLabel } from "../useGovernanceTopicLabel";
 import { useNeuronAction } from "./useNeuronAction";
 import MissingNeuron from "./MissingNeuron";
-import type { InternetComputerNeuronManageFlowParamList } from "./types";
+import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
+import type { FollowTopic, InternetComputerNeuronManageFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<
   InternetComputerNeuronManageFlowParamList,
@@ -57,6 +58,12 @@ const readDraft = (
   return { issue: "unadded", id };
 };
 
+/** How many followees the neuron currently has on the topic being edited. */
+const followeeCountOnTopic = (neuron: ICPNeuron | undefined, topic: FollowTopic | undefined) => {
+  if (!topic) return 0;
+  return neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic])?.followeeIds.length ?? 0;
+};
+
 /**
  * Edits the followee list for one topic. The canister replaces the whole list per `follow` call, so
  * removing a followee means submitting the remaining ones — there is no per-followee delete call.
@@ -79,10 +86,7 @@ export default function Followees({ navigation, route }: Props) {
   } = useNeuronAction(navigation, route);
   const followTopic = transaction?.followTopic;
   const topicName = followTopic ? topicLabel(followTopic) : "";
-  // How many followees the neuron currently has on the topic being edited.
-  const currentCount = followTopic
-    ? (neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic])?.followeeIds.length ?? 0)
-    : 0;
+  const currentCount = followeeCountOnTopic(neuron, followTopic);
 
   // Stable across renders: the `?? []` fallback would otherwise be a fresh array every time, which
   // invalidates every callback below.
@@ -108,10 +112,10 @@ export default function Followees({ navigation, route }: Props) {
 
   if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
+  const isMalformed = issue === "notANeuronId" || issue === "outOfRange";
   // A malformed entry is the fault worth reporting even at capacity: removing a followee would not
   // make it addable.
-  const notice =
-    issue === "notANeuronId" || issue === "outOfRange" ? issue : isFull ? "atCapacity" : issue;
+  const notice = isFull && !isMalformed ? "atCapacity" : issue;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>

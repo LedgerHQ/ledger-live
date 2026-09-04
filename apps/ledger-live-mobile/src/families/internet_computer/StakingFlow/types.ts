@@ -31,6 +31,9 @@ export type InternetComputerStakingFlowParamList = {
     transaction: Transaction;
     status?: TransactionStatus;
     device?: Device;
+    // ConnectDevice sends the user back here with this set, so the last-connected device is not
+    // auto-selected again.
+    forceSelectDevice?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.InternetComputerStakingConnectDevice]: {
