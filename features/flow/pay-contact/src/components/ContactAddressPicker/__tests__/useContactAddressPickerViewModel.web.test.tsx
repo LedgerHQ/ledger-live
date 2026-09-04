@@ -5,7 +5,7 @@ import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testi
 import {
   useContactAddressPickerViewModel,
   type UseContactAddressPickerViewModelParams,
-} from "../useContactAddressPickerViewModel.web";
+} from "../useContactAddressPickerViewModel";
 
 const resources: I18nTestProviderProps["resources"] = {
   en: {
@@ -66,7 +66,7 @@ describe("useContactAddressPickerViewModel", () => {
     const { result } = renderViewModel();
 
     act(() => result.current.open(contact));
-    act(() => result.current.contactAddressPicker.onClose());
+    act(() => result.current.close());
 
     expect(result.current.contactAddressPicker.isOpen).toBe(false);
     expect(result.current.contactAddressPicker.contact).toBeNull();

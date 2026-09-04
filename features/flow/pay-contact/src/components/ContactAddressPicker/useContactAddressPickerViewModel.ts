@@ -11,6 +11,7 @@ export type UseContactAddressPickerViewModelParams = Readonly<{
 
 export type UseContactAddressPickerViewModel = Readonly<{
   open: (contact: Contact) => void;
+  close: () => void;
   contactAddressPicker: ContactAddressPickerProps;
 }>;
 
@@ -22,7 +23,7 @@ export function useContactAddressPickerViewModel({
   const [contact, setContact] = useState<Contact | null>(null);
 
   const open = useCallback((nextContact: Contact) => setContact(nextContact), []);
-  const onClose = useCallback(() => setContact(null), []);
+  const close = useCallback(() => setContact(null), []);
 
   const groups = useMemo(
     () => (contact === null ? [] : buildContactAddressPickerGroups(contact)),
@@ -50,15 +51,16 @@ export function useContactAddressPickerViewModel({
       title,
       addAddressLabel: t("payTab.contacts.addressPicker.addAddress"),
       groups,
-      onClose,
+      onClose: close,
       onSelectAddress,
       onAddNewAddress: handleAddNewAddress,
     }),
-    [contact, title, groups, t, onClose, onSelectAddress, handleAddNewAddress],
+    [contact, title, groups, t, close, onSelectAddress, handleAddNewAddress],
   );
 
   return {
     open,
+    close,
     contactAddressPicker,
   };
 }
