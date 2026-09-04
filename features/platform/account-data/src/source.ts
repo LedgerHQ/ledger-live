@@ -1,6 +1,6 @@
 import type { AccountBalance } from "@domain/entity-account-balance";
 import type { AccountId } from "@shared/schema-primitives";
-import { NoAccountBalanceSourceError } from "./errors";
+import { NoAccountSourceError } from "./errors";
 
 /**
  * Everything a source needs in order to read a balance, with no dependency on the account model.
@@ -28,12 +28,12 @@ export type AccountRef = {
 };
 
 /**
- * One way of reading an account's balances.
+ * What every source declares, whatever it reads.
  *
  * Registered at the app composition root, never imported by a screen — which is what lets a family
  * move from a full sync to a direct chain read without touching any UI.
  */
-export type AccountBalanceSource = {
+export type AccountSource = {
   /** Stable identity, recorded on the status so you can see which world answered. */
   readonly id: string;
   /**
@@ -48,6 +48,10 @@ export type AccountBalanceSource = {
    * up) must answer `false` until it is, so a lower-priority source takes over instead of stalling.
    */
   supports(ref: AccountRef): boolean;
+};
+
+/** One way of reading an account's balances. */
+export type AccountBalanceSource = AccountSource & {
   /**
    * The account's own balance plus one row per token account it holds, as one atomic set.
    *
@@ -57,12 +61,18 @@ export type AccountBalanceSource = {
   getBalances(ref: AccountRef, signal?: AbortSignal): Promise<AccountBalance[]>;
 };
 
-/** The highest-priority source that supports this ref, or `undefined` when none does. */
-export function pickSource(
+/**
+ * The highest-priority source that supports this ref, or `undefined` when none does.
+ *
+ * Generic over the source, and that is the interesting part: adding a second kind of data cost this
+ * function one type parameter and nothing else. Selection depends only on `supports` and `priority`,
+ * neither of which knows what is being read.
+ */
+export function pickSource<S extends AccountSource>(
   ref: AccountRef,
-  sources: readonly AccountBalanceSource[],
-): AccountBalanceSource | undefined {
-  let best: AccountBalanceSource | undefined;
+  sources: readonly S[],
+): S | undefined {
+  let best: S | undefined;
   for (const source of sources) {
     if (!source.supports(ref)) continue;
     if (!best || source.priority > best.priority) best = source;
@@ -76,7 +86,7 @@ export function pickSource(
  * A plain function, not a service and not a thunk: it is what wallet-cli calls with no Redux around
  * it, and what {@link fetchAccountBalance} calls with one.
  *
- * @throws {NoAccountBalanceSourceError} when nothing registered supports the ref.
+ * @throws {NoAccountSourceError} when nothing registered supports the ref.
  */
 export async function readAccountBalances(
   ref: AccountRef,
@@ -84,6 +94,6 @@ export async function readAccountBalances(
   signal?: AbortSignal,
 ): Promise<{ balances: AccountBalance[]; sourceId: string }> {
   const source = pickSource(ref, sources);
-  if (!source) throw new NoAccountBalanceSourceError(ref.accountId);
+  if (!source) throw new NoAccountSourceError(ref.accountId, "balance");
   return { balances: await source.getBalances(ref, signal), sourceId: source.id };
 }

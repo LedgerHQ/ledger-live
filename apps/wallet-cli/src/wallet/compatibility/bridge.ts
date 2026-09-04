@@ -11,6 +11,8 @@ import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type { AccountBalance } from "@domain/entity-account-balance";
 import { toAccountBalances } from "@ledgerhq/live-common/legacy-mapping/accountBalance";
+import { toAccountOperations } from "@ledgerhq/live-common/legacy-mapping/accountOperation";
+import type { AccountOperation } from "@domain/entity-account-operations";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
@@ -138,6 +140,16 @@ export class BridgeAdapter {
    */
   async getBalanceRows(descriptor: AccountDescriptor): Promise<AccountBalance[]> {
     return toAccountBalances(await this.sync(descriptor));
+  }
+
+  /**
+   * The account's whole history, as entity rows.
+   *
+   * A full sync holds everything, so this is by definition complete — which is what lets this source
+   * report a total the paginated one cannot.
+   */
+  async getOperationRows(descriptor: AccountDescriptor): Promise<AccountOperation[]> {
+    return toAccountOperations(await this.sync(descriptor));
   }
 
   async getOperations(descriptor: AccountDescriptor): Promise<Operation[]> {

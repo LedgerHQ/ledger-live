@@ -11,11 +11,12 @@ import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from
 // at module load time for every subprocess regardless of which command is invoked.
 import type { BridgeAdapter } from "./compatibility/bridge";
 import type { CoinFrameworkAdapter, OperationsPage } from "./compatibility/coinframework";
+import type { Operation } from "./models";
 import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { Network } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
-import { readDescriptorBalances } from "./accountData";
+import { readDescriptorBalances, readDescriptorOperations } from "./accountData";
 
 export class WalletAdapter {
   private _bridge: Promise<BridgeAdapter> | null = null;
@@ -77,14 +78,37 @@ export class WalletAdapter {
    *
    * This is exactly why the capability is per datum and not per family: `balance` goes granular
    * (see `getAccountBalances`) while `operations` stays on the bridge, for the same family, with no
-   * contradiction. Re-enabling means an `operations` entity and its own source, not a change here.
+   * contradiction. The read now goes through `@features/platform-account-data` all the same — its
+   * source list simply has one entry. Re-enabling the granular path is a second entry in
+   * `accountOperationsSources`, not a change here.
    */
   async getAccountOperations(
     descriptor: AccountDescriptor,
     options?: { cursor?: string; limit?: number },
   ): Promise<OperationsPage> {
-    const ops = await (await this.getBridge()).getOperations(descriptor);
-    const limited = options?.limit == null ? ops : ops.slice(0, options.limit);
+    const rows = await readDescriptorOperations(descriptor);
+    const operations = rows.map(row => ({
+      id: row.id,
+      hash: row.hash,
+      type: row.type as Operation["type"],
+      value: row.value,
+      fee: row.fee,
+      senders: row.senders,
+      recipients: row.recipients,
+      blockHeight: row.blockHeight,
+      accountId: row.accountId,
+      assetId: row.assetId,
+      date: row.date,
+      // The CLI's `parentId` means "an internal operation of this transaction". The entity links
+      // every nested row to its parent, token transfers included, and the two are told apart by the
+      // account they landed on: an internal operation stays on the main account, a token transfer
+      // moves to the token account. Reconstructing the legacy field from the flat model rather than
+      // widening it is the whole argument for the flat model.
+      ...(row.parentOperationId && row.accountId === descriptor.id
+        ? { parentId: row.parentOperationId }
+        : {}),
+    })) as Operation[];
+    const limited = options?.limit == null ? operations : operations.slice(0, options.limit);
     return { operations: limited, nextCursor: undefined };
   }
 

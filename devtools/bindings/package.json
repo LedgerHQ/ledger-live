@@ -24,6 +24,7 @@
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-operations": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
     "@features/platform-account-data": "workspace:*",

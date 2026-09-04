@@ -1,4 +1,5 @@
 import type { AccountBalancesState } from "@domain/entity-account-balance";
+import type { AccountOperationsState } from "@domain/entity-account-operations";
 import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -448,6 +449,7 @@ export type DeeplinkInstallAppState = {
 export type State = LLMRTKApiState & {
   accounts: AccountsState;
   accountBalances: AccountBalancesState;
+  accountOperations: AccountOperationsState;
   appstate: AppState;
   auth: AuthState;
   ble: BleState;

@@ -57,9 +57,11 @@ const syncBalanceRows = mock(async () => [row(BTC_ID, "bitcoin", "7")]);
 
 // Injected, never `mock.module`: the command tests run the CLI in process, so a module mock on a
 // shared module bleeds into them (see the warning in src/test/helpers/cli-runner.ts).
+const getOperationRows = mock(async () => [] as never[]);
+
 const adapters = {
   loadCoinFramework: async () => ({ getBalanceRows }),
-  loadBridge: async () => ({ getBalanceRows: syncBalanceRows }),
+  loadBridge: async () => ({ getBalanceRows: syncBalanceRows, getOperationRows }),
 };
 
 const read = (descriptor: AccountDescriptor) => readDescriptorBalances(descriptor, adapters);
