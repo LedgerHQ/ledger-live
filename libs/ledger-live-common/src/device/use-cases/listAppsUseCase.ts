@@ -1,6 +1,7 @@
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import type { Currency } from "@domain/entity-currency";
 import { listApps } from "../../apps/listApps";
 import { ListAppsEvent } from "../../apps";
 import { getEnv } from "@shared/env";
@@ -8,10 +9,14 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { ManagerApiRepository } from "@ledgerhq/device-core";
 
+const identitySorter = <C extends Currency>(currencies: C[]): Promise<C[]> =>
+  Promise.resolve(currencies);
+
 export function listAppsUseCase(
   transport: Transport,
   deviceInfo: DeviceInfo,
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
+  sortCurrenciesByMarketcap: <C extends Currency>(currencies: C[]) => Promise<C[]> = identitySorter,
 ): Observable<ListAppsEvent> {
   return listApps({
     transport,
@@ -20,5 +25,6 @@ export function listAppsUseCase(
     managerApiRepository,
     forceProvider: getEnv("FORCE_PROVIDER"),
     managerDevModeEnabled: getEnv("MANAGER_DEV_MODE"),
+    sortCurrenciesByMarketcap,
   });
 }

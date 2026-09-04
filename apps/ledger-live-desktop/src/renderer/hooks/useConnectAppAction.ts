@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { catchError, throwError } from "rxjs";
+import { makeSortCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies";
+import { useDispatch } from "LLD/hooks/redux";
 import { GenuineCheckFailed } from "@ledgerhq/live-common/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -91,12 +93,19 @@ export function useStartExchangeAction() {
 
 export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const dispatch = useDispatch();
+  const sortCurrenciesByMarketcap = useMemo(
+    () => makeSortCurrenciesByMarketcap(dispatch),
+    [dispatch],
+  );
   const action = useMemo(
     () =>
       createManagerAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectManager({ isLdmkConnectAppEnabled }),
+        getEnv("MOCK")
+          ? mockedEventEmitter
+          : connectManager({ isLdmkConnectAppEnabled, sortCurrenciesByMarketcap }),
       ),
-    [isLdmkConnectAppEnabled],
+    [isLdmkConnectAppEnabled, sortCurrenciesByMarketcap],
   );
   return action;
 }
@@ -108,12 +117,17 @@ export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, 
  */
 export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const dispatch = useDispatch();
+  const sortCurrenciesByMarketcap = useMemo(
+    () => makeSortCurrenciesByMarketcap(dispatch),
+    [dispatch],
+  );
   return useMemo(() => {
     if (getEnv("MOCK")) {
       return createManagerAction(mockedEventEmitter);
     }
     const task: Parameters<typeof createManagerAction>[0] = input =>
-      connectManager({ isLdmkConnectAppEnabled })(input).pipe(
+      connectManager({ isLdmkConnectAppEnabled, sortCurrenciesByMarketcap })(input).pipe(
         catchError(error => {
           if (isCounterfeitError(error)) return throwError(() => error);
           if (isDeviceNotOnboardedError(error)) return throwError(() => error);
@@ -122,5 +136,5 @@ export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, Ma
         }),
       );
     return createManagerAction(task);
-  }, [isLdmkConnectAppEnabled]);
+  }, [isLdmkConnectAppEnabled, sortCurrenciesByMarketcap]);
 }
