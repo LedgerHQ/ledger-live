@@ -267,6 +267,7 @@
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-swap-quotes": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@shared/schema-primitives": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",

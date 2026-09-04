@@ -15,6 +15,7 @@ import type { WSState } from "@domain/entity-wallet-sync";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
 import type { State } from ".";
 import type { WalletState } from "./wallet.core";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 export type { WalletState, ExportedWalletState } from "./wallet.core";
 export {
@@ -53,7 +54,7 @@ export const accountUserDataExportSelector = (
 ): AccountUserData => {
   const starredIds = [account, ...(account.subAccounts || [])]
     .map(a => a.id)
-    .filter(id => state.starredAccountIds.has(id));
+    .filter(id => state.starredAccountIds.has(parseAnyAccountId(id)));
   return {
     id: account.id,
     name: accountNameWithDefaultSelector(state, account),

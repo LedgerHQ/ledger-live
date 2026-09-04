@@ -41,9 +41,11 @@ import {
   CRYPTO_CURRENCIES_REGISTRY,
 } from "@domain/entity-currency-crypto";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import type { AccountNamesState } from "@domain/entity-account-name";
 import { TrackingAPI } from "./tracking";
-const walletState = new Map<string, string>();
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+
+const walletState: AccountNamesState = new Map();
 
 // Setup mock store for unit tests
 setCryptoAssetsStore({

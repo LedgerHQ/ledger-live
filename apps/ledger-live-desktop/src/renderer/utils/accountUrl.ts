@@ -1,4 +1,5 @@
 import { computeAccountAlias } from "@domain/entity-account-alias";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 /**
  * React Router decodes URL parameters, but account IDs in the Redux store are encoded.
@@ -107,9 +108,9 @@ export function findSubAccountByIdWithFallback<
  * @returns The URL path (e.g., "/account/{parentAlias}/{alias}" or "/account/{alias}")
  */
 export function getAccountUrl(accountId: string, parentId?: string): string {
-  const alias = computeAccountAlias(accountId);
+  const alias = computeAccountAlias(parseAnyAccountId(accountId));
   if (parentId) {
-    return `/account/${computeAccountAlias(parentId)}/${alias}`;
+    return `/account/${computeAccountAlias(parseAnyAccountId(parentId))}/${alias}`;
   }
   return `/account/${alias}`;
 }

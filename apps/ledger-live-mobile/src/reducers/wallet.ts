@@ -29,6 +29,7 @@ import type { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,
@@ -133,7 +134,7 @@ export const accountUserDataExportSelector = (
 ): AccountUserData => {
   const starredIds = [account, ...(account.subAccounts || [])]
     .map(a => a.id)
-    .filter(id => state.starredAccountIds.has(id));
+    .filter(id => state.starredAccountIds.has(parseAnyAccountId(id)));
   return {
     id: account.id,
     name: accountNameWithDefaultSelector(state, account),

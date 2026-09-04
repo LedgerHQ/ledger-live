@@ -38,6 +38,7 @@
     "@shared/feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/cloud-sync-module": "workspace:*",
+    "@shared/schema-primitives": "workspace:^",
     "@devtools/bindings": "workspace:*",
     "@features/platform-currencies": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",

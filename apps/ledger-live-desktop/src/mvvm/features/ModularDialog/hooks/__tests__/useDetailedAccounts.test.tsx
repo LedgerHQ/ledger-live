@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
@@ -29,7 +30,7 @@ describe("useDetailedAccounts", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        wallet: { accountNames: new Map([[parseAnyAccountId("eth1"), "eth1"]]) },
       },
     });
 
@@ -58,7 +59,7 @@ describe("useDetailedAccounts", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        wallet: { accountNames: new Map([[parseAnyAccountId("eth1"), "eth1"]]) },
       },
     });
 
@@ -77,7 +78,7 @@ describe("useDetailedAccounts", () => {
       ...INITIAL_STATE,
       initialState: {
         accounts: [ETH_ACCOUNT],
-        wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        wallet: { accountNames: new Map([[parseAnyAccountId("eth1"), "eth1"]]) },
       },
     });
 

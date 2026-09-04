@@ -4,7 +4,7 @@
 import { renderHook, act, cleanup } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
-const walletState = new Map<string, string>();
+import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
@@ -13,6 +13,7 @@ import { accountGetPublicKeyLogic } from "./logic";
 import { getAccountIdFromWalletAccountId, resolveWalletApiSpendableBalance } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
+const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
 const mockSetConfig = jest.fn();
 const mockSetPermissions = jest.fn();

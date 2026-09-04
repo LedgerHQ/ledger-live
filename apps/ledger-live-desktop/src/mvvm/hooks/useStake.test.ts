@@ -10,6 +10,7 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getAccountUrl } from "~/renderer/utils";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -111,8 +112,8 @@ const walletState: WalletState = {
 const userData = accountRawToAccountUserData(raw);
 const userDataTron = accountRawToAccountUserData(rawTron);
 
-walletState.accountNames.set(userData.id, userData.name);
-walletState.accountNames.set(userDataTron.id, userDataTron.name);
+walletState.accountNames.set(parseAnyAccountId(userData.id), userData.name);
+walletState.accountNames.set(parseAnyAccountId(userDataTron.id), userDataTron.name);
 
 const feature_stake_programs_json = {
   enabled: true,

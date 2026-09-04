@@ -887,7 +887,8 @@
     "yargs",
     "@ledgerhq/domain-service",
     "@ledgerhq/evm-tools",
-    "@ton-community/ton-ledger"
+    "@ton-community/ton-ledger",
+    "@shared/schema-primitives"
   ],
   "ignoreUnresolved": [
     "../../Image/Image",

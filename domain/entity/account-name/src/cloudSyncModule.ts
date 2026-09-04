@@ -1,4 +1,5 @@
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
+import { parseAnyAccountId, type AnyAccountId } from "@shared/schema-primitives";
 import {
   AccountNamesDistantSchema,
   type AccountNamesDistantState,
@@ -44,6 +45,14 @@ export const accountNamesSyncModule: CloudSyncDataManager<
     _localData: AccountNamesState,
     update: { replaceAllNames: AccountNamesDistantState },
   ) {
-    return new Map(Object.entries(update.replaceAllNames));
+    const entries: [AnyAccountId, string][] = [];
+    for (const [id, name] of Object.entries(update.replaceAllNames)) {
+      try {
+        entries.push([parseAnyAccountId(id), name]);
+      } catch {
+        // skip malformed ids from cloud payload
+      }
+    }
+    return new Map(entries);
   },
 };

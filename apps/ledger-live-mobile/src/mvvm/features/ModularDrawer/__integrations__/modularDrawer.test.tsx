@@ -29,6 +29,7 @@ import {
   type NetInfoNoConnectionState,
   type NetInfoUnknownState,
 } from "@react-native-community/netinfo";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
@@ -238,7 +239,7 @@ describe.each(DRAWER_VARIANTS)(
             accounts: { active: mockedAccounts },
             wallet: {
               ...state.wallet,
-              accountNames: new Map([[ARB_ACCOUNT.id, "Arbitrum One"]]),
+              accountNames: new Map([[parseAnyAccountId(ARB_ACCOUNT.id), "Arbitrum One"]]),
             },
           }),
       });
