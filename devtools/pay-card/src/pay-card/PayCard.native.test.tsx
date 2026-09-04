@@ -26,6 +26,7 @@ function buildProps(): PayCardToolProps {
     balance: {
       total: 0,
       isPartialTotal: false,
+      isPricingWired: true,
       wallets: [],
       isFetching: false,
       errors: [],
@@ -269,6 +270,35 @@ describe("PayCard (native)", () => {
     expect(
       screen.getByText("null — no balance yet, no currency matched this ticker, or no rate for it"),
     ).toBeTruthy();
+  });
+
+  it("says pricing is not wired rather than blaming the ticker for it", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    // With no resolver the binding prices nothing, so no wallet carries a counter value.
+    const unpriced = wallets.map(wallet => ({ ...wallet, counterValue: null }));
+    render(
+      <PayCard
+        {...props}
+        balance={{
+          ...props.balance,
+          wallets: unpriced,
+          total: undefined,
+          isPricingWired: false,
+        }}
+      />,
+    );
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("not wired by this host")).toBeTruthy();
+    // Every wallet is unpriced for the one reason, so the ticker explanation must not appear.
+    expect(screen.getAllByText("null — this host wired no pricing")).toHaveLength(unpriced.length);
+    expect(
+      screen.queryByText(
+        "null — no balance yet, no currency matched this ticker, or no rate for it",
+      ),
+    ).toBeNull();
   });
 
   it("shows which endpoint failed and what it answered", async () => {

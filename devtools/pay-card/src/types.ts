@@ -88,6 +88,11 @@ export interface PayCardBalanceProps {
   readonly total: number | undefined;
   /** A wallet the rates could not price is left out of `total` rather than counted as zero. */
   readonly isPartialTotal: boolean;
+  /**
+   * Whether the host wired pricing at all. Without it nothing can be priced, which is a different
+   * thing from a ticker the rates did not cover.
+   */
+  readonly isPricingWired: boolean;
   readonly wallets: readonly PayCardBalanceWallet[];
   readonly isFetching: boolean;
   readonly errors: readonly PayCardBalanceError[];

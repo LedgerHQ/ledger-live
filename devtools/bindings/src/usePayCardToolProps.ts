@@ -242,13 +242,14 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       total: isAnyWalletPriced ? linkedWallets.total : undefined,
       isPartialTotal: linkedWallets.isPartialTotal,
+      isPricingWired: resolveCounterValue !== undefined,
       wallets: linkedWallets.wallets,
       isFetching: linkedWallets.isFetching,
       errors,
       load: loadWallets,
       refresh: refreshWallets,
     }),
-    [linkedWallets, isAnyWalletPriced, errors, loadWallets, refreshWallets],
+    [linkedWallets, isAnyWalletPriced, resolveCounterValue, errors, loadWallets, refreshWallets],
   );
 
   return useMemo(
