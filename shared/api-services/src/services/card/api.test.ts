@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { NamedSchemaError } from "@reduxjs/toolkit/query";
 import { describeSchemaFailure, getCardExtra, cardApi, cardApiExtra } from "./api";
 import type { CardApiExtra } from "./types";
 
@@ -26,17 +27,19 @@ describe("cardApi", () => {
 });
 
 describe("cardApi schema failures", () => {
-  // A real rejection from the Card status response: one required string absent.
-  const holderNameMissing = {
-    issues: [
-      { path: ["holderName"], message: "Invalid input: expected string, received undefined" },
-    ],
-    schemaName: "responseSchema",
-    value: { id: "card-1" },
-  };
+  type Issues = ConstructorParameters<typeof NamedSchemaError>[0];
+
+  /** The error RTK Query hands the converter when a response fails its schema. */
+  const rejection = (issues: Issues, value: unknown = { id: "card-1" }) =>
+    new NamedSchemaError(issues, value, "responseSchema", undefined);
 
   it("names the field the response was rejected on", () => {
-    const error = describeSchemaFailure(holderNameMissing as never);
+    // A real rejection from the Card status response: one required string absent.
+    const error = describeSchemaFailure(
+      rejection([
+        { path: ["holderName"], message: "Invalid input: expected string, received undefined" },
+      ]),
+    );
 
     expect(error).toEqual({
       status: "CUSTOM_ERROR",
@@ -46,24 +49,36 @@ describe("cardApi schema failures", () => {
   });
 
   it("joins every failing field, so one run reports them all", () => {
-    const error = describeSchemaFailure({
-      ...holderNameMissing,
-      issues: [
+    const error = describeSchemaFailure(
+      rejection([
         { path: ["holderName"], message: "expected string" },
         { path: ["panLast4"], message: "expected string" },
-      ],
-    } as never);
+      ]),
+    );
 
     expect(error).toMatchObject({
       error: expect.stringContaining("holderName: expected string; panLast4: expected string"),
     });
   });
 
+  it("reports a root-level rejection by its message, with no empty field label", () => {
+    const error = describeSchemaFailure(
+      rejection([{ path: [], message: "Invalid input: expected object, received array" }]),
+    );
+
+    expect(error).toMatchObject({
+      error:
+        "responseSchema rejected the response — Invalid input: expected object, received array",
+    });
+  });
+
   it("keeps the rejected value out of the error: it carries the holder's name and PAN", () => {
-    const error = describeSchemaFailure({
-      ...holderNameMissing,
-      value: { holderName: "Ada Lovelace", panLast4: "4242" },
-    } as never);
+    const error = describeSchemaFailure(
+      rejection([{ path: ["holderName"], message: "expected string" }], {
+        holderName: "Ada Lovelace",
+        panLast4: "4242",
+      }),
+    );
 
     expect(JSON.stringify(error)).not.toContain("Ada Lovelace");
     expect(JSON.stringify(error)).not.toContain("4242");
