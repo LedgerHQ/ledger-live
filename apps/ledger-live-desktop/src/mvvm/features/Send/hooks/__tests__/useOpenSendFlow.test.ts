@@ -80,6 +80,37 @@ describe("useOpenSendFlow", () => {
 
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).not.toHaveProperty("categories");
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({ source: "Pay" }),
+    );
+  });
+
+  it("forwards the source into the send params when an account is preselected", () => {
+    const account = genAccount("send-preselected-source", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      account,
+      source: "Pay",
+    });
+
+    expect(store.getState().sendFlow.isOpen).toBe(true);
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({ account, source: "Pay" }),
+    );
   });
 
   it("preserves the direct-recipient intent after account selection", () => {

@@ -34,6 +34,7 @@ type DataContextValue = Readonly<{
     clear: () => void;
   }>;
   isRecipientAddressComplete: boolean;
+  source?: string;
 }>;
 
 const SendFlowDataContext = createContext<DataContextValue | null>(null);
@@ -65,8 +66,15 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
       uiConfig: value.uiConfig,
       recipientSearch: value.recipientSearch,
       isRecipientAddressComplete: value.isRecipientAddressComplete,
+      source: value.source,
     }),
-    [value.state, value.uiConfig, value.recipientSearch, value.isRecipientAddressComplete],
+    [
+      value.state,
+      value.uiConfig,
+      value.recipientSearch,
+      value.isRecipientAddressComplete,
+      value.source,
+    ],
   );
 
   const actionsValue = useMemo(

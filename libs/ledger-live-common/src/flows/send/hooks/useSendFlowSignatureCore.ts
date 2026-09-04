@@ -6,6 +6,7 @@ import { getMainAccount } from "../../../account/index";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
 import { saveRecentSendRecipient } from "../utils";
+import { SEND_FLOW_COMPLETION, type SendFlowCompletion } from "../types";
 
 export type SignatureDeviceActionResult =
   | { signedOperation: SignedOperation | undefined | null; device: unknown }
@@ -37,8 +38,8 @@ export type UseSendFlowSignatureCoreParams = Readonly<{
     setError: () => void;
     setSuccess: () => void;
   }>;
-  /** Advances the flow to the next step (e.g. confirmation). */
-  onFinish: () => void;
+  /** Advances the flow once signature resolves; the outcome lets platforms branch success vs failure. */
+  onFinish: (completion: SendFlowCompletion) => void;
   /** Persists the optimistic operation as pending on the (main) account, app-side. */
   registerPendingOperation: (mainAccount: Account, operation: Operation) => void;
   /** Optional ENS name from the flow recipient state (fallback: transaction.recipientDomain). */
@@ -56,7 +57,7 @@ export type UseSendFlowSignatureCoreResult = Readonly<{
  * Platform-agnostic Send flow signature logic shared by desktop and mobile.
  *
  * It builds the device-action request, handles the signature result (broadcast,
- * success/error resolution) and guarantees the flow only finishes once per set
+ * success/failure resolution) and guarantees the flow only finishes once per set
  * of inputs. The platform layer injects the side-effects that differ across apps
  * (broadcast, redux pending-operation persistence, navigation, status actions).
  */
@@ -122,7 +123,7 @@ export function useSendFlowSignatureCore({
         statusActions.setError();
       }
 
-      onFinish();
+      onFinish(SEND_FLOW_COMPLETION.FAILURE);
     },
     [currency, operation, statusActions, onFinish],
   );
@@ -143,7 +144,7 @@ export function useSendFlowSignatureCore({
 
       operation.onOperationBroadcasted(op);
       statusActions.setSuccess();
-      onFinish();
+      onFinish(SEND_FLOW_COMPLETION.SUCCESS);
     },
     [
       account,

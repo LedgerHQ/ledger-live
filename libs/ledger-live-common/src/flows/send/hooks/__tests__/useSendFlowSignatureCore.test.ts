@@ -14,6 +14,7 @@ import {
   useSendFlowSignatureCore,
   type UseSendFlowSignatureCoreParams,
 } from "../useSendFlowSignatureCore";
+import { SEND_FLOW_COMPLETION } from "../../types";
 
 jest.mock("../../../../account/index", () => ({
   getMainAccount: jest.fn(),
@@ -186,6 +187,7 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.operation.onOperationBroadcasted).toHaveBeenCalledWith(operation);
     expect(params.statusActions.setSuccess).toHaveBeenCalledTimes(1);
     expect(params.onFinish).toHaveBeenCalledTimes(1);
+    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.SUCCESS);
   });
 
   it("should pass the flow ENS name when saving the recent recipient", () => {
@@ -225,6 +227,7 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.statusActions.resetStatus).toHaveBeenCalledTimes(1);
     expect(params.statusActions.setError).not.toHaveBeenCalled();
     expect(params.onFinish).toHaveBeenCalledTimes(1);
+    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE);
   });
 
   it("should set error when finishing with a non-user-refused error", () => {
@@ -240,6 +243,7 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.statusActions.setError).toHaveBeenCalledTimes(1);
     expect(params.statusActions.resetStatus).not.toHaveBeenCalled();
     expect(params.onFinish).toHaveBeenCalledTimes(1);
+    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE);
   });
 
   it("should broadcast the signed operation from a device action result", async () => {
