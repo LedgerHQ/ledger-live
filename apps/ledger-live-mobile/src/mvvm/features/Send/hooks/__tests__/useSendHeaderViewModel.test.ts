@@ -67,6 +67,7 @@ describe("useSendHeaderViewModel", () => {
   const mockNavigate = jest.fn();
   const mockGoBack = jest.fn();
   const mockCanGoBack = jest.fn(() => false);
+  const mockGetState = jest.fn(() => ({ routes: [{ name: ScreenName.SendFlowAmount }], index: 0 }));
   const mockAddListener = jest.fn(() => jest.fn());
   const mockClearRecipientSearch = jest.fn();
   const mockSetRecipientSearchValue = jest.fn();
@@ -77,6 +78,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseNavigation.mockReturnValue({
       canGoBack: mockCanGoBack,
       goBack: mockGoBack,
+      getState: mockGetState,
       navigate: mockNavigate,
       addListener: mockAddListener,
     } as never);
@@ -457,6 +459,52 @@ describe("useSendHeaderViewModel", () => {
       expect(mockSetRecipientSearchValue).toHaveBeenCalledWith(ADDRESS);
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
       expect(mockGoBack).not.toHaveBeenCalled();
+    });
+
+    it("opens Recipient when going back would leave Send for Pay", () => {
+      mockAmountStep();
+      mockCanGoBack.mockReturnValue(true);
+      mockGetState.mockReturnValue({
+        routes: [{ name: "Pay" }, { name: ScreenName.SendFlowAmount }],
+        index: 1,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      result.current.handleRecipientInputPress();
+
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
+      expect(mockGoBack).not.toHaveBeenCalled();
+    });
+
+    it("goes back to Recipient when that step is already under Amount", () => {
+      mockAmountStep();
+      mockCanGoBack.mockReturnValue(true);
+      mockGetState.mockReturnValue({
+        routes: [{ name: ScreenName.SendFlowRecipient }, { name: ScreenName.SendFlowAmount }],
+        index: 1,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      result.current.handleRecipientInputPress();
+
+      expect(mockGoBack).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("filters Recipient search by the contact name", () => {
+      jest
+        .mocked(useContactsFeature)
+        .mockReturnValue({ isEnabled: true, eligibleAddressFamilies: ["evm"] } as never);
+      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
+      mockAmountStep();
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      result.current.handleRecipientInputPress();
+
+      expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("Benoit Jean");
     });
   });
 });
