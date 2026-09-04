@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   ListItem,
   ListItemContent,
@@ -25,7 +25,7 @@ const STEP_ICONS: Record<string, typeof Placeholder> = {
   "apple-google-pay": Placeholder,
 };
 
-export const CardOnboardingOptionView = memo(function CardOnboardingOptionView({
+export function CardOnboardingOptionView({
   title,
   description,
   status,
@@ -50,4 +50,4 @@ export const CardOnboardingOptionView = memo(function CardOnboardingOptionView({
       )}
     </ListItem>
   );
-});
+}
