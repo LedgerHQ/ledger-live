@@ -7399,6 +7399,9 @@
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
+    "ZcashSendTooLarge": {
+      "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
