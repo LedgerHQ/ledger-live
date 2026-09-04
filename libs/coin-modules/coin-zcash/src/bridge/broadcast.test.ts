@@ -3,6 +3,7 @@
  * outpoints the signing recorded on the operation, and the account's explorer.
  * The guard itself is covered in logic/transaction/broadcast.unit.test.ts.
  */
+import { log } from "@ledgerhq/logs";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcast } from "./broadcast";
 import { getWalletAccount } from "./getWalletAccount";
@@ -16,9 +17,11 @@ import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 
 jest.mock("./getWalletAccount");
 jest.mock("../logic/transaction/broadcast");
+jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 const mockGetWalletAccount = getWalletAccount as jest.MockedFunction<typeof getWalletAccount>;
 const mockBroadcastLogic = broadcastLogic as jest.MockedFunction<typeof broadcastLogic>;
+const mockLog = log as jest.MockedFunction<typeof log>;
 
 const TXID = "cc".repeat(32);
 const PREVOUT_HASH = "ab".repeat(32);
@@ -86,6 +89,11 @@ describe("broadcast", () => {
       await expect(submit({ zcashShielded: true }, TXID)).rejects.toThrow("network down");
 
       expect(getSessionReservedNullifiers(account.id).size).toBe(0);
+      expect(mockLog).toHaveBeenCalledWith(
+        "zcash",
+        "released note reservation after broadcast failure",
+        { accountId: account.id, operationHash: TXID },
+      );
     });
 
     it("keeps them reserved once the send is out", async () => {

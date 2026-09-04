@@ -1,5 +1,6 @@
+import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getZainoEndpoint } from "../../constants";
+import { ZCASH_LOG_TYPE, getZainoEndpoint } from "../../constants";
 import { getZCashClient } from "../engineClient";
 
 /**
@@ -40,12 +41,17 @@ export async function assertTransparentInputsUnspent({
 
   for (const txHash of uniqueHashes) {
     const tx = await fetchUtxoTx(txHash).catch(() => {
+      log(ZCASH_LOG_TYPE, "broadcast guard: source transaction not found", { hash: txHash });
       throw new InvalidTransactionError("tx not found");
     });
 
     for (const ref of inputRefs.filter(r => r.hash === txHash)) {
       const output = tx.outputs.find(o => o.output_index === ref.outputIndex);
       if (output && typeof output.spent_at_height === "number" && output.spent_at_height > 0) {
+        log(ZCASH_LOG_TYPE, "broadcast guard: refusing already-spent transparent input", {
+          hash: ref.hash,
+          outputIndex: ref.outputIndex,
+        });
         throw new InvalidTransactionError("utxos already spent");
       }
     }
@@ -75,5 +81,24 @@ export async function broadcast(
     throw new Error("Shielded Zcash transactions are not supported in this environment");
   }
 
-  return client.broadcastTransaction(grpcUrl, txHex);
+  const sizeBytes = txHex.length / 2;
+  log(ZCASH_LOG_TYPE, "broadcasting transaction", { endpoint: grpcUrl, sizeBytes });
+  const startedAt = Date.now();
+
+  try {
+    const txid = await client.broadcastTransaction(grpcUrl, txHex);
+    log(ZCASH_LOG_TYPE, "broadcast succeeded", {
+      endpoint: grpcUrl,
+      txid,
+      durationMs: Date.now() - startedAt,
+    });
+    return txid;
+  } catch (error) {
+    log(ZCASH_LOG_TYPE, "broadcast failed", {
+      endpoint: grpcUrl,
+      durationMs: Date.now() - startedAt,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
 }

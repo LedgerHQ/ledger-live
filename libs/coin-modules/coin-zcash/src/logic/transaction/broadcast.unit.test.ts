@@ -3,13 +3,16 @@
  * engine client is mocked: what matters is which outpoints are checked against
  * the explorer, and when the submission is refused.
  */
+import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { broadcast, assertTransparentInputsUnspent, type TransparentInputs } from "./broadcast";
 import { getZCashClient } from "../engineClient";
 
 jest.mock("../engineClient");
+jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 const mockGetZCashClient = getZCashClient as jest.MockedFunction<typeof getZCashClient>;
+const mockLog = log as jest.MockedFunction<typeof log>;
 
 const TXID = "cc".repeat(32);
 const PREVOUT_HASH = "ab".repeat(32);
@@ -93,6 +96,40 @@ describe("assertTransparentInputsUnspent", () => {
 
     expect(fetchUtxoTx).toHaveBeenCalledTimes(1);
   });
+
+  it("logs the offending outpoint when refusing an already-spent input", async () => {
+    mockLog.mockClear();
+
+    await expect(
+      assertTransparentInputsUnspent({
+        inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
+        fetchUtxoTx: explorer({
+          [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: 3_000_100 }],
+        }),
+      }),
+    ).rejects.toThrow(InvalidTransactionError);
+
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast guard: refusing already-spent transparent input",
+      { hash: PREVOUT_HASH, outputIndex: 0 },
+    );
+  });
+
+  it("logs the hash when the source transaction cannot be fetched", async () => {
+    mockLog.mockClear();
+
+    await expect(
+      assertTransparentInputsUnspent({
+        inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
+        fetchUtxoTx: explorer({}),
+      }),
+    ).rejects.toThrow("tx not found");
+
+    expect(mockLog).toHaveBeenCalledWith("zcash", "broadcast guard: source transaction not found", {
+      hash: PREVOUT_HASH,
+    });
+  });
 });
 
 describe("broadcast", () => {
@@ -133,5 +170,42 @@ describe("broadcast", () => {
     );
 
     await expect(broadcast(TX_HEX)).rejects.toThrow("not supported in this environment");
+  });
+
+  it("logs the endpoint and outcome, on both success and failure", async () => {
+    await broadcast(TX_HEX);
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcasting transaction",
+      expect.objectContaining({ endpoint: expect.any(String), sizeBytes: TX_HEX.length / 2 }),
+    );
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast succeeded",
+      expect.objectContaining({ txid: TXID }),
+    );
+
+    mockLog.mockClear();
+    broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
+    await expect(broadcast(TX_HEX)).rejects.toThrow("gRPC rejected");
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast failed",
+      expect.objectContaining({ error: "gRPC rejected" }),
+    );
+  });
+
+  // Merge gate: the broadcast path must never log the transaction hex (or a
+  // slice of it long enough to be a de-facto digest) -- only metadata about it.
+  it("never logs the raw transaction hex", async () => {
+    mockLog.mockClear();
+    await broadcast(TX_HEX, {
+      inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
+      fetchUtxoTx: explorer({ [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: null }] }),
+    });
+
+    for (const [, , data] of mockLog.mock.calls) {
+      expect(JSON.stringify(data)).not.toContain(TX_HEX);
+    }
   });
 });

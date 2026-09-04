@@ -264,14 +264,22 @@ function resolveOneShot<T>(
   }
 }
 
-/** Rejects a one-shot resolver, with the same unknown-requestId logging as {@link resolveOneShot}. */
+/**
+ * Rejects a one-shot resolver, with the same unknown-requestId logging as
+ * {@link resolveOneShot}. `extra` is attached as own enumerable properties on
+ * the reconstructed `Error` (not just folded into the message) so that
+ * downstream error-context extraction (e.g. Datadog's `extractErrorContext`,
+ * which only copies an `Error`'s own properties) can see it.
+ */
 function rejectOneShot<T>(
   resolver: OneShotResolver<T>,
   requestId: RequestId,
   message: string,
   label: string,
+  extra?: Record<string, unknown>,
 ): void {
-  if (!resolver.reject(requestId, new Error(message))) {
+  const error = extra ? Object.assign(new Error(message), extra) : new Error(message);
+  if (!resolver.reject(requestId, error)) {
     log(LOG_TYPE, `${label} for unknown requestId`, { requestId });
   }
 }
@@ -338,7 +346,9 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
     case "broadcast-transaction-result":
       return resolveOneShot(broadcastTx, msg.requestId, msg.txid, "broadcast-transaction-result");
     case "broadcast-transaction-error":
-      return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error");
+      return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error", {
+        endpoint: msg.endpoint,
+      });
     case "transaction-details-result":
       return resolveOneShot(
         transactionDetails,
