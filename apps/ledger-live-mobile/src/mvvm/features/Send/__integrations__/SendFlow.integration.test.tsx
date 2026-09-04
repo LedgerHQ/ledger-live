@@ -230,6 +230,46 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeOnTheScreen();
   });
 
+  it("should open recipient from amount without stacking a second amount", async () => {
+    const benoit = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({
+          id: "address-benoit-eth",
+          currencyId: "ethereum",
+          label: "Ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+        mockContactAddress({
+          id: "address-benoit-coinbase",
+          currencyId: "ethereum",
+          label: "Ethereum Coinbase",
+          address: "0x1234567890123456789012345678901234567890",
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: true, contacts: [mockMeContact(), benoit] },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue("Benoit")).toBeVisible();
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+    expect(await screen.findByText("Select Benoit's address")).toBeVisible();
+    await user.press(screen.getByLabelText(`Ethereum, ${VALID_ETHEREUM_RECIPIENT}`));
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.queryByLabelText("Back")).not.toBeOnTheScreen();
+    expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeOnTheScreen();
+  });
+
   it("should keep add contact enabled when the network supports the address book", async () => {
     const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
 

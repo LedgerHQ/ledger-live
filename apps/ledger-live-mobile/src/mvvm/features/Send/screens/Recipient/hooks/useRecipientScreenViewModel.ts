@@ -7,7 +7,6 @@ import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
-import { navigateSendFlowScreen } from "../../../utils/navigateSendFlowScreen";
 
 type RecipientScreenViewModelBase = Readonly<{
   ready: false;
@@ -38,18 +37,27 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [state.account.currency, account],
   );
 
+  const goToAmount = useCallback(() => {
+    const { routes, index } = navigation.getState();
+    if (routes[index - 1]?.name === ScreenName.SendFlowAmount) {
+      navigation.goBack();
+      return;
+    }
+    navigation.navigate(ScreenName.SendFlowAmount);
+  }, [navigation]);
+
   const onMemoProceed = useCallback(() => {
     recipientSearch.clear();
-    navigateSendFlowScreen(navigation, ScreenName.SendFlowAmount);
-  }, [recipientSearch, navigation]);
+    goToAmount();
+  }, [recipientSearch, goToAmount]);
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string) => {
       transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
       recipientSearch.clear();
-      navigateSendFlowScreen(navigation, ScreenName.SendFlowAmount);
+      goToAmount();
     },
-    [transaction, state.recipient?.memo, recipientSearch, navigation],
+    [transaction, state.recipient?.memo, recipientSearch, goToAmount],
   );
 
   if (!account || !currency) {

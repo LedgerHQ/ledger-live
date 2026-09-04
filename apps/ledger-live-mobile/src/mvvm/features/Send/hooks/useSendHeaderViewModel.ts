@@ -27,7 +27,6 @@ import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
-import { navigateSendFlowScreen } from "../utils/navigateSendFlowScreen";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 
 export type SendHeaderViewModel = {
@@ -201,7 +200,12 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       setRecipientSearchValue(prefillValue);
     }
 
-    navigateSendFlowScreen(navigation, ScreenName.SendFlowRecipient);
+    const { routes, index } = navigation.getState();
+    if (routes[index - 1]?.name === ScreenName.SendFlowRecipient) {
+      navigation.goBack();
+      return;
+    }
+    navigation.navigate(ScreenName.SendFlowRecipient);
   }, [
     isAmountStep,
     navigation,
