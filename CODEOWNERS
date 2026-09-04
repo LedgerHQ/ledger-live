@@ -138,6 +138,7 @@ features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
 features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
 features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
+features/flow/pay-card-widget/                           @ledgerhq/wallet-xp
 features/flow/pay-contact/                               @ledgerhq/wallet-xp
 
 # Wallet — Intents
