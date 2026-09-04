@@ -14,14 +14,21 @@ const FEE_READDED_BY_FRAMEWORK = new Set(["OUT", "DELEGATE", "UNDELEGATE", "REDE
 function toOperation(op: CosmosParsedOperation): Operation {
   const details = toOperationExtraRaw(op.extra) as Record<string, unknown>;
   const value = FEE_READDED_BY_FRAMEWORK.has(op.type) ? op.value.minus(op.fee) : op.value;
-  // The generic op adapter forwards only `details.stake`, not cosmos's `validators` array — mirror
-  // validators[0] so the generic-adapter sees the same delegate/undelegate/reward target as legacy.
-  const validator = op.extra.validators?.[0];
-  if (validator) {
-    details.stake = {
-      address: validator.address,
-      amount: BigInt(validator.amount.integerValue().toFixed()),
-    };
+  const { familyExtra } = op.extra;
+  if (familyExtra) {
+    const rawFamilyExtra: Record<string, unknown> = {};
+    if (familyExtra.validators && familyExtra.validators.length > 0) {
+      rawFamilyExtra.validators = familyExtra.validators.map(v => ({
+        address: v.address,
+        amount: v.amount.toString(),
+      }));
+    }
+    if (familyExtra.sourceValidator) {
+      rawFamilyExtra.sourceValidator = familyExtra.sourceValidator;
+    }
+    if (Object.keys(rawFamilyExtra).length > 0) {
+      details.familyExtra = rawFamilyExtra;
+    }
   }
   return {
     id: op.hash,
