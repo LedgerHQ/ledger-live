@@ -78,6 +78,39 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
   }),
 }));
 
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet } = actual;
+
+  function MockQueuedBottomSheet({
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+    onOpened,
+    ...props
+  }: import("@shared/ui-queued-bottom-sheet").QueuedBottomSheetProps) {
+    const shouldOpen = !!(isRequestingToBeOpened || isForcingToBeOpened);
+    React.useEffect(() => {
+      if (shouldOpen) {
+        onOpened?.();
+      }
+    }, [onOpened, shouldOpen]);
+    return (
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isRequestingToBeOpened}
+        isForcingToBeOpened={isForcingToBeOpened}
+        onOpened={onOpened}
+        {...props}
+      />
+    );
+  }
+
+  return {
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
+  };
+});
+
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const actual = jest.requireActual("LLM/components/DeviceIntentExecutor");
   const ReactModule = jest.requireActual("react");
@@ -282,7 +315,7 @@ describe("Send flow integration tests", () => {
     expect(screen.queryByTestId("send-add-to-existing-contact-step")).toBeNull();
   });
 
-  it("should show network contacts and advance when selecting a contact with one address", async () => {
+  it("should show network contacts and open the address sheet for a contact with one address", async () => {
     const contacts = [
       mockContact({
         id: "contact-vincent",
@@ -316,10 +349,13 @@ describe("Send flow integration tests", () => {
 
     await user.press(screen.getByTestId("contacts-compact-row-contact-vincent"));
 
+    expect(await screen.findByText("Select Vincent's address")).toBeVisible();
+    await user.press(screen.getByLabelText("Ethereum Main, " + VALID_ETHEREUM_RECIPIENT));
+
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
-  it("should ask which address to use when a contact has several network addresses", async () => {
+  it("should open the address sheet when a contact has several network addresses", async () => {
     const contacts = [
       mockContact({
         id: "contact-benoit",
@@ -344,11 +380,11 @@ describe("Send flow integration tests", () => {
 
     await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
 
-    expect(await screen.findByText("Select address")).toBeVisible();
-    expect(screen.getByText("Benoit")).toBeVisible();
-    expect(screen.queryByTestId("recipient-input")).toBeNull();
+    expect(await screen.findByText("Select Benoit's address")).toBeVisible();
 
-    await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"));
+    await user.press(
+      screen.getByLabelText("Ethereum Coinbase, 0x1234567890123456789012345678901234567890"),
+    );
 
     expect(await screen.findByText("Review")).toBeVisible();
   });
