@@ -31,6 +31,8 @@ const nativeAccounts: ReceiveTestCase[] = [
   { account: Account.ATOM_1, xrayTicket: "B2CQA-2560, B2CQA-2694" },
   { account: Account.XTZ_1, xrayTicket: "B2CQA-2564, B2CQA-2695", teamOwner: Team.BST },
   { account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
+  // TODO(LIVE-36495): replace with a real Xray ticket before merge.
+  { account: Account.ZEC_1, xrayTicket: "B2CQA-TODO", teamOwner: Team.BST },
 ];
 
 const tokenAccount = { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-5694" };
