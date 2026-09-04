@@ -51,7 +51,12 @@ export function PayTabView({
         <Balance {...balance} actionTiles={actionTiles} />
         {isContactsEnabled && <Contacts {...contacts} />}
         <ContactAddressPicker {...contactAddressPicker} />
-        <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
+        <Card
+          title={cardTitle}
+          oauthConfig={oauthConfig}
+          callback={callback}
+          onTrackEvent={balance.onTrackEvent}
+        />
         <FeatureTour {...featureTour} />
         <DepositOptions {...depositOptions} />
         <BankTransferIntro {...bankTransferIntro} />

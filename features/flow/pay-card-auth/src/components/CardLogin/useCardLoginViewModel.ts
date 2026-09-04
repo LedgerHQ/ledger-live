@@ -1,12 +1,23 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
+import { useTranslation } from "@shared/i18n";
+import { buildSignupUrl } from "../../state/buildSignupUrl";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
+import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
+import { markPayCardLoginIntroSeen } from "../../state/loginIntroSlice";
 import { selectIsSignedIn } from "../../state/selectors";
-import type { CardLoginViewModel, CardLoginViewModelParams } from "./types";
+import type {
+  CardLoginCopy,
+  CardLoginIntroActionId,
+  CardLoginIntroRowIcon,
+  CardLoginIntroViewProps,
+  CardLoginViewModel,
+  CardLoginViewModelParams,
+} from "./types";
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 
@@ -20,6 +31,33 @@ const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
   fetch_user_failed: "Your card could not be loaded. Please try again.",
 };
 
+const LOGIN_KEY_PREFIX = "payTab.cardLogin";
+
+const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
+
+const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
+  { icon: "CoinsAddPlus", key: "cashback" },
+  { icon: "CreditCard", key: "virtualCard" },
+  { icon: "LedgerLogo", key: "topUp" },
+];
+
+const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
+  { id: "createAccount", appearance: "base" },
+  { id: "logIn", appearance: "gray" },
+];
+
+export const CARD_LOGIN_INTRO_PAGE_EVENT = "Page card login intro";
+export const CARD_LOGIN_INTRO_PAGE = "card login intro";
+export const CARD_LOGIN_INTRO_FLOW = "card";
+
+const TRACK_BUTTON = {
+  getCard: "get card",
+  login: "login",
+  createAccount: "create an account",
+  logIn: "log in to baanx",
+  close: "close",
+} as const;
+
 /**
  * Turns one machine snapshot into the view props. It is a pure function so the mapping can be read,
  * and tested, without a React tree.
@@ -27,7 +65,9 @@ const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
   errorKind: PayCardLoginErrorKind | null,
+  copy: CardLoginCopy,
   onLoginPress: () => void,
+  intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
   // The card holder is signed in, so there is no login left to offer. `CardMore` holds the screen.
   if (value === "ready") {
@@ -35,22 +75,28 @@ export function mapSnapshotToViewModel(
   }
 
   return {
-    title: "Card",
-    description: "Log in to access your Ledger Card",
-    loginLabel: "Login",
+    ...copy,
     isLoading: value !== "idle" && value !== "error",
     errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
     onLoginPress,
+    intro,
   };
 }
 
 export function useCardLoginViewModel({
   openHostedLogin,
+  mobileWallet,
   oauthConfig,
   callback,
+  onTrackEvent,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
+  const { t } = useTranslation();
+  const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
+  const [isIntroRequested, setIsIntroRequested] = useState(false);
+  const [hasStartedLogin, setHasStartedLogin] = useState(false);
+  const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
     () => createCardLoginPorts({ dispatch, openHostedLogin }),
@@ -77,7 +123,128 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  const onLoginPress = useCallback(() => send({ type: "LOGIN" }), [send]);
+  useEffect(() => {
+    if (snapshot.value === "ready" && hasStartedLogin) {
+      dispatch(markPayCardLoginIntroSeen());
+    }
+  }, [snapshot.value, hasStartedLogin, dispatch]);
 
-  return mapSnapshotToViewModel(snapshot.value, snapshot.context.errorKind, onLoginPress);
+  const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
+
+  const startLogin = useCallback(() => {
+    setHasSignupFailed(false);
+    setHasStartedLogin(true);
+    send({ type: "LOGIN" });
+  }, [send]);
+
+  const openSignup = useCallback(() => {
+    setHasSignupFailed(false);
+
+    void (async () => {
+      try {
+        await openHostedLogin(buildSignupUrl(oauthConfig), oauthConfig.deepLink);
+      } catch {
+        setHasSignupFailed(true);
+      }
+    })();
+  }, [openHostedLogin, oauthConfig]);
+
+  const trackCta = useCallback(
+    (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
+      onTrackEvent?.("button_clicked", {
+        button,
+        flow: CARD_LOGIN_INTRO_FLOW,
+        page: CARD_LOGIN_INTRO_PAGE,
+      });
+    },
+    [onTrackEvent],
+  );
+
+  const onLoginPress = useCallback(() => {
+    if (hasSeenLoginIntro) {
+      trackCta(TRACK_BUTTON.login);
+      startLogin();
+      return;
+    }
+    trackCta(TRACK_BUTTON.getCard);
+    onTrackEvent?.(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
+    setIsIntroRequested(true);
+  }, [hasSeenLoginIntro, onTrackEvent, startLogin, trackCta]);
+
+  const onIntroActionPress = useCallback(
+    (id: CardLoginIntroActionId) => {
+      if (!isIntroOpen) {
+        return;
+      }
+      trackCta(id === "createAccount" ? TRACK_BUTTON.createAccount : TRACK_BUTTON.logIn);
+      setIsIntroRequested(false);
+
+      if (id === "createAccount") {
+        openSignup();
+        return;
+      }
+
+      startLogin();
+    },
+    [isIntroOpen, openSignup, startLogin, trackCta],
+  );
+
+  const onIntroClose = useCallback(() => {
+    if (!isIntroOpen) {
+      return;
+    }
+    trackCta(TRACK_BUTTON.close);
+    setIsIntroRequested(false);
+  }, [isIntroOpen, trackCta]);
+
+  const introRows = useMemo(() => {
+    const wallet = t(`${INTRO_KEY_PREFIX}.wallets.${mobileWallet}`);
+
+    return INTRO_ROWS.map(({ icon, key }) => ({
+      icon,
+      title: t(`${INTRO_KEY_PREFIX}.rows.${key}.title`),
+      description: t(`${INTRO_KEY_PREFIX}.rows.${key}.description`, { wallet }),
+    }));
+  }, [t, mobileWallet]);
+
+  const introActions = useMemo(
+    () =>
+      INTRO_ACTIONS.map(({ id, appearance }) => ({
+        id,
+        appearance,
+        label: t(`${INTRO_KEY_PREFIX}.${id}`),
+      })),
+    [t],
+  );
+
+  const copy = useMemo<CardLoginCopy>(() => {
+    const stage = hasSeenLoginIntro ? "afterIntro" : "beforeIntro";
+
+    return {
+      title: t(`${LOGIN_KEY_PREFIX}.title`),
+      description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
+      loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
+    };
+  }, [t, hasSeenLoginIntro]);
+
+  const intro = useMemo<CardLoginIntroViewProps>(
+    () => ({
+      isOpen: isIntroOpen,
+      title: t(`${INTRO_KEY_PREFIX}.title`),
+      providedBy: t(`${INTRO_KEY_PREFIX}.providedBy`),
+      rows: introRows,
+      actions: introActions,
+      onActionPress: onIntroActionPress,
+      onClose: onIntroClose,
+    }),
+    [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
+  );
+
+  return mapSnapshotToViewModel(
+    snapshot.value,
+    hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
+    copy,
+    onLoginPress,
+    intro,
+  );
 }

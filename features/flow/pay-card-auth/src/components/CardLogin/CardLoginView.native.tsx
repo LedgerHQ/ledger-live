@@ -1,5 +1,14 @@
 import React from "react";
-import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Button,
+  Subheader,
+  SubheaderDescription,
+  SubheaderRow,
+  SubheaderTitle,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
 export function CardLoginView({
@@ -9,40 +18,42 @@ export function CardLoginView({
   isLoading,
   errorMessage,
   onLoginPress,
+  intro,
 }: CardLoginViewProps) {
   return (
-    <Box
-      lx={{
-        flexDirection: "column",
-        gap: "s4",
-        paddingTop: "s16",
-      }}
-    >
-      <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
-        <Box lx={{ flex: 1, flexDirection: "column", gap: "s4" }} style={{ minWidth: 0 }}>
-          <Text typography="heading5SemiBold" lx={{ color: "base" }}>
-            {title}
-          </Text>
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {description}
-          </Text>
+    <>
+      <Box
+        lx={{
+          flexDirection: "column",
+          gap: "s4",
+          paddingTop: "s16",
+        }}
+      >
+        <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
+          <Subheader lx={{ flex: 1 }} style={{ minWidth: 0 }}>
+            <SubheaderRow>
+              <SubheaderTitle>{title}</SubheaderTitle>
+            </SubheaderRow>
+            <SubheaderDescription>{description}</SubheaderDescription>
+          </Subheader>
+          <Button
+            appearance="base"
+            size="md"
+            loading={isLoading}
+            disabled={isLoading}
+            onPress={onLoginPress}
+            accessibilityLabel={loginLabel}
+          >
+            {loginLabel}
+          </Button>
         </Box>
-        <Button
-          appearance="base"
-          size="md"
-          loading={isLoading}
-          disabled={isLoading}
-          onPress={onLoginPress}
-          accessibilityLabel={loginLabel}
-        >
-          {loginLabel}
-        </Button>
+        {errorMessage ? (
+          <Text typography="body3" lx={{ color: "error", alignSelf: "flex-end" }}>
+            {errorMessage}
+          </Text>
+        ) : null}
       </Box>
-      {errorMessage ? (
-        <Text typography="body3" lx={{ color: "error", alignSelf: "flex-end" }}>
-          {errorMessage}
-        </Text>
-      ) : null}
-    </Box>
+      <CardLoginIntroView {...intro} />
+    </>
   );
 }

@@ -34,6 +34,7 @@ export function usePayTabViewModel() {
   // login must take the new values without a restart of the app.
   const apiUrl = useEnv("CARD_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
+  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -41,10 +42,11 @@ export function usePayTabViewModel() {
     () => ({
       apiUrl,
       clientId,
+      hostedUiUrl,
       redirectUri,
       deepLink: PAY_TAB_DEEP_LINK,
     }),
-    [apiUrl, clientId, redirectUri],
+    [apiUrl, clientId, hostedUiUrl, redirectUri],
   );
 
   // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to

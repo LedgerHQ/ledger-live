@@ -89,6 +89,8 @@ export interface PayCardToolProps {
   readonly hasSeenReceiveVerifyHint: boolean;
   /** Resets the Request Verify hint so it shows again on the next Request. */
   readonly resetReceiveVerifyHintSeen: () => void;
+  readonly hasSeenLoginIntro: boolean;
+  readonly resetPayCardLoginIntroSeen: () => void;
   /** Host-only: jump to Portfolio. Omitted when the host cannot navigate. */
   readonly onNavigateToPortfolio?: () => void;
   /** Host-only: jump to the Pay tab. Omitted when the host cannot navigate. */

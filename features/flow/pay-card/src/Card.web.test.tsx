@@ -2,9 +2,12 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import type { CardProps } from "./Card.types";
 
+let mockIsSignedIn = false;
+
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
   CardMore: () => <div data-testid="card-more" />,
+  useIsCardSignedIn: () => mockIsSignedIn,
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -19,6 +22,7 @@ const title = "Crypto card";
 const oauthConfig: CardProps["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
+  hostedUiUrl: "https://hosted.example",
   redirectUri: "https://card.example/callback",
 };
 
@@ -31,7 +35,19 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
 });
 
 describe("Card (web)", () => {
-  it("renders the host title", () => {
+  beforeEach(() => {
+    mockIsSignedIn = false;
+  });
+
+  it("renders the host title once the card holder is signed in", () => {
+    mockIsSignedIn = true;
+
+    render(<Card title={title} oauthConfig={oauthConfig} />);
+
+    expect(screen.getByText(title)).toBeVisible();
+  });
+
+  it("shows the host title while nobody is signed in", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByText(title)).toBeVisible();

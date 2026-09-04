@@ -57,6 +57,13 @@ jest.mock("@features/flow-pay-feature-tour/state", () => ({
   }),
 }));
 
+jest.mock("@features/flow-pay-card-auth/state", () => ({
+  ...jest.requireActual("@features/flow-pay-card-auth/state"),
+  payCardLoginIntroPersistedSelector: (state: FakeState) => ({
+    hasSeenLoginIntro: state.payCardLoginIntro.hasSeenLoginIntro,
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));
@@ -83,6 +90,9 @@ type FakeState = {
   payRequestVerifyHint: {
     hasSeenReceiveVerifyHint: boolean;
   };
+  payCardLoginIntro: {
+    hasSeenLoginIntro: boolean;
+  };
   trustchain?: unknown;
 };
 
@@ -100,6 +110,7 @@ const baseState = (): FakeState => ({
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
   payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+  payCardLoginIntro: { hasSeenLoginIntro: false },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -243,58 +254,55 @@ describe("DBMiddleware - payCard branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists the composed { hasSeenFeatureTour, hasSeenReceiveVerifyHint, balanceFilter } blob on payCardFeatureTour/* actions", () => {
-    const state: FakeState = {
-      ...baseState(),
-      payCardFeatureTour: { hasSeenFeatureTour: true },
-      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
-      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
-    };
+  const seenState = (): FakeState => ({
+    ...baseState(),
+    payCardFeatureTour: { hasSeenFeatureTour: true },
+    payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
+    payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    payCardLoginIntro: { hasSeenLoginIntro: true },
+  });
+
+  const expectedBlob = {
+    hasSeenFeatureTour: true,
+    hasSeenReceiveVerifyHint: true,
+    balanceFilter: "ethereum/erc20/usd__coin",
+    hasSeenLoginIntro: true,
+  };
+
+  it("persists the composed blob on payCardFeatureTour/* actions", () => {
+    const state = seenState();
 
     runMiddleware([state, state], { type: "payCardFeatureTour/markPayCardFeatureTourSeen" });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
-      hasSeenFeatureTour: true,
-      hasSeenReceiveVerifyHint: true,
-      balanceFilter: "ethereum/erc20/usd__coin",
-    });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", expectedBlob);
   });
 
   it("persists the composed blob on payRequestVerifyHint/* actions", () => {
-    const state: FakeState = {
-      ...baseState(),
-      payCardFeatureTour: { hasSeenFeatureTour: true },
-      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
-      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
-    };
+    const state = seenState();
 
     runMiddleware([state, state], { type: "payRequestVerifyHint/markReceiveVerifyHintSeen" });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
-      hasSeenFeatureTour: true,
-      hasSeenReceiveVerifyHint: true,
-      balanceFilter: "ethereum/erc20/usd__coin",
-    });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", expectedBlob);
   });
 
   it("persists the composed blob on payCardBalance/* actions", () => {
-    const state: FakeState = {
-      ...baseState(),
-      payCardFeatureTour: { hasSeenFeatureTour: true },
-      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
-      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
-    };
+    const state = seenState();
 
     runMiddleware([state, state], { type: "payCardBalance/setPayCardBalanceFilter" });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
-      hasSeenFeatureTour: true,
-      hasSeenReceiveVerifyHint: true,
-      balanceFilter: "ethereum/erc20/usd__coin",
-    });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", expectedBlob);
+  });
+
+  it("persists the composed blob on payCardLoginIntro/* actions", () => {
+    const state = seenState();
+
+    runMiddleware([state, state], { type: "payCardLoginIntro/markPayCardLoginIntroSeen" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", expectedBlob);
   });
 });
 

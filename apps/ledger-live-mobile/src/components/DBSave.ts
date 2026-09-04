@@ -38,6 +38,7 @@ import { marketBannerStoreSelector } from "~/reducers/marketBanner";
 import { payCardBalancePersistedSelector } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintPersistedSelector } from "@features/flow-pay-request/state";
+import { payCardLoginIntroPersistedSelector } from "@features/flow-pay-card-auth/state";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
@@ -190,16 +191,19 @@ export const payCardPersistedSelector = (state: State) => ({
   ...payCardFeatureTourPersistedSelector(state),
   ...payRequestVerifyHintPersistedSelector(state),
   ...payCardBalancePersistedSelector(state),
+  ...payCardLoginIntroPersistedSelector(state),
 });
 
-const payCardDbSaveSliceSelector = createSelector(
+export const payCardDbSaveSliceSelector = createSelector(
   (state: State) => state.payCardBalance,
   (state: State) => state.payCardFeatureTour,
   (state: State) => state.payRequestVerifyHint,
-  (payCardBalance, payCardFeatureTour, payRequestVerifyHint) => ({
+  (state: State) => state.payCardLoginIntro,
+  (payCardBalance, payCardFeatureTour, payRequestVerifyHint, payCardLoginIntro) => ({
     payCardBalance,
     payCardFeatureTour,
     payRequestVerifyHint,
+    payCardLoginIntro,
   }),
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>

@@ -2,14 +2,26 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style";
 import { CardLoginView } from "../CardLoginView.web";
+import type { CardLoginIntroViewProps } from "../types";
+
+const intro: CardLoginIntroViewProps = {
+  isOpen: false,
+  title: "Spend crypto, earn cashback",
+  providedBy: "Card provided by Baanx",
+  rows: [],
+  actions: [],
+  onActionPress: jest.fn(),
+  onClose: jest.fn(),
+};
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
-  title: "Ledger Card",
-  description: "Log in to manage your Ledger Card",
+  title: "Crypto Card",
+  description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
+  intro,
 };
 
 function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {
@@ -25,6 +37,12 @@ describe("CardLoginView (Web)", () => {
     renderCardLoginView();
 
     expect(screen.getByRole("button", { name: "Login" })).toBeVisible();
+  });
+
+  it("should render the login subtitle when copy is provided", () => {
+    renderCardLoginView();
+
+    expect(screen.getByText("Log in to access your card")).toBeVisible();
   });
 
   it("should render a login error when provided", () => {
