@@ -63,7 +63,7 @@ jobs:
       id-token: write
       contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
@@ -75,6 +75,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -112,7 +113,7 @@ jobs:
     name: "Post build status to PR"
     needs: [build-web-tools]
     if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public
     permissions:
       contents: read
       pull-requests: write

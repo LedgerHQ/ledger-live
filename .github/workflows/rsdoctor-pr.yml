@@ -48,7 +48,7 @@ env:
 jobs:
   rsdoctor:
     name: "Rsdoctor (Desktop + Mobile)"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 20
     steps:
       - name: Checkout

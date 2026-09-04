@@ -80,7 +80,7 @@ jobs:
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -89,6 +89,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -193,7 +194,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -202,6 +203,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -219,6 +221,11 @@ jobs:
         with:
           skip_ruby: true
           install_playwright: true
+
+      - name: Install mitmproxy build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: pipx
 
       - name: Start mitmproxy
         continue-on-error: true
@@ -287,7 +294,7 @@ jobs:
   report:
     name: "Desktop E2E & Mock > Report"
     needs: [e2e-tests-linux, speculos-e2e-tests-linux]
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

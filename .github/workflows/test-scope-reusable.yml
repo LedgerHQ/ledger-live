@@ -60,7 +60,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -70,6 +70,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}

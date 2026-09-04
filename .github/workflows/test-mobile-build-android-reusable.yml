@@ -106,7 +106,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
     steps:
@@ -120,6 +120,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
@@ -185,7 +186,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}
     outputs:
@@ -208,6 +209,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
@@ -259,6 +261,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     steps:
       - run: echo "Skipping"

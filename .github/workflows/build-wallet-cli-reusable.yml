@@ -39,7 +39,7 @@ permissions:
 jobs:
   build-wallet-cli:
     name: "Build (all platforms)"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 30
     continue-on-error: true
     outputs:
@@ -54,6 +54,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}

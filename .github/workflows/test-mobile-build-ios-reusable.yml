@@ -142,6 +142,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
           use-mise: "true"
@@ -200,7 +201,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-wallet-8cpu-aws-public]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -221,6 +222,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
@@ -272,6 +274,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-wallet-1cpu-aws-public]
     steps:
       - run: echo "Skipping"
