@@ -62,6 +62,11 @@ export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction):
  * bounded PCZT (device-safe) selection does not. Lets the caller raise a
  * "too large for one send" error instead of NotEnoughBalance in exactly that
  * case, and never in a genuine-shortfall case.
+ *
+ * Inherits `resolveTransparentUtxos`'s exclusion of `tx.selectedUtxos`: a
+ * caller-supplied override is never bounded (see that function's comment), so
+ * this always answers `false` when one is set, however many UTXOs it holds --
+ * there is no bounded-only shortfall to report for an unbounded set.
  */
 export function hasBoundedTransparentShortfall(
   account: ZcashAccount,
