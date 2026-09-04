@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
+import { navigateSendFlowScreen } from "../../../utils/navigateSendFlowScreen";
 
 type RecipientScreenViewModelBase = Readonly<{
   ready: false;
@@ -39,14 +40,14 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onMemoProceed = useCallback(() => {
     recipientSearch.clear();
-    navigation.navigate(ScreenName.SendFlowAmount);
+    navigateSendFlowScreen(navigation, ScreenName.SendFlowAmount);
   }, [recipientSearch, navigation]);
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string) => {
       transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
       recipientSearch.clear();
-      navigation.navigate(ScreenName.SendFlowAmount);
+      navigateSendFlowScreen(navigation, ScreenName.SendFlowAmount);
     },
     [transaction, state.recipient?.memo, recipientSearch, navigation],
   );
