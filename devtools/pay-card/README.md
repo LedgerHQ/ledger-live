@@ -1,15 +1,17 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place, in five
-sections: **Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**,
-**Feature tour** (seen state plus a reset) and **Env vars** (the Card backend values, with the
-development tenant ready in each input).
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
 
-The native panel adds a **Secure browser** section at the bottom: a URL field and one button, which
-opens that URL in the secure browser the hosted login uses. The host supplies the action, so a host
-without such a browser shows no section.
+The shared panel has five sections: **Feature flags**, **Onboarding** (toggle each step done or
+not-done), **Reset onboarding**, **Feature tour** (seen state plus a reset) and **Env vars** (the
+Card backend values, with the development tenant ready in each input).
 
-The native panel adds four more sections at the top, when the host builds the `auth` prop:
+The native panel adds **Request verify hint** (seen state plus a reset) and, when the host supplies
+navigation, **Quick actions** (Portfolio / Pay tab). It also adds a **Secure browser** section: a
+URL field and one button, which opens that URL in the secure browser the hosted login uses. The
+host supplies the action, so a host without such a browser shows no section.
+
+When the host builds the `auth` prop, the native panel adds four more sections at the top:
 **Auth session** (the stored tokens, or why the secure store refused a read), **Device secure
 storage** (read the tokens, damage one, or clear the session), **Send API requests** (renew the
 session, or get the user) and **MSW Auth Renewal Mock** (what the mocked
@@ -56,6 +58,10 @@ interface PayCardToolProps {
   };
   hasSeenFeatureTour: boolean;
   resetPayCardFeatureTourSeen: () => void;
+  hasSeenReceiveVerifyHint: boolean;
+  resetReceiveVerifyHintSeen: () => void;
+  onNavigateToPortfolio?: () => void;
+  onNavigateToPayTab?: () => void;
   env: {
     // The app reads these values on every request, so `setVar` applies without a restart. Nothing
     // saves them: after a restart the app reads the build's values again.
