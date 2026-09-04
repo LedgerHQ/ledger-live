@@ -142,6 +142,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
           use-mise: "true"
@@ -221,6 +222,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"

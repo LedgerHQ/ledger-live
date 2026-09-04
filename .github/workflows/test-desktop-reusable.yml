@@ -89,6 +89,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -202,6 +203,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -219,6 +221,11 @@ jobs:
         with:
           skip_ruby: true
           install_playwright: true
+
+      - name: Install mitmproxy build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: pipx
 
       - name: Start mitmproxy
         continue-on-error: true

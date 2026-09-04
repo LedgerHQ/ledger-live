@@ -67,6 +67,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -75,10 +76,6 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
-        with:
-          ruby-version: 3.3.0
 
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
@@ -123,6 +120,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}

@@ -302,7 +302,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@ci-runner-baseline
     permissions:
       id-token: write
       contents: read
@@ -326,7 +326,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@ci-runner-baseline
     permissions:
       id-token: write
       contents: read
@@ -440,6 +440,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
@@ -478,7 +479,7 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p /tmp/apk/assets
-          mkdir /home/runner/.android/
+          mkdir -p /home/runner/.android/
           mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
           mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
           (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
@@ -705,6 +706,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
           use-mise: true
@@ -895,6 +897,7 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          skip-nx-cache: "true"
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
