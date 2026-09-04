@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardLogoutView } from "../CardLogoutView.native";
+import { CardMoreView } from "../CardMoreView.native";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
@@ -19,7 +19,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   ),
 }));
 
-const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
+const defaultProps: React.ComponentProps<typeof CardMoreView> = {
   moreLabel: "More",
   sheetTitle: "More",
   rows: [
@@ -33,24 +33,24 @@ const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
   onSheetClose: jest.fn(),
 };
 
-function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLogoutView>> = {}) {
-  return render(<CardLogoutView {...defaultProps} {...props} />);
+function renderCardMoreView(props: Partial<React.ComponentProps<typeof CardMoreView>> = {}) {
+  return render(<CardMoreView {...defaultProps} {...props} />);
 }
 
-describe("CardLogoutView (Native)", () => {
+describe("CardMoreView (Native)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should render the More tile with its label", () => {
-    renderCardLogoutView();
+    renderCardMoreView();
 
     expect(screen.getByLabelText("More")).toBeTruthy();
   });
 
   it("should call the More handler when the tile is pressed", () => {
     const onMorePress = jest.fn();
-    renderCardLogoutView({ onMorePress });
+    renderCardMoreView({ onMorePress });
 
     fireEvent.press(screen.getByTestId("card-more-tile"));
 
@@ -58,7 +58,7 @@ describe("CardLogoutView (Native)", () => {
   });
 
   it("should pass the open flag to the sheet", () => {
-    renderCardLogoutView({ isSheetOpen: true });
+    renderCardMoreView({ isSheetOpen: true });
 
     expect(screen.getByTestId("card-more-sheet").props.accessibilityState.expanded).toBe(true);
   });

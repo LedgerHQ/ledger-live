@@ -6,7 +6,7 @@ import { useGetUserQuery } from "@domain/api-card-management";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { createCardLogoutPorts } from "../../../state/createCardLogoutPorts";
 import { payCardAuthSlice, setSignedIn } from "../../../state/slice";
-import { useCardLogoutViewModel } from "../useCardLogoutViewModel";
+import { useCardMoreViewModel } from "../useCardMoreViewModel";
 import { CARD_MORE_RESOURCES } from "./fixtures";
 
 jest.mock("@domain/api-card-management", () => ({ useGetUserQuery: jest.fn() }));
@@ -15,7 +15,7 @@ jest.mock("../../../state/createCardLogoutPorts", () => ({ createCardLogoutPorts
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
 
 /** The row the ViewModel gives a real action to. The other three run a shared no-op. */
-function pressLogoutRow(model: ReturnType<typeof useCardLogoutViewModel>) {
+function pressLogoutRow(model: ReturnType<typeof useCardMoreViewModel>) {
   model?.rows.find(row => row.id === "logout")?.onPress();
 }
 
@@ -53,12 +53,12 @@ function setUp() {
       <I18nTestProvider resources={CARD_MORE_RESOURCES}>{children}</I18nTestProvider>
     </Provider>
   );
-  const view = renderHook(() => useCardLogoutViewModel(), { wrapper });
+  const view = renderHook(() => useCardMoreViewModel(), { wrapper });
 
   return { store, view, logout, logoutReached, release: () => releaseLogout?.() };
 }
 
-describe("useCardLogoutViewModel", () => {
+describe("useCardMoreViewModel", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

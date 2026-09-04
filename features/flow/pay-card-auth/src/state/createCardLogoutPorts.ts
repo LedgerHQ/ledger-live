@@ -6,8 +6,8 @@ import type { CardLoginDispatch } from "./createCardLoginPorts";
 import type { CardLogoutPorts } from "./types";
 
 /**
- * Binds `CardLogout` to the outside world. It is its own factory, because the logout is its own
- * component: it shares the session store and the Card api with the login, and nothing else.
+ * Binds `CardMore` to the outside world. It is its own factory, because the logout is its own
+ * concern: it shares the session store and the Card api with the login, and nothing else.
  */
 export function createCardLogoutPorts(dispatch: CardLoginDispatch): CardLogoutPorts {
   return {

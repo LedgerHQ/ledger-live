@@ -1,17 +1,17 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { MoreHorizontal } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CardMoreSheet } from "../CardMore/CardMoreSheet";
-import type { CardLogoutViewProps } from "./types";
+import { CardMoreSheet } from "./CardMoreSheet";
+import type { CardMoreViewProps } from "./types";
 
-export function CardLogoutView({
+export function CardMoreView({
   moreLabel,
   sheetTitle,
   rows,
   isSheetOpen,
   onMorePress,
   onSheetClose,
-}: CardLogoutViewProps) {
+}: CardMoreViewProps) {
   return (
     <>
       {/* The design puts three tiles in a row, and `More` is the only one in scope. `isFull` gives

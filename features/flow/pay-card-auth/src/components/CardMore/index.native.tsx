@@ -1,6 +1,6 @@
 import React from "react";
-import { CardLogoutView } from "./CardLogoutView";
-import { useCardLogoutViewModel } from "./useCardLogoutViewModel";
+import { CardMoreView } from "./CardMoreView";
+import { useCardMoreViewModel } from "./useCardMoreViewModel";
 
 /**
  * The Card's `More` menu, on its own: a tile-button that opens a sheet, and the sheet's `Logout` row
@@ -11,8 +11,8 @@ import { useCardLogoutViewModel } from "./useCardLogoutViewModel";
  * Rendering nothing is not the same as leaving: the caller keeps this component mounted, so the
  * ViewModel holds its state across a whole login, logout and login again.
  */
-export function CardLogout() {
-  const logout = useCardLogoutViewModel();
+export function CardMore() {
+  const more = useCardMoreViewModel();
 
-  return logout ? <CardLogoutView {...logout} /> : null;
+  return more ? <CardMoreView {...more} /> : null;
 }

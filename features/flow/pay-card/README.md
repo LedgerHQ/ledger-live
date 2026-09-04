@@ -23,9 +23,9 @@ import { Card } from "@features/flow-pay-card";
 
 - The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
   once the host provides a countervalue formatter and a balance label, the bare `CardArtwork` otherwise.
-- `CardLogin` / `CardLogout` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — each
+- `CardLogin` / `CardMore` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — each
   decides on its own whether it belongs on screen: the login while nobody is signed in, and the
-  logout once somebody is.
+  More menu once somebody is.
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
 They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and

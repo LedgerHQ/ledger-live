@@ -1,5 +1,5 @@
-import { mapUserToViewModel, runLogout, startLogout } from "../useCardLogoutViewModel";
-import type { CardMoreLabels } from "../useCardLogoutViewModel";
+import { mapUserToViewModel, runLogout, startLogout } from "../useCardMoreViewModel";
+import type { CardMoreLabels } from "../useCardMoreViewModel";
 import type { CardLogoutPorts } from "../../../state/types";
 
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;

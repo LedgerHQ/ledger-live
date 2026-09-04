@@ -7,8 +7,7 @@ import { createCardLogoutPorts } from "../../state/createCardLogoutPorts";
 import type { CardLoginDispatch } from "../../state/createCardLoginPorts";
 import { selectIsSignedIn } from "../../state/selectors";
 import type { CardLogoutPorts } from "../../state/types";
-import type { CardMoreRow, CardMoreRowId } from "../CardMore/types";
-import type { CardLogoutViewModel } from "./types";
+import type { CardMoreRow, CardMoreRowId, CardMoreViewModel } from "./types";
 
 /** The order the design lists the rows in. */
 const ROW_ORDER: readonly CardMoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
@@ -92,7 +91,7 @@ export function mapUserToViewModel({
   onMorePress,
   onSheetClose,
   handlers,
-}: MapUserToViewModelInput): CardLogoutViewModel {
+}: MapUserToViewModelInput): CardMoreViewModel {
   // Nobody is signed in, or the user answer is still on its way back from the cache.
   if (!isSignedIn || !user) {
     return null;
@@ -114,7 +113,7 @@ export function mapUserToViewModel({
   };
 }
 
-export function useCardLogoutViewModel(): CardLogoutViewModel {
+export function useCardMoreViewModel(): CardMoreViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
