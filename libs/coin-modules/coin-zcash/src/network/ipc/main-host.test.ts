@@ -299,8 +299,26 @@ describe("one-shot transaction handlers", () => {
       type: "broadcast-transaction-error",
       requestId: "req-cast",
       message: "gRPC rejected",
+      endpoint: "https://grpc.example.com",
     });
     await expect(promise).rejects.toThrow("gRPC rejected");
+  });
+
+  it("attaches the endpoint as an own property on the rejected Error", async () => {
+    setupZcashNativeHost();
+    const args = { requestId: "req-cast", grpcUrl: "u", txHex: "abcd" };
+    const promise = getHandler(ZCASH_IPC.broadcastTransaction)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    emitUtilityMessage({
+      type: "broadcast-transaction-error",
+      requestId: "req-cast",
+      message: "gRPC rejected",
+      endpoint: "https://grpc.example.com",
+    });
+
+    await expect(promise).rejects.toMatchObject({ endpoint: "https://grpc.example.com" });
   });
 
   it("deriveShieldedAddress forwards to the utility and resolves with the address", async () => {

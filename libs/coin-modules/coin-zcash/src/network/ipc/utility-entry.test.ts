@@ -164,7 +164,7 @@ describe("bootstrapUtility — broadcast-transaction", () => {
     ]);
   });
 
-  it("posts a broadcast-transaction-error on failure", async () => {
+  it("posts a broadcast-transaction-error with the endpoint on failure", async () => {
     mockBroadcastTransactionJob.mockRejectedValue(new Error("gRPC rejected"));
 
     const { posted, dispatch } = makePort();
@@ -172,7 +172,12 @@ describe("bootstrapUtility — broadcast-transaction", () => {
     await flush();
 
     expect(posted).toEqual([
-      { type: "broadcast-transaction-error", requestId: "req-cast", message: "gRPC rejected" },
+      {
+        type: "broadcast-transaction-error",
+        requestId: "req-cast",
+        message: "gRPC rejected",
+        endpoint: "https://grpc.example.com",
+      },
     ]);
   });
 });
