@@ -10193,7 +10193,8 @@
       }
     },
     "card": {
-      "title": "Crypto card"
+      "title": "Crypto card",
+      "balanceLabel": "Balance"
     },
     "actions": {
       "deposit": "Add stablecoin",

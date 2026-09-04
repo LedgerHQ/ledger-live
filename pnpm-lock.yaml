@@ -6847,6 +6847,9 @@ importers:
 
   features/flow/pay-card-details:
     dependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.27
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.11(react@19.1.4)
@@ -6854,15 +6857,12 @@ importers:
       '@features/platform-style':
         specifier: workspace:*
         version: link:../../platform/style
-      '@ledgerhq/lumen-design-core':
-        specifier: 'catalog:'
-        version: 0.1.27
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.56(@ledgerhq/lumen-design-core@0.1.27)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.59(@ledgerhq/lumen-design-core@0.1.27)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        version: 0.1.59(@ledgerhq/lumen-design-core@0.1.27)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
@@ -6926,6 +6926,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-native-svg:
+        specifier: 'catalog:'
+        version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)

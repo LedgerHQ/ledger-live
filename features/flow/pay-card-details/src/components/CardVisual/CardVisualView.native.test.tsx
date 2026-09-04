@@ -1,3 +1,6 @@
+// The overlay only needs the provider to switch color scheme; the stubbed provider ignores it.
+jest.mock("@ledgerhq/lumen-design-core", () => ({ ledgerLiveThemes: {} }));
+
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { CardVisualView } from "./CardVisualView.native";
@@ -12,7 +15,7 @@ const formatCountervalue = (value: number): FormattedValue => ({
 });
 
 describe("CardVisualView (native)", () => {
-  it("renders nothing until the native card visual ships", () => {
+  it("renders the card artwork with the balance caption and amount", () => {
     render(
       <CardVisualView
         balance={100}
@@ -22,6 +25,9 @@ describe("CardVisualView (native)", () => {
       />,
     );
 
-    expect(screen.queryByTestId("card-visual")).toBeNull();
+    expect(screen.getByTestId("card-visual")).toBeTruthy();
+    expect(screen.getByTestId("card-artwork")).toBeTruthy();
+    expect(screen.getByText("Balance")).toBeTruthy();
+    expect(screen.getByTestId("card-visual-amount")).toBeTruthy();
   });
 });
