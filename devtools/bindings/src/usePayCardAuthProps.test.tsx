@@ -21,6 +21,19 @@ function withStore(store: ReturnType<typeof buildStore>) {
 
 const session = { accessToken: "at_token", refreshToken: "rt_token" };
 
+function publishMockState(overrides: Partial<NonNullable<MockHost["payCardMockState"]>> = {}) {
+  (globalThis as MockHost).payCardMockState = {
+    tokenResponse: "pass",
+    responses: [
+      { id: "pass", label: "Off", hint: "The real provider answers." },
+      { id: "400", label: "400", hint: "The session must end." },
+    ],
+    userUnauthorizedOnce: false,
+    refreshCount: 3,
+    ...overrides,
+  };
+}
+
 describe("usePayCardAuthProps", () => {
   let store: ReturnType<typeof buildStore>;
 
@@ -151,15 +164,7 @@ describe("usePayCardAuthProps", () => {
   });
 
   it("drives the mock the handler published", async () => {
-    (globalThis as MockHost).payCardMockState = {
-      tokenResponse: "pass",
-      responses: [
-        { id: "pass", label: "Off", hint: "The real provider answers." },
-        { id: "400", label: "400", hint: "The session must end." },
-      ],
-      userUnauthorizedOnce: false,
-      refreshCount: 3,
-    };
+    publishMockState();
     const { result } = renderHook(() => usePayCardAuthProps(), { wrapper: withStore(store) });
 
     await waitFor(() => expect(result.current.mock.available).toBe(true));
