@@ -10,24 +10,23 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-jest.mock("../usePayTabNewPayment", () => ({
-  usePayTabNewPayment: () => ({ open: mockOpen }),
-}));
-
 describe("usePayTabContacts", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("wires the Pay tile to the Send flow", () => {
-    const { result } = renderHook(() => usePayTabContacts());
+  it("wires the New tile to open send", () => {
+    const { result } = renderHook(() => usePayTabContacts(mockOpen));
 
     act(() => result.current.onPay());
+
     expect(mockOpen).toHaveBeenCalledTimes(1);
+    expect(mockOpen).toHaveBeenCalledWith();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("opens the full contacts list from the My Wallet stack with a Pay title on see-all", () => {
-    const { result } = renderHook(() => usePayTabContacts());
+    const { result } = renderHook(() => usePayTabContacts(mockOpen));
 
     act(() => result.current.onSeeAll?.());
 

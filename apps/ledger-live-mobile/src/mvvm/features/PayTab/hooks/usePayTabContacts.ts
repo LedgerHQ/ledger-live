@@ -6,30 +6,29 @@ import type { ContactsNativeProps } from "@features/flow-pay-contact";
 import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { usePayTabNewPayment } from "./usePayTabNewPayment";
 import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
 
-export function usePayTabContacts(): ContactsNativeProps {
+export function usePayTabContacts(open: (contact?: Contact) => void): ContactsNativeProps {
   const { t } = useTranslation();
-  const { open } = usePayTabNewPayment();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const outgoingOperations = usePayTabOutgoingOperations();
 
-  const onSeeAll = useCallback(() => {
+  const openPayContactList = useCallback(() => {
     navigation.navigate(NavigatorName.MyWallet, {
       screen: ScreenName.MyWalletContacts,
       params: { title: t("payTab.contacts.seeAllTitle") },
     });
   }, [navigation, t]);
+  const onPay = useCallback(() => open(), [open]);
   const onContactPress = useCallback((contact: Contact) => open(contact), [open]);
 
   return useMemo(
     () => ({
-      onPay: open,
+      onPay,
       onContactPress,
-      onSeeAll,
+      onSeeAll: openPayContactList,
       outgoingOperations,
     }),
-    [open, onContactPress, onSeeAll, outgoingOperations],
+    [onContactPress, onPay, openPayContactList, outgoingOperations],
   );
 }
