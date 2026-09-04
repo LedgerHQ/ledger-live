@@ -36,6 +36,11 @@ type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
   readonly platform?: "web" | "native";
+  /**
+   * Prices one wallet's balance. The rates and the counter-value currency are the app's, so the
+   * host owns this; without one the tool reads the wallets and prices none of them.
+   */
+  readonly resolveCounterValue?: ResolveWalletCounterValue;
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -79,7 +84,7 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
 }
 
 /** Never called: the wallet queries are skipped whenever the host omits its own resolver. */
-/** The tool reports what the endpoints answer, not what it is worth. The join needs one anyway. */
+/** Stands in when the host prices nothing, so the wallets are still read and shown. */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
 /** The catalog as the tool lists it, in key order so a pair is easy to find by eye. */
@@ -271,7 +276,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    resolveCounterValue: options.resolveCounterValue ?? NO_COUNTER_VALUE,
     skip: skipWallets,
   });
 
@@ -308,9 +313,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
-      // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, ledgerId, balance: walletBalance }) => ({
+        ({
           id,
           address,
           currency,
@@ -318,6 +322,16 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
           priority,
           ledgerId,
           balance: walletBalance,
+          counterValue,
+        }) => ({
+          id,
+          address,
+          currency,
+          network,
+          priority,
+          ledgerId,
+          balance: walletBalance,
+          counterValue,
         }),
       ),
       isFetching: linkedWallets.isFetching,

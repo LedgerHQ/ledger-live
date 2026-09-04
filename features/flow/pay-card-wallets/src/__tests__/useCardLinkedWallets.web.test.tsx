@@ -16,11 +16,25 @@ const internalWallets = [
 ];
 
 const linkedWallets = [
-  { id: "w-usdt", address: "0xusdt", currency: "usdt", network: "ethereum", priority: 2 },
-  { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 1 },
+  {
+    id: "w-usdt",
+    address: "0xusdt",
+    currency: "usdt",
+    network: "ethereum",
+    priority: 2,
+    ledgerId: "ethereum/erc20/usd_tether__erc20_",
+  },
+  {
+    id: "w-usdc",
+    address: "0xusdc",
+    currency: "usdc",
+    network: "ethereum",
+    priority: 1,
+    ledgerId: "ethereum/erc20/usd__coin",
+  },
 ];
 
-const resolveCounterValue: ResolveWalletCounterValue = (_wallet, balance) => Number(balance);
+const resolveCounterValue: ResolveWalletCounterValue = (_ledgerId, balance) => Number(balance);
 
 type QueryStub = Readonly<{
   data?: unknown;

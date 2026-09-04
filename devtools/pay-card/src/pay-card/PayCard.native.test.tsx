@@ -246,6 +246,7 @@ describe("PayCard (native)", () => {
       network: "ethereum",
       priority: 0,
       balance: "125.40",
+      counterValue: 12540,
     },
     {
       id: "w-sol",
@@ -254,6 +255,7 @@ describe("PayCard (native)", () => {
       network: "solana",
       priority: 1,
       balance: null,
+      counterValue: null,
     },
   ];
 
@@ -323,6 +325,17 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("ethereum")).toBeTruthy();
     expect(screen.getByText("sol")).toBeTruthy();
     expect(screen.getByText("solana")).toBeTruthy();
+  });
+
+  it("shows what a joined wallet is worth, and says when it could not be priced", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, combinedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("12540")).toBeTruthy();
+    expect(screen.getByText("null — nothing to price, or no rate for it")).toBeTruthy();
   });
 
   it("shows the Ledger currency each link resolved to, and says when one did not", async () => {
