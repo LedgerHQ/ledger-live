@@ -60,7 +60,7 @@ export const store = configureStore({
             }),
             ...cardApiExtra({
               // Read on every request, so the debug settings can change them without a restart.
-              getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
+              getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
               getCardSessionToken,
               refreshCardSession,

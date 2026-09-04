@@ -11,13 +11,11 @@ import {
   ListItemTrailing,
   Spot,
   Tag,
-  Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, CoinsCrypto, CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
-import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 import { Interaction } from "../components/Interaction/Interaction";
 
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
@@ -33,7 +31,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetReceiveVerifyHintSeen,
     onNavigateToPortfolio,
     onNavigateToPayTab,
-    env,
   } = props;
   const [showInteraction, setShowInteraction] = useState(false);
 
@@ -154,17 +151,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           </Section>
         </>
       ) : null}
-
-      <Divider />
-
-      <Section title="Env vars">
-        <Text typography="body4" lx={{ color: "muted" }}>
-          Applied at once, and not saved: a restart brings the build's values back.
-        </Text>
-        {env.vars.map(envVar => (
-          <EnvVarRow key={envVar.key} envVar={envVar} onSet={env.setVar} />
-        ))}
-      </Section>
     </ScrollView>
   );
 }
