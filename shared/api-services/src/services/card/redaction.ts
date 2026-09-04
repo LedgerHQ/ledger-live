@@ -13,10 +13,7 @@ export function redactCardApiAction<A extends Action>(action: A): A {
   const redacted: Record<string, unknown> = { ...action };
 
   if ("payload" in redacted && redacted.payload !== undefined) {
-    redacted.payload =
-      isRecord(redacted.payload) && "status" in redacted.payload
-        ? { status: redacted.payload.status, data: REDACTED }
-        : REDACTED;
+    redacted.payload = redactedPayload(redacted.payload);
   }
 
   if ("error" in redacted && redacted.error !== undefined) {
@@ -76,6 +73,20 @@ export function redactCardApiState<S>(state: S): S {
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return { ...state, [CARD_REDUCER_PATH]: redactedCardState } as S;
+}
+
+/** A `CUSTOM_ERROR` carries our own error string instead of a provider `data` payload. */
+function redactedPayload(payload: unknown): unknown {
+  if (!isRecord(payload) || !("status" in payload)) {
+    return REDACTED;
+  }
+
+  const keptError =
+    payload.status === "CUSTOM_ERROR" && typeof payload.error === "string"
+      ? { error: payload.error }
+      : {};
+
+  return { status: payload.status, ...keptError, data: REDACTED };
 }
 
 function withoutRequestAndResponse(meta: Record<string, unknown>): Record<string, unknown> {
