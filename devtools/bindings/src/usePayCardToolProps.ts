@@ -13,6 +13,7 @@ import {
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
 import type { DevToolsConfig } from "@devtools/registry";
+import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
@@ -23,6 +24,8 @@ type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
   readonly platform?: "web" | "native";
+  readonly openPayTab?: () => void;
+  readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -163,6 +166,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const env = useMemo(() => ({ vars: envVars, setVar: setEnvVar }), [envVars, setEnvVar]);
 
+  const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
+
   const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
   const cardStatusProbe = useMemo<PayCardProbe>(
@@ -191,6 +196,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       hasSeenReceiveVerifyHint,
       resetReceiveVerifyHintSeen: resetVerifyHint,
       env,
+      auth: platform === "native" ? auth : undefined,
+      openSecureBrowser: options.openSecureBrowser,
     }),
     [
       flags,
@@ -201,6 +208,9 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       hasSeenReceiveVerifyHint,
       resetVerifyHint,
       env,
+      platform,
+      auth,
+      options.openSecureBrowser,
     ],
   );
 }

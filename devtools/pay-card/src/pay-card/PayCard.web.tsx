@@ -5,17 +5,7 @@ import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const {
-    flags,
-    onboarding,
-    hasSeenFeatureTour,
-    resetPayCardFeatureTourSeen,
-    hasSeenReceiveVerifyHint,
-    resetReceiveVerifyHintSeen,
-    onNavigateToPortfolio,
-    onNavigateToPayTab,
-    env,
-  } = props;
+  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen, env } = props;
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -67,41 +57,20 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Divider />
 
-      <SeenReset
-        title="Feature tour"
-        seen={hasSeenFeatureTour}
-        resetLabel="Reset feature tour"
-        onReset={resetPayCardFeatureTourSeen}
-      />
-
-      <Divider />
-
-      <SeenReset
-        title="Request verify hint"
-        seen={hasSeenReceiveVerifyHint}
-        resetLabel="Reset verify hint"
-        onReset={resetReceiveVerifyHintSeen}
-      />
-
-      {onNavigateToPortfolio || onNavigateToPayTab ? (
-        <>
-          <Divider />
-          <Section title="Quick actions">
-            <div className="flex flex-wrap gap-8">
-              {onNavigateToPortfolio ? (
-                <Button appearance="gray" size="sm" onClick={onNavigateToPortfolio}>
-                  Go to Portfolio
-                </Button>
-              ) : null}
-              {onNavigateToPayTab ? (
-                <Button appearance="gray" size="sm" onClick={onNavigateToPayTab}>
-                  Go to Pay tab
-                </Button>
-              ) : null}
-            </div>
-          </Section>
-        </>
-      ) : null}
+      <Section title="Feature tour">
+        <div>
+          <Tag
+            size="sm"
+            appearance={hasSeenFeatureTour ? "success" : "gray"}
+            label={hasSeenFeatureTour ? "Seen" : "Not seen"}
+          />
+        </div>
+        <div className="flex flex-wrap gap-8">
+          <Button appearance="gray" size="sm" onClick={resetPayCardFeatureTourSeen}>
+            Reset feature tour
+          </Button>
+        </div>
+      </Section>
 
       <Divider />
 
@@ -114,31 +83,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         ))}
       </Section>
     </div>
-  );
-}
-
-function SeenReset({
-  title,
-  seen,
-  resetLabel,
-  onReset,
-}: Readonly<{
-  title: string;
-  seen: boolean;
-  resetLabel: string;
-  onReset: () => void;
-}>) {
-  return (
-    <Section title={title}>
-      <div>
-        <Tag size="sm" appearance={seen ? "success" : "gray"} label={seen ? "Seen" : "Not seen"} />
-      </div>
-      <div className="flex flex-wrap gap-8">
-        <Button appearance="gray" size="sm" onClick={onReset}>
-          {resetLabel}
-        </Button>
-      </div>
-    </Section>
   );
 }
 
