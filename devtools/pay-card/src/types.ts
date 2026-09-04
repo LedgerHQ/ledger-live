@@ -32,6 +32,25 @@ export interface PayCardOnboardingProps {
   readonly setStepDone: (id: string, done: boolean) => void;
 }
 
+/** One Card endpoint the tool can call on demand, with the last thing it returned. */
+export interface PayCardProbe {
+  readonly id: string;
+  readonly label: string;
+  readonly isFetching: boolean;
+  /** The last response, pretty-printed. `undefined` until the probe has been run. */
+  readonly result: string | undefined;
+  readonly error: string | undefined;
+  readonly run: () => void;
+}
+
+/**
+ * Card interaction controls: call the signed-in cardholder's endpoints and read back what they
+ * answer, so the data can be checked without a screen to render it.
+ */
+export interface PayCardInteractionProps {
+  readonly probes: readonly PayCardProbe[];
+}
+
 /**
  * One env var the tool shows, with the value a tester most often wants next.
  *
@@ -61,6 +80,7 @@ export interface PayCardEnvProps {
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
+  readonly interaction: PayCardInteractionProps;
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLazyGetCardStatusQuery } from "@domain/api-card-management";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
 import { changes, getEnv, setEnvUnsafe, type EnvName } from "@shared/env";
@@ -16,6 +17,8 @@ import type { DevToolsConfig } from "@devtools/registry";
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
 type PayCardEnvVar = PayCardToolProps["env"]["vars"][number];
+
+type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
@@ -60,6 +63,12 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
   return platform === "native"
     ? [...LEADING_ONBOARDING_STEPS, NATIVE_ONLY_STEP, PURCHASE_STEP]
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
+}
+
+/** Reads what an endpoint answered, whatever shape the failure arrives in. */
+function describeError(error: unknown): string {
+  if (error === undefined || error === null) return "";
+  return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
 /**
@@ -154,10 +163,29 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const env = useMemo(() => ({ vars: envVars, setVar: setEnvVar }), [envVars, setEnvVar]);
 
+  const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
+
+  const cardStatusProbe = useMemo<PayCardProbe>(
+    () => ({
+      id: "card-status",
+      label: "Card Status",
+      isFetching: cardStatus.isFetching,
+      result: cardStatus.data === undefined ? undefined : JSON.stringify(cardStatus.data, null, 2),
+      error: cardStatus.error === undefined ? undefined : describeError(cardStatus.error),
+      run: () => {
+        runCardStatus();
+      },
+    }),
+    [cardStatus.isFetching, cardStatus.data, cardStatus.error, runCardStatus],
+  );
+
+  const interaction = useMemo(() => ({ probes: [cardStatusProbe] }), [cardStatusProbe]);
+
   return useMemo(
     () => ({
       flags,
       onboarding,
+      interaction,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
@@ -167,6 +195,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [
       flags,
       onboarding,
+      interaction,
       hasSeenFeatureTour,
       resetFeatureTour,
       hasSeenReceiveVerifyHint,

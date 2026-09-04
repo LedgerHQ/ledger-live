@@ -11,6 +11,7 @@ import {
   payRequestVerifyHintSlice,
   markReceiveVerifyHintSeen,
 } from "@features/flow-pay-request/state";
+import { cardApi } from "@shared/api-services";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 /**
@@ -50,8 +51,13 @@ function buildStore() {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
       payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+      // The tool reads the Card endpoints, so its api has to be part of the store under test.
+      [cardApi.reducerPath]: cardApi.reducer,
     },
-    middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
+    middleware: gdm =>
+      gdm()
+        .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }))
+        .concat(cardApi.middleware),
   });
 }
 
