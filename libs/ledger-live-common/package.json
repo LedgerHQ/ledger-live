@@ -428,6 +428,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-account": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",

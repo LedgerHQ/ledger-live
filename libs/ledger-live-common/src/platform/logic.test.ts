@@ -10,6 +10,7 @@ import BigNumber from "bignumber.js";
 import * as signMessage from "../hw/signMessage/index";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import * as converters from "./converters";
+import type { AccountNamesState } from "@domain/entity-account-name";
 
 jest.mock("../hw/signMessage/index", () => ({
   ...jest.requireActual("../hw/signMessage/index"),
@@ -38,7 +39,7 @@ import { LiveAppManifest } from "./types";
 import { TrackingAPI } from "./tracking";
 
 describe("receiveOnAccountLogic", () => {
-  const walletState = new Map<string, string>();
+  const walletState: AccountNamesState = new Map();
   // Given
   const mockPlatformReceiveRequested = jest.fn();
   const mockPlatformReceiveFail = jest.fn();
