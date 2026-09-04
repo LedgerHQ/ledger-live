@@ -1,6 +1,7 @@
 import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { setEnv } from "@shared/env";
 
 jest.mock("@ledgerhq/live-network", () => ({ default: jest.fn(), __esModule: true }));
 // Bypass LRU caching so each test starts with a fresh network call.
@@ -57,5 +58,16 @@ describe("currenciesByMarketcap", () => {
     const currencies = [eth, btc];
     const result = await currenciesByMarketcap(currencies);
     expect(result).toBe(currencies);
+  });
+
+  describe("when MOCK_COUNTERVALUES is set", () => {
+    beforeEach(() => setEnv("MOCK_COUNTERVALUES", "1"));
+    afterEach(() => setEnv("MOCK_COUNTERVALUES", ""));
+
+    test("returns fixture ids without making a network call", async () => {
+      const result = await currenciesByMarketcap([eth, btc]);
+      expect(mockNetwork).not.toHaveBeenCalled();
+      expect(result.length).toBeGreaterThan(0);
+    });
   });
 });
