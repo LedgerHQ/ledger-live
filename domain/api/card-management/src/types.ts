@@ -8,6 +8,8 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardDetailsCssSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -28,6 +30,14 @@ export type PayCardFreezeStateResult = z.infer<typeof PayCardFreezeStateResponse
 export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 
 export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
+
+export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
+
+/**
+ * Single use, and short-lived: the provider invalidates the token once the image has been read.
+ * Neither field may be logged, stored, or put in a cache that outlives the render.
+ */
+export type PayCardDetailsToken = z.infer<typeof PayCardDetailsTokenResponseSchema>;
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;

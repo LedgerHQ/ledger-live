@@ -24,6 +24,7 @@ shape and the reasons.
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
+| `createCardDetailsToken` | POST | `/v1/card/details/token` | Mint a single-use token and image URL showing PAN, CVV and expiry |
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
