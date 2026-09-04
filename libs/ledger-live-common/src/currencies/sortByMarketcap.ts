@@ -1,6 +1,8 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network";
+import { getEnv } from "@shared/env";
+import { TICKER_TO_ID_AND_VALUE } from "@ledgerhq/live-countervalues/mock";
 import type { Currency } from "@domain/entity-currency";
-import api from "@ledgerhq/live-countervalues/api/index";
 
 // sort currencies by ids provided
 export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: string[]): C[] => {
@@ -26,9 +28,16 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
 /**
  * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
  */
-export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(() =>
-  api.fetchIdsSortedByMarketcap(),
-);
+export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
+  if (getEnv("MOCK_COUNTERVALUES")) {
+    return Object.values(TICKER_TO_ID_AND_VALUE).map(([id]) => id);
+  }
+  const { data } = await network<string[]>({
+    method: "GET",
+    url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/crypto`,
+  });
+  return data;
+});
 
 /**
  * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function

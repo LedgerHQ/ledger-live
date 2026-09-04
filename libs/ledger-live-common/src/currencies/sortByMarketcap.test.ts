@@ -1,5 +1,16 @@
-import { sortCurrenciesByIds } from "./sortByMarketcap";
+import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 import { CURRENCIES_LIST, IDS } from "./mock";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { setEnv } from "@shared/env";
+
+jest.mock("@ledgerhq/live-network", () => ({ default: jest.fn(), __esModule: true }));
+// Bypass LRU caching so each test starts with a fresh network call.
+jest.mock("@ledgerhq/live-network/cache", () => ({
+  makeLRUCache: (fn: () => Promise<unknown>) => fn,
+}));
+
+const mockNetwork: jest.MockedFunction<typeof import("@ledgerhq/live-network").default> =
+  jest.requireMock("@ledgerhq/live-network").default;
 
 test("sortCurrenciesByIds simulate staking from portfolio", () => {
   expect(sortCurrenciesByIds(CURRENCIES_LIST, IDS).map(c => c.id)).toEqual([
@@ -23,4 +34,40 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "babylon",
     "quicksilver",
   ]);
+});
+
+describe("currenciesByMarketcap", () => {
+  const eth = getCryptoCurrencyById("ethereum");
+  const btc = getCryptoCurrencyById("bitcoin");
+
+  beforeEach(() => mockNetwork.mockClear());
+
+  test("sorts currencies by CVS marketcap order on success", async () => {
+    mockNetwork.mockResolvedValue({
+      status: 200,
+      data: ["bitcoin", "ethereum"],
+    });
+
+    const result = await currenciesByMarketcap([eth, btc]);
+    expect(result.map(c => c.id)).toEqual(["bitcoin", "ethereum"]);
+  });
+
+  test("returns currencies in original order when network fails", async () => {
+    mockNetwork.mockRejectedValue(new Error("network error"));
+
+    const currencies = [eth, btc];
+    const result = await currenciesByMarketcap(currencies);
+    expect(result).toBe(currencies);
+  });
+
+  describe("when MOCK_COUNTERVALUES is set", () => {
+    beforeEach(() => setEnv("MOCK_COUNTERVALUES", "1"));
+    afterEach(() => setEnv("MOCK_COUNTERVALUES", ""));
+
+    test("returns fixture ids without making a network call", async () => {
+      const result = await currenciesByMarketcap([eth, btc]);
+      expect(mockNetwork).not.toHaveBeenCalled();
+      expect(result.length).toBeGreaterThan(0);
+    });
+  });
 });
