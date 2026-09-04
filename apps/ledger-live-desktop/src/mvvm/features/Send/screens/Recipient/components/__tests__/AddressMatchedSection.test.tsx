@@ -41,6 +41,7 @@ function AddressMatchedSectionContainer({
     searchValue: address,
     onSelect: jest.fn(),
     onAddContact,
+    onUnsupportedNetwork: jest.fn(),
     isAddressComplete,
     hasBridgeError,
     isSanctioned,
@@ -539,7 +540,10 @@ describe("AddressMatchedSection", () => {
       matchedRecentAddress: undefined,
       matchedAccounts: [
         {
-          account: createMockAccount({ id: "account_2", freshAddress: "0xDifferentAddress" }),
+          account: createMockAccount({
+            id: "account_2",
+            freshAddress: "0xDifferentAddress",
+          }),
           accountName: undefined,
           accountBalance: undefined,
           accountBalanceFormatted: undefined,
