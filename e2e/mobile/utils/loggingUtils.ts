@@ -99,13 +99,16 @@ function splitSummaryAndJson(text: string): { summary: string; body: string | nu
   }
 }
 
+const CONSOLE_KEEP_LEVELS = new Set(["warn", "warning", "error"]);
+
 function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
   const lines: string[] = [
     "TIMESTAMP                      | LEVEL   | MESSAGE",
     "-------------------------------|---------|--------",
   ];
+  const kept = entries.filter(e => CONSOLE_KEEP_LEVELS.has((e.level ?? "log").toLowerCase()));
 
-  for (const e of entries) {
+  for (const e of kept) {
     const ts = (e.timestamp ?? "").slice(0, TS_WIDTH).padEnd(TS_WIDTH);
     const level = (e.level ?? "log").toUpperCase().padEnd(LEVEL_WIDTH);
     const raw = (e.text ?? "").replaceAll("\n", " ");
@@ -130,7 +133,7 @@ type ParsedLogsPayload = {
   webviewLoadErrors?: unknown[];
 };
 
-/** Parse logs payload and attach App logs, Webview Network Logs, and Webview Console Logs to Allure. */
+/** Parse a serialized logs payload and attach each section it carries to Allure. */
 export async function attachFailureLogsToAllure(logsPayload: string): Promise<void> {
   let parsed: ParsedLogsPayload;
   try {
@@ -139,10 +142,13 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     parsed = { appLogs: logsPayload };
   }
 
+  // A raw (non-JSON) payload renders legibly as text/plain, not as one escaped JSON line.
+  const appLogsValue = parsed.appLogs ?? logsPayload;
+  const appLogsIsString = typeof appLogsValue === "string";
   await allure.attachment(
-    "App logs",
-    JSON.stringify(parsed.appLogs ?? logsPayload, null, 2),
-    "application/json",
+    "App Logs",
+    appLogsIsString ? appLogsValue : JSON.stringify(appLogsValue, null, 2),
+    appLogsIsString ? "text/plain" : "application/json",
   );
   parsed.appLogs = undefined;
 
@@ -157,7 +163,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
 
   if (parsed.appNetworkLogs?.length) {
     await allure.attachment(
-      "Ledger Wallet Network Logs",
+      "App Network Logs",
       JSON.stringify(parsed.appNetworkLogs, null, 2),
       "application/json",
     );
@@ -168,7 +174,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
   // read several hundred individual entries.
   if (parsed.appNetworkSummary) {
     await allure.attachment(
-      "Ledger Wallet Network Summary",
+      "App Network Summary",
       JSON.stringify(parsed.appNetworkSummary, null, 2),
       "application/json",
     );

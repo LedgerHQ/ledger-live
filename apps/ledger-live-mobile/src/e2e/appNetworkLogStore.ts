@@ -6,6 +6,80 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "ax
  * reports on failure — the app-side counterpart to the desktop network log collector.
  */
 
+/** Telemetry / CDN hosts whose start-up traffic drowns the log (QAA-1514 / QAA-1433). */
+const NETWORK_NOISE_HOSTS = [
+  "firebaseinstallations.googleapis.com",
+  "firebaseremoteconfig.googleapis.com",
+  "firebase.googleapis.com",
+  "firebaselogging-pa.googleapis.com",
+  "sentry.io",
+  "segment.io",
+  "cdn.segment.com",
+  "google-analytics.com",
+  "googletagmanager.com",
+  "datadoghq.com",
+  "braze.com",
+  "cdn.live.ledger.com",
+  "countervalues.live.ledger.com",
+  "countervalues.api.live.ledger.com",
+];
+
+const NETWORK_NOISE_ASSET_EXTENSIONS = new Set([
+  "js",
+  "mjs",
+  "css",
+  "map",
+  "woff",
+  "woff2",
+  "ttf",
+  "otf",
+  "eot",
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "svg",
+  "ico",
+  "webp",
+  "avif",
+  "mp4",
+  "wasm",
+]);
+
+function pathExtension(pathname: string): string {
+  const lastSegment = pathname.slice(pathname.lastIndexOf("/") + 1);
+  const dotIndex = lastSegment.lastIndexOf(".");
+  return dotIndex === -1 ? "" : lastSegment.slice(dotIndex + 1);
+}
+
+/** True when `url` is app-asset / font / telemetry / CDN start-up noise (not a real API call). */
+function isNoiseNetworkUrl(url: string): boolean {
+  let host = "";
+  let pathname = url;
+  try {
+    const parsed = new URL(url);
+    host = parsed.host;
+    pathname = parsed.pathname;
+  } catch {
+    pathname = url.split(/[?#]/)[0];
+  }
+  const lowerPath = pathname.toLowerCase();
+  if (NETWORK_NOISE_ASSET_EXTENSIONS.has(pathExtension(lowerPath))) return true;
+  return NETWORK_NOISE_HOSTS.some(
+    noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
+  );
+}
+
+/** Keeps every failure; drops start-up noise that would evict real API calls from the buffer. */
+export function shouldKeepNetworkLog(entry: {
+  url: string;
+  status?: number;
+  failureText?: string;
+}): boolean {
+  const isFailure = (entry.status !== undefined && entry.status >= 400) || !!entry.failureText;
+  return isFailure || !isNoiseNetworkUrl(entry.url);
+}
+
 export interface AppNetworkLog {
   timestamp: string;
   method: string;
@@ -54,6 +128,7 @@ function hostOf(url: string): string {
 
 export const appNetworkLogStore = {
   addNetworkLog(entry: AppNetworkLog) {
+    if (!shouldKeepNetworkLog(entry)) return;
     networkLogs.unshift(entry);
     while (networkLogs.length > MAX_NETWORK_LOGS) {
       networkLogs.pop();
