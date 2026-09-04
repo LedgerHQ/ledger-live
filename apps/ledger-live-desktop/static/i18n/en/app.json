@@ -9233,12 +9233,12 @@
         "selfTransfer": {
           "toPrivate": "Self transfer to private balance",
           "toPublic": "Self transfer to public balance",
-          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
-        "showBalance": "Show balance",
+        "showBalance": "Enable shielded",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "upToDate": "Update balance",
