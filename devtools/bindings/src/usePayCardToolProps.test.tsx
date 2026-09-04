@@ -189,9 +189,9 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.balance).toMatchObject({
-      total: undefined,
-      isPartialTotal: false,
-      wallets: [],
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
       isFetching: false,
       errors: [],
     });

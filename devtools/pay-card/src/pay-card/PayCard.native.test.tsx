@@ -24,10 +24,9 @@ function buildProps(): PayCardToolProps {
     },
     interaction: { probes: [] },
     balance: {
-      total: 0,
-      isPartialTotal: false,
-      isPricingWired: true,
-      wallets: [],
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
       isFetching: false,
       errors: [],
       load: jest.fn(),
@@ -202,103 +201,119 @@ describe("PayCard (native)", () => {
     expect(screen.getByText('{ "status": "ACTIVE" }')).toBeTruthy();
   });
 
-  // One priced wallet and one the rates could not price: the pair the total is built from.
-  const wallets = [
+  const baanxWallets = [
     {
       id: "w-usdc",
-      currency: "usdc",
-      network: "ethereum",
-      address: "0xusdc",
-      priority: 0,
       balance: "125.40",
-      counterValue: 12540,
-    },
-    {
-      id: "w-sol",
-      currency: "sol",
-      network: "solana",
-      address: "sol-addr",
-      priority: 1,
-      balance: "2.5",
-      counterValue: null,
+      currency: "usdc",
+      address: "0xusdc",
+      addressMemo: null,
     },
   ];
 
-  it("requests the linked wallets when the balance screen opens, and shows the total", async () => {
+  // The second link has no Baanx wallet behind it, which is what the join has to show.
+  const linkedWallets = [
+    { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
+    { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
+  ];
+
+  const combinedWallets = [
+    {
+      id: "w-usdc",
+      address: "0xusdc",
+      currency: "usdc",
+      network: "ethereum",
+      priority: 0,
+      balance: "125.40",
+    },
+    {
+      id: "w-sol",
+      address: "sol-addr",
+      currency: "sol",
+      network: "solana",
+      priority: 1,
+      balance: null,
+    },
+  ];
+
+  it("requests the wallets when the balance screen opens", async () => {
     const user = userEvent.setup();
     const load = jest.fn();
     const props = buildProps();
-    render(<PayCard {...props} balance={{ ...props.balance, total: 12540, wallets, load }} />);
+    render(<PayCard {...props} balance={{ ...props.balance, load }} />);
 
     await user.press(screen.getByText("Balance"));
 
     expect(load).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Total amount")).toBeTruthy();
-    // Twice: the total, and the one wallet it was summed from.
-    expect(screen.getAllByText("12540")).toHaveLength(2);
   });
 
-  it("reports an absent total as undefined rather than as a blank", async () => {
+  it("shows the two responses and the join under a section each", async () => {
     const user = userEvent.setup();
     const props = buildProps();
-    render(<PayCard {...props} balance={{ ...props.balance, total: undefined }} />);
-
-    await user.press(screen.getByText("Balance"));
-
-    expect(screen.getByText("undefined")).toBeTruthy();
-  });
-
-  it("shows every field of every linked wallet", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} balance={{ ...props.balance, wallets }} />);
-
-    await user.press(screen.getByText("Balance"));
-
-    expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
-    // The provider's own ids, unmapped, so a mapping gap can be read off the screen.
-    expect(screen.getByText("usdc")).toBeTruthy();
-    expect(screen.getByText("ethereum")).toBeTruthy();
-    expect(screen.getByText("sol")).toBeTruthy();
-    expect(screen.getByText("solana")).toBeTruthy();
-    expect(screen.getByText("125.40")).toBeTruthy();
-    expect(screen.getByText("0xusdc")).toBeTruthy();
-    expect(screen.getByText("w-usdc")).toBeTruthy();
-
-    // The unpriced wallet says why it is missing from the total rather than reading as zero.
-    expect(screen.getByText("1. sol / solana")).toBeTruthy();
-    expect(
-      screen.getByText("null — no balance yet, no currency matched this ticker, or no rate for it"),
-    ).toBeTruthy();
-  });
-
-  it("says pricing is not wired rather than blaming the ticker for it", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    // With no resolver the binding prices nothing, so no wallet carries a counter value.
-    const unpriced = wallets.map(wallet => ({ ...wallet, counterValue: null }));
     render(
       <PayCard
         {...props}
-        balance={{
-          ...props.balance,
-          wallets: unpriced,
-          total: undefined,
-          isPricingWired: false,
-        }}
+        balance={{ ...props.balance, baanxWallets, linkedWallets, combinedWallets }}
       />,
     );
 
     await user.press(screen.getByText("Balance"));
 
-    expect(screen.getByText("not wired by this host")).toBeTruthy();
-    // Every wallet is unpriced for the one reason, so the ticker explanation must not appear.
-    expect(screen.getAllByText("null — this host wired no pricing")).toHaveLength(unpriced.length);
-    expect(
-      screen.queryByText(
-        "null — no balance yet, no currency matched this ticker, or no rate for it",
-      ),
-    ).toBeNull();
+    expect(screen.getByText("Baanx wallets")).toBeTruthy();
+    expect(screen.getByText("Card linked wallets")).toBeTruthy();
+    expect(screen.getByText("Card linked combined wallets")).toBeTruthy();
+    expect(screen.getAllByText("count")).toHaveLength(3);
+  });
+
+  it("counts an empty section, so no answer does not read as no section", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, baanxWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    // One Baanx wallet read, and nothing from the other two endpoints.
+    expect(screen.getByText("1")).toBeTruthy();
+    expect(screen.getAllByText("0")).toHaveLength(2);
+  });
+
+  it("shows every field the Baanx response carried, memo included", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, baanxWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("125.40")).toBeTruthy();
+    expect(screen.getByText("0xusdc")).toBeTruthy();
+    // An absent memo has to read as `null`, not as a blank.
+    expect(screen.getByText("null")).toBeTruthy();
+  });
+
+  it("shows the provider's own unmapped currency and network for every link", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, linkedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    // Unmapped: what a currency mapping would have to be keyed on.
+    expect(screen.getByText("usdc")).toBeTruthy();
+    expect(screen.getByText("ethereum")).toBeTruthy();
+    expect(screen.getByText("sol")).toBeTruthy();
+    expect(screen.getByText("solana")).toBeTruthy();
+  });
+
+  it("says a joined row has no balance rather than showing it as zero", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, combinedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
+    expect(screen.getByText("1. sol / solana")).toBeTruthy();
+    expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeTruthy();
   });
 
   it("shows which endpoint failed and what it answered", async () => {

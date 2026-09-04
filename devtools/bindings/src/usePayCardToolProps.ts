@@ -31,11 +31,6 @@ type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
   readonly platform?: "web" | "native";
-  /**
-   * Prices one card-linked wallet. Pricing needs the app's rates and currency settings, so the host
-   * owns it; without one the tool reports no balance rather than a wrong zero.
-   */
-  readonly resolveCounterValue?: ResolveWalletCounterValue;
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -79,6 +74,7 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
 }
 
 /** Never called: the wallet queries are skipped whenever the host omits its own resolver. */
+/** The tool reports what the endpoints answer, not what it is worth. The join needs one anyway. */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
 /** Reads what an endpoint answered, whatever shape the failure arrives in. */
@@ -199,15 +195,11 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);
-  const { resolveCounterValue } = options;
+  const skipWallets = !walletsRequested;
 
-  /**
-   * The wallets are worth reading with no pricing at all: what the two endpoints answer is the
-   * point of the screen. Without a resolver every `counterValue` is null and there is no total.
-   */
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: resolveCounterValue ?? NO_COUNTER_VALUE,
-    skip: !walletsRequested,
+    resolveCounterValue: NO_COUNTER_VALUE,
+    skip: skipWallets,
   });
 
   const loadWallets = useCallback(() => setWalletsRequested(true), []);
@@ -218,11 +210,15 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     refetchWallets();
   }, [refetchWallets]);
 
-  // `useCardLinkedWallets` reports only that something failed. Reading the same cache entries again
-  // costs no request and gives the tool what each endpoint actually answered.
-  const skipWallets = !walletsRequested;
-  const { error: linkedError } = useGetCardLinkedWalletsQuery(undefined, { skip: skipWallets });
-  const { error: internalError } = useGetInternalWalletsQuery(undefined, { skip: skipWallets });
+  // `useCardLinkedWallets` hands back only the join, and reports no more than that something
+  // failed. Reading the same cache entries again costs no request and gives the tool both
+  // responses as they arrived, which is what the screen is for.
+  const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
+  const { data: internal, error: internalError } = useGetInternalWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
 
   const errors = useMemo(
     () =>
@@ -235,21 +231,27 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [linkedError, internalError],
   );
 
-  // A total of nothing is not a balance of zero: report it as absent rather than as priced.
-  const isAnyWalletPriced = linkedWallets.wallets.some(({ counterValue }) => counterValue !== null);
-
   const balance = useMemo(
     () => ({
-      total: isAnyWalletPriced ? linkedWallets.total : undefined,
-      isPartialTotal: linkedWallets.isPartialTotal,
-      isPricingWired: resolveCounterValue !== undefined,
-      wallets: linkedWallets.wallets,
+      baanxWallets: internal ?? [],
+      linkedWallets: linked ?? [],
+      // Without the counter value, which this tool does not price.
+      combinedWallets: linkedWallets.wallets.map(
+        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
+          id,
+          address,
+          currency,
+          network,
+          priority,
+          balance: walletBalance,
+        }),
+      ),
       isFetching: linkedWallets.isFetching,
       errors,
       load: loadWallets,
       refresh: refreshWallets,
     }),
-    [linkedWallets, isAnyWalletPriced, resolveCounterValue, errors, loadWallets, refreshWallets],
+    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets],
   );
 
   return useMemo(
