@@ -85,6 +85,12 @@ export type AleoTokenType = "arc20" | "arc21" | "arc22" | "unknown";
 
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
+/** The `credits.aleo` staking calls, as opposed to the transfer/convert modes. */
+export type AleoStakingMode =
+  | typeof TRANSACTION_TYPE.BOND_PUBLIC
+  | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
+  | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+
 export type AleoTransactionIntentData =
   | TxDataNotSupported
   | {

@@ -25,6 +25,7 @@ import {
   getAvailableBalance,
   getRecordByCommitment,
   isPrivateTransaction,
+  isSelfStakingMode,
   isSelfTransferTransaction,
   isTokenTransaction,
   getAleoSubAccount,
@@ -307,14 +308,10 @@ async function handleTransferTransaction({
   const errors: Errors = {};
   const warnings: Warnings = {};
 
-  const isStakingSelfMode =
-    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
-
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer: allowSelfTransfer || isStakingSelfMode,
+    allowSelfTransfer: allowSelfTransfer || isSelfStakingMode(transaction),
   });
 
   if (recipientError) {
