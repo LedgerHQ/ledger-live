@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { cardApi, cardApiExtra } from "@shared/api-services";
 import {
   cardManagementApi,
+  useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
   useOrderCardMutation,
+  useUnfreezeCardMutation,
 } from "./api";
 import { PayCardErrorResponseSchema } from "./schema";
 
@@ -109,7 +111,7 @@ const makeStore = (
 ) =>
   configureStore({
     reducer: {
-      [cardApi.reducerPath]: cardApi.reducer,
+      [cardManagementApi.reducerPath]: cardManagementApi.reducer,
     },
     middleware: gdm =>
       gdm({
@@ -121,7 +123,7 @@ const makeStore = (
             refreshCardSession: () => Promise.resolve(null),
           }),
         },
-      }).concat(cardApi.middleware),
+      }).concat(cardManagementApi.middleware),
   });
 
 describe("cardManagementApi configuration", () => {
@@ -133,6 +135,7 @@ describe("cardManagementApi configuration", () => {
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "exchangeAuthorizationCode",
+      "freezeCard",
       "getCardLinkedWallets",
       "getCardStatus",
       "getInternalWallets",
@@ -140,6 +143,7 @@ describe("cardManagementApi configuration", () => {
       "logout",
       "orderCard",
       "refreshSession",
+      "unfreezeCard",
     ]);
   });
 
@@ -153,6 +157,13 @@ describe("cardManagementApi configuration", () => {
     expect(useGetCardStatusQuery).toBeDefined();
     // The devtool fetches on press, not on mount, so the lazy hook is part of the surface too.
     expect(useLazyGetCardStatusQuery).toBeDefined();
+  });
+
+  it("exposes the freeze endpoints and their hooks", () => {
+    expect(cardManagementApi.endpoints.freezeCard).toBeDefined();
+    expect(useFreezeCardMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.unfreezeCard).toBeDefined();
+    expect(useUnfreezeCardMutation).toBeDefined();
   });
 
   it("exposes the wallet endpoints and their hooks", () => {
@@ -384,6 +395,125 @@ describe("cardManagementApi requests", () => {
       expect(statusRequests).toHaveLength(2);
 
       status.unsubscribe();
+    });
+  });
+
+  describe("freezeCard", () => {
+    it("posts the freeze with the session bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/freeze");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("surfaces a card that is already frozen as a 400", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(400, "Card is already frozen"));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toMatchObject({
+        status: 400,
+        data: { message: "Card is already frozen" },
+      });
+    });
+
+    it("refetches the card status, because freezing moves it to FROZEN", async () => {
+      let cardState = "ACTIVE";
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/freeze") {
+            cardState = "FROZEN";
+            return jsonResponse({ success: true });
+          }
+          return jsonResponse({ ...cardStatus, status: cardState });
+        });
+
+      const store = makeStore(async () => "session-token");
+      const subscription = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await subscription;
+      await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
+      await flushPendingRequests();
+
+      const statusRequests = fetchSpy.mock.calls.filter(
+        ([input]) => new URL((input as Request).url).pathname === "/v1/card/status",
+      );
+      expect(statusRequests).toHaveLength(2);
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("FROZEN");
+
+      subscription.unsubscribe();
+    });
+  });
+
+  describe("unfreezeCard", () => {
+    it("posts the unfreeze with the session bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/unfreeze");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("surfaces a card that is not frozen as a 400", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(400, "Card is not frozen"));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toMatchObject({ status: 400, data: { message: "Card is not frozen" } });
+    });
+
+    it("refetches the card status, because unfreezing moves it back to ACTIVE", async () => {
+      let cardState = "FROZEN";
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/unfreeze") {
+            cardState = "ACTIVE";
+            return jsonResponse({ success: true });
+          }
+          return jsonResponse({ ...cardStatus, status: cardState });
+        });
+
+      const store = makeStore(async () => "session-token");
+      const subscription = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await subscription;
+      await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
+      await flushPendingRequests();
+
+      const statusRequests = fetchSpy.mock.calls.filter(
+        ([input]) => new URL((input as Request).url).pathname === "/v1/card/status",
+      );
+      expect(statusRequests).toHaveLength(2);
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("ACTIVE");
+
+      subscription.unsubscribe();
     });
   });
 

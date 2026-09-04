@@ -18,13 +18,14 @@ shape and the reasons.
 
 | Endpoint | Method | Path | Purpose |
 | -------- | ------ | ---- | ------- |
-| `initiateAuthorize` | GET | `/v1/auth/oauth/authorize/initiate` | Start a login and get the hosted login URL |
-| `exchangeAuthorizationCode` | POST | `/v1/auth/oauth/token` | Exchange the authorization code for a session |
-| `refreshSession` | POST | `/v1/auth/oauth/token` | Same endpoint, `refresh_token` grant |
+| `exchangeAuthorizationCode` | POST | `/v1/auth/oauth2/token` | Exchange the authorization code for a session |
+| `refreshSession` | POST | `/v1/auth/oauth2/token` | Same endpoint, `refresh_token` grant |
 | `logout` | POST | `/v1/auth/logout` | End the session |
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
+| `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
+| `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
 

@@ -42,6 +42,10 @@ export const PayCardOrderResponseSchema = z.object({
   success: z.boolean(),
 });
 
+export const PayCardFreezeStateResponseSchema = z.object({
+  success: z.boolean(),
+});
+
 export const PayCardStatusResponseSchema = z.object({
   id: z.string().min(1),
   // Optional because a live card answered with neither.
