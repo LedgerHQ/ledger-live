@@ -5,6 +5,8 @@ import {
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
+  PayCardOnboardingStepSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -41,3 +43,7 @@ export type PayCardRefreshSessionRequest = {
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;
+
+export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
+
+export type PayCardOnboardingStatus = z.infer<typeof PayCardOnboardingStatusResponseSchema>;
