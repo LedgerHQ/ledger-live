@@ -13,14 +13,14 @@ import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
 
-type Props = {
+type Props = Readonly<{
   error: LedgerError;
   onClose: () => void;
   /** Omit to withhold Retry: a flow whose attempt must not be repeated has nothing to offer here. */
   onRetry?: () => void;
   /** Rendered where Retry would be, for a flow that offers a different way forward instead. */
   primaryButton?: React.ReactNode;
-};
+}>;
 
 function ValidateError({ error, onClose, onRetry, primaryButton }: Props) {
   const navigation = useNavigation<BaseNavigation>();

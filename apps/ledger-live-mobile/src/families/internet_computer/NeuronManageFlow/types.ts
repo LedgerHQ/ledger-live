@@ -56,7 +56,12 @@ export type InternetComputerNeuronManageFlowParamList = {
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.InternetComputerNeuronSelectDevice]: NeuronSigningRoute & { device?: Device };
+  [ScreenName.InternetComputerNeuronSelectDevice]: NeuronSigningRoute & {
+    device?: Device;
+    // ConnectDevice sends the user back here with this set, so the last-connected device is
+    // not auto-selected again.
+    forceSelectDevice?: boolean;
+  };
   [ScreenName.InternetComputerNeuronConnectDevice]: NeuronSigningRoute & {
     device: Device;
     appName?: string;
