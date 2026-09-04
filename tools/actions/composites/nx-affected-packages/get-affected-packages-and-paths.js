@@ -67,53 +67,47 @@ async function getAffectedPackagesAndPaths(options = {}) {
   let packageNames = [];
   const { stdout: affectedStdout, stderr: affectedStderr, exitCode } = await runPnpm(args, exec);
 
+  // Continuation lines are indented so none can start with `::` and be parsed as a
+  // workflow command.
+  const clip = value => {
+    const text = (value || "").trim();
+    if (!text) return "<none>";
+    const clipped = text.length > 4000 ? `${text.slice(0, 4000)}… (truncated)` : text;
+    return clipped.replace(/\r?\n/g, "\n  ");
+  };
+
+  const diagnostics = () =>
+    [
+      `base: ${base || "<nx default>"}`,
+      `head: ${head || "<nx default>"}`,
+      `exitCode: ${exitCode}`,
+      `stderr: ${clip(affectedStderr)}`,
+      `stdout: ${clip(affectedStdout)}`,
+    ].join("\n");
+
+  // github-script surfaces only `error.message` in the ##[error] annotation, and truncates it,
+  // so the same diagnostics also go to the step log.
+  const fail = summary => {
+    const message = `${summary}\n${diagnostics()}`;
+    console.error(`[nx-affected] ${message}`);
+    throw new Error(message);
+  };
+
   // If Nx cannot compute affected projects, fail instead of silently
   // returning an empty list, which could cause CI to skip tests/jobs.
   if (exitCode !== 0) {
-    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
-    if (debugEnabled) {
-      console.error(
-        "[nx-affected] `pnpm nx show projects --affected --json` failed.",
-        "exitCode:",
-        exitCode,
-        "stderr:",
-        affectedStderr || "<none>",
-        "stdout:",
-        affectedStdout || "<none>",
-      );
-    }
-    throw new Error(`pnpm nx show projects --affected --json failed with exit code ${exitCode}`);
+    fail(`pnpm nx show projects --affected --json failed with exit code ${exitCode}.`);
   }
 
   if (!affectedStdout || !affectedStdout.trim()) {
-    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
-    if (debugEnabled) {
-      console.error(
-        "[nx-affected] `pnpm nx show projects --affected --json` produced no output.",
-        "stderr:",
-        affectedStderr || "<none>",
-      );
-    }
-    throw new Error("pnpm nx show projects --affected --json returned empty output");
+    fail("pnpm nx show projects --affected --json returned empty output.");
   }
 
   try {
     const parsed = JSON.parse(affectedStdout.trim());
     if (Array.isArray(parsed)) packageNames = parsed.filter(Boolean);
   } catch (e) {
-    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
-    if (debugEnabled) {
-      console.error(
-        "[nx-affected] Failed to parse affected projects JSON.",
-        "error:",
-        e,
-        "stderr:",
-        affectedStderr || "<none>",
-        "stdout:",
-        affectedStdout || "<none>",
-      );
-    }
-    throw new Error("Failed to parse output from pnpm nx show projects");
+    fail(`Failed to parse output from pnpm nx show projects: ${e}`);
   }
 
   const paths = [];
