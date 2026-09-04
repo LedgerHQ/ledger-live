@@ -115,6 +115,16 @@ describe("redactCardApiAction", () => {
     expect(JSON.stringify(redacted)).not.toContain(ACCESS_TOKEN);
   });
 
+  it("redacts a fulfilled response whose own data carries a status field", () => {
+    const redacted = redactCardApiAction({
+      type: `${CARD_REDUCER_PATH}/executeQuery/fulfilled`,
+      payload: { status: "ACTIVE", accountId: "an-id" },
+      meta: { arg: { endpointName: "getCardStatus", originalArgs: undefined } },
+    });
+
+    expect(redacted.payload).toBe(REDACTED);
+  });
+
   it("keeps the originalStatus of a PARSING_ERROR, so a 401 with a non-JSON body stays readable", () => {
     const redacted = redactCardApiAction({
       type: `${CARD_REDUCER_PATH}/executeQuery/rejected`,
