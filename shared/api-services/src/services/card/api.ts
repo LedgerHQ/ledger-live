@@ -102,7 +102,7 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
 export function describeSchemaFailure(error: NamedSchemaError): FetchBaseQueryError {
   const issues = error.issues
     .map(issue => {
-      const path = issue.path?.map((segment: unknown) => String(segment)).join(".");
+      const path = issue.path?.map(String).join(".");
       return path ? `${path}: ${issue.message}` : issue.message;
     })
     .join("; ");
