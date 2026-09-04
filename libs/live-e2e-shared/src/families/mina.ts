@@ -1,6 +1,5 @@
-import expect from "expect";
 import { Delegate } from "../models/Delegate";
-import { containsSubstringInEvent, getDelegateEvents } from "../speculos";
+import { expectSpeculosEventsContain, getDelegateEvents } from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { isTouchDevice } from "../speculosAppVersion";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
@@ -12,8 +11,7 @@ export const delegateMina = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
-      expect(isProviderCorrect).toBeTruthy();
+      expectSpeculosEventsContain(delegatingAccount.provider, events);
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

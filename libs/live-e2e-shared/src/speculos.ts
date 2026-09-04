@@ -17,7 +17,6 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
-import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
 import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
@@ -38,7 +37,7 @@ import { delegateMultiversX } from "./families/multiversX";
 import { Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
-import { delegateOsmosis } from "./families/osmosis";
+import { delegateOsmosis, sendOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui, delegateSui } from "./families/sui";
@@ -744,12 +743,29 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+export function expectSpeculosEventsContain(
+  substring: string,
+  events: string[],
+  message = "Speculos events validation failed",
+) {
+  if (containsSubstringInEvent(substring, events) !== true) {
+    let formattedEvents = events.join("\n  ");
+    const maxLength = 1000;
+    if (formattedEvents.length > maxLength) {
+      formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
+    }
+    throw new Error(
+      `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`,
+    );
+  }
+}
+
 /** Asserts memo/tag appears on Speculos screens when the tx includes one. */
 export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
   if (!tx.memoTag || tx.memoTag === "noTag") {
     return;
   }
-  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
+  expectSpeculosEventsContain(tx.memoTag, events);
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
@@ -928,13 +944,11 @@ export const expectValidAddressDevice = withDeviceController(
 
       if (isTouchDevice()) {
         const events = await pressUntilTextFound(receiveConfirmLabel);
-        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(addressDisplayed, events);
         await pressAndRelease(DeviceLabels.CONFIRM);
       } else {
         const events = await pressUntilTextFound(receiveConfirmLabel);
-        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(addressDisplayed, events);
         await buttons.both();
       }
     },
@@ -977,8 +991,10 @@ export async function signSendTransaction(tx: Transaction) {
       await sendStellar(tx);
       break;
     case Currency.ATOM.id:
-    case Currency.OSMO.id:
       await sendCosmos(tx);
+      break;
+    case Currency.OSMO.id:
+      await sendOsmosis(tx);
       break;
     case Currency.ADA.id:
       await sendCardano(tx);
@@ -1156,25 +1172,16 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
 
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
     if (swap.provider && swap.provider.app && swap.provider.app !== AppInfos.EXCHANGE) {
-      expectDeviceScreenContains(
+      expectSpeculosEventsContain(
         swap.provider.uiName,
         events,
         "Provider not found on the device screen",
       );
     } else {
-      expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+      expectSpeculosEventsContain(swapPair, events, "Swap pair not found on the device screen");
     }
   }
-  expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
-}
-
-function expectDeviceScreenContains(substring: string, events: string[], message: string) {
-  const found = containsSubstringInEvent(substring, events);
-  if (!found) {
-    throw new Error(
-      `${message}. Expected events to contain "${substring}". Got: ${JSON.stringify(events)}`,
-    );
-  }
+  expectSpeculosEventsContain(amount, events, `Amount ${amount} not found on the device screen`);
 }
 
 export const exportUfvk = withDeviceController(

@@ -1,5 +1,4 @@
-import expect from "expect";
-import { containsSubstringInEvent, getDelegateEvents, getSendEvents } from "../speculos";
+import { getDelegateEvents, getSendEvents, expectSpeculosEventsContain } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
@@ -29,16 +28,14 @@ export const sendSolana = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
+      expectSpeculosEventsContain(tx.amount, events);
 
       const isSplToken = !!tx.accountToCredit.currency.contractAddress;
       if (!isSplToken && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
         if (!tx.accountToCredit.address) {
           throw new Error("Recipient address is not set");
         }
-        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.accountToCredit.address, events);
       }
 
       if (isTouchDevice()) {
