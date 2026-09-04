@@ -355,9 +355,29 @@ export enum ScreenName {
 
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
-  // ICP staking — entry screens reserved by LIVE-29097; the full flows land with LIVE-29098
+  // ICP staking. The device/validation names are load-bearing: ConnectDevice derives its sibling
+  // screens by string replacement (`route.name.replace("ConnectDevice", …)`), so each flow's four
+  // screens must share a prefix and differ only by that suffix.
   InternetComputerStakingStarted = "InternetComputerStakingStarted",
+  InternetComputerStakingAmount = "InternetComputerStakingAmount",
+  InternetComputerStakingSelectDevice = "InternetComputerStakingSelectDevice",
+  InternetComputerStakingConnectDevice = "InternetComputerStakingConnectDevice",
+  InternetComputerStakingValidationError = "InternetComputerStakingValidationError",
+  InternetComputerStakingValidationSuccess = "InternetComputerStakingValidationSuccess",
   InternetComputerNeuronList = "InternetComputerNeuronList",
+  InternetComputerNeuronDetails = "InternetComputerNeuronDetails",
+  InternetComputerNeuronIncreaseStake = "InternetComputerNeuronIncreaseStake",
+  InternetComputerNeuronSetDissolveDelay = "InternetComputerNeuronSetDissolveDelay",
+  InternetComputerNeuronStakeMaturity = "InternetComputerNeuronStakeMaturity",
+  InternetComputerNeuronSplit = "InternetComputerNeuronSplit",
+  InternetComputerNeuronAddHotKey = "InternetComputerNeuronAddHotKey",
+  InternetComputerNeuronFollowTopic = "InternetComputerNeuronFollowTopic",
+  InternetComputerNeuronFollowees = "InternetComputerNeuronFollowees",
+  InternetComputerNeuronRefreshVotingPower = "InternetComputerNeuronRefreshVotingPower",
+  InternetComputerNeuronSelectDevice = "InternetComputerNeuronSelectDevice",
+  InternetComputerNeuronConnectDevice = "InternetComputerNeuronConnectDevice",
+  InternetComputerNeuronValidationError = "InternetComputerNeuronValidationError",
+  InternetComputerNeuronValidationSuccess = "InternetComputerNeuronValidationSuccess",
 
   // ton
   TonEditComment = "TonEditComment",

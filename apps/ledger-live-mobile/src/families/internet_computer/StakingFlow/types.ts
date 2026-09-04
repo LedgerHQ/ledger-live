@@ -1,12 +1,68 @@
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/internet_computer/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 
-// Reserved for LIVE-29098 (create-neuron flow). LIVE-29097 only registers the entry screen so
-// the account "Stake" action has a navigation target; LIVE-29098 extends this param list.
+/**
+ * Creating a neuron is a ledger transfer to a governance subaccount, so this flow is shaped like a
+ * send: pick an amount, sign, done. There is no validator to choose — prepareTransaction derives
+ * the recipient — which is why there is no selection screen between Started and Amount.
+ */
 export type InternetComputerStakingFlowParamList = {
   [ScreenName.InternetComputerStakingStarted]: {
     accountId: string;
     parentId?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.InternetComputerStakingAmount]: {
+    accountId: string;
+    parentId?: string;
+    transaction: Transaction;
+    status?: TransactionStatus;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.InternetComputerStakingSelectDevice]: {
+    accountId: string;
+    parentId?: string;
+    transaction: Transaction;
+    status?: TransactionStatus;
+    device?: Device;
+    // ConnectDevice sends the user back here with this set, so the last-connected device is not
+    // auto-selected again.
+    forceSelectDevice?: boolean;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.InternetComputerStakingConnectDevice]: {
+    accountId: string;
+    parentId?: string;
+    transaction: Transaction;
+    status?: TransactionStatus;
+    device: Device;
+    appName?: string;
+    selectDeviceLink?: boolean;
+    analyticsPropertyFlow?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.InternetComputerStakingValidationSuccess]: {
+    accountId: string;
+    parentId?: string;
+    deviceId?: string;
+    transaction: Transaction;
+    result: Operation;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.InternetComputerStakingValidationError]: {
+    accountId: string;
+    parentId?: string;
+    deviceId?: string;
+    transaction: Transaction;
+    error: Error;
+    // Whether the device produced a signature: a request that was never sent is always safe to retry.
+    signed?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };
