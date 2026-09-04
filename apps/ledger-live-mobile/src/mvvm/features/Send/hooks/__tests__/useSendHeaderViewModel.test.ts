@@ -67,7 +67,10 @@ describe("useSendHeaderViewModel", () => {
   const mockNavigate = jest.fn();
   const mockGoBack = jest.fn();
   const mockCanGoBack = jest.fn(() => false);
-  const mockGetState = jest.fn(() => ({ routes: [{ name: ScreenName.SendFlowAmount }], index: 0 }));
+  const mockGetState = jest.fn((): { routes: { name: string }[]; index: number } => ({
+    routes: [{ name: ScreenName.SendFlowAmount }],
+    index: 0,
+  }));
   const mockAddListener = jest.fn(() => jest.fn());
   const mockClearRecipientSearch = jest.fn();
   const mockSetRecipientSearchValue = jest.fn();

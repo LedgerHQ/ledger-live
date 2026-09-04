@@ -107,9 +107,10 @@ describe("useRecipientScreenViewModel", () => {
     if (!result.current.ready) {
       throw new Error("Expected a ready recipient screen");
     }
+    const viewModel = result.current;
 
     act(() => {
-      result.current.onAddressSelected("destination");
+      viewModel.onAddressSelected("destination");
     });
 
     expect(goBack).toHaveBeenCalledTimes(1);
