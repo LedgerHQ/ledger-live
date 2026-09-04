@@ -8,7 +8,16 @@ import {
 import Transport, { type DescriptorEvent } from "@ledgerhq/hw-transport";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
+import {
+  firstValueFrom,
+  Observer,
+  startWith,
+  pairwise,
+  map,
+  Subscription,
+  filter,
+  timeout,
+} from "rxjs";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
@@ -47,10 +56,29 @@ export class DeviceManagementKitTransport extends Transport {
     return subscription;
   };
 
-  static async open(): Promise<DeviceManagementKitTransport> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+  /** The device the active session is connected to, if it is still connected. */
+  private static activeSessionDeviceId(activeSessionId: DeviceId): DeviceId | undefined {
+    return getDeviceManagementKit()
+      .listConnectedDevices()
+      .find(device => device.sessionId === activeSessionId)?.id;
+  }
 
-    if (activeSessionId) {
+  /**
+   * @param options.deviceId Open this specific device. The active session is
+   *   reused only when it belongs to it: without that check a caller asking for
+   *   one device gets a transport bound to another, which then dies the moment
+   *   that other device goes away. Omit to keep the legacy behaviour of reusing
+   *   any live session and otherwise connecting the first available device.
+   */
+  static async open(options?: { deviceId?: DeviceId }): Promise<DeviceManagementKitTransport> {
+    const requestedDeviceId = options?.deviceId;
+    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const activeSessionIsForRequestedDevice =
+      !requestedDeviceId ||
+      (!!activeSessionId &&
+        DeviceManagementKitTransport.activeSessionDeviceId(activeSessionId) === requestedDeviceId);
+
+    if (activeSessionIsForRequestedDevice && activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
@@ -69,9 +97,25 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice] = await firstValueFrom(
-      getDeviceManagementKit().listenToAvailableDevices({}),
+    // Discovery emits an empty array first (before transports report), so wait
+    // for the first non-empty emission instead of grabbing the initial []. Real
+    // devices are already discovered when open() runs, so this is a no-op for
+    // them; it lets the mock transport's first poll populate the list.
+    const discoveredDevices = await firstValueFrom(
+      getDeviceManagementKit()
+        .listenToAvailableDevices({})
+        .pipe(
+          filter(devices =>
+            requestedDeviceId
+              ? devices.some(device => device.id === requestedDeviceId)
+              : devices.length > 0,
+          ),
+          timeout({ first: 10000 }),
+        ),
     );
+    const discoveredDevice = requestedDeviceId
+      ? discoveredDevices.find(device => device.id === requestedDeviceId)!
+      : discoveredDevices[0];
     const connectedSessionId = await getDeviceManagementKit().connect({
       device: discoveredDevice,
       sessionRefresherOptions: { isRefresherDisabled: true },
@@ -108,7 +152,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device added ${id}`);
             observer.next({
               type: "add",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -123,7 +167,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device removed ${id}`);
             observer.next({
               type: "remove",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -148,12 +192,14 @@ export class DeviceManagementKitTransport extends Transport {
     const pendingRemovals = new Map<DeviceId, DiscoveredDevice>();
     const sessionSubscriptions = new Map<DeviceId, Subscription>();
 
+    // Consumers key their device list by the descriptor, so it has to be the
+    // device id: a shared one collapses every device into a single entry.
     const notifyDeviceAdded = (device: DiscoveredDevice) => {
       const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
       tracer.trace(`[listen] device added ${id}`);
       observer.next({
         type: "add",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {
@@ -167,7 +213,7 @@ export class DeviceManagementKitTransport extends Transport {
       tracer.trace(`[listen] device removed ${id}`);
       observer.next({
         type: "remove",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {
@@ -278,11 +324,7 @@ export class DeviceManagementKitTransport extends Transport {
         apdu: new Uint8Array(apdu),
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
-        const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        return response;
-      })
-      .catch(e => {
-        throw e;
+        return Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
       });
   }
 }

@@ -25,6 +25,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { SideBarViewModel } from "./types";
 import { AnimatedLogo } from "../AnimatedLogo";
+import { DeviceScreen } from "../DeviceScreen";
 import { cn } from "LLD/utils/cn";
 
 export interface SideBarViewProps {
@@ -35,7 +36,7 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="grid h-full grid-rows-[auto_1fr] gap-24 py-32 pl-32">
+    <div className="grid h-full grid-rows-[auto_1fr_auto] gap-24 py-32 pl-32">
       <div
         className={cn(
           "flex h-48 w-0 items-center justify-center justify-self-center overflow-visible transition-transform duration-300",
@@ -123,6 +124,14 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
           </SideBarTrailing>
         </SideBar>
       </div>
+
+      {/* Emulated device screen. Hidden on the collapsed rail, which is too
+          narrow to render a device frame. */}
+      {!viewModel.collapsed && (
+        <div className="w-208">
+          <DeviceScreen />
+        </div>
+      )}
     </div>
   );
 }

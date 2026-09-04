@@ -18,6 +18,7 @@ import { LiveApp } from "tests/page/liveApp.page";
 import { LockscreenPage } from "tests/page/lockscreen.page";
 import { MarketPage } from "tests/page/market.page";
 import { Modal } from "tests/component/modal.component";
+import { OnboardingPage } from "tests/page/onboarding.page";
 import { OperationDrawer } from "tests/page/drawer/operation.drawer";
 import { PageHolder } from "tests/page/abstractClasses";
 import { PasswordlockModal } from "tests/page/modal/passwordlock.modal";
@@ -74,6 +75,7 @@ export class Application extends PageHolder {
   public modal = new Modal(this.page);
   public modularDialog = new ModularDialog(this.page);
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
+  public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
   public portfolio = new PortfolioPage(this.page);

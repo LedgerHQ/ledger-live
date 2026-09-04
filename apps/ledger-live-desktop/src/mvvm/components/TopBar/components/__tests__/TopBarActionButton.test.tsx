@@ -67,4 +67,37 @@ describe("TopBarActionButton", () => {
     const button = screen.getByTestId("topbar-action-button-test-action");
     expect(button).toBeDisabled();
   });
+
+  it("calls onContextMenu instead of opening the native menu on right click", async () => {
+    const handleContextMenu = jest.fn();
+
+    const { user } = render(
+      <TopBarActionButton {...defaultProps} onContextMenu={handleContextMenu} />,
+    );
+
+    const contextMenu = jest.fn();
+    document.addEventListener("contextmenu", contextMenu);
+    await user.pointer({
+      target: screen.getByTestId("topbar-action-button-test-action"),
+      keys: "[MouseRight]",
+    });
+    document.removeEventListener("contextmenu", contextMenu);
+
+    expect(handleContextMenu).toHaveBeenCalledTimes(1);
+    expect(contextMenu.mock.calls[0][0].defaultPrevented).toBe(true);
+  });
+
+  it("leaves the native menu alone when no onContextMenu is given", async () => {
+    const { user } = render(<TopBarActionButton {...defaultProps} />);
+
+    const contextMenu = jest.fn();
+    document.addEventListener("contextmenu", contextMenu);
+    await user.pointer({
+      target: screen.getByTestId("topbar-action-button-test-action"),
+      keys: "[MouseRight]",
+    });
+    document.removeEventListener("contextmenu", contextMenu);
+
+    expect(contextMenu.mock.calls[0][0].defaultPrevented).toBe(false);
+  });
 });

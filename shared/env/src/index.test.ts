@@ -89,4 +89,40 @@ describe("@shared/live-env", () => {
       expect(received).toHaveLength(0);
     });
   });
+
+  describe("mock server envs", () => {
+    const defaultSession = getEnv("MOCK_SERVER_SESSION");
+
+    afterEach(() => {
+      setEnv("MOCK_SERVER_SESSION", defaultSession);
+    });
+
+    it("leaves MOCK_SERVER_SEED empty so the mock server's own seed applies", () => {
+      expect(getEnv("MOCK_SERVER_SEED")).toBe("");
+    });
+
+    it("defaults MOCK_SERVER_SESSION to a single USB Stax on firmware 1.9.1", () => {
+      expect(defaultSession).toEqual({
+        devices: [
+          {
+            name: "Ledger Stax",
+            device_type: "stax",
+            connectivity_type: "USB",
+            firmware_version: "1.9.1",
+            apps: [{ name: "BOLOS", version: "1.4.0" }],
+          },
+        ],
+      });
+    });
+
+    it("parses a MOCK_SERVER_SESSION override from a JSON string", () => {
+      expect(setEnvUnsafe("MOCK_SERVER_SESSION", '{"devices":[{"device_type":"flex"}]}')).toBe(true);
+      expect(getEnv("MOCK_SERVER_SESSION")).toEqual({ devices: [{ device_type: "flex" }] });
+    });
+
+    it("keeps the default when MOCK_SERVER_SESSION is not valid JSON", () => {
+      expect(setEnvUnsafe("MOCK_SERVER_SESSION", "{oops")).toBe(false);
+      expect(getEnv("MOCK_SERVER_SESSION")).toEqual(defaultSession);
+    });
+  });
 });

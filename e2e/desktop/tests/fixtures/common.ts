@@ -24,6 +24,11 @@ import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import { attachNetworkLogging } from "tests/utils/networkLogging";
+import {
+  isMockServerReachable,
+  mockServerBaseUrl,
+  type MockServerDeviceConfig,
+} from "tests/utils/mockServerUtils";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
@@ -65,6 +70,9 @@ type TestFixtures = {
   teamOwner?: Team;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
+  /** Set to drive the app off a device mock server instead of Speculos. */
+  mockServerDevice?: MockServerDeviceConfig;
+  mockServer: { url: string; device: MockServerDeviceConfig } | undefined;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -99,6 +107,22 @@ export const test = base.extend<TestFixtures>({
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
+  mockServerDevice: undefined,
+
+  mockServer: async ({ mockServerDevice }, use, testInfo) => {
+    if (!mockServerDevice) {
+      await use(undefined);
+      return;
+    }
+
+    const url = mockServerBaseUrl();
+    testInfo.skip(!(await isMockServerReachable(url)), `device mock server unreachable at ${url}`);
+
+    // The app provisions its own session from MOCK_SERVER_SESSION at boot, so
+    // there is nothing to tear down here: its token never leaves the renderer,
+    // and the session expires on the server's own TTL.
+    await use({ url, device: mockServerDevice });
+  },
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -200,7 +224,16 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
+    {
+      lang,
+      theme,
+      userdataDestinationPath,
+      env,
+      featureFlags,
+      simulateCamera,
+      speculos,
+      mockServer,
+    },
     use,
     testInfo,
   ) => {
@@ -226,6 +259,11 @@ export const test = base.extend<TestFixtures>({
         MANAGER_DEV_MODE: true,
         SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
         SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
+        MOCK_SERVER_TRANSPORT: mockServer ? "1" : undefined,
+        MOCK_SERVER_TRANSPORT_URL: mockServer?.url,
+        MOCK_SERVER_SESSION: mockServer
+          ? JSON.stringify({ devices: [mockServer.device] })
+          : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
       },
       env,
