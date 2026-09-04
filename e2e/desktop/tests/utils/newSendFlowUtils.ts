@@ -66,6 +66,12 @@ export type NewSendFlowEntry = {
   xrayTicket: string;
   bugTicket?: string;
   teamOwner?: Team;
+  /**
+   * When set, the amount is asserted to round-trip exactly in the input and to appear
+   * verbatim in the operation details. Use for assets whose decimal magnitude is unusual
+   * enough that a formatting regression would otherwise pass unnoticed.
+   */
+  verifyAmountPrecision?: boolean;
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -139,6 +145,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           }
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
+          if (entry.verifyAmountPrecision) {
+            await app.newSendFlow.expectCryptoAmount(tx.amount);
+          }
 
           if (tx.speed) {
             await app.newSendFlow.selectFeePreset(tx.speed);
@@ -152,6 +161,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.newSendFlow.clickViewDetails();
           await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+          if (entry.verifyAmountPrecision) {
+            await app.sendDrawer.expectAmountVisible(tx.amount);
+          }
           if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
             await app.sendDrawer.expectMemoVisible(validMemoTag);
           }

@@ -33,6 +33,11 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
     transaction: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01"),
     xrayTicket: "B2CQA-6111",
   },
+  {
+    transaction: new Transaction(TokenAccount.ETH_WGNK_1, TokenAccount.ETH_WGNK_3, "0.123456789"),
+    xrayTicket: "B2CQA-6111",
+    verifyAmountPrecision: true,
+  },
 ];
 
 registerNewSendFlowTests(tokenSendTransactions);
