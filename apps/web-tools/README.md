@@ -9,7 +9,7 @@ Today we have:
 - **Logs Viewer**: a tool to view logs exported from a Ledger Live application. This is useful for the customer support to investigate issues in collaboration with developers.
 - **Ledger Live Desktop signatures**: this allows a user to verify if a Ledger Live Desktop build is legit but cross verifying the signature of the build with the public key of the Ledger Live Desktop team.
 - **REPL**: this allows developers to test the connectivity on the web through various web implementation of HW Transports against our different hardware wallets. (U2F, WebHID, WebUSB, Web Bluetooth,...). This is a low level technical tool for developers where you can execute arbitrary APDUs.
-- **Synchronisation**: this allows developers to test the coin implementations on the web. Give it an Account ID and it reads the balance through the account-data layer — showing which source answered (`coin-module-api` for a direct chain read, `legacy-bridge` for a full sync) and every token balance that came back in the same call. A full legacy synchronisation stays one click away, to inspect everything else and to reveal web specific issues like CORS or libraries that wouldn't be web compatible.
+- **Synchronisation**: this allows developers to test the coin implementations on the web. Give it an Account ID and it reads the balance through the account-data layer — showing which source answered (`granular` for a direct chain read, `full-sync` for a full `AccountBridge.sync()`) and every token balance that came back in the same call. A full legacy synchronisation stays one click away, to inspect everything else and to reveal web specific issues like CORS or libraries that wouldn't be web compatible.
 - **Network Troubleshooting**: allows to run basic HTTP check on some important API endpoints Ledger Live uses. This typically allows us to ask if a user can access our network from there location (e.g. through VPN / behind firewall / etc...)
 - **Domain TLV Parser**: allows to parse a domain APDU (TLV) returned by the Ledger NFT Metadata service. This is useful to test the parsing done in the Ethereum app.
 - **SVG Icons**: helper to facilitate the creation of currency SVG icons for the Ledger Live application. This will validate icons correctly matches Ledger Live expectations and will prefill a PR creation.
@@ -18,9 +18,10 @@ Today we have:
 ### Account data (hybrid balance reads)
 
 `src/logic/accountData.ts` is this app's composition root for
-[`@features/platform-account-data`](../../features/platform/account-data/README.md): it registers the
-granular coin-module source and the legacy-bridge fallback, and creates the scheduler that
-`<AccountDataProvider>` exposes to the pages.
+[`@features/platform-account-data`](../../features/platform/account-data/README.md): it registers two
+sources — `granular` (the coin module's own `getBalance`) and `full-sync` (today's
+`AccountBridge.sync()`, projected onto balance rows). The highest-priority one that supports an
+account answers.
 
 Two places use it:
 
@@ -30,7 +31,7 @@ Two places use it:
   resource bag — only to display a name and a balance. `descriptorToAccount` already rebuilds every
   other field with no network at all, so that sync was paid for one number.
   `src/logic/balanceOnlyBridge.ts` now answers the accounts cloud-sync module's `bridge.sync` call
-  with a `{ balance }` request instead: one `getBalance` on a family with a granular coin module, the
+  with a single balance read instead: one `getBalance` on a family with a granular coin module, the
   same full sync as before on families without one. Each row shows which source served it.
 
 ---

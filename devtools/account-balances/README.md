@@ -1,20 +1,20 @@
 # @devtools/account-balances
 
 Lists the profile's accounts and reads each one's **balance** through
-[`@features/platform-account-data`](../../features/platform/account-data/README.md) — the `balance`
-slice and nothing else.
+[`@features/platform-account-data`](../../features/platform/account-data/README.md) — the balance and
+nothing else.
 
 What it makes visible, which is the reason it exists:
 
-- **which source answered** — `coin-module-api` (one chain call) or `legacy-bridge` (a full
-  `AccountBridge.sync()`), so the routing decision stops being a thing you take on trust;
+- **which source answered** — `granular` (one coin-module `getBalance` call) or `full-sync` (a whole
+  `AccountBridge.sync()`), so the selection stops being a thing you take on trust;
 - **the token balances that came back in the same read**, since one `getBalance` returns every asset
   an address holds;
-- **freshness** — how old the stored value is, and whether the scheduler skipped a read because a
-  background sync had already produced it.
+- **freshness** — how old the stored value is, which is also what decides whether a read happens at
+  all.
 
 `Read balance` forces a round-trip (`maxAge: 0`). `Read all` does not: it reproduces what a portfolio
-mount does, so the reads it *skips* are the point.
+mount does, so the reads it *skips* — the ones whose stored balance is still fresh — are the point.
 
 ## Props
 

@@ -22,9 +22,16 @@ describe("formatAmount", () => {
     );
   });
 
-  it("handles a value shorter than the magnitude, and zero", () => {
-    expect(formatAmount("1", ETH)).toBe("0 ETH");
+  it("distinguishes dust from nothing", () => {
+    // 1 wei is not 0 ETH, and a tool built to make a balance trustworthy must not say it is.
+    expect(formatAmount("1", ETH)).toBe("<0.00000001 ETH");
+    expect(formatAmount("9999999999", ETH)).toBe("<0.00000001 ETH");
     expect(formatAmount("0", TRX)).toBe("0 TRX");
+    expect(formatAmount("0", ETH)).toBe("0 ETH");
+  });
+
+  it("does not floor an amount that has a visible digit", () => {
+    expect(formatAmount("10000000000", ETH)).toBe("0.00000001 ETH");
   });
 
   it("supports a magnitude of zero", () => {

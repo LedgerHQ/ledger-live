@@ -123,6 +123,7 @@ function App() {
  * a source, and "no read yet" is the only case left.
  */
 function sourceLine(status: AccountBalanceStatus, assetCount: number): string {
+  if (status.pending) return "reading…";
   if (status.error) return status.error;
   if (!status.sourceId) return "no read yet";
   const extra = assetCount > 1 ? ` — ${assetCount} assets in one read` : "";

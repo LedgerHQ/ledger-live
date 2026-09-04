@@ -35,6 +35,11 @@ function groupThousands(digits: string): string {
  * locale-aware formatter, and pulling one in would tie a devtool to the wallet's currency stack.
  * Falls back to the raw value when the host could not resolve the unit, or when the value is not a
  * plain integer — a devtool must show what the layer actually holds, never a silent `NaN`.
+ *
+ * A non-zero amount whose first significant digit falls past {@link MAX_DECIMALS} renders as
+ * `<0.00000001 CODE` rather than as `0 CODE`: 1 wei is dust, but "this account holds nothing" and
+ * "this account holds dust" are different answers, and a tool built to make a balance read
+ * trustworthy must not conflate them.
  */
 export function formatAmount(value: string, unit?: AmountUnit): string {
   if (!unit || !/^\d+$/.test(value)) return value;
@@ -42,6 +47,9 @@ export function formatAmount(value: string, unit?: AmountUnit): string {
   const whole = padded.slice(0, padded.length - unit.magnitude) || "0";
   const fraction = unit.magnitude === 0 ? "" : padded.slice(padded.length - unit.magnitude);
   const decimals = trimTrailingZeros(fraction.slice(0, MAX_DECIMALS));
+  if (!decimals && groupThousands(whole) === "0" && /[1-9]/.test(value)) {
+    return `<0.${"0".repeat(MAX_DECIMALS - 1)}1 ${unit.code}`;
+  }
   const fractionPart = decimals ? `.${decimals}` : "";
   return `${groupThousands(whole)}${fractionPart} ${unit.code}`;
 }

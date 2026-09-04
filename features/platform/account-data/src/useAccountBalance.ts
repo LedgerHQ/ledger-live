@@ -62,12 +62,15 @@ export function useAccountBalance(
   const latest = useRef(ref);
   latest.current = ref;
 
+  // Deliberately no `AbortController`. A read is not *for* a component: its result lands in a shared
+  // table, and because `fetchAccountBalance` coalesces on the account's pending status, only the
+  // first of N mounted consumers actually runs one. Aborting on that one's unmount would cancel the
+  // read the other N-1 are still waiting on. Ref-counting it back is the scheduler this layer just
+  // removed; letting a cheap request finish and land is the cheaper answer.
   useEffect(() => {
     const current = latest.current;
     if (!refKey || !current) return;
-    const controller = new AbortController();
-    void dispatch(fetchAccountBalance(current, { maxAge, signal: controller.signal }));
-    return () => controller.abort();
+    void dispatch(fetchAccountBalance(current, { maxAge }));
   }, [dispatch, refKey, maxAge]);
 
   const balance = useSelector((state: WithAccountBalances) =>

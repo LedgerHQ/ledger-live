@@ -29,8 +29,10 @@ export type AccountBalancesInput = {
   units: Readonly<Record<string, { code: string; magnitude: number }>>;
 };
 
+// `getSelectors()` — over the slice state, not the root state. Selecting the root state here would
+// re-render the whole devtool on any unrelated slice change.
 const { selectAccountBalance, selectSubAccountBalances, selectAccountBalanceStatus } =
-  accountBalancesSlice.selectors;
+  accountBalancesSlice.getSelectors();
 
 /**
  * Props for the Account Balances devtool.
@@ -47,14 +49,14 @@ export function useAccountBalancesToolProps(
   inputs: readonly AccountBalancesInput[],
 ): AccountBalancesToolProps {
   const dispatch = useDispatch<ThunkDispatch<WithAccountBalances, unknown, UnknownAction>>();
-  const state = useSelector((state: WithAccountBalances) => state);
+  const balances = useSelector((state: WithAccountBalances) => state.accountBalances);
 
   const accounts = useMemo<Row[]>(
     () =>
       inputs.map(({ ref, name, granular, units }) => {
-        const balance = selectAccountBalance(state, ref.accountId);
-        const subs = selectSubAccountBalances(state, ref.accountId);
-        const status = selectAccountBalanceStatus(state, ref.accountId);
+        const balance = selectAccountBalance(balances, ref.accountId);
+        const subs = selectSubAccountBalances(balances, ref.accountId);
+        const status = selectAccountBalanceStatus(balances, ref.accountId);
 
         return {
           accountId: ref.accountId,
@@ -79,7 +81,7 @@ export function useAccountBalancesToolProps(
           status,
         };
       }),
-    [inputs, state],
+    [inputs, balances],
   );
 
   const refsById = useMemo(
