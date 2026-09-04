@@ -130,6 +130,19 @@ export const FF_STAKE_PROGRAMS_MODAL = {
   },
 } satisfies PartialFeatures;
 
+// Mina staking is unreleased, so the currency is absent from the remote stakePrograms list. The
+// account header only keeps a "Stake" action when getCanStakeUsingLedgerLive is true, so without
+// this the Earn button never renders.
+export const FF_MINA_STAKING_ENABLED = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["mina"],
+      redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_DISABLED = {
   newSendFlow: {
     enabled: false,

@@ -55,6 +55,7 @@ export async function verifyStakeOperationDetailsInfo(
   ];
   const currenciesForDelegateType = [
     Currency.ATOM,
+    Currency.MINA,
     Currency.SOL,
     Currency.SUI,
     Currency.XTZ,

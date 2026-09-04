@@ -11,7 +11,7 @@ import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import { FF_MINA_STAKING_ENABLED, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -565,6 +565,60 @@ test.describe("Delegate", () => {
 
       await app.delegateDrawer.providerIsVisible(seiDelegation);
       await app.delegateDrawer.amountValueIsVisible(seiDelegation.account.currency.ticker);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
+
+// The mina rosetta node answers /search/transactions in 35s or so even for an account holding a
+// handful of operations, which leaves no room under the default expect timeout.
+const MINA_SYNC_TIMEOUT = 120_000;
+
+test.describe("Delegate", () => {
+  // Mina delegates the whole balance, so the flow carries no amount.
+  const account = new Delegate(Account.MINA_1, "N/A", "Kraken");
+  // Broadcasting would leave `Mina 1` delegated, turning the next run into a redelegation: the
+  // continue button would stay disabled on the current delegate, and the operation would be typed
+  // REDELEGATE. `Mina 2` is the account kept delegated, for the undelegate spec.
+  setupEnv(true);
+  test.use({
+    teamOwner: delegateTeamOwner(account.account.currency.id),
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account.account)],
+    featureFlags: FF_MINA_STAKING_ENABLED,
+  });
+
+  test(
+    `[${account.account.currency.testLabel}] - Delegate`,
+    {
+      // The Nano S build of the Mina app stops at 1.4.2 while the other devices ship 1.6.9, the
+      // version the delegation flow was validated against.
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
+      annotation: { type: "TMS", description: "B2CQA-387" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+
+      // The modal opens straight on the validator list, and the whole-balance delegation means
+      // there is no amount step between the selection and the device.
+      await app.account.startStakingFlowFromMainStakeButton(MINA_SYNC_TIMEOUT);
+      await app.delegate.checkValidatorListIsVisible();
+      await app.delegate.inputProvider(account.provider);
+      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.continue();
+
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Delegated");
       await app.delegateDrawer.operationTypeIsCorrect("Delegated");
       await app.drawer.closeDrawer();
     },
