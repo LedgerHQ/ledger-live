@@ -2,6 +2,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
@@ -19,14 +20,18 @@ export type ReadyRecipientScreenViewModel = Readonly<{
   transaction: Transaction | null;
   currency: CryptoOrTokenCurrency;
   recipientSupportsDomain: boolean;
-  onAddressSelected: (address: string, ensName?: string) => void;
-  onMemoProceed: () => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
 }>;
 
 export type RecipientScreenViewModel = RecipientScreenViewModelBase | ReadyRecipientScreenViewModel;
 
 export function useRecipientScreenViewModel(): RecipientScreenViewModel {
-  const { state, uiConfig, recipientSearch } = useSendFlowData();
+  const { state, uiConfig } = useSendFlowData();
   const { transaction } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
 
@@ -46,18 +51,20 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     navigation.navigate(ScreenName.SendFlowAmount);
   }, [navigation]);
 
-  const onMemoProceed = useCallback(() => {
-    recipientSearch.clear();
-    goToAmount();
-  }, [recipientSearch, goToAmount]);
-
   const onAddressSelected = useCallback(
-    (address: string, ensName?: string) => {
-      transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
-      recipientSearch.clear();
-      goToAmount();
+    (address: string, ensName?: string, goToNextStep = true, memo?: Memo) => {
+      transaction.setRecipient({
+        ...state.recipient,
+        address,
+        ensName,
+        ...(memo ? { memo } : {}),
+      });
+
+      if (goToNextStep) {
+        goToAmount();
+      }
     },
-    [transaction, state.recipient?.memo, recipientSearch, goToAmount],
+    [transaction, state.recipient, goToAmount],
   );
 
   if (!account || !currency) {
@@ -72,6 +79,5 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     currency,
     recipientSupportsDomain: uiConfig.recipientSupportsDomain,
     onAddressSelected,
-    onMemoProceed,
   };
 }

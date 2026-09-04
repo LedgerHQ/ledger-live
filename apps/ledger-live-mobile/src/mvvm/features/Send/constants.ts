@@ -26,6 +26,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  // Rendered as a bottomsheet overlay from the recipient screen, not a stack screen.
   [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: {
     id: SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
     canGoBack: true,

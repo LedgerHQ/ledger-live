@@ -34,7 +34,6 @@ const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFo
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
-const onMemoProceed = jest.fn();
 
 const recipientViewModel = {
   isLoading: false,
@@ -106,7 +105,6 @@ describe("useRecipientScreenContentViewModel", () => {
         currency: account.currency,
         onAddressSelected: jest.fn(),
         recipientSupportsDomain: true,
-        onMemoProceed,
         onAddContact: jest.fn(),
       }),
     );
@@ -133,7 +131,6 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
       address: "resolved-address",
       hasMemo: true,
-      onSkip: expect.any(Function),
     });
     expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -158,7 +155,6 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
       address: "",
       hasMemo: false,
-      onSkip: expect.any(Function),
     });
   });
 
@@ -207,18 +203,14 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(false);
   });
 
-  it("tracks memo skipping before proceeding", () => {
-    renderViewModel();
-    const { onSkip } = mockedUseMemoViewModel.mock.calls[0][0];
+  it("shows the matched address even when the memo is empty", () => {
+    mockedUseMemoViewModel.mockReturnValue({
+      hasFilledMemo: false,
+      memoError: undefined,
+    } as never);
 
-    act(() => {
-      onSkip();
-    });
+    const { result } = renderViewModel();
 
-    expect(mockedTrack).toHaveBeenCalledWith(
-      "button_clicked",
-      expect.objectContaining({ button: "skip", page: "step memo" }),
-    );
-    expect(onMemoProceed).toHaveBeenCalledTimes(1);
+    expect(result.current.showMatched).toBe(true);
   });
 });

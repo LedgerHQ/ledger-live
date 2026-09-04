@@ -4,6 +4,7 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import {
   InvalidAddress,
@@ -15,11 +16,16 @@ import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.m
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
+import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
+import { useSendMemoReset } from "../../../../context/SendMemoResetContext";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../context/SendMemoResetContext");
+jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
 jest.mock("@ledgerhq/live-common/account/index");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts", () => ({
   useContacts: jest.fn(),
   useContactsFeature: jest.fn(),
@@ -37,6 +43,11 @@ const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelect
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
+const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseDoNotAskAgainSkipMemo = jest.mocked(useDoNotAskAgainSkipMemo);
+const mockedUseSendMemoReset = jest.mocked(useSendMemoReset);
+const markMemoSkipped = jest.fn();
+const setDoNotAskAgainSkipMemo = jest.fn();
 
 const mockAccount = createMockAccount({
   id: "account_1",
@@ -103,6 +114,13 @@ describe("useRecipientScreenView", () => {
       primaryActionLabel: "",
       onComplete: jest.fn(),
       onClose: jest.fn(),
+    });
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
+    mockedUseDoNotAskAgainSkipMemo.mockReturnValue([false, setDoNotAskAgainSkipMemo]);
+    mockedUseSendMemoReset.mockReturnValue({
+      markMemoSkipped,
+      registerResetViewState: jest.fn(),
+      resetViewState: jest.fn(),
     });
   });
 
@@ -340,7 +358,7 @@ describe("useRecipientScreenView", () => {
     act(() => result.current.handleContactSelect(contact));
     act(() => result.current.contactAddressPicker.onSelectAddress(contact.addresses[0]));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined, true);
     expect(result.current.contactAddressPicker.contact).toBeNull();
   });
 
@@ -412,7 +430,77 @@ describe("useRecipientScreenView", () => {
 
     result.current.handleAddressSelect("new_address", "ens_name");
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
+  });
+
+  it("asks for confirmation before sending without a memo", () => {
+    const onAddressSelected = jest.fn();
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address", "ens_name"));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", false);
+    expect(result.current.isSkipMemoConfirmationOpen).toBe(true);
+  });
+
+  it("sends without confirmation when the memo warning was dismissed permanently", () => {
+    const onAddressSelected = jest.fn();
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+    mockedUseDoNotAskAgainSkipMemo.mockReturnValue([true, setDoNotAskAgainSkipMemo]);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("new_address"));
+
+    expect(markMemoSkipped).toHaveBeenCalledTimes(1);
+    expect(onAddressSelected).toHaveBeenCalledWith("new_address", undefined, true, {
+      value: "",
+      type: "NO_MEMO",
+    });
+    expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
+  });
+
+  it("uses the resolved address to decide whether a memo is required", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "name.eth" },
+      state: {} as never,
+      uiConfig: {} as never,
+    });
+    mockedUseAddressValidation.mockReturnValue({
+      result: { ...idleResult, resolvedAddress: "0xresolved", ensName: "name.eth" },
+      isLoading: false,
+      validateAddress: jest.fn(),
+    });
+
+    renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedSendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+      mockAccount.currency,
+      "0xresolved",
+    );
   });
 
   it("passes the current transaction to address and clipboard validation", () => {

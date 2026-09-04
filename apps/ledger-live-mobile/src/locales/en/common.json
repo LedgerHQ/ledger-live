@@ -4636,11 +4636,11 @@
         "walletNotExist": "Wallet doesn’t exist"
       },
       "skipMemo": {
-        "title": "Skip adding a {{tag}}?",
-        "warning": "Your asset may be lost if a {{tag}} is required by your recipient",
-        "notRequired": "{{tag}} not required by recipient?",
-        "confirm": "Yes, skip",
-        "neverAskAgain": "Don’t show this warning again"
+        "title": "Do you want to send without a {{tag}}?",
+        "description": "Your asset may be lost if a {{tag}} is required by your recipient.",
+        "confirm": "Yes, send without a {{tag}}",
+        "cancel": "No, go back",
+        "neverAskAgain": "Don't ask again"
       },
       "tagHelp": {
         "title": "What’s a {{tag}}?",
