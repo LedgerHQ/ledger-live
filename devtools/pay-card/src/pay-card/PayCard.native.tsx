@@ -31,6 +31,8 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
     resetReceiveVerifyHintSeen,
+    hasCompletedCardOnboarding,
+    resetCardOnboarding,
     onNavigateToPortfolio,
     onNavigateToPayTab,
     env,
@@ -111,8 +113,11 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Section title="Reset onboarding">
         <Box style={BUTTON_ROW_STYLE}>
+          <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
+            Set all done
+          </Button>
           <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", false)}>
-            Reset onboarding widget
+            Reset all
           </Button>
         </Box>
       </Section>
@@ -133,6 +138,15 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         seen={hasSeenReceiveVerifyHint}
         resetLabel="Reset verify hint"
         onReset={resetReceiveVerifyHintSeen}
+      />
+
+      <Divider />
+
+      <SeenReset
+        title="Onboarding completed"
+        seen={hasCompletedCardOnboarding}
+        resetLabel="Reset onboarding completion"
+        onReset={resetCardOnboarding}
       />
 
       {onNavigateToPortfolio || onNavigateToPayTab ? (

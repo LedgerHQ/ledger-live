@@ -12,6 +12,7 @@ import {
   markReceiveVerifyHintSeen,
 } from "@features/flow-pay-request/state";
 import { cardApi } from "@shared/api-services";
+import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 /**
@@ -51,6 +52,7 @@ function buildStore() {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
       payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+      payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
       // The tool reads the Card endpoints, so its api has to be part of the store under test.
       [cardApi.reducerPath]: cardApi.reducer,
     },
@@ -78,26 +80,26 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "first-purchase",
     ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
   });
 
-  it("includes walletPay when platform is native", () => {
+  it("includes apple-google-pay step when platform is native", () => {
     const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
       wrapper: withStore(store),
     });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "walletPay",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "apple-google-pay",
+      "first-purchase",
     ]);
   });
 
@@ -174,9 +176,11 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     act(() => {
-      result.current.onboarding.setStepDone("kyc", true);
+      result.current.onboarding.setStepDone("choose-card-type", true);
     });
-    expect(result.current.onboarding.steps.find(step => step.id === "kyc")?.done).toBe(true);
+    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
+      true,
+    );
 
     act(() => {
       result.current.onboarding.setStepDone("all", false);
