@@ -746,7 +746,7 @@ describe("cardManagementApi requests", () => {
     it("reads the onboarding steps with the bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(onboardingStatus));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
       );
@@ -765,7 +765,7 @@ describe("cardManagementApi requests", () => {
         }),
       );
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
       );
