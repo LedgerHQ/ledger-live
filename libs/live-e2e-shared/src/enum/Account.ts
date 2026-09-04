@@ -404,6 +404,24 @@ export class TokenAccount extends Account {
     Account.ETH_3,
   );
 
+  static readonly ETH_WGNK_1 = new TokenAccount(
+    Currency.ETH_WGNK,
+    "(Ethereum) Wrapped Gonka 1",
+    0,
+    Account.ETH_1.accountPath,
+    TokenType.ERC20,
+    Account.ETH_1,
+  );
+
+  static readonly ETH_WGNK_3 = new TokenAccount(
+    Currency.ETH_WGNK,
+    "Wrapped Gonka 3",
+    2,
+    Account.ETH_3.accountPath,
+    TokenType.ERC20,
+    Account.ETH_3,
+  );
+
   static readonly SOL_GIGA_1 = new TokenAccount(
     Currency.SOL_GIGA,
     "(Solana) GIGACHAD 1",

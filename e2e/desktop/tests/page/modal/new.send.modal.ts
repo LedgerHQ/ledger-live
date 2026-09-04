@@ -100,6 +100,11 @@ export class NewSendModal extends Modal {
     await this.amountInput.fill(amount);
   }
 
+  @step("Verify crypto amount round-trips exactly: $0")
+  async expectCryptoAmount(amount: string) {
+    await expect(this.amountInput).toHaveValue(amount);
+  }
+
   @step("Click review to proceed to signature")
   async clickReview() {
     await expect(this.reviewButton).toBeEnabled();

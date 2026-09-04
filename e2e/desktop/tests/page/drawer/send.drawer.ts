@@ -18,4 +18,15 @@ export class SendDrawer extends Drawer {
   async expectMemoVisible(memo: string) {
     await expect(this.sendDrawer.getByText(memo, { exact: true })).toBeVisible();
   }
+
+  @step("Verify amount is visible in transaction details: $0")
+  async expectAmountVisible(amount: string) {
+    // Digit-boundary guarded rather than a plain substring: "0.1234567890" contains
+    // "0.123456789", so a substring match would accept a differently-rounded amount and
+    // defeat the point of a precision assertion.
+    const escaped = amount.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+    await expect(
+      this.sendDrawer.filter({ hasText: new RegExp(String.raw`(?<!\d)${escaped}(?!\d)`) }),
+    ).toBeVisible();
+  }
 }

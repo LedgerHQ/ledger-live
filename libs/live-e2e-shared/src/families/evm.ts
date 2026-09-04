@@ -16,6 +16,7 @@ import {
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { Currency } from "../enum/Currency";
+import { TokenAccount } from "../enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { getEnv } from "@shared/env";
@@ -44,6 +45,19 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     throw new Error(
       `Expected amount "${tx.amount}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
     );
+  }
+
+  if (tx.accountToDebit instanceof TokenAccount) {
+    const { ticker } = tx.accountToDebit.currency;
+    // Strict containment, not containsSubstringInEvent: that helper falls back to a
+    // `W.*?G.*?N.*?K` regex over the concatenated events, which a 4-letter ticker would
+    // match against almost any screen. Screens are concatenated first, so a ticker split
+    // across two events is still found.
+    if (!events.join("").includes(ticker)) {
+      throw new Error(
+        `Expected token ticker "${ticker}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
+      );
+    }
   }
 
   if (shouldSkipRecipientDisplayValidation(tx)) {
