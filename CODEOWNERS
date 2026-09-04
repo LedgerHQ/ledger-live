@@ -119,6 +119,7 @@ apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
 # Wallet — Contacts
 domain/entity/contact/                                   @ledgerhq/wallet-xp
+domain/entity/pay-card-asset/                            @ledgerhq/wallet-xp
 features/platform/contacts/                               @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp

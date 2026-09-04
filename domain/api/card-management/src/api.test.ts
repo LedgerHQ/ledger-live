@@ -741,7 +741,44 @@ describe("cardManagementApi requests", () => {
       expect(request(fetchSpy).method).toBe("GET");
       expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
-      expect(result.data).toEqual(linkedWallets);
+      // The wire fields, each wallet resolved to the Ledger currency its asset is.
+      expect(result.data).toEqual(
+        linkedWallets.map(wallet => ({ ...wallet, ledgerId: expect.any(String) })),
+      );
+    });
+
+    it("resolves each wallet to its Ledger currency, so no consumer has to map it again", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse([
+          { ...linkedWallets[0], currency: "usdc", network: "ethereum", priority: 0 },
+          { ...linkedWallets[0], id: "w-btc", currency: "btc", network: "bitcoin", priority: 1 },
+        ]),
+      );
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data?.map(({ ledgerId }) => ledgerId)).toEqual([
+        "ethereum/erc20/usd__coin",
+        "bitcoin",
+      ]);
+    });
+
+    it("leaves an asset the catalog does not cover unresolved rather than guessing one", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(
+          jsonResponse([{ ...linkedWallets[0], currency: "bxx", network: "ethereum" }]),
+        );
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data?.[0]?.ledgerId).toBeUndefined();
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {

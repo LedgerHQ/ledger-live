@@ -41,6 +41,7 @@ function buildProps(): PayCardToolProps {
       load: jest.fn(),
       refresh: jest.fn(),
     },
+    currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,

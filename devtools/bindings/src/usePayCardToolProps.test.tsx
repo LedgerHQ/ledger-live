@@ -227,6 +227,22 @@ describe("usePayCardToolProps", () => {
     }
   });
 
+  it("hands the tool the whole asset catalog, in key order", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    const { currencyMapping } = result.current;
+    const keys = currencyMapping.map(({ key }) => key);
+
+    expect(keys).toEqual([...keys].sort());
+    expect(currencyMapping).toContainEqual({
+      key: "usdc.ethereum",
+      ledgerId: "ethereum/erc20/usd__coin",
+    });
+    // Every row names a currency: an entry with no id would read as a mapped asset that is not.
+    expect(currencyMapping.every(({ ledgerId }) => ledgerId.length > 0)).toBe(true);
+  });
+
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 
