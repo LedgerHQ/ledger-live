@@ -43,12 +43,38 @@ export interface PayCardProbe {
   readonly run: () => void;
 }
 
+/** The four colours the provider paints the details image with. Hex, `#RGB` or `#RRGGBB`. */
+export interface PayCardDetailsCssProps {
+  readonly cardBackgroundColor?: string;
+  readonly cardTextColor?: string;
+  /** PAN is the card number: the provider draws it on its own strip. */
+  readonly panBackgroundColor?: string;
+  readonly panTextColor?: string;
+}
+
+/**
+ * The secure card details image.
+ *
+ * The provider renders PAN, CVV and expiry itself and hands back a URL whose token is the whole
+ * credential, so the image loads with no headers. The URL is single-use and short-lived: it is
+ * never rendered as text, never logged, and dropped when the screen is left.
+ */
+export interface PayCardDetailsImageProps {
+  readonly imageUrl: string | undefined;
+  readonly isFetching: boolean;
+  readonly error: string | undefined;
+  readonly request: (customCss?: PayCardDetailsCssProps) => void;
+  /** Drops the minted URL, so coming back to the screen mints a fresh one. */
+  readonly clear: () => void;
+}
+
 /**
  * Card interaction controls: call the signed-in cardholder's endpoints and read back what they
  * answer, so the data can be checked without a screen to render it.
  */
 export interface PayCardInteractionProps {
   readonly probes: readonly PayCardProbe[];
+  readonly details: PayCardDetailsImageProps;
 }
 
 /** One card-linked wallet, joined to its balance, exactly as the calculation saw it. */
