@@ -1,5 +1,20 @@
 import type { Action } from "@reduxjs/toolkit";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { CARD_GRANT_ENDPOINTS, CARD_REDUCER_PATH, REDACTED } from "./constants";
+
+const FETCH_BASE_QUERY_ERROR_STRING_STATUSES = new Set<FetchBaseQueryError["status"]>([
+  "FETCH_ERROR",
+  "PARSING_ERROR",
+  "TIMEOUT_ERROR",
+  "CUSTOM_ERROR",
+]);
+
+function isFetchBaseQueryErrorStatus(status: unknown): status is FetchBaseQueryError["status"] {
+  return (
+    typeof status === "number" ||
+    FETCH_BASE_QUERY_ERROR_STRING_STATUSES.has(status as FetchBaseQueryError["status"])
+  );
+}
 
 export function isCardApiAction(action: Action): boolean {
   return action.type.startsWith(`${CARD_REDUCER_PATH}/`);
@@ -77,7 +92,7 @@ export function redactCardApiState<S>(state: S): S {
 
 /** A `CUSTOM_ERROR` carries our own error string instead of a provider `data` payload. */
 function redactedPayload(payload: unknown): unknown {
-  if (!isRecord(payload) || !("status" in payload)) {
+  if (!isRecord(payload) || !isFetchBaseQueryErrorStatus(payload.status)) {
     return REDACTED;
   }
 
