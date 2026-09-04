@@ -5,7 +5,7 @@ import {
   type IdentityProvider,
   type IdPAuthParams,
   type KeycloakToken,
-} from "@ledgerhq/ledger-auth";
+} from "@ledgerhq/auth";
 import getApi, {
   type Challenge as ChallengeJson,
   type LKRPChallenge,

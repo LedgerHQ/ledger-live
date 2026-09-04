@@ -30,12 +30,12 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
     "semver": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",

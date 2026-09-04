@@ -34,7 +34,7 @@
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "catalog:",

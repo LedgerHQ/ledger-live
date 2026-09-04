@@ -58,6 +58,7 @@
     "@types/command-line-args": "5.2.3",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
     "yaml": "2.8.1",

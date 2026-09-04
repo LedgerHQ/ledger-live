@@ -1,7 +1,7 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { WalletAuthMissingBaseUrlError } from "@ledgerhq/ledger-auth";
+import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";

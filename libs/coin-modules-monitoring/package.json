@@ -21,7 +21,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "command-line-args": "6.0.1",
     "rxjs": "catalog:"
   },
@@ -37,6 +37,7 @@
     "@types/command-line-args": "5.2.3",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "jest": "catalog:",
     "tsx": "^4.7.1"

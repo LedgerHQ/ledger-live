@@ -1,5 +1,5 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { AuthSDK } from "@ledgerhq/auth";
 import { configureStore } from "@reduxjs/toolkit";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";

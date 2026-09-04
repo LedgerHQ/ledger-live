@@ -19,11 +19,11 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-transport-node-speculos": "workspace:*",
     "@ledgerhq/live-dmk-speculos": "workspace:*",
     "@shared/env": "workspace:*",
-    "@ledgerhq/live-promise": "workspace:*",
+    "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/logs": "catalog:"
   },
   "devDependencies": {

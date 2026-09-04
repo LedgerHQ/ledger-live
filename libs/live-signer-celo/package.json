@@ -29,7 +29,7 @@
     "@ledgerhq/coin-celo": "workspace:^",
     "@ledgerhq/hw-app-celo": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*"
+    "@ledgerhq/hw-transport": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

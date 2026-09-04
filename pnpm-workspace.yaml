@@ -48,6 +48,13 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.19.0
+  "@ledgerhq/auth": 0.1.0
+  "@ledgerhq/devices": 8.18.0
+  "@ledgerhq/hw-transport": 6.36.0
+  "@ledgerhq/hw-transport-mocker": 6.35.0
+  "@ledgerhq/live-network": 3.1.0
+  "@ledgerhq/live-promise": 0.4.0
+  "@ledgerhq/psbtv2": 0.6.0
   "@ledgerhq/lumen-design-core": 0.1.27
   "@ledgerhq/lumen-ui-react": 0.1.56
   "@ledgerhq/lumen-ui-rnative": 0.1.59

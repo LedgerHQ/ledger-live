@@ -140,7 +140,7 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",
@@ -166,6 +166,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",
     "jest-expect-message": "^1.1.3",

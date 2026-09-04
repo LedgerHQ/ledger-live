@@ -63,9 +63,9 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/psbtv2": "workspace:^",
+    "@ledgerhq/psbtv2": "catalog:",
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0",
     "bip32-path": "^0.4.2",
@@ -76,7 +76,7 @@
     "semver": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

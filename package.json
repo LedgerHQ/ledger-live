@@ -48,17 +48,17 @@
     "build:llm:deps": "nx run-many -t build -p live-mobile",
     "build:coin-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-*\"",
     "build:coin-tester-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-tester-*\"",
-    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "build:hw-app": "nx run-many -t build -p \"@ledgerhq/hw-app-*\"",
     "build:web-tools": "nx run-many -t build -p @ledgerhq/web-tools",
     "build-ci:llm:ios": "nx run-many -t ios:ci:adhoc -p live-mobile",
     "build-ci:llm:android": "nx run-many -t android:apk -p live-mobile",
-    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
-    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "watch:coin": "nx run-many -t watch -p \"@ledgerhq/coin-*\" --parallel=20",
     "watch:es:coin": "nx run-many -t watch:es -p \"@ledgerhq/coin-*\" --parallel=20",
-    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
-    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
     "watch:common": "nx run-many -t watch -p @ledgerhq/live-common",
     "watch:es:common": "nx run-many -t watch:es -p @ledgerhq/live-common",
     "watch:countervalues": "nx run-many -t watch -p @ledgerhq/live-countervalues",
@@ -161,12 +161,9 @@
     "live-env": "pnpm --filter live-env",
     "wallet": "pnpm --filter live-wallet",
     "asset-aggregation": "pnpm --filter asset-aggregation",
-    "promise": "pnpm --filter live-promise",
-    "network": "pnpm --filter live-network",
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
-    "psbtv2": "pnpm --filter psbtv2",
     "types-devices": "pnpm --filter types-devices",
     "types-live": "pnpm --filter types-live",
     "hw-transport-http": "pnpm --filter hw-transport-http",
@@ -180,7 +177,6 @@
     "live-dmk-shared": "pnpm --filter live-dmk-shared",
     "live-dmk-mobile": "pnpm --filter live-dmk-mobile",
     "live-dmk-desktop": "pnpm --filter live-dmk-desktop",
-    "ljs:devices": "pnpm --filter devices",
     "ljs:hw-app:coverage": "nx run-many -t coverage -p \"@ledgerhq/hw-app-*\" --parallel=2",
     "ljs:hw-app:coverage:clean": "rm -rf coverage && rm -rf libs/ledgerjs/packages/hw-app-*/coverage",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
@@ -205,8 +201,6 @@
     "ljs:hw-app-vet": "pnpm --filter hw-app-vet",
     "ljs:hw-app-sui": "pnpm --filter hw-app-sui",
     "ljs:hw-bolos": "pnpm --filter hw-bolos",
-    "ljs:hw-transport": "pnpm --filter hw-transport",
-    "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
     "ljs:hw-transport-node-speculos": "pnpm --filter hw-transport-node-speculos",
     "ljs:hw-transport-node-speculos-http": "pnpm --filter hw-transport-node-speculos-http",
     "ljs:hw-transport-vault": "pnpm --filter hw-transport-vault",
@@ -276,8 +270,8 @@
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
-      "@ledgerhq/devices": "workspace:*",
-      "@ledgerhq/hw-transport": "workspace:*",
+      "@ledgerhq/devices": "catalog:",
+      "@ledgerhq/hw-transport": "catalog:",
       "@ledgerhq/context-module": "catalog:",
       "tslib": "2.6.2",
       "@ethersproject/providers>ws": "7.5.10",
@@ -327,6 +321,21 @@
       "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
     },
     "packageExtensions": {
+      "@ledgerhq/coin-module-framework": {
+        "dependencies": {
+          "axios": "1.13.5"
+        }
+      },
+      "@ledgerhq/coin-tezos": {
+        "dependencies": {
+          "axios": "1.13.5"
+        }
+      },
+      "@ledgerhq/ledger-cal-service": {
+        "dependencies": {
+          "axios": "1.13.5"
+        }
+      },
       "detox-allure2-adapter": {
         "dependencies": {
           "tslib": "*"

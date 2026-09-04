@@ -1,4 +1,0 @@
-{
-  "entry": ["src/Transport.ts"],
-  "ignoreUnimported": ["src/errors.ts"]
-}

@@ -27,10 +27,10 @@
   "types": "lib-es/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-hyperliquid": "catalog:",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "rxjs": "catalog:"
   },
   "scripts": {

@@ -20,7 +20,7 @@
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
