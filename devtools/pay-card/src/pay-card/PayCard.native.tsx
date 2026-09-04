@@ -13,13 +13,14 @@ import {
   Tag,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, CoinsCrypto, CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ChevronRight, CoinsCrypto, CreditCard, Coins } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
+import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
@@ -29,6 +30,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onboarding,
     interaction,
     balance,
+    currencyMapping,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -37,7 +39,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPayTab,
     env,
   } = props;
-  const [screen, setScreen] = useState<"tool" | "interaction" | "balance">("tool");
+  const [screen, setScreen] = useState<"tool" | "interaction" | "balance" | "mapping">("tool");
 
   if (screen === "interaction") {
     return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
@@ -45,6 +47,10 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
   if (screen === "balance") {
     return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "mapping") {
+    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
   }
 
   return (
@@ -72,6 +78,18 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <Spot appearance="icon" icon={CoinsCrypto} />
             <ListItemContent>
               <ListItemTitle>Balance</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
+        <ListItem onPress={() => setScreen("mapping")}>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={Coins} />
+            <ListItemContent>
+              <ListItemTitle>Currency Mapping</ListItemTitle>
             </ListItemContent>
           </ListItemLeading>
           <ListItemTrailing>

@@ -41,6 +41,7 @@ function buildProps(): PayCardToolProps {
       load: jest.fn(),
       refresh: jest.fn(),
     },
+    currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
@@ -345,6 +346,39 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
     expect(screen.getByText("1. sol / solana")).toBeTruthy();
     expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeTruthy();
+  });
+
+  it("lists the whole currency mapping, so a gap can be read against it", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        currencyMapping={[
+          { key: "btc.bitcoin", ledgerId: "bitcoin" },
+          { key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" },
+        ]}
+      />,
+    );
+
+    await user.press(screen.getByText("Currency Mapping"));
+
+    expect(screen.getByText("currency.network")).toBeTruthy();
+    expect(screen.getByText("btc.bitcoin")).toBeTruthy();
+    expect(screen.getByText("bitcoin")).toBeTruthy();
+    expect(screen.getByText("usdc.ethereum")).toBeTruthy();
+    expect(screen.getByText("ethereum/erc20/usd__coin")).toBeTruthy();
+  });
+
+  it("returns to the tool from the mapping table", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Currency Mapping"));
+    await user.press(screen.getByText("Back"));
+
+    expect(screen.getByText("Card Debug")).toBeTruthy();
   });
 
   it("shows which endpoint failed and what it answered", async () => {

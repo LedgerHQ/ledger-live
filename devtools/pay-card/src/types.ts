@@ -112,6 +112,13 @@ export interface PayCardCombinedWallet {
   readonly balance: string | null;
 }
 
+/** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
+export interface PayCardCurrencyMappingRow {
+  /** The `{currency}.{network}` id the catalog is keyed on. */
+  readonly key: string;
+  readonly ledgerId: string;
+}
+
 export interface PayCardBalanceError {
   readonly endpoint: string;
   readonly detail: string;
@@ -168,6 +175,8 @@ export interface PayCardToolProps {
   readonly onboarding: PayCardOnboardingProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
+  /** The whole Card asset catalog, so a mapping gap can be read against it. */
+  readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */

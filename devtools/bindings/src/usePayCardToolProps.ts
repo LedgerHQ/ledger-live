@@ -7,6 +7,7 @@ import {
   useFreezeCardMutation,
   useUnfreezeCardMutation,
 } from "@domain/api-card-management";
+import { PAY_CARD_ASSET_LEDGER_IDS } from "@domain/entity-pay-card-asset";
 import {
   useCardLinkedWallets,
   type ResolveWalletCounterValue,
@@ -80,6 +81,11 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
 /** Never called: the wallet queries are skipped whenever the host omits its own resolver. */
 /** The tool reports what the endpoints answer, not what it is worth. The join needs one anyway. */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+
+/** The catalog as the tool lists it, in key order so a pair is easy to find by eye. */
+const CURRENCY_MAPPING_ROWS = Object.entries(PAY_CARD_ASSET_LEDGER_IDS)
+  .map(([key, ledgerId]) => ({ key, ledgerId }))
+  .sort((a, b) => a.key.localeCompare(b.key));
 
 type ProbeState = Readonly<{
   isFetching?: boolean;
@@ -328,6 +334,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       onboarding,
       interaction,
       balance,
+      currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,

@@ -12,3 +12,4 @@ Resolve a card-linked wallet to the Ledger currency it holds.
 - Several provider keys map onto one currency: its docs name the chain, its sandbox has answered with the ticker repeated, and both resolve.
 - `getCardLinkedWallets` attaches `ledgerId` in its transform, so every consumer reads one answer rather than mapping again.
 - The join and the devtool carry it through; an unmapped pair stays `undefined` rather than resolving to a wrong currency.
+- A "Currency Mapping" screen in the devtool lists the whole catalog, scrollable both ways, so a gap can be read against it.

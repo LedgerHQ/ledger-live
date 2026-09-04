@@ -49,6 +49,7 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       refresh: jest.fn(),
       ...overrides.balance,
     },
+    currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: overrides.hasSeenFeatureTour ?? false,
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
     hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,
