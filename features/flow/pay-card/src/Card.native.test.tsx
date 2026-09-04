@@ -3,6 +3,13 @@ import { render, screen } from "@testing-library/react-native";
 import { View } from "react-native";
 import type { CardProps } from "./Card.types";
 
+const mockUseCardLinkedWallets = jest.fn();
+const mockCardVisual = jest.fn();
+
+jest.mock("@features/flow-pay-card-wallets", () => ({
+  useCardLinkedWallets: (params: unknown) => mockUseCardLinkedWallets(params),
+}));
+
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
   CardLogout: () => <View testID="card-logout" />,
@@ -10,7 +17,10 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
-  CardVisual: () => <View testID="card-visual" />,
+  CardVisual: (props: { balance: number }) => {
+    mockCardVisual(props);
+    return <View testID="card-visual" />;
+  },
 }));
 
 import { Card } from "./Card";
@@ -29,6 +39,21 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
   currencyText: "$",
   decimalSeparator: ".",
   currencyPosition: "start",
+});
+
+const resolveCounterValue: NonNullable<CardProps["resolveCounterValue"]> = () => null;
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockUseCardLinkedWallets.mockReturnValue({
+    wallets: [],
+    total: 0,
+    isPartialTotal: false,
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    refetch: jest.fn(),
+  });
 });
 
 describe("Card (native)", () => {
@@ -55,5 +80,47 @@ describe("Card (native)", () => {
     expect(screen.queryByTestId("card-artwork")).toBeNull();
     expect(screen.getByTestId("card-login")).toBeVisible();
     expect(screen.getByTestId("card-logout")).toBeVisible();
+  });
+
+  it("shows the linked-wallet total as the card balance", () => {
+    mockUseCardLinkedWallets.mockReturnValue({
+      wallets: [],
+      total: 125_40,
+      isPartialTotal: false,
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <Card
+        title={title}
+        oauthConfig={oauthConfig}
+        formatCountervalue={formatCountervalue}
+        balanceLabel="Balance"
+        resolveCounterValue={resolveCounterValue}
+      />,
+    );
+
+    expect(mockCardVisual).toHaveBeenCalledWith(
+      expect.objectContaining({ balance: 125_40, isLoading: false }),
+    );
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(
+      expect.objectContaining({ resolveCounterValue, skip: false }),
+    );
+  });
+
+  it("skips the wallet queries when the host provides no resolver", () => {
+    render(
+      <Card
+        title={title}
+        oauthConfig={oauthConfig}
+        formatCountervalue={formatCountervalue}
+        balanceLabel="Balance"
+      />,
+    );
+
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
 });

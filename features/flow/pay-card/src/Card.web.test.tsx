@@ -2,6 +2,13 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import type { CardProps } from "./Card.types";
 
+const mockUseCardLinkedWallets = jest.fn();
+const mockCardVisual = jest.fn();
+
+jest.mock("@features/flow-pay-card-wallets", () => ({
+  useCardLinkedWallets: (params: unknown) => mockUseCardLinkedWallets(params),
+}));
+
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
   CardLogout: () => <div data-testid="card-logout" />,
@@ -9,7 +16,10 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
-  CardVisual: () => <div data-testid="card-visual" />,
+  CardVisual: (props: { balance: number }) => {
+    mockCardVisual(props);
+    return <div data-testid="card-visual" />;
+  },
 }));
 
 import { Card } from "./Card";
@@ -28,6 +38,21 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
   currencyText: "$",
   decimalSeparator: ".",
   currencyPosition: "start",
+});
+
+const resolveCounterValue: NonNullable<CardProps["resolveCounterValue"]> = () => null;
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockUseCardLinkedWallets.mockReturnValue({
+    wallets: [],
+    total: 0,
+    isPartialTotal: false,
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    refetch: jest.fn(),
+  });
 });
 
 describe("Card (web)", () => {
@@ -59,5 +84,47 @@ describe("Card (web)", () => {
     expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     expect(screen.getByTestId("card-login")).toBeVisible();
     expect(screen.getByTestId("card-logout")).toBeVisible();
+  });
+
+  it("shows the linked-wallet total as the card balance", () => {
+    mockUseCardLinkedWallets.mockReturnValue({
+      wallets: [],
+      total: 125_40,
+      isPartialTotal: false,
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <Card
+        title={title}
+        oauthConfig={oauthConfig}
+        formatCountervalue={formatCountervalue}
+        balanceLabel="Balance"
+        resolveCounterValue={resolveCounterValue}
+      />,
+    );
+
+    expect(mockCardVisual).toHaveBeenCalledWith(
+      expect.objectContaining({ balance: 125_40, isLoading: false }),
+    );
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(
+      expect.objectContaining({ resolveCounterValue, skip: false }),
+    );
+  });
+
+  it("skips the wallet queries when the host provides no resolver", () => {
+    render(
+      <Card
+        title={title}
+        oauthConfig={oauthConfig}
+        formatCountervalue={formatCountervalue}
+        balanceLabel="Balance"
+      />,
+    );
+
+    expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
 });

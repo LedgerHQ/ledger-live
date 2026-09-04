@@ -11,6 +11,7 @@ import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
+import { usePayCardWalletCounterValue } from "LLM/features/PayTab/hooks/usePayCardWalletCounterValue";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
@@ -29,6 +30,7 @@ export function usePayTabViewModel() {
   const unit = counterValueCurrency.units[0];
 
   const balance = usePayCardBalance();
+  const resolveCardWalletCounterValue = usePayCardWalletCounterValue();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const request = usePayTabRequestReceive();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
@@ -79,6 +81,7 @@ export function usePayTabViewModel() {
     cardTitle: t("payTab.card.title"),
     cardBalanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
+    resolveCardWalletCounterValue,
     oauthConfig,
     callback,
     featureTour,
