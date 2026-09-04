@@ -177,6 +177,26 @@ describe("cardBaseQuery", () => {
     expect(result.error).toMatchObject({ status: 401 });
   });
 
+  it("sends nothing when a cleared session left no token and the session moved on", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({
+          readCardSession: async () => ({ token: null, sessionId: SESSION_ID }),
+          isCardSessionCurrent: () => false,
+        }),
+      ),
+    );
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result.error).toEqual({
+      status: "CUSTOM_ERROR",
+      error: CARD_STALE_REQUEST,
+    });
+  });
+
   it("renews the session once and replays the same request on a 401", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")

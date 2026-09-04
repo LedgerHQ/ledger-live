@@ -97,7 +97,7 @@ const cardBaseQuery: BaseQueryFn<
     return sessionPortError("read");
   }
 
-  const sendForCurrentSession = async (token: string) => {
+  const sendForCurrentSession = async (token: string | null) => {
     if (!extra.isCardSessionCurrent(session.sessionId)) {
       return staleRequestResult;
     }
@@ -106,7 +106,7 @@ const cardBaseQuery: BaseQueryFn<
     return extra.isCardSessionCurrent(session.sessionId) ? answer : staleRequestResult;
   };
 
-  const result = session.token ? await sendForCurrentSession(session.token) : await send(null);
+  const result = await sendForCurrentSession(session.token);
 
   if (!session.token || !isUnauthorized(result.error)) {
     return result;
