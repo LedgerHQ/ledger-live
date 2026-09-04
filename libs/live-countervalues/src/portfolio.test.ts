@@ -11,15 +11,17 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
   getAssetsDistribution,
-  defaultAssetsDistribution,
-  getPortfolioRangeConfig,
-  getDates,
-  getRanges,
+  orderAccountsByFiatValue,
+} from "./portfolio";
+import {
   startOfHour,
   startOfDay,
   startOfWeek,
-  orderAccountsByFiatValue,
-} from "./portfolio";
+  getRanges,
+  getDates,
+  getPortfolioRangeConfig,
+} from "./internal/ranges";
+import { defaultAssetsDistribution } from "./internal/assetsDistribution";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -402,7 +404,6 @@ describe("Portfolio", () => {
       expect(assets.sum).toBe(0);
     });
   });
-
   describe("range module", () => {
     test("getRanges", () => {
       const ranges = ["all", "year", "month", "week", "day"];
@@ -412,6 +413,17 @@ describe("Portfolio", () => {
         expect(match).toBe(true);
       });
     });
+  });
+});
+
+describe("orderAccountsByFiatValue", () => {
+  test("should return accounts ordered by fiat value", async () => {
+    const account1 = genAccountBitcoin("bitcoin_1");
+    const account2 = genAccountBitcoin("bitcoin_2");
+    const { state, to } = await loadCV([account1, account2]);
+    const accounts = [account1, account2];
+    const orderedAccounts = orderAccountsByFiatValue(accounts, state, to);
+    expect(orderedAccounts).toMatchObject([account2, account1]);
   });
 });
 
@@ -456,16 +468,6 @@ describe("date utils", () => {
   describe("getRanges", () => {
     test("returns a non empty array", () => {
       expect(getRanges().length).toBeGreaterThan(0);
-    });
-  });
-  describe("orderAccountsByFiatValue", () => {
-    test("should return accounts ordered by fiat value", async () => {
-      const account1 = genAccountBitcoin("bitcoin_1");
-      const account2 = genAccountBitcoin("bitcoin_2");
-      const { state, to } = await loadCV([account1, account2]);
-      const accounts = [account1, account2];
-      const orderedAccounts = orderAccountsByFiatValue(accounts, state, to);
-      expect(orderedAccounts).toMatchObject([account2, account1]);
     });
   });
 });
