@@ -194,17 +194,25 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const handleRecipientInputPress = useCallback(() => {
     if (!isAmountStep) return;
 
-    const prefillValue = getRecipientSearchPrefillValue(recipientFromTransaction);
+    const prefillValue =
+      recipientHeader.contact?.name ?? getRecipientSearchPrefillValue(recipientFromTransaction);
     if (prefillValue) {
       setRecipientSearchValue(prefillValue);
     }
 
-    if (navigation.canGoBack()) {
+    const { routes, index } = navigation.getState();
+    if (routes[index - 1]?.name === ScreenName.SendFlowRecipient) {
       navigation.goBack();
-    } else {
-      navigation.navigate(ScreenName.SendFlowRecipient);
+      return;
     }
-  }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
+    navigation.navigate(ScreenName.SendFlowRecipient);
+  }, [
+    isAmountStep,
+    navigation,
+    recipientFromTransaction,
+    recipientHeader.contact?.name,
+    setRecipientSearchValue,
+  ]);
 
   const handleScannedURI = useCallback(
     (decoded: DecodedURISchemePayment) => {
