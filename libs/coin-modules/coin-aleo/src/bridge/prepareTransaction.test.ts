@@ -637,4 +637,71 @@ describe("prepareTransaction", () => {
       },
     });
   });
+
+  describe("staking modes", () => {
+    it("prepares an unbond transaction and pins the recipient to the account itself", async () => {
+      const result = await prepareTransaction(mockAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        recipient: "aleo1recipient",
+      });
+
+      expect(mockEstimateFeesBN).toHaveBeenCalledTimes(1);
+      expect(mockEstimateFeesBN).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      });
+      expect(result).toMatchObject({
+        amount: mockAmount,
+        fees: mockFees,
+        recipient: mockAccount.freshAddress,
+      });
+    });
+
+    it("prepares a bond transaction and pins the withdrawal address to the account itself", async () => {
+      const resultWithOtherWithdrawal = await prepareTransaction(mockAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: "aleo1otherwithdrawal",
+      });
+
+      expect(mockEstimateFeesBN).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: TRANSACTION_TYPE.BOND_PUBLIC,
+      });
+      expect(resultWithOtherWithdrawal).toMatchObject({
+        withdrawal: mockAccount.freshAddress,
+        recipient: mockTransaction.recipient,
+      });
+
+      const resultWithOwnWithdrawal = await prepareTransaction(mockAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: mockAccount.freshAddress,
+      });
+
+      expect(resultWithOwnWithdrawal).toMatchObject({
+        withdrawal: mockAccount.freshAddress,
+        recipient: mockTransaction.recipient,
+      });
+    });
+
+    it("prepares a claim transaction with a zero amount and no amount resolution", async () => {
+      const result = await prepareTransaction(mockAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        recipient: "aleo1recipient",
+      });
+
+      expect(mockEstimateFeesBN).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      });
+      expect(mockCalculateAmount).not.toHaveBeenCalled();
+      expect(result).toMatchObject({
+        amount: new BigNumber(0),
+        recipient: mockAccount.freshAddress,
+      });
+    });
+  });
 });
