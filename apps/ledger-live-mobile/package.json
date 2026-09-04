@@ -337,6 +337,7 @@
     "@callstack/repack-plugin-expo-modules": "5.2.5",
     "@callstack/repack-plugin-reanimated": "5.2.5",
     "@features/flow-market-banner": "workspace:^",
+    "@features/flow-pay-card-wallets": "workspace:*",
     "@jest/reporters": "catalog:",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",

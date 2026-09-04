@@ -59,8 +59,10 @@ describe("DevToolsScreen", () => {
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
     render(withBottomInset(<DevToolsScreen />));
 
-    expect(devToolsSpy).toHaveBeenCalledTimes(1);
-    const props = devToolsSpy.mock.calls[0][0];
+    // The last render, not the first: the Pay card tool prices wallets from a query that settles
+    // after mount, so the props it is given change once more.
+    expect(devToolsSpy).toHaveBeenCalled();
+    const props = devToolsSpy.mock.lastCall![0];
 
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },

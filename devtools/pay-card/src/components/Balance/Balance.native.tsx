@@ -79,6 +79,14 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
         label="balance"
         value={wallet.balance ?? "null — still reading, or no Baanx wallet matched"}
       />
+      <Field
+        label="counterValue"
+        value={
+          wallet.counterValue === null
+            ? "null — nothing to price, or no rate for it"
+            : String(wallet.counterValue)
+        }
+      />
       <Field label="address" value={wallet.address} />
     </Box>
   );
