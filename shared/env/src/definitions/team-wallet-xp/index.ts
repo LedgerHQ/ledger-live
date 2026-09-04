@@ -27,12 +27,12 @@ const teamWalletXp = {
     desc: "CoinMarketCap API",
   },
   CARD_BAANX_API_URL: {
-    def: "https://dev.api.baanx.com",
+    def: "https://card.api.live.ledger.com",
     parser: stringParser,
     desc: "Baanx Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",
   },
   CARD_BAANX_CLIENT_KEY: {
-    def: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
+    def: "",
     parser: stringParser,
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
   },

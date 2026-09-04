@@ -4,8 +4,6 @@ export type {
   PayCardToolProps,
   PayCardFlagsProps,
   PayCardOnboardingProps,
-  PayCardEnvProps,
-  PayCardEnvVar,
   OnboardingStep,
 } from "./types";
 export { usePayCardViewModel, formatId } from "./usePayCardViewModel";
