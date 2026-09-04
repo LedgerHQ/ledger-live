@@ -117,10 +117,9 @@ describe("Contacts device intents integration", () => {
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
     });
     await user.click(screen.getByTestId("contacts-add-address-confirm"));
-    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
 
     await expectDeviceIntentExecutor();
-    expect(screen.queryByTestId("contacts-add-address-review")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-address-confirm")).not.toBeInTheDocument();
   });
 
   it("should open the device intent executor alone when renaming a contact", async () => {

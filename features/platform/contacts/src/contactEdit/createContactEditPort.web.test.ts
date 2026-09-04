@@ -60,7 +60,13 @@ describe("createContactEditPort", () => {
 
   it("rejects an unknown contact", async () => {
     const store = makeStore([]);
-    const port = createContactEditPort({ dispatch: store.dispatch, getState: store.getState });
+    const port = createContactEditPort({
+      dispatch: store.dispatch,
+      getState: store.getState,
+      deviceIntents: {
+        renameExternalContact: jest.fn(),
+      } as unknown as ContactDeviceIntentsPort,
+    });
 
     await expect(
       port.renameContact({

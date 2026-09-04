@@ -31,9 +31,15 @@ jest.mock("LLD/hooks/redux", () => ({
 
 jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),
-  createMockContactDeviceIntentsPort: () => ({ registerExternalAddress }),
   useContacts: () => [me, ada],
   useContactsMeContact: () => me,
+}));
+
+jest.mock("@features/platform-contacts/device", () => ({
+  useContactsIntentsOrchestrator: () => ({
+    deviceIntents: { registerExternalAddress },
+    dieProps: undefined,
+  }),
 }));
 
 jest.mock("../../../../context/SendFlowContext", () => ({

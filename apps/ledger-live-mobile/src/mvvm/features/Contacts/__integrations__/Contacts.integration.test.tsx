@@ -801,7 +801,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should save an address to the selected contact after mocked confirmation", async () => {
+  it("should save an address to the selected contact after device confirmation", async () => {
     const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: savedContactDetailNavigationState,
