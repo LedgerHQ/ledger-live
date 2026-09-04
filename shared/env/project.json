@@ -2,8 +2,7 @@
   "name": "@shared/env",
   "targets": {
     "build": {
-      "executor": "nx:noop",
-      "dependsOn": []
+      "executor": "nx:noop"
     },
     "coverage": {
       "dependsOn": ["build"]
