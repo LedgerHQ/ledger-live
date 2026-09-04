@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 4.19.0-next.3
+
+### Minor Changes
+
+- [#21532](https://github.com/LedgerHQ/ledger-live/pull/21532) [`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-solana): support v1 transactions
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@37.5.0-next.2
+  - @ledgerhq/asset-detail@0.11.3-next.2
+  - @ledgerhq/live-dmk-desktop@0.20.9-next.2
+
 ## 4.19.0-next.2
 
 ### Minor Changes

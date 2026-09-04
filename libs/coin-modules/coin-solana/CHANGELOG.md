@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 2.0.0-next.1
+
+### Minor Changes
+
+- [#21532](https://github.com/LedgerHQ/ledger-live/pull/21532) [`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-solana): support v1 transactions
+
 ## 2.0.0-next.0
 
 ### Major Changes

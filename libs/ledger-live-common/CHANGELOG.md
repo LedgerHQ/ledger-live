@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 37.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932)]:
+  - @ledgerhq/coin-solana@2.0.0-next.1
+  - @ledgerhq/live-signer-solana@0.21.1-next.1
+
 ## 37.5.0-next.1
 
 ### Patch Changes
