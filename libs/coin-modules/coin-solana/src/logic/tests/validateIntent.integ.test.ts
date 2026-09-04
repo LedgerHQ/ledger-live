@@ -36,10 +36,15 @@ const SENDER = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
 
 const NETWORK_FEE = 5_000n;
 const MAIN_ACCOUNT_RENT_EXEMPT = 890_880n;
+const CLASSIC_ATA_SIZE = 165;
 
-// Exact reproducer from the bug report: native = 0.00293516 SOL, spendable
-// (value - locked) = 0.00204428 SOL = classic 165-byte ATA rent + network fee.
-const BALANCE_AT_BUG_THRESHOLD = 2_044_280n + MAIN_ACCOUNT_RENT_EXEMPT;
+// The reproducer from the bug report: spendable is exactly what a classic 165-byte token account
+// costs, plus the fee -- and a Token-2022 one costs more. Read from the chain rather than pinned:
+// Solana has lowered the rent-exempt minimum since, and a pinned figure stops reproducing anything.
+async function balanceAtBugThreshold(): Promise<bigint> {
+  const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
+  return classicAtaRent + NETWORK_FEE + MAIN_ACCOUNT_RENT_EXEMPT;
+}
 const SPL_BALANCE = 10_000_000n;
 
 function makeNativeBalance(value: bigint, locked: bigint = MAIN_ACCOUNT_RENT_EXEMPT): Balance {
@@ -81,18 +86,20 @@ describe("validateIntent (integration)", () => {
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
       const estimation = await estimateFees(api, intent);
+      const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
 
       const result = await validateIntent(
         intent,
-        [makeNativeBalance(BALANCE_AT_BUG_THRESHOLD), makeTokenBalance(VIBECODOOR_MINT)],
+        [makeNativeBalance(await balanceAtBugThreshold()), makeTokenBalance(VIBECODOOR_MINT)],
         estimation,
         api,
       );
 
       expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
-      // The message carries a human-readable amount, not raw lamports.
+      // A human-readable amount, not raw lamports -- and sized from the mint, so above what a
+      // classic token account would have cost.
       const fees = (result.errors.gasPrice as Error & { fees?: string }).fees;
-      expect(Number(fees)).toBeGreaterThan(2_044_280 / 1e9);
+      expect(Number(fees)).toBeGreaterThan(Number(classicAtaRent) / 1e9);
     });
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
