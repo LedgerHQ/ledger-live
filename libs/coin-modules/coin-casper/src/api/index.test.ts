@@ -26,7 +26,7 @@ const sendIntent: TransactionIntent<CasperMemo> = {
 const balances: Balance[] = [{ value: BALANCE, asset: { type: "native" }, locked: 0n }];
 
 describe("createApi", () => {
-  it("implements every method the contract requires", () => {
+  it("returns an object with all CoinModuleApi methods", () => {
     for (const method of requiredApiKeys) {
       expect(typeof api[method]).toBe("function");
     }

@@ -43,8 +43,6 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
 
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
-      // Matches descriptor/send/memo.ts casper handler: memoType is always "transferId" for
-      // this family; memoValue carries the value or undefined when cleared.
       transaction: bridge.updateTransaction(transaction, {
         transferId: transferId || undefined,
         memoType: "transferId",

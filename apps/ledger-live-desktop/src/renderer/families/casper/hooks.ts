@@ -13,7 +13,6 @@ export function useTransferIdChange(
   return useCallback(
     (value: string) => {
       value = value.replace(/\D/g, "");
-      // Cleared state mirrors descriptor/send/memo.ts casper handler — keep in sync.
       onChange(
         bridge.updateTransaction(transaction, {
           transferId: value || undefined,

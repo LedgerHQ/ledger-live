@@ -38,20 +38,24 @@ export const buildSignOperation =
         );
         const casperTx = CasperTransaction.fromJSON(crafted.transaction);
 
+        // Serialize tx
         const txBytes = casperTx.toBytes();
         log("debug", `[signOperation] serialized transaction: [${txBytes.toString()}]`);
         o.next({
           type: "device-signature-requested",
         });
 
-        const { r } = await signerContext(deviceId, async signer => ({
-          r: await signer.sign(derivationPath, Buffer.from(txBytes)),
-        }));
+        // Sign by device
+        const { r } = await signerContext(deviceId, async signer => {
+          const r = await signer.sign(derivationPath, Buffer.from(txBytes));
+          return { r };
+        });
 
         o.next({
           type: "device-signature-granted",
         });
 
+        // signature verification
         const txHash = casperTx.hash.getHash()?.toHex() ?? "";
         const signature = tagSignature(r.signatureRS);
 
