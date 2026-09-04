@@ -67,6 +67,71 @@ const makeDelegateTx = (): CosmosTx =>
     },
   }) as unknown as CosmosTx;
 
+const makeRedelegateTx = (): CosmosTx =>
+  ({
+    ...makeTx(),
+    tx: {
+      body: {
+        messages: [
+          {
+            "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+            delegator_address: ADDR,
+            validator_src_address: "cosmosvaloper1src",
+            validator_dst_address: "cosmosvaloper1dst",
+            amount: { denom: "uatom", amount: "2000000" },
+          },
+        ],
+        memo: "",
+      },
+      auth_info: {
+        fee: { amount: [{ denom: "uatom", amount: "500" }] },
+        signer_infos: [{ sequence: "3" }],
+      },
+    },
+  }) as unknown as CosmosTx;
+
+const makeRewardTx = (): CosmosTx =>
+  ({
+    ...makeTx(),
+    events: [
+      {
+        type: "withdraw_rewards",
+        attributes: [
+          { key: "amount", value: "1000000uatom" },
+          { key: "validator", value: "cosmosvaloper1a" },
+        ],
+      },
+      {
+        type: "withdraw_rewards",
+        attributes: [
+          { key: "amount", value: "500000uatom" },
+          { key: "validator", value: "cosmosvaloper1b" },
+        ],
+      },
+    ],
+    tx: {
+      body: {
+        messages: [
+          {
+            "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+            delegator_address: ADDR,
+            validator_address: "cosmosvaloper1a",
+          },
+          {
+            "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+            delegator_address: ADDR,
+            validator_address: "cosmosvaloper1b",
+          },
+        ],
+        memo: "",
+      },
+      auth_info: {
+        fee: { amount: [{ denom: "uatom", amount: "500" }] },
+        signer_infos: [{ sequence: "3" }],
+      },
+    },
+  }) as unknown as CosmosTx;
+
 // Models one newest-first stream that honours `count`, so the fetch window is actually bounded.
 const apiCounting = (allTxs: CosmosTx[]): CosmosAPI =>
   ({
@@ -97,21 +162,55 @@ describe("logic/history/listOperations", () => {
     expect(page.next).toBe(undefined);
   });
 
-  it("serializes BigNumber amounts in details to JSON-safe strings", async () => {
+  it("serializes BigNumber amounts in familyExtra to JSON-safe strings", async () => {
     const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
       minHeight: 0,
     });
-    const details = page.items[0].details as { validators: { amount: unknown }[] };
-    expect(details.validators[0].amount).toBe("1000000");
-    expect(typeof details.validators[0].amount).toBe("string");
+    const details = page.items[0].details as {
+      familyExtra: { validators: { amount: unknown }[] };
+    };
+    expect(details.familyExtra.validators[0].amount).toBe("1000000");
+    expect(typeof details.familyExtra.validators[0].amount).toBe("string");
   });
 
-  it("mirrors the first validator into details.stake (bigint) for the generic framework's operation adapter", async () => {
+  it("nests staking extras under details.familyExtra for the generic framework's operation adapter", async () => {
     const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
       minHeight: 0,
     });
-    const details = page.items[0].details as { stake: { address: string; amount: bigint } };
-    expect(details.stake).toEqual({ address: "cosmosvaloper1v", amount: 1_000_000n });
+    const details = page.items[0].details as {
+      familyExtra: { validators: { address: string; amount: string }[] };
+    };
+    expect(details.familyExtra.validators[0]).toEqual({
+      address: "cosmosvaloper1v",
+      amount: "1000000",
+    });
+  });
+
+  it("carries sourceValidator in familyExtra for a redelegate", async () => {
+    const page = await listOperations(apiWith([makeRedelegateTx()]), ADDR, {
+      minHeight: 0,
+    });
+    const details = page.items[0].details as {
+      familyExtra: { validators: { address: string; amount: string }[]; sourceValidator: string };
+    };
+    expect(details.familyExtra.sourceValidator).toBe("cosmosvaloper1src");
+    expect(details.familyExtra.validators[0]).toEqual({
+      address: "cosmosvaloper1dst",
+      amount: "2000000",
+    });
+  });
+
+  it("carries all validators in familyExtra for a reward claim", async () => {
+    const page = await listOperations(apiWith([makeRewardTx()]), ADDR, {
+      minHeight: 0,
+    });
+    const details = page.items[0].details as {
+      familyExtra: { validators: { address: string; amount: string }[] };
+    };
+    expect(details.familyExtra.validators).toEqual([
+      { address: "cosmosvaloper1a", amount: "1000000" },
+      { address: "cosmosvaloper1b", amount: "500000" },
+    ]);
   });
 
   it("dedupes a tx returned in both the sender and recipient streams", async () => {
