@@ -404,6 +404,15 @@ export class TokenAccount extends Account {
     Account.ETH_3,
   );
 
+  static readonly ETH_WBTC_4 = new TokenAccount(
+    Currency.ETH_WBTC,
+    "(Ethereum) Wrapped Bitcoin 4",
+    3,
+    Account.ETH_4.accountPath,
+    TokenType.ERC20,
+    Account.ETH_4,
+  );
+
   static readonly SOL_GIGA_1 = new TokenAccount(
     Currency.SOL_GIGA,
     "(Solana) GIGACHAD 1",

@@ -17,6 +17,8 @@ export const ETHEREUM_CHAIN_ID = 1;
 export const DEFAULT_MARKET_ID =
   "morpho-blue-borrow-ethereum-wbtc-usdt-0xa921ef34e2fc7a27ccc50ae7e4b154e16c9799d3387076c421423ef52ac4df99";
 
+const ERC20_APPROVE_SELECTOR = "0x095ea7b3";
+
 function get(v: unknown, key: string): unknown {
   return v !== null && typeof v === "object" ? Reflect.get(v, key) : undefined;
 }
@@ -76,6 +78,24 @@ export async function postAction(body: ActionRequest): Promise<PartnerActionResp
     throw new Error(`Partner returned no steps[] (actionId ${actionId})`);
   }
   return { actionId, steps: steps.map((step, i) => normalizeStep(step, i)) };
+}
+
+/**
+ * Address the collateral allowance is granted to, read from the `supply` approve step
+ * the partner builds. It is an adapter the partner can redeploy, so it is resolved rather
+ * than pinned. Building an action does not broadcast anything.
+ */
+export async function resolveCollateralSpender(
+  address: string,
+  amount: string,
+  marketId: string = DEFAULT_MARKET_ID,
+): Promise<string> {
+  const { steps } = await postAction({ address, action: "supply", args: { marketId, amount } });
+  for (const step of steps) {
+    const data = getString(JSON.parse(step.signablePayload), "data") ?? "";
+    if (data.startsWith(ERC20_APPROVE_SELECTOR)) return `0x${data.slice(34, 74)}`;
+  }
+  throw new Error(`Partner supply for ${marketId} returned no ERC-20 approve step`);
 }
 
 /** Best-effort notify; the state we act on is the on-chain confirmation, not this. */
