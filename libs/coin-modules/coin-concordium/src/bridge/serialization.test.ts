@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
   ConcordiumAccount,
   ConcordiumAccountRaw,
@@ -17,6 +18,19 @@ import {
   assignToAccountRaw,
   assignFromAccountRaw,
 } from "./serialization";
+
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: { getCoinConfig: jest.fn() },
+}));
+
+const coinConfig = jest.requireMock("../config").default;
+
+// Token state only survives deserialization while the feature is on. The suites
+// below assume it is; "assignFromAccountRaw and the token flag" varies it.
+beforeEach(() => {
+  coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
+});
 
 const ACCOUNT_ID = "js:2:concordium_testnet:someaddr:";
 
@@ -351,5 +365,76 @@ describe("mapRawOperationToBridgeOperation", () => {
     const result = mapRawOperationToBridgeOperation(raw, ACCOUNT_ID);
 
     expect(result.blockHash).toBeNull();
+  });
+});
+
+/**
+ * Deserialization is the one account-producing path no `postSync` covers, so
+ * the flag has to be enforced here too.
+ */
+describe("assignFromAccountRaw and the token flag", () => {
+  const storedTokens = { "t-USDT": { transferStatus: "allowed" } };
+
+  const raw = () =>
+    ({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "",
+        publicKey: "",
+        identityIndex: 0,
+        credNumber: 0,
+        ipIdentity: 0,
+        tokens: { ...storedTokens },
+      },
+    }) as unknown as AccountRaw;
+
+  const account = () =>
+    ({
+      currency: { id: "concordium_testnet", family: "concordium" },
+      subAccounts: [{ id: "sub", type: "TokenAccount" }],
+    }) as unknown as Account;
+
+  beforeEach(() => jest.clearAllMocks());
+
+  it("drops sub-accounts and stored token state when the flag is off", () => {
+    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: false });
+    const target = account();
+
+    assignFromAccountRaw(raw(), target);
+
+    expect(target.subAccounts).toBeUndefined();
+    expect(
+      "tokens" in (target as never as { concordiumResources: object }).concordiumResources,
+    ).toBe(false);
+  });
+
+  it("keeps both when the flag is on", () => {
+    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
+    const target = account();
+
+    assignFromAccountRaw(raw(), target);
+
+    expect(target.subAccounts).toHaveLength(1);
+    expect(
+      (target as never as { concordiumResources: { tokens?: object } }).concordiumResources.tokens,
+    ).toEqual(storedTokens);
+  });
+
+  it.each([
+    [
+      "the config cannot be resolved",
+      () => {
+        throw new Error("MissingCoinConfig");
+      },
+    ],
+    ["the flag is absent from the config", () => ({})],
+  ])("fails closed and strips tokens when %s", (_case, impl) => {
+    // An unreadable flag must not expose token UI for a feature that is off by
+    // default. Sub-accounts are rebuilt from chain on the next sync.
+    coinConfig.getCoinConfig.mockImplementation(impl);
+    const target = account();
+
+    expect(() => assignFromAccountRaw(raw(), target)).not.toThrow();
+    expect(target.subAccounts).toBeUndefined();
   });
 });

@@ -84,4 +84,21 @@ describe("api/estimateFees", () => {
 
     expect(result).toEqual({ value: BigInt(1000) });
   });
+
+  it("should reject a non-native asset rather than return a plausible native fee", async () => {
+    const api = createApi("concordium_testnet");
+    const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
+      sender: VALID_ADDRESS,
+      recipient: VALID_ADDRESS_2,
+      amount: BigInt(1000000),
+      asset: { type: "plt", assetReference: "t-USDT" },
+    } as any;
+
+    await expect(api.estimateFees(context, transactionIntent)).rejects.toThrow(
+      /asset type plt is not supported/,
+    );
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
 });

@@ -162,6 +162,7 @@ describe("OnboardModal Integration", () => {
       grpcPort: 443,
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
+      enableTokens: false,
     }));
   });
 
