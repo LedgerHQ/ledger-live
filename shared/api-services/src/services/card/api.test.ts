@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { getCardExtra, cardApi, cardApiExtra } from "./api";
+import { NamedSchemaError } from "@reduxjs/toolkit/query";
+import { z } from "zod";
+import { describeSchemaFailure, getCardExtra, cardApi, cardApiExtra } from "./api";
 import type { CardApiExtra } from "./types";
 
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
@@ -22,6 +24,106 @@ describe("cardApi", () => {
 
   it("declares no endpoints of its own", () => {
     expect(OWN_ENDPOINT_NAMES).toHaveLength(0);
+  });
+});
+
+describe("cardApi schema failures", () => {
+  type Issues = ConstructorParameters<typeof NamedSchemaError>[0];
+
+  /** The error RTK Query hands the converter when a response fails its schema. */
+  const rejection = (issues: Issues, value: unknown = { id: "card-1" }) =>
+    new NamedSchemaError(issues, value, "responseSchema", undefined);
+
+  it("names the field the response was rejected on", () => {
+    // A real rejection from the Card status response: one required string absent.
+    const error = describeSchemaFailure(
+      rejection([
+        { path: ["holderName"], message: "Invalid input: expected string, received undefined" },
+      ]),
+    );
+
+    expect(error).toEqual({
+      status: "CUSTOM_ERROR",
+      error:
+        "responseSchema rejected the response — holderName: Invalid input: expected string, received undefined",
+    });
+  });
+
+  it("joins every failing field, so one run reports them all", () => {
+    const error = describeSchemaFailure(
+      rejection([
+        { path: ["holderName"], message: "expected string" },
+        { path: ["panLast4"], message: "expected string" },
+      ]),
+    );
+
+    expect(error).toMatchObject({
+      error: expect.stringContaining("holderName: expected string; panLast4: expected string"),
+    });
+  });
+
+  it("reports a root-level rejection by its message, with no empty field label", () => {
+    const error = describeSchemaFailure(
+      rejection([{ path: [], message: "Invalid input: expected object, received array" }]),
+    );
+
+    expect(error).toMatchObject({
+      error:
+        "responseSchema rejected the response — Invalid input: expected object, received array",
+    });
+  });
+
+  it("keeps the rejected value out of the error: it carries the holder's name and PAN", () => {
+    const error = describeSchemaFailure(
+      rejection([{ path: ["holderName"], message: "expected string" }], {
+        holderName: "Ada Lovelace",
+        panLast4: "4242",
+      }),
+    );
+
+    expect(JSON.stringify(error)).not.toContain("Ada Lovelace");
+    expect(JSON.stringify(error)).not.toContain("4242");
+  });
+});
+
+describe("cardApi schema failure wiring", () => {
+  let fetchSpy: jest.SpyInstance;
+
+  afterEach(() => {
+    fetchSpy?.mockRestore();
+  });
+
+  /**
+   * `catchSchemaFailure` is the only RTK Query hook that can change what a caller receives:
+   * `onSchemaFailure` runs beside it for its side effect and its return value is discarded. Drive a
+   * real response through a real endpoint, so the wiring is proven rather than assumed — if the
+   * option is ever renamed or dropped, this fails instead of quietly reporting the old message.
+   */
+  it("hands a rejected response to the converter, and returns what it built", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: 42 }));
+
+    const api = cardApi.injectEndpoints({
+      endpoints: build => ({
+        schemaProbe: build.query<{ ok: string }, void>({
+          query: () => "/probe",
+          responseSchema: z.object({ ok: z.string() }),
+        }),
+      }),
+      overrideExisting: true,
+    });
+    const store = configureStore({
+      reducer: { [cardApi.reducerPath]: cardApi.reducer },
+      middleware: gdm =>
+        gdm({ thunk: { extraArgument: cardApiExtra(buildExtra()) } }).concat(cardApi.middleware),
+    });
+
+    const result = await store.dispatch(api.endpoints.schemaProbe.initiate());
+
+    expect(result.data).toBeUndefined();
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("responseSchema rejected the response — ok:"),
+    });
   });
 });
 
