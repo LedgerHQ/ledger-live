@@ -1,6 +1,5 @@
-import expect from "expect";
 import {
-  containsSubstringInEvent,
+  expectSpeculosEventsContain,
   getDelegateEvents,
   getDeviceLabels,
   pressUntilTextFound,
@@ -25,8 +24,7 @@ export const delegateTezos = withDeviceController(
       // Stake/unstake reviews show the amount on-device; a pure delegation (amount "N/A") shows the
       // baker address + fee but no amount, so only assert when an amount is expected.
       if (delegatingAccount.amount !== "N/A") {
-        const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
-        expect(isAmountCorrect).toBeTruthy();
+        expectSpeculosEventsContain(delegatingAccount.amount, events);
       }
       await pressUntilTextFound(delegateConfirmLabel);
 

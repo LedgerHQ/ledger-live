@@ -1,6 +1,5 @@
-import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { containsSubstringInEvent, expectMemoTagInEvents, getSendEvents } from "../speculos";
+import { expectSpeculosEventsContain, expectMemoTagInEvents, getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
@@ -12,14 +11,12 @@ export const sendStellar = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
+      expectSpeculosEventsContain(tx.amount, events);
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-      expect(isAddressCorrect).toBeTruthy();
+      expectSpeculosEventsContain(tx.accountToCredit.address, events);
       expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {
