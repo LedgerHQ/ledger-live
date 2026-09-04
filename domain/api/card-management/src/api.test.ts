@@ -467,7 +467,7 @@ describe("cardManagementApi requests", () => {
     it("posts the freeze with the session bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/freeze");
@@ -482,7 +482,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(errorResponse(400, "Card is already frozen"));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
 
       expect(result.data).toBeUndefined();
@@ -504,7 +504,7 @@ describe("cardManagementApi requests", () => {
           return jsonResponse({ ...cardStatus, status: cardState });
         });
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
@@ -528,7 +528,7 @@ describe("cardManagementApi requests", () => {
     it("posts the unfreeze with the session bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/unfreeze");
@@ -543,7 +543,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(errorResponse(400, "Card is not frozen"));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
 
       expect(result.data).toBeUndefined();
@@ -562,7 +562,7 @@ describe("cardManagementApi requests", () => {
           return jsonResponse({ ...cardStatus, status: cardState });
         });
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
