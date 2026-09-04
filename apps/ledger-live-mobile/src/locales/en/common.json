@@ -9785,6 +9785,7 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountToPayFrom": "Select account to pay from",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
