@@ -185,6 +185,11 @@ describe("solana bridge", () => {
       ["delegate", "DELEGATE"],
       ["undelegate", "UNDELEGATE"],
       ["unstake", "WITHDRAW_UNBONDED"],
+      // Undescribed, these fell back to `OUT` -- claiming the amount left the account, and letting
+      // the stake account address a split carries as a memo surface as if the user had typed it.
+      ["split", "FEES"],
+      ["approve", "FEES"],
+      ["revoke", "FEES"],
     ])("types a %s as %s, valued at the fee", (mode, expected) => {
       expect(describeOptimisticOperation(mode, account, { fees })).toEqual({
         type: expected,

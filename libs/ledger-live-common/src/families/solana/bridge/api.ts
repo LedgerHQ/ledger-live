@@ -87,8 +87,9 @@ export function buildIntentData(transaction: Record<string, unknown>): TxData {
 
 /**
  * The types the next sync will produce (`coin-solana/logic/listOperations.ts`), so the pending row
- * matches: a stake creation resolves to `DELEGATE`, a withdrawal to `WITHDRAW_UNBONDED`. All four
- * carry the fee as their value -- none sends funds anywhere.
+ * matches: a stake creation resolves to `DELEGATE`, a withdrawal to `WITHDRAW_UNBONDED`. All of
+ * them carry the fee as their value -- none sends funds anywhere. A mode missing here falls back to
+ * `OUT`, which would claim the amount left the account.
  */
 const STAKING_OPERATION_TYPES: Record<string, OperationType> = {
   "opt-in": "OPT_IN",
@@ -96,6 +97,10 @@ const STAKING_OPERATION_TYPES: Record<string, OperationType> = {
   delegate: "DELEGATE",
   undelegate: "UNDELEGATE",
   unstake: "WITHDRAW_UNBONDED",
+  // Lamports move between two stake accounts the wallet owns, so only the fee leaves it.
+  split: "FEES",
+  approve: "FEES",
+  revoke: "FEES",
 };
 
 export function describeOptimisticOperation(

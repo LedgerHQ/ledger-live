@@ -1149,10 +1149,13 @@ export const buildOptimisticOperation = (
       // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
       // and `index` are this path's alone, which is why they are not in the reserved set.
       ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
-      // The pending row must show the memo the user typed, like the synced row does. Restricted to
-      // transfers: a family is free to use the memo field as transport for something else (Solana
-      // carries the stake account there when delegating), and that is not a user memo.
-      ...(transaction.memoValue && (parentType === "OUT" || parentType === "FEES")
+      // The pending row must show the memo the user typed, like the synced row does. Only for an
+      // operation the framework typed itself: a family that describes its own uses the memo field
+      // as transport for something else -- Solana carries the stake account there -- and that is
+      // not a user memo.
+      ...(transaction.memoValue &&
+      described === undefined &&
+      (parentType === "OUT" || parentType === "FEES")
         ? { memo: transaction.memoValue }
         : {}),
       ledgerOpType: type,
