@@ -115,6 +115,26 @@ describe("redactCardApiAction", () => {
     expect(JSON.stringify(redacted)).not.toContain(ACCESS_TOKEN);
   });
 
+  it("keeps the originalStatus of a PARSING_ERROR, so a 401 with a non-JSON body stays readable", () => {
+    const redacted = redactCardApiAction({
+      type: `${CARD_REDUCER_PATH}/executeQuery/rejected`,
+      payload: {
+        status: "PARSING_ERROR",
+        originalStatus: 401,
+        data: `token=${ACCESS_TOKEN}`,
+        error: "SyntaxError",
+      },
+      meta: { arg: { endpointName: "getUser", originalArgs: undefined } },
+    });
+
+    expect(redacted.payload).toEqual({
+      status: "PARSING_ERROR",
+      originalStatus: 401,
+      data: REDACTED,
+    });
+    expect(JSON.stringify(redacted)).not.toContain(ACCESS_TOKEN);
+  });
+
   it("does not add fields that the action did not carry", () => {
     const redacted = redactCardApiAction({
       type: `${CARD_REDUCER_PATH}/config/middlewareRegistered`,

@@ -86,7 +86,10 @@ function redactedPayload(payload: unknown): unknown {
       ? { error: payload.error }
       : {};
 
-  return { status: payload.status, ...keptError, data: REDACTED };
+  const keptOriginalStatus =
+    typeof payload.originalStatus === "number" ? { originalStatus: payload.originalStatus } : {};
+
+  return { status: payload.status, ...keptError, ...keptOriginalStatus, data: REDACTED };
 }
 
 function withoutRequestAndResponse(meta: Record<string, unknown>): Record<string, unknown> {
