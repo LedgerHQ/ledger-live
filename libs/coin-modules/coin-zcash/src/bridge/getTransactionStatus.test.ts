@@ -593,6 +593,28 @@ describe("getTransactionStatus, bounded-selection shortfall (ZcashSendTooLarge)"
     expect(boundedTotal + FEE).toBeLessThanOrEqual(fullTotal);
   });
 
+  it("rejects a shielded-to-transparent send between the bounded and full pool with ZcashSendTooLarge", async () => {
+    // shielded-to-transparent (z->t) also spends the Ironwood pool and routes
+    // through the same shielded branch of getTransactionStatus as "shielded"
+    // -- this is the transfer type the sibling test above doesn't cover.
+    const noteCount = ZCASH_MAX_IRONWOOD_ACTIONS + 5;
+    const acc = account({ ironwoodNotes: Array(noteCount).fill(100_000) });
+    const boundedTotal = ZCASH_MAX_IRONWOOD_ACTIONS * 100_000;
+    const fullTotal = noteCount * 100_000;
+    const tx = transaction({
+      transferType: "shielded-to-transparent",
+      recipient: T_ADDRESS,
+      amount: new BigNumber(boundedTotal),
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toBeInstanceOf(ZcashSendTooLarge);
+    expect(status.errors.amount).not.toEqual(new Error("Insufficient shielded balance"));
+    expect(boundedTotal + FEE).toBeLessThanOrEqual(fullTotal);
+  });
+
   it("keeps reporting the generic insufficiency error for a genuine shielded shortfall, on a pool below the bound", async () => {
     const acc = account({ ironwoodNotes: [10_000, 10_000] }); // pool 20_000, well below the bound
     const tx = transaction({
