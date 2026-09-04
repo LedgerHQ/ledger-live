@@ -21,15 +21,15 @@ import type {
   TokenTransferTransaction,
   Transaction,
 } from "./types";
+import {
+  fetchMinimumBalanceForRentExempt,
+  InternalTestError,
+} from "./__tests__/fixtures/helpers.fixture";
 
 const SOLANA_RPC_ENDPOINT = "https://solana.coin.ledger.com";
 
 const VIBECODOOR_MINT = "Aj1mSpD4vJDN5r3xptnHsjHQgGWDLge8bRQi2W6pump";
 const SENDER_ADDRESS = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
-
-const MAIN_ACCOUNT_RENT_EXEMPT = new BigNumber(890_880);
-const SPENDABLE_AT_BUG_THRESHOLD = new BigNumber(2_044_280);
-const BALANCE_AT_BUG_THRESHOLD = SPENDABLE_AT_BUG_THRESHOLD.plus(MAIN_ACCOUNT_RENT_EXEMPT);
 
 const VIBECODOOR_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
@@ -72,7 +72,7 @@ const senderAtaAddress = PublicKey.findProgramAddressSync(
 
 const subAccountId = encodeAccountIdWithTokenAccountAddress(mainAccountId, senderAtaAddress);
 
-function buildSenderAccount(): SolanaAccount {
+function buildSenderAccount(rentExemptionMinimum: BigNumber): SolanaAccount {
   const tokenSub = {
     type: "TokenAccount",
     id: subAccountId,
@@ -108,8 +108,8 @@ function buildSenderAccount(): SolanaAccount {
     creationDate: new Date(),
     lastSyncDate: new Date(0),
     blockHeight: 0,
-    balance: BALANCE_AT_BUG_THRESHOLD,
-    spendableBalance: SPENDABLE_AT_BUG_THRESHOLD,
+    balance: rentExemptionMinimum.multipliedBy(2),
+    spendableBalance: rentExemptionMinimum,
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
@@ -129,8 +129,21 @@ describe("prepareTransaction packs NotEnoughGas", () => {
 
   const api = getChainAPI({ endpoint: SOLANA_RPC_ENDPOINT });
 
-  it("prepareTransaction packs NotEnoughGas when spendable == classic ATA rent + fee", async () => {
-    const account = buildSenderAccount();
+  it("prepareTransaction packs NotEnoughGas when spendable is lesser than classic ATA rent + fee", async () => {
+    let rentExemptionMinimum: BigNumber;
+    try {
+      rentExemptionMinimum = await fetchMinimumBalanceForRentExempt(VIBECODOOR_MINT, api).then(
+        rentExemptionMinimum => BigNumber(rentExemptionMinimum),
+      );
+    } catch (error) {
+      if (error instanceof InternalTestError) {
+        fail("Test failed due to: " + error.message);
+      }
+
+      throw error;
+    }
+
+    const account = buildSenderAccount(rentExemptionMinimum);
     const freshRecipient = Keypair.generate().publicKey.toBase58();
 
     const tx: Transaction = {
