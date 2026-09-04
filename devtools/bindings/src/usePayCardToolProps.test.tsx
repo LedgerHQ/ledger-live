@@ -206,6 +206,27 @@ describe("usePayCardToolProps", () => {
     expect(result.current.balance.isFetching).toBe(true);
   });
 
+  it("offers a probe per Card endpoint the tool can call, in the order they are read", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.interaction.probes.map(({ id, label }) => [id, label])).toEqual([
+      ["card-status", "Card Status"],
+      ["freeze-card", "Freeze Card"],
+      ["unfreeze-card", "Unfreeze Card"],
+    ]);
+  });
+
+  it("starts every probe idle, with nothing answered and nothing failed", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    for (const probe of result.current.interaction.probes) {
+      expect(probe).toMatchObject({ isFetching: false, result: undefined, error: undefined });
+      expect(typeof probe.run).toBe("function");
+    }
+  });
+
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 
