@@ -229,10 +229,12 @@ export function useQueuedBottomSheet({
   const handleDismiss = useCallback(() => {
     logBottomSheet("BottomSheet dismissed (onDismiss)");
 
-    dismissKeyboard();
-
-    // Fallback for dismissals that bypass the close animation (and thus handleAnimate).
+    // Fallback for dismissals that bypass the close animation (and thus handleAnimate). An
+    // orderly close already retracted the keyboard when it began, and onDismiss can land long
+    // after that — by then the sheet that took over may have raised the keyboard for its own
+    // input, and retracting it again would steal it.
     if (stateRef.current === "open") {
+      dismissKeyboard();
       onCloseRef.current?.();
     }
 
