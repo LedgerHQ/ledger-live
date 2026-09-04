@@ -118,10 +118,14 @@ function ReceiveFunds({ navigation, route }: Props) {
         const mainAccount = getMainAccount(account, parentAccount);
 
         if (shouldUseNewFlow) {
+          const extra = route.params?.extra;
+          const recipient = typeof extra?.recipient === "string" ? extra.recipient : undefined;
           navigation.navigate(NavigatorName.SendFlow, {
             params: {
               account,
               parentAccount: mainAccount === account ? undefined : mainAccount,
+              recipient,
+              skipRecipientStep: extra?.skipRecipientStep === true,
             },
           });
           return;
