@@ -11,9 +11,15 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
+  "dependencies": {
+    "@domain/api-card-management": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/i18n": "workspace:*"
+  },
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
@@ -28,10 +34,14 @@
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react-dom": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
@@ -40,6 +50,7 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
   },
   "optionalDependencies": {
@@ -49,6 +60,13 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
-    "react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    }
   }
 }
