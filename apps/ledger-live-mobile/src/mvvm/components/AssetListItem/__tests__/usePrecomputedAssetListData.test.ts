@@ -4,7 +4,7 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
-} from "@ledgerhq/live-countervalues/portfolio";
+} from "@ledgerhq/live-common/portfolio/portfolio";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -22,8 +22,8 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   calculate: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-countervalues/portfolio", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/portfolio"),
+jest.mock("@ledgerhq/live-common/portfolio/portfolio", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/portfolio/portfolio"),
   getCurrencyPortfolio: jest.fn(),
   getCurrentBalanceCountervalueChange: jest.fn(),
 }));

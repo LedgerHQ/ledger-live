@@ -11,7 +11,7 @@ import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
-import { usePortfolioThrottled } from "@ledgerhq/live-countervalues-react/portfolio";
+import { usePortfolioThrottled } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   selectLastUserSyncClickTimestamp,
   selectHasCompletedInitialSync,

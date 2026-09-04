@@ -1,8 +1,6 @@
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
 import type {
   Account,
   AccountLike,
@@ -17,7 +15,7 @@ import {
   getAccountCurrency,
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { useCountervaluesState } from ".";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useThrottledValues } from "@ledgerhq/live-hooks/useThrottledFunction";
 import {
   getBalanceHistoryWithCountervalue,
@@ -26,7 +24,7 @@ import {
   getAssetsDistribution,
   getPortfolioCount,
   GetPortfolioOptionsType,
-} from "@ledgerhq/live-countervalues/portfolio";
+} from "./portfolio";
 
 export function useBalanceHistoryWithCountervalue({
   account,

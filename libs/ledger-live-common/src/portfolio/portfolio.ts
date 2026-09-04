@@ -1,5 +1,5 @@
-import type { CounterValuesState } from "./types";
-import { calculate, calculateMany } from "./logic";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenAccounts,
   getAccountCurrency,
@@ -18,14 +18,12 @@ import type {
   AssetsDistribution,
   ValueChange,
 } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/ledger-wallet-framework/types";
-import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./internal/ranges";
-import { defaultAssetsDistribution } from "./internal/assetsDistribution";
-import type { AssetsDistributionOpts } from "./internal/assetsDistribution";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
+import { getDates, getPortfolioRangeConfig, getPortfolioCountByDate } from "./ranges";
+import { defaultAssetsDistribution } from "./assetsDistribution";
+import type { AssetsDistributionOpts } from "./assetsDistribution";
 
 export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
@@ -179,8 +177,14 @@ export function getPortfolio(
   const accounts = flattenSourceAccounts ? flattenAccounts(topAccounts) : topAccounts;
   const count = getPortfolioCount(accounts, range);
 
-  const availables = [];
-  const unavailableAccounts = [];
+  type AvailableEntry = Pick<
+    ReturnType<typeof getBalanceHistoryWithChanges>,
+    "history" | "changes"
+  > & {
+    account: AccountLike;
+  };
+  const availables: AvailableEntry[] = [];
+  const unavailableAccounts: AccountLike[] = [];
 
   for (const account of accounts) {
     const p = getBalanceHistoryWithChanges(account, range, count, cvState, cvCurrency);
@@ -216,10 +220,12 @@ export function getPortfolio(
 
   // in case there were no receive, we just track the market change
   // weighted by the current balances
-  const balanceDivider = getEnv("EXPERIMENTAL_ROI_CALCULATION")
-    ? countervalueReceiveSum === 0
+  const experimentalDivider =
+    countervalueReceiveSum === 0
       ? firstSignificantHistoryValue + countervalueSendSum
-      : countervalueReceiveSum
+      : countervalueReceiveSum;
+  const balanceDivider = getEnv("EXPERIMENTAL_ROI_CALCULATION")
+    ? experimentalDivider
     : firstSignificantHistoryValue;
 
   return {
@@ -264,7 +270,7 @@ export function getCurrencyPortfolio(
     countervalue: histories.reduce((sum, h) => sum + (h[i]?.countervalue ?? 0), 0),
   }));
   const from = history[0];
-  const to = history[history.length - 1];
+  const to = history.at(-1)!;
   const cryptoChange = {
     value: to.value - from.value,
     percentage: null,
@@ -354,8 +360,7 @@ export function getAssetsDistribution(
   const currenciesAccounts: Record<string, AccountLike[]> = {};
   const accounts = flattenAccounts(topAccounts);
 
-  for (let i = 0; i < accounts.length; i++) {
-    const account = accounts[i];
+  for (const account of accounts) {
     const cur = getAccountCurrency(account);
     const id = cur.id;
 
@@ -370,11 +375,9 @@ export function getAssetsDistribution(
         idCurrencies[id] = cur;
         idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
       }
-    } else {
-      if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
-        idCurrencies[id] = cur;
-        idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
-      }
+    } else if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
+      idCurrencies[id] = cur;
+      idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
     }
   }
 
@@ -406,15 +409,13 @@ export function getAssetsDistribution(
       const amount = idBalances[id];
       const countervalue = idCountervalues[id] ?? 0;
       const currencyAccounts = currenciesAccounts[id];
+      const distributionWhenAvailable =
+        sum !== 0 ? countervalue / sum : 1 / idCurrenciesKeys.length;
       return {
         currency,
         countervalue,
         amount,
-        distribution: isAvailable
-          ? sum !== 0
-            ? countervalue / sum
-            : 1 / idCurrenciesKeys.length
-          : 0,
+        distribution: isAvailable ? distributionWhenAvailable : 0,
         accounts: currencyAccounts,
       };
     })
@@ -424,8 +425,9 @@ export function getAssetsDistribution(
     });
   let i;
   let acc = 0;
+  const upperBound = Math.min(maxShowFirst, list.length);
 
-  for (i = 0; i < maxShowFirst && i < list.length; i++) {
+  for (i = 0; i < upperBound; i++) {
     if (acc > showFirstThreshold) {
       break;
     }

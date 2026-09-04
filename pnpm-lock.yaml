@@ -13026,6 +13026,9 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
@@ -16772,7 +16775,7 @@ importers:
         version: 3.0.6
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
-        version: 3.3.5(@types/react@19.0.14)
+        version: 3.3.5
       '@types/lodash':
         specifier: 'catalog:'
         version: 4.17.21
@@ -16995,7 +16998,7 @@ importers:
         version: 3.0.6
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
-        version: 3.3.5(@types/react@19.0.14)
+        version: 3.3.5
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -18435,7 +18438,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -27132,11 +27135,6 @@ packages:
 
   '@types/hoist-non-react-statics@3.3.5':
     resolution: {integrity: sha512-SbcrWzkKBw2cdwRTwQAswfpB9g9LJWfjtUeW/jvNwbhC8cpmmNYVePa+ncbUe0rGTQ7G3Ff6mYUN2VMfLVr+Sg==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   '@types/html-minifier-terser@6.1.0':
     resolution: {integrity: sha512-oh/6byDPnL1zeNXFrDXFLyZjkr1MsBG667IM792caf1L2UPOOMf65NFzjUH/ltyfwjAGfs1rsX1eftK0jC/KIg==}
@@ -54951,11 +54949,9 @@ snapshots:
     dependencies:
       '@types/unist': 2.0.10
 
-  '@types/hoist-non-react-statics@3.3.5(@types/react@19.0.14)':
+  '@types/hoist-non-react-statics@3.3.5':
     dependencies:
       hoist-non-react-statics: 3.3.2
-    optionalDependencies:
-      '@types/react': 19.0.14
 
   '@types/html-minifier-terser@6.1.0': {}
 
@@ -55234,7 +55230,7 @@ snapshots:
 
   '@types/styled-components@5.1.34(@types/react@19.0.14)':
     dependencies:
-      '@types/hoist-non-react-statics': 3.3.5(@types/react@19.0.14)
+      '@types/hoist-non-react-statics': 3.3.5
       csstype: 3.2.3
     optionalDependencies:
       '@types/react': 19.0.14

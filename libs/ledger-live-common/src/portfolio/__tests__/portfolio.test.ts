@@ -1,8 +1,12 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
-import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
-import { pairId } from "./helpers";
+import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./currencies";
+import {
+  initialState,
+  loadCountervalues,
+  inferTrackingPairForAccounts,
+} from "@ledgerhq/live-countervalues/logic";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
   getPortfolioCount,
   getBalanceHistory,
@@ -12,7 +16,7 @@ import {
   getCurrentBalanceCountervalueChange,
   getAssetsDistribution,
   orderAccountsByFiatValue,
-} from "./portfolio";
+} from "../portfolio";
 import {
   startOfHour,
   startOfDay,
@@ -20,15 +24,40 @@ import {
   getRanges,
   getDates,
   getPortfolioRangeConfig,
-} from "./internal/ranges";
-import { defaultAssetsDistribution } from "./internal/assetsDistribution";
+} from "../ranges";
+import { defaultAssetsDistribution } from "../assetsDistribution";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
+
+// Mirror live-countervalues's jest-setup: restrict genAccount to only bitcoin+ethereum
+// so the seeded RNG picks the same currency as when the snapshots were generated.
+const LOCAL_CURRENCIES = ["bitcoin", "ethereum"].map(id => getCryptoCurrencyById(id));
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById: id => {
+    try {
+      return getCryptoCurrencyById(id);
+    } catch {
+      return undefined;
+    }
+  },
+  findCryptoCurrencyByScheme: () => undefined,
+  listCryptoCurrencies: () => LOCAL_CURRENCIES,
+  hasCryptoCurrencyId: id => {
+    try {
+      getCryptoCurrencyById(id);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+});
 describe("Portfolio", () => {
   const rangeCount: [PortfolioRange, number][] = [
     ["all", 52],
@@ -307,7 +336,7 @@ describe("Portfolio", () => {
 
     // Builds a state where the "now" rate comes from "latest" and the "then" rate from the fallback,
     // so both endpoints can be controlled independently for the edge cases below.
-    function stateWithRates({ now, then }: { now?: number; then?: number }) {
+    function stateWithRates({ now, past }: { now?: number; past?: number }) {
       const from = getCryptoCurrencyById("bitcoin");
       const to = getFiatCurrencyByTicker("USD");
       const map = new Map<string, number>();
@@ -318,7 +347,7 @@ describe("Portfolio", () => {
         cache: {
           [pairId({ from, to })]: {
             map,
-            fallback: then,
+            fallback: past,
             stats: {
               oldest: null,
               earliest: null,
@@ -334,7 +363,7 @@ describe("Portfolio", () => {
     it("returns a 0% change when the price is flat over the range", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: 100 });
+      const state = stateWithRates({ now: 100, past: 100 });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change.value).toBe(0);
       expect(change.percentage).toBe(0);
@@ -349,7 +378,7 @@ describe("Portfolio", () => {
         spendableBalance: zeroBalance,
       };
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: 80 });
+      const state = stateWithRates({ now: 100, past: 80 });
       const change = getCurrentBalanceCountervalueChange([emptyAccount], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
@@ -357,7 +386,7 @@ describe("Portfolio", () => {
     it("returns a neutral change when the past rate is missing", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: 100, then: undefined });
+      const state = stateWithRates({ now: 100, past: undefined });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
@@ -365,7 +394,7 @@ describe("Portfolio", () => {
     it("returns a neutral change when the current rate is missing", () => {
       const account = genAccountBitcoin();
       const to = getFiatCurrencyByTicker("USD");
-      const state = stateWithRates({ now: undefined, then: 100 });
+      const state = stateWithRates({ now: undefined, past: 100 });
       const change = getCurrentBalanceCountervalueChange([account], range, state, to);
       expect(change).toEqual({ value: 0, percentage: null });
     });
@@ -492,3 +521,30 @@ async function loadCV(a: Account | Account[], cvTicker = "USD") {
     to,
   };
 }
+
+describe("inferTrackingPairForAccounts", () => {
+  const accounts = Array(20)
+    .fill(null)
+    .map((_, i) => genAccount("test" + i));
+  const usd = getFiatCurrencyByTicker("USD");
+
+  test("trackingPairs have a deterministic order regardless of accounts order", () => {
+    const trackingPairs = inferTrackingPairForAccounts(accounts, usd);
+    const accounts2 = accounts.slice(10).concat(accounts.slice(0, 10));
+    const trackingPairs2 = inferTrackingPairForAccounts(accounts2, usd);
+    expect(trackingPairs).toEqual(trackingPairs2);
+  });
+
+  test("trackingPairs with same from and to are filtered out", () => {
+    const first = genAccount("test1", { currency: getCryptoCurrencyById("bitcoin") });
+    const trackingPairs = inferTrackingPairForAccounts([first], first.currency);
+    expect(trackingPairs).toEqual([]);
+  });
+
+  test("trackingPairs with 2 accounts of same coin yield one tracking pair", () => {
+    const first = genAccount("test1", { currency: getCryptoCurrencyById("bitcoin") });
+    const second = genAccount("test2", { currency: getCryptoCurrencyById("bitcoin") });
+    const trackingPairs = inferTrackingPairForAccounts([first, second], usd);
+    expect(trackingPairs.length).toBe(1);
+  });
+});
