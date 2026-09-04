@@ -47,7 +47,6 @@ export const zcash_regtest = currency({
     },
   ],
   isTestnetFor: "zcash",
-  disableCountervalue: true,
   explorerViews: [],
   explorerId: "zcash_regtest",
 });
