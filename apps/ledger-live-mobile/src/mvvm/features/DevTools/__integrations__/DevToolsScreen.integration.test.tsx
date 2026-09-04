@@ -59,9 +59,8 @@ describe("DevToolsScreen", () => {
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
     render(withBottomInset(<DevToolsScreen />));
 
-    // The last render, not the first: the tool props read queries that settle after mount.
-    expect(devToolsSpy).toHaveBeenCalled();
-    const props = devToolsSpy.mock.lastCall![0];
+    expect(devToolsSpy).toHaveBeenCalledTimes(1);
+    const props = devToolsSpy.mock.calls[0][0];
 
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
