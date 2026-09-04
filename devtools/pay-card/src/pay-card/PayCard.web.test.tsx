@@ -25,6 +25,8 @@ function buildProps(): PayCardToolProps {
     interaction: { probes: [] },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
+    hasSeenReceiveVerifyHint: false,
+    resetReceiveVerifyHintSeen: jest.fn(),
     env: {
       vars: [
         {

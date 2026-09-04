@@ -31,6 +31,8 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     interaction: { probes: [], ...overrides.interaction },
     hasSeenFeatureTour: overrides.hasSeenFeatureTour ?? false,
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
+    hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,
+    resetReceiveVerifyHintSeen: overrides.resetReceiveVerifyHintSeen ?? jest.fn(),
     env: overrides.env ?? { vars: [], setVar: jest.fn() },
   };
 }
