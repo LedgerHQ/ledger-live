@@ -10279,7 +10279,8 @@
     "contacts": {
       "title": "Pay",
       "pay": "New",
-      "seeAllTitle": "Pay contact"
+      "seeAllTitle": "Pay contact",
+      "selectAddressTitle": "Select {{name}}'s address"
     }
   },
   "syncIndicator": {
