@@ -86,7 +86,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "algosdk": "3.5.2",
     "bignumber.js": "^9.1.2",
@@ -105,6 +105,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

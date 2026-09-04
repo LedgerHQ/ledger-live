@@ -4,7 +4,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { useCallback, useEffect, useState } from "react";
 import { defer, from, repeat, catchError, map, Observable, of } from "rxjs";
-import { DeviceModelId } from "@ledgerhq/devices/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
 import { IsDeviceLockedResult, IsDeviceLockedResultType } from "./types";
 

@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import React, { useCallback } from "react";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";

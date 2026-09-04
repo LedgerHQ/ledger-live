@@ -43,12 +43,12 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
     "protobufjs": "7.5.4"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

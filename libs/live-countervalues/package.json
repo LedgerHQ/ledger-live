@@ -24,8 +24,8 @@
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/live-promise": "workspace:*",
+    "@ledgerhq/live-network": "catalog:",
+    "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
@@ -35,6 +35,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "jest": "catalog:",
     "prando": "6"
   },

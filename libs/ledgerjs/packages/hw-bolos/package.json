@@ -24,7 +24,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*"
+    "@ledgerhq/hw-transport": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -40,7 +40,7 @@
     "unimported": "unimported"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:*",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",

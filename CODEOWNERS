@@ -61,7 +61,6 @@ libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
 libs/env/                                                @ledgerhq/platform
 libs/identities/                                         @ledgerhq/platform
-libs/promise/                                            @ledgerhq/platform
 libs/ledger-key-ring-protocol/                           @ledgerhq/platform
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/                @ledgerhq/platform
@@ -221,11 +220,9 @@ domain/api/market-sentiment/                             @ledgerhq/wallet-xp
 domain/api/altcoins-sentiment/                           @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
-libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
-libs/live-network/                                       @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
 libs/wallet-btc/                                         @ledgerhq/coin-integration
 libs/wallet-framework-test-setup/                        @ledgerhq/coin-integration
@@ -433,7 +430,6 @@ libs/live-signer-celo/                                             @ledgerhq/liv
 libs/live-signer-cosmos/                                           @ledgerhq/live-devices
 libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
 libs/live-signer-xrp/                                              @ledgerhq/live-devices
-libs/ledgerjs/packages/hw-transport/                               @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 

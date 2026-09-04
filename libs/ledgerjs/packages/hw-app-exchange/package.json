@@ -26,14 +26,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
     "protobufjs": "7.2.5",
     "protobufjs-cli": "1.1.2"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@noble/curves": "1.9.7",

@@ -28,7 +28,7 @@
   "types": "lib/SpeculosHttpTransport.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
     "rxjs": "catalog:"

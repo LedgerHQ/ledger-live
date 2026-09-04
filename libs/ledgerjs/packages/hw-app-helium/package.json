@@ -30,13 +30,13 @@
     "@helium/address": "^4.6.2",
     "@helium/proto": "^1.6.0",
     "@helium/transactions": "^4.7.5",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32-path": "^0.4.2",
     "long": "^5.2.0"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

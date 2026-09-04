@@ -26,12 +26,12 @@
   "types": "lib/Sui.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@mysten/ledgerjs-hw-app-sui": "^0.8.0",
     "semver": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",

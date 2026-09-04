@@ -1,6 +1,6 @@
 /* oxlint-disable eslint/no-console */
 import makeFetchCookie from "fetch-cookie";
-import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "../src/LKRPIdentityProvider";
 import { readMemberCredentials } from "./utils/readMemberCredentials";
 

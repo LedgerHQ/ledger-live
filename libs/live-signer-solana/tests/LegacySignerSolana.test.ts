@@ -4,7 +4,7 @@ import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
 import * as loadPKIModule from "@ledgerhq/hw-bolos";
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "../src/errors";
-import { DeviceModelId } from "@ledgerhq/devices/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { TokenData } from "@ledgerhq/ledger-cal-service/tokens";

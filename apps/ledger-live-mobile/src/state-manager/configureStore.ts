@@ -2,7 +2,7 @@ import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
-import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";

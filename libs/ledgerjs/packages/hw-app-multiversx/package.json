@@ -27,7 +27,7 @@
   "types": "lib/MultiversX.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@multiversx/sdk-core": "^13.7.0",
     "axios": "catalog:",
     "bignumber.js": "^9.0.1",
@@ -35,7 +35,7 @@
     "protobufjs": "^7.2.6"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
