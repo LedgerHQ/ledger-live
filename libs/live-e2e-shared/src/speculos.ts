@@ -612,10 +612,11 @@ export async function waitFor(
     try {
       const allEvents = (await fetchAllEvents(port)).join(" ");
       const shot = await takeScreenshot(port);
+      const shotSummary = shot ? `${shot.length} bytes` : "unreachable";
       console.warn(
         `[waitFor] "${text}" not matched after ${maxAttempts} polls on port ${port}. ` +
           `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}" | ` +
-          `screenshot(${port}) => ${shot ? `${shot.length} bytes` : "unreachable"}`,
+          `screenshot(${port}) => ${shotSummary}`,
       );
     } catch (err) {
       console.warn(`[waitFor] failed to dump diagnostics on port ${port}: ${sanitizeError(err)}`);

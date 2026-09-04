@@ -141,7 +141,7 @@ export const FF_MINA_STAKING_ENABLED = {
       redirects: {},
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_DISABLED = {
   newSendFlow: {
