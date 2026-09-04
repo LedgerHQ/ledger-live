@@ -80,6 +80,13 @@ export const PayCardInternalWalletSchema = z.object({
   address: z.string().min(1),
   // Nullish because a wallet with no memo answers with the key absent, others with `null`.
   addressMemo: z.string().min(1).nullish(),
+  /** What the link and unlink endpoints identify a wallet by. Not the same as `id`. */
+  addressId: z.string().min(1),
+});
+
+/** Both linking and unlinking answer with this and nothing else. */
+export const PayCardLinkedWalletMutationResponseSchema = z.object({
+  success: z.boolean(),
 });
 
 export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);

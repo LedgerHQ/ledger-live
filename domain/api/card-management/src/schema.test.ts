@@ -228,11 +228,20 @@ describe("PayCardInternalWalletSchema", () => {
     expect(PayCardInternalWalletSchema.parse(wallet).balance).toBe("125.50");
   });
 
-  it("drops the internal address id and the constant type the contract does not declare", () => {
-    const parsed = PayCardInternalWalletSchema.parse(wallet);
+  it("keeps the address id, which is what links and unlinks the wallet", () => {
+    expect(PayCardInternalWalletSchema.parse(wallet).addressId).toBe(
+      "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c",
+    );
+  });
 
-    expect(parsed).not.toHaveProperty("addressId");
-    expect(parsed).not.toHaveProperty("type");
+  it("drops the constant type the contract does not declare", () => {
+    expect(PayCardInternalWalletSchema.parse(wallet)).not.toHaveProperty("type");
+  });
+
+  it("rejects a wallet with no address id: it could then never be linked", () => {
+    const { addressId: _addressId, ...withoutAddressId } = wallet;
+
+    expect(() => PayCardInternalWalletSchema.parse(withoutAddressId)).toThrow();
   });
 
   it("keeps the address memo the chain needs", () => {
