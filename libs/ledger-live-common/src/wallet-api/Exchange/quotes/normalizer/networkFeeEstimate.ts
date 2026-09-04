@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import type {
-  QuoteApprovalNetworkFee,
-  QuoteEstimatedNetworkFee,
-} from "@ledgerhq/wallet-api-exchange-module";
+import type { QuoteNetworkFeeAmount } from "@ledgerhq/wallet-api-exchange-module";
 
 import type { RawQuote } from "../service/types";
 import { isGasLess } from "./quoteHelpers";
@@ -39,8 +36,8 @@ export type NetworkFeeContext = {
 };
 
 export type FeeEstimate = {
-  estimatedNetworkFee?: QuoteEstimatedNetworkFee;
-  approvalNetworkFee?: QuoteApprovalNetworkFee;
+  estimatedNetworkFee?: QuoteNetworkFeeAmount;
+  approvalNetworkFee?: QuoteNetworkFeeAmount;
   notEnoughBalance: boolean;
 };
 
@@ -76,7 +73,7 @@ export function computeFeeEstimate(quote: RawQuote, context: NetworkFeeContext):
   } else {
     // No gas price available: fall back to the bridge-reported estimate
     // for base; approval gas is unknowable without a price.
-    baseFeeAtomic = gasLess ? new BigNumber(0) : context.estimatedFeesAtomic;
+    baseFeeAtomic = gasLess ? new BigNumber(0) : fallbackBaseFeeAtomic(quote, context);
     approvalFeeAtomic = new BigNumber(0);
   }
 
@@ -112,6 +109,37 @@ function computeOverrideFeeEstimate(
   };
 }
 
+/**
+ * Last-resort fee estimate built only from the provider-reported
+ * `networkFees.value`. Used when {@link fetchNetworkFeeContext} could not
+ * produce a {@link NetworkFeeContext} (account lookup / bridge failure,
+ * unsupported chain) so the displayed fee and the net-countervalue sort
+ * stay fee-aware instead of silently collapsing to zero.
+ *
+ * The provider value is only trusted when the quote is not gasless, the
+ * value is positive, and it is denominated in the resolved fee currency.
+ * Balance is unknown without a bridge, so `notEnoughBalance` is always
+ * `false` — a degraded estimate must never block a quote on a guess.
+ */
+export function computeProviderFeeEstimate(
+  quote: RawQuote,
+  feeCurrency: { id: string; magnitude: number },
+): FeeEstimate {
+  const gasLess = isGasLess(quote);
+  const providerValue = new BigNumber(quote.networkFees.value ?? 0);
+  const usable = !gasLess && providerValue.gt(0) && quote.networkFees.currency === feeCurrency.id;
+
+  const baseFeeAtomic = usable
+    ? providerValue.shiftedBy(feeCurrency.magnitude).integerValue(BigNumber.ROUND_DOWN)
+    : new BigNumber(0);
+
+  return {
+    estimatedNetworkFee: toAtomicFeeField(baseFeeAtomic, feeCurrency.id),
+    approvalNetworkFee: undefined,
+    notEnoughBalance: false,
+  };
+}
+
 function pickGasPrice(context: NetworkFeeContext): BigNumber | undefined {
   if (context.maxFeePerGas?.gt(0)) {
     return context.maxFeePerGas;
@@ -120,6 +148,26 @@ function pickGasPrice(context: NetworkFeeContext): BigNumber | undefined {
     return context.gasPrice;
   }
   return undefined;
+}
+
+/**
+ * Use the provider fee only when the bridge cannot provide a positive estimate.
+ */
+function fallbackBaseFeeAtomic(quote: RawQuote, context: NetworkFeeContext): BigNumber {
+  if (context.estimatedFeesAtomic.gt(0)) {
+    return context.estimatedFeesAtomic;
+  }
+
+  if (quote.networkFees.currency !== context.feeCurrencyId) {
+    return context.estimatedFeesAtomic;
+  }
+
+  const providerFee = new BigNumber(quote.networkFees.value ?? 0);
+  if (!providerFee.gt(0)) {
+    return context.estimatedFeesAtomic;
+  }
+
+  return providerFee.shiftedBy(context.feeCurrencyMagnitude).integerValue(BigNumber.ROUND_DOWN);
 }
 
 /**
@@ -141,7 +189,7 @@ function shouldCheckBalance(quote: RawQuote, needsApproval: boolean): boolean {
 function toAtomicFeeField(
   amount: BigNumber,
   currencyId: string,
-): QuoteEstimatedNetworkFee | undefined {
+): QuoteNetworkFeeAmount | undefined {
   if (!amount.gt(0)) {
     return undefined;
   }

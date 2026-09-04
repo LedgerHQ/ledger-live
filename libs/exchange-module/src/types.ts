@@ -217,6 +217,7 @@ export type ProviderDetails = {
 
 export type QuoteNetworkFees = {
   currencyId: string;
+  /** Provider-reported fee amount in display units, when available. */
   value?: number;
   gasLimit?: string;
 };
@@ -318,21 +319,14 @@ export type QuotePermitData = {
 };
 
 /**
- * Wallet-computed network-fee estimate for the default fee strategy.
+ * Wallet-computed network-fee amount.
  * `amount` is in atomic units as a decimal string to preserve precision for
  * chains whose fees exceed `Number.MAX_SAFE_INTEGER`.
  */
-export type QuoteEstimatedNetworkFee = {
+export type QuoteNetworkFeeAmount = {
   amount: string;
   currencyId: string;
 };
-
-/**
- * Extra network fee for a pre-swap ERC-20 approval transaction (EVM only).
- * Shaped identically to {@link QuoteEstimatedNetworkFee}. Absent when no
- * approval is required.
- */
-export type QuoteApprovalNetworkFee = QuoteEstimatedNetworkFee;
 
 export type QuoteDetails = {
   type: TradeMethod;
@@ -348,8 +342,9 @@ export type QuoteDetails = {
   tokenAllowance?: QuoteTokenAllowance;
   tags?: QuoteTags;
   permitData?: QuotePermitData;
-  estimatedNetworkFee?: QuoteEstimatedNetworkFee;
-  approvalNetworkFee?: QuoteApprovalNetworkFee;
+  estimatedNetworkFee?: QuoteNetworkFeeAmount;
+  approvalNetworkFee?: QuoteNetworkFeeAmount;
+  totalNetworkFee?: QuoteNetworkFeeAmount;
 };
 
 export type FormattedNumber = {

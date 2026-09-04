@@ -5,27 +5,15 @@ import type { FormattedQuoteValues } from "@ledgerhq/wallet-api-exchange-module"
 import { formatQuote } from "../format/formatQuote";
 import type { FormatContext } from "../format/types";
 import type { Quote } from "../types";
-import type { FeeEstimate } from "./networkFeeEstimate";
 
 /**
- * Convert the base swap-gas estimate from atomic to display units.
- * Mirrors swap-live-app's `calculateNetworkFeeAmount`: only
- * `estimatedNetworkFee` contributes — the UI renders approvals on a
- * separate line — and returns `0` when the quote is gasless or the
- * wallet could not produce an estimate (parity with the legacy
- * `"0 <fee-ticker>"` display).
- *
- * @param feeEstimate - Wallet-side fee estimate, possibly undefined when
- *   no bridge was available.
- * @param feeCurrencyDecimals - Magnitude of the fee currency, used to
- *   scale the atomic amount.
- * @returns Fee amount in display units as a `BigNumber`.
+ * Convert an atomic quote fee field to display units.
  */
-function estimatedNetworkFeeAsDisplay(
-  feeEstimate: FeeEstimate | undefined,
+function networkFeeAsDisplay(
+  quoteDetails: Quote["quoteDetails"],
   feeCurrencyDecimals: number | undefined,
 ): BigNumber {
-  const atomic = feeEstimate?.estimatedNetworkFee?.amount;
+  const atomic = quoteDetails.totalNetworkFee?.amount;
   if (!atomic || feeCurrencyDecimals === undefined) {
     return new BigNumber(0);
   }
@@ -40,8 +28,6 @@ function estimatedNetworkFeeAsDisplay(
  *
  * @param quoteDetails - Already-normalized quote details carrying the
  *   numeric fields to format.
- * @param feeEstimate - Wallet-side fee estimate; `undefined` collapses
- *   `networkFee` to `"0 <feeTicker>"`.
  * @param formatContext - Resolved locale / fiat / currencies + spot
  *   prices threaded down from the handler context.
  * @returns The triplet-shaped `FormattedQuoteValues` object to attach as
@@ -49,11 +35,10 @@ function estimatedNetworkFeeAsDisplay(
  */
 export function buildFormattedQuoteValues(
   quoteDetails: Quote["quoteDetails"],
-  feeEstimate: FeeEstimate | undefined,
   formatContext: FormatContext,
 ): FormattedQuoteValues {
-  const networkFeeAmount = estimatedNetworkFeeAsDisplay(
-    feeEstimate,
+  const networkFeeAmount = networkFeeAsDisplay(
+    quoteDetails,
     formatContext.networkFeesCurrency?.decimals,
   );
 
@@ -64,7 +49,8 @@ export function buildFormattedQuoteValues(
       receiveAmount: quoteDetails.receiveAmount,
       exchangeRate: quoteDetails.exchangeRate,
       slippage: quoteDetails.slippage,
-      networkFeesCurrencyId: quoteDetails.networkFees.currencyId,
+      networkFeesCurrencyId:
+        quoteDetails.totalNetworkFee?.currencyId ?? quoteDetails.networkFees.currencyId,
     },
     networkFeeAmount,
     sendCurrency: formatContext.sendCurrency,
