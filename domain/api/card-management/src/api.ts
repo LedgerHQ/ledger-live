@@ -5,6 +5,7 @@ import {
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -18,6 +19,7 @@ import type {
   PayCardInternalWallet,
   PayCardLinkedWallet,
   PayCardLogoutResult,
+  PayCardOnboardingStatus,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
@@ -133,6 +135,15 @@ export const cardManagementApi = cardApi
         }),
         responseSchema: PayCardLinkedWalletsResponseSchema,
       }),
+
+      getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
+        query: () => ({
+          url: "/v1/card/onboarding-status",
+          method: "GET",
+        }),
+        responseSchema: PayCardOnboardingStatusResponseSchema,
+        providesTags: ["CardOnboardingStatus"],
+      }),
     }),
   });
 
@@ -150,4 +161,5 @@ export const {
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
   useGetCardLinkedWalletsQuery,
+  useGetCardOnboardingStatusQuery,
 } = cardManagementApi;

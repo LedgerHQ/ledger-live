@@ -858,6 +858,9 @@ importers:
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
+      '@domain/api-card-management':
+        specifier: workspace:^
+        version: link:../../domain/api/card-management
       '@domain/api-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/api/currency-fiat
@@ -22953,6 +22956,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28425,7 +28429,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -49012,7 +49016,7 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.7.3
+      semver: 7.8.1
     optional: true
 
   '@npmcli/fs@2.1.2':
@@ -51076,7 +51080,7 @@ snapshots:
 
   '@react-native/codegen@0.77.3(@babel/preset-env@7.28.5(@babel/core@7.28.5))':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
       glob: 7.2.3
       hermes-parser: 0.25.1
@@ -51090,7 +51094,7 @@ snapshots:
   '@react-native/codegen@0.81.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       glob: 7.2.3
       hermes-parser: 0.29.1
       invariant: 2.2.4

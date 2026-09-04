@@ -4,6 +4,7 @@ import {
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardStatusResponseSchema,
@@ -249,5 +250,56 @@ describe("PayCardLinkedWalletSchema", () => {
 
   it("rejects a linked wallet with no network, which would not identify the asset", () => {
     expect(() => PayCardLinkedWalletSchema.parse({ ...linked, network: "" })).toThrow();
+  });
+});
+
+describe("PayCardOnboardingStatusResponseSchema", () => {
+  const response = {
+    steps: [
+      {
+        id: "kyc",
+        title: "Verify your identity",
+        description: "Complete KYC verification to activate your card.",
+        isDone: true,
+      },
+      {
+        id: "address",
+        title: "Add shipping address",
+        description: "Tell us where to send your physical card.",
+        isDone: false,
+      },
+    ],
+  };
+
+  it("reads a status made of onboarding steps", () => {
+    expect(PayCardOnboardingStatusResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("accepts a status with no remaining steps as an empty list", () => {
+    expect(PayCardOnboardingStatusResponseSchema.parse({ steps: [] })).toEqual({ steps: [] });
+  });
+
+  it("drops the keys the wire contract does not declare on a step", () => {
+    const parsed = PayCardOnboardingStatusResponseSchema.parse({
+      steps: [{ ...response.steps[0], cta: "https://ledger.com" }],
+    });
+
+    expect(parsed.steps[0]).not.toHaveProperty("cta");
+  });
+
+  it("rejects a step whose done flag is not a boolean", () => {
+    expect(() =>
+      PayCardOnboardingStatusResponseSchema.parse({
+        steps: [{ ...response.steps[0], isDone: "yes" }],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a step with an empty title", () => {
+    expect(() =>
+      PayCardOnboardingStatusResponseSchema.parse({
+        steps: [{ ...response.steps[0], title: "" }],
+      }),
+    ).toThrow();
   });
 });

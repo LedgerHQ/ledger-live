@@ -77,3 +77,15 @@ export const PayCardLinkedWalletSchema = z.object({
 });
 
 export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
+
+/** One onboarding step the card holder still has to complete, as the backend describes it. */
+export const PayCardOnboardingStepSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  isDone: z.boolean(),
+});
+
+export const PayCardOnboardingStatusResponseSchema = z.object({
+  steps: z.array(PayCardOnboardingStepSchema),
+});

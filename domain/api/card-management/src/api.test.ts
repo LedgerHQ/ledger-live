@@ -4,6 +4,7 @@ import {
   cardManagementApi,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
+  useGetCardOnboardingStatusQuery,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
@@ -137,6 +138,7 @@ describe("cardManagementApi configuration", () => {
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
+      "getCardOnboardingStatus",
       "getCardStatus",
       "getInternalWallets",
       "getUser",
@@ -171,6 +173,11 @@ describe("cardManagementApi configuration", () => {
     expect(useGetInternalWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
+  });
+
+  it("exposes the onboarding status endpoint and its hook", () => {
+    expect(cardManagementApi.endpoints.getCardOnboardingStatus).toBeDefined();
+    expect(useGetCardOnboardingStatusQuery).toBeDefined();
   });
 
   it("shares the Card service reducer and middleware once registered in a store", () => {
@@ -653,6 +660,56 @@ describe("cardManagementApi requests", () => {
       const store = makeStore(async () => "session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("getCardOnboardingStatus", () => {
+    const onboardingStatus = {
+      steps: [
+        {
+          id: "kyc",
+          title: "Verify your identity",
+          description: "Complete KYC verification to activate your card.",
+          isDone: true,
+        },
+        {
+          id: "address",
+          title: "Add shipping address",
+          description: "Tell us where to send your physical card.",
+          isDone: false,
+        },
+      ],
+    };
+
+    it("reads the onboarding steps with the bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(onboardingStatus));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/onboarding-status");
+      expect(request(fetchSpy).method).toBe("GET");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual(onboardingStatus);
+    });
+
+    it("rejects a step whose done flag is not a boolean", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse({
+          steps: [{ ...onboardingStatus.steps[0], isDone: "yes" }],
+        }),
+      );
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
       );
 
       expect(result.data).toBeUndefined();
