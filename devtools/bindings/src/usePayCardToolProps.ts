@@ -5,6 +5,8 @@ import {
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
+  useFreezeCardMutation,
+  useUnfreezeCardMutation,
 } from "@domain/api-card-management";
 import {
   useCardLinkedWallets,
@@ -90,6 +92,25 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
  * balance and answers `null`, which the screen reports as unpriced.
  */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+
+type ProbeState = Readonly<{
+  isFetching?: boolean;
+  isLoading?: boolean;
+  data?: unknown;
+  error?: unknown;
+}>;
+
+/** Maps one endpoint's hook state onto the probe the tool renders. */
+function toProbe(id: string, label: string, state: ProbeState, run: () => void): PayCardProbe {
+  return {
+    id,
+    label,
+    isFetching: state.isFetching ?? state.isLoading ?? false,
+    result: state.data === undefined ? undefined : JSON.stringify(state.data, null, 2),
+    error: state.error === undefined ? undefined : describeError(state.error),
+    run,
+  };
+}
 
 /** Reads what an endpoint answered, whatever shape the failure arrives in. */
 function describeError(error: unknown): string {
@@ -203,18 +224,39 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
-  const cardStatusProbe = useMemo<PayCardProbe>(
-    () => ({
-      id: "card-status",
-      label: "Card Status",
-      isFetching: cardStatus.isFetching,
-      result: cardStatus.data === undefined ? undefined : JSON.stringify(cardStatus.data, null, 2),
-      error: cardStatus.error === undefined ? undefined : describeError(cardStatus.error),
-      run: () => {
+  const [freezeCard, freeze] = useFreezeCardMutation();
+  const [unfreezeCard, unfreeze] = useUnfreezeCardMutation();
+
+  /**
+   * Freezing and unfreezing invalidate `CardStatus`, so once the status probe has been run its
+   * result refreshes itself here: the tool shows the state change without a second press.
+   */
+  const probes = useMemo<PayCardProbe[]>(
+    () => [
+      toProbe("card-status", "Card Status", cardStatus, () => {
         runCardStatus();
-      },
-    }),
-    [cardStatus.isFetching, cardStatus.data, cardStatus.error, runCardStatus],
+      }),
+      toProbe("freeze-card", "Freeze Card", freeze, () => {
+        freezeCard();
+      }),
+      toProbe("unfreeze-card", "Unfreeze Card", unfreeze, () => {
+        unfreezeCard();
+      }),
+    ],
+    [
+      cardStatus.isFetching,
+      cardStatus.data,
+      cardStatus.error,
+      freeze.isLoading,
+      freeze.data,
+      freeze.error,
+      unfreeze.isLoading,
+      unfreeze.data,
+      unfreeze.error,
+      runCardStatus,
+      freezeCard,
+      unfreezeCard,
+    ],
   );
 
   const [requestCardDetails, cardDetails] = useCreateCardDetailsTokenMutation();
@@ -242,10 +284,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     ],
   );
 
-  const interaction = useMemo(
-    () => ({ probes: [cardStatusProbe], details }),
-    [cardStatusProbe, details],
-  );
+  const interaction = useMemo(() => ({ probes, details }), [probes, details]);
 
   // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);
