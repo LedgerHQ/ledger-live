@@ -5,5 +5,5 @@
   "stellar": true,
   "tezos": true,
   "tron": true,
-  "solana": false
+  "solana": true
 }

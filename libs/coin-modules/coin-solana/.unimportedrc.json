@@ -2,7 +2,6 @@
   "entry": [
     "src/network/index.ts",
     "src/bridge/js.ts",
-    "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/serialization.ts",
@@ -28,7 +27,6 @@
   "ignoreUnimported": [
     "src/datasets/solana.scanAccounts.1.ts",
     "src/supportedFeatures.ts",
-    "src/test/bridge.dataset.ts",
     "src/tests/preload.fixtures.ts"
   ],
   "ignoreUnused": []

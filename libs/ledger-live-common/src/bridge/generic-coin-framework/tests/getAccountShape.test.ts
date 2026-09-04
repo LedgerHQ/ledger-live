@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
@@ -54,6 +55,8 @@ const adaptCoreOperationToLiveOperationMock = jest.fn();
 const extractBalanceMock = jest.fn();
 const cleanedOperationMock = jest.fn();
 jest.mock("../utils", () => ({
+  // `optionalNumeric` is a pure coercion with no I/O — keep the real one.
+  ...jest.requireActual("../utils"),
   adaptCoreOperationToLiveOperation: (...a: any[]) => adaptCoreOperationToLiveOperationMock(...a),
   extractBalance: (...a: any[]) => extractBalanceMock(...a),
   cleanedOperation: (...a: any[]) => cleanedOperationMock(...a),
@@ -72,6 +75,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
 const buildSubAccountsMock = jest.fn();
 const mergeSubAccountsMock = jest.fn();
 jest.mock("../buildSubAccounts", () => ({
+  adoptStoredSubAccountIds: jest.requireActual("../buildSubAccounts").adoptStoredSubAccountIds,
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
   mergeSubAccounts: (...a: any[]) => mergeSubAccountsMock(...a),
 }));
@@ -190,6 +194,75 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
     }
+
+    // A sub-account stored under a pre-migration id keeps that id through the merge, and its
+    // operations are re-keyed onto it. Reading the pre-merge list would leave the parent operation
+    // pointing at an id no sub-account carries, and `OperationDetails` drops what it cannot resolve.
+    it("infers sub-operations from the merged sub-accounts, not the freshly built ones", async () => {
+      const fresh = [{ id: "fresh-id", token: { id: "tok1" } }];
+      const merged = [{ id: "stored-id", token: { id: "tok1" } }];
+      buildSubAccountsMock.mockReturnValue(fresh);
+      mergeSubAccountsMock.mockReturnValue(merged);
+      listOperationsMock.mockResolvedValue({ items: [{ tx: { hash: "h1" } }], next: undefined });
+      adaptCoreOperationToLiveOperationMock.mockImplementation(() => ({
+        id: "op1",
+        hash: "h1",
+        type: "OUT",
+        extra: {},
+      }));
+
+      // A resumed sync, not one from scratch: that is the only path where the merge matters.
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            subAccounts: [{ token: { id: "tok1" } }],
+            pendingOperations: [],
+            blockHeight: 10,
+            syncHash: "sync-hash",
+            operations: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(inferSubOperationsMock).toHaveBeenCalled();
+      for (const call of inferSubOperationsMock.mock.calls) {
+        expect(call[1]).toBe(merged);
+      }
+    });
+
+    // A legacy-synced account carries no `syncHash`, so its first generic sync is from scratch --
+    // the path that rebuilds rather than merges. The stored ids still have to survive it, or every
+    // route, star, custom name and swap-history entry keyed on one breaks.
+    it("keeps the stored sub-account id when the sync rebuilds from scratch", async () => {
+      buildSubAccountsMock.mockReturnValue([
+        { id: "framework-id", token: { id: "tok1" }, operations: [], pendingOperations: [] },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result: any = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            subAccounts: [{ id: "legacy-ata-address", token: { id: "tok1" } }],
+            pendingOperations: [],
+            blockHeight: 10,
+            operations: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.subAccounts[0].id).toBe("legacy-ata-address");
+      expect(mergeSubAccountsMock).not.toHaveBeenCalled();
+    });
 
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
       await callWithSubAccountToken();
@@ -1723,6 +1796,7 @@ describe("genericGetAccountShape", () => {
           stakingResources: expect.objectContaining({
             delegations: [
               {
+                positionId: "s-shares",
                 validatorAddress: "0xvalidator",
                 amount: new BigNumber(100),
                 pendingRewards: new BigNumber(0),
@@ -1730,6 +1804,7 @@ describe("genericGetAccountShape", () => {
                 shares: new BigNumber(999),
               },
               {
+                positionId: "s-noshares",
                 validatorAddress: "0xvalidator2",
                 amount: new BigNumber(50),
                 pendingRewards: new BigNumber(0),
@@ -1739,6 +1814,145 @@ describe("genericGetAccountShape", () => {
           }),
         }),
       );
+    });
+
+    test("maps stake.uid and the details bag onto StakingPositionDetails, and keeps undelegated stakes", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "StakeAcc1",
+            address: "sol1",
+            delegate: "validator1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 90n,
+            details: {
+              activeAmount: 90,
+              inactiveAmount: 0,
+              withdrawableAmount: 5,
+              lockedReserve: 2_282_880,
+              canStake: true,
+              canWithdraw: true,
+            },
+          },
+        },
+        {
+          // never delegated: no `delegate`, and previously dropped from stakingResources entirely
+          asset: { type: "native" },
+          value: 50n,
+          stake: {
+            uid: "StakeAcc2",
+            address: "sol1",
+            // a fully deactivated stake: neither active nor deactivating, and previously dropped
+            state: "inactive",
+            asset: { type: "native" },
+            amount: 0n,
+            details: { withdrawableAmount: 50, canStake: true, canWithdraw: true },
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "solana");
+      const result = await getShape(
+        {
+          address: "sol1",
+          initialAccount: undefined,
+          currency: { id: "solana", name: "Solana", family: "solana" },
+          derivationMode: "",
+          index: 0,
+          derivationPath: "",
+          challenge: undefined,
+        } as never,
+        {} as never,
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources.delegations).toEqual([
+        {
+          positionId: "StakeAcc1",
+          validatorAddress: "validator1",
+          amount: new BigNumber(90),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+          activeAmount: new BigNumber(90),
+          inactiveAmount: new BigNumber(0),
+          withdrawableAmount: new BigNumber(5),
+          lockedReserve: new BigNumber(2_282_880),
+          canStake: true,
+          canWithdraw: true,
+        },
+      ]);
+      // the undelegated stake survives, with an empty validatorAddress
+      expect(resources.unbondings).toHaveLength(1);
+      expect(resources.unbondings[0]).toMatchObject({
+        positionId: "StakeAcc2",
+        validatorAddress: "",
+        status: "withdrawable",
+        withdrawableAmount: new BigNumber(50),
+      });
+    });
+
+    test("leaves StakingPositionDetails undefined for a chain that emits no details", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "",
+            address: "cosmos1",
+            delegate: "cosmosvaloper1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "cosmos");
+      const result = await getShape(
+        {
+          address: "cosmos1",
+          initialAccount: undefined,
+          currency: { id: "cosmos", name: "Cosmos", family: "cosmos" },
+          derivationMode: "",
+          index: 0,
+          derivationPath: "",
+          challenge: undefined,
+        } as never,
+        {} as never,
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources.delegations).toEqual([
+        {
+          validatorAddress: "cosmosvaloper1",
+          amount: new BigNumber(100),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+        },
+      ]);
     });
 
     test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {

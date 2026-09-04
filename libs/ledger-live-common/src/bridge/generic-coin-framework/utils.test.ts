@@ -212,6 +212,41 @@ describe("coin-framework utils", () => {
     });
   });
 
+  // A family that describes its own operation uses the memo field for plumbing -- Solana carries the
+  // stake account there -- so only the ones the framework typed itself may claim a user memo.
+  describe("buildOptimisticOperation memo", () => {
+    const account = {
+      id: "acc",
+      freshAddress: "sender",
+      currency: { units: [{ magnitude: 9 }] },
+      subAccounts: [],
+      pendingOperations: [],
+    } as unknown as Account;
+    const transaction = {
+      recipient: "dest",
+      amount: new BigNumber(1),
+      fees: new BigNumber(5000),
+      memoValue: "a memo",
+    } as unknown as GenericTransaction;
+
+    it("carries the memo of a plain transfer", () => {
+      const op = buildOptimisticOperation(account, transaction, undefined, () => undefined);
+
+      expect(op.extra).toMatchObject({ memo: "a memo" });
+    });
+
+    it("drops it when the family typed the operation itself", () => {
+      const op = buildOptimisticOperation(
+        account,
+        { ...transaction, mode: "split" } as unknown as GenericTransaction,
+        undefined,
+        () => ({ type: "FEES", value: new BigNumber(5000) }),
+      );
+
+      expect(op.extra).not.toHaveProperty("memo");
+    });
+  });
+
   describe("buildOptimisticOperation", () => {
     it.each([
       [

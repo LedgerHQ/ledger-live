@@ -28,8 +28,8 @@ const VIBECODOOR_MINT = "Aj1mSpD4vJDN5r3xptnHsjHQgGWDLge8bRQi2W6pump";
 const SENDER_ADDRESS = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
 
 const MAIN_ACCOUNT_RENT_EXEMPT = new BigNumber(890_880);
-const SPENDABLE_AT_BUG_THRESHOLD = new BigNumber(2_044_280);
-const BALANCE_AT_BUG_THRESHOLD = SPENDABLE_AT_BUG_THRESHOLD.plus(MAIN_ACCOUNT_RENT_EXEMPT);
+const NETWORK_FEE = new BigNumber(5_000);
+const CLASSIC_ATA_SIZE = 165;
 
 const VIBECODOOR_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
@@ -72,7 +72,7 @@ const senderAtaAddress = PublicKey.findProgramAddressSync(
 
 const subAccountId = encodeAccountIdWithTokenAccountAddress(mainAccountId, senderAtaAddress);
 
-function buildSenderAccount(): SolanaAccount {
+function buildSenderAccount(spendable: BigNumber): SolanaAccount {
   const tokenSub = {
     type: "TokenAccount",
     id: subAccountId,
@@ -108,8 +108,8 @@ function buildSenderAccount(): SolanaAccount {
     creationDate: new Date(),
     lastSyncDate: new Date(0),
     blockHeight: 0,
-    balance: BALANCE_AT_BUG_THRESHOLD,
-    spendableBalance: SPENDABLE_AT_BUG_THRESHOLD,
+    balance: spendable.plus(MAIN_ACCOUNT_RENT_EXEMPT),
+    spendableBalance: spendable,
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
@@ -129,8 +129,13 @@ describe("prepareTransaction packs NotEnoughGas", () => {
 
   const api = getChainAPI({ endpoint: SOLANA_RPC_ENDPOINT });
 
+  // Read from the chain rather than pinned: Solana has lowered the rent-exempt minimum since this
+  // was written, and a pinned figure stops reproducing the case it was meant to.
   it("prepareTransaction packs NotEnoughGas when spendable == classic ATA rent + fee", async () => {
-    const account = buildSenderAccount();
+    const classicAtaRent = new BigNumber(
+      await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE),
+    );
+    const account = buildSenderAccount(classicAtaRent.plus(NETWORK_FEE));
     const freshRecipient = Keypair.generate().publicKey.toBase58();
 
     const tx: Transaction = {
@@ -149,6 +154,7 @@ describe("prepareTransaction packs NotEnoughGas", () => {
 
     expect(status.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
     const fees = (status.errors.gasPrice as Error & { fees?: string }).fees;
-    expect(parseFloat(fees ?? "0")).toBeGreaterThan(0.001);
+    // Sized from the mint, so above what a classic token account would have cost.
+    expect(parseFloat(fees ?? "0")).toBeGreaterThan(classicAtaRent.toNumber() / 1e9);
   });
 });

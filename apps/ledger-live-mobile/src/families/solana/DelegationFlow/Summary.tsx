@@ -1,13 +1,16 @@
+import {
+  createStakeAccountTransaction,
+  delegateTransaction,
+  undelegateTransaction,
+  withdrawTransaction,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import {
-  Transaction as SolanaTransaction,
-  TransactionModel,
-} from "@ledgerhq/live-common/families/solana/types";
+import { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
 import {
   assertUnreachable,
   ValidatorsAppValidator,
@@ -144,8 +147,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
   const error = Object.values(status.errors)[0];
   const feeError = status.errors.fee;
-  const isUndelagating = transaction.model.kind === "stake.undelegate";
-  const hasErrorWhileDesactivating = isUndelagating && feeError?.name === "NotEnoughBalance";
+  const isUndelegating = transaction.mode === "undelegate";
+  const hasErrorWhileDesactivating = isUndelegating && feeError?.name === "NotEnoughBalance";
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -257,9 +260,9 @@ function tx({
     amount: new BigNumber(
       delegationAction.kind === "new" ? (amount ?? 0) : txAmount(delegationAction),
     ),
-    recipient: "",
-    model: txModelByDelegationAction(delegationAction, defaultValidator, chosenValidator),
-  };
+    ...txByDelegationAction(delegationAction, defaultValidator, chosenValidator),
+    // legacy `Transaction` union does not describe the generic shape; goes away with it
+  } as SolanaTransaction;
 }
 
 function txAmount(delegationAction: DelegationAction & { kind: "change" }): BigNumber {
@@ -358,20 +361,13 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line consistent-return
-function txModelByDelegationAction(
+function txByDelegationAction(
   delegationAction: DelegationAction,
   defaultValidator: ValidatorsAppValidator,
   chosenValidator?: ValidatorsAppValidator,
-): TransactionModel {
+) {
   if (delegationAction.kind === "new") {
-    return {
-      kind: "stake.createAccount",
-      uiState: {
-        delegate: {
-          voteAccAddress: (chosenValidator ?? defaultValidator).voteAccount,
-        },
-      },
-    };
+    return createStakeAccountTransaction((chosenValidator ?? defaultValidator).voteAccount);
   }
 
   const {
@@ -388,28 +384,12 @@ function txModelByDelegationAction(
       // has no `validatorAddress`, and withdrawing or undelegating it must still work.
       const voteAccAddr = chosenValidator?.voteAccount || stake.validatorAddress;
       invariant(voteAccAddr, "solana: a validator is required to delegate a stake position");
-      return {
-        kind: "stake.delegate",
-        uiState: {
-          stakeAccAddr,
-          voteAccAddr,
-        },
-      };
+      return delegateTransaction(stakeAccAddr, voteAccAddr);
     }
     case "deactivate":
-      return {
-        kind: "stake.undelegate",
-        uiState: {
-          stakeAccAddr,
-        },
-      };
+      return undelegateTransaction(stakeAccAddr);
     case "withdraw":
-      return {
-        kind: "stake.withdraw",
-        uiState: {
-          stakeAccAddr,
-        },
-      };
+      return withdrawTransaction(stakeAccAddr, txAmount(delegationAction));
     default:
       return assertUnreachable(stakeAction);
   }

@@ -110,6 +110,15 @@ export type BridgeApi = {
     address: string,
     accountInfo?: AccountInfo,
   ) => Promise<FamilyAccountShape | undefined> | FamilyAccountShape | undefined;
+  /**
+   * The same for token sub-accounts, keyed by contract address — `Balance` has no room for what a
+   * chain's token accounts hold beyond an amount. Declare `assignFrom/ToTokenAccountRaw` alongside
+   * it, or what this builds is lost on reload. A rejection fails the sync, as for
+   * `buildAccountShape`: catch inside the hook for fields the accounts are correct without.
+   */
+  buildTokenAccountShapes?: (
+    address: string,
+  ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**

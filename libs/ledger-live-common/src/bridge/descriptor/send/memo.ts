@@ -1,3 +1,5 @@
+import { setTransactionMemo } from "../../../families/solana/transactions";
+
 type MemoApplicationFn = (
   memoValue: string | number | undefined,
   memoType: string | undefined,
@@ -14,19 +16,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
-  solana: (memo, _type, transaction) => {
-    const currentModel = isRecord(transaction.model) ? transaction.model : {};
-    const currentUiState = isRecord(currentModel.uiState) ? currentModel.uiState : {};
-    return {
-      model: {
-        ...currentModel,
-        uiState: {
-          ...currentUiState,
-          memo,
-        },
-      },
-    };
-  },
+  solana: memo => setTransactionMemo(memo === undefined ? "" : String(memo)),
   casper: memo => ({ transferId: memo, memoType: "transferId", memoValue: memo }),
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };

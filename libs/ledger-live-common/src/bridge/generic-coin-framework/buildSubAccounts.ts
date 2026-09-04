@@ -4,9 +4,10 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
+import type { FamilyAccountShape } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { mergeOps } from "../jsHelpers";
 import { cleanedOperation } from "./utils";
 import { OperationCommon } from "./types";
@@ -65,12 +66,14 @@ export async function buildSubAccounts({
   syncConfig,
   operations,
   getTokenFromAsset,
+  familyShapes,
 }: {
   accountId: string;
   allTokenAssetsBalances: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
+  familyShapes?: Record<string, FamilyAccountShape>;
 }): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
@@ -89,8 +92,9 @@ export async function buildSubAccounts({
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      tokenAccounts.push(
-        buildTokenAccount({
+      tokenAccounts.push({
+        ...familyShapes?.[token.contractAddress],
+        ...buildTokenAccount({
           parentAccountId: accountId,
           assetBalance: balance,
           token,
@@ -109,11 +113,48 @@ export async function buildSubAccounts({
             );
           }),
         }),
-      );
+      });
     }
   }
 
   return tokenAccounts;
+}
+
+function reKeyOperations(operations: Operation[], accountId: string): Operation[] {
+  return operations.map(operation => ({
+    ...operation,
+    accountId,
+    id: encodeOperationId(accountId, operation.hash, operation.type),
+  }));
+}
+
+/**
+ * Re-keys freshly built sub-accounts onto the id they are already stored under, matching on the
+ * token. A sync from scratch rebuilds the list rather than merging it, but the identities have to
+ * survive: routes, starred accounts, account names and swap history are all keyed by sub-account
+ * id, and a family whose stored ids predate `encodeTokenAccountId` -- Solana's are the token
+ * account's address -- would otherwise see every one of them change on its first generic sync.
+ */
+export function adoptStoredSubAccountIds(
+  oldSubAccounts: Array<TokenAccount>,
+  newSubAccounts: Array<TokenAccount>,
+): Array<TokenAccount> {
+  if (!oldSubAccounts.length) return newSubAccounts;
+
+  const storedIdByTokenId = new Map(
+    oldSubAccounts.map(account => [String(account.token.id), account.id]),
+  );
+
+  return newSubAccounts.map(subAccount => {
+    const storedId = storedIdByTokenId.get(String(subAccount.token.id));
+    if (!storedId || storedId === subAccount.id) return subAccount;
+    return {
+      ...subAccount,
+      id: storedId,
+      operations: reKeyOperations(subAccount.operations, storedId),
+      pendingOperations: reKeyOperations(subAccount.pendingOperations, storedId),
+    };
+  });
 }
 
 export function mergeSubAccounts(
@@ -139,8 +180,16 @@ export function mergeSubAccounts(
       continue;
     }
 
-    // New sub account is already known, probably outdated
-    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    // New sub account is already known, probably outdated. The stored id wins, so the freshly
+    // built operations — keyed on the id `buildTokenAccount` just derived — have to be re-keyed
+    // onto it. They match for every family whose stored ids already follow `encodeTokenAccountId`;
+    // Solana's predate the framework and carry the token account's address instead.
+    const operations = mergeOps(
+      existingSubAccount.operations,
+      newSubAccount.id === existingSubAccount.id
+        ? newSubAccount.operations
+        : reKeyOperations(newSubAccount.operations, existingSubAccount.id),
+    );
     oldSubAccountsByTokenId[String(newSubAccount.token.id)] = {
       ...existingSubAccount,
       balance: newSubAccount.balance,

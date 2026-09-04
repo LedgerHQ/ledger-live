@@ -71,19 +71,13 @@ function expectDelegationTo(account: Account, validatorAddress: string): void {
   const found = getSolanaPositions(account).find(p => p.validatorAddress === validatorAddress);
   expect(found).toBeDefined();
   expect(found!.amount.isGreaterThan(0)).toBe(true);
+  // the staking modals build their transaction against this id, so it must always be there
+  expect(found!.positionId).toBeDefined();
 }
 
-function expectStakeExists(account: Account, strat: BridgeStrategy, stakeAddress: string): void {
-  if (strat === "legacy") {
-    const found = getSolanaPositions(account).find(p => p.positionId === stakeAddress);
-    expect(found).toBeDefined();
-    return;
-  }
-  // generic-adapter builds stakingResources from the framework balances, which carry no
-  // per-stake-account id, so only the aggregated staked amount can be asserted here
-  const resources = (account as SolanaAccount).stakingResources;
-  expect(resources).toBeDefined();
-  expect(resources.delegatedBalance.plus(resources.unbondingBalance).isGreaterThan(0)).toBe(true);
+function expectStakeExists(account: Account, stakeAddress: string): void {
+  const found = getSolanaPositions(account).find(p => p.positionId === stakeAddress);
+  expect(found).toBeDefined();
 }
 
 function expectStakingResourcesDefined(account: Account): void {
@@ -444,7 +438,7 @@ function makeScenarioTransactions(
       );
       // Verify the stake account still exists (state may be "deactivating" or still
       // "active" depending on epoch boundary timing on the local validator)
-      expectStakeExists(currentAccount, strategy, STAKE_ACCOUNT!.publicKey.toBase58());
+      expectStakeExists(currentAccount, STAKE_ACCOUNT!.publicKey.toBase58());
     },
   };
 

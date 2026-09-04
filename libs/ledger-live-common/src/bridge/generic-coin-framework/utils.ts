@@ -10,7 +10,10 @@ import type {
   OperationExtra,
   OperationExtraRaw,
   OperationType,
+  StakingDelegation,
+  StakingUnbonding,
 } from "@ledgerhq/types-live";
+import { isStakingAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type {
@@ -20,6 +23,7 @@ import type {
   FeeEstimation,
   MapMemo,
   MemoNotSupported,
+  StakeState,
   StakingOperation,
   StringMemo,
   TransactionIntent,
@@ -293,6 +297,62 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
   );
 }
 
+/**
+ * The staking positions, back in the `Balance` shape `getBalance` reported them in -- without them
+ * a family validating a staking intent finds no position at all. Appended after the native balance,
+ * which stays first: consumers resolve it with `find(b => b.asset.type === "native")`.
+ */
+function stakingBalances(account: Account): Balance[] {
+  // `isStakingAccount` only tests that the key is present, so the value can still be undefined.
+  const resources = isStakingAccount(account) ? account.stakingResources : undefined;
+  if (!resources) return [];
+
+  const toBalance = (
+    position: StakingDelegation | StakingUnbonding,
+    state: StakeState,
+    delegate: string | undefined,
+  ): Balance => ({
+    // What the position holds, rent-exempt reserve included -- a consumer subtracts it from the
+    // account balance to learn what is liquid. `stake.amount` keeps the delegated principal.
+    value: BigInt(position.amount.plus(position.lockedReserve ?? 0).toFixed()),
+    asset: { type: "native" },
+    stake: {
+      uid: position.positionId ?? "",
+      address: position.positionId ?? "",
+      state,
+      asset: { type: "native" },
+      amount: BigInt(position.amount.toFixed()),
+      ...(delegate ? { delegate } : {}),
+      actions: [],
+      details: {
+        ...numericDetailEntry("activeAmount", position.activeAmount),
+        ...numericDetailEntry("inactiveAmount", position.inactiveAmount),
+        ...numericDetailEntry("withdrawableAmount", position.withdrawableAmount),
+        ...numericDetailEntry("lockedReserve", position.lockedReserve),
+        ...(typeof position.canStake === "boolean" ? { canStake: position.canStake } : {}),
+        ...(typeof position.canWithdraw === "boolean" ? { canWithdraw: position.canWithdraw } : {}),
+      },
+    },
+  });
+
+  return [
+    ...resources.delegations.map(d =>
+      toBalance(d, d.status === "activating" ? "activating" : "active", d.validatorAddress),
+    ),
+    ...resources.unbondings.map(u =>
+      toBalance(
+        u,
+        u.status === "withdrawable" ? "withdrawable" : "deactivating",
+        u.validatorAddress,
+      ),
+    ),
+  ];
+}
+
+function numericDetailEntry(key: string, value: BigNumber | undefined): Record<string, number> {
+  return value === undefined ? {} : { [key]: value.toNumber() };
+}
+
 export function extractBalances(
   account: Account,
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
@@ -311,6 +371,8 @@ export function extractBalances(
     },
   ];
 
+  balances.push(...stakingBalances(account));
+
   if (!account.subAccounts?.length || !getAssetFromToken) {
     return balances;
   }
@@ -328,6 +390,18 @@ export function extractBalances(
   }
 
   return balances;
+}
+
+/**
+ * Reads a numeric field (bigint/number/string) as BigNumber, else `undefined`.
+ * Unparseable input yields `undefined` rather than a NaN BigNumber.
+ */
+export function optionalNumeric(value: unknown): BigNumber | undefined {
+  if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") {
+    return undefined;
+  }
+  const parsed = new BigNumber(value.toString());
+  return parsed.isNaN() ? undefined : parsed;
 }
 
 /** Reads a numeric `parameters` field (bigint/number/string) as BigNumber, else `fallback`. */
@@ -1075,6 +1149,15 @@ export const buildOptimisticOperation = (
       // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
       // and `index` are this path's alone, which is why they are not in the reserved set.
       ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
+      // The pending row must show the memo the user typed, like the synced row does. Only for an
+      // operation the framework typed itself: a family that describes its own uses the memo field
+      // as transport for something else -- Solana carries the stake account there -- and that is
+      // not a user memo.
+      ...(transaction.memoValue &&
+      described === undefined &&
+      (parentType === "OUT" || parentType === "FEES")
+        ? { memo: transaction.memoValue }
+        : {}),
       ledgerOpType: type,
       blockTime: new Date(),
       index: "0",

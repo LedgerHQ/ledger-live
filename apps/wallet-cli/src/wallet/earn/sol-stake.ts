@@ -2,7 +2,7 @@
  * Solana (native staking) earn deposit/withdraw pipeline.
  *
  * The `earn deposit` / `earn withdraw` commands dispatch here for the `solana` family. We reuse
- * the native Solana staking transaction modes through the bridge (see buildSolanaTransactionModel
+ * the native Solana staking transaction modes through the bridge (see buildSolanaTransactionPatch
  * in ../compatibility/bridge.ts), exactly the way `send.ts` runs a Solana intent:
  *   deposit:  Solana intent `mode: stake.createAccount` (+delegate) with `--product` = validator.
  *             coin-solana's stake.createAccount creates AND delegates a stake account in one tx.
@@ -82,7 +82,10 @@ export type WithdrawSolanaParams = {
   device?: EarnDeviceContext;
 };
 
-/** coin-solana ignores `tx.recipient` for every stake.* mode (it routes on model.kind). */
+/**
+ * Every stake mode overloads `recipient` with the validator or the stake account, and
+ * `buildSolanaTransactionPatch` supplies it -- the intent's own recipient is overwritten.
+ */
 const STAKE_RECIPIENT = "";
 
 /**

@@ -38,7 +38,7 @@ describe("createSigner", () => {
 
   describe("legacy transport", () => {
     describe("getAddress", () => {
-      it("returns { address: Buffer } from the legacy signer", async () => {
+      it("returns the address and its base58 public key, without asking to display it", async () => {
         const addressBuffer = Buffer.from("deadbeef", "hex");
         mockGetAddress.mockResolvedValue({ address: addressBuffer });
 
@@ -46,8 +46,8 @@ describe("createSigner", () => {
         const result = await signer.getAddress("44'/501'/0'/0'");
 
         expect(MockedLegacySignerSolana).toHaveBeenCalledWith(mockTransport);
-        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'");
-        expect(result).toEqual({ address: addressBuffer });
+        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", false);
+        expect(result).toEqual({ address: addressBuffer, publicKey: bs58.encode(addressBuffer) });
       });
 
       it("forwards the verify flag to the signer", async () => {
@@ -58,6 +58,18 @@ describe("createSigner", () => {
         await signer.getAddress("44'/501'/0'/0'", true);
 
         expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", true);
+      });
+
+      // The generic coin framework calls getAddress with an options object while signing; taking it
+      // for a truthy `display` makes the device ask the user to verify their address mid-signature.
+      it("does not display the address when handed the framework's options object", async () => {
+        const addressBuffer = Buffer.from("cafebabe", "hex");
+        mockGetAddress.mockResolvedValue({ address: addressBuffer });
+
+        const signer = createSigner(mockTransport);
+        await signer.getAddress("44'/501'/0'/0'", { derivationMode: "solanaMain" });
+
+        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", false);
       });
     });
 
@@ -110,7 +122,7 @@ describe("createSigner", () => {
       const signer = createSigner(dmkTransport);
       const result = await signer.getAddress("44'/501'/0'/0'");
 
-      expect(result).toEqual({ address: addressBuffer });
+      expect(result).toEqual({ address: addressBuffer, publicKey: bs58.encode(addressBuffer) });
     });
 
     it("delegates signTransaction to the DMK signer", async () => {

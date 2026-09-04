@@ -12,10 +12,13 @@ import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
-import type {
-  TransactionModel as SolanaTransactionModel,
-  SolanaAccount,
-} from "@ledgerhq/coin-solana/types";
+import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
+import {
+  createStakeAccountTransaction,
+  delegateTransaction,
+  setTransactionMemo,
+  undelegateTransaction,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
@@ -27,44 +30,32 @@ type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
 type SolanaTransactionIntent = Extract<TransactionIntent, { family: "solana" }>;
 
-// Maps a Solana CLI intent to the coin-solana transaction `model` (kind + uiState).
-// coin-solana routes createTransaction/prepareTransaction on `model.kind`, so the stake
-// behaviour MUST be expressed through this model — loose patch fields are ignored by the
-// generic shallow-merge updateTransaction. Mirrors coin-solana's cli-transaction inferTransactions.
-export function buildSolanaTransactionModel(
+/**
+ * Maps a Solana CLI intent onto the generic transaction the bridge reads: a flat `mode`, plus the
+ * recipient each mode overloads. Built through the family's own constructors so the CLI cannot
+ * drift from the apps — `families/solana/transactions.ts` is the single place that knows the shape.
+ *
+ * `amount` is not set here: `buildValidatedTx` already applies the intent's parsed amount, and a
+ * withdrawal spends exactly that.
+ */
+export function buildSolanaTransactionPatch(
   intent: SolanaTransactionIntent,
-  tokenAccount?: TokenAccount,
-): SolanaTransactionModel {
+): Record<string, unknown> {
   switch (intent.mode) {
     case "stake.createAccount":
-      return {
-        kind: "stake.createAccount",
-        uiState: { delegate: { voteAccAddress: intent.validator ?? "" } },
-      };
+      return createStakeAccountTransaction(intent.validator ?? "");
     case "stake.delegate":
-      return {
-        kind: "stake.delegate",
-        uiState: { stakeAccAddr: intent.stakeAccount ?? "", voteAccAddr: intent.validator ?? "" },
-      };
+      return delegateTransaction(intent.stakeAccount ?? "", intent.validator ?? "");
     case "stake.undelegate":
-      return {
-        kind: "stake.undelegate",
-        uiState: { stakeAccAddr: intent.stakeAccount ?? "" },
-      };
+      return undelegateTransaction(intent.stakeAccount ?? "");
     case "stake.withdraw":
-      return {
-        kind: "stake.withdraw",
-        uiState: { stakeAccAddr: intent.stakeAccount ?? "" },
-      };
+      return { mode: "unstake", recipient: intent.stakeAccount ?? "" };
     case "send":
     default:
-      // Token transfers carry the sub-account; native transfers just carry the memo.
-      return tokenAccount
-        ? {
-            kind: "token.transfer",
-            uiState: { subAccountId: tokenAccount.id, memo: intent.memo },
-          }
-        : { kind: "transfer", uiState: { memo: intent.memo } };
+      return {
+        mode: "send",
+        ...(intent.memo !== undefined ? setTransactionMemo(intent.memo) : {}),
+      };
   }
 }
 
@@ -289,9 +280,7 @@ export class BridgeAdapter {
         }
         break;
       case "solana":
-        // coin-solana behaviour is driven entirely by `model.kind`; setting loose
-        // mode/validator/stakeAccount fields is a no-op (generic merge ignores them).
-        patch.model = buildSolanaTransactionModel(intent, tokenAccount);
+        Object.assign(patch, buildSolanaTransactionPatch(intent));
         break;
     }
     return patch;

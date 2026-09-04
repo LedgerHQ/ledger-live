@@ -1,10 +1,12 @@
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
+import { log } from "@ledgerhq/logs";
 import {
   BlockhashWithExpiryBlockHeight,
   TransactionError,
   VersionedTransaction,
 } from "@solana/web3.js";
 import type { ChainAPI } from "../network";
+import { SolanaTxConfirmationTimeout } from "../errors";
 
 type BroadcastOptions = {
   recentBlockhash?: BlockhashWithExpiryBlockHeight;
@@ -71,8 +73,21 @@ export async function broadcast(
   });
 
   if (value.err !== null) {
+    // The user-facing error is deliberately generic, so keep the chain's own verdict — the only
+    // thing that says *why* a well-formed transaction was refused — in the logs.
+    log("solana", "transaction simulation failed", { err: value.err, logs: value.logs });
     throw classifySimulationError(value.err);
   }
 
-  return api.sendRawTransaction(buffer, options?.recentBlockhash);
+  try {
+    return await api.sendRawTransaction(buffer, options?.recentBlockhash);
+  } catch (error) {
+    // `confirmTransaction` gives up once the blockhash expires. The transaction may still land, so
+    // the message has to say "not confirmed yet", not "failed" -- a generic error reads as the
+    // latter and pushes the user to send again.
+    if (error instanceof Error && error.message.includes("was not confirmed in")) {
+      throw new SolanaTxConfirmationTimeout();
+    }
+    throw error;
+  }
 }

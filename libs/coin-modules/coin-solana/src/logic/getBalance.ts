@@ -1,12 +1,15 @@
-import type { Balance, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/index";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";
+import { getTokenAccountProgramId } from "../helpers/token";
 import type { SolanaTokenProgram } from "../types";
 import {
-  computeFrameworkStakeActions,
   computeUnstakeReserve,
   getStakeAccounts,
+  mapStakeAccountToFrameworkStake,
   type StakeAccount,
 } from "./getStakes";
 
@@ -76,57 +79,54 @@ function mapStakeAccountsToBalances(
   mainAccountAddress: string,
   epoch: number,
 ): Balance[] {
-  return stakeAccounts.map(stakeAccount => {
-    const { account, activation } = stakeAccount;
-    const delegation = account.info.stake?.delegation;
-    const delegateAddress = delegation?.voter.toBase58();
-    const amount = BigInt(account.onChainAcc.account.lamports);
-
-    const stake: Stake = {
-      uid: account.onChainAcc.pubkey.toBase58(),
-      address: account.onChainAcc.pubkey.toBase58(),
-      state: activation.state as StakeState,
-      asset: { type: "native" },
-      amount,
-      actions: computeFrameworkStakeActions(stakeAccount, mainAccountAddress, epoch),
-    };
-
-    if (delegateAddress) {
-      stake.delegate = delegateAddress;
-    }
-    if (delegation) {
-      const deposited = BigInt(delegation.stake.toString());
-      stake.amountDeposited = deposited;
-      stake.amountRewarded = amount > deposited ? amount - deposited : 0n;
-    }
-
-    return {
-      value: amount,
-      asset: { type: "native" as const },
-      stake,
-    };
-  });
+  return stakeAccounts.map(stakeAccount => ({
+    // `value` stays the stake account's full lamports (what the account actually holds); the
+    // delegated principal the framework sums into `stakingResources` lives on `stake.amount`.
+    value: BigInt(stakeAccount.account.onChainAcc.account.lamports),
+    asset: { type: "native" as const },
+    stake: mapStakeAccountToFrameworkStake(stakeAccount, mainAccountAddress, epoch),
+  }));
 }
 
+/**
+ * A wallet can own several token accounts for the same mint, but only the canonical associated
+ * one is reachable: `craftTransaction` derives it from (owner, mint, program) rather than reading
+ * it off the sub-account. Counting the others would report a balance the bridge cannot spend, and
+ * a send-max built on it fails at broadcast.
+ *
+ * This is what the legacy bridge did too — `synchronization.ts:toAssociatedTokenAccount` keeps the
+ * associated account and drops the mint entirely when there is none.
+ */
 function mapTokenAccountsToBalances(
   accounts: ReadonlyArray<ParsedOnChainTokenAccount>,
   tokenProgram: SolanaTokenProgram,
   ownerAddress: string,
 ): Balance[] {
-  const balancesByMint = new Map<string, bigint>();
+  const owner = new PublicKey(ownerAddress);
+  const programId = getTokenAccountProgramId(tokenProgram);
 
-  for (const { account } of accounts) {
-    const { mint, tokenAmount } = account.data.parsed.info;
-    const amount = BigInt(tokenAmount.amount);
-    balancesByMint.set(mint, (balancesByMint.get(mint) ?? 0n) + amount);
-  }
+  return accounts.flatMap(({ pubkey, account }) => {
+    const { mint, tokenAmount, state } = account.data.parsed.info;
+    const associatedAddress = getAssociatedTokenAddressSync(
+      new PublicKey(mint),
+      owner,
+      undefined,
+      programId,
+    );
+    if (!associatedAddress.equals(pubkey)) return [];
 
-  return Array.from(balancesByMint.entries()).map(([mint, value]) => ({
-    value,
-    asset: {
-      type: tokenProgram,
-      assetReference: mint,
-      assetOwner: ownerAddress,
-    },
-  }));
+    const value = BigInt(tokenAmount.amount);
+    return [
+      {
+        value,
+        asset: {
+          type: tokenProgram,
+          assetReference: mint,
+          assetOwner: ownerAddress,
+        },
+        // A frozen token account holds funds that cannot be transferred at all.
+        ...(state === "frozen" ? { locked: value } : {}),
+      },
+    ];
+  });
 }

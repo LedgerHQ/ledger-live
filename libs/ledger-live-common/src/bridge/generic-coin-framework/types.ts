@@ -51,6 +51,15 @@ export type FeeDataRaw = {
   nextBaseFee: string | null;
 };
 
+export type TransferFee = {
+  maxTransferFee: number;
+  transferFee: number;
+  feePercent: number;
+  feeBps: number;
+  transferAmountIncludingFee: number;
+  transferAmountExcludingFee: number;
+};
+
 export type GasOptions = {
   [key in Strategy]: FeeData;
 };
@@ -102,6 +111,11 @@ export type GenericTransaction = TransactionCommon & {
   maxPriorityFeePerGas?: BigNumber | null;
   additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
+  transferFee?: TransferFee;
+  /** Rent a chain charges to open an account the transaction creates, in the native unit. */
+  stakeAccountRent?: BigNumber;
+  /** Account the transaction acts on, when the chain derives it rather than the wallet. */
+  ownerTokenAccount?: string;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;
@@ -194,6 +208,9 @@ export type CoinFrameworkSigner<S = unknown> = {
 export type AccountRawAssignHooks = {
   assignFromAccountRaw?: AccountBridge<GenericTransaction>["assignFromAccountRaw"];
   assignToAccountRaw?: AccountBridge<GenericTransaction>["assignToAccountRaw"];
+  /** The same pair for a token sub-account, without which `buildTokenAccountShapes` is lost on reload. */
+  assignFromTokenAccountRaw?: AccountBridge<GenericTransaction>["assignFromTokenAccountRaw"];
+  assignToTokenAccountRaw?: AccountBridge<GenericTransaction>["assignToTokenAccountRaw"];
   /**
    * Revive/serialize the family-owned part of `Operation.extra` (forwarded through
    * `Operation.details.familyExtra`). Without these the bag is persisted verbatim, so a non-JSON

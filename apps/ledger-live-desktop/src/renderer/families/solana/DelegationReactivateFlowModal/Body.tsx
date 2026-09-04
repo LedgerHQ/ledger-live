@@ -1,3 +1,4 @@
+import { delegateTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -101,13 +102,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       "solana: can reactivate only delegated stake in <deactivating> state",
     );
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.delegate",
-        uiState: {
-          stakeAccAddr: requireStakePositionId(stake),
-          voteAccAddr: stake.validatorAddress,
-        },
-      },
+      ...delegateTransaction(requireStakePositionId(stake), stake.validatorAddress),
     });
     return {
       account,
