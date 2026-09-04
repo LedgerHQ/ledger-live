@@ -34,7 +34,7 @@ export const buildSignOperation =
               memo: { type: "string" as const, kind: "transferId" as const, value: transferId },
             }),
           },
-          { value: BigInt(fees.toFixed(0)) },
+          fees === null ? undefined : { value: BigInt(fees.toFixed(0)) },
         );
         const casperTx = CasperTransaction.fromJSON(crafted.transaction);
 

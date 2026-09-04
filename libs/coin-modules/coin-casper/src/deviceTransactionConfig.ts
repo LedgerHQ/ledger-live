@@ -4,6 +4,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CASPER_NETWORK } from "./constants";
 import { methodToString } from "./logic";
+import { getEstimatedFees } from "./logic/estimateFees";
 import { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField = {
@@ -25,7 +26,7 @@ async function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [
     { type: "text", label: "Type", value: methodToString(0) },
     { type: "text", label: "Chain ID", value: CASPER_NETWORK },
-    { type: "casper.extendedAmount", label: "Fee", value: transaction.fees },
+    { type: "casper.extendedAmount", label: "Fee", value: transaction.fees ?? getEstimatedFees() },
     { type: "casper.extendedAmount", label: "Amount", value: transaction.amount },
   ];
 

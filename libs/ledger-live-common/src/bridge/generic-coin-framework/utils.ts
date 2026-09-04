@@ -440,10 +440,7 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
   );
 }
 
-// Reuse the framework's own memo union rather than a parallel shape: a `StringMemo` for typed memos,
-// `MemoNotSupported` for none, and a `MapMemo` for a numeric destination tag. Emitting anything else
-// (e.g. `{ type: memoType, value }`, which drops the `kind`) type-checks against the base `Memo` but
-// is silently dropped by every coin module's `kind === "…"` guard (LIVE-35735).
+// Use the framework's memo union — `{ type: memoType, value }` without `kind` is silently dropped by coin modules (LIVE-35735).
 type GenericCoinFrameworkMemo = MemoNotSupported | StringMemo<string> | MapMemo<string, string>;
 type GenericCoinFrameworkTxData = { type: string; value?: unknown };
 type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
@@ -534,6 +531,11 @@ type FrameworkOperationExtra = {
   feePayer?: string;
   stake?: { address: string; amount: BigNumber };
   transferId?: string;
+};
+
+// Maps memoType to its extra-field key; omit an entry to fall back to "memo".
+const MEMO_TYPE_TO_EXTRA_KEY: Readonly<Record<string, string>> = {
+  transferId: "transferId",
 };
 
 /**
@@ -845,8 +847,7 @@ export function transactionToIntent(
       memos: new Map([["destinationTag", String(transaction.tag)]]),
     };
   } else if (transaction.memoType && transaction.memoValue) {
-    // The family's declared `kind` travels in `memoType` (Tron "memo", Casper "transferId", …); emit
-    // the union's `StringMemo` so the coin module's `type === "string" && kind === "…"` guard matches.
+    // `memoType` carries the StringMemo `kind`; the coin module's `type === "string" && kind === "…"` guard requires this shape.
     res.memo = {
       type: "string",
       kind: transaction.memoType,
@@ -1027,6 +1028,15 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   }
 }
 
+function memoExtraFields(
+  memoType: string | null | undefined,
+  memoValue: string | null | undefined,
+): Record<string, string> {
+  if (!memoType || !memoValue) return {};
+  const extraKey = MEMO_TYPE_TO_EXTRA_KEY[memoType] ?? "memo";
+  return { [extraKey]: memoValue };
+}
+
 export const buildOptimisticOperation = (
   account: Account,
   transaction: GenericTransaction,
@@ -1075,6 +1085,7 @@ export const buildOptimisticOperation = (
       // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
       // and `index` are this path's alone, which is why they are not in the reserved set.
       ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
+      ...memoExtraFields(transaction.memoType, transaction.memoValue),
       ledgerOpType: type,
       blockTime: new Date(),
       index: "0",

@@ -1,6 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import { CasperAccount, CasperOperation, Transaction } from "../types";
+import { getEstimatedFees } from "../logic/estimateFees";
 import { getAddress } from "../logic/validateAddress";
 
 export const buildOptimisticOperation = (
@@ -19,8 +20,8 @@ export const buildOptimisticOperation = (
     senders: [address],
     recipients: [transaction.recipient],
     accountId,
-    value: transaction.amount.plus(transaction.fees),
-    fee: transaction.fees,
+    value: transaction.amount.plus(transaction.fees ?? getEstimatedFees()),
+    fee: transaction.fees ?? getEstimatedFees(),
     blockHash: null,
     blockHeight: null,
     date: new Date(),
