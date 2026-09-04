@@ -18,11 +18,11 @@ export function combineCardLinkedWallets({
 }: CombineCardLinkedWalletsParams): CardLinkedWallets {
   const balanceById = new Map(internal.map(wallet => [wallet.id, wallet.balance]));
 
-  const counterValueFor = (
-    wallet: Readonly<{ currency: string; network: string }>,
-    balance: string,
-  ): number | null => {
-    const resolved = resolveCounterValue(wallet, balance);
+  const counterValueFor = (ledgerId: string | undefined, balance: string | null): number | null => {
+    // An unmapped asset and an unread balance are both "nothing to price", not "worth zero".
+    if (ledgerId === undefined || balance === null) return null;
+
+    const resolved = resolveCounterValue(ledgerId, balance);
     return resolved === null || !Number.isFinite(resolved) ? null : resolved;
   };
 
@@ -41,7 +41,7 @@ export function combineCardLinkedWallets({
         priority,
         ledgerId,
         balance,
-        counterValue: balance === null ? null : counterValueFor({ currency, network }, balance),
+        counterValue: counterValueFor(ledgerId, balance),
       };
     });
 
