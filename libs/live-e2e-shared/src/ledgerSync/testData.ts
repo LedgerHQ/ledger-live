@@ -1,3 +1,6 @@
+/** The name the CLI registers its trustchain member under, so the name the apps display for it. */
+export const CLI_MEMBER_NAME = "CLI";
+
 /** An account as it is stored in the trustchain, matching `accountDescriptorSchema`. */
 export interface LedgerSyncAccountDescriptor {
   id: string;

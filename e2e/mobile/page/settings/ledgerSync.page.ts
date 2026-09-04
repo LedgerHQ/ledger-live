@@ -5,11 +5,6 @@ import * as ledgerSyncSetup from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import type { LedgerSyncAccountDescriptor } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 
 export default class LedgerSyncPage {
-  /** CLI state lives in the shared helper so desktop and mobile drive the trustchain the same way. */
-  get ledgerKeyRingProtocolArgs() {
-    return LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
-  }
-
   /** The CLI member: the instance a test can remove, since the app is seeded as the other one. */
   get initialMemberPubKey() {
     return LedgerSyncCliHelper.initialMember.pubKey;
@@ -19,18 +14,20 @@ export default class LedgerSyncPage {
     return LedgerSyncCliHelper.ledgerSyncPushDataArgs;
   }
 
-  successPage = "walletsync-success";
-  confirmDeleteSyncId = "delete-trustchain";
-  deleteSyncId = "walletSync-manage-backup";
-  backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
-  useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
-  manageInstancesId = "walletSync-manage-instances";
+  private readonly successPage = "walletsync-success";
+  private readonly confirmDeleteSyncId = "delete-trustchain";
+  private readonly deleteSyncId = "walletSync-manage-backup";
+  private readonly backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
+  private readonly instanceRemovalSuccessTextId = "walletsync-remove-instance-success-title";
+  private readonly useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
+  private readonly manageInstancesId = "walletSync-manage-instances";
 
-  activationButton = () => getElementById("walletsync-activation-button");
-  activationTitle = () => getElementById("walletsync-activation-title");
-  activationDescription = () => getElementById("walletsync-activation-description");
-  activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
-  deletionSuccessCloseButton = () => getElementById("walletsync-deletion-success-close");
+  private readonly activationTitleId = "walletsync-activation-title";
+  private readonly activationDescriptionId = "walletsync-activation-description";
+
+  private readonly activationButton = () => getElementById("walletsync-activation-button");
+  private readonly activationSuccessCloseButton = () =>
+    getElementById("walletsync-activation-success-close");
 
   /** Instance rows are keyed by the member public key, which is what the CLI holds. */
   private instanceRowId(memberPubKey: string) {
@@ -47,10 +44,14 @@ export default class LedgerSyncPage {
     await removeMemberLedgerSync();
   }
 
+  /**
+   * Polls rather than asserting outright: the drawer animates in from the bottom, so the title can
+   * be on screen but still clipped below the 75% visible-area threshold for a frame or two.
+   */
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
-    await detoxExpect(this.activationTitle()).toBeVisible();
-    await detoxExpect(this.activationDescription()).toBeVisible();
+    await waitForElementById(this.activationTitleId);
+    await waitForElementById(this.activationDescriptionId);
   }
 
   @Step("Tap on the activation button")
@@ -73,24 +74,38 @@ export default class LedgerSyncPage {
     await tapByElement(this.activationSuccessCloseButton());
   }
 
+  @Step("Expect Ledger Sync management screen is displayed")
+  async expectLedgerSyncManagementVisible() {
+    await waitForElementById(this.manageInstancesId);
+    await detoxExpect(getElementById(this.deleteSyncId)).toBeVisible();
+  }
+
+  @Step("Expect instance {{{0}}} removal to be successful")
+  async expectMemberRemoval(memberName: string) {
+    await waitForElementById(this.instanceRemovalSuccessTextId);
+    await detoxExpect(getElementById(this.instanceRemovalSuccessTextId)).toHaveText(
+      `Your Ledger Wallet app on ${memberName} is no longer connected to Ledger Sync`,
+    );
+  }
+
   @Step("Open the synchronized instances list")
   async openManageInstances() {
     await waitForElementById(this.manageInstancesId);
     await tapById(this.manageInstancesId);
   }
 
-  @Step("Expect instance $0 to be listed")
+  @Step("Expect instance {{{0}}} to be listed")
   async expectInstanceVisible(memberPubKey: string) {
     await waitForElementById(this.instanceRowId(memberPubKey));
   }
 
-  @Step("Expect instance $0 to be gone")
+  @Step("Expect instance {{{0}}} to be gone")
   async expectInstanceRemoved(memberPubKey: string) {
     await waitForElementNotVisible(this.instanceRowId(memberPubKey));
   }
 
   /** The row itself is not touchable — only the Remove CTA inside it is. */
-  @Step("Remove instance $0")
+  @Step("Remove instance {{{0}}}")
   async removeInstance(memberPubKey: string) {
     await tapById(`${this.instanceRowId(memberPubKey)}-cta`);
   }
