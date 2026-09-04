@@ -29,7 +29,13 @@ function Field({ label, value }: { readonly label: string; readonly value: strin
   );
 }
 
-function Wallet({ wallet }: { readonly wallet: PayCardBalanceWallet }) {
+function Wallet({
+  wallet,
+  isPricingWired,
+}: {
+  readonly wallet: PayCardBalanceWallet;
+  readonly isPricingWired: boolean;
+}) {
   return (
     <Box lx={BLOCK_LX}>
       <Text typography="body2">{`${wallet.priority}. ${wallet.currency} / ${wallet.network}`}</Text>
@@ -44,7 +50,9 @@ function Wallet({ wallet }: { readonly wallet: PayCardBalanceWallet }) {
         label="counterValue"
         value={
           wallet.counterValue === null
-            ? "null — no balance yet, no currency matched this ticker, or no rate for it"
+            ? isPricingWired
+              ? "null — no balance yet, no currency matched this ticker, or no rate for it"
+              : "null — this host wired no pricing"
             : String(wallet.counterValue)
         }
       />
@@ -57,6 +65,7 @@ function Wallet({ wallet }: { readonly wallet: PayCardBalanceWallet }) {
 export function BalanceScreen({
   total,
   isPartialTotal,
+  isPricingWired,
   wallets,
   isFetching,
   errors,
@@ -89,6 +98,7 @@ export function BalanceScreen({
             {String(total)}
           </Text>
           <Field label="isPartialTotal" value={String(isPartialTotal)} />
+          {!isPricingWired && <Field label="pricing" value="not wired by this host" />}
           <Field label="wallets" value={String(wallets.length)} />
         </Box>
 
@@ -106,7 +116,7 @@ export function BalanceScreen({
         {wallets.map(wallet => (
           <Box key={wallet.id} lx={BLOCK_LX}>
             <Divider />
-            <Wallet wallet={wallet} />
+            <Wallet wallet={wallet} isPricingWired={isPricingWired} />
           </Box>
         ))}
       </Box>

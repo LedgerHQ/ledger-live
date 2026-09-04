@@ -26,6 +26,7 @@ function buildProps(): PayCardToolProps {
     balance: {
       total: 0,
       isPartialTotal: false,
+      isPricingWired: true,
       wallets: [],
       isFetching: false,
       errors: [],
