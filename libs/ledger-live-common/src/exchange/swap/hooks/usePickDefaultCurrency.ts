@@ -12,7 +12,7 @@ export const usePickDefaultCurrency = (
 
   useEffect(() => {
     // Keep the same currency target if it is still valid.
-    const isCurrencyValid = currency && currencies.indexOf(currency) >= 0;
+    const isCurrencyValid = currency && sortedCurrencies.includes(currency);
     if (!currency || !isCurrencyValid) {
       const defaultCurrency = sortedCurrencies.find(c => c.id === "ethereum" || c.id === "bitcoin");
 
