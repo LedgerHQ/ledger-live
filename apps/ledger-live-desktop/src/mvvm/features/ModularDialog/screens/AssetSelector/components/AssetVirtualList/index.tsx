@@ -1,14 +1,13 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { VirtualList } from "LLD/components/VirtualList";
-import { partitionByAvailability } from "@ledgerhq/live-common/modularDrawer/utils/partitionByAvailability";
+import { useAvailabilityRows } from "@ledgerhq/live-common/modularDrawer/hooks/useAvailabilityRows";
+import type { AvailabilityRow } from "@ledgerhq/live-common/modularDrawer/utils/buildAvailabilityRows";
 import { AssetListItem } from "../AssetListItem";
 import { AssetType } from "../../../../types";
 import {
   UNAVAILABLE_SECTION_HEADER_HEIGHT,
   UnavailableSectionHeader,
 } from "LLD/features/ModularDialog/components/UnavailableSectionHeader";
-
-type AssetListRow = { kind: "asset"; asset: AssetType } | { kind: "unavailableSectionHeader" };
 
 type AssetVirtualListProps = {
   assets: AssetType[];
@@ -20,6 +19,8 @@ type AssetVirtualListProps = {
   fillAvailableHeight?: boolean;
 };
 
+const isUnavailableAsset = (asset: AssetType) => !!asset.disabled;
+
 export const AssetVirtualList = ({
   assets,
   onClick,
@@ -29,31 +30,20 @@ export const AssetVirtualList = ({
   isDebuggingDuplicates,
   fillAvailableHeight,
 }: AssetVirtualListProps) => {
-  const rows = useMemo<AssetListRow[]>(() => {
-    const { available, unavailable } = partitionByAvailability(assets, asset => !!asset.disabled);
-    const availableRows: AssetListRow[] = available.map(asset => ({ kind: "asset", asset }));
-
-    if (unavailable.length === 0) return availableRows;
-
-    return [
-      ...availableRows,
-      { kind: "unavailableSectionHeader" },
-      ...unavailable.map(asset => ({ kind: "asset" as const, asset })),
-    ];
-  }, [assets]);
+  const rows = useAvailabilityRows(assets, isUnavailableAsset);
 
   const renderAssetItem = useCallback(
-    (row: AssetListRow) =>
+    (row: AvailabilityRow<AssetType>) =>
       row.kind === "unavailableSectionHeader" ? (
         <UnavailableSectionHeader testId="asset-selector-unavailable-assets-header" />
       ) : (
-        <AssetListItem {...row.asset} shouldDisplayId={isDebuggingDuplicates} onClick={onClick} />
+        <AssetListItem {...row.item} shouldDisplayId={isDebuggingDuplicates} onClick={onClick} />
       ),
     [onClick, isDebuggingDuplicates],
   );
 
   const getItemHeight = useCallback(
-    (row: AssetListRow) =>
+    (row: AvailabilityRow<AssetType>) =>
       row.kind === "unavailableSectionHeader" ? UNAVAILABLE_SECTION_HEADER_HEIGHT : undefined,
     [],
   );

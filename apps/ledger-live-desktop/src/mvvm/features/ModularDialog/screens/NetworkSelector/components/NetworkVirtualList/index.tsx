@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { VirtualList } from "LLD/components/VirtualList";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { partitionByAvailability } from "@ledgerhq/live-common/modularDrawer/utils/partitionByAvailability";
+import { useAvailabilityRows } from "@ledgerhq/live-common/modularDrawer/hooks/useAvailabilityRows";
+import type { AvailabilityRow } from "@ledgerhq/live-common/modularDrawer/utils/buildAvailabilityRows";
 import { NetworkListItem } from "../NetworkListItem";
 import type { ReactElement, ReactNode } from "react";
 import {
@@ -14,10 +15,6 @@ type NetworkWithUI = CryptoOrTokenCurrency & {
   rightElement?: ReactNode;
   apy?: ReactElement;
 };
-
-type NetworkListRow =
-  | { kind: "network"; network: NetworkWithUI }
-  | { kind: "unavailableSectionHeader" };
 
 type NetworkVirtualListProps = {
   networks: NetworkWithUI[];
@@ -33,32 +30,21 @@ export const NetworkVirtualList = ({
   onClick,
   selectableNetworkIdSet,
 }: NetworkVirtualListProps) => {
-  const rows = useMemo<NetworkListRow[]>(() => {
-    const { available, unavailable } = partitionByAvailability(
-      networks,
-      network => !!selectableNetworkIdSet && !selectableNetworkIdSet.has(getNetworkId(network)),
-    );
-    const availableRows: NetworkListRow[] = available.map(network => ({
-      kind: "network",
-      network,
-    }));
+  const isUnavailableNetwork = useCallback(
+    (network: NetworkWithUI) =>
+      !!selectableNetworkIdSet && !selectableNetworkIdSet.has(getNetworkId(network)),
+    [selectableNetworkIdSet],
+  );
 
-    if (unavailable.length === 0) return availableRows;
-
-    return [
-      ...availableRows,
-      { kind: "unavailableSectionHeader" },
-      ...unavailable.map(network => ({ kind: "network" as const, network })),
-    ];
-  }, [networks, selectableNetworkIdSet]);
+  const rows = useAvailabilityRows(networks, isUnavailableNetwork);
 
   const renderNetworkItem = useCallback(
-    (row: NetworkListRow) => {
+    (row: AvailabilityRow<NetworkWithUI>) => {
       if (row.kind === "unavailableSectionHeader") {
         return <UnavailableSectionHeader testId="network-selector-unavailable-networks-header" />;
       }
 
-      const { network } = row;
+      const network = row.item;
       const networkId = getNetworkId(network);
 
       return (
@@ -76,7 +62,7 @@ export const NetworkVirtualList = ({
   );
 
   const getItemHeight = useCallback(
-    (row: NetworkListRow) =>
+    (row: AvailabilityRow<NetworkWithUI>) =>
       row.kind === "unavailableSectionHeader" ? UNAVAILABLE_SECTION_HEADER_HEIGHT : undefined,
     [],
   );
