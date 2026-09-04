@@ -3596,11 +3596,11 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - segment-analytics-react-native (2.21.4):
+  - segment-analytics-react-native (2.24.0):
     - React-Core
     - sovran-react-native
   - SocketRocket (0.7.1)
-  - sovran-react-native (1.1.3):
+  - sovran-react-native (1.1.4):
     - React-Core
   - SwiftyRSA (1.7.0):
     - SwiftyRSA/ObjC (= 1.7.0)
@@ -3749,9 +3749,9 @@ DEPENDENCIES:
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.1_react-native@0.81.6_pa_08eb043c81d24f286c8d48f60dda9206/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_be913a2b01c3c3fd5f918d41d25ef21a/node_modules/react-native-worklets`)"
-  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.21.4_bb7c3452cb2697ae64ac0d020430b5c4/node_modules/@segment/analytics-react-native`)"
+  - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.0_80b21f32d3eec5b5e3abb940946456cb/node_modules/@segment/analytics-react-native`)"
   - SocketRocket (~> 0.7.1)
-  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-nativ_dbadcd2e97a659e26cb720d010c32635/node_modules/@segment/sovran-react-native`)"
+  - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_@react-nativ_25e9a0e3ae9031a914d0dc38b2020c8c/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/yoga`)"
 
@@ -4064,9 +4064,9 @@ EXTERNAL SOURCES:
   RNWorklets:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_be913a2b01c3c3fd5f918d41d25ef21a/node_modules/react-native-worklets"
   segment-analytics-react-native:
-    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.21.4_bb7c3452cb2697ae64ac0d020430b5c4/node_modules/@segment/analytics-react-native"
+    :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@2.24.0_80b21f32d3eec5b5e3abb940946456cb/node_modules/@segment/analytics-react-native"
   sovran-react-native:
-    :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-nativ_dbadcd2e97a659e26cb720d010c32635/node_modules/@segment/sovran-react-native"
+    :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_@react-nativ_25e9a0e3ae9031a914d0dc38b2020c8c/node_modules/@segment/sovran-react-native"
   VisionCamera:
     :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera"
   Yoga:
@@ -4240,9 +4240,9 @@ SPEC CHECKSUMS:
   RNWorklets: 9cef9103fe90607a99b214aca0b4fe34b99e668e
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  segment-analytics-react-native: 0eae155b0e9fa560fa6b17d78941df64537c35b7
+  segment-analytics-react-native: acb03fcffad10bfff49f13f5f6e58a832466a9a2
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
+  sovran-react-native: 803ccf23b24c8c5da99f249d4a0e317d62fa35e7
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
