@@ -1,0 +1,70 @@
+# Regtest config for the local zebra node used by the Zcash coin tester.
+# `mining.miner_address` below is substituted by regtestNode.ts at spawn time
+# with the tester's own transparent address, so the coinbase reward zebra's
+# internal miner produces is directly spendable by the account under test (no
+# additional funding transaction needed, since regtest coinbase outputs are
+# unshielded-spendable per `should_allow_unshielded_coinbase_spends`). Its
+# placeholder token must appear exactly once in this file (the config line
+# itself) -- writeZebraConfig uses a plain, non-global `String.replace`, which
+# only replaces the first match.
+#
+# `network.network = "Regtest"` (a bare string) selects zebra's
+# `DNetwork::DefaultForKind(NetworkKind::Regtest)` config variant
+# (zebra-network/src/config.rs); the nested `[network.testnet_parameters]`
+# table is then applied on top of it (`build_regtest_params`), which is what
+# actually lets `should_allow_unshielded_coinbase_spends` and custom
+# activation heights take effect on Regtest. Empirically confirmed against
+# the real zebrad binary -- `network = "Testnet"` with the same nested table
+# rejects with "should_allow_unshielded_coinbase_spends is only supported on
+# Regtest for key `network`"; a sibling `regtest = true` under `[network]`
+# rejects with "unknown field `regtest`"; and a *top-level*
+# `[testnet_parameters]` (not nested under `[network]`) rejects with "unknown
+# field `testnet_parameters`" (valid top-level sections are `consensus,
+# metrics, network, state, tracing, sync, mempool, notify, rpc, mining,
+# health, zcashd_compat`).
+#
+# Activation heights are set low so every network upgrade -- in particular
+# NU5 and NU6.3, both required by @ledgerhq/coin-zcash's PCZT (V5/V6) send
+# flows -- is already active from genesis. These MUST match zaino's own
+# configured activation heights: a mismatch makes zaino report an "incorrect
+# consensus branch id" for every transaction zebra accepts.
+[network]
+network = "Regtest"
+listen_addr = "0.0.0.0:18233"
+
+[network.testnet_parameters]
+network_name = "RegtestZcashCoinTester"
+disable_pow = true
+should_allow_unshielded_coinbase_spends = true
+
+[network.testnet_parameters.activation_heights]
+BeforeOverwinter = 1
+Overwinter = 1
+Sapling = 1
+Blossom = 1
+Heartwood = 1
+Canopy = 1
+NU5 = 2
+NU6 = 2
+"NU6.1" = 2
+"NU6.2" = 2
+"NU6.3" = 2
+
+[rpc]
+listen_addr = "0.0.0.0:18232"
+# The tester's RPC client (helpers.ts) calls the JSON-RPC endpoint directly
+# with no cookie -- simplest for a local, single-container regtest instance
+# with no other consumer to isolate from.
+enable_cookie_auth = false
+
+[mining]
+# `internal_miner = true` is a harmless no-op on the published zfnd/zebra
+# image: that flag is gated behind a Rust-only `internal-miner` Cargo feature
+# the image isn't built with (see helpers.ts's `generateBlocks`, which mines
+# on demand via zebra's own zcashd-compatible `generate` RPC instead).
+# `miner_address` must be regtest-encoded (see regtestNode.ts's
+# toRegtestAddress call) -- a mainnet-encoded address is rejected at config
+# load with "Not a Zcash address for key `mining.miner_address`", empirically
+# confirmed.
+internal_miner = true
+miner_address = "{{MINER_ADDRESS}}"

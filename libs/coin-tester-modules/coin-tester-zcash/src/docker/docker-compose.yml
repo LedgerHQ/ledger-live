@@ -1,0 +1,175 @@
+# Two services: `zebra` (consensus node, Regtest, internal miner) and `zaino`
+# (shielded gRPC indexer @ledgerhq/zcash-utils talks to). No third explorer
+# service: the transparent leg is served by zebra's own address-indexed
+# JSON-RPC (getaddressutxos/getaddresstxids/getrawtransaction), bridged to the
+# wallet's Ledger-explorer HTTP calls by this package's own MSW indexer
+# (../indexer.ts) rather than by a separate service.
+#
+# zaino has no published image tag as of this writing; built from a pinned
+# git commit (see the zaino service's own comment for why the Dockerfile
+# itself is inlined rather than used as-is). Config verified directly
+# against zaino's `dev` branch source (packages/zainod/src/config.rs,
+# packages/zaino-common/src/config/*.rs) -- notably: RUST_VERSION has no
+# Dockerfile default and must be supplied explicitly (pinned in zaino's own
+# rust-toolchain.toml); env vars use a ZAINO_ prefix with `__` for nesting
+# (config-rs), not the flat names an earlier, unverified pass guessed; zainod
+# requires a config file to exist on disk even when every setting comes from
+# env vars (see zainod.toml); and zaino *learns* Regtest activation heights
+# directly from zebra's own `getblockchaininfo` at startup, so there is no
+# activation-heights env var to set here at all -- a mismatch between this
+# file and zebra.toml's heights is structurally not a failure mode for this
+# pair of services.
+services:
+  zebra:
+    image: zfnd/zebra:latest@sha256:52a67e543906c98a0ed1599e2ce3ee238fc05b40592ae26ee5914ddb6ede51e3
+    platform: linux/amd64
+    volumes:
+      - "./zebra.toml:/etc/zebrad.toml:ro"
+    ports:
+      - "18232:18232" # RPC
+      - "18233:18233" # P2P (unused on an isolated regtest, exposed for parity)
+    command: ["zebrad", "-c", "/etc/zebrad.toml", "start"]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl --fail -s -X POST -H ''content-type: application/json'' --data ''{"jsonrpc":"1.0","id":"healthcheck","method":"getblockcount","params":[]}'' http://127.0.0.1:18232',
+        ]
+      interval: 5s
+      retries: 20
+      timeout: 5s
+
+  zaino:
+    build:
+      # Git build context (no published image tag exists yet): Docker clones
+      # this pinned commit itself at build time for the `COPY . .` step, so
+      # the build needs no local checkout and works identically here and in
+      # CI. `dockerfile_inline` below overrides zaino's own Dockerfile rather
+      # than using it as-is: it pins `ca-certificates`/`protobuf-compiler` to
+      # exact deb12 versions that are no longer resolvable against the
+      # current bookworm apt mirror snapshot (`E: Version '3.21.12-3' for
+      # 'protobuf-compiler' was not found`, reproduced on both amd64 and
+      # arm64 -- not an arch issue). Dropping just those two pins (letting
+      # apt take whatever bookworm currently ships) builds successfully;
+      # every other line is copied verbatim from upstream's Dockerfile.
+      context: https://github.com/zingolabs/zaino.git#afd609eeb5027486ab15fbbbbf638f054e4b65b9
+      # Every `$` below is doubled (`$$`) so Compose's own variable
+      # interpolation passes it through literally to buildkit -- otherwise
+      # Compose substitutes `${FOO}` from ITS OWN environment (blank, since
+      # none of these are shell/`.env` vars) before the Dockerfile ever sees
+      # it, silently emptying every ARG/shell reference (e.g. a blank
+      # `EXPOSE` line), empirically confirmed.
+      dockerfile_inline: |
+        # syntax=docker/dockerfile:1
+        ARG RUST_VERSION
+        ARG UID=1000
+        ARG GID=1000
+        ARG USER=container_user
+        ARG HOME=/home/container_user
+
+        FROM docker.io/library/rust:$${RUST_VERSION}-bookworm AS builder
+        SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
+        WORKDIR /app
+
+        ARG NO_TLS=false
+        ARG CARGO_FEATURES=""
+
+        RUN apt-get update && apt-get install -y --no-install-recommends \
+              pkg-config=1.8.1-1 \
+              clang=1:14.0-55.7~deb12u1 \
+              cmake=3.25.1-1 \
+              make=4.3-4.1 \
+              ca-certificates \
+              protobuf-compiler \
+          && rm -rf /var/lib/apt/lists/*
+
+        COPY . .
+
+        RUN --mount=type=cache,target=/usr/local/cargo/registry \
+            --mount=type=cache,target=/usr/local/cargo/git \
+            --mount=type=cache,target=/app/target \
+            if [ -n "$${CARGO_FEATURES}" ]; then \
+              cargo install --locked --path packages/zainod --bin zainod --root /out --features "$${CARGO_FEATURES}"; \
+            elif [ "$${NO_TLS}" = "true" ]; then \
+              cargo install --locked --path packages/zainod --bin zainod --root /out --features no_tls_use_unencrypted_traffic; \
+            else \
+              cargo install --locked --path packages/zainod --bin zainod --root /out; \
+            fi
+
+        FROM docker.io/library/debian:bookworm-slim AS runtime
+        SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
+
+        ARG UID
+        ARG GID
+        ARG USER
+        ARG HOME
+
+        RUN apt-get -qq update && \
+            apt-get -qq install -y --no-install-recommends \
+              ca-certificates \
+              libgcc-s1=12.2.0-14+deb12u1 \
+            && rm -rf /var/lib/apt/lists/*
+
+        RUN addgroup --gid "$${GID}" "$${USER}" && \
+            adduser  --uid "$${UID}" --gid "$${GID}" --home "$${HOME}" \
+                     --disabled-password --gecos "" "$${USER}"
+
+        ENV HOME=$${HOME}
+        WORKDIR $${HOME}
+
+        RUN mkdir -p /app/config /app/data && \
+            mkdir -p $${HOME}/.config $${HOME}/.cache && \
+            ln -s /app/config $${HOME}/.config/zaino && \
+            ln -s /app/data $${HOME}/.cache/zaino && \
+            chown -R $${UID}:$${GID} /app $${HOME}/.config $${HOME}/.cache
+
+        COPY --from=builder /out/bin/zainod /usr/local/bin/zainod
+        COPY entrypoint.sh /entrypoint.sh
+        RUN chmod +x /entrypoint.sh
+
+        ARG ZAINO_GRPC_PORT=8137
+        ARG ZAINO_JSON_RPC_PORT=8237
+        EXPOSE $${ZAINO_GRPC_PORT} $${ZAINO_JSON_RPC_PORT}
+
+        HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+          CMD /usr/local/bin/zainod --version >/dev/null 2>&1 || exit 1
+
+        USER $${USER}
+        ENTRYPOINT ["/entrypoint.sh"]
+        CMD ["start"]
+      # RUST_VERSION has no Dockerfile default (deliberately, per its own
+      # comment: the canonical source is zaino's own rust-toolchain.toml, so a
+      # stale literal here can never drift from the pinned toolchain).
+      #
+      # `no_tls_use_unencrypted_traffic`: without it, zaino's own config
+      # validation (`ZainodConfig::check_config`, packages/zainod/src/config.rs)
+      # refuses to bind its gRPC server to a non-loopback address without TLS --
+      # and it must bind 0.0.0.0 (not 127.0.0.1) here so the host-published port
+      # can reach it at all. This regtest stack is loopback-only end to end
+      # (compose's default bridge network, ports published to 127.0.0.1), so
+      # the plaintext bind this feature allows carries no real exposure.
+      args:
+        RUST_VERSION: "1.96.0"
+        CARGO_FEATURES: "no_tls_use_unencrypted_traffic"
+    # No platform pin: builds natively for the host architecture.
+    depends_on:
+      zebra:
+        condition: service_healthy
+    volumes:
+      # zainod's config loader requires a file to exist at this path even though
+      # every field it doesn't set falls back to its own defaults or the ZAINO_*
+      # env vars below (see zainod.toml's own comment).
+      - "./zainod.toml:/app/config/zainod.toml:ro"
+    environment:
+      # BackendType::Rpc (JSON-RPC, the config default) talks to zebra over
+      # the network -- no shared filesystem/volume with zebra's state db
+      # needed (that's only required for BackendType::Direct).
+      ZAINO_NETWORK: "Regtest"
+      ZAINO_EPHEMERAL_FINALISED_STATE: "true"
+      ZAINO_VALIDATOR_SETTINGS__VALIDATOR_JSONRPC_LISTEN_ADDRESS: "zebra:18232"
+      ZAINO_GRPC_SETTINGS__LISTEN_ADDRESS: "0.0.0.0:8137"
+    ports:
+      - "8137:8137" # gRPC, consumed via setZainoGrpcUrl("http://127.0.0.1:8137", ...)
+    # No custom healthcheck: the image already declares one (zainod --version)
+    # in its own Dockerfile; grpc_health_probe (tried first) is not installed
+    # in the image.

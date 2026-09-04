@@ -35,6 +35,7 @@ export type Currency =
   | "dash"
   | "qtum"
   | "zcash"
+  | "zcash_regtest"
   | "bitcoin_gold"
   | "dogecoin"
   | "digibyte"

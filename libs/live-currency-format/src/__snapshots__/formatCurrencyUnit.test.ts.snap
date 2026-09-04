@@ -392,6 +392,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Zcash Regtest unit (zcash) 1`] = `"123.456.789,00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Zenrock unit (Zenrock) 1`] = `"12.345.678.900,000000- -ROCK"`;
@@ -795,6 +797,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Zcash Regtest unit (zcash) 1`] = `"123,456,789.00000000- -𝚝ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
@@ -1200,6 +1204,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Zcash Regtest unit (zcash) 1`] = `"123.456.789,00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Zenrock unit (Zenrock) 1`] = `"12.345.678.900,000000- -ROCK"`;
@@ -1603,6 +1609,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Zcash Regtest unit (zcash) 1`] = `"123 456 789,00000000- -𝚝ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Zcash unit (zcash) 1`] = `"123 456 789,00000000- -ZEC"`;
 
@@ -2008,6 +2016,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Zcash Regtest unit (zcash) 1`] = `"123,456,789.00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Zenrock unit (Zenrock) 1`] = `"12,345,678,900.000000- -ROCK"`;
@@ -2411,6 +2421,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Zcash Regtest unit (zcash) 1`] = `"123,456,789.00000000- -𝚝ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
@@ -2816,6 +2828,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Zcash Regtest unit (zcash) 1`] = `"123.456.789,00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Zenrock unit (Zenrock) 1`] = `"12.345.678.900,000000- -ROCK"`;
@@ -3219,6 +3233,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Zcash Regtest unit (zcash) 1`] = `"123 456 789,00000000- -𝚝ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Zcash unit (zcash) 1`] = `"123 456 789,00000000- -ZEC"`;
 
@@ -3624,6 +3640,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Zcash Regtest unit (zcash) 1`] = `"123.456.789,00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Zenrock unit (Zenrock) 1`] = `"12.345.678.900,000000- -ROCK"`;
@@ -4028,6 +4046,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Zcash Regtest unit (zcash) 1`] = `"123,456,789.00000000- -𝚝ZEC"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Zenrock unit (Zenrock) 1`] = `"12,345,678,900.000000- -ROCK"`;
@@ -4431,6 +4451,8 @@ exports[`formatCurrencyUnit with default options should correctly format ZCoin u
 exports[`formatCurrencyUnit with default options should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format ZKsync unit (ETH) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Zcash Regtest unit (zcash) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Zcash unit (zcash) 1`] = `"123,456,789"`;
 
