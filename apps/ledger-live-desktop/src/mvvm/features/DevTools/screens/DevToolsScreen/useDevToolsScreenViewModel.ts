@@ -17,6 +17,7 @@ import {
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
   useAccountBalancesToolProps,
+  useAccountOperationsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -32,7 +33,11 @@ export function useDevToolsScreenViewModel() {
   const envToolProps = useEnvDevToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
-  const accountBalancesToolProps = useAccountBalancesToolProps(useAccountBalancesInputs());
+  // One inputs hook, two tools: the accounts and their display units are the same, only the datum
+  // being read differs — which is the shape the slicing is supposed to produce.
+  const accountInputs = useAccountBalancesInputs();
+  const accountBalancesToolProps = useAccountBalancesToolProps(accountInputs);
+  const accountOperationsToolProps = useAccountOperationsToolProps(accountInputs);
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>
@@ -92,6 +97,7 @@ export function useDevToolsScreenViewModel() {
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "account-balances", config: accountBalancesToolProps },
+      { id: "account-operations", config: accountOperationsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -100,6 +106,7 @@ export function useDevToolsScreenViewModel() {
       trustchainToolProps,
       cloudSyncToolProps,
       accountBalancesToolProps,
+      accountOperationsToolProps,
     ],
   );
 

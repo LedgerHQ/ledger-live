@@ -840,6 +840,9 @@ importers:
       '@datadog/browser-rum':
         specifier: 6.30.1
         version: 6.30.1(@datadog/browser-logs@6.30.1)
+      '@devtools/account-operations':
+        specifier: workspace:*
+        version: link:../../devtools/account-operations
       '@devtools/bindings':
         specifier: workspace:*
         version: link:../../devtools/bindings
@@ -3254,6 +3257,72 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  devtools/account-operations:
+    devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.27
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.11(react@19.1.4)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@support/jest-devtools':
+        specifier: workspace:*
+        version: link:../../support/jest-devtools
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   devtools/bindings:
     dependencies:
       '@devtools/env':
@@ -3268,6 +3337,9 @@ importers:
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance
+      '@domain/entity-account-operations':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-operations
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour
@@ -3809,6 +3881,9 @@ importers:
       '@devtools/account-balances':
         specifier: workspace:*
         version: link:../account-balances
+      '@devtools/account-operations':
+        specifier: workspace:*
+        version: link:../account-operations
       '@devtools/cloud-sync':
         specifier: workspace:*
         version: link:../cloud-sync
@@ -42651,7 +42726,7 @@ snapshots:
   '@babel/generator@7.29.1':
     dependencies:
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
@@ -42666,7 +42741,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/helper-compilation-targets@7.27.2':
     dependencies:
@@ -42765,7 +42840,7 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/helper-globals@7.28.0': {}
 
@@ -42773,26 +42848,26 @@ snapshots:
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1(supports-color@5.5.0)':
     dependencies:
       '@babel/traverse': 7.29.0(supports-color@5.5.0)
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42815,7 +42890,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/helper-plugin-utils@7.27.1': {}
 
@@ -42862,7 +42937,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/helper-string-parser@7.27.1': {}
 
@@ -42880,7 +42955,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42898,11 +42973,11 @@ snapshots:
 
   '@babel/parser@7.24.1':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/parser@7.28.5':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/parser@7.29.2':
     dependencies:
@@ -43959,7 +44034,7 @@ snapshots:
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
@@ -43967,11 +44042,11 @@ snapshots:
 
   '@babel/traverse@7.27.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       debug: 4.4.3
       globals: 11.12.0
     transitivePeerDependencies:
@@ -44040,7 +44115,7 @@ snapshots:
   '@babel/types@7.27.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
 
   '@babel/types@7.28.5':
     dependencies:
@@ -45897,7 +45972,7 @@ snapshots:
 
   '@expo/json-file@10.2.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       json5: 2.2.3
 
   '@expo/metro-config@54.0.14(expo@54.0.33(01371b6b08adf68dcde9ab2ace4a34f9))':
@@ -51691,7 +51766,7 @@ snapshots:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-icons: 5.5.0(react@19.1.4)
-      react-is: 19.2.7
+      react-is: 19.2.8
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       redux: 5.0.1
       redux-persist: 6.0.0(react@19.1.4)(redux@5.0.1)
@@ -54478,7 +54553,7 @@ snapshots:
 
   '@svgr/hast-util-to-babel-ast@5.5.0':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@svgr/plugin-jsx@5.5.0':
     dependencies:
@@ -54772,7 +54847,7 @@ snapshots:
 
   '@testing-library/dom@10.4.1':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -54959,16 +55034,16 @@ snapshots:
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@types/babel__template@7.4.4':
     dependencies:
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@types/babel__traverse@7.28.0':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -57515,7 +57590,7 @@ snapshots:
 
   babel-plugin-react-compiler@1.0.0:
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   babel-plugin-react-docgen-typescript@1.5.1(@babel/core@7.28.5)(@typescript/typescript6@6.0.2):
     dependencies:
@@ -61580,7 +61655,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(@typescript/typescript6@6.0.2)(eslint@8.57.0)(vue-template-compiler@2.7.16)(webpack@5.94.0(@swc/core@1.15.11)):
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -63684,7 +63759,7 @@ snapshots:
 
   jest-message-util@30.5.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@jest/types': 30.5.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -63835,7 +63910,7 @@ snapshots:
       '@babel/generator': 7.28.5
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       '@jest/expect-utils': 30.5.0
       '@jest/get-type': 30.5.0
       '@jest/snapshot-utils': 30.5.0
@@ -65654,7 +65729,7 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.29.0
       '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8'
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
       metro-symbolicate: 0.81.5
@@ -65669,7 +65744,7 @@ snapshots:
     dependencies:
       '@babel/traverse': 7.29.0
       '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8'
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
       metro-symbolicate: 0.83.3
@@ -65765,7 +65840,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       metro: 0.81.5
       metro-babel-transformer: 0.81.5
@@ -65785,7 +65860,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       metro: 0.83.3
       metro-babel-transformer: 0.83.3
@@ -65869,13 +65944,13 @@ snapshots:
 
   metro@0.83.3:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       accepts: 1.3.8
       chalk: 4.1.2
       ci-info: 2.0.0
@@ -65916,13 +65991,13 @@ snapshots:
 
   metro@0.83.7:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/core': 7.28.5
-      '@babel/generator': 7.29.1
+      '@babel/generator': 7.29.8
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       accepts: 2.0.0
       ci-info: 2.0.0
       connect: 3.7.0

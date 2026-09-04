@@ -1,4 +1,7 @@
 ---
+"@devtools/account-operations": minor
+"@devtools/bindings": minor
+"@devtools/registry": minor
 "@ledgerhq/live-common": minor
 "@domain/entity-account-operations": minor
 "@features/platform-account-data": minor
@@ -33,6 +36,11 @@ in wallet-cli, because `listOperations` parity is unproven. web-tools turns it o
 between the two sources is observable. A family being granular for `balance` says nothing about
 `operations`, and that per-datum asymmetry is the strongest argument the exercise has produced for
 slicing at all.
+
+`@devtools/account-operations` is the tool that makes it observable: `Load more` is disabled on a
+source that cannot resume from a cursor, the count reads `total unknown, the window is partial` until
+the history is complete, and nested rows and rows that landed on a token account are tagged as such.
+It takes the same inputs as the balances tool — only the datum differs.
 
 What survived the second slice unchanged and what broke — including that `operationsCount` is not
 knowable from a page, and that the portfolio graph needs a *bounded* window rather than the whole
