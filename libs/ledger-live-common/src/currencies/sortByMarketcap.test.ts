@@ -41,27 +41,19 @@ describe("sortCurrenciesByDada", () => {
 
   beforeEach(() => mockNetwork.mockClear());
 
-  test("sorts currencies by DADA marketcap order on success", async () => {
+  test("sorts currencies by CVS marketcap order on success", async () => {
     mockNetwork.mockResolvedValue({
       status: 200,
-      data: {
-        currenciesOrder: { metaCurrencyIds: ["btc-meta", "eth-meta"] },
-        cryptoAssets: {
-          "btc-meta": { assetsIds: { a: "bitcoin" } },
-          "eth-meta": { assetsIds: { a: "ethereum" } },
-        },
-      },
+      data: ["bitcoin", "ethereum"],
     });
 
     const result = await sortCurrenciesByDada([eth, btc]);
     expect(result.map(c => c.id)).toEqual(["bitcoin", "ethereum"]);
   });
 
-  test("returns currencies in original order when network fails", async () => {
+  test("rejects when network fails", async () => {
     mockNetwork.mockRejectedValue(new Error("network error"));
 
-    const currencies = [eth, btc];
-    const result = await sortCurrenciesByDada(currencies);
-    expect(result).toBe(currencies);
+    await expect(sortCurrenciesByDada([eth, btc])).rejects.toThrow("network error");
   });
 });

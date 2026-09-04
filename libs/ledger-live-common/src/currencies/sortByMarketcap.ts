@@ -24,27 +24,16 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
   return [...all];
 };
 
-// DADA coverage is partial: major cryptos, stablecoins and xStocks are ranked;
-// unknown currencies fall to the end via the sortCurrenciesByIds fallback.
-const fetchMarketcapIdsFromDada: () => Promise<string[]> = makeLRUCache(async () => {
-  const { data } = await network<{
-    cryptoAssets: Record<string, { assetsIds?: Record<string, string> }>;
-    currenciesOrder: { metaCurrencyIds: string[] };
-  }>({
+const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
+  const { data } = await network<string[]>({
     method: "GET",
-    url: `${getEnv("DADA_API_PROD")}/assets`,
-    params: { product: "lld", minVersion: "1.0.0", pageSize: 100 },
+    url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/crypto`,
   });
-  return data.currenciesOrder.metaCurrencyIds.flatMap(metaId =>
-    Object.values(data.cryptoAssets[metaId]?.assetsIds ?? {}),
-  );
+  return data;
 });
 
-// Async sort for non-React callers (e.g. listApps). Falls back to original
-// order on error. DADA coverage is partial; sortCurrenciesByIds appends unknowns.
+// Async sort for non-React callers (e.g. listApps).
+// Rejects on CVS failure, propagating the error to the caller.
 export function sortCurrenciesByDada<C extends Currency>(currencies: C[]): Promise<C[]> {
-  return fetchMarketcapIdsFromDada().then(
-    ids => sortCurrenciesByIds(currencies, ids),
-    () => currencies,
-  );
+  return fetchMarketcapIds().then(ids => sortCurrenciesByIds(currencies, ids));
 }
