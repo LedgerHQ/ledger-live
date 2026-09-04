@@ -26,6 +26,11 @@ type VirtualListProps<T> = {
    */
   itemHeight: number;
   /**
+   * Height of a specific item, for lists mixing rows of different heights.
+   * Falls back to `itemHeight` when omitted or when it returns undefined.
+   */
+  getItemHeight?: (item: T) => number | undefined;
+  /**
    * Number of extra items to render outside the visible viewport for smoother scrolling.
    * Defaults to 5.
    */
@@ -92,6 +97,7 @@ function easeInOutCubic(t: number) {
 
 export const VirtualList = <T,>({
   gap,
+  getItemHeight,
   hasNextPage = false,
   isLoading,
   itemHeight,
@@ -146,12 +152,22 @@ export const VirtualList = <T,>({
     [],
   );
 
+  const resolveItemHeight = useCallback(
+    (index: number) => {
+      const item = items[index];
+      if (item === undefined) return itemHeight;
+
+      return getItemHeight?.(item) ?? itemHeight;
+    },
+    [getItemHeight, itemHeight, items],
+  );
+
   const rowVirtualizer = useVirtualizer({
     gap,
     count: hasNextPage ? items.length + 1 : items.length,
     overscan,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => itemHeight,
+    estimateSize: resolveItemHeight,
     scrollToFn,
   });
 
@@ -206,7 +222,7 @@ export const VirtualList = <T,>({
               className="absolute top-0 left-0 w-full"
               style={{
                 transform: `translateY(${virtualRow.start}px)`,
-                height: `${itemHeight}px`,
+                height: `${resolveItemHeight(virtualRow.index)}px`,
               }}
             >
               {item ? renderItem(item) : <Loading />}

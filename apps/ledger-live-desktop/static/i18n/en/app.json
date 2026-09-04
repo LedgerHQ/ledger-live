@@ -8975,6 +8975,7 @@
     "selectNetwork": "Select network",
     "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
     "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
+    "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",

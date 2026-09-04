@@ -1,5 +1,7 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 export { groupCurrenciesByAsset } from "./groupCurrenciesByAsset";
+export { buildAvailabilityRows } from "./buildAvailabilityRows";
+export type { AvailabilityRow } from "./buildAvailabilityRows";
 export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
 const getBaseId = (currency: CryptoOrTokenCurrency) =>
