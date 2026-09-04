@@ -94,6 +94,9 @@ function collectAllSelectableIronwoodNotes(
  * max(2, max(n_spends, n_outputs)), and a send's output count never exceeds
  * 2), so bounding the note count bounds the action count exactly -- no
  * off-by-one.
+ *
+ * Returned largest-first (see `collectAllSelectableIronwoodNotes`) -- this is
+ * now a contract callers may rely on, not an artifact of iteration order.
  */
 export function collectSelectableIronwoodNotes(
   account: SpendabilityAccount,
