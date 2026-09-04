@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import heroImage from "./payCardLoginIntro.webp";
@@ -19,11 +19,31 @@ export function CardLoginIntroView({
   onActionPress,
   onClose,
 }: CardLoginIntroViewProps) {
+  const acted = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      acted.current = false;
+    }
+  }, [isOpen]);
+
+  const actOnce = useCallback((action: () => void) => {
+    if (acted.current) {
+      return;
+    }
+    acted.current = true;
+    action();
+  }, []);
+
+  const handleClose = useCallback(() => {
+    actOnce(onClose);
+  }, [actOnce, onClose]);
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) onClose();
+      if (!open) handleClose();
     },
-    [onClose],
+    [handleClose],
   );
 
   if (!isOpen) {
@@ -37,7 +57,7 @@ export function CardLoginIntroView({
         className="max-h-[90vh] p-0"
         data-testid="pay-card-login-intro-dialog"
       >
-        <DialogHeader density="compact" onClose={onClose} />
+        <DialogHeader density="compact" onClose={handleClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-16 overflow-hidden px-16 pb-24">
           <div
             className="scrollbar-none flex min-h-0 flex-1 flex-col gap-16 overflow-y-auto"

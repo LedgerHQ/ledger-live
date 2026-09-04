@@ -117,4 +117,14 @@ describe("CardLoginIntroView (Web)", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onActionPress).not.toHaveBeenCalled();
   });
+
+  it("reports close only once when the header close also dismisses the dialog", () => {
+    const onClose = jest.fn();
+    renderIntro({ onClose });
+
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
