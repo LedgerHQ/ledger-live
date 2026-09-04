@@ -7,6 +7,8 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   act,
   fireEvent,
@@ -256,6 +258,7 @@ describe("Send flow integration tests", () => {
     );
 
     expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.getByText("Benoit")).toBeVisible();
 
     await user.press(screen.getByLabelText("Edit recipient"));
 
@@ -268,6 +271,54 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
     expect(screen.queryByLabelText("Back")).not.toBeVisible();
     expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeVisible();
+  });
+
+  it("should show a truncated address on amount when the recipient is not a contact", async () => {
+    const { user } = renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: true },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(
+      screen.getByDisplayValue(
+        formatAddress(VALID_ETHEREUM_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText("Benoit")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+  });
+
+  it("should show a truncated address on amount when contacts are off", async () => {
+    const benoit = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({
+          id: "address-benoit-eth",
+          currencyId: "ethereum",
+          label: "Ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: false, contacts: [mockMeContact(), benoit] },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(
+      screen.getByDisplayValue(
+        formatAddress(VALID_ETHEREUM_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText("Benoit")).not.toBeOnTheScreen();
   });
 
   it("should keep add contact enabled when the network supports the address book", async () => {
