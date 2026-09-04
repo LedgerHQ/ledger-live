@@ -1,5 +1,6 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
 import { computeAccountAlias, registerAccountAliases } from "@domain/entity-account-alias";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import type { State } from "../../reducers";
 import { createAccountAliasMiddleware, withAccountAliases } from "../accountAlias";
 
@@ -79,8 +80,8 @@ describe("withAccountAliases", () => {
     const state = { accounts: [account(BTC_ID, [{ id: `${BTC_ID}+token` }])] } as unknown as State;
 
     expect(withAccountAliases(state)?.accountAliases.accountIdByAlias).toEqual({
-      [computeAccountAlias(BTC_ID)]: BTC_ID,
-      [computeAccountAlias(`${BTC_ID}+token`)]: `${BTC_ID}+token`,
+      [computeAccountAlias(parseAnyAccountId(BTC_ID))]: BTC_ID,
+      [computeAccountAlias(parseAnyAccountId(`${BTC_ID}+token`))]: `${BTC_ID}+token`,
     });
   });
 

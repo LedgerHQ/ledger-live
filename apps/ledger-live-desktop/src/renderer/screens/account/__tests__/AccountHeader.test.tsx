@@ -3,6 +3,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { WalletState } from "~/renderer/reducers/wallet";
 import { render, screen, waitFor } from "tests/testSetup";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import AccountHeader from "../AccountHeader";
 
 jest.mock("~/renderer/linking", () => ({
@@ -19,7 +20,7 @@ describe("AccountHeader", () => {
   const accountName = "My Bitcoin Account";
 
   const walletState: WalletState = {
-    accountNames: new Map([[mockAccount.id, accountName]]),
+    accountNames: new Map([[parseAnyAccountId(mockAccount.id), accountName]]),
     starredAccountIds: new Set(),
     walletSync: {
       walletSyncState: { data: null, version: 0 },

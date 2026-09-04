@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/schema-primitives": "workspace:^",
     "immer": "^11.0.0"
   },
   "devDependencies": {

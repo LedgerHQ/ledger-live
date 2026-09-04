@@ -2,6 +2,7 @@ import { of } from "rxjs";
 import { contact, contactsInitialState } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import {
   createWalletsync,
   type WalletSyncDocument,
@@ -32,7 +33,7 @@ function makeLocalState(overrides: Partial<WalletSyncLocalState> = {}): WalletSy
 
 const emptyLocalState = {
   accounts: { list: [], nonImportedAccountInfos: [] },
-  accountNames: new Map<string, string>(),
+  accountNames: new Map(),
   contacts: [...contactsInitialState.contacts],
   recentAddresses: {},
 } as unknown as WalletSyncLocalState;
@@ -74,7 +75,7 @@ describe("walletsync composition", () => {
       expect(resolved.update.recentAddresses).toEqual({ hasChanges: false });
 
       const local = walletsync.applyUpdate(makeLocalState(), resolved.update);
-      expect(local.accountNames.get(account2.id)).toBe("Distant name");
+      expect(local.accountNames.get(parseAnyAccountId(account2.id))).toBe("Distant name");
       expect(local.accounts.list.map(a => a.id)).toContain(account2.id);
     });
 
@@ -139,7 +140,9 @@ describe("walletsync composition", () => {
       expect(resolved.hasChanges).toBe(true);
       if (!resolved.hasChanges) return;
       const local = walletsync.applyUpdate(makeLocalState(), resolved.update);
-      expect(local.accountNames.get(account2.id)).toBe("Name from another instance");
+      expect(local.accountNames.get(parseAnyAccountId(account2.id))).toBe(
+        "Name from another instance",
+      );
     });
 
     it("keeps the rejected slice verbatim rather than replacing it with local state", () => {
@@ -229,7 +232,10 @@ describe("walletsync composition", () => {
 
     it("keeps unknown fields through a read then re-upload round trip", () => {
       const latest = { ...withUnknownField(), accountNames: { foo: "bar" } };
-      const localData = { ...emptyLocalState, accountNames: new Map([["foo", "baz"]]) };
+      const localData = {
+        ...emptyLocalState,
+        accountNames: new Map([[parseAnyAccountId("foo"), "baz"]]),
+      };
       const diff = walletsync.diffLocalToDistant(localData, latest);
       expect(diff.hasChanges).toBe(true);
       expect(diff.nextState).toMatchObject({

@@ -1,9 +1,11 @@
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import { computeAccountAlias, initialAccountAliasState } from "./schema";
 import { accountIdFromAliasSelector, resolveAccountIdSelector } from "./selectors";
 
 const ACCOUNT_ID = "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhH:segwit";
-const alias = computeAccountAlias(ACCOUNT_ID);
-const state = { accountIdByAlias: { [alias]: ACCOUNT_ID } };
+const accountId = parseAnyAccountId(ACCOUNT_ID);
+const alias = computeAccountAlias(accountId);
+const state = { accountIdByAlias: { [alias]: accountId } };
 
 describe("accountIdFromAliasSelector", () => {
   it("resolves a registered alias", () => {

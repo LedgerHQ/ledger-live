@@ -20,6 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/entity-account-name": "workspace:*",
+    "@shared/schema-primitives": "workspace:^",
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:*",

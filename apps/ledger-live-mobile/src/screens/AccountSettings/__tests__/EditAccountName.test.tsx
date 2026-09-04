@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 const onAccountNameChange = jest.fn();
 
@@ -74,7 +75,7 @@ const renderWithState = (useAccount = false) =>
     overrideInitialState: state => ({
       ...state,
       accounts: { active: [genAcc] },
-      wallet: { ...state.wallet, accountNames: new Map<string, string>() },
+      wallet: { ...state.wallet, accountNames: new Map() },
     }),
   });
 
@@ -101,7 +102,9 @@ describe("EditAccountName", () => {
     await user.type(getByTestId("account-rename-text-input"), updatedName);
     await user.press(getByTestId("account-rename-apply"));
 
-    expect(store.getState().wallet.accountNames.get(genAcc.id)).toEqual(updatedName);
+    expect(store.getState().wallet.accountNames.get(parseAnyAccountId(genAcc.id))).toEqual(
+      updatedName,
+    );
 
     expect(mockedNavigation.goBack).toHaveBeenCalled();
   });

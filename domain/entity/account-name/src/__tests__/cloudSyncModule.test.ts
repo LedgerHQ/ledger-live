@@ -1,16 +1,16 @@
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import { accountNamesSyncModule } from "../cloudSyncModule";
+import type { AccountNamesState } from "../schema";
 import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
 
+const makeMap = (entries: Record<string, string>): AccountNamesState =>
+  new Map(Object.entries(entries).map(([k, v]) => [parseAnyAccountId(k), v]));
+
 describeCloudSyncModuleContract("accountNamesSyncModule contract", accountNamesSyncModule, {
-  emptyLocalState: new Map(),
-  nonEmptyLocalState: new Map([
-    ["acc1", "My Account"],
-    ["acc2", "Savings"],
-  ]),
+  emptyLocalState: makeMap({}),
+  nonEmptyLocalState: makeMap({ acc1: "My Account", acc2: "Savings" }),
   matchingDistantState: { acc1: "My Account", acc2: "Savings" },
 });
-
-const makeMap = (entries: Record<string, string>) => new Map(Object.entries(entries));
 
 describe("accountNamesSyncModule.diffLocalToDistant", () => {
   it("returns hasChanges=false for empty local and null distant", () => {
@@ -111,21 +111,30 @@ describe("accountNamesSyncModule.applyUpdate", () => {
     const update = { replaceAllNames: { acc1: "New", acc2: "Added" } };
     const result = accountNamesSyncModule.applyUpdate(local, update);
     expect(result).toBeInstanceOf(Map);
-    expect(result.get("acc1")).toBe("New");
-    expect(result.get("acc2")).toBe("Added");
+    expect(result.get(parseAnyAccountId("acc1"))).toBe("New");
+    expect(result.get(parseAnyAccountId("acc2"))).toBe("Added");
   });
 
   it("replaces all local names with replaceAllNames", () => {
     const local = makeMap({ acc1: "Keep", acc2: "Remove" });
     const update = { replaceAllNames: { acc1: "Keep" } };
     const result = accountNamesSyncModule.applyUpdate(local, update);
-    expect(result.has("acc2")).toBe(false);
+    expect(result.has(parseAnyAccountId("acc2"))).toBe(false);
   });
 
   it("handles empty replaceAllNames", () => {
     const local = makeMap({ acc1: "Name" });
     const result = accountNamesSyncModule.applyUpdate(local, { replaceAllNames: {} });
     expect(result.size).toBe(0);
+  });
+
+  it("skips malformed keys from cloud payload rather than throwing", () => {
+    const local = makeMap({});
+    const result = accountNamesSyncModule.applyUpdate(local, {
+      replaceAllNames: { "": "empty key is invalid", acc1: "Valid" },
+    });
+    expect(result.size).toBe(1);
+    expect(result.get(parseAnyAccountId("acc1"))).toBe("Valid");
   });
 });
 

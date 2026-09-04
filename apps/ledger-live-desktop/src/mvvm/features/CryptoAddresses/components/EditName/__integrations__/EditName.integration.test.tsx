@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 
 const ASSET_NAME = "Ethereum";
 
@@ -56,7 +57,9 @@ describe("EditName", () => {
     });
 
     await waitFor(() => {
-      expect(store.getState().wallet.accountNames.get(ETH_ACCOUNT.id)).toBe("My ETH wallet");
+      expect(store.getState().wallet.accountNames.get(parseAnyAccountId(ETH_ACCOUNT.id))).toBe(
+        "My ETH wallet",
+      );
     });
 
     await user.click(screen.getByTestId("edit-name-trigger"));

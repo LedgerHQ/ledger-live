@@ -6,6 +6,7 @@ import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import type { Operation } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { usePaySuccessViewModel } from "../usePaySuccessViewModel";
@@ -63,7 +64,7 @@ function renderPaySuccess(state = buildFlowState(), { isContactsEnabled = true }
   return renderHook(() => usePaySuccessViewModel(), {
     initialState: {
       accounts: [account],
-      wallet: { accountNames: new Map([[account.id, ACCOUNT_NAME]]) },
+      wallet: { accountNames: new Map([[parseAnyAccountId(account.id), ACCOUNT_NAME]]) },
       contacts: { contacts: [ada] },
       ...withFlagOverrides({ lwdContacts: { enabled: isContactsEnabled } }),
     },

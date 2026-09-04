@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { v5 as uuidv5 } from "uuid";
+import { type AnyAccountId, parseAnyAccountId } from "@shared/schema-primitives";
 
 /**
  * Namespace for account id aliasing. Randomly generated uuid v4, distinct from the wallet-api one
@@ -13,7 +14,7 @@ export const AccountAliasSchema = z.uuid().brand<"AccountAlias">();
 
 export type AccountAlias = z.infer<typeof AccountAliasSchema>;
 
-const aliasByAccountId = new Map<string, AccountAlias>();
+const aliasByAccountId = new Map<AnyAccountId, AccountAlias>();
 
 /**
  * Derives the alias of an account id. Deterministic across sessions and devices, so an alias can
@@ -24,7 +25,7 @@ const aliasByAccountId = new Map<string, AccountAlias>();
  * same alias on every install. This stops the plaintext leak; it is not an unlinkability
  * guarantee. Same trade-off as the wallet-api aliasing this generalizes.
  */
-export function computeAccountAlias(accountId: string): AccountAlias {
+export function computeAccountAlias(accountId: AnyAccountId): AccountAlias {
   const cached = aliasByAccountId.get(accountId);
   if (cached) return cached;
   const alias = AccountAliasSchema.parse(uuidv5(accountId, ACCOUNT_ALIAS_NAMESPACE));
@@ -34,7 +35,7 @@ export function computeAccountAlias(accountId: string): AccountAlias {
 
 export const AccountAliasStateSchema = z.object({
   /** Reverse map keyed by alias, only known for accounts registered during this session. */
-  accountIdByAlias: z.record(z.string(), z.string()),
+  accountIdByAlias: z.record(z.string(), z.string().transform(parseAnyAccountId)),
 });
 
 export type AccountAliasState = z.infer<typeof AccountAliasStateSchema>;

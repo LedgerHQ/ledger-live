@@ -9,6 +9,7 @@ import {
 } from "./ordering";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import type { AccountNamesState } from "@domain/entity-account-name";
+import { parseAnyAccountId } from "@shared/schema-primitives";
 import { accountRawToAccountUserData } from "./serialization";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
@@ -104,7 +105,7 @@ beforeAll(async () => {
 
   for (const raw of raws) {
     const r = accountRawToAccountUserData(raw);
-    accountNames.set(r.id, r.name);
+    accountNames.set(parseAnyAccountId(r.id), r.name);
   }
 });
 
@@ -117,7 +118,7 @@ test("Accounts ordering | name asc", () => {
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(parseAnyAccountId(a.id)) || "")).toEqual([
     "A",
     "AA",
     "B",
@@ -132,7 +133,7 @@ test("Accounts ordering | name desc", () => {
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(parseAnyAccountId(a.id)) || "")).toEqual([
     "CA",
     "C",
     "B",
@@ -147,7 +148,7 @@ test("Accounts ordering | balance asc", () => {
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(parseAnyAccountId(a.id)) || "")).toEqual([
     "A",
     "B",
     "C",
@@ -162,7 +163,7 @@ test("Accounts ordering | balance desc", () => {
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(parseAnyAccountId(a.id)) || "")).toEqual([
     "AA",
     "C",
     "CA",
@@ -172,20 +173,24 @@ test("Accounts ordering | balance desc", () => {
 });
 
 const byName: AccountComparator = (a, b) =>
-  (accountNames.get(a.id) || "").localeCompare(accountNames.get(b.id) || "");
+  (accountNames.get(parseAnyAccountId(a.id)) || "").localeCompare(
+    accountNames.get(parseAnyAccountId(b.id)) || "",
+  );
 
 test("flattenSortAccounts", () => {
-  expect(flattenSortAccounts(accounts, byName).map(a => accountNames.get(a.id))).toEqual([
+  expect(
+    flattenSortAccounts(accounts, byName).map(a => accountNames.get(parseAnyAccountId(a.id))),
+  ).toEqual(["A", "AA", "B", "C", "CA"]);
+});
+
+test("nestedSortAccounts keeps the same reference when the order is already correct", () => {
+  const sorted = nestedSortAccounts(accounts, byName);
+  expect(sorted.map(a => accountNames.get(parseAnyAccountId(a.id)))).toEqual([
     "A",
     "AA",
     "B",
     "C",
     "CA",
   ]);
-});
-
-test("nestedSortAccounts keeps the same reference when the order is already correct", () => {
-  const sorted = nestedSortAccounts(accounts, byName);
-  expect(sorted.map(a => accountNames.get(a.id))).toEqual(["A", "AA", "B", "C", "CA"]);
   expect(nestedSortAccounts(sorted, byName)).toBe(sorted);
 });
