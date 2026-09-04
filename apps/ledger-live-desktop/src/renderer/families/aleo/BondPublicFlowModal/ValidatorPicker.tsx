@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -37,6 +37,16 @@ export default function ValidatorPicker({
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
   const { validators, loading, error } = useAleoValidators(currency);
+
+  useEffect(() => {
+    if (lockedTo) return;
+
+    const current = validators.find(({ address }) => address === selected);
+    if (!current || !isDisabled(current)) return;
+
+    const replacement = validators.find(validator => !isDisabled(validator));
+    if (replacement) onSelect(replacement.address);
+  }, [validators, selected, lockedTo, onSelect]);
 
   const matches = useMemo(() => {
     const needle = search.trim().toLowerCase();

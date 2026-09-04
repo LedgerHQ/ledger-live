@@ -56,6 +56,7 @@ export type AleoValidator = {
   name?: string;
   stakeMicrocredits: number;
   isOpen: boolean;
+  isUnbonding: boolean;
   commissionPercent: number;
   /**
    * Estimated net yearly rate as a fraction (0.07 = 7%). Absent when it could not be

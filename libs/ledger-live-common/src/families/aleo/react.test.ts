@@ -1392,6 +1392,7 @@ describe("useAleoValidators", () => {
     name: "Validator One",
     stakeMicrocredits: 20_000_000,
     isOpen: true,
+    isUnbonding: false,
     commissionPercent: 10,
     estimatedYearlyRewardsRate: 0.07,
   };

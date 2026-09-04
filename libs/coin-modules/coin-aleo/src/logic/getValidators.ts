@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { apiClient } from "../network/api";
+import { getUnbondingValidators } from "../network/utils";
 import {
   estimateNetRate,
   getValidatorNonEarningReason,
@@ -50,11 +51,16 @@ function isValidValidatorMetadataResponse(value: unknown): value is AleoValidato
   return Object.values(value).every(entry => typeof entry === "string");
 }
 
+function isAcceptingNewStakes(validator: Pick<AleoValidator, "isOpen" | "isUnbonding">) {
+  return validator.isOpen && !validator.isUnbonding;
+}
+
 /**
  * The validator committee for `currencyId`'s configured network, ordered for a picker.
  *
- * Only the committee is required. Names and total supply are best-effort, so losing
- * either degrades a field rather than failing the list the bond flow depends on.
+ * Only the committee is required. Names, total supply and unbonding state are best-effort,
+ * so losing any of them degrades a field rather than failing the list the bond flow
+ * depends on.
  */
 export const getValidators = makeLRUCache(
   async (currencyId: string): Promise<AleoValidator[]> => {
@@ -71,6 +77,7 @@ export const getValidators = makeLRUCache(
     }
 
     const safeMetadata = metadata && isValidValidatorMetadataResponse(metadata) ? metadata : {};
+    const unbonding = await getUnbondingValidators(config, Object.keys(committee.members));
 
     const totalSupplyCredits = parseTotalSupply(totalSupply);
     const totalStakeMicrocredits =
@@ -106,14 +113,16 @@ export const getValidators = makeLRUCache(
           name: safeMetadata[address],
           stakeMicrocredits,
           isOpen,
+          isUnbonding: unbonding.has(address),
           commissionPercent,
           ...(rate !== null && { estimatedYearlyRewardsRate: rate.toNumber() }),
           ...(nonEarningReason !== null && { nonEarningReason }),
         };
       })
       .sort((left, right) => {
-        if (left.isOpen !== right.isOpen) {
-          return left.isOpen ? -1 : 1;
+        const leftBondable = isAcceptingNewStakes(left);
+        if (leftBondable !== isAcceptingNewStakes(right)) {
+          return leftBondable ? -1 : 1;
         }
 
         return right.stakeMicrocredits - left.stakeMicrocredits;

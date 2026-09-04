@@ -11,6 +11,8 @@ const OPEN_HIGH_STAKE = "aleo1open_high";
 const OPEN_LOW_STAKE = "aleo1open_low";
 const CLOSED_HIGH_STAKE = "aleo1closed_high";
 
+const UNBONDING_RAW = "{\n  microcredits: 10000000000u64,\n  height: 7862785u32\n}";
+
 const microcredits = (credits: number) => credits * MICROCREDITS_PER_CREDIT;
 
 const TOTAL_STAKE_CREDITS = 200_000_000;
@@ -38,6 +40,7 @@ describe("getValidators", () => {
       [OPEN_HIGH_STAKE]: "High Stake Validator",
     });
     jest.mocked(apiClient.getTotalSupply).mockResolvedValue(TOTAL_SUPPLY_CREDITS);
+    jest.mocked(apiClient.getUnbondingMapping).mockResolvedValue(null);
   });
 
   it("orders open validators first, then by descending stake", async () => {
@@ -82,6 +85,46 @@ describe("getValidators", () => {
     expect(apiClient.getCommittee).toHaveBeenCalledTimes(1);
     expect(apiClient.getValidatorMetadata).toHaveBeenCalledTimes(1);
     expect(apiClient.getTotalSupply).toHaveBeenCalledTimes(1);
+  });
+
+  describe("unbonding validators", () => {
+    const unbondingOnly = (unbonding: string[]) =>
+      jest
+        .mocked(apiClient.getUnbondingMapping)
+        .mockImplementation(async (_config, address) =>
+          unbonding.includes(address) ? UNBONDING_RAW : null,
+        );
+
+    it("flags a validator that has an unbonding entry of its own", async () => {
+      unbondingOnly([OPEN_HIGH_STAKE]);
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.isUnbonding).toBe(true);
+      expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.isUnbonding).toBe(false);
+    });
+
+    it("demotes an unbonding validator below the open ones, despite the higher stake", async () => {
+      unbondingOnly([OPEN_HIGH_STAKE]);
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      // Behind the one validator still taking stake, then among the rest by descending stake.
+      expect(validators.map(v => v.address)).toEqual([
+        OPEN_LOW_STAKE,
+        CLOSED_HIGH_STAKE,
+        OPEN_HIGH_STAKE,
+      ]);
+    });
+
+    it("reports no unbonding rather than failing the list when the lookup errors", async () => {
+      jest.mocked(apiClient.getUnbondingMapping).mockRejectedValue(new Error("boom"));
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      expect(validators).toHaveLength(3);
+      expect(validators.every(v => v.isUnbonding === false)).toBe(true);
+    });
   });
 
   describe("degraded responses", () => {
