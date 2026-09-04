@@ -12,10 +12,6 @@ const api: CounterValuesAPI = {
     getEnv("MOCK_COUNTERVALUES")
       ? mockAPI.fetchLatest(pairs, batchStrategySolver)
       : prodAPI.fetchLatest(pairs, batchStrategySolver),
-  fetchIdsSortedByMarketcap: () =>
-    getEnv("MOCK_COUNTERVALUES")
-      ? mockAPI.fetchIdsSortedByMarketcap()
-      : prodAPI.fetchIdsSortedByMarketcap(),
 };
 
 export default api;
