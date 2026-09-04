@@ -14,7 +14,7 @@ export const payCardAuthSlice = createSlice({
       state.hasCard = action.payload;
     },
     /**
-     * Written by the login machine, and by `CardLogout` once a logout is through. It is runtime
+     * Written by the login machine, and by `CardMore` once a logout is through. It is runtime
      * state, not a preference, so the slice must stay out of the persisted app state.
      */
     setSignedIn: (state, action: PayloadAction<boolean>) => {

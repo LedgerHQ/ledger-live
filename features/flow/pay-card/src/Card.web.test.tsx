@@ -4,7 +4,7 @@ import type { CardProps } from "./Card.types";
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
-  CardLogout: () => <div data-testid="card-logout" />,
+  CardMore: () => <div data-testid="card-more" />,
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -37,12 +37,12 @@ describe("Card (web)", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
-  it("composes the bare artwork with the auth login and logout", () => {
+  it("composes the bare artwork with the auth login and More menu", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-logout")).toBeVisible();
+    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
@@ -58,6 +58,6 @@ describe("Card (web)", () => {
     expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-logout")).toBeVisible();
+    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 });

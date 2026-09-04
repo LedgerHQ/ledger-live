@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLogin, CardLogout } from "@features/flow-pay-card-auth";
+import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardVisual } from "@features/flow-pay-card-details";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import type { CardViewProps } from "./Card.types";
@@ -14,7 +14,7 @@ export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewP
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       <Divider />
       <CardLogin key={`${oauthConfig.apiUrl}`} oauthConfig={oauthConfig} callback={callback} />
-      <CardLogout />
+      <CardMore />
     </div>
   );
 }

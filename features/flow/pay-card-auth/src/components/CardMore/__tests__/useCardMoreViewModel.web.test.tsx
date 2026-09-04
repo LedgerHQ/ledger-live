@@ -1,11 +1,40 @@
-import { mapUserToViewModel, runLogout } from "../useCardLogoutViewModel";
+import { mapUserToViewModel, runLogout, startLogout } from "../useCardMoreViewModel";
+import type { CardMoreLabels } from "../useCardMoreViewModel";
 import type { CardLogoutPorts } from "../../../state/types";
 
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
 
 const onLogoutPress = jest.fn();
+const onMorePress = jest.fn();
+const onSheetClose = jest.fn();
+
+const labels: CardMoreLabels = {
+  more: "More",
+  sheetTitle: "More",
+  rows: {
+    managePin: "Manage PIN Code",
+    accessBaanx: "Access to Baanx",
+    help: "Help",
+    logout: "Logout",
+  },
+};
+
+function mapWith(overrides: Partial<Parameters<typeof mapUserToViewModel>[0]> = {}) {
+  return mapUserToViewModel({
+    isSignedIn: true,
+    user,
+    labels,
+    isSheetOpen: false,
+    onMorePress,
+    onSheetClose,
+    handlers: { logout: onLogoutPress },
+    ...overrides,
+  });
+}
 
 type Ports = { [K in keyof CardLogoutPorts]: jest.Mock };
+
+const settle = () => new Promise(resolve => setTimeout(resolve, 0));
 
 function stubPorts(overrides: Partial<Ports> = {}): Ports {
   return {
@@ -74,38 +103,74 @@ describe("runLogout", () => {
   });
 });
 
+describe("startLogout", () => {
+  it("tells the provider once, whatever the number of presses in one turn", async () => {
+    const ports = stubPorts();
+
+    startLogout(ports as unknown as CardLogoutPorts);
+    startLogout(ports as unknown as CardLogoutPorts);
+    await settle();
+
+    expect(ports.logout).toHaveBeenCalledTimes(1);
+  });
+
+  it("is ready again once the logout settles", async () => {
+    const ports = stubPorts();
+
+    startLogout(ports as unknown as CardLogoutPorts);
+    await settle();
+    startLogout(ports as unknown as CardLogoutPorts);
+    await settle();
+
+    expect(ports.logout).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("mapUserToViewModel", () => {
-  it("shows the card holder and the logout action", () => {
-    expect(mapUserToViewModel(true, user, false, onLogoutPress)).toMatchObject({
-      userId: user.id,
-      verificationValue: "Verified",
-      logoutLabel: "Log out",
-      isLoading: false,
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("shows the More tile and the sheet it opens", () => {
+    expect(mapWith()).toMatchObject({
+      moreLabel: "More",
+      sheetTitle: "More",
+      isSheetOpen: false,
+      onMorePress,
+      onSheetClose,
     });
   });
 
-  it("keeps the logout action busy while the logout runs", () => {
-    expect(mapUserToViewModel(true, user, true, onLogoutPress)?.isLoading).toBe(true);
+  it("returns the four rows in the design order with their ids and titles", () => {
+    const rows = mapWith()?.rows ?? [];
+
+    expect(rows.map(row => row.id)).toEqual(["managePin", "accessBaanx", "help", "logout"]);
+    expect(rows.map(row => row.title)).toEqual([
+      "Manage PIN Code",
+      "Access to Baanx",
+      "Help",
+      "Logout",
+    ]);
+  });
+
+  it("gives a real handler only to the logout row", () => {
+    const rows = mapWith()?.rows ?? [];
+
+    for (const row of rows) {
+      row.onPress();
+    }
+
+    expect(rows.find(row => row.id === "logout")?.onPress).toBe(onLogoutPress);
+    expect(onLogoutPress).toHaveBeenCalledTimes(1);
   });
 
   it("shows nothing while nobody is signed in", () => {
     // `CardLogin` holds the screen then, and it reads the same flag to know it.
-    expect(mapUserToViewModel(false, user, false, onLogoutPress)).toBeNull();
+    expect(mapWith({ isSignedIn: false })).toBeNull();
   });
 
   it("shows nothing while the signed-in user is still on its way", () => {
-    // An empty cache would otherwise show an account with no id.
-    expect(mapUserToViewModel(true, undefined, false, onLogoutPress)).toBeNull();
-  });
-
-  it.each([
-    ["UNVERIFIED", "Not verified"],
-    ["PENDING", "In review"],
-    ["VERIFIED", "Verified"],
-    ["REJECTED", "Rejected"],
-  ] as const)("reads %s as %s", (verificationState, expected) => {
-    const logout = mapUserToViewModel(true, { ...user, verificationState }, false, onLogoutPress);
-
-    expect(logout?.verificationValue).toBe(expected);
+    // An empty cache would otherwise show a tile that opens a sheet with no session behind it.
+    expect(mapWith({ user: undefined })).toBeNull();
   });
 });

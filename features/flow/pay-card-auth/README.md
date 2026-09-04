@@ -8,20 +8,21 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ## Usage
 
 ```tsx
-import { CardLogin, CardLogout } from "@features/flow-pay-card-auth";
+import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
 
 <CardLogin oauthConfig={oauthConfig} callback={callback} />
-<CardLogout />;
+<CardMore />;
 ```
 
 Two components, one for each direction, and each one decides whether it belongs on screen. `CardLogin`
-runs the whole login, and shows nothing once the card holder is signed in. `CardLogout` does the
-opposite: it shows the account id, the verification state and a logout action, and nothing at all while
-nobody is signed in. A caller places both and passes `CardLogout` nothing.
+runs the whole login, and shows nothing once the card holder is signed in. `CardMore` does the
+opposite: it shows a `More` tile-button that opens the `More` sheet, and the sheet's `Logout` row ends
+the session. It shows nothing at all while nobody is signed in. A caller places both and passes
+`CardMore` nothing.
 
 They agree through one Redux flag, `payCardAuth.isSignedIn`, because two machines would each hydrate the
 session and neither would agree with the other. The login machine writes the flag on entering `ready`,
-`idle` and `error`. `CardLogout` writes it once a logout is through, and the login machine takes a
+`idle` and `error`. `CardMore` writes it once a logout is through, and the login machine takes a
 `SESSION_ENDED` event to put the login back on offer.
 
 `oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
@@ -104,8 +105,8 @@ import { CardLoginView } from "./CardLoginView";
 
 | Platform         | Files resolved                                        |
 | ---------------- | ----------------------------------------------------- |
-| Mobile (Re.Pack) | `CardLogin/index.native.tsx`, `CardLogout/index.native.tsx` |
-| Desktop (Rspack) | `CardLogin/index.web.tsx`, `CardLogout/index.web.tsx`  |
+| Mobile (Re.Pack) | `CardLogin/index.native.tsx`, `CardMore/index.native.tsx` |
+| Desktop (Rspack) | `CardLogin/index.web.tsx`, `CardMore/index.web.tsx`  |
 
 ## Structure
 
@@ -126,14 +127,19 @@ pay-card-auth/
     │   │   ├── openHostedLogin.web.ts       # Desktop browsing-context opener
     │   │   ├── types.ts                     # Component contracts
     │   │   └── useCardLoginViewModel.ts     # Shared state and orchestration
-    │   └── CardLogout/
-    │       ├── __tests__/                   # View and ViewModel tests
-    │       ├── CardLogoutView.native.tsx    # Native signed-in UI, with logout
-    │       ├── CardLogoutView.web.tsx       # Web signed-in UI, with logout
-    │       ├── index.native.tsx             # Native component container
-    │       ├── index.web.tsx                # Web component container
-    │       ├── types.ts                     # Component contracts
-    │       └── useCardLogoutViewModel.ts    # The logout itself, and its visibility
+    │   └── CardMore/
+    │       ├── __tests__/                    # View, ViewModel, sheet and row tests
+    │       ├── CardMoreRow.tsx               # One sheet row, shared by both platforms
+    │       ├── CardMoreRowParts.native.tsx   # Native Lumen row parts, and the row icons
+    │       ├── CardMoreRowParts.web.tsx      # Web Lumen row parts, and the row icons
+    │       ├── CardMoreSheet.native.tsx      # Native More bottom sheet
+    │       ├── CardMoreSheet.web.tsx         # Web More dialog
+    │       ├── CardMoreView.native.tsx       # Native signed-in UI, the More tile
+    │       ├── CardMoreView.web.tsx          # Web signed-in UI, the More tile
+    │       ├── index.native.tsx              # Native component container
+    │       ├── index.web.tsx                 # Web component container
+    │       ├── types.ts                      # Tile, row and sheet contracts
+    │       └── useCardMoreViewModel.ts       # Visibility, the sheet, and the logout
     ├── hooks/                              # Flow-local hooks
     ├── router/                             # Flow-local routing
     ├── state/

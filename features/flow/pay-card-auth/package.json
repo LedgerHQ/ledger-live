@@ -32,6 +32,8 @@
     "@domain/api-card-management": "workspace:^",
     "@features/platform-card": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@xstate/react": "catalog:",
     "expo-crypto": "catalog:",
     "expo-web-browser": "15.0.10",

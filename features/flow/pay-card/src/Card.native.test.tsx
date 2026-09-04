@@ -5,7 +5,7 @@ import type { CardProps } from "./Card.types";
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
-  CardLogout: () => <View testID="card-logout" />,
+  CardMore: () => <View testID="card-more" />,
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -32,13 +32,13 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
 });
 
 describe("Card (native)", () => {
-  it("composes the bare artwork with the auth login and logout", () => {
+  it("composes the bare artwork with the auth login and More menu", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByText(title)).toBeVisible();
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-logout")).toBeVisible();
+    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
@@ -54,6 +54,6 @@ describe("Card (native)", () => {
     expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).toBeNull();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-logout")).toBeVisible();
+    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 });

@@ -896,6 +896,16 @@
         }
       }
     },
+    "cardMore": {
+      "tile": "More",
+      "title": "More",
+      "rows": {
+        "managePin": "Manage PIN Code",
+        "accessBaanx": "Access to Baanx",
+        "help": "Help",
+        "logout": "Logout"
+      }
+    },
     "balance": {
       "emptyTitle": "Pay and get paid",
       "emptyDescription": "Start by depositing stablecoin to your wallet",
