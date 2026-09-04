@@ -79,19 +79,10 @@ describe("validateIntent (integration)", () => {
 
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
-      let rentExemptionMinimum: bigint;
-
-      try {
-        rentExemptionMinimum = await fetchMinimumBalanceForRentExempt(VIBECODOOR_MINT, api).then(
-          rentExemptionMinimum => BigInt(rentExemptionMinimum),
-        );
-      } catch (error) {
-        if (error instanceof InternalTestError) {
-          fail("Test fails due to: " + error.message);
-        }
-
-        throw error;
-      }
+      const rentExemptionMinimum = await fetchMinimumBalanceForRentExempt(
+        VIBECODOOR_MINT,
+        api,
+      ).then(rentExemptionMinimum => BigInt(rentExemptionMinimum));
 
       const result = await validateIntent(
         makeTokenIntent(VIBECODOOR_MINT),

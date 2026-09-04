@@ -130,18 +130,9 @@ describe("prepareTransaction packs NotEnoughGas", () => {
   const api = getChainAPI({ endpoint: SOLANA_RPC_ENDPOINT });
 
   it("prepareTransaction packs NotEnoughGas when spendable is lesser than classic ATA rent + fee", async () => {
-    let rentExemptionMinimum: BigNumber;
-    try {
-      rentExemptionMinimum = await fetchMinimumBalanceForRentExempt(VIBECODOOR_MINT, api).then(
-        rentExemptionMinimum => BigNumber(rentExemptionMinimum),
-      );
-    } catch (error) {
-      if (error instanceof InternalTestError) {
-        fail("Test failed due to: " + error.message);
-      }
-
-      throw error;
-    }
+    const rentExemptionMinimum = await fetchMinimumBalanceForRentExempt(VIBECODOOR_MINT, api).then(
+      rentExemptionMinimum => BigNumber(rentExemptionMinimum),
+    );
 
     const account = buildSenderAccount(rentExemptionMinimum);
     const freshRecipient = Keypair.generate().publicKey.toBase58();

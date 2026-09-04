@@ -206,9 +206,7 @@ export async function fetchMinimumBalanceForRentExempt(
   if (!mintOrError || mintOrError instanceof Error) {
     const message =
       mintOrError instanceof Error ? `${mintOrError.name} - ${mintOrError.message}` : "undefined";
-    throw new InternalTestError("Failed to retrieve mint: " + message, {
-      cause: mintOrError,
-    });
+    throw new InternalTestError("Failed to retrieve mint: " + message, mintOrError);
   }
 
   return await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError));
