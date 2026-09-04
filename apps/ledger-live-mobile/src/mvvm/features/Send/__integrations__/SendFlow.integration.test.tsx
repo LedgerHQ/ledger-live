@@ -273,6 +273,22 @@ describe("Send flow integration tests", () => {
     expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeVisible();
   });
 
+  it("should pop back to the recipient under amount instead of stacking another recipient", async () => {
+    const { user } = renderForAccount(accountEthereum);
+
+    await driveToAmount(user, { recipient: VALID_ETHEREUM_RECIPIENT });
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.getByLabelText("Back")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+    expect(screen.getByTestId("recipient-input")).toBeVisible();
+    expect(screen.queryByLabelText("Edit recipient")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Back")).not.toBeOnTheScreen();
+  });
+
   it("should show a truncated address on amount when the recipient is not a contact", async () => {
     const { user } = renderForAccount(
       accountEthereum,
