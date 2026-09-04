@@ -1,4 +1,3 @@
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "./tests/currencies";
 import {
   exportCountervalues,
