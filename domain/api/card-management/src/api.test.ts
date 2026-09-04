@@ -1,5 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { cardApi, cardApiExtra } from "@shared/api-services";
+import {
+  cardApi,
+  cardApiExtra,
+  CARD_GRANT_ENDPOINTS,
+  type CardApiExtra,
+} from "@shared/api-services";
+import * as apiModule from "./api";
 import {
   cardManagementApi,
   useFreezeCardMutation,
@@ -39,18 +45,6 @@ function flushPendingRequests(): Promise<void> {
 function request(spy: jest.SpyInstance): Request {
   return spy.mock.calls[0][0] as Request;
 }
-
-const sessionResponse = {
-  access_token: "at_token",
-  expires_in: 21600,
-  refresh_token: "rt_token",
-};
-
-const session = {
-  accessToken: "at_token",
-  expiresIn: 21600,
-  refreshToken: "rt_token",
-};
 
 // The provider's own example response.
 const cardStatus = {
@@ -107,9 +101,7 @@ const linkedWallets = [
 ];
 
 // Wired the way the apps wire it: the store registers the service api, never this package.
-const makeStore = (
-  getCardSessionToken: () => Promise<string | null> = () => Promise.resolve(null),
-) =>
+const makeStore = (sessionToken: string | null = null, overrides: Partial<CardApiExtra> = {}) =>
   configureStore({
     reducer: {
       [cardManagementApi.reducerPath]: cardManagementApi.reducer,
@@ -120,11 +112,13 @@ const makeStore = (
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => "https://card.test",
             getCardBaanxClientKey: () => "client-key",
-            getCardSessionToken,
-            refreshCardSession: () => Promise.resolve(null),
+            readCardSession: () => Promise.resolve({ token: sessionToken, sessionId: 1 }),
+            isCardSessionCurrent: () => true,
+            refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
+            ...overrides,
           }),
         },
-      }).concat(cardManagementApi.middleware),
+      }).concat(cardApi.middleware),
   });
 
 describe("cardManagementApi configuration", () => {
@@ -147,6 +141,21 @@ describe("cardManagementApi configuration", () => {
       "refreshSession",
       "unfreezeCard",
     ]);
+  });
+
+  it("names the two grants the redaction knows", () => {
+    expect([...CARD_GRANT_ENDPOINTS].sort()).toEqual([
+      "exchangeAuthorizationCode",
+      "refreshSession",
+    ]);
+    for (const name of CARD_GRANT_ENDPOINTS) {
+      expect(Object.keys(cardManagementApi.endpoints)).toContain(name);
+    }
+  });
+
+  it("exports no hook for either grant", () => {
+    expect(Object.keys(apiModule)).not.toContain("useExchangeAuthorizationCodeMutation");
+    expect(Object.keys(apiModule)).not.toContain("useRefreshSessionMutation");
   });
 
   it("exposes the orderCard endpoint and its hook", () => {
@@ -194,68 +203,113 @@ describe("cardManagementApi requests", () => {
     fetchSpy?.mockRestore();
   });
 
-  describe("exchangeAuthorizationCode", () => {
-    it("posts the authorization_code grant and maps the session onto camelCase", async () => {
+  describe("the OAuth2 grants", () => {
+    const sessionResponse = {
+      access_token: "at_token",
+      expires_in: 21600,
+      refresh_token: "rt_token",
+    };
+
+    const session = {
+      accessToken: "at_token",
+      expiresIn: 21600,
+      refreshToken: "rt_token",
+    };
+
+    it("posts the code and the verifier, and answers with the session", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
 
-      const store = makeStore();
+      const store = makeStore("session-token");
       const result = await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
-          code: "auth-code",
-          codeVerifier: "verifier",
-        }),
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(
+          { code: "auth-code", codeVerifier: "verifier" },
+          { track: false },
+        ),
       );
 
+      expect(result.data).toEqual(session);
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
-      expect(request(fetchSpy).method).toBe("POST");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
+      await expect(request(fetchSpy).json()).resolves.toEqual({
         grant_type: "authorization_code",
         code: "auth-code",
         code_verifier: "verifier",
       });
-      expect(result.data).toEqual(session);
     });
 
-    it("does not expose tokens when the response is malformed", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-        jsonResponse({
-          ...sessionResponse,
-          access_token: "sensitive-access-token",
-          refresh_token: "sensitive-refresh-token",
-          expires_in: "invalid",
-        }),
-      );
-
-      const store = makeStore();
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
-          code: "auth-code",
-          codeVerifier: "verifier",
-        }),
-      );
-      const serializedError = JSON.stringify(result.error);
-
-      expect(result.data).toBeUndefined();
-      expect(serializedError).not.toContain("sensitive-access-token");
-      expect(serializedError).not.toContain("sensitive-refresh-token");
-    });
-  });
-
-  describe("refreshSession", () => {
-    it("reuses the token endpoint with the refresh_token grant", async () => {
+    it("posts the refresh token to the same path, and answers with the session", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(sessionResponse));
 
-      const store = makeStore();
+      const store = makeStore("session-token");
       const result = await store.dispatch(
-        cardManagementApi.endpoints.refreshSession.initiate({ refreshToken: "rt_token" }),
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
       );
 
-      expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/oauth2/token");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
-        grant_type: "refresh_token",
-        refresh_token: "rt_token",
-      });
       expect(result.data).toEqual(session);
+      await expect(request(fetchSpy).json()).resolves.toEqual({
+        grant_type: "refresh_token",
+        refresh_token: "rt_stored",
+      });
+      expect(request(fetchSpy).headers.get("authorization")).toBeNull();
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+    });
+
+    it("writes no cache entry, because both grants run untracked", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(sessionResponse));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const state = store.getState()[cardApi.reducerPath] as { mutations: object };
+      expect(state.mutations).toEqual({});
+    });
+
+    it("fails, and quotes no token, when the answer is not a session", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse({
+          access_token: "sensitive-access-token",
+          refresh_token: "sensitive-refresh-token",
+        }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      expect(result.error).toMatchObject({ status: "CUSTOM_ERROR" });
+      expect(JSON.stringify(result.error)).toContain("rawResponseSchema");
+      expect(JSON.stringify(result.error)).not.toContain("sensitive-access-token");
+      expect(JSON.stringify(result.error)).not.toContain("sensitive-refresh-token");
+    });
+
+    it("reports the status when the provider refuses the grant", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(400, "invalid_grant"));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate(
+          { refreshToken: "rt_stored" },
+          { track: false },
+        ),
+      );
+
+      expect(result.error).toMatchObject({ status: 400 });
     });
   });
 
@@ -272,7 +326,7 @@ describe("cardManagementApi requests", () => {
     it("sends the session bearer token alongside the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.logout.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/logout");
@@ -301,7 +355,7 @@ describe("cardManagementApi requests", () => {
         }),
       );
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/user");
@@ -317,12 +371,14 @@ describe("cardManagementApi requests", () => {
     it("posts a virtual card order with the session bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/order");
       expect(request(fetchSpy).method).toBe("POST");
-      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({ type: "VIRTUAL" });
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
+        type: "VIRTUAL",
+      });
       expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ success: true });
@@ -333,7 +389,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse({ success: "yes" }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
 
       expect(result.data).toBeUndefined();
@@ -345,7 +401,7 @@ describe("cardManagementApi requests", () => {
     it("reads the card and drops everything the wire contract does not declare", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(cardStatus));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/status");
@@ -359,7 +415,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(errorResponse(404, "Card not found"));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
 
       expect(result.data).toBeUndefined();
@@ -371,7 +427,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse({ ...cardStatus, status: "SOMETHING_ELSE" }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
 
       expect(result.data).toBeUndefined();
@@ -387,10 +443,12 @@ describe("cardManagementApi requests", () => {
             : jsonResponse(cardStatus),
         );
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       // Subscribed, so the invalidation has a live cache entry to refetch.
       const status = store.dispatch(
-        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, {
+          subscribe: true,
+        }),
       );
       await status;
       await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
@@ -409,7 +467,7 @@ describe("cardManagementApi requests", () => {
     it("posts the freeze with the session bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/freeze");
@@ -424,7 +482,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(errorResponse(400, "Card is already frozen"));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
 
       expect(result.data).toBeUndefined();
@@ -446,7 +504,7 @@ describe("cardManagementApi requests", () => {
           return jsonResponse({ ...cardStatus, status: cardState });
         });
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
@@ -470,7 +528,7 @@ describe("cardManagementApi requests", () => {
     it("posts the unfreeze with the session bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/card/unfreeze");
@@ -485,7 +543,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(errorResponse(400, "Card is not frozen"));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
 
       expect(result.data).toBeUndefined();
@@ -504,7 +562,7 @@ describe("cardManagementApi requests", () => {
           return jsonResponse({ ...cardStatus, status: cardState });
         });
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const subscription = store.dispatch(
         cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
       );
@@ -530,7 +588,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse(internalWalletsOnTheWire));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -549,7 +607,7 @@ describe("cardManagementApi requests", () => {
           jsonResponse([{ ...internalWallets[0], balance: "9007199254740993.000001" }]),
         );
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -562,7 +620,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse([internalWalletsOnTheWire[0]]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -573,7 +631,7 @@ describe("cardManagementApi requests", () => {
     it("accepts a user with no wallets as an empty list, not an error", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse([]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -587,7 +645,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse([{ ...internalWallets[0], balance: 125.4 }]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -601,7 +659,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse({ wallets: internalWallets }));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getInternalWallets.initiate(),
       );
@@ -615,7 +673,7 @@ describe("cardManagementApi requests", () => {
     it("reads the linked wallets with the bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(linkedWallets));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
@@ -632,7 +690,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse([{ ...linkedWallets[0], priority: 0 }]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
@@ -643,7 +701,7 @@ describe("cardManagementApi requests", () => {
     it("accepts a card with nothing linked to it as an empty list", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse([]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
@@ -657,7 +715,7 @@ describe("cardManagementApi requests", () => {
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse([{ ...linkedWallets[0], priority: "1" }]));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
@@ -688,7 +746,7 @@ describe("cardManagementApi requests", () => {
     it("reads the onboarding steps with the bearer token and the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(onboardingStatus));
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
       );
@@ -707,7 +765,7 @@ describe("cardManagementApi requests", () => {
         }),
       );
 
-      const store = makeStore(async () => "session-token");
+      const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
       );
@@ -722,7 +780,7 @@ describe("cardManagementApi requests", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(jsonResponse({ id: "not-a-uuid", verification_state: "VERIFIED" }));
 
-    const store = makeStore(async () => "session-token");
+    const store = makeStore("session-token");
     const result = await store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
     expect(result.data).toBeUndefined();

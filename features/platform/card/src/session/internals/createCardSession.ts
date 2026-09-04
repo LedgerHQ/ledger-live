@@ -1,4 +1,10 @@
-import type { PayCardSession } from "@domain/api-card-management";
+import { cardManagementApi } from "@domain/api-card-management";
+import type { CardSessionRefreshResult, CardSessionSnapshot } from "@shared/api-services";
+import {
+  CardSessionNotStoredError,
+  type CardSessionRenewalConfig,
+  type StoredCardSession,
+} from "../types";
 import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
 
 /**
@@ -6,13 +12,6 @@ import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
  * Card session is the same on every platform.
  */
 export function createCardSession(store: CardSessionStore) {
-  /**
-   * One queue for `set`, `clear` and `get`, because each one touches more than one key.
-   *
-   * Their callers know nothing about each other: `set` runs from the login machine, and `clear` runs
-   * from `refreshCardSession`, which the base query calls on any 401. Unqueued, a `clear` lands between
-   * the two phases of a `set` and leaves the access token alone on disk.
-   */
   let turn: Promise<unknown> = Promise.resolve();
 
   function takeTurn<T>(operation: () => Promise<T>): Promise<T> {
@@ -22,120 +21,235 @@ export function createCardSession(store: CardSessionStore) {
     return result;
   }
 
-  /**
-   * True from a clear until the next successful write.
-   *
-   * A locked keychain rejects every removal, so a cleared access token can still read back. The flag
-   * keeps "cleared means no Bearer" true for the life of the process. A restart reads the store again,
-   * and a token that outlived its session answers 401, which clears it for good.
-   */
   let isCleared = false;
 
-  async function writeSession(session: PayCardSession): Promise<void> {
-    try {
-      // The access token is written last, because it is the only key the request path reads.
-      const coldWriteResults = await Promise.allSettled([
-        store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
-        store.write(CARD_SESSION_KEYS.lifetimes, JSON.stringify({ expiresIn: session.expiresIn })),
-      ]);
-      const failedColdWrite = coldWriteResults.find(
-        (result): result is PromiseRejectedResult => result.status === "rejected",
-      );
-      if (failedColdWrite) {
-        throw failedColdWrite.reason;
-      }
+  let sessionId = 0;
 
+  type InFlightRefresh = {
+    failedAccessToken: string;
+    promise: Promise<CardSessionRefreshResult>;
+  };
+
+  let inFlight: InFlightRefresh | null = null;
+
+  let renewal: CardSessionRenewalConfig | null = null;
+
+  async function writeSession(
+    session: StoredCardSession,
+    expectedSessionId: number,
+  ): Promise<"written" | "stale"> {
+    if (expectedSessionId !== sessionId) {
+      return "stale";
+    }
+
+    try {
+      await store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken);
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
     } catch (error) {
-      // The login is over. Every key that landed is a credential, the refresh token included, so
-      // remove them all.
       await removeSession();
       throw error;
     }
 
+    if (expectedSessionId !== sessionId) {
+      await removeSession();
+      return "stale";
+    }
+
     isCleared = false;
+
+    return "written";
   }
 
-  async function readSession(): Promise<PayCardSession | null> {
+  async function removeSession(): Promise<void> {
+    isCleared = true;
+
+    await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
+    await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
+    await store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined);
+  }
+
+  async function readToken(key: string): Promise<string | null> {
     if (isCleared) {
       return null;
     }
 
-    const [accessToken, refreshToken, lifetimes] = await Promise.all([
-      store.read(CARD_SESSION_KEYS.accessToken),
-      store.read(CARD_SESSION_KEYS.refreshToken),
-      store.read(CARD_SESSION_KEYS.lifetimes),
-    ]);
+    const reading = sessionId;
+    const token = await store.read(key);
 
-    // A session is only a session when all three keys agree. Half of one reads as none, which sends
-    // the user to the login screen instead of into a broken state.
-    const parsedLifetimes = parseLifetimes(lifetimes);
-    if (!accessToken || !refreshToken || !parsedLifetimes) {
+    return isCleared || reading !== sessionId ? null : token;
+  }
+
+  async function readAccessToken(): Promise<string | null> {
+    return readToken(CARD_SESSION_KEYS.accessToken);
+  }
+
+  async function readRefreshToken(): Promise<string | null> {
+    return readToken(CARD_SESSION_KEYS.refreshToken);
+  }
+
+  async function readSession(): Promise<StoredCardSession | null> {
+    if (isCleared) {
       return null;
     }
 
-    return { accessToken, refreshToken, ...parsedLifetimes };
+    const [accessToken, refreshToken] = await Promise.all([readAccessToken(), readRefreshToken()]);
+
+    if (!accessToken || !refreshToken) {
+      return null;
+    }
+
+    return { accessToken, refreshToken };
   }
 
-  /**
-   * Removes the access token first, and never rejects.
-   *
-   * First, because every Card request reads that key. Never rejects, because `isCleared` has already
-   * ended the session: a removal the store refused leaves a value that nothing will serve, so the
-   * caller has nothing to handle. `refreshCardSession` therefore always answers the base query, whose
-   * guard against a rejected port never fires here.
-   */
-  async function removeSession(): Promise<void> {
-    // Raised before the first removal, so a store that refuses to forget cannot keep the session alive.
+  function startRefresh(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
+    const attempt = Promise.resolve().then(() => runRefresh(requestSessionId, failedAccessToken));
+    inFlight = { failedAccessToken, promise: attempt };
+
+    const settle = () => {
+      if (inFlight?.promise === attempt) {
+        inFlight = null;
+      }
+    };
+    attempt.then(settle, settle);
+
+    return attempt;
+  }
+
+  async function runRefresh(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
+    try {
+      const currentAccessToken = await readAccessToken();
+
+      if (requestSessionId !== sessionId) {
+        return { kind: "session-replaced" };
+      }
+
+      if (!currentAccessToken) {
+        throw new Error("the Card session holds no access token");
+      }
+
+      if (currentAccessToken !== failedAccessToken) {
+        return { kind: "refreshed", accessToken: currentAccessToken };
+      }
+
+      const session = await grantNewSession();
+      const outcome = await takeTurn(() => writeSession(session, requestSessionId));
+
+      return outcome === "written"
+        ? { kind: "refreshed", accessToken: session.accessToken }
+        : { kind: "session-replaced" };
+    } catch {
+      return endIfCurrent(requestSessionId);
+    }
+  }
+
+  async function grantNewSession(): Promise<StoredCardSession> {
+    if (!renewal) {
+      throw new Error("the Card session renewal is not configured");
+    }
+
+    const refreshToken = await readRefreshToken();
+    if (!refreshToken) {
+      throw new Error("the Card session holds no refresh token");
+    }
+
+    return renewal
+      .dispatch(
+        cardManagementApi.endpoints.refreshSession.initiate({ refreshToken }, { track: false }),
+      )
+      .unwrap();
+  }
+
+  async function endIfCurrent(renewing: number): Promise<CardSessionRefreshResult> {
+    if (renewing !== sessionId) {
+      return { kind: "session-replaced" };
+    }
+
+    const clearing = clear();
+    console.warn("[card] the session renewal failed, so the session is over");
+    await clearing;
+    try {
+      renewal?.onCardSessionEnded();
+    } catch {
+      console.error("[card] onCardSessionEnded failed");
+    }
+
+    return { kind: "session-ended" };
+  }
+
+  const beginSessionReplacement = (): number => {
     isCleared = true;
+    inFlight = null;
+    return ++sessionId;
+  };
 
-    await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
-    await Promise.all([
-      store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined),
-      store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined),
-    ]);
+  const set = async (session: StoredCardSession): Promise<void> => {
+    const written = beginSessionReplacement();
+
+    const outcome = await takeTurn(() => writeSession(session, written));
+    if (outcome === "stale") {
+      throw new CardSessionNotStoredError();
+    }
+  };
+
+  const clear = (): Promise<void> => {
+    beginSessionReplacement();
+    return takeTurn(removeSession);
+  };
+
+  const get = (): Promise<StoredCardSession | null> => takeTurn(readSession);
+
+  const getCardSessionToken = (): Promise<string | null> => readAccessToken();
+
+  const readCardSession = async (): Promise<CardSessionSnapshot> => {
+    const id = sessionId;
+    const token = isCleared ? null : await store.read(CARD_SESSION_KEYS.accessToken);
+    return { token, sessionId: id };
+  };
+
+  const isCardSessionCurrent = (requestSessionId: number): boolean =>
+    !isCleared && requestSessionId === sessionId;
+
+  function refreshCardSession(
+    requestSessionId: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
+    if (requestSessionId !== sessionId) {
+      return Promise.resolve({ kind: "session-replaced" });
+    }
+
+    if (isCleared) {
+      return Promise.resolve({ kind: "session-ended" });
+    }
+
+    if (!inFlight) {
+      return startRefresh(requestSessionId, failedAccessToken);
+    }
+
+    if (inFlight.failedAccessToken === failedAccessToken) {
+      return inFlight.promise;
+    }
+
+    const activeRefresh = inFlight.promise;
+    const recheck = () => refreshCardSession(requestSessionId, failedAccessToken);
+    return activeRefresh.then(recheck, recheck);
   }
 
-  const set = (session: PayCardSession) => takeTurn(() => writeSession(session));
-  const clear = () => takeTurn(removeSession);
+  const configureCardSessionRenewal = (config: CardSessionRenewalConfig): void => {
+    renewal = config;
+  };
 
-  /**
-   * Takes a turn, because it reads all three keys. A `set` over a live session replaces the two cold
-   * keys before the access token, so an unqueued read pairs the previous access token with the new
-   * refresh token. `get` is off the request path, so the wait costs nothing there.
-   */
-  const get = () => takeTurn(readSession);
-
-  /**
-   * The reader `cardApiExtra` gets. One key, because the header needs one value.
-   *
-   * It never waits for a turn: one key cannot disagree with itself. During a `set` it answers the
-   * previous access token, which stays valid until the new one lands. The request path must not queue
-   * behind a login.
-   */
-  async function getCardSessionToken(): Promise<string | null> {
-    return isCleared ? null : store.read(CARD_SESSION_KEYS.accessToken);
-  }
-
-  /** No renewal yet (LIVE-34741): a 401 ends the session. */
-  async function refreshCardSession(): Promise<string | null> {
-    await clear();
-    return null;
-  }
-
-  return { cardSession: { set, get, clear }, getCardSessionToken, refreshCardSession };
-}
-
-/** Unreadable or incomplete lifetimes answer null, so the caller reports no session. */
-function parseLifetimes(value: string | null): Pick<PayCardSession, "expiresIn"> | null {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const { expiresIn } = JSON.parse(value) as Record<string, unknown>;
-    return typeof expiresIn === "number" ? { expiresIn } : null;
-  } catch {
-    return null;
-  }
+  return {
+    cardSession: { set, get, clear },
+    getCardSessionToken,
+    readCardSession,
+    isCardSessionCurrent,
+    refreshCardSession,
+    configureCardSessionRenewal,
+  };
 }

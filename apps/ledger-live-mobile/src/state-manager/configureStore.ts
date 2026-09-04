@@ -22,13 +22,22 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings"
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
+  cardApi,
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
+  redactCardApiState,
   swapApiExtra,
 } from "@shared/api-services";
-import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  configureCardSessionRenewal,
+  isCardSessionCurrent,
+  readCardSession,
+  refreshCardSession,
+} from "@features/platform-card";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
@@ -40,7 +49,9 @@ import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
-  devTools: !!Config.DEBUG_RNDEBUGGER,
+  devTools: Config.DEBUG_RNDEBUGGER
+    ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+    : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({
@@ -62,7 +73,8 @@ export const store = configureStore({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-              getCardSessionToken,
+              readCardSession,
+              isCardSessionCurrent,
               refreshCardSession,
             }),
             ...pushDevicesApiExtra({
@@ -129,6 +141,14 @@ export const store = configureStore({
 
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;
+
+configureCardSessionRenewal({
+  dispatch: store.dispatch,
+  onCardSessionEnded: () => {
+    store.dispatch(setSignedIn(false));
+    setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
+  },
+});
 
 setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
   const unsubscribe = NetInfo.addEventListener(state => {

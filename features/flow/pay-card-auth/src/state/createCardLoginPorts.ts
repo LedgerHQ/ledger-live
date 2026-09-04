@@ -6,10 +6,6 @@ import { createAuthorizeAttempt } from "./authorizeAttempt";
 import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
-/**
- * The app store's `dispatch`, used to run the Card api's `initiate` thunks. The Card api reducer must
- * be registered in that store, and `cardApiExtra` supplies its base URL and headers.
- */
 export type CardLoginDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 export type CreateCardLoginPortsConfig = {
@@ -31,13 +27,18 @@ export function createCardLoginPorts({
     loadAttempt,
     clearAttempt,
     hasSession: async () => Boolean(await getCardSessionToken()),
-    persistSession: session => cardSession.set(session),
+    persistSession: async session => {
+      await cardSession.set(session);
+      dispatch(cardManagementApi.util.resetApiState());
+    },
     clearSession: () => cardSession.clear(),
     forgetUser: () => {
       dispatch(cardManagementApi.util.resetApiState());
     },
     exchangeAuthorizationCode: request =>
-      dispatch(cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request)).unwrap(),
+      dispatch(
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate(request, { track: false }),
+      ).unwrap(),
     getUser: async () => {
       const request = dispatch(cardManagementApi.endpoints.getUser.initiate());
       try {
