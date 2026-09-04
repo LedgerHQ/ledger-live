@@ -24,10 +24,9 @@ function buildProps(): PayCardToolProps {
     },
     interaction: { probes: [] },
     balance: {
-      total: 0,
-      isPartialTotal: false,
-      isPricingWired: true,
-      wallets: [],
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
       isFetching: false,
       errors: [],
       load: jest.fn(),

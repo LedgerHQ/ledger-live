@@ -29,10 +29,9 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     },
     interaction: { probes: [], ...overrides.interaction },
     balance: {
-      total: 0,
-      isPartialTotal: false,
-      isPricingWired: true,
-      wallets: [],
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
       isFetching: false,
       errors: [],
       load: jest.fn(),

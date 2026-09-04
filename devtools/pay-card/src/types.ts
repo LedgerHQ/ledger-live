@@ -52,48 +52,55 @@ export interface PayCardInteractionProps {
 }
 
 /** One card-linked wallet, joined to its balance, exactly as the calculation saw it. */
-export interface PayCardBalanceWallet {
+/** One wallet exactly as `GET /v1/wallet/internal` answered. */
+export interface PayCardBaanxWallet {
   readonly id: string;
+  readonly balance: string;
   readonly currency: string;
-  readonly network: string;
   readonly address: string;
-  /** Charging order. The wallets are listed in it. */
-  readonly priority: number;
-  /** `null` while the internal wallets are still being read, and when none matched this link. */
-  readonly balance: string | null;
-  /**
-   * `null` whenever the balance is, and when the balance could not be priced. Those are left out
-   * of the total.
-   */
-  readonly counterValue: number | null;
+  /** Absent when the provider sent no key at all, `null` when it sent one: the tool shows which. */
+  readonly addressMemo?: string | null;
 }
 
-/** What one endpoint answered with, when it failed. */
+/** One wallet exactly as `GET /v1/wallet/internal/card_linked` answered. */
+export interface PayCardLinkedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  /** Charging order. The wallets are listed in it. */
+  readonly priority: number;
+}
+
+/** One item of the join the app builds from the two responses above. */
+export interface PayCardCombinedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  readonly priority: number;
+  /** `null` when no Baanx wallet matched this link, and while they are still being read. */
+  readonly balance: string | null;
+}
+
 export interface PayCardBalanceError {
   readonly endpoint: string;
   readonly detail: string;
 }
 
 /**
- * The card-linked wallets, as the balance calculation returns them.
+ * What the two wallet endpoints answered, and the join the app builds from them.
  *
- * `total` is the raw sum the calculation produced, in the counter-value currency's smallest unit,
- * deliberately unformatted: the tool exists to show what the calculation returned.
+ * All three are shown side by side and unformatted: the screen exists to compare what the provider
+ * sent with what the app made of it.
  */
 export interface PayCardBalanceProps {
-  /**
-   * Rendered verbatim, `undefined` included: the tool reports what the calculation returned.
-   * `undefined` when not one wallet could be priced, which is not the same as a balance of zero.
-   */
-  readonly total: number | undefined;
-  /** A wallet the rates could not price is left out of `total` rather than counted as zero. */
-  readonly isPartialTotal: boolean;
-  /**
-   * Whether the host wired pricing at all. Without it nothing can be priced, which is a different
-   * thing from a ticker the rates did not cover.
-   */
-  readonly isPricingWired: boolean;
-  readonly wallets: readonly PayCardBalanceWallet[];
+  /** Raw `GET /v1/wallet/internal`. */
+  readonly baanxWallets: readonly PayCardBaanxWallet[];
+  /** Raw `GET /v1/wallet/internal/card_linked`. */
+  readonly linkedWallets: readonly PayCardLinkedWallet[];
+  /** What the app joins the two into. */
+  readonly combinedWallets: readonly PayCardCombinedWallet[];
   readonly isFetching: boolean;
   readonly errors: readonly PayCardBalanceError[];
   /** Starts the wallet queries. The screen calls this when it opens. */
