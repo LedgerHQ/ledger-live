@@ -21,10 +21,7 @@ import type {
   TokenTransferTransaction,
   Transaction,
 } from "./types";
-import {
-  fetchMinimumBalanceForRentExempt,
-  InternalTestError,
-} from "./__tests__/fixtures/helpers.fixture";
+import { fetchMinimumBalanceForRentExempt } from "./__tests__/fixtures/helpers.fixture";
 
 const SOLANA_RPC_ENDPOINT = "https://solana.coin.ledger.com";
 

@@ -13,10 +13,7 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { endpointByCurrencyId } from "../../utils";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 import type { SolanaCoinConfig } from "../../config";
-import {
-  fetchMinimumBalanceForRentExempt,
-  InternalTestError,
-} from "../../__tests__/fixtures/helpers.fixture";
+import { fetchMinimumBalanceForRentExempt } from "../../__tests__/fixtures/helpers.fixture";
 
 const config: SolanaCoinConfig = {
   token2022Enabled: false,
