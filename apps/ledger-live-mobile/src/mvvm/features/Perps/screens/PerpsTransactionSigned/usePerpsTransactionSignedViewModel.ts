@@ -5,15 +5,6 @@ import type { RootComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 
-export type PerpsTransactionSignedParams = Readonly<{
-  /** Ticker of the currency credited to the perps balance, e.g. "USDC". */
-  receiveCurrencyTicker: string;
-  /** Only set when the provider issued one, so the deposit can be tracked. */
-  swapId?: string;
-  /** Provider that quoted the deposit, which titles the status drawer. */
-  provider?: string;
-}>;
-
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsTransactionSigned>
 >;

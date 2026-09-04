@@ -1,9 +1,7 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
-import {
-  usePerpsTransactionSignedViewModel,
-  type PerpsTransactionSignedParams,
-} from "../usePerpsTransactionSignedViewModel";
+import type { PerpsTransactionSignedParams } from "../../../types";
+import { usePerpsTransactionSignedViewModel } from "../usePerpsTransactionSignedViewModel";
 
 const mockDispatch = jest.fn();
 jest.mock("~/context/hooks", () => ({
