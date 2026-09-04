@@ -72,7 +72,14 @@ describe("DevToolsScreen", () => {
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
       { id: "env", config: { marker: "env-props" } },
-      { id: "pay-card", config: { marker: "pay-card-props" } },
+      {
+        id: "pay-card",
+        config: expect.objectContaining({
+          marker: "pay-card-props",
+          onNavigateToPortfolio: expect.any(Function),
+          onNavigateToPayTab: expect.any(Function),
+        }),
+      },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });
