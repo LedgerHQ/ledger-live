@@ -63,8 +63,18 @@ type TestStackParamList = {
   };
   [NavigatorName.MyWallet]:
     | {
-        screen: ScreenName.MyWalletContacts;
+        screen: typeof ScreenName.MyWalletContacts;
         params?: { title?: string };
+      }
+    | {
+        screen: typeof ScreenName.MyWalletContactDetail;
+        params: { contactId: string };
+      }
+    | undefined;
+  [NavigatorName.SendFunds]:
+    | {
+        screen: ScreenName.SendCoin;
+        params?: { currencyIds?: string[] };
       }
     | undefined;
 };
@@ -85,9 +95,30 @@ function ReceiveFundsScreen({
 function MyWalletContactsScreen({
   route,
 }: NativeStackScreenProps<TestStackParamList, NavigatorName.MyWallet>) {
+  const screenName = route.params?.screen;
+  const params = route.params?.params;
+  const detail = params && "contactId" in params ? params.contactId : undefined;
+  const title = params && "title" in params ? params.title : undefined;
+
   return (
-    <Text testID="my-wallet-contacts-screen">
-      {route.params?.screen}:{route.params?.params?.title}
+    <Text
+      testID={
+        screenName === ScreenName.MyWalletContactDetail
+          ? "my-wallet-contact-detail-screen"
+          : "my-wallet-contacts-screen"
+      }
+    >
+      {screenName}:{title ?? detail ?? ""}
+    </Text>
+  );
+}
+
+function SendFundsScreen({
+  route,
+}: NativeStackScreenProps<TestStackParamList, NavigatorName.SendFunds>) {
+  return (
+    <Text testID="send-funds-screen">
+      {route.params?.screen}:{route.params?.params?.currencyIds?.join(",") ?? ""}
     </Text>
   );
 }
@@ -209,6 +240,7 @@ export function renderPayTab({
         <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
         <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
+        <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
       </Stack.Navigator>
       <ModularDrawerWrapper />
     </>,
