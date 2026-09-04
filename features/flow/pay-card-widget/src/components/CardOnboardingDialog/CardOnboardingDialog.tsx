@@ -11,6 +11,6 @@ type Props = {
   handleGotIt: () => void;
 };
 
-export function CardOnboardingDialog(props: Props) {
+export function CardOnboardingDialog(props: Readonly<Props>) {
   return <CardOnboardingDialogView {...useCardOnboardingDialogViewModel(props)} />;
 }

@@ -38,7 +38,7 @@ export const CardOnboardingDialogView = memo(function CardOnboardingDialogView({
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-0 overflow-y-auto p-16 pt-0">
           <div className="flex flex-col gap-8 p-8 pb-16">
             <Stepper currentStep={completedCount} totalSteps={totalCount} />
-            <span className="heading-3-semi-bold text-base">{dialogTitle}</span>
+            <h2 className="heading-3-semi-bold text-base">{dialogTitle}</h2>
           </div>
           {options.map(option => (
             <CardOnboardingOption key={option.id} {...option} />

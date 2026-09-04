@@ -8,6 +8,12 @@ import type {
 
 const noop = () => {};
 
+function toStepStatus(isDone: boolean, isFirstUndone: boolean): StepStatus {
+  if (isDone) return "done";
+  if (isFirstUndone) return "active";
+  return "pending";
+}
+
 // None of the steps has a destination wired yet: each one keeps its own entry so it can be
 // replaced independently, and unknown ids coming from the backend still get a handler.
 const STEP_ACTIONS: Record<string, () => void> = {
@@ -50,11 +56,7 @@ export function useCardOnboardingDialogViewModel({
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {
     const firstUndoneIndex = steps.findIndex(s => !s.isDone);
     return steps.map((step, index) => {
-      const status: StepStatus = step.isDone
-        ? "done"
-        : index === firstUndoneIndex
-          ? "active"
-          : "pending";
+      const status = toStepStatus(step.isDone, index === firstUndoneIndex);
       return {
         id: step.id,
         title: step.title,

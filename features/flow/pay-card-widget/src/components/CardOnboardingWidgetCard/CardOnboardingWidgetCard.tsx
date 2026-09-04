@@ -9,6 +9,6 @@ type Props = {
   onboardingCompleted: boolean;
 };
 
-export function CardOnboardingWidgetCard(props: Props) {
+export function CardOnboardingWidgetCard(props: Readonly<Props>) {
   return <CardOnboardingWidgetCardView {...useCardOnboardingWidgetCardViewModel(props)} />;
 }
