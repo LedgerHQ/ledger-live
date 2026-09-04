@@ -31,29 +31,28 @@ when it is available, full sync otherwise. There is no plan, no set-cover, no sc
 
 ## Wiring an app
 
+A wallet host does not hand-write its sources. `createAccountBalanceSources` in
+`@ledgerhq/live-common/account-data/sources` builds both from the little that genuinely differs:
+
 ```ts
-registerAccountBalanceSources([
-  {
-    id: "granular",
-    priority: 10,
-    supports: ref => !ref.parentId && granularFamilies.has(familyOf(ref.currencyId)),
-    getBalances: ref => readBalancesFromCoinModule(ref),
-  },
-  {
-    id: "full-sync",
-    priority: 0,
-    supports: ref => !ref.parentId,
-    getBalances: (ref, signal) => syncAndProject(ref, signal),
-  },
-]);
+registerAccountBalanceSources(
+  createAccountBalanceSources({
+    getAccount: accountId => accountSelector(store.getState(), { accountId }),
+    prepareCurrency,
+    blacklistedTokenIds: () => blacklistedTokenIdsSelector(store.getState()),
+  }),
+);
 ```
 
 Then mount `accountBalancesSlice.reducer` under the `accountBalances` key, and a screen can call
 `useAccountBalance(ref)`.
 
-The capability decision — *which families can serve a balance on their own* — must be read from the
-app's coin layer, never copied into a list here. Three divergent hardcoded "families with the new
-API" lists is how this repo got into trouble in the first place.
+It lives in `libs/` and not here because the sources are built from live-common's coin layer and
+`features/` may not import `libs/` — and because the decision it encodes, *which families can serve a
+balance on their own*, has to exist in exactly one place. Three apps each writing their own is how
+this repo ended up with three divergent "families with the new API" lists. A host that genuinely
+needs its own source (wallet-cli narrows to `evm`) still just passes an object matching
+`AccountBalanceSource`.
 
 ## Freshness, de-duplication, and what replaced the scheduler
 

@@ -28,9 +28,10 @@ family set is replaced by source selection (narrowing kept explicit at `evm`, so
 output is unchanged), and the granular path becomes family-agnostic: it used to import
 `createLocalEvmApi` / `evmBridge` directly, so it could only ever read EVM.
 
-In live-common, `getAccountBalanceRows` (generic-coin-framework) is the shared granular read, and a
-new `legacy-mapping` folder owns the `Account → AccountBalance[]` projection — the entity package
-deliberately does not know what an `Account` is. The feature package splits its exports: `.` is
+In live-common, `getAccountBalanceRows` (generic-coin-framework) is the shared granular read,
+`account-data/sources` builds the two sources every wallet host registers — a host passes only its
+store accessors — and a new `legacy-mapping` folder owns the `Account → AccountBalance[]` projection,
+since the entity package deliberately does not know what an `Account` is. The feature package splits its exports: `.` is
 framework-free (source contract, thunk) and `./react` carries the hook, so a CLI can use the layer
 without pulling React.
 

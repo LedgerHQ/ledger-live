@@ -259,7 +259,7 @@ when available*, full-sync otherwise. There is no plan, no cover, no pruning.
 ```mermaid
 flowchart TD
     apps["apps/{desktop, mobile, web-tools, wallet-cli}<br/><i>composition root — builds and registers sources</i>"]
-    lc["libs/ledger-live-common<br/><i>getAccountBalanceRows · legacy-mapping · coin-module registry</i>"]
+    lc["libs/ledger-live-common<br/><i>account-data/sources · getAccountBalanceRows · legacy-mapping</i>"]
     plat["features/platform/account-data<br/><i>source type · pickSource · thunk · hook</i>"]
     ent["domain/entity/account-balance<br/><i>slice: rows + status + selectors</i>"]
     prim["shared/schema-primitives<br/><i>AccountId · BigNumberStr · DateTimeIso</i>"]
@@ -278,6 +278,9 @@ Two placements follow from review decisions:
 - **Legacy mappers live in live-common**, not in the entity. `@domain/entity-account-balance` must
   not know what an `Account` is; a shared legacy-mapping lib in `libs/ledger-live-common` owns the
   `Account → AccountBalance[]` projection, and owns it for the next entity too.
+- **The two concrete sources live in live-common too** (`account-data/sources`), for the same
+  reason and one more: they are built from the coin layer, and three hand-written copies of the same
+  twenty lines is how the family gate diverges. A host passes only its store accessors.
 
 ---
 
