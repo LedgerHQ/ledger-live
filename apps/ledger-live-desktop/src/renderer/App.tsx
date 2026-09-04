@@ -36,6 +36,8 @@ import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
+import { AccountDataProvider } from "@features/platform-account-data/react";
+import { getAccountDataScheduler } from "~/config/account-data-setup";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -122,6 +124,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 };
 
 const App = ({ store, initialCountervalues }: Props) => {
+  const accountDataScheduler = getAccountDataScheduler();
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
@@ -129,7 +132,9 @@ const App = ({ store, initialCountervalues }: Props) => {
       <I18nextProvider i18n={i18n}>
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
-            <InnerApp initialCountervalues={initialCountervalues} />
+            <AccountDataProvider scheduler={accountDataScheduler}>
+              <InnerApp initialCountervalues={initialCountervalues} />
+            </AccountDataProvider>
           </Provider>
         </I18nProvider>
       </I18nextProvider>

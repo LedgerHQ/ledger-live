@@ -6,3 +6,5 @@ export { useProdToggle } from "./useProdToggle";
 export type { ProdToggle } from "./useProdToggle";
 export { useTrustchainDevToolProps } from "./useTrustchainDevToolProps";
 export { useCloudSyncDevToolProps } from "./useCloudSyncDevToolProps";
+export { useAccountBalancesToolProps } from "./useAccountBalancesToolProps";
+export type { AccountBalancesInput } from "./useAccountBalancesToolProps";

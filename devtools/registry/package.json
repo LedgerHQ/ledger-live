@@ -21,7 +21,8 @@
     "@devtools/env": "workspace:*",
     "@devtools/pay-card": "workspace:*",
     "@devtools/trustchain": "workspace:*",
-    "@devtools/cloud-sync": "workspace:*"
+    "@devtools/cloud-sync": "workspace:*",
+    "@devtools/account-balances": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

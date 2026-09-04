@@ -23,8 +23,10 @@
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
+    "@features/platform-account-data": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*"

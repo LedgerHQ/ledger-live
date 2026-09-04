@@ -27,6 +27,7 @@ import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
+import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import {
   largeScreenUpsellModalSlice,
@@ -65,6 +66,7 @@ import knownDevices, { KnownDevicesState } from "./knownDevices";
 export type State = LLDRTKApiState & {
   accountAliases: AccountAliasState;
   accounts: AccountsState;
+  accountBalances: AccountBalancesState;
   application: ApplicationState;
   countervalues: CountervaluesState;
   devices: DevicesState;
@@ -109,6 +111,7 @@ export type State = LLDRTKApiState & {
 const appReducer = combineReducers({
   accountAliases: accountAliasSlice.reducer,
   accounts,
+  accountBalances: accountBalancesSlice.reducer,
   application,
   countervalues,
   devices,

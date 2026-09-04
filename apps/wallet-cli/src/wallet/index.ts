@@ -4,7 +4,6 @@
 
 import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters
@@ -16,9 +15,9 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { Network } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
+import { accountRefOf, createAccountDataRuntime } from "./accountData";
 
 export class WalletAdapter {
-  private static readonly coinFrameworkFamilies = new Set(["evm"]);
   private _bridge: Promise<BridgeAdapter> | null = null;
   private _coinFramework: Promise<CoinFrameworkAdapter> | null = null;
 
@@ -57,27 +56,42 @@ export class WalletAdapter {
 
   /**
    * Return all balances (native + tokens) for the given account descriptor.
-   * Uses coin-framework for supported families (fast direct API); falls back to full bridge sync.
+   *
+   * Routed through `@features/platform-account-data`: the request asks for the `balance` slice and
+   * nothing else, and the router picks the cheapest source that can serve it — a single `getBalance`
+   * on a family with a granular coin module, a full bridge sync on the others. The per-family
+   * decision that used to live in this method is now a declared capability (see `GRANULAR_FAMILIES`
+   * in `./accountData`), which is the same shape the wallet apps use.
    */
   async getAccountBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
-    const { family } = getCryptoCurrencyById(descriptor.currencyId);
-    if (WalletAdapter.coinFrameworkFamilies.has(family))
-      return (await this.getCoinFramework()).getBalances(descriptor);
-    return (await this.getBridge()).getBalances(descriptor);
+    const { scheduler, rowsOf } = createAccountDataRuntime({
+      descriptorById: id => (id === descriptor.id ? descriptor : undefined),
+    });
+    const ref = accountRefOf(descriptor);
+    // `maxAge: 0`: a CLI process is a single request, so there is never a cached value worth serving.
+    await scheduler.fetch({ ref, slices: ["balance"], reason: "balances-command", maxAge: 0 });
+
+    const { error } = scheduler.getStatus(ref.accountId, "balance");
+    if (error) throw error;
+
+    return rowsOf(descriptor.id).map(row => ({
+      assetId: row.assetId,
+      balance: row.balance,
+    }));
   }
 
   /**
    * Return a page of operations for the given account.
    *
-   * NOTE: coin-framework is temporarily bypassed for all families — always uses bridge sync.
-   * coin-framework has known correctness issues (missing internal ops, questionable pagination
-   * reliability) that need investigation before re-enabling. `cursor` is not supported
-   * in bridge mode (bridge always returns the full history); `limit` slices the result.
+   * NOTE: coin-framework is bypassed for all families here — always bridge sync. It has known
+   * correctness issues on this path (missing internal ops, questionable pagination reliability) that
+   * need investigation first. `cursor` is not supported in bridge mode (the bridge always returns the
+   * full history); `limit` slices the result.
    *
-   * Re-enable coin-framework once validated:
-   *   const { family } = getCryptoCurrencyById(descriptor.currencyId);
-   *   if (WalletAdapter.coinFrameworkFamilies.has(family))
-   *     return this._coinFramework.getOperations(descriptor, options);
+   * This is exactly why capabilities are per slice and not per family: `balance` goes granular
+   * (see `getAccountBalances`) while `operations` stays on the bridge, for the same family, with no
+   * contradiction. Re-enabling means declaring `operations` on the coin-module source in
+   * `./accountData` and routing this method through the scheduler the same way.
    */
   async getAccountOperations(
     descriptor: AccountDescriptor,

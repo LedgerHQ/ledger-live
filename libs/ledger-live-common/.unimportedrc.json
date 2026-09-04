@@ -366,7 +366,8 @@
     "src/domain/isMinEarnUiVersion.ts",
     "src/domain/computeEarnUiVersion.ts",
     "src/domain/earnUiVersion.ts",
-    "src/errors/helpers.ts"
+    "src/errors/helpers.ts",
+    "src/bridge/generic-coin-framework/accountBalances.ts"
   ],
   "extensions": [
     ".ts",

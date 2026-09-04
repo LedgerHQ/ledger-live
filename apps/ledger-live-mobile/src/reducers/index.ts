@@ -50,12 +50,14 @@ import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintSlice } from "@features/flow-pay-request/state";
 import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
 import { contactsSlice } from "@domain/entity-contact";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  accountBalances: accountBalancesSlice.reducer,
   appstate,
   auth,
   ble,
