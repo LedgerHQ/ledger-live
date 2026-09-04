@@ -16,7 +16,6 @@ import type { DevToolsConfig } from "@devtools/shell";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
-import { usePayCardWalletCounterValue } from "LLM/features/PayTab/hooks/usePayCardWalletCounterValue";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -29,8 +28,7 @@ export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
   const tabNavigation = navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation;
   const featureFlagsProps = useFeatureFlagsToolProps();
-  const resolveCounterValue = usePayCardWalletCounterValue();
-  const boundPayCard = usePayCardToolProps({ platform: "native", resolveCounterValue });
+  const boundPayCard = usePayCardToolProps({ platform: "native" });
   const onNavigateToPortfolio = useCallback(() => {
     tabNavigation.dispatch(
       StackActions.replace(NavigatorName.Main, {

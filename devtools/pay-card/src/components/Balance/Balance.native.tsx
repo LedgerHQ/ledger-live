@@ -36,12 +36,15 @@ function Wallet({ wallet }: { readonly wallet: PayCardBalanceWallet }) {
       {/* The provider's own ids, unmapped: what a currency mapping would have to be keyed on. */}
       <Field label="currency" value={wallet.currency} />
       <Field label="network" value={wallet.network} />
-      <Field label="balance" value={wallet.balance ?? "null — no internal wallet matched"} />
+      <Field
+        label="balance"
+        value={wallet.balance ?? "null — still reading, or no internal wallet matched"}
+      />
       <Field
         label="counterValue"
         value={
           wallet.counterValue === null
-            ? "null — no currency matched this ticker, or no rate for it"
+            ? "null — no balance yet, no currency matched this ticker, or no rate for it"
             : String(wallet.counterValue)
         }
       />
