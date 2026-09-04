@@ -1,9 +1,9 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "../bridge/server";
+import { getFlags } from "@e2e/bridge/server";
 
 import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
 
-export const FF_LWM_WALLET_40_Q1 = {
+const FF_LWM_WALLET_40_Q1 = {
   lwmWallet40: {
     enabled: true,
     params: {
@@ -49,6 +49,11 @@ export const FF_BORROW_ENABLED = {
     enabled: true,
     params: { manifest_id: "borrow" },
   },
+  largeScreenUpsell: { enabled: false },
+  // Note: Prevent usage of DIE, which is not Speculos ready yet. The device-intent drawer bypasses
+  // the SignTransaction screens, so it also ignores the SWAP_DISABLE_APPS_INSTALL bypass swapSetup
+  // installs; leaving this to Firebase would make signing non-deterministic.
+  llmWalletApiDeviceIntentSign: { enabled: false },
   lwmWallet40: {
     ...FF_LWM_WALLET_40_Q2.lwmWallet40,
     params: {
@@ -127,7 +132,7 @@ export const getMergedFeatureFlags = ({
   };
 };
 
-export const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
+const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
   getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined;
 
 export const isQ2WithAggregatedAssets = (): boolean => {
@@ -140,7 +145,7 @@ export const isQ2WithOperationsList = (): boolean => {
   return lwmWallet40?.enabled === true && lwmWallet40?.params?.operationsList === true;
 };
 
-export const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
+const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
   const flags = await getFlags();
   if (!flags.trim()) {
     return undefined; // avoid parse errors

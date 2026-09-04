@@ -82,6 +82,7 @@ function run(input: SignApprovalEvmIntentInput = BASE_INPUT) {
     deviceConnectionResult: FAKE_CONNECTION,
     deviceExtractedContext: FAKE_CONTEXT,
     input,
+    onResult: jest.fn(),
   });
 }
 

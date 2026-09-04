@@ -67,7 +67,7 @@ describe("Contacts feature introduction integration", () => {
     expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
   });
 
-  it("should persist dismissal from Try contacts and keep the Contacts page available", async () => {
+  it("should persist dismissal from Explore now and keep the Contacts page available", async () => {
     const { user, store } = render(<ContactsFeatureIntroductionTestApp />, {
       navigationInitialState: contactsNavigationState,
       overrideInitialState: withFlagOverrides(

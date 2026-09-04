@@ -19,9 +19,18 @@ jest.mock("../../bridge/preload", () => ({
   getCurrentCeloPreloadData: () => mockGetCurrentCeloPreloadData(),
 }));
 
+// readContract is dispatched by functionName: `isBlocked` (the epoch-processing
+// probe) defaults to false; every other read (e.g. getAccountNonvotingLockedGold)
+// returns a balance. Tests override mockReadContract to simulate a blocked epoch.
+const defaultReadContract = async ({ functionName }: { functionName?: string }) =>
+  functionName === "isBlocked" ? false : BigInt(100);
+const mockReadContract = jest.fn<Promise<unknown>, [{ functionName?: string }]>(
+  defaultReadContract,
+);
+
 jest.mock("../../network/client", () => ({
   getCeloClient: jest.fn(() => ({
-    readContract: jest.fn(async () => BigInt(100)),
+    readContract: (args: { functionName?: string }) => mockReadContract(args),
   })),
 }));
 
@@ -528,6 +537,75 @@ describe("getTransactionStatus", () => {
       const status = await getTransactionStatus(voteAccount, voteTransaction);
 
       expect(status.errors).not.toHaveProperty("recipient");
+    });
+  });
+
+  describe("vote mode - epoch processing block (LIVE-32861)", () => {
+    const voteAccount = {
+      ...accountFixture,
+      balance: BigNumber(10000000000000000),
+      spendableBalance: BigNumber(10000000000000000),
+      celoResources: {
+        ...accountFixture.celoResources,
+        nonvotingLockedBalance: BigNumber(100),
+      },
+    };
+    const voteTransaction = {
+      ...transactionFixture,
+      mode: "vote" as const,
+      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      fees: BigNumber(2),
+      amount: BigNumber(50),
+    };
+
+    const blockedReadContract = async ({ functionName }: { functionName?: string }) =>
+      functionName === "isBlocked" ? true : BigInt(100);
+
+    beforeEach(() => {
+      // Recipient is eligible so the votable check stays quiet; the probe reset
+      // guards against a blocked implementation leaking from a previous test.
+      mockGetCurrentCeloPreloadData.mockReturnValue({
+        validatorGroups: [
+          { address: voteTransaction.recipient, name: "Eligible Group", votes: BigNumber(0) },
+        ],
+      });
+      mockReadContract.mockImplementation(defaultReadContract);
+    });
+
+    it("sets CeloEpochProcessingActive on amount when Election.isBlocked() is true", async () => {
+      mockReadContract.mockImplementation(blockedReadContract);
+
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors["amount"].name).toEqual("CeloEpochProcessingActive");
+    });
+
+    it("does not set CeloEpochProcessingActive when Election.isBlocked() is false", async () => {
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors).not.toHaveProperty("amount");
+    });
+
+    it("takes precedence over NotEnoughBalance when the epoch is blocked", async () => {
+      mockReadContract.mockImplementation(blockedReadContract);
+
+      const status = await getTransactionStatus(voteAccount, {
+        ...voteTransaction,
+        amount: BigNumber(100000), // exceeds the non-voting locked balance (100)
+      });
+
+      expect(status.errors["amount"].name).toEqual("CeloEpochProcessingActive");
+    });
+
+    it("does not block when the isBlocked() probe fails transiently", async () => {
+      mockReadContract.mockImplementation(async ({ functionName }: { functionName?: string }) => {
+        if (functionName === "isBlocked") throw new Error("network error");
+        return BigInt(100);
+      });
+
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors).not.toHaveProperty("amount");
     });
   });
 });

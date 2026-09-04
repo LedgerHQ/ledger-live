@@ -14,7 +14,7 @@ import {
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
   shareViewKey,
 } from "@ledgerhq/live-e2e-shared/speculos";
-import { setExchangeDependencies } from "../utils/speculosUtils";
+import { setExchangeDependencies } from "@e2e/utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";

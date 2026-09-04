@@ -688,6 +688,92 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.value).toEqual(new BigNumber(515_000));
   });
 
+  // ── memo extraction ───────────────────────────────────────────────────
+
+  it("reads the memo from the outgoing note of a shielded send", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-memo-out",
+      hex: "00",
+      blockHeight: 200,
+      blockHash: "hash-memo",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          { amount: new BigNumber(5_000), memo: "Hello receiver", transfer_type: "outgoing" },
+          { amount: new BigNumber(1_000), memo: "", transfer_type: "internal" },
+        ],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect((op.extra as { memo?: string }).memo).toBe("Hello receiver");
+  });
+
+  it("reads the memo from the incoming note of a shielded receive", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-memo-in",
+      hex: "00",
+      blockHeight: 201,
+      blockHash: "hash-memo-in",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          { amount: new BigNumber(8_000), memo: "Payment for invoice", transfer_type: "incoming" },
+        ],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect((op.extra as { memo?: string }).memo).toBe("Payment for invoice");
+  });
+
+  it("picks the correct note's memo when incoming and outgoing notes are both present", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-mixed-memo",
+      hex: "00",
+      blockHeight: 202,
+      blockHash: "hash-mixed-memo",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        // The incoming note comes first on purpose: picking the first non-empty memo
+        // instead of the one matching the operation direction would fail this test.
+        ironwood_outputs: [
+          { amount: new BigNumber(1_000), memo: "incoming memo", transfer_type: "incoming" },
+          { amount: new BigNumber(3_000), memo: "outgoing memo", transfer_type: "outgoing" },
+          { amount: new BigNumber(500), memo: "change note", transfer_type: "internal" },
+        ],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_OUT");
+    expect((op.extra as { memo?: string }).memo).toBe("outgoing memo");
+  });
+
+  it("produces no memo field when the note memo is empty", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-no-memo",
+      hex: "00",
+      blockHeight: 203,
+      blockHash: "hash-no-memo",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(2_000), memo: "", transfer_type: "outgoing" }],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect((op.extra as { memo?: string }).memo).toBeUndefined();
+  });
+
   // The newest pool present labels the operation, but every pool that moved funds
   // is counted: the label answers "which protocol", not "how much".
   it("op.value for a mixed-pool outgoing tx counts the notes of every pool", () => {

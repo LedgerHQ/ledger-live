@@ -6,7 +6,7 @@ import {
 import { createAddContactController } from "./controller";
 import type { ContactCreationPort } from "./ports";
 
-function createContactCreationPort(
+function stubContactCreationPort(
   implementation: ContactCreationPort["createContact"],
 ): ContactCreationPort {
   return { createContact: implementation };
@@ -14,14 +14,14 @@ function createContactCreationPort(
 
 describe("createAddContactController", () => {
   it("keeps save disabled until the draft name is valid", () => {
-    const controller = createAddContactController(createContactCreationPort(jest.fn()));
+    const controller = createAddContactController(stubContactCreationPort(jest.fn()));
 
     expect(controller.getViewModel("").isSaveEnabled).toBe(false);
     expect(controller.getViewModel("Ben").isSaveEnabled).toBe(true);
   });
 
   it("exposes the stable invalid name error while the draft name is invalid", () => {
-    const controller = createAddContactController(createContactCreationPort(jest.fn()));
+    const controller = createAddContactController(stubContactCreationPort(jest.fn()));
 
     expect(controller.getViewModel("Olive@2")).toMatchObject({
       invalidNameError: "InvalidContactNameError",
@@ -31,7 +31,7 @@ describe("createAddContactController", () => {
 
   it("rejects a duplicate name before calling the creation port", async () => {
     const createContact = jest.fn();
-    const controller = createAddContactController(createContactCreationPort(createContact));
+    const controller = createAddContactController(stubContactCreationPort(createContact));
     const existingNames = [ContactNameSchema.parse("Ada")];
 
     expect(controller.getViewModel(" ada ", existingNames)).toMatchObject({
@@ -43,7 +43,7 @@ describe("createAddContactController", () => {
   });
 
   it("rejects save when the draft name is empty", async () => {
-    const controller = createAddContactController(createContactCreationPort(jest.fn()));
+    const controller = createAddContactController(stubContactCreationPort(jest.fn()));
 
     await expect(controller.save("")).rejects.toThrow();
   });
@@ -57,7 +57,7 @@ describe("createAddContactController", () => {
         addresses: [],
       }),
     );
-    const controller = createAddContactController(createContactCreationPort(createContact));
+    const controller = createAddContactController(stubContactCreationPort(createContact));
 
     await expect(controller.save("Olivia")).resolves.toMatchObject({
       id: "contact-olivia",
@@ -77,7 +77,7 @@ describe("createAddContactController", () => {
         addresses: [],
       }),
     );
-    const controller = createAddContactController(createContactCreationPort(createContact));
+    const controller = createAddContactController(stubContactCreationPort(createContact));
 
     await controller.save(" E\u0301lodie ");
 

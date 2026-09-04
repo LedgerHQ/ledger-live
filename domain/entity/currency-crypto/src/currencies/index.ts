@@ -84,6 +84,7 @@ export * from "./flare";
 export * from "./flow";
 export * from "./game_credits";
 export * from "./gochain";
+export * from "./gonka";
 export * from "./groestcoin";
 export * from "./hedera";
 export * from "./hedera_testnet";

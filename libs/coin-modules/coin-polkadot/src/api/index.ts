@@ -1,21 +1,13 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
-  CoinModuleApi,
-  Balance,
-  Block,
-  BlockInfo,
+  CoinModuleImpl,
   BroadcastConfig,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
-  TransactionValidation,
-  Validator,
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -35,7 +27,16 @@ import { validateAddress } from "../logic/validateAddress";
 // The caller builds the PolkadotContext and passes it to each method (ADR-019). Each method resolves
 // config via `await context.config()` and threads it as the required first argument down through the
 // logic/network layers, so the currency-keyed singleton is no longer used on the api path.
-export function createApi(): CoinModuleApi<PolkadotCoinConfig> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`,
+// `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer
+// resolver applies `withDefaults`, which answers "not supported" for each.
+//
+// `combine` stays and keeps throwing: it is a required method, so it cannot be omitted — the device
+// signature is attached by the signer rather than here.
+export function createApi() {
   return {
     broadcast: async (
       context: PolkadotContext,
@@ -45,27 +46,17 @@ export function createApi(): CoinModuleApi<PolkadotCoinConfig> {
       const config = await context.config();
       return broadcast(config, transaction, "polkadot");
     },
-    async call(_context: PolkadotContext) {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context: PolkadotContext, _tx: string, _signature: string[]) => {
+    combine: (
+      _context: PolkadotContext,
+      _tx: string,
+      _signature: string[],
+      _options?: { pubkey?: string },
+    ) => {
       throw new Error("UnsupportedMethod");
     },
-    craftTransaction: (context, transactionIntent, options) =>
+    craftTransaction: (context, transactionIntent, options?) =>
       craft(context, transactionIntent, options?.customFees),
-    craftRawTransaction: (
-      _context: PolkadotContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: (context, transactionIntent) => estimate(context, transactionIntent),
+    estimateFees: (context, transactionIntent, _options?) => estimate(context, transactionIntent),
     getBalance: async (context: PolkadotContext, address: string, options?: BalanceOptions) => {
       const config = await context.config();
       return rejectBalanceOptions(() => getBalance(config, address), options);
@@ -75,46 +66,9 @@ export function createApi(): CoinModuleApi<PolkadotCoinConfig> {
       return lastBlock(config);
     },
     listOperations: (context, address, options) => operations(context, address, options),
-    getBlock(_context: PolkadotContext, _height: number): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context: PolkadotContext, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(
-      _context: PolkadotContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(
-      _context: PolkadotContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(
-      _context: PolkadotContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateIntent: async (
-      _context: PolkadotContext,
-      _transactionIntent: TransactionIntent,
-      _balances: Balance[],
-      _options?: { customFees?: FeeEstimation },
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_context: PolkadotContext, _address: string) => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<PolkadotCoinConfig>;
 }
 
 async function craft(

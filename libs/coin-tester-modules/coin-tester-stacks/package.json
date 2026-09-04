@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stacks",
-  "version": "0.1.1",
+  "version": "0.1.2-next.3",
   "private": true,
   "description": "Ledger Stacks Coin Tester",
   "main": "src/scenarii.test.ts",

@@ -531,6 +531,28 @@ describe("mapConnectAppDAErrorStatus", () => {
     expect(getCurrentDeviceState).not.toHaveBeenCalled();
   });
 
+  it("GIVEN an invalid firmware metadata error WHEN it is mapped THEN it returns a blocking invalid provider state", () => {
+    // GIVEN
+    const getCurrentDeviceState = jest.fn(() => makeSessionState());
+
+    // WHEN
+    const result = mapConnectAppDAErrorStatus({
+      state: makeErrored({
+        _tag: "InvalidGetFirmwareMetadataResponseError",
+      } as unknown as ConnectAppDAError),
+      appName,
+      getCurrentDeviceState,
+      latestInstallPlan: null,
+      retry,
+    });
+
+    // THEN
+    expect(result).toEqual({
+      type: BlockingStateType.InvalidProvider,
+    });
+    expect(getCurrentDeviceState).not.toHaveBeenCalled();
+  });
+
   it("GIVEN a locked device error WHEN it is mapped THEN it returns a retryable locked state", () => {
     // WHEN
     const result = mapConnectAppDAErrorStatus({

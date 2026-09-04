@@ -94,6 +94,17 @@ function Earn({ route }: Props) {
         : undefined,
     [swapToEarnFlag],
   );
+  const stableSavingsFlag = useFeature("stableSavings");
+  const stableSavingsParam = useMemo(
+    () =>
+      stableSavingsFlag
+        ? JSON.stringify({
+            enabled: stableSavingsFlag.enabled,
+            params: stableSavingsFlag.params,
+          })
+        : undefined,
+    [stableSavingsFlag],
+  );
 
   const shouldDisplayBackgroundCanvas = useMemo(
     () => shouldDisplayEarnBackgroundCanvas(params?.intent, swapToEarnFlag?.enabled ?? false),
@@ -122,6 +133,7 @@ function Earn({ route }: Props) {
         ? JSON.stringify(stakeCurrenciesParam)
         : undefined,
       swapToEarn: swapToEarnParam,
+      stableSavings: stableSavingsParam,
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: "v1",
@@ -144,6 +156,7 @@ function Earn({ route }: Props) {
     stakeCurrenciesParam,
     ethDepositCohort,
     swapToEarnParam,
+    stableSavingsParam,
     params,
     searchParams,
   ]);

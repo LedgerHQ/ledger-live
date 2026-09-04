@@ -1,9 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import CommonPage from "../common.page";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import CommonPage from "@e2e/page/common.page";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { isAggregatedAssetsEnabled } from "../../utils/featureFlagUtils";
+import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
 
 export default class AccountsPage extends CommonPage {
   private readonly baseLink = "accounts";

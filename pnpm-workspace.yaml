@@ -21,15 +21,17 @@ packages:
   - "support/*"
 
 catalog:
-  "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.4.1
+  "@jest/globals": 30.4.1
+  "@ledgerhq/context-module": 2.5.0
   "@ledgerhq/crypto-icons": "2.0.4"
-  "@ledgerhq/device-management-kit": 1.7.1
+  "@ledgerhq/device-contacts-kit": 0.3.0
+  "@ledgerhq/device-management-kit": 1.8.0
+  "@ledgerhq/dmk-ledger-wallet": 0.5.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.16.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.17.0
   "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
-  "@ledgerhq/device-signer-kit-solana": 1.12.1
+  "@ledgerhq/device-signer-kit-solana": 1.13.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-signer-kit-icp": 0.2.0
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
@@ -83,19 +85,19 @@ catalog:
   expo-keep-awake: 15.0.8
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
-  "@jest/reporters": 30.2.0
-  "@jest/test-result": 30.2.0
+  "@jest/reporters": 30.4.1
+  "@jest/test-result": 30.4.1
   "@reduxjs/toolkit": 2.11.2
-  "@rsbuild/core": 2.0.9
-  "@rsbuild/plugin-node-polyfill": 1.4.5
-  "@rsbuild/plugin-react": 2.0.1
+  "@rsbuild/core": 2.1.13
+  "@rsbuild/plugin-node-polyfill": 1.4.6
+  "@rsbuild/plugin-react": 2.1.0
   "@rsbuild/plugin-styled-components": 1.6.2
   "@rsdoctor/rspack-plugin": "2.0.0-alpha.0"
-  "@rspack/cli": 2.0.5
-  "@rspack/core": 2.0.5
-  "@rspack/dev-server": 2.0.3
-  "@rspack/plugin-react-refresh": 2.0.1
-  "@rslib/core": 0.22.0
+  "@rspack/cli": 2.1.10
+  "@rspack/core": 2.1.10
+  "@rspack/dev-server": 2.1.0
+  "@rspack/plugin-react-refresh": 2.0.2
+  "@rslib/core": 0.23.2
   react-refresh: 0.18.0
   storybook: 10.4.1
   "@storybook/react": 10.4.1
@@ -142,7 +144,7 @@ catalog:
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.5
-  babel-jest: 30.2.0
+  babel-jest: 30.4.1
   bs58: ^4.0.1
   bs58check: ^2.1.2
   class-variance-authority: 0.7.1
@@ -152,7 +154,7 @@ catalog:
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
-  "@solana/web3.js": ^1.98.4
+  "@solana/web3.js": ^1.99.0-beta.0
   "@polkadot/api": 16.5.4
   "@polkadot/api-augment": 16.5.4
   "@polkadot/api-derive": 16.5.4
@@ -161,18 +163,18 @@ catalog:
   "@polkadot/rpc-provider": 16.5.4
   "@polkadot/util": 14.0.1
   "@polkadot/util-crypto": 14.0.1
-  expect: 30.2.0
+  expect: 30.4.1
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
   lodash: 4.17.21
   msw: ^2.7.3
-  jest: 30.2.0
-  jest-circus: 30.2.0
-  jest-docblock: 30.2.0
-  jest-environment-jsdom: 30.2.0
-  jest-environment-node: 30.2.0
+  jest: 30.4.1
+  jest-circus: 30.4.1
+  jest-docblock: 30.4.0
+  jest-environment-jsdom: 30.4.1
+  jest-environment-node: 30.4.1
   jest-file-snapshot: 0.7.0
-  jest-util: 30.2.0
+  jest-util: 30.4.1
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
@@ -221,11 +223,11 @@ catalog:
   oxlint: 1.79.0
   oxfmt: 0.64.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-hypercore": 2.0.0
-  "@ledgerhq/coin-module-framework": 8.1.0
-  "@ledgerhq/coin-stellar": 9.3.0
-  "@ledgerhq/coin-tezos": 10.1.1
-  "@ledgerhq/coin-xrp": 10.0.0
+  "@ledgerhq/coin-hypercore": 2.0.1
+  "@ledgerhq/coin-module-framework": 8.2.0
+  "@ledgerhq/coin-stellar": 9.4.0
+  "@ledgerhq/coin-tezos": 10.2.0
+  "@ledgerhq/coin-xrp": 10.1.0
   detox: 20.51.3
 
 overrides:

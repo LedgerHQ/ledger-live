@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/evm-tools",
-  "version": "1.14.1",
+  "version": "1.14.2-next.0",
   "description": "EVM tooling used for coin integrations & app bindings",
   "main": "./index.ts",
   "keywords": [
@@ -53,13 +53,14 @@
     "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

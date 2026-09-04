@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runSwapHistoryOperationsTest } from "./swap.other";
+import { runSwapHistoryOperationsTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapHistoryTestConfig = {
   swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),

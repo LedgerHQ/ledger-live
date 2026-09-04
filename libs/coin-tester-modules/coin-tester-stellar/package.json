@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stellar",
-  "version": "1.6.1",
+  "version": "1.6.2-next.3",
   "private": true,
   "description": "Ledger Stellar Coin Tester",
   "keywords": [

@@ -44,11 +44,11 @@ export async function listOperations(
 
   const sigStrings = signatures.map(s => s.signature);
   const parsed = await api.getParsedTransactions(sigStrings);
+  const txBySignature = indexTransactionsBySignature(parsed);
 
   const items: Operation[] = [];
-  for (let i = 0; i < signatures.length; i++) {
-    const sig = signatures[i];
-    const tx = parsed[i];
+  for (const sig of signatures) {
+    const tx = txBySignature.get(sig.signature);
     if (!tx?.meta || sig.blockTime === null || sig.blockTime === undefined) continue;
 
     if (minHeight > 0 && sig.slot < minHeight) continue;
@@ -64,10 +64,23 @@ export async function listOperations(
   const lastSig = signatures[signatures.length - 1];
   const hasMore = signatures.length === rpcLimit;
   const reachedMinHeightBoundary = minHeight > 0 && lastSig.slot < minHeight;
-  const next =
-    items.length > 0 && hasMore && !reachedMinHeightBoundary ? lastSig.signature : undefined;
+  const next = hasMore && !reachedMinHeightBoundary ? lastSig.signature : undefined;
 
   return { items, next };
+}
+
+/** JSON-RPC batch responses are not order-guaranteed, so pairing by array position is unsafe. */
+function indexTransactionsBySignature(
+  parsed: (ParsedTransactionWithMeta | null)[],
+): Map<string, ParsedTransactionWithMeta> {
+  const bySignature = new Map<string, ParsedTransactionWithMeta>();
+  for (const tx of parsed) {
+    if (!tx) continue;
+    for (const signature of tx.transaction.signatures) {
+      bySignature.set(signature, tx);
+    }
+  }
+  return bySignature;
 }
 
 type TxMeta = {

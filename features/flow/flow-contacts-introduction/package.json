@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-introduction",
-  "version": "0.3.0",
+  "version": "1.0.0-next.0",
   "private": true,
   "description": "Shared Contacts introduction flow for Desktop and Mobile",
   "main": "src/web.ts",

@@ -18,7 +18,6 @@ describe("Fantom (etherscan explorer)", () => {
         type: "blockscout",
         uri: "https://ftmscout.com/api",
       },
-      showNfts: false,
     };
     beforeAll(() => {
       module = createApi("fantom");

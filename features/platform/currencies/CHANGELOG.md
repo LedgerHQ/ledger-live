@@ -1,5 +1,20 @@
 # @features/platform-currencies
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#21349](https://github.com/LedgerHQ/ledger-live/pull/21349) [`0df32c7`](https://github.com/LedgerHQ/ledger-live/commit/0df32c7f80d190522285002bfa6bffa0539f5b23) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(domain): add resilience to `null` and `undefined` responses from CAL
+
+### Patch Changes
+
+- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`ce47443`](https://github.com/LedgerHQ/ledger-live/commit/ce47443e97f559210443547a7948ef61c01f7feb), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`0df32c7`](https://github.com/LedgerHQ/ledger-live/commit/0df32c7f80d190522285002bfa6bffa0539f5b23)]:
+  - @domain/entity-currency-crypto@0.11.0-next.0
+  - @shared/api-services@0.6.0-next.0
+  - @domain/api-currency-token@0.6.0-next.0
+  - @domain/entity-currency-token@0.5.1-next.0
+  - @features/platform-feature-flags@0.6.8-next.0
+
 ## 0.6.2
 
 ### Patch Changes

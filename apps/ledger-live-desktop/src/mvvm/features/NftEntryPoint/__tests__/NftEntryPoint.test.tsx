@@ -5,6 +5,7 @@ import NftEntryPoint from "..";
 import { Entry } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { Account } from "@ledgerhq/types-live";
+import { getAccountUrl } from "~/renderer/utils";
 
 const mockNavigate = jest.fn();
 
@@ -116,7 +117,7 @@ describe("NftEntryPoint", () => {
       state: {
         accountId: mockAccount.id,
         chainId: mockAccount.currency.id,
-        returnTo: `/account/${mockAccount.id}`,
+        returnTo: getAccountUrl(mockAccount.id),
         website: "https://magiceden.io",
       },
     });

@@ -1,3 +1,5 @@
+import { computeAccountAlias } from "@domain/entity-account-alias";
+
 /**
  * React Router decodes URL parameters, but account IDs in the Redux store are encoded.
  * This function returns an array of IDs to try when searching for an account:
@@ -96,15 +98,18 @@ export function findSubAccountByIdWithFallback<
 /**
  * Constructs a URL path for navigating to an account.
  * Handles both main accounts and token accounts (sub-accounts).
- * React Router v7 with wildcard routes (*) captures the full path including slashes.
+ *
+ * Account IDs embed an xpub or an address, so the path carries their alias instead — see
+ * `@domain/entity-account-alias`. Resolve it back with `useAccountIdFromRoute`.
  *
  * @param accountId - The account ID (required)
  * @param parentId - The parent account ID (optional, for token accounts)
- * @returns The URL path (e.g., "/account/{parentId}/{accountId}" or "/account/{accountId}")
+ * @returns The URL path (e.g., "/account/{parentAlias}/{alias}" or "/account/{alias}")
  */
 export function getAccountUrl(accountId: string, parentId?: string): string {
+  const alias = computeAccountAlias(accountId);
   if (parentId) {
-    return `/account/${parentId}/${accountId}`;
+    return `/account/${computeAccountAlias(parentId)}/${alias}`;
   }
-  return `/account/${accountId}`;
+  return `/account/${alias}`;
 }

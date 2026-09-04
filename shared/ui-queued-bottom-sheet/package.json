@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-queued-bottom-sheet",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Shared queue-aware Lumen QueuedBottomSheet for React Native, with app couplings injected as adapters",
   "main": "src/index.ts",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
@@ -57,6 +57,7 @@
     "react-native": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

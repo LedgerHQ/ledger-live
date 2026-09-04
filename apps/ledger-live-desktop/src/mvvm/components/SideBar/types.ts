@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { Location } from "react-router";
 import type { SideBarActiveValue } from "./utils";
 
@@ -25,6 +26,7 @@ export interface RecoverFeatureConfig {
 export interface SideBarViewModel {
   readonly pathname: string;
   readonly location: Location;
+  readonly navRef: RefObject<HTMLElement | null>;
   readonly collapsed: boolean;
   readonly navigationLocked?: boolean;
   readonly noAccounts: boolean;

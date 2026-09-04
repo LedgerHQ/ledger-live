@@ -6,7 +6,7 @@ import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/featu
 import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
-} from "@features/flow-pay-card-feature-tour/state";
+} from "@features/flow-pay-feature-tour/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {

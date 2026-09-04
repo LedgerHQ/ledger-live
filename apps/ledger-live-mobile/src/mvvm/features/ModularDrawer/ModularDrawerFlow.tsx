@@ -13,6 +13,7 @@ import {
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import type { DisabledItemsExplanation } from "./types";
 
 export type ModularDrawerFlowRenderProps = Readonly<{
   /** Existing Modular Drawer flow to render in the chosen presentation shell */
@@ -33,8 +34,10 @@ export type ModularDrawerFlowRenderProps = Readonly<{
 export type ModularDrawerFlowProps = Readonly<{
   /** Whether the drawer flow is open */
   isOpen: boolean;
-  /** Callback fired when the drawer flow is closed */
+  /** Callback fired when the drawer flow is closed (fires cancel callback) */
   onClose?: () => void;
+  /** Hides the drawer UI without firing the cancel callback; used for inline navigation */
+  onSilentClose?: () => void;
 
   /** List of preselected currencies to display in the drawer */
   currencies?: string[];
@@ -58,6 +61,8 @@ export type ModularDrawerFlowProps = Readonly<{
   areCurrenciesFiltered?: boolean;
   /** Network IDs that remain selectable while all MAD rows stay visible. */
   selectableNetworkIds?: readonly string[];
+  /** Optional explanations displayed when an unavailable asset or network is pressed. */
+  disabledItemsExplanation?: DisabledItemsExplanation;
 
   /** Renders the Modular Drawer flow inside a presentation shell */
   children: (props: ModularDrawerFlowRenderProps) => React.ReactNode;
@@ -66,6 +71,7 @@ export type ModularDrawerFlowProps = Readonly<{
 export function ModularDrawerFlow({
   isOpen,
   onClose,
+  onSilentClose,
   currencies,
   categories,
   assetsConfiguration,
@@ -76,6 +82,7 @@ export function ModularDrawerFlow({
   uiUseCase,
   areCurrenciesFiltered,
   selectableNetworkIds,
+  disabledItemsExplanation,
   children,
 }: ModularDrawerFlowProps): React.JSX.Element {
   const {
@@ -102,6 +109,7 @@ export function ModularDrawerFlow({
 
   const {
     accountCurrency,
+    selectedAssetName,
     handleAsset,
     handleNetwork,
     handleBackButton,
@@ -115,6 +123,7 @@ export function ModularDrawerFlow({
     currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
+    onSilentClose,
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
     onCurrencySelected,
@@ -135,12 +144,17 @@ export function ModularDrawerFlow({
         assetsSorted,
         uiUseCase,
         selectableNetworkIds,
+        disabledAssetExplanation: disabledItemsExplanation?.asset,
+        onDisabledAssetPress: disabledItemsExplanation?.onPress,
       }}
       networksViewModel={{
         onNetworkSelected: handleNetwork,
         availableNetworks,
         networksConfiguration: networkConfigurationSanitized,
         selectableNetworkIds,
+        disabledNetworkExplanation: disabledItemsExplanation?.network,
+        onDisabledNetworkPress: disabledItemsExplanation?.onPress,
+        selectedAssetName,
       }}
       accountsViewModel={{
         onAddNewAccount,

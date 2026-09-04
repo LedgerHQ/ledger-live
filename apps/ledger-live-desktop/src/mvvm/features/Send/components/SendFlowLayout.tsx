@@ -14,6 +14,8 @@ import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { AddNewContactHeaderProvider } from "../context/AddNewContactHeaderContext";
+import { RecipientContactSelectionProvider } from "../context/RecipientContactSelectionContext";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -62,32 +64,36 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
             })}
           />
         )}
-        <RecipientScannerProvider>
-          {shouldAnimateHeight ? (
-            <AnimatedHeight>
-              <div className="flex flex-col">
-                <SendHeader />
-                {StepComponent && (
-                  <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
-                    <StepComponent />
+        <AddNewContactHeaderProvider>
+          <RecipientContactSelectionProvider>
+            <RecipientScannerProvider>
+              {shouldAnimateHeight ? (
+                <AnimatedHeight>
+                  <div className="flex flex-col">
+                    <SendHeader />
+                    {StepComponent && (
+                      <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                        <StepComponent />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </AnimatedHeight>
-          ) : (
-            <>
-              <SendHeader />
-              {StepComponent && (
-                <div
-                  key={wizard.currentStep}
-                  className="flex min-h-0 flex-1 animate-fade-in flex-col"
-                >
-                  <StepComponent />
-                </div>
+                </AnimatedHeight>
+              ) : (
+                <>
+                  <SendHeader />
+                  {StepComponent && (
+                    <div
+                      key={wizard.currentStep}
+                      className="flex min-h-0 flex-1 animate-fade-in flex-col"
+                    >
+                      <StepComponent />
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </RecipientScannerProvider>
+            </RecipientScannerProvider>
+          </RecipientContactSelectionProvider>
+        </AddNewContactHeaderProvider>
       </DialogContent>
     </Dialog>
   );

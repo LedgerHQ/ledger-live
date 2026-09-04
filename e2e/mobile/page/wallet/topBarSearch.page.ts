@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { retryUntilTimeout } from "../../utils/retry";
+import { retryUntilTimeout } from "@e2e/utils/retry";
 
 export default class TopBarSearchPage {
   private readonly topBarSearchButtonId = "topbar-search";

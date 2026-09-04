@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNewSendMemoTest } from "../newSendFlow";
-import { FF_NEW_SEND_FLOW_ENABLED } from "../../../utils/featureFlagUtils";
+import { runNewSendMemoTest } from "@e2e/specs/send/newSendFlow";
+import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 // The Ledger Solana app does not surface the memo on the device review screen, so Speculos does
 // not assert it; this test covers completion with and without a memo (skip).

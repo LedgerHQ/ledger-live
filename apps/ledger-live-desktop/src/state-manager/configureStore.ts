@@ -14,6 +14,10 @@ import {
   swapApiExtra,
 } from "@shared/api-services";
 import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  createAccountAliasMiddleware,
+  withAccountAliases,
+} from "~/renderer/middlewares/accountAlias";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -45,7 +49,7 @@ const customCreateStore = ({
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
-    preloadedState: state,
+    preloadedState: withAccountAliases(state),
     middleware: getDefaultMiddleware =>
       applyLldRTKApiMiddlewares(
         getDefaultMiddleware({
@@ -64,8 +68,9 @@ const customCreateStore = ({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
               ...cardApiExtra({
-                cardApiBaseUrl: getEnv("CARD_API_URL"),
-                cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+                // Read on every request, so the debug settings can change them without a restart.
+                getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
+                getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
                 getCardSessionToken,
                 refreshCardSession,
               }),
@@ -102,6 +107,7 @@ const customCreateStore = ({
         }),
       )
         .concat(logger)
+        .concat(createAccountAliasMiddleware())
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
         .concat(dbMiddleware ? [dbMiddleware] : [])
         .concat(

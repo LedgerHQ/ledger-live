@@ -1,18 +1,20 @@
 /**
- * Unit tests for the createApi factory — verifies the coin config is set, every CoinModuleApi
- * method is wired and delegates to its logic function with the right arguments, and unsupported
- * methods throw. Network and logic layers are mocked; no network access.
+ * Unit tests for the createApi factory — verifies the coin config is set, every method the chain
+ * supports is wired and delegates to its logic function with the right arguments, the omitted
+ * capabilities are absent from the authored object, and they answer "not supported" once the
+ * framework's `withDefaults` (the wrapper the resolver applies) has backfilled them. Network and
+ * logic layers are mocked; no network access.
  */
 import type {
   Balance,
   BalanceOptions,
-  CoinModuleApi,
   CraftedTransaction,
   FeeEstimation,
   Operation,
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { createApi } from "./index";
 import { getCoinConfig, setCoinConfig, type VechainCurrencyConfig } from "../config";
 import { createMockVechainContext } from "../test/context";
@@ -60,6 +62,21 @@ describe("createApi", () => {
     jest.clearAllMocks();
   });
 
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), createMockVechainContext())).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "register",
+      ],
+      inconsistent: [],
+    });
+  });
   it("exposes the coin config through the singleton", () => {
     setCoinConfig(config);
 
@@ -69,7 +86,7 @@ describe("createApi", () => {
     });
   });
 
-  it("returns an object with every CoinModuleApi method", () => {
+  it("declares every method the chain supports", () => {
     const api = createApi();
 
     expect(api).toEqual(
@@ -77,7 +94,6 @@ describe("createApi", () => {
         broadcast: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
-        craftRawTransaction: expect.any(Function),
         craftTransactionData: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
@@ -85,13 +101,8 @@ describe("createApi", () => {
         listOperations: expect.any(Function),
         getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
-        getRewards: expect.any(Function),
-        getStakes: expect.any(Function),
-        getValidators: expect.any(Function),
         validateIntent: expect.any(Function),
-        getNextSequence: expect.any(Function),
         validateAddress: expect.any(Function),
-        call: expect.any(Function),
       }),
     );
   });
@@ -221,33 +232,6 @@ describe("createApi", () => {
 
     expect(validateIntent).toHaveBeenCalledWith(nativeIntent, [], undefined);
     expect(result).toEqual(validation);
-  });
-
-  it("throws synchronously for methods not applicable/supported for Vechain", () => {
-    const api = createApi();
-    const context = createMockVechainContext();
-
-    expect(() => api.getNextSequence(context, SENDER)).toThrow(
-      "getNextSequence is not applicable for Vechain",
-    );
-    expect(() => api.craftRawTransaction(context, "raw", SENDER, "pubkey", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-    expect(() => api.getStakes(context, SENDER)).toThrow("getStakes is not supported");
-    expect(() => api.getRewards(context, SENDER)).toThrow("getRewards is not supported");
-    expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
-  });
-
-  it("throws for call (not supported)", () => {
-    const api = createApi();
-    const context = createMockVechainContext();
-    expect(() => api.call(context, {})).toThrow("call is not supported");
-  });
-
-  it("throws for register (not supported)", async () => {
-    const api = createApi();
-    const context = createMockVechainContext();
-    await expect(api.register(context, SENDER)).rejects.toThrow("register is not supported");
   });
 
   it("validates addresses via parseAddress", async () => {

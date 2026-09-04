@@ -1,25 +1,5 @@
-module.exports = {
-  testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
-  roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts"],
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
+const { createSharedJestConfig, sharedReporters } = require("@support/jest-shared");
+module.exports = createSharedJestConfig({
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
-};
+  reporters: ["default", ...(process.env.CI ? ["github-actions"] : []), ...sharedReporters],
+});

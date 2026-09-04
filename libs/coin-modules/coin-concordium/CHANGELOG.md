@@ -1,5 +1,40 @@
 # @ledgerhq/coin-concordium
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`da47556`](https://github.com/LedgerHQ/ledger-live/commit/da475565799815dd17c4cb941068031e564da9b6) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` no longer declares `CoinModuleApi` as its return type: it returns the object it actually
+  builds, checked with `satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>`. Seven
+  capability methods that only threw are omitted instead of stubbed — `call`, `register`, the three
+  staking reads (`getStakes`, `getRewards`, `getValidators`), `validateIntent`, and `getNextSequence`
+  (the crafting path resolves the sequence internally via `getNextValidSequence`, so the capability was
+  never published to callers anyway). Everything Concordium does implement stays, including
+  `craftRawTransaction` and the full block API (`lastBlock`, `getBlockInfo`, `getBlock`), which are real
+  implementations rather than stubs.
+
+  Consumers see no behavioural change: the resolver applies the framework's `withDefaults`, which
+  backfills each omitted method with the same `"<name> is not supported"` throw. `supports()` on the
+  wrapped api now reports these capabilities as absent, which the stubs previously masked.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `combine`, `craftTransaction`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+- [#21239](https://github.com/LedgerHQ/ledger-live/pull/21239) [`02c9ccf`](https://github.com/LedgerHQ/ledger-live/commit/02c9ccfb409317a72f0b29d1fb755214adc9e596) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Protocol-Level Token (PLT) support: TransactionType.TokenUpdate, CIS-7 CBOR encoding, and flat wire serialization
+
+- [#21264](https://github.com/LedgerHQ/ledger-live/pull/21264) [`e723d82`](https://github.com/LedgerHQ/ledger-live/commit/e723d823688cd7f00d4b16549b45c62a500c8a9d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Type the PLT wallet-proxy responses: `accountTokens`, the `/v0/plt/tokens` and `/v0/plt/tokenInfo` clients, PLT transaction detail fields, and the raw reject reason
+
+### Patch Changes
+
+- Updated dependencies [[`02c9ccf`](https://github.com/LedgerHQ/ledger-live/commit/02c9ccfb409317a72f0b29d1fb755214adc9e596), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/concordium-core@0.6.0-next.0
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 1.0.1
 
 ### Patch Changes
@@ -302,25 +337,5 @@
   - @ledgerhq/cryptoassets@13.52.0
   - @ledgerhq/ledger-wallet-framework@2.2.0
   - @ledgerhq/live-network@2.6.5
-
-## 0.13.1-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
-  - @ledgerhq/cryptoassets@13.52.0-next.1
-  - @ledgerhq/types-live@6.112.0-next.1
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
-
-## 0.13.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0-next.0
-  - @ledgerhq/types-live@6.112.0-next.0
-  - @ledgerhq/cryptoassets@13.52.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
-  - @ledgerhq/live-network@2.6.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

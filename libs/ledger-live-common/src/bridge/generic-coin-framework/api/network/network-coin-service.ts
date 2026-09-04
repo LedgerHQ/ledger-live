@@ -1,20 +1,15 @@
 import type {
-  CoinModuleApi,
+  CoinModuleImpl,
   AssetInfo,
   Balance,
-  Block,
   BlockInfo,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
   TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData as craftTransactionDataImpl } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
@@ -197,6 +192,14 @@ const buildCraftTransaction = networkFamily =>
     return data;
   };
 
+// Declared as a `CoinModuleImpl`, so it lists only what the coin-service actually serves. The
+// capabilities the backend does not expose — `craftRawTransaction`, `getBlock`, `getBlockInfo`,
+// `getStakes`, `getRewards`, `getValidators`, `validateAddress`, `call` and `register` — are left
+// out rather than stubbed here: the resolver applies the framework's `withDefaults`, which supplies
+// the same "<name> is not supported" error from a single place.
+//
+// `call` is the one that is meant to arrive: wire it to the coin-service `call` endpoint once that
+// is exposed over the network (BACK-11825).
 export const getNetworkCoinModuleApi = (networkFamily: string) =>
   ({
     broadcast: buildBroadcast(networkFamily),
@@ -208,51 +211,6 @@ export const getNetworkCoinModuleApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-    craftRawTransaction: (
-      _context: Context<any>,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    getBlock(_context: Context<any>, _height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context: Context<any>, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(
-      _context: Context<any>,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(
-      _context: Context<any>,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(
-      _context: Context<any>,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateAddress(_context: Context<any>, _address: string): Promise<boolean> {
-      throw new Error("validateAddress is not supported");
-    },
-    // TODO(BACK-11825): wire to the coin-service `call` endpoint once it is exposed over the network.
-    async call(_context: Context<any>) {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
     craftTransactionData: (_context: Context<any>, intent: TransactionIntent) =>
       craftTransactionDataImpl(intent),
-  }) satisfies CoinModuleApi<any> & BridgeApi;
+  }) satisfies CoinModuleImpl<any> & BridgeApi;

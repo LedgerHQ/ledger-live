@@ -140,7 +140,6 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
       title: t("contacts.featureIntroduction.title"),
-      description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       onComplete: onCompleteFeatureIntroduction,

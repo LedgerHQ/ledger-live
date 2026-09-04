@@ -1,5 +1,17 @@
 # @features/platform-verify-address-intent
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#21164](https://github.com/LedgerHQ/ledger-live/pull/21164) [`a2be85c`](https://github.com/LedgerHQ/ledger-live/commit/a2be85cd773ae59e454cd33b9a38548ea5b003f8) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Wire Pay Request Verify on mobile (intro sheet, DIE address confirmation, tracking).
+  Share `getAddressVerification` (maps refuse / unsupported) in the platform intent package.
+
+### Patch Changes
+
+- Updated dependencies [[`9d5a6d9`](https://github.com/LedgerHQ/ledger-live/commit/9d5a6d980442ac78bcc1c3c12fbfee389aa8e0c9)]:
+  - @features/platform-device-intent@5.2.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

@@ -162,6 +162,7 @@ describe("useOpenSendFlow", () => {
       params: {
         accountId: account.id,
         parentId: undefined,
+        account,
       },
     });
   });
@@ -313,6 +314,7 @@ describe("useOpenSendFlow", () => {
       params: {
         accountId: tokenAccount.id,
         parentId,
+        account: tokenAccount,
       },
     });
   });

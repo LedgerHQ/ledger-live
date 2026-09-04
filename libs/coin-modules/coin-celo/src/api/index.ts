@@ -5,6 +5,7 @@ import type {
   BroadcastConfig,
   BufferTxData,
   CoinModuleApi,
+  CoinModuleImpl,
   Cursor,
   FeeEstimation,
   MemoNotSupported,
@@ -43,23 +44,29 @@ const prefixHex = (hex: string): `0x${string}` =>
  * intents, `getRewards` is unsupported (no discrete on-chain reward events), and
  * `validateIntent` handles staking then delegates the rest to coin-evm.
  */
-export function createApi(
-  currencyId = "celo",
-): CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives — including `stakingSupported`, which is not part of the API surface.
+//
+// `craftRawTransaction` is the one capability neither this module nor the EVM api it composes
+// provides, so it is absent here; the consumer resolver applies `withDefaults`, which answers
+// "not supported" for it. `register` is likewise left to the wrapper rather than stubbed.
+export function createApi(currencyId = "celo") {
   const evmApi = createEvmApi(currencyId);
 
-  // Bridge the gap between the built lib's MemoNotSupported-typed evmApi and the
-  // real v6 EvmConfigInfo-typed interface; the cast is safe because coin-evm
-  // already implements the v6 CoinModuleApi at the source level.
-  const typedEvmApi = evmApi as unknown as CoinModuleApi<
+  // Bridge the gap between the built lib's MemoNotSupported-typed evmApi and the real v6
+  // EvmConfigInfo-typed authoring shape; the cast is needed because coin-evm is consumed through
+  // its build output here, and it names the authoring type since that is what createApi returns.
+  // `validateIntent` is spelled out as required because this module delegates to it for every
+  // non-staking intent: coin-evm implements it, and a future change dropping it must break here
+  // rather than at runtime.
+  const typedEvmApi = evmApi as unknown as CoinModuleImpl<
     EvmConfigInfo,
     MemoNotSupported,
     BufferTxData
-  >;
+  > &
+    Required<Pick<CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData>, "validateIntent">>;
 
-  const api: CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> & {
-    stakingSupported?: boolean;
-  } = {
+  const api = {
     ...typedEvmApi,
     craftTransaction: (
       _context: CeloContext,
@@ -71,7 +78,8 @@ export function createApi(
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       _options?: { feeOption?: unknown },
     ) => estimateFees(intent),
-    combine: (_context: CeloContext, tx: string, signature: string[]) => combine(tx, signature),
+    combine: (_context: CeloContext, tx: string, signature: string[], _options?) =>
+      combine(tx, signature),
     broadcast: (
       _context: CeloContext,
       tx: string,
@@ -90,9 +98,6 @@ export function createApi(
       _context: CeloContext,
       _options?: { cursor?: Cursor },
     ): Promise<Page<Validator>> => getValidators(),
-    async register() {
-      throw new Error("register is not supported");
-    },
     stakingSupported: true,
     validateIntent: (
       context: CeloContext,
@@ -103,6 +108,8 @@ export function createApi(
       isCeloStakingIntent(intent)
         ? validateStakingIntent(intent, balances, options?.customFees)
         : typedEvmApi.validateIntent(context, intent, balances, options),
+  } satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData> & {
+    stakingSupported?: boolean;
   };
 
   return api;

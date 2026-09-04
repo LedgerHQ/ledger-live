@@ -1,11 +1,9 @@
-import { RenameContactComponent } from "./component";
 import { renameContactIntentJob } from "./job";
-import type { RenameContactIntentPlatformDefinition } from "./types";
+import type { RenameContactIntentDefinition } from "./types";
 
-export const renameContactIntentPlatformDefinition: RenameContactIntentPlatformDefinition = {
+export const renameContactIntentDefinition: RenameContactIntentDefinition = {
   label: "Rename contact",
   requiresConnectedDevice: true,
   delegateDeviceLockStateHandlingToExecutor: true,
   job: renameContactIntentJob,
-  component: RenameContactComponent,
 };

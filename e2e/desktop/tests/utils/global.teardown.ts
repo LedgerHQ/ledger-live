@@ -1,8 +1,8 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-e2e-shared/index";
 import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
-import { launchApp } from "./electronUtils";
-import { getFeatureFlags, getMergedFeatureFlags } from "./featureFlagUtils";
+import { launchApp } from "tests/utils/electronUtils";
+import { getFeatureFlags, getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
 

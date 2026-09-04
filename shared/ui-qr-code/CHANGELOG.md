@@ -1,5 +1,14 @@
 # @shared/qr-code
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21074](https://github.com/LedgerHQ/ledger-live/pull/21074) [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Introduce `@support/jest-shared` with `createSharedJestConfig` and `createSharedUiJestConfig` factories; wire all `shared/*` jest configs to use them.
+
+- [#21267](https://github.com/LedgerHQ/ledger-live/pull/21267) [`c20677f`](https://github.com/LedgerHQ/ledger-live/commit/c20677f1b5d13973883196e5665d6dd0ef7c58ba) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the native address QR code format and present the Contacts QR code in its dedicated dark,
+  framed layout.
+
 ## 0.3.0
 
 ### Minor Changes

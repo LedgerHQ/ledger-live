@@ -1,5 +1,23 @@
 # @ledgerhq/live-signer-solana
 
+## 0.21.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932)]:
+  - @ledgerhq/coin-solana@2.0.0-next.1
+
+## 0.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a4e5995`](https://github.com/LedgerHQ/ledger-live/commit/a4e5995bea7f9e1f164bfa50939e15031765b2fa), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a), [`bc1093b`](https://github.com/LedgerHQ/ledger-live/commit/bc1093bc06adfda3700841b5dbd5598825cb52d1)]:
+  - @ledgerhq/coin-solana@2.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.4-next.0
+  - @ledgerhq/ledger-trust-service@0.8.15-next.0
+
 ## 0.21.0
 
 ### Minor Changes
@@ -234,19 +252,5 @@
   - @ledgerhq/hw-transport@6.35.6-next.0
   - @ledgerhq/hw-app-solana@7.10.6-next.0
   - @ledgerhq/hw-bolos@6.36.6-next.0
-
-## 0.16.1
-
-### Patch Changes
-
-- Updated dependencies [[`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9)]:
-  - @ledgerhq/coin-solana@0.56.1
-
-## 0.16.1-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9)]:
-  - @ledgerhq/coin-solana@0.56.1-hotfix.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -87,7 +87,7 @@ describe("ContactsAddAddressEntry", () => {
 
     expect(screen.getByTestId("contacts-add-address-entry-screen")).toHaveStyle({
       bottom: 0,
-      paddingBottom: 352,
+      paddingBottom: 320,
     });
   });
 

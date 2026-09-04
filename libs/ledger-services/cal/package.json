@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-cal-service",
-  "version": "1.19.3",
+  "version": "1.19.4-next.0",
   "private": true,
   "description": "Ledger CAL service client",
   "keywords": [
@@ -64,6 +64,9 @@
     "@shared/env": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
@@ -72,8 +75,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {

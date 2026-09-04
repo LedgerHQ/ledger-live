@@ -135,6 +135,32 @@ describe("validateIntent", () => {
     expect(errors.transaction).toBeInstanceOf(CasperInvalidTransferId);
   });
 
+  describe("framework memo shape { type: 'transferId' }", () => {
+    it("accepts a valid transfer id", () => {
+      const intent: TransactionIntent<CasperMemo> = {
+        ...buildIntent(sendCase()),
+        memo: { type: "transferId", value: "42" },
+      };
+
+      const { errors } = validateIntent(intent, buildBalances(sendCase()), { value: FEES });
+
+      expect(errors.sender).toBeUndefined();
+      expect(errors.transaction).toBeUndefined();
+    });
+
+    it("rejects an out-of-range transfer id", () => {
+      const intent: TransactionIntent<CasperMemo> = {
+        ...buildIntent(sendCase()),
+        memo: { type: "transferId", value: OUT_OF_RANGE_TRANSFER_ID },
+      };
+
+      const { errors } = validateIntent(intent, buildBalances(sendCase()), { value: FEES });
+
+      expect(errors.sender).toBeInstanceOf(CasperInvalidTransferId);
+      expect(errors.transaction).toBeInstanceOf(CasperInvalidTransferId);
+    });
+  });
+
   it("reduces the accepted useAllAmount by the locked funds", () => {
     const locked = 10_000_000_000n;
 

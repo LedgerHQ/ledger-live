@@ -23,6 +23,7 @@ export function ContactsSavedListItem({
   return (
     <ListItem
       onClick={() => onOpen(contact.contactId)}
+      onPointerUp={event => event.currentTarget.blur()}
       data-testid={`contacts-saved-row-${contact.contactId}`}
     >
       <ListItemLeading>

@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-aggregated-assets",
-  "version": "0.5.0",
+  "version": "0.5.1-next.0",
   "private": true,
   "description": "App-facing assets-data runtime: hooks over the DADA API, cache selectors, asset discovery and currency selection",
   "main": "src/index.ts",

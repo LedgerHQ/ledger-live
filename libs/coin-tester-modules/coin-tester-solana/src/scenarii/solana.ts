@@ -13,7 +13,8 @@ import {
   initMSW,
   makeAccount,
 } from "../fixtures";
-import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
+import type { SolanaAccount, SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
+import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@shared/env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
@@ -62,66 +63,31 @@ function computeSubAccountId(
   return encodeTokenAccountId(parentAccountId, token);
 }
 
-function getSolanaStakes(account: Account): SolanaAccount["solanaResources"]["stakes"] {
-  return (account as SolanaAccount).solanaResources?.stakes ?? [];
+function getSolanaPositions(account: Account): SolanaStakingPosition[] {
+  return listSolanaStakingPositions((account as SolanaAccount).stakingResources);
 }
 
-interface StakingResourcesShape {
-  delegations: Array<{ validatorAddress: string; amount: BigNumber }>;
-  unbondings: Array<{ validatorAddress: string; amount: BigNumber }>;
-  delegatedBalance: BigNumber;
-  unbondingBalance: BigNumber;
-  pendingRewardsBalance: BigNumber;
-}
-
-/** Extract stakingResources set by the generic-coin-framework bridge (not typed on Account). */
-function getStakingResources(account: Account): StakingResourcesShape | undefined {
-  const raw = (account as Account & { stakingResources?: StakingResourcesShape }).stakingResources;
-  return raw;
-}
-
-/**
- * Strategy-agnostic staking assertions.
- * Legacy exposes `solanaResources.stakes`, generic-adapter exposes `stakingResources`.
- * These helpers verify the same semantic invariants regardless of strategy.
- */
-function expectDelegationTo(
-  account: Account,
-  strat: BridgeStrategy,
-  validatorAddress: string,
-): void {
-  if (strat === "legacy") {
-    const stakes = getSolanaStakes(account);
-    const found = stakes.find(s => s.delegation?.voteAccAddr === validatorAddress);
-    expect(found).toBeDefined();
-  } else {
-    const sr = getStakingResources(account);
-    expect(sr).toBeDefined();
-    const found = sr!.delegations.find(d => d.validatorAddress === validatorAddress);
-    expect(found).toBeDefined();
-    expect(found!.amount.isGreaterThan(0)).toBe(true);
-  }
+function expectDelegationTo(account: Account, validatorAddress: string): void {
+  const found = getSolanaPositions(account).find(p => p.validatorAddress === validatorAddress);
+  expect(found).toBeDefined();
+  expect(found!.amount.isGreaterThan(0)).toBe(true);
 }
 
 function expectStakeExists(account: Account, strat: BridgeStrategy, stakeAddress: string): void {
   if (strat === "legacy") {
-    const found = getSolanaStakes(account).find(s => s.stakeAccAddr === stakeAddress);
+    const found = getSolanaPositions(account).find(p => p.positionId === stakeAddress);
     expect(found).toBeDefined();
-  } else {
-    // generic-adapter doesn't expose individual stake addresses, check total staking > 0
-    const sr = getStakingResources(account);
-    expect(sr).toBeDefined();
-    const totalStaking = sr!.delegatedBalance.plus(sr!.unbondingBalance);
-    expect(totalStaking.isGreaterThan(0)).toBe(true);
+    return;
   }
+  // generic-adapter builds stakingResources from the framework balances, which carry no
+  // per-stake-account id, so only the aggregated staked amount can be asserted here
+  const resources = (account as SolanaAccount).stakingResources;
+  expect(resources).toBeDefined();
+  expect(resources.delegatedBalance.plus(resources.unbondingBalance).isGreaterThan(0)).toBe(true);
 }
 
-function expectStakingResourcesDefined(account: Account, strat: BridgeStrategy): void {
-  if (strat === "legacy") {
-    expect(getSolanaStakes(account)).toBeDefined();
-  } else {
-    expect(getStakingResources(account)).toBeDefined();
-  }
+function expectStakingResourcesDefined(account: Account): void {
+  expect((account as SolanaAccount).stakingResources).toBeDefined();
 }
 
 function makeScenarioTransactions(
@@ -434,7 +400,7 @@ function makeScenarioTransactions(
         previousAccount.spendableBalance.minus(1e9 + 2297880),
       );
       // Verify staking resources are populated after sync with delegation to the validator
-      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
+      expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
     },
   };
 
@@ -458,7 +424,7 @@ function makeScenarioTransactions(
         previousAccount.balance.minus(latestOperation.value),
       );
       // Verify the stake account is now delegated
-      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
+      expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
     },
   };
 
@@ -510,7 +476,7 @@ function makeScenarioTransactions(
       );
       // Verify staking resources still exist after partial withdrawal
       // (spendableBalance increase above already validates the withdraw landed)
-      expectStakingResourcesDefined(currentAccount, strategy);
+      expectStakingResourcesDefined(currentAccount);
     },
   };
 
@@ -536,7 +502,7 @@ function makeScenarioTransactions(
       );
       expect(currentAccount.spendableBalance).toStrictEqual(new BigNumber(0));
       // Verify staking resources reflect the new stake
-      expectDelegationTo(currentAccount, strategy, VOTE_ACCOUNT!.votePubkey);
+      expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
     },
   };
 

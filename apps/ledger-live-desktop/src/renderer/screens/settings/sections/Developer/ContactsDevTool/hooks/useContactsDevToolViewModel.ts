@@ -11,12 +11,15 @@ import {
 import { setOverride } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setHasDismissedContactsFeatureIntroduction } from "~/renderer/actions/settings";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { hasDismissedContactsFeatureIntroductionSelector } from "~/renderer/reducers/settings";
 import { CONTACTS_FLAG } from "../constants";
+import { createContactsFromSendHistory } from "../createContactsFromSendHistory";
 import { ContactsDevToolViewModel } from "../types";
 
 export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const dispatch = useDispatch();
+  const accounts = useSelector(flattenAccountsSelector);
   const featureFlag = useFeature(CONTACTS_FLAG);
   const hasDismissedFeatureIntroduction = useSelector(
     hasDismissedContactsFeatureIntroductionSelector,
@@ -68,6 +71,10 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     dispatch(setContacts(mockPopulatedContacts()));
   }, [dispatch]);
 
+  const handleLoadFromSendHistory = useCallback(() => {
+    dispatch(setContacts(createContactsFromSendHistory(accounts)));
+  }, [dispatch, accounts]);
+
   const handleResetContacts = useCallback(() => {
     dispatch(setContacts(mockEmptyContacts()));
   }, [dispatch]);
@@ -93,6 +100,7 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
     handleLoadPopulatedContacts,
+    handleLoadFromSendHistory,
     handleResetContacts,
     handleResetOverride,
   };

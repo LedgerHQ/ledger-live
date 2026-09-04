@@ -21,6 +21,7 @@ export function ContactsListView({
   isLedgerSyncChecking,
   searchQuery,
   onSearchQueryChange,
+  surface = "base",
 }: ContactsListViewNativeProps): React.JSX.Element {
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
@@ -76,14 +77,16 @@ export function ContactsListView({
           sections={viewModel.sections}
           keyExtractor={contact => contact.contactId}
           renderItem={renderContact}
-          renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
+          renderSectionHeader={({ section }) => (
+            <ContactsSectionHeader title={section.title} surface={surface} />
+          )}
           ListHeaderComponent={listHeader}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 8,
-            paddingBottom: 24,
+            paddingBottom: 8,
           }}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
@@ -111,7 +114,7 @@ export function ContactsListView({
   }
 
   return (
-    <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
+    <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: surface }}>
       <Box
         testID="contacts-content"
         lx={{ flex: 1, position: "relative" }}
@@ -132,7 +135,7 @@ export function ContactsListView({
             paddingHorizontal: "s16",
             paddingTop: "s8",
             paddingBottom: "s16",
-            backgroundColor: "base",
+            backgroundColor: surface,
           }}
         >
           <ContactsSearchInput

@@ -1,4 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -65,11 +66,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
     const { stake } = delegationAction.stakeWithMeta;
 
-    if (stake.delegation === undefined) {
+    if (!stake.validatorAddress) {
       return undefined;
     }
 
-    return validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
+    return validators.find(v => v.voteAccount === stake.validatorAddress);
   }, [validators, validator, delegationAction]);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
@@ -261,16 +262,16 @@ function tx({
   };
 }
 
-function txAmount(delegationAction: DelegationAction & { kind: "change" }) {
+function txAmount(delegationAction: DelegationAction & { kind: "change" }): BigNumber {
   const { stake } = delegationAction.stakeWithMeta;
   switch (delegationAction.stakeAction) {
     case "activate":
-      return stake.withdrawable - stake.rentExemptReserve;
+      return (stake.withdrawableAmount ?? new BigNumber(0)).minus(stake.lockedReserve ?? 0);
     case "deactivate":
     case "reactivate":
-      return stake.delegation?.stake ?? 0;
+      return stake.amount;
     case "withdraw":
-      return stake.withdrawable;
+      return stake.withdrawableAmount ?? new BigNumber(0);
     default:
       return assertUnreachable(delegationAction.stakeAction);
   }
@@ -378,20 +379,23 @@ function txModelByDelegationAction(
     stakeWithMeta: { stake },
   } = delegationAction;
 
-  invariant(stake.delegation, "stake delegation must be defined");
-
-  const { stakeAccAddr, delegation } = stake;
+  const stakeAccAddr = requireStakePositionId(stake);
 
   switch (stakeAction) {
     case "activate":
-    case "reactivate":
+    case "reactivate": {
+      // Only delegating needs a validator. A stake account that was created but never delegated
+      // has no `validatorAddress`, and withdrawing or undelegating it must still work.
+      const voteAccAddr = chosenValidator?.voteAccount || stake.validatorAddress;
+      invariant(voteAccAddr, "solana: a validator is required to delegate a stake position");
       return {
         kind: "stake.delegate",
         uiState: {
           stakeAccAddr,
-          voteAccAddr: chosenValidator?.voteAccount ?? delegation?.voteAccAddr ?? "-",
+          voteAccAddr,
         },
       };
+    }
     case "deactivate":
       return {
         kind: "stake.undelegate",

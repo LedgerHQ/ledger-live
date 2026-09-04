@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-icp
 
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/coin-internet_computer@1.29.3-next.0
+
 ## 0.1.3
 
 ### Patch Changes

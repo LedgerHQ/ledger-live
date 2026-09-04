@@ -155,7 +155,7 @@ describe("usePrefillAddAddressFlow", () => {
         addressDeviceContext,
       }),
       renameExternalContact: jest.fn(),
-      editExternalAddressScope: jest.fn(),
+      editExternalAddress: jest.fn(),
     };
     const { result } = renderPrefillFlow({
       addressValidation,
@@ -203,7 +203,7 @@ describe("usePrefillAddAddressFlow", () => {
     const deviceIntents = {
       registerExternalAddress: jest.fn().mockRejectedValue(new Error("device")),
       renameExternalContact: jest.fn(),
-      editExternalAddressScope: jest.fn(),
+      editExternalAddress: jest.fn(),
     };
     const { result } = renderPrefillFlow({ addressValidation, deviceIntents });
     const pending = openPrefillFlow();
@@ -262,7 +262,7 @@ describe("usePrefillAddAddressFlow", () => {
     const deviceIntents = {
       registerExternalAddress: jest.fn().mockReturnValue(confirmation.promise),
       renameExternalContact: jest.fn(),
-      editExternalAddressScope: jest.fn(),
+      editExternalAddress: jest.fn(),
     };
     const { result } = renderPrefillFlow({ addressValidation, deviceIntents });
     const pending = openPrefillFlow();

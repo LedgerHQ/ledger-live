@@ -18,6 +18,7 @@ export function ContactsRenameContactDrawer({
   invalidNameError,
   bottomInset = 0,
   keyboardInset = 0,
+  autoFocus = false,
   labels,
   onDraftNameChange,
   onConfirm,
@@ -39,6 +40,7 @@ export function ContactsRenameContactDrawer({
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}
+              autoFocus={autoFocus}
               onChangeText={onDraftNameChange}
             />
             <Banner appearance="info" description={labels.namingDisclaimer} />

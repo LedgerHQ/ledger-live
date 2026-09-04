@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-swap-quotes",
-  "version": "0.2.2",
+  "version": "0.2.3-next.0",
   "private": true,
   "description": "Domain API client for the swap quotes aggregator: RTK Query endpoint for the /quote request",
   "main": "src/index.ts",

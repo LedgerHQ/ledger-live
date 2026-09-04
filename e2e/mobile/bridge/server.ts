@@ -4,12 +4,8 @@ import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
 
-import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
-import type {
-  MessageData,
-  OverrideFeatureFlagPayload,
-  ServerData,
-} from "../../../apps/ledger-live-mobile/src/e2e/bridge/types";
+import { NavigatorName } from "~/const";
+import type { MessageData, OverrideFeatureFlagPayload, ServerData } from "~/e2e/bridge/types";
 import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
@@ -116,6 +112,12 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   if (data.accounts?.length) {
     postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
+  }
+
+  // Written by LedgerSyncCliHelper.saveTrustchainToUserdata, so the app boots already a member
+  // of the trustchain the CLI created and skips the in-app activation flow.
+  if (data.trustchain) {
+    postMessage({ type: "importTrustchain", id: uniqueId(), payload: data.trustchain });
   }
 
   if (data.featureFlags?.overrides) {

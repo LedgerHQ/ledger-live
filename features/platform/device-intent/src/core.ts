@@ -51,17 +51,20 @@ export type DeviceExtractedContext = {
 /**
  * Execution logic for one step of a flow.
  *
- * A job is called with the connected device, the extracted device context and
- * step-specific input, and returns an `Observable` that emits typed state
+ * A job is called with the connected device, the extracted device context,
+ * step-specific input, and an `onResult` callback for reporting a typed
+ * consumer-facing result. It returns an `Observable` that emits typed state
  * updates (`JobState`) as it progresses.
  *
  * @typeParam JobState - Discriminated union of states emitted by this job.
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
+ * @typeParam Result - Final consumer-facing value produced by the job (default `undefined`).
  */
-export type Job<JobState, Input = undefined> = (params: {
+export type Job<JobState, Input = undefined, Result = undefined> = (params: {
   deviceConnectionResult: DeviceConnectionResult;
   deviceExtractedContext: DeviceExtractedContext;
   input: Input;
+  onResult: (result: Result) => void;
 }) => Observable<JobState>;
 
 /**
@@ -72,8 +75,9 @@ export type Job<JobState, Input = undefined> = (params: {
  *
  * @typeParam JobState - Discriminated union of states emitted by the job.
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
+ * @typeParam Result - Final consumer-facing value produced by the job (default `undefined`).
  */
-export interface IntentDefinition<JobState, Input = undefined> {
+export interface IntentDefinition<JobState, Input = undefined, Result = undefined> {
   /** Human-readable label identifying this intent (used for logging / debugging). */
   readonly label: string;
   /** Whether this intent requires an active device connection to run its job. */
@@ -81,7 +85,7 @@ export interface IntentDefinition<JobState, Input = undefined> {
   /** When `true`, the executor handles device lock/unlock transitions on behalf of the job. */
   readonly delegateDeviceLockStateHandlingToExecutor: boolean;
   /** The execution logic for this intent. */
-  readonly job: Job<JobState, Input>;
+  readonly job: Job<JobState, Input, Result>;
 }
 
 /**
@@ -94,12 +98,14 @@ export interface IntentDefinition<JobState, Input = undefined> {
  * @typeParam JobState - Discriminated union of states emitted by the job.
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
+ * @typeParam Result - Final consumer-facing value produced by the job (default `undefined`).
  */
 export interface IntentPlatformDefinition<
   JobState,
   Input = undefined,
   ExtraProps = void,
-> extends IntentDefinition<JobState, Input> {
+  Result = undefined,
+> extends IntentDefinition<JobState, Input, Result> {
   /** React component that renders the current {@link JobState}. */
   readonly component: React.ComponentType<{
     jobState: JobState | undefined;
@@ -118,10 +124,13 @@ export interface IntentPlatformDefinition<
  * cross-cutting executor callbacks.
  *
  * @typeParam JobState - Discriminated union of states emitted by the job.
+ * @typeParam Result - Final consumer-facing value produced by the job.
  */
-export type IntentListeners<JobState> = {
+export type IntentListeners<JobState, Result = undefined> = {
   /** Called when the job observable emits a new state. */
   readonly onJobStateChanged?: (jobState: JobState) => void;
+  /** Called whenever the job reports a result. Jobs conventionally report their final result once. */
+  readonly onResult?: (result: Result) => void;
   /** Called when the job observable completes. */
   readonly onJobComplete?: () => void;
   /** Called when the job observable errors. */
@@ -137,18 +146,22 @@ export type IntentListeners<JobState> = {
  * @typeParam JobState - Discriminated union of states emitted by the job.
  * @typeParam Input - Data provided to the job at runtime (default `undefined`).
  * @typeParam ExtraProps - Additional props forwarded to the component by the caller.
+ * @typeParam Result - Final consumer-facing value produced by the job (default `undefined`).
  */
 export interface Intent<
   JobState,
   Input = undefined,
   ExtraProps = void,
-> extends IntentPlatformDefinition<JobState, Input, ExtraProps> {
+  Result = undefined,
+> extends IntentPlatformDefinition<JobState, Input, ExtraProps, Result> {
   /** Unique identifier for this runtime instance, useful for logging and debugging. */
   readonly uuid: string;
   /** Concrete input passed to the job when the executor runs this intent. */
   readonly input: Input;
   /** Called when the job observable emits a new state. Fires before executor-level callback. */
   readonly onJobStateChanged?: (jobState: JobState) => void;
+  /** Called whenever the job reports a result. Jobs conventionally report their final result once. */
+  readonly onResult?: (result: Result) => void;
   /** Called when the job observable completes. Fires before executor-level callback. */
   readonly onJobComplete?: () => void;
   /** Called when the job observable errors. Fires before executor-level callback. */
@@ -164,12 +177,12 @@ export interface Intent<
  * Each call generates a new `uuid` so intent instances can be told apart in
  * logs and debugging, even when the same definition is reused.
  */
-export function createIntent<JobState, Input, ExtraProps>(
-  definition: IntentPlatformDefinition<JobState, Input, ExtraProps>,
+export function createIntent<JobState, Input, ExtraProps, Result = undefined>(
+  definition: IntentPlatformDefinition<JobState, Input, ExtraProps, Result>,
   ...args: Input extends undefined
-    ? [input?: undefined, listeners?: IntentListeners<JobState>]
-    : [input: Input, listeners?: IntentListeners<JobState>]
-): Intent<JobState, Input, ExtraProps> {
+    ? [input?: undefined, listeners?: IntentListeners<JobState, Result>]
+    : [input: Input, listeners?: IntentListeners<JobState, Result>]
+): Intent<JobState, Input, ExtraProps, Result> {
   const [input, listeners] = args;
   return {
     ...definition,

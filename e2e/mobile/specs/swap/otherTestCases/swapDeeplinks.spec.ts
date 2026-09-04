@@ -6,8 +6,8 @@ import {
   USDT_ACCOUNT_ID,
   USDT_TOKEN_ID,
 } from "@ledgerhq/live-e2e-shared/swapDeeplinkFixtures";
-import { swapSetup } from "../../../bridge/server";
-import { setTeamOwner } from "../../../helpers/allure/allure-helper";
+import { swapSetup } from "@e2e/bridge/server";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 // Fresh session: send defaults to BTC; receive has no default ("Choose asset").
 const DEFAULT_FROM = "BTC";

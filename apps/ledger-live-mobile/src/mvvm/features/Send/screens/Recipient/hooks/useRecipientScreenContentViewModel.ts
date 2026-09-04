@@ -21,6 +21,7 @@ export type UseRecipientScreenContentViewModelProps = Readonly<{
   onAddressSelected: (address: string, ensName?: string) => void;
   recipientSupportsDomain: boolean;
   onMemoProceed: () => void;
+  onAddContact: () => void;
 }>;
 
 export function useRecipientScreenContentViewModel({
@@ -31,6 +32,7 @@ export function useRecipientScreenContentViewModel({
   onAddressSelected,
   recipientSupportsDomain,
   onMemoProceed,
+  onAddContact,
 }: UseRecipientScreenContentViewModelProps) {
   const recipient = useRecipientScreenView({
     account,
@@ -91,6 +93,7 @@ export function useRecipientScreenContentViewModel({
     isContactsFeatureEnabled: recipient.isContactsFeatureEnabled,
     hasAddressBook: recipient.hasAddressBook,
     addressBookFamilyName: recipient.addressBookFamilyName,
+    onAddContact,
   });
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runEarningChoiceTezos } from "./stake";
+import { runEarningChoiceTezos } from "@e2e/specs/stake/stake";
 
 // XTZ_4 (index 3) is funded + UNDELEGATED: with the staking flag on, Earn opens the earning-choice chooser.
 // (idx0/XTZ_1 is used by the legacy Tezos delegation spec, so the earning-choice flow has its own account.)

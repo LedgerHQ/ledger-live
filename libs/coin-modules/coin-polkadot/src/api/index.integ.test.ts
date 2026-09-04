@@ -1,4 +1,5 @@
 import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { type PolkadotCoinConfig } from "../config";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
@@ -26,7 +27,7 @@ describe("Polkadot Api", () => {
   beforeAll(() => {
     // The api/logic layers still resolve config through the getCoinConfig() singleton, so seed it.
     coinConfig.setCoinConfig(() => mainnetConfig);
-    module = createApi();
+    module = withDefaults(createApi());
   });
 
   describe("estimateFees", () => {

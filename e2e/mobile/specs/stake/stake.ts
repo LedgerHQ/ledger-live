@@ -1,8 +1,8 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { verifyTezosStakingOperationDetails } from "../../models/stake";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { verifyTezosStakingOperationDetails } from "@e2e/models/stake";
 
 const TEZOS_STAKING_TAGS = [
   "@NanoSP",

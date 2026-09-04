@@ -8,6 +8,7 @@ import {
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
+import { emptyStakingResources } from "@ledgerhq/coin-solana/logic";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { HttpResponse, bypass, http } from "msw";
@@ -154,7 +155,7 @@ export const makeAccount = (
         balances: [],
       },
     },
-    solanaResources: { stakes: [], unstakeReserve: new BigNumber(0) },
+    stakingResources: emptyStakingResources(new BigNumber(0)),
   };
 };
 

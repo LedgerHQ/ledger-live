@@ -23,6 +23,7 @@
 #                       (default: "emulator-5554 emulator-5556 emulator-5558")
 #   WATCH_INTERVAL    - seconds between polls (default: 5)
 #   WATCH_STOP_FILE   - watcher exits once this file exists (workflow writes it after Detox)
+#   WATCH_CONFIRM_POLLS - polls a serial must stay missing to count as a death (default: 3)
 #   WATCH_DIAGNOSTICS - any non-empty value enables the opt-in tier
 #
 # Requires: adb on PATH. Never exits non-zero: this must not be able to fail a shard.
@@ -36,6 +37,8 @@ readonly DIAG_DIR="${ARTIFACTS_DIR}/host-diagnostics"
 readonly TREND_LOG="${DIAG_DIR}/host-trend.tsv"
 readonly INTERVAL="${WATCH_INTERVAL:-5}"
 readonly STOP_FILE="${WATCH_STOP_FILE:-${ARTIFACTS_DIR}/.watchdog-stop}"
+# Polls a serial must stay missing before it counts as a death rather than teardown.
+readonly CONFIRM_POLLS="${WATCH_CONFIRM_POLLS:-3}"
 readonly DIAGNOSTICS="${WATCH_DIAGNOSTICS:-}"
 read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
 
@@ -183,9 +186,26 @@ diag_label="off"
 log "watching ${SERIALS[*]} every ${INTERVAL}s (diagnostics: ${diag_label})"
 declare -A alive=()      # serial has been seen up at least once
 declare -A reported=()
+declare -A pending=()    # serial -> timestamp it first looked gone
+declare -A misses=()     # serial -> consecutive polls it has been missing
+
+# Discard every unconfirmed loss: the stop file proves we are in teardown.
+drop_pending_as_teardown() {
+  local serial
+  for serial in "${!pending[@]}"; do
+    [ -n "${pending[$serial]:-}" ] &&
+      log "$serial went away at ${pending[$serial]} and the stop file followed — teardown, not a death"
+    pending[$serial]=""
+    misses[$serial]=0
+  done
+}
 
 while true; do
-  [ -f "$STOP_FILE" ] && { log "stop file present — exiting"; break; }
+  if [ -f "$STOP_FILE" ]; then
+    drop_pending_as_teardown
+    log "stop file present — exiting"
+    break
+  fi
 
   [ -n "$DIAGNOSTICS" ] && trend
   [ -n "$DIAGNOSTICS" ] && check_wedges
@@ -195,14 +215,30 @@ while true; do
     if grep -q "^${serial}[[:space:]]*device" <<<"$online"; then
       alive[$serial]=1
       reported[$serial]=""
+      pending[$serial]=""
+      misses[$serial]=0
     elif [ -n "${alive[$serial]:-}" ] && [ -z "${reported[$serial]:-}" ]; then
       # Only a serial that was previously UP can have "disappeared". Without this gate the
       # first polls, before the emulators finish booting, report three phantom deaths.
-      reported[$serial]=1
-      stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-      log "❌ $serial is GONE at ${stamp}"
-      echo "${stamp} ${serial} disappeared from adb devices" >>"$DEATH_LOG"
-      [ -n "$DIAGNOSTICS" ] && capture_diagnostics "$serial" "$stamp"
+      #
+      # Do not report on first sight. Detox tears the emulators down inside its own step,
+      # seconds before the workflow can write the stop file, so at this instant a normal
+      # teardown is indistinguishable from a real death -- and reporting immediately turned
+      # every shard's shutdown into three "deaths" in the job summary. Hold the loss until
+      # it survives CONFIRM_POLLS polls with no stop file. A real death is permanent, so
+      # the delay costs nothing; qemu spends 2-4 minutes writing its core either way.
+      misses[$serial]=$(( ${misses[$serial]:-0} + 1 ))
+      if [ -z "${pending[$serial]:-}" ]; then
+        pending[$serial]="$(date -u +%Y%m%dT%H%M%SZ)"
+        log "⏳ $serial not in adb devices — confirming over $((CONFIRM_POLLS * INTERVAL))s"
+      elif [ "${misses[$serial]}" -ge "$CONFIRM_POLLS" ]; then
+        stamp="${pending[$serial]}"
+        reported[$serial]=1
+        pending[$serial]=""
+        log "❌ $serial is GONE at ${stamp} (confirmed after ${misses[$serial]} polls)"
+        echo "${stamp} ${serial} disappeared from adb devices" >>"$DEATH_LOG"
+        [ -n "$DIAGNOSTICS" ] && capture_diagnostics "$serial" "$stamp"
+      fi
     fi
   done
   sleep "$INTERVAL"

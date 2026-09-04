@@ -26,5 +26,7 @@ export default {
         reportedFilePath: "absolute",
       },
     ],
+    "@ledgerhq/test-quarantine/jest",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };

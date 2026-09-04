@@ -1,5 +1,35 @@
 # @ledgerhq/coin-hedera
 
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`1e438d1`](https://github.com/LedgerHQ/ledger-live/commit/1e438d109bf2644b1d25321d3bf9221d15873cfb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns its object with `satisfies CoinModuleImpl<HederaCoinConfig, HederaMemo, HederaTxData>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits the five capabilities the module has none of, `validateIntent`, `getNextSequence`, `craftRawTransaction`, `call` and `register`, instead of giving each a `throw new Error("… is not supported")`.
+
+  Why each is absent is recorded above the factory rather than lost with the stub it used to sit on. Two are worth spelling out: intent validation still lives in the account bridge's `getTransactionStatus`, so the api path has none of its own yet, and there is no sequence to hand out because a Hedera transaction is identified by its payer plus a valid-start timestamp rather than by a per-account nonce. Staking, by contrast, is fully covered and untouched — Hedera proxy-stakes to a node id, so `getStakes`, `getRewards` and `getValidators` are all real implementations. So are the two methods that throw for a reason rather than as a placeholder: `craftTransaction` rejects `useAllAmount` and `listOperations` rejects a non-zero `minHeight`, both argument validations on working code.
+
+  The return type also loses its `& BridgeApi` half. Every member of `BridgeApi` is optional and this factory supplied none of them, so the intersection only ever promised hooks that were not there; nothing consumes `createApi` yet, so no call site relied on it.
+
+  The parameters an implementation declares now matter: `satisfies` infers the signature from the function itself, so the trailing `options` argument of `combine`, `craftTransaction`, `getValidators` and `getRewards` carries an explicit `?` rather than relying on the contract to make it optional — the integration suite already calls `getValidators(context)` and `getRewards(context, address)` without it.
+
+  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `estimateFees`, `getStakes` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+  The api test asserts the whole capability surface with the framework's `capabilityReport()` rather than one test per unimplemented capability: one expectation covers that each is absent, that reaching it raises `"<name> is not supported"`, and that `supports()` agrees. Being an exact comparison it is exhaustive, so implementing or dropping a capability changes the list instead of leaving a test that passes while covering less.
+
+- [#21106](https://github.com/LedgerHQ/ledger-live/pull/21106) [`9f37206`](https://github.com/LedgerHQ/ledger-live/commit/9f372065ab564bc75960e4d02b8a9cb4e7ac21b0) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera framework signer
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+  - @ledgerhq/live-countervalues@0.24.5-next.0
+
 ## 2.1.0
 
 ### Minor Changes
@@ -380,37 +410,5 @@
   - @ledgerhq/ledger-wallet-framework@2.2.0
   - @ledgerhq/live-countervalues@0.20.0
   - @ledgerhq/live-network@2.6.5
-
-## 1.35.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
-  - @ledgerhq/cryptoassets@13.52.0-next.1
-  - @ledgerhq/types-live@6.112.0-next.1
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
-  - @ledgerhq/live-countervalues@0.20.0-next.1
-
-## 1.35.0-next.0
-
-### Minor Changes
-
-- [#18327](https://github.com/LedgerHQ/ledger-live/pull/18327) [`4304c17`](https://github.com/LedgerHQ/ledger-live/commit/4304c17dd3e761e604690352e295588a7b680738) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera sdk client configuration in coin config
-
-- [#18490](https://github.com/LedgerHQ/ledger-live/pull/18490) [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace the embedded `TokenCurrency.parentCurrency: CryptoCurrency` object with a `parentCurrencyId: string` foreign key.
-
-  `TokenCurrency` no longer carries the full parent `CryptoCurrency` object. Resolve the parent on demand with `getCryptoCurrencyById(token.parentCurrencyId)` (or `findCryptoCurrencyById` when a missing parent must be tolerated). The CAL token converter and persistence layer now read/write `parentCurrencyId` directly, aligning the legacy type with the `@domain/entity-currency-token` schema.
-
-- [#18493](https://github.com/LedgerHQ/ledger-live/pull/18493) [`70b8692`](https://github.com/LedgerHQ/ledger-live/commit/70b869271c712b9d2719b1437d60042e5ecbb42b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: missing associate_token operation in getBlock
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0-next.0
-  - @ledgerhq/types-live@6.112.0-next.0
-  - @ledgerhq/cryptoassets@13.52.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
-  - @ledgerhq/live-countervalues@0.20.0-next.0
-  - @ledgerhq/live-network@2.6.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

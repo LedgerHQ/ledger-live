@@ -1,4 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { solanaActivationState } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { sweetch } from "@ledgerhq/live-common/families/solana/staking";
 import { Currency } from "@domain/entity-currency";
@@ -49,7 +50,7 @@ export default function DelegationRow({
         <ValidatorImage
           size={32}
           imgUrl={meta.validator?.img}
-          name={meta.validator?.name ?? stake.delegation?.voteAccAddr}
+          name={meta.validator?.name || stake.validatorAddress}
         />
       </View>
 
@@ -61,10 +62,10 @@ export default function DelegationRow({
             ellipsizeMode="middle"
             style={{ marginRight: 5 }}
           >
-            {meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-"}
+            {meta.validator?.name || stake.validatorAddress || "-"}
           </Text>
 
-          {sweetch(stake.activation.state, {
+          {sweetch(solanaActivationState(stake), {
             activating: <Clock size={12} color={colors.orange} />,
             deactivating: <Clock size={12} color={colors.orange} />,
             active: <CheckCircle size={12} color={colors.green} />,
@@ -84,7 +85,7 @@ export default function DelegationRow({
         <Text fontWeight="semiBold">
           {formatCurrencyUnit(
             unit,
-            new BigNumber((stake.delegation?.stake ?? 0) || stake.withdrawable),
+            stake.amount.gt(0) ? stake.amount : (stake.withdrawableAmount ?? new BigNumber(0)),
             {
               showCode: true,
               disableRounding: true,
@@ -96,7 +97,7 @@ export default function DelegationRow({
           <CounterValue
             currency={currency}
             showCode={true}
-            value={stake.delegation?.stake ?? 0}
+            value={stake.amount}
             alwaysShowSign={false}
             withPlaceholder
           />

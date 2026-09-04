@@ -2,11 +2,18 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
+    "baseUrl": ".",
     "experimentalDecorators": true,
     "jsx": "react-native",
     "types": ["node", "jest"],
     "paths": {
-      "*": ["./*"],
+      "@e2e/bridge/*": ["./bridge/*"],
+      "@e2e/helpers/*": ["./helpers/*"],
+      "@e2e/models/*": ["./models/*"],
+      "@e2e/page/*": ["./page/*"],
+      "@e2e/specs/*": ["./specs/*"],
+      "@e2e/types/*": ["./types/*"],
+      "@e2e/utils/*": ["./utils/*"],
       "~/*": ["../../apps/ledger-live-mobile/src/*"],
       "LLM/*": ["../../apps/ledger-live-mobile/src/mvvm/*"]
     }

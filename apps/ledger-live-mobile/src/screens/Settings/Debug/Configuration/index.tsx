@@ -16,7 +16,7 @@ import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
-import HasStaxEuropaRows from "./HasStaxEuropaRows";
+import { DeviceSimulationDevToolRow } from "./DeviceSimulationDevTool";
 import SkipOnboardingRow from "./SkipOnboardingRow";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 
@@ -37,6 +37,7 @@ export default function Configuration() {
         iconLeft={<IconsLegacy.MobileMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugEnv)}
       />
+      <DeviceSimulationDevToolRow />
       <Flex p={6}>
         <Alert type={"info"} title={"Quick toggles for common settings."} />
       </Flex>
@@ -45,7 +46,6 @@ export default function Configuration() {
       <RecoverUpsellRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
-      <HasStaxEuropaRows />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <ThemeToggleRow />

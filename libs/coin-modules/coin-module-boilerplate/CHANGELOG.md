@@ -1,5 +1,26 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 5.1.0-next.0
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`377763b`](https://github.com/LedgerHQ/ledger-live/commit/377763b6807ff9269b5d2720be060519989958a4) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Migrate the boilerplate to the coin-module authoring type, establishing the shape every new module copies.
+
+  `createApi` now returns an object checked against `CoinModuleImpl` with `satisfies`, declaring only the eight methods the module implements. `satisfies` rather than a return-type annotation, so the precise shape survives: a caller sees exactly which methods exist, and referencing an omitted one is a compile error instead of an optional to silence — an annotation would widen every capability back to optional, including the ones the module does implement. The eleven capabilities the chain has none of — `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`, `getStakes`, `getRewards`, `getValidators`, `validateIntent`, `getNextSequence`, `validateAddress` — are simply left out instead of each carrying a hand-written `throw new Error("… is not supported")`. The consumer reaches the module through a resolver that applies `withDefaults`, which supplies every omitted capability, so the surface a caller sees is unchanged and `supports()` now reports which ones are real.
+
+  The module's own test asserts both halves of that contract, since this is the reference shape: what `createApi` declares, and what the same value looks like once wrapped.
+
+  Because a module may now omit methods, a direct `createApi` call no longer receives a complete object. `no-restricted-imports` rejects one, in both the `ledger-live-common` and `coin-modules` configs, so a new bypass fails the existing lint job. The per-family `coinModuleApi.ts` adapters the resolver loads are exempt, as are test files, along with the four callers previously established as unable to break — celo's synchronisation and its composing `createApi`, `getTokenAllowance`, and the Canton mock bridge.
+
+  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `craftTransaction`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 5.0.1
 
 ### Patch Changes
@@ -290,25 +311,5 @@
   - @ledgerhq/cryptoassets@13.52.0
   - @ledgerhq/ledger-wallet-framework@2.2.0
   - @ledgerhq/live-network@2.6.5
-
-## 4.21.3-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
-  - @ledgerhq/cryptoassets@13.52.0-next.1
-  - @ledgerhq/types-live@6.112.0-next.1
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.1
-
-## 4.21.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`b9a2a9e`](https://github.com/LedgerHQ/ledger-live/commit/b9a2a9e5b85f9fb5556ef2de83bd0418e5326e89), [`bfbd74d`](https://github.com/LedgerHQ/ledger-live/commit/bfbd74d47f028d7398e1856c7b18442be3f8f6d7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`031097a`](https://github.com/LedgerHQ/ledger-live/commit/031097ac469c39e4ab475b92d9f6960ebb9a1ad3), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0-next.0
-  - @ledgerhq/types-live@6.112.0-next.0
-  - @ledgerhq/cryptoassets@13.52.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.0-next.0
-  - @ledgerhq/live-network@2.6.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

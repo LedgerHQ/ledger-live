@@ -7,7 +7,10 @@ import { useContactsViewModel } from "./useContactsViewModel";
 
 function ContactsScreen() {
   const pageViewModel = useContactsViewModel();
-  const addContactDialog = useAddContactDialogAdapter(pageViewModel.onClearSearch);
+  const addContactDialog = useAddContactDialogAdapter(contact => {
+    pageViewModel.onClearSearch();
+    pageViewModel.onSelectContact(contact.id);
+  });
   const viewModel = {
     ...pageViewModel,
     onAddContact: () => pageViewModel.onRequestAddContact(addContactDialog.onOpen),

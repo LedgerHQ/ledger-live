@@ -134,6 +134,94 @@ describe("TransferDrawer Navigation", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  it("tracks newSendFlow as true when the asset family is allowed by the flag", () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    const { result } = renderHook(() => useTransferDrawerViewModel({ currency }), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: true }),
+    );
+  });
+
+  it("tracks newSendFlow as false when the asset family is not allowed by the flag", () => {
+    const currency = getCryptoCurrencyById("solana");
+    const { result } = renderHook(() => useTransferDrawerViewModel({ currency }), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm", "bitcoin", "tron"], excludedCurrencyIds: [] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: false }),
+    );
+  });
+
+  it("tracks newSendFlow as false when the asset currency is excluded by the flag", () => {
+    const currency = getCryptoCurrencyById("dash");
+    const { result } = renderHook(() => useTransferDrawerViewModel({ currency }), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: ["dash"] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: false }),
+    );
+  });
+
+  it("tracks newSendFlow as false when the drawer has no currency to open the new send flow", () => {
+    const { result } = renderHook(() => useTransferDrawerViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "send", newSendFlow: false }),
+    );
+  });
+
   it("bank_transfer navigates to ReceiveFunds/ReceiveProvider with noah manifest and tracks", () => {
     const { result } = renderViewModel();
 

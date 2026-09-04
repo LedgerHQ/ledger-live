@@ -1,3 +1,4 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { createFixtureConfig, createFixtureContext, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
@@ -33,10 +34,24 @@ describe("api/index", () => {
     jest.clearAllMocks();
   });
 
-  it("should return every api methods", () => {
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi("concordium_testnet"), context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "register",
+        "validateIntent",
+      ],
+      inconsistent: [],
+    });
+  });
+  it("declares every method the chain supports", () => {
     expect(createApi("concordium_testnet")).toEqual({
       broadcast: expect.any(Function),
-      call: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
@@ -44,15 +59,9 @@ describe("api/index", () => {
       getBalance: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
-      getRewards: expect.any(Function),
-      getNextSequence: expect.any(Function),
-      getStakes: expect.any(Function),
-      getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
-      register: expect.any(Function),
       validateAddress: expect.any(Function),
-      validateIntent: expect.any(Function),
       craftTransactionData: expect.any(Function),
     });
   });
@@ -170,23 +179,6 @@ describe("api/index", () => {
 
       expect(getBlockMock).toHaveBeenCalledWith(config, 600, "concordium_testnet");
       expect(result).toEqual(mockBlock);
-    });
-  });
-
-  describe("unsupported methods", () => {
-    it("should throw error for getStakes", () => {
-      const api = createApi("concordium_testnet");
-      expect(() => api.getStakes(context, "address")).toThrow("getStakes is not supported");
-    });
-
-    it("should throw error for getRewards", () => {
-      const api = createApi("concordium_testnet");
-      expect(() => api.getRewards(context, "address")).toThrow("getRewards is not supported");
-    });
-
-    it("should throw error for getValidators", () => {
-      const api = createApi("concordium_testnet");
-      expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
     });
   });
 });

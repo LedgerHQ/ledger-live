@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
-import { normalizeText, isIos } from "../../helpers/commonHelpers";
+import { normalizeText, isIos } from "@e2e/helpers/commonHelpers";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
+import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
 
 export type SwapTransactionStatusDetails = {
   date: string;

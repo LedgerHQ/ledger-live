@@ -1,131 +1,13 @@
-import { BigNumber } from "bignumber.js";
-import type {
-  Account,
-  AccountRaw,
-  StakingAccount,
-  StakingAccountRaw,
-  StakingDelegation,
-  StakingDelegationRaw,
-  StakingRedelegation,
-  StakingRedelegationRaw,
-  StakingResources,
-  StakingResourcesRaw,
-  StakingUnbonding,
-  StakingUnbondingRaw,
-} from "@ledgerhq/types-live";
-
-function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
-  return {
-    validatorAddress: d.validatorAddress,
-    ...(d.validatorId !== undefined ? { validatorId: d.validatorId } : {}),
-    ...(d.validatorName !== undefined ? { validatorName: d.validatorName } : {}),
-    amount: d.amount.toString(),
-    pendingRewards: d.pendingRewards.toString(),
-    status: d.status,
-    ...(BigNumber.isBigNumber(d.shares) ? { shares: d.shares.toString() } : {}),
-  };
-}
-
-function fromStakingDelegationRaw(d: StakingDelegationRaw): StakingDelegation {
-  return {
-    validatorAddress: d.validatorAddress,
-    ...(typeof d.validatorId === "string" ? { validatorId: d.validatorId } : {}),
-    ...(typeof d.validatorName === "string" ? { validatorName: d.validatorName } : {}),
-    amount: new BigNumber(d.amount),
-    pendingRewards: new BigNumber(d.pendingRewards),
-    status: d.status,
-    ...(typeof d.shares === "string" ? { shares: new BigNumber(d.shares) } : {}),
-  };
-}
-
-function toStakingRedelegationRaw(r: StakingRedelegation): StakingRedelegationRaw {
-  return {
-    validatorSrcAddress: r.validatorSrcAddress,
-    validatorDstAddress: r.validatorDstAddress,
-    amount: r.amount.toString(),
-    completionDate: r.completionDate.toISOString(),
-  };
-}
-
-function fromStakingRedelegationRaw(r: StakingRedelegationRaw): StakingRedelegation {
-  return {
-    validatorSrcAddress: r.validatorSrcAddress,
-    validatorDstAddress: r.validatorDstAddress,
-    amount: new BigNumber(r.amount),
-    completionDate: new Date(r.completionDate),
-  };
-}
-
-function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
-  return {
-    validatorAddress: u.validatorAddress,
-    ...(u.validatorId !== undefined ? { validatorId: u.validatorId } : {}),
-    ...(u.validatorName !== undefined ? { validatorName: u.validatorName } : {}),
-    amount: u.amount.toString(),
-    completionDate: u.completionDate.toISOString(),
-    ...(u.withdrawId !== undefined ? { withdrawId: u.withdrawId.toString() } : {}),
-    ...(u.status !== undefined ? { status: u.status } : {}),
-  };
-}
-
-function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
-  return {
-    validatorAddress: u.validatorAddress,
-    ...(typeof u.validatorId === "string" ? { validatorId: u.validatorId } : {}),
-    ...(typeof u.validatorName === "string" ? { validatorName: u.validatorName } : {}),
-    amount: new BigNumber(u.amount),
-    completionDate: new Date(u.completionDate),
-    ...(u.withdrawId !== undefined ? { withdrawId: Number(u.withdrawId) } : {}),
-    ...(u.status !== undefined ? { status: u.status } : {}),
-  };
-}
-
-function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw {
-  const raw: StakingResourcesRaw = {
-    delegations: r.delegations.map(toStakingDelegationRaw),
-    redelegations: r.redelegations.map(toStakingRedelegationRaw),
-    unbondings: r.unbondings.map(toStakingUnbondingRaw),
-    delegatedBalance: r.delegatedBalance.toString(),
-    pendingRewardsBalance: r.pendingRewardsBalance.toString(),
-    unbondingBalance: r.unbondingBalance.toString(),
-  };
-
-  if (r.validators !== undefined) {
-    raw.validators = r.validators;
-  }
-
-  return raw;
-}
-
-function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResources {
-  const resources: StakingResources = {
-    delegations: (r.delegations ?? []).map(fromStakingDelegationRaw),
-    redelegations: (r.redelegations ?? []).map(fromStakingRedelegationRaw),
-    unbondings: (r.unbondings ?? []).map(fromStakingUnbondingRaw),
-    delegatedBalance: new BigNumber(r.delegatedBalance ?? "0"),
-    pendingRewardsBalance: new BigNumber(r.pendingRewardsBalance ?? "0"),
-    unbondingBalance: new BigNumber(r.unbondingBalance ?? "0"),
-  };
-
-  if (r.validators !== undefined) {
-    resources.validators = r.validators;
-  }
-
-  return resources;
-}
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import {
+  assignStakingResourcesFromAccountRaw,
+  assignStakingResourcesToAccountRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
-  const stakingAccount = account as StakingAccount;
-  if (stakingAccount.stakingResources) {
-    (accountRaw as StakingAccountRaw).stakingResources = toStakingResourcesRaw(
-      stakingAccount.stakingResources,
-    );
-  }
+  assignStakingResourcesToAccountRaw(account, accountRaw);
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const stakingResourcesRaw = (accountRaw as StakingAccountRaw).stakingResources;
-  if (stakingResourcesRaw) {
-    (account as StakingAccount).stakingResources = fromStakingResourcesRaw(stakingResourcesRaw);
-  }
+  assignStakingResourcesFromAccountRaw(accountRaw, account);
 }

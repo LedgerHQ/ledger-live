@@ -152,7 +152,8 @@
     "memoTag" : {
       "learnMore" : "Saiba mais sobre a Tag/Memo"
     },
-    "memo" : "Memo"
+    "memo" : "Memo",
+    "stake" : "Aplicar"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -901,29 +902,85 @@
         "confirm" : "Confirmar"
       }
     },
+    "card" : {
+      "title" : "Cartão cripto",
+      "balanceLabel" : "Saldo"
+    },
+    "contacts" : {
+      "title" : "Pagar contato",
+      "empty" : {
+        "info" : "Ainda não possui contatos",
+        "addContact" : "Adicionar contato"
+      },
+      "table" : {
+        "name" : "Nome",
+        "addresses" : "Endereços",
+        "transactions" : "Transações",
+        "transactionCount_zero" : "Nenhuma transação",
+        "transactionCount_one" : "{{count}} transações",
+        "transactionCount_other" : "{{count}} transações"
+      },
+      "actions" : {
+        "pay" : "Enviar para contato",
+        "more" : "Mais opções",
+        "viewTransactions" : "Ver transação"
+      }
+    },
     "actions" : {
       "deposit" : "Adicionar stablecoin",
       "request" : "Solicitar",
       "pay" : "Novo pagamento"
     },
     "deposit" : {
-      "title" : "Add stablecoins",
+      "title" : "Adicionar stablecoin",
       "options" : {
         "bankTransfer" : {
-          "title" : "Bank transfer",
-          "description" : "Transfer USD or EUR to receive stablecoins."
+          "title" : "Transferência bancária",
+          "description" : "Transferir USD ou EUR para receber stablecoins."
         },
         "swap" : {
-          "title" : "Swap from crypto",
-          "description" : "Swap your crypto for stablecoins."
+          "title" : "Trocar a partir de cripto",
+          "description" : "Trocar cripto por stablecoin."
         },
         "receive" : {
-          "title" : "Crypto address",
-          "description" : "Receive stablecoins from another wallet."
+          "title" : "Endereço cripto",
+          "description" : "Receba stablecoins de outra carteira."
         },
         "buy" : {
-          "title" : "Buy",
-          "description" : "Buy stablecoins with credit card."
+          "title" : "Comprar",
+          "description" : "Compre stablecoins com cartão de crédito."
+        }
+      }
+    },
+    "request" : {
+      "title" : "Solicitar {{asset}}",
+      "networkLabel" : "Rede {{network}}",
+      "saveDialogTitle" : "Salvar cartão de solicitação",
+      "actions" : {
+        "share" : "Compartilhar",
+        "copy" : "Copiar",
+        "copied" : "Copiado",
+        "save" : "Salvar",
+        "verify" : "Verificar"
+      },
+      "verifyAddress" : {
+        "introTitle" : "Verificar seu endereço",
+        "introDescription" : "Para se proteger contra ataques de substituição de endereço, verifique o seu endereço na tela segura do seu dispositivo Ledger.",
+        "verifyCta" : "Verificar Endereço",
+        "successTitle" : "Endereço exibido na tela segura do dispositivo",
+        "nextStepsLabel" : "Próximos passos",
+        "nextStepShare" : "Compartilhe o seu endereço pelo aplicativo desejado",
+        "nextStepMatch" : "Certifique-se de que o endereço compartilhado corresponda ao do seu dispositivo Ledger.",
+        "gotItCta" : "Entendi",
+        "device" : {
+          "cancelledTitle" : "Verificação de endereço cancelada",
+          "cancelledDescription" : "O endereço foi recusado em seu dispositivo. É possível exibi-lo novamente para verificá-lo.",
+          "mismatchTitle" : "Os endereços não correspondem",
+          "mismatchDescription" : "O endereço exibido no seu dispositivo é diferente do solicitado. Não compartilhe este endereço.",
+          "unsupportedTitle" : "Verificação não disponível",
+          "unsupportedDescription" : "Este aplicativo de dispositivo não pode tela o endereço para verificação no dispositivo.",
+          "retryCta" : "Mostrar endereço novamente",
+          "closeCta" : "Fechar"
         }
       }
     }
@@ -2530,6 +2587,8 @@
     },
     "placeholder" : "Digite o endereço ou ENS",
     "placeholderNoENS" : "Digite o endereço",
+    "placeholderWithContacts" : "Insira o endereço, ENS ou contato",
+    "placeholderNoEnsWithContacts" : "Insira o endereço ou contato",
     "recent" : "Recente",
     "myAccounts" : "Minhas contas",
     "sendTo" : "Enviar para {{address}}",
@@ -2539,6 +2598,7 @@
     "addressBookUnsupported" : "{{family}} ainda não é suportado",
     "recentSendWillAppear" : "O seu envio recente aparecerá aqui",
     "contactsWillAppear" : "Os contatos aparecerão aqui",
+    "selectAddress" : "Selecione o endereço",
     "securityInfo" : {
       "title" : "Como enviar com segurança?",
       "items" : {
@@ -2559,7 +2619,12 @@
     },
     "addContact" : {
       "newContact" : "Adicionar um novo contato",
-      "existingContact" : "Adicionar a um contato existente"
+      "existingContact" : "Adicionar a um contato existente",
+      "selectContact" : "Selecionar contato",
+      "syncWallet" : {
+        "title" : "Sincronize a carteira para adicionar um contato",
+        "description" : "Os contatos são criptografados de ponta a ponta e sincronizados na Ledger Wallet em todos os smartphones e computadores"
+      }
     },
     "relativeDate" : {
       "justNow" : "Agora mesmo",
@@ -5252,6 +5317,7 @@
         "applyFamilies" : "Aplicar",
         "contactsData" : "Dados dos contatos",
         "loadPopulatedContacts" : "Carregar contatos preenchidos",
+        "loadFromSendHistory" : "Carregar contatos do histórico de envios",
         "resetContacts" : "Redefinir contatos",
         "resetOverride" : "Redefinir sobreposição",
         "featureIntroduction" : {
@@ -5259,6 +5325,22 @@
           "label" : "Introdução ao recurso Mostrar Contatos",
           "dismissed" : "Dispensado — ative para exibir a introdução novamente em Contatos.",
           "willShow" : "Será exibido em Contatos até ser dispensado."
+        }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "Simulação de dispositivo (QA)",
+        "description" : "Simular o histórico de dispositivo para testar superfícies de upsell de usuários Nano sem um dispositivo físico.",
+        "currentHistory" : "Dispositivos de QA ativos: {{devices}}",
+        "resetWarning" : "Redefinir limpa apenas a lista de dispositivos de QA simulados. O histórico do dispositivo real não pode ser restaurado sem o mecanismo de simulação.",
+        "reset" : "Redefinir o histórico do dispositivo",
+        "none" : "nenhum",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
         }
       },
       "cryptoAssetsList" : {
@@ -6510,7 +6592,7 @@
           },
           "dualValidator" : {
             "title" : "Segurança de validador duplo",
-            "body" : "As transações exigem a co-assinatura tanto da Ledger como da Klin. Nenhum dos dois pode agir sozinho em seu nome."
+            "body" : "As transações exigem uma co-assinatura da Ledger e da Klin. Nenhum dos dois pode agir sozinho em seu nome."
           },
           "tokenLiability" : {
             "title" : "Responsabilidade padrão do token ⚠️",
@@ -6747,6 +6829,10 @@
     },
     "CeloAllFundsWarning" : {
       "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
+    },
+    "CeloEpochProcessingActive" : {
+      "title" : "Esta ação está temporariamente indisponível",
+      "description" : "A Celo está atualmente processando uma atualização de época (epoch). Durante esta curta janela do tempo da cadeia, atividades de staking como votar, ativar, revogar, bloquear e desbloquear são temporariamente indisponibilizadas pela rede. Tente novamente assim que o processamento da época for concluído."
     },
     "CeloGroupNotVotable" : {
       "title" : "Este grupo de validadores não pode receber votos. Pode estar completo ou não ser mais elegível."
@@ -7226,6 +7312,9 @@
     },
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "Enviar para endereços Sapling não é suportado"
+    },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "A quantia é muito pequena para ser transmitida (mínimo de {{minimumZatoshis}} zatoshis)"
     },
     "InvalidNonce" : {
       "title" : "Requer o nonce"
@@ -7866,10 +7955,20 @@
       "title" : "A quantia mínima é 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "Você deve aplicar pelo menos 1 SUI em staking"
+      "title" : "Desaplicar a quantia total ou deixar pelo menos 1 SUI aplicado"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "Detalhes do staking indisponíveis. Sincronize sua conta e tente novamente"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "A quantia excede a aplicação selecionada"
     },
     "SomeSuiForUnstake" : {
       "title" : "Certifique-se de reservar pelo menos 0,1 SUI em sua carteira para cobrir futuras taxas de rede e de desdelegação do seu staking"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "Atualize seu aplicativo Sui",
+      "description" : "O aplicativo Sui da sua Ledger não pode assinar uma transferência do saldo do seu endereço SUI. Atualize o aplicativo Sui no seu dispositivo Ledger e tente novamente."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}.",
@@ -8018,6 +8117,56 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Inserir tag/memo",
     "memoWarningText" : "Ao usar um memo, verifique cuidadosamente as informações com o destinatário"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Taxa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Ganhar"
+    },
+    "stakeBanner" : {
+      "title" : "Ganhe recompensas com a MINA",
+      "altTitle" : "Gerencie sua delegação de MINA",
+      "description" : "Delegue seus MINA a um Produtor de Blocos e receba recompensas pela produção de blocos. As recompensas são distribuídas com base na quantia delegada.",
+      "altDescription" : "Altere suas configurações de delegação ou desdelegue seus tokens MINA.",
+      "changeCTA" : "Redelegar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegado a",
+      "stakedBalance" : "Saldo delegado",
+      "producerAddress" : "Endereço do produtor",
+      "delegatedToTooltip" : "Nome do produtor de bloco para o qual você está delegando",
+      "stakedBalanceTooltip" : "Quantia total de MINA atualmente delegada a esse validador",
+      "producerAddressTooltip" : "Endereço público do produtor de blocos para o qual você está delegando"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Escolha o validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmação"
+      },
+      "title" : "Delegar MINA",
+      "help" : "Selecione um validador da lista abaixo para delegar seus tokens MINA.",
+      "success" : {
+        "title" : "Transação transmitida com sucesso",
+        "description" : "Sua solicitação de alteração de delegação foi transmitida.",
+        "viewDetails" : "Ver detalhes"
+      },
+      "error" : {
+        "title" : "Ocorreu um erro ao transmitir a transação"
+      },
+      "undelegateTitle" : "Desdelegar MINA"
+    },
+    "delegation" : {
+      "listHeader" : "Delegação",
+      "amount" : "Quantia",
+      "redelegate" : "Redelegar",
+      "undelegate" : "Desdelegar",
+      "totalStake" : "Total Aplicado",
+      "commission" : "Comissão"
+    }
   },
   "hedera" : {
     "name" : "hedera",
@@ -8476,6 +8625,10 @@
       },
       "onboarding" : {
         "title" : "Sincronizar com outro aplicativo Ledger Wallet"
+      },
+      "sendFlow" : {
+        "title" : "Sincronizar minha carteira",
+        "later" : "Agora não"
       }
     },
     "manage" : {
@@ -8632,6 +8785,11 @@
       "title" : "Mais proteção. Mais controle",
       "description" : "Saiba mais sobre recursos de segurança.",
       "cta" : "Saiba mais"
+    },
+    "profile" : {
+      "title" : "Faça o upgrade do seu dispositivo",
+      "description" : "Tela maior, melhor segurança. Aproveite {{discount}}%.",
+      "cta" : "Descobrir"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8802,12 @@
       "title" : "Detecte golpes antes de assinar",
       "subtitle" : "Saiba mais sobre recursos de segurança avançados que permitem detectar ameaças em tempo real.",
       "cta" : "Saiba mais"
+    },
+    "recoverTrigger" : {
+      "title" : "Deseja recuperar com tranquilidade?",
+      "subtitle" : "Embora o seu Nano S seja perfeitamente seguro, ele não é compatível com o Ledger Recover. Faça o upgrade para um modelo mais recente para desbloquear o backup de carteira seguro e baseado em ID.",
+      "cta" : "Saiba mais",
+      "dismiss" : "Agora não"
     }
   },
   "modularAssetDrawer" : {
@@ -8710,6 +8874,8 @@
     "emptyAssetList" : "Nenhum ativo encontrado",
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecione a rede",
+    "unsupportedAssetTooltip" : "{{asset}} ainda não é compatível",
+    "unsupportedNetworkTooltip" : "A rede {{network}} ainda não é compatível.",
     "selectAccount" : "Selecionar conta",
     "selectAccountPerpsTitle" : "Selecionar conta Hyperliquid",
     "selectAccountPerpsDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
@@ -8747,7 +8913,8 @@
     "title" : "Início",
     "today" : "Hoje",
     "carousel" : {
-      "title" : "Para você"
+      "title" : "Para você",
+      "closeAll" : "Fechar tudo"
     },
     "addAccountCta" : "Adicionar conta de criptomoedas",
     "noBalanceTitle" : "Comece depositando fundos na sua carteira",
@@ -8930,7 +9097,7 @@
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo oculto ao público",
       "privateBalanceWarning" : "O saldo privado exclui os fundos protegidos de Sapling e Orchard",
-      "privateBalanceMaturing" : "{{spendable}} utilizável · {{maturing}} em maturação"
+      "privateBalanceMaturing" : "Saldo privado: {{spendable}} utilizável · {{maturing}} em maturação"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9130,10 @@
             "message" : "O saldo privado não está sincronizado",
             "cta" : "Retomar sincronização"
           },
+          "failed" : {
+            "message" : "Falha na sincronização do saldo privado",
+            "cta" : "Retomar sincronização"
+          },
           "running" : {
             "message" : "O saldo privado está sendo sincronizado ({{progress}}%)",
             "timeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}"
@@ -8985,7 +9156,8 @@
         "stopSync" : "Parar sincronização",
         "upToDate" : "Atualizado",
         "lastSync" : "Última sincronização: {{date}}",
-        "estimatedTimeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}",
+        "syncFailed" : "Falha na sincronização do saldo privado"
       },
       "datepicker" : {
         "label" : "Altura de nascimento",
@@ -9042,7 +9214,8 @@
       "transparentTx" : "Transparente",
       "shieldedSaplingTx" : "🛡 Privado (Sapling)",
       "shieldedOrchardTx" : "🛡 Privado (Orchard)",
-      "shieldedIronwoodTx" : "🛡 Privado (Ironwood)"
+      "shieldedIronwoodTx" : "🛡 Privado (Ironwood)",
+      "memo" : "Memo"
     }
   },
   "aleo" : {
@@ -9332,6 +9505,27 @@
     "explore" : "Explore todos os dispositivos Ledger"
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Preparando seu dispositivo Ledger"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "Use o mesmo dispositivo Ledger usado para adicionar este contato",
+          "description" : "O dispositivo conectado não corresponde."
+        },
+        "invalidData" : {
+          "title" : "Este endereço não pode ser salvo",
+          "description" : "Seu dispositivo Ledger rejeitou os detalhes do contato. Tente novamente ou fale com o Suporte Ledger se o problema continuar."
+        },
+        "appVersionTooLow" : {
+          "title" : "Atualização de aplicativo necessária",
+          "description" : "Atualize o aplicativo no seu dispositivo Ledger para salvar contatos e tente novamente."
+        }
+      }
+    },
     "title" : "Contatos",
     "addContact" : "Adicionar contato",
     "addAddress" : "Adicionar endereço",
@@ -9363,6 +9557,10 @@
     },
     "addAddressReview" : {
       "title" : "Revisar endereço",
+      "addressLabel" : "Endereço",
+      "currencyLabel" : "Moeda",
+      "networkLabel" : "Rede",
+      "nameLabel" : "Nome do endereço",
       "continue" : "Confirmar endereço",
       "successTitle" : "Endereço salvo",
       "close" : "Fechar"
@@ -9388,7 +9586,7 @@
         "meTitle" : "Não há endereços salvos para você",
         "contactTitle" : "Não há endereços salvos para {{name}}",
         "meDescription" : "Salve seus endereços de carteira para receber cripto por nome na próxima vez.",
-        "contactDescription" : "Salve os endereços de carteira de outros para enviar-los com nome na próxima vez."
+        "contactDescription" : "Salve os endereços de carteira dos seus contatos para enviar cripto usando o nome deles."
       }
     },
     "addressDetail" : {
@@ -9443,23 +9641,23 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "Seus contatos são criptografados de ponta a ponta com sua Ledger e sincronizados entre seus dispositivos, apenas você pode desbloqueá-los.",
+      "activate" : "Ativar o Ledger Sync",
       "dismiss" : "Entendi"
     },
     "featureIntroduction" : {
       "title" : "Apresentando Contatos",
-      "description" : "Sua agenda de endereços para cripto — salve as carteiras para as quais envia, tudo em um só lugar.",
-      "primaryAction" : "Experimente os contatos",
+      "primaryAction" : "Explorar",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Salve endereços uma vez",
-          "description" : "Mantenha os endereços para os quais envia em um só lugar."
+          "title" : "Salvar endereços com um nome de sua escolha",
+          "description" : "Plataformas para negociar, amigos, suas próprias contas externas."
         },
         "sendToRightAddress" : {
           "title" : "Envie para o endereço correto",
-          "description" : "Os fundos chegam sempre à carteira correta."
+          "description" : "Veja um nome de sua confiança, não um endereço."
         },
         "privateAcrossDevices" : {
-          "title" : "Privada em todos os seus dispositivos",
+          "title" : "Recarregue com segurança através da Ledger Wallet™",
           "description" : "Criptografada de ponta a ponta com o Ledger Sync."
         }
       }
@@ -9532,8 +9730,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "Dispositivo bloqueado",
-        "description" : "Desbloqueie seu dispositivo para continuar."
+        "title" : "Desbloqueie seu dispositivo Ledger e depois selecione “Tentar novamente” abaixo"
       },
       "unlockDevice" : {
         "title" : "Desbloqueie sua {{productName}}"
@@ -9545,16 +9742,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "Dispositivo desconectado",
-        "description" : "Sua Ledger não está mais conectada. Certifique-se de que o dispositivo esteja ligado e conectado."
+        "title" : "Dispositivo Ledger desconectado",
+        "description" : "Certifique-se de que o dispositivo esteja ligado e conectado."
       },
       "intentError" : {
         "title" : "Erro desconhecido",
-        "description" : "Ocorreu um erro Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+        "description" : "Tente novamente ou contate o Suporte Ledger se o problema persistir."
       },
       "invalidOperation" : {
-        "title" : "Estado inválido",
-        "description" : "Ocorreu um erro Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+        "title" : "Ocorreu um erro",
+        "description" : "Tente novamente ou fale com o Suporte Ledger se o problema continuar."
       }
     },
     "initialization" : {
@@ -9570,46 +9767,51 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "Operação rejeitada no dispositivo"
+          "title" : "Operação rejeitada no dispositivo Ledger"
         },
         "deviceBusy" : {
-          "title" : "Ação pendente no seu dispositivo Ledger",
-          "description" : "Conclua e então selecione “Tentar novamente”."
+          "title" : "Ação necessária no seu dispositivo Ledger",
+          "description" : "Finalize a ação em seu dispositivo e, depois, selecione “Tentar novamente” abaixo."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "Sua Ledger ainda não está pronta para ser usada",
-          "description" : "Você precisa configurar sua {{productName}} primeiro. Nós vamos guiar você pelo processo de configuração do dispositivo"
+          "title" : "Seu dispositivo Ledger precisa ser configurado",
+          "description" : "Configure para continuar."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "É preciso atualizar o Ledger OS"
         },
         "unsupportedApplication" : {
           "title" : "Recurso incompatível",
-          "description" : "O aplicativo necessário para esta operação não está disponível no seu dispositivo Ledger no momento. Entre em contato com o Suporte Ledger para detalhes."
+          "description" : "O aplicativo necessário para esta ação não é compatível com o seu dispositivo Ledger. Entre em contato com o Suporte Ledger para mais detalhes."
         },
         "unsupportedFeature" : {
           "title" : "Recurso incompatível",
-          "description" : "O aplicativo necessário para esta operação não está disponível no seu dispositivo Ledger no momento. Entre em contato com o Suporte Ledger para detalhes."
+          "description" : "O aplicativo necessário para esta ação não é compatível com o seu dispositivo Ledger. Entre em contato com o Suporte Ledger para mais detalhes."
         },
         "wrongDeviceForAccount" : {
-          "title" : "Frase de Recuperação Secreta Errada",
-          "description" : "Este dispositivo Ledger não está configurado com a frase de recuperação vinculada à conta selecionada. Verifique se você está usando o dispositivo correto."
+          "title" : "Use o dispositivo Ledger com o qual esta conta foi originalmente configurada",
+          "description" : "Este dispositivo Ledger não está configurado com a frase de recuperação secreta vinculada à conta cripto selecionada."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "Memória insuficiente no dispositivo",
-          "description" : "Seu dispositivo não tem memória suficiente. Desinstale alguns aplicativos e tente novamente.",
+          "title" : "Desinstale alguns aplicativos para liberar memória do dispositivo Ledger",
+          "description" : "Seu dispositivo não tem memória suficiente.",
           "apps" : "Aplicativos a gerenciar: {{appNames}}"
+        },
+        "invalidProvider" : {
+          "title" : "Provedor Inválido",
+          "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” da Ledger Wallet, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
         }
       },
       "cta" : {
         "openMyLedger" : "Abrir Minha Ledger",
         "goToMyLedger" : "Ir para Minha Ledger",
-        "setupDevice" : "Configurar Dispositivo",
+        "setupDevice" : "Configurar dispositivo Ledger",
         "updateLedgerOs" : "Atualizar Ledger OS",
         "cancelOperation" : "Cancelar operação",
-        "contactLedgerSupport" : "Fale com o Suporte Ledger"
+        "contactLedgerSupport" : "Fale com o Suporte Ledger",
+        "goToSettings" : "Ir para Configurações"
       }
     },
     "connectDevice" : {
@@ -9623,7 +9825,7 @@
           "title" : "Carregando"
         },
         "connecting" : {
-          "title" : "Carregando"
+          "title" : "Conectando ao seu dispositivo Ledger"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9857,7 @@
         },
         "noKnownDevice" : {
           "title" : "Dispositivo Ledger necessário",
-          "description" : "Para continuar, configure ou conecte seu autenticador.",
+          "description" : "Para continuar, configure ou conecte seu dispositivo Ledger.",
           "connectLedgerDevice" : "Conectar um dispositivo Ledger",
           "noLedgerDevice" : "Eu não tenho um dispositivo Ledger."
         },

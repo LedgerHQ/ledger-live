@@ -1,5 +1,13 @@
 # @features/flow-analytics-consent
 
+## 0.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.6.8-next.0
+  - @domain/entity-analytics-consent@0.2.2-next.0
+
 ## 0.2.3
 
 ### Patch Changes

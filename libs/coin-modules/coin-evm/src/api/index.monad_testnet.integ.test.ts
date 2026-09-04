@@ -11,7 +11,6 @@ describe("EVM Api (Monad Testnet)", () => {
       type: "etherscan",
       uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10143",
     },
-    showNfts: false,
   };
   beforeAll(() => {
     module = createApi("monad_testnet");

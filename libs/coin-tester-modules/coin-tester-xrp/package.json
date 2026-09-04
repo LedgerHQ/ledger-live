@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-xrp",
-  "version": "0.6.2",
+  "version": "0.6.3-next.3",
   "private": true,
   "description": "Ledger XRP Coin Tester",
   "main": "src/scenarii.test.ts",

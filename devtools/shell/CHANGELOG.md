@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.4.1-next.0
+
 ## 0.9.0
 
 ### Minor Changes
@@ -183,23 +190,5 @@
 
 - Updated dependencies []:
   - @devtools/registry@0.1.4-next.1
-
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#18547](https://github.com/LedgerHQ/ledger-live/pull/18547) [`4973a36`](https://github.com/LedgerHQ/ledger-live/commit/4973a3648b64c9110f42dcacfdc559f4e7186885) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add mobile ui for devtools/shell. A screen to choose a tool category, one for tools and one for the tool itself
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.4-next.0
-
-## 0.3.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.3
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

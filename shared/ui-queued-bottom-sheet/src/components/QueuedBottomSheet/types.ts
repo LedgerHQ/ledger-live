@@ -1,7 +1,7 @@
 import type React from "react";
 import type { BottomSheetProps } from "@ledgerhq/lumen-ui-rnative";
 
-export type QueuedBottomSheetProps = {
+export type QueuedBottomSheetProps = Readonly<{
   /** Whether this drawer is requesting to be opened (queued). */
   isRequestingToBeOpened?: boolean;
   /** Whether this drawer should force-open (clears queue). */
@@ -27,6 +27,12 @@ export type QueuedBottomSheetProps = {
    * drawer is dismissed. Use it to track close intent accurately.
    */
   onBackdropPress?: () => void;
+  /**
+   * Callback after the drawer has finished animating open and settled on its snap point. Use it to
+   * defer work that would otherwise compete with the opening animation, such as focusing an input
+   * (which raises the keyboard and, with {@link enableDynamicSizing}, resizes the drawer mid-flight).
+   */
+  onOpened?: () => void;
   /** Callback after the drawer is fully hidden. */
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
@@ -47,4 +53,4 @@ export type QueuedBottomSheetProps = {
   testID?: string;
   /** Content of the drawer. */
   children: React.ReactNode;
-};
+}>;

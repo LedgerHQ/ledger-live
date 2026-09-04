@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { DecryptedOutput, ShieldedTransaction, SpendableNote } from "../network/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { BtcOperation } from "../types/bridge";
+import type { BtcOperation, ZcashOperationExtra } from "../types/bridge";
 
 /**
  * Value the transaction moved out of the shielded pools through its transparent
@@ -254,6 +254,14 @@ export function convertShieldedTransactionsToOperations(
     }
 
     const operationType = toOperationType(txType);
+
+    let memo: string | undefined;
+    if (txType.endsWith("_OUT")) {
+      memo = allNotes.find(n => n.transfer_type === "outgoing" && n.memo)?.memo;
+    } else if (txType.endsWith("_IN")) {
+      memo = allNotes.find(n => n.transfer_type === "incoming" && n.memo)?.memo;
+    }
+
     const operation: BtcOperation = {
       id: encodeOperationId(accountId, tx.id, operationType),
       hash: tx.id,
@@ -266,7 +274,7 @@ export function convertShieldedTransactionsToOperations(
       date: new Date(tx.timestamp * 1000), // zcash shielded transaction timestamps are Unix seconds.
       value,
       fee,
-      extra: {},
+      extra: (memo ? { memo } : {}) as ZcashOperationExtra,
       transactionSequenceNumber: new BigNumber(tx.blockHeight),
       subOperations: [],
       nftOperations: [],

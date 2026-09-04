@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useFeature } from "@features/platform-feature-flags";
 import type {
-  PayCardTrackEvent,
+  PayRequestTrackEvent,
   VerifyAddressLabels,
   VerifyAddressPhase,
   VerifyAddressProps,
-} from "@features/flow-pay-card-request";
+} from "@features/flow-pay-request";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 
@@ -66,7 +66,7 @@ export type UsePayTabVerifyAddress = Readonly<{
  * - flag off -> open the classic Receive modal, which verifies via the legacy transport.
  */
 export function usePayTabVerifyAddress(
-  onTrackEvent: PayCardTrackEvent | undefined,
+  onTrackEvent: PayRequestTrackEvent | undefined,
 ): UsePayTabVerifyAddress {
   const { t } = useTranslation();
   const dispatch = useDispatch();

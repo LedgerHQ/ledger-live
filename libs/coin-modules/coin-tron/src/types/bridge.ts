@@ -65,6 +65,8 @@ export type TrongridTxInfo = {
   extra?: TrongridExtraTxInfo;
   hasFailed: boolean;
   feesPayer?: string;
+  /** Decoded UTF-8 memo carried in the transaction's `raw_data.data`, when present. */
+  memo?: string;
 };
 
 export type TronOperation = Operation<TrongridExtraTxInfo>;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.25.0",
+  "version": "0.26.0-next.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -48,14 +48,15 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "prebuild": "pnpm pbjs -t json -r ledger_swap -o src/generate-protocol.json ./protocol.proto",
+    "prebuild": "pnpm pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto && pnpm pbts -o src/generate-protocol.d.ts src/generate-protocol.js",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "postbuild": "cp src/generate-protocol.d.ts lib/generate-protocol.d.ts && cp src/generate-protocol.d.ts lib-es/generate-protocol.d.ts && rm -f lib/generate-protocol.d.ts.map lib-es/generate-protocol.d.ts.map",
     "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src --ignore-pattern '**/setupTests.ts'",
+    "doc": "documentation readme src/Exchange.ts src/FundUtils.ts src/ReturnCode.ts src/SellUtils.ts src/SwapUtils.ts src/errors.ts src/index.ts src/shared-utils.ts --section=API --pe ts --re ts --shallow",
+    "lint": "oxlint ./src --ignore-pattern '**/setupTests.ts' --ignore-pattern '**/generate-protocol.js'",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts --runInBand",
     "test-integ": "jest --config=jest.integ.config.ts",

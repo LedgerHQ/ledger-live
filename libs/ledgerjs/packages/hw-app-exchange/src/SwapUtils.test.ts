@@ -1,5 +1,4 @@
-import protobuf from "protobufjs";
-import * as protoJson from "./generate-protocol.json";
+import { ledger_trade } from "./generate-protocol";
 import { decodePayloadProtobuf, findSwapPayloadSpecViolation } from "./SwapUtils";
 import { SwapPayloadFieldExceedsLimit } from "./errors";
 
@@ -59,14 +58,13 @@ describe("decodePayloadProtobuf function", () => {
 });
 
 describe("findSwapPayloadSpecViolation function", () => {
-  function encodeSwapPayload(fields: Record<string, unknown>): string {
-    const root = protobuf.Root.fromJSON(protoJson);
-    const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
+  function encodeSwapPayload(fields: ledger_trade.INewTransactionResponse): string {
+    const TransactionResponse = ledger_trade.NewTransactionResponse;
     const message = TransactionResponse.create(fields);
     return Buffer.from(TransactionResponse.encode(message).finish()).toString("hex");
   }
 
-  const validFields = {
+  const validFields: ledger_trade.INewTransactionResponse = {
     payinAddress: "0x976c3954c5dbbf39a591510db32d2f8cc2252807",
     refundAddress: "0xccaEBcB3876a75ab9E96975058aA75463773029c",
     payoutAddress: "bc1qqdykdw8u36yhdsletwsyv4xe95s375qjjy4gk0",

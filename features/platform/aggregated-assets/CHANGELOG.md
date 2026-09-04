@@ -1,5 +1,14 @@
 # @features/platform-aggregated-assets
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.4.2-next.0
+  - @features/platform-env@0.2.3-next.0
+  - @domain/entity-currency@0.4.2-next.0
+
 ## 0.5.0
 
 ### Minor Changes

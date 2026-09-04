@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runDelegateTest } from "./delegate";
+import { runDelegateTest } from "@e2e/specs/delegate/delegate";
 import { setEnv } from "@shared/env";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);

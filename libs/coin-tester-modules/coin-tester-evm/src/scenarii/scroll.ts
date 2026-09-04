@@ -108,7 +108,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
         noCache: true,
         uri: "https://scroll.blockscout.com/api",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_scroll: {

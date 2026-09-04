@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.6.16",
+  "version": "0.6.17-next.0",
   "private": true,
   "description": "Ledger Live device react module",
   "keywords": [
@@ -25,6 +25,9 @@
     "@ledgerhq/device-core": "workspace:^"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
@@ -34,9 +37,7 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "react-dom": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

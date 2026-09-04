@@ -116,7 +116,6 @@ export const sendFeatures = {
   getMemoOptions: fromDescriptor(d => d.inputs.memo?.options, undefined),
   getMemoDefaultOption: fromDescriptor(d => d.inputs.memo?.defaultOption, undefined),
   supportsDomain: fromDescriptor(d => d.inputs.recipientSupportsDomain, false),
-  hasAddressBook: fromDescriptor(d => d.addressBook, false),
   getSelfTransferPolicy: fromDescriptor(d => d.selfTransfer, defaultSelfTransferPolicy),
   getUserRefusedTransactionErrorName: fromDescriptor(
     d => d.errors?.userRefusedTransaction,

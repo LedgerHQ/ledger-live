@@ -99,7 +99,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
       explorer: {
         type: "none",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_core: {

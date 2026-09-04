@@ -84,10 +84,13 @@ function stakeHashCredential(stakeKey: string): TyphonTypes.HashCredential {
 }
 
 /**
- * Account-level obligations that the legacy builder attaches to every transaction:
- * sweep claimable rewards (only withdrawable once delegated to a dRep — Conway rule) and,
- * when rewards exist but no dRep is set, add the ABSTAIN vote-delegation certificate the
- * Conway era requires before such a transaction is valid.
+ * Account-level reward/governance obligations for the staking flows (delegate/undelegate): sweep
+ * claimable rewards via a withdrawal (only withdrawable once delegated to a dRep — the Conway
+ * ConwayWdrlNotDelegatedToDRep rule) and, when rewards exist but no dRep is set, opt the account
+ * into governance with an ABSTAIN vote-delegation certificate so future withdrawals stay valid.
+ * Deliberately NOT run for a plain send/token transfer: a transfer that does not withdraw needs
+ * neither, and injecting either breaks swaps (the device swap policy denies any certificate or
+ * withdrawal).
  */
 function addAccountObligations(
   typhonTx: TyphonTransaction,
@@ -328,12 +331,6 @@ export async function buildUnsignedTransaction(
     throw new Error("No spendable UTXOs for sender address");
   }
 
-  // Account-level reward/vote obligations (Conway) plus, for staking, the certificates;
-  // both require the stake credential carried by the sender address.
-  if (stakeKey && delegation) {
-    addAccountObligations(typhonTx, currency, stakeKey, delegation);
-  }
-
   // changeAddress is the sender for fixed-amount sends/staking; for a send-all it is the recipient
   // (the send-all branch below sends the balance minus fee there as an explicit output).
   let changeAddress: TyphonTypes.CardanoAddress = senderAddress;
@@ -342,6 +339,10 @@ export async function buildUnsignedTransaction(
 
   if (intent.intentType === "staking") {
     if (!stakeKey) throw new Error("Sender address has no stake credential");
+    // Account-level reward/vote obligations (Conway) belong to the staking flows only.
+    if (delegation) {
+      addAccountObligations(typhonTx, currency, stakeKey, delegation);
+    }
     addStakingCertificates(
       typhonTx,
       intent as StakingTransactionIntent<StringMemo>,

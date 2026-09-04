@@ -1,93 +1,35 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import * as animationModule from "./getDeviceActionAnimation";
-import { DeviceActionContent } from ".";
+import * as platformModule from "@features/platform-device-action-content";
+import { DeviceActionContent, supportedDeviceActionModelIds } from ".";
 
-jest.mock("~/renderer/animations", () => ({
-  __esModule: true,
-  default: () => <div data-testid="device-action-lottie" />,
-}));
-
-jest.mock("./getDeviceActionAnimation", () => {
-  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation")>(
-    "./getDeviceActionAnimation",
+jest.mock("@features/platform-device-action-content", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-device-action-content")>(
+    "@features/platform-device-action-content",
   );
   return {
     ...actual,
-    getDeviceActionAnimation: jest.fn(actual.getDeviceActionAnimation),
+    DeviceActionContent: jest.fn(() => <div data-testid="platform-device-action-content" />),
   };
 });
+
+const mockedPlatformDeviceActionContent = jest.mocked(platformModule.DeviceActionContent);
+
+function lastProps() {
+  return mockedPlatformDeviceActionContent.mock.calls.at(-1)?.[0];
+}
 
 describe("DeviceActionContent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("GIVEN title description device label and banner WHEN rendered THEN it displays all of them", () => {
-    // GIVEN / WHEN
-    render(
-      <DeviceActionContent
-        title="Unlock your device"
-        description="Enter your PIN code to continue."
-        deviceName="Ledger Flex CDA1"
-        deviceModelId={DeviceModelId.europa}
-        action="power-and-unlock"
-        banner={{
-          title: "Keep the device connected",
-          description: "Do not disconnect your Ledger.",
-        }}
-      />,
-    );
-
-    // THEN
-    expect(screen.getByText("Unlock your device")).toBeVisible();
-    expect(screen.getByText("Enter your PIN code to continue.")).toBeVisible();
-    expect(screen.getByText("Ledger Flex CDA1")).toBeVisible();
-    expect(screen.getByText("Keep the device connected")).toBeVisible();
-    expect(screen.getByText("Do not disconnect your Ledger.")).toBeVisible();
-  });
-
-  it("GIVEN a test id WHEN rendered THEN it renders the root container and animation", () => {
+  it("GIVEN a supported device model WHEN rendered THEN it converts the model id and leaves the theme to the platform package", () => {
     // GIVEN / WHEN
     render(
       <DeviceActionContent
         title="Continue on device"
-        description="Follow the instructions on your Ledger."
-        deviceName="Ledger Flex CDA1"
-        deviceModelId={DeviceModelId.europa}
-        action="continue"
-        testID="device-action-content"
-      />,
-    );
-
-    // THEN
-    expect(screen.getByTestId("device-action-content")).toBeVisible();
-    expect(screen.getByTestId("device-action-content-animation")).toBeVisible();
-  });
-
-  it("GIVEN optional copy and banner are omitted WHEN rendered THEN it only displays the device label", () => {
-    // GIVEN / WHEN
-    render(
-      <DeviceActionContent
-        deviceName="Ledger Apex CDA1"
-        deviceModelId={DeviceModelId.apex}
-        action="continue"
-      />,
-    );
-
-    // THEN
-    expect(screen.queryByText("Continue on device")).toBeNull();
-    expect(screen.queryByText("Keep the device connected")).toBeNull();
-    expect(screen.getByText("Ledger Apex CDA1")).toBeVisible();
-  });
-
-  it("GIVEN a rendered content WHEN resolving the animation THEN it uses the current app theme", () => {
-    // GIVEN / WHEN
-    render(
-      <DeviceActionContent
-        title="Continue on device"
-        description="Follow the instructions on your Ledger."
         deviceName="Ledger Flex CDA1"
         deviceModelId={DeviceModelId.europa}
         action="continue"
@@ -95,10 +37,63 @@ describe("DeviceActionContent", () => {
     );
 
     // THEN
-    expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
-      action: "continue",
-      modelId: DeviceModelId.europa,
-      theme: "dark",
-    });
+    expect(lastProps()).toEqual(
+      expect.objectContaining({
+        title: "Continue on device",
+        deviceName: "Ledger Flex CDA1",
+        deviceModelId: "europa",
+        action: "continue",
+      }),
+    );
+  });
+
+  it("GIVEN an explicit theme override WHEN rendered THEN it forwards the override", () => {
+    // GIVEN / WHEN
+    render(
+      <DeviceActionContent
+        deviceName="Ledger Flex CDA1"
+        deviceModelId={DeviceModelId.europa}
+        action="continue"
+        theme="light"
+      />,
+    );
+
+    // THEN
+    expect(lastProps()).toEqual(expect.objectContaining({ theme: "light" }));
+  });
+
+  it("GIVEN the blue device model WHEN rendered THEN it converts it to null", () => {
+    // GIVEN / WHEN
+    render(
+      <DeviceActionContent
+        deviceName="Ledger Blue"
+        deviceModelId={DeviceModelId.blue}
+        action="continue"
+      />,
+    );
+
+    // THEN
+    expect(lastProps()).toEqual(expect.objectContaining({ deviceModelId: null }));
+  });
+
+  it("GIVEN every DeviceModelId WHEN listing supported models THEN it excludes blue", () => {
+    // GIVEN / WHEN / THEN
+    expect(supportedDeviceActionModelIds).toEqual(
+      Object.values(DeviceModelId).filter(modelId => modelId !== DeviceModelId.blue),
+    );
+    expect(supportedDeviceActionModelIds).not.toContain(DeviceModelId.blue);
+  });
+
+  // The platform package can't import DeviceModelId (legacy libs/ is forbidden in features/), so
+  // its DeviceActionModelId union is hand-written. This is the only layer that sees both: it
+  // fails if a device model is added to the enum without teaching the package about it, which
+  // would otherwise silently render no animation.
+  it("GIVEN a new device model WHEN it is missing from the platform union THEN the conversion fails loudly", () => {
+    // GIVEN / WHEN / THEN
+    expect(
+      supportedDeviceActionModelIds.filter(
+        modelId => platformModule.toDeviceActionModelId(modelId) === null,
+      ),
+    ).toEqual([]);
   });
 });

@@ -521,6 +521,48 @@ describe("bridge/signOperation", () => {
     ).rejects.toThrow(/signPcztTransaction/);
   });
 
+  // ── memo on operation.extra ───────────────────────────────────────────
+
+  describe("memo on operation.extra", () => {
+    it("includes memo in extra when the transaction carries one", async () => {
+      const account = makeAccount();
+      const tx = makeTx("shielded", { memo: "Hello shielded receiver" });
+      const signOp = buildSignOperation(makeSignerContext());
+
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
+
+      const signedEvent = events.find(e => e.type === "signed");
+      expect(signedEvent?.type).toBe("signed");
+      if (signedEvent?.type === "signed") {
+        const extra = signedEvent.signedOperation.operation.extra as Record<string, unknown>;
+        expect(extra.memo).toBe("Hello shielded receiver");
+      }
+    });
+
+    it("omits memo from extra when the transaction has none", async () => {
+      const account = makeAccount();
+      const tx = makeTx("shielded"); // no memo field
+      const signOp = buildSignOperation(makeSignerContext());
+
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
+
+      const signedEvent = events.find(e => e.type === "signed");
+      expect(signedEvent?.type).toBe("signed");
+      if (signedEvent?.type === "signed") {
+        const extra = signedEvent.signedOperation.operation.extra as Record<string, unknown>;
+        expect(extra).not.toHaveProperty("memo");
+      }
+    });
+  });
+
   describe("shieldedNullifiers on operation.extra", () => {
     beforeEach(() => {
       _resetReservationsForTest();

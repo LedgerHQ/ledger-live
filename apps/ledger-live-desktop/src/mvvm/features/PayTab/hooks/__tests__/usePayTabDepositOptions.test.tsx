@@ -36,16 +36,10 @@ describe("usePayTabDepositOptions", () => {
     });
   });
 
-  it("builds i18n labels for the title and the four options", () => {
+  it("exposes the deposit page to the feature", () => {
     const { result } = render();
 
-    const { labels, page } = result.current.depositOptions;
-    expect(page).toBe("Pay");
-    expect(labels.title).toBeTruthy();
-    (["bankTransfer", "swap", "receive", "buy"] as const).forEach(id => {
-      expect(labels.options[id].title).toBeTruthy();
-      expect(labels.options[id].description).toBeTruthy();
-    });
+    expect(result.current.depositOptions.page).toBe("Pay");
   });
 
   it("passes the host tracking callback through", () => {

@@ -103,11 +103,20 @@ export function useZcashShieldedSync(account: ZcashAccount) {
     const currentAccount = currentAccountOf(account);
     if (currentAccount.type !== "Account" || (currentAccount.currency.id as Currency) !== "zcash")
       return;
-    if (!isSubscribedTo(currentAccount.id)) return;
 
+    // No early return when nothing is tracked here: the very first sync after enabling
+    // private balance runs unattended, driven by the automatic wallet sync (syncState
+    // "ready" already makes coin-zcash build the shielded leg -- see buildExtraSyncObservable
+    // -- so nothing ever calls startShieldedSync to register a subscription). The Stop button
+    // only renders while syncState is "running" (see AccountBalanceSummaryFooter), so reaching
+    // this callback at all means the user is looking at a real running sync and clicking Stop
+    // must always take effect, whether or not this hook is the one that started it.
     clearExistingSubscription();
-    saveSyncState({ syncState: "stopped", progress: 0 });
-  }, [account, currentAccountOf, isSubscribedTo, saveSyncState, clearExistingSubscription]);
+    // Explicitly null lastSyncError so this "stopped" is unambiguous: coin-zcash's
+    // buildExtraSyncObservable only lets the automatic wallet sync rebuild a "stopped"
+    // shielded leg when lastSyncError is set, i.e. it degraded on its own and should retry.
+    saveSyncState({ syncState: "stopped", progress: 0, lastSyncError: null });
+  }, [account, currentAccountOf, saveSyncState, clearExistingSubscription]);
 
   return { saveSyncState, startShieldedSync, stopShieldedSync };
 }

@@ -7,6 +7,7 @@ const config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "../../features/**/src/**/*.{ts,tsx}",
+    "../../shared/**/src/**/*.{ts,tsx}",
     "../../devtools/**/src/**/*.{ts,tsx}",
   ],
   presets: [ledgerLivePreset],

@@ -56,6 +56,7 @@ export const PAGE_CONNECT_APP = {
   DeviceDeprecatedBlocking: "Connect App - Device Deprecated Blocking",
   WrongDeviceForAccount: "Connect App - Wrong Device For Account",
   OutOfStorage: "Connect App - Out Of Storage",
+  InvalidProvider: "Connect App - Invalid Provider",
   Error: "Connect App - Error",
 } as const;
 
@@ -81,6 +82,7 @@ export const CONNECT_APP_BUTTON = {
   LearnMore: "Learn More",
   DiscoverUpgradeProgram: "Discover Upgrade Program",
   ManageApps: "Manage Apps",
+  GoToSettings: "Go To Settings",
 } as const;
 
 export const DEVICE_ACTION_BUTTON = {

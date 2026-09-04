@@ -9,20 +9,8 @@ on:
         default: true
         type: string
 
-      build-native-storybook:
-        description: Whether to build native storybook
-        required: false
-        default: true
-        type: string
-
-      build-react-storybook:
-        description: Whether to build react storybook
-        required: false
-        default: true
-        type: string
-
       vercel-production:
-        description: When true, deploy web tools and Storybooks to Vercel production
+        description: When true, deploy web tools to Vercel production
         required: false
         default: "false"
         type: string
@@ -44,10 +32,6 @@ on:
         required: true
       VERCEL_LEDGER_WALLET_TOKEN:
         required: true
-      VERCEL_PROJECT_NATIVE_STORYBOOK:
-        required: true
-      VERCEL_PROJECT_REACT_STORYBOOK:
-        required: true
       VERCEL_PROJECT_WEBTOOLS:
         required: true
   workflow_dispatch:
@@ -60,14 +44,6 @@ on:
         required: false
       build-web-tools:
         description: Whether to build web tools
-        required: false
-        default: true
-      build-native-storybook:
-        description: Whether to native storybook
-        required: false
-        default: true
-      build-react-storybook:
-        description: Whether to react storybook
         required: false
         default: true
       vercel-production:
@@ -132,80 +108,9 @@ jobs:
           disable_cache: false
 
 
-  build-native-storybook:
-    name: "Native Storybook Build"
-    permissions:
-      id-token: write
-      contents: read
-    if: ${{ inputs.build-native-storybook != 'false' }}
-    runs-on: ubuntu-24.04
-    outputs:
-      deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Build and Deploy
-        id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
-        with:
-          vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
-          working-directory: libs/ui/packages/native
-          production: ${{ inputs.vercel-production }}
-
-  build-react-storybook:
-    name: "React Storybook Build"
-    permissions:
-      id-token: write
-      contents: read
-    if: ${{ inputs.build-react-storybook != 'false' }}
-    runs-on: ubuntu-24.04
-    outputs:
-      deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Build and Deploy
-        id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
-        with:
-          vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
-          working-directory: libs/ui/packages/react
-          production: ${{ inputs.vercel-production }}
-
   post-build-summary:
     name: "Post build status to PR"
-    needs: [build-web-tools, build-native-storybook, build-react-storybook]
+    needs: [build-web-tools]
     if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-24.04
     permissions:
@@ -219,8 +124,6 @@ jobs:
             const needs = JSON.parse(process.env.NEEDS_JSON || '{}');
             const jobs = [
               { id: 'build-web-tools', name: 'Web Tools Build' },
-              { id: 'build-native-storybook', name: 'Native Storybook Build' },
-              { id: 'build-react-storybook', name: 'React Storybook Build' },
             ];
 
             const rows = jobs.map(({ id, name }) => {

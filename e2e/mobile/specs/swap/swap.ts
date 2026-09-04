@@ -6,10 +6,10 @@ import {
   isTokenApprovalExpected,
   performSwapUntilQuoteSelectionStep,
   truncateSwapAmount,
-} from "../../utils/swapUtils";
+} from "@e2e/utils/swapUtils";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { beforeAllFunctionSwap } from "./swap.setup";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

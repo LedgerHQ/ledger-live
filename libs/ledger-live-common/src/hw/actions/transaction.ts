@@ -1,7 +1,13 @@
 import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { log } from "@ledgerhq/logs";
+import {
+  buildSignCommonEvent,
+  buildTransactionAbandonedEvent,
+  emitTransactionEvent,
+  TransactionPathway,
+} from "@ledgerhq/transaction-observability";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
@@ -141,6 +147,16 @@ export const createAction = (
       isACRE,
     } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
+    // A background account sync hands down a new account object with the same id. Tearing down an
+    // in-flight device signature request over that identity change abandons a prompt the device is
+    // still showing: the approval the user then gives lands on a closed subscriber, and the fresh
+    // request asks them to sign all over again. Keyed on the id, with the live object read via ref.
+    const mainAccountRef = useRef(mainAccount);
+    useEffect(() => {
+      mainAccountRef.current = mainAccount;
+    }, [mainAccount]);
+    const mainAccountId = mainAccount.id;
+
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: isACRE ? undefined : mainAccount, // Bypass derivation check with ACRE as we can use other addresses than the freshest
       appName,
@@ -149,23 +165,73 @@ export const createAction = (
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState(initialState);
+
+    /**
+     * Transaction observability: the sign-prompt drop-off. Failures and broadcast outcomes
+     * are captured wide at the bridge seam, but a user closing the modal is an unsubscribe
+     * rather than an error, so the bridge cannot see it — only this layer can.
+     */
+    const promptShownRef = useRef(false);
+    const settledRef = useRef(false);
+    const buildCommon = useCallback(
+      () =>
+        buildSignCommonEvent({
+          // The signing account, which may be a TokenAccount — that is where the token id and
+          // ticker come from. `mainAccount` supplies the chain and family.
+          account: txRequest.account,
+          mainAccount,
+          pathway: manifestId
+            ? TransactionPathway.WalletApiSignAndBroadcast
+            : TransactionPathway.Send,
+          manifestId,
+          transaction,
+        }),
+      [txRequest.account, mainAccount, manifestId, transaction],
+    );
+    const buildCommonRef = useRef(buildCommon);
+    buildCommonRef.current = buildCommon;
+
+    useEffect(() => {
+      if (state.deviceSignatureRequested) promptShownRef.current = true;
+    }, [state.deviceSignatureRequested]);
+
+    useEffect(() => {
+      if (state.signedOperation || state.transactionSignError) settledRef.current = true;
+    }, [state.signedOperation, state.transactionSignError]);
+
+    // Unmount-only (empty deps), so an effect re-run is not mistaken for the user leaving.
+    useEffect(
+      () => () => {
+        if (promptShownRef.current && !settledRef.current) {
+          emitTransactionEvent(buildTransactionAbandonedEvent(buildCommonRef.current()));
+        }
+      },
+      [],
+    );
+
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         setState(initialState);
+        // The attempt ended without the user dismissing anything — the device went away, or was
+        // the wrong one. Clearing both refs stops that being reported later as a dismissal, and
+        // leaves a retry on the same screen starting from a clean slate.
+        promptShownRef.current = false;
+        settledRef.current = false;
         return;
       }
 
       let cancelled = false;
       let sub: { unsubscribe: () => void } | undefined;
       (async () => {
+        const signingAccount = mainAccountRef.current;
         const bridge = isACRE
           ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (ACREBridge.accountBridge as unknown as AccountBridge<any>)
-          : await getAccountBridge(mainAccount);
+          : await getAccountBridge(signingAccount);
         if (cancelled) return;
         sub = bridge
           .signOperation({
-            account: mainAccount,
+            account: signingAccount,
             transaction,
             deviceId: device.deviceId,
             deviceModelId: device.modelId,
@@ -186,7 +252,7 @@ export const createAction = (
         cancelled = true;
         sub?.unsubscribe();
       };
-    }, [device, mainAccount, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
+    }, [device, mainAccountId, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
     return {
       ...appState,
       ...state,

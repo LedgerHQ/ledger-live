@@ -23,7 +23,7 @@ export default function StepValidator({
   error,
 }: StepProps) {
   invariant(
-    account && account.solanaResources && transaction,
+    account && account.stakingResources && transaction,
     "solana account, resources and transaction required",
   );
   const bridge = useAccountBridge<Transaction>(account, parentAccount);

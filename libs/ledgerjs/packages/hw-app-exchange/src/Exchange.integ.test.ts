@@ -583,7 +583,7 @@ type SwapPayloadNg = SwapPayloadCore & {
 type SwapPayload = SwapPayloadLegacy | SwapPayloadNg;
 async function generateSwapPayloadProtobuf(payload: SwapPayload): Promise<Buffer> {
   const root = await protobuf.load("protocol.proto");
-  const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
+  const TransactionResponse = root.lookupType("ledger_trade.NewTransactionResponse");
   const err = TransactionResponse.verify(payload);
   if (err) {
     throw Error(err);
@@ -610,7 +610,7 @@ type SellPayload = {
 };
 async function generateSellPayloadProtobuf(payload: SellPayload): Promise<Buffer> {
   const root = await protobuf.load("protocol.proto");
-  const SellResponse = root.lookupType("ledger_swap.NewSellResponse");
+  const SellResponse = root.lookupType("ledger_trade.NewSellResponse");
   const err = SellResponse.verify(payload);
   if (err) {
     throw Error(err);

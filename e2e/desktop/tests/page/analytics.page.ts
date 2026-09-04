@@ -1,6 +1,6 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { PageHeader } from "tests/component/pageHeader.component";
 
 export class AnalyticsPage extends AppPage {

@@ -1,5 +1,4 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
@@ -13,6 +12,7 @@ import { DEFAULT_LEDGER_EXPLORER_URI } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
+import { nftEnabled } from "../../utils";
 
 export const DEFAULT_BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
@@ -62,11 +62,11 @@ export async function fetchPaginatedOpsWithRetries(
       },
     });
 
-    const mergedOperations = [...previousOperations, ...operationsBatch];
+    previousOperations.push(...operationsBatch);
 
     return token
-      ? fetchPaginatedOpsWithRetries(params, token, mergedOperations, retries)
-      : mergedOperations.sort(
+      ? fetchPaginatedOpsWithRetries(params, token, previousOperations, retries)
+      : previousOperations.sort(
           // sorting DESC order
           (a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime(),
         );
@@ -132,13 +132,13 @@ export const getOperations: ExplorerApi["getOperations"] = async (
       ledgerERC20EventToOperations(address, coinOps[0], event, index),
     );
     const erc721Ops =
-      isNFTActive(currencyId) && config.showNfts
+      nftEnabled(currencyId) && config.supportedTokens?.includes("erc721")
         ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>
             ledgerERC721EventToOperations(address, coinOps[0], event, index),
           )
         : [];
     const erc1155Ops =
-      isNFTActive(currencyId) && config.showNfts
+      nftEnabled(currencyId) && config.supportedTokens?.includes("erc1155")
         ? ledgerOp.erc1155_transfer_events.flatMap((event, index) =>
             ledgerERC1155EventToOperations(address, coinOps[0], event, index),
           )

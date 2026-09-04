@@ -12,6 +12,7 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import getTransactionStatus from "./getTransactionStatus";
 import { encodeAccountIdWithTokenAccountAddress } from "./logic";
+import { emptyStakingResources } from "./logic/stakingResources";
 import { getChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
 import type {
@@ -119,7 +120,7 @@ function buildSenderAccount(): SolanaAccount {
       DAY: { balances: [], latestDate: null },
       WEEK: { balances: [], latestDate: null },
     },
-    solanaResources: { stakes: [], unstakeReserve: new BigNumber(0) },
+    stakingResources: emptyStakingResources(new BigNumber(0)),
   } as SolanaAccount;
 }
 

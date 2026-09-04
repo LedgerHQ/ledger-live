@@ -12,6 +12,9 @@ import type {
   AleoPrivateRecord,
   DelegatedProvingResponse,
   AleoTransitionCursor,
+  AleoCommitteeResponse,
+  AleoValidatorMetadataResponse,
+  AleoTotalSupplyResponse,
 } from "../types/api";
 import type { AleoCoinConfig } from "../types";
 import { MAX_TRANSITIONS_PER_PAGE, PROGRAM_ID } from "../constants";
@@ -33,6 +36,77 @@ async function getAccountBalance(config: AleoCoinConfig, address: string): Promi
   const res = await network<string | null>({
     method: "GET",
     url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getBondedMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/bonded/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getUnbondingMapping(
+  config: AleoCoinConfig,
+  address: string,
+): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/unbonding/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getWithdrawMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/withdraw/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getCommittee(config: AleoCoinConfig): Promise<AleoCommitteeResponse> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<AleoCommitteeResponse>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/committee/latest`,
+  });
+
+  return res.data;
+}
+
+async function getValidatorMetadata(
+  config: AleoCoinConfig,
+): Promise<AleoValidatorMetadataResponse> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<AleoValidatorMetadataResponse>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/committee/validator-metadata`,
+  });
+
+  return res.data;
+}
+
+async function getTotalSupply(config: AleoCoinConfig): Promise<AleoTotalSupplyResponse> {
+  const { apiUrls, networkType } = config;
+
+  const res = await network<AleoTotalSupplyResponse>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/latest/totalSupply`,
   });
 
   return res.data;
@@ -327,6 +401,12 @@ async function submitEncryptedDelegatedProvingRequest({
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
+  getBondedMapping,
+  getUnbondingMapping,
+  getWithdrawMapping,
+  getCommittee,
+  getValidatorMetadata,
+  getTotalSupply,
   getTokenBalance,
   getTokens,
   getTransactionById,

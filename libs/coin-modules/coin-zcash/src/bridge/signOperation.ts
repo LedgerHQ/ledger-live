@@ -225,6 +225,7 @@ export const buildSignOperation =
               inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`),
               inputRefs,
             }),
+            ...(transaction.memo && { memo: transaction.memo }),
           } satisfies ZcashOperationExtra,
         };
 

@@ -1,5 +1,11 @@
 # @ledgerhq/concordium-core
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#21239](https://github.com/LedgerHQ/ledger-live/pull/21239) [`02c9ccf`](https://github.com/LedgerHQ/ledger-live/commit/02c9ccfb409317a72f0b29d1fb755214adc9e596) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Protocol-Level Token (PLT) support: TransactionType.TokenUpdate, CIS-7 CBOR encoding, and flat wire serialization
+
 ## 0.5.0
 
 ### Minor Changes

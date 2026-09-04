@@ -13,6 +13,7 @@ import {
   CurrencyBridge,
   ResolvedAccountBridge,
   TransactionCommon,
+  TransactionSource,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "./generic-coin-framework/accountBridge";
@@ -26,6 +27,19 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { isZcashShieldedEnabled } from "./zcashRouting";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { throwError } from "rxjs";
+import { catchError, tap } from "rxjs/operators";
+import {
+  buildBroadcastCommonEvent,
+  buildSignCommonEvent,
+  buildTransactionFailureEvent,
+  buildTransactionSuccessEvent,
+  emitTransactionEvent,
+  rememberSignContext,
+  TransactionPathway,
+  TransactionStage,
+} from "@ledgerhq/transaction-observability";
 
 // The family owning a currency's bridge is `currency.family`, except zcash:
 // `zcashShielded` routes it to the standalone "zcash" family
@@ -184,7 +198,50 @@ export function getAccountBridge(
   return getAccountBridgeByFamily(family, mainAccount.id);
 }
 
-async function wrapAccountBridge<T extends TransactionCommon>(
+/**
+ * Attributes a broadcast to a {@link TransactionPathway} and a live-app manifest id from
+ * `broadcastConfig.source`. `manifestId` is only set for live-app / dApp sources — a
+ * "coin-module" source's `name` is the host app, not a manifest.
+ */
+function attributeBroadcastSource(source?: TransactionSource): {
+  pathway: TransactionPathway;
+  manifestId?: string;
+} {
+  switch (source?.type) {
+    case "dApp":
+      return { pathway: TransactionPathway.Dapp, manifestId: source.name };
+    case "live-app":
+      return { pathway: TransactionPathway.WalletApiSignAndBroadcast, manifestId: source.name };
+    case "coin-module":
+      return { pathway: TransactionPathway.Send };
+    case "swap":
+      return { pathway: TransactionPathway.Swap };
+    default:
+      return { pathway: TransactionPathway.Unknown };
+  }
+}
+
+/**
+ * The live-app or dApp that started this signature, when there is one.
+ *
+ * `broadcastConfig` does not exist at the sign stage, so the route is otherwise unknown until
+ * broadcast — which leaves the Earn live-app skip in `toSegmentTrackEvent` unable to fire, and
+ * double-counts its sign-stage failures. `withLiveAppContext` already scopes the manifest id
+ * around every wallet-api and dApp signing call, so reading it here attributes the stage
+ * without changing the bridge signature. That matters: mobile's legacy wallet-api path never
+ * forwards the manifest to the device action, so an argument would not cover every route.
+ *
+ * The store is a singleton set and restored around an `await`, not an `AsyncLocalStorage`, so
+ * two overlapping signatures would misattribute the second. Device signing serialises — one
+ * device, one prompt — so that holds today. LIVE-36571 replaces this by passing the source
+ * explicitly. Note the singleton now has two consumers, this and the blind-signing reporter.
+ */
+function currentLiveAppManifestId(): string | undefined {
+  return liveBlindSigningReporter.getContext().liveAppContext ?? undefined;
+}
+
+// Exported for unit testing the transaction-observability seam.
+export async function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
   family: string,
 ): Promise<ResolvedAccountBridge<T>> {
@@ -203,6 +260,75 @@ async function wrapAccountBridge<T extends TransactionCommon>(
 
       const commonTransactionStatus = await commonGetTransactionStatus(...args);
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
+    },
+    /**
+     * Transaction observability, sign stage. Only failures: a success here is not an outcome
+     * the funnel cares about, and abandoning the prompt is an unsubscribe rather than an
+     * error, so the device-action layer reports that instead.
+     *
+     * The rich transaction is available (hence the exact action and the validators).
+     * `broadcastConfig` is not, so the route *type* stays unknown until broadcast — but the
+     * originating manifest comes from the live-app context, see below.
+     */
+    signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
+      bridge.signOperation(arg0).pipe(
+        // The signed operation is the same object `broadcast` is handed later, so remembering
+        // against it carries the transaction's own wording and target across the stages.
+        tap(event => {
+          if (event.type === "signed") {
+            rememberSignContext(
+              event.signedOperation,
+              arg0.account.currency.family,
+              arg0.transaction,
+            );
+          }
+        }),
+        catchError(error => {
+          emitTransactionEvent(
+            buildTransactionFailureEvent(
+              buildSignCommonEvent({
+                account: arg0.account,
+                mainAccount: arg0.account,
+                // The manifest names the origin; the route type still needs `broadcastConfig`.
+                pathway: TransactionPathway.Unknown,
+                manifestId: currentLiveAppManifestId(),
+                transaction: arg0.transaction,
+              }),
+              { stage: TransactionStage.Sign, error },
+            ),
+          );
+          return throwError(() => error);
+        }),
+      ),
+    /**
+     * Transaction observability, broadcast stage — where a staking transaction's success is
+     * actually known. Fully attributed via `broadcastConfig.source`, but the action has to be
+     * read off the optimistic operation since the transaction is not passed here.
+     */
+    broadcast: async (arg0: Parameters<typeof bridge.broadcast>[0]) => {
+      const { pathway, manifestId } = attributeBroadcastSource(arg0.broadcastConfig?.source);
+      const common = buildBroadcastCommonEvent({
+        account: arg0.account,
+        mainAccount: arg0.account,
+        pathway,
+        manifestId,
+        source: arg0.broadcastConfig?.source,
+        signedOperation: arg0.signedOperation,
+      });
+      try {
+        const operation = await bridge.broadcast(arg0);
+        emitTransactionEvent(buildTransactionSuccessEvent(common));
+        return operation;
+      } catch (error) {
+        emitTransactionEvent(
+          buildTransactionFailureEvent(common, {
+            stage: TransactionStage.Broadcast,
+            error,
+            signedOperation: arg0.signedOperation,
+          }),
+        );
+        throw error;
+      }
     },
   } as ResolvedAccountBridge<T>;
 }

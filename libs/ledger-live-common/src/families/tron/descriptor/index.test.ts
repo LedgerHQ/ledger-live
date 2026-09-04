@@ -37,10 +37,6 @@ describe("tron descriptor", () => {
     expect(descriptor.send.fees.hasCustom).toBe(false);
     expect(descriptor.send.fees.hasCoinControl).toBeUndefined();
   });
-
-  it("does not declare address book support until contacts supports Tron", () => {
-    expect(descriptor.send.addressBook).toBe(false);
-  });
 });
 
 describe("tron descriptor - getNetworkFeesInfo", () => {

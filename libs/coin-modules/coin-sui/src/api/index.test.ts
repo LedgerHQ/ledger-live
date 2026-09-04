@@ -37,12 +37,23 @@ describe("api/index", () => {
     api = createApi();
   });
 
+  it("omits the capabilities the chain has none of", () => {
+    for (const method of [
+      "call",
+      "register",
+      "craftRawTransaction",
+      "validateIntent",
+      "getNextSequence",
+    ] as const) {
+      expect(api).not.toHaveProperty(method);
+    }
+  });
+
   it("should return API object", () => {
     expect(typeof api).toBe("object");
     expect(Object.keys(api)).toEqual(
       expect.arrayContaining([
         "broadcast",
-        "call",
         "combine",
         "craftTransaction",
         "estimateFees",

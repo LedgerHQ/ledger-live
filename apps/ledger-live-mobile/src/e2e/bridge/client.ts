@@ -10,6 +10,7 @@ import {
   getAllFeatureFlags,
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
+import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -116,6 +117,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         } catch (error) {
           log(`Failed to persist bridge-imported accounts: ${String(error)}`);
         }
+        break;
+      }
+      case "importTrustchain": {
+        // Boot hydration has already run and minted throwaway member credentials, so this
+        // overwrites them. DBSave persists the slice on its own.
+        store.dispatch(importTrustchainStoreState(msg.payload));
         break;
       }
       case "mockDeviceEvent": {

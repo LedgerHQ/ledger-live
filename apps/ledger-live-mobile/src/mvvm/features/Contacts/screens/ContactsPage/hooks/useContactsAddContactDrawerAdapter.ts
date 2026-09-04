@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { v4 as uuid } from "uuid";
 import {
-  addContact,
-  contact,
   type Contact,
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
 import { type AddContactAppAdapterResult, useAddContactAppAdapter } from "@features/flow-contacts";
-import type { ContactCreationPort } from "@features/flow-contacts-add-contact";
+import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
@@ -19,21 +17,8 @@ export function useContactsAddContactDrawerAdapter(
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const contactCreation = useMemo<ContactCreationPort>(
-    () => ({
-      createContact: async ({ name }) => {
-        const createdContact = contact({
-          id: `contact-${uuid()}`,
-          isMe: false,
-          name,
-          addresses: [],
-        });
-
-        dispatch(addContact(createdContact));
-
-        return createdContact;
-      },
-    }),
+  const contactCreation = useMemo(
+    () => createContactCreationPort({ dispatch, generateId: uuid }),
     [dispatch],
   );
   const labels = useMemo(

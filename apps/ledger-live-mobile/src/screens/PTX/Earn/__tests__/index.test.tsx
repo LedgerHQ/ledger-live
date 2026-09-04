@@ -115,4 +115,24 @@ describe("EarnScreen canvas background wiring", () => {
     expect(capturedProps.current).toBeDefined();
     expect(capturedProps.current?.shouldDisplayBackgroundCanvas).toBe(true);
   });
+
+  it("should pass stableSavings with enabled and params", () => {
+    renderEarnScreen("deposit", {
+      lwmWallet40: { enabled: true },
+      stableSavings: { enabled: true, params: { cohort: "a" } },
+    });
+
+    expect(capturedProps.current?.inputs?.stableSavings).toBe(
+      JSON.stringify({ enabled: true, params: { cohort: "a" } }),
+    );
+  });
+
+  it("should pass stableSavings with enabled=false and no params key", () => {
+    renderEarnScreen("deposit", {
+      lwmWallet40: { enabled: true },
+      stableSavings: { enabled: false },
+    });
+
+    expect(capturedProps.current?.inputs?.stableSavings).toBe(JSON.stringify({ enabled: false }));
+  });
 });

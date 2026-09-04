@@ -1,9 +1,9 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
-import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
-import { getCurrencyManagerApp } from "../../models/currencies";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
+import { getCurrencyManagerApp } from "@e2e/models/currencies";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({

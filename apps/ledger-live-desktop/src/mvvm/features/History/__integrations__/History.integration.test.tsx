@@ -10,6 +10,15 @@ import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAsse
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import History from "../index";
+import {
+  aliceContact,
+  CONTACT_HISTORY_ID,
+  CONTACT_HISTORY_NAME,
+  createEthAccountWithContactTransfers,
+  IN_FROM_CONTACT_OP_ID,
+  OUT_TO_CONTACT_OP_ID,
+  OUT_TO_OTHER_OP_ID,
+} from "./contactHistory.fixtures";
 
 const mockNavigate = jest.fn();
 let mockExportShouldSucceed = true;
@@ -232,6 +241,84 @@ describe("History integration", () => {
     await user.click(await screen.findByTestId("history-actions-menu-button"));
 
     expect(screen.queryByTestId("history-toggle-dust-filter-button")).not.toBeInTheDocument();
+  });
+
+  it("should show the contact in the header and only that contact's send and receive rows", async () => {
+    const account = createEthAccountWithContactTransfers();
+
+    render(<History />, {
+      initialRoute: `/history?contactId=${CONTACT_HISTORY_ID}`,
+      initialState: {
+        accounts: [account],
+        settings: AFTER_ONBOARDING_STATE,
+        contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+
+    expect(await screen.findByTestId("history-contact-scope")).toHaveTextContent(
+      CONTACT_HISTORY_NAME,
+    );
+    expect(screen.getByTestId(`history-operation-row-${OUT_TO_CONTACT_OP_ID}`)).toBeVisible();
+    expect(screen.getByTestId(`history-operation-row-${IN_FROM_CONTACT_OP_ID}`)).toBeVisible();
+    expect(
+      screen.queryByTestId(`history-operation-row-${OUT_TO_OTHER_OP_ID}`),
+    ).not.toBeInTheDocument();
+  });
+
+  it("should leave History unscoped when the contactId is unknown", async () => {
+    const account = createEthAccountWithContactTransfers();
+
+    render(<History />, {
+      initialRoute: "/history?contactId=contact-missing",
+      initialState: {
+        accounts: [account],
+        settings: AFTER_ONBOARDING_STATE,
+        contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId(`history-operation-row-${OUT_TO_OTHER_OP_ID}`)).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-contact-scope")).not.toBeInTheDocument();
+  });
+
+  it("should ignore the contactId scope when the lwdPayTab flag is disabled", async () => {
+    const account = createEthAccountWithContactTransfers();
+
+    render(<History />, {
+      initialRoute: `/history?contactId=${CONTACT_HISTORY_ID}`,
+      initialState: {
+        accounts: [account],
+        settings: AFTER_ONBOARDING_STATE,
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId(`history-operation-row-${OUT_TO_OTHER_OP_ID}`)).toBeVisible();
+    });
+    expect(screen.getByTestId(`history-operation-row-${OUT_TO_CONTACT_OP_ID}`)).toBeVisible();
+    expect(screen.getByTestId(`history-operation-row-${IN_FROM_CONTACT_OP_ID}`)).toBeVisible();
+    expect(screen.queryByTestId("history-contact-scope")).not.toBeInTheDocument();
+  });
+
+  it("should show the empty state when the contact has no matching transactions", async () => {
+    render(<History />, {
+      initialRoute: `/history?contactId=${CONTACT_HISTORY_ID}`,
+      initialState: {
+        accounts: [EMPTY_BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        contacts: { contacts: [aliceContact()] },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+
+    expect(await screen.findByText("No transactions yet")).toBeVisible();
+    expect(screen.getByTestId("history-contact-scope")).toHaveTextContent(CONTACT_HISTORY_NAME);
+    expect(screen.queryByTestId("history-table")).not.toBeInTheDocument();
   });
 });
 

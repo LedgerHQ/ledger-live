@@ -12,7 +12,12 @@ import type { AccountTronAPI, ChainParameters } from "../network/types";
 import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo } from "../types";
 import type { TronMemo, TronTxData } from "../types";
-import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
+import {
+  ACTIVATION_FEES,
+  MEMO_FEE_PESSIMISTIC,
+  STANDARD_FEES_NATIVE,
+  STANDARD_FEES_TRC_20,
+} from "./constants";
 import {
   computeBandwidthFee,
   computeEnergyFee,
@@ -56,6 +61,7 @@ const chainParams: ChainParameters = {
   transactionFee: 1000,
   createAccountFee: 100_000,
   createNewAccountFeeInSystemContract: 1_000_000,
+  memoFee: 1_000_000, // 1 TRX, mainnet's value
 };
 
 const activeRecipient: AccountTronAPI[] = [{ address: "recipient", trc20: [] }];
@@ -77,6 +83,12 @@ const sendNative: TransactionIntent<TronMemo, TronTxData> = {
   data: { type: "tron" },
 };
 
+const MEMO = "ledger-e2e"; // 10 UTF-8 bytes
+const sendNativeWithMemo: TransactionIntent<TronMemo, TronTxData> = {
+  ...sendNative,
+  memo: { type: "string", kind: "memo", value: MEMO },
+};
+
 const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
   intentType: "transaction",
   type: "send",
@@ -85,6 +97,11 @@ const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
   amount: BigInt(1000),
   asset: { type: "trc10", assetReference: "1002000" },
   data: { type: "tron" },
+};
+
+const sendTrc10WithMemo: TransactionIntent<TronMemo, TronTxData> = {
+  ...sendTrc10,
+  memo: { type: "string", kind: "memo", value: MEMO },
 };
 
 const sendTrc20: TransactionIntent<TronMemo, TronTxData> = {
@@ -168,6 +185,63 @@ describe("estimateFees", () => {
 
       expect(result.value).toBe(
         BigInt(chainParams.createAccountFee + chainParams.createNewAccountFeeInSystemContract),
+      );
+    });
+  });
+
+  describe("memo fee (TIP-387)", () => {
+    it("adds the chain memo fee on top when a native send carries a memo", async () => {
+      // Enough free bandwidth to cover the (slightly larger) memo'd transaction, so the whole fee is
+      // the flat memo fee.
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipient);
+
+      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+
+      expect(result.value).toBe(BigInt(chainParams.memoFee));
+    });
+
+    it("grows the bandwidth requirement by the memo's byte length", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+      mockFetchTronAccount.mockResolvedValue(activeRecipient);
+
+      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+
+      expect(result.value).toBe(
+        BigInt(
+          (270 + Buffer.byteLength(MEMO, "utf8")) * chainParams.transactionFee +
+            chainParams.memoFee,
+        ),
+      );
+    });
+
+    it("charges no memo fee on a chain that never activated the parameter (getMemoFee = 0)", async () => {
+      mockGetChainParameters.mockResolvedValue({ ...chainParams, memoFee: 0 });
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipient);
+
+      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+
+      expect(result.value).toBe(0n);
+    });
+
+    it("prices a memo on a TRC-10 send too (size grows, memo fee added)", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+      mockFetchTronAccount.mockResolvedValue(activeRecipient);
+
+      const result = await estimateFees(mockConfig, sendTrc10WithMemo);
+
+      // A TRC-10 transfer carries its memo in `raw_data.data` and pays TIP-387's memo fee the same
+      // as a native send.
+      expect(result.value).toBe(
+        BigInt(
+          (285 + Buffer.byteLength(MEMO, "utf8")) * chainParams.transactionFee +
+            chainParams.memoFee,
+        ),
       );
     });
   });
@@ -484,6 +558,16 @@ describe("estimateFees", () => {
       const result = await estimateFees(mockConfig, sendTrc20);
 
       expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+    });
+
+    it("adds a pessimistic memo fee to the native fallback when the send carries a memo", async () => {
+      mockGetTronAccountNetwork.mockRejectedValue(new Error("network down"));
+
+      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+
+      expect(result.value).toBe(
+        BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).plus(MEMO_FEE_PESSIMISTIC).toString()),
+      );
     });
 
     it("reports a non-zero requirement against an unknown pool so the tooltip cannot claim coverage", async () => {

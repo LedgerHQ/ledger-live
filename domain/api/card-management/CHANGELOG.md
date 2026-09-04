@@ -1,5 +1,40 @@
 # @domain/api-card-management
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20980](https://github.com/LedgerHQ/ledger-live/pull/20980) [`6918e5b`](https://github.com/LedgerHQ/ledger-live/commit/6918e5b285afe016d54f95090d44db3c1467fcec) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add the `getCardStatus` query for `GET /v1/card/status`.
+
+  - Makes an ordered card observable: `orderCard` answers `{ success: true }` and nothing else.
+  - New `CardStatus` cache tag — provided by the query, invalidated by `orderCard`, so a successful
+    order refetches the status on its own.
+  - `PayCardStatusResponseSchema` stays narrow, keeping any PAN, CVV or PIN the endpoint might grow out
+    of the RTK Query cache.
+  - A user who never ordered a card surfaces as `error.status === 404`, not as an empty success.
+  - Drops the unused `CardManagement` tag, which no endpoint provided or invalidated.
+
+- [#21121](https://github.com/LedgerHQ/ledger-live/pull/21121) [`e8c2316`](https://github.com/LedgerHQ/ledger-live/commit/e8c23168916415e569b27b530c71785e0dd2f29e) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Align the Card schemas and their tests with the provider's documented responses:
+
+  - Test payloads are now the documented examples, field for field, instead of invented ones. The card id is a digit string (`"000000000050277836"`), not a uuid — which is why the schema does not pin one.
+  - Drops test data that injected `pan`, `cvv`, `pin` and `cardId`. The status response documents none of them, so those cases asserted behaviour against a payload the provider never sends.
+  - Adds `PayCardErrorResponseSchema` for the `{ message }` body every documented Card error returns, and builds the error fixtures through it. Deliberately not wired to `rawErrorResponseSchema`: a validation failure there would replace the `FetchBaseQueryError`, and `isUnauthorizedError` reads `status === 401` off it to end a session.
+  - The 404 fixture now carries the documented `"Card not found"` body.
+
+- [#20999](https://github.com/LedgerHQ/ledger-live/pull/20999) [`9f130fb`](https://github.com/LedgerHQ/ledger-live/commit/9f130fb908ad4596ef5697189633a3470935de75) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add the custodial wallet queries the card balance is built from:
+
+  - `getInternalWallets` for `GET /v1/wallet/internal` — the only endpoint carrying balances, kept as decimal strings so the provider's precision survives.
+  - `getCardLinkedWallets` for `GET /v1/wallet/internal/card_linked` — the wallets funding the card, with the priority Baanx charges them in.
+
+  Both schemas are narrow: the internal wallet drops `addressId` and the constant `type`, and neither endpoint is given a cache tag until the link/unlink mutations that would invalidate it exist.
+
+  `addressMemo` accepts an explicit `null`, which is what the provider sends for a wallet with no memo. Requiring a string or an absent key would have failed that wallet, and with it the whole array.
+
+### Patch Changes
+
+- Updated dependencies [[`ce47443`](https://github.com/LedgerHQ/ledger-live/commit/ce47443e97f559210443547a7948ef61c01f7feb), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8)]:
+  - @shared/api-services@0.6.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

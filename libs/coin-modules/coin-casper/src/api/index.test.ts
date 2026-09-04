@@ -1,4 +1,9 @@
 import type { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import {
+  isNotSupportedStub,
+  requiredApiKeys,
+  withDefaults,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { CASPER_FEES_MOTES } from "../constants";
 import { TEST_ADDRESSES } from "../__tests__/fixtures/addresses.fixture";
 import type { CasperContext, CasperMemo } from "../types";
@@ -25,30 +30,36 @@ const sendIntent: TransactionIntent<CasperMemo> = {
 const balances: Balance[] = [{ value: BALANCE, asset: { type: "native" }, locked: 0n }];
 
 describe("createApi", () => {
-  it("returns an object with all CoinModuleApi methods", () => {
-    const methods = [
-      "lastBlock",
-      "getBlockInfo",
+  it("implements every method the contract requires", () => {
+    for (const method of requiredApiKeys) {
+      expect(typeof api[method]).toBe("function");
+    }
+  });
+
+  // The capabilities Casper does not expose are omitted now rather than stubbed one by one,
+  // and the resolver's `withDefaults` supplies them — which is also what makes them
+  // reportable: a consumer can ask, where a throwing placeholder used to be
+  // indistinguishable from an implementation.
+  it("omits the capabilities Casper does not expose", () => {
+    const resolved = withDefaults(api);
+    for (const capability of [
       "getBlock",
+      "getBlockInfo",
       "call",
+      "register",
       "getValidators",
-      "getBalance",
-      "listOperations",
       "getStakes",
       "getRewards",
-      "craftTransaction",
       "craftRawTransaction",
-      "estimateFees",
-      "combine",
-      "broadcast",
-      "validateIntent",
-      "getNextSequence",
-      "validateAddress",
-      "craftTransactionData",
-    ];
-    for (const method of methods) {
-      expect(typeof api[method as keyof typeof api]).toBe("function");
+    ] as const) {
+      expect(resolved.supports(capability)).toBe(false);
     }
+  });
+
+  // `craftTransactionData` is the one unsupported method the contract requires, so it cannot
+  // be omitted — it stays declared, and stays visible for what it is.
+  it("declares craftTransactionData as unsupported", () => {
+    expect(isNotSupportedStub(api.craftTransactionData)).toBe(true);
   });
 
   describe("validateIntent", () => {

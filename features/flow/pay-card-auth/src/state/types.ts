@@ -86,6 +86,8 @@ export type CardLoginPorts = Readonly<{
   hasSession: () => Promise<boolean>;
   persistSession: (session: PayCardSession) => Promise<void>;
   clearSession: () => Promise<void>;
+  /** Removes the cached Card user, so no other screen shows whoever just left. */
+  forgetUser: () => void;
   exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;

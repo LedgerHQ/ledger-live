@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runDelegateTezos } from "./delegate";
+import { runDelegateTezos } from "@e2e/specs/delegate/delegate";
 
 const delegation = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 runDelegateTezos(

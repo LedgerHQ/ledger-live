@@ -1,3 +1,4 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { CosmosCoinConfig, CosmosContext } from "../config";
 import { CosmosAPI } from "../network/Cosmos";
@@ -40,7 +41,21 @@ const sendIntent = {
 } as unknown as TransactionIntent;
 
 describe("api/createApi", () => {
-  it("returns a CoinModuleApi with all supported methods wired", () => {
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi("cosmos"), context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getRewards",
+        "register",
+      ],
+      inconsistent: [],
+    });
+  });
+  it("declares every method the chain supports", () => {
     const api = createApi("cosmos") as unknown as Record<string, unknown>;
 
     const methods = [
@@ -61,17 +76,6 @@ describe("api/createApi", () => {
     for (const m of methods) {
       expect(typeof api[m]).toBe("function");
     }
-  });
-
-  it("throws 'not supported' for the unsupported methods", () => {
-    const api = createApi("cosmos");
-
-    expect(() => api.getRewards(context, "addr")).toThrow("getRewards is not supported");
-    expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
-    expect(() => api.getBlockInfo(context, 1)).toThrow("getBlockInfo is not supported");
-    expect(() => api.craftRawTransaction(context, "tx", "sender", "pubkey", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
   });
 
   it("wires the supported delegations to the logic layer", async () => {

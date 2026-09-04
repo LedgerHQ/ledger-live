@@ -48,17 +48,20 @@ module.exports = {
   reporters: [
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   projects: [
     {
       ...defaultConfig,
       testPathIgnorePatterns: [...testPathIgnorePatterns, ".(test|spec).tsx"],
+      setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
     {
       ...defaultConfig,
       displayName: "dom",
       testEnvironment: "jsdom",
       testRegex: ".react.(test|spec).tsx",
+      setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
   ],
 };

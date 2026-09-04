@@ -101,6 +101,21 @@ describe("createIntent", () => {
     expect(intent.onJobComplete).toBe(onJobComplete);
   });
 
+  it("GIVEN a typed result definition WHEN creating an intent THEN it attaches its result listener", () => {
+    // GIVEN
+    const definition: IntentPlatformDefinition<TestJobState, TestInput, TestExtraProps, string> = {
+      ...myIntentDefinitionWithInput,
+      job: () => of({ step: "done" as const, result: "ok" }),
+    };
+    const onResult = jest.fn<void, [string]>();
+
+    // WHEN
+    const intent = createIntent(definition, { value: 1 }, { onResult });
+
+    // THEN
+    expect(intent.onResult).toBe(onResult);
+  });
+
   it("has no listener fields when none are provided", () => {
     const intent = createIntent(myIntentDefinitionWithInput, { value: 1 });
 

@@ -7,6 +7,8 @@ import {
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
+  getPltTokens,
+  getPltTokenInfo,
   getTransactions,
   getTransactionCost,
   submitTransfer,
@@ -257,6 +259,70 @@ describe("proxyClient", () => {
         expect.objectContaining({
           method: "GET",
           url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/accNonce/test-address",
+        }),
+      );
+    });
+  });
+
+  describe("getPltTokens", () => {
+    it("should fetch the full token info for every token", async () => {
+      const mockResponse = [
+        {
+          tokenId: "PLT",
+          tokenState: {
+            tokenModuleRef: "ref",
+            decimals: 2,
+            totalSupply: { value: "999999900", decimals: 2 },
+            moduleState: { name: "Test token", allowList: true },
+          },
+        },
+      ];
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getPltTokens(config, currencyId);
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/plt/tokens",
+        }),
+      );
+    });
+  });
+
+  describe("getPltTokenInfo", () => {
+    it("should fetch one token info", async () => {
+      const mockResponse = {
+        tokenId: "PLT",
+        tokenState: {
+          tokenModuleRef: "ref",
+          decimals: 2,
+          totalSupply: { value: "999999900", decimals: 2 },
+          moduleState: "a1",
+        },
+      };
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getPltTokenInfo(config, currencyId, "PLT");
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/plt/tokenInfo/PLT",
+        }),
+      );
+    });
+
+    it("should escape a token id that is not URL-safe", async () => {
+      mockNetwork.mockResolvedValue({ data: {} });
+
+      await getPltTokenInfo(config, currencyId, "a/b c");
+
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/plt/tokenInfo/a%2Fb%20c",
         }),
       );
     });

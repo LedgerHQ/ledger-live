@@ -24,6 +24,7 @@ import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
+import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
@@ -31,14 +32,11 @@ import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import {
-  payCardBalanceSlice,
-  type PayCardBalanceState,
-} from "@features/flow-pay-card-balance/state";
+import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pay-balance/state";
 import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
-} from "@features/flow-pay-card-feature-tour/state";
+} from "@features/flow-pay-feature-tour/state";
 import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
@@ -61,6 +59,7 @@ import coinConfigOverrides, { CoinConfigOverridesState } from "./coinConfigOverr
 import knownDevices, { KnownDevicesState } from "./knownDevices";
 
 export type State = LLDRTKApiState & {
+  accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
   countervalues: CountervaluesState;
@@ -103,6 +102,7 @@ export type State = LLDRTKApiState & {
 };
 
 const appReducer = combineReducers({
+  accountAliases: accountAliasSlice.reducer,
   accounts,
   application,
   countervalues,

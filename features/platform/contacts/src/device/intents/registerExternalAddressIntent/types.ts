@@ -1,8 +1,11 @@
+import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type {
   Intent,
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactDeviceIntentFailureJobState } from "../../contactsDeviceActionFailure";
+import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
 type ChainId = string | number;
@@ -33,24 +36,36 @@ export type RegisterExternalAddressResult = Readonly<{
 
 export type RegisterExternalAddressJobState =
   | { readonly type: "pending" }
-  | { readonly type: "awaiting-device-confirmation" }
-  | { readonly type: "completed"; readonly result: RegisterExternalAddressResult }
-  | { readonly type: "failed"; readonly error: Error };
+  /**
+   * Carries the connected device so the renderer can name the product and pick
+   * the matching animation: the executor hands intent components only the job
+   * state, so the job is what publishes the device.
+   */
+  | {
+      readonly type: "awaiting-device-confirmation";
+      readonly deviceModelId: DeviceModelId;
+      readonly deviceName: string;
+    }
+  | { readonly type: "completed" }
+  | ContactDeviceIntentFailureJobState;
 
 export type RegisterExternalAddressIntentDefinition = IntentDefinition<
   RegisterExternalAddressJobState,
-  RegisterExternalAddressIntentInput
+  RegisterExternalAddressIntentInput,
+  ContactIntentResult<RegisterExternalAddressResult>
 >;
 
 export type RegisterExternalAddressIntentPlatformDefinition<ExtraProps = undefined> =
   IntentPlatformDefinition<
     RegisterExternalAddressJobState,
     RegisterExternalAddressIntentInput,
-    ExtraProps
+    ExtraProps,
+    ContactIntentResult<RegisterExternalAddressResult>
   >;
 
 export type RegisterExternalAddressIntent<ExtraProps = undefined> = Intent<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
-  ExtraProps
+  ExtraProps,
+  ContactIntentResult<RegisterExternalAddressResult>
 >;

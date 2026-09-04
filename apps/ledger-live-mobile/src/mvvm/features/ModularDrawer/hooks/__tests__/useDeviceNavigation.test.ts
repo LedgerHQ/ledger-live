@@ -40,6 +40,21 @@ describe("useDeviceNavigation", () => {
     expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
   });
 
+  it("calls onSilentClose instead of onClose when provided", () => {
+    const onClose = jest.fn();
+    const onSilentClose = jest.fn();
+    const resetSelection = jest.fn();
+    const onAccountSelected = jest.fn();
+    const { result } = renderHook(() =>
+      useDeviceNavigation({ onClose, onSilentClose, resetSelection, onAccountSelected }),
+    );
+
+    act(() => result.current.navigateToDeviceWithCurrency(mockBtcCryptoCurrency));
+
+    expect(onSilentClose).toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it("navigates to device with a token currency (uses parent)", () => {
     const onClose = jest.fn();
     const resetSelection = jest.fn();

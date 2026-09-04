@@ -16,7 +16,7 @@ import type {
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
+import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
 import type Prando from "prando";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
@@ -155,6 +155,9 @@ export type CoinModuleLoader<
    * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would
    * make a module that declares its own — coin-tron's `TronTxData`, say — unassignable, because the
    * API's methods take the intent as a parameter and so are contravariant in it.
+   *
+   * The impl type rather than the full contract: a module may omit the capabilities its chain has
+   * none of, and `getCoinModuleApi` backfills them through `withDefaults`.
    */
-  loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleApi<any, any> & BridgeApi>;
+  loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleImpl<any, any> & BridgeApi>;
 };

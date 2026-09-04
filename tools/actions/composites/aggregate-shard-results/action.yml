@@ -82,7 +82,7 @@ runs:
           shardNum=$((i + 1))
           status="${statuses[$i]}"
 
-          if [ -z "$status" ]; then
+          if [ -z "$status" ] || [ "$status" = "skipped" ]; then
             missingShards+=("$shardNum")
           elif [ "$status" != "success" ]; then
             finalStatus="failure"

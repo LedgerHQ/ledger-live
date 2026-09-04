@@ -1,5 +1,16 @@
 # @devtools/feature-flags
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#21117](https://github.com/LedgerHQ/ledger-live/pull/21117) [`1190ce1`](https://github.com/LedgerHQ/ledger-live/commit/1190ce10656496de8af6aa893b6cafca6c8a36d8) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Declares `expo-document-picker` as an optional peer dependency (and devDependency) in `@devtools/feature-flags`, removing it from regular dependencies. Adds it as a direct dependency in `ledger-live-mobile` so autolinking resolves correctly on the native side.
+
+### Patch Changes
+
+- Updated dependencies [[`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`c8bb138`](https://github.com/LedgerHQ/ledger-live/commit/c8bb13851393d4b1a50a5ece62763ba43110ae6f), [`116f006`](https://github.com/LedgerHQ/ledger-live/commit/116f006fb7e1dc3ed7d97c41ec08b2340b66a12e)]:
+  - @shared/feature-flags@0.21.0-next.0
+
 ## 0.8.0
 
 ### Minor Changes
@@ -171,25 +182,5 @@
 
 - Updated dependencies [[`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e)]:
   - @shared/feature-flags@0.12.0-next.1
-
-## 0.5.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`dd0be79`](https://github.com/LedgerHQ/ledger-live/commit/dd0be79ac4a388e9db17e349fbdf218f0a05a91f), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`94923e3`](https://github.com/LedgerHQ/ledger-live/commit/94923e36342b58ebd4754ce41324680bd9eb1bfd), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @shared/feature-flags@0.12.0-next.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#18177](https://github.com/LedgerHQ/ledger-live/pull/18177) [`fc60d9e`](https://github.com/LedgerHQ/ledger-live/commit/fc60d9e91ef2e77434a101a1dc2d558afa0aa4ae) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a sidebar that triggers when clicking on a flag. It contains a switch, a button to restore a flag if it has been overriden and a jsonEditor to change the parameters of the flag. There is also a diffView to see the difference between the jsonEditor content and the current flag parameters.
-
-- [#18316](https://github.com/LedgerHQ/ledger-live/pull/18316) [`59e5b2c`](https://github.com/LedgerHQ/ledger-live/commit/59e5b2c933040d58ac896d7f971eabf834e81edf) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add a ToolBar to devtools feature flags to sort, search, filter, clear all, import and export overrides
-
-### Patch Changes
-
-- Updated dependencies [[`8d79393`](https://github.com/LedgerHQ/ledger-live/commit/8d793937cfb5a2e7edb7234abcecc88102c10e6d), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`bbb92a1`](https://github.com/LedgerHQ/ledger-live/commit/bbb92a1efd4126343b5ef5a54605b9ca284d241c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356)]:
-  - @shared/feature-flags@0.11.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

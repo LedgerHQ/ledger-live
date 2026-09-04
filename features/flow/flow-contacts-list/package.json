@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-list",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "private": true,
   "description": "Shared Contacts list flow for Desktop and Mobile",
   "main": "src/web.ts",

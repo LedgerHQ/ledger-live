@@ -20,6 +20,7 @@ import {
 } from "../constants";
 import { CasperInvalidTransferId } from "../errors";
 import type { CasperMemo } from "../types";
+import { getTransferIdFromMemo } from "./utils";
 import { isAddressValid } from "./validateAddress";
 import { validateMemo } from "./validateMemo";
 
@@ -109,8 +110,7 @@ export function validateIntent(
   const balance = nativeBalance?.value ?? 0n;
   const spendableBalance = balance - (nativeBalance?.locked ?? 0n);
 
-  const memo = "memo" in intent ? intent.memo : undefined;
-  const transferId = memo?.type === "string" && memo.kind === "transferId" ? memo.value : undefined;
+  const transferId = getTransferIdFromMemo("memo" in intent ? intent.memo : undefined);
 
   validateRecipient(recipient, sender, currencyName, errors);
   validateSender(sender, transferId, currencyName, errors);

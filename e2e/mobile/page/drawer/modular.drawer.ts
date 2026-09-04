@@ -75,7 +75,7 @@ export default class ModularDrawer {
   }
 
   @Step("Check asset {{{0}}} amount is masked in discreet mode")
-  async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
+  private async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
     await this.performSearchByTicker(ticker);
     const assetItemId = this.assetItemByTicker(ticker);
     await waitForElement(getElementById(assetItemId));

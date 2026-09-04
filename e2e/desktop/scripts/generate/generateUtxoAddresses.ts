@@ -1,7 +1,7 @@
 import { isUtxoBasedCurrency } from "@ledgerhq/live-e2e-shared/addressCache";
 import { UTXO_ADDRESS_CACHE_FILE } from "@ledgerhq/live-e2e-shared/utxoAddressCache";
-import { generateAddressCache } from "./addressCacheGen";
-import { runGenerator } from "./shared";
+import { generateAddressCache } from "scripts/generate/addressCacheGen";
+import { runGenerator } from "scripts/generate/shared";
 
 function isUtxoCacheable(currencyId: string): boolean {
   if (currencyId.includes("/")) return false;

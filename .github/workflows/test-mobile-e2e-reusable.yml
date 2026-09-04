@@ -425,7 +425,12 @@ jobs:
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          # QAA-1509: this cache carries /usr/local/lib/android/sdk/emulator/, so the
+          # emulator binary every shard runs is whichever one sdkmanager installed the
+          # last time this key changed -- the setup job is skipped while the object
+          # exists. Bump the trailing version to force a rebuild onto a current
+          # emulator; the one pinned since AVD_API went to 36 segfaults mid-run.
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9" >> $GITHUB_OUTPUT
 
       - name: Prepare test filter
         id: test-filter
@@ -790,7 +795,7 @@ jobs:
           retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
-        if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
+        if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && steps.run-ios.outcome != 'skipped'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
@@ -1075,13 +1080,40 @@ jobs:
           fi
 
           DEATHS="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-deaths.log"
+          WATCHLOG="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log"
+          CORES="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces/coredumpctl-list.txt"
           if [ -s "$DEATHS" ]; then
+            LOST="$(awk '{print $2}' "$DEATHS" | sort -u | tr '\n' ' ')"
+            # Same default as the boot/watch scripts, which is what actually ran.
+            TOTAL="$(wc -w <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}" | tr -d ' ')"
             {
               echo "### ❌ Emulator died during this shard"
+              echo "**Lost:** \`${LOST}\`  |  **Devices affected:** $(awk '{print $2}' "$DEATHS" | sort -u | wc -l | tr -d ' ') of ${TOTAL}"
+              echo
               echo '```'
               cat "$DEATHS"
               echo '```'
+              # The watchdog only writes here after a loss survives several polls with no
+              # stop file, so this is a real mid-run death and not the shard's teardown.
+              if [ -s "$CORES" ] && grep -qi SIGSEGV "$CORES"; then
+                echo "**Coredumps:** SIGSEGV recorded - qemu crashed (QAA-1509)."
+              elif [ -s "$CORES" ]; then
+                echo "**Coredumps:** none recorded, so the device was lost without a qemu crash."
+              else
+                echo "_Re-run with \`emulator_diagnostics: true\` for coredumps and host forensics._"
+              fi
+              echo
               echo "Test failures after this point are not meaningful - see QAA-1497."
+              if [ -s "$WATCHLOG" ]; then
+                echo
+                echo "<details><summary>Watchdog log (last 20 lines)</summary>"
+                echo
+                echo '```'
+                tail -20 "$WATCHLOG"
+                echo '```'
+                echo
+                echo "</details>"
+              fi
             } >> "$GITHUB_STEP_SUMMARY"
             while read -r line; do
               echo "::error title=Emulator died (QAA-1497)::$line"
@@ -1165,7 +1197,7 @@ jobs:
           retention-days: 7
 
       - name: Setup Android Shard timing artifacts
-        if: (!cancelled() || steps.run-android.outcome == 'cancelled')
+        if: (!cancelled() || steps.run-android.outcome == 'cancelled') && steps.run-android.outcome != 'skipped'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json

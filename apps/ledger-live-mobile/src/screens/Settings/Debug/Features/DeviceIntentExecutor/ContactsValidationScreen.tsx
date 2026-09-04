@@ -5,11 +5,11 @@ import {
   type DeviceConnectionParams,
   type ExecutorState,
 } from "@features/platform-device-intent";
-import {
-  registerExternalAddressIntentPlatformDefinition,
-  type RegisterExternalAddressIntentInput,
-  type RegisterExternalAddressJobState,
+import type {
+  RegisterExternalAddressIntentInput,
+  RegisterExternalAddressJobState,
 } from "@features/platform-contacts/device/intents";
+import { registerExternalAddressIntentLWMDefinition } from "LLM/features/Contacts/deviceIntents/registerExternalAddressIntent/intentLWMDefinition";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 
@@ -26,7 +26,7 @@ const CONTACTS_VALIDATION_INPUT: RegisterExternalAddressIntentInput = {
 };
 
 const contactsValidationIntent = createIntent(
-  registerExternalAddressIntentPlatformDefinition,
+  registerExternalAddressIntentLWMDefinition,
   CONTACTS_VALIDATION_INPUT,
 );
 

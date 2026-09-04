@@ -1,3 +1,4 @@
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { VechainCurrencyConfig } from "../config";
 import { createApi } from "./index";
@@ -15,14 +16,14 @@ describe("createApi (integration)", () => {
   const context = createMockVechainContext();
 
   beforeAll(() => {
-    api = createApi();
+    api = withDefaults(createApi());
   });
 
   // These methods throw synchronously (they never return a promise), so they are asserted with a
   // synchronous `expect(() => …).toThrow`, not `.rejects` (mirrors coin-kaspa's api integ test).
   it("getNextSequence throws (not applicable to Vechain's account model)", () => {
     expect(() => api.getNextSequence(context, KNOWN_ADDRESS)).toThrow(
-      "getNextSequence is not applicable for Vechain",
+      "getNextSequence is not supported",
     );
   });
 

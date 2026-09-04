@@ -9,7 +9,7 @@ import {
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
-import { CLI } from "./cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { unregisterTransportModule } from "@ledgerhq/live-common/hw/index";
 
 export async function launchSpeculos(

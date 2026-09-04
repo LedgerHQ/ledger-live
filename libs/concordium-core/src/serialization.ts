@@ -1,6 +1,10 @@
 import {
   TransactionType,
+  type AnyTransaction,
   type Transaction,
+  type TokenUpdatePayload,
+  type TokenUpdateTransaction,
+  type TransactionHeader,
   type CredentialDeploymentTransaction,
   type IdOwnershipProofs,
 } from "./types";
@@ -18,7 +22,12 @@ import {
   serializeYearMonth,
 } from "./utils";
 import { AccountAddress } from "./address";
-import { MAX_CBOR_SIZE } from "./cbor";
+import {
+  MAX_CBOR_SIZE,
+  PLT_CBOR_MAX_SIZE,
+  PLT_TOKEN_ID_MAX_LENGTH,
+  PLT_TOKEN_ID_MIN_LENGTH,
+} from "./cbor";
 
 /**
  * Serializes transaction header common to all account transaction types.
@@ -26,7 +35,7 @@ import { MAX_CBOR_SIZE } from "./cbor";
  * Format: [sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8]
  * @private
  */
-function serializeTransactionHeader(tx: Transaction, payload: Buffer): Buffer {
+function serializeTransactionHeader(tx: { header: TransactionHeader }, payload: Buffer): Buffer {
   const serializedSender = tx.header.sender.toBuffer();
   const serializedNonce = encodeWord64(tx.header.nonce);
   const serializedEnergyAmount = encodeWord64(tx.header.energyAmount);
@@ -104,6 +113,197 @@ export const serializeTransferWithMemo = (tx: Transaction): Buffer => {
   const serializedType = Buffer.from([tx.type]);
 
   return Buffer.concat([serializedHeader, serializedType, serializedPayload]);
+};
+
+/**
+ * CBOR head for a definite-length array of exactly one item. CIS-7 allows an
+ * array of operations; the device accepts only one element.
+ * @private
+ */
+const CBOR_SINGLE_ELEMENT_ARRAY = 0x81;
+
+/**
+ * Narrows a transaction to the PLT shape.
+ *
+ * The type discriminator alone is not enough: a JS caller or an unsafe cast can
+ * produce an object that claims to be `TokenUpdate` while carrying a CCD
+ * payload. The payload checks reject that instead of letting it reach the PLT
+ * serializer.
+ */
+export function isTokenUpdateTransaction(
+  transaction: AnyTransaction,
+): transaction is TokenUpdateTransaction {
+  return (
+    transaction?.type === TransactionType.TokenUpdate && hasTokenUpdatePayload(transaction.payload)
+  );
+}
+
+/**
+ * The `in` operator throws on a null or primitive operand, so the object check
+ * comes first: the public type guard above must return false for a malformed
+ * input rather than throw.
+ *
+ * Presence alone would let a payload with string fields satisfy the guard and
+ * reach the serializer, where it fails on `readUInt8` only after passing the
+ * length bounds.
+ * @private
+ */
+function hasTokenUpdatePayload(payload: unknown): payload is TokenUpdatePayload {
+  return (
+    typeof payload === "object" &&
+    payload !== null &&
+    "tokenId" in payload &&
+    "operations" in payload &&
+    Buffer.isBuffer(payload.tokenId) &&
+    Buffer.isBuffer(payload.operations)
+  );
+}
+
+/**
+ * Serializes a TokenUpdate transaction — a Protocol-Level Token (PLT) operation.
+ *
+ * Output format:
+ * `[sender:32][nonce:8][energyAmount:8][payloadSize:4][expiry:8][type:1][token_id_length:1][token_id:N][cbor_length:4][cbor:M]`
+ *
+ * All multi-byte fields are big-endian.
+ *
+ * This is the flat wire transaction: the same bytes the chain accepts and the
+ * device hashes. The signer re-splits it into APDU frames, so nothing else needs
+ * to know the framing.
+ *
+ * Every bound checked here mirrors one the device enforces. Failing locally
+ * turns an opaque status word mid-signing into a clear error before the user is
+ * prompted.
+ *
+ * @param tx TokenUpdate transaction
+ * @returns Serialized transaction ready for signing and network submission
+ * @throws If the payload is not a PLT payload, or the token id or operations blob is outside the device's limits
+ */
+export const serializeTokenUpdate = (tx: TokenUpdateTransaction): Buffer => {
+  if (tx.type !== TransactionType.TokenUpdate) {
+    throw new Error("Transaction must be TokenUpdate type");
+  }
+
+  if (!hasTokenUpdatePayload(tx.payload)) {
+    throw new Error("TokenUpdate payload must contain tokenId and operations");
+  }
+
+  const { tokenId, operations } = tx.payload;
+
+  if (tokenId.length < PLT_TOKEN_ID_MIN_LENGTH || tokenId.length > PLT_TOKEN_ID_MAX_LENGTH) {
+    throw new Error(
+      `Token id length ${tokenId.length} is outside the device range of ${PLT_TOKEN_ID_MIN_LENGTH}..${PLT_TOKEN_ID_MAX_LENGTH} bytes`,
+    );
+  }
+
+  if (operations.length === 0) {
+    throw new Error("TokenUpdate operations blob must not be empty");
+  }
+
+  if (operations.length > PLT_CBOR_MAX_SIZE) {
+    throw new Error(
+      `TokenUpdate operations blob is ${operations.length} bytes, exceeding the device limit of ${PLT_CBOR_MAX_SIZE} bytes`,
+    );
+  }
+
+  // The blob arrives as opaque bytes, so a caller can bypass
+  // encodePltTransferOperations and hand over a multi-operation array. The
+  // device answers that with 0x6B10 after the user has already been prompted,
+  // so check the outer array header here: 0x81 is "array of exactly one".
+  if (operations.readUInt8(0) !== CBOR_SINGLE_ELEMENT_ARRAY) {
+    throw new Error(
+      `TokenUpdate operations must be a single-element CBOR array (0x${CBOR_SINGLE_ELEMENT_ARRAY.toString(16)}), got 0x${operations.readUInt8(0).toString(16)}`,
+    );
+  }
+
+  const serializedPayload = Buffer.concat([
+    encodeWord8(tokenId.length),
+    tokenId,
+    encodeWord32(operations.length),
+    operations,
+  ]);
+
+  const serializedHeader = serializeTransactionHeader(tx, serializedPayload);
+  const serializedType = Buffer.from([tx.type]);
+
+  return Buffer.concat([serializedHeader, serializedType, serializedPayload]);
+};
+
+/**
+ * Deserializes a TokenUpdate transaction.
+ *
+ * Provided for round-trip testing and for symmetry with the other transaction
+ * types. The send flow never needs it: PLT history arrives from the wallet proxy
+ * as JSON, so nothing in production decodes a PLT payload. The CBOR operations
+ * blob is returned as raw bytes rather than parsed.
+ *
+ * @param buffer Serialized TokenUpdate transaction
+ * @returns The deserialized transaction, with `operations` still CBOR-encoded
+ */
+export const deserializeTokenUpdate = (buffer: Buffer): TokenUpdateTransaction => {
+  const TYPE_OFFSET = 60;
+  const MIN_LENGTH = TYPE_OFFSET + 1 + 1 + PLT_TOKEN_ID_MIN_LENGTH + 4 + 1;
+
+  if (buffer.length < MIN_LENGTH) {
+    throw new Error(
+      `TokenUpdate buffer too short: expected at least ${MIN_LENGTH} bytes, got ${buffer.length}`,
+    );
+  }
+
+  const sender = AccountAddress.fromBuffer(buffer.subarray(0, 32));
+  const nonce = decodeWord64(buffer, 32);
+  const energyAmount = decodeWord64(buffer, 40);
+  const expiry = decodeWord64(buffer, 52);
+
+  const type = buffer.readUInt8(TYPE_OFFSET);
+  if (type !== TransactionType.TokenUpdate) {
+    throw new Error(`Expected TokenUpdate type ${TransactionType.TokenUpdate}, got ${type}`);
+  }
+
+  const tokenIdLength = buffer.readUInt8(TYPE_OFFSET + 1);
+  if (tokenIdLength < PLT_TOKEN_ID_MIN_LENGTH || tokenIdLength > PLT_TOKEN_ID_MAX_LENGTH) {
+    throw new Error(
+      `Token id length ${tokenIdLength} is outside the device range of ${PLT_TOKEN_ID_MIN_LENGTH}..${PLT_TOKEN_ID_MAX_LENGTH} bytes`,
+    );
+  }
+
+  const tokenIdOffset = TYPE_OFFSET + 2;
+  const cborLengthOffset = tokenIdOffset + tokenIdLength;
+  if (buffer.length < cborLengthOffset + 4) {
+    throw new Error("TokenUpdate buffer truncated before the CBOR length field");
+  }
+
+  const tokenId = Buffer.from(buffer.subarray(tokenIdOffset, cborLengthOffset));
+  const cborLength = decodeWord32(buffer, cborLengthOffset);
+  const operations = Buffer.from(buffer.subarray(cborLengthOffset + 4));
+
+  if (cborLength < 1 || cborLength > PLT_CBOR_MAX_SIZE) {
+    throw new Error(
+      `Declared CBOR length ${cborLength} is outside the device range of 1..${PLT_CBOR_MAX_SIZE} bytes`,
+    );
+  }
+
+  if (operations.length !== cborLength) {
+    throw new Error(
+      `Declared CBOR length ${cborLength} does not match the ${operations.length} remaining bytes`,
+    );
+  }
+
+  // payloadSize covers the kind byte and everything after it, the same rule
+  // serializeTransactionHeader applies and deserializeTransfer checks.
+  const payloadSize = decodeWord32(buffer, 48);
+  const expectedPayloadSize = 1 + 1 + tokenIdLength + 4 + cborLength;
+  if (payloadSize !== expectedPayloadSize) {
+    throw new Error(
+      `Invalid payload size for TokenUpdate: expected ${expectedPayloadSize}, got ${payloadSize}`,
+    );
+  }
+
+  return {
+    header: { sender, nonce, expiry, energyAmount },
+    type: TransactionType.TokenUpdate,
+    payload: { tokenId, operations },
+  };
 };
 
 /**
@@ -445,6 +645,7 @@ export const deserializeTransferWithMemo = (buffer: Buffer): Transaction => {
  * Payload structure varies by type:
  * - Transfer (0x03): [recipient:32][amount:8]
  * - TransferWithMemo (0x16): [recipient:32][memo_length:2][memo:N][amount:8]
+ * - TokenUpdate (0x1B): [token_id_length:1][token_id:N][cbor_length:4][cbor:M]
  *
  * @param buffer - Serialized transaction buffer
  * @returns The transaction type
@@ -461,9 +662,13 @@ export function getTransactionType(buffer: Buffer): TransactionType {
 
   const type = buffer.readUInt8(TYPE_OFFSET);
 
-  if (type !== TransactionType.Transfer && type !== TransactionType.TransferWithMemo) {
+  if (
+    type !== TransactionType.Transfer &&
+    type !== TransactionType.TransferWithMemo &&
+    type !== TransactionType.TokenUpdate
+  ) {
     throw new Error(
-      `Unsupported transaction type: ${type} (0x${type.toString(16)}). Expected Transfer (${TransactionType.Transfer}) or TransferWithMemo (${TransactionType.TransferWithMemo})`,
+      `Unsupported transaction type: ${type} (0x${type.toString(16)}). Expected Transfer (${TransactionType.Transfer}), TransferWithMemo (${TransactionType.TransferWithMemo}) or TokenUpdate (${TransactionType.TokenUpdate})`,
     );
   }
 
@@ -471,11 +676,14 @@ export function getTransactionType(buffer: Buffer): TransactionType {
 }
 
 /**
- * Deserializes a transaction buffer by automatically detecting its type.
+ * Deserializes a CCD transaction buffer by automatically detecting its type.
+ *
+ * TokenUpdate is detected but rejected: PLT transactions deserialize through
+ * {@link deserializeTokenUpdate}.
  *
  * @param buffer - Serialized transaction buffer
  * @returns The deserialized transaction
- * @throws Error if buffer is invalid or type is unsupported
+ * @throws Error if the buffer is invalid, carries a TokenUpdate, or has an unsupported type
  */
 export function deserializeTransaction(buffer: Buffer): Transaction {
   const type = getTransactionType(buffer);
@@ -485,6 +693,10 @@ export function deserializeTransaction(buffer: Buffer): Transaction {
       return deserializeTransfer(buffer);
     case TransactionType.TransferWithMemo:
       return deserializeTransferWithMemo(buffer);
+    case TransactionType.TokenUpdate:
+      throw new Error(
+        "TokenUpdate transactions are not handled by deserializeTransaction; use deserializeTokenUpdate",
+      );
     default:
       // This should never happen since getTransactionType validates the type
       /* istanbul ignore next */
@@ -499,14 +711,21 @@ export function deserializeTransaction(buffer: Buffer): Transaction {
  * @returns The serialized transaction buffer
  * @throws Error if transaction type is unsupported
  */
-export function serializeTransaction(transaction: Transaction): Buffer {
+export function serializeTransaction(transaction: AnyTransaction): Buffer {
+  if (isTokenUpdateTransaction(transaction)) {
+    return serializeTokenUpdate(transaction);
+  }
+
   switch (transaction.type) {
     case TransactionType.Transfer:
       return serializeTransfer(transaction);
     case TransactionType.TransferWithMemo:
       return serializeTransferWithMemo(transaction);
-    /* istanbul ignore next */
+    // The narrowed discriminator makes this unreachable for a well-typed caller,
+    // but it still catches a malformed object from JS or a cast.
     default:
-      throw new Error(`Unsupported transaction type for serialization: ${transaction.type}`);
+      throw new Error(
+        `Unsupported transaction type for serialization: ${(transaction as AnyTransaction).type}`,
+      );
   }
 }

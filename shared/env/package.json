@@ -1,6 +1,6 @@
 {
   "name": "@shared/env",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "private": true,
   "description": "Shared live-env definitions organized by team",
   "main": "src/index.ts",
@@ -29,6 +29,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

@@ -8,6 +8,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Box from "~/renderer/components/Box";
 import Discreet from "~/renderer/components/Discreet";
+import Ellipsis from "~/renderer/components/Ellipsis";
 import {
   Address,
   Cell,
@@ -79,19 +80,37 @@ const OperationDetailsExtra = ({
   const { type } = operation;
   const i18nKey = getI18nKey(type);
 
-  if (account.currency.id !== "zcash" || !i18nKey) {
+  if (account.currency.id !== "zcash") {
     return null;
   }
 
+  const memo = (operation.extra as { memo?: string } | undefined)?.memo;
+
+  if (!i18nKey && !memo) return null;
+
   return (
-    <OpDetailsSection>
-      <OpDetailsTitle>
-        <Trans i18nKey={"zcash.operationDetails.txType"} />
-      </OpDetailsTitle>
-      <OpDetailsData>
-        <Trans i18nKey={i18nKey} />
-      </OpDetailsData>
-    </OpDetailsSection>
+    <>
+      {i18nKey && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={"zcash.operationDetails.txType"} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Trans i18nKey={i18nKey} />
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
+      {memo && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={"zcash.operationDetails.memo"} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{memo}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,15 @@
 # @ledgerhq/wallet-analytics
 
+## 0.3.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @domain/entity-currency@0.4.2-next.0
+  - @ledgerhq/live-countervalues@0.24.5-next.0
+
 ## 0.3.5
 
 ### Patch Changes

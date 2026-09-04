@@ -1,5 +1,13 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.29.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`6cef6b5`](https://github.com/LedgerHQ/ledger-live/commit/6cef6b5341c30850aa74159bdbdea0a18f89de4c), [`5b9df59`](https://github.com/LedgerHQ/ledger-live/commit/5b9df5970cb628dbfe592227231b66ff498f480c)]:
+  - @shared/env@0.5.0-next.0
+  - @ledgerhq/live-dmk-shared@0.32.0-next.0
+
 ## 0.29.5
 
 ### Patch Changes
@@ -209,35 +217,5 @@
 
 - Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
   - @ledgerhq/live-env@2.39.0-next.0
-
-## 0.25.0
-
-### Minor Changes
-
-- [#17946](https://github.com/LedgerHQ/ledger-live/pull/17946) [`b2e3154`](https://github.com/LedgerHQ/ledger-live/commit/b2e315426c8ced9815ccef10e758bd9908f8f36a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add Connect Device Layer B analytics events on mobile and expose the selected device on connection-error UI states.
-
-### Patch Changes
-
-- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/live-env@2.38.0
-  - @ledgerhq/live-dmk-shared@0.26.0
-  - @ledgerhq/errors@6.36.0
-  - @ledgerhq/devices@8.15.1
-  - @ledgerhq/hw-transport@6.35.4
-
-## 0.25.0-next.0
-
-### Minor Changes
-
-- [#17946](https://github.com/LedgerHQ/ledger-live/pull/17946) [`b2e3154`](https://github.com/LedgerHQ/ledger-live/commit/b2e315426c8ced9815ccef10e758bd9908f8f36a) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add Connect Device Layer B analytics events on mobile and expose the selected device on connection-error UI states.
-
-### Patch Changes
-
-- Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`8269fe2`](https://github.com/LedgerHQ/ledger-live/commit/8269fe21f252be75cd5d07623bba9701098b812d), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc), [`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
-  - @ledgerhq/live-env@2.38.0-next.0
-  - @ledgerhq/live-dmk-shared@0.26.0-next.0
-  - @ledgerhq/errors@6.36.0-next.0
-  - @ledgerhq/devices@8.15.1-next.0
-  - @ledgerhq/hw-transport@6.35.4-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

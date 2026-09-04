@@ -1,5 +1,50 @@
 # @ledgerhq/coin-solana
 
+## 2.0.0-next.1
+
+### Minor Changes
+
+- [#21532](https://github.com/LedgerHQ/ledger-live/pull/21532) [`173be30`](https://github.com/LedgerHQ/ledger-live/commit/173be30135caf7ffdb26432dac0a6c4f5701e932) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-solana): support v1 transactions
+
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#20935](https://github.com/LedgerHQ/ledger-live/pull/20935) [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682) Thanks [@dilaouid](https://github.com/dilaouid)! - Move Solana staking onto the generic `StakingResources` account attribute.
+
+  **Breaking for `@ledgerhq/coin-solana`.** `SolanaResources`, `SolanaResourcesRaw`, `toSolanaResourcesRaw` and `fromSolanaResourcesRaw` are gone. `SolanaAccount` is now an alias of `StakingAccount`, so read staking data from `account.stakingResources` instead of `account.solanaResources`. A stake is a `StakingDelegation` or a `StakingUnbonding` (`SolanaStakingPosition`) rather than a `SolanaStake`: its stake account address is `positionId`, its validator is `validatorAddress`, and the former `activation.active` / `activation.inactive` / `withdrawable` fields are `activeAmount` / `inactiveAmount` / `withdrawableAmount`. `listSolanaStakingPositions`, `solanaActivationState` and `stakeActions` from `@ledgerhq/coin-solana/logic` cover the common access patterns. Accounts already persisted with a `solanaResources` blob are migrated on hydration, so no resync is needed.
+
+  `@ledgerhq/types-live` gains `StakingPositionDetails`, mixed into `StakingDelegation` and `StakingUnbonding` for chains that materialize each position as its own on-chain account, plus `actionFeeReserve` on `StakingResources`. Both are optional, so other chains are unaffected.
+
+  `@ledgerhq/wallet-cli`'s `earn positions` output changes shape: on `EarnSolanaStake`, `stakeBalance` and `withdrawable` go from `number` to an integer decimal string, so lamport amounts above `Number.MAX_SAFE_INTEGER` stay exact. Anything reading those two fields numerically needs updating.
+
+  `@ledgerhq/ledger-wallet-framework` now exports the generic `StakingResources` serializer (`toStakingResourcesRaw`, `fromStakingResourcesRaw`, `assignStakingResourcesToAccountRaw`, `assignStakingResourcesFromAccountRaw`), moved out of the EVM family in `live-common` so every coin module can use it.
+
+### Minor Changes
+
+- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`a4e5995`](https://github.com/LedgerHQ/ledger-live/commit/a4e5995bea7f9e1f164bfa50939e15031765b2fa) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
+
+  `createApi` now returns its object with `satisfies CoinModuleImpl<…>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits the five capabilities the chain has none of, `call`, `register`, `getBlock`, `getBlockInfo` and `getRewards`, instead of giving each a `throw new Error("… is not supported")`.
+
+  Staking stays: `getStakes` and `getValidators` are implemented against the chain's stake accounts and validator list, and only `getRewards` is absent.
+
+  Consumers see no change in what they can call. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real.
+
+  The authored type also keeps the contract's trailing optional parameter, or a caller reaching the module through it could no longer pass it: `getValidators` accepts and ignores its own. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
+
+- [#21212](https://github.com/LedgerHQ/ledger-live/pull/21212) [`bc1093b`](https://github.com/LedgerHQ/ledger-live/commit/bc1093bc06adfda3700841b5dbd5598825cb52d1) Thanks [@YazhuEth](https://github.com/YazhuEth)! - fix(coin-solana): pair each signature with its own parsed transaction in listOperations
+
+  JSON-RPC batch responses are not order-guaranteed, so pairing the signature list with the parsed
+  transaction batch by array position could attach another transaction's fee, feesPayer and balances
+  to a signature. Transactions are now matched by their own signature.
+
+### Patch Changes
+
+- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/live-env@3.2.0-next.0
+
 ## 1.0.1
 
 ### Patch Changes
@@ -397,17 +442,5 @@
   - @ledgerhq/types-cryptoassets@7.39.0-next.0
   - @ledgerhq/devices@8.17.0-next.0
   - @ledgerhq/live-network@2.6.7-next.0
-
-## 0.56.1
-
-### Patch Changes
-
-- [#19512](https://github.com/LedgerHQ/ledger-live/pull/19512) [`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add new OCMS v1 msg format
-
-## 0.56.1-hotfix.0
-
-### Patch Changes
-
-- [#19512](https://github.com/LedgerHQ/ledger-live/pull/19512) [`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add new OCMS v1 msg format
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

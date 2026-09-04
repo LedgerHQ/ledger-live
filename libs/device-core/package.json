@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.11.13",
+  "version": "0.11.14-next.0",
   "private": true,
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
@@ -28,6 +28,9 @@
     "semver": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
@@ -37,9 +40,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

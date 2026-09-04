@@ -1,29 +1,30 @@
 import { Step } from "jest-allure2-reporter/api";
-import { activateLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
-import { getEnv } from "@shared/env";
-import { getFlags } from "../../bridge/server";
+import { activateLedgerSync, removeMemberLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
+import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
+import * as ledgerSyncSetup from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
+import type { LedgerSyncAccountDescriptor } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 
 export default class LedgerSyncPage {
-  ledgerKeyRingProtocolArgs = {
-    apiBaseUrl: "",
-    pubKey: "",
-    privateKey: "",
-  };
+  /** CLI state lives in the shared helper so desktop and mobile drive the trustchain the same way. */
+  get ledgerKeyRingProtocolArgs() {
+    return LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
+  }
 
-  ledgerSyncPushDataArgs = {
-    rootId: "",
-    walletSyncEncryptionKey: "",
-    applicationPath: "",
-    push: true,
-    data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
-    cloudSyncApiBaseUrl: "",
-  };
+  /** The CLI member: the instance a test can remove, since the app is seeded as the other one. */
+  get initialMemberPubKey() {
+    return LedgerSyncCliHelper.initialMember.pubKey;
+  }
+
+  get ledgerSyncPushDataArgs() {
+    return LedgerSyncCliHelper.ledgerSyncPushDataArgs;
+  }
 
   successPage = "walletsync-success";
   confirmDeleteSyncId = "delete-trustchain";
   deleteSyncId = "walletSync-manage-backup";
   backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
   useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
+  manageInstancesId = "walletSync-manage-instances";
 
   activationButton = () => getElementById("walletsync-activation-button");
   activationTitle = () => getElementById("walletsync-activation-title");
@@ -31,9 +32,19 @@ export default class LedgerSyncPage {
   activationSuccessCloseButton = () => getElementById("walletsync-activation-success-close");
   deletionSuccessCloseButton = () => getElementById("walletsync-deletion-success-close");
 
+  /** Instance rows are keyed by the member public key, which is what the CLI holds. */
+  private instanceRowId(memberPubKey: string) {
+    return `walletSync-manage-instance-${memberPubKey}`;
+  }
+
   @Step("Activate Ledger Sync on Speculos")
   async activateLedgerSyncOnSpeculos() {
     await activateLedgerSync();
+  }
+
+  @Step("Remove a member from Ledger Sync on Speculos")
+  async removeMemberFromLedgerSyncOnSpeculos() {
+    await removeMemberLedgerSync();
   }
 
   @Step("Expect Ledger Sync activation page is displayed")
@@ -62,6 +73,28 @@ export default class LedgerSyncPage {
     await tapByElement(this.activationSuccessCloseButton());
   }
 
+  @Step("Open the synchronized instances list")
+  async openManageInstances() {
+    await waitForElementById(this.manageInstancesId);
+    await tapById(this.manageInstancesId);
+  }
+
+  @Step("Expect instance $0 to be listed")
+  async expectInstanceVisible(memberPubKey: string) {
+    await waitForElementById(this.instanceRowId(memberPubKey));
+  }
+
+  @Step("Expect instance $0 to be gone")
+  async expectInstanceRemoved(memberPubKey: string) {
+    await waitForElementNotVisible(this.instanceRowId(memberPubKey));
+  }
+
+  /** The row itself is not touchable — only the Remove CTA inside it is. */
+  @Step("Remove instance $0")
+  async removeInstance(memberPubKey: string) {
+    await tapById(`${this.instanceRowId(memberPubKey)}-cta`);
+  }
+
   @Step("Select delete sync")
   async openDeleteSync() {
     await waitForElementById(this.deleteSyncId);
@@ -82,64 +115,49 @@ export default class LedgerSyncPage {
     );
   }
 
-  @Step("Initialize Ledger Key Ring Protocol")
-  async initializeLedgerKeyRingProtocol() {
-    const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
-    this.ledgerKeyRingProtocolArgs.apiBaseUrl =
-      environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
-    this.ledgerSyncPushDataArgs.cloudSyncApiBaseUrl =
-      environment == "PROD" ? getEnv("CLOUD_SYNC_API_PROD") : getEnv("CLOUD_SYNC_API_STAGING");
-
-    return CLI.ledgerKeyRingProtocol({
-      initMemberCredentials: true,
-      apiBaseUrl: this.ledgerKeyRingProtocolArgs.apiBaseUrl,
-    }).then(output => {
-      if (output && "pubkey" in output) {
-        this.ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
-        this.ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
-      }
-      return output;
-    });
+  /**
+   * Speculos reads `process.env.SEED` when it launches, and Jest hands each test file a *copy* of
+   * `process.env` — so a spec setting the seed itself would only ever change its own copy while
+   * Speculos keeps booting on the shell's real seed. The swap has to happen on this side.
+   */
+  useGeneratedSeed() {
+    const previousSeed = process.env.SEED;
+    process.env.SEED = ledgerSyncSetup.generateLedgerSyncSeed();
+    return previousSeed;
   }
 
-  @Step("Initialize then delete trust chain")
-  initializeThenDeleteTrustChain() {
-    return [
-      async () => this.initializeLedgerKeyRingProtocol(),
-      async () => this.initializeLedgerSync(),
-      async () => this.deleteLedgerSyncData(),
-    ];
+  restoreSeed(previousSeed?: string) {
+    if (previousSeed === undefined) delete process.env.SEED;
+    else process.env.SEED = previousSeed;
   }
 
-  @Step("Delete Ledger Sync data")
-  async deleteLedgerSyncData() {
-    await CLI.ledgerSync({
-      deleteData: true,
-      ...this.ledgerKeyRingProtocolArgs,
-      ...this.ledgerSyncPushDataArgs,
-    });
-
-    await CLI.ledgerKeyRingProtocol({
-      destroyKeyRingTree: true,
-      ...this.ledgerKeyRingProtocolArgs,
-      ...this.ledgerSyncPushDataArgs,
-    });
+  /**
+   * Setup commands are reached through the page object rather than imported by the spec. The test
+   * environment builds the page objects in Jest's host module registry while a spec's own imports
+   * are evaluated in the sandbox one, so a spec importing the shared helper gets a second copy of
+   * it: the trustchain would be created against one set of statics and read back from an empty
+   * other. Everything that touches trustchain state has to enter through `app`.
+   */
+  initializeEmptyTrustchain() {
+    return ledgerSyncSetup.initializeEmptyTrustchain();
   }
 
-  @Step("Initialize Ledger Sync")
-  async initializeLedgerSync() {
-    const output = CLI.ledgerKeyRingProtocol({
-      getKeyRingTree: true,
-      ...this.ledgerKeyRingProtocolArgs,
-    }).then(out => {
-      if (out && "rootId" in out) {
-        this.ledgerSyncPushDataArgs.rootId = out.rootId;
-        this.ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
-        this.ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
-      }
-      return out;
-    });
-    await this.activateLedgerSyncOnSpeculos();
-    return output;
+  pushAccountsToTrustchain(
+    descriptors: LedgerSyncAccountDescriptor[],
+    accountNames: Record<string, string> = {},
+  ) {
+    return ledgerSyncSetup.pushAccountsToTrustchain(descriptors, accountNames);
+  }
+
+  addTrustchainMember(name: string) {
+    return ledgerSyncSetup.addTrustchainMember(name);
+  }
+
+  saveTrustchainToUserdata(userdataPath?: string) {
+    return LedgerSyncCliHelper.saveTrustchainToUserdata(userdataPath);
+  }
+
+  destroyTrustchain() {
+    return ledgerSyncSetup.destroyTrustchain();
   }
 }

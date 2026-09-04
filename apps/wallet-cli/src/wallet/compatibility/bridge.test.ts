@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
+import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionModel } from "./bridge";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";
@@ -215,18 +216,27 @@ describe("BridgeAdapter.getSolanaStakes", () => {
     return adapter;
   };
 
-  it("maps solanaResources.stakes to EarnSolanaStake rows", async () => {
+  it("maps stakingResources positions to EarnSolanaStake rows", async () => {
     const adapter = adapterWithSyncedAccount({
-      solanaResources: {
-        stakes: [
+      stakingResources: {
+        delegations: [
           {
-            stakeAccAddr: "stakeAcc1",
-            delegation: { voteAccAddr: "voteAcc1" },
-            activation: { state: "active" },
-            stakeAccBalance: 2_000_000,
-            withdrawable: 500_000,
+            positionId: "stakeAcc1",
+            validatorAddress: "voteAcc1",
+            amount: new BigNumber(2_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(1_500_000),
+            inactiveAmount: new BigNumber(0),
+            lockedReserve: new BigNumber(500_000),
+            withdrawableAmount: new BigNumber(500_000),
           },
         ],
+        unbondings: [],
+        redelegations: [],
+        delegatedBalance: new BigNumber(2_000_000),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
       },
     });
 
@@ -235,23 +245,66 @@ describe("BridgeAdapter.getSolanaStakes", () => {
         stakeAccount: "stakeAcc1",
         validator: "voteAcc1",
         state: "active",
-        stakeBalance: 2_000_000,
-        withdrawable: 500_000,
+        stakeBalance: BigNumberStrSchema.parse("2000000"),
+        withdrawable: BigNumberStrSchema.parse("500000"),
       },
     ]);
   });
 
-  it("leaves validator undefined for a stake with no delegation", async () => {
+  it("drops a position with no stake account address rather than emitting an empty target", async () => {
     const adapter = adapterWithSyncedAccount({
-      solanaResources: {
-        stakes: [
+      stakingResources: {
+        delegations: [
           {
-            stakeAccAddr: "stakeAcc2",
-            activation: { state: "inactive" },
-            stakeAccBalance: 1_000_000,
-            withdrawable: 1_000_000,
+            validatorAddress: "voteAcc1",
+            amount: new BigNumber(2_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(2_000_000),
+          },
+          {
+            positionId: "stakeAcc1",
+            validatorAddress: "voteAcc1",
+            amount: new BigNumber(1_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(1_000_000),
           },
         ],
+        unbondings: [],
+        redelegations: [],
+        delegatedBalance: new BigNumber(3_000_000),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+      },
+    });
+
+    const stakes = await adapter.getSolanaStakes(descriptor);
+
+    expect(stakes.map(s => s.stakeAccount)).toEqual(["stakeAcc1"]);
+  });
+
+  it("leaves validator undefined for a stake with no delegation", async () => {
+    const adapter = adapterWithSyncedAccount({
+      stakingResources: {
+        delegations: [],
+        unbondings: [
+          {
+            positionId: "stakeAcc2",
+            validatorAddress: "",
+            amount: new BigNumber(0),
+            completionDate: new Date(0),
+            status: "withdrawable",
+            activeAmount: new BigNumber(0),
+            inactiveAmount: new BigNumber(1_000_000),
+            lockedReserve: new BigNumber(0),
+            withdrawableAmount: new BigNumber(1_000_000),
+          },
+        ],
+        redelegations: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
       },
     });
 
@@ -261,12 +314,48 @@ describe("BridgeAdapter.getSolanaStakes", () => {
       stakeAccount: "stakeAcc2",
       validator: undefined,
       state: "inactive",
-      stakeBalance: 1_000_000,
-      withdrawable: 1_000_000,
+      stakeBalance: BigNumberStrSchema.parse("1000000"),
+      withdrawable: BigNumberStrSchema.parse("1000000"),
     });
   });
 
-  it("returns [] when the account has no solanaResources", async () => {
+  it("keeps lamport amounts as decimal strings past Number.MAX_SAFE_INTEGER", async () => {
+    const unsafeLamports = "9007199254740993";
+    const adapter = adapterWithSyncedAccount({
+      stakingResources: {
+        delegations: [
+          {
+            positionId: "stakeAcc3",
+            validatorAddress: "voteAcc3",
+            amount: new BigNumber(unsafeLamports),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(unsafeLamports),
+            inactiveAmount: new BigNumber(0),
+            lockedReserve: new BigNumber(0),
+            withdrawableAmount: new BigNumber(unsafeLamports),
+          },
+        ],
+        unbondings: [],
+        redelegations: [],
+        delegatedBalance: new BigNumber(unsafeLamports),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+      },
+    });
+
+    await expect(adapter.getSolanaStakes(descriptor)).resolves.toEqual([
+      {
+        stakeAccount: "stakeAcc3",
+        validator: "voteAcc3",
+        state: "active",
+        stakeBalance: BigNumberStrSchema.parse(unsafeLamports),
+        withdrawable: BigNumberStrSchema.parse(unsafeLamports),
+      },
+    ]);
+  });
+
+  it("returns [] when the account has no stakingResources", async () => {
     const adapter = adapterWithSyncedAccount({});
     await expect(adapter.getSolanaStakes(descriptor)).resolves.toEqual([]);
   });

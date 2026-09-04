@@ -1,7 +1,7 @@
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { contactsInitialState } from "@domain/entity-contact";
-import { payCardBalanceInitialState } from "@features/flow-pay-card-balance/state";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import { payCardBalanceInitialState } from "@features/flow-pay-balance/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -19,6 +19,7 @@ import {
 import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
+import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { i18n } from "~/context/Locale";
@@ -296,22 +297,26 @@ function Providers({
       content
     ) : (
       // For default rendering, add new providers here
-      <I18nextProvider i18n={i18n}>
-        <BottomSheetModalProvider>
-          <QueuedBottomSheetsProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedBottomSheetsProvider>
-        </BottomSheetModalProvider>
-      </I18nextProvider>
+      <BottomSheetModalProvider>
+        <QueuedBottomSheetsProvider>
+          <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+        </QueuedBottomSheetsProvider>
+      </BottomSheetModalProvider>
     );
 
-  // General Providers needed for all render types
+  // General Providers needed for all render types. i18n belongs here rather than in the
+  // non-HOOK branch: `useI18n` throws instead of falling back, so a `renderHook` on any hook
+  // reaching @shared/i18n would crash without a provider above it.
   let providers = (
-    <Provider store={store}>
-      <CountervaluesProviders store={store}>
-        <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
-      </CountervaluesProviders>
-    </Provider>
+    <I18nextProvider i18n={i18n}>
+      <I18nProvider i18n={i18n}>
+        <Provider store={store}>
+          <CountervaluesProviders store={store}>
+            <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+          </CountervaluesProviders>
+        </Provider>
+      </I18nProvider>
+    </I18nextProvider>
   );
 
   //if React Query is needed

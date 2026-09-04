@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import type { ActionTilesProps } from "@features/flow-pay-card-balance";
+import type { ActionTilesProps } from "@features/flow-pay-balance";
 
 export function usePayTabActionTiles(
   onTrackEvent: ActionTilesProps["onTrackEvent"],
@@ -8,28 +7,16 @@ export function usePayTabActionTiles(
   onRequest: () => void,
   onPay: () => void,
 ): ActionTilesProps {
-  const { t } = useTranslation();
-
   return useMemo(
     () => ({
       tiles: [
-        {
-          id: "deposit",
-          label: t("payTab.actions.deposit"),
-          onPress: onDeposit,
-          appearance: "base",
-        },
-        {
-          id: "request",
-          label: t("payTab.actions.request"),
-          onPress: onRequest,
-          appearance: "transparent",
-        },
-        { id: "pay", label: t("payTab.actions.pay"), onPress: onPay, appearance: "transparent" },
+        { id: "deposit", onPress: onDeposit, appearance: "base" },
+        { id: "request", onPress: onRequest, appearance: "transparent" },
+        { id: "pay", onPress: onPay, appearance: "transparent" },
       ],
       page: "Pay",
       onTrackEvent,
     }),
-    [t, onTrackEvent, onDeposit, onRequest, onPay],
+    [onTrackEvent, onDeposit, onRequest, onPay],
   );
 }

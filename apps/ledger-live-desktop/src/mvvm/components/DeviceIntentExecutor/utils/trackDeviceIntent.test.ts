@@ -243,6 +243,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         DeviceDeprecatedBlocking: "Connect App - Device Deprecated Blocking",
         WrongDeviceForAccount: "Connect App - Wrong Device For Account",
         OutOfStorage: "Connect App - Out Of Storage",
+        InvalidProvider: "Connect App - Invalid Provider",
         Error: "Connect App - Error",
       });
     });

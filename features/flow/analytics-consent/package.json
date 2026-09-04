@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-analytics-consent",
-  "version": "0.2.3",
+  "version": "0.2.4-next.0",
   "private": true,
   "description": "Analytics consent decision engine: policy version major/minor semantics",
   "main": "src/index.ts",

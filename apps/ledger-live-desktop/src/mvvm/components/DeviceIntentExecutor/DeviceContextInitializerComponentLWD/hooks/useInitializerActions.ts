@@ -6,6 +6,7 @@ import { openURL } from "~/renderer/linking";
 
 const MANAGER_ROUTE = "/manager";
 const ONBOARDING_ROUTE = "/onboarding/select-device";
+const EXPERIMENTAL_SETTINGS_ROUTE = "/settings/experimental";
 
 export function useInitializerActions() {
   const navigate = useNavigate();
@@ -35,10 +36,15 @@ export function useInitializerActions() {
     openURL(contactSupportUrl);
   }, [contactSupportUrl]);
 
+  const openExperimentalSettings = useCallback(() => {
+    navigate(EXPERIMENTAL_SETTINGS_ROUTE);
+  }, [navigate]);
+
   return {
     openMyLedger,
     openMyLedgerFirmwareUpdate,
     openOnboarding,
     openSupport,
+    openExperimentalSettings,
   };
 }

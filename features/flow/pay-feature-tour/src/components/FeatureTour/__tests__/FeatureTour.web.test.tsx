@@ -1,0 +1,81 @@
+import React from "react";
+import { configureStore } from "@reduxjs/toolkit";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
+import { Provider } from "react-redux";
+import { FeatureTour } from "../FeatureTour";
+import { I18nTestProvider } from "@shared/i18n/testing";
+import type { FeatureTourProps } from "../types";
+import { FEATURE_TOUR_RESOURCES } from "./fixtures";
+
+function makeStore() {
+  return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
+}
+
+function renderTour(props: FeatureTourProps = {}, store = makeStore()) {
+  return {
+    store,
+    ...render(
+      <Provider store={store}>
+        <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
+          <FeatureTour {...props} />
+        </I18nTestProvider>
+      </Provider>,
+    ),
+  };
+}
+
+describe("FeatureTour (Web)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders the feature rows and CTA when not seen", () => {
+    renderTour();
+
+    expect(screen.getByText("Spend with a card and get 1% cashback")).toBeInTheDocument();
+    expect(screen.getByText("Got it")).toBeInTheDocument();
+  });
+
+  it("tracks the screen view once shown", () => {
+    const onTrackScreen = jest.fn();
+    renderTour({ onTrackScreen });
+
+    expect(onTrackScreen).toHaveBeenCalledWith("Page card feature intro");
+  });
+
+  it("marks the tour as seen and emits the click event on Got it", () => {
+    const onTrackEvent = jest.fn();
+    const { store } = renderTour({ onTrackEvent });
+
+    fireEvent.click(screen.getByText("Got it"));
+
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "got it",
+      page: "$page",
+    });
+  });
+
+  it("renders nothing when the tour has already been seen", () => {
+    const store = makeStore();
+    store.dispatch(markPayCardFeatureTourSeen());
+    renderTour({}, store);
+
+    expect(screen.queryByText("Spend with a card and get 1% cashback")).toBeNull();
+  });
+
+  it("resolves its copy from the mounted i18n provider, not from props", () => {
+    render(
+      <Provider store={makeStore()}>
+        <I18nTestProvider
+          resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
+        >
+          <FeatureTour />
+        </I18nTestProvider>
+      </Provider>,
+    );
+
+    expect(screen.getByText("Compris")).toBeInTheDocument();
+  });
+});

@@ -1,7 +1,7 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export class AccountPage extends AppPage {
@@ -43,15 +43,6 @@ export class AccountPage extends AppPage {
   private accountHeaderNamePattern(...names: string[]) {
     const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
     return new RegExp(`^(${escaped.join("|")})$`);
-  }
-
-  @step("Navigate to token")
-  async navigateToToken(account: AccountType) {
-    const tokenRow = this.tokenValue(account.currency.name).or(
-      this.tokenRowByTicker(account.currency.ticker),
-    );
-    await expect(tokenRow).toBeVisible();
-    await tokenRow.click();
   }
 
   @step("Click `Receive` button")
@@ -130,7 +121,7 @@ export class AccountPage extends AppPage {
   }
 
   @step("Scroll to operations")
-  async scrollToOperations() {
+  private async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
     // Wait for the operation list to be attached and stable before scrolling (React 19 deferred rendering)
     await operationList.waitFor({ state: "attached" });
@@ -202,23 +193,24 @@ export class AccountPage extends AppPage {
     await this.closeModal.click();
   }
 
+  private async revealTokenRow(row: Locator) {
+    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
+    if (!(await row.isVisible())) {
+      await this.showAllTokensButton.click();
+    }
+  }
+
   @step("Expect token to be present")
   async expectTokenToBePresent(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
-    if (await this.showAllTokensButton.isVisible()) {
-      await this.showAllTokensButton.click();
-    }
+    await this.revealTokenRow(row);
     await expect(row).toBeVisible();
   }
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
-    if (await this.showAllTokensButton.isVisible()) {
-      await this.showAllTokensButton.click();
-    }
+    await this.revealTokenRow(row);
     await row.click();
     await this.waitForAccountHeaderName(tokenAccount.currency.name, tokenAccount.currency.ticker);
   }
@@ -234,15 +226,5 @@ export class AccountPage extends AppPage {
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
     await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
-  }
-
-  @step("Check account chart is visible")
-  async checkAccountChart() {
-    await expect(this.accountChart).toBeVisible();
-  }
-
-  @step("Click on selected ($0) last operation")
-  async selectAndClickOnLastOperation(operation: string) {
-    await this.selectSpecificOperation(operation).first().click();
   }
 }

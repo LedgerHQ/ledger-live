@@ -142,7 +142,7 @@ describe("Testing craftTransaction function", () => {
         amount,
         data: { type: "tron" },
       },
-      { value: 0n },
+      { value: 0n, parameters: { fees: 0n } },
     );
 
     const decodeResult = await decodeTransaction(result);
@@ -170,6 +170,41 @@ describe("Testing craftTransaction function", () => {
     expect(decodeResult.raw_data.fee_limit).toBeUndefined();
   });
 
+  it("should default the fee limit for an auto-resolved fee with no override marker for a TRC20 transaction", async () => {
+    // LIVE-36865: the generic framework passes the net display fee as customFees.value on every send,
+    // with no override marker; that value is 0 for an energy-covered account. Without the marker it must
+    // NOT pin the fee_limit to 0 — the default ceiling applies, otherwise the tx reverts OUT_OF_ENERGY.
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const { transaction: result } = await craftTransaction(
+      mockConfig,
+      {
+        intentType: "transaction",
+        type: "send",
+        asset: {
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        },
+        sender,
+        recipient,
+        amount,
+        data: { type: "tron" },
+      },
+      { value: 0n },
+    );
+
+    const decodeResult = await decodeTransaction(result);
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          fee_limit: DEFAULT_TRC20_FEES_LIMIT,
+        }),
+      }),
+    );
+  });
+
   it("should pass a custom fee below the default straight through for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
@@ -190,7 +225,7 @@ describe("Testing craftTransaction function", () => {
         amount,
         data: { type: "tron" },
       },
-      { value: customFees },
+      { value: customFees, parameters: { fees: customFees } },
     );
 
     const decodeResult = await decodeTransaction(result);

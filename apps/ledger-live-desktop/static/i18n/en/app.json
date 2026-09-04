@@ -152,7 +152,8 @@
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
     },
-    "memo": "Memo"
+    "memo": "Memo",
+    "stake": "Stake"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -902,7 +903,28 @@
       }
     },
     "card": {
+      "title": "Crypto card",
       "balanceLabel": "Balance"
+    },
+    "contacts": {
+      "title": "Pay contact",
+      "empty": {
+        "info": "You don’t have contact yet",
+        "addContact": "Add contact"
+      },
+      "table": {
+        "name": "Name",
+        "addresses": "Addresses",
+        "transactions": "Transactions",
+        "transactionCount_zero": "No transaction",
+        "transactionCount_one": "{{count}} transaction",
+        "transactionCount_other": "{{count}} transactions"
+      },
+      "actions": {
+        "pay": "Send to contact",
+        "more": "More options",
+        "viewTransactions": "View transactions"
+      }
     },
     "actions": {
       "deposit": "Add stablecoin",
@@ -2576,6 +2598,7 @@
     "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
+    "selectAddress": "Select address",
     "securityInfo": {
       "title": "How to send securely?",
       "items": {
@@ -2596,7 +2619,12 @@
     },
     "addContact": {
       "newContact": "Add a new contact",
-      "existingContact": "Add to an existing contact"
+      "existingContact": "Add to an existing contact",
+      "selectContact": "Select contact",
+      "syncWallet": {
+        "title": "Sync your wallet to add a contact",
+        "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers"
+      }
     },
     "relativeDate": {
       "justNow": "Just now",
@@ -5322,6 +5350,7 @@
         "applyFamilies": "Apply",
         "contactsData": "Contacts data",
         "loadPopulatedContacts": "Load populated contacts",
+        "loadFromSendHistory": "Load contacts from send history",
         "resetContacts": "Reset contacts",
         "resetOverride": "Reset override",
         "featureIntroduction": {
@@ -5329,6 +5358,22 @@
           "label": "Show Contacts feature introduction",
           "dismissed": "Dismissed — turn on to show the intro again on Contacts.",
           "willShow": "Will show on Contacts until dismissed."
+        }
+      },
+      "deviceSimulationDevTool": {
+        "title": "Device simulation (QA)",
+        "description": "Simulate device history to test Nano-user upsell surfaces without physical devices.",
+        "currentHistory": "Active QA devices: {{devices}}",
+        "resetWarning": "Reset clears the simulated QA device list only. Real device history cannot be restored without the simulation engine.",
+        "reset": "Reset device history",
+        "none": "none",
+        "devices": {
+          "nanoS": "Nano S",
+          "nanoSP": "Nano S Plus",
+          "nanoX": "Nano X",
+          "stax": "Ledger Stax",
+          "europa": "Ledger Flex",
+          "apex": "Ledger Flex Plus"
         }
       },
       "cryptoAssetsList": {
@@ -6821,6 +6866,10 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloEpochProcessingActive": {
+      "title": "This action is temporarily unavailable",
+      "description": "Celo is currently processing an epoch update. During this short on-chain window, staking actions such as voting, activating, revoking, locking, and unlocking are temporarily blocked by the network. Please try again once epoch processing is complete."
+    },
     "CeloGroupNotVotable": {
       "title": "This validator group cannot receive votes. It may be full or no longer eligible."
     },
@@ -8105,6 +8154,56 @@
     "memoPlaceholder": "Enter Tag / Memo",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
+  "mina": {
+    "percentageSymbol": "%",
+    "fee": "Fee",
+    "accountHeaderManageActions": {
+      "changeDelegation": "Redelegate",
+      "earn": "Earn"
+    },
+    "stakeBanner": {
+      "title": "Earn rewards with MINA",
+      "altTitle": "Manage your MINA delegation",
+      "description": "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription": "Change your delegation settings or undelegate your MINA tokens.",
+      "changeCTA": "Redelegate"
+    },
+    "summaryFooter": {
+      "delegatedTo": "Delegated to",
+      "stakedBalance": "Delegated Balance",
+      "producerAddress": "Producer Address",
+      "delegatedToTooltip": "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip": "Total amount of MINA currently delegated to this validator",
+      "producerAddressTooltip": "Public address of the block producer you are delegating to"
+    },
+    "delegators": "Delegators",
+    "selectValidator": {
+      "stepLabels": {
+        "chooseValidator": "Choose Validator",
+        "connectDevice": "Connect Device",
+        "confirmation": "Confirmation"
+      },
+      "title": "Delegate MINA",
+      "help": "Select a validator from the list below to delegate your MINA tokens.",
+      "success": {
+        "title": "Transaction successfully broadcasted",
+        "description": "Your delegation change request has been broadcasted.",
+        "viewDetails": "View details"
+      },
+      "error": {
+        "title": "An error occurred while broadcasting the transaction"
+      },
+      "undelegateTitle": "Undelegate MINA"
+    },
+    "delegation": {
+      "listHeader": "Delegation",
+      "amount": "Amount",
+      "redelegate": "Redelegate",
+      "undelegate": "Undelegate",
+      "totalStake": "Total Stake",
+      "commission": "Commission"
+    }
+  },
   "hedera": {
     "name": "hedera",
     "createHederaAccountHelp": {
@@ -8562,6 +8661,10 @@
       },
       "onboarding": {
         "title": "Sync with another Ledger Wallet app"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "manage": {
@@ -8807,6 +8910,8 @@
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
+    "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
+    "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
@@ -9145,7 +9250,8 @@
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Private (Sapling)",
       "shieldedOrchardTx": "🛡 Private (Orchard)",
-      "shieldedIronwoodTx": "🛡 Private (Ironwood)"
+      "shieldedIronwoodTx": "🛡 Private (Ironwood)",
+      "memo": "Memo"
     }
   },
   "aleo": {
@@ -9440,6 +9546,27 @@
     "explore": "Explore all Ledger devices"
   },
   "contacts": {
+    "deviceIntents": {
+      "registerExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "errors": {
+        "wrongDevice": {
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
+        },
+        "invalidData": {
+          "title": "This address can't be saved",
+          "description": "Your Ledger device rejected the contact details. Try again or contact Ledger Support if the issue continues."
+        },
+        "appVersionTooLow": {
+          "title": "App update required",
+          "description": "Update the app on your Ledger device to save contacts, then try again."
+        }
+      }
+    },
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
@@ -9560,19 +9687,18 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
-      "primaryAction": "Try contacts",
+      "primaryAction": "Explore now",
       "highlights": {
         "saveAddresses": {
-          "title": "Save addresses once",
-          "description": "Keep the addresses you send to in one place."
+          "title": "Save addresses by a name you choose",
+          "description": "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress": {
           "title": "Send to the right address",
-          "description": "Funds reach the right wallet every time."
+          "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Private across your devices",
+          "title": "Securely top up via Ledger Wallet™",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }
@@ -9713,6 +9839,10 @@
           "title": "Uninstall some apps to free up Ledger device memory",
           "description": "Your device doesn't have enough memory.",
           "apps": "Apps to manage: {{appNames}}"
+        },
+        "invalidProvider": {
+          "title": "Invalid Provider",
+          "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
         }
       },
       "cta": {
@@ -9721,7 +9851,8 @@
         "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
-        "contactLedgerSupport": "Contact Ledger support"
+        "contactLedgerSupport": "Contact Ledger support",
+        "goToSettings": "Go to settings"
       }
     },
     "connectDevice": {

@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.8.0",
+  "version": "0.9.0-next.0",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@support/jest-devtools": "workspace:*",
+    "expo-document-picker": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -56,7 +57,6 @@
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "expo-file-system": "catalog:",
     "expo-modules-core": "catalog:",
-    "expo-document-picker": "catalog:",
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
@@ -71,6 +71,7 @@
   },
   "peerDependencies": {
     "react": ">=19",
+    "expo-document-picker": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -84,5 +85,10 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "expo-document-picker": {
+      "optional": true
+    }
   }
 }

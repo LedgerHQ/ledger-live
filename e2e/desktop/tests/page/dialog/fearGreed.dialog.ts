@@ -1,5 +1,5 @@
-import { step } from "../../misc/reporters/step";
-import { Dialog } from "../../component/dialog.component";
+import { step } from "tests/misc/reporters/step";
+import { Dialog } from "tests/component/dialog.component";
 import { expect } from "@playwright/test";
 
 export class FearAndGreedDialog extends Dialog {

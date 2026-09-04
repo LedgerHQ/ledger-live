@@ -9,6 +9,7 @@ import CtaEntryPoint from "../components/CtaEntryPoint";
 import CardEntryPoint from "../components/CardEntryPoint";
 import OptimisedCardEntryPoint from "../components/CardEntryPoint/optimisedCardEntryPoint";
 import LedgerSyncBannerV4 from "../components/LedgerSyncBannerV4";
+import SendFlowEntryPoint from "../components/SendFlowEntryPoint";
 
 export function useEntryPoint(entryPoint: EntryPoint, variant?: "v4") {
   const featureLedgerSyncEntryPoints = useFeature("llmLedgerSyncEntryPoints");
@@ -49,6 +50,12 @@ export function useEntryPoint(entryPoint: EntryPoint, variant?: "v4") {
     },
     component: LedgerSyncBannerV4,
   };
+  const sendFlowEntryPoint = {
+    onClick: ({ page }: { page: string }) => {
+      track("banner_clicked", { banner: "Ledger Sync Activation", page });
+    },
+    component: SendFlowEntryPoint,
+  };
 
   const accountsEntryPoint =
     variant === "v4"
@@ -77,6 +84,10 @@ export function useEntryPoint(entryPoint: EntryPoint, variant?: "v4") {
     [EntryPoint.postOnboarding]: {
       enabled: featureLedgerSyncEntryPoints?.params?.postOnboarding ?? false,
       ...cardEntryPoint,
+    },
+    [EntryPoint.sendFlow]: {
+      enabled: featureLedgerSyncEntryPoints?.params?.sendFlow ?? false,
+      ...sendFlowEntryPoint,
     },
   };
   const entryPointData = entryPointsData[entryPoint];

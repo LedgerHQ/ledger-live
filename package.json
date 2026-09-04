@@ -238,9 +238,6 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
     "@nx/s3-cache": "5.0.2",
-    "@react-native-community/cli": "15.1.0",
-    "@react-native-community/cli-platform-android": "15.1.0",
-    "@react-native-community/cli-platform-ios": "15.1.0",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/parser": "catalog:",
@@ -293,7 +290,17 @@
       "bignumber.js": "9.1.2",
       "@radix-ui/react-slot": "^1.2.4",
       "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3",
-      "@ton/ton>zod": "catalog:"
+      "@ton/ton>zod": "catalog:",
+      "jest-environment-node": "30.4.1",
+      "jest-mock": "30.4.1",
+      "jest-matcher-utils": "30.4.1",
+      "jest-diff": "30.4.1",
+      "jest-message-util": "30.4.1",
+      "jest-util": "30.4.1",
+      "@jest/expect-utils": "30.4.1",
+      "@jest/create-cache-key-function": "30.4.1",
+      "@jest/types": "30.4.1",
+      "expect": "30.4.1"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-name",
-  "version": "0.2.1",
+  "version": "0.2.2-next.0",
   "private": true,
   "description": "AccountName entity: naming utilities, account-names store, and wallet-sync module",
   "main": "src/index.ts",

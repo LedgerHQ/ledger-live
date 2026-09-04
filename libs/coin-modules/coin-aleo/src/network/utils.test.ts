@@ -35,6 +35,7 @@ import {
   accessProvableApi,
   decryptRecordAmount,
   sumUnspentRecords,
+  getStakingPosition,
 } from "./utils";
 
 jest.mock("./api");
@@ -3350,5 +3351,49 @@ describe("network/utils", () => {
         }),
       );
     });
+  });
+});
+
+describe("getStakingPosition", () => {
+  const config = getMockedConfig("mainnet");
+  const ADDRESS = "aleo1d37xxnms3sq5qxcnnh3dtvzr35xemjzas4jcytjr8uvymfetnu9salav5n";
+  const BONDED_RAW = `{\n  validator: ${ADDRESS},\n  microcredits: 39339243096u64\n}`;
+  const WITHDRAW_RAW = "aleo1g5wrxvgyvckgtuceg36eg6pf024x3p6nex05lcefz0h6576rmgrs22dr4w";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(apiClient.getBondedMapping).mockResolvedValue(null);
+    jest.mocked(apiClient.getUnbondingMapping).mockResolvedValue(null);
+    jest.mocked(apiClient.getWithdrawMapping).mockResolvedValue(null);
+  });
+
+  it("reads all three mappings for the address", async () => {
+    await getStakingPosition(config, ADDRESS);
+
+    expect(apiClient.getBondedMapping).toHaveBeenCalledTimes(1);
+    expect(apiClient.getBondedMapping).toHaveBeenCalledWith(config, ADDRESS);
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledTimes(1);
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledWith(config, ADDRESS);
+    expect(apiClient.getWithdrawMapping).toHaveBeenCalledTimes(1);
+    expect(apiClient.getWithdrawMapping).toHaveBeenCalledWith(config, ADDRESS);
+  });
+
+  it("returns the assembled position", async () => {
+    jest.mocked(apiClient.getBondedMapping).mockResolvedValue(BONDED_RAW);
+    jest.mocked(apiClient.getWithdrawMapping).mockResolvedValue(WITHDRAW_RAW);
+
+    const position = await getStakingPosition(config, ADDRESS);
+
+    expect(position.bondedBalance.toString()).toBe("39339243096");
+    expect(position.bondedValidator).toBe(ADDRESS);
+    expect(position.withdrawalAddress).toBe(WITHDRAW_RAW);
+  });
+
+  it("propagates a failure on any one of the three reads", async () => {
+    jest
+      .mocked(apiClient.getWithdrawMapping)
+      .mockRejectedValue(new LedgerAPI5xx("Internal Server Error"));
+
+    await expect(getStakingPosition(config, ADDRESS)).rejects.toThrow("Internal Server Error");
   });
 });

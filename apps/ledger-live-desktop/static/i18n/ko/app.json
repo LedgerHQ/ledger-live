@@ -152,7 +152,8 @@
     "memoTag" : {
       "learnMore" : "태그/메모에 대해 더 알아보기"
     },
-    "memo" : "메모"
+    "memo" : "메모",
+    "stake" : "스테이킹"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -901,6 +902,30 @@
         "confirm" : "확인"
       }
     },
+    "card" : {
+      "title" : "크립토 카드",
+      "balanceLabel" : "잔액"
+    },
+    "contacts" : {
+      "title" : "저장된 주소로 보내기",
+      "empty" : {
+        "info" : "아직 저장된 주소가 없습니다",
+        "addContact" : "주소록 추가"
+      },
+      "table" : {
+        "name" : "이름",
+        "addresses" : "주소",
+        "transactions" : "트랜잭션",
+        "transactionCount_zero" : "트랜잭션 없음",
+        "transactionCount_one" : "{{count}}개 트랜잭션",
+        "transactionCount_other" : "{{count}}개 트랜잭션"
+      },
+      "actions" : {
+        "pay" : "저장된 주소로 보내기",
+        "more" : "더 보기",
+        "viewTransactions" : "트랜잭션 보기"
+      }
+    },
     "actions" : {
       "deposit" : "스테이블코인 추가",
       "request" : "요청",
@@ -924,6 +949,38 @@
         "buy" : {
           "title" : "구매(매수)",
           "description" : "신용카드로 스테이블코인을 구매합니다."
+        }
+      }
+    },
+    "request" : {
+      "title" : "{{asset}} 요청",
+      "networkLabel" : "{{network}} 네트워크",
+      "saveDialogTitle" : "요청 카드 저장",
+      "actions" : {
+        "share" : "공유",
+        "copy" : "복사",
+        "copied" : "복사됨",
+        "save" : "저장",
+        "verify" : "확인"
+      },
+      "verifyAddress" : {
+        "introTitle" : "주소를 확인하세요",
+        "introDescription" : "주소 변조 공격을 막기 위해, Ledger 장치의 보안 화면에서 주소를 확인해 주세요.",
+        "verifyCta" : "주소 확인",
+        "successTitle" : "장치의 보안 스크린에 표시된 주소",
+        "nextStepsLabel" : "다음 단계",
+        "nextStepShare" : "원하는 앱으로 주소를 공유하세요",
+        "nextStepMatch" : "공유된 주소가 사용 중인 Ledger 장치의 주소와 일치하는지 확인하세요.",
+        "gotItCta" : "확인",
+        "device" : {
+          "cancelledTitle" : "주소 확인 취소됨",
+          "cancelledDescription" : "장치에서 주소 확인을 거부했습니다. 다시 표시하여 확인할 수 있습니다.",
+          "mismatchTitle" : "주소가 일치하지 않습니다",
+          "mismatchDescription" : "장치에 표시된 주소가 요청된 주소와 다릅니다. 이 주소를 공유하지 마세요.",
+          "unsupportedTitle" : "주소 확인 불가",
+          "unsupportedDescription" : "이 장치 앱은 주소 확인을 위한 화면 표시 기능을 지원하지 않습니다.",
+          "retryCta" : "주소 다시 보기",
+          "closeCta" : "닫기"
         }
       }
     }
@@ -2530,6 +2587,8 @@
     },
     "placeholder" : "주소 또는 ENS를 입력하세요",
     "placeholderNoENS" : "주소 입력",
+    "placeholderWithContacts" : "주소, ENS 또는 연락처 정보를 입력하세요",
+    "placeholderNoEnsWithContacts" : "주소 또는 연락처 정보를 입력하세요",
     "recent" : "최근 항목",
     "myAccounts" : "내 계정",
     "sendTo" : "{{address}}로 보내기",
@@ -2538,7 +2597,8 @@
     "alreadyUsed" : "이미 사용됨 · {{date}}",
     "addressBookUnsupported" : "{{family}}: 아직 지원되지 않습니다",
     "recentSendWillAppear" : "최근 전송 내역이 여기에 표시됩니다",
-    "contactsWillAppear" : "연락처가 여기에 표시됩니다",
+    "contactsWillAppear" : "주소록이 여기에 표시됩니다",
+    "selectAddress" : "주소 선택",
     "securityInfo" : {
       "title" : "안전한 전송 방법은 무엇인가요?",
       "items" : {
@@ -2558,8 +2618,13 @@
       }
     },
     "addContact" : {
-      "newContact" : "새 연락처 추가",
-      "existingContact" : "기존 연락처에 추가"
+      "newContact" : "주소록에 추가",
+      "existingContact" : "기존 항목에 추가",
+      "selectContact" : "주소록 선택",
+      "syncWallet" : {
+        "title" : "주소록에 추가하려면 지갑을 동기화하세요",
+        "description" : "주소록은 종단간 암호화되어 모든 휴대폰과 컴퓨터의 Ledger Wallet에서 동기화됩니다."
+      }
     },
     "relativeDate" : {
       "justNow" : "방금 전",
@@ -5242,23 +5307,40 @@
         "hideJson" : "JSON 감추기"
       },
       "contactsDevTool" : {
-        "title" : "연락처 개발자 도구",
-        "description" : "데스크탑용 연락처 롤아웃 설정 토글(lwdContacts 기능 플래그)",
+        "title" : "주소록 개발자 도구",
+        "description" : "데스크탑용 주소록 롤아웃 설정 토글(lwdContacts 기능 플래그)",
         "mainFeatureToggle" : "메인 기능 토글",
         "featureParameters" : "기능 파라미터",
         "eligibleAddressFamilies" : "지원 주소 체계",
         "customFamiliesHint" : "사용자 지정 다중 패밀리 테스트를 위해 쉼표로 구분된 주소 체계",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "적용",
-        "contactsData" : "연락처 데이터",
-        "loadPopulatedContacts" : "등록된 연락처 불러오기",
-        "resetContacts" : "연락처 초기화",
+        "contactsData" : "주소록 데이터",
+        "loadPopulatedContacts" : "등록된 주소록 불러오기",
+        "loadFromSendHistory" : "전송 내역에서 주소록 불러오기",
+        "resetContacts" : "주소록 초기화",
         "resetOverride" : "오버라이드 리셋",
         "featureIntroduction" : {
           "title" : "기능 소개",
-          "label" : "연락처 기능 소개 보기",
+          "label" : "주소록 기능 소개 보기",
           "dismissed" : "해제 — 연락처에서 소개 화면을 다시 보려면 이 설정을 켜세요.",
-          "willShow" : "닫기 전까지 연락처에 표시됩니다."
+          "willShow" : "닫기 전까지 주소록에 표시됩니다."
+        }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "장치 시뮬레이션(QA)",
+        "description" : "실제 장치 없이 Nano 사용자 업셀(upsell) 화면을 테스트하기 위해 장치 기록을 시뮬레이션합니다.",
+        "currentHistory" : "활성 QA 장치: {{devices}}",
+        "resetWarning" : "초기화는 시뮬레이션된 QA 장치 목록만 지웁니다. 실제 장치 기록은 시뮬레이션 엔진 없이 복원할 수 없습니다.",
+        "reset" : "장치 기록 초기화",
+        "none" : "없음",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
         }
       },
       "cryptoAssetsList" : {
@@ -6510,7 +6592,7 @@
           },
           "dualValidator" : {
             "title" : "이중 검증인 보안(Dual-validator security)",
-            "body" : "트랜잭션을 처리하려면 Ledger와 Klin 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
+            "body" : "트랜잭션을 처리하려면 Ledger와 Kiln 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
           },
           "tokenLiability" : {
             "title" : "표준 토큰 관련 책임(Standard token liability) ⚠️",
@@ -6747,6 +6829,10 @@
     },
     "CeloAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
+    },
+    "CeloEpochProcessingActive" : {
+      "title" : "이 작업을 일시적으로 실행할 수 없습니다.",
+      "description" : "현재 셀로에서 에포크 업데이트를 처리하고 있습니다. 온체인 처리가 진행되는 짧은 시간 동안 네트워크 시스템에 의해 투표, 활성화, 철회, 잠금 및 잠금 해제 등의 스테이킹 작업이 일시적으로 제한됩니다. 에포크 처리가 완료된 후 다시 시도해 주세요."
     },
     "CeloGroupNotVotable" : {
       "title" : "이 검증인 그룹에는 투표할 수 없습니다. 위임 한도가 초과되었거나 자격이 없는 상태일 수 있습니다."
@@ -7226,6 +7312,9 @@
     },
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "Sapling 주소로의 전송은 지원되지 않습니다."
+    },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "최소 송금액({{minimumZatoshis}} Zatoshi)보다 작아 전송이 불가능합니다."
     },
     "InvalidNonce" : {
       "title" : "논스가 필요합니다"
@@ -7866,10 +7955,20 @@
       "title" : "최소 스테이킹 수량: 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+      "title" : "전체 수량을 언스테이킹하거나 최소 1 SUI를 스테이킹 상태로 남겨두세요."
+    },
+    "SuiStakeNotFound" : {
+      "title" : "스테이킹 상세 정보를 확인할 수 없습니다. 계정을 다시 동기화한 후 다시 시도해 주세요"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "입력한 수량이 선택한 스테이킹 금액을 초과합니다."
     },
     "SomeSuiForUnstake" : {
       "title" : "향후 네트워크 수수료 지불과 위임 철회를 위해 지갑에 최소 0.1 SUI를 남겨주세요."
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "SUI 앱을 업데이트하세요",
+      "description" : "현재 Ledger Sui 앱으로는 SUI 송금 트랜잭션에 서명할 수 없습니다. Ledger 장치에서 SUI 앱을 업데이트하고 다시 시도하세요."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다.",
@@ -8018,6 +8117,56 @@
     "memo" : "메모",
     "memoPlaceholder" : "태그 / 메모 입력",
     "memoWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "수수료",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요.",
+      "changeCTA" : "재위임"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "위임 수량",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 위임된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 위임",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다.",
+        "viewDetails" : "세부사항 보기"
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      },
+      "undelegateTitle" : "MINA 위임 해제"
+    },
+    "delegation" : {
+      "listHeader" : "위임",
+      "amount" : "수량",
+      "redelegate" : "재위임",
+      "undelegate" : "위임 해제",
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료"
+    }
   },
   "hedera" : {
     "name" : "헤데라",
@@ -8476,6 +8625,10 @@
       },
       "onboarding" : {
         "title" : "다른 Ledger Wallet 앱과 동기화"
+      },
+      "sendFlow" : {
+        "title" : "지갑 동기화",
+        "later" : "나중에 하기"
       }
     },
     "manage" : {
@@ -8632,6 +8785,11 @@
       "title" : "더 안전하게, 더 자유롭게",
       "description" : "보안 기능에 대해 자세히 알아보세요.",
       "cta" : "자세히 알아보기"
+    },
+    "profile" : {
+      "title" : "장치 업그레이드",
+      "description" : "더 큰 화면, 더 강력한 보안. {{discount}}% 혜택까지.",
+      "cta" : "탐색"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8802,12 @@
       "title" : "서명 전 스캠 감지",
       "subtitle" : "실시간 위협 감지를 지원하는 고급 보안 기능에 대해 자세히 알아보세요.",
       "cta" : "자세히 알아보기"
+    },
+    "recoverTrigger" : {
+      "title" : "안심할 수 있는 복구 수단이 필요한가요?",
+      "subtitle" : "Nano S는 보안과 안전성에는 전혀 문제가 없지만, Ledger Recover는 지원되지 않는 장치입니다. 새로운 모델로 업그레이드하고 더욱 안전한 ID 기반 지갑 백업을 마련해 두세요.",
+      "cta" : "자세히 알아보기",
+      "dismiss" : "나중에 하기"
     }
   },
   "modularAssetDrawer" : {
@@ -8710,6 +8874,8 @@
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
+    "unsupportedAssetTooltip" : "{{asset}}은(는) 아직 지원되지 않습니다.",
+    "unsupportedNetworkTooltip" : "{{network}} 네트워크는 아직 지원되지 않습니다.",
     "selectAccount" : "계정 선택",
     "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
     "selectAccountPerpsDescription" : "무기한 선물에 자산을 예치하려면 Hyperliquid 계정이 필요합니다. 계속하려면 계정을 추가하세요.",
@@ -8747,7 +8913,8 @@
     "title" : "홈",
     "today" : "오늘",
     "carousel" : {
-      "title" : "고객 맞춤 정보"
+      "title" : "고객 맞춤 정보",
+      "closeAll" : "모두 닫기"
     },
     "addAccountCta" : "암호화폐 계정 추가",
     "noBalanceTitle" : "자산을 입금하고 시작하세요",
@@ -8930,7 +9097,7 @@
       "privateBalance" : "비공개 수량",
       "privateBalanceTooltip" : "타인에게 공개되지 않은 수량",
       "privateBalanceWarning" : "비공개 수량에는 Sapling 및 Orchard 쉴디드(Shielded) 자산이 포함되지 않습니다.",
-      "privateBalanceMaturing" : "{{spendable}} 사용 가능 · {{maturing}} 대기 중"
+      "privateBalanceMaturing" : "비공개 수량: {{spendable}} 사용 가능 · {{maturing}} 대기 중"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9130,10 @@
             "message" : "비공개 수량이 동기화되지 않았습니다",
             "cta" : "동기화 재개"
           },
+          "failed" : {
+            "message" : "비공개 수량 동기화 실패",
+            "cta" : "동기화 재개"
+          },
           "running" : {
             "message" : "비공개 수량 동기화 중({{progress}}%)",
             "timeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
@@ -8985,7 +9156,8 @@
         "stopSync" : "동기화 중지",
         "upToDate" : "최신",
         "lastSync" : "마지막 동기화: {{date}}",
-        "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}",
+        "syncFailed" : "비공개 수량 동기화 실패"
       },
       "datepicker" : {
         "label" : "시작 높이",
@@ -9042,7 +9214,8 @@
       "transparentTx" : "공개",
       "shieldedSaplingTx" : "🛡 비공개(Sapling)",
       "shieldedOrchardTx" : "🛡 비공개(Orchard)",
-      "shieldedIronwoodTx" : "🛡 비공개(Ironwood)"
+      "shieldedIronwoodTx" : "🛡 비공개(Ironwood)",
+      "memo" : "메모"
     }
   },
   "aleo" : {
@@ -9326,14 +9499,35 @@
       "description" : "Ledger 장치를 관리하세요"
     },
     "contacts" : {
-      "title" : "연락처",
-      "description" : "연락처 관리"
+      "title" : "주소록",
+      "description" : "주소록 관리"
     },
     "explore" : "모든 Ledger 장치 살펴보기"
   },
   "contacts" : {
-    "title" : "연락처",
-    "addContact" : "연락처 추가",
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "주소록 추가 시 사용한 것과 동일한 Ledger 장치를 사용하세요.",
+          "description" : "연결된 장치가 일치하지 않습니다."
+        },
+        "invalidData" : {
+          "title" : "저장할 수 없는 주소입니다",
+          "description" : "Ledger 장치에서 주소록 정보를 거부했습니다. 다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
+        },
+        "appVersionTooLow" : {
+          "title" : "앱 업데이트가 필요합니다",
+          "description" : "주소록에 저장하려면 Ledger 장치에서 앱을 업데이트하고 다시 시도하세요."
+        }
+      }
+    },
+    "title" : "주소록",
+    "addContact" : "주소록 추가",
     "addAddress" : "주소 추가",
     "addExternalAddress" : "외부 주소 추가",
     "addAddressEntry" : {
@@ -9363,18 +9557,22 @@
     },
     "addAddressReview" : {
       "title" : "주소 검토",
+      "addressLabel" : "주소",
+      "currencyLabel" : "통화",
+      "networkLabel" : "네트워크",
+      "nameLabel" : "주소 별칭",
       "continue" : "주소 확인",
       "successTitle" : "주소가 저장되었습니다",
       "close" : "닫기"
     },
     "addContactDrawer" : {
-      "namePlaceholder" : "연락처명",
+      "namePlaceholder" : "이름",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "invalidNameError" : "특수 문자는 허용되지 않습니다.",
-      "duplicateNameError" : "이미 사용 중인 연락처명입니다."
+      "duplicateNameError" : "이미 주소록에 등록된 이름입니다."
     },
-    "searchPlaceholder" : "연락처 검색",
-    "searchNoResults" : "검색된 연락처가 없습니다",
+    "searchPlaceholder" : "주소록 검색",
+    "searchNoResults" : "검색 결과가 없습니다",
     "addressCount_zero" : "0개 주소",
     "addressCount_one" : "{{count}}개 주소",
     "addressCount_other" : "{{count}}개 주소",
@@ -9388,7 +9586,7 @@
         "meTitle" : "등록된 주소가 없습니다",
         "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
         "meDescription" : "다음번에는 이름만으로 암호화폐를 받을 수 있도록 지갑 주소를 저장하세요.",
-        "contactDescription" : "다음번에는 이름만으로 송금할 수 있도록 상대방의 지갑 주소를 저장하세요."
+        "contactDescription" : "다음번에는 이름만으로 송금할 수 있도록 상대방의 지갑 주소를 저장하세요"
       }
     },
     "addressDetail" : {
@@ -9400,26 +9598,26 @@
       "networkTag" : "{{name}} 네트워크"
     },
     "detailActions" : {
-      "editContact" : "연락처 수정",
-      "deleteContact" : "연락처 삭제"
+      "editContact" : "주소록 수정",
+      "deleteContact" : "주소록 삭제"
     },
     "editContact" : {
-      "title" : "연락처 수정",
-      "namePlaceholder" : "연락처명",
+      "title" : "주소록 수정",
+      "namePlaceholder" : "이름",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "applyChanges" : "변경 사항 적용",
       "confirmName" : "이름 확인",
       "invalidNameError" : "특수 문자는 허용되지 않습니다."
     },
     "deleteContact" : {
-      "title" : "연락처를 삭제하시겠습니까?",
+      "title" : "주소록에서 삭제하시겠습니까?",
       "description" : "이 연락처를 삭제하면 연결된 모든 주소가 삭제됩니다.",
       "confirm" : "삭제",
       "cancel" : "취소"
     },
     "deleteAddress" : {
       "title" : "주소를 삭제하시겠습니까?",
-      "description" : "이 주소가 연락처에서 삭제됩니다.",
+      "description" : "이 주소가 주소록에서 삭제됩니다.",
       "confirm" : "삭제",
       "cancel" : "취소"
     },
@@ -9443,23 +9641,23 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "연락처는 Ledger 장치를 통해 종단간 암호화되어 모든 장치에 동기화되며, 오직 사용자 본인만 잠금을 해제할 수 있습니다.",
+      "activate" : "Ledger Sync 활성화하기",
       "dismiss" : "확인"
     },
     "featureIntroduction" : {
-      "title" : "연락처 기능 소개",
-      "description" : "암호화폐 주소록 — 송금할 지갑 주소를 한곳에 모두 저장하세요.",
-      "primaryAction" : "연락처 기능 사용해 보기",
+      "title" : "주소록 기능을 소개합니다",
+      "primaryAction" : "지금 살펴보기",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "주소를 한 번만 저장하세요",
-          "description" : "송금할 주소를 한 곳에서 보관하고 관리하세요."
+          "title" : "원하는 이름으로 주소 저장",
+          "description" : "거래소, 친구, 나의 외부 계정까지 모두 저장할 수 있습니다."
         },
         "sendToRightAddress" : {
           "title" : "정확한 주소로 송금하기",
-          "description" : "자산이 매번 올바른 지갑으로 전송됩니다."
+          "description" : "복잡한 주소 대신 신뢰하는 내가 아는 이름이 표시됩니다."
         },
         "privateAcrossDevices" : {
-          "title" : "모든 장치에서 비공개로 유지",
+          "title" : "Ledger Wallet™으로 안전하게 충전",
           "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
         }
       }
@@ -9532,8 +9730,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "장치가 잠겨 있습니다",
-        "description" : "계속하려면 장치 잠금을 해제하세요."
+        "title" : "Ledger 장치를 잠금 해제한 후 아래에서 '다시 시도'를 선택하세요"
       },
       "unlockDevice" : {
         "title" : "{{productName}} 잠금 해제"
@@ -9545,16 +9742,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "장치 연결 해제됨",
-        "description" : "Ledger 장치 연결이 해제되었습니다. 장치의 전원이 켜져 있고, 케이블이 올바르게 연결되어 있는지 확인해 주세요."
+        "title" : "Ledger 장치 연결이 해제되었습니다",
+        "description" : "장치의 전원이 켜져 있고, 케이블이 올바르게 연결되어 있는지 확인해 주세요."
       },
       "intentError" : {
         "title" : "알 수 없는 오류",
-        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+        "description" : "다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
       },
       "invalidOperation" : {
-        "title" : "잘못된 상태",
-        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+        "title" : "오류 발생",
+        "description" : "다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
       }
     },
     "initialization" : {
@@ -9570,46 +9767,51 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "장치에서 작업이 거부되었습니다."
+          "title" : "Ledger 장치에서 작업이 거부되었습니다"
         },
         "deviceBusy" : {
-          "title" : "Ledger 장치에서 작업 대기 중",
-          "description" : "작업을 완료한 다음 다시 시도를 선택하세요."
+          "title" : "Ledger 장치에서 확인이 필요합니다.",
+          "description" : "장치에서 작업을 완료한 후, 아래 “다시 시도”를 선택하세요."
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "귀하의 Ledger 장치는 아직 사용 준비가 되지 않았습니다",
-          "description" : "먼저 {{productName}} 장치 설정이 필요합니다. 장치 설정 방법을 안내해드리겠습니다."
+          "title" : "Ledger 장치 설정이 필요합니다",
+          "description" : "계속하려면 장치 설정을 완료하세요."
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS 업데이트 필요"
         },
         "unsupportedApplication" : {
           "title" : "지원되지 않는 기능",
-          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+          "description" : "이 작업에 필요한 앱이 사용 중인 Ledger 장치에서 지원되지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
         },
         "unsupportedFeature" : {
           "title" : "지원되지 않는 기능",
-          "description" : "이 작업을 실행하는 데 필요한 앱이 현재 Ledger 장치에 설치되어 있지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
+          "description" : "이 작업에 필요한 앱이 사용 중인 Ledger 장치에서 지원되지 않습니다. 자세한 내용은 Ledger 지원팀으로 문의하세요"
         },
         "wrongDeviceForAccount" : {
-          "title" : "잘못된 비밀 복구 문구",
-          "description" : "현재 Ledger 장치의 복구 문구가 선택한 계정과 일치하지 않습니다. 올바른 장치를 연결했는지 확인해 주세요."
+          "title" : "이 계정 설정에 사용한 것과 동일한 Ledger 장치를 사용해 주세요",
+          "description" : "선택한 암호화폐 계정과 연결된 비밀 복구 문구로 설정된 Ledger 장치가 아닙니다."
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "장치의 저장 공간이 부족합니다",
-          "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요.",
+          "title" : "일부 앱을 제거하여 Ledger 장치 메모리를 확보하세요",
+          "description" : "장치에 사용 가능한 메모리가 부족합니다.",
           "apps" : "관리할 앱: {{appNames}}"
+        },
+        "invalidProvider" : {
+          "title" : "유효하지 않은 서비스 제공업체",
+          "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 업체를 변경하려면 Ledger Wallet \"설정\"을 열고 \"실험적 기능\"을 선택한 다음 다른 서비스 제공업체를 선택합니다."
         }
       },
       "cta" : {
         "openMyLedger" : "My Ledger 열기",
         "goToMyLedger" : "My Ledger로 이동",
-        "setupDevice" : "장치 설정",
+        "setupDevice" : "Ledger 장치 설정",
         "updateLedgerOs" : "Ledger OS 업데이트",
         "cancelOperation" : "작업 취소",
-        "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+        "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요",
+        "goToSettings" : "설정으로 이동"
       }
     },
     "connectDevice" : {
@@ -9623,7 +9825,7 @@
           "title" : "로딩중"
         },
         "connecting" : {
-          "title" : "로딩중"
+          "title" : "Ledger 장치 연결 중"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9857,7 @@
         },
         "noKnownDevice" : {
           "title" : "Ledger 장치가 필요합니다",
-          "description" : "계속하려면 사이너를 설정하거나 연결하세요.",
+          "description" : "계속하려면 Ledger 장치를 설정하거나 연결하세요.",
           "connectLedgerDevice" : "Ledger 장치 연결하기",
           "noLedgerDevice" : "Ledger 장치가 없습니다"
         },

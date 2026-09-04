@@ -203,18 +203,29 @@ describe("releaseRetiredReservations", () => {
     expect(getSessionReservedNullifiers(ACCOUNT_A).size).toBe(2);
   });
 
-  it("holds a reservation right up to the end of the optimistic window", () => {
-    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
-    releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION - 1);
-    expect(getSessionReservedNullifiers(ACCOUNT_A).has(NF1)).toBe(true);
-  });
+  // Fake timers freeze Date.now() so reserveNotes and the releaseRetiredReservations
+  // call read the same clock value — the boundary arithmetic is exact, not race-prone.
+  describe("expiry boundary", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+    });
 
-  // Past that window Ledger Wallet drops the optimistic operation itself, so a
-  // broadcast that never confirmed stops holding notes at the same moment.
-  it("releases a reservation that outlived the optimistic window", () => {
-    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
-    releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION + 1);
-    expect(getSessionReservedNullifiers(ACCOUNT_A).size).toBe(0);
+    it("holds a reservation right up to the end of the optimistic window", () => {
+      reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+      releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION - 1);
+      expect(getSessionReservedNullifiers(ACCOUNT_A).has(NF1)).toBe(true);
+    });
+
+    // Past that window Ledger Wallet drops the optimistic operation itself, so a
+    // broadcast that never confirmed stops holding notes at the same moment.
+    it("releases a reservation that outlived the optimistic window", () => {
+      reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+      releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION + 1);
+      expect(getSessionReservedNullifiers(ACCOUNT_A).size).toBe(0);
+    });
   });
 
   it("is a no-op on an unknown account (no throw)", () => {

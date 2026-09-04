@@ -20,7 +20,7 @@ type MemoValueInputProps = Readonly<{
   value: string;
   maxLength?: number;
   memoType?: string;
-  memoMaxValue?: number;
+  memoMaxValue?: number | bigint;
   transactionError?: Error;
   onChange: (value: string) => void;
 }>;

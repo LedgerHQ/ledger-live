@@ -18,7 +18,10 @@ import type {
   Balance,
   Operation as CoreOperation,
   FeeEstimation,
+  MapMemo,
+  MemoNotSupported,
   StakingOperation,
+  StringMemo,
   TransactionIntent,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -437,9 +440,11 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
   );
 }
 
-type GenericCoinFrameworkMemo =
-  | { type: string; value?: string }
-  | { type: "map"; memos: Map<string, string> };
+// Reuse the framework's own memo union rather than a parallel shape: a `StringMemo` for typed memos,
+// `MemoNotSupported` for none, and a `MapMemo` for a numeric destination tag. Emitting anything else
+// (e.g. `{ type: memoType, value }`, which drops the `kind`) type-checks against the base `Memo` but
+// is silently dropped by every coin module's `kind === "…"` guard (LIVE-35735).
+type GenericCoinFrameworkMemo = MemoNotSupported | StringMemo<string> | MapMemo<string, string>;
 type GenericCoinFrameworkTxData = { type: string; value?: unknown };
 type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   memo?: GenericCoinFrameworkMemo;
@@ -528,13 +533,13 @@ type FrameworkOperationExtra = {
   internal?: boolean;
   feePayer?: string;
   stake?: { address: string; amount: BigNumber };
+  transferId?: string;
 };
 
 /**
- * Every key of the above, plus `pagingToken` — read as the next sync's cursor in `getAccountShape` but
- * never written here. The family bag lands flat beside these, so a collision is dropped rather than
- * merged: each framework key is written *conditionally*, so a surviving family key would supply the
- * framework's own answer on an operation where the framework wrote none.
+ * Every key of the above. The family bag lands flat beside these, so a collision is dropped rather
+ * than merged: each framework key is written *conditionally*, so a surviving family key would supply
+ * the framework's own answer on an operation where the framework wrote none.
  *
  * `satisfies Record<…, true>` keeps this list honest: adding a field to `FrameworkOperationExtra`
  * without reserving it here fails to compile.
@@ -553,8 +558,8 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     internal: true,
     feePayer: true,
     stake: true,
-    pagingToken: true,
-  } satisfies Record<keyof FrameworkOperationExtra | "pagingToken", true>),
+    transferId: true,
+  } satisfies Record<keyof FrameworkOperationExtra, true>),
 );
 
 function stripFrameworkReservedKeys(bag: Record<string, unknown>): Record<string, unknown> {
@@ -669,6 +674,10 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
     extra.stake = stake;
   }
 
+  if (op.details?.transferId !== undefined) {
+    extra.transferId = op.details.transferId as string;
+  }
+
   return extra;
 }
 
@@ -781,7 +790,7 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
  * @returns A `TransactionIntent` object containing the standardized representation of the transaction.
  *   - Includes details such as type, sender, recipient, amount, fees, asset, and an optional memo.
  *   - If `assetReference` and `assetOwner` are provided, the asset is represented as a token.
- *   - If `memoType` and `memoValue` are provided, a memo is included; otherwise, a default memo of type "NO_MEMO" is added.
+ *   - If `memoType` and `memoValue` are provided, a `StringMemo` is included (with `memoType` as its `kind`); otherwise the framework's `MemoNotSupported` (`{ type: "none" }`) is used.
  *
  * @throws An error if the transaction mode is unsupported.
  */
@@ -836,12 +845,15 @@ export function transactionToIntent(
       memos: new Map([["destinationTag", String(transaction.tag)]]),
     };
   } else if (transaction.memoType && transaction.memoValue) {
+    // The family's declared `kind` travels in `memoType` (Tron "memo", Casper "transferId", …); emit
+    // the union's `StringMemo` so the coin module's `type === "string" && kind === "…"` guard matches.
     res.memo = {
-      type: transaction.memoType,
+      type: "string",
+      kind: transaction.memoType,
       value: transaction.memoValue,
     };
   } else {
-    res.memo = { type: "NO_MEMO" };
+    res.memo = { type: "none" };
   }
 
   res.data = resolveIntentData(transaction, res, craftTransactionData, buildIntentData);

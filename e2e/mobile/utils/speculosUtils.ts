@@ -14,14 +14,14 @@ import {
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
 } from "@ledgerhq/live-e2e-shared/speculosCI";
-import { isSpeculosRemote } from "../helpers/commonHelpers";
-import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
-import { CLI } from "./cliUtils";
+import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
+import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "@e2e/bridge/server";
+import { CLI } from "@e2e/utils/cliUtils";
 import { promises as fs } from "fs";
 import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { getCapturedStderr } from "./loggingUtils";
+import { getCapturedStderr } from "@e2e/utils/loggingUtils";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
 const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";

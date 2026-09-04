@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-style",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Single source of truth for StyleProvider across Ledger Live apps — SC ThemeProvider + Lumen integration, DDD-boundary-clean",
   "main": "src/index.ts",
@@ -9,6 +9,10 @@
     ".": {
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
+    },
+    "./hooks": {
+      "react-native": "./src/hooks/index.native.ts",
+      "default": "./src/hooks/index.ts"
     },
     "./package.json": "./package.json"
   },

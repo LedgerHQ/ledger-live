@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
+import type { Contact } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { OperationTableItem } from "../types";
@@ -9,9 +10,10 @@ import {
   filterTopLevelAccountsByAllowedAccountIds,
   parseAccountIdsSearchParam,
 } from "../utils/accountScopeForHistory";
+import { filterOperationTableItemsByContact } from "../utils/contactScopeForHistory";
 import { useHistoryOperationItemsForRootAccounts } from "./useHistoryOperationItemsForRootAccounts";
 
-export function useHistoryOperations(): OperationTableItem[] {
+export function useHistoryOperations(contact?: Contact): OperationTableItem[] {
   const [searchParams] = useSearchParams();
   const accountIdsQuery = searchParams.get("accountIds");
   const allAccounts = useSelector(accountsSelector);
@@ -30,8 +32,16 @@ export function useHistoryOperations(): OperationTableItem[] {
     return expandRequestedAccountIdsForHistoryScope(allAccounts, new Set(ids));
   }, [accountIdsQuery, allAccounts]);
 
-  return useMemo(() => {
+  const accountScopedItems = useMemo(() => {
     if (!operationAccountIds) return baseOperationItems;
     return filterOperationTableItemsByAllowedAccountIds(baseOperationItems, operationAccountIds);
   }, [baseOperationItems, operationAccountIds]);
+
+  return useMemo(
+    () =>
+      contact
+        ? filterOperationTableItemsByContact(accountScopedItems, contact)
+        : accountScopedItems,
+    [accountScopedItems, contact],
+  );
 }

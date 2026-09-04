@@ -1,5 +1,26 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.37.0-next.0
+
+### Minor Changes
+
+- [#21331](https://github.com/LedgerHQ/ledger-live/pull/21331) [`7e9416b`](https://github.com/LedgerHQ/ledger-live/commit/7e9416b629ae3cf4cf6da97b5a50e1197a2a101c) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Remove dead code from the e2e test suites: page-object methods and locators with no callers are deleted, members used only inside their own class are made `private`, and symbols exported but only referenced in their own file lose the `export`. Two empty page classes left behind by the sweep (`portfolioEmptyState.page.ts`, `transferMenu.drawer.ts`) are removed along with their `Application` wiring.
+
+  Also fixes `e2e/mobile/scripts/typecheck.js`, which passed the raw `tsconfig.json` to `parseJsonConfigFileContent` and so never resolved the `extends` chain. It reported 466 phantom errors on a clean tree, which hid real ones — including the `app.<page>.<method>()` calls that break at runtime with `TypeError: ... is not a function` when a page-object method is deleted while a caller in `e2e/mobile/models/` remains. It now uses `getParsedCommandLineOfConfigFile` and reports clean.
+
+- [#20931](https://github.com/LedgerHQ/ledger-live/pull/20931) [`75711a2`](https://github.com/LedgerHQ/ledger-live/commit/75711a26b6a6e23a8ee1e9e34e3e574a08f76a95) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Split the Ledger Wallet Mobile Ledger Sync E2E test into five suites, one per Xray ticket, each
+  booting the app already a member of a freshly created trustchain and destroying it afterwards. The
+  mobile suite now shares the Ledger Sync CLI layer from `live-e2e-shared` instead of keeping a
+  near-verbatim copy, and a `TrustchainPage` asserts trustchain contents through the CLI. On the app
+  side this adds a Detox-only `importTrustchain` bridge message so a test can pre-seed the trustchain,
+  and testIDs on the `TinyCard` CTA and the manage-instances row so the synchronized instances list is
+  reachable from tests — the card's testID sat on a non-touchable container, so taps on it did nothing.
+
+  Also fixes `addAccountAtIndex`, which cleared the selection whenever exactly one account was
+  discovered: it tapped "deselect all" only for multiple accounts but tapped the account row
+  unconditionally, and a lone account arrives already selected, so Confirm was disabled and account
+  discovery timed out.
+
 ## 0.36.0
 
 ### Minor Changes
@@ -281,33 +302,5 @@
 - [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
 
 - [#18435](https://github.com/LedgerHQ/ledger-live/pull/18435) [`136ca7c`](https://github.com/LedgerHQ/ledger-live/commit/136ca7c3bc4a489e49a8df647e2f87585cd705c5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Align delegate and earn v2 e2e tests (desktop and mobile) with the versioned stakePrograms feature-flag values. ETH staking now redirects into the earn deposit webview instead of a native staking flow, so the affected cold-start, inline add-account, partner-dapp CTA and delegate assertions drive the deposit webview for ETH (amount → provider → partner dapp) while other assets keep the native staking checks. Keeps the test environment in sync with production.
-
-## 0.26.0
-
-### Minor Changes
-
-- [#18246](https://github.com/LedgerHQ/ledger-live/pull/18246) [`dcd0ed9`](https://github.com/LedgerHQ/ledger-live/commit/dcd0ed903aa7f5a455dacc2259ac7ca1e5d26491) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Assign an owning team to every mobile e2e test via Allure `owner`/`parentSuite` labels (new `setTeamOwner` helper), mirroring the desktop team system so reports can be grouped and filtered by team.
-
-- [#17814](https://github.com/LedgerHQ/ledger-live/pull/17814) [`b16aa2c`](https://github.com/LedgerHQ/ledger-live/commit/b16aa2c4ba83aa9f67e6ba24a6f522de3956e16d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add wallet 4.0 my wallet e2e tests
-
-- [#18076](https://github.com/LedgerHQ/ledger-live/pull/18076) [`a3025cf`](https://github.com/LedgerHQ/ledger-live/commit/a3025cffe9bef6c082dd45a75523cadfe6677001) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update data-testId
-
-- [#18149](https://github.com/LedgerHQ/ledger-live/pull/18149) [`7ee8538`](https://github.com/LedgerHQ/ledger-live/commit/7ee8538247a0d48c587354f04c05fff4e69bb3b4) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Declare `@babel/plugin-transform-dynamic-import` and `@babel/plugin-transform-modules-commonjs` as explicit devDependencies. They were referenced by `babel.config.js` since #18119 but resolved via pnpm hoist luck, causing `Cannot find module '@babel/plugin-transform-dynamic-import'` on jest globalSetup.
-
-- [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
-
-## 0.26.0-next.0
-
-### Minor Changes
-
-- [#18246](https://github.com/LedgerHQ/ledger-live/pull/18246) [`dcd0ed9`](https://github.com/LedgerHQ/ledger-live/commit/dcd0ed903aa7f5a455dacc2259ac7ca1e5d26491) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Assign an owning team to every mobile e2e test via Allure `owner`/`parentSuite` labels (new `setTeamOwner` helper), mirroring the desktop team system so reports can be grouped and filtered by team.
-
-- [#17814](https://github.com/LedgerHQ/ledger-live/pull/17814) [`b16aa2c`](https://github.com/LedgerHQ/ledger-live/commit/b16aa2c4ba83aa9f67e6ba24a6f522de3956e16d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add wallet 4.0 my wallet e2e tests
-
-- [#18076](https://github.com/LedgerHQ/ledger-live/pull/18076) [`a3025cf`](https://github.com/LedgerHQ/ledger-live/commit/a3025cffe9bef6c082dd45a75523cadfe6677001) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update data-testId
-
-- [#18149](https://github.com/LedgerHQ/ledger-live/pull/18149) [`7ee8538`](https://github.com/LedgerHQ/ledger-live/commit/7ee8538247a0d48c587354f04c05fff4e69bb3b4) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Declare `@babel/plugin-transform-dynamic-import` and `@babel/plugin-transform-modules-commonjs` as explicit devDependencies. They were referenced by `babel.config.js` since #18119 but resolved via pnpm hoist luck, causing `Cannot find module '@babel/plugin-transform-dynamic-import'` on jest globalSetup.
-
-- [#18119](https://github.com/LedgerHQ/ledger-live/pull/18119) [`537e45b`](https://github.com/LedgerHQ/ledger-live/commit/537e45b1dac506a7cee61485f22e560f27fa274c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix mobile e2e jest loading of ESM-only live-common: transpile `lib-es` to CommonJS in the jest main process (config/globalSetup/reporters) via an swc require-hook, and transform `@ledgerhq` packages in jest workers (`ESM_PACKAGES` + babel `modules-commonjs`/`dynamic-import`). Resolves `ERR_MODULE_NOT_FOUND` on extensionless `device-core` imports after live-common became ESM-only.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -4,8 +4,8 @@ import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { InfoState } from "LLM/components/InfoState";
-import type { InfoStatePreset, InfoStateProps } from "LLM/components/InfoState/types";
+import { InfoState } from "@shared/ui-info-state";
+import type { InfoStatePreset, InfoStateProps } from "@shared/ui-info-state";
 
 const presetOptions: InfoStatePreset[] = [
   "illustration",

@@ -2,11 +2,11 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import type { PayCardTrackEvent, RequestReceiveProps } from "@features/flow-pay-card-request";
+import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
 import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
-import { useSaveRequestReceiveCard } from "./useSaveRequestReceiveCard";
+import { useSaveRequestReceive } from "./useSaveRequestReceive";
 import type { PayVerifySelection } from "./usePayTabVerifyAddress";
 
 const REQUEST_PAGE = "Pay";
@@ -23,7 +23,7 @@ export type UsePayTabRequestReceive = Readonly<{
 }>;
 
 export function usePayTabRequestReceive(
-  onTrackEvent: PayCardTrackEvent | undefined,
+  onTrackEvent: PayRequestTrackEvent | undefined,
   onVerify: (selection: PayVerifySelection, onDone: () => void) => void,
 ): UsePayTabRequestReceive {
   const { t } = useTranslation();
@@ -59,7 +59,7 @@ export function usePayTabRequestReceive(
     [selection],
   );
 
-  const saveCard = useSaveRequestReceiveCard(data?.asset.ticker ?? "");
+  const saveCard = useSaveRequestReceive(data?.asset.ticker ?? "");
 
   const labels = useMemo(
     () => ({

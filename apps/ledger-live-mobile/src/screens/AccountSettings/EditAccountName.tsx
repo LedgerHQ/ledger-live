@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import { Platform, StyleSheet, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "~/context/hooks";

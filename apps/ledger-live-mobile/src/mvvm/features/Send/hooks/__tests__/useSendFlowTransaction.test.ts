@@ -182,7 +182,7 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
-    it("should apply transferId for casper", () => {
+    it("should apply memo for casper", () => {
       const casperTransaction = {
         family: "casper",
         recipient: "",
@@ -217,6 +217,8 @@ describe("useSendFlowTransaction", () => {
       expect(mockUpdateTransaction).toHaveBeenCalledWith(casperTransaction, {
         recipient: "casper-address",
         transferId: "transfer-id-123",
+        memoType: "transferId",
+        memoValue: "transfer-id-123",
       });
     });
 

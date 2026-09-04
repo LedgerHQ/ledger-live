@@ -33,9 +33,8 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: SolanaAccount }) => {
-  const { solanaResources } = account;
   const dispatch = useDispatch();
-  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, solanaResources.stakes);
+  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_SOLANA_REWARDS_INFO", {
@@ -67,9 +66,9 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
     ({ meta, stake }: SolanaStakeWithMeta) => {
       const url =
         meta.validator?.url ??
-        (stake.delegation?.voteAccAddr &&
+        (stake.validatorAddress &&
           explorerView &&
-          getAddressExplorer(explorerView, stake.delegation.voteAccAddr));
+          getAddressExplorer(explorerView, stake.validatorAddress));
       if (url) {
         openURL(url === urls.ledgerValidator ? ledgerValidatorUrl : url);
       }
@@ -99,10 +98,10 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
           </TableHeader>
 
           <Header />
-          {stakesWithMeta.map(stakeWithMeta => (
+          {stakesWithMeta.map((stakeWithMeta, i) => (
             <Row
               stakeWithMeta={stakeWithMeta}
-              key={stakeWithMeta.stake.stakeAccAddr}
+              key={stakeWithMeta.stake.positionId || i}
               account={account}
               onManageAction={onRedirect}
               onExternalLink={onExternalLink}

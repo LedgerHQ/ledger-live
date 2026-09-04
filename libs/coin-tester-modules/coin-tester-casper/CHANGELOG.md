@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-casper
 
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a4f727d`](https://github.com/LedgerHQ/ledger-live/commit/a4f727d0c17d685302cf9ec2a39e752b2c9937fd), [`aafcdb7`](https://github.com/LedgerHQ/ledger-live/commit/aafcdb70e59584d6580f080cfd167cce41e56c19), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
+  - @ledgerhq/coin-casper@3.2.0-next.0
+  - @ledgerhq/types-live@6.122.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+
 ## 0.2.1
 
 ### Patch Changes

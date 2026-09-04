@@ -1,8 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
-import { getFlags } from "../../bridge/server";
-import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
+import { getFlags } from "@e2e/bridge/server";
+import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "@e2e/utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -29,11 +29,6 @@ export default class PortfolioPage {
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
-  walletTabSelectorBase = "wallet-tab-";
-  selectAssetsPageTitle = "select-crypto-header-step1-title";
-  baseBigCurrency = "big-currency";
-  bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
-  tabBarEarnButton = "tab-bar-earn";
   marketBannerList = "market-banner-list";
   marketBannerTileBase = "market-banner-tile-";
   marketBannerViewAll = "market-banner-view-all";
@@ -77,8 +72,6 @@ export default class PortfolioPage {
   assetItemExactRegExp = (currencyName: string) =>
     new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
-  walletTabSelector = (id: "Wallet" | "Market") =>
-    getElementById(`${this.walletTabSelectorBase}${id}`);
   operationByType = (operationType: string | RegExp, accountName?: string) =>
     accountName
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
@@ -98,18 +91,6 @@ export default class PortfolioPage {
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
     await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
-  }
-
-  @Step("Expect Portfolio read only")
-  async expectPortfolioReadOnly() {
-    await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
-    await waitForElementById(this.readOnlyItemsId);
-    await waitForElementById(this.connectButtonId);
-  }
-
-  @Step("Expect asset row to be visible {{{0}}}")
-  async expectAssetRowToBeVisible(asset: string) {
-    await detoxExpect(getElementById(this.assetItemBalanceId(asset))).toBeVisible();
   }
 
   @Step("Expect asset row {{{0}}} to have the correct counter value {{{1}}}")
@@ -146,7 +127,7 @@ export default class PortfolioPage {
   }
 
   @Step("Expect operation row to be visible")
-  async expectOperationRowToBeVisible() {
+  private async expectOperationRowToBeVisible() {
     await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
@@ -295,28 +276,10 @@ export default class PortfolioPage {
     await tapByElement(this.tabSelector(id));
   }
 
-  @Step("Tap on {{{0}}} tab selector")
-  async tapWalletTabSelector(id: "Wallet" | "Market") {
-    await tapByElement(this.walletTabSelector(id));
-  }
-
   @Step("Tap on (Show All Accounts) button")
-  async tapShowAllAccountsButton() {
+  private async tapShowAllAccountsButton() {
     await scrollToId(this.showAllAccountsButton, this.accountsListView);
     await tapById(this.showAllAccountsButton);
-  }
-
-  @Step("Expect (Select Asset) page")
-  async checkSelectAssetPage() {
-    await waitForElementById(this.selectAssetsPageTitle);
-    await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
-    await app.common.expectSearchBarVisible();
-    jestExpect(await countElements(getElementsById(this.bigCurrencyRowRegex))).toBeGreaterThan(6);
-  }
-
-  @Step("Open Earn tab from navigation bar")
-  async openEarnTab() {
-    await tapById(this.tabBarEarnButton);
   }
 
   @Step("Tap on (Add new or existing account) button")

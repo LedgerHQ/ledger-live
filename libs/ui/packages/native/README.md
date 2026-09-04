@@ -4,15 +4,9 @@
 > **Status: DEPRECATED** — Deprecated. Migrate to `@ledgerhq/lumen-ui-rnative`.
 
 [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
-[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://native-ui-storybook.vercel.app)
-
 ### Design and interface resources for React Native
 
 #### This package contains [React Native](https://reactnative.dev/) components and styles built on top of our design system and used internally at [Ledger](https://www.ledger.com/).
-
-## Reference
-
-**[🔗 Storybook](https://native-ui-storybook.vercel.app)**
 
 ## Installation
 

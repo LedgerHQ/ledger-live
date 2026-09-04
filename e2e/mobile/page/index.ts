@@ -1,51 +1,50 @@
 import { Step } from "jest-allure2-reporter/api";
-import AssetAccountsPage from "./accounts/assetAccounts.page";
-import AccountPage from "./accounts/account.page";
-import AccountsPage from "./accounts/accounts.page";
-import AddAccountDrawer from "./accounts/addAccount.drawer";
-import CommonPage from "./common.page";
-import CustomLockscreenPage from "./stax/customLockscreen.page";
-import DeviceValidationPage from "./trade/deviceValidation.page";
-import DiscoverPage from "./discover/discover.page";
-import LedgerSyncPage from "./settings/ledgerSync.page";
-import ManagerPage from "./manager/manager.page";
-import MarketPage from "./market/market.page";
-import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
-import OperationDetailsPage from "./trade/operationDetails.page";
-import PasswordEntryPage from "./passwordEntry.page";
-import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
-import PortfolioPage from "./wallet/portfolio.page";
-import AssetDetailPage from "./wallet/assetDetail.page";
-import ReceivePage from "./trade/receive.page";
-import NewSendFlowPage from "./trade/newSendFlow.page";
-import SendPage from "./trade/send.page";
-import SettingsGeneralPage from "./settings/settingsGeneral.page";
-import SettingsHelpPage from "./settings/settingsHelp.page";
-import SettingsPage from "./settings/settings.page";
-import SpeculosPage from "./speculos.page";
-import StakePage from "./trade/stake.page";
-import EvmStakePage from "./trade/evmStake.page";
-import TezosStakePage from "./trade/tezosStake.page";
-import SwapPage from "./trade/swap.page";
-import SwapLiveAppPage from "./liveApps/swapLiveApp";
-import MainNavigationPage from "./wallet/mainNavigation.page";
-import MyWalletPage from "./wallet/myWallet.page";
-import ContactsPage from "./wallet/contacts.page";
-import OperationPage from "./wallet/operation.page";
-import TopBarSearchPage from "./wallet/topBarSearch.page";
-import CeloManageAssetsPage from "./trade/celoManageAssets.page";
-import BorrowPage from "./trade/borrow.page";
-import TransferMenuDrawer from "./wallet/transferMenu.drawer";
-import BuySellPage from "./trade/buySell.page";
-import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
-import ModularDrawer from "./drawer/modular.drawer";
-import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
-import UndelegatePage from "./trade/undelegate.page";
-import Wallet40DrawersPage from "./drawer/wallet40Drawers.drawer";
+import AssetAccountsPage from "@e2e/page/accounts/assetAccounts.page";
+import AccountPage from "@e2e/page/accounts/account.page";
+import AccountsPage from "@e2e/page/accounts/accounts.page";
+import AddAccountDrawer from "@e2e/page/accounts/addAccount.drawer";
+import CommonPage from "@e2e/page/common.page";
+import CustomLockscreenPage from "@e2e/page/stax/customLockscreen.page";
+import DeviceValidationPage from "@e2e/page/trade/deviceValidation.page";
+import DiscoverPage from "@e2e/page/discover/discover.page";
+import LedgerSyncPage from "@e2e/page/settings/ledgerSync.page";
+import TrustchainPage from "@e2e/page/trustchain.page";
+import ManagerPage from "@e2e/page/manager/manager.page";
+import MarketPage from "@e2e/page/market/market.page";
+import OnboardingStepsPage from "@e2e/page/onboarding/onboardingSteps.page";
+import OperationDetailsPage from "@e2e/page/trade/operationDetails.page";
+import PasswordEntryPage from "@e2e/page/passwordEntry.page";
+import PortfolioPage from "@e2e/page/wallet/portfolio.page";
+import AssetDetailPage from "@e2e/page/wallet/assetDetail.page";
+import ReceivePage from "@e2e/page/trade/receive.page";
+import NewSendFlowPage from "@e2e/page/trade/newSendFlow.page";
+import SendPage from "@e2e/page/trade/send.page";
+import SettingsGeneralPage from "@e2e/page/settings/settingsGeneral.page";
+import SettingsHelpPage from "@e2e/page/settings/settingsHelp.page";
+import SettingsPage from "@e2e/page/settings/settings.page";
+import SpeculosPage from "@e2e/page/speculos.page";
+import StakePage from "@e2e/page/trade/stake.page";
+import EvmStakePage from "@e2e/page/trade/evmStake.page";
+import TezosStakePage from "@e2e/page/trade/tezosStake.page";
+import SwapPage from "@e2e/page/trade/swap.page";
+import SwapLiveAppPage from "@e2e/page/liveApps/swapLiveApp";
+import MainNavigationPage from "@e2e/page/wallet/mainNavigation.page";
+import MyWalletPage from "@e2e/page/wallet/myWallet.page";
+import ContactsPage from "@e2e/page/wallet/contacts.page";
+import OperationPage from "@e2e/page/wallet/operation.page";
+import TopBarSearchPage from "@e2e/page/wallet/topBarSearch.page";
+import CeloManageAssetsPage from "@e2e/page/trade/celoManageAssets.page";
+import BorrowPage from "@e2e/page/trade/borrow.page";
+import BuySellPage from "@e2e/page/trade/buySell.page";
+import EarnV2DashboardPage from "@e2e/page/trade/earnV2Dashboard.page";
+import ModularDrawer from "@e2e/page/drawer/modular.drawer";
+import SwapTransactionStatusDrawer from "@e2e/page/drawer/swapTransactionStatus.drawer";
+import UndelegatePage from "@e2e/page/trade/undelegate.page";
+import Wallet40DrawersPage from "@e2e/page/drawer/wallet40Drawers.drawer";
 
 import path from "path";
 import fs from "fs";
-import { InitializationManager, InitOptions } from "../utils/initUtil";
+import { InitializationManager, InitOptions } from "@e2e/utils/initUtil";
 import { randomUUID } from "crypto";
 
 export type ApplicationOptions = InitOptions;
@@ -72,12 +71,12 @@ export class Application {
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
   private discoverPageInstance = lazyInit(DiscoverPage);
   private ledgerSyncPageInstance = lazyInit(LedgerSyncPage);
+  private trustchainPageInstance = lazyInit(TrustchainPage);
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
-  private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
@@ -97,7 +96,6 @@ export class Application {
   private operationPageInstance = lazyInit(OperationPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private readonly borrowPageInstance = lazyInit(BorrowPage);
-  private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
@@ -151,6 +149,10 @@ export class Application {
     return this.discoverPageInstance();
   }
 
+  public get trustchain() {
+    return this.trustchainPageInstance();
+  }
+
   public get ledgerSync() {
     return this.ledgerSyncPageInstance();
   }
@@ -181,10 +183,6 @@ export class Application {
 
   public get assetDetail() {
     return this.assetDetailPageInstance();
-  }
-
-  public get portfolioEmptyState() {
-    return this.portfolioEmptyStatePageInstance();
   }
 
   public get receive() {
@@ -249,10 +247,6 @@ export class Application {
 
   public get celoManageAssets() {
     return this.celoManageAssetsPageInstance();
-  }
-
-  public get transferMenuDrawer() {
-    return this.TransferMenuDrawerInstance();
   }
 
   public get buySell() {

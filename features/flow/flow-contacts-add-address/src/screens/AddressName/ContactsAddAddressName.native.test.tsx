@@ -82,7 +82,7 @@ describe("ContactsAddAddressName", () => {
 
     expect(screen.getByTestId("contacts-add-address-name-screen")).toHaveStyle({
       bottom: 0,
-      paddingBottom: 352,
+      paddingBottom: 320,
     });
   });
 

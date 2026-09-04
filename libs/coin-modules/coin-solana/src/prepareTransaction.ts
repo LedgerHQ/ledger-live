@@ -42,8 +42,10 @@ import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMa
 import { calculateToken2022TransferFees, getAtaDataLengthForMint } from "./helpers/token";
 import {
   decodeAccountIdWithTokenAccountAddress,
+  findSolanaStakingPosition,
   isEd25519Address,
   isValidBase58Address,
+  solanaActivationState,
   withdrawableFromStake,
 } from "./logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
@@ -67,7 +69,7 @@ import { createStakeAccountSeed } from "./stakeAccountSeed";
 import type {
   CommandDescriptor,
   SolanaAccount,
-  SolanaStake,
+  SolanaStakingPosition,
   SolanaTokenAccount,
   SolanaTokenProgram,
   StakeCreateAccountCommand,
@@ -713,14 +715,15 @@ async function deriveStakeDelegateCommandDescriptor(
 
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
-  if (stake !== undefined && !stake.hasStakeAuth && !stake.hasWithdrawAuth) {
+  if (stake !== undefined && stake.canStake === false && stake.canWithdraw === false) {
     errors.stakeAccAddr = new SolanaStakeNoStakeAuth();
   }
 
   await validateValidatorCommon(uiState.voteAccAddr, errors, api);
 
   if (!errors.voteAccAddr && stake !== undefined) {
-    switch (stake.activation.state) {
+    const activationState = solanaActivationState(stake);
+    switch (activationState) {
       case "active":
       case "activating":
         errors.stakeAccAddr = new SolanaStakeAccountIsNotDelegatable();
@@ -728,12 +731,12 @@ async function deriveStakeDelegateCommandDescriptor(
       case "inactive":
         break;
       case "deactivating":
-        if (stake.delegation?.voteAccAddr !== uiState.voteAccAddr) {
+        if (stake.validatorAddress !== uiState.voteAccAddr) {
           errors.stakeAccAddr = new SolanaStakeAccountValidatorIsUnchangeable();
         }
         break;
       default:
-        return assertUnreachable(stake.activation.state);
+        return assertUnreachable(activationState);
     }
   }
 
@@ -769,7 +772,8 @@ async function deriveStakeUndelegateCommandDescriptor(
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
   if (stake !== undefined) {
-    switch (stake.activation.state) {
+    const activationState = solanaActivationState(stake);
+    switch (activationState) {
       case "active":
       case "activating":
         break;
@@ -778,16 +782,16 @@ async function deriveStakeUndelegateCommandDescriptor(
         errors.stakeAccAddr = new SolanaStakeAccountIsNotUndelegatable();
         break;
       default:
-        return assertUnreachable(stake.activation.state);
+        return assertUnreachable(activationState);
     }
 
-    if (!errors.stakeAccAddr && !stake.hasStakeAuth && !stake.hasWithdrawAuth) {
+    if (!errors.stakeAccAddr && stake.canStake === false && stake.canWithdraw === false) {
       errors.stakeAccAddr = new SolanaStakeNoStakeAuth();
     }
   }
 
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
-  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
+  if ((mainAccount.stakingResources?.actionFeeReserve ?? new BigNumber(0)).lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -814,11 +818,10 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
-  let withdrawable = stake?.withdrawable ?? 0;
+  let withdrawable = 0;
 
   if (!errors.stakeAccAddr && stake !== undefined) {
-    if (!stake.hasWithdrawAuth) {
-      withdrawable = 0;
+    if (stake.canWithdraw === false) {
       errors.stakeAccAddr = new SolanaStakeNoWithdrawAuth();
     } else {
       const liveLamports = await api.getBalance(uiState.stakeAccAddr);
@@ -826,8 +829,11 @@ async function deriveStakeWithdrawCommandDescriptor(
         0,
         withdrawableFromStake({
           stakeAccBalance: liveLamports,
-          activation: stake.activation,
-          rentExemptReserve: stake.rentExemptReserve,
+          activation: {
+            state: solanaActivationState(stake),
+            active: stake.activeAmount?.toNumber() ?? 0,
+          },
+          rentExemptReserve: stake.lockedReserve?.toNumber() ?? 0,
         }),
       );
       if (withdrawable <= 0) {
@@ -837,7 +843,7 @@ async function deriveStakeWithdrawCommandDescriptor(
   }
 
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
-  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
+  if ((mainAccount.stakingResources?.actionFeeReserve ?? new BigNumber(0)).lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -877,8 +883,6 @@ async function deriveStakeSplitCommandDescriptor(
       currencyName: mainAccount.currency.name,
     });
   }
-
-  mainAccount.solanaResources?.stakes ?? [];
 
   const commandFees = await getStakeAccountMinimumBalanceForRentExemption(api);
 
@@ -1021,7 +1025,7 @@ function validateAndTryGetStakeAccount(
   account: SolanaAccount,
   stakeAccAddr: string,
   errors: Record<string, Error>,
-): SolanaStake | undefined {
+): SolanaStakingPosition | undefined {
   if (stakeAccAddr.length === 0) {
     errors.stakeAccAddr = new SolanaStakeAccountRequired();
   } else if (!isValidBase58Address(stakeAccAddr)) {
@@ -1031,9 +1035,7 @@ function validateAndTryGetStakeAccount(
   }
 
   if (!errors.stakeAccAddr) {
-    const stake = account.solanaResources?.stakes.find(
-      stake => stake.stakeAccAddr === stakeAccAddr,
-    );
+    const stake = findSolanaStakingPosition(account, stakeAccAddr);
 
     if (stake === undefined) {
       errors.stakeAccAddr = new SolanaStakeAccountNotFound();

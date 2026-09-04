@@ -122,6 +122,7 @@ export const clearAttempt = fromPromise(
     await input.ports.clearAttempt().catch(() => undefined);
     if (input.clearSession) {
       await input.ports.clearSession().catch(() => undefined);
+      input.ports.forgetUser();
     }
   },
 );

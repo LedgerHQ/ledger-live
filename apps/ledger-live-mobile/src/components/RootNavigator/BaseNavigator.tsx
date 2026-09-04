@@ -507,6 +507,7 @@ export default function BaseNavigator() {
           component={ScanRecipient}
           options={{
             ...TransparentHeaderNavigationOptions,
+            animation: "slide_from_bottom",
             title: t("send.scan.title"),
             headerRight: ScanRecipientHeaderRight,
             headerLeft: renderNullHeader,

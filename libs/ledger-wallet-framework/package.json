@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.1.0",
+  "version": "3.2.0-next.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -121,21 +121,22 @@
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@types/imurmurhash": "^0.1.4",
-    "@types/node": "catalog:",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "timemachine": "^0.3.2",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "timemachine": "^0.3.2"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",

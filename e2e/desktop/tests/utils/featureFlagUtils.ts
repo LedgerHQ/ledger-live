@@ -35,7 +35,7 @@ export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
-export const FF_LWD_WALLET_40_Q1 = {
+const FF_LWD_WALLET_40_Q1 = {
   lwdWallet40: {
     enabled: true,
     params: {

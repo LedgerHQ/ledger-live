@@ -10,7 +10,7 @@ import { CASPER_DEFAULT_TTL, CASPER_MAX_TRANSFER_ID, CASPER_NETWORK } from "../c
 import { CasperInvalidTransferId } from "../errors";
 import type { CasperMemo } from "../types";
 import { getEstimatedFees } from "./estimateFees";
-import { toSafeNumber } from "./utils";
+import { getTransferIdFromMemo, toSafeNumber } from "./utils";
 import { isAddressValid } from "./validateAddress";
 import { validateMemo } from "./validateMemo";
 
@@ -35,8 +35,9 @@ export async function craftTransaction(
     throw new InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 
-  const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
-  const transferId = memo?.type === "string" && memo.kind === "transferId" ? memo.value : undefined;
+  const transferId = getTransferIdFromMemo(
+    "memo" in transactionIntent ? transactionIntent.memo : undefined,
+  );
 
   if (typeof transferId === "string" && transferId.length > 0 && !validateMemo(transferId)) {
     throw new CasperInvalidTransferId("", {

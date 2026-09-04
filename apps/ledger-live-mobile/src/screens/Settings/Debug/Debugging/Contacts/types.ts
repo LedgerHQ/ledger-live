@@ -13,6 +13,7 @@ export type ContactsEnabledToggleProps = {
 
 export type ContactsSampleDataSectionProps = {
   readonly onLoadSamples: () => void;
+  readonly onLoadFromSendHistory: () => void;
   readonly onClearContacts: () => void;
 };
 

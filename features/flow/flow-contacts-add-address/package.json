@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-add-address",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Shared Add address flow for Desktop and Mobile",
   "main": "src/web.ts",

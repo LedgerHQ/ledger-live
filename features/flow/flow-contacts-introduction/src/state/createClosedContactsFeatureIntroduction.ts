@@ -7,7 +7,6 @@ export function createClosedContactsFeatureIntroduction(
   return {
     isOpen: false,
     title: "",
-    description: "",
     highlights: [],
     primaryActionLabel: "",
     onComplete,

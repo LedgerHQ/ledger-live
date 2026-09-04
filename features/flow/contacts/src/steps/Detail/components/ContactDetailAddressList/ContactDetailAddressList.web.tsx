@@ -5,16 +5,19 @@ import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetwo
 type ContactDetailAddressListProps = Readonly<{
   addressGroups: readonly ContactDetailAddressNetworkGroup[];
   onAddressRowPress: (intent: ContactDetailAddressRowIntent) => void;
+  onScroll: (event: React.UIEvent<HTMLDivElement>) => void;
 }>;
 
 export function ContactDetailAddressList({
   addressGroups,
   onAddressRowPress,
+  onScroll,
 }: ContactDetailAddressListProps): React.ReactNode {
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col gap-24 overflow-y-auto"
+      className="scrollbar-custom flex min-h-0 flex-1 flex-col gap-24 overflow-y-auto [scrollbar-gutter:auto]"
       data-testid="contacts-detail-address-list"
+      onScroll={onScroll}
     >
       {addressGroups.map(group => (
         <ContactDetailAddressNetworkSection

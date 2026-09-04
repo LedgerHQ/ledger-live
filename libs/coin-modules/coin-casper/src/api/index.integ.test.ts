@@ -4,6 +4,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from "./index";
 import { createMockContext } from "../__tests__/fixtures/config.fixture";
 import {
@@ -39,7 +40,7 @@ describe("Casper Api (mainnet)", () => {
   let api: CoinModuleApi<CasperConfig, CasperMemo>;
 
   beforeAll(() => {
-    api = createApi();
+    api = withDefaults(createApi());
   });
 
   describe("broadcast", () => {

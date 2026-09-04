@@ -1,13 +1,12 @@
-import protobuf from "protobufjs";
-import * as protoJson from "./generate-protocol.json";
+import { ledger_trade } from "./generate-protocol";
 import { isHexadecimal } from "./shared-utils";
 
 export type SellPayload = {
-  deviceTransactionId: object;
+  deviceTransactionId: Uint8Array;
   inAddress: string;
-  inAmount: object;
+  inAmount: Uint8Array;
   inCurrency: string;
-  outAmount: object;
+  outAmount?: ledger_trade.IUDecimal | null;
   outCurrency: string;
   traderEmail: string;
   inExtraId?: string;
@@ -18,16 +17,13 @@ export async function decodeSellPayload(payload: string): Promise<SellPayload> {
     ? Buffer.from(payload, "hex")
     : Buffer.from(payload, "base64");
 
-  const root: { [key: string]: any } = protobuf.Root.fromJSON(protoJson) || {};
-
-  const TransactionResponse = root?.nested.ledger_swap?.NewSellResponse;
-  const err = TransactionResponse.verify(buffer);
+  const SellResponse = ledger_trade.NewSellResponse;
+  const decodedPayload = SellResponse.decode(buffer);
+  const err = SellResponse.verify(decodedPayload);
 
   if (err) {
     throw Error(err);
   }
-
-  const decodedPayload = TransactionResponse.decode(buffer);
 
   return {
     ...decodedPayload,

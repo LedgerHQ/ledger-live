@@ -14,19 +14,15 @@ describe.each([
       broadcast: expect.any(Function),
       call: expect.any(Function),
       combine: expect.any(Function),
-      craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
       getBalance: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
-      getRewards: expect.any(Function),
       getNextSequence: expect.any(Function),
-      getStakes: expect.any(Function),
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
-      register: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       craftTransactionData: expect.any(Function),
@@ -39,27 +35,30 @@ describe.each([
       broadcast: expect.any(Function),
       call: expect.any(Function),
       combine: expect.any(Function),
-      craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
       getBalance: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
-      getRewards: expect.any(Function),
       getNextSequence: expect.any(Function),
-      getStakes: expect.any(Function),
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
-      register: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       craftTransactionData: expect.any(Function),
     },
   ],
 ])("coin-framework methods %s", (_s, _config, methods) => {
-  it("ensures methods are presents", () => {
+  it("declares every method the chain supports", () => {
     expect(createApi("ethereum")).toEqual(methods);
+  });
+
+  it("omits the capabilities the chain has none of", () => {
+    const impl = createApi("ethereum");
+    for (const method of ["craftRawTransaction", "register", "getStakes", "getRewards"] as const) {
+      expect(impl).not.toHaveProperty(method);
+    }
   });
 });
 

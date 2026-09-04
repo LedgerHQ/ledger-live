@@ -19,6 +19,7 @@ export function HistoryView({
   hideSmallValueTokenOperations,
   dustFilterThreshold,
   onToggleHideSmallValueTokenOperations,
+  contact,
 }: Readonly<HistoryViewModel>) {
   const operationsCountRef = useRef(operationsCount);
   const hasPendingOperationsRef = useRef(hasPendingOperations);
@@ -37,6 +38,7 @@ export function HistoryView({
         hideSmallValueTokenOperations={hideSmallValueTokenOperations}
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
+        contact={contact}
       />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <HistoryList

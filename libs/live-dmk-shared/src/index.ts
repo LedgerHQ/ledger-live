@@ -101,3 +101,4 @@ export type {
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
 } from "./device-action/PrepareConnectManager/types";
+export * from "./os-update/api";

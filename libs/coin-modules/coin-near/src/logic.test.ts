@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getMaxAmount, getTotalSpent } from "./logic";
+import { getMaxAmount, getStakingFees, getTotalSpent } from "./logic";
 import { NearAccount, Transaction } from "./types";
 
 describe("getMaxAmount", () => {
@@ -269,5 +269,30 @@ describe("getTotalSpent", () => {
 
     // Then
     expect(result).toEqual(spendableBalance);
+  });
+});
+
+// Regression for LIVE-36138: the fee formula previously divided by 10, which caused a ~10x
+// underestimate and let users sign a withdraw transaction that the network then rejected.
+describe("getStakingFees", () => {
+  // Typical NEAR gas price: 10^9 yoctoNEAR per gas unit.
+  const gasPrice = new BigNumber("1000000000");
+
+  it("estimates withdraw_all fee as (175 + 25) TGas × gasPrice with no divisor", () => {
+    // 175 TGas prepaid + 25 TGas buffer = 200 TGas
+    const expected = new BigNumber("200000000000000").multipliedBy(gasPrice);
+
+    const fee = getStakingFees({ mode: "withdraw", useAllAmount: true }, gasPrice);
+
+    expect(fee).toEqual(expected);
+  });
+
+  it("estimates partial withdraw fee as (125 + 25) TGas × gasPrice with no divisor", () => {
+    // 125 TGas prepaid + 25 TGas buffer = 150 TGas
+    const expected = new BigNumber("150000000000000").multipliedBy(gasPrice);
+
+    const fee = getStakingFees({ mode: "withdraw", useAllAmount: false }, gasPrice);
+
+    expect(fee).toEqual(expected);
   });
 });

@@ -11,7 +11,7 @@ describe("sanitizePersistedOverrides", () => {
     ["a string", "config_currency_solana"],
     ["a number", 42],
     ["a boolean", true],
-    ["an array", [{ config_currency_solana: { showNfts: false } }]],
+    ["an array", [{ config_currency_solana: { supportedTokens: [] } }]],
   ])("returns null when the persisted payload is %s", (_label, input) => {
     expect(sanitizePersistedOverrides(input)).toBeNull();
   });
@@ -19,7 +19,7 @@ describe("sanitizePersistedOverrides", () => {
   it("returns a fresh map of own enumerable entries when the payload is a plain object", () => {
     const raw = {
       config_currency_solana: { token2022Enabled: true },
-      config_currency_ethereum: { showNfts: false },
+      config_currency_ethereum: { supportedTokens: [] },
     };
 
     const sanitized = sanitizePersistedOverrides(raw);

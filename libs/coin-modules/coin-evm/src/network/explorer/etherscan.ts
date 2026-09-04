@@ -1,4 +1,3 @@
-import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
@@ -30,6 +29,7 @@ import { enrichRewardOperationsValue } from "../../staking/rewardsFromReceipt";
 import { withApi } from "../node/rpc.common";
 import { isExternalNodeConfig } from "../node/types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
+import { nftDisabled } from "../../utils";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
@@ -471,12 +471,14 @@ export const getERC1155Operations = async (
  */
 export const getNftOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
   const { config } = params;
-  if (!config.showNfts) {
+  const supportsErc721 = config.supportedTokens?.includes("erc721");
+  const supportsErc1155 = config.supportedTokens?.includes("erc1155");
+  if (!supportsErc721 && !supportsErc1155) {
     return EMPTY_RESULT;
   }
 
-  const erc721Result = await getERC721Operations(params);
-  const erc1155Result = await getERC1155Operations(params);
+  const erc721Result = supportsErc721 ? await getERC721Operations(params) : EMPTY_RESULT;
+  const erc1155Result = supportsErc1155 ? await getERC1155Operations(params) : EMPTY_RESULT;
 
   const sort = params.sort;
   const operations = [...erc721Result.operations, ...erc1155Result.operations].sort(
@@ -800,10 +802,12 @@ export const getOperations = makeLRUCache<
         pagingState?.tokenIsDone,
       );
 
+      const nftUnsupported =
+        !config.supportedTokens?.includes("erc721") && !config.supportedTokens?.includes("erc1155");
       const nfts = await callEndpoint(
         getNftOperations,
         tokens.effectiveBoundBlock,
-        !isNFTActive(currencyId) || pagingState?.nftIsDone,
+        nftUnsupported || nftDisabled(currencyId) || pagingState?.nftIsDone,
       );
 
       const effectiveBoundBlock = nfts.effectiveBoundBlock;

@@ -1,8 +1,8 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { runAddAccountTest } from "./addAccount";
+import { runAddAccountTest } from "@e2e/specs/addAccount/addAccount";
 
 runAddAccountTest(
   Currency.ETC,
-  ["B2CQA-2502", "B2CQA-2646", "B2CQA-2674"],
+  ["B2CQA-2502"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum_classic`, `@family-evm`],
 );

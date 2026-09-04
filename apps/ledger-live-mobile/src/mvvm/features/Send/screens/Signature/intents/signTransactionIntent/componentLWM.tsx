@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useTranslation } from "~/context/Locale";
 import InfiniteLoader from "~/components/InfiniteLoader";

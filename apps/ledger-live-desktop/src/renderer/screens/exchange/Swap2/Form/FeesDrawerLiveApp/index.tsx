@@ -4,7 +4,7 @@ import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
 import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useRef, useState } from "react";
 import { track } from "~/renderer/analytics/segment";

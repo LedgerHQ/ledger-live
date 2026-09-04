@@ -60,6 +60,7 @@ export enum SchemeId {
 export enum TransactionType {
   Transfer = 3,
   TransferWithMemo = 22,
+  TokenUpdate = 27,
 }
 
 /**
@@ -90,6 +91,52 @@ export interface TransferWithMemoPayload {
 }
 
 /**
+ * Account transaction header, common to every transaction type.
+ */
+export interface TransactionHeader {
+  /** Sender's Concordium address */
+  sender: AccountAddressType;
+  /** Account nonce / sequence number */
+  nonce: bigint;
+  /** Transaction expiry time (epoch seconds) */
+  expiry: bigint;
+  /** Maximum energy (gas) for transaction execution */
+  energyAmount: bigint;
+}
+
+/**
+ * TokenUpdate transaction payload — a Protocol-Level Token (PLT) operation.
+ *
+ * The token id is a sibling of the operations blob on the wire, not a field
+ * inside it. Build `operations` with `encodePltTransferOperations`.
+ */
+export interface TokenUpdatePayload {
+  /** Token id as raw bytes, 1 to 128 bytes. Resolved from CAL, not from chain data. */
+  tokenId: Buffer;
+  /** CBOR-encoded CIS-7 operations array, holding exactly one operation. */
+  operations: Buffer;
+}
+
+/**
+ * A TokenUpdate (PLT) transaction.
+ *
+ * Kept separate from {@link Transaction} rather than folded into its payload
+ * union: `Transaction.payload` is narrowed by property checks across the coin
+ * module, and widening the union would silently defeat that narrowing at every
+ * existing call site.
+ */
+export interface TokenUpdateTransaction {
+  header: TransactionHeader;
+  type: TransactionType.TokenUpdate;
+  payload: TokenUpdatePayload;
+}
+
+/**
+ * Any transaction this package can serialize.
+ */
+export type AnyTransaction = Transaction | TokenUpdateTransaction;
+
+/**
  * Union type of all supported transaction payloads.
  */
 export type TransactionPayload = TransferPayload | TransferWithMemoPayload;
@@ -102,20 +149,15 @@ export type TransactionPayload = TransferPayload | TransferWithMemoPayload;
  * The type field determines which payload structure is expected:
  * - TransactionType.Transfer → TransferPayload
  * - TransactionType.TransferWithMemo → TransferWithMemoPayload
+ *
+ * TransactionType.TokenUpdate is absent by construction, so a PLT transaction
+ * cannot be built here. PLT uses {@link TokenUpdateTransaction};
+ * {@link AnyTransaction} is the discriminated union of both.
  */
 export interface Transaction {
-  header: {
-    /** Sender's Concordium address */
-    sender: AccountAddressType;
-    /** Account nonce / sequence number */
-    nonce: bigint;
-    /** Transaction expiry time (epoch seconds) */
-    expiry: bigint;
-    /** Maximum energy (gas) for transaction execution */
-    energyAmount: bigint;
-  };
+  header: TransactionHeader;
   /** Transaction type discriminator */
-  type: TransactionType;
+  type: TransactionType.Transfer | TransactionType.TransferWithMemo;
   /** Type-safe payload (structure depends on type field) */
   payload: TransactionPayload;
 }

@@ -1,3 +1,4 @@
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 
 describe("Algorand Api (mainnet)", () => {
@@ -376,32 +377,30 @@ describe("Algorand Api (mainnet)", () => {
   });
 
   describe("unsupported methods", () => {
+    // The module omits these capabilities; the resolver's `withDefaults` is what answers for them,
+    // which is why the message is the framework's generic one.
+    const resolved = withDefaults(createApi());
+
     it("getBlock throws not supported error", () => {
-      expect(() => api.getBlock(context, 100)).toThrow("getBlock is not supported for Algorand");
+      expect(() => resolved.getBlock(context, 100)).toThrow("getBlock is not supported");
     });
 
-    it("getNextSequence throws not applicable error", () => {
-      expect(() => api.getNextSequence(context, SENDER)).toThrow(
-        "getNextSequence is not applicable for Algorand",
+    it("getNextSequence throws not supported error", () => {
+      expect(() => resolved.getNextSequence(context, SENDER)).toThrow(
+        "getNextSequence is not supported",
       );
     });
 
     it("getStakes throws not supported error", () => {
-      expect(() => api.getStakes(context, SENDER)).toThrow(
-        "getStakes is not supported for Algorand",
-      );
+      expect(() => resolved.getStakes(context, SENDER)).toThrow("getStakes is not supported");
     });
 
     it("getRewards throws not supported error", () => {
-      expect(() => api.getRewards(context, SENDER)).toThrow(
-        "getRewards is not supported for Algorand",
-      );
+      expect(() => resolved.getRewards(context, SENDER)).toThrow("getRewards is not supported");
     });
 
     it("getValidators throws not supported error", () => {
-      expect(() => api.getValidators(context)).toThrow(
-        "getValidators is not supported for Algorand",
-      );
+      expect(() => resolved.getValidators(context)).toThrow("getValidators is not supported");
     });
   });
 });

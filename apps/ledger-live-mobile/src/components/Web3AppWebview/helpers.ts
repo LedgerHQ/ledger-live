@@ -64,6 +64,8 @@ export function useWebView(
     inputs,
     customHandlers,
     onWalletApiTransactionBroadcast,
+    onAccountRequestCancel,
+    onAccountRequestSuccess,
     manifestDomainCheckEnabled,
   }: Pick<
     WebviewProps,
@@ -73,6 +75,8 @@ export function useWebView(
     | "currentAccountHistDb"
     | "setCurrentAccountHistDb"
     | "onWalletApiTransactionBroadcast"
+    | "onAccountRequestCancel"
+    | "onAccountRequestSuccess"
   > & {
     manifestDomainCheckEnabled?: boolean;
   },
@@ -140,7 +144,8 @@ export function useWebView(
     requestDeviceIntentSign: setDeviceIntentSignRequest,
     requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
     onPublicKeyUnavailable: setPublicKeyUnavailableError,
-    goBackOnAccountRequestCancel: inputs?.goBackOnAccountRequestCancel === "true",
+    onAccountRequestCancel,
+    onAccountRequestSuccess,
   });
 
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -517,8 +522,8 @@ export interface Props {
    * to the SignMessage stack.
    */
   requestDeviceIntentSignMessage: (request: WalletApiDeviceIntentSignMessageRequest) => void;
-  /** Opt-in: navigate back when account.request is cancelled (0-accounts Exchange flow only). */
-  goBackOnAccountRequestCancel?: boolean;
+  onAccountRequestCancel?: () => void;
+  onAccountRequestSuccess?: () => void;
 }
 
 export function useUiHook({
@@ -527,11 +532,10 @@ export function useUiHook({
   onPublicKeyUnavailable,
   requestDeviceIntentSign,
   requestDeviceIntentSignMessage,
-  goBackOnAccountRequestCancel,
+  onAccountRequestCancel,
+  onAccountRequestSuccess,
 }: Props): UiHook {
   const navigation = useNavigation();
-  // flips to false after first onSuccess so currency-change cancels don't trigger goBack
-  const shouldGoBackOnCancelRef = useRef(!!goBackOnAccountRequestCancel);
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
@@ -567,12 +571,12 @@ export function useUiHook({
           flow: flow,
           enableAccountSelection: true,
           onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) => {
-            shouldGoBackOnCancelRef.current = false;
+            onAccountRequestSuccess?.();
             onSuccess(account, parentAccount);
           },
           onCancel: () => {
             onCancel?.();
-            if (shouldGoBackOnCancelRef.current && navigation.canGoBack()) navigation.goBack();
+            onAccountRequestCancel?.();
           },
           currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
           areCurrenciesFiltered,
@@ -808,6 +812,8 @@ export function useUiHook({
       requestDeviceIntentSignMessage,
       manifest.id,
       manifest.name,
+      onAccountRequestCancel,
+      onAccountRequestSuccess,
       onPublicKeyUnavailable,
     ],
   );

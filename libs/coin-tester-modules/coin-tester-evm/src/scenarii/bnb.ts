@@ -107,7 +107,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
         type: "ledger",
         explorerId: "bnb",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_bsc: {

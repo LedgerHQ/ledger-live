@@ -37,6 +37,7 @@ function startJob(expectedAddress = EXPECTED_ADDRESS) {
     },
     deviceExtractedContext: {} as never,
     input: { expectedAddress, startAddressVerification },
+    onResult: jest.fn(),
   }).subscribe({
     next: state => states.push(state),
     error: e => {

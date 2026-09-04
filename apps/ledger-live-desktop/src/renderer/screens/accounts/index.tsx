@@ -14,6 +14,7 @@ import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import { getAccountUrl } from "~/renderer/utils";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
@@ -33,9 +34,7 @@ export default function AccountsPage() {
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
       setTrackingSource("accounts page");
-      navigate(
-        parentAccount ? `/account/${parentAccount.id}/${account.id}` : `/account/${account.id}`,
-      );
+      navigate(getAccountUrl(account.id, parentAccount?.id));
     },
     [navigate],
   );

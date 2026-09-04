@@ -7,6 +7,7 @@ const DEFAULT_QR_CODE_SIZE = 200;
 export function QrCode({
   value,
   size = DEFAULT_QR_CODE_SIZE,
+  foregroundColor,
   centerContent,
   testID,
 }: QrCodeProps): React.JSX.Element {
@@ -16,8 +17,8 @@ export function QrCode({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    drawStyledQrCode(canvas, value, size, hasCenterContent);
-  }, [value, size, hasCenterContent]);
+    drawStyledQrCode(canvas, value, size, hasCenterContent, foregroundColor);
+  }, [value, size, hasCenterContent, foregroundColor]);
 
   return (
     <div data-testid={testID} className="relative flex items-center justify-center">

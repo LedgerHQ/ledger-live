@@ -8,8 +8,10 @@ import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { ContactsAddressValidationPort } from "@features/platform-contacts";
-import type { ContactAddressEditSavePayload } from "../EditAddress/types";
-import { useRenameAddressDialogViewModel } from "../EditAddress/useRenameAddressDialogViewModel";
+import {
+  type ContactAddressEditSavePayload,
+  useRenameAddressDialogViewModel,
+} from "@features/flow-contacts-edit-address";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsFlowViewModel } from "./useContactAddressDetailActionsFlowViewModel";
 import type { ContactAddressDetailSendIntent } from "./types";
@@ -75,10 +77,8 @@ export function useContactAddressDetailActionsFlowBindings({
     isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,
     requestSaveApproval: flow.requestSaveApproval,
-    onSaveSuccess: payload => {
-      onEditAddressSaved?.(payload);
-      onCloseAddressDetail?.();
-    },
+    onSaveStart: onCloseAddressDetail,
+    onSaveSuccess: onEditAddressSaved,
   });
 
   return { flow, renameViewModel };

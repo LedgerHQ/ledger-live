@@ -50,6 +50,22 @@ describe("craftTransaction", () => {
       }),
     );
 
+    expect(idSpy).toHaveBeenCalledTimes(1);
+    expect(idSpy).toHaveBeenCalledWith(TEST_TRANSFER_IDS.VALID);
+    const idArg = getArgs(transaction).getByName("id");
+    expect(idArg?.option?.isEmpty()).toBe(false);
+    expect(idArg?.option?.value()?.ui64?.toString()).toBe(TEST_TRANSFER_IDS.VALID);
+  });
+
+  it("includes the transfer id from the generic-adapter memo shape (type=transferId)", async () => {
+    const idSpy = jest.spyOn(NativeTransferBuilder.prototype, "id");
+
+    const { transaction } = await craftTransaction({
+      ...baseIntent(),
+      memo: { type: "transferId", value: TEST_TRANSFER_IDS.VALID },
+    } as TransactionIntent<CasperMemo>);
+
+    expect(idSpy).toHaveBeenCalledTimes(1);
     expect(idSpy).toHaveBeenCalledWith(TEST_TRANSFER_IDS.VALID);
     const idArg = getArgs(transaction).getByName("id");
     expect(idArg?.option?.isEmpty()).toBe(false);
@@ -134,6 +150,7 @@ describe("craftTransaction", () => {
 
     await craftTransaction(baseIntent(), { value: 999_000_000n });
 
+    expect(paymentSpy).toHaveBeenCalledTimes(1);
     expect(paymentSpy).toHaveBeenCalledWith(999_000_000);
   });
 
@@ -142,6 +159,7 @@ describe("craftTransaction", () => {
 
     await craftTransaction(baseIntent());
 
+    expect(paymentSpy).toHaveBeenCalledTimes(1);
     expect(paymentSpy).toHaveBeenCalledWith(CASPER_FEES_MOTES);
   });
 });

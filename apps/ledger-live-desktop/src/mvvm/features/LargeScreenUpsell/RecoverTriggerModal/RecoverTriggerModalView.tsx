@@ -1,7 +1,6 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
-import { InfoState } from "LLD/components/InfoState";
+import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
 import { RECOVER_TRIGGER_DISMISS_BUTTON } from "./analytics";
 import type { RecoverTriggerModalViewProps } from "./useRecoverTriggerModalViewModel";
 

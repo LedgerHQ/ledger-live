@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSellFlowTest } from "./buySell";
+import { runSellFlowTest } from "@e2e/specs/buySell/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 

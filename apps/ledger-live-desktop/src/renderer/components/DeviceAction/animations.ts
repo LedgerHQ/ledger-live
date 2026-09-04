@@ -2,6 +2,12 @@
 /* eslint-disable camelcase */
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Theme } from "@ledgerhq/react-ui";
+import {
+  getDeviceActionAnimation,
+  type DeviceActionAnimationTheme,
+  type DeviceActionContentAction,
+  type DeviceActionModelId,
+} from "@features/platform-device-action-content";
 
 import NANO_S_LIGHT_plugAndPinCode from "~/renderer/animations/nanoS/1PlugAndPinCode/light.json";
 import NANO_S_DARK_plugAndPinCode from "~/renderer/animations/nanoS/1PlugAndPinCode/dark.json";
@@ -33,36 +39,47 @@ import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen
 
 /* ⬆️ The imports above are old assets used somewhere and no new assets to replace them ⬆️ */
 
-import NANOX_DARK_PIN from "~/renderer/animations/nanoX/dark/pin.json";
 import NANOX_DARK_PAIRED from "~/renderer/animations/nanoX/dark/paired.json";
-import NANOX_DARK_CONTINUE from "~/renderer/animations/nanoX/dark/continue.json";
-import NANOX_LIGHT_PIN from "~/renderer/animations/nanoX/light/pin.json";
 import NANOX_LIGHT_PAIRED from "~/renderer/animations/nanoX/light/paired.json";
-import NANOX_LIGHT_CONTINUE from "~/renderer/animations/nanoX/light/continue.json";
-
-import NANOSP_DARK_PIN from "~/renderer/animations/nanoSP/dark/pin.json";
-import NANOSP_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.json";
-import NANOSP_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
-import NANOSP_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
-
-/* Lottie animations for devices with touchscreen */
-import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
-import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
-import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
-import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
-
-import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
-import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
-import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
-import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
-
-import APEX_DARK_PIN from "~/renderer/animations/apex/dark/pin.json";
-import APEX_DARK_CONTINUE from "~/renderer/animations/apex/dark/continue.json";
-import APEX_LIGHT_PIN from "~/renderer/animations/apex/light/pin.json";
-import APEX_LIGHT_CONTINUE from "~/renderer/animations/apex/light/continue.json";
 
 import FLEX_LIGHT_ONBOARDING_SUCCESS from "~/renderer/animations/flex/light/onboardingSuccess.json";
 import FLEX_DARK_ONBOARDING_SUCCESS from "~/renderer/animations/flex/dark/onboardingSuccess.json";
+
+/**
+ * The pin and continue assets below are owned by `@features/platform-device-action-content`,
+ * which ships them for both platforms. Keeping app-local copies bundled the same bytes twice.
+ */
+const asset = (
+  modelId: DeviceActionModelId,
+  action: DeviceActionContentAction,
+  theme: DeviceActionAnimationTheme,
+) => getDeviceActionAnimation({ modelId, action, theme });
+
+const NANOX_DARK_PIN = asset("nanoX", "power-and-unlock", "dark");
+const NANOX_DARK_CONTINUE = asset("nanoX", "continue", "dark");
+const NANOX_LIGHT_PIN = asset("nanoX", "power-and-unlock", "light");
+const NANOX_LIGHT_CONTINUE = asset("nanoX", "continue", "light");
+
+const NANOSP_DARK_PIN = asset("nanoSP", "power-and-unlock", "dark");
+const NANOSP_DARK_CONTINUE = asset("nanoSP", "continue", "dark");
+const NANOSP_LIGHT_PIN = asset("nanoSP", "power-and-unlock", "light");
+const NANOSP_LIGHT_CONTINUE = asset("nanoSP", "continue", "light");
+
+/* Lottie animations for devices with touchscreen */
+const STAX_DARK_PIN = asset("stax", "power-and-unlock", "dark");
+const STAX_DARK_CONTINUE = asset("stax", "continue", "dark");
+const STAX_LIGHT_PIN = asset("stax", "power-and-unlock", "light");
+const STAX_LIGHT_CONTINUE = asset("stax", "continue", "light");
+
+const FLEX_DARK_PIN = asset("europa", "power-and-unlock", "dark");
+const FLEX_DARK_CONTINUE = asset("europa", "continue", "dark");
+const FLEX_LIGHT_PIN = asset("europa", "power-and-unlock", "light");
+const FLEX_LIGHT_CONTINUE = asset("europa", "continue", "light");
+
+const APEX_DARK_PIN = asset("apex", "power-and-unlock", "dark");
+const APEX_DARK_CONTINUE = asset("apex", "continue", "dark");
+const APEX_LIGHT_PIN = asset("apex", "power-and-unlock", "light");
+const APEX_LIGHT_CONTINUE = asset("apex", "continue", "light");
 
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
 

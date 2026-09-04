@@ -219,13 +219,146 @@ export interface AccountBalanceResponse {
       }>;
       total: string;
     };
-    accountTokens: unknown[];
+    accountTokens: PltAccountToken[];
     accountEncryptedAmount?: {
       incomingAmounts: unknown[];
       selfAmount: string;
       startIndex: number;
     };
   };
+}
+
+// ============================================================================
+// Protocol-Level Token (PLT) Types
+// ============================================================================
+
+/**
+ * A PLT amount. `value` is the amount in the token's smallest unit; `decimals`
+ * is how many of its digits are fractional. The pair is self-describing, so the
+ * same shape is used for balances, supplies and transfer amounts.
+ */
+export interface PltTokenAmount {
+  value: string;
+  decimals: number;
+}
+
+/**
+ * A CBOR-backed state blob as the node renders it: the decoded object when the
+ * CBOR parses, or the raw hex-encoded bytes when it does not.
+ */
+export type PltEncodedState<T> = T | string;
+
+export interface PltTokenMetadataUrl {
+  url: string;
+  checksumSha256?: string;
+  _additional?: Record<string, unknown>;
+}
+
+export interface PltGovernanceAccount {
+  type: "account";
+  address: string;
+}
+
+/**
+ * Module-level token state.
+ *
+ * `allowList` / `denyList` here mean the token *has* that list feature. Whether
+ * a given account is on the list is {@link PltAccountModuleState}, which is a
+ * different question with the same field names.
+ *
+ * Every field is optional and is omitted rather than defaulted, so an absent
+ * flag means "not declared by the module", not `false`.
+ */
+export interface PltModuleState {
+  name?: string;
+  metadata?: PltTokenMetadataUrl;
+  governanceAccount?: PltGovernanceAccount;
+  paused?: boolean;
+  allowList?: boolean;
+  denyList?: boolean;
+  mintable?: boolean;
+  burnable?: boolean;
+  _additional?: Record<string, unknown>;
+}
+
+/**
+ * Account-level token state.
+ *
+ * `allowList` / `denyList` here mean *this account is on* that list. See
+ * {@link PltModuleState} for the module-level counterpart.
+ */
+export interface PltAccountModuleState {
+  allowList?: boolean;
+  denyList?: boolean;
+  _additional?: Record<string, unknown>;
+}
+
+/**
+ * Global state of a token. `decimals` is the canonical proxy-side value; the
+ * per-amount `decimals` on balances and transfer amounts are copies that must
+ * agree with it.
+ */
+export interface PltTokenState {
+  tokenModuleRef: string;
+  decimals: number;
+  totalSupply: PltTokenAmount;
+  moduleState: PltEncodedState<PltModuleState>;
+}
+
+/**
+ * Returned by /v0/plt/tokens and /v0/plt/tokenInfo.
+ */
+export interface PltTokenInfo {
+  tokenId: string;
+  tokenState: PltTokenState;
+}
+
+/**
+ * Per-account state of one token. `state` is absent entirely when the account
+ * has no module state, so absence is distinct from an empty object.
+ */
+export interface PltTokenAccountState {
+  balance: PltTokenAmount;
+  state?: PltEncodedState<PltAccountModuleState>;
+}
+
+/**
+ * One entry of `accountTokens` in the /v2/accBalance response.
+ *
+ * The proxy does not return the node's account-token entry verbatim: it drops
+ * the entry's `tokenId` and substitutes the full token info under `token`, so
+ * the id is reached through `token.tokenId`.
+ */
+export interface PltAccountToken {
+  token: PltTokenInfo;
+  tokenAccountState: PltTokenAccountState;
+}
+
+/**
+ * Details of a token-module rejection, carried by a `TokenUpdateTransactionFailed`
+ * reject reason. `type` is a module-defined string, not a closed set.
+ */
+export interface PltTokenModuleRejectReason {
+  tokenId: string;
+  type: string;
+  details?: unknown;
+}
+
+/**
+ * The two chain-level reject reasons a PLT transaction can produce. Every other
+ * tag is modelled by {@link WalletProxyRawRejectReason}.
+ */
+export type PltRejectReason =
+  | { tag: "NonExistentTokenId"; contents: string }
+  | { tag: "TokenUpdateTransactionFailed"; contents: PltTokenModuleRejectReason };
+
+/**
+ * Structured reject reason, returned only when the request passes
+ * `includeRawRejectReason`.
+ */
+export interface WalletProxyRawRejectReason {
+  tag: string;
+  contents?: unknown;
 }
 
 /**
@@ -238,17 +371,40 @@ export interface WalletProxyTransactionOrigin {
 
 /**
  * Wallet-proxy transaction details (varies by transaction type)
+ *
+ * A PLT transfer has `type: "tokenUpdate"`. There is no separate
+ * "with memo" type string, so a memo shows only as the presence of `memo`.
  */
 export interface WalletProxyTransactionDetails {
-  type: string; // e.g., "transfer", "transferWithMemo", "bakingReward", "encryptedTransfer", etc.
+  type: string; // e.g., "transfer", "transferWithMemo", "tokenUpdate", "bakingReward", etc.
   outcome: "success" | "reject";
   description?: string;
   events?: string[];
   transferAmount?: string;
   transferSource?: string;
   transferDestination?: string;
-  memo?: string; // Present for transferWithMemo transactions
+  memo?: string; // Present for transferWithMemo and for tokenUpdate transactions
+  tokenId?: string; // Present for tokenUpdate
+  tokenTransferAmount?: PltTokenAmount; // Present for tokenUpdate. Named `tokenAmount` by /v0/submissionStatus.
+  rejectReason?: string; // Localized prose. Not a mapping key.
+  rawRejectReason?: WalletProxyRawRejectReason; // Only when the request passes includeRawRejectReason
   [key: string]: unknown;
+}
+
+/**
+ * Details of a PLT transfer as returned by /v0/submissionStatus.
+ *
+ * This endpoint names the transferred value `tokenAmount`, where the
+ * transaction history names it `tokenTransferAmount`, and it reports only the
+ * recipient — there is no sender field.
+ */
+export interface SubmissionStatusTokenUpdateDetails {
+  outcome: "success" | "reject";
+  to?: string;
+  tokenId?: string;
+  tokenAmount?: PltTokenAmount;
+  memo?: string;
+  rejectReason?: string;
 }
 
 /**

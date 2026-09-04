@@ -1,6 +1,6 @@
 import { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set([
   "ton",

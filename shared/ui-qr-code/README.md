@@ -11,19 +11,20 @@ scanning — same approach as Receive.
 
 ## Exports
 
-| Export | Description |
-| --- | --- |
-| `QrCode` | Styled QR card with an optional center overlay |
-| `QrCodeProps` | Component props |
+| Export        | Description                                      |
+| ------------- | ------------------------------------------------ |
+| `QrCode`      | Styled QR matrix with an optional center overlay |
+| `QrCodeProps` | Component props                                  |
 
 The public API is identical on web and native, so consumers never branch on platform. Only the
 renderer differs:
 
 - **web** — [`qrcode`](https://www.npmjs.com/package/qrcode) drawn on a `<canvas>`
-- **native** — [`react-native-qrcode-svg`](https://www.npmjs.com/package/react-native-qrcode-svg)
+- **native** — a `qrcode` matrix drawn with `react-native-svg`, matching the Web rounded-dot format
 
 `centerContent` is a free slot: pass any node (a `CryptoIcon`, a logo, an `<img>`, …). The package
-only provides the QR matrix and the white circular host in the center.
+only provides the QR matrix and a clear center area for the optional overlay; each consumer owns
+its surrounding card and layout.
 
 ## Usage
 
@@ -37,5 +38,5 @@ import CryptoIcon from "@ledgerhq/crypto-icons/native";
   centerContent={
     <CryptoIcon ledgerId="bitcoin" ticker="BTC" size={48} shape="circle" />
   }
-/>
+/>;
 ```

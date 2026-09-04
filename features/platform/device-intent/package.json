@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-device-intent",
-  "version": "5.1.0",
+  "version": "5.2.0-next.0",
   "private": true,
   "description": "Cross-platform Device Intent Executor",
   "main": "src/index.ts",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

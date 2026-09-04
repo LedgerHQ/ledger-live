@@ -13,7 +13,9 @@ import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomIm
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
 import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
+import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
+import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug/screens/OsUpdatesOrchestratorDebugScreen";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
@@ -381,6 +383,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugOsUpdateOrchestrator}
+        component={DebugOsUpdateOrchestrator}
+        options={{
+          title: "OS Update orchestrator",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugInstallSetOfApps}
         component={DebugInstallSetOfApps}
         options={{
@@ -476,6 +485,13 @@ export default function SettingsNavigator() {
         component={DebugStore}
         options={{
           title: "Application state",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceSimulation}
+        component={DeviceSimulationDevToolScreen}
+        options={{
+          title: "Device simulation (QA)",
         }}
       />
       <Stack.Screen

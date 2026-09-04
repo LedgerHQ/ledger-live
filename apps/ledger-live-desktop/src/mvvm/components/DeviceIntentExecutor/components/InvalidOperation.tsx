@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { InvalidOperationComponent } from "@features/platform-device-intent";
 import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 import {
   DEVICE_ACTION_BUTTON,

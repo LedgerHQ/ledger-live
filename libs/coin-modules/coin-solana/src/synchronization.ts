@@ -21,6 +21,7 @@ import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token
 import {
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
+  solanaStakesToStakingResources,
   withdrawableFromStake,
 } from "./logic";
 import { estimateTxFee } from "./logic/estimateFees";
@@ -407,13 +408,10 @@ export const getAccountShapeWithAPI = async (
     ),
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
-    solanaResources: {
-      stakes: sortedStakes,
-      unstakeReserve: BigNumber.min(
-        unstakeReserve,
-        BigNumber.max(mainAccBalance.minus(mainAccountRentExempt), 0),
-      ),
-    },
+    stakingResources: solanaStakesToStakingResources(
+      sortedStakes,
+      BigNumber.min(unstakeReserve, BigNumber.max(mainAccBalance.minus(mainAccountRentExempt), 0)),
+    ),
   };
 
   return shape;

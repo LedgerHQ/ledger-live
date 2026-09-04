@@ -6,7 +6,7 @@ import { AssetIcon } from "./AssetIcon";
 
 type TrendingAssetTileProps = {
   readonly item: MarketItemPerformer;
-  readonly onNavigate: (id: string) => () => void;
+  readonly onNavigate: (item: MarketItemPerformer) => () => void;
 };
 
 const TrendingAssetTileComponent = ({ item, onNavigate }: TrendingAssetTileProps) => {
@@ -31,13 +31,13 @@ const TrendingAssetTileComponent = ({ item, onNavigate }: TrendingAssetTileProps
     <Tile
       className="w-[98px]"
       appearance="card"
-      onClick={onNavigate(item.id)}
+      onClick={onNavigate(item)}
       data-testid={`market-banner-asset-${item.id}`}
     >
       <Spot size={40} appearance="icon" icon={renderIcon} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
-        <PerformanceIndicator value={item} />
+        <PerformanceIndicator item={item} />
       </TileContent>
     </Tile>
   );

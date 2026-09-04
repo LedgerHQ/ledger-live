@@ -1,13 +1,13 @@
 import { setEnv } from "@shared/env";
-import { verifyAppValidationSendInfo } from "../../models/send";
+import { verifyAppValidationSendInfo } from "@e2e/models/send";
 
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import type { InitOptions } from "../../utils/initUtil";
+import type { InitOptions } from "@e2e/utils/initUtil";
 
 export const BST_SEND_CURRENCIES = new Set([
   "aptos",

@@ -3,7 +3,7 @@
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import React from "react";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
@@ -21,7 +21,9 @@ import {
   buildAccountsWithViewKeys,
   useAleoPrivateSync,
   useAleoQuickAmountSelector,
+  useAleoValidators,
 } from "./react";
+import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { ALEO_ACCOUNT_1, makeAleoAccount } from "./__mocks__/account.mock";
 
 const mockCreateAction = jest.fn();
@@ -50,6 +52,8 @@ jest.mock("./utils", () => ({
     id: `${account.id}:patched:${viewKey}`,
   })),
 }));
+
+jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn() }));
 
 const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
@@ -1379,5 +1383,127 @@ describe("useAleoQuickAmountSelector", () => {
     result.current.selectStrategy(result.current.strategyData[2]);
 
     expect(updateTransaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("useAleoValidators", () => {
+  const validator = {
+    address: "aleo1validator",
+    name: "Validator One",
+    stakeMicrocredits: 20_000_000,
+    isOpen: true,
+    commissionPercent: 10,
+    estimatedYearlyRewardsRate: 0.07,
+  };
+
+  // The hook keeps a module-level render seed per currency id, so every test needs
+  // its own id or it would be handed the previous test's seed instead of loading.
+  let currencyIdCounter = 0;
+  const freshCurrency = () =>
+    ({ id: `aleo_test_${currencyIdCounter++}`, type: "CryptoCurrency" }) as CryptoCurrency;
+
+  beforeEach(() => {
+    jest.mocked(getValidators).mockReset();
+  });
+
+  it("starts loading with an empty list, then resolves to the fetched committee", async () => {
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+    const currency = freshCurrency();
+
+    const { result } = renderHook(() => useAleoValidators(currency));
+
+    expect(result.current).toEqual({ validators: [], loading: true, error: null });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current).toEqual({ validators: [validator], loading: false, error: null });
+  });
+
+  it("seeds a remount with the last-seen list so the picker does not flash empty", async () => {
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+    const currency = freshCurrency();
+
+    const first = renderHook(() => useAleoValidators(currency));
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+    first.unmount();
+
+    const second = renderHook(() => useAleoValidators(currency));
+
+    expect(second.result.current).toEqual({
+      validators: [validator],
+      loading: false,
+      error: null,
+    });
+
+    // Let the background refetch settle inside act, so its setState does not
+    // land after the test has finished.
+    await act(async () => {});
+  });
+
+  it("hands each mount its own list, so a picker sorting in place cannot corrupt the cache", async () => {
+    const second = { ...validator, address: "aleo1second" };
+    const arrayHeldByTheCoinModuleCache = [validator, second];
+    // A separate snapshot: asserting against the array under mutation would pass
+    // whether or not the hook copies.
+    const expectedOrder = [validator, second];
+    jest.mocked(getValidators).mockResolvedValue(arrayHeldByTheCoinModuleCache);
+    const currency = freshCurrency();
+
+    const first = renderHook(() => useAleoValidators(currency));
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+
+    first.result.current.validators.reverse();
+    first.unmount();
+
+    const remount = renderHook(() => useAleoValidators(currency));
+
+    expect(remount.result.current.validators).toEqual(expectedOrder);
+
+    await act(async () => {});
+    expect(remount.result.current.validators).toEqual(expectedOrder);
+  });
+
+  it("surfaces a fetch failure as an empty list when there is no seed to fall back on", async () => {
+    const error = new Error("offline");
+    jest.mocked(getValidators).mockRejectedValue(error);
+    const currency = freshCurrency();
+
+    const { result } = renderHook(() => useAleoValidators(currency));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toBe(error);
+    expect(result.current.validators).toEqual([]);
+  });
+
+  it("keeps the last-seen list when a later refetch fails, so offline degrades to stale", async () => {
+    const error = new Error("offline");
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+    const currency = freshCurrency();
+
+    const first = renderHook(() => useAleoValidators(currency));
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+    first.unmount();
+
+    jest.mocked(getValidators).mockRejectedValue(error);
+    const second = renderHook(() => useAleoValidators(currency));
+
+    await waitFor(() => expect(second.result.current.error).toBe(error));
+    expect(second.result.current.validators).toEqual([validator]);
+    expect(second.result.current.loading).toBe(false);
+  });
+
+  it("refetches and never shows the previous network's committee on a currency switch", async () => {
+    const testnetValidator = { ...validator, address: "aleo1testnet" };
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+
+    const { result, rerender } = renderHook(({ currency }) => useAleoValidators(currency), {
+      initialProps: { currency: freshCurrency() },
+    });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    jest.mocked(getValidators).mockResolvedValue([testnetValidator]);
+    rerender({ currency: freshCurrency() });
+
+    expect(result.current.validators).toEqual([]);
+    await waitFor(() => expect(result.current.validators).toEqual([testnetValidator]));
   });
 });

@@ -114,6 +114,26 @@ describe("QueuedBottomSheetsProvider", () => {
     expect(handlers3.open).toHaveBeenCalledTimes(1);
   });
 
+  it("opens the forced drawer when the closing drawer frees its slot synchronously", () => {
+    const { result } = renderQueue();
+    const handlers2 = createHandlers();
+    let handle1!: ReturnType<typeof result.current.addBottomSheetToQueue>;
+
+    const handlers1 = createHandlers();
+    handlers1.close.mockImplementation(() => handle1.removeBottomSheetFromQueue());
+
+    act(() => {
+      handle1 = result.current.addBottomSheetToQueue(handlers1, false);
+    });
+
+    act(() => {
+      result.current.addBottomSheetToQueue(handlers2, true);
+    });
+
+    expect(handlers1.close).toHaveBeenCalledTimes(1);
+    expect(handlers2.open).toHaveBeenCalledTimes(1);
+  });
+
   it("closeAllBottomSheets closes every drawer and empties the queue", () => {
     const { result } = renderQueue();
     const handlers1 = createHandlers();

@@ -46,6 +46,8 @@ export const WebPTXPlayer = ({
   },
   softExit = false,
   Interstitial,
+  onAccountRequestCancel,
+  onAccountRequestSuccess,
 }: {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
@@ -53,6 +55,8 @@ export const WebPTXPlayer = ({
   config?: BackConfig;
   softExit?: boolean;
   Interstitial?: InterstitialType;
+  onAccountRequestCancel?: () => void;
+  onAccountRequestSuccess?: () => void;
 }) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -188,6 +192,8 @@ export const WebPTXPlayer = ({
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        onAccountRequestCancel={onAccountRequestCancel}
+        onAccountRequestSuccess={onAccountRequestSuccess}
         Loader={PTXLoader}
       />
       {Interstitial && <Interstitial manifest={manifest} isLoading={webviewState.loading} />}

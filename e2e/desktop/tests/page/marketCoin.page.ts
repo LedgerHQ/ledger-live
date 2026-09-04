@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 
 export class MarketCoinPage extends AppPage {
   readonly root = this.page.getByTestId("market-coin-page-container");

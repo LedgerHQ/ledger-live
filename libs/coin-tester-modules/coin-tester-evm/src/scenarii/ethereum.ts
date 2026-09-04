@@ -105,7 +105,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
         type: "ledger",
         explorerId: "eth",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
       config_currency_ethereum: {

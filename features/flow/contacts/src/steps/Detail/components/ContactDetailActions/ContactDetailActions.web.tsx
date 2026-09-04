@@ -8,6 +8,7 @@ export type ContactDetailActionsProps = Readonly<{
   labels: ContactDetailActionsLabels;
   onEdit: () => void;
   onDelete: () => void;
+  isCollapsed?: boolean;
 }>;
 
 export function ContactDetailActions({
@@ -15,9 +16,15 @@ export function ContactDetailActions({
   labels,
   onEdit,
   onDelete,
+  isCollapsed = false,
 }: ContactDetailActionsProps): React.ReactNode {
   return (
-    <div className="absolute right-16 top-16 flex gap-8" data-testid="contacts-detail-actions">
+    <div
+      className={`absolute flex gap-8 motion-safe:transition-[top,right,transform] motion-safe:duration-[400ms] motion-safe:ease-in-out motion-reduce:transition-none ${
+        isCollapsed ? "right-16 top-1/2 -translate-y-1/2" : "right-0 -top-16"
+      }`}
+      data-testid="contacts-detail-actions"
+    >
       <IconButton
         appearance="transparent"
         size="sm"

@@ -5,8 +5,10 @@ import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
-import type { SolanaStake } from "@ledgerhq/coin-solana/types";
+import type { SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
+import type { StakingResources } from "@ledgerhq/types-live";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import BigNumber from "bignumber.js";
 import * as hooks from "./react";
 
 jest.mock("@ledgerhq/coin-solana/validators", () => ({
@@ -76,15 +78,29 @@ describe("solana/react", () => {
   });
 
   describe("useSolanaStakesWithMeta", () => {
-    const stake = {
-      stakeAccAddr: "stake-account",
-      delegation: { voteAccAddr: "ledger-vote-account" },
-    } as SolanaStake;
+    const resourcesWith = (...delegations: SolanaStakingPosition[]): StakingResources => ({
+      delegations: delegations as StakingResources["delegations"],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: new BigNumber(0),
+      pendingRewardsBalance: new BigNumber(0),
+      unbondingBalance: new BigNumber(0),
+    });
+
+    const stake: SolanaStakingPosition = {
+      positionId: "stake-account",
+      validatorAddress: "ledger-vote-account",
+      amount: new BigNumber(0),
+      pendingRewards: new BigNumber(0),
+      status: "bonded",
+    };
 
     it("attaches the validator metadata to each stake", async () => {
       const currency = nextCurrency();
 
-      const { result } = renderHook(() => hooks.useSolanaStakesWithMeta(currency, [stake]));
+      const { result } = renderHook(() =>
+        hooks.useSolanaStakesWithMeta(currency, resourcesWith(stake)),
+      );
 
       await waitFor(() =>
         expect(result.current).toEqual([
@@ -102,12 +118,32 @@ describe("solana/react", () => {
       );
     });
 
+    it("returns the same result across renders when the resources object is unchanged", async () => {
+      const currency = nextCurrency();
+      const resources = resourcesWith(stake);
+
+      const { result, rerender } = renderHook(() =>
+        hooks.useSolanaStakesWithMeta(currency, resources),
+      );
+
+      // wait for the fetched validator metadata to land, otherwise the capture races the fetch
+      await waitFor(() =>
+        expect(result.current[0]?.meta.validator?.name).toBe(ledgerValidator.name),
+      );
+      const first = result.current;
+      rerender();
+
+      expect(result.current).toBe(first);
+    });
+
     it("leaves the metadata empty for an unknown validator", async () => {
-      const unknown = { ...stake, delegation: { voteAccAddr: "unknown" } } as SolanaStake;
+      const unknown: SolanaStakingPosition = { ...stake, validatorAddress: "unknown" };
 
       const currency = nextCurrency();
 
-      const { result } = renderHook(() => hooks.useSolanaStakesWithMeta(currency, [unknown]));
+      const { result } = renderHook(() =>
+        hooks.useSolanaStakesWithMeta(currency, resourcesWith(unknown)),
+      );
 
       await waitFor(() => expect(result.current.length).toBe(1));
       expect(result.current).toEqual([

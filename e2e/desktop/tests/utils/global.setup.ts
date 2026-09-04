@@ -2,7 +2,7 @@ import "@shared/env";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { FullConfig } from "@playwright/test";
 import { execFileSync } from "node:child_process";
-import { responseLogfilePath } from "./networkResponseLogger";
+import { responseLogfilePath } from "tests/utils/networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
 import {
   createNanoAppJsonFile,
@@ -10,7 +10,7 @@ import {
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import path from "path";
-import { NANO_APP_CATALOG_PATH } from "./fileUtils";
+import { NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
 

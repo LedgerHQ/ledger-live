@@ -28,6 +28,18 @@ describe("pickContactAddressForCurrency", () => {
     expect(pickContactAddressForCurrency([ethAddress], "ethereum/erc20/usd_coin")).toBe(ethAddress);
   });
 
+  it("does not pick an address when several addresses share the requested currency", () => {
+    expect(
+      pickContactAddressForCurrency(
+        [
+          { id: "eth-1", currencyId: "ethereum", address: "0x123" },
+          { id: "eth-2", currencyId: "ethereum", address: "0x456" },
+        ],
+        "ethereum",
+      ),
+    ).toBeUndefined();
+  });
+
   it("does not pick an address when several candidates remain without an exact currency match", () => {
     expect(
       pickContactAddressForCurrency(

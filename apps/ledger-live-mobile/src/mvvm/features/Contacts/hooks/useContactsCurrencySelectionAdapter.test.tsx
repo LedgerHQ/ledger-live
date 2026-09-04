@@ -13,6 +13,7 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 
 const openDrawer = jest.fn();
 const closeDrawer = jest.fn();
+const hideDrawer = jest.fn();
 const handleAccountSelected = jest.fn();
 const handleCurrencySelected = jest.fn();
 const mockedUseModularDrawerController = jest.mocked(useModularDrawerController);
@@ -25,6 +26,7 @@ function mockModularDrawerController(
     assetsConfiguration: undefined,
     categories: undefined,
     closeDrawer,
+    hideDrawer,
     completionMode: "currency",
     enableAccountSelection: false,
     handleAccountSelected,

@@ -1,5 +1,13 @@
 # @ledgerhq/speculos-transport
 
+## 0.10.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8)]:
+  - @shared/env@0.5.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.10.7-next.0
+
 ## 0.10.12
 
 ### Patch Changes
@@ -179,21 +187,5 @@
   - @ledgerhq/live-dmk-speculos@0.9.0-next.0
   - @ledgerhq/devices@8.15.0-next.0
   - @ledgerhq/hw-transport-node-speculos@6.34.3-next.0
-
-## 0.10.2
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0
-  - @ledgerhq/live-dmk-speculos@0.8.8
-
-## 0.10.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/live-env@2.36.0-next.0
-  - @ledgerhq/live-dmk-speculos@0.8.8-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

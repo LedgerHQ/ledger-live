@@ -1,33 +1,21 @@
-import { useCallback, useMemo, useState } from "react";
-import { Share } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import type { PayCardTrackEvent, RequestReceiveProps } from "@features/flow-pay-card-request";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
-import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
+import { ScreenName } from "~/const";
+import type { PayTabNavigatorParamList } from "../types";
 
 const REQUEST_PAGE = "Pay";
 const REQUEST_CATEGORIES: AssetCategory[] = [AssetCategory.Stablecoins];
 
-const EMPTY_LABELS: RequestReceiveProps["labels"] = {
-  title: "",
-  networkLabel: "",
-  actions: { share: "", copy: "", copied: "", save: "", verify: "" },
-};
-
-type Selection = Readonly<{ account: AccountLike; parentAccount?: Account }>;
-
 export type UsePayTabRequestReceive = Readonly<{
   open: () => void;
-  requestReceive: RequestReceiveProps;
 }>;
 
-export function usePayTabRequestReceive(
-  onTrackEvent: PayCardTrackEvent | undefined,
-): UsePayTabRequestReceive {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selection, setSelection] = useState<Selection | null>(null);
+export function usePayTabRequestReceive(): UsePayTabRequestReceive {
+  const { navigate } = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const { openDrawer } = useModularDrawerController();
 
   const open = useCallback(() => {
@@ -37,46 +25,16 @@ export function usePayTabRequestReceive(
       source: REQUEST_PAGE,
       enableAccountSelection: true,
       onAccountSelected: (account, parentAccount) => {
-        setSelection({ account, parentAccount });
-        setIsOpen(true);
+        const accountCurrency = getAccountCurrency(account);
+        navigate(ScreenName.PayTabRequestReceive, {
+          parentId: parentAccount?.id,
+          currency: accountCurrency,
+          // Token (USDC) may not be in the wallet yet. Use the parent (ETH) id instead.
+          accountId: (account.type !== "Account" && account.parentId) || account.id,
+        });
       },
     });
-  }, [openDrawer]);
+  }, [openDrawer, navigate]);
 
-  const onClose = useCallback(() => setIsOpen(false), []);
-
-  const onCopy = useCallback((address: string) => {
-    Clipboard.setString(address);
-  }, []);
-
-  const onShare = useCallback((address: string) => {
-    void Share.share({ message: address }).catch(() => undefined);
-  }, []);
-
-  const data = useMemo(
-    () => (selection ? deriveRequestReceiveData(selection.account, selection.parentAccount) : null),
-    [selection],
-  );
-
-  const requestReceive = useMemo<RequestReceiveProps>(
-    () => ({
-      isOpen,
-      address: data?.address ?? "",
-      asset: data?.asset ?? { name: "", ticker: "" },
-      network: data?.network ?? "",
-      page: REQUEST_PAGE,
-      labels: EMPTY_LABELS,
-      assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
-      networkIcon: data?.networkIcon,
-      visibleActions: ["share", "copy"],
-      onShare,
-      onCopy,
-      onVerify: () => {},
-      onClose,
-      onTrackEvent,
-    }),
-    [isOpen, data, onShare, onCopy, onClose, onTrackEvent],
-  );
-
-  return { open, requestReceive };
+  return { open };
 }

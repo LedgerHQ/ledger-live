@@ -30,6 +30,7 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   projects: [
     {
@@ -39,6 +40,7 @@ module.exports = {
       setupFilesAfterEnv: [
         "@ledgerhq/wallet-framework-test-setup",
         "@ledgerhq/disable-network-setup",
+        "@ledgerhq/test-quarantine/jest-retries",
       ],
     },
     {
@@ -46,6 +48,7 @@ module.exports = {
       displayName: "msw",
       testMatch: ["**/*.msw.test.ts"],
       setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
+      setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
   ],
 };

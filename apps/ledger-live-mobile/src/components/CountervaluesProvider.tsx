@@ -1,13 +1,9 @@
-import {
-  CountervaluesBridge,
-  CountervaluesProvider,
-  useCountervaluesPolling,
-} from "@ledgerhq/live-countervalues-react";
+import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
 import { flow } from "lodash/fp";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AppState, AppStateStatus } from "react-native";
+import React, { useMemo } from "react";
+import { useCountervaluesPollingLifecycle } from "LLM/hooks/useCountervaluesPollingLifecycle";
 import { useDispatch } from "~/context/hooks";
 import { useUserSettings } from "~/actions/general";
 import {
@@ -30,7 +26,7 @@ import {
  * Call side effects outside of the primary render tree, avoiding costly child re-renders
  */
 function Effect() {
-  usePollingManager();
+  useCountervaluesPollingLifecycle();
   return null;
 }
 
@@ -73,31 +69,4 @@ export function CountervaluesBridgedProvider({
       {children}
     </CountervaluesProvider>
   );
-}
-
-function usePollingManager() {
-  const { start, stop } = useCountervaluesPolling();
-  const appState = useRef(AppState.currentState ?? "");
-  const [isActive, setIsActive] = useState<boolean>(!!appState.current);
-  useEffect(() => {
-    function handleChange(nextAppState: AppStateStatus) {
-      setIsActive(
-        (appState.current.match(/inactive|background/) && nextAppState === "active") || false,
-      );
-      appState.current = nextAppState;
-    }
-
-    const sub = AppState.addEventListener("change", handleChange);
-    return () => {
-      sub.remove();
-    };
-  }, []);
-  useEffect(() => {
-    if (!isActive) {
-      stop();
-      return;
-    }
-
-    start();
-  }, [isActive, start, stop]);
 }

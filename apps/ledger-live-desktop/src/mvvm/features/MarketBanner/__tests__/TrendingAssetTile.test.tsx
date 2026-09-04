@@ -21,7 +21,7 @@ describe("TrendingAssetTile", () => {
     expect(screen.getByText("+5.50%")).toBeVisible();
 
     await user.click(screen.getByTestId("market-banner-asset-bitcoin"));
-    expect(onNavigate).toHaveBeenCalledWith("bitcoin");
+    expect(onNavigate).toHaveBeenCalledWith(item);
     expect(clickHandler).toHaveBeenCalledTimes(1);
   });
 });

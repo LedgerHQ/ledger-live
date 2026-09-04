@@ -195,6 +195,7 @@ test.describe("New Send Flow", () => {
 
       await test.step("Type an address not present in account OUT operations", async () => {
         await app.newSendFlow.typeAddress(TEST_ADDRESSES.newAddress);
+        await app.newSendFlow.waitForRecipientValidation();
       });
 
       await test.step("Verify recent history warning card is visible", async () => {

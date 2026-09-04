@@ -1,6 +1,6 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runSwapLnsNotSupportedBannerTest } from "./swap.other";
+import { runSwapLnsNotSupportedBannerTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 runSwapLnsNotSupportedBannerTest(
   Account.ETH_1,

@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
-import { runSwapWithDifferentSeedTest } from "./swap.other";
+import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapTestConfig = {
   swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03"),

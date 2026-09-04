@@ -1,13 +1,7 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  Block,
-  BlockInfo,
-  CoinModuleApi,
-  CraftedTransaction,
-  Cursor,
+  CoinModuleImpl,
   MemoNotSupported,
-  Page,
-  Reward,
   StakingTransactionIntent,
   StringMemo,
   TransactionIntent,
@@ -28,7 +22,7 @@ import { getValidators } from "../logic/staking/getValidators";
 import { validateAddress } from "../logic/validateAddress";
 import { CosmosAPI } from "../network/Cosmos";
 
-type CosmosCoinModuleApi = CoinModuleApi<CosmosCoinConfig, StringMemo | MemoNotSupported>;
+type CosmosCoinModuleImpl = CoinModuleImpl<CosmosCoinConfig, StringMemo | MemoNotSupported>;
 
 /**
  * Resolves the coin configuration from the {@link CosmosContext} and builds the per-chain
@@ -48,16 +42,22 @@ async function resolve(
  * CoinModuleApi ("Alpaca") entry point for Cosmos-SDK chains. The `currencyId` selector is captured
  * here; endpoint and chain parameters resolve per currency via {@link CosmosAPI}, so a single
  * factory serves every Cosmos-family currency (ADR-019).
+ *
+ * Checked against {@link CosmosCoinModuleImpl} with `satisfies` rather than annotated as it, so the
+ * precise shape survives and a caller sees exactly which methods exist.
+ *
+ * Staking is published à la carte: `getStakes` and `getValidators` are implemented, `getRewards` is
+ * not. Omitted rather than stubbed:
+ *   - `call`, `register` — the module implements neither.
+ *   - `craftRawTransaction` — the module takes no externally-built transaction.
+ *   - `getRewards` — no reward-distribution listing is implemented; the accrued amount is reported
+ *     by `getStakes` instead.
+ *   - `getBlock`, `getBlockInfo` — no per-height block lookup is implemented (`lastBlock` is).
+ * The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
  */
-export function createApi(currencyId: string): CosmosCoinModuleApi {
+export function createApi(currencyId: string) {
   return {
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    getBalance: async (context, address, options) => {
+    getBalance: async (context, address, options?) => {
       const { api } = await resolve(context, currencyId);
       return rejectBalanceOptions(() => getBalance(api, address), options);
     },
@@ -74,7 +74,7 @@ export function createApi(currencyId: string): CosmosCoinModuleApi {
     },
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
 
-    craftTransaction: async (context, intent, options) => {
+    craftTransaction: async (context, intent, options?) => {
       const { api, config } = await resolve(context, currencyId);
       return craftTransaction(
         api,
@@ -84,12 +84,12 @@ export function createApi(currencyId: string): CosmosCoinModuleApi {
         config,
       );
     },
-    estimateFees: async (context, intent, options) => {
+    estimateFees: async (context, intent, options?) => {
       const { api } = await resolve(context, currencyId);
       return estimateFees(api, intent, options?.customFeesParameters);
     },
-    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
-    broadcast: async (context, tx) => {
+    combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
+    broadcast: async (context, tx, _options?) => {
       const { api } = await resolve(context, currencyId);
       return broadcast(api, tx);
     },
@@ -98,42 +98,18 @@ export function createApi(currencyId: string): CosmosCoinModuleApi {
       const { api } = await resolve(context, currencyId);
       return listOperations(api, address, options);
     },
-    validateIntent: async (context, intent, balances, options) => {
+    validateIntent: async (context, intent, balances, options?) => {
       const config = await context.config(currencyId);
       return validateIntent(currencyId, intent, balances, options?.customFees, config);
     },
 
-    getStakes: async (context, address, options) => {
+    getStakes: async (context, address, options?) => {
       const { api } = await resolve(context, currencyId);
       return getStakes(api, address, options?.cursor);
     },
-    getValidators: async (context, options) => {
+    getValidators: async (context, options?) => {
       const { api } = await resolve(context, currencyId);
       return getValidators(api, options?.cursor);
     },
-
-    // --- not supported by the Cosmos coin module ---
-    craftRawTransaction: (
-      _context: CosmosContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    getRewards: (
-      _context: CosmosContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
-    getBlock: (_context: CosmosContext, _height: number): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo: (_context: CosmosContext, _height: number): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
-    },
-  };
+  } satisfies CosmosCoinModuleImpl;
 }

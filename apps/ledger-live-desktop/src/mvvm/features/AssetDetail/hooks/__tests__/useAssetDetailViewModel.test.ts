@@ -132,6 +132,18 @@ describe("useAssetDetailViewModel", () => {
 
       expect((await waitForReady()).distributionItem).toBe(item);
     });
+
+    it("does not resolve a market id to a chain that shares the same id", async () => {
+      mockMarket.empty();
+      mockDada.empty();
+      route("arbitrum");
+      locationState({ id: "arbitrum", ledgerIds: ["ethereum/erc20/arbitrum"] });
+
+      const vm = await waitForReady();
+
+      expect(vm.ledgerCurrency?.id).not.toBe("arbitrum");
+      expect(vm.displayTicker).not.toBe("ETH");
+    });
   });
 
   describe("distribution options", () => {

@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { useIsFocused, useTheme } from "@react-navigation/native";

@@ -1,6 +1,6 @@
 {
   "name": "@shared/cloud-sync-module",
-  "version": "0.3.0",
+  "version": "0.4.0-next.0",
   "private": true,
   "description": "Shared CloudSync module interface types (ctx-free)",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

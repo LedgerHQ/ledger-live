@@ -71,6 +71,44 @@ describe("Zcash operationDetails", () => {
 
       expect(container.firstChild).toBeNull();
     });
+
+    it("should render the Memo section when operation.extra.memo is set", () => {
+      const operation = {
+        ...createOperation("SHIELDED_TX_IRONWOOD_OUT"),
+        extra: { zcashShielded: true, memo: "Invoice #42" },
+      } as never;
+
+      render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+      expect(screen.getByText("Memo")).toBeInTheDocument();
+      expect(screen.getByText("Invoice #42")).toBeInTheDocument();
+    });
+
+    // The optimistic operation emitted right after signing is a plain OUT, which has
+    // no transaction-type label: the memo section must render on its own.
+    it("should render the Memo section alone for an OUT operation", () => {
+      const operation = {
+        ...createOperation("OUT"),
+        extra: { zcashShielded: true, memo: "Invoice #43" },
+      } as never;
+
+      render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+      expect(screen.getByText("Memo")).toBeInTheDocument();
+      expect(screen.getByText("Invoice #43")).toBeInTheDocument();
+      expect(screen.queryByText("Transaction type")).not.toBeInTheDocument();
+    });
+
+    it("should not render a Memo section when extra.memo is absent", () => {
+      const operation = {
+        ...createOperation("SHIELDED_TX_IRONWOOD_OUT"),
+        extra: { zcashShielded: true },
+      } as never;
+
+      render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+      expect(screen.queryByText("Memo")).not.toBeInTheDocument();
+    });
   });
 });
 

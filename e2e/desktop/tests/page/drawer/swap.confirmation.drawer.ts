@@ -1,20 +1,14 @@
 import { expect } from "@playwright/test";
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 
 export class SwapConfirmationDrawer extends Drawer {
-  private fees = this.page.getByTestId("fees");
   private exchangeError = this.page.locator("#error-CompleteExchangeError span").first();
   private swapCompletedMessage = this.page.getByTestId("swap-completed-message");
   private swapCompletedDescription = this.page.getByTestId("swap-completed-description");
   private deviceActionError = this.page.getByTestId("error-description-deviceAction");
   private readonly kycWarningBanner = this.page.getByTestId("swap-drawer-footer-terms");
   private readonly shareYourFeedbackLink = this.page.getByTestId("share-your-feedback-link");
-
-  @step("Get fees")
-  async getFees() {
-    return (await this.fees.textContent()) ?? "";
-  }
 
   @step("Verify exchange error text content: $0")
   async verifyExchangeErrorTextContent(text: string) {

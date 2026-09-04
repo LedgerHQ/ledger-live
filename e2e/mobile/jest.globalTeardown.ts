@@ -1,13 +1,3 @@
-import { register } from "tsconfig-paths";
-
-// Register path mappings explicitly with the correct tsconfig
-// eslint-disable-next-line @typescript-eslint/no-require-imports -- JSON config load
-const tsConfig = require("./tsconfig.json");
-register({
-  baseUrl: __dirname,
-  paths: tsConfig.compilerOptions.paths,
-});
-
 import { globalTeardown } from "detox/runners/jest";
 import { promises as fs } from "fs";
 import {
@@ -16,18 +6,18 @@ import {
   getFlags,
   loadConfig,
   setFeatureFlags,
-} from "./bridge/server";
+} from "@e2e/bridge/server";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-e2e-shared";
-import { launchApp } from "./helpers/commonHelpers";
-import { getMergedFeatureFlags } from "./utils/featureFlagUtils";
+import { launchApp } from "@e2e/helpers/commonHelpers";
+import { getMergedFeatureFlags } from "@e2e/utils/featureFlagUtils";
 import detox from "detox/internals";
 import path from "path";
 import { glob } from "glob";
 import { log } from "detox";
 import { Subject } from "rxjs";
-import { NativeElementHelpers } from "./helpers/elementHelpers";
+import { NativeElementHelpers } from "@e2e/helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { withTimeout } from "./utils/withTimeout";
+import { withTimeout } from "@e2e/utils/withTimeout";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");

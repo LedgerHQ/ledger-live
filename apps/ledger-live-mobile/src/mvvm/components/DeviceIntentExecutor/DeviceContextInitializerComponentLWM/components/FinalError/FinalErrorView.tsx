@@ -2,7 +2,7 @@ import React from "react";
 import type { DmkError } from "@ledgerhq/live-dmk-mobile";
 import { Trans } from "~/context/Locale";
 import TranslatedError from "~/components/TranslatedError";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 type FinalErrorViewProps = Readonly<{
   error: Error | DmkError | null;

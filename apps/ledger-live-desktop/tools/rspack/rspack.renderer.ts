@@ -276,7 +276,13 @@ export function createRendererConfig(
           : [
               {
                 test: /\.json$/,
-                include: path.resolve(rootFolder, "src"),
+                include: [
+                  path.resolve(rootFolder, "src"),
+                  // Animation JSON owned by a new-architecture package (e.g.
+                  // @features/platform-device-action-content) resolves outside the app, so it
+                  // needs the same treatment or it gets inlined into the renderer bundle.
+                  /[\\/]features[\\/].*[\\/]animations[\\/]/,
+                ],
                 type: "javascript/auto" as const,
                 use: [path.resolve(__dirname, "animationJsonLoader.cjs")],
               },

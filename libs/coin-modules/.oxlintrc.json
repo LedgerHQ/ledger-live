@@ -45,7 +45,19 @@
     "jest/no-export": "off",
     "jest/valid-describe-callback": "warn",
     "jest/no-standalone-expect": "warn",
-    "jest/valid-expect": "warn"
+    "jest/valid-expect": "warn",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
+            "importNamePattern": "^createApi$",
+            "message": "Reach a coin module through getCoinModuleApi (bridge/generic-coin-framework/api), which applies the framework's withDefaults. Since a module may omit the capabilities its chain lacks, calling createApi directly yields an object with those methods missing, and the call fails at runtime with nothing failing at compile time. If a direct call is genuinely needed, add the file to the exemptions in this config and record in the PR why it cannot break."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
@@ -67,6 +79,23 @@
                   "!@ledgerhq/ledger-wallet-framework",
                   "!@ledgerhq/ledger-wallet-framework/**"
                 ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/src/api/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
+                "importNamePattern": "^createApi$",
+                "message": "Reach a coin module through getCoinModuleApi (bridge/generic-coin-framework/api), which applies the framework's withDefaults. Since a module may omit the capabilities its chain lacks, calling createApi directly yields an object with those methods missing, and the call fails at runtime with nothing failing at compile time. If a direct call is genuinely needed, add the file to the exemptions in this config and record in the PR why it cannot break."
               }
             ]
           }
@@ -96,7 +125,14 @@
         ],
         "eslint/no-console": "off",
         "typescript/no-explicit-any": "off",
-        "typescript/consistent-type-assertions": "off"
+        "typescript/consistent-type-assertions": "off",
+        "eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["coin-celo/src/api/index.ts", "coin-celo/src/bridge/synchronisation.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
       }
     }
   ]

@@ -35,8 +35,8 @@ import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDe
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
 import { marketBannerStoreSelector } from "~/reducers/marketBanner";
-import { payCardBalancePersistedSelector } from "@features/flow-pay-card-balance/state";
-import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-card-feature-tour/state";
+import { payCardBalancePersistedSelector } from "@features/flow-pay-balance/state";
+import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-tour/state";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";

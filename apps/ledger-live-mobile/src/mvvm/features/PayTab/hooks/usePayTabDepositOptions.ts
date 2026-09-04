@@ -5,11 +5,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
-  type DepositOptionsLabels,
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
-} from "@features/flow-pay-card-deposit";
-import { useTranslation } from "~/context/Locale";
+} from "@features/flow-pay-deposit";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
@@ -25,7 +23,6 @@ export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
 ): UsePayTabDepositOptions {
-  const { t } = useTranslation();
   const navigation = useNavigation();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -60,30 +57,7 @@ export function usePayTabDepositOptions(
     [navigation, handleOpenSwap, handleOpenBuySell, handleOpenReceiveDrawer],
   );
 
-  const labels: DepositOptionsLabels = {
-    title: t("payTab.deposit.title"),
-    options: {
-      bankTransfer: {
-        title: t("payTab.deposit.options.bankTransfer.title"),
-        description: t("payTab.deposit.options.bankTransfer.description"),
-      },
-      swap: {
-        title: t("payTab.deposit.options.swap.title"),
-        description: t("payTab.deposit.options.swap.description"),
-      },
-      receive: {
-        title: t("payTab.deposit.options.receive.title"),
-        description: t("payTab.deposit.options.receive.description"),
-      },
-      buy: {
-        title: t("payTab.deposit.options.buy.title"),
-        description: t("payTab.deposit.options.buy.description"),
-      },
-    },
-  };
-
   const { open, depositOptions } = useDepositOptionsAdapter({
-    labels,
     page: DEPOSIT_PAGE,
     onSelect,
     onTrackEvent,

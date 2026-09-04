@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "5.1.0",
+  "version": "5.2.0-next.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -65,7 +65,6 @@
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
@@ -75,9 +74,6 @@
     "react-native-get-random-values": "^1.8.0"
   },
   "devDependencies": {
-    "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

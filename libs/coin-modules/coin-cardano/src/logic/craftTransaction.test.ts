@@ -381,19 +381,21 @@ describe("buildUnsignedTransaction — staking", () => {
   });
 });
 
-describe("buildUnsignedTransaction — account obligations (Conway)", () => {
-  it("sweeps claimable rewards via a withdrawal when delegated to a dRep", async () => {
+describe("buildUnsignedTransaction — account obligations are staking-only (swap-safe)", () => {
+  // The Conway ConwayWdrlNotDelegatedToDRep rule only constrains a tx that withdraws, and the
+  // firmware swap policy denies any certificate or withdrawal on a swap.
+  it("should not sweep rewards on a send even when delegated to a dRep", async () => {
     mockGetDelegation.mockResolvedValue(
       registeredDelegation({ dRepHex: "drep1abc", rewards: new BigNumber("1500000") }),
     );
 
     const tx = await buildUnsignedTransaction(currency, sendIntent());
 
-    expect(tx.getWithdrawals()).toHaveLength(1);
-    expect(tx.getWithdrawals()[0].amount).toEqual(new BigNumber("1500000"));
+    expect(tx.getWithdrawals()).toHaveLength(0);
+    expect(tx.getCertificates()).toHaveLength(0);
   });
 
-  it("adds an ABSTAIN vote certificate when rewards exist but no dRep is set", async () => {
+  it("should not add an abstain vote on a send when rewards exist but no dRep is set", async () => {
     mockGetDelegation.mockResolvedValue(
       registeredDelegation({ dRepHex: undefined, rewards: new BigNumber("1500000") }),
     );
@@ -401,9 +403,39 @@ describe("buildUnsignedTransaction — account obligations (Conway)", () => {
     const tx = await buildUnsignedTransaction(currency, sendIntent());
 
     expect(tx.getWithdrawals()).toHaveLength(0);
-    expect(tx.getCertificates().map(c => c.type)).toEqual([
-      TyphonTypes.CertificateType.VOTE_DELEGATION,
-    ]);
+    expect(tx.getCertificates()).toHaveLength(0);
+  });
+
+  it("should still sweep claimable rewards via a withdrawal on a staking intent when delegated to a dRep", async () => {
+    mockGetDelegation.mockResolvedValue(
+      registeredDelegation({ dRepHex: "drep1abc", rewards: new BigNumber("1500000") }),
+    );
+
+    const tx = await buildUnsignedTransaction(
+      currency,
+      stakeIntent({ mode: "undelegate", type: "undelegate" }),
+    );
+
+    expect(tx.getWithdrawals()).toHaveLength(1);
+    expect(tx.getWithdrawals()[0].amount).toEqual(new BigNumber("1500000"));
+  });
+
+  it("should still add the abstain vote on a staking intent when rewards exist but no dRep is set", async () => {
+    mockGetDelegation.mockResolvedValue(
+      registeredDelegation({ dRepHex: undefined, rewards: new BigNumber("1500000") }),
+    );
+
+    const tx = await buildUnsignedTransaction(currency, stakeIntent());
+
+    expect(
+      tx
+        .getCertificates()
+        .some(
+          c =>
+            c.type === TyphonTypes.CertificateType.VOTE_DELEGATION &&
+            c.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN,
+        ),
+    ).toBe(true);
   });
 });
 

@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
-import { runSendInvalidAddressTest } from "../send";
+import { runSendInvalidAddressTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(
   Account.ETH_1,

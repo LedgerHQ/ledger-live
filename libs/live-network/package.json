@@ -83,13 +83,14 @@
     "axios": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "jest": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

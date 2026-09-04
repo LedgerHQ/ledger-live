@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#21059](https://github.com/LedgerHQ/ledger-live/pull/21059) [`31f1f89`](https://github.com/LedgerHQ/ledger-live/commit/31f1f89cd4bec9b092e5ddf726414cd3c803c3dd) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - fix CSP unsafe-eval by switching protobuf decode to a static-module build
+
 ## 0.25.0
 
 ### Minor Changes

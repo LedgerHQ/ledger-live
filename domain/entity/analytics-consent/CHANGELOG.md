@@ -1,5 +1,12 @@
 # @domain/entity-analytics-consent
 
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8)]:
+  - @shared/schema-primitives@0.5.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

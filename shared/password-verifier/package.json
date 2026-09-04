@@ -1,6 +1,6 @@
 {
   "name": "@shared/password-verifier",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Password verifier record and its constant-time comparison",
   "main": "src/index.ts",
@@ -26,6 +26,7 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

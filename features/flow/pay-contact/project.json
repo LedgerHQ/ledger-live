@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-pay-contact",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

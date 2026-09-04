@@ -1,14 +1,11 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
-  CoinModuleApi,
+  CoinModuleImpl,
   BalanceOptions,
-  CraftedTransaction,
   ListOperationsOptions,
   Operation,
-  TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
@@ -51,11 +48,24 @@ import type {
 // logger) and passes it to each method. Each method resolves the coin configuration from the context
 // via `context.config()` and threads it explicitly into the logic layer rather than seeding the
 // module-level singleton (ADR-019).
-export function createApi(
-  currencyId: string,
-): CoinModuleApi<HederaCoinConfig, HederaMemo, HederaTxData> & BridgeApi {
+//
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist. Staking is fully covered here — Hedera
+// proxy-stakes to a node, so `getStakes`, `getRewards` and `getValidators` are all real.
+//
+// Omitted rather than stubbed, and why:
+//   - `validateIntent`      — intent validation still lives in the account bridge's
+//                             `getTransactionStatus`; the api path has none of its own yet.
+//   - `getNextSequence`     — no per-account nonce: a Hedera transaction is identified by its
+//                             payer plus a valid-start timestamp (`createTransactionId`).
+//   - `craftRawTransaction` — the module accepts no externally-built transaction.
+//   - `call`                — no read-only contract-call escape hatch is exposed, even though the
+//                             device app parses contract calls.
+//   - `register`            — no enrollment step.
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+export function createApi(currencyId: string) {
   return {
-    broadcast: async (context: HederaContext, tx) => {
+    broadcast: async (context: HederaContext, tx, _options?) => {
       const coinConfig = await context.config();
       const response = await logicBroadcast({
         configOrCurrencyId: coinConfig,
@@ -64,14 +74,8 @@ export function createApi(
 
       return Buffer.from(response.transactionHash).toString("base64");
     },
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
-    craftTransaction: async (context: HederaContext, txIntent, options) => {
+    combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
+    craftTransaction: async (context: HederaContext, txIntent, options?) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
       const coinConfig = await context.config();
       const { serializedTx } = await craftTransaction({
@@ -84,16 +88,7 @@ export function createApi(
         transaction: serializedTx,
       };
     },
-    craftRawTransaction: (
-      _context: HederaContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: async (context: HederaContext, txIntent) => {
+    estimateFees: async (context: HederaContext, txIntent, _options?) => {
       let estimateFeesParams: EstimateFeesParams;
       const operationType = mapIntentToSDKOperation(txIntent);
 
@@ -236,30 +231,19 @@ export function createApi(
         next: latestAccountOperations.nextCursor || undefined,
       };
     },
-    getValidators: async (context: HederaContext, options) => {
+    getValidators: async (context: HederaContext, options?) => {
       const coinConfig = await context.config();
       return getValidators({ configOrCurrencyId: coinConfig, cursor: options?.cursor });
     },
-    getStakes: async (context: HederaContext, address) => {
+    getStakes: async (context: HederaContext, address, _options?) => {
       const coinConfig = await context.config();
       return getStakes({ configOrCurrencyId: coinConfig, address });
     },
-    getRewards: async (context: HederaContext, address, options) => {
+    getRewards: async (context: HederaContext, address, options?) => {
       const coinConfig = await context.config();
       return getRewards({ configOrCurrencyId: coinConfig, address, cursor: options?.cursor });
     },
-    validateIntent: async (
-      _context: HederaContext,
-      _transactionIntent,
-      _balances,
-      _options,
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_context: HederaContext, _address): Promise<bigint> => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<HederaCoinConfig, HederaMemo, HederaTxData>;
 }

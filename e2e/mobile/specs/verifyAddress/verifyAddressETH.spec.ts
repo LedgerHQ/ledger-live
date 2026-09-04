@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runVerifyAddressTest } from "./verifyAddress";
+import { runVerifyAddressTest } from "@e2e/specs/verifyAddress/verifyAddress";
 
 runVerifyAddressTest(
   Account.ETH_1,
-  ["B2CQA-2561", "B2CQA-2688"],
+  ["B2CQA-2561"],
   [
     "@NanoSP",
     "@LNS",

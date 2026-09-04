@@ -98,7 +98,7 @@ const ListElement = ({
   );
 };
 
-ListElement.displayName = "Radio.ListElement"; // For easy identification in the React devtools & in storybook
+ListElement.displayName = "Radio.ListElement"; // For easy identification in the React devtools
 ListElement.Label = Label;
 
 export default ListElement;

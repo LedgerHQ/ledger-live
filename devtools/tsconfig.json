@@ -1,9 +1,12 @@
 {
   "files": [],
   "references": [
+    { "path": "./env" },
     { "path": "./shell" },
     { "path": "./feature-flags/" },
     { "path": "./pay-card" },
+    { "path": "./trustchain" },
+    { "path": "./cloud-sync" },
     { "path": "./registry" },
     { "path": "./transport" },
     { "path": "./transport-panel" },

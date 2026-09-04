@@ -1,4 +1,4 @@
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults, type CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
 import { createFixtureContext } from "../test/fixtures";
 import { createApi } from ".";
@@ -20,7 +20,7 @@ describe("Concordium Api (testnet)", () => {
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   beforeAll(() => {
-    api = createApi("concordium_testnet");
+    api = withDefaults(createApi("concordium_testnet"));
   });
 
   describe("estimateFees", () => {
@@ -272,6 +272,7 @@ describe("Concordium Api (testnet)", () => {
     });
   });
 
+  // Omitted by the module; withDefaults (applied by the resolver, and here) supplies the answer.
   describe("unsupported methods", () => {
     it("getStakes throws not supported error", async () => {
       await expect(async () => api.getStakes(context, ADDRESS_WITH_BALANCE)).rejects.toThrow();

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-trust-service",
-  "version": "0.8.14",
+  "version": "0.8.15-next.0",
   "private": true,
   "description": "Ledger Trust service client",
   "keywords": [
@@ -63,6 +63,9 @@
     "@shared/env": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
@@ -71,8 +74,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {

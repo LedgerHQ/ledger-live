@@ -1,15 +1,13 @@
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
-  type DepositOptionsLabels,
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
-} from "@features/flow-pay-card-deposit";
+} from "@features/flow-pay-deposit";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 
 const DEPOSIT_PAGE = "Pay";
@@ -21,7 +19,6 @@ export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
 ): UsePayTabDepositOptions {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { openAssetFlow } = useOpenAssetFlow(
@@ -51,27 +48,5 @@ export function usePayTabDepositOptions(
     [navigate, openAssetFlow],
   );
 
-  const labels: DepositOptionsLabels = {
-    title: t("payTab.deposit.title"),
-    options: {
-      bankTransfer: {
-        title: t("payTab.deposit.options.bankTransfer.title"),
-        description: t("payTab.deposit.options.bankTransfer.description"),
-      },
-      swap: {
-        title: t("payTab.deposit.options.swap.title"),
-        description: t("payTab.deposit.options.swap.description"),
-      },
-      receive: {
-        title: t("payTab.deposit.options.receive.title"),
-        description: t("payTab.deposit.options.receive.description"),
-      },
-      buy: {
-        title: t("payTab.deposit.options.buy.title"),
-        description: t("payTab.deposit.options.buy.description"),
-      },
-    },
-  };
-
-  return useDepositOptionsAdapter({ labels, page: DEPOSIT_PAGE, onSelect, onTrackEvent });
+  return useDepositOptionsAdapter({ page: DEPOSIT_PAGE, onSelect, onTrackEvent });
 }

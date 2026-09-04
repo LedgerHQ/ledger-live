@@ -1,5 +1,5 @@
 import React from "react";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import TranslatedError from "~/components/TranslatedError";
 import { useTranslation } from "~/context/Locale";
 

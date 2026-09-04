@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runPartnerDappCTATest } from "./earnV2";
+import { runPartnerDappCTATest } from "@e2e/specs/earn/earnV2";
 
 const testConfig = {
   account: Account.ETH_1,

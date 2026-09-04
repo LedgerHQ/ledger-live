@@ -3,11 +3,12 @@
  */
 
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { BANNER_PLACEMENT_BY_LOCATION } from "LLD/features/LNSUpsell/types";
 import { LNSUpsellBanner } from ".";
 
@@ -17,11 +18,33 @@ jest.mock("~/renderer/linking", () => ({
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const DEFAULT_DISCOUNT_PERCENT = Math.round(
   (FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params?.discount ?? 0) * 100,
 );
+
+const OPTED_IN_ANALYTICS_PROPS = {
+  deviceModel: "lns",
+  personalRecoOptIn: true,
+  offerType: "discount",
+  platform: "lwd",
+} as const;
+
+const OPTED_OUT_ANALYTICS_PROPS = {
+  deviceModel: "lns",
+  personalRecoOptIn: false,
+  offerType: "none",
+  platform: "lwd",
+} as const;
+
+type SharedAnalyticsProps = {
+  deviceModel: "lns" | "lnsp" | "lnx";
+  personalRecoOptIn: boolean;
+  offerType: "discount" | "none";
+  platform: "lwd";
+};
 
 function daysAgoIso(days: number): string {
   const date = new Date();
@@ -29,18 +52,54 @@ function daysAgoIso(days: number): string {
   return date.toISOString();
 }
 
+function expectUpgradeClickTracking(pageName: string, sharedProps: SharedAnalyticsProps) {
+  expect(track).toHaveBeenCalledWith("button_clicked", {
+    button: "upgrade",
+    page: pageName,
+    ...sharedProps,
+  });
+  expect(track).toHaveBeenCalledWith("deeplink_clicked", {
+    page: pageName,
+    deeplinkSource: LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.desktop,
+    deeplinkMedium: LARGE_SCREEN_UPSELL_UTM.medium,
+    deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM.campaign,
+    ...sharedProps,
+  });
+}
+
 describe("LNSUpsellBanner", () => {
   beforeEach(() => {
     jest.mocked(openURL).mockClear();
     jest.mocked(track).mockClear();
+    jest.mocked(trackPage).mockClear();
   });
 
   describe.each([
-    { location: "accounts", page: "Accounts" },
-    { location: "manager", page: "Manager" },
-    { location: "portfolio", page: "Portfolio" },
-    { location: "notification_center", page: "NotificationPanel" },
-  ] as const)("on the $page page", ({ location, page }) => {
+    {
+      location: "accounts",
+      page: "Accounts",
+      bannerPageName: "banner upsell portfolio",
+      utmContent: LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
+    },
+    {
+      location: "manager",
+      page: "Manager",
+      bannerPageName: "banner upsell my ledger",
+      utmContent: LARGE_SCREEN_UPSELL_UTM.content.my_ledger_banner,
+    },
+    {
+      location: "portfolio",
+      page: "Portfolio",
+      bannerPageName: "banner upsell portfolio",
+      utmContent: LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
+    },
+    {
+      location: "notification_center",
+      page: "NotificationPanel",
+      bannerPageName: "banner upsell notification center",
+      utmContent: LARGE_SCREEN_UPSELL_UTM.content.notif_banner,
+    },
+  ] as const)("on the $page page", ({ location, bannerPageName, utmContent }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
       expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
@@ -68,8 +127,8 @@ describe("LNSUpsellBanner", () => {
     );
 
     it.each([
-      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" },
-      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" },
+      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" as const },
+      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" as const },
     ])(
       "should render for $deviceModelId once its cooldown has elapsed",
       ({ deviceModelId, analyticsValue }) => {
@@ -79,11 +138,9 @@ describe("LNSUpsellBanner", () => {
         });
         fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
-        expect(track).toHaveBeenCalledWith("button_clicked", {
-          button: "Level up wallet",
+        expectUpgradeClickTracking(bannerPageName, {
+          ...OPTED_IN_ANALYTICS_PROPS,
           deviceModel: analyticsValue,
-          link: "https://example.com/optInCta",
-          page,
         });
       },
     );
@@ -112,11 +169,9 @@ describe("LNSUpsellBanner", () => {
       });
       fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
+      expectUpgradeClickTracking(bannerPageName, {
+        ...OPTED_IN_ANALYTICS_PROPS,
         deviceModel: "lnx",
-        link: "https://example.com/optInCta",
-        page,
       });
     });
 
@@ -130,19 +185,31 @@ describe("LNSUpsellBanner", () => {
       expect(screen.queryByText("Upgrade my Ledger")).toBeNull();
     });
 
+    it("should fire a banner page event when the banner is shown", () => {
+      renderBanner({});
+
+      expect(trackPage).toHaveBeenCalledWith(
+        bannerPageName,
+        undefined,
+        {
+          name: bannerPageName,
+          ...OPTED_IN_ANALYTICS_PROPS,
+        },
+        true,
+        false,
+      );
+    });
+
     it("should track click on the cta", () => {
       renderBanner({});
       fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
-      expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optInCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optInCta");
+      expect(openedUrl.searchParams.get("utm_content")).toBe(utmContent);
+      expect(track).toHaveBeenCalledTimes(2);
+      expectUpgradeClickTracking(bannerPageName, OPTED_IN_ANALYTICS_PROPS);
     });
 
     it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
@@ -154,13 +221,7 @@ describe("LNSUpsellBanner", () => {
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
-      expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optInCta",
-        page,
-      });
+      expectUpgradeClickTracking(bannerPageName, OPTED_IN_ANALYTICS_PROPS);
     });
 
     it("should render opted-out MediaBanner copy when lwdWallet40 brazePlacement is on", () => {
@@ -175,14 +236,10 @@ describe("LNSUpsellBanner", () => {
       fireEvent.click(screen.getByText("Learn more"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
-      expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optOutCta",
-        page,
-      });
+      const openedUrl = new URL(String(jest.mocked(openURL).mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optOutCta");
+      expect(track).toHaveBeenCalledTimes(2);
+      expectUpgradeClickTracking(bannerPageName, OPTED_OUT_ANALYTICS_PROPS);
     });
 
     it("should render for opted out users regardless of content cards state", () => {
@@ -190,14 +247,8 @@ describe("LNSUpsellBanner", () => {
       fireEvent.click(screen.getByText("Learn more"));
 
       expect(openURL).toHaveBeenCalledTimes(1);
-      expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "Level up wallet",
-        deviceModel: "lns",
-        link: "https://example.com/optOutCta",
-        page,
-      });
+      expect(track).toHaveBeenCalledTimes(2);
+      expectUpgradeClickTracking(bannerPageName, OPTED_OUT_ANALYTICS_PROPS);
     });
 
     function renderBanner({
@@ -321,6 +372,10 @@ describe("LNSUpsellBanner", () => {
     });
 
     fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
-    expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
+    const openedUrl = new URL(String(jest.mocked(openURL).mock.calls[0][0]));
+    expect(openedUrl.origin + openedUrl.pathname).toBe("https://example.com/optInCta");
+    expect(openedUrl.searchParams.get("utm_content")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
+    );
   });
 });

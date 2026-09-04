@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import LogContentCardWrapper from "../LogContentCardWrapper";
+import { shouldShowHardwareCarouselCloseAll } from "../../hardwareCarousel/shouldShowHardwareCarouselCloseAll";
+import { useHardwareCarouselPageTracking } from "../../hardwareCarousel/useHardwareCarouselPageTracking";
 import Header from "./Header";
 import Layout from "./Layout";
 import {
@@ -22,6 +24,9 @@ function ContentCardsCategory({
   categoryContentCards,
   leadingSlide,
 }: ContentCardsCategoryProps) {
+  const isHardwareCarousel = shouldShowHardwareCarouselCloseAll(category);
+  const hardwareCarouselSharedProps = useHardwareCarouselPageTracking(isHardwareCarousel);
+
   const {
     title,
     cta,
@@ -37,6 +42,7 @@ function ContentCardsCategory({
     category,
     categoryContentCards,
     leadingSlide,
+    hardwareCarouselSharedProps: isHardwareCarousel ? hardwareCarouselSharedProps : undefined,
   });
 
   const handleCardClick = useCallback(

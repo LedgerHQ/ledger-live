@@ -2,7 +2,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import i18next from "i18next";
+import i18next from "~/i18n/instance";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { ScrollView, StyleSheet, View } from "react-native";
