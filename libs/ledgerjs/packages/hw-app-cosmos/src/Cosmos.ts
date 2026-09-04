@@ -15,8 +15,8 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { resolveBip32Path } from "./bip32Path";
 const CHUNK_SIZE = 250;
 const CLA = 0x55;
 const APP_KEY = "CSM";
@@ -106,7 +106,7 @@ export default class Cosmos {
     publicKey: string;
     address: string;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const serializedPath = this.serializePath(bipPath);
     const data = Buffer.concat([this.serializeHRP(hrp), serializedPath]);
     return this.transport
@@ -142,7 +142,7 @@ export default class Cosmos {
     signature: null | Buffer;
     return_code: number | string;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const serializedPath = this.serializePath(bipPath);
     const chunks: Buffer[] = [];
     chunks.push(serializedPath);

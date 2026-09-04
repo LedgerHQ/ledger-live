@@ -21,18 +21,23 @@
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach(element => {
-    let number = parseInt(element, 10);
-    if (isNaN(number)) {
-      return; // FIXME shouldn't it throws instead?
+  for (const element of components) {
+    // Fail closed: reject empty/non-numeric/truncated segments (e.g. "NOTAINDEX", "12abc'").
+    if (!/^\d+'?$/.test(element)) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
     }
-    if (element.length > 1 && element[element.length - 1] === "'") {
+    if (parseInt(element, 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
+    }
+    let number = parseInt(element, 10);
+    if (element[element.length - 1] === "'") {
       number += 0x80000000;
     }
     result.push(number);
-  });
+  }
   return result;
 }
+
 
 export function foreach<T, A>(arr: T[], callback: (T, number) => Promise<A>): Promise<A[]> {
   function iterate(index, array, result) {

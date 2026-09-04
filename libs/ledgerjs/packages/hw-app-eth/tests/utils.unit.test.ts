@@ -45,6 +45,13 @@ describe("Eth app biding", () => {
           789,
         ]);
       });
+
+      it("should reject non-numeric path segments instead of skipping them", () => {
+        expect(() => splitPath("44'/NOTAINDEX'/0'/0/0")).toThrow(/Invalid BIP32 path segment/);
+        expect(() => splitPath("44'/12abc'/0'/0/0")).toThrow(/Invalid BIP32 path segment/);
+        expect(() => splitPath("44'/2147483648'/0'/0/0")).toThrow(/Invalid BIP32 path segment/);
+        expect(() => splitPath("44'//0'/0/0")).toThrow(/Invalid BIP32 path segment/);
+      });
     });
 
     describe("hexBuffer", () => {

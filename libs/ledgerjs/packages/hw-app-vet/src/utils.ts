@@ -1,16 +1,23 @@
 import { Buffer } from "buffer";
 
 export const splitPath = (path: string): number[] => {
-  return path
-    .split("/")
-    .map(elem => {
-      let num = parseInt(elem, 10);
-      if (elem.length > 1 && elem[elem.length - 1] === "'") {
-        num += 0x80000000;
-      }
-      return num;
-    })
-    .filter(num => !isNaN(num));
+  const result: number[] = [];
+  const components = path.split("/");
+  for (const element of components) {
+    // Fail closed: reject empty/non-numeric/truncated segments (e.g. "NOTAINDEX", "12abc'").
+    if (!/^\d+'?$/.test(element)) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
+    }
+    if (parseInt(element, 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
+    }
+    let number = parseInt(element, 10);
+    if (element[element.length - 1] === "'") {
+      number += 0x80000000;
+    }
+    result.push(number);
+  }
+  return result;
 };
 
 export const splitRaw = (path: string, rawHex: string, isTransaction: boolean): Buffer[] => {

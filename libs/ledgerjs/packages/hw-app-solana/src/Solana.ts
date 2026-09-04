@@ -2,8 +2,8 @@ import Transport from "@ledgerhq/hw-transport";
 
 import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 
-import BIPPath from "bip32-path";
 import { DescriptorInput, buildDescriptor } from "./descriptor";
+import { resolveHardenedBip32Path } from "./bip32Path";
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
@@ -239,12 +239,7 @@ export default class Solana {
   }
 
   private pathToBuffer(originalPath: string) {
-    const path = originalPath
-      .split("/")
-      .map(value => (value.endsWith("'") || value.endsWith("h") ? value : value + "'"))
-      .join("/");
-    const pathNums: number[] = BIPPath.fromString(path).toPathArray();
-    return this.serializePath(pathNums);
+    return this.serializePath(resolveHardenedBip32Path(originalPath));
   }
 
   private serializePath(path: number[]) {

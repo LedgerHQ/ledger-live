@@ -15,9 +15,9 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
 import { UserRefusedAddress } from "@ledgerhq/hw-transport/errors";
 import { PolkadotGenericApp } from "@zondax/ledger-substrate";
+import { resolveBip32Path } from "./bip32Path";
 
 const INS = {
   GET_VERSION: 0x00,
@@ -72,7 +72,7 @@ export default class Polkadot {
     return_code: number;
   }> {
     const CLA = 0xf9;
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const bip44Path = this.serializePath(bipPath, ss58prefix);
     return this.transport
       .send(CLA, INS.GET_ADDR_ED25519, showAddrInDevice ? 1 : 0, 0, bip44Path, [SW_OK, SW_CANCEL])

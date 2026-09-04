@@ -127,7 +127,7 @@ test("should throw on invalid derivation path", async () => {
   const solana = new Solana(transport);
   return expect(
     solana.getAddress("some invalid derivation path", false)
-  ).rejects.toThrow("input");
+  ).rejects.toThrow("Invalid BIP32 path segment");
 });
 
 test("report blind signature required", async () => {
