@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/live-common": "workspace:*",
     "@ledgerhq/wallet-api-client": "catalog:",
     "@ledgerhq/wallet-api-client-react": "catalog:",

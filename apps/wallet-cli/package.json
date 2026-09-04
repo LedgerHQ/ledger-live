@@ -67,7 +67,7 @@
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/hw-app-exchange": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
