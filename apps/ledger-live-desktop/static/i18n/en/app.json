@@ -8022,6 +8022,10 @@
       "title": "This validator is closed",
       "description": "This validator is not accepting new delegators. Choose an open validator to continue."
     },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
     "AleoAlreadyBondedElsewhere": {
       "title": "You are already staking with another validator",
       "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
@@ -9512,6 +9516,8 @@
             "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
             "commissionOnly": "{{commission}}% commission",
             "rowSubtitleClosed": "Validator is closed to new stake",
+            "rowSubtitleUnbonding": "Validator is unbonding",
+            "unbondingTooltip": "This validator is withdrawing its own stake. The network rejects every new stake to it until that withdrawal is claimed.",
             "rowSubtitleEarnsNothing": "Validator earns no rewards",
             "nonEarning": {
               "fullCommission": "This validator takes 100% commission, so delegators keep nothing.",

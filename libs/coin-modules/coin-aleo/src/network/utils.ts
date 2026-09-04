@@ -52,6 +52,18 @@ export async function getStakingPosition(
   return toStakingPosition({ bondedRaw, unbondingRaw, withdrawRaw });
 }
 
+export async function getUnbondingValidators(
+  config: AleoCoinConfig,
+  addresses: string[],
+): Promise<Set<string>> {
+  const flagged = await promiseAllBatched(4, addresses, async address => {
+    const raw = await apiClient.getUnbondingMapping(config, address).catch(() => null);
+    return raw ? address : null;
+  });
+
+  return new Set(flagged.filter((address): address is string => address !== null));
+}
+
 export async function decryptRecordAmount(
   config: AleoCoinConfig,
   viewKey: string,

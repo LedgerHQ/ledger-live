@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, userEvent, waitFor } from "tests/testSetup";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import { importLLDCoinFamily } from "~/renderer/families";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -10,6 +10,7 @@ import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { getAleoCurrencyConfig } from "../shared/utils";
 import { initSendSubjects, subjectRefs, prepareTransactionSpy } from "../__mocks__/bridge.mock";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
+import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 
 jest.mock("../shared/utils", () => ({
   ...jest.requireActual("../shared/utils"),
@@ -32,13 +33,15 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
 const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
 const mockUseAleoValidators = jest.mocked(useAleoValidators);
 
-// Both open and earning: give either a closed flag or a non-earning reason and the
-// rows below get demoted and re-sorted, silently changing what the assertions mean.
+// Open, not unbonding and earning: give any of a closed flag, an unbonding flag or a
+// non-earning reason and the rows below get demoted and re-sorted, silently changing what
+// the assertions mean.
 const FIGMENT = {
   address: DEFAULT_ALEO_VALIDATOR.mainnet,
   name: "Figment",
   stakeMicrocredits: 63_051_013_000_000,
   isOpen: true,
+  isUnbonding: false,
   commissionPercent: 10,
   estimatedYearlyRewardsRate: 0.062,
 };
@@ -47,6 +50,7 @@ const OTHER = {
   name: "Other Validator",
   stakeMicrocredits: 162_243_084_000_000,
   isOpen: true,
+  isUnbonding: false,
   commissionPercent: 10,
   estimatedYearlyRewardsRate: 0.061,
 };
@@ -155,5 +159,95 @@ describe("Aleo bond flow — validator pre-selection", () => {
 
     const selected = await screen.findByTestId("selected-validator");
     expect(selected).toHaveTextContent("Figment");
+  });
+});
+
+// `bond_public` asserts the validator has no `unbonding` entry, so bonding to one that
+// does always fails on-chain — however open the committee still reports it.
+describe("Aleo bond flow — a validator that is itself unbonding", () => {
+  beforeEach(() => {
+    mockUseAleoValidators.mockReturnValue({
+      validators: [{ ...OTHER, isUnbonding: true }, FIGMENT],
+      loading: false,
+      error: null,
+    });
+  });
+
+  it("says so on the row, rather than leaving it looking bondable", async () => {
+    setupModal();
+
+    expect(await screen.findByText("Validator is unbonding")).toBeVisible();
+  });
+
+  it("does not let it be selected", async () => {
+    setupModal();
+
+    await userEvent.click(await screen.findByText("Other Validator"));
+
+    expect(await screen.findByTestId("selected-validator")).toHaveTextContent("Figment");
+  });
+});
+
+// The default is seeded before the list loads, so it can land on a row the list then
+// refuses to select. Left alone that opens the flow on an error the user cannot clear.
+describe("Aleo bond flow — a default that turns out to be unpickable", () => {
+  const seedDefaultAs = (state: Partial<AleoValidator>) =>
+    mockUseAleoValidators.mockReturnValue({
+      validators: [OTHER, { ...FIGMENT, ...state }],
+      loading: false,
+      error: null,
+    });
+
+  it.each<[string, Partial<AleoValidator>]>([
+    ["unbonding", { isUnbonding: true }],
+    ["closed", { isOpen: false }],
+    ["over the concentration cap", { nonEarningReason: "overConcentrated" }],
+  ])("moves off a default that is %s", async (_label, state) => {
+    seedDefaultAs(state);
+
+    setupModal();
+
+    await waitFor(() =>
+      expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(OTHER.address),
+    );
+    expect(await screen.findByTestId("selected-validator")).toHaveTextContent("Other Validator");
+  });
+
+  it("leaves the selection alone when no validator accepts stake", async () => {
+    mockUseAleoValidators.mockReturnValue({
+      validators: [
+        { ...OTHER, isUnbonding: true },
+        { ...FIGMENT, isUnbonding: true },
+      ],
+      loading: false,
+      error: null,
+    });
+
+    setupModal();
+
+    await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
+    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(FIGMENT.address);
+  });
+
+  // Aleo allows one validator per address, so a bonded position is the only legal target —
+  // switching away from it would seed a bond the chain rejects outright.
+  it("keeps a bonded validator that is unbonding, rather than switching away from it", async () => {
+    mockUseAleoValidators.mockReturnValue({
+      validators: [OTHER, { ...FIGMENT, isUnbonding: true }],
+      loading: false,
+      error: null,
+    });
+    const bonded = {
+      ...ALEO_MAIN_ACCOUNT,
+      aleoResources: {
+        ...ALEO_MAIN_ACCOUNT.aleoResources,
+        bondedValidator: FIGMENT.address,
+      },
+    };
+
+    setupModal(bonded as typeof ALEO_MAIN_ACCOUNT);
+
+    await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
+    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(FIGMENT.address);
   });
 });
