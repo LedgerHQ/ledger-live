@@ -21,7 +21,7 @@ wiring, `renderAddresses`). Keys read from the host app's **default** namespace 
 | `payTab.contacts.empty.{info,addContact}` | Web empty state |
 | `payTab.contacts.table.{name,addresses,transactions,transactionCount}` | Web table headers + count |
 | `payTab.contacts.actions.{pay,more,viewTransactions}` | Web row actions |
-| `payTab.contacts.addressPicker.{title,addAddress}` | Web address picker dialog |
+| `payTab.contacts.addressPicker.{title,addAddress}` | Address picker (web dialog, native sheet) |
 
 Both apps must carry these keys at the same path until translation keys are colocated per feature
 (a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). The add-contact
@@ -48,21 +48,19 @@ its Telegram button) calls `onContactPress(contact)`. The row overflow (`...`) m
 **View contact** → `onViewContact(contact)` and **View transactions** → `onViewTransactions(contact)`;
 each item is shown only when its handler is provided.
 
-## Contact address picker (web)
+## Contact address picker
 
-> [!NOTE]
-> Native picker lands in a later ticket.
-
-`ContactAddressPicker` is a Lumen dialog that opens after a contact is pressed so the user can pick
-which address to pay. `useContactAddressPickerViewModel` builds the presentation groups (addresses
-segmented by network with asset-aware icons and truncated display), owns visibility and the selected
-contact, and resolves its own copy through `@shared/i18n`. The host injects behavior only — no labels.
-Grouping, icon resolution and truncation are shared from [`@features/flow-contacts`](../contacts).
+`ContactAddressPicker` is a Lumen dialog on web and a `QueuedBottomSheet` on native. It opens after
+a contact is pressed so the user can pick which address to pay. `useContactAddressPickerViewModel`
+builds the presentation groups (addresses segmented by network with asset-aware icons and truncated
+display), owns visibility and the selected contact, and resolves its own copy through
+`@shared/i18n`. The host injects behavior only — no labels. Grouping, icon resolution and
+truncation are shared from [`@features/flow-contacts`](../contacts).
 
 ```tsx
 import { ContactAddressPicker, useContactAddressPickerViewModel } from "@features/flow-pay-contact";
 
-const { open, contactAddressPicker } = useContactAddressPickerViewModel({
+const { open, close, contactAddressPicker } = useContactAddressPickerViewModel({
   onSelectAddress: address => startPayment(address),
   onAddNewAddress,
 });
@@ -72,17 +70,19 @@ const { open, contactAddressPicker } = useContactAddressPickerViewModel({
 ```
 
 `onSelectAddress` receives the full `ContactAddress` (currency + recipient). `onAddNewAddress` is
-optional and receives the open `contact`; wire it to the contact's add-address flow.
+optional and receives the open `contact`; wire it to the contact's add-address flow. Call `close`
+from the host when a selection should dismiss the picker (the view model does not auto-close).
 
 ## Native
 
 ```tsx
 import { Contacts } from "@features/flow-pay-contact";
 
-<Contacts onPay={openSend} onSeeAll={openContactsList} />;
+<Contacts onPay={openSend} onSeeAll={openContactsList} onContactPress={open} />;
+<ContactAddressPicker {...contactAddressPicker} />;
 ```
 
-Caps at 8 contacts. `onSeeAll` opens the full list when there are more. `onContactPress` is optional
-and unused for now.
+Caps at 8 contacts. `onSeeAll` opens the full list when there are more. `onContactPress` opens the
+address picker.
 
 Tests wrap the component in `I18nTestProvider` from `@shared/i18n/testing`.

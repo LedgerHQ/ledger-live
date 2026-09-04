@@ -10279,7 +10279,11 @@
     "contacts": {
       "title": "Pay",
       "pay": "New",
-      "seeAllTitle": "Pay contact"
+      "seeAllTitle": "Pay contact",
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
+      }
     }
   },
   "syncIndicator": {

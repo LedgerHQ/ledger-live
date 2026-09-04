@@ -33,6 +33,7 @@
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/platform-contacts": "workspace:^",
     "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:"
   },
   "devDependencies": {
@@ -62,6 +63,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
@@ -79,10 +81,14 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": ">=4.0.0",
     "react-redux": ">=9.0.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {
