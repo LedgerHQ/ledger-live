@@ -40,6 +40,11 @@ export const genericSignOperation =
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
           parameters: {
+            // A deliberate fee override — prepareTransaction sets this only when the user picks a custom
+            // fee. `value` above is the auto-resolved display fee, which a coin module must NOT treat as an
+            // override: TRON crafts its TRC20 `fee_limit` from an override, and pinning it to the net,
+            // energy-covered display fee (0 when the account has energy) reverts OUT_OF_ENERGY (LIVE-36865).
+            fees: transaction.customFees?.parameters?.fees,
             feesStrategy: transaction.feesStrategy ?? undefined,
             sponsored: transaction.sponsored,
             gasLimit: transaction.customGasLimit ?? transaction.gasLimit,
