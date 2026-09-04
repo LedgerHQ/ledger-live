@@ -9,6 +9,9 @@ import BigNumber from "bignumber.js";
 import { v4, v5, parse } from "uuid";
 import { TokenAccountExtensions } from "../../network/chain/account/tokenExtensions";
 import { Transaction } from "../../types";
+import { ChainAPI } from "../../network";
+import { getMaybeTokenMint } from "../../network/chain/web3";
+import { getAtaDataLengthForMint } from "../../helpers/token";
 
 const seed = v4();
 
@@ -193,4 +196,30 @@ export function transaction(options?: {
     raw: options?.raw ?? "",
     templateId: options?.templateId ?? "",
   } as unknown as Transaction;
+}
+
+export async function fetchMinimumBalanceForRentExempt(
+  mintAddress: string,
+  api: ChainAPI,
+): Promise<number> {
+  const mintOrError = await getMaybeTokenMint(mintAddress, api);
+  if (!mintOrError || mintOrError instanceof Error) {
+    const message =
+      mintOrError instanceof Error ? `${mintOrError.name} - ${mintOrError.message}` : "undefined";
+    throw new InternalTestError("Failed to retrieve mint: " + message, {
+      cause: mintOrError,
+    });
+  }
+
+  return await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError));
+}
+
+export class InternalTestError extends Error {
+  override name = "InternalTestError";
+  cause: unknown;
+
+  constructor(message?: string, cause?: unknown) {
+    super(message);
+    this.cause = cause;
+  }
 }
