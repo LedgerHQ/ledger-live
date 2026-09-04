@@ -948,6 +948,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.POL.id:
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
+    case Currency.ETH_WGNK.id:
     case Currency.SEI_EVM.id:
     case Currency.BASE_AERODROME.id:
       await sendEVM(tx);
