@@ -3,11 +3,11 @@ import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
 import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-const beforeAllFunction = async (delegation: DelegateType, featureFlags?: OptionalFeatureMap) => {
+const beforeAllFunction = async (delegation: DelegateType, featureFlags?: PartialFeatures) => {
   await app.init({
     speculosApp: delegation.account.currency.speculosApp,
     cliCommands: [liveDataWithAddressCommand(delegation.account)],

@@ -52,7 +52,7 @@ type Props = {
   onUndelegate: () => void;
 };
 
-export function Row({ account, onRedelegate, onUndelegate }: Props) {
+export function Row({ account, onRedelegate, onUndelegate }: Readonly<Props>) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
 

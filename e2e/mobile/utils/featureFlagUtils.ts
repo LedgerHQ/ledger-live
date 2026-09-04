@@ -90,7 +90,7 @@ export const FF_MINA_STAKING_ENABLED = {
       redirects: {},
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const getMergedFeatureFlags = ({
   testFlags,
