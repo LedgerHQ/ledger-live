@@ -1,4 +1,10 @@
+/**
+ * @deprecated `@ledgerhq/live-env` is being sunset — see MIGRATION.md.
+ */
 export type EnvDef<T> = { def: T; parser: (v: unknown) => T | undefined; desc: string };
+/**
+ * @deprecated `@ledgerhq/live-env` is being sunset — see MIGRATION.md.
+ */
 export type EnvDefs = Record<string, EnvDef<unknown>>;
 
 type State = {
@@ -7,6 +13,9 @@ type State = {
   defaults: Record<string, unknown>;
 };
 
+/**
+ * @deprecated `@ledgerhq/live-env` is being sunset — see MIGRATION.md.
+ */
 export type EnvChange = { name: string; value: unknown; oldValue: unknown };
 type Listener = (change: EnvChange) => void;
 
@@ -21,6 +30,10 @@ function getListeners(): Set<Listener> {
   return g.__ledgerLiveEnvListeners;
 }
 
+/**
+ * @deprecated `@ledgerhq/live-env` is being sunset. Subscribe to the app's own state or to a
+ * feature flag instead — see MIGRATION.md.
+ */
 export const changes = {
   subscribe(fn: Listener): { unsubscribe(): void } {
     getListeners().add(fn);
@@ -42,6 +55,10 @@ export function notifyChange(change: EnvChange): void {
   });
 }
 
+/**
+ * @deprecated `@ledgerhq/live-env` is being sunset. Do not register new definitions —
+ * see MIGRATION.md.
+ */
 export function injectDefinitions(defs: EnvDefs): void {
   // Idempotent: Jest reloads modules per test file but globalThis persists, so skip if already set.
   if (g.__ledgerLiveEnvState !== undefined) return;

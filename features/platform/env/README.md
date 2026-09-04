@@ -1,7 +1,9 @@
 # @features/platform-env
 
-> [!NOTE]
-> **Status: STABLE** — Production-ready; API is considered stable.
+> [!WARNING]
+> **Status: DEPRECATED** — sunset together with `@ledgerhq/live-env`
+> ([LIVE-36894](https://ledgerhq.atlassian.net/browse/LIVE-36894)). Do not add a call site. See
+> **[../../../shared/env/MIGRATION.md](../../../shared/env/MIGRATION.md)** for how to migrate.
 
 React hook for subscribing to typed env var changes in Ledger Live apps.
 

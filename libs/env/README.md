@@ -1,7 +1,12 @@
 # live-env
 
-> [!NOTE]
-> **Status: STABLE** — Production-ready; API is considered stable.
+> [!WARNING]
+> **Status: DEPRECATED** — `@ledgerhq/live-env` is being sunset. Do not add env var definitions and
+> do not add call sites. To take an existing one out, read **[MIGRATION.md](./MIGRATION.md)**:
+> every variable exits as a feature flag, an inline constant, `process.env` at the point of use,
+> or a parameter the caller passes in.
+>
+> The package still works exactly as documented below until the last call site is gone.
 
 `@ledgerhq/live-env` is the **framework** for typed runtime environment variables, enabling interoperability across `@ledgerhq/*` libraries. It exposes a reactive API (`getEnv`, `setEnv`, `changes`) but ships **no env-var definitions** — those live in the workspace-private `@shared/env` layer inside the monorepo.
 
