@@ -1,4 +1,4 @@
-import { CARD_REDUCER_PATH, REDACTED } from "./constants";
+import { CARD_REDUCER_PATH, CARD_STALE_REQUEST, REDACTED } from "./constants";
 import { isCardApiAction, redactCardApiAction, redactCardApiState } from "./redaction";
 
 const ACCESS_TOKEN = "sentinel-access-token";
@@ -97,6 +97,21 @@ describe("redactCardApiAction", () => {
 
     expect(redacted.payload).toEqual({ status: 401, data: REDACTED });
     expect(redacted.error).toBe(REDACTED);
+    expect(JSON.stringify(redacted)).not.toContain(ACCESS_TOKEN);
+  });
+
+  it("keeps the error code of a CUSTOM_ERROR, because our base query wrote it", () => {
+    const redacted = redactCardApiAction({
+      type: `${CARD_REDUCER_PATH}/executeQuery/rejected`,
+      payload: { status: "CUSTOM_ERROR", error: CARD_STALE_REQUEST },
+      meta: { arg: { endpointName: "getUser", originalArgs: { token: ACCESS_TOKEN } } },
+    });
+
+    expect(redacted.payload).toEqual({
+      status: "CUSTOM_ERROR",
+      error: CARD_STALE_REQUEST,
+      data: REDACTED,
+    });
     expect(JSON.stringify(redacted)).not.toContain(ACCESS_TOKEN);
   });
 
