@@ -302,8 +302,8 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
     xrayTicket: "B2CQA-6267",
-    extraCliCommands: [shareViewKeyCommand(Account.ALEO_1)],
     teamOwner: Team.BST,
+    postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
 ];
 
@@ -315,8 +315,9 @@ test.describe("Send", () => {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          liveDataWithRecipientAddressCommand(transaction.transaction),
-          ...(transaction.extraCliCommands ?? []),
+          liveDataWithRecipientAddressCommand(transaction.transaction, {
+            postSeedHook: transaction.postSeedHook,
+          }),
         ],
         env: transaction.disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
         featureFlags: {
