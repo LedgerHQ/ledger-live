@@ -93,6 +93,18 @@ describe("PayCardStatusResponseSchema", () => {
     expect(PayCardStatusResponseSchema.parse(cardStatus).id).toBe("000000000050277836");
   });
 
+  it("reads a card that answered without a holder name or expiry date", () => {
+    const { holderName: _holderName, expiryDate: _expiryDate, ...withoutPreview } = cardStatus;
+
+    expect(PayCardStatusResponseSchema.parse(withoutPreview)).toEqual(withoutPreview);
+  });
+
+  it("still requires the fields a card always answers with", () => {
+    const { panLast4: _panLast4, ...withoutPanLast4 } = cardStatus;
+
+    expect(() => PayCardStatusResponseSchema.parse(withoutPanLast4)).toThrow();
+  });
+
   it("rejects a status the wire contract does not name", () => {
     expect(() =>
       PayCardStatusResponseSchema.parse({ ...cardStatus, status: "SOMETHING_ELSE" }),
