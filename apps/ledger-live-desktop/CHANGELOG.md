@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 4.19.0-next.4
+
+### Minor Changes
+
+- [#21536](https://github.com/LedgerHQ/ledger-live/pull/21536) [`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e) Thanks [@ishaba](https://github.com/ishaba)! - fix(coin-tron): restore the TRC20 fee_limit default
+
+### Patch Changes
+
+- Updated dependencies [[`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e)]:
+  - @ledgerhq/live-common@37.5.0-next.3
+  - @ledgerhq/asset-detail@0.11.3-next.3
+  - @ledgerhq/live-dmk-desktop@0.20.9-next.3
+
 ## 4.19.0-next.3
 
 ### Minor Changes

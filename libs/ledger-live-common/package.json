@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "37.5.0-next.2",
+  "version": "37.5.0-next.3",
   "private": true,
   "repository": {
     "type": "git",

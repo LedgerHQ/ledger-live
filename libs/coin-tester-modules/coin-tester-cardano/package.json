@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.6.2-next.2",
+  "version": "0.6.2-next.3",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",

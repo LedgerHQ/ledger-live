@@ -1,5 +1,12 @@
 # @ledgerhq/asset-detail
 
+## 0.11.3-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e)]:
+  - @ledgerhq/live-common@37.5.0-next.3
+
 ## 0.11.3-next.2
 
 ### Patch Changes

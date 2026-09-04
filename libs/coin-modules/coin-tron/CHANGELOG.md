@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 7.2.0-next.1
+
+### Minor Changes
+
+- [#21536](https://github.com/LedgerHQ/ledger-live/pull/21536) [`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e) Thanks [@ishaba](https://github.com/ishaba)! - fix(coin-tron): restore the TRC20 fee_limit default
+
 ## 7.2.0-next.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-multiversx",
-  "version": "0.4.2-next.2",
+  "version": "0.4.2-next.3",
   "private": true,
   "description": "Ledger MultiversX Coin Tester",
   "main": "src/scenarii.test.ts",
