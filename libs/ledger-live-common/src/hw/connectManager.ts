@@ -5,7 +5,6 @@ import { isCharonSupported } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
-import type { Currency } from "@domain/entity-currency";
 import { PrepareConnectManagerDeviceAction } from "@ledgerhq/live-dmk-shared";
 import type { ListAppsEvent } from "../apps";
 import { listAppsUseCase } from "../device/use-cases/listAppsUseCase";
@@ -44,11 +43,7 @@ export type ConnectManagerEvent =
   | ListAppsEvent
   | LockedDeviceEvent;
 
-const cmd = (
-  transport: Transport,
-  { request }: Input,
-  sortCurrenciesByMarketcap: <C extends Currency>(currencies: C[]) => Promise<C[]>,
-): Observable<ConnectManagerEvent> =>
+const cmd = (transport: Transport, { request }: Input): Observable<ConnectManagerEvent> =>
   new Observable(o => {
     const timeoutSub = of({
       type: "unresponsiveDevice",
@@ -99,7 +94,7 @@ const cmd = (
               type: "listingApps",
               deviceInfo,
             } as ConnectManagerEvent),
-            listAppsUseCase(transport, deviceInfo, undefined, sortCurrenciesByMarketcap),
+            listAppsUseCase(transport, deviceInfo),
           );
         }),
         catchError((e: unknown) => {
@@ -141,16 +136,11 @@ const cmd = (
     };
   });
 
-const identitySorter = <C extends Currency>(currencies: C[]): Promise<C[]> =>
-  Promise.resolve(currencies);
-
 export default function connectManagerFactory(
   {
     isLdmkConnectAppEnabled,
-    sortCurrenciesByMarketcap = identitySorter,
   }: {
     isLdmkConnectAppEnabled: boolean;
-    sortCurrenciesByMarketcap?: <C extends Currency>(currencies: C[]) => Promise<C[]>;
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
@@ -158,7 +148,7 @@ export default function connectManagerFactory(
       withDevice(
         deviceId,
         deviceName ? { matchDeviceByName: deviceName } : undefined,
-      )(transport => cmd(transport, { deviceId, deviceName, request }, sortCurrenciesByMarketcap));
+      )(transport => cmd(transport, { deviceId, deviceName, request }));
   }
   return ({ deviceId, deviceName, request }: Input): Observable<ConnectManagerEvent> =>
     withDevice(
@@ -166,7 +156,7 @@ export default function connectManagerFactory(
       deviceName ? { matchDeviceByName: deviceName } : undefined,
     )(transport => {
       if (!isDmkTransport(transport)) {
-        return cmd(transport, { deviceId, deviceName, request }, sortCurrenciesByMarketcap);
+        return cmd(transport, { deviceId, deviceName, request });
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new PrepareConnectManagerDeviceAction({
@@ -180,8 +170,6 @@ export default function connectManagerFactory(
       });
       return new PrepareConnectManagerEventMapper(observable)
         .map()
-        .pipe(
-          concatWith(cmd(transport, { deviceId, deviceName, request }, sortCurrenciesByMarketcap)),
-        );
+        .pipe(concatWith(cmd(transport, { deviceId, deviceName, request })));
     });
 }

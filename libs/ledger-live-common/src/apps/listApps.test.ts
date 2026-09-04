@@ -13,11 +13,13 @@ import { DeviceModel } from "@ledgerhq/devices";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { sortCurrenciesByDada } from "../currencies";
 import { makeAppV2Mock } from "./mock";
 
 jest.useFakeTimers();
 jest.mock("../hw/customLockScreenFetchSize");
 jest.mock("../device/use-cases/getDeviceNameUseCase");
+jest.mock("../currencies");
 jest.mock("@domain/entity-currency-crypto", () => ({
   ...jest.requireActual("@domain/entity-currency-crypto"),
   listCryptoCurrencies: jest.fn(),
@@ -31,7 +33,7 @@ jest.mock("../device/use-cases/getLatestFirmwareForDeviceUseCase", () => ({
 const mockedCustomLockScreenFetchSize = jest.mocked(customLockScreenFetchSize);
 const mockedGetDeviceName = jest.mocked(getDeviceName);
 const mockedListCryptoCurrencies = jest.mocked(listCryptoCurrencies);
-const mockSortCurrencies = jest.fn<Promise<never[]>, [never[]]>().mockResolvedValue([]);
+const mockedCurrenciesByMarketCap = jest.mocked(sortCurrenciesByDada);
 
 const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
   type: "result",
@@ -46,7 +48,7 @@ describe("listApps", () => {
   beforeEach(() => {
     mockedManagerApiRepository = new StubManagerApiRepository();
     mockedGetDeviceName.mockReturnValue(Promise.resolve("Mocked device name"));
-    mockSortCurrencies.mockResolvedValue([]);
+    mockedCurrenciesByMarketCap.mockReturnValue(Promise.resolve([]));
     mockedListCryptoCurrencies.mockReturnValue([]);
 
     listAppsWithManagerApiSpy = jest
@@ -70,7 +72,6 @@ describe("listApps", () => {
         deviceInfo,
         managerApiRepository: mockedManagerApiRepository,
         forceProvider: 1,
-        sortCurrenciesByMarketcap: mockSortCurrencies,
       }),
     );
 
@@ -145,7 +146,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
@@ -169,7 +169,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
@@ -193,7 +192,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("Bad usage of listAppsV2: missing deviceModelId");
@@ -222,7 +220,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe();
     jest.advanceTimersByTime(1);
 
@@ -248,7 +245,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("getDeviceVersion failed");
@@ -281,7 +277,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("catalogForDevice failed");
@@ -316,7 +311,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("getLanguagePackagesForDevice failed");
@@ -400,7 +394,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       next: listAppsEvent => {
         if (listAppsEvent.type === "result") {
@@ -444,7 +437,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       next: listAppsEvent => {
         if (listAppsEvent.type === "result") {
@@ -504,7 +496,6 @@ describe("listApps", () => {
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
       forceProvider: 1,
-      sortCurrenciesByMarketcap: mockSortCurrencies,
     }).subscribe({
       next: listAppsEvent => {
         if (listAppsEvent.type === "result") {

@@ -19,9 +19,7 @@ import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetc
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
-import { makeSortCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies";
 import useEnv from "@features/platform-env";
-import { useDispatch } from "~/context/hooks";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import {
@@ -84,19 +82,12 @@ export function useRawTransactionDeviceAction() {
 export function useManagerDeviceAction() {
   const mock = useEnv("MOCK");
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-  const dispatch = useDispatch();
-  const sortCurrenciesByMarketcap = useMemo(
-    () => makeSortCurrenciesByMarketcap(dispatch),
-    [dispatch],
-  );
   return useMemo(
     () =>
       managerCreateAction(
-        mock
-          ? connectManagerExecMock
-          : connectManagerFactory({ isLdmkConnectAppEnabled, sortCurrenciesByMarketcap }),
+        mock ? connectManagerExecMock : connectManagerFactory({ isLdmkConnectAppEnabled }),
       ),
-    [isLdmkConnectAppEnabled, mock, sortCurrenciesByMarketcap],
+    [isLdmkConnectAppEnabled, mock],
   );
 }
 

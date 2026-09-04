@@ -8,7 +8,7 @@ import semver from "semver";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { Currency } from "@domain/entity-currency";
+import { sortCurrenciesByDada } from "../currencies";
 import ManagerAPI from "../manager/api";
 
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
@@ -53,7 +53,6 @@ type ListAppsParams = {
   managerDevModeEnabled: boolean;
   forceProvider: number;
   managerApiRepository: ManagerApiRepository;
-  sortCurrenciesByMarketcap: <C extends Currency>(currencies: C[]) => Promise<C[]>;
   deviceProxyModel?: DeviceModelId;
 };
 
@@ -64,7 +63,6 @@ export const listApps = ({
   managerDevModeEnabled,
   forceProvider,
   managerApiRepository,
-  sortCurrenciesByMarketcap,
 }: ListAppsParams): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
@@ -195,7 +193,7 @@ export const listApps = ({
        * Sequence 4: list all currencies, sorted by market cp
        */
 
-      const sortedCryptoCurrenciesPromise = sortCurrenciesByMarketcap(
+      const sortedCryptoCurrenciesPromise = sortCurrenciesByDada(
         listCryptoCurrencies(managerDevModeEnabled),
       );
 

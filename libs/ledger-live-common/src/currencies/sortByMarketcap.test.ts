@@ -1,6 +1,15 @@
-import { sortCurrenciesByIds, makeSortCurrenciesByMarketcap } from "./sortByMarketcap";
+import { sortCurrenciesByIds, sortCurrenciesByDada } from "./sortByMarketcap";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+
+jest.mock("@ledgerhq/live-network", () => ({ default: jest.fn(), __esModule: true }));
+// Bypass LRU caching so each test starts with a fresh network call.
+jest.mock("@ledgerhq/live-network/cache", () => ({
+  makeLRUCache: (fn: () => Promise<unknown>) => fn,
+}));
+
+const mockNetwork: jest.MockedFunction<typeof import("@ledgerhq/live-network").default> =
+  jest.requireMock("@ledgerhq/live-network").default;
 
 test("sortCurrenciesByIds simulate staking from portfolio", () => {
   expect(sortCurrenciesByIds(CURRENCIES_LIST, IDS).map(c => c.id)).toEqual([
@@ -26,31 +35,33 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
   ]);
 });
 
-describe("makeSortCurrenciesByMarketcap", () => {
+describe("sortCurrenciesByDada", () => {
   const eth = getCryptoCurrencyById("ethereum");
   const btc = getCryptoCurrencyById("bitcoin");
 
-  test("sorts currencies by CVS marketcap order on success", async () => {
-    const dispatch = jest.fn().mockReturnValue({
-      unwrap: () => Promise.resolve(["bitcoin", "ethereum"]),
+  beforeEach(() => mockNetwork.mockClear());
+
+  test("sorts currencies by DADA marketcap order on success", async () => {
+    mockNetwork.mockResolvedValue({
+      status: 200,
+      data: {
+        currenciesOrder: { metaCurrencyIds: ["btc-meta", "eth-meta"] },
+        cryptoAssets: {
+          "btc-meta": { assetsIds: { a: "bitcoin" } },
+          "eth-meta": { assetsIds: { a: "ethereum" } },
+        },
+      },
     });
 
-    const sorter = makeSortCurrenciesByMarketcap(dispatch as never);
-    const result = await sorter([eth, btc]);
-
+    const result = await sortCurrenciesByDada([eth, btc]);
     expect(result.map(c => c.id)).toEqual(["bitcoin", "ethereum"]);
-    expect(dispatch).toHaveBeenCalledTimes(1);
   });
 
-  test("returns currencies in original order when dispatch fails", async () => {
-    const dispatch = jest.fn().mockReturnValue({
-      unwrap: () => Promise.reject(new Error("query failed")),
-    });
+  test("returns currencies in original order when network fails", async () => {
+    mockNetwork.mockRejectedValue(new Error("network error"));
 
-    const sorter = makeSortCurrenciesByMarketcap(dispatch as never);
     const currencies = [eth, btc];
-    const result = await sorter(currencies);
-
+    const result = await sortCurrenciesByDada(currencies);
     expect(result).toBe(currencies);
   });
 });
