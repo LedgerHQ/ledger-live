@@ -141,10 +141,13 @@ export function getSpendableIronwoodBalance(
   account: SpendabilityAccount,
   reserved: ReadonlySet<string>,
 ): BigNumber {
-  return collectAllSelectableIronwoodNotes(account, reserved).reduce(
-    (sum, note) => sum.plus(note.amount),
-    new BigNumber(0),
-  );
+  // A sum doesn't care about order, so this filters the maturity pass
+  // directly instead of going through collectAllSelectableIronwoodNotes,
+  // which sorts largest-first for callers that need a ranked pool -- this
+  // renderer-facing path never does.
+  return collectIronwoodNotesWithMaturity(account)
+    .filter(({ note, mature }) => mature && !reserved.has(note.nullifier))
+    .reduce((sum, { note }) => sum.plus(note.amount), new BigNumber(0));
 }
 
 /**
