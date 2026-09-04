@@ -13,7 +13,7 @@ import { DeviceModel } from "@ledgerhq/devices";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
-import { sortCurrenciesByDada } from "../currencies";
+import { currenciesByMarketcap } from "../currencies";
 import { makeAppV2Mock } from "./mock";
 
 jest.useFakeTimers();
@@ -33,7 +33,7 @@ jest.mock("../device/use-cases/getLatestFirmwareForDeviceUseCase", () => ({
 const mockedCustomLockScreenFetchSize = jest.mocked(customLockScreenFetchSize);
 const mockedGetDeviceName = jest.mocked(getDeviceName);
 const mockedListCryptoCurrencies = jest.mocked(listCryptoCurrencies);
-const mockedCurrenciesByMarketCap = jest.mocked(sortCurrenciesByDada);
+const mockedCurrenciesByMarketCap = jest.mocked(currenciesByMarketcap);
 
 const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
   type: "result",

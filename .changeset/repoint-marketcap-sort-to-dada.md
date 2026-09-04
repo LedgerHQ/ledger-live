@@ -2,22 +2,10 @@
 "@ledgerhq/live-common": minor
 ---
 
-Repoint `sortCurrenciesByDada` from DADA to the Counter Value Service.
+Repoint `fetchMarketcapIds` in `sortByMarketcap.ts` from the
+`live-countervalues` package API to a direct call to the Counter Value
+Service (`/v3/supported/crypto`).
 
-The internal `fetchMarketcapIds` helper now fetches from the CVS
-`/v3/supported/crypto` endpoint (the same source already used by
-`useCurrenciesByMarketcap` via the RTK Query client). The DADA
-`/assets` call is removed entirely from `live-common`.
-
-**Behaviour change**: previously a network failure fell back to the
-original (unsorted) currency order. It now rejects, which propagates
-out of `listApps`' `Promise.all` as a visible failure — matching the
-original intent of the function.
-
-`sortCurrenciesByIds` is unchanged. `sortCurrenciesByDada` retains its
-name and signature; callers require no changes.
-
-Note: `grep -rn "v3/supported/crypto"` now returns two places —
-the RTK Query client (`counterValues/state-manager/api.ts`) and this
-helper. Consolidating to a single CVS client is a Phase 1 outcome, not
-a Phase -1 gate.
+The function signature, fallback behaviour, and all callers are
+unchanged. `fetchIdsSortedByMarketcap` in `live-countervalues` now has
+zero callers outside its own package.

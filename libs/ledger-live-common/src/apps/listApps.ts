@@ -8,7 +8,7 @@ import semver from "semver";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { sortCurrenciesByDada } from "../currencies";
+import { currenciesByMarketcap } from "../currencies";
 import ManagerAPI from "../manager/api";
 
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
@@ -193,7 +193,7 @@ export const listApps = ({
        * Sequence 4: list all currencies, sorted by market cp
        */
 
-      const sortedCryptoCurrenciesPromise = sortCurrenciesByDada(
+      const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
         listCryptoCurrencies(managerDevModeEnabled),
       );
 

@@ -1,4 +1,4 @@
-import { sortCurrenciesByIds, sortCurrenciesByDada } from "./sortByMarketcap";
+import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
@@ -35,7 +35,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
   ]);
 });
 
-describe("sortCurrenciesByDada", () => {
+describe("currenciesByMarketcap", () => {
   const eth = getCryptoCurrencyById("ethereum");
   const btc = getCryptoCurrencyById("bitcoin");
 
@@ -47,13 +47,15 @@ describe("sortCurrenciesByDada", () => {
       data: ["bitcoin", "ethereum"],
     });
 
-    const result = await sortCurrenciesByDada([eth, btc]);
+    const result = await currenciesByMarketcap([eth, btc]);
     expect(result.map(c => c.id)).toEqual(["bitcoin", "ethereum"]);
   });
 
-  test("rejects when network fails", async () => {
+  test("returns currencies in original order when network fails", async () => {
     mockNetwork.mockRejectedValue(new Error("network error"));
 
-    await expect(sortCurrenciesByDada([eth, btc])).rejects.toThrow("network error");
+    const currencies = [eth, btc];
+    const result = await currenciesByMarketcap(currencies);
+    expect(result).toBe(currencies);
   });
 });

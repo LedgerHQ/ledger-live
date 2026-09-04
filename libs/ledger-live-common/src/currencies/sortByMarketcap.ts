@@ -24,7 +24,10 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
   return [...all];
 };
 
-const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
+/**
+ * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
+ */
+export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
   const { data } = await network<string[]>({
     method: "GET",
     url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/crypto`,
@@ -32,8 +35,11 @@ const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
   return data;
 });
 
-// Async sort for non-React callers (e.g. listApps).
-// Rejects on CVS failure, propagating the error to the caller.
-export function sortCurrenciesByDada<C extends Currency>(currencies: C[]): Promise<C[]> {
-  return fetchMarketcapIds().then(ids => sortCurrenciesByIds(currencies, ids));
-}
+/**
+ * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
+ */
+export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
+  fetchMarketcapIds().then(
+    ids => sortCurrenciesByIds(currencies, ids),
+    () => currencies,
+  );
