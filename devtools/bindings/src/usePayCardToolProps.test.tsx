@@ -184,6 +184,28 @@ describe("usePayCardToolProps", () => {
     expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
   });
 
+  it("reports no balance until the screen asks for one", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.balance).toMatchObject({
+      total: undefined,
+      isPartialTotal: false,
+      wallets: [],
+      isFetching: false,
+      errors: [],
+    });
+  });
+
+  it("starts reading the wallets when the screen opens", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => result.current.balance.load());
+
+    expect(result.current.balance.isFetching).toBe(true);
+  });
+
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 

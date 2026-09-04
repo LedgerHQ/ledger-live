@@ -267,7 +267,7 @@ describe("PayCard (native)", () => {
     // The unpriced wallet says why it is missing from the total rather than reading as zero.
     expect(screen.getByText("1. sol / solana")).toBeTruthy();
     expect(
-      screen.getByText("null — no currency matched this ticker, or no rate for it"),
+      screen.getByText("null — no balance yet, no currency matched this ticker, or no rate for it"),
     ).toBeTruthy();
   });
 

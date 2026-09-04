@@ -59,9 +59,12 @@ export interface PayCardBalanceWallet {
   readonly address: string;
   /** Charging order. The wallets are listed in it. */
   readonly priority: number;
-  /** `null` when no internal wallet matched this link. */
+  /** `null` while the internal wallets are still being read, and when none matched this link. */
   readonly balance: string | null;
-  /** `null` when the balance could not be priced. Those are left out of the total. */
+  /**
+   * `null` whenever the balance is, and when the balance could not be priced. Those are left out
+   * of the total.
+   */
   readonly counterValue: number | null;
 }
 
@@ -78,7 +81,10 @@ export interface PayCardBalanceError {
  * deliberately unformatted: the tool exists to show what the calculation returned.
  */
 export interface PayCardBalanceProps {
-  /** Rendered verbatim, `undefined` included: the tool reports what the calculation returned. */
+  /**
+   * Rendered verbatim, `undefined` included: the tool reports what the calculation returned.
+   * `undefined` when not one wallet could be priced, which is not the same as a balance of zero.
+   */
   readonly total: number | undefined;
   /** A wallet the rates could not price is left out of `total` rather than counted as zero. */
   readonly isPartialTotal: boolean;
