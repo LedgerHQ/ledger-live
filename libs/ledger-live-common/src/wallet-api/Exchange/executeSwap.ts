@@ -426,7 +426,7 @@ export async function extractSwapStartParam(
   const currency = params.tokenCurrency
     ? await getCryptoAssetsStore().findTokenById(params.tokenCurrency)
     : null;
-  
+
   const newTokenAccount = currency ? makeEmptyTokenAccount(toParentAccount, currency) : null;
   const resolvedToAccount = newTokenAccount ?? toAccount;
 
