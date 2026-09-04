@@ -18,13 +18,18 @@ import type {
   TransactionStatus,
   ICPSigner,
 } from "../types";
-import { getAccountShape } from "./bridgeHelpers/account";
+import { getAccountShape, postSync } from "./bridgeHelpers/account";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { validateAddress } from "./validateAddress";
 
@@ -41,7 +46,7 @@ function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyB
   };
 }
 
-const sync = makeSync({ getAccountShape });
+const sync = makeSync({ getAccountShape, postSync });
 
 function buildAccountBridge(
   signerContext: SignerContext<ICPSigner>,
@@ -75,6 +80,8 @@ function buildAccountBridge(
     validateAddress,
     assignToAccountRaw,
     assignFromAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
   };
 }
 

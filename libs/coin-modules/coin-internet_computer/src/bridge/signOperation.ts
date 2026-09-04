@@ -15,7 +15,10 @@ import { ICPSigner, ICPTransactionType, TRANSFER_TYPES, Transaction } from "../t
 import { getAddress } from "./bridgeHelpers/addresses";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
-// Optimistic operation type per transaction; governance calls cost only the network fee.
+// Optimistic operation type per transaction. Only ledger-canister transfers are listed; a governance
+// call falls through to NONE, marking an operation that must stay out of account history — it moves
+// no ICP and its hash is an IC request id no explorer resolves. The operation is still built: it is
+// what carries the neuron snapshot back from broadcast.
 const OPERATION_TYPE: Partial<Record<ICPTransactionType, OperationType>> = {
   send: "OUT",
   create_neuron: "STAKE_NEURON",
@@ -54,7 +57,7 @@ export const buildSignOperation =
           account,
           transaction,
           rawData.hash,
-          OPERATION_TYPE[transaction.type] ?? "FEES",
+          OPERATION_TYPE[transaction.type] ?? "NONE",
         );
         o.next({
           type: "signed",

@@ -13,6 +13,8 @@ import {
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
+  ICPHotKeyIsController,
+  ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -161,6 +163,39 @@ describe("getTransactionStatus", () => {
       expect(status.errors.transaction).toBeInstanceOf(ICPDissolveDelayGTMax);
     });
 
+    // Every surface that reports a bound does it in whole days, so the error carries the day count
+    // alongside the seconds. The minimum rounds up and the maximum down, so both stay acceptable to
+    // the canister — the two-year maximum is 730.5 days, which has to report as 730, not 731.
+    it.each([
+      ["1.5", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY, minDays: 7, count: 7 }],
+      [
+        String(NNS_MAXIMUM_DISSOLVE_DELAY + 1),
+        { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY, maxDays: 730, count: 730 },
+      ],
+    ])(
+      "reports the offended bound in days as well as seconds (%s)",
+      async (dissolveDelay, bound) => {
+        const status = await getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "set_dissolve_delay", neuronId: "7", dissolveDelay }),
+        );
+        expect(status.errors.transaction).toMatchObject(bound);
+      },
+    );
+
+    // Reusing ICPDissolveDelayLTMin here quoted a bound the entry never crossed, and rounding its
+    // one-second stand-in up to days put "at least 1 days" on screen.
+    it.each(["0", "-5", "1.5", "", "abc"])(
+      "names the entry rather than the network minimum for an increase of %s",
+      async additionalDissolveDelay => {
+        const status = await getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "increase_dissolve_delay", neuronId: "7", additionalDissolveDelay }),
+        );
+        expect(status.errors.transaction).toBeInstanceOf(ICPInvalidDissolveDelayIncrease);
+      },
+    );
+
     it("rejects a dissolve delay below the neuron's current delay", async () => {
       const status = await getTransactionStatus(
         accountWith(
@@ -193,6 +228,14 @@ describe("getTransactionStatus", () => {
         tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
       );
       expect(missing.errors.transaction).toBeInstanceOf(ICPNeuronNotFound);
+    });
+
+    it("rejects the neuron's own controller as a hot key", async () => {
+      const status = await getTransactionStatus(
+        accountWith(neuron({ controller: "2vxsx-fae" })),
+        tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
+      );
+      expect(status.errors.transaction).toBeInstanceOf(ICPHotKeyIsController);
     });
 
     it("rejects an out-of-range spawn percentage", async () => {

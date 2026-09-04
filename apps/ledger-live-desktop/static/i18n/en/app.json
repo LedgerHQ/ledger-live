@@ -8186,6 +8186,76 @@
     },
     "UtxoLimitReachedError": {
       "title": "Amount too large for UTXO constraints."
+    },
+    "ICPDissolveDelayLTMin": {
+      "title": "Dissolve delay too short",
+      "description_one": "The Internet Computer requires a dissolve delay of at least {{minDays}} day.",
+      "description_other": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+    },
+    "ICPInvalidDissolveDelayIncrease": {
+      "title": "Invalid number of days",
+      "description": "Enter a whole number of days greater than zero."
+    },
+    "ICPDissolveDelayGTMax": {
+      "title": "Dissolve delay too long",
+      "description_one": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} day.",
+      "description_other": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
+    },
+    "ICPDissolveDelayLTCurrent": {
+      "title": "Dissolve delay cannot be shortened",
+      "description": "A neuron's dissolve delay can only be increased. To shorten it, start dissolving the neuron instead."
+    },
+    "ICPNeuronNotFound": {
+      "title": "Neuron not found",
+      "description": "This neuron is missing from your last synced snapshot. Sync your neurons and try again."
+    },
+    "ICPInvalidHotKey": {
+      "title": "Invalid principal",
+      "description": "A hot key must be a valid Internet Computer principal."
+    },
+    "ICPHotKeyAlreadyExists": {
+      "title": "Hot key already added",
+      "description": "This principal is already a hot key on this neuron."
+    },
+    "ICPHotKeyIsController": {
+      "title": "This principal already controls the neuron",
+      "description": "Enter a different principal. A hot key can only vote and set following, which the controller can already do."
+    },
+    "ICPSplitNotAllowed": {
+      "title": "Amount outside the range this neuron can split",
+      "description": "Both the original neuron and the new one must keep at least 1 ICP staked, plus the network fee on the amount moved."
+    },
+    "ICPStakeMemoNotRecoverable": {
+      "title": "Cannot top up this neuron",
+      "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."
+    },
+    "ICPCallUnconfirmed": {
+      "title": "Outcome unknown",
+      "description": "The Internet Computer accepted the request but returned no result, so it may or may not have taken effect. Sync your neurons to check before trying again."
+    },
+    "ICPNeuronsNotRead": {
+      "title": "Neurons not refreshed",
+      "description": "The Internet Computer did not return your neurons, so they are unchanged. Please try again."
+    },
+    "ICPCreateNeuronWarning": {
+      "title": "This locks your ICP in a new neuron",
+      "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
+    },
+    "ICPIncreaseStakeWarning": {
+      "title": "This adds to a locked stake",
+      "description": "The amount joins the neuron's existing stake and follows its dissolve delay, so it is not spendable until the neuron dissolves."
+    },
+    "ICPGovernanceRejected": {
+      "title": "The network refused this operation",
+      "description": "Internet Computer governance rejected the request, so the neuron is unchanged. Sync your neurons to see their current state. {{reason}}"
+    },
+    "ICPCallRejected": {
+      "title": "Request not accepted",
+      "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
+    },
+    "ICPInvalidPercentage": {
+      "title": "Percentage out of range",
+      "description": "Enter a whole number between 1 and 100."
     }
   },
   "cryptoOrg": {
@@ -10027,12 +10097,241 @@
         "title": "Stake ICP",
         "description": "Stake ICP and gain rewards by participating in its governance.",
         "cta": "Stake ICP"
+      },
+      "confirmFollowing": {
+        "title": "Confirm your following",
+        "description": "One of your neurons is losing voting power. Confirm its following to restore it.",
+        "cta": "Confirm following"
+      },
+      "syncNeurons": {
+        "title": "Refresh your neurons",
+        "description": "Your neuron data is out of date. Connect your device to refresh it.",
+        "cta": "Refresh neurons"
+      },
+      "lockNeurons": {
+        "title": "Increase your dissolve delay",
+        "description": "A neuron needs a longer dissolve delay before it can vote and earn rewards.",
+        "cta": "Manage neurons"
+      },
+      "addFollowees": {
+        "title": "Start earning rewards",
+        "description": "Follow other neurons on governance topics so your neuron votes and earns rewards.",
+        "cta": "Manage neurons"
       }
     },
     "headerManageActions": {
       "manageNeurons": {
         "title": "Manage Neurons"
       }
+    },
+    "duration": {
+      "years_one": "{{count}} year",
+      "years_other": "{{count}} years",
+      "months_one": "{{count}} month",
+      "months_other": "{{count}} months",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "minutes_one": "{{count}} minute",
+      "minutes_other": "{{count}} minutes",
+      "lessThanAMinute": "Less than a minute"
+    },
+    "neuronState": {
+      "Locked": "Locked",
+      "Dissolving": "Dissolving",
+      "Dissolved": "Dissolved",
+      "Spawning": "Spawning",
+      "Unknown": "Unknown"
+    },
+    "common": {
+      "neuronId": "Neuron ID",
+      "stake": "Stake",
+      "maturity": "Maturity",
+      "dissolveDelay": "Dissolve delay",
+      "state": "State",
+      "action": "Action",
+      "none": "None",
+      "disburse": "Disburse",
+      "startDissolving": "Start dissolving",
+      "stopDissolving": "Stop dissolving",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
+    "manageNeuronFlow": {
+      "title": "Manage neurons",
+      "device": {
+        "title": "Device"
+      },
+      "confirmation": {
+        "title": "Confirmation",
+        "broadcastError": "Your operation was signed but could not be sent to the network.",
+        "backToNeurons": "Back to neurons",
+        "success": {
+          "title": "Done",
+          "default": "Your neuron has been updated.",
+          "list_neurons": "Your neurons are up to date.",
+          "start_dissolving": "Your neuron has started dissolving.",
+          "stop_dissolving": "Your neuron has stopped dissolving.",
+          "disburse": "Your neuron's stake has been disbursed to your account.",
+          "set_dissolve_delay": "Your neuron's dissolve delay has been set.",
+          "increase_dissolve_delay": "Your neuron's dissolve delay has been increased.",
+          "add_hot_key": "The hot key has been added to your neuron.",
+          "remove_hot_key": "The hot key has been removed from your neuron.",
+          "follow": "Your neuron's following has been updated.",
+          "refresh_voting_power": "Your neuron's voting power has been refreshed.",
+          "stake_maturity": "Your neuron's maturity has been staked.",
+          "auto_stake_maturity": "Automatic maturity staking has been updated.",
+          "spawn_neuron": "A new neuron is spawning from your maturity.",
+          "split_neuron": "Your neuron has been split.",
+          "increase_stake": "Your neuron's stake has been increased."
+        }
+      },
+      "listNeuron": {
+        "title": "Neurons",
+        "empty": "You have no neurons yet. Stake ICP to create one.",
+        "lastSynced": "Last synced: {{date}}",
+        "sync": "Refresh neurons"
+      },
+      "manage": {
+        "title": "Manage",
+        "neuron": "Neuron",
+        "hotKeyOnly": "You hold a hot key on this neuron. You can vote and set following, but not move its stake.",
+        "missingNeuron": "This neuron is no longer in your synced snapshot. Go back to your neurons and sync to pick another.",
+        "votingPower": {
+          "title": "Voting power",
+          "tooltip": "Voting power decides how much weight your neuron carries in governance, and how many rewards it earns.",
+          "staked": "Staked",
+          "increaseStake": "Increase stake",
+          "state": "State",
+          "bonusValue": "+{{percent}}%",
+          "ageBonus": "Age bonus",
+          "ageBonusTooltip": "A neuron earns up to +25% voting power as it ages, reaching the maximum after four years.",
+          "dissolveDelayBonus": "Dissolve delay bonus: +{{percent}}%",
+          "dissolveDelayBonusTooltip": "A longer dissolve delay earns up to +200% voting power, reaching the maximum at two years.",
+          "noDissolveDelay": "No dissolve delay",
+          "setDissolveDelay": "Set dissolve delay",
+          "increaseDissolveDelay": "Increase dissolve delay",
+          "decayStartsIn": "Voting power starts decaying in {{duration}}",
+          "decaying": "Voting power is decaying — reaches zero in {{duration}}",
+          "expired": "Voting power lost — following has been cleared",
+          "confirmFollowing": "Confirm following",
+          "confirmFollowingTooltip": "Confirm your following at least every six months, or your neuron gradually loses its voting power."
+        },
+        "maturity": {
+          "title": "Maturity",
+          "tooltip": "Maturity is the reward a neuron accrues. Stake it back into the neuron, or spawn it into a new one.",
+          "available": "Available maturity",
+          "staked": "Staked maturity",
+          "stakedTooltip": "Maturity already staked into the neuron. It counts toward voting power and can no longer be spawned into a new neuron.",
+          "stake": "Stake maturity",
+          "spawn": "Spawn neuron",
+          "autoStake": "Automatic maturity staking",
+          "autoStakeTooltip": "When enabled, maturity is staked back into the neuron as it accrues."
+        },
+        "following": {
+          "title": "Following",
+          "tooltip": "A neuron that follows others votes as they do, which is how it earns rewards without voting manually.",
+          "count_one": "{{count}} topic",
+          "count_other": "{{count}} topics",
+          "edit": "Follow neurons on a governance topic",
+          "follow": "Edit following"
+        },
+        "hotKeys": {
+          "title": "Hot keys",
+          "tooltip": "A hot key can vote and set following on your behalf, but can never move the neuron's stake.",
+          "add": "Grant hot-key access to another principal",
+          "addAction": "Add hot key",
+          "remove": "Remove"
+        },
+        "advanced": {
+          "title": "Advanced",
+          "split": "Split this neuron into two",
+          "splitTooltip": "Both the original and the new neuron must keep at least the minimum stake of 1 ICP.",
+          "splitAction": "Split neuron"
+        }
+      },
+      "setDissolveDelay": {
+        "title": "Dissolve delay",
+        "setDescription": "Choose how long the neuron takes to dissolve. Between {{min}} and {{max}} days.",
+        "increaseDescription": "Add to the neuron's dissolve delay. You can add up to {{remaining}} more days, for a total of {{max}}, and it can never be lowered.",
+        "days": "Days",
+        "resulting": "New dissolve delay: {{duration}}",
+        "belowVotingThreshold": "Below {{days}} days the neuron cannot vote and earns no rewards."
+      },
+      "stakeMaturity": {
+        "title": "Stake maturity",
+        "description": "Stake a share of this neuron's maturity back into it, increasing its voting power.",
+        "percentage": "Percentage to stake",
+        "selected": "Amount to stake:"
+      },
+      "splitNeuron": {
+        "title": "Split neuron",
+        "description": "Move part of this neuron's stake into a new neuron. The new neuron starts with no dissolve delay or age bonus.",
+        "amount": "Amount to split off",
+        "range": "Allowed range:"
+      },
+      "addHotKey": {
+        "title": "Add hot key",
+        "description": "Grant another principal permission to vote and set following on this neuron. It can never move the stake.",
+        "principal": "Principal ID",
+        "ownPrincipal": "This account's principal",
+        "ownPrincipalHint": "Enter a different principal — typically the one you sign in with on the NNS dapp. This account already controls the neuron, so adding its own principal grants nothing."
+      },
+      "followTopic": {
+        "title": "Topic",
+        "description": "Pick the governance topic whose following you want to change.",
+        "followeeCount_one": "{{count}} followee",
+        "followeeCount_other": "{{count}} followees"
+      },
+      "selectFollowees": {
+        "title": "Followees",
+        "description": "Your neuron will vote on {{topic}} exactly as these neurons do.",
+        "neuronId": "Neuron ID to follow",
+        "add": "Add",
+        "remove": "Remove",
+        "empty": "No followees yet. Your neuron will not vote on this topic.",
+        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}.",
+        "notANeuronId": "A neuron ID is digits only.",
+        "outOfRange": "This is not a valid neuron ID.",
+        "duplicate": "This neuron is already a followee on this topic.",
+        "self": "A neuron cannot follow itself.",
+        "unadded": "Select Add to include this neuron ID, or clear the field.",
+        "atCapacity": "A topic can follow at most {{max}} neurons. Remove one to add another."
+      }
+    },
+    "governanceTopic": {
+      "Unspecified": "All other topics",
+      "NeuronManagement": "Neuron management",
+      "ExchangeRate": "Exchange rate",
+      "NetworkEconomics": "Network economics",
+      "Governance": "Governance",
+      "NodeAdmin": "Node admin",
+      "ParticipantManagement": "Participant management",
+      "SubnetManagement": "Subnet management",
+      "NetworkCanisterManagement": "Network canister management",
+      "Kyc": "KYC",
+      "NodeProviderRewards": "Node provider rewards",
+      "SnsDecentralizationSale": "SNS decentralization sale",
+      "IcOsVersionDeployment": "IC OS version deployment",
+      "IcOsVersionElection": "IC OS version election",
+      "SnsAndCommunityFund": "SNS & Community Fund",
+      "ApiBoundaryNodeManagement": "API boundary node management",
+      "SubnetRental": "Subnet rental",
+      "ProtocolCanisterManagement": "Protocol canister management",
+      "ServiceNervousSystemManagement": "Service Nervous System management"
+    },
+    "refreshVotingPowerFlow": {
+      "title": "Confirm following",
+      "listTitle": "Neurons",
+      "description": "Confirming your following restores a neuron's voting power for another six months.",
+      "timeUntilLoss": "Voting power lost in",
+      "losing": "{{duration}} — losing power now",
+      "expired": "Already lost",
+      "confirm": "Confirm",
+      "empty": "None of your neurons are on a confirmation clock right now."
     },
     "summaryFooter": {
       "stakedBalance": "Staked Balance",

@@ -24,6 +24,8 @@ import {
   MAINNET_INDEX_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
+import { redactPrincipals } from "../common-logic/redact";
+import { ICPCallRejected, ICPGovernanceRejected } from "../errors";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
@@ -33,7 +35,7 @@ import {
   indexIdlFactory,
   ledgerIdlFactory,
 } from "../network/candid";
-import type { ListNeuronsResponse } from "../types/neuron";
+import type { ListNeuronsResponse, NeuronCommandOutcome } from "../types/neuron";
 
 function toArrayBuffer(view: ArrayBuffer | Uint8Array): ArrayBuffer {
   if (view instanceof ArrayBuffer) {
@@ -258,9 +260,8 @@ const terminalReply = async (
     const rejectBuf = lookupResultToBuffer(
       cert.lookup(["request_status", requestId, "reject_message"]),
     );
-    throw new Error(
-      `[ICP] call rejected: ${rejectBuf ? new TextDecoder().decode(rejectBuf) : "unknown"}`,
-    );
+    const reason = redactPrincipals(rejectBuf ? new TextDecoder().decode(rejectBuf) : "");
+    throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
   }
   return status === "replied"
     ? (lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"])) ?? null)
@@ -355,14 +356,46 @@ export const claimOrRefreshNeuronFromAccount = async (
   return result && "NeuronId" in result ? result.NeuronId?.id : undefined;
 };
 
-/** Decode a manage_neuron reply, throwing the governance error message if the command failed. */
-export const decodeManageNeuronReply = (reply: ArrayBuffer): void => {
+/**
+ * Decode a manage_neuron reply: throw the governance error if the command failed, otherwise return
+ * whatever the command reported about its own result.
+ *
+ * StakeMaturity is the only command read out today, because it is the only one in the flow whose
+ * outcome the canister computes *and* hands straight back. Reproducing it locally would mean
+ * re-deriving the split from a percentage of a maturity figure that may have accrued since the last
+ * snapshot; the reply states both totals outright.
+ */
+export const decodeManageNeuronReply = (reply: ArrayBuffer): NeuronCommandOutcome | undefined => {
   const func = getCanisterIdlFunc(governanceIdlFactory, "manage_neuron");
   const [decoded] = decodeCanisterIdlFunc<
-    [{ command: [] | [{ Error?: { error_message: string } }] }]
+    [
+      {
+        command:
+          | []
+          | [
+              {
+                Error?: { error_message: string };
+                StakeMaturity?: { maturity_e8s: bigint; staked_maturity_e8s: bigint };
+              },
+            ];
+      },
+    ]
   >(func, reply);
   const command = fromNullable(decoded.command);
-  if (command && "Error" in command && command.Error) throw new Error(command.Error.error_message);
+  if (command && "Error" in command && command.Error) {
+    // Named rather than a bare Error: `errors.<name>` is how the apps translate this, and the
+    // canister's own text rides along as `reason` for the copy to quote — minus the caller, which
+    // several of these messages name and which the error carries into crash reporting.
+    const reason = redactPrincipals(command.Error.error_message ?? "");
+    throw new ICPGovernanceRejected(reason || "ICPGovernanceRejected", { reason });
+  }
+  const staked = command && "StakeMaturity" in command ? command.StakeMaturity : undefined;
+  return staked
+    ? {
+        maturityE8s: staked.maturity_e8s.toString(),
+        stakedMaturityE8s: staked.staked_maturity_e8s.toString(),
+      }
+    : undefined;
 };
 
 /** Decode a list_neurons reply into the raw neuron snapshot. */

@@ -18,6 +18,7 @@ import {
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY,
+  SECONDS_IN_DAY,
 } from "../consts";
 import {
   ICPCreateNeuronWarning,
@@ -25,7 +26,9 @@ import {
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
   ICPHotKeyAlreadyExists,
+  ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
+  ICPInvalidDissolveDelayIncrease,
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
@@ -83,6 +86,21 @@ const validateRecipient = (
   return undefined;
 };
 
+// The bounds are protocol seconds, but every surface that reports them talks in whole days, so each
+// error carries both. A minimum rounds up and a maximum rounds down, keeping the quoted day count
+// one the canister would actually accept.
+// `count` repeats the day figure because that is the field i18next selects a plural form on, and the
+// apps hand the whole error to `t()`. Dropping it would fall the copy back to the generic message.
+const belowMin = (minSeconds: number) => {
+  const minDays = Math.ceil(minSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayLTMin("", { minSeconds, minDays, count: minDays });
+};
+
+const aboveMax = (maxSeconds: number) => {
+  const maxDays = Math.floor(maxSeconds / SECONDS_IN_DAY);
+  return new ICPDissolveDelayGTMax("", { maxSeconds, maxDays, count: maxDays });
+};
+
 // New dissolve delay must be >= the current one and within the network bounds (Mission 70).
 const validateSetDissolveDelay = (
   neuron: ICPNeuron | undefined,
@@ -91,15 +109,15 @@ const validateSetDissolveDelay = (
   if (!neuron) return new ICPNeuronNotFound();
   const seconds = Number(dissolveDelay);
   if (!Number.isInteger(seconds) || seconds < 0) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   const requested = BigInt(seconds);
   if (requested < getNeuronDissolveDurationSeconds(neuron)) return new ICPDissolveDelayLTCurrent();
   if (requested < BigInt(NNS_MINIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   if (requested > BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };
@@ -110,13 +128,14 @@ const validateIncreaseDissolveDelay = (
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   const value = Number(additional);
-  if (!Number.isInteger(value) || value <= 0)
-    return new ICPDissolveDelayLTMin("", { minSeconds: 1 });
+  // Not belowMin: the network minimum is not what an empty or zero entry violates, and quoting it
+  // would name a bound the user never crossed.
+  if (!Number.isInteger(value) || value <= 0) return new ICPInvalidDissolveDelayIncrease();
   if (
     getNeuronDissolveDurationSeconds(neuron) + BigInt(value) >
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)
   ) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };
@@ -125,6 +144,9 @@ const validateAddHotKey = (neuron: ICPNeuron | undefined, hotKey?: string): Erro
   if (!neuron) return new ICPNeuronNotFound();
   if (!isValidPrincipal(hotKey)) return new ICPInvalidHotKey();
   if (neuron.hotKeys.includes(hotKey!)) return new ICPHotKeyAlreadyExists();
+  // Compared against the neuron's own controller rather than the account's derived principal: the
+  // controller is what the permission actually duplicates, and it is already on the neuron.
+  if (hotKey === neuron.controller) return new ICPHotKeyIsController();
   return undefined;
 };
 
