@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { StatusGradient } from "LLM/components/StatusGradient";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useTranslation } from "~/context/Locale";
