@@ -35,10 +35,7 @@ const SENDER = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
 
 const NETWORK_FEE = 5_000n;
 const MAIN_ACCOUNT_RENT_EXEMPT = 890_880n;
-
-// Exact reproducer from the bug report: native = 0.00293516 SOL, spendable
-// (value - locked) = 0.00204428 SOL = classic 165-byte ATA rent + network fee.
-const BALANCE_AT_BUG_THRESHOLD = 2_044_280n + MAIN_ACCOUNT_RENT_EXEMPT;
+const CLASSIC_ATA_SIZE = 165;
 const SPL_BALANCE = 10_000_000n;
 
 function makeNativeBalance(value: bigint, locked: bigint = MAIN_ACCOUNT_RENT_EXEMPT): Balance {
@@ -76,16 +73,22 @@ describe("validateIntent (integration)", () => {
 
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
     it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
+      // Spendable is exactly what a classic 165-byte token account costs, plus the fee -- and a
+      // Token-2022 one costs more. Read from the chain: Solana has lowered the rent-exempt minimum
+      // since this was written, and a pinned figure stops reproducing the case.
+      const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
+      const balanceAtBugThreshold = classicAtaRent + NETWORK_FEE + MAIN_ACCOUNT_RENT_EXEMPT;
+
       const result = await validateIntent(
         makeTokenIntent(VIBECODOOR_MINT),
-        [makeNativeBalance(BALANCE_AT_BUG_THRESHOLD), makeTokenBalance(VIBECODOOR_MINT)],
+        [makeNativeBalance(balanceAtBugThreshold), makeTokenBalance(VIBECODOOR_MINT)],
         { value: NETWORK_FEE },
         api,
       );
 
       expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
       const fees = (result.errors.gasPrice as Error & { fees?: string }).fees;
-      expect(BigInt(fees ?? "0")).toBeGreaterThan(2_044_280n);
+      expect(BigInt(fees ?? "0")).toBeGreaterThan(classicAtaRent + NETWORK_FEE);
     });
 
     it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
