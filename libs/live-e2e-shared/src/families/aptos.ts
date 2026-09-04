@@ -1,6 +1,10 @@
-import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { waitFor, pressUntilTextFound, containsSubstringInEvent, getSendEvents } from "../speculos";
+import {
+  waitFor,
+  pressUntilTextFound,
+  expectSpeculosEventsContain,
+  getSendEvents,
+} from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Delegate } from "../models/Delegate";
@@ -29,8 +33,7 @@ export const delegateAptos = withDeviceController(
 
       await waitFor(DeviceLabels.REVIEW_OPERATION);
       const events = await pressUntilTextFound(DeviceLabels.APPROVE);
-      const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
+      expectSpeculosEventsContain(delegatingAccount.amount, events);
 
       await buttons.both();
     },

@@ -1,8 +1,7 @@
-import expect from "expect";
 import { Delegate } from "../models/Delegate";
 import {
   waitFor,
-  containsSubstringInEvent,
+  expectSpeculosEventsContain,
   getDelegateEvents,
   pressUntilTextFound,
 } from "../speculos";
@@ -17,8 +16,7 @@ export const delegateNear = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
-      expect(isProviderCorrect).toBeTruthy();
+      expectSpeculosEventsContain(delegatingAccount.provider, events);
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONFIRM_HEADER);
