@@ -45,6 +45,10 @@ lets `features/*` and `domain/*` resolve their own copy without depending on an 
 
 ---
 
+## Worked example
+
+[The account data layer](./account-data-layer.md) — how a screen asks for one slice of an account, and how a capability-routed port keeps legacy families working while granular ones get cheap. The first slice carved out of the `Account` god object.
+
 ## Dependency rules (enforced by Nx)
 
 ```

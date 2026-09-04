@@ -1,4 +1,5 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { Observable, concat, defer, find, from, ignoreElements, mergeMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -26,10 +27,14 @@ import {
   accountNameWithDefaultSelector,
 } from "@domain/entity-account-name";
 import { contactsSyncModule, type Contact } from "@domain/entity-contact";
-import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { Account, BridgeCacheSystem, ScanAccountEvent } from "@ledgerhq/types-live";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import { Account, ScanAccountEvent } from "@ledgerhq/types-live";
+import type { AccountBalanceStatus } from "@domain/entity-account-balance";
+import { useAccountBalance } from "@features/platform-account-data/react";
+import { bridgeCache } from "../../logic/syncAccount";
+import { accountRefOf } from "../../logic/accountData";
+import { balanceOnlyAccountBridge } from "../../logic/balanceOnlyBridge";
 import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -90,23 +95,16 @@ export default function AppAccountsSync({
     [],
   );
 
-  const bridgeCache = useMemo(() => {
-    const localCache: Record<string, unknown> = {};
-    const cache = makeBridgeCacheSystem({
-      saveData(c, d) {
-        localCache[c.id] = d;
-        return Promise.resolve();
-      },
-      getData(c) {
-        return Promise.resolve(localCache[c.id]);
-      },
-    });
-    return cache;
-  }, []);
-
+  // Resolving an incoming descriptor no longer costs a full account sync: the accounts cloud-sync
+  // module only ever calls `bridge.sync` on this context, and `balanceOnlyAccountBridge` answers it
+  // with a `{ balance }` request routed through the account-data layer.
   const ctx = useMemo(
-    () => ({ getAccountBridge, bridgeCache, blacklistedTokenIds: [] }),
-    [bridgeCache],
+    () => ({
+      getAccountBridge: balanceOnlyAccountBridge,
+      bridgeCache,
+      blacklistedTokenIds: [],
+    }),
+    [],
   );
 
   const accountsSyncModule = useMemo(() => bindLiveWalletAccountsCtx(ctx), [ctx]);
@@ -128,7 +126,10 @@ export default function AppAccountsSync({
   );
 
   type AggLocalState = {
-    accounts: { list: Account[]; nonImportedAccountInfos: NonImportedAccountInfo[] };
+    accounts: {
+      list: Account[];
+      nonImportedAccountInfos: NonImportedAccountInfo[];
+    };
     accountNames: Map<string, string>;
     contacts: Contact[];
     recentAddresses: RecentAddressesState;
@@ -214,7 +215,9 @@ export default function AppAccountsSync({
   const [timestamp, setTimestamp] = useState(0);
   const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => () => {});
 
-  const [watchConfig, setWatchConfig] = useState({ notificationsEnabled: false });
+  const [watchConfig, setWatchConfig] = useState({
+    notificationsEnabled: false,
+  });
 
   useEffect(() => {
     const localIncrementUpdate = makeLocalIncrementalUpdate({
@@ -317,11 +320,7 @@ export default function AppAccountsSync({
           {state.nonImportedAccounts.length} non-imported accounts
         </div>
       ) : null}
-      <HeadlessAddAccounts
-        deviceId={deviceId}
-        bridgeCache={bridgeCache}
-        setAccounts={setAccounts}
-      />
+      <HeadlessAddAccounts deviceId={deviceId} setAccounts={setAccounts} />
 
       <Actionable
         buttonTitle="Toggle WebSocket notifications"
@@ -339,11 +338,9 @@ export default function AppAccountsSync({
 
 function HeadlessAddAccounts({
   deviceId,
-  bridgeCache,
   setAccounts,
 }: {
   deviceId: string;
-  bridgeCache: BridgeCacheSystem;
   setAccounts: (_: (_: Account[]) => Account[]) => void;
 }) {
   const addAccounts = useCallback(
@@ -401,7 +398,7 @@ function HeadlessAddAccounts({
         sub.unsubscribe();
       };
     },
-    [deviceId, addAccounts, bridgeCache],
+    [deviceId, addAccounts],
   );
   return (
     <div className="p-10 text-center">
@@ -462,9 +459,7 @@ function AccountRow({
           setName={name => setAccountName(account.id, name)}
         />
       </span>
-      <span className="body-2-semi-bold" style={{ color: getCurrencyColor(account.currency) }}>
-        {formatCurrencyUnit(account.currency.units[0], account.balance, { showCode: true })}
-      </span>
+      <AccountBalanceCell account={account} />
       <span className="flex-1" />
       <code className="body-4 pr-10 text-muted">{account.freshAddressPath}</code>
       <span>
@@ -478,6 +473,50 @@ function AccountRow({
         </Button>
       </span>
     </li>
+  );
+}
+
+/**
+ * Where the number on screen came from, flattened out of a ternary chain: pending wins over an
+ * error, an error over a source, and "from sync" is what is left when the layer has not read it —
+ * the amount then comes off the `Account` the legacy sync produced.
+ */
+function statusLine(status: AccountBalanceStatus): string {
+  if (status.pending) return "reading balance…";
+  if (status.error) return status.error;
+  return status.sourceId ? `via ${status.sourceId}` : "from sync";
+}
+
+/**
+ * The balance, read from `@domain/entity-account-balance` rather than off the `Account`.
+ *
+ * Two things this makes visible that the god-object read could not: which source answered
+ * (`granular` = one chain call, `full-sync` = the whole account), and the token balances that came
+ * back in that *same* single call — the property that makes the granular path worth having.
+ */
+function AccountBalanceCell({ account }: Readonly<{ account: Account }>) {
+  const ref = useMemo(
+    () => accountRefOf(account),
+    // Rebuilt only when the identity behind the ref moves, not on every sync that replaces the object.
+    [account.id, account.currency.id, account.freshAddress, account.derivationMode],
+  );
+  const { balance, subAccountBalances, status } = useAccountBalance(ref);
+  const amount = balance ? new BigNumber(balance.balance) : account.balance;
+
+  return (
+    <span className="flex flex-col items-end">
+      <span className="body-2-semi-bold" style={{ color: getCurrencyColor(account.currency) }}>
+        {formatCurrencyUnit(account.currency.units[0], amount, {
+          showCode: true,
+        })}
+      </span>
+      <span className="body-4 text-muted">{statusLine(status)}</span>
+      {subAccountBalances.map(sub => (
+        <span key={sub.accountId} className="body-4 text-muted">
+          {sub.assetId}: {sub.balance}
+        </span>
+      ))}
+    </span>
   );
 }
 

@@ -876,6 +876,9 @@ importers:
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -981,6 +984,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -1694,6 +1700,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -1802,6 +1811,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -2634,6 +2646,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2649,6 +2664,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -2835,6 +2853,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -2859,6 +2880,9 @@ importers:
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync
+      '@features/platform-account-data':
+        specifier: workspace:^
+        version: link:../../features/platform/account-data
       '@features/platform-currencies':
         specifier: workspace:*
         version: link:../../features/platform/currencies
@@ -2970,6 +2994,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3152,6 +3179,72 @@ importers:
         specifier: 'catalog:'
         version: 4.1.18
 
+  devtools/account-balances:
+    devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.27
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.11(react@19.1.4)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@support/jest-devtools':
+        specifier: workspace:*
+        version: link:../../support/jest-devtools
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   devtools/bindings:
     dependencies:
       '@devtools/env':
@@ -3163,12 +3256,18 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-balance
       '@features/flow-pay-feature-tour':
         specifier: workspace:*
         version: link:../../features/flow/pay-feature-tour
       '@features/flow-pay-request':
         specifier: workspace:*
         version: link:../../features/flow/pay-request
+      '@features/platform-account-data':
+        specifier: workspace:*
+        version: link:../../features/platform/account-data
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -3188,6 +3287,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
+      '@shared/schema-primitives':
+        specifier: workspace:*
+        version: link:../../shared/schema-primitives
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3695,6 +3797,9 @@ importers:
 
   devtools/registry:
     dependencies:
+      '@devtools/account-balances':
+        specifier: workspace:*
+        version: link:../account-balances
       '@devtools/cloud-sync':
         specifier: workspace:*
         version: link:../cloud-sync
@@ -4633,6 +4738,49 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-balance:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../currency-token
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7550,6 +7698,73 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+
+  features/platform/account-data:
+    dependencies:
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-balance
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+    devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-token
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
 
   features/platform/aggregated-assets:
     dependencies:
@@ -12780,6 +12995,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -13113,6 +13331,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -48190,6 +48411,21 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
+  '@ledgerhq/lumen-ui-react@0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.27
+      '@ledgerhq/lumen-utils-shared': 0.1.11(react@19.1.4)
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      i18next: 23.10.1
+      react: 19.1.4
+      react-dom: 19.1.4(react@19.1.4)
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      tailwind-merge: 3.4.0
+    transitivePeerDependencies:
+      - react-native
+
   '@ledgerhq/lumen-ui-react@0.1.56(@ledgerhq/lumen-design-core@0.1.27)(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.27
@@ -57993,7 +58229,7 @@ snapshots:
       lru-cache: 6.0.0
       minipass: 3.3.6
       minipass-collect: 1.0.2
-      minipass-flush: 1.0.5
+      minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
       mkdirp: 1.0.4
       p-map: 4.0.0

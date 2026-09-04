@@ -1,0 +1,53 @@
+{
+  "name": "@features/platform-account-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account balance reads: the source contract, the fetch thunk and the React hook",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./react": {
+      "default": "./src/react.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-account-balance": "workspace:^",
+    "@shared/schema-primitives": "workspace:^",
+    "@reduxjs/toolkit": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@domain/entity-currency-token": "workspace:^",
+    "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  }
+}

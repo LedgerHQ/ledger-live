@@ -16,9 +16,11 @@ import {
   useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
+  useAccountBalancesToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { useAccountBalancesInputs } from "./useAccountBalancesInputs";
 
 const APPLICATION_ID = 16;
 
@@ -30,6 +32,7 @@ export function useDevToolsScreenViewModel() {
   const envToolProps = useEnvDevToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
+  const accountBalancesToolProps = useAccountBalancesToolProps(useAccountBalancesInputs());
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>
@@ -88,6 +91,7 @@ export function useDevToolsScreenViewModel() {
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
+      { id: "account-balances", config: accountBalancesToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -95,6 +99,7 @@ export function useDevToolsScreenViewModel() {
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,
+      accountBalancesToolProps,
     ],
   );
 

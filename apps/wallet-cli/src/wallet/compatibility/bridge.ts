@@ -9,6 +9,8 @@ import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridg
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
+import type { AccountBalance } from "@domain/entity-account-balance";
+import { toAccountBalances } from "@ledgerhq/live-common/legacy-mapping/accountBalance";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
@@ -18,7 +20,7 @@ import type {
 } from "@ledgerhq/coin-solana/types";
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
-import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
+import type { AccountDescriptor, Operation, SendEvent } from "../models";
 import type { EarnSolanaStake } from "../earn/types";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
@@ -129,23 +131,13 @@ export class BridgeAdapter {
     });
   }
 
-  async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
-    const account = await this.sync(descriptor);
-    const balances: Balance[] = [
-      {
-        assetId: account.currency.id,
-        balance: BigNumberStrSchema.parse(account.balance.toFixed()),
-      },
-    ];
-    for (const sub of account.subAccounts ?? []) {
-      if (sub.type === "TokenAccount") {
-        balances.push({
-          assetId: sub.token.id,
-          balance: BigNumberStrSchema.parse(sub.balance.toFixed()),
-        });
-      }
-    }
-    return balances;
+  /**
+   * The account's balances, obtained the only way a legacy bridge can: a **full** sync — the whole
+   * operation history, the balance-history cache, the family resource bag — of which one number is
+   * kept. `toAccountBalances` projects the synced account onto the rows a source must return.
+   */
+  async getBalanceRows(descriptor: AccountDescriptor): Promise<AccountBalance[]> {
+    return toAccountBalances(await this.sync(descriptor));
   }
 
   async getOperations(descriptor: AccountDescriptor): Promise<Operation[]> {
