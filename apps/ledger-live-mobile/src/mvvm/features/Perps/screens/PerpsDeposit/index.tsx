@@ -15,9 +15,8 @@ const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
 
 function QuotedAmount({
   formattedQuotedAmount,
-  quotedAmountTicker,
   isQuoteLoading,
-}: Pick<PerpsDepositViewModel, "formattedQuotedAmount" | "quotedAmountTicker" | "isQuoteLoading">) {
+}: Pick<PerpsDepositViewModel, "formattedQuotedAmount" | "isQuoteLoading">) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
@@ -34,10 +33,7 @@ function QuotedAmount({
 
   return (
     <Text typography="body3" lx={{ color: "muted" }}>
-      {t("perpsDeposit.inputDepositAmount", {
-        value: formattedQuotedAmount,
-        currencyTicker: quotedAmountTicker,
-      })}
+      {t("perpsDeposit.inputDepositAmount", { value: formattedQuotedAmount })}
     </Text>
   );
 }
@@ -73,7 +69,6 @@ export function PerpsDepositView({
   amountText,
   depositAmount,
   formattedQuotedAmount,
-  quotedAmountTicker,
   isQuoteLoading,
   counterValueCode,
   maxDecimalLength,
@@ -126,7 +121,6 @@ export function PerpsDepositView({
           />
           <QuotedAmount
             formattedQuotedAmount={formattedQuotedAmount}
-            quotedAmountTicker={quotedAmountTicker}
             isQuoteLoading={isQuoteLoading}
           />
           <AmountMessage statusError={statusError} depositAmount={depositAmount} />
