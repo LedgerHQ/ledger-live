@@ -18,6 +18,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
+import { useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
@@ -33,11 +35,14 @@ type NavigationProp = BaseNavigationComposite<
   NativeStackNavigationProp<MyWalletNavigatorStackParamList>
 >;
 
-export function useContactsPageViewModel(): ContactsPageViewModel {
+export function useContactsPageViewModel(
+  onSelectContact?: (contact: Contact) => void,
+): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
+  const contacts = useContacts();
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -77,9 +82,16 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
     contactId => {
       trackContactsListContactOpen(analytics, contactId, meContact.id);
+      if (onSelectContact) {
+        const contact = contacts.find(candidate => candidate.id === contactId);
+        if (contact && !contact.isMe) {
+          onSelectContact(contact);
+          return;
+        }
+      }
       navigation.navigate(ScreenName.MyWalletContactDetail, { contactId });
     },
-    [analytics, meContact.id, navigation],
+    [analytics, contacts, meContact.id, navigation, onSelectContact],
   );
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
@@ -117,8 +129,12 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
+  const showFeatureIntroduction = !onSelectContact && featureIntroductionState.isRequested;
+  // Pay never shows Introducing Contacts. Until you have seen that sheet on Contacts
+  // (Explore now, or close after LIVE-36870), Add contact here would open nothing if
+  // Ledger Sync is off. Pass the intro you actually see so you still get Sync your wallet.
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
-    isFeatureIntroductionRequested: featureIntroductionState.isRequested,
+    isFeatureIntroductionRequested: showFeatureIntroduction,
     ledgerSyncStatus,
     isLedgerSyncIntroductionRequested,
   });
@@ -140,7 +156,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     onOpenContact,
     ledgerSyncStatus,
     featureIntroduction: {
-      isOpen: featureIntroductionState.isRequested,
+      isOpen: showFeatureIntroduction,
       title: t("contacts.featureIntroduction.title"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),

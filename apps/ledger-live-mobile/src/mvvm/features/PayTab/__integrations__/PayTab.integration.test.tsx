@@ -495,7 +495,7 @@ describe("PayTab integration", () => {
       await user.press(screen.getByTestId("pay-contacts-see-all"));
 
       expect(await screen.findByTestId("my-wallet-contacts-screen")).toHaveTextContent(
-        `${ScreenName.MyWalletContacts}:Pay contact`,
+        `${ScreenName.MyWalletContacts}:Pay contact:selectContactToPay`,
       );
     });
 

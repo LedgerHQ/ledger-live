@@ -16,7 +16,7 @@ export function usePayTabContacts(open: (contact?: Contact) => void): ContactsNa
   const openPayContactList = useCallback(() => {
     navigation.navigate(NavigatorName.MyWallet, {
       screen: ScreenName.MyWalletContacts,
-      params: { title: t("payTab.contacts.seeAllTitle") },
+      params: { title: t("payTab.contacts.seeAllTitle"), selectContactToPay: true },
     });
   }, [navigation, t]);
   const onPay = useCallback(() => open(), [open]);
