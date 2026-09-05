@@ -64,7 +64,7 @@ type TestStackParamList = {
   [NavigatorName.MyWallet]:
     | {
         screen: typeof ScreenName.MyWalletContacts;
-        params?: { title?: string };
+        params?: { title?: string; selectForPay?: boolean };
       }
     | {
         screen: typeof ScreenName.MyWalletContactDetail;
@@ -99,6 +99,8 @@ function MyWalletContactsScreen({
   const params = route.params?.params;
   const detail = params && "contactId" in params ? params.contactId : undefined;
   const title = params && "title" in params ? params.title : undefined;
+  const selectForPay =
+    params && "selectForPay" in params && params.selectForPay ? "selectForPay" : undefined;
 
   return (
     <Text
@@ -108,7 +110,7 @@ function MyWalletContactsScreen({
           : "my-wallet-contacts-screen"
       }
     >
-      {screenName}:{title ?? detail ?? ""}
+      {[screenName, title ?? detail, selectForPay].filter(Boolean).join(":")}
     </Text>
   );
 }
