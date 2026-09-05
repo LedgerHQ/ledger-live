@@ -8,10 +8,7 @@ import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSwap";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { ExchangeType, type SwapUiRequest } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import {
-  getWalletApiIdFromAccountId,
-  setWalletApiIdForAccountId,
-} from "@ledgerhq/live-common/wallet-api/converters";
+import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
@@ -218,10 +215,6 @@ export function usePerpsDepositExecution(
     try {
       // Reset to the loading state on every run (including retry after an error).
       setDeviceStep(PROCESSING_STEP);
-
-      // `executeSwap` resolves both accounts by their wallet-api id.
-      setWalletApiIdForAccountId(depositAccount.id);
-      setWalletApiIdForAccountId(receiverAccount.id);
 
       const depositCurrency = getAccountCurrency(depositAccount);
 
