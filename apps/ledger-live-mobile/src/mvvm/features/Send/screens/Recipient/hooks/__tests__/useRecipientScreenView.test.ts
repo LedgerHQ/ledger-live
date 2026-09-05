@@ -13,7 +13,6 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
-import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
 
 jest.mock("../useAddressValidation");
@@ -24,7 +23,6 @@ jest.mock("@features/platform-contacts", () => ({
   useContacts: jest.fn(),
   useContactsFeature: jest.fn(),
 }));
-jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
@@ -33,7 +31,6 @@ const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
-const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
@@ -90,11 +87,6 @@ describe("useRecipientScreenView", () => {
       isEnabled: false,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
-    });
-    mockedUseRecipientContactSelection.mockReturnValue({
-      selectedContact: undefined,
-      selectContact: jest.fn(),
-      clearSelectedContact: jest.fn(),
     });
     mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
       isOpen: false,
