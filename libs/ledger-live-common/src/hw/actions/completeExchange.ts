@@ -32,7 +32,7 @@ type CompleteExchangeRequest = {
   rate?: number;
   amountExpectedTo?: number;
 };
-type Result =
+export type Result =
   | {
       completeExchangeResult: Transaction;
     }

@@ -9827,6 +9827,9 @@
     "depositReceiveLabel": "Receiver account",
     "depositCTA": "Deposit"
   },
+  "perpsDepositSign": {
+    "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
+  },
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}",

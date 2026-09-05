@@ -8,6 +8,7 @@ import { PERPS_DEPOSIT_PROVIDER_ID } from "../../constants/depositFunding";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
+import { PerpsDepositSign } from "./components/PerpsDepositSign";
 import { PerpsReview } from "./components/PerpsReview";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
@@ -64,7 +65,7 @@ function AmountMessage({
   return null;
 }
 
-export function PerpsDepositView({
+function DepositForm({
   headerDescription,
   amountText,
   depositAmount,
@@ -86,23 +87,11 @@ export function PerpsDepositView({
   missingAccount,
   pickDepositAccount,
   handleReview,
-  isReviewOpen,
-  reviewParams,
-  closeReview,
 }: Readonly<PerpsDepositViewModel>) {
   const { t } = useTranslation();
-  const styles = useStyleSheet(
-    theme => ({
-      root: {
-        flex: 1,
-        backgroundColor: theme.colors.bg.base,
-      },
-    }),
-    [],
-  );
 
   return (
-    <SafeAreaView edges={["bottom"]} style={styles.root}>
+    <>
       <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
         <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
           {headerDescription}
@@ -164,9 +153,44 @@ export function PerpsDepositView({
           {t("perpsDeposit.review")}
         </Button>
       </Box>
+    </>
+  );
+}
+
+export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
+  const { isReviewOpen, reviewParams, closeReview, isSignOpen, handOverToDevice } = viewModel;
+  const { signingDevice, selectSigningDevice, returnToReview, endSigning } = viewModel;
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+        backgroundColor: theme.colors.bg.base,
+      },
+    }),
+    [],
+  );
+
+  return (
+    <SafeAreaView edges={["bottom"]} style={styles.root}>
+      <DepositForm {...viewModel} />
+
+      {isSignOpen && reviewParams ? (
+        <PerpsDepositSign
+          {...reviewParams}
+          selectedDevice={signingDevice}
+          onSelectDevice={selectSigningDevice}
+          onDone={endSigning}
+          onRefused={returnToReview}
+        />
+      ) : null}
 
       {reviewParams ? (
-        <PerpsReview {...reviewParams} isOpen={isReviewOpen} onClose={closeReview} />
+        <PerpsReview
+          {...reviewParams}
+          isOpen={isReviewOpen}
+          onClose={closeReview}
+          onConfirm={handOverToDevice}
+        />
       ) : null}
     </SafeAreaView>
   );
