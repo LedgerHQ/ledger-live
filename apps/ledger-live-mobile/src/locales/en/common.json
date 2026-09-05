@@ -9828,7 +9828,7 @@
   },
   "perpsDeposit": {
     "title": "Deposit",
-    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
+    "inputDepositAmount": "Deposit ~{{value}}",
     "inputSubText": "Swap and deposit via {{provider}}",
     "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
     "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
