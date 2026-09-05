@@ -342,7 +342,7 @@ jobs:
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/skip-redundant-pr-comment-jobs
     permissions:
       security-events: write
       contents: read
@@ -385,8 +385,18 @@ jobs:
       contents: read
       pull-requests: write
     needs: determine-affected
-    if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    # Union of the paths the reusable workflow's script can post on: a package.json
+    # bump marks its project affected, so `criticalLibsChanged` stays covered here.
+    if: >-
+      ${{ github.event_name == 'pull_request'
+        && github.event.pull_request.draft == false
+        && !github.event.pull_request.head.repo.fork
+        && (contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-desktop')
+          || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile')
+          || contains(needs.determine-affected.outputs.paths, 'libs/ledger-live-common')
+          || contains(needs.determine-affected.outputs.paths, 'libs/coin-framework')
+          || contains(needs.determine-affected.outputs.paths, 'libs/coin-modules')) }}
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@ci/skip-redundant-pr-comment-jobs
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
 
