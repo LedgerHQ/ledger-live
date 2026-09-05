@@ -10061,5 +10061,44 @@
       "totalMaturity": "Total Maturity",
       "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
     }
+  },
+  "perpsReview": {
+    "depositTitle": "Deposit via SwapKit",
+    "depositSubtitle": "Our partner SwapKit manages your swap and deposit in one transaction - all secured by your Ledger device.",
+    "swapDetailTitle": "Swap details",
+    "amountSendLabel": "Amount send",
+    "amountReceiveLabel": "Amount receive",
+    "approximateValue": "~{{value}}",
+    "depositDetailTitle": "Deposit details",
+    "depositAmountLabel": "Deposit amount",
+    "depositReceiveLabel": "Receiver account",
+    "depositCTA": "Deposit"
+  },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}",
+    "inputSubText": "Swap and deposit via {{provider}}",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount": "No account",
+    "review": "Review",
+    "formErrors": {
+      "amountExceedsBalance": "Insufficient balance",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsDepositSign": {
+    "a11yTitle": "Deposit signing",
+    "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
+  },
+  "perpsTransactionSigned": {
+    "title": "Transaction signed",
+    "description": "You'll receive your {{currency}} once confirmed on the blockchain",
+    "viewTransaction": "View transaction"
+  },
+  "perpsTransactionStatus": {
+    "dialogTitle": "Transaction detail",
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}"
   }
 }

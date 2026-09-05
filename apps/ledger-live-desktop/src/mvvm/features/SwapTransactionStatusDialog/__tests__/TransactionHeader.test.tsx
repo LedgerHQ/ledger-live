@@ -61,6 +61,21 @@ describe("TransactionHeader", () => {
     expect(screen.getByText(formatCreatedAt(createdAt, "en-US"))).toBeVisible();
   });
 
+  it("should name the perps deposit and keep the swapped pair on its own line", () => {
+    render(
+      <TransactionHeader
+        sendCurrency={bitcoin}
+        receiveCurrency={ethereum}
+        createdAt={new Date(2024, 0, 2, 15, 4).getTime()}
+        locale="en-US"
+        origin="perps"
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Fund Perpetuals BTC → ETH" })).toBeVisible();
+    expect(screen.queryByText("Swap BTC → ETH")).not.toBeInTheDocument();
+  });
+
   it("should render token icons without a parent network badge", () => {
     render(
       <TransactionHeader

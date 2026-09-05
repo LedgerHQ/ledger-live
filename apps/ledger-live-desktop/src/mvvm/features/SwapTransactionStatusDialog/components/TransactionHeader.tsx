@@ -4,6 +4,7 @@ import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { formatCreatedAt } from "../utils";
 
 type TransactionHeaderProps = Readonly<{
@@ -11,6 +12,13 @@ type TransactionHeaderProps = Readonly<{
   receiveCurrency?: CryptoOrTokenCurrency;
   createdAt?: number;
   locale: string;
+  origin?: SwapTransactionStatusOrigin;
+}>;
+
+type HeaderTitleProps = Readonly<{
+  origin?: SwapTransactionStatusOrigin;
+  sendTicker: string;
+  receiveTicker: string;
 }>;
 
 function HeaderCurrencyIcon({
@@ -26,13 +34,38 @@ function HeaderCurrencyIcon({
   );
 }
 
+/** Perps leads with the deposit it is funding, and keeps the swapped pair on its own line. */
+function HeaderTitle({ origin, sendTicker, receiveTicker }: HeaderTitleProps) {
+  const { t } = useTranslation();
+
+  if (origin === "perps") {
+    return (
+      <h2
+        data-testid="swap-transaction-title"
+        className="heading-4-semi-bold text-base text-center"
+      >
+        <span className="block">{t("perpsTransactionStatus.title")}</span>
+        <span className="block">
+          {t("perpsTransactionStatus.currencies", { sendTicker, receiveTicker })}
+        </span>
+      </h2>
+    );
+  }
+
+  return (
+    <h2 data-testid="swap-transaction-title" className="heading-4-semi-bold text-base">
+      {t("swap2.modals.transactionStatus.title", { sendTicker, receiveTicker })}
+    </h2>
+  );
+}
+
 export function TransactionHeader({
   sendCurrency,
   receiveCurrency,
   createdAt,
   locale,
+  origin,
 }: TransactionHeaderProps) {
-  const { t } = useTranslation();
   const hasCurrencies = sendCurrency !== undefined && receiveCurrency !== undefined;
 
   return (
@@ -51,12 +84,11 @@ export function TransactionHeader({
         {hasCurrencies ? null : <Skeleton className="size-48 rounded-full" />}
       </div>
       {hasCurrencies ? (
-        <h2 data-testid="swap-transaction-title" className="heading-4-semi-bold text-base">
-          {t("swap2.modals.transactionStatus.title", {
-            sendTicker: sendCurrency.ticker,
-            receiveTicker: receiveCurrency.ticker,
-          })}
-        </h2>
+        <HeaderTitle
+          origin={origin}
+          sendTicker={sendCurrency.ticker}
+          receiveTicker={receiveCurrency.ticker}
+        />
       ) : (
         <Skeleton className="h-24 w-176 rounded-sm" />
       )}

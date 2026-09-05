@@ -88,7 +88,7 @@ type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
 };
 
-type States = PartialNullable<{
+export type States = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
@@ -168,6 +168,9 @@ type InnerProps<P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
   location?: HOOKS_TRACKING_LOCATIONS;
+  // Replaces the on-device exchange confirmation with a caller-owned screen, for
+  // flows that reuse the exchange behind their own design.
+  renderExchangeConfirmation?: () => React.ReactNode;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -200,6 +203,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   inlineRetry = true,
   analyticsPropertyFlow,
   location,
+  renderExchangeConfirmation,
 }: Props<H, P> & {
   request?: R;
 }) => {
@@ -512,6 +516,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
+    if (renderExchangeConfirmation) {
+      return renderExchangeConfirmation();
+    }
+
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
