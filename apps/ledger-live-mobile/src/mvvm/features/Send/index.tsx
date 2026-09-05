@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
+import { SendContactsFirstProvider } from "./context/SendContactsFirstContext";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import { SEND_FLOW_CONFIG } from "./constants";
 
@@ -37,6 +38,7 @@ type SendWorkflowParams = Readonly<{
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
+  selectContactBeforeAccount?: boolean;
 }>;
 
 type SendWorkflowRouteParams = {
@@ -50,6 +52,7 @@ type SendWorkflowRouteParams = {
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
+  selectContactBeforeAccount?: boolean;
 };
 
 export default function SendWorkflow() {
@@ -82,15 +85,22 @@ export default function SendWorkflow() {
     [params, routeParams],
   );
 
+  const selectContactBeforeAccount = Boolean(
+    params?.selectContactBeforeAccount ?? routeParams?.selectContactBeforeAccount,
+  );
+
   return (
     <DomainServiceProvider>
       <React.Suspense fallback={null}>
-        <SendFlowOrchestrator
-          initParams={initParams}
-          onClose={handleClose}
-          stepRegistry={stepRegistry}
-          flowConfig={SEND_FLOW_CONFIG}
-        />
+        <SendContactsFirstProvider enabled={selectContactBeforeAccount}>
+          <SendFlowOrchestrator
+            key={initParams.account?.id ?? (selectContactBeforeAccount ? "contacts-first" : "send")}
+            initParams={initParams}
+            onClose={handleClose}
+            stepRegistry={stepRegistry}
+            flowConfig={SEND_FLOW_CONFIG}
+          />
+        </SendContactsFirstProvider>
       </React.Suspense>
     </DomainServiceProvider>
   );

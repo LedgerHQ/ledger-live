@@ -226,7 +226,10 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SendFlow]: {
     onClose?: () => void;
-    params?: SendFlowInitParams;
+    params?: SendFlowInitParams & {
+      /** Open Send on the contact list. The user picks a contact, then a source account. */
+      selectContactBeforeAccount?: boolean;
+    };
   };
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;

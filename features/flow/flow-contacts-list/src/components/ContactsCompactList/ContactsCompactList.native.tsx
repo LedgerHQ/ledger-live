@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   ListItem,
   ListItemContent,
@@ -7,11 +7,36 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar } from "@features/platform-contacts";
-import type { ContactsCompactListProps } from "../../types";
+import type { ContactsCompactListProps, ContactsCompactRowProps } from "../../types";
 import {
   getCompactContactAddressDescription,
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
+
+export const ContactsCompactRow = memo(function ContactsCompactRow({
+  contact,
+  labels,
+  onContactSelect,
+}: ContactsCompactRowProps): React.JSX.Element {
+  return (
+    <ListItem
+      testID={`contacts-compact-row-${contact.id}`}
+      onPress={() => onContactSelect(contact)}
+      density="expanded"
+      lx={{ marginHorizontal: "-s8" }}
+    >
+      <ListItemLeading>
+        <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
+        <ListItemContent>
+          <ListItemTitle>{contact.name}</ListItemTitle>
+          <ListItemDescription>
+            {getCompactContactAddressDescription(contact, labels)}
+          </ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+    </ListItem>
+  );
+});
 
 export function ContactsCompactList({
   contacts,
@@ -24,23 +49,12 @@ export function ContactsCompactList({
   return (
     <>
       {displayedContacts.map(contact => (
-        <ListItem
+        <ContactsCompactRow
           key={contact.id}
-          testID={`contacts-compact-row-${contact.id}`}
-          onPress={() => onContactSelect(contact)}
-          density="expanded"
-          lx={{ marginHorizontal: "-s8" }}
-        >
-          <ListItemLeading>
-            <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
-            <ListItemContent>
-              <ListItemTitle>{contact.name}</ListItemTitle>
-              <ListItemDescription>
-                {getCompactContactAddressDescription(contact, labels)}
-              </ListItemDescription>
-            </ListItemContent>
-          </ListItemLeading>
-        </ListItem>
+          contact={contact}
+          labels={labels}
+          onContactSelect={onContactSelect}
+        />
       ))}
     </>
   );
