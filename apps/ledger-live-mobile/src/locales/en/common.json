@@ -9835,6 +9835,11 @@
     "description": "You'll receive your {{currency}} once confirmed on the blockchain",
     "viewTransaction": "View transaction"
   },
+  "perpsTransactionStatus": {
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
+  },
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}",

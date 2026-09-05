@@ -29,7 +29,7 @@ export function usePerpsTransactionSignedViewModel({
   const handleViewTransaction = useCallback(() => {
     if (!swapId) return;
     navigation.goBack();
-    dispatch(openSwapTransactionStatusDrawer({ swapId, provider }));
+    dispatch(openSwapTransactionStatusDrawer({ swapId, provider, origin: "perps" }));
   }, [dispatch, navigation, provider, swapId]);
 
   return {
