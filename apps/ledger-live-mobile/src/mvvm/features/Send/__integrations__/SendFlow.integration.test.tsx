@@ -446,6 +446,34 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
+  it("should keep the send title when the address sheet is open", async () => {
+    const vincent = mockContact({
+      id: "contact-vincent-header",
+      name: "Vincent",
+      addresses: [
+        mockContactAddress({
+          id: "address-vincent-header-eth",
+          currencyId: "ethereum",
+          label: "Ethereum Main",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [vincent] },
+    );
+
+    expect(await screen.findByText("Send ETH")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-vincent-header"));
+
+    expect(await screen.findByText("Select Vincent's address")).toBeVisible();
+    expect(screen.getByText("Send ETH")).toBeVisible();
+    expect(screen.queryByText("Select address")).not.toBeOnTheScreen();
+  });
+
   it("should open the address sheet when a contact has several network addresses", async () => {
     const contacts = [
       mockContact({
