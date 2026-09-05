@@ -64,7 +64,7 @@ type TestStackParamList = {
   [NavigatorName.MyWallet]:
     | {
         screen: typeof ScreenName.MyWalletContacts;
-        params?: { title?: string; selectContactToPay?: boolean };
+        params?: { title?: string };
       }
     | {
         screen: typeof ScreenName.MyWalletContactDetail;
@@ -79,11 +79,12 @@ type TestStackParamList = {
     | undefined;
   [NavigatorName.SendFlow]:
     | {
-        params?: { selectContactBeforeAccount?: boolean };
+        params?: { selectContactBeforeAccount?: boolean; account?: { id: string } };
       }
     | undefined;
 };
 
+const RootStack = createNativeStackNavigator<{ [NavigatorName.Base]: undefined }>();
 const Stack = createNativeStackNavigator<TestStackParamList>();
 const RequestStack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
@@ -104,10 +105,6 @@ function MyWalletContactsScreen({
   const params = route.params?.params;
   const detail = params && "contactId" in params ? params.contactId : undefined;
   const title = params && "title" in params ? params.title : undefined;
-  const selectContactToPay =
-    params && "selectContactToPay" in params && params.selectContactToPay
-      ? "selectContactToPay"
-      : undefined;
 
   return (
     <Text
@@ -117,7 +114,7 @@ function MyWalletContactsScreen({
           : "my-wallet-contacts-screen"
       }
     >
-      {[screenName, title ?? detail, selectContactToPay].filter(Boolean).join(":")}
+      {[screenName, title ?? detail].filter(Boolean).join(":")}
     </Text>
   );
 }
@@ -135,10 +132,25 @@ function SendFundsScreen({
 function SendFlowScreen({
   route,
 }: NativeStackScreenProps<TestStackParamList, NavigatorName.SendFlow>) {
+  const params = route.params?.params;
+  const label = params?.selectContactBeforeAccount
+    ? "selectContactBeforeAccount"
+    : params?.account
+      ? `send:${params.account.id}`
+      : "";
+
+  return <Text testID="send-flow-screen">{label}</Text>;
+}
+
+function AppBase() {
   return (
-    <Text testID="send-flow-screen">
-      {route.params?.params?.selectContactBeforeAccount ? "selectContactBeforeAccount" : ""}
-    </Text>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
+      <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
+      <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
+      <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
+      <Stack.Screen name={NavigatorName.SendFlow} component={SendFlowScreen} />
+    </Stack.Navigator>
   );
 }
 
@@ -255,13 +267,9 @@ export function renderPayTab({
 }: RenderPayTabOptions = {}) {
   return render(
     <>
-      <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-        <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
-        <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
-        <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
-        <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
-        <Stack.Screen name={NavigatorName.SendFlow} component={SendFlowScreen} />
-      </Stack.Navigator>
+      <RootStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+        <RootStack.Screen name={NavigatorName.Base} component={AppBase} />
+      </RootStack.Navigator>
       <ModularDrawerWrapper />
     </>,
     {
@@ -270,6 +278,10 @@ export function renderPayTab({
           llmModularDrawer: {
             enabled: true,
             params: { enableModularization: true, searchDebounceTime: 0 },
+          },
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
           },
           ...(contactsEnabled
             ? { lwmContacts: { enabled: true, params: { newBadge: false } } }

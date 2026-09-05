@@ -84,7 +84,7 @@ export function useContactsPageViewModel(
       trackContactsListContactOpen(analytics, contactId, meContact.id);
       if (onSelectContact) {
         const contact = contacts.find(candidate => candidate.id === contactId);
-        if (contact && !contact.isMe) {
+        if (contact) {
           onSelectContact(contact);
           return;
         }
@@ -129,10 +129,9 @@ export function useContactsPageViewModel(
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
-  const showFeatureIntroduction = !onSelectContact && featureIntroductionState.isRequested;
-  // Pay never shows Introducing Contacts. Until you have seen that sheet on Contacts
-  // (Explore now, or close after LIVE-36870), Add contact here would open nothing if
-  // Ledger Sync is off. Pass the intro you actually see so you still get Sync your wallet.
+  const isSelectingContact = Boolean(onSelectContact);
+  const showFeatureIntroduction = !isSelectingContact && featureIntroductionState.isRequested;
+  // Sync sheet stays closed while Introducing Contacts is up. Pay skips that sheet.
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: showFeatureIntroduction,
     ledgerSyncStatus,
