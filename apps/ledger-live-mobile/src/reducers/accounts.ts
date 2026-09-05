@@ -31,6 +31,7 @@ import type {
   AccountsPayload,
   AccountsReorderPayload,
   AccountsUpdateAccountWithUpdaterPayload,
+  AccountsUpdateAccountsWithUpdatersPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
   AccountsReplacePayload,
@@ -88,6 +89,38 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     };
   },
 
+  [AccountsActionTypes.UPDATE_ACCOUNTS]: (state, action) => {
+    const {
+      payload: { updates },
+    } = action as Action<AccountsUpdateAccountsWithUpdatersPayload>;
+    // Skip the map entirely when nothing to fold (defensive; the debounce in
+    // BridgeSyncContext only flushes non-empty batches).
+    if (updates.length === 0) return state;
+
+    const updatersByAccountId = new Map<string, AccountsUpdateAccountWithUpdaterPayload[]>();
+    for (const update of updates) {
+      const list = updatersByAccountId.get(update.accountId);
+      if (list) list.push(update);
+      else updatersByAccountId.set(update.accountId, [update]);
+    }
+
+    function update(existingAccount: Account) {
+      const accountUpdaters = updatersByAccountId.get(existingAccount.id);
+      if (!accountUpdaters) return existingAccount;
+      let next = { ...existingAccount };
+      // Fold in emission order so the last update per account wins per field
+      // (mirrors N sequential UPDATE_ACCOUNT dispatches).
+      for (const { updater } of accountUpdaters) {
+        next = { ...next, ...updater(next) };
+      }
+      return next;
+    }
+
+    return {
+      active: state.active.map(update),
+    };
+  },
+
   [AccountsActionTypes.DELETE_ACCOUNT]: (state, action) => ({
     active: state.active.filter(
       acc => acc.id !== (action as Action<AccountsDeleteAccountPayload>).payload.id,
@@ -109,6 +142,20 @@ const handlers: ReducerMap<AccountsState, Payload> = {
 
 // Selectors
 
+// ponytail: per-reference encode cache. Safe because account updates are
+// immutable (a changed account gets a new reference) and userData (name/stars,
+// from the wallet slice) is re-checked. Ceiling: accountModel.encode applies a
+// Date.now()-based op-retention filter, so a cached row can retain operations
+// past the 366-day cutoff until the next app start; drop this cache if
+// retention ever becomes correctness-critical.
+const encodeCache = new WeakMap<
+  Account,
+  {
+    userData: AccountUserData;
+    encoded: Promise<{ data: AccountRaw; version: number }>;
+  }
+>();
+
 export async function exportSelector(state: State): Promise<{
   active: {
     data: AccountRaw;
@@ -120,7 +167,11 @@ export async function exportSelector(state: State): Promise<{
       .map(account => {
         const accountUserData = accountUserDataExportSelector(state.wallet, { account });
         if (!accountUserData) return null;
-        return accountModel.encode([account, accountUserData]);
+        const cached = encodeCache.get(account);
+        if (cached && isEqual(cached.userData, accountUserData)) return cached.encoded;
+        const encoded = accountModel.encode([account, accountUserData]);
+        encodeCache.set(account, { userData: accountUserData, encoded });
+        return encoded;
       })
       .filter((p): p is Promise<{ data: AccountRaw; version: number }> => p !== null),
   );

@@ -2,7 +2,7 @@ import { groupAccountsOperationsByDay } from "@ledgerhq/ledger-wallet-framework/
 import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import {
   counterValueCurrencySelector,
@@ -84,11 +84,15 @@ export function useOperationsV1(
     ],
   );
 
-  const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-    count: opCount,
-    withSubAccounts: true,
-    filterOperation,
-  });
+  const { sections, completed } = useMemo(
+    () =>
+      groupAccountsOperationsByDay(accounts, {
+        count: opCount,
+        withSubAccounts: true,
+        filterOperation,
+      }),
+    [accounts, opCount, filterOperation],
+  );
 
   return {
     sections,

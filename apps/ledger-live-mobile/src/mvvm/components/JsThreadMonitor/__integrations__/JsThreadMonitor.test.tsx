@@ -43,13 +43,14 @@ describe("JsThreadMonitor Integration", () => {
     }
   }
 
-  it("should render nothing when JS_THREAD_MONITOR is disabled", () => {
+  it("should render the badge in dev even when JS_THREAD_MONITOR is disabled", () => {
+    // __DEV__ is true under the RN jest preset, so the overlay renders regardless of the flag
     useEnvMock.mockReturnValue(false);
 
-    const { queryByText } = render(<JsThreadMonitor />);
+    const { getAllByText } = render(<JsThreadMonitor />);
 
-    expect(queryByText("-")).toBeNull();
-    expect(queryByText("%")).toBeNull();
+    const placeholders = getAllByText("-");
+    expect(placeholders.length).toBe(2);
   });
 
   it("should render placeholder values before enough samples are collected", () => {
@@ -91,12 +92,21 @@ describe("JsThreadMonitor Integration", () => {
     expect(getByText("100ms")).toBeTruthy();
   });
 
-  it("should not start the timer when the env is disabled", () => {
-    useEnvMock.mockReturnValue(false);
+  it("should not start the timer when the flag is off in a non-dev build", () => {
+    // Simulate a production bundle (__DEV__ is false outside dev)
+    // Cast: RN types declare __DEV__ as const, but the runtime global is writable
+    const devGlobal = globalThis as typeof globalThis & { __DEV__: boolean };
+    const originalDev = devGlobal.__DEV__;
+    devGlobal.__DEV__ = false;
+    try {
+      useEnvMock.mockReturnValue(false);
 
-    render(<JsThreadMonitor />);
+      render(<JsThreadMonitor />);
 
-    // AppState listener should not be registered when disabled
-    expect(AppState.addEventListener).not.toHaveBeenCalled();
+      // AppState listener should not be registered when disabled
+      expect(AppState.addEventListener).not.toHaveBeenCalled();
+    } finally {
+      devGlobal.__DEV__ = originalDev;
+    }
   });
 });

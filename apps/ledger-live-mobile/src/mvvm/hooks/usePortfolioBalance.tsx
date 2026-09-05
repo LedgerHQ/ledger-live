@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
@@ -24,14 +32,18 @@ import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 const DEFAULT_RANGE = "day" as const;
 
 /**
- * Single source of truth for portfolio balance and the sync lifecycle.
+ * Computes portfolio balance and the sync lifecycle ONCE.
+ *
+ * Mounted once by `PortfolioBalanceProvider` near the app root (AppView in
+ * src/index.tsx — it must sit above the MainNavigator headers where the TopBar
+ * consumers render, so it cannot live under the Portfolio screen root).
  *
  * Mobile equivalent of desktop's usePortfolioBalance.
  * Consumed independently by the TopBar (useSyncIndicator), the Balance section,
  * and the PortfolioRefreshStatus. All instances stay in sync because they read
  * the same Redux state and BridgeSync context.
  */
-export function usePortfolioBalance() {
+function usePortfolioBalanceState() {
   const dispatch = useDispatch();
   const { isConnected, isInternetReachable } = useNetInfo();
 
@@ -139,4 +151,35 @@ export function usePortfolioBalance() {
     handleSync,
     triggerRefresh,
   };
+}
+
+type UsePortfolioBalanceResult = ReturnType<typeof usePortfolioBalanceState>;
+
+const PortfolioBalanceContext = createContext<UsePortfolioBalanceResult | null>(null);
+
+/**
+ * Mounts `usePortfolioBalanceState` ONCE and shares the result to all
+ * `usePortfolioBalance()` consumers via context. Provider lives at AppView
+ * (src/index.tsx) because TopBar consumers render in navigator headers outside
+ * the Portfolio screen tree.
+ */
+export function PortfolioBalanceProvider({ children }: { children: ReactNode }) {
+  const value = usePortfolioBalanceState();
+  return (
+    <PortfolioBalanceContext.Provider value={value}>{children}</PortfolioBalanceContext.Provider>
+  );
+}
+
+/**
+ * Same signature/return shape as before; reads the shared context value instead
+ * of recomputing the expensive portfolio per consumer.
+ */
+export function usePortfolioBalance() {
+  const value = useContext(PortfolioBalanceContext);
+  if (value === null) {
+    throw new Error(
+      "usePortfolioBalance must be used within a PortfolioBalanceProvider (mounted at AppView in src/index.tsx)",
+    );
+  }
+  return value;
 }

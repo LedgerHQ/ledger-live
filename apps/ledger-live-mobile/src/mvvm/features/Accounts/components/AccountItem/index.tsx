@@ -1,5 +1,8 @@
 import React from "react";
-import useAccountItemModel, { AccountItemProps } from "./useAccountItemModel";
+import useAccountItemModel, {
+  useAccountItemModelHook,
+  AccountItemProps,
+} from "./useAccountItemModel";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import CounterValue from "~/components/CounterValue";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -69,6 +72,10 @@ const View: React.FC<ViewProps> = ({
   </>
 );
 
-const AccountItem: React.FC<AccountItemProps> = props => <View {...useAccountItemModel(props)} />;
+export const AccountItemHook = useAccountItemModelHook;
+
+const AccountItem: React.FC<AccountItemProps> = props => (
+  <View {...useAccountItemModelHook(props)} />
+);
 
 export default AccountItem;
