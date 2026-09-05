@@ -1,5 +1,6 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { fetchPerpsDepositQuote, PERPS_DEPOSIT_QUOTE_PROVIDER } from "./depositQuote";
+import { setWalletApiIdForAccountId } from "../converters";
 import { fetchQuotes } from "../Exchange/quotes/service/fetchQuotes";
 import type { FetchQuotesResult } from "../Exchange/quotes/service/types";
 
@@ -50,6 +51,7 @@ const rawQuote = {
 describe("fetchPerpsDepositQuote", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    accounts.forEach(account => setWalletApiIdForAccountId(account.id));
   });
 
   it("returns the amount the perps account receives, and the quote that priced it", async () => {

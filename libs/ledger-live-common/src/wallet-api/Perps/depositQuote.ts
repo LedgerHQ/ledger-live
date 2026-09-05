@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../converters";
+import { getWalletApiIdFromAccountId } from "../converters";
 import { resolveQuoteId } from "../Exchange/quotes/normalizer/quoteHelpers";
 import { resolveQuotesInput } from "../Exchange/quotes/resolveQuotesInput";
 import { fetchQuotes } from "../Exchange/quotes/service/fetchQuotes";
@@ -32,9 +32,6 @@ export async function fetchPerpsDepositQuote({
   amount,
   counterValueCurrency,
 }: PerpsDepositQuoteParams): Promise<PerpsDepositQuote | undefined> {
-  setWalletApiIdForAccountId(depositAccount.id);
-  setWalletApiIdForAccountId(receiverAccount.id);
-
   const quotesInput = resolveQuotesInput(
     {
       amount,

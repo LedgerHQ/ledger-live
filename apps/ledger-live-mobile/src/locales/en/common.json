@@ -9815,10 +9815,22 @@
       "cta": "Try again"
     }
   },
+  "perpsReview": {
+    "depositTitle": "Deposit via SwapKit",
+    "depositSubtitle": "Our partner SwapKit manages your swap and deposit in one transaction - all secured by your Ledger device.",
+    "swapDetailTitle": "Swap details",
+    "amountSendLabel": "Amount send",
+    "amountReceiveLabel": "Amount receive",
+    "approximateValue": "~{{value}}",
+    "depositDetailTitle": "Deposit details",
+    "depositAmountLabel": "Deposit amount",
+    "depositReceiveLabel": "Receiver account",
+    "depositCTA": "Deposit"
+  },
   "perpsDeposit": {
     "title": "Deposit",
-    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
-    "inputSubText": "Swap and deposit via SwapKit",
+    "inputDepositAmount": "Deposit ~{{value}}",
+    "inputSubText": "Swap and deposit via {{provider}}",
     "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
     "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
     "selectCurrencyNoAccount": "No account",
@@ -9826,7 +9838,7 @@
     "keypadDelete": "Delete last digit",
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
-      "quoteUnavailable": "We can’t get a quote from SwapKit, try with a different asset or come back later."
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
     }
   },
   "swapErrors": {

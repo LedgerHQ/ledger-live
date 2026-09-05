@@ -2,19 +2,21 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useTranslation } from "~/context/Locale";
+import { PERPS_DEPOSIT_PROVIDER_ID } from "../../constants/depositFunding";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
+import { PerpsReview } from "./components/PerpsReview";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
 
 function QuotedAmount({
   formattedQuotedAmount,
-  quotedAmountTicker,
   isQuoteLoading,
-}: Pick<PerpsDepositViewModel, "formattedQuotedAmount" | "quotedAmountTicker" | "isQuoteLoading">) {
+}: Pick<PerpsDepositViewModel, "formattedQuotedAmount" | "isQuoteLoading">) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
@@ -31,10 +33,7 @@ function QuotedAmount({
 
   return (
     <Text typography="body3" lx={{ color: "muted" }}>
-      {t("perpsDeposit.inputDepositAmount", {
-        value: formattedQuotedAmount,
-        currencyTicker: quotedAmountTicker,
-      })}
+      {t("perpsDeposit.inputDepositAmount", { value: formattedQuotedAmount })}
     </Text>
   );
 }
@@ -44,11 +43,12 @@ function AmountMessage({
   depositAmount,
 }: Pick<PerpsDepositViewModel, "statusError" | "depositAmount">) {
   const { t } = useTranslation();
+  const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
   if (statusError) {
     return (
       <Text typography="body3" lx={{ color: "error" }} testID="perps-deposit-form-error">
-        {t(statusError.labelKey)}
+        {t(statusError.labelKey, { provider })}
       </Text>
     );
   }
@@ -56,7 +56,7 @@ function AmountMessage({
   if (depositAmount > 0) {
     return (
       <Text typography="body3" lx={{ color: "base" }}>
-        {t("perpsDeposit.inputSubText")}
+        {t("perpsDeposit.inputSubText", { provider })}
       </Text>
     );
   }
@@ -69,7 +69,6 @@ export function PerpsDepositView({
   amountText,
   depositAmount,
   formattedQuotedAmount,
-  quotedAmountTicker,
   isQuoteLoading,
   counterValueCode,
   maxDecimalLength,
@@ -87,6 +86,9 @@ export function PerpsDepositView({
   missingAccount,
   pickDepositAccount,
   handleReview,
+  isReviewOpen,
+  reviewParams,
+  closeReview,
 }: Readonly<PerpsDepositViewModel>) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
@@ -119,7 +121,6 @@ export function PerpsDepositView({
           />
           <QuotedAmount
             formattedQuotedAmount={formattedQuotedAmount}
-            quotedAmountTicker={quotedAmountTicker}
             isQuoteLoading={isQuoteLoading}
           />
           <AmountMessage statusError={statusError} depositAmount={depositAmount} />
@@ -163,6 +164,10 @@ export function PerpsDepositView({
           {t("perpsDeposit.review")}
         </Button>
       </Box>
+
+      {reviewParams ? (
+        <PerpsReview {...reviewParams} isOpen={isReviewOpen} onClose={closeReview} />
+      ) : null}
     </SafeAreaView>
   );
 }
