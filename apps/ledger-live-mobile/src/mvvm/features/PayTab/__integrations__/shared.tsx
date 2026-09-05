@@ -77,6 +77,11 @@ type TestStackParamList = {
         params?: { currencyIds?: string[] };
       }
     | undefined;
+  [NavigatorName.SendFlow]:
+    | {
+        params?: { selectContactBeforeAccount?: boolean };
+      }
+    | undefined;
 };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
@@ -121,6 +126,16 @@ function SendFundsScreen({
   return (
     <Text testID="send-funds-screen">
       {route.params?.screen}:{route.params?.params?.currencyIds?.join(",") ?? ""}
+    </Text>
+  );
+}
+
+function SendFlowScreen({
+  route,
+}: NativeStackScreenProps<TestStackParamList, NavigatorName.SendFlow>) {
+  return (
+    <Text testID="send-flow-screen">
+      {route.params?.params?.selectContactBeforeAccount ? "selectContactBeforeAccount" : ""}
     </Text>
   );
 }
@@ -243,6 +258,7 @@ export function renderPayTab({
         <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
         <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
+        <Stack.Screen name={NavigatorName.SendFlow} component={SendFlowScreen} />
       </Stack.Navigator>
       <ModularDrawerWrapper />
     </>,

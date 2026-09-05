@@ -473,26 +473,82 @@ describe("PayTab integration", () => {
     it("should not render the contacts section when lwmContacts is disabled", async () => {
       renderPayTab({ contacts: seedContacts(8) });
 
-      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
-      expect(screen.queryByTestId("pay-contacts")).toBeNull();
+      expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+      expect(screen.queryByRole("button", { name: "New" })).not.toBeOnTheScreen();
     });
 
     it("should render the Pay tile without see-all when 8 or fewer contacts are saved", async () => {
-      renderPayTab({ contacts: seedContacts(8), contactsEnabled: true });
+      const { user } = renderPayTab({ contacts: seedContacts(8), contactsEnabled: true });
 
-      expect(await screen.findByTestId("pay-contacts-pay-tile")).toBeVisible();
-      expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
-      expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
-      expect(screen.getByTestId("pay-contacts-see-all").props.onPress).toBeUndefined();
+      expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Contact 7" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Contact 8" })).not.toBeOnTheScreen();
+
+      await user.press(screen.getByText("Pay"));
+
+      expect(
+        screen.queryByText(`${ScreenName.MyWalletContacts}:Pay contact`),
+      ).not.toBeOnTheScreen();
+    });
+
+    it("should open send with the saved contacts from the New tile", async () => {
+      const withAddress = mockContactWithAddress({ id: "contact-0", name: "Contact 0" });
+      const alsoWithAddress = mockContactWithAddress({ id: "contact-1", name: "Contact 1" });
+      const { user, store } = renderPayTab({
+        contacts: [mockMeContact(), withAddress, alsoWithAddress],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "New" }));
+
+      expect(await screen.findByText("selectContactBeforeAccount")).toBeVisible();
+      expect(store.getState().modularDrawer.isOpen).toBe(false);
+    });
+
+    it("should open send from New when some contacts have no address", async () => {
+      const withAddress = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
+      const withoutAddress = mockContact({ id: "contact-rosa", name: "Rosa" });
+      const { user } = renderPayTab({
+        contacts: [mockMeContact(), withAddress, withoutAddress],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "New" }));
+
+      expect(await screen.findByText("selectContactBeforeAccount")).toBeVisible();
+    });
+
+    it("should open the modular send drawer from New when there is no one to pay", async () => {
+      const { user, store } = renderPayTab({
+        contacts: [mockMeContact()],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "New" }));
+
+      expect(screen.queryByText("selectContactBeforeAccount")).not.toBeOnTheScreen();
+      expect(store.getState().modularDrawer.isOpen).toBe(true);
+    });
+
+    it("should open the modular send drawer from New when no contact has an address", async () => {
+      const { user, store } = renderPayTab({
+        contacts: seedContacts(2),
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "New" }));
+
+      expect(screen.queryByText("selectContactBeforeAccount")).not.toBeOnTheScreen();
+      expect(store.getState().modularDrawer.isOpen).toBe(true);
     });
 
     it("should cap the strip at 8 and open the contacts list with a Pay title via see-all", async () => {
       const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
-      expect(await screen.findByTestId("pay-contacts-tile-7")).toBeVisible();
-      expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
+      expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
+      expect(screen.getAllByRole("button", { name: /^Contact / })).toHaveLength(8);
 
-      await user.press(screen.getByTestId("pay-contacts-see-all"));
+      await user.press(screen.getByText("Pay"));
 
       expect(await screen.findByTestId("my-wallet-contacts-screen")).toHaveTextContent(
         `${ScreenName.MyWalletContacts}:Pay contact:selectForPay`,
@@ -572,18 +628,6 @@ describe("PayTab integration", () => {
       expect(
         await screen.findByText(`${ScreenName.MyWalletContactDetail}:${contact.id}`),
       ).toBeVisible();
-    });
-
-    it("should open the modular send drawer from New", async () => {
-      const { user, store } = renderPayTab({
-        contacts: seedContacts(2),
-        contactsEnabled: true,
-      });
-
-      await user.press(await screen.findByTestId("pay-contacts-pay-tile"));
-
-      expect(store.getState().modularDrawer.isOpen).toBe(true);
-      expect(store.getState().modularDrawer.uiUseCase).not.toBe("pay");
     });
   });
 });
