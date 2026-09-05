@@ -60,8 +60,14 @@ export type PerpsDepositExecution = Readonly<{
   retry: () => void;
 }>;
 
+/** What a signed deposit leaves behind for the screen that reports it. */
+export type PerpsDepositOutcome = Readonly<{
+  /** Only set when the provider issued one, so the deposit can be tracked. */
+  swapId?: string;
+}>;
+
 export type PerpsDepositExecutionCallbacks = Readonly<{
-  onDone: () => void;
+  onDone: (outcome: PerpsDepositOutcome) => void;
   onRefused: () => void;
 }>;
 
@@ -269,7 +275,7 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
-      onDone();
+      onDone({ swapId: signed.swapId });
     } catch (e) {
       if (isUserRefusal(e)) {
         onRefused();

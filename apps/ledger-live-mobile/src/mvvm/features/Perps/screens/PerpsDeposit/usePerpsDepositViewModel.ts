@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
 import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
@@ -26,6 +27,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
+import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";
@@ -71,11 +73,14 @@ export type PerpsDepositViewModel = Readonly<{
   handOverToDevice: () => void;
   /** The device declined, which is not a failure: the summary takes over again. */
   returnToReview: () => void;
-  /** Signed and broadcast, so nothing is left to sign. */
-  endSigning: () => void;
+  /** Signed and broadcast, so the form gives way to the receipt. */
+  endSigning: (outcome: PerpsDepositOutcome) => void;
 }>;
 
-export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepositViewModel {
+export function usePerpsDepositViewModel({
+  navigation,
+  route,
+}: NavigationProps): PerpsDepositViewModel {
   const { receiverAccount } = route.params;
 
   const walletState = useSelector(walletSelector);
@@ -92,7 +97,6 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
 
-  /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
     () => accounts.find(account => account.id === depositAccountId),
     [accounts, depositAccountId],
@@ -277,16 +281,23 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     setIsSignOpen(true);
   }, []);
 
-  /** The device is kept, so handing over again skips the device list. */
   const returnToReview = useCallback(() => {
     setIsSignOpen(false);
     setIsReviewOpen(true);
   }, []);
 
-  const endSigning = useCallback(() => {
-    setIsSignOpen(false);
-    setSigningDevice(undefined);
-  }, []);
+  const endSigning = useCallback(
+    ({ swapId }: PerpsDepositOutcome) => {
+      setIsSignOpen(false);
+      setSigningDevice(undefined);
+      navigation.replace(ScreenName.PerpsTransactionSigned, {
+        receiveCurrencyTicker: receiverCurrency.ticker,
+        swapId,
+        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+      });
+    },
+    [navigation, receiverCurrency.ticker],
+  );
 
   return {
     headerDescription: `${receiverAccountName} · ${receiverAccountCounterValue}`,
