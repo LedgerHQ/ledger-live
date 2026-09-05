@@ -1,6 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { NavigatorScreenParams } from "@react-navigation/native";
+import type {
+  NavigationProp,
+  NavigatorScreenParams,
+  ParamListBase,
+} from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -34,6 +38,20 @@ type UseOpenSendFlowProps = Readonly<{
   categories?: AssetCategory[];
 }>;
 
+function getSendHostNavigation<T extends NavigationProp<ParamListBase>>(navigation: T): T {
+  let current = navigation;
+  for (;;) {
+    if (current.getState?.()?.routeNames?.includes(NavigatorName.SendFlow)) {
+      return current;
+    }
+    const parent = current.getParent<T>();
+    if (!parent) {
+      return current;
+    }
+    current = parent;
+  }
+}
+
 export function useOpenSendFlow({
   currency,
   currencyIds,
@@ -43,6 +61,7 @@ export function useOpenSendFlow({
   categories,
 }: UseOpenSendFlowProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const rootNavigation = useMemo(() => getSendHostNavigation(navigation), [navigation]);
   const { openDrawer } = useModularDrawerController();
   const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
     useNewSendFlowFeature();
@@ -92,7 +111,7 @@ export function useOpenSendFlow({
         ) &&
         params.transaction
       ) {
-        navigation.navigate(NavigatorName.SendFunds, {
+        rootNavigation.navigate(NavigatorName.SendFunds, {
           screen: ScreenName.SendAmountCoin,
           params: {
             accountId: account.id,
@@ -103,12 +122,12 @@ export function useOpenSendFlow({
         return;
       }
 
-      navigation.navigate(NavigatorName.SendFunds, {
+      rootNavigation.navigate(NavigatorName.SendFunds, {
         screen: ScreenName.SendSelectRecipient,
         params,
       });
     },
-    [navigation],
+    [rootNavigation],
   );
 
   const navigateAfterAccountSelection = useCallback(
@@ -133,15 +152,20 @@ export function useOpenSendFlow({
       const mainAccount = getMainAccount(account, parentAccount ?? null);
 
       if (isEnabledForFamily(family, currencyId)) {
-        navigation.navigate(NavigatorName.SendFlow, {
-          params: {
-            account,
-            parentAccount: mainAccount === account ? undefined : mainAccount,
-            fromMAD: true,
-            recipient: prefilledRecipient,
-            skipRecipientStep,
-          },
-        });
+        const params = {
+          account,
+          parentAccount: mainAccount === account ? undefined : mainAccount,
+          fromMAD: true,
+          recipient: prefilledRecipient,
+          skipRecipientStep,
+        };
+        const state = rootNavigation.getState?.();
+        const focused = state?.routes[state.index];
+        if (focused?.name === NavigatorName.SendFlow) {
+          rootNavigation.push(NavigatorName.SendFlow, { params });
+          return;
+        }
+        rootNavigation.navigate(NavigatorName.SendFlow, { params });
         return;
       }
 
@@ -155,7 +179,7 @@ export function useOpenSendFlow({
         : undefined;
 
       if (customEntrypoint) {
-        navigation.navigate(
+        rootNavigation.navigate(
           NavigatorName.SendFunds,
           customEntrypoint as NavigatorScreenParams<SendFundsNavigatorStackParamList>,
         );
@@ -169,7 +193,7 @@ export function useOpenSendFlow({
       getFamilyFromAccount,
       isEnabledForFamily,
       navigateToLegacyRecipient,
-      navigation,
+      rootNavigation,
     ],
   );
 
