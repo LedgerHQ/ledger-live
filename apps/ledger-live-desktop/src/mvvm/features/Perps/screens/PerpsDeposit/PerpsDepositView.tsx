@@ -17,7 +17,6 @@ export function PerpsDepositView({
   amountText,
   depositAmount,
   formattedQuotedAmount,
-  quotedAmountTicker,
   isQuoteLoading,
   counterValueCode,
   maxDecimalLength,
@@ -57,7 +56,6 @@ export function PerpsDepositView({
 
         <DepositAmountStatus
           formattedAmount={formattedQuotedAmount}
-          currencyTicker={quotedAmountTicker}
           isQuoteLoading={isQuoteLoading}
           hasAmount={depositAmount > 0}
           error={statusError}

@@ -7,7 +7,6 @@ import type { DepositFormError } from "../utils/validateDepositFlow";
 
 type DepositAmountStatusProps = Readonly<{
   formattedAmount: string;
-  currencyTicker: string;
   isQuoteLoading: boolean;
   hasAmount: boolean;
   error: DepositFormError | null;
@@ -15,9 +14,8 @@ type DepositAmountStatusProps = Readonly<{
 
 function QuotedAmount({
   formattedAmount,
-  currencyTicker,
   isQuoteLoading,
-}: Pick<DepositAmountStatusProps, "formattedAmount" | "currencyTicker" | "isQuoteLoading">) {
+}: Pick<DepositAmountStatusProps, "formattedAmount" | "isQuoteLoading">) {
   const { t } = useTranslation();
 
   if (isQuoteLoading) {
@@ -32,7 +30,6 @@ function QuotedAmount({
     <div className="body-3 text-muted">
       {t("perpsDeposit.inputDepositAmount", {
         value: formattedAmount,
-        currencyTicker,
       })}
     </div>
   );
@@ -40,7 +37,6 @@ function QuotedAmount({
 
 export function DepositAmountStatus({
   formattedAmount,
-  currencyTicker,
   isQuoteLoading,
   hasAmount,
   error,
@@ -60,11 +56,7 @@ export function DepositAmountStatus({
 
   return (
     <div className="mb-40 flex flex-col items-center gap-8 text-center">
-      <QuotedAmount
-        formattedAmount={formattedAmount}
-        currencyTicker={currencyTicker}
-        isQuoteLoading={isQuoteLoading}
-      />
+      <QuotedAmount formattedAmount={formattedAmount} isQuoteLoading={isQuoteLoading} />
       {errorMessage ?? providerNotice}
     </div>
   );

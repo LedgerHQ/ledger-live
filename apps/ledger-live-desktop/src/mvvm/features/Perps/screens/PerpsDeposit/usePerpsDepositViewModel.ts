@@ -56,7 +56,6 @@ export type PerpsDepositViewModel = Readonly<{
   amountText: string;
   depositAmount: number;
   formattedQuotedAmount: string;
-  quotedAmountTicker: string;
   isQuoteLoading: boolean;
   counterValueCode: string;
   maxDecimalLength: number;
@@ -149,7 +148,7 @@ export function usePerpsDepositViewModel(
     const counterValue =
       calculateCountervalue(receiverCurrency, receiverAccount.spendableBalance) ?? new BigNumber(0);
     return formatCurrencyUnit(counterValueUnit, counterValue, {
-      showCode: false,
+      showCode: true,
       discreet,
       locale,
     });
@@ -170,7 +169,7 @@ export function usePerpsDepositViewModel(
   const depositAccountCounterValue = useMemo(() => {
     if (!depositAccountBalanceCounterValue) return null;
     return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
-      showCode: false,
+      showCode: true,
       discreet,
       locale,
     });
@@ -233,7 +232,7 @@ export function usePerpsDepositViewModel(
     () =>
       quote
         ? formatCurrencyUnit(receiverUnit, valueFromUnit(quote.amountTo, receiverUnit), {
-            showCode: false,
+            showCode: true,
             locale,
           })
         : "",
@@ -286,7 +285,6 @@ export function usePerpsDepositViewModel(
     amountText,
     depositAmount,
     formattedQuotedAmount,
-    quotedAmountTicker: receiverCurrency.ticker,
     isQuoteLoading,
     counterValueCode: counterValueUnit.code,
     maxDecimalLength,

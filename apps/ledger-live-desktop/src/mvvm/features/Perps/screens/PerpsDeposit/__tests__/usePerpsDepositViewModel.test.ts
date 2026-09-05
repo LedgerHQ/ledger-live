@@ -228,7 +228,7 @@ describe("usePerpsDepositViewModel", () => {
     await pickFundingAccount(result);
 
     expect(result.current.headerDescription).toContain("***");
-    expect(result.current.depositAccountCounterValue).toBe("***");
+    expect(result.current.depositAccountCounterValue).toBe("$***");
   });
 
   it("holds the review CTA back until the quote lands", async () => {
