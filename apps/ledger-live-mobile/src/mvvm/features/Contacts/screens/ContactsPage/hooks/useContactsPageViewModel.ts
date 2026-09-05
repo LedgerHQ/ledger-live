@@ -85,7 +85,7 @@ export function useContactsPageViewModel(
       trackContactsListContactOpen(analytics, contactId, meContact.id);
       if (onSelectContact) {
         const contact = contacts.find(candidate => candidate.id === contactId);
-        if (contact && !contact.isMe) {
+        if (contact) {
           onSelectContact(contact);
           return;
         }

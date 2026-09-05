@@ -11,9 +11,8 @@ import {
 } from "@domain/entity-contact/schema.mock";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
-import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { ContactsScreen } from "LLM/features/Contacts";
 import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
+import { PaySelectContactScreen } from "LLM/features/PayTab/screens/PaySelectContact";
 
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 jest.mock("@shared/ui-queued-bottom-sheet", () => {
@@ -52,8 +51,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 type TestStackParamList = {
-  [ScreenName.MyWalletContacts]: MyWalletNavigatorStackParamList[typeof ScreenName.MyWalletContacts];
-  [ScreenName.MyWalletContactDetail]: { contactId: string };
+  [ScreenName.PayTabSelectContact]: undefined;
   [NavigatorName.MyWallet]:
     | {
         screen: typeof ScreenName.MyWalletContactDetail;
@@ -63,28 +61,18 @@ type TestStackParamList = {
   [NavigatorName.SendFunds]:
     | {
         screen: typeof ScreenName.SendCoin;
-        params?: { currencyIds?: string[]; extra?: { recipient?: string } };
+        params?: { currencyIds?: string[] };
       }
     | undefined;
 };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
-function ContactDetailScreen({
-  route,
-}: NativeStackScreenProps<TestStackParamList, typeof ScreenName.MyWalletContactDetail>) {
-  return (
-    <Text testID="my-wallet-contact-detail-screen">
-      {ScreenName.MyWalletContactDetail}:{route.params.contactId}
-    </Text>
-  );
-}
-
 function MyWalletScreen({
   route,
 }: NativeStackScreenProps<TestStackParamList, typeof NavigatorName.MyWallet>) {
   return (
-    <Text testID="my-wallet-contact-detail-screen">
+    <Text>
       {route.params?.screen}:{route.params?.params?.contactId ?? ""}
     </Text>
   );
@@ -94,20 +82,16 @@ function SendFundsScreen({
   route,
 }: NativeStackScreenProps<TestStackParamList, typeof NavigatorName.SendFunds>) {
   return (
-    <Text testID="send-funds-screen">
+    <Text>
       {route.params?.screen}:{route.params?.params?.currencyIds?.join(",") ?? ""}
     </Text>
   );
 }
 
-function renderContactsSelectForPay({
-  selectContactToPay = true,
-  title = "Pay contact",
+function renderPaySelectContact({
   hasDismissedContactsFeatureIntroduction = true,
   includeSavedContacts = true,
 }: {
-  selectContactToPay?: boolean;
-  title?: string;
   hasDismissedContactsFeatureIntroduction?: boolean;
   includeSavedContacts?: boolean;
 } = {}) {
@@ -121,12 +105,7 @@ function renderContactsSelectForPay({
 
   const result = render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Stack.Screen
-        name={ScreenName.MyWalletContacts}
-        component={ContactsScreen}
-        initialParams={selectContactToPay ? { title, selectContactToPay } : { title }}
-      />
-      <Stack.Screen name={ScreenName.MyWalletContactDetail} component={ContactDetailScreen} />
+      <Stack.Screen name={ScreenName.PayTabSelectContact} component={PaySelectContactScreen} />
       <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletScreen} />
       <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
     </Stack.Navigator>,
@@ -150,14 +129,14 @@ function renderContactsSelectForPay({
   return { ...result, me, yana, stephanie, rosa };
 }
 
-describe("Contacts selectContactToPay", () => {
+describe("Pay select contact", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedContactsLedgerSyncStatus.mockReturnValue("ready");
   });
 
   it("should open the address sheet then MAD when a Pay contact is tapped", async () => {
-    const { user, store, yana } = renderContactsSelectForPay();
+    const { user, store, yana } = renderPaySelectContact();
     const address = yana.addresses[0];
 
     expect(await screen.findByTestId("contacts-screen")).toBeVisible();
@@ -178,7 +157,7 @@ describe("Contacts selectContactToPay", () => {
   });
 
   it("should still open the address sheet when the Pay contact has several addresses", async () => {
-    const { user, store, stephanie } = renderContactsSelectForPay();
+    const { user, store, stephanie } = renderPaySelectContact();
     const address = stephanie.addresses[1];
 
     await user.press(await screen.findByTestId(`contacts-saved-contact-${stephanie.id}`));
@@ -198,7 +177,7 @@ describe("Contacts selectContactToPay", () => {
   });
 
   it("should open the contact to add an address when the Pay picker has none", async () => {
-    const { user, rosa } = renderContactsSelectForPay();
+    const { user, rosa } = renderPaySelectContact();
 
     await user.press(await screen.findByTestId(`contacts-saved-contact-${rosa.id}`));
 
@@ -209,7 +188,7 @@ describe("Contacts selectContactToPay", () => {
   });
 
   it("should still open Me from the Pay contact list", async () => {
-    const { user, me } = renderContactsSelectForPay();
+    const { user, me } = renderPaySelectContact();
 
     await user.press(await screen.findByTestId("contacts-me-item"));
 
@@ -219,7 +198,7 @@ describe("Contacts selectContactToPay", () => {
 
   it("should open Ledger Sync when adding a contact from Pay before the intro was dismissed", async () => {
     mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
-    const { user } = renderContactsSelectForPay({
+    const { user } = renderPaySelectContact({
       hasDismissedContactsFeatureIntroduction: false,
       includeSavedContacts: false,
     });
@@ -231,17 +210,5 @@ describe("Contacts selectContactToPay", () => {
 
     expect(await screen.findByText("Sync your wallet to add a contact")).toBeVisible();
     expect(screen.queryByText("Introducing Contacts")).not.toBeOnTheScreen();
-  });
-
-  it("should open contact detail when selectContactToPay is off", async () => {
-    const { user, yana } = renderContactsSelectForPay({
-      selectContactToPay: false,
-      title: "Contacts",
-    });
-
-    await user.press(await screen.findByTestId(`contacts-saved-contact-${yana.id}`));
-
-    expect(await screen.findByText(`${ScreenName.MyWalletContactDetail}:${yana.id}`)).toBeVisible();
-    expect(screen.queryByText("Select Yana's address")).not.toBeOnTheScreen();
   });
 });
