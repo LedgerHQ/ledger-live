@@ -1,6 +1,7 @@
 import type React from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import type {
+  DeviceConnectionComponentParams,
   DeviceConnectionParams,
   DeviceConnectionResult,
   DeviceExtractedContext,
@@ -19,7 +20,7 @@ import type {
  * errors, transport setup issues): they never surface to the executor.
  */
 export type DeviceConnectionComponent = React.ComponentType<{
-  deviceConnectionParams: DeviceConnectionParams;
+  deviceConnectionParams: DeviceConnectionComponentParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
@@ -110,7 +111,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
  * - `deviceDisconnected` → the disconnected device from the last successful connection.
  */
 export type ExecutorState =
-  | { type: "connectingDevice" }
+  | { type: "connectingDevice"; disableAutoConnect: boolean }
   | { type: "deviceDisconnected"; device: ConnectedDevice }
   | {
       type: "initializingDeviceContext";
@@ -167,6 +168,13 @@ export interface DeviceIntentExecutorProps<
    * (e.g. user closes the bottom sheet containing the executor, or clicks a "Close" CTA in a given error state, etc.).
    */
   onUserCancel: () => void;
+  /**
+   * Optional. Called when the executor is destroyed — the component unmounts, or
+   * `enabled` flips to `false` — leaving no later run to report an outcome, so a
+   * caller awaiting an intent result has to settle here. It does **not** fire when
+   * the executor tears a job down but stays alive (restart, disconnection).
+   */
+  onExecutorStopped?: () => void;
   /** Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId: string | undefined;
   /** Optional. Called whenever the running job emits a new state. */

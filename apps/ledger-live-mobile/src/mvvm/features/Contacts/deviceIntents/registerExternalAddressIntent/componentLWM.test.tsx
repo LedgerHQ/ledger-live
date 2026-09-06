@@ -92,4 +92,24 @@ describe("RegisterExternalAddressComponentLWM", () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("should let the user connect a different device when the wrong device carries a reconnect", async () => {
+    const reconnect = jest.fn();
+    const { user } = renderComponent({
+      type: "existing-group-verification-failed",
+      error: new Error("SWO_SECURITY_CONDITION_NOT_SATISFIED"),
+      reconnect,
+    });
+
+    await user.press(screen.getByText("Connect a different device"));
+
+    expect(reconnect).toHaveBeenCalledTimes(1);
+  });
+
+  it("should offer cancel alone when the wrong device carries no reconnect", () => {
+    renderComponent(failure("existing-group-verification-failed"));
+
+    expect(screen.queryByText("Connect a different device")).toBeNull();
+    expect(screen.getByText("Cancel")).toBeVisible();
+  });
 });

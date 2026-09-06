@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
-  DeviceConnectionParams,
+  DeviceConnectionComponentParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import { dmkToLedgerDeviceIdMap, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
@@ -24,7 +24,7 @@ import {
 const missingDeviceManagementKitError = new Error("Device Management Kit is not available");
 
 type UseDeviceConnectionComponentLWDViewModelParams = {
-  deviceConnectionParams: DeviceConnectionParams;
+  deviceConnectionParams: DeviceConnectionComponentParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
 };
 
@@ -107,6 +107,7 @@ export function useDeviceConnectionComponentLWDViewModel({
       acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
         deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
       ),
+      disableAutoConnect: deviceConnectionParams.disableAutoConnect,
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({
@@ -118,7 +119,12 @@ export function useDeviceConnectionComponentLWDViewModel({
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, wrappedOnConnected]);
+  }, [
+    deviceConnectionParams.acceptedDeviceModelIds,
+    deviceConnectionParams.disableAutoConnect,
+    dmk,
+    wrappedOnConnected,
+  ]);
 
   return {
     state,

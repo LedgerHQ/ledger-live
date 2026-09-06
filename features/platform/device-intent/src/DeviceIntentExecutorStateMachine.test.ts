@@ -98,8 +98,14 @@ describe("DeviceIntentExecutorStateMachine", () => {
       sm.start();
 
       // THEN
-      expect(listeners.onExecutorStateChanged).toHaveBeenCalledWith({ type: "connectingDevice" });
-      expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
+      expect(listeners.onExecutorStateChanged).toHaveBeenCalledWith({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
       sm.stop();
     });
 
@@ -195,7 +201,10 @@ describe("DeviceIntentExecutorStateMachine", () => {
       });
 
       sm.retry();
-      expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
       sm.stop();
     });
   });
@@ -260,6 +269,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
         deviceExtractedContext: extractedContext,
         input: jobInput,
         onResult: expect.any(Function),
+        restartExecutor: expect.any(Function),
       });
       sm.stop();
     });
@@ -536,13 +546,115 @@ describe("DeviceIntentExecutorStateMachine", () => {
     });
   });
 
+  describe("GIVEN a job restarts the executor", () => {
+    /**
+     * `restartExecutor` reaches a job through its params only, so the tests grab
+     * the handle from the running job and fire it the way its CTA would.
+     */
+    function createRestartableSM(job?: Job<unknown, unknown>) {
+      let restart: (() => void) | undefined;
+      const connectionResult = makeConnectionResult();
+      const { sm, listeners } = createSM({
+        job: params => {
+          restart = params.restartExecutor;
+          return job ? job(params) : NEVER;
+        },
+      });
+      driveToExecution(sm, connectionResult);
+      if (restart === undefined) {
+        throw new Error("Expected the running job to receive restartExecutor");
+      }
+      return { sm, listeners, connectionResult, restart };
+    }
+
+    it("WHEN RESTART is received during intent execution THEN it returns to connectingDevice with auto-connect disabled", () => {
+      const { sm, listeners, restart } = createRestartableSM();
+      expect(lastExecutorState(listeners)).toMatchObject({ type: "executingIntent" });
+
+      restart();
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: true,
+      });
+      sm.stop();
+    });
+
+    it("WHEN RESTART is received THEN it disconnects the device it is leaving", () => {
+      const { sm, connectionResult, restart } = createRestartableSM();
+
+      restart();
+      expect(connectionResult.dmk.disconnect).toHaveBeenCalledWith({
+        sessionId: connectionResult.sessionId,
+      });
+      sm.stop();
+    });
+
+    it("WHEN RESTART is received THEN the job observable is auto-cancelled", async () => {
+      let unsubscribed = false;
+      const { sm, restart } = createRestartableSM(
+        () =>
+          new Observable<TestJobState>(() => () => {
+            unsubscribed = true;
+          }),
+      );
+      await flushMicrotasks();
+      expect(unsubscribed).toBe(false);
+
+      restart();
+      await flushMicrotasks();
+      expect(unsubscribed).toBe(true);
+      sm.stop();
+    });
+
+    it("WHEN RESTART is received again from connectingDevice THEN it is a no-op", () => {
+      const { sm, listeners, restart } = createRestartableSM();
+      restart();
+      const statesAfterRestart = listeners.executorStates.length;
+
+      restart();
+      // Re-entering would reset the connection component the user is working in.
+      expect(listeners.executorStates).toHaveLength(statesAfterRestart);
+      sm.stop();
+    });
+
+    it("WHEN RESTART is received from idle THEN it returns to connectingDevice with auto-connect disabled", () => {
+      const { sm, listeners, restart } = createRestartableSM(() => of({ step: "done" as const }));
+      expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
+
+      restart();
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: true,
+      });
+      sm.stop();
+    });
+
+    it("GIVEN a restart WHEN a device connects and the job runs again THEN auto-connect stays disabled", () => {
+      const { sm, listeners, restart } = createRestartableSM();
+      restart();
+
+      driveToExecution(sm);
+      expect(lastExecutorState(listeners)).toMatchObject({ type: "executingIntent" });
+
+      restart();
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: true,
+      });
+      sm.stop();
+    });
+  });
+
   describe("end-to-end: happy path", () => {
     it("GIVEN a fresh machine WHEN connect, init, execute, complete THEN it goes through all phases to idle", async () => {
       const subject = new Subject<TestJobState>();
       const intent = makeIntent(() => subject.asObservable());
       const { sm, listeners } = createSM({ intent });
 
-      expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
 
       sm.deviceConnected(makeConnectionResult());
       expect(lastExecutorState(listeners)).toMatchObject({ type: "initializingDeviceContext" });
@@ -651,7 +763,10 @@ describe("DeviceIntentExecutorStateMachine", () => {
       });
 
       sm.retry();
-      expect(lastExecutorState(listeners)).toEqual({ type: "connectingDevice" });
+      expect(lastExecutorState(listeners)).toEqual({
+        type: "connectingDevice",
+        disableAutoConnect: false,
+      });
 
       sm.deviceConnected(makeConnectionResult("session-2"));
       expect(lastExecutorState(listeners)).toMatchObject({ type: "initializingDeviceContext" });

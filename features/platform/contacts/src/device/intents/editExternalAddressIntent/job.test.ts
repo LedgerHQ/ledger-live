@@ -5,7 +5,6 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
-import { ContactDeviceIntentCancelledError } from "../../errors";
 import { editExternalAddressIntentJob } from "./job";
 import type { EditExternalAddressIntentInput, EditExternalAddressJobState } from "./types";
 
@@ -47,7 +46,10 @@ const COMBINED: EditExternalAddressIntentInput = { ...INPUT, newScope: "Testnet"
  * subject per call, so a chained or replayed edit can be stepped independently:
  * `identifierRun(0)` is the first identifier attempt, `(1)` the retry, and so on.
  */
-function startJob(input: EditExternalAddressIntentInput = INPUT) {
+function startJob(
+  input: EditExternalAddressIntentInput = INPUT,
+  { canReconnect = true }: { canReconnect?: boolean } = {},
+) {
   const runs = { identifier: [] as Subject<unknown>[], scope: [] as Subject<unknown>[] };
   const cancels = { identifier: [] as jest.Mock[], scope: [] as jest.Mock[] };
 
@@ -67,6 +69,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
 
   const states: EditExternalAddressJobState[] = [];
   const onResult = jest.fn();
+  const restartExecutor = jest.fn();
   let error: unknown;
   let completed = false;
 
@@ -87,6 +90,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
     },
     input,
     onResult,
+    ...(canReconnect ? { restartExecutor } : {}),
   }).subscribe({
     next: state => states.push(state),
     error: e => {
@@ -106,6 +110,7 @@ function startJob(input: EditExternalAddressIntentInput = INPUT) {
   return {
     states,
     onResult,
+    restartExecutor,
     subscription,
     editExternalAddressIdentifier,
     editExternalAddressScope,
@@ -377,7 +382,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(steps).toEqual(["identifier", "scope"]);
     });
 
-    it("GIVEN the user gives up between the two steps THEN it cancels without reporting a partial result", () => {
+    it("GIVEN a teardown between the two steps THEN it reports nothing, not a partial result", () => {
       // GIVEN
       const job = startJob(COMBINED);
       job.emitIdentifier(identifierCompletion([0x07, 0x08]));
@@ -388,11 +393,7 @@ describe("editExternalAddressIntentJob", () => {
       // THEN
       // The device records nothing, so dropping the intermediate proof leaves
       // the stored record untouched and still valid.
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
-      expect(job.onResult).toHaveBeenCalledTimes(1);
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the scope step is running WHEN the caller unsubscribes THEN it tears that step down", () => {
@@ -443,7 +444,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
     });
 
-    it("GIVEN status word 0x6982 on the scope step THEN it reports existing-group-verification-failed", () => {
+    it("GIVEN status word 0x6982 on the scope step THEN it reports existing-group-verification-failed carrying a reconnect handle", () => {
       // GIVEN
       const job = startJob(COMBINED);
       job.emitIdentifier(identifierCompletion([0x07, 0x08]));
@@ -462,7 +463,11 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({
         type: "existing-group-verification-failed",
         error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+        reconnect: expect.any(Function),
       });
+      // A retry replays from the stored proof, so the chain survives the swap.
+      expect(job.isCompleted()).toBe(false);
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the scope step is rejected WHEN the user retries THEN it restarts from the identifier step", () => {
@@ -688,7 +693,7 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.isCompleted()).toBe(true);
     });
 
-    it("GIVEN a rejection WHEN the user gives up instead THEN it settles as a cancellation", () => {
+    it("GIVEN a rejection WHEN the job is torn down instead of retried THEN it reports nothing", () => {
       // GIVEN
       const job = startJob();
       job.emitIdentifier(REJECTION);
@@ -697,13 +702,12 @@ describe("editExternalAddressIntentJob", () => {
       job.subscription.unsubscribe();
 
       // THEN
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
+      // Giving up is the orchestrator's `onUserCancel`, not a teardown: the
+      // executor also tears jobs down on paths that keep the operation alive.
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
-    it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
+    it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed carrying a reconnect handle", () => {
       // GIVEN
       const job = startJob();
       // An edit always replays the entry's existing proofs, so this is how proofs
@@ -721,7 +725,53 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.states).toContainEqual({
         type: "existing-group-verification-failed",
         error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
+        reconnect: expect.any(Function),
       });
+      expect(job.isCompleted()).toBe(false);
+      expect(job.onResult).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN a wrong device WHEN the reconnect handle is called THEN it restarts the executor", () => {
+      // GIVEN
+      const job = startJob();
+      job.emitIdentifier({
+        status: DeviceActionStatus.Error,
+        error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+      });
+      const state = job.states.find(s => s.type === "existing-group-verification-failed");
+
+      // WHEN
+      if (state?.type !== "existing-group-verification-failed") {
+        throw new Error("Expected the job to have reported a wrong device");
+      }
+      state.reconnect?.();
+
+      // THEN
+      expect(job.restartExecutor).toHaveBeenCalled();
+    });
+
+    it("GIVEN no restart affordance WHEN a wrong device is reported THEN it settles as a terminal failure", () => {
+      // GIVEN
+      const job = startJob(INPUT, { canReconnect: false });
+
+      // WHEN
+      job.emitIdentifier({
+        status: DeviceActionStatus.Error,
+        error: { _tag: "ContactsCommandError", errorCode: "6982", message: "wrong device" },
+      });
+
+      // THEN
+      // Nothing can send this host back to device selection, so leaving the job
+      // open would hang the caller on a recovery it cannot offer.
+      expect(job.states).toContainEqual({
+        type: "existing-group-verification-failed",
+        error: expect.objectContaining({ message: "wrong device" }),
+      });
+      expect(job.onResult).toHaveBeenCalledWith({
+        type: "failure",
+        error: expect.objectContaining({ message: "wrong device" }),
+      });
+      expect(job.isCompleted()).toBe(true);
     });
 
     it("GIVEN status word 0x6984 WHEN the device action errors THEN it reports unsupported-operation", () => {
@@ -802,7 +852,7 @@ describe("editExternalAddressIntentJob", () => {
       },
     );
 
-    it("GIVEN an active edit WHEN the caller unsubscribes before completion THEN it cancels the device action and reports cancellation", () => {
+    it("GIVEN an active edit WHEN the caller unsubscribes before completion THEN it cancels the device action without reporting", () => {
       // GIVEN
       const job = startJob();
 
@@ -811,10 +861,9 @@ describe("editExternalAddressIntentJob", () => {
 
       // THEN
       expect(job.identifierCancel(0)).toHaveBeenCalled();
-      expect(job.onResult).toHaveBeenCalledWith({
-        type: "failure",
-        error: expect.any(ContactDeviceIntentCancelledError),
-      });
+      // The executor tears the job down whenever it leaves intent execution, so a
+      // report here would settle the flow that a later run is meant to finish.
+      expect(job.onResult).not.toHaveBeenCalled();
     });
 
     it("GIVEN the device action is stopped WHEN reported THEN it reports failure", () => {

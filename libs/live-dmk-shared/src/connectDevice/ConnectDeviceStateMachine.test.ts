@@ -124,6 +124,7 @@ type SetupTestOptions = {
   readonly matchDiscoveredDevices?: ConnectDeviceMatchDiscoveredDevices;
   readonly onConnected?: jest.Mock;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
+  readonly disableAutoConnect?: boolean;
 };
 
 const defaultMatchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices = (
@@ -159,6 +160,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     matchDiscoveredDevices = defaultMatchDiscoveredDevices,
     onConnected = jest.fn(),
     buildCompatDeviceId,
+    disableAutoConnect,
   } = options;
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
@@ -192,6 +194,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     mapConnectionError,
     matchDiscoveredDevices,
     onConnected,
+    ...(disableAutoConnect === undefined ? {} : { disableAutoConnect }),
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
   });
 
@@ -284,6 +287,89 @@ describe("ConnectDeviceStateMachine", () => {
         expect.objectContaining({ type: "not-available", knownDevice: knownDeviceA }),
         expect.objectContaining({ type: "not-available", knownDevice: knownDeviceB }),
       ]);
+    });
+  });
+
+  describe("Startup with auto-connect disabled", () => {
+    it("emits Discovering instead of preselecting the only known device", () => {
+      // Arrange
+      const { machine, states } = setupTest({
+        knownDevices: [knownDeviceA],
+        disableAutoConnect: true,
+      });
+
+      // Act
+      machine.start();
+
+      // Assert
+      expect(states[states.length - 1].type).toBe(ConnectDeviceUIStateTypes.Discovering);
+    });
+
+    it("emits Discovering instead of reusing an existing session", () => {
+      // Arrange
+      const { machine, onConnected, states } = setupTest({
+        knownDevices: [knownDeviceA, knownDeviceB],
+        sessionId: "existing-session-id",
+        disableAutoConnect: true,
+      });
+
+      // Act
+      machine.start();
+
+      // Assert
+      expect(states[states.length - 1].type).toBe(ConnectDeviceUIStateTypes.Discovering);
+      expect(onConnected).not.toHaveBeenCalled();
+    });
+
+    it("keeps a lone discovered device available instead of connecting to it", () => {
+      // Arrange
+      const { connect, discoverDevices, machine, states } = setupTest({
+        knownDevices: [knownDeviceA, knownDeviceB],
+        disableAutoConnect: true,
+      });
+      machine.start();
+
+      // Act
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+
+      // Assert
+      expect(connect).not.toHaveBeenCalled();
+      const discoveringState = states[states.length - 1];
+      expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
+      expect(
+        (
+          discoveringState as {
+            type: ConnectDeviceUIStateTypes.Discovering;
+            devices: Array<DisplayedDevice>;
+          }
+        ).devices,
+      ).toEqual([
+        expect.objectContaining({ type: "available", knownDevice: knownDeviceA }),
+        expect.objectContaining({ type: "not-available", knownDevice: knownDeviceB }),
+      ]);
+    });
+
+    it("still connects to a device the user taps", () => {
+      // Arrange
+      const { connect, discoverDevices, machine, states } = setupTest({
+        knownDevices: [knownDeviceA, knownDeviceB],
+        disableAutoConnect: true,
+      });
+      machine.start();
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+      const devices = (
+        states[states.length - 1] as {
+          type: ConnectDeviceUIStateTypes.Discovering;
+          devices: Array<DisplayedDevice>;
+        }
+      ).devices;
+
+      // Act
+      devices[0].onSelect();
+
+      // Assert
+      // The choice was explicit, so nothing here should stand in its way.
+      expect(connect).toHaveBeenCalled();
     });
   });
 

@@ -61,6 +61,7 @@ function createOutcomeMapper(
   params: Readonly<{
     awaitingConfirmation: RenameContactJobState;
     retry: () => void;
+    reconnect?: () => void;
   }>,
 ): (state: RenameContactDAState) => Outcome {
   return state => {
@@ -103,11 +104,16 @@ function createOutcomeMapper(
       case DeviceActionStatus.Error: {
         const jobState = mapDeviceActionErrorToFailureJobState(state.error);
 
-        // A rejection is the one failure the user can undo, so it stays open and
-        // carries the replay handle instead of settling the port promise.
-        return jobState.type === "device-rejected"
-          ? { jobState: { ...jobState, retry: params.retry }, terminal: false }
-          : { jobState, terminal: true, report: { type: "failure", error: jobState.error } };
+        // Two failures the user can undo, so both stay open and carry their handle
+        // instead of settling the port promise: a rejection replays on this device,
+        // a wrong device replays on whichever one they connect next.
+        if (jobState.type === "device-rejected") {
+          return { jobState: { ...jobState, retry: params.retry }, terminal: false };
+        }
+        if (jobState.type === "existing-group-verification-failed" && params.reconnect) {
+          return { jobState: { ...jobState, reconnect: params.reconnect }, terminal: false };
+        }
+        return { jobState, terminal: true, report: { type: "failure", error: jobState.error } };
       }
     }
   };
@@ -125,7 +131,7 @@ export const renameContactIntentJob: Job<
   RenameContactJobState,
   RenameContactIntentInput,
   ContactIntentResult<RenameContactResult>
-> = ({ deviceConnectionResult, deviceExtractedContext, input, onResult }) => {
+> = ({ deviceConnectionResult, deviceExtractedContext, input, onResult, restartExecutor }) => {
   const reporter = createContactIntentResultReporter(onResult);
   const retries = new Subject<void>();
   const retry = () => retries.next();
@@ -136,7 +142,11 @@ export const renameContactIntentJob: Job<
     deviceName: deviceConnectionResult.compatDeviceName,
   };
 
-  const toOutcome = createOutcomeMapper({ awaitingConfirmation, retry });
+  const toOutcome = createOutcomeMapper({
+    awaitingConfirmation,
+    retry,
+    ...(restartExecutor ? { reconnect: restartExecutor } : {}),
+  });
 
   return defer(() => {
     let deviceActionInput: RenameContactKitInput;
@@ -193,5 +203,5 @@ export const renameContactIntentJob: Job<
         return of<RenameContactJobState>({ type: "failed", error: mapped });
       }),
     );
-  }).pipe(reporter.cancelOnUnsubscribe());
+  });
 };

@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { assign, createActor, fromPromise, setup } from "xstate";
+import { and, assign, createActor, fromPromise, not, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   BaseDiscoveryErrorTypes,
@@ -77,6 +77,7 @@ const createConnectDeviceStateMachine = <
       hasOnlyOneKnownDevice: ({ context }) => context.knownDevices.length === 1,
       hasMoreThanOneKnownDevice: ({ context }) => context.knownDevices.length > 1,
       hasSession: ({ context }) => context.sessionId !== null,
+      canAutoConnect: ({ context }) => context.disableAutoConnect !== true,
       hasSelectedKnownDeviceMatch: ({ context, event }) =>
         getSelectedMatchedDeviceFromDiscoveryEvent(event, context.selectedKnownDevice) !== null,
       retryOutputIsTrue: (_, params: { output: true | BaseDiscoveryError }) =>
@@ -254,11 +255,11 @@ const createConnectDeviceStateMachine = <
             target: "NoKnownDevice",
           },
           {
-            guard: "hasSession",
+            guard: and(["hasSession", "canAutoConnect"]),
             target: "Connected",
           },
           {
-            guard: "hasOnlyOneKnownDevice",
+            guard: and(["hasOnlyOneKnownDevice", "canAutoConnect"]),
             actions: ["assignDefaultSelectedKnownDevice"],
             target: "WaitingForSelectedDevice",
           },
@@ -285,10 +286,18 @@ const createConnectDeviceStateMachine = <
           [ConnectDeviceStateMachineEventTypes.DiscoveredManyDevices]: {
             actions: ["assignMatchedDevices", "emitDiscovering"],
           },
-          [ConnectDeviceStateMachineEventTypes.DiscoveredOneDevice]: {
-            target: "Connecting",
-            actions: ["assignMatchedDevices", "assignSelectedMatchedDeviceFromDiscoveryEvent"],
-          },
+          [ConnectDeviceStateMachineEventTypes.DiscoveredOneDevice]: [
+            // Without auto-connect the lone discovery is rendered like any other,
+            // so the user picks it (or another device) themselves.
+            {
+              guard: not("canAutoConnect"),
+              actions: ["assignMatchedDevices", "emitDiscovering"],
+            },
+            {
+              target: "Connecting",
+              actions: ["assignMatchedDevices", "assignSelectedMatchedDeviceFromDiscoveryEvent"],
+            },
+          ],
           [ConnectDeviceStateMachineEventTypes.DiscoveryError]: {
             target: "DiscoveryError",
             actions: "assignDiscoveryError",

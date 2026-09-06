@@ -16,6 +16,8 @@ import { createConnectionError, filterMatchedDevices } from "./utils";
 export type ConnectDeviceInput = {
   knownDevices: Array<KnownDevice>;
   acceptedDeviceModelIds?: Array<DeviceModelId>;
+  /** See {@link ConnectDeviceStateMachineInput.disableAutoConnect}. */
+  disableAutoConnect?: boolean;
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
 };

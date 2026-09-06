@@ -1,5 +1,5 @@
 import type {
-  DeviceConnectionParams,
+  DeviceConnectionComponentParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import {
@@ -61,8 +61,9 @@ const mockDmk = { id: "dmk" } as unknown as NonNullable<ReturnType<typeof useDev
 let connectDeviceObserver: ConnectDeviceObserver | undefined;
 let mockUnsubscribe: jest.Mock;
 
-const defaultDeviceConnectionParams: DeviceConnectionParams = {
+const defaultDeviceConnectionParams: DeviceConnectionComponentParams = {
   acceptedDeviceModelIds: [],
+  disableAutoConnect: false,
 };
 
 const layerABaseProperties = {
@@ -87,7 +88,7 @@ function renderViewModel({
   onConnected = jest.fn(),
 }: {
   knownDevices?: KnownDevice[];
-  deviceConnectionParams?: DeviceConnectionParams;
+  deviceConnectionParams?: DeviceConnectionComponentParams;
   onConnected?: (connectionResult: DeviceConnectionResult) => void;
 } = {}) {
   const store = createStore({
@@ -178,6 +179,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     expect(mockedConnectDevice).toHaveBeenCalledWith({
       knownDevices,
       acceptedDeviceModelIds: [],
+      disableAutoConnect: false,
       dmk: mockDmk,
       onConnected: expect.any(Function),
     });
@@ -189,7 +191,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
     // WHEN
     renderViewModel({
-      deviceConnectionParams: { acceptedDeviceModelIds },
+      deviceConnectionParams: { acceptedDeviceModelIds, disableAutoConnect: false },
     });
 
     // THEN
@@ -197,6 +199,18 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
       expect.objectContaining({
         acceptedDeviceModelIds: [DeviceModelId.stax],
       }),
+    );
+  });
+
+  it("GIVEN the executor suppressed auto-connect WHEN rendering the view model THEN it passes that to connect device", () => {
+    // WHEN
+    renderViewModel({
+      deviceConnectionParams: { acceptedDeviceModelIds: [], disableAutoConnect: true },
+    });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ disableAutoConnect: true }),
     );
   });
 

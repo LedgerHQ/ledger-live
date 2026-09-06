@@ -44,15 +44,27 @@ describe("deriveHookState", () => {
       onConnected,
       onUserCancel,
     });
-    const state: ExecutorState = { type: "connectingDevice" };
+    const state: ExecutorState = { type: "connectingDevice", disableAutoConnect: false };
 
     const result = deriveHookState(state, params);
 
     expect(result).toEqual({
       phase: "deviceConnection",
-      deviceConnectionParams,
+      deviceConnectionParams: { ...deviceConnectionParams, disableAutoConnect: false },
       onConnected,
       onClose: onUserCancel,
+    });
+  });
+
+  it("maps a restarted connectingDevice to deviceConnection phase with auto-connect disabled", () => {
+    const params = makeParams({ deviceConnectionParams: { acceptedDeviceModelIds: [] } });
+    const state: ExecutorState = { type: "connectingDevice", disableAutoConnect: true };
+
+    const result = deriveHookState(state, params);
+
+    expect(result).toMatchObject({
+      phase: "deviceConnection",
+      deviceConnectionParams: { acceptedDeviceModelIds: [], disableAutoConnect: true },
     });
   });
 
@@ -216,7 +228,7 @@ describe("deriveHookState", () => {
     const params = makeParams({ onUserCancel });
 
     const phases: ExecutorState[] = [
-      { type: "connectingDevice" },
+      { type: "connectingDevice", disableAutoConnect: false },
       { type: "deviceDisconnected", device: defaultDevice },
       {
         type: "initializingDeviceContext",
