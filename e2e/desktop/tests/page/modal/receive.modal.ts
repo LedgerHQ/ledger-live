@@ -15,6 +15,7 @@ export class ReceiveModal extends Modal {
   private selectAccount = this.page.getByText("Choose a crypto asset");
   private warningMessage = this.page.locator('div[type="warning"]');
   private receiveMenu = this.page.getByTestId("receive-step-options");
+  private privateAddressBlock = this.page.getByTestId("receive-private-address-block");
   private receiveFundsOptionId = (receiveFundsOption: ReceiveFundsOptionsType) =>
     `receive-step-options-${receiveFundsOption}`;
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
@@ -74,5 +75,10 @@ export class ReceiveModal extends Modal {
   async verifyTronAddressActivationWarningMessage() {
     await expect(this.warningMessage).toBeVisible();
     await expect(this.warningMessage).toContainText(this.sendTronAddressActivationWarningMessage);
+  }
+
+  @step("Verify private/shielded address block visibility")
+  async expectPrivateAddressBlockVisible() {
+    await expect(this.privateAddressBlock).toBeVisible();
   }
 }

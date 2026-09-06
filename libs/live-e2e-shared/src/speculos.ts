@@ -400,6 +400,9 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Zcash",
+      // Manager API provider 1's catalog is still on 3.0.2 (no GET_VK support);
+      // pin to 3.9.3, present in LedgerHQ/coin-apps, to test shielded flows.
+      appVersion: "3.9.3",
     },
     dependencies: [],
   },

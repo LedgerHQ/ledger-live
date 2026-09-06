@@ -29,4 +29,11 @@ export class PrivateBalanceModal extends Modal {
   async confirmUfvkExportedFromDevice() {
     await expect(this.finalMessage).toBeVisible();
   }
+
+  // Overrides Modal.close(): the base "modal-close-button" testid also
+  // matches a decorative icon here, so scope to the actual close button role.
+  @step("Close modal")
+  async close() {
+    await this.container.getByRole("button", { name: "Close" }).click();
+  }
 }

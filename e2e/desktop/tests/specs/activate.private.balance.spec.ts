@@ -7,12 +7,11 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const accounts = [
-  { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-01-01" },
+  { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-08-01" },
 ];
 
 for (const account of accounts) {
-  // TODO: Activate when next app is available
-  test.describe.skip("Activate private balance", () => {
+  test.describe("Activate private balance", () => {
     test.use({
       teamOwner: Team.BST,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -46,6 +45,10 @@ for (const account of accounts) {
         await app.privateBalance.clickContinue();
         await app.speculos.exportUfvk(account.account);
         await app.privateBalance.confirmUfvkExportedFromDevice();
+        await app.privateBalance.close();
+
+        // TODO: extend to shielded-address receive coverage once the device-reconnect
+        // stall on reopening the Receive modal right after this one is fixed.
       },
     );
   });
