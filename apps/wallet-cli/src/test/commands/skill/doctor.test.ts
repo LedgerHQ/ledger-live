@@ -1,5 +1,14 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { appendFile, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  appendFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../helpers/cli-runner";
@@ -8,6 +17,15 @@ import { hashOne, hashSkillFiles } from "../../../skills/hash";
 
 const SKILL_NAME = "wallet-cli-usage";
 const LEGACY_SKILL_NAME = "ledger-wallet-cli";
+
+async function exists(p: string): Promise<boolean> {
+  try {
+    await access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 let tmpDir: string | undefined;
 afterEach(async () => {
@@ -311,5 +329,74 @@ describe("skill doctor — pre-rename installs", () => {
     expect(exitCode).toBe(1);
     expect(stdout).toContain("missing");
     expect(stdout).not.toMatch(/superseded/i);
+  });
+
+  /** A directory carrying the legacy name whose sidecar attests to another skill. */
+  async function installForeignSkillUnderLegacyName(dir: string): Promise<string> {
+    const legacyRoot = path.join(dir, LEGACY_SKILL_NAME);
+    await mkdir(legacyRoot, { recursive: true });
+    await writeFile(path.join(legacyRoot, "SKILL.md"), "someone else's skill\n", "utf8");
+    await writeFile(
+      path.join(legacyRoot, SIDECAR_FILENAME),
+      `${JSON.stringify(
+        {
+          name: "some-other-skill",
+          cliVersion: "0.0.1",
+          contentHash: "deadbeef",
+          files: { "SKILL.md": "deadbeef" },
+          installedAt: new Date().toISOString(),
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    return legacyRoot;
+  }
+
+  it("does not report a legacy-named directory whose sidecar names another skill", async () => {
+    const dir = await makeTmpDir();
+    const foreignRoot = await installForeignSkillUnderLegacyName(dir);
+
+    const { stdout, exitCode } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode).toBe(1);
+    expect(stdout).toContain("missing");
+    expect(stdout).not.toMatch(/superseded/i);
+    expect(stdout).not.toContain(foreignRoot);
+  });
+
+  it("keeps it out of the json envelope too", async () => {
+    const dir = await makeTmpDir();
+    await installForeignSkillUnderLegacyName(dir);
+
+    const { stdout } = await runCli(["skill", "doctor", "--dir", dir, "--output", "json"]);
+    const entry = (
+      JSON.parse(stdout).results as { name: string; supersededRoots?: string[] }[]
+    ).find(r => r.name === SKILL_NAME);
+    expect(entry?.supersededRoots).toBeUndefined();
+  });
+
+  it("does not let it choose where --fix installs", async () => {
+    // Unchecked, an unrelated directory in a non-default agent root would pull
+    // the install to that root.
+    const dir = await makeTmpDir();
+    const prevCwd = process.cwd();
+    process.chdir(dir);
+    const cwd = process.cwd(); // resolves symlinks (macOS /var -> /private/var)
+    try {
+      await mkdir(path.join(cwd, ".cursor", "skills"), { recursive: true });
+      await installForeignSkillUnderLegacyName(path.join(cwd, ".cursor", "skills"));
+
+      const fixed = await runCli(["skill", "doctor", "--fix"]);
+      expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+
+      expect(await exists(path.join(cwd, ".claude", "skills", SKILL_NAME, "SKILL.md"))).toBe(true);
+      expect(await exists(path.join(cwd, ".cursor", "skills", SKILL_NAME))).toBe(false);
+      expect(
+        await readFile(path.join(cwd, ".cursor", "skills", LEGACY_SKILL_NAME, "SKILL.md"), "utf8"),
+      ).toBe("someone else's skill\n");
+    } finally {
+      process.chdir(prevCwd);
+    }
   });
 });

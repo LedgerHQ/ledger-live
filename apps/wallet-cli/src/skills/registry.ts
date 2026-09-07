@@ -270,8 +270,9 @@ export type SkillDiagnosis = {
   shippedHash: string;
   /**
    * Directories under `root` holding an install of this skill under a name it no
-   * longer uses (see `LEGACY_SKILL_NAMES`). Reported so a pre-rename install is
-   * visible rather than silently orphaned; never written to or deleted.
+   * longer uses (see `LEGACY_SKILL_NAMES`), as attested by their sidecar. Reported
+   * so a pre-rename install is visible rather than silently orphaned; never
+   * written to or deleted.
    */
   supersededRoots?: string[];
 };
@@ -360,19 +361,20 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
 }
 
 /**
- * Find installs of `skill` under `root` that use a name it no longer ships.
+ * Find installs of `skill` under `root` under a name it no longer ships.
  *
- * Requires our provenance sidecar, not just a matching directory name: without
- * that check, running `skill doctor` from a ledger-live checkout would report the
- * canonical source at `.agents/skills/ledger-wallet-cli` — which `.agents/skills`
- * is a scanned agent root — as a stale install of itself.
+ * Identified by provenance, not directory name: the sidecar must record that
+ * legacy name. So the canonical source at `.agents/skills/ledger-wallet-cli` (a
+ * scanned root) isn't reported as a stale install of itself, and an unrelated
+ * directory can't be reported or decide where `--fix` installs.
  */
 async function findSupersededRoots(skill: SkillManifest, root: string): Promise<string[]> {
   const found: string[] = [];
   for (const legacyName of legacyNamesFor(skill.name)) {
     const legacyRoot = path.join(root, legacyName);
     if (!(await isDirectory(legacyRoot))) continue;
-    if (!(await readSidecar(legacyRoot))) continue;
+    const sidecar = await readSidecar(legacyRoot);
+    if (sidecar?.name !== legacyName) continue;
     found.push(legacyRoot);
   }
   return found;

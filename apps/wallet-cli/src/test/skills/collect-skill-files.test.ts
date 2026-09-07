@@ -4,9 +4,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { collectSkillFiles } from "../../../scripts/collect-skill-files.mjs";
 
-// The walker feeds two public artifacts — the skill embedded in the npm binary and
-// the copy published to the agent-skills repo — so a symlink escaping the skill tree
-// would publish content nobody reviewed. These tests pin that boundary.
+// The walker feeds two public artifacts, so a symlink escaping the tree would
+// publish content nobody reviewed. These tests pin that boundary.
 
 let root = "";
 let skillDir = "";
@@ -47,8 +46,6 @@ describe("collectSkillFiles", () => {
   });
 
   it("refuses a symlink that escapes the boundary", async () => {
-    // Without this guard the export step would read through the link and publish
-    // the target's content to the public agent-skills repository.
     await symlink(path.join(outside, "secret.md"), path.join(skillDir, "references", "leak.md"));
     await expect(collectSkillFiles(skillDir, { boundary: skillDir })).rejects.toThrow(
       /symlink resolves outside/,
@@ -74,8 +71,7 @@ describe("collectSkillFiles", () => {
   });
 
   it("refuses a symlinked directory even inside the boundary", async () => {
-    // Descending it would emit the same content under two paths, and a self-link
-    // would loop; the manifest hash must stay a function of the real tree.
+    // Descending would emit the same content twice; a self-link would loop.
     await symlink(path.join(skillDir, "references"), path.join(skillDir, "refs"));
     await expect(collectSkillFiles(skillDir, { boundary: skillDir })).rejects.toThrow(
       /does not point to a file/,
@@ -90,8 +86,7 @@ describe("collectSkillFiles", () => {
   });
 
   it("allows a cross-skill symlink when the boundary is the whole skills tree", async () => {
-    // The manifest generator's boundary: skills may share references with each
-    // other, so the same tree that is refused for the public export is allowed here.
+    // The generator's boundary: skills may share references with each other.
     const shared = path.join(root, "skills", "shared");
     await mkdir(shared, { recursive: true });
     await writeFile(path.join(shared, "safety.md"), "# safety\n");
@@ -105,8 +100,7 @@ describe("collectSkillFiles", () => {
   });
 
   it("resolves the boundary itself, so a symlinked ancestor is not a false positive", async () => {
-    // Mirrors a git worktree or macOS /tmp -> /private/tmp: the boundary is reached
-    // through a link, so comparing unresolved paths would reject every entry.
+    // A git worktree, or macOS /tmp -> /private/tmp.
     const linkedRoot = path.join(root, "linked-skills");
     await symlink(path.join(root, "skills"), linkedRoot);
     const files = await collectSkillFiles(path.join(linkedRoot, "ledger-wallet-cli"), {
