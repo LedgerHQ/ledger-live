@@ -27,12 +27,12 @@ export const warnings: Observable<string> = warningsSubject.asObservable();
 
 /**
  * Mask a session token carried by a scriptrunner URL, in a
- * `/secure-channel/<token>` path segment or a `token=` query param. Keeps it out
- * of traces and error metadata, which reach monitoring. A no-op for URLs that
- * carry no token.
+ * `/secure-channel/<token>` path segment or a `token=` query param, every
+ * occurrence of both. Keeps it out of traces and error metadata, which reach
+ * monitoring. A no-op for URLs that carry no token.
  */
 export const redactSecureChannelToken = (value: string): string =>
-  value.replace(/(\/secure-channel\/)[^/?#]+/, "$1***").replace(/([?&]token=)[^&#]+/, "$1***");
+  value.replace(/(\/secure-channel\/)[^/?#]+/g, "$1***").replace(/([?&]token=)[^&#]+/g, "$1***");
 
 /**
  * use Ledger WebSocket API to exchange data with the device

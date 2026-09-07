@@ -30,6 +30,15 @@ describe("redactSecureChannelToken", () => {
     );
   });
 
+  it("masks a token repeated in several query params", () => {
+    const url = `wss://mock.example/update?token=${TOKEN}&retry=1&token=${TOKEN}`;
+
+    const redacted = redactSecureChannelToken(url);
+
+    expect(redacted).toBe("wss://mock.example/update?token=***&retry=1&token=***");
+    expect(redacted).not.toContain(TOKEN);
+  });
+
   it("leaves a url without a token untouched", () => {
     const url = "wss://scriptrunner.api.live.ledger.com/update";
 
