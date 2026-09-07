@@ -43,6 +43,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/                                                 @ledgerhq/platform
 
 # Platform — shared (explicit overrides)
+/shared/analytics/                                       @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
 /shared/qr-code                                          @ledgerhq/platform
@@ -51,6 +52,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
+
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -214,6 +216,8 @@ features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
 features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
+
+shared/analytics/                                        @ledgerhq/engagement
 
 ### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
 domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
