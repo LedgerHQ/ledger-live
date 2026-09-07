@@ -1,5 +1,4 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
 import { PortfolioEmptySection } from "../index";
 import { State } from "~/reducers/types";
@@ -13,6 +12,8 @@ import {
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 import type { Account } from "@ledgerhq/types-live";
 
+const mockNavigate = jest.fn();
+
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
   useAccountBridgeOrNull: jest.fn(),
@@ -21,19 +22,15 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   ),
 }));
 
-const Stack = createNativeStackNavigator();
-
-function PortfolioEmptyHost() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Portfolio" component={PortfolioEmptyScreen} />
-    </Stack.Navigator>
-  );
-}
-
-function PortfolioEmptyScreen() {
-  return <PortfolioEmptySection isLNUpsellBannerShown={false} />;
-}
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+  useRoute: () => ({
+    name: "Portfolio",
+  }),
+}));
 
 const createAccountState = withFlagOverrides(
   { lwmWallet40: { params: { assetSection: true } } },
@@ -66,7 +63,7 @@ describe("PortfolioEmptySection", () => {
 
   describe("when user has no accounts (NoAccountsContent)", () => {
     it("should render an add account button", async () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -74,7 +71,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render quick actions CTAs", () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -82,9 +79,12 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should open the add account drawer when pressing the add button", async () => {
-      const { user } = renderWithReactQuery(<PortfolioEmptyHost />, {
-        overrideInitialState: emptyAccountState,
-      });
+      const { user } = renderWithReactQuery(
+        <PortfolioEmptySection isLNUpsellBannerShown={false} />,
+        {
+          overrideInitialState: emptyAccountState,
+        },
+      );
 
       const addButton = await screen.findByText(/add crypto account/i);
       await user.press(addButton);
@@ -93,7 +93,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should not display the cryptos section", () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -101,7 +101,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render portfolio banners section", () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: overrideInitialStateWithOnboardingWidgetVisible,
       });
 
@@ -111,7 +111,7 @@ describe("PortfolioEmptySection", () => {
 
   describe("when user has accounts (NoSignerContent)", () => {
     it("should render the cryptos section with assets", async () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -119,7 +119,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render the read-only coins fallback when assetSection flag is off", async () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
 
@@ -127,7 +127,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render quick actions CTAs", () => {
-      render(<PortfolioEmptyHost />, {
+      render(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -135,7 +135,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should not display the add account button", () => {
-      render(<PortfolioEmptyHost />, {
+      render(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -143,7 +143,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should display the portfolio banners section", () => {
-      renderWithReactQuery(<PortfolioEmptyHost />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: state =>
           overrideInitialStateWithOnboardingWidgetVisible(createAccountState(state)),
       });
