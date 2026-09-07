@@ -12,6 +12,8 @@ import {
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionsRequestSchema,
+  PayCardTransactionsResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 import { transformPayCardSessionResponse } from "./transforms";
@@ -28,6 +30,8 @@ import type {
   PayCardDetailsCss,
   PayCardDetailsToken,
   PayCardStatus,
+  PayCardTransaction,
+  PayCardTransactionsRequest,
   PayCardUser,
 } from "./types";
 
@@ -118,6 +122,23 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * The card's own transactions, newest first.
+       *
+       * Paged by number and nothing else: the provider answers with a bare array, so a short page
+       * is how a caller learns it has reached the end.
+       */
+      getCardTransactions: build.query<PayCardTransaction[], PayCardTransactionsRequest>({
+        query: filters => ({
+          url: "/v1/card/transactions",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardTransactionsRequestSchema,
+        responseSchema: PayCardTransactionsResponseSchema,
+        providesTags: ["CardTransactions"],
+      }),
+
+      /**
        * A mutation, though it reads: the provider spends the token on first use, so the answer must
        * never be served from a cache, and a mutation is never cached.
        *
@@ -200,6 +221,8 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useGetCardTransactionsQuery,
+  useLazyGetCardTransactionsQuery,
   useCreateCardDetailsTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,

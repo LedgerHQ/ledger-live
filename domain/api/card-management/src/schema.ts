@@ -77,6 +77,64 @@ export const PayCardDetailsTokenResponseSchema = z.object({
     .refine(value => value.startsWith("https://"), { message: "must be an https URL" }),
 });
 
+/**
+ * One card transaction, narrowed to what a transaction list shows.
+ *
+ * The response carries more: the card and processor ids, the MCC number, the conversion and ECB
+ * rates, and the funding sources behind each charge. None of it is displayed, and one field here is
+ * already sensitive — `merchantNameLocation` says where the cardholder shopped — so the rest is
+ * left undeclared and Zod drops it before it reaches the cache.
+ */
+export const PayCardTransactionSchema = z.object({
+  id: z.string().min(1),
+  /** ISO 8601, as the provider formats it. */
+  dateTime: z.string().min(1),
+  sign: z.enum(["DEBIT", "CREDIT"]),
+  merchantNameLocation: z.string().min(1),
+  /** The provider's own grouping, not an id we map: `SUBSCRIPTIONS`, `FOOD`, `MISC` and so on. */
+  mccCategory: z.string().min(1),
+  status: z.enum(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]),
+  /** The provider sends `""` on a transaction that was not declined, so an empty one is expected. */
+  declineReason: z.string().optional(),
+  transactionCurrency: z.string().min(1),
+  amountInTransactionCurrency: z.string().min(1),
+  feesInTransactionCurrency: z.string().min(1),
+  /** What the merchant charged, when that differs from the card's own currency. */
+  originalCurrency: z.string().min(1),
+  amountInOriginalCurrency: z.string().min(1),
+});
+
+export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);
+
+const PayCardTransactionFiltersSchema = z.object({
+  page: z.number().int().nonnegative().optional(),
+  searchKey: z.string().min(1).optional(),
+  mccCategories: z.string().min(1).optional(),
+});
+
+/**
+ * The provider requires `dateFrom` and `dateTo` together, so neither is useful alone: one without
+ * the other is a filter the backend rejects.
+ *
+ * A union rather than a refinement, so the rule is in the inferred type as well: a caller cannot
+ * write a filter that only fails once it is sent.
+ */
+export const PayCardTransactionsRequestSchema = z
+  .union(
+    [
+      PayCardTransactionFiltersSchema.extend({
+        dateFrom: z.string().min(1),
+        dateTo: z.string().min(1),
+      }),
+      PayCardTransactionFiltersSchema.extend({
+        dateFrom: z.undefined().optional(),
+        dateTo: z.undefined().optional(),
+      }),
+    ],
+    { error: "dateFrom and dateTo go together" },
+  )
+  .optional();
+
 export const PayCardInternalWalletSchema = z.object({
   id: z.string().min(1),
   balance: z.string().min(1),
