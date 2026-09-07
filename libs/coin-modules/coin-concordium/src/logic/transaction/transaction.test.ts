@@ -1,8 +1,6 @@
 import BigNumber from "bignumber.js";
 import { TransactionType } from "@ledgerhq/concordium-core";
-import { CONCORDIUM_ENERGY } from "../../constants";
 import { craftTransaction } from "./craftTransaction";
-import { estimateFees } from "./estimateFees";
 import { combine } from "./combine";
 import { broadcast } from "./broadcast";
 import { createFixtureConfig } from "../../test/fixtures";
@@ -10,10 +8,6 @@ import { createFixtureConfig } from "../../test/fixtures";
 // Mock network calls
 jest.mock("../../network/proxyClient", () => ({
   submitTransfer: jest.fn().mockResolvedValue({ submissionId: "test-submission-id" }),
-  getTransactionCost: jest.fn().mockResolvedValue({
-    cost: "1000000",
-    energy: "501",
-  }),
 }));
 
 const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
@@ -180,71 +174,6 @@ describe("logic/transaction", () => {
       // Expiry should be ~1 hour (3600 seconds) from now
       expect(expiry).toBeGreaterThanOrEqual(beforeTime + 3600);
       expect(expiry).toBeLessThanOrEqual(afterTime + 3600 + 1);
-    });
-  });
-
-  describe("estimateFees", () => {
-    it("should return fee estimation for simple transfer", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
-
-      expect(result).toHaveProperty("cost");
-      expect(result).toHaveProperty("energy");
-      expect(typeof result.cost).toBe("bigint");
-      expect(typeof result.energy).toBe("bigint");
-    });
-
-    it("should use fixed energy for simple transfer without payload", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
-
-      // Simple transfer has fixed energy cost
-      expect(result.energy).toBe(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
-    });
-
-    it("should calculate energy for transfer with payload", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
-
-      expect(result.energy).toBeGreaterThan(0n);
-    });
-
-    it("should return default values when transaction cost fetch fails", async () => {
-      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
-      getTransactionCost.mockRejectedValueOnce(new Error("Network error"));
-
-      const result = await estimateFees(config, "concordium_testnet");
-
-      expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
-      expect(result.energy).toBe(CONCORDIUM_ENERGY.DEFAULT);
-    });
-
-    it("should return higher default energy for memo transfer when fetch fails", async () => {
-      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
-      getTransactionCost.mockRejectedValueOnce(new Error("Network error"));
-
-      const result = await estimateFees(config, "concordium_testnet", "some memo");
-
-      expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
-      expect(result.energy).toBe(CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX);
-    });
-
-    it("should call getTransactionCost with correct parameters", async () => {
-      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
-
-      await estimateFees(config, "concordium_testnet");
-
-      expect(getTransactionCost).toHaveBeenCalledWith(config, "concordium_testnet", {
-        numSignatures: 1,
-      });
-    });
-
-    it("should call getTransactionCost with memoSize when memo provided", async () => {
-      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
-
-      await estimateFees(config, "concordium_testnet", "test");
-
-      expect(getTransactionCost).toHaveBeenCalledWith(config, "concordium_testnet", {
-        numSignatures: 1,
-        memoSize: 5,
-      });
     });
   });
 

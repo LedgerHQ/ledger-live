@@ -129,10 +129,48 @@ export interface TransactionQueryParams {
   blockHeightTo?: number; // inclusive upper bound
 }
 
-export interface GetTransactionCostParams {
-  numSignatures: number;
-  memoSize?: number;
-}
+/**
+ * Token operation names the proxy prices.
+ *
+ * Anything outside this set is a 400 from `computeTokenOperationSpecificCost`,
+ * so the union is what keeps an unpriceable name from being sent at all. The
+ * wallet only ever emits `transfer`; the rest are governance operations it does
+ * not perform, and are listed to match the proxy's own map.
+ */
+export type PltOperationName =
+  | "transfer"
+  | "mint"
+  | "burn"
+  | "addAllowList"
+  | "removeAllowList"
+  | "addDenyList"
+  | "removeDenyList"
+  | "pause"
+  | "unpause";
+
+/**
+ * Parameters for `GET /v0/transactionCost`, discriminated on the transaction
+ * type the proxy prices.
+ *
+ * Every `tokenUpdate` parameter is mandatory and returns its own 400 when
+ * absent.
+ */
+export type GetTransactionCostParams =
+  | {
+      type: "simpleTransfer";
+      numSignatures: number;
+      memoSize?: number;
+    }
+  | {
+      type: "tokenUpdate";
+      numSignatures: number;
+      /** Priced by its UTF-8 byte length alone, not by its value. */
+      tokenId: string;
+      /** Byte length of the CBOR operations blob, which must already be encoded. */
+      listOperationsSize: number;
+      /** Sent as a JSON document in the query string, not as repeated parameters. */
+      tokenOperationTypeCount: Partial<Record<PltOperationName, number>>;
+    };
 
 /**
  * Request payload for submitting a transfer transaction

@@ -1,8 +1,10 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { Observable } from "rxjs";
 import type { ConcordiumSigner, Transaction } from "../types";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../logic";
@@ -31,7 +33,29 @@ export const buildSignOperation =
           account.currency.id,
         );
 
-        const estimation = await estimateFees(config, account.currency.id, transaction.memo);
+        // The fee shown in the wallet and the energy in the signed header must
+        // be two halves of one estimate, or the device's "Max fees" step
+        // contradicts the figure the user already approved. The discriminator is
+        // the selected sub-account, not a present `energy`: that field outlives
+        // any token selection, so reading it alone would declare a token energy
+        // limit on a native transfer.
+        const isTokenTransfer =
+          findSubAccountById(account, transaction.subAccountId ?? "")?.type === "TokenAccount";
+
+        if (isTokenTransfer && transaction.energy === undefined) throw new FeeNotLoaded();
+
+        const estimation =
+          isTokenTransfer && transaction.energy !== undefined
+            ? { cost: BigInt(fee.toString()), energy: BigInt(transaction.energy) }
+            : await estimateFees(config, account.currency.id, transaction.memo);
+
+        // `craftTransaction` emits a native transfer whatever it is handed, so a
+        // token send would move CCD at the token's integer amount — the wrong
+        // asset, at a magnitude the token's decimals chose. The api layer refuses
+        // a PLT intent for this reason (`assertNativeAsset`); the bridge had no
+        // equivalent. Removed by LIVE-28337, which crafts the `TokenUpdate`
+        // payload.
+        invariant(!isTokenTransfer, "concordium: signing a PLT transfer is not supported yet");
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

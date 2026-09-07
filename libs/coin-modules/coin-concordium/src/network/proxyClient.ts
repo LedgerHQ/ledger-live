@@ -261,26 +261,46 @@ export async function getTransactions(
 }
 
 /**
+ * Flattens the cost parameters into the query string the proxy parses.
+ *
+ * `tokenOperationTypeCount` is serialized rather than spread: a bracket or
+ * repeated-key encoding is a parse error, not an equivalent form.
+ */
+function toCostQueryParams(params: GetTransactionCostParams): Record<string, string | number> {
+  if (params.type === "tokenUpdate") {
+    return {
+      type: params.type,
+      numSignatures: params.numSignatures,
+      tokenId: params.tokenId,
+      listOperationsSize: params.listOperationsSize,
+      tokenOperationTypeCount: JSON.stringify(params.tokenOperationTypeCount),
+    };
+  }
+
+  return {
+    type: params.type,
+    numSignatures: params.numSignatures,
+    ...(params.memoSize ? { memoSize: params.memoSize } : {}),
+  };
+}
+
+/**
  * Calculate transaction cost
  * GET /v0/transactionCost
  *
- * Always uses "simpleTransfer" type as it's the only supported type for regular transfers.
- * Memo overhead is calculated via the optional memoSize parameter.
+ * The energy returned is a ceiling the caller is expected to buffer, not the
+ * amount the chain will bill.
  */
 export async function getTransactionCost(
   config: ConcordiumCoinConfig,
   currencyId: string,
-  { numSignatures, memoSize }: GetTransactionCostParams,
+  params: GetTransactionCostParams,
 ): Promise<{ cost: string; energy: number }> {
   return withClient(config, currencyId, async client =>
     client.request<{ cost: string; energy: number }>({
       method: "GET",
       url: "/v0/transactionCost",
-      params: {
-        type: "simpleTransfer",
-        numSignatures,
-        ...(memoSize ? { memoSize } : {}),
-      },
+      params: toCostQueryParams(params),
     }),
   );
 }
