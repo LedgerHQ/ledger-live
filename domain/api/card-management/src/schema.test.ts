@@ -10,6 +10,8 @@ import {
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionSchema,
+  PayCardTransactionsRequestSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -347,5 +349,113 @@ describe("PayCardOnboardingStatusResponseSchema", () => {
         steps: [{ ...response.steps[0], title: "" }],
       }),
     ).toThrow();
+  });
+});
+
+describe("PayCardTransactionSchema", () => {
+  // The provider's own documented example, kept whole so the extra keys are exercised too.
+  const documented = {
+    id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
+    cardId: "1234537292209260487",
+    panLast4: "9189",
+    transactionId: "1122334477422",
+    dateTime: "2024-10-14T10:44:36.276Z",
+    sign: "DEBIT",
+    merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
+    merchantType: "OutOfWalletOnline",
+    mcc: 5964,
+    mccCategory: "MISC",
+    transactionCurrency: "EUR",
+    amountInTransactionCurrency: "0.79",
+    feesInTransactionCurrency: "0",
+    originalCurrency: "USD",
+    amountInOriginalCurrency: "0.85",
+    feesInOriginalCurrency: "0",
+    billingConversionRate: "0.9294117647058824",
+    ecbRate: "0.9161704076958315",
+    status: "CONFIRMED",
+    declineReason: "",
+    fundingSources: [
+      {
+        id: "3181a37a-07fa-41dc-b423-6c2db07a7ba1",
+        address: "0x3a11a86cf218c448be519728cd3ac5c741fb3424",
+        network: "linea",
+        txHash: "0xb92de09d893e8162b0861c0f7321f68df02212efbc58f208839ae3f176d89638",
+        currency: "usdc",
+        amount: "0.104201",
+        fees: "0",
+        swapFee: "0.00208",
+        sign: "DEBIT",
+        status: "CONFIRMED",
+        dateTime: "2024-10-14T10:44:36.288Z",
+      },
+    ],
+  };
+
+  it("reads the transaction the provider documents", () => {
+    expect(PayCardTransactionSchema.parse(documented).id).toBe(documented.id);
+  });
+
+  it("accepts the empty decline reason a confirmed transaction carries", () => {
+    // The provider sends `""`, not an absent key. A non-empty rule here would reject every
+    // transaction that was not declined.
+    expect(PayCardTransactionSchema.parse(documented).declineReason).toBe("");
+  });
+
+  it("reads a declined transaction with its reason", () => {
+    const declined = { ...documented, status: "DECLINED", declineReason: "Insufficient funds" };
+
+    expect(PayCardTransactionSchema.parse(declined)).toMatchObject({
+      status: "DECLINED",
+      declineReason: "Insufficient funds",
+    });
+  });
+
+  it.each(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"])("reads a %s transaction", status => {
+    expect(PayCardTransactionSchema.parse({ ...documented, status }).status).toBe(status);
+  });
+
+  it("keeps the card and processor ids out of what callers receive", () => {
+    const parsed = PayCardTransactionSchema.parse(documented);
+
+    // Zod drops what is not declared, which is what keeps the unneeded fields out of the cache.
+    expect(parsed).not.toHaveProperty("cardId");
+    expect(parsed).not.toHaveProperty("panLast4");
+    expect(parsed).not.toHaveProperty("fundingSources");
+  });
+
+  it("keeps the amount as the string the provider sent, not a number", () => {
+    expect(PayCardTransactionSchema.parse(documented).amountInTransactionCurrency).toBe("0.79");
+  });
+
+  it("rejects a direction the wire contract does not name", () => {
+    expect(() => PayCardTransactionSchema.parse({ ...documented, sign: "REFUND" })).toThrow();
+  });
+});
+
+describe("PayCardTransactionsRequestSchema", () => {
+  it("takes no filters at all", () => {
+    expect(PayCardTransactionsRequestSchema.parse(undefined)).toBeUndefined();
+  });
+
+  it("takes a page on its own", () => {
+    expect(PayCardTransactionsRequestSchema.parse({ page: 2 })).toEqual({ page: 2 });
+  });
+
+  it("takes both dates together", () => {
+    const range = { dateFrom: "2026-01-01", dateTo: "2026-01-31" };
+
+    expect(PayCardTransactionsRequestSchema.parse(range)).toEqual(range);
+  });
+
+  it.each([{ dateFrom: "2026-01-01" }, { dateTo: "2026-01-31" }])(
+    "rejects %s, because the provider requires the pair",
+    range => {
+      expect(() => PayCardTransactionsRequestSchema.parse(range)).toThrow();
+    },
+  );
+
+  it("rejects a negative page", () => {
+    expect(() => PayCardTransactionsRequestSchema.parse({ page: -1 })).toThrow();
   });
 });

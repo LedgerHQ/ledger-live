@@ -125,6 +125,7 @@ describe("cardManagementApi configuration", () => {
       "getCardLinkedWallets",
       "getCardOnboardingStatus",
       "getCardStatus",
+      "getCardTransactions",
       "getInternalWallets",
       "getUser",
       "logout",
@@ -432,6 +433,84 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("getCardTransactions", () => {
+    const TRANSACTIONS_PATH = "/v1/card/transactions";
+
+    const transaction = {
+      id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
+      dateTime: "2024-10-14T10:44:36.276Z",
+      sign: "DEBIT",
+      merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
+      mccCategory: "MISC",
+      status: "CONFIRMED",
+      declineReason: "",
+      transactionCurrency: "EUR",
+      amountInTransactionCurrency: "0.79",
+      feesInTransactionCurrency: "0",
+      originalCurrency: "USD",
+      amountInOriginalCurrency: "0.85",
+    };
+
+    it("reads the transactions with the bearer token and the client key", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([transaction]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
+      );
+
+      expectSessionRequest("GET", TRANSACTIONS_PATH);
+      expect(result.data).toEqual([transaction]);
+    });
+
+    it("sends the filters as query parameters", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate({
+          page: 2,
+          dateFrom: "2026-01-01",
+          dateTo: "2026-01-31",
+          mccCategories: "FOOD,TRAVEL",
+        }),
+      );
+
+      const { searchParams } = new URL(provider.sent().url);
+      expect(searchParams.get("page")).toBe("2");
+      expect(searchParams.get("dateFrom")).toBe("2026-01-01");
+      expect(searchParams.get("dateTo")).toBe("2026-01-31");
+      expect(searchParams.get("mccCategories")).toBe("FOOD,TRAVEL");
+    });
+
+    it("rejects one date without the other before the request goes out", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // The pairing is part of the request type, so this line also asserts the type refuses it.
+        // @ts-expect-error one date without the other is not a filter
+        cardManagementApi.endpoints.getCardTransactions.initiate({ dateFrom: "2026-01-01" }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The provider would answer 400; the filter never leaves the app.
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("reads an empty history as an empty list, not as a failure", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
     });
   });
 
