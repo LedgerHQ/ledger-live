@@ -6,11 +6,12 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useContacts } from "@features/platform-contacts";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
-import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { PAY_ACCOUNT_UI_USE_CASE } from "LLM/features/ModularDrawer/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
 
@@ -45,13 +46,12 @@ export type RecipientScreenViewModel =
 
 export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const { state, uiConfig, recipientSearch, selectContactBeforeAccount } = useSendFlowData();
-  const { transaction } = useSendFlowActions();
+  const { transaction, setAccountAndNavigate } = useSendFlowActions();
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const storedContacts = useContacts();
   const contacts = useMemo(() => storedContacts.filter(contact => !contact.isMe), [storedContacts]);
-  const { handleOpenSendFlow } = useOpenSendFlow({
-    sourceScreenName: "Pay",
-  });
+  const { openDrawer } = useModularDrawerController();
+  const [pendingRecipientAddress, setPendingRecipientAddress] = useState<string>();
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? null;
@@ -85,14 +85,30 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onSelectAddress = useCallback(
     (address: ContactAddress) => {
-      handleOpenSendFlow({
-        currencyIds: [address.currencyId],
-        recipient: address.address,
-        skipRecipientStep: true,
+      openDrawer({
+        currencies: [address.currencyId],
+        flow: "send",
+        source: "Pay",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: true,
+        uiUseCase: PAY_ACCOUNT_UI_USE_CASE,
+        onAccountSelected: (selectedAccount, selectedParentAccount) => {
+          setPendingRecipientAddress(address.address);
+          setAccountAndNavigate(selectedAccount, selectedParentAccount);
+          goToAmount();
+        },
       });
     },
-    [handleOpenSendFlow],
+    [goToAmount, openDrawer, setAccountAndNavigate],
   );
+
+  useEffect(() => {
+    if (!pendingRecipientAddress || !state.transaction.transaction) {
+      return;
+    }
+    transaction.setRecipient({ address: pendingRecipientAddress });
+    setPendingRecipientAddress(undefined);
+  }, [pendingRecipientAddress, state.transaction.transaction, transaction]);
 
   const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
     onSelectAddress,
@@ -105,11 +121,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [openPicker],
   );
 
-  if (!account || !currency) {
-    if (!selectContactBeforeAccount) {
-      return { ready: false };
-    }
-
+  if (selectContactBeforeAccount) {
     return {
       ready: true,
       mode: "selectContactBeforeAccount",
@@ -117,6 +129,10 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
       onSelectContact,
       contactAddressPicker,
     };
+  }
+
+  if (!account || !currency) {
+    return { ready: false };
   }
 
   return {

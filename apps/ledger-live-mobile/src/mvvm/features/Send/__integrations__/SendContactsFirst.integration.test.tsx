@@ -231,6 +231,7 @@ describe("Send contacts-first", () => {
     await user.press(await screen.findByTestId("asset-item-ETH"));
     await user.press(await screen.findByTestId("account-item"));
 
-    expect(await screen.findByText(`send:${ethAccount.id}`)).toBeVisible();
+    expect(await screen.findByTestId("disabled-amount-continue-button")).toBeVisible();
+    expect(screen.queryByText(`send:${ethAccount.id}`)).not.toBeOnTheScreen();
   });
 });
