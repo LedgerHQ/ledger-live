@@ -477,7 +477,7 @@ describe("useRecipientScreenView", () => {
       expect.objectContaining({
         button: "contact address",
         page: "select contact address",
-        addressRank: 0,
+        addressRank: 1,
       }),
     );
     expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");

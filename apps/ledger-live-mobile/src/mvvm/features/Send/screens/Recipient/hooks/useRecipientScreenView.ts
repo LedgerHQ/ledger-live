@@ -197,14 +197,16 @@ export function useRecipientScreenView({
   const handleContactAddressSelect = useCallback(
     (address: ContactAddress) => {
       const pickedContact = pickerRef.current?.contact;
+      const rowIndex = (pickerRef.current?.groups ?? [])
+        .flatMap(group => group.rows)
+        .findIndex(row => row.addressId === address.id);
       track("button_clicked", {
         button: "contact address",
         page: "select contact address",
         network: mainAccount.currency.id,
         asset: address.currencyId,
-        addressRank: (pickerRef.current?.groups ?? [])
-          .flatMap(group => group.rows)
-          .findIndex(row => row.addressId === address.id),
+        // 1-based, to stay consistent with the rest of the send-flow ranks.
+        addressRank: rowIndex + 1,
         ...sendFlowTrackingProperties,
       });
       setRecipientResolution(
