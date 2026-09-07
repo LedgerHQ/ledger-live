@@ -188,6 +188,39 @@ describe("usePayCardToolProps", () => {
     expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
   });
 
+  it("reports no balance until the screen asks for one", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.balance).toMatchObject({
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+    });
+  });
+
+  it("starts reading the wallets when the screen opens", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => result.current.balance.load());
+
+    expect(result.current.balance.isFetching).toBe(true);
+  });
+
+  it("reads the wallets on a refresh, even as the first thing the screen does", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    // Refresh both requests them and refetches, so it stands on its own: pressing it before the
+    // first read has landed must not leave the screen with nothing.
+    act(() => result.current.balance.refresh());
+
+    expect(result.current.balance.isFetching).toBe(true);
+  });
+
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 
