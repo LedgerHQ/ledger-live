@@ -103,6 +103,7 @@
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-pay-card": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
+    "@features/flow-pay-card-widget": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-contact": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",
