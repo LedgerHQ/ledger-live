@@ -913,17 +913,17 @@
         "addContact" : "Kişi ekle"
       },
       "table" : {
-        "name" : "Name",
-        "addresses" : "Addresses",
-        "transactions" : "Transactions",
-        "transactionCount_zero" : "No transaction",
-        "transactionCount_one" : "{{count}} transaction",
-        "transactionCount_other" : "{{count}} transactions"
+        "name" : "İsim",
+        "addresses" : "Adresler",
+        "transactions" : "İşlemler",
+        "transactionCount_zero" : "İşlem yok",
+        "transactionCount_one" : "{{count}} işlem",
+        "transactionCount_other" : "{{count}} işlem"
       },
       "actions" : {
-        "pay" : "Send to contact",
-        "more" : "More options",
-        "viewTransactions" : "View transactions"
+        "pay" : "Kişiye gönder",
+        "more" : "Daha fazla seçenek",
+        "viewTransactions" : "İşlemi görüntüle"
       }
     },
     "actions" : {
@@ -5317,7 +5317,7 @@
         "applyFamilies" : "Uygula",
         "contactsData" : "Kişi verileri",
         "loadPopulatedContacts" : "Örnek kişileri yükle",
-        "loadFromSendHistory" : "Load contacts from send history",
+        "loadFromSendHistory" : "Gönderim geçmişinden kişileri yükle",
         "resetContacts" : "Kişileri sıfırla",
         "resetOverride" : "Uygulamayı sıfırla",
         "featureIntroduction" : {
@@ -8874,8 +8874,8 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
-    "unsupportedAssetTooltip" : "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip" : "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip" : "{{asset}} henüz desteklenmiyor",
+    "unsupportedNetworkTooltip" : "{{network}} ağı henüz desteklenmiyor.",
     "selectAccount" : "Hesap seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
     "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
@@ -9646,18 +9646,18 @@
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Explore now",
+      "primaryAction" : "Hemen keşfet",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Save addresses by a name you choose",
-          "description" : "Exchanges, friends, your own external accounts."
+          "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
+          "description" : "Borsalar, arkadaşlar, kendi harici hesaplarınız."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "See a name you trust, not an address."
+          "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Securely top up via Ledger Wallet™",
+          "title" : "Ledger Wallet™ ile güvenli bir şekilde bakiye yükleyin",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
