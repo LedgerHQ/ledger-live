@@ -44,6 +44,7 @@ import {
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
   AleoClosedValidator,
+  AleoUnbondingValidator,
   AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
@@ -230,16 +231,17 @@ async function validateRecipient({
 }
 
 /**
- * The committee/latest response (fetched via getValidators) is the only
- * place `isOpen` is available; there is no single-address lookup. A
- * validator absent from the committee is not proven closed (it may be new,
- * or the metadata fetch may be incomplete) so it is not blocked here — an
- * invalid/unknown recipient is already caught by validateRecipient above.
- * A network failure while fetching the committee is treated the same way:
- * we do not hard-fail the status (that would block legitimate bonds during
- * an outage), we simply skip this check.
+ * The two validator states `bond_public` refuses to bond to, both only knowable through
+ * getValidators: `is_open` comes from committee/latest, and the `unbonding` entry from a
+ * per-address mapping read there is no single call for here.
+ *
+ * A validator absent from the committee is not proven to be in either state (it may be
+ * new, or the fetch may be incomplete) so it is not blocked here — an invalid/unknown
+ * recipient is already caught by validateRecipient above. A network failure is treated the
+ * same way: we do not hard-fail the status (that would block legitimate bonds during an
+ * outage), we simply skip this check.
  */
-async function validateBondValidatorIsOpen({
+async function validateBondValidator({
   account,
   recipient,
 }: {
@@ -250,7 +252,13 @@ async function validateBondValidatorIsOpen({
     const validators = await getValidators(account.currency.id);
     const validator = validators.find(({ address }) => address === recipient);
 
-    if (validator && !validator.isOpen) {
+    if (!validator) return null;
+
+    if (validator.isUnbonding) {
+      return new AleoUnbondingValidator();
+    }
+
+    if (!validator.isOpen) {
       return new AleoClosedValidator();
     }
   } catch {
@@ -329,12 +337,12 @@ async function handleTransferTransaction({
       if (bondedValidator && bondedValidator !== transaction.recipient) {
         errors.recipient = new AleoAlreadyBondedElsewhere(undefined, { bondedValidator });
       } else {
-        const closedValidatorError = await validateBondValidatorIsOpen({
+        const validatorError = await validateBondValidator({
           account,
           recipient: transaction.recipient,
         });
-        if (closedValidatorError) {
-          errors.recipient = closedValidatorError;
+        if (validatorError) {
+          errors.recipient = validatorError;
         }
       }
     }

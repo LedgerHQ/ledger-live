@@ -86,6 +86,14 @@ export class AleoClosedValidator extends Error {
   }
 }
 
+export class AleoUnbondingValidator extends Error {
+  override name = "AleoUnbondingValidator";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoUnbondingValidator");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class AleoAlreadyBondedElsewhere extends Error {
   override name = "AleoAlreadyBondedElsewhere";
   constructor(message?: string, fields?: Record<string, unknown>) {

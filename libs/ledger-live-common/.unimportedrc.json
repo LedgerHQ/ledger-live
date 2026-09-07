@@ -458,6 +458,7 @@
     "src/families/aleo/hw/getViewKey/index.ts",
     "src/families/aleo/hw/getViewKey/resolver.ts",
     "src/families/aleo/hw/getViewKey/types.ts",
+    "src/families/aleo/logic.ts",
     "src/families/aleo/privateSyncProgress.ts",
     "src/families/aleo/react.ts",
     "src/families/aleo/setup.ts",
