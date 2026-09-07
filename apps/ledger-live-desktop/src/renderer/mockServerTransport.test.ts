@@ -152,7 +152,7 @@ describe("bootstrapMockServerTransport", () => {
 
   it("leaves the token unpublished when provisioning fails", async () => {
     mockedNetwork.mockRejectedValue(new Error("unreachable"));
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
 
     await bootstrapMockServerTransport();
 
