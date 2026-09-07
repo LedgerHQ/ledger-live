@@ -67,10 +67,10 @@ export type NewSendFlowEntry = {
   bugTicket?: string;
   teamOwner?: Team;
   /**
-   * When set, the amount is asserted to pin the currency's decimal magnitude in the input
-   * (exact round-trip, and one decimal deeper rejected) and to appear verbatim in the
-   * operation details. Use for assets whose magnitude is unusual enough that a formatting
-   * regression would otherwise pass unnoticed.
+   * When set, the amount input is asserted to pin the currency's decimal magnitude: an exact
+   * round-trip, plus one decimal deeper rejected. Only meaningful when the amount already
+   * fills the currency's magnitude — otherwise the deeper value is legitimately accepted.
+   * The operation-details amount is asserted for every entry regardless.
    */
   verifyAmountPrecision?: boolean;
 };
@@ -162,9 +162,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.newSendFlow.clickViewDetails();
           await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
-          if (entry.verifyAmountPrecision) {
-            await app.sendDrawer.expectAmountVisible(tx.amount);
-          }
+          await app.sendDrawer.expectAmountVisible(tx.amount);
           if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
             await app.sendDrawer.expectMemoVisible(validMemoTag);
           }

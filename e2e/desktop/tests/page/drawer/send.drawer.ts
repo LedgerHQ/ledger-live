@@ -5,6 +5,7 @@ import { exactAmountPattern } from "@ledgerhq/live-e2e-shared/amountPattern";
 
 export class SendDrawer extends Drawer {
   private sendDrawer = this.page.getByTestId("drawer-content");
+  private amountValue = this.sendDrawer.getByTestId("amountReceived-drawer").first();
   private addressValue = (address: string) => this.sendDrawer.filter({ hasText: address });
 
   @step("Verify address is visible")
@@ -22,6 +23,8 @@ export class SendDrawer extends Drawer {
 
   @step("Verify amount is visible in transaction details: $0")
   async expectAmountVisible(amount: string) {
-    await expect(this.sendDrawer.filter({ hasText: exactAmountPattern(amount) })).toBeVisible();
+    // Scoped to the amount element rather than the whole drawer: the fee and total rows also
+    // render crypto values, and either would satisfy a drawer-wide match.
+    await expect(this.amountValue).toHaveText(exactAmountPattern(amount));
   }
 }

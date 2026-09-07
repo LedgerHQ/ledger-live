@@ -1,6 +1,7 @@
 import { Transaction } from "../models/Transaction";
 import {
   expectSpeculosEventsContain,
+  expectSpeculosEventsContainExactly,
   fetchCurrentScreenTexts,
   waitForReviewTransaction,
   pressUntilTextFound,
@@ -38,16 +39,11 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   );
 
   if (tx.accountToDebit instanceof TokenAccount) {
-    const { ticker } = tx.accountToDebit.currency;
-    // Strict containment, not containsSubstringInEvent: that helper falls back to a
-    // `W.*?G.*?N.*?K` regex over the concatenated events, which a 4-letter ticker would
-    // match against almost any screen. Screens are concatenated first, so a ticker split
-    // across two events is still found.
-    if (!events.join("").includes(ticker)) {
-      throw new Error(
-        `Expected token ticker "${ticker}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
-      );
-    }
+    expectSpeculosEventsContainExactly(
+      tx.accountToDebit.currency.ticker,
+      events,
+      "Expected the token ticker to be displayed on Speculos device",
+    );
   }
 
   if (shouldSkipRecipientDisplayValidation(tx)) {

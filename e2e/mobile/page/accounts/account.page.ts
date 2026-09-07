@@ -9,9 +9,10 @@ export default class AccountPage {
   accountListTitleId = "accounts-list-title";
   accountsListId = "accounts-list";
   accountScreenScrollView = "account-screen-scrollView";
-  // The Button wrapper falls back to its `event` prop as the testID when no explicit testID
-  // is given (src/components/Button.tsx getTestID), so this needs no change in the app.
-  expandSubAccountsButtonId = "accountExpandTokenList";
+  // The Button wrapper prefixes an explicit testID with "enabled-"/"disabled-"
+  // (src/components/Button.tsx getTestID). The id is state-specific, so its presence
+  // alone means the list is collapsed.
+  expandSubAccountsToggleId = "enabled-subAccounts-expand-toggle";
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
@@ -141,27 +142,13 @@ export default class AccountPage {
   async expandSubAccountsIfNeeded(subAccountId: string) {
     // Only the first 3 sub-accounts are rendered; the rest sit behind a toggle, so a token
     // outside that set is not in the view tree at all. A present row means nothing to do; an
-    // absent one proves nothing (off-screen rows are unmounted either way), so the state comes
-    // from the toggle's own label.
+    // absent one proves nothing, since off-screen rows are unmounted either way.
     if (await IsIdPresent(subAccountId)) return;
-    if (!(await IsIdPresent(this.expandSubAccountsButtonId))) return;
-    await revealForTap(this.expandSubAccountsButtonId, {
+    if (!(await IsIdPresent(this.expandSubAccountsToggleId))) return;
+    await revealForTap(this.expandSubAccountsToggleId, {
       container: this.accountScreenScrollView,
     });
-    if (!(await this.isSubAccountsListCollapsed())) return;
-    await tapById(this.expandSubAccountsButtonId);
-  }
-
-  /** Every expand wording contains "more"; every collapse wording uses "fewer" or "less". */
-  private async isSubAccountsListCollapsed(): Promise<boolean> {
-    try {
-      await detoxExpect(
-        getElementByIdWithDescendantTexts(this.expandSubAccountsButtonId, /\bmore\b/i),
-      ).toExist();
-      return true;
-    } catch {
-      return false;
-    }
+    await tapById(this.expandSubAccountsToggleId);
   }
 
   @Step("Scroll to a Specific SubAccount Row {{{0}}}")
