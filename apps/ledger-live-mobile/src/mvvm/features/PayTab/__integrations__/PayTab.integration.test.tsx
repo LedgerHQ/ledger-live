@@ -524,8 +524,10 @@ describe("PayTab integration", () => {
       await user.press(await screen.findByTestId("asset-item-ETH"));
       await user.press(await screen.findByTestId("account-item"));
 
-      expect(await screen.findByTestId("disabled-amount-continue-button")).toBeVisible();
-      expect(screen.getByText("Contact 0")).toBeVisible();
+      expect(await screen.findByTestId("enabled-amount-continue-button")).toBeVisible();
+      expect(
+        within(screen.getByTestId("recipient-contact-row")).getByText("Contact 0"),
+      ).toBeVisible();
     });
 
     it("should open send from New when some contacts have no address", async () => {
@@ -544,17 +546,29 @@ describe("PayTab integration", () => {
       expect(screen.queryByText("Me")).not.toBeOnTheScreen();
     });
 
-    it("should open send without Me from New when there is no one else to pay", async () => {
+    it("should open send recipient search from New when there is no one else to pay", async () => {
       const { user, store } = renderPayTab({
         contacts: [mockMeContact()],
         contactsEnabled: true,
+        cryptoOnly: true,
       });
 
       await user.press(await screen.findByRole("button", { name: "New" }));
 
-      expect(await screen.findByTestId("send-recipient-contacts-list")).toBeVisible();
+      await waitFor(() => {
+        expect(store.getState().modularDrawer).toMatchObject({
+          isOpen: true,
+          flow: "send",
+          source: "Pay",
+        });
+      });
+      expect(screen.queryByTestId("send-recipient-contacts-list")).not.toBeOnTheScreen();
       expect(screen.queryByText("Me")).not.toBeOnTheScreen();
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
+
+      await user.press(await screen.findByTestId("asset-item-ETH"));
+      await user.press(await screen.findByTestId("account-item"));
+
+      expect(await screen.findByPlaceholderText("Enter address, ENS or contact")).toBeVisible();
     });
 
     it("should open send from New when no contact has an address", async () => {

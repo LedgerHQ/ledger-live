@@ -233,7 +233,7 @@ describe("Send contacts-first", () => {
   it("should hide Me when only Me is saved", async () => {
     renderContactsFirstSend([mockMeContact({ name: "Me" })]);
 
-    expect(await screen.findByTestId("send-recipient-contacts-list")).toBeVisible();
+    expect(screen.queryByTestId("send-recipient-contacts-list")).not.toBeOnTheScreen();
     expect(screen.queryByText("Me")).not.toBeOnTheScreen();
   });
 

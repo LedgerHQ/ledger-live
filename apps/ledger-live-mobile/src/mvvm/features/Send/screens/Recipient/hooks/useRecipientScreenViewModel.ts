@@ -114,7 +114,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [openPicker],
   );
 
-  if (selectContactBeforeAccount) {
+  if (selectContactBeforeAccount && contacts.length > 0) {
     return {
       ready: true,
       mode: "selectContactBeforeAccount",

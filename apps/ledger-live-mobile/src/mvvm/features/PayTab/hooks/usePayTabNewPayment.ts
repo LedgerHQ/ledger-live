@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { useContacts } from "@features/platform-contacts";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { NavigatorName } from "~/const";
@@ -15,6 +16,8 @@ export type UsePayTabNewPayment = Readonly<{
 
 export function usePayTabNewPayment(): UsePayTabNewPayment {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const contacts = useContacts();
+  const hasSomeoneToPay = contacts.some(contact => !contact.isMe);
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: "Pay",
   });
@@ -36,15 +39,19 @@ export function usePayTabNewPayment(): UsePayTabNewPayment {
   const open = useCallback(
     (nextContact?: Contact) => {
       if (!nextContact) {
-        navigation.navigate(NavigatorName.SendFlow, {
-          params: { selectContactBeforeAccount: true },
-        });
+        if (hasSomeoneToPay) {
+          navigation.navigate(NavigatorName.SendFlow, {
+            params: { selectContactBeforeAccount: true },
+          });
+          return;
+        }
+        handleOpenSendFlow();
         return;
       }
 
       openPicker(nextContact);
     },
-    [openPicker, navigation],
+    [handleOpenSendFlow, hasSomeoneToPay, openPicker, navigation],
   );
 
   return { open, contactAddressPicker };
