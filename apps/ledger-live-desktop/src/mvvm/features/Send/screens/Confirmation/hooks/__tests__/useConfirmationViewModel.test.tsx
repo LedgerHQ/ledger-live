@@ -7,7 +7,9 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/renderer/drawers/Provider", () => ({ setDrawer: jest.fn() }));
-jest.mock("~/renderer/drawers/OperationDetails", () => ({ OperationDetails: {} }));
+jest.mock("~/renderer/drawers/OperationDetails", () => ({
+  OperationDetails: {},
+}));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { isUserRefusedTransactionError: jest.fn() },
 }));
@@ -17,6 +19,17 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowActions: jest.fn(),
   useSendFlowData: jest.fn(),
+}));
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    inputMethod: "manual",
+    resultType: "unknown address",
+    recipientType: "external address",
+    savedContactDuringFlow: false,
+    setInputMethod: jest.fn(),
+    setRecipientResolution: jest.fn(),
+    markContactSaved: jest.fn(),
+  })),
 }));
 
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
@@ -176,6 +189,7 @@ describe("useConfirmationViewModel", () => {
 
     expect(trackPage).toHaveBeenCalledWith("Modal send - action rejected", null, {
       flow: "send",
+      recipientType: "external address",
       blockchain: "",
       currency: "",
       currency_id: "",
@@ -197,7 +211,10 @@ describe("useConfirmationViewModel", () => {
       },
       operation: {
         signed: true,
-        optimisticOperation: { id: "opRoot", subOperations: [{ id: "child1" }, { id: "child2" }] },
+        optimisticOperation: {
+          id: "opRoot",
+          subOperations: [{ id: "child1" }, { id: "child2" }],
+        },
         transactionError: null,
       },
     });
@@ -212,6 +229,7 @@ describe("useConfirmationViewModel", () => {
       button: "view details",
       page: "step confirmation",
       flow: "send",
+      recipientType: "external address",
       blockchain: "",
       currency: "",
       currency_id: "",
@@ -219,6 +237,7 @@ describe("useConfirmationViewModel", () => {
     });
     expect(trackPage).toHaveBeenCalledWith("Modal send - transaction details", null, {
       flow: "send",
+      recipientType: "external address",
       blockchain: "",
       currency: "",
       currency_id: "",
@@ -243,7 +262,10 @@ describe("useConfirmationViewModel", () => {
       },
       operation: {
         signed: true,
-        optimisticOperation: { id: "opRoot", subOperations: [{ id: "child1" }] },
+        optimisticOperation: {
+          id: "opRoot",
+          subOperations: [{ id: "child1" }],
+        },
         transactionError: null,
       },
     });
@@ -261,6 +283,7 @@ describe("useConfirmationViewModel", () => {
       button: "close transaction details",
       page: "transaction details",
       flow: "send",
+      recipientType: "external address",
       blockchain: "",
       currency: "",
       currency_id: "",
@@ -375,6 +398,18 @@ describe("useConfirmationViewModel", () => {
 
     expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
       flow: "send",
+      recipientType: "external address",
+      savedContactDuringFlow: false,
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+      newSendFlow: true,
+    });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      page: "step confirmation",
+      flow: "send",
+      recipientType: "external address",
       blockchain: "",
       currency: "",
       currency_id: "",

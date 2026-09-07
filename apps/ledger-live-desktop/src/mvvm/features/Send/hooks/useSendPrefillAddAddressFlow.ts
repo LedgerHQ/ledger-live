@@ -16,6 +16,12 @@ import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
 } from "@features/platform-contacts/device";
+import { CONTACTS_EVENT_SOURCE } from "@features/flow-contacts";
+import {
+  buildContactsGlobalProperties,
+  useContacts,
+  useContactsFeature,
+} from "@features/platform-contacts";
 import {
   isPrefillAddAddressFlowOpen,
   useAddAddressFlowViewModel,
@@ -34,6 +40,9 @@ import {
   useAddNewContactHeaderController,
   type AddNewContactHeaderState,
 } from "../context/AddNewContactHeaderContext";
+import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
+import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { track, trackPage } from "~/renderer/analytics/segment";
 
 export type SendPrefillAddAddressPhase = Readonly<{
   state: PrefillAddAddressFlowVisibleState;
@@ -48,6 +57,7 @@ export type SendPrefillAddAddressPhase = Readonly<{
 
 export type UseSendPrefillAddAddressFlowOptions = Readonly<{
   idleHeaderState: AddNewContactHeaderState;
+  contactType: "new" | "existing";
 }>;
 
 export type SendPrefillAddAddressFlow = Readonly<{
@@ -63,11 +73,15 @@ const ADDRESS_PHASE_HEADER_STATE: AddNewContactHeaderState = {
 
 export function useSendPrefillAddAddressFlow({
   idleHeaderState,
+  contactType,
 }: UseSendPrefillAddAddressFlowOptions): SendPrefillAddAddressFlow {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { state, recipientSearch } = useSendFlowData();
+  const contacts = useContacts();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const { inputMethod, markContactSaved } = useSendFlowTracking();
   const { setState: setHeaderState } = useAddNewContactHeaderController();
   const [isOpeningAddressFlow, setIsOpeningAddressFlow] = useState(false);
   const selectedContactRef = useRef<Contact | null>(null);
@@ -87,6 +101,43 @@ export function useSendPrefillAddAddressFlow({
     close,
   } = useAddAddressFlowViewModel({ addressValidation });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
+  const trackingProperties = useMemo(
+    () => ({
+      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...buildContactsGlobalProperties({
+        ffAddressBookEnabled: isContactsFeatureEnabled,
+        contacts,
+      }),
+    }),
+    [contacts, isContactsFeatureEnabled, state.account.account, state.account.parentAccount],
+  );
+
+  const trackedAddressPhaseRef = useRef("");
+  useEffect(() => {
+    if (
+      !isAddressPhase ||
+      addressFlowState.status !== "namingAddress" ||
+      !addressFlowState.displayContext
+    ) {
+      return;
+    }
+
+    const phaseKey = [
+      addressFlowState.selectedContactId,
+      addressFlowState.selectedCurrencyId,
+      addressFlowState.addressEntry.resolvedAddress,
+    ].join(":");
+    if (trackedAddressPhaseRef.current === phaseKey) {
+      return;
+    }
+    trackedAddressPhaseRef.current = phaseKey;
+
+    trackPage("Modal send - name address", null, {
+      ...trackingProperties,
+      network: addressFlowState.displayContext.network.networkId,
+      asset: addressFlowState.selectedCurrencyId,
+    });
+  }, [addressFlowState, isAddressPhase, trackingProperties]);
 
   const cancelPendingSave = useCallback(() => {
     saveRequestId.current += 1;
@@ -126,10 +177,12 @@ export function useSendPrefillAddAddressFlow({
     if (
       isSaving.current ||
       addressFlowState.status !== "reviewingAddress" ||
-      addressFlowState.entryMode !== "prefilled"
+      addressFlowState.entryMode !== "prefilled" ||
+      !addressFlowState.displayContext
     ) {
       return;
     }
+    const displayContext = addressFlowState.displayContext;
 
     const selectedContact = selectedContactRef.current;
     if (!selectedContact) {
@@ -165,16 +218,43 @@ export function useSendPrefillAddAddressFlow({
         }),
       );
 
+      track("address_added", {
+        ...trackingProperties,
+        source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+        page: "address signing device",
+        network: displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+        inputMethod,
+        isEns: Boolean(state.recipient?.ensName),
+        contactType,
+      });
+      markContactSaved();
       close();
       navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
     } catch {
+      trackPage("Modal send - address signing rejected", null, {
+        ...trackingProperties,
+        network: displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      });
       return;
     } finally {
       if (saveRequestId.current === requestId) {
         isSaving.current = false;
       }
     }
-  }, [addressFlowState, close, deviceIntents, dispatch, navigation]);
+  }, [
+    addressFlowState,
+    close,
+    contactType,
+    deviceIntents,
+    dispatch,
+    inputMethod,
+    markContactSaved,
+    navigation,
+    state.recipient,
+    trackingProperties,
+  ]);
 
   const startForContact = useCallback(
     async (contact: Contact) => {
@@ -258,8 +338,29 @@ export function useSendPrefillAddAddressFlow({
         reviewLabels,
         dieProps,
         onAddressLabelChange: updateAddressLabel,
-        onContinueFromName: continueFromName,
+        onContinueFromName: () => {
+          if (addressFlowState.status !== "namingAddress" || !addressFlowState.displayContext) {
+            return;
+          }
+          track("button_clicked", {
+            button: "continue to review",
+            page: "name address",
+            nameEdited:
+              addressFlowState.addressLabel.value !==
+              addressFlowState.displayContext.assetDisplayName,
+            ...trackingProperties,
+          });
+          continueFromName();
+        },
         onContinueFromReview: () => {
+          if (!addressFlowState.displayContext) {
+            return;
+          }
+          trackPage("Modal send - address signing device", null, {
+            ...trackingProperties,
+            network: addressFlowState.displayContext.network.networkId,
+            asset: addressFlowState.selectedCurrencyId,
+          });
           void saveFromReview();
         },
       }
