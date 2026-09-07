@@ -55,7 +55,11 @@ type UseSendFlowBusinessLogicResult = Readonly<{
   recipient: RecipientData | null;
   isRecipientAddressComplete: boolean;
   setIsRecipientAddressComplete: (value: boolean) => void;
-  setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
+  setAccountAndNavigate: (
+    account: AccountLike,
+    parentAccount?: Account,
+    recipientAddress?: string,
+  ) => void | Promise<void>;
   source?: string;
   selectContactBeforeAccount?: boolean;
 }>;
@@ -98,20 +102,23 @@ export function useSendFlowBusinessLogic({
     [accountHook.state.currency],
   );
 
-  const setAccountAndNavigate = useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
-      accountHook.setAccount(account, parentAccount);
-      transactionHook.actions.setAccount(account, parentAccount);
-    },
-    [accountHook, transactionHook.actions],
-  );
-
   const handleRecipientSet = useCallback(
     (newRecipient: RecipientData) => {
       setRecipient(newRecipient);
       transactionHook.actions.setRecipient(newRecipient);
     },
     [transactionHook.actions],
+  );
+
+  const setAccountAndNavigate = useCallback(
+    async (account: AccountLike, parentAccount?: Account, recipientAddress?: string) => {
+      accountHook.setAccount(account, parentAccount);
+      await transactionHook.actions.setAccount(account, parentAccount, recipientAddress);
+      if (recipientAddress) {
+        setRecipient({ address: recipientAddress });
+      }
+    },
+    [accountHook, transactionHook.actions],
   );
 
   useEffect(() => {

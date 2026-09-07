@@ -11,9 +11,11 @@ import {
 } from "@domain/entity-contact/schema.mock";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import type { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, withFlagOverrides, within } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import { SEND_FLOW_CONFIG } from "../constants";
@@ -25,9 +27,19 @@ import { CustomFeesScreen } from "../screens/CustomFees";
 import { RecipientScreen } from "../screens/Recipient";
 import { SignatureScreen } from "../screens/Signature";
 
-const ethAccount = genAccount("contacts-first-eth", {
-  currency: getCryptoCurrencyById("ethereum"),
-});
+const ethereum = getCryptoCurrencyById("ethereum");
+const ethAccount = {
+  ...genAccount("contacts-first-eth", { currency: ethereum }),
+  balance: new BigNumber(2),
+  spendableBalance: new BigNumber(2),
+  subAccounts: [],
+};
+const ethAccountB = {
+  ...genAccount("contacts-first-eth-b", { currency: ethereum }),
+  balance: new BigNumber(1),
+  spendableBalance: new BigNumber(1),
+  subAccounts: [],
+};
 
 type TestStackParamList = {
   PayHost: undefined;
@@ -108,7 +120,10 @@ function SendFlowScreen({
   );
 }
 
-function renderContactsFirstSend(contacts: readonly Contact[]) {
+function renderContactsFirstSend(
+  contacts: readonly Contact[],
+  accounts: readonly Account[] = [ethAccount],
+) {
   return renderWithReactQuery(
     <>
       <Stack.Navigator
@@ -133,11 +148,12 @@ function renderContactsFirstSend(contacts: readonly Contact[]) {
             enabled: true,
             params: { families: ["evm"], excludedCurrencyIds: [] },
           },
+          lwmContacts: { enabled: true, params: { newBadge: false } },
         },
         state => ({
           ...state,
           contacts: { contacts: [...contacts] },
-          accounts: { active: [{ ...ethAccount, subAccounts: [] }] },
+          accounts: { active: [...accounts] },
         }),
       ),
     },
@@ -231,7 +247,23 @@ describe("Send contacts-first", () => {
     await user.press(await screen.findByTestId("asset-item-ETH"));
     await user.press(await screen.findByTestId("account-item"));
 
-    expect(await screen.findByTestId("disabled-amount-continue-button")).toBeVisible();
+    expect(await screen.findByTestId("recipient-contact-row")).toBeVisible();
+    expect(within(screen.getByTestId("recipient-contact-row")).getByText("Yana")).toBeVisible();
     expect(screen.queryByText(`send:${ethAccount.id}`)).not.toBeOnTheScreen();
+  });
+
+  it("should keep the recipient when the second debit account is selected", async () => {
+    const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
+    const address = yana.addresses[0];
+    const { user } = renderContactsFirstSend([yana], [ethAccount, ethAccountB]);
+
+    await user.press(await screen.findByText("Yana"));
+    await user.press(await screen.findByLabelText(`${address.label}, ${address.address}`));
+    await user.press(await screen.findByTestId("asset-item-ETH"));
+    const accounts = await screen.findAllByTestId("account-item");
+    await user.press(accounts[1]);
+
+    expect(await screen.findByTestId("recipient-contact-row")).toBeVisible();
+    expect(within(screen.getByTestId("recipient-contact-row")).getByText("Yana")).toBeVisible();
   });
 });

@@ -45,7 +45,11 @@ type ActionsContextValue = Readonly<{
   operation: SendFlowOperationActions;
   status: FlowStatusActions;
   close: () => void;
-  setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
+  setAccountAndNavigate: (
+    account: AccountLike,
+    parentAccount?: Account,
+    recipientAddress?: string,
+  ) => void | Promise<void>;
   setIsRecipientAddressComplete: (value: boolean) => void;
 }>;
 

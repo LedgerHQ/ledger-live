@@ -95,7 +95,11 @@ export type SendFlowTransactionActions = Readonly<{
   setTransaction: (tx: Transaction) => void;
   updateTransaction: (updater: (tx: Transaction) => Transaction) => void;
   setRecipient: (recipient: RecipientData) => void;
-  setAccount: (account: AccountLike, parentAccount?: Account | null) => void;
+  setAccount: (
+    account: AccountLike,
+    parentAccount?: Account | null,
+    recipientAddress?: string,
+  ) => void | Promise<void>;
 }>;
 
 export type SendFlowOperationActions = Readonly<{
@@ -149,5 +153,9 @@ export type SendFlowBusinessContext = Readonly<{
   isRecipientAddressComplete: boolean;
   setIsRecipientAddressComplete: (value: boolean) => void;
   close: () => void;
-  setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
+  setAccountAndNavigate: (
+    account: AccountLike,
+    parentAccount?: Account,
+    recipientAddress?: string,
+  ) => void | Promise<void>;
 }>;

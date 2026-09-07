@@ -6,7 +6,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useContacts } from "@features/platform-contacts";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
@@ -51,7 +51,6 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const storedContacts = useContacts();
   const contacts = useMemo(() => storedContacts.filter(contact => !contact.isMe), [storedContacts]);
   const { openDrawer } = useModularDrawerController();
-  const [pendingRecipientAddress, setPendingRecipientAddress] = useState<string>();
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? null;
@@ -93,22 +92,16 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         enableAccountSelection: true,
         uiUseCase: PAY_ACCOUNT_UI_USE_CASE,
         onAccountSelected: (selectedAccount, selectedParentAccount) => {
-          setPendingRecipientAddress(address.address);
-          setAccountAndNavigate(selectedAccount, selectedParentAccount);
-          goToAmount();
+          void Promise.resolve(
+            setAccountAndNavigate(selectedAccount, selectedParentAccount, address.address),
+          ).then(() => {
+            goToAmount();
+          });
         },
       });
     },
     [goToAmount, openDrawer, setAccountAndNavigate],
   );
-
-  useEffect(() => {
-    if (!pendingRecipientAddress || !state.transaction.transaction) {
-      return;
-    }
-    transaction.setRecipient({ address: pendingRecipientAddress });
-    setPendingRecipientAddress(undefined);
-  }, [pendingRecipientAddress, state.transaction.transaction, transaction]);
 
   const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
     onSelectAddress,

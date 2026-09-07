@@ -28,7 +28,7 @@ export type Result<T extends Transaction = Transaction> = {
   updateTransaction: (updater: (arg0: T) => T) => void;
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
-  setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => Promise<void>;
+  setAccount: (arg0: AccountLike, arg1?: Account | null, recipient?: string) => Promise<void>;
   updateAccount: (account: AccountLike) => void;
   status: TransactionStatus;
   bridgeError: Error | null | undefined;
@@ -41,6 +41,7 @@ type Actions<T extends Transaction = Transaction> =
       account: AccountLike;
       parentAccount: Account | null | undefined;
       bridge: AccountBridge<any>;
+      recipient?: string;
     }
   | {
       type: "setTransaction";
@@ -169,6 +170,11 @@ const reducer = <T extends Transaction = Transaction>(
           t = { ...t, subAccountId };
         }
 
+        const recipient = action.recipient ?? state.transaction?.recipient;
+        if (recipient) {
+          t = bridge.updateTransaction(t, { recipient });
+        }
+
         return {
           ...initial,
           account,
@@ -256,13 +262,14 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit(bridge, optionalInit));
 
   const setAccount = useCallback(
-    async (account, parentAccount) => {
+    async (account, parentAccount, recipient?: string) => {
       const bridge = await getAccountBridge(account, parentAccount);
       dispatch({
         type: "setAccount",
         account,
         parentAccount,
         bridge,
+        recipient,
       });
     },
     [dispatch],
