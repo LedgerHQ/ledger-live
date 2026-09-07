@@ -61,10 +61,7 @@ runs:
       if: inputs.use-mise == 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
-        # Pinned for reproducible CI: mise-action installs the latest release when
-        # unpinned, which is how the 2026.7.2 plugin regression reached us (TSDINT-1644).
-        # That regression is fixed in mise.toml by using full git plugin URLs.
-        version: "2026.9.1"
+        version: "2026.9.1" # pinned; bump deliberately (TSDINT-1644)
         install: true
         cache: true
         reshim: true
