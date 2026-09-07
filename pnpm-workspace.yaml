@@ -211,7 +211,7 @@ catalog:
   # Modules published by coin-modules
   "@ledgerhq/coin-evm": 5.2.1
   "@ledgerhq/coin-hypercore": 2.0.1
-  "@ledgerhq/coin-module-framework": 8.3.0
+  "@ledgerhq/coin-module-framework": 8.4.0
   "@ledgerhq/coin-stellar": 9.6.0
   "@ledgerhq/coin-tezos": 10.2.1
   "@ledgerhq/coin-xrp": 10.1.0
