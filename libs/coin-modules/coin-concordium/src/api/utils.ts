@@ -39,8 +39,10 @@ export function mapRawOperationToApiOperation(op: RawOperation, address: string)
     },
     type: op.type,
     value: BigInt(op.value),
-    senders: [op.sender],
-    recipients: [op.recipient],
+    // A fee-only or rejected operation names no counterparty, and `[""]` would
+    // publish an address the chain never saw.
+    senders: op.sender ? [op.sender] : [],
+    recipients: op.recipient ? [op.recipient] : [],
     details,
   };
 }

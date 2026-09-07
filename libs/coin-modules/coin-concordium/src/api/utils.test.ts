@@ -89,6 +89,12 @@ describe("mapRawOperationToApiOperation", () => {
     expect(result.tx.failed).toBe(true);
   });
 
+  it("names no counterparty when the chain named none, rather than an empty address", () => {
+    const raw = createRawOperation({ recipient: "", failed: true });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS).recipients).toEqual([]);
+  });
+
   describe("PLT operations", () => {
     it("reports the token rather than the native asset", () => {
       const raw = createRawOperation({ tokenId: "trUSDT", decimals: 6, value: "3000000" });
