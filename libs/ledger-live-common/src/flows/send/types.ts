@@ -5,6 +5,7 @@ import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
+  BALANCE_TYPE: "BALANCE_TYPE",
   SKIP_MEMO_CONFIRMATION: "SKIP_MEMO_CONFIRMATION",
   RECENT_HISTORY: "RECENT_HISTORY",
   ADD_CONTACT: "ADD_CONTACT",
@@ -52,6 +53,8 @@ export type SendFlowUiConfig = Readonly<{
   hasCustomFees: boolean;
   hasCoinControl: boolean;
   hasDefaultStrategy: boolean;
+  /** Whether the flow should start with a balance-type (pool) selection step. */
+  hasBalanceTypeStep: boolean;
 }>;
 
 export type Memo = { value: string; type?: string };

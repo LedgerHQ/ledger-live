@@ -13,5 +13,6 @@ export const descriptor: CoinDescriptor = {
       hasCoinControl: false,
     },
     selfTransfer: "free",
+    hasBalanceTypeStep: true,
   },
 };

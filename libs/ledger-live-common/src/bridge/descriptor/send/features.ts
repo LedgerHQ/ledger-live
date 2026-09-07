@@ -119,6 +119,7 @@ export const sendFeatures = {
     return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
   },
   hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
+  hasBalanceTypeStep: fromDescriptor(d => d.hasBalanceTypeStep, false),
   getDefaultStrategyPatch: (
     currency: CryptoOrTokenCurrency | undefined,
   ): TransactionPatch | null => {

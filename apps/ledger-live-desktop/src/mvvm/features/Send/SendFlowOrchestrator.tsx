@@ -31,9 +31,11 @@ export function SendFlowOrchestrator({
   const flowConfig = useMemo(
     () => ({
       ...SEND_FLOW_CONFIG,
-      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
-        ? SEND_FLOW_STEP.AMOUNT
-        : SEND_FLOW_STEP.RECIPIENT,
+      initialStep: businessContext.uiConfig.hasBalanceTypeStep
+        ? SEND_FLOW_STEP.BALANCE_TYPE
+        : canSkipRecipientStep(initParams, businessContext.uiConfig)
+          ? SEND_FLOW_STEP.AMOUNT
+          : SEND_FLOW_STEP.RECIPIENT,
     }),
     [businessContext.uiConfig, initParams],
   );

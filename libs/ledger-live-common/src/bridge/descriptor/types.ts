@@ -365,6 +365,12 @@ export type SendDescriptor = {
   amount?: SendAmountDescriptor;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
+  /**
+   * Whether the send flow should show a balance-type selection step before
+   * the recipient step. Declared by coins that draw from multiple pools
+   * (e.g. Zcash transparent vs shielded) and need an explicit upfront choice.
+   */
+  hasBalanceTypeStep?: boolean;
 };
 
 /**

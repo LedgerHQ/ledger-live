@@ -7,6 +7,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
+import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   closeDialog,
@@ -40,8 +41,12 @@ type WorkflowParams = {
 export function useOpenSendFlow() {
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(state => accountsSelector(state).length === 0);
-  const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
-    useNewSendFlowFeature();
+  const {
+    isEnabledForFamily,
+    getFamilyFromAccount,
+    getCurrencyIdFromAccount,
+    getCurrencyFromAccount,
+  } = useNewSendFlowFeature();
 
   const openSendFlow = useCallback(
     (params?: WorkflowParams) => {
@@ -68,7 +73,11 @@ export function useOpenSendFlow() {
                   dispatch(closeDialog());
                   const family = getFamilyFromAccount(account, parentAccount ?? null);
                   const currencyId = getCurrencyIdFromAccount(account, parentAccount ?? null);
-                  const shouldUseNewFlow = isEnabledForFamily(family, currencyId);
+                  const currency = getCurrencyFromAccount(account, parentAccount ?? null);
+                  const uiConfig = currency ? getSendUiConfig(currency) : null;
+                  const shouldUseNewFlow =
+                    isEnabledForFamily(family, currencyId) ||
+                    (uiConfig?.hasBalanceTypeStep ?? false);
                   track("button_clicked", {
                     button: "send",
                     buttonLocation: "quick_action",
@@ -105,7 +114,13 @@ export function useOpenSendFlow() {
           flowParams.account,
           flowParams.parentAccount ?? null,
         );
-        const shouldUseNewFlow = isEnabledForFamily(family, currencyId);
+        const currency = getCurrencyFromAccount(
+          flowParams.account,
+          flowParams.parentAccount ?? null,
+        );
+        const uiConfig = currency ? getSendUiConfig(currency) : null;
+        const shouldUseNewFlow =
+          isEnabledForFamily(family, currencyId) || (uiConfig?.hasBalanceTypeStep ?? false);
 
         if (shouldUseNewFlow) {
           let normalizedAmount: string | undefined;
@@ -142,7 +157,14 @@ export function useOpenSendFlow() {
 
       openSendFlowImpl(params);
     },
-    [hasNoAccounts, dispatch, isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount],
+    [
+      hasNoAccounts,
+      dispatch,
+      isEnabledForFamily,
+      getFamilyFromAccount,
+      getCurrencyIdFromAccount,
+      getCurrencyFromAccount,
+    ],
   );
 
   return openSendFlow;

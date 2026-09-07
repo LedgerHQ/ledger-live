@@ -2,6 +2,7 @@ import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/s
 import type { SendStepConfig, SendFlowConfig } from "./types";
 
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
+  SEND_FLOW_STEP.BALANCE_TYPE,
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
   SEND_FLOW_STEP.RECENT_HISTORY,
@@ -17,6 +18,13 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
 ];
 
 export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
+  [SEND_FLOW_STEP.BALANCE_TYPE]: {
+    id: SEND_FLOW_STEP.BALANCE_TYPE,
+    canGoBack: false,
+    showTitle: true,
+    titleKey: "newSendFlow.balanceType.title",
+    height: "fit",
+  },
   [SEND_FLOW_STEP.RECIPIENT]: {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,
