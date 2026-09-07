@@ -1,23 +1,9 @@
 import React from "react";
-import { View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { QUEUED_BOTTOM_SHEET_MOCK_TEST_ID } from "@shared/ui-queued-bottom-sheet/testing";
 import { ContactAddressPicker } from "../ContactAddressPicker.native";
 import type { ContactAddressPickerProps } from "../../../types";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isRequestingToBeOpened,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened?: boolean;
-  }) => (
-    <View accessibilityState={{ expanded: !!isRequestingToBeOpened }} testID="queued-sheet">
-      {children}
-    </View>
-  ),
-}));
 
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),
@@ -89,7 +75,9 @@ describe("ContactAddressPicker (Native)", () => {
   it("keeps the sheet mounted but hides content when closed", () => {
     render(<ContactAddressPicker {...defaultProps} isOpen={false} />);
 
-    expect(screen.getByTestId("queued-sheet").props.accessibilityState.expanded).toBe(false);
+    expect(
+      screen.getByTestId(QUEUED_BOTTOM_SHEET_MOCK_TEST_ID).props.accessibilityState.expanded,
+    ).toBe(false);
     expect(screen.queryByTestId("pay-contact-address-picker")).toBeNull();
   });
 });

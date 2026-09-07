@@ -1,25 +1,8 @@
 import React from "react";
-import { View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import type { BalanceFilterPickerViewProps } from "../types";
 import { BalanceFilterPickerView } from "../components/Filter/BalanceFilterPickerView.native";
 import { filterLabels, options, usdcOption } from "./fixtures";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isRequestingToBeOpened,
-    testID,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened?: boolean;
-    testID?: string;
-  }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
-      {children}
-    </View>
-  ),
-}));
 
 jest.mock("@ledgerhq/crypto-icons/native", () => () => null);
 

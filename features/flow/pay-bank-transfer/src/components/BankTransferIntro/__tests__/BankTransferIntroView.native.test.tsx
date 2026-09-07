@@ -1,31 +1,7 @@
 import React from "react";
-import { Pressable, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { BankTransferIntroView } from "../BankTransferIntroView.native";
 import type { BankTransferIntroViewProps } from "../../../types";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isForcingToBeOpened,
-    onHeaderClosePressed,
-    testID,
-  }: {
-    children: React.ReactNode;
-    isForcingToBeOpened?: boolean;
-    onHeaderClosePressed?: () => void;
-    testID?: string;
-  }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isForcingToBeOpened }}>
-      <Pressable
-        onPress={onHeaderClosePressed}
-        testID="pay-bank-transfer-intro-header-close"
-        accessibilityRole="button"
-      />
-      {children}
-    </View>
-  ),
-}));
 
 const defaultProps: BankTransferIntroViewProps = {
   isOpen: true,
@@ -115,7 +91,7 @@ describe("BankTransferIntroView (Native)", () => {
     const onClosePress = jest.fn();
     render(<BankTransferIntroView {...defaultProps} onClosePress={onClosePress} />);
 
-    fireEvent.press(screen.getByTestId("pay-bank-transfer-intro-header-close"));
+    fireEvent.press(screen.getByTestId("pay-bank-transfer-intro-sheet-header-close"));
     expect(onClosePress).toHaveBeenCalledTimes(1);
   });
 });

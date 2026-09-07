@@ -1,26 +1,6 @@
 import React from "react";
-import { Pressable, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { CardMoreSheet } from "../CardMoreSheet.native";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isRequestingToBeOpened,
-    onClose,
-    testID,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened?: boolean;
-    onClose?: () => void;
-    testID?: string;
-  }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
-      <Pressable testID={`${testID}-dismiss`} onPress={onClose} />
-      {children}
-    </View>
-  ),
-}));
 
 const onPress = {
   managePin: jest.fn(),
