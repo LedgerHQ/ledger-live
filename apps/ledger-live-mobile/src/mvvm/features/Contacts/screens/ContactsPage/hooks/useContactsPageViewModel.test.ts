@@ -1,4 +1,4 @@
-import { mockMeContact } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useContactsLedgerSyncStatus } from "../../../hooks/useContactsLedgerSyncStatus";
@@ -33,6 +33,45 @@ describe("useContactsPageViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedContactsLedgerSyncStatus.mockReturnValue("ready");
+  });
+
+  it("should select a contact for Pay instead of opening detail", () => {
+    const me = mockMeContact();
+    const contact = mockContact({ name: "Rosa" });
+    const onSelectContact = jest.fn();
+    const { result } = renderHook(() => useContactsPageViewModel(onSelectContact), {
+      overrideInitialState: withFlagOverrides({}, state => ({
+        ...state,
+        contacts: { contacts: [me, contact] },
+      })),
+    });
+
+    act(() => {
+      result.current.onOpenContact(contact.id);
+    });
+
+    expect(onSelectContact).toHaveBeenCalledWith(contact);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should still open me from the Pay contact list", () => {
+    const me = mockMeContact();
+    const onSelectContact = jest.fn();
+    const { result } = renderHook(() => useContactsPageViewModel(onSelectContact), {
+      overrideInitialState: withFlagOverrides({}, state => ({
+        ...state,
+        contacts: { contacts: [me] },
+      })),
+    });
+
+    act(() => {
+      result.current.onOpenContact(me.id);
+    });
+
+    expect(onSelectContact).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MyWalletContactDetail, {
+      contactId: me.id,
+    });
   });
 
   it("should navigate to the contact detail screen when a contact is opened", () => {
