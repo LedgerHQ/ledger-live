@@ -1,9 +1,24 @@
-import type { InternetComputerOperation } from "@ledgerhq/live-common/families/internet_computer/types";
+import {
+  NeuronState,
+  type ICPAccount,
+  type ICPNeuron,
+  type InternetComputerOperation,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import BigNumber from "bignumber.js";
 import React, { useState } from "react";
 import { act, render, screen } from "tests/testSetup";
-import { makeHealthyNeuron, makeICPAccount, makeNeuron } from "./testUtils";
+import { makeHealthyNeuron, makeICPAccount } from "./testUtils";
 import type { StepId } from "../neuronFlow/types";
+
+const CONTROLLER = "test-principal";
+
+// Both read a device-provided key genAccount cannot fake, and the top-up gate needs a recoverable
+// nonce; the manage step's own coverage of them is in StepManage.test.tsx.
+jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
+  useICPPrincipal: () => CONTROLLER,
+  useCanTopUpNeuron: () => true,
+}));
 
 const bridgeMock = {
   createTransaction: jest.fn(() => ({ family: "internet_computer", type: "send" })),
@@ -15,12 +30,22 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => bridgeMock,
 }));
 
+// Hoisted rather than created inside the factory: a fresh spy per render records nothing.
+const updateAccount = jest.fn();
+const updateTransaction = jest.fn();
+
+// Which transaction is in flight decides what a reply with no snapshot can replay, so a test that
+// cares sets it. Reset in beforeEach.
+const SEND_TRANSACTION = { family: "internet_computer", type: "send", amount: new BigNumber(0) };
+let currentTransaction: Record<string, unknown> = SEND_TRANSACTION;
+
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
   default: () => ({
-    transaction: { family: "internet_computer", type: "send", amount: new BigNumber(0) },
+    transaction: currentTransaction,
     setTransaction: jest.fn(),
-    updateTransaction: jest.fn(),
+    updateTransaction,
+    updateAccount,
     status: { errors: {}, warnings: {}, estimatedFees: new BigNumber(0) },
     bridgeError: null,
     bridgePending: false,
@@ -63,12 +88,29 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
             accountId: "acc-1",
             type: "NONE",
             date: new Date(),
-            extra: { neurons: [makeNeuron({ id: 9n })] },
+            extra: { neurons: [makeHealthyNeuron({ id: 9n, controller: CONTROLLER })] },
           } as unknown as InternetComputerOperation);
           props.transitionTo("confirmation");
         }}
       >
         broadcast
+      </button>
+      <button
+        type="button"
+        data-testid="device-broadcast-command"
+        onClick={() => {
+          // A manage_neuron reply carries no snapshot, so the flow replays the accepted command.
+          props.onOperationBroadcasted({
+            id: "op-2",
+            accountId: "acc-1",
+            type: "NONE",
+            date: new Date(),
+            extra: {},
+          } as unknown as InternetComputerOperation);
+          props.transitionTo("confirmation");
+        }}
+      >
+        broadcast command
       </button>
       <button
         type="button"
@@ -114,6 +156,7 @@ const ControlledBody = ({ initialStep = "listNeuron" as StepId }) => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  currentTransaction = SEND_TRANSACTION;
 });
 
 describe("manage neuron flow (integration)", () => {
@@ -173,6 +216,85 @@ describe("manage neuron flow (integration)", () => {
     // The operation carried a single neuron, replacing the account's two.
     expect(screen.getAllByTestId("icp-neuron-row")).toHaveLength(1);
     expect(screen.getByText("9")).toBeInTheDocument();
+  });
+
+  /*
+   * The bridge keeps the account it was initialised with, so a snapshot the flow learned here has to
+   * be handed to it. Without this the steps measured the refreshed neurons while getTransactionStatus
+   * still validated against the payload's: the split form printed a range the bridge then refused.
+   */
+  it("hands the broadcast snapshot to the bridge", async () => {
+    const { user } = render(<ControlledBody />);
+
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-broadcast"));
+    });
+
+    const patched = updateAccount.mock.calls.at(-1)?.[0];
+    expect(patched.neurons.fullNeurons.map((n: { id: bigint }) => n.id)).toEqual([9n]);
+    // A new account alone does not re-run validation, so the transaction is copied to stand
+    // comparison against.
+    expect(updateTransaction).toHaveBeenCalled();
+  });
+
+  // A reply with no snapshot replays the accepted command instead, and that has to reach the bridge
+  // too — otherwise the next validation still measures the pre-command neuron.
+  it("hands a replayed command to the bridge as well", async () => {
+    currentTransaction = {
+      family: "internet_computer",
+      type: "start_dissolving",
+      neuronId: "1",
+      amount: new BigNumber(0),
+    };
+    const { user } = render(<ControlledBody />);
+
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-broadcast-command"));
+    });
+
+    const patched = updateAccount.mock.calls.at(-1)?.[0];
+    const replayed = patched.neurons.fullNeurons.find((n: ICPNeuron) => n.id === 1n);
+    expect(replayed.state).toBe(NeuronState.Dissolving);
+    // A replay is not a fresh read, so the stamp stays where the payload had it.
+    expect(patched.neurons.lastUpdatedMSecs).toBe(account.neurons.lastUpdatedMSecs);
+  });
+
+  /*
+   * prepareTransaction derives the neuron's governance subaccount and recovers its stake nonce out of
+   * `account.neurons`, so the send flow has to be opened with the snapshot this flow is showing. Handing
+   * it the modal's opening payload left the transfer with no recipient and reported the nonce as
+   * unrecoverable — on a neuron the user had just refreshed into view.
+   */
+  it("opens a top-up with the refreshed snapshot, not the payload it was opened with", async () => {
+    const { store, user } = render(<ControlledBody />);
+
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-sync-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-broadcast"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-back-to-neurons-button"));
+    });
+    await act(async () => {
+      await user.click(screen.getAllByTestId("icp-neuron-row")[0]);
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("icp-increase-stake-button"));
+    });
+
+    const sendModal = store.getState().modals.MODAL_SEND;
+    if (!sendModal?.isOpened) throw new Error("the send modal was not opened");
+    const { account: sent } = sendModal.data as unknown as { account: ICPAccount };
+    // The payload held neurons 1 and 2; only the refreshed snapshot holds 9.
+    expect(sent.neurons.fullNeurons.map(n => n.id)).toEqual([9n]);
   });
 
   it("reports a signing failure on the confirmation step", async () => {

@@ -2,12 +2,13 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { applyNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
-import type {
-  ICPAccount,
-  ICPNeuron,
-  ICPTransactionType,
-  InternetComputerOperation,
-  Transaction,
+import {
+  NeuronsData,
+  type ICPAccount,
+  type ICPNeuron,
+  type ICPTransactionType,
+  type InternetComputerOperation,
+  type Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import invariant from "invariant";
@@ -30,6 +31,17 @@ import type { Step, StepId, StepProps } from "./types";
  * and so never renders its own confirmation step, the only place it would have synced from.
  */
 const SYNC_SAFE_STEPS = new Set<StepId>(["listNeuron", "confirmation"]);
+
+/** What the flow has learned since it opened: a signed snapshot, or one an accepted command patched. */
+type NeuronSnapshot = {
+  neurons: readonly ICPNeuron[];
+  lastUpdatedMSecs: number;
+};
+
+const withSnapshot = (account: ICPAccount, snapshot: NeuronSnapshot): ICPAccount => ({
+  ...account,
+  neurons: new NeuronsData([...snapshot.neurons], snapshot.lastUpdatedMSecs),
+});
 
 export type Data = {
   account: ICPAccount;
@@ -72,11 +84,18 @@ const Body = ({
   invariant(account?.type === "Account", "MODAL_ICP_LIST_NEURONS: an ICP main account is required");
 
   const bridge = useAccountBridge<Transaction>(account);
-  const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
-    useBridgeTransaction<Transaction>(bridge, () => ({
-      account,
-      transaction: bridge.createTransaction(account),
-    }));
+  const {
+    transaction,
+    setTransaction,
+    updateTransaction,
+    updateAccount,
+    status,
+    bridgeError,
+    bridgePending,
+  } = useBridgeTransaction<Transaction>(bridge, () => ({
+    account,
+    transaction: bridge.createTransaction(account),
+  }));
 
   const [optimisticOperation, setOptimisticOperation] = useState<InternetComputerOperation | null>(
     null,
@@ -92,15 +111,43 @@ const Body = ({
   // What the flow has learned since it opened, if anything. `account` is the payload the modal was
   // opened with and is never re-read from the store, so a refresh performed here has to be held —
   // but as an override rather than a copy, so a modal reopened with a fresher payload still shows it.
-  const [refreshed, setRefreshed] = useState<{
-    neurons: readonly ICPNeuron[];
-    lastUpdatedMSecs: number;
-  } | null>(null);
+  const [refreshed, setRefreshed] = useState<NeuronSnapshot | null>(null);
 
-  const neurons = refreshed?.neurons ?? account.neurons.fullNeurons;
+  /**
+   * The one account the flow speaks for, payload plus whatever it has since learned.
+   *
+   * Everything downstream has to agree on the neuron set: the steps measure it, `getTransactionStatus`
+   * validates against it, and `increase_stake` derives the neuron's subaccount from it. Handing the
+   * bare payload to any of them means measuring one snapshot and enforcing another — the split form
+   * printed a range the bridge then refused, and a top-up could not resolve the neuron it was for.
+   */
+  const flowAccount = useMemo(
+    () => (refreshed ? withSnapshot(account, refreshed) : account),
+    [account, refreshed],
+  );
+
+  const neurons = flowAccount.neurons.fullNeurons;
   // Only a canister read moves this. An optimistically patched neuron is not a fresh snapshot, and
-  // "Last synced" must not claim that it is.
-  const lastUpdatedMSecs = refreshed?.lastUpdatedMSecs ?? account.neurons.lastUpdatedMSecs;
+  // "Last synced" must not claim that it is — `refreshed` carries the old value through such a patch.
+  const lastUpdatedMSecs = flowAccount.neurons.lastUpdatedMSecs;
+
+  /**
+   * Takes a snapshot the flow has just learned: holds it, and hands it to the bridge.
+   *
+   * One act rather than two, because the bridge keeps the account it was initialised with — holding a
+   * snapshot without handing it over is what left the steps measuring one neuron set while
+   * `getTransactionStatus` enforced another. The account alone does not re-validate, since the status
+   * effect skips while the transaction is unchanged, hence the copy; `prepareTransaction` is a no-op
+   * for every type this flow builds, so it is inert beyond forcing that comparison.
+   */
+  const learnSnapshot = useCallback(
+    (snapshot: NeuronSnapshot) => {
+      setRefreshed(snapshot);
+      updateAccount(withSnapshot(account, snapshot));
+      updateTransaction(tx => ({ ...tx }));
+    },
+    [account, updateAccount, updateTransaction],
+  );
 
   const handleOpenModal = useMemo(() => bindActionCreators(openModal, dispatch), [dispatch]);
 
@@ -126,26 +173,26 @@ const Body = ({
 
       const snapshot = operation.extra.neurons;
       if (snapshot) {
-        setRefreshed({ neurons: snapshot, lastUpdatedMSecs: operation.date.getTime() });
+        learnSnapshot({ neurons: snapshot, lastUpdatedMSecs: operation.date.getTime() });
         return;
       }
       // A manage_neuron reply carries no snapshot — reading one back needs another device signature.
       // Replaying the command the canister just accepted keeps the card from still showing the state
       // the action was meant to change, and where the reply stated its own result that is used.
       if (!transaction) return;
-      setRefreshed(current => {
-        const base = current ?? {
-          neurons: account.neurons.fullNeurons,
-          lastUpdatedMSecs: account.neurons.lastUpdatedMSecs,
-        };
-        const outcome = operation.extra.outcome;
-        const patched = applyNeuronCommand(base.neurons, transaction, {
-          ...(outcome !== undefined && { outcome }),
-        });
-        return patched ? { ...base, neurons: patched } : current;
+      // Read from the render rather than through a state updater: the snapshot has to be handed to
+      // the bridge as well as held, and one broadcast per signature means this value is current.
+      const base = refreshed ?? {
+        neurons: account.neurons.fullNeurons,
+        lastUpdatedMSecs: account.neurons.lastUpdatedMSecs,
+      };
+      const outcome = operation.extra.outcome;
+      const patched = applyNeuronCommand(base.neurons, transaction, {
+        ...(outcome !== undefined && { outcome }),
       });
+      if (patched) learnSnapshot({ ...base, neurons: patched });
     },
-    [account, dispatch, transaction],
+    [account, dispatch, transaction, refreshed, learnSnapshot],
   );
 
   const handleStepChange = useCallback((step: Step) => onChangeStepId(step.id), [onChangeStepId]);
@@ -180,7 +227,7 @@ const Body = ({
     disabledSteps: [],
     hideBreadcrumb: false,
     device,
-    account,
+    account: flowAccount,
     parentAccount: null,
     transaction,
     status,
