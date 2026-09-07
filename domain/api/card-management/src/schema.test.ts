@@ -204,6 +204,12 @@ describe("PayCardInternalWalletSchema", () => {
     expect(() => PayCardInternalWalletSchema.parse({ ...wallet, addressMemo: "" })).toThrow();
   });
 
+  it("reads a wallet that answered with no address memo at all", () => {
+    const { addressMemo: _addressMemo, ...withoutMemo } = documentedWallets[0]!;
+
+    expect(PayCardInternalWalletSchema.parse(withoutMemo).addressMemo).toBeUndefined();
+  });
+
   it("rejects a balance sent as a number, which would already have lost precision", () => {
     expect(() => PayCardInternalWalletSchema.parse({ ...wallet, balance: 125.4 })).toThrow();
   });

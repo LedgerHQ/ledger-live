@@ -63,7 +63,8 @@ export const PayCardInternalWalletSchema = z.object({
   balance: z.string().min(1),
   currency: z.string().min(1),
   address: z.string().min(1),
-  addressMemo: z.string().min(1).nullable(),
+  // Nullish because a wallet with no memo answers with the key absent, others with `null`.
+  addressMemo: z.string().min(1).nullish(),
 });
 
 export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);
