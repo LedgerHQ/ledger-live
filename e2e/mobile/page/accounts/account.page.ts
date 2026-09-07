@@ -9,6 +9,9 @@ export default class AccountPage {
   accountListTitleId = "accounts-list-title";
   accountsListId = "accounts-list";
   accountScreenScrollView = "account-screen-scrollView";
+  // The Button wrapper falls back to its `event` prop as the testID when no explicit testID
+  // is given (src/components/Button.tsx getTestID), so this needs no change in the app.
+  expandSubAccountsButtonId = "accountExpandTokenList";
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
@@ -134,9 +137,42 @@ export default class AccountPage {
     await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 300, "down");
   }
 
+  @Step("Expand the sub-account list if {{{0}}} is not reachable")
+  async expandSubAccountsIfNeeded(subAccountId: string) {
+    // The account screen renders only the first 3 sub-accounts, the rest collapsed behind a
+    // toggle, so a token outside that set is absent from the view tree and cannot be reached by
+    // scrolling. A present row means no expansion is needed; an absent one proves nothing (the
+    // list is a FlatList, so off-screen rows are unmounted in either state), so the collapsed
+    // check below reads the toggle itself. With 3 or fewer sub-accounts the toggle does not
+    // exist and this returns within the IsIdPresent probe timeout, leaving callers unaffected.
+    if (await IsIdPresent(subAccountId)) return;
+    if (!(await IsIdPresent(this.expandSubAccountsButtonId))) return;
+    await scrollToId(this.expandSubAccountsButtonId, this.accountScreenScrollView);
+    if (!(await this.isSubAccountsListCollapsed())) return;
+    await tapById(this.expandSubAccountsButtonId);
+  }
+
+  /**
+   * Reads the toggle's own label rather than inferring from the rows, so an already-expanded
+   * list is never collapsed. Every expand wording contains "more" ("Display more Tokens",
+   * "See more subaccounts", "See more ASA", "See more assets"); every collapse wording uses
+   * "fewer" or "less".
+   */
+  private async isSubAccountsListCollapsed(): Promise<boolean> {
+    try {
+      await detoxExpect(
+        getElementByIdWithDescendantTexts(this.expandSubAccountsButtonId, /\bmore\b/i),
+      ).toExist();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   @Step("Scroll to a Specific SubAccount Row {{{0}}}")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
+    await this.expandSubAccountsIfNeeded(subAccountId);
     await scrollToId(subAccountId, this.accountScreenScrollView);
   }
 
