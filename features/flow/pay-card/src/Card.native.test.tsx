@@ -13,6 +13,10 @@ jest.mock("@features/flow-pay-card-details", () => ({
   CardVisual: () => <View testID="card-visual" />,
 }));
 
+jest.mock("@features/flow-pay-card-widget", () => ({
+  CardOnboardingWidget: () => <View testID="card-onboarding-widget" />,
+}));
+
 import { Card } from "./Card";
 
 const title = "Crypto card";
@@ -39,6 +43,12 @@ describe("Card (native)", () => {
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
     expect(screen.getByTestId("card-more")).toBeVisible();
+  });
+
+  it("mounts the onboarding widget", () => {
+    render(<Card title={title} oauthConfig={oauthConfig} />);
+
+    expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
   });
 
   it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {

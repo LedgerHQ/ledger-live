@@ -5,6 +5,7 @@ import {
   type PayCardOnboardingStep,
 } from "@domain/api-card-management";
 import { markCardOnboardingCompleted, selectHasCompletedCardOnboarding } from "../../state";
+import { useOnboardingSteps } from "./useOnboardingSteps";
 
 export type CardOnboardingViewModelResult = {
   readonly isOpen: boolean;
@@ -28,7 +29,7 @@ export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(selectHasCompletedCardOnboarding);
 
-  const steps = useMemo(() => data?.steps ?? NO_STEPS, [data]);
+  const steps = useOnboardingSteps(data?.steps ?? NO_STEPS);
   const completedCount = useMemo(() => steps.filter(s => s.isDone).length, [steps]);
   const totalCount = steps.length;
   const onboardingCompleted = totalCount > 0 && completedCount === totalCount;

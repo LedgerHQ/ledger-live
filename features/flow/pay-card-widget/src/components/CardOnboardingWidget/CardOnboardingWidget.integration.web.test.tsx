@@ -1,56 +1,12 @@
-import React, { type FC, type ReactNode } from "react";
-import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import type { PayCardOnboardingStep } from "@domain/api-card-management";
-import { CARD_ONBOARDING_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { payCardOnboardingWidgetSlice } from "../../state";
-import { CardOnboardingWidget } from "./CardOnboardingWidget";
+import { CARD_ONBOARDING_COPY } from "../../__tests__/i18nWrapper";
+import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
 
 jest.mock("@domain/api-card-management", () => ({
   useGetCardOnboardingStatusQuery: jest.fn(),
 }));
 
-import { useGetCardOnboardingStatusQuery } from "@domain/api-card-management";
-
-const mockedQuery = jest.mocked(useGetCardOnboardingStatusQuery);
-type QueryResult = ReturnType<typeof useGetCardOnboardingStatusQuery>;
-
-function setQuery(state: {
-  data?: { steps: PayCardOnboardingStep[] };
-  isLoading?: boolean;
-  isError?: boolean;
-}) {
-  mockedQuery.mockReturnValue({
-    data: state.data,
-    isLoading: state.isLoading ?? false,
-    isError: state.isError ?? false,
-    refetch: jest.fn(),
-  } as unknown as QueryResult);
-}
-
-function stepsWith(...done: boolean[]): PayCardOnboardingStep[] {
-  return done.map((isDone, index) => ({
-    id: `step-${index}`,
-    title: `Step ${index}`,
-    description: `Description ${index}`,
-    isDone,
-  }));
-}
-
-function renderWidget({ hasCompletedOnboarding = false } = {}) {
-  const store = configureStore({
-    reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
-    preloadedState: { payCardOnboardingWidget: { hasCompletedOnboarding } },
-  });
-  const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
-    <Provider store={store}>
-      <I18nWrapper>{children}</I18nWrapper>
-    </Provider>
-  );
-
-  return render(<CardOnboardingWidget />, { wrapper });
-}
+const renderWidget = createRenderWidget(render);
 
 function openWidget(name: string = CARD_ONBOARDING_COPY.widgetTitle) {
   fireEvent.click(screen.getByRole("button", { name }));
@@ -114,6 +70,16 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(
       screen.queryByRole("button", { name: CARD_ONBOARDING_COPY.gotIt }),
     ).not.toBeInTheDocument();
+  });
+
+  it("should show the backend steps without adding the wallet step", () => {
+    setQuery({ data: { steps: stepsWithIds("top-up-card", "first-purchase") } });
+    renderWidget();
+    openWidget();
+
+    expect(screen.getByText("Title top-up-card")).toBeVisible();
+    expect(screen.getByText("Title first-purchase")).toBeVisible();
+    expect(screen.queryByText(/Apple\/Google Pay/)).not.toBeInTheDocument();
   });
 
   it("should close the dialog from the header close button", () => {

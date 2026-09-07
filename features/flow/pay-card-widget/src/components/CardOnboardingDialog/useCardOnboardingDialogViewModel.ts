@@ -1,10 +1,13 @@
 import { useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import type { PayCardOnboardingStep } from "@domain/api-card-management";
+import { markCardAddedToWallet } from "../../state";
+import { getStepIconId } from "./getStepIconId";
 import type {
   CardOnboardingOptionViewProps,
   StepStatus,
-} from "./CardOnboardingOption/useCardOnboardingOptionViewModel";
+} from "../CardOnboardingOption/useCardOnboardingOptionViewModel";
 
 const noop = () => {};
 
@@ -14,19 +17,18 @@ function toStepStatus(isDone: boolean, isFirstUndone: boolean): StepStatus {
   return "pending";
 }
 
-// None of the steps has a destination wired yet: each one keeps its own entry so it can be
-// replaced independently, and unknown ids coming from the backend still get a handler.
 const STEP_ACTIONS: Record<string, () => void> = {
   "create-account": noop,
   "choose-card-type": noop,
   "top-up-card": noop,
   "first-purchase": noop,
-  "apple-google-pay": noop,
 };
 
 type Params = {
   isOpen: boolean;
   steps: PayCardOnboardingStep[];
+  completedCount: number;
+  totalCount: number;
   onClose: () => void;
   onboardingCompleted: boolean;
   handleGotIt: () => void;
@@ -35,6 +37,7 @@ type Params = {
 export type CardOnboardingDialogViewProps = {
   readonly isOpen: boolean;
   readonly dialogTitle: string;
+  readonly gotItLabel: string;
   readonly options: CardOnboardingOptionViewProps[];
   readonly completedCount: number;
   readonly totalCount: number;
@@ -46,12 +49,21 @@ export type CardOnboardingDialogViewProps = {
 export function useCardOnboardingDialogViewModel({
   isOpen,
   steps,
+  completedCount,
+  totalCount,
   onClose,
   onboardingCompleted,
   handleGotIt,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
+  const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
+
+  const stepActions = useMemo<Record<string, () => void>>(
+    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => dispatch(markCardAddedToWallet()) }),
+    [dispatch],
+  );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {
     const firstUndoneIndex = steps.findIndex(s => !s.isDone);
@@ -64,18 +76,16 @@ export function useCardOnboardingDialogViewModel({
           ? t("payTab.cardOnboarding.dialog.stepComplete")
           : step.description,
         status,
-        iconId: step.id,
-        onAction: STEP_ACTIONS[step.id] ?? noop,
+        iconId: getStepIconId(step.id),
+        onAction: stepActions[step.id] ?? noop,
       };
     });
-  }, [steps, t]);
-
-  const completedCount = options.filter(o => o.status === "done").length;
-  const totalCount = options.length;
+  }, [steps, t, stepActions]);
 
   return {
     isOpen,
     dialogTitle,
+    gotItLabel,
     options,
     completedCount,
     totalCount,

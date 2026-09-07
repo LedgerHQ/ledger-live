@@ -7,6 +7,8 @@ export const CARD_ONBOARDING_COPY = {
   dialogTitle: "Complete your card",
   stepComplete: "Completed",
   gotIt: "Got it",
+  walletStepTitle: "Add to Apple/Google Pay",
+  walletStepDescription: "Pay with your phone in store",
 } as const;
 
 export const CARD_ONBOARDING_RESOURCES = {
@@ -22,6 +24,10 @@ export const CARD_ONBOARDING_RESOURCES = {
             title: CARD_ONBOARDING_COPY.dialogTitle,
             stepComplete: CARD_ONBOARDING_COPY.stepComplete,
             gotIt: CARD_ONBOARDING_COPY.gotIt,
+          },
+          walletStep: {
+            title: CARD_ONBOARDING_COPY.walletStepTitle,
+            description: CARD_ONBOARDING_COPY.walletStepDescription,
           },
         },
       },

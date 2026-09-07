@@ -31,6 +31,8 @@ export function CardOnboardingWidget() {
       <CardOnboardingDialog
         isOpen={isOpen}
         steps={steps}
+        completedCount={completedCount}
+        totalCount={totalCount}
         onClose={handleClose}
         onboardingCompleted={onboardingCompleted}
         handleGotIt={handleGotIt}

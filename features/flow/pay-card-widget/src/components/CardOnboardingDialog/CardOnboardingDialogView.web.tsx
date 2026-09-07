@@ -8,13 +8,13 @@ import {
   DialogHeader,
   Stepper,
 } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "@shared/i18n";
-import { CardOnboardingOption } from "./CardOnboardingOption/CardOnboardingOption";
+import { CardOnboardingOption } from "../CardOnboardingOption/CardOnboardingOption";
 import type { CardOnboardingDialogViewProps } from "./useCardOnboardingDialogViewModel";
 
 export const CardOnboardingDialogView = memo(function CardOnboardingDialogView({
   isOpen,
   dialogTitle,
+  gotItLabel,
   options,
   completedCount,
   totalCount,
@@ -22,8 +22,6 @@ export const CardOnboardingDialogView = memo(function CardOnboardingDialogView({
   onboardingCompleted,
   handleGotIt,
 }: CardOnboardingDialogViewProps) {
-  const { t } = useTranslation();
-
   const handleOpenChange = (open: boolean) => {
     if (!open) handleClose();
   };
@@ -47,7 +45,7 @@ export const CardOnboardingDialogView = memo(function CardOnboardingDialogView({
         {onboardingCompleted ? (
           <DialogFooter>
             <Button appearance="base" size="lg" className="w-full" isFull onClick={handleGotIt}>
-              {t("payTab.cardOnboarding.dialog.gotIt")}
+              {gotItLabel}
             </Button>
           </DialogFooter>
         ) : null}
