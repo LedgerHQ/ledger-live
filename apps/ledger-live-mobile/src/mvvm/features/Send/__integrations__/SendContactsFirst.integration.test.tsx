@@ -9,21 +9,12 @@ import {
   mockContactWithMultipleAddresses,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, withFlagOverrides, within } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
-import { SEND_FLOW_CONFIG } from "../constants";
-import { SendFlowOrchestrator } from "../SendFlowOrchestrator";
-import { AmountScreen } from "../screens/Amount";
-import { CoinControlScreen } from "../screens/CoinControl";
-import { ConfirmationScreen } from "../screens/Confirmation";
-import { CustomFeesScreen } from "../screens/CustomFees";
-import { RecipientScreen } from "../screens/Recipient";
-import { SignatureScreen } from "../screens/Signature";
+import SendWorkflow from "LLM/features/Send";
 
 const ethAccount = genAccount("contacts-first-eth", {
   currency: getCryptoCurrencyById("ethereum"),
@@ -33,7 +24,12 @@ type TestStackParamList = {
   PayHost: undefined;
   [NavigatorName.SendFlow]:
     | {
-        params?: { account?: { id: string } };
+        params?: {
+          selectContactBeforeAccount?: boolean;
+          account?: { id: string };
+          recipient?: string;
+          skipRecipientStep?: boolean;
+        };
       }
     | undefined;
   [NavigatorName.SendFunds]:
@@ -51,16 +47,6 @@ type TestStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
-
-const stepRegistry: StepRegistry<SendFlowStep> = {
-  [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
-  [SEND_FLOW_STEP.RECENT_HISTORY]: () => null,
-  [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
-  [SEND_FLOW_STEP.CUSTOM_FEES]: CustomFeesScreen,
-  [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
-  [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
-  [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
-};
 
 function SendFundsScreen({
   route,
@@ -84,28 +70,12 @@ function MyWalletScreen({
 
 function PayHostScreen({ navigation }: NativeStackScreenProps<TestStackParamList, "PayHost">) {
   useEffect(() => {
-    navigation.navigate(NavigatorName.SendFlow);
+    navigation.navigate(NavigatorName.SendFlow, {
+      params: { selectContactBeforeAccount: true },
+    });
   }, [navigation]);
 
   return <Text>Pay home</Text>;
-}
-
-function SendFlowScreen({
-  route,
-}: NativeStackScreenProps<TestStackParamList, typeof NavigatorName.SendFlow>) {
-  const accountId = route.params?.params?.account?.id;
-  if (accountId) {
-    return <Text testID="send-flow-screen">{`send:${accountId}`}</Text>;
-  }
-
-  return (
-    <SendFlowOrchestrator
-      initParams={{ selectContactBeforeAccount: true }}
-      onClose={() => {}}
-      stepRegistry={stepRegistry}
-      flowConfig={SEND_FLOW_CONFIG}
-    />
-  );
 }
 
 function renderContactsFirstSend(contacts: readonly Contact[]) {
@@ -116,7 +86,7 @@ function renderContactsFirstSend(contacts: readonly Contact[]) {
         screenOptions={{ headerShown: false, animation: "none" }}
       >
         <Stack.Screen name="PayHost" component={PayHostScreen} />
-        <Stack.Screen name={NavigatorName.SendFlow} component={SendFlowScreen} />
+        <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
         <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletScreen} />
       </Stack.Navigator>
@@ -133,6 +103,7 @@ function renderContactsFirstSend(contacts: readonly Contact[]) {
             enabled: true,
             params: { families: ["evm"], excludedCurrencyIds: [] },
           },
+          lwmContacts: { enabled: true, params: { newBadge: false } },
         },
         state => ({
           ...state,
@@ -231,6 +202,8 @@ describe("Send contacts-first", () => {
     await user.press(await screen.findByTestId("asset-item-ETH"));
     await user.press(await screen.findByTestId("account-item"));
 
-    expect(await screen.findByText(`send:${ethAccount.id}`)).toBeVisible();
+    expect(await screen.findByTestId("recipient-contact-row")).toBeVisible();
+    expect(within(screen.getByTestId("recipient-contact-row")).getByText("Yana")).toBeVisible();
+    expect(screen.getByTestId("disabled-amount-continue-button")).toBeVisible();
   });
 });
