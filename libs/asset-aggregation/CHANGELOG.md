@@ -1,5 +1,21 @@
 # @ledgerhq/asset-aggregation
 
+## 0.14.0
+
+### Minor Changes
+
+- [#21394](https://github.com/LedgerHQ/ledger-live/pull/21394) [`6046b34`](https://github.com/LedgerHQ/ledger-live/commit/6046b34802da0365fd027b83e48627afd64845ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix MarketBanner/Market list navigation so clicking Arbitrum opens the ARB asset detail instead of the Ethereum one, by passing the market ledger ids in the navigation state and preventing a bare market id from colliding with a same-named chain id
+
+### Patch Changes
+
+- Updated dependencies [[`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
+  - @domain/entity-currency-crypto@0.11.0
+  - @ledgerhq/types-live@6.122.0
+  - @domain/api-aggregated-assets@0.4.2
+  - @domain/entity-currency@0.4.2
+  - @domain/entity-currency-token@0.5.1
+  - @ledgerhq/live-countervalues@0.24.5
+
 ## 0.14.0-next.1
 
 ### Minor Changes
