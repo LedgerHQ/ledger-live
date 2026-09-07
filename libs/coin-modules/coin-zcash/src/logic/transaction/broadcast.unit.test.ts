@@ -16,7 +16,9 @@ const mockLog = log as jest.MockedFunction<typeof log>;
 
 const TXID = "cc".repeat(32);
 const PREVOUT_HASH = "ab".repeat(32);
-const TX_HEX = "05" + "00".repeat(63);
+// Distinctive (not a run of "00") so the merge-gate test below can't pass by
+// coincidentally matching some unrelated zero-padded value in a log line.
+const TX_HEX = "05" + "ab".repeat(63);
 
 type ExplorerOutput = { output_index: number; spent_at_height?: number | null };
 
@@ -191,21 +193,36 @@ describe("broadcast", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
       "broadcast failed",
-      expect.objectContaining({ error: "gRPC rejected" }),
+      expect.objectContaining({ errorName: "Error", errorMessageLength: "gRPC rejected".length }),
     );
+  });
+
+  it("attaches the endpoint to the thrown error, surviving past this call site", async () => {
+    broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
+
+    await expect(broadcast(TX_HEX)).rejects.toMatchObject({ endpoint: expect.any(String) });
   });
 
   // Merge gate: the broadcast path must never log the transaction hex (or a
   // slice of it long enough to be a de-facto digest) -- only metadata about it.
-  it("never logs the raw transaction hex", async () => {
+  // Covers both outcomes: a passing-guard success never touched the hex to
+  // begin with, but the failure path logs `error.message`, which can be an
+  // arbitrary, server-controlled string (client.broadcastTransaction's own
+  // rejection) -- the case this gate actually exists to catch.
+  it.each([
+    ["success", () => broadcastTransaction.mockResolvedValueOnce(TXID)],
+    ["failure", () => broadcastTransaction.mockRejectedValueOnce(new Error(`rejected: ${TX_HEX}`))],
+  ])("never logs the raw transaction hex (%s)", async (_case, arrange) => {
     mockLog.mockClear();
+    arrange();
+
     await broadcast(TX_HEX, {
       inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
       fetchUtxoTx: explorer({ [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: null }] }),
-    });
+    }).catch(() => {});
 
-    for (const [, , data] of mockLog.mock.calls) {
-      expect(JSON.stringify(data)).not.toContain(TX_HEX);
+    for (const call of mockLog.mock.calls) {
+      expect(JSON.stringify(call)).not.toContain(TX_HEX);
     }
   });
 });

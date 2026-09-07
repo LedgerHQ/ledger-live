@@ -92,7 +92,7 @@ describe("broadcast", () => {
       expect(mockLog).toHaveBeenCalledWith(
         "zcash",
         "released note reservation after broadcast failure",
-        { accountId: account.id, operationHash: TXID },
+        { accountId: account.id },
       );
     });
 

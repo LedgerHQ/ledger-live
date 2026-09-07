@@ -39,9 +39,12 @@ export const broadcast: AccountBridge<Transaction, ZcashAccount>["broadcast"] = 
         : undefined,
     );
   } catch (error) {
+    // No operationHash here: on this path it's the txid of a transaction that
+    // never reached the chain -- exactly the "digest of the signed transaction"
+    // artifact this feature must not log (see logic/transaction/broadcast.ts's
+    // own "broadcast failed" line, already in the same log stream, for context).
     log(ZCASH_LOG_TYPE, "released note reservation after broadcast failure", {
       accountId: account.id,
-      operationHash: operation.hash,
     });
     releaseReservation(account.id, operation.hash);
     throw error;

@@ -94,11 +94,26 @@ export async function broadcast(
     });
     return txid;
   } catch (error) {
+    // Not the raw message: it comes from the remote gRPC endpoint, which is
+    // untrusted input that could itself echo back a chunk of what was
+    // submitted -- exactly what this feature must never log. Name and length
+    // are safe, content-free signals, same spirit as logging the transaction
+    // itself only by size.
+    const message = error instanceof Error ? error.message : String(error);
     log(ZCASH_LOG_TYPE, "broadcast failed", {
       endpoint: grpcUrl,
       durationMs: Date.now() - startedAt,
-      error: error instanceof Error ? error.message : String(error),
+      errorName: error instanceof Error ? error.name : typeof error,
+      errorMessageLength: message.length,
     });
-    throw error;
+    // Re-attach `endpoint` here, on the renderer side: any own property set by
+    // main-host.ts's rejectOneShot is lost crossing Electron's ipcMain.handle /
+    // ipcRenderer.invoke boundary, which serializes a rejection to a plain
+    // string (error.toString()) and reconstructs a brand-new Error from it.
+    // This is the last hop before extractErrorContext reads the error, so it's
+    // the only place that can still make `endpoint` visible to it.
+    throw error instanceof Error
+      ? Object.assign(error, { endpoint: grpcUrl })
+      : Object.assign(new Error(String(error)), { endpoint: grpcUrl });
   }
 }
