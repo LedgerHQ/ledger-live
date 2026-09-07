@@ -243,3 +243,79 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1"
 }
+
+// LIVE-37010 regression guard.
+//
+// The HID transport hands a `cont::resume` callable reference to a data class that gets
+// interpolated into a log string, so FunctionReference.toString() asks kotlin-reflect to
+// render it. kotlin-reflect then resolves `resume` against kotlin.coroutines.ContinuationKt
+// using the reference's JVM signature, which is a compile-time constant R8 never rewrites.
+// The lookup therefore only matches while both the member and the Continuation type name
+// survive shrinking. When they don't, the app dies on the first APDU exchange -- and only
+// on a minified build, which no unit test or Detox run exercises.
+//
+// These assertions read the R8 mapping and fail the build if either invariant is lost,
+// whether because the keep rules were dropped or because an AGP/R8/Kotlin upgrade defeated
+// them. They verify the keeps are still effective; they cannot prove the SDK has not started
+// reflecting over some other lambda, which would need a new keep of its own.
+def kotlinReflectMappingAssertions = [
+    [
+        needle: "\nkotlin.coroutines.Continuation -> kotlin.coroutines.Continuation:\n",
+        failure: "kotlin.coroutines.Continuation was renamed by R8.",
+        remedy : "-keepnames class kotlin.coroutines.Continuation",
+    ],
+    [
+        needle: "\nkotlin.coroutines.ContinuationKt -> kotlin.coroutines.ContinuationKt:\n",
+        failure: "kotlin.coroutines.ContinuationKt was renamed by R8.",
+        remedy : "-keep class kotlin.coroutines.ContinuationKt { *; }",
+    ],
+    [
+        needle: "void resume(kotlin.coroutines.Continuation,java.lang.Object)",
+        // The mapping records original signatures on the left of "->", so this only proves
+        // the member survived shrinking. Renaming of the parameter type is covered above.
+        failure: "ContinuationKt.resume(Continuation, Object) did not survive shrinking.",
+        remedy : "-keep class kotlin.coroutines.ContinuationKt { *; }",
+    ],
+]
+
+afterEvaluate {
+    android.buildTypes.each { buildType ->
+        if (!buildType.minifyEnabled) {
+            return
+        }
+        // This module declares no product flavors, so variant name == build type name.
+        def variant = buildType.name
+        def suffix = variant.capitalize()
+        def mappingFile = layout.buildDirectory.file("outputs/mapping/${variant}/mapping.txt")
+
+        def guard = tasks.register("verify${suffix}KotlinReflectKeeps") {
+            group = "verification"
+            description = "Assert the LIVE-37010 ProGuard keeps still hold in the ${variant} R8 mapping"
+            outputs.upToDateWhen { false }
+            doLast {
+                def file = mappingFile.get().asFile
+                if (!file.exists()) {
+                    throw new GradleException(
+                        "LIVE-37010 guard: no R8 mapping at ${file}. Cannot verify the" +
+                        " kotlin-reflect keep rules for the ${variant} variant."
+                    )
+                }
+                def mapping = file.text
+                def failures = kotlinReflectMappingAssertions.findAll { !mapping.contains(it.needle) }
+                if (!failures.isEmpty()) {
+                    def detail = failures.collect { "  - ${it.failure}\n    Required rule: ${it.remedy}" }.join("\n")
+                    throw new GradleException(
+                        "LIVE-37010 guard failed for the ${variant} variant: USB HID will crash the app" +
+                        " on the first APDU exchange.\n${detail}\n" +
+                        "  See apps/ledger-live-mobile/android/app/proguard-rules.pro and" +
+                        " https://ledgerhq.atlassian.net/browse/LIVE-37010"
+                    )
+                }
+            }
+        }
+
+        tasks.matching { it.name == "minify${suffix}WithR8" }.configureEach {
+            finalizedBy(guard)
+        }
+    }
+}
