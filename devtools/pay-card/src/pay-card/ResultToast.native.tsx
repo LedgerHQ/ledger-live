@@ -10,7 +10,10 @@ export function ResultToast({ result }: { readonly result: PayCardActionResult |
   const [shown, setShown] = useState<PayCardActionResult | null>(null);
 
   useEffect(() => {
-    if (!result) return undefined;
+    if (!result) {
+      setShown(null);
+      return undefined;
+    }
     setShown(result);
     const timer = setTimeout(() => setShown(null), VISIBLE_MS);
     return () => clearTimeout(timer);

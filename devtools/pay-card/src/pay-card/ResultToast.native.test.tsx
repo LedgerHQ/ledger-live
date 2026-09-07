@@ -16,6 +16,14 @@ describe("ResultToast (native)", () => {
     expect(screen.getByText(result.message)).toBeTruthy();
   });
 
+  it("hides the previous result when it is cleared", () => {
+    const { rerender } = render(<ResultToast result={result} />);
+
+    rerender(<ResultToast result={null} />);
+
+    expect(screen.queryByText(result.message)).toBeNull();
+  });
+
   it("gets out of the way on its own", () => {
     jest.useFakeTimers();
     render(<ResultToast result={result} />);

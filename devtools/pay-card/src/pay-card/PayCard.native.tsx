@@ -145,7 +145,11 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
               Set all done
             </Button>
-            <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", false)}>
+            <Button
+              appearance="gray"
+              size="sm"
+              onPress={() => onboarding.setStepDone("all", false)}
+            >
               Reset all
             </Button>
           </Box>

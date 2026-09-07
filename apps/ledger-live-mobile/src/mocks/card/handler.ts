@@ -91,8 +91,6 @@ const handlers = [
     }
 
     state.refreshCount += 1;
-    // eslint-disable-next-line no-console
-    console.log(`[card-msw] renewal #${state.refreshCount} answers ${state.tokenResponse}`);
 
     return answerTokenRequest(state.tokenResponse, state.refreshCount);
   }),
@@ -100,8 +98,6 @@ const handlers = [
   http.get("*/v1/user", ({ request }) => {
     if (state.userUnauthorizedOnce) {
       state.userUnauthorizedOnce = false;
-      // eslint-disable-next-line no-console
-      console.log("[card-msw] answering one /v1/user with 401");
       return HttpResponse.json({ message: "unauthorized" }, { status: 401 });
     }
 
@@ -109,8 +105,6 @@ const handlers = [
       return passthrough();
     }
 
-    // eslint-disable-next-line no-console
-    console.log("[card-msw] answering /v1/user from the mock");
     return HttpResponse.json(MOCK_USER);
   }),
 

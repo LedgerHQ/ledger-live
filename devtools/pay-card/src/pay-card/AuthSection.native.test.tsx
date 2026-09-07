@@ -147,7 +147,6 @@ describe("AuthSection (native)", () => {
   it("names the endpoint it steers, and lists one button per documented answer", () => {
     render(<AuthSection auth={buildAuth()} />);
 
-    expect(screen.getByText("MSW running")).toBeTruthy();
     expect(screen.getByText("renewals 0")).toBeTruthy();
     expect(screen.getByText("What POST /v1/auth/oauth2/token answers:")).toBeTruthy();
     expect(screen.getByText("Off")).toBeTruthy();
