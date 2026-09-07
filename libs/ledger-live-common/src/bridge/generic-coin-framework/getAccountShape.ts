@@ -27,6 +27,7 @@ import type {
   StakingUnbonding,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -420,9 +421,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         })
       : Promise.resolve(undefined);
 
+    const balancePromise = coinModuleApi
+      .getBalance(context, address, bridgeApi.balanceOptions)
+      .catch(err => {
+        throw new UnexpectedGetBalanceError("", err);
+      });
+
     const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
       coinModuleApi.lastBlock(context),
-      coinModuleApi.getBalance(context, address, bridgeApi.balanceOptions),
+      balancePromise,
       validatorsPromise,
       readinessPromise,
       chainSpecificShapePromise,

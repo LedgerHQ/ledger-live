@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
@@ -150,6 +151,24 @@ describe("genericGetAccountShape", () => {
       );
 
       expect((result as any).readiness).toBeUndefined();
+    });
+  });
+
+  describe("getBalance error wrapping", () => {
+    test("rejects with UnexpectedGetBalanceError when getBalance throws, preserving the original error as cause", async () => {
+      const { currency, network } = chains[1];
+      const cause = new Error("network failure");
+      getBalanceMock.mockRejectedValue(cause);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const err = await getShape(
+        { address: "rTest", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} },
+      ).catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(UnexpectedGetBalanceError);
+      expect(err).toMatchObject({ cause });
     });
   });
 
