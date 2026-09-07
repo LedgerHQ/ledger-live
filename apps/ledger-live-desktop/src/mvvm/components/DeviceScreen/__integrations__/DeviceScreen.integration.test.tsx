@@ -1,6 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { act, fireEvent, render, screen, waitFor } from "tests/testSetup";
+import { fireEvent, render, screen, waitFor } from "tests/testSetup";
 import { DeviceScreen } from "../index";
 import { DEVICE_SCREEN_COLLAPSED_STORAGE_KEY } from "../useDeviceScreenViewModel";
 
@@ -93,13 +93,11 @@ describe("DeviceScreen", () => {
   });
 
   it("collapses to its header, stops polling, and persists the choice", async () => {
-    render(<DeviceScreen />);
+    const { user } = render(<DeviceScreen />);
 
     expect(mockUseDeviceScreen).toHaveBeenLastCalledWith(true);
 
-    act(() => {
-      fireEvent.click(screen.getByTestId("device-screen-toggle"));
-    });
+    await user.click(screen.getByTestId("device-screen-toggle"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("device-screen-image")).not.toBeInTheDocument();
