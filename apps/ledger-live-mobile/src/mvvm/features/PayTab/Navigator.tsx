@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
 import { PayTabScreen } from "./screens/PayTab";
 import { PayTabRequestReceiveScreen } from "./screens/RequestReceive";
+import { PayTabSelectContactScreen } from "./screens/SelectContact";
 import type { PayTabNavigatorParamList } from "./types";
 
 const TabStack = createNativeStackNavigator<PayTabNavigatorParamList>();
@@ -14,6 +15,10 @@ export default function PayTabNavigator() {
       <TabStack.Screen
         name={ScreenName.PayTabRequestReceive}
         component={PayTabRequestReceiveScreen}
+      />
+      <TabStack.Screen
+        name={ScreenName.PayTabSelectContact}
+        component={PayTabSelectContactScreen}
       />
     </TabStack.Navigator>
   );

@@ -5,8 +5,8 @@ import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { NavigatorName } from "~/const";
-import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import type { PayTabNavigatorParamList } from "../types";
 
 export type UsePayTabNewPayment = Readonly<{
   open: (contact?: Contact) => void;
@@ -14,7 +14,7 @@ export type UsePayTabNewPayment = Readonly<{
 }>;
 
 export function usePayTabNewPayment(): UsePayTabNewPayment {
-  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: "Pay",
   });
@@ -36,9 +36,7 @@ export function usePayTabNewPayment(): UsePayTabNewPayment {
   const open = useCallback(
     (nextContact?: Contact) => {
       if (!nextContact) {
-        navigation.navigate(NavigatorName.SendFlow, {
-          params: { selectContactBeforeAccount: true },
-        });
+        navigation.navigate(ScreenName.PayTabSelectContact);
         return;
       }
 

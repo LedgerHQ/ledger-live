@@ -115,6 +115,7 @@ export enum ScreenName {
   Card = "Card",
   PayTab = "PayTab",
   PayTabRequestReceive = "PayTabRequestReceive",
+  PayTabSelectContact = "PayTabSelectContact",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeSelectAccount = "ExchangeSelectAccount",
