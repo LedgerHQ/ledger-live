@@ -774,6 +774,44 @@ describe("useRecipientScreenView", () => {
     expect(mockRecipientSearch.setValue).not.toHaveBeenCalled();
   });
 
+  it("keeps the contact resolution when the step hands the recipient to the amount step", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "Alice" },
+      state: {} as never,
+      uiConfig: {} as never,
+    });
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({ id: "address-eth", currencyId: "ethereum", address: "0xeth" }),
+      ],
+    });
+
+    const { result, rerender } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+    act(() => result.current.contactAddressPicker.onSelectAddress(contact.addresses[0]));
+
+    expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");
+
+    // Handing the recipient over clears the search; that must not read as the user
+    // emptying the field to start a new lookup.
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "" },
+      state: {} as never,
+      uiConfig: {} as never,
+    });
+    rerender(undefined);
+
+    expect(resetRecipientResolution).not.toHaveBeenCalled();
+  });
+
   it("shows loading state when validation is in progress", () => {
     mockedUseAddressValidation.mockReturnValue({
       result: { ...idleResult, status: "loading" },

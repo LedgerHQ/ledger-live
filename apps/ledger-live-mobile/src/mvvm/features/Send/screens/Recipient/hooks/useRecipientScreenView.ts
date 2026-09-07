@@ -154,8 +154,15 @@ export function useRecipientScreenView({
     showContactSearchResult,
   ]);
 
+  // Handing the recipient to the amount step clears the search (mobile only), which must
+  // not read as the user emptying the field to start a new lookup and drop the resolution.
+  const committedRecipientRef = useRef(false);
   useEffect(() => {
     if (hasSearchValue) {
+      committedRecipientRef.current = false;
+      return;
+    }
+    if (committedRecipientRef.current) {
       return;
     }
 
@@ -177,6 +184,7 @@ export function useRecipientScreenView({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      committedRecipientRef.current = true;
       onAddressSelected(address, ensName);
     },
     [onAddressSelected],
