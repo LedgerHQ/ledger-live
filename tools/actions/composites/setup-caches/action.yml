@@ -61,7 +61,8 @@ runs:
       if: inputs.use-mise == 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
-        version: "2026.9.1" # pinned; bump deliberately (TSDINT-1644)
+        # pinned: following latest mise once broke plugin installs (TSDINT-1644)
+        version: "2026.9.1"
         install: true
         cache: true
         reshim: true
