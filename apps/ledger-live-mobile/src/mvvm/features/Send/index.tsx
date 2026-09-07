@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -69,18 +69,15 @@ export default function SendWorkflow() {
   }, [onClose, navigation]);
 
   // Support both nested params (params.account) and flattened params (account)
-  const initParams: SendFlowInitParams = useMemo(
-    () => ({
-      account: params?.account ?? routeParams?.account,
-      parentAccount: params?.parentAccount ?? routeParams?.parentAccount,
-      recipient: params?.recipient ?? routeParams?.recipient,
-      skipRecipientStep: params?.skipRecipientStep ?? routeParams?.skipRecipientStep,
-      amount: params?.amount ?? routeParams?.amount,
-      memo: params?.memo ?? routeParams?.memo,
-      fromMAD: params?.fromMAD ?? routeParams?.fromMAD ?? false,
-    }),
-    [params, routeParams],
-  );
+  const initParams: SendFlowInitParams = {
+    account: params?.account ?? routeParams?.account,
+    parentAccount: params?.parentAccount ?? routeParams?.parentAccount,
+    recipient: params?.recipient ?? routeParams?.recipient,
+    skipRecipientStep: params?.skipRecipientStep ?? routeParams?.skipRecipientStep,
+    amount: params?.amount ?? routeParams?.amount,
+    memo: params?.memo ?? routeParams?.memo,
+    fromMAD: params?.fromMAD ?? routeParams?.fromMAD ?? false,
+  };
 
   return (
     <DomainServiceProvider>
