@@ -11,6 +11,8 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./testing": "./src/testing/index.ts",
+    "./testing/module-mock": "./src/testing/moduleMock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

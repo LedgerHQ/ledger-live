@@ -1,23 +1,6 @@
 import React from "react";
-import { View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { FeatureTourView } from "../FeatureTourView.native";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isRequestingToBeOpened,
-    testID,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened?: boolean;
-    testID?: string;
-  }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
-      {children}
-    </View>
-  ),
-}));
 
 const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
   isVisible: true,
