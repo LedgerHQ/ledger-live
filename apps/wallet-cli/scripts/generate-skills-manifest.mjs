@@ -22,9 +22,10 @@
 //   node ./scripts/generate-skills-manifest.mjs --check   # validate generation succeeds (no write)
 
 import { createHash } from "node:crypto";
-import { lstat, readFile, readdir, realpath, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { collectSkillFiles } from "./collect-skill-files.mjs";
 import { parseFrontmatterField, rewriteSkillFile } from "./standalone-skill-transform.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -36,10 +37,6 @@ const root = path.resolve(__dirname, "..");
 // that point to a shared copy within this same tree, which `readFile` follows natively.
 const skillsSourceDir = path.resolve(root, "../../.agents/skills");
 const outFile = path.resolve(root, "src/skills/manifest.gen.ts");
-
-// Symlink-resolved skills root, used as the boundary for the guard in collectFiles.
-// (Resolved so a symlinked parent — e.g. a git worktree path — compares correctly.)
-const skillsSourceDirReal = await realpath(skillsSourceDir).catch(() => skillsSourceDir);
 
 const CHECK = process.argv.includes("--check");
 
@@ -57,33 +54,19 @@ const CHECK = process.argv.includes("--check");
 const SHIPPED_SKILL_DIRS = new Set(["ledger-wallet-cli"]);
 
 /**
- * Recursively collect files (relative paths) under `dir`. Uses `lstat` so symlinks
- * are not transparently followed: symlinked files (e.g. `references/safety.md` →
- * shared copy) are included as leaves after checking they resolve inside the skills
- * tree, and symlinked directories are never descended into — so a stray symlink can't
- * pull arbitrary files into the published binary.
+ * Collect a skill's files. The shared walker refuses any symlink resolving outside
+ * the skills tree, so a stray symlink can't pull arbitrary repo content into the
+ * published binary. The boundary is the whole skills tree (not one skill dir)
+ * because skills are allowed to symlink shared references to each other.
+ *
+ * @param {string} skillDir
+ * @returns {Promise<string[]>}
  */
-async function collectFiles(dir, base = dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const abs = path.join(dir, entry.name);
-    const info = await lstat(abs);
-    if (info.isSymbolicLink()) {
-      const real = await realpath(abs);
-      if (real !== skillsSourceDirReal && !real.startsWith(skillsSourceDirReal + path.sep)) {
-        throw new Error(
-          `Refusing to embed "${path.relative(root, abs)}": symlink resolves outside the skills tree (${real}).`,
-        );
-      }
-      files.push(path.relative(base, abs));
-    } else if (info.isDirectory()) {
-      files.push(...(await collectFiles(abs, base)));
-    } else if (info.isFile()) {
-      files.push(path.relative(base, abs));
-    }
-  }
-  return files;
+async function collectFiles(skillDir) {
+  return collectSkillFiles(skillDir, {
+    boundary: skillsSourceDir,
+    label: path.relative(root, skillDir),
+  });
 }
 
 /**
@@ -147,10 +130,9 @@ async function buildManifest() {
 
     const files = [];
     for (const rel of relFiles) {
-      // Normalize to posix so the generated manifest is stable across OSes.
-      const posixRel = rel.split(path.sep).join("/");
+      // `rel` is already posix-separated, so the generated manifest is stable across OSes.
       const content = await readSkillFile(path.join(skillDir, rel));
-      files.push({ path: posixRel, content: rewriteSkillFile(posixRel, content) });
+      files.push({ path: rel, content: rewriteSkillFile(rel, content) });
     }
 
     // Identity and description come from the REWRITTEN SKILL.md, not the source:

@@ -9,29 +9,13 @@
 // Usage:
 //   node ./scripts/export-standalone-skill.mjs <source-skill-dir> <target-skill-dir>
 
-import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { collectSkillFiles } from "./collect-skill-files.mjs";
 import { rewriteSkillFile } from "./standalone-skill-transform.mjs";
 
 /** Files that must exist in the export — the workflow used to assert this in bash. */
 const REQUIRED_FILES = ["SKILL.md", "references/business-logic.md"];
-
-/** Recursively collect skill-relative posix paths under `dir`. */
-async function collectFiles(dir, base = dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const abs = path.join(dir, entry.name);
-    // Follow symlinks as leaves (in-repo `references/safety.md` is one) rather than
-    // descending into them, mirroring generate-skills-manifest.mjs.
-    if (entry.isDirectory()) {
-      files.push(...(await collectFiles(abs, base)));
-    } else {
-      files.push(path.relative(base, abs).split(path.sep).join("/"));
-    }
-  }
-  return files;
-}
 
 async function main() {
   const [sourceDir, targetDir] = process.argv.slice(2);
@@ -41,7 +25,12 @@ async function main() {
     );
   }
 
-  const files = await collectFiles(sourceDir);
+  // Boundary is the skill dir, stricter than the generator's whole-skills-tree
+  // one: this copy is public, so a link to another skill fails the sync loudly.
+  const files = await collectSkillFiles(sourceDir, {
+    boundary: sourceDir,
+    label: path.basename(sourceDir),
+  });
 
   const missing = REQUIRED_FILES.filter(required => !files.includes(required));
   if (missing.length > 0) {
