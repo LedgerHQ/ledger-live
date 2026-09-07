@@ -51,7 +51,6 @@ export interface PayCardInteractionProps {
   readonly probes: readonly PayCardProbe[];
 }
 
-/** One card-linked wallet, joined to its balance, exactly as the calculation saw it. */
 /** One wallet exactly as `GET /v1/wallet/internal` answered. */
 export interface PayCardBaanxWallet {
   readonly id: string;

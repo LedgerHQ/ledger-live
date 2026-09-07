@@ -83,8 +83,10 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
 }
 
-/** Never called: the wallet queries are skipped whenever the host omits its own resolver. */
-/** The tool reports what the endpoints answer, not what it is worth. The join needs one anyway. */
+/**
+ * The join needs a resolver, and this tool prices nothing. It is called for every wallet with a
+ * balance and answers `null`, which the screen reports as unpriced.
+ */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
 /** Reads what an endpoint answered, whatever shape the failure arrives in. */

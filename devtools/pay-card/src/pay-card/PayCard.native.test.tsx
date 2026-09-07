@@ -288,8 +288,26 @@ describe("PayCard (native)", () => {
 
     expect(screen.getByText("125.40")).toBeTruthy();
     expect(screen.getByText("0xusdc")).toBeTruthy();
-    // An absent memo has to read as `null`, not as a blank.
+    // The provider sends `null` for a wallet with no memo, and omits the key on others. They have
+    // to read differently, because telling them apart is what the schema had to get right.
     expect(screen.getByText("null")).toBeTruthy();
+  });
+
+  it("tells a memo the provider omitted from one it sent as null", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    const [withMemo] = baanxWallets;
+    const { addressMemo: _addressMemo, ...withoutMemo } = withMemo!;
+    render(
+      <PayCard
+        {...props}
+        balance={{ ...props.balance, baanxWallets: [{ ...withoutMemo, id: "w-nomemo" }] }}
+      />,
+    );
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("undefined")).toBeTruthy();
   });
 
   it("shows the provider's own unmapped currency and network for every link", async () => {
