@@ -139,25 +139,20 @@ export default class AccountPage {
 
   @Step("Expand the sub-account list if {{{0}}} is not reachable")
   async expandSubAccountsIfNeeded(subAccountId: string) {
-    // The account screen renders only the first 3 sub-accounts, the rest collapsed behind a
-    // toggle, so a token outside that set is absent from the view tree and cannot be reached by
-    // scrolling. A present row means no expansion is needed; an absent one proves nothing (the
-    // list is a FlatList, so off-screen rows are unmounted in either state), so the collapsed
-    // check below reads the toggle itself. With 3 or fewer sub-accounts the toggle does not
-    // exist and this returns within the IsIdPresent probe timeout, leaving callers unaffected.
+    // Only the first 3 sub-accounts are rendered; the rest sit behind a toggle, so a token
+    // outside that set is not in the view tree at all. A present row means nothing to do; an
+    // absent one proves nothing (off-screen rows are unmounted either way), so the state comes
+    // from the toggle's own label.
     if (await IsIdPresent(subAccountId)) return;
     if (!(await IsIdPresent(this.expandSubAccountsButtonId))) return;
-    await scrollToId(this.expandSubAccountsButtonId, this.accountScreenScrollView);
+    await revealForTap(this.expandSubAccountsButtonId, {
+      container: this.accountScreenScrollView,
+    });
     if (!(await this.isSubAccountsListCollapsed())) return;
     await tapById(this.expandSubAccountsButtonId);
   }
 
-  /**
-   * Reads the toggle's own label rather than inferring from the rows, so an already-expanded
-   * list is never collapsed. Every expand wording contains "more" ("Display more Tokens",
-   * "See more subaccounts", "See more ASA", "See more assets"); every collapse wording uses
-   * "fewer" or "less".
-   */
+  /** Every expand wording contains "more"; every collapse wording uses "fewer" or "less". */
   private async isSubAccountsListCollapsed(): Promise<boolean> {
     try {
       await detoxExpect(

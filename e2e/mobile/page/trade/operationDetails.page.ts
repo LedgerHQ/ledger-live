@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { exactAmountPattern } from "@ledgerhq/live-e2e-shared/amountPattern";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 
@@ -142,11 +143,7 @@ export default class OperationDetailsPage {
   async expectOperationAmountPrecision(amount: string) {
     await this.waitForOperationDetails();
     const amountText = await getTextOfElement(this.operationDetailsAmount);
-    // Digit-boundary guarded rather than a plain substring: "0.1234567890" contains
-    // "0.123456789", so a substring match would accept a differently-rounded amount and
-    // defeat the point of a precision assertion.
-    const escaped = amount.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-    jestExpect(amountText).toMatch(new RegExp(String.raw`(?<!\d)${escaped}(?!\d)`));
+    jestExpect(amountText).toMatch(exactAmountPattern(amount));
   }
 
   @Step("Check view in explorer button")

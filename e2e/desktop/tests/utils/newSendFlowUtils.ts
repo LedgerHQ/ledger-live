@@ -67,9 +67,10 @@ export type NewSendFlowEntry = {
   bugTicket?: string;
   teamOwner?: Team;
   /**
-   * When set, the amount is asserted to round-trip exactly in the input and to appear
-   * verbatim in the operation details. Use for assets whose decimal magnitude is unusual
-   * enough that a formatting regression would otherwise pass unnoticed.
+   * When set, the amount is asserted to pin the currency's decimal magnitude in the input
+   * (exact round-trip, and one decimal deeper rejected) and to appear verbatim in the
+   * operation details. Use for assets whose magnitude is unusual enough that a formatting
+   * regression would otherwise pass unnoticed.
    */
   verifyAmountPrecision?: boolean;
 };
@@ -146,7 +147,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
           if (entry.verifyAmountPrecision) {
-            await app.newSendFlow.expectCryptoAmount(tx.amount);
+            await app.newSendFlow.expectAmountMagnitude(tx.amount);
           }
 
           if (tx.speed) {
