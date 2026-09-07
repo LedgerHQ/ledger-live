@@ -17,9 +17,19 @@ const seedZcashPrivateInfo = (account: Account) => {
   const cmd = async (userdataPath?: string) => {
     if (!userdataPath) return;
     const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
+    if (!Array.isArray(raw?.data?.accounts)) {
+      throw new Error(
+        `seedZcashPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}, got ${JSON.stringify(raw?.data)}`,
+      );
+    }
     const acc = raw.data.accounts.find((a: { data: { id: string } }) =>
       a.data.id.includes(account.currency.id),
     );
+    if (!acc) {
+      throw new Error(
+        `seedZcashPrivateInfo: no account matching currency "${account.currency.id}" found in ${userdataPath}. Did liveDataCommand run first and add it?`,
+      );
+    }
     acc.data.privateInfo = {
       orchardBalance: "0",
       saplingBalance: "0",

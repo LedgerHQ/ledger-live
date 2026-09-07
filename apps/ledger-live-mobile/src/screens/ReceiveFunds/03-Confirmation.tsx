@@ -361,6 +361,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 alignItems="center"
                 justifyContent="center"
                 accessible
+                accessibilityRole="image"
+                accessibilityLabel={t("transfer.receive.receiveConfirmation.qrCode")}
                 testID={"receive-qr-code-container-" + mainAccountName}
               >
                 <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
