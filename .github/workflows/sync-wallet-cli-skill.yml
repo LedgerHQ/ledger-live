@@ -4,8 +4,14 @@ on:
   push:
     branches:
       - develop
+    # The published copy is a function of the source AND the transform, so watch
+    # both — a transform-only change must sync too.
     paths:
       - ".agents/skills/ledger-wallet-cli/**"
+      - "apps/wallet-cli/scripts/standalone-skill-transform.mjs"
+      - "apps/wallet-cli/scripts/export-standalone-skill.mjs"
+      - "apps/wallet-cli/scripts/collect-skill-files.mjs"
+      - ".github/workflows/sync-wallet-cli-skill.yml"
   workflow_dispatch:
     inputs:
       source_ref:
@@ -70,16 +76,10 @@ jobs:
           path: ledger-live
           persist-credentials: false
 
-      # The transform (rename to wallet-cli-usage, rewrite the monorepo-only
-      # `pnpm --silent wallet-cli start ...` invocations, assert nothing
-      # monorepo-only survives) lives in the wallet-cli scripts so this workflow and
-      # the copy embedded in the compiled binary run the SAME code. Node comes
-      # preinstalled on the runner and the script is stdlib-only (no pnpm install,
-      # no dependencies) — keep it that way. It used to be an
-      # inline `sed` pipeline duplicating the generator's JS rules, and the two
-      # drifted: the published copy was renamed and rewritten while the embedded copy
-      # shipped the pnpm-prefixed examples. The script asserts its own output and
-      # exits non-zero on failure, so no extra bash checks are needed here.
+      # The transform lives in the wallet-cli scripts so this workflow and the copy
+      # embedded in the binary run the same code — as a `sed` pipeline here it
+      # drifted. The script asserts its own output, so no bash checks are needed.
+      # Keep it stdlib-only: the runner has node, but no pnpm install runs here.
       - name: Export wallet-cli skill
         run: |
           set -euo pipefail
