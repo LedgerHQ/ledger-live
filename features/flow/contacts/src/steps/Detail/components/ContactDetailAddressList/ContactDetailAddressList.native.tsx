@@ -1,5 +1,4 @@
 import React from "react";
-import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRowIntent } from "../../types";
 import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection.native";
@@ -14,21 +13,17 @@ export function ContactDetailAddressList({
   onAddressRowPress,
 }: ContactDetailAddressListProps): React.JSX.Element {
   return (
-    <ScrollView
+    <Box
       testID="contacts-detail-address-list"
-      alwaysBounceVertical={false}
-      contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
+      lx={{ gap: "s24", paddingHorizontal: "s16", paddingTop: "s32", paddingBottom: "s32" }}
     >
-      <Box lx={{ gap: "s24", paddingHorizontal: "s16", paddingTop: "s32", paddingBottom: "s32" }}>
-        {addressGroups.map(group => (
-          <ContactDetailAddressNetworkSection
-            key={group.networkId}
-            group={group}
-            onAddressRowPress={onAddressRowPress}
-          />
-        ))}
-      </Box>
-    </ScrollView>
+      {addressGroups.map(group => (
+        <ContactDetailAddressNetworkSection
+          key={group.networkId}
+          group={group}
+          onAddressRowPress={onAddressRowPress}
+        />
+      ))}
+    </Box>
   );
 }
