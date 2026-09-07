@@ -4,6 +4,7 @@ import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
+  createFixtureTokenAccount,
   createFixtureTransaction,
   createFixtureOperation,
   setupTestnetCoinConfig,
@@ -42,6 +43,25 @@ jest.mock("./getTransactionStatus", () => ({
     totalSpent: new BigNumber(5001000),
   }),
 }));
+
+const sign = async (
+  transaction: ReturnType<typeof createFixtureTransaction>,
+  account: ReturnType<typeof createFixtureAccount> = createFixtureAccount(),
+) => {
+  const mockSigner = createFixtureSigner();
+  const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner));
+  const events = await firstValueFrom(
+    signOperation({ account, deviceId: "device-1", transaction }).pipe(toArray()),
+  );
+  return { mockSigner, events };
+};
+
+/** A parent carrying its PLT sub-account, which is what marks a transfer as a token send. */
+const withTokenSubAccount = () => {
+  const parent = createFixtureAccount();
+  const subAccount = createFixtureTokenAccount({ parentId: parent.id });
+  return { account: { ...parent, subAccounts: [subAccount] }, subAccount };
+};
 
 describe("signOperation", () => {
   beforeEach(() => {
@@ -446,6 +466,100 @@ describe("signOperation", () => {
       // THEN
       expect(signedEvent.signedOperation.operation.id).toContain("concordium:test-account");
       expect(signedEvent.signedOperation.operation.id).toContain("OUT");
+    });
+  });
+
+  describe("the persisted estimate", () => {
+    const { craftTransaction, estimateFees } = jest.requireMock("../logic");
+
+    const tokenTransaction = (over = {}) => {
+      const { account, subAccount } = withTokenSubAccount();
+      const transaction = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        fee: new BigNumber(3600),
+        energy: 1080,
+        ...over,
+      });
+      return { account, transaction };
+    };
+
+    // A second estimate would put a different number on the device's "Max fees"
+    // step from the one the wallet showed.
+    it("does not re-estimate when preparation persisted the energy", async () => {
+      const { account, transaction } = tokenTransaction();
+
+      await sign(transaction, account);
+
+      expect(estimateFees).not.toHaveBeenCalled();
+    });
+
+    it("crafts with the persisted pair, not a fresh estimate", async () => {
+      const { account, transaction } = tokenTransaction();
+
+      await sign(transaction, account);
+
+      expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ fee: new BigNumber(3600), energy: BigInt(1080) }),
+      );
+    });
+
+    it("signs against the persisted cost", async () => {
+      const { account, transaction } = tokenTransaction();
+
+      const { mockSigner } = await sign(transaction, account);
+
+      expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(String),
+        BigInt(3600),
+      );
+    });
+
+    it("keeps estimating for a native transfer", async () => {
+      await sign(createFixtureTransaction({ fee: new BigNumber(1000) }));
+
+      expect(estimateFees).toHaveBeenCalled();
+      expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ energy: BigInt(501) }),
+      );
+    });
+
+    // A draft that was a token transfer can arrive native with the token's
+    // energy still attached, via a raw round-trip or an account change.
+    it("ignores a stale energy on a native transfer", async () => {
+      await sign(createFixtureTransaction({ fee: new BigNumber(1000), energy: 1080 }));
+
+      expect(estimateFees).toHaveBeenCalled();
+      expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ energy: BigInt(501) }),
+      );
+    });
+
+    it("ignores a stale energy when the sub-account is not a token account", async () => {
+      await sign(
+        createFixtureTransaction({
+          subAccountId: "js:2:concordium_testnet:nope:",
+          fee: new BigNumber(1000),
+          energy: 1080,
+        }),
+      );
+
+      expect(estimateFees).toHaveBeenCalled();
+    });
+
+    // The energy half of the pair is missing, so the fee on screen has no
+    // matching limit to sign; preparation could not have produced this.
+    it("refuses a token transfer with no persisted energy", async () => {
+      const { account, subAccount } = withTokenSubAccount();
+      const transaction = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        fee: new BigNumber(3600),
+      });
+
+      await expect(sign(transaction, account)).rejects.toThrow(FeeNotLoaded);
     });
   });
 });

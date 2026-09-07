@@ -1,4 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
@@ -31,7 +32,21 @@ export const buildSignOperation =
           account.currency.id,
         );
 
-        const estimation = await estimateFees(config, account.currency.id, transaction.memo);
+        // The fee shown in the wallet and the energy in the signed header must
+        // be two halves of one estimate, or the device's "Max fees" step
+        // contradicts the figure the user already approved. The discriminator is
+        // the selected sub-account, not a present `energy`: that field outlives
+        // any token selection, so reading it alone would declare a token energy
+        // limit on a native transfer.
+        const isTokenTransfer =
+          findSubAccountById(account, transaction.subAccountId ?? "")?.type === "TokenAccount";
+
+        if (isTokenTransfer && transaction.energy === undefined) throw new FeeNotLoaded();
+
+        const estimation =
+          isTokenTransfer && transaction.energy !== undefined
+            ? { cost: BigInt(fee.toString()), energy: BigInt(transaction.energy) }
+            : await estimateFees(config, account.currency.id, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

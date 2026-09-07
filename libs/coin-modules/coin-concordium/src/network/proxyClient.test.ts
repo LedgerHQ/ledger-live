@@ -362,7 +362,10 @@ describe("proxyClient", () => {
     it("should fetch transaction cost", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "1000", energy: "500" } });
 
-      const result = await getTransactionCost(config, currencyId, { numSignatures: 1 });
+      const result = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures: 1,
+      });
 
       expect(result).toEqual({ cost: "1000", energy: "500" });
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -372,6 +375,75 @@ describe("proxyClient", () => {
           params: { type: "simpleTransfer", numSignatures: 1 },
         }),
       );
+    });
+
+    it("omits memoSize when there is no memo", async () => {
+      mockNetwork.mockResolvedValue({ data: { cost: "1000", energy: "500" } });
+
+      await getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 });
+
+      const { params } = mockNetwork.mock.calls[0][0];
+      expect(params).not.toHaveProperty("memoSize");
+    });
+
+    it("passes memoSize through for a memo transfer", async () => {
+      mockNetwork.mockResolvedValue({ data: { cost: "1200", energy: "600" } });
+
+      await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures: 1,
+        memoSize: 12,
+      });
+
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: { type: "simpleTransfer", numSignatures: 1, memoSize: 12 },
+        }),
+      );
+    });
+
+    // The proxy decodes this parameter with `AE.eitherDecode`, so it must arrive
+    // as one JSON document; a bracket or repeated-key form is a parse error.
+    it("serializes tokenOperationTypeCount as JSON", async () => {
+      mockNetwork.mockResolvedValue({ data: { cost: "3000", energy: "900" } });
+
+      const result = await getTransactionCost(config, currencyId, {
+        type: "tokenUpdate",
+        numSignatures: 1,
+        tokenId: "t-USDT",
+        listOperationsSize: 42,
+        tokenOperationTypeCount: { transfer: 1 },
+      });
+
+      expect(result).toEqual({ cost: "3000", energy: "900" });
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/transactionCost",
+          params: {
+            type: "tokenUpdate",
+            numSignatures: 1,
+            tokenId: "t-USDT",
+            listOperationsSize: 42,
+            tokenOperationTypeCount: '{"transfer":1}',
+          },
+        }),
+      );
+    });
+
+    it("never sends memoSize on a tokenUpdate", async () => {
+      mockNetwork.mockResolvedValue({ data: { cost: "3000", energy: "900" } });
+
+      await getTransactionCost(config, currencyId, {
+        type: "tokenUpdate",
+        numSignatures: 1,
+        tokenId: "t-USDT",
+        listOperationsSize: 42,
+        tokenOperationTypeCount: { transfer: 1 },
+      });
+
+      const { params } = mockNetwork.mock.calls[0][0];
+      expect(params).not.toHaveProperty("memoSize");
     });
   });
 

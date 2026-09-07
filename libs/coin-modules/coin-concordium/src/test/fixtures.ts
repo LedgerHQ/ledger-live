@@ -6,8 +6,14 @@
  *   const account = createFixtureAccount({ balance: new BigNumber(5000) });
  */
 import BigNumber from "bignumber.js";
-import type { Account, Operation } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+  type CryptoCurrency,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   ConcordiumCoinConfig,
   ConcordiumConfig,
@@ -131,4 +137,50 @@ export function createFixtureOperation(overrides?: Partial<Operation>): Operatio
     transactionSequenceNumber: new BigNumber(1),
     ...overrides,
   } as Operation;
+}
+
+/** The launch PLT, `t-USDT`: 6 decimals, the id recorded verbatim as the chain spells it. */
+export const PLT_TOKEN_ID = "t-USDT";
+
+export function createFixtureTokenCurrency(overrides?: Partial<TokenCurrency>): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: TokenCurrencyIdSchema.parse(`concordium_testnet/plt/${PLT_TOKEN_ID.toLowerCase()}`),
+    contractAddress: PLT_TOKEN_ID,
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("concordium_testnet"),
+    tokenType: "plt",
+    name: PLT_TOKEN_ID,
+    ticker: PLT_TOKEN_ID,
+    delisted: false,
+    disableCountervalue: false,
+    units: [{ name: PLT_TOKEN_ID, code: PLT_TOKEN_ID, magnitude: 6 }],
+    ...overrides,
+  };
+}
+
+/**
+ * A PLT sub-account of {@link createFixtureAccount}'s parent.
+ *
+ * The id is composed with `encodeTokenAccountId` rather than written out, so
+ * that `findSubAccountById` resolves it the way the bridge does.
+ */
+export function createFixtureTokenAccount(overrides?: Partial<TokenAccount>): TokenAccount {
+  const token = overrides?.token ?? createFixtureTokenCurrency();
+  const parentId = overrides?.parentId ?? createFixtureAccount().id;
+
+  return {
+    type: "TokenAccount",
+    id: encodeTokenAccountId(parentId, token),
+    parentId,
+    token,
+    balance: new BigNumber(5000000),
+    spendableBalance: new BigNumber(5000000),
+    creationDate: new Date("2024-01-01"),
+    operations: [],
+    operationsCount: 0,
+    pendingOperations: [],
+    balanceHistoryCache: emptyHistoryCache,
+    swapHistory: [],
+    ...overrides,
+  };
 }
