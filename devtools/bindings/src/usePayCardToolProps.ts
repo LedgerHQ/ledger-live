@@ -222,7 +222,9 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const { reset: resetCardDetails } = cardDetails;
   const details = useMemo(
     () => ({
-      // The URL itself never leaves this object: it is a live, single-use credential.
+      // A live, single-use credential. RTK holds it in mutation state while this hook is mounted,
+      // so what the tool guarantees is narrower: it is never handed over as text, and `clear`
+      // resets it on the way out.
       imageUrl: cardDetails.data?.imageUrl,
       isFetching: cardDetails.isLoading,
       error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),

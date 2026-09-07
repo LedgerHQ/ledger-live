@@ -33,13 +33,18 @@ const CARD_IMAGE_STYLE = { width: "100%", aspectRatio: 16 / 9 } as const;
 /**
  * Stands in for the card details until a developer asks for them, then shows the image the provider
  * rendered. The URL is the credential, so it loads with no headers and is never shown as text.
+ *
+ * `cache: "reload"` keeps the load off any existing cache entry. The provider spends the token on
+ * first use, so a cache hit is the only way this image could be seen a second time. It is not a
+ * promise that nothing is written: the option is iOS-only, and neither platform offers a
+ * no-store image load.
  */
 function CardDetails({ imageUrl, isFetching, error, request }: PayCardDetailsImageProps) {
   const { colorScheme } = useTheme();
   if (imageUrl !== undefined) {
     return (
       <Image
-        source={{ uri: imageUrl }}
+        source={{ uri: imageUrl, cache: "reload" }}
         style={CARD_IMAGE_STYLE}
         resizeMode="contain"
         accessibilityLabel="Card details"
@@ -48,7 +53,12 @@ function CardDetails({ imageUrl, isFetching, error, request }: PayCardDetailsIma
   }
 
   return (
-    <Pressable onPress={() => request(detailsCss(colorScheme === "dark"))} disabled={isFetching}>
+    <Pressable
+      onPress={() => request(detailsCss(colorScheme === "dark"))}
+      disabled={isFetching}
+      accessibilityRole="button"
+      accessibilityLabel="Request Card Details"
+    >
       <Box
         lx={{
           borderWidth: "s1",

@@ -398,7 +398,7 @@ describe("PayCard (native)", () => {
     );
 
     await user.press(screen.getByText("Card interaction"));
-    await user.press(screen.getByText("Request Card Details"));
+    await user.press(screen.getByLabelText("Request Card Details"));
     // The colours are baked into the image, so they go out with the request. The stubbed theme
     // reports no scheme, which is the light branch.
     expect(request).toHaveBeenCalledWith({
