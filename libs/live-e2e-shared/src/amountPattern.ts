@@ -1,6 +1,6 @@
 /** Comma, plain space, non-breaking space and narrow non-breaking space are all used as
  * thousands separators depending on locale and surface. */
-const GROUPING_SEPARATOR = String.raw`[,   ]?`;
+const GROUPING_SEPARATOR = "[,   ]?";
 
 /**
  * Matches an amount as an exact digit sequence, tolerating thousands separators in the
