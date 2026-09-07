@@ -18,6 +18,7 @@ export function TopBarActionButton({
   onClick,
   icon,
   appearance = "gray",
+  className,
   onTooltipShow,
   cta,
 }: TopBarActionButtonProps) {
@@ -38,7 +39,7 @@ export function TopBarActionButton({
       onClick={onClick}
       data-testid={testId}
       disabled={!isInteractive}
-      className="rounded-full"
+      className={`rounded-full${className ? ` ${className}` : ""}`}
     >
       {cta}
     </Button>
@@ -51,6 +52,7 @@ export function TopBarActionButton({
       onClick={onClick}
       data-testid={testId}
       disabled={!isInteractive}
+      className={className}
     />
   );
 

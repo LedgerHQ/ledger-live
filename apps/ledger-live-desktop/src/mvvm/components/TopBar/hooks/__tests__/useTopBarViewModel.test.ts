@@ -1,4 +1,11 @@
-import { Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  Devices,
+  Eye,
+  Experiment,
+  Refresh,
+  Settings,
+  Tools,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
@@ -7,6 +14,7 @@ import { useActivityIndicator } from "../useActivityIndicator";
 import { useDiscreetMode } from "../useDiscreetMode";
 import { useExperimentalFeatures } from "../useExperimentalFeatures";
 import { useFeatureFlags } from "../useFeatureFlags";
+import { useMockServerTransport } from "../useMockServerTransport";
 import { useSettings } from "../useSettings";
 import type { TopBarSlot } from "../../types";
 
@@ -14,6 +22,7 @@ jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
 jest.mock("../useExperimentalFeatures");
 jest.mock("../useFeatureFlags");
+jest.mock("../useMockServerTransport");
 jest.mock("../useSettings");
 
 const defaults = {
@@ -40,6 +49,13 @@ const defaults = {
     icon: Tools,
     tooltip: "Feature flags",
   },
+  mockServer: {
+    isVisible: false,
+    handleMockServer: jest.fn(),
+    icon: Devices,
+    tooltip: "Mock server connected",
+    className: "bg-success-strong hover:bg-success-strong active:bg-success-strong",
+  },
 };
 
 type SetupOptions = {
@@ -47,6 +63,7 @@ type SetupOptions = {
   isRotating?: boolean;
   experimentalVisible?: boolean;
   featureFlagsVisible?: boolean;
+  mockServerVisible?: boolean;
   operationsList?: boolean;
   myWallet?: boolean;
   route?: string;
@@ -57,6 +74,7 @@ const setup = ({
   isRotating = false,
   experimentalVisible = false,
   featureFlagsVisible = false,
+  mockServerVisible = false,
   operationsList = false,
   myWallet = false,
   route,
@@ -75,6 +93,10 @@ const setup = ({
   jest.mocked(useFeatureFlags).mockReturnValue({
     ...defaults.featureFlags,
     isVisible: featureFlagsVisible,
+  });
+  jest.mocked(useMockServerTransport).mockReturnValue({
+    ...defaults.mockServer,
+    isVisible: mockServerVisible,
   });
 
   const needsFlags = operationsList || myWallet;
