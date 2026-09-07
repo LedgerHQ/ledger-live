@@ -18,8 +18,10 @@ lockfile_platforms = [
 ]
 
 [plugins]
-bundler = "jonathanmorley/asdf-bundler"
-cocoapods = "mise-plugins/mise-cocoapods"
+# Use full git URLs. mise 2026.7+ resolves a bare "owner/repo" as a relative
+# filesystem path instead of a GitHub shorthand, which breaks `mise install`.
+bundler = "https://github.com/jonathanmorley/asdf-bundler.git"
+cocoapods = "https://github.com/mise-plugins/mise-cocoapods.git"
 
 
 [tools]
