@@ -1,17 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
 import type { SpeculosAction } from "@ledgerhq/live-dmk-desktop";
-import { cn } from "LLD/utils/cn";
 
 interface Point {
   x: number;
   y: number;
 }
 
-export interface DeviceScreenImageProps {
-  readonly src: string;
-  /** Omitted on button-driven devices, which are not tappable. */
-  readonly onTouch?: (x: number, y: number, action: SpeculosAction) => void;
-}
+export type DeviceScreenTouch = (x: number, y: number, action: SpeculosAction) => void;
 
 /**
  * Round a ratio of a frame's own dimension to a device pixel, clamped to the
@@ -22,15 +18,15 @@ const toPixelIndex = (value: number, size: number): number =>
   Math.min(Math.max(Math.round(value), 0), size - 1);
 
 /**
- * A still frame of the device screen. The PNG's own dimensions drive the aspect
- * ratio and the touch mapping, so every model is handled without a per-model
- * size table.
+ * Drives a still frame of the device screen: the frame's own dimensions give
+ * the aspect ratio and map a tap to device pixels, so every model is handled
+ * without a per-model size table.
  *
  * Touches are sent as a press on pointer down and a release on pointer up, so
  * holding the mouse holds the finger — Stax and Flex gate their confirmations
  * behind exactly that.
  */
-export function DeviceScreenImage({ src, onTouch }: DeviceScreenImageProps) {
+export function useDeviceScreenImageViewModel(src: string, onTouch?: DeviceScreenTouch) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [aspectRatio, setAspectRatio] = useState<number>();
   const [undecodable, setUndecodable] = useState(false);
@@ -108,40 +104,16 @@ export function DeviceScreenImage({ src, onTouch }: DeviceScreenImageProps) {
     [],
   );
 
-  return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-sm bg-black",
-        onTouch && !undecodable ? "cursor-pointer" : "cursor-default",
-      )}
-      style={{ aspectRatio: aspectRatio ?? 1 }}
-    >
-      <img
-        ref={imageRef}
-        src={src}
-        alt="Device screen"
-        draggable={false}
-        onLoad={handleLoad}
-        onError={handleError}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        // Device screens are tiny; smoothing them turns text to mush. A hold
-        // must not start a native image drag or a text selection either.
-        className="block h-full w-full touch-none select-none object-contain [image-rendering:pixelated] [-webkit-user-drag:none]"
-        data-testid="device-screen-image"
-      />
-      {undecodable && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-canvas-muted p-12 text-center"
-          data-testid="device-screen-undecodable"
-        >
-          <span className="body-4 text-error">Screenshot could not be decoded</span>
-          <span className="body-4 text-muted">
-            The mock server may predate binary passthrough on its Speculos proxy.
-          </span>
-        </div>
-      )}
-    </div>
-  );
+  return {
+    imageRef,
+    aspectRatio,
+    undecodable,
+    tappable: Boolean(onTouch) && !undecodable,
+    handleLoad,
+    handleError,
+    handlePointerDown,
+    handlePointerUp,
+  };
 }
+
+export type DeviceScreenImageViewModel = ReturnType<typeof useDeviceScreenImageViewModel>;

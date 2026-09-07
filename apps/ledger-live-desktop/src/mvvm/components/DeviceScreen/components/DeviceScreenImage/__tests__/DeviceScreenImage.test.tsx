@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
-import { DeviceScreenImage } from "../DeviceScreenImage";
+import { DeviceScreenImage } from "../index";
 
 /**
  * jsdom ships no PointerEvent, and the fallback it leaves carries no
