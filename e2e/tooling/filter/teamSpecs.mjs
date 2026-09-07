@@ -1,10 +1,10 @@
-// Maps every e2e spec file to the team(s) that own it, so a `@team-<slug>` token or the `team`
-// workflow input can be expanded into selectors the runners already understand — no new tag, no
-// spec annotation, no stored registry.
+// Maps every e2e spec file to the team(s) that own it, so the `team` workflow input can be expanded
+// into selectors the runners already understand — no new tag, no spec annotation, no stored
+// registry.
 //
 // Ownership is READ FROM THE SOURCE: desktop specs set the `teamOwner` fixture option and mobile
 // runners call `setTeamOwner()`, both through a `Team.<MEMBER>` reference. Coverage is 100% on
-// both suites, and teamSpecs.test.mjs asserts it stays that way.
+// both suites.
 //
 // CI-only (see ./README.md): never imported by the test runtime.
 import fs from "node:fs";
@@ -18,7 +18,7 @@ const repoRoot = path.resolve(currentDir, "../../..");
 
 // Closed vocabulary, mirroring libs/live-e2e-shared/src/enum/Team.ts. Duplicated here on purpose:
 // the mobile determine-builds job sparse-checks-out e2e/tooling/filter but NOT libs/, so this file
-// must not reach outside the checked-out tree. teamSpecs.test.mjs asserts the two lists match.
+// must not reach outside the checked-out tree.
 export const TEAM_SLUGS = Object.freeze([
   "bst",
   "buy-and-sell",
@@ -29,7 +29,6 @@ export const TEAM_SLUGS = Object.freeze([
   "wallet-xp",
 ]);
 
-const TEAM_ALIAS_PATTERN = /^@?team-([a-z0-9-]+)$/;
 const TEAM_REFERENCE = /\bTeam\.([A-Z][A-Z0-9_]*)\b/g;
 const IMPORT_SOURCE = /(?:from|import)\s*["']([^"']+)["']/g;
 
@@ -46,14 +45,21 @@ const TEAM_OWNER_HELPERS = new Map([["delegateTeamOwner", ["BST", "COIN_INTEGRAT
 
 const MAX_IMPORT_DEPTH = 3;
 
-export function parseTeamAlias(part) {
-  return String(part).trim().toLowerCase().match(TEAM_ALIAS_PATTERN)?.[1];
-}
-
 // Team.WALLET_XP -> "wallet-xp". The enum's *values* ("Wallet XP", "BuyAndSell") are Allure
 // display strings: inconsistent, and not safe to drop into a regex. The member name is the slug.
 export function teamSlug(member) {
   return member.toLowerCase().replaceAll("_", "-");
+}
+
+const fileCache = new Map();
+
+function readFileCached(filePath) {
+  let text = fileCache.get(filePath);
+  if (text === undefined) {
+    text = fs.readFileSync(filePath, "utf8");
+    fileCache.set(filePath, text);
+  }
+  return text;
 }
 
 function readTeamsIn(content) {
@@ -93,7 +99,7 @@ function resolveImport(fromFile, source) {
 // fallbacks a shared registrar/runner supplies (which is also how mobile's thin shims get an
 // owner at all). The walk stops at the first depth that contributes something new.
 function teamsForSpec(specPath) {
-  const content = fs.readFileSync(specPath, "utf8");
+  const content = readFileCached(specPath);
   const own = readTeamsIn(content);
   const found = new Set(own);
   const seen = new Set([specPath]);
@@ -107,7 +113,7 @@ function teamsForSpec(specPath) {
         seen.add(target);
         let targetText;
         try {
-          targetText = fs.readFileSync(target, "utf8");
+          targetText = readFileCached(target);
         } catch {
           continue;
         }
@@ -130,12 +136,6 @@ export function buildTeamIndex(files) {
     }
   }
   return new Map([...index].sort(([a], [b]) => a.localeCompare(b)));
-}
-
-// Specs with no discoverable owner. Asserted empty by the unit tests, so a new spec that no team
-// claims turns the PR red instead of silently vanishing from every team run.
-export function findUnownedSpecs(files) {
-  return files.filter(file => teamsForSpec(file).size === 0);
 }
 
 // Detox matches a spec by literal path substring, so a wholly-owned directory stands in for every

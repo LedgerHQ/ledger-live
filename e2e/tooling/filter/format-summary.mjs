@@ -3,15 +3,13 @@
 
 import { fileURLToPath } from "node:url";
 
-import { splitFilter, stripLeafAnchor, stripSpecAnchor, unescapeLiteral } from "./escaping.mjs";
+import { splitFilter, stripLeafAnchor, unescapeLiteral } from "./escaping.mjs";
 
+// The two E2E workflows render different things with this, so the caller names the bullet.
 const DEFAULT_LABEL = "- **Filtered pattern:**";
-// A team expansion is up to 21 mobile needles or 13 desktop basenames. Listing them all buries
-// the rest of the "Workflow Context" block QA are told to read.
-const MAX_BULLETS = 10;
 
 function humanizePattern(pattern) {
-  return unescapeLiteral(stripSpecAnchor(stripLeafAnchor(pattern))).trim();
+  return unescapeLiteral(stripLeafAnchor(pattern)).trim();
 }
 
 export function formatFilterSummary(rawInput = "", label = DEFAULT_LABEL) {
@@ -31,11 +29,8 @@ export function formatFilterSummary(rawInput = "", label = DEFAULT_LABEL) {
   }
 
   const lines = [`${LABEL} (${patterns.length} patterns)`];
-  for (const pattern of patterns.slice(0, MAX_BULLETS)) {
+  for (const pattern of patterns) {
     lines.push(`  - ${pattern}`);
-  }
-  if (patterns.length > MAX_BULLETS) {
-    lines.push(`  - …and ${patterns.length - MAX_BULLETS} more`);
   }
   return lines.join("\n");
 }

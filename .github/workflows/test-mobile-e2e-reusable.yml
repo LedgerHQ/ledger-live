@@ -1,6 +1,6 @@
 name: "[Mobile] - E2E Only - Scheduled/Manual"
 run-name: >
-  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} •${{ inputs.team && inputs.team != 'all' && format(' team {0} •', inputs.team) || '' }} ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
+  @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 # One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
 # test surface (tests_type or schedule cron). Matches checkout ref: inputs.ref || github.sha.
@@ -30,7 +30,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks". A @team-<slug> token selects that team's specs as one more alternative)
+        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       team:
@@ -111,7 +111,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks". A @team-<slug> token selects that team's specs as one more alternative)
+        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       team:
@@ -432,14 +432,7 @@ jobs:
 
       - name: Prepare test filter
         id: test-filter
-        shell: bash
-        env:
-          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
-          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
-          TEAM_INPUT: ${{ inputs.team || 'all' }}
         run: |
-          # Heredoc-delimited output: a team selection is a "|"-joined spec list (~1 KB), which the
-          # previous `echo key=$VALUE` form could not carry safely.
           node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
@@ -447,18 +440,22 @@ jobs:
             --check-dir "e2e/mobile/specs" \
             --runner detox \
             --github-output >> "$GITHUB_OUTPUT"
-
-      - name: Write resolved filter to GitHub Summary
         shell: bash
         env:
-          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
+
+      - name: Write resolved filter to GitHub Summary
         run: |
-          # Passed via env, not interpolated into the script: test_filter is free-text user input.
           {
             echo "- **Team:** ${TEAM_INPUT}"
             node e2e/tooling/filter/format-summary.mjs "${FILTER_PATTERN:-}" "- **Resolved filtered pattern:**"
           } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Generate shards matrix and test files
         id: generate-shards

@@ -41,17 +41,12 @@ addAccount,deeplinks
 - `@generic-coin-framework` / `@generic-family` expands to all **enabled** generic-coin-framework
   families (from `genericCoinFrameworkFamilies.json`).
 - `@smoke` is added automatically when you enable the **Smoke tests** toggle.
-- `@team-<slug>` expands to the specs owned by that team — one more OR alternative, so
-  `@team-swap,@team-earn` runs both teams' specs.
 
 ## Filter by team
 
-Both workflows have a **`team`** dropdown next to `test_filter`. The two are different tools:
-
-| Where | Meaning |
-| ----- | ------- |
-| the **`team` dropdown** | **AND** — narrows the run to that team, *combined with* `test_filter`, Smoke and the device. `team=swap` + `test_filter=@solana` runs the specs that are **both**. |
-| **`@team-<slug>`** inside `test_filter` | **OR** — one more alternative, like any other token. Use it to run two teams at once. |
+Both workflows have a **`team`** dropdown next to `test_filter`. It **narrows** the run: the team is
+ANDed with `test_filter`, Smoke and the device, so `team=swap` + `test_filter=@solana` runs the specs
+that are **both**. (`test_filter` itself is still an OR across its own patterns.)
 
 Teams: `bst`, `buy-and-sell`, `coin-integration`, `earn`, `engagement`, `swap`, `wallet-xp`
 (the dropdown's `all` is the default and changes nothing). List them with their spec counts:
@@ -70,6 +65,8 @@ Things worth knowing before you rely on it:
 - **Smoke is a separate axis.** `team=swap` + **Smoke** selects nothing, because swap tags its
   smoke tests `@swapSmoke`, not `@smoke` — use `test_filter=@swapSmoke` instead. The run warns
   about this in the first minute rather than failing at the end.
+- **The dropdown is single-select.** To cover several teams in one go, filter on something they
+  share (a path or coin tag) or dispatch once per team.
 - **An unknown team, an empty team ∩ filter, or a team that owns nothing on that app fails the run
   immediately**, with the valid list printed. It never falls back to running everything —
   `engagement` owns no desktop spec today, so picking it on Desktop is always an error.

@@ -1,7 +1,6 @@
 name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
-  @Desktop E2E •${{ inputs.team && inputs.team != 'all' && format(' team {0} •', inputs.team) || '' }}
-  triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
+  @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
 on:
   schedule:
@@ -17,7 +16,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings". A @team-<slug> token selects that team's specs as one more alternative)
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       team:
         description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
@@ -91,7 +90,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings". A @team-<slug> token selects that team's specs as one more alternative)
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       team:
@@ -283,8 +282,6 @@ jobs:
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           INVERT_FILTER_INPUT: ${{ inputs.invert_filter || false }}
         run: |
-          # `shell: bash` runs with -eo pipefail, so a non-zero exit from resolve.mjs (unknown team,
-          # empty selection) fails the job HERE — before pnpm install and the LLD build.
           node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \

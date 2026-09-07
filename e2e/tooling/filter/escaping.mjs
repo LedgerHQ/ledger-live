@@ -31,7 +31,3 @@ export function unescapeLiteral(pattern) {
 export function escapeLiteral(text) {
   return String(text).replace(REGEX_LITERAL, "\\$&");
 }
-
-export function stripSpecAnchor(pattern) {
-  return pattern.replaceAll(SPEC_ANCHOR, "");
-}

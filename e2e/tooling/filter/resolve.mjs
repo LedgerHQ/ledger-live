@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { joinFilter, splitFilter } from "./escaping.mjs";
 import { isRuntimeGeneratedTag } from "./generatedTags.mjs";
 import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
-import { TEAM_SLUGS, createTeamExpander, parseTeamAlias } from "./teamSpecs.mjs";
+import { TEAM_SLUGS, createTeamExpander } from "./teamSpecs.mjs";
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
@@ -46,10 +46,8 @@ function conjunction(groups) {
 }
 
 export function resolveBaseFilter(input, options = {}) {
-  const {
-    enabledGenericCoinFrameworkFamilies = readEnabledGenericCoinFrameworkFamilies(),
-    teamExpander = null,
-  } = options;
+  const { enabledGenericCoinFrameworkFamilies = readEnabledGenericCoinFrameworkFamilies() } =
+    options;
 
   const parts = splitFilter(input);
   const genericCoinFrameworkTags = enabledGenericCoinFrameworkFamilies.map(
@@ -57,31 +55,11 @@ export function resolveBaseFilter(input, options = {}) {
   );
   let expandedGenericCoinFramework = false;
   const resolvedParts = [];
-  const teams = []; // { slug, specCount } — expanded OK
-  const emptyTeams = []; // valid slug, owns nothing on this runner
-  const unknownTeams = []; // typo
 
   for (const part of parts) {
     if (GENERIC_COIN_FRAMEWORK_ALIASES.has(part)) {
       expandedGenericCoinFramework = true;
       resolvedParts.push(...genericCoinFrameworkTags);
-      continue;
-    }
-
-    const slug = parseTeamAlias(part);
-    if (slug) {
-      if (!TEAM_SLUGS.includes(slug)) {
-        unknownTeams.push(part);
-        continue;
-      }
-      const patterns = teamExpander?.expand(slug) ?? [];
-      if (patterns.length === 0) {
-        emptyTeams.push(slug);
-        continue;
-      }
-      teams.push({ slug, specCount: teamExpander.specCount(slug) });
-      // OR: an alias inside test_filter is one more alternative, like every other token.
-      resolvedParts.push(...patterns);
       continue;
     }
 
@@ -91,16 +69,18 @@ export function resolveBaseFilter(input, options = {}) {
   return {
     filter: joinFilter(resolvedParts),
     expandedTags: expandedGenericCoinFramework ? genericCoinFrameworkTags : [],
-    teams,
-    emptyTeams,
-    unknownTeams,
   };
 }
 
-// Space-as-OR is the composite's documented behaviour; normalising here keeps it true once we
-// introduce a "|" of our own. Detox is unaffected either way (filterTestFiles splits on /[\s,|]+/).
+// Mirrors run-e2e-playwright-tests/action.yml exactly: it rewrites spaces to "|" ONLY when the
+// filter has a space and carries no "|" of its own. We pre-apply that here so the meaning survives
+// once WE add a "|" (the "@smoke|" prefix, or a team conjunct) — which would otherwise suppress the
+// composite's rewrite and silently turn a space-separated filter into a literal phrase.
+// Detox is unaffected either way (filterTestFiles splits on /[\s,|]+/).
 export function normalizeAlternatives(filter) {
-  return String(filter).split(/\s+/).filter(Boolean).join("|");
+  const text = String(filter);
+  if (!/ /.test(text) || text.includes("|")) return text;
+  return text.split(/\s+/).filter(Boolean).join("|");
 }
 
 export function applySmokeFilter(filter, smokeTests) {
@@ -192,8 +172,7 @@ function warnZeroMatches(checkDir, files, baseFilter, expandedTags, runner) {
 //                   INPUTS_TEST_FILTER contract that several specs read as `.includes("@smoke")`.
 //   runner_filter — what the runner actually selects with: the conjunct grep string on desktop,
 //                   the intersected spec list on mobile.
-// With no team selected the two are byte-identical, which is the acceptance criterion that keeps
-// every existing dispatch, scheduled run and external caller behaving exactly as before.
+// With no team selected the two are byte-identical.
 export function resolveE2eSelection({
   input = "",
   smokeTests = false,
@@ -205,26 +184,31 @@ export function resolveE2eSelection({
   const isDetox = runner === "detox";
   const specRoot = checkDir ? path.resolve(repoRoot, checkDir) : "";
   const specFiles = specRoot ? findSpecFiles(specRoot) : []; // scanned ONCE, reused below
-  const expander = specFiles.length
-    ? createTeamExpander({ files: specFiles, specRoot, runner })
-    : null;
 
   const selectedTeam = String(team ?? "")
     .trim()
     .toLowerCase();
   const hasTeam = Boolean(selectedTeam) && selectedTeam !== "all";
 
-  const {
-    filter: rawBaseFilter,
-    expandedTags,
-    teams,
-    emptyTeams,
-    unknownTeams,
-  } = resolveBaseFilter(input, { teamExpander: expander });
+  const { filter: rawBaseFilter, expandedTags } = resolveBaseFilter(input);
   const baseFilter = isDetox ? rawBaseFilter : normalizeAlternatives(rawBaseFilter);
 
   let ok = true;
   const notes = [];
+
+  // Filtering by team is the dropdown's job, and only the dropdown ANDs. A `@team-…` pattern would
+  // otherwise be treated as an ordinary literal, match nothing, and (on mobile) skip every test job
+  // while the run stayed green.
+  const teamTokens = splitFilter(input)
+    .flatMap(part => part.split(/\s+/))
+    .filter(Boolean)
+    .filter(token => /^@?team-/i.test(token));
+  if (teamTokens.length > 0) {
+    console.warn(
+      `::error title=Use the team dropdown::${teamTokens.join(", ")} is not a test_filter pattern; pick the team in the "team" dropdown instead (one of: ${TEAM_SLUGS.join(", ")})`,
+    );
+    ok = false;
+  }
 
   if (hasTeam && invertFilter) {
     // The composite applies --grep-invert to the whole pattern, team conjunct included, so this
@@ -237,22 +221,6 @@ export function resolveE2eSelection({
   if (hasTeam && !TEAM_SLUGS.includes(selectedTeam)) {
     console.warn(
       `::error title=Unknown E2E team::"${team}" is not a team. Pick one of: all, ${TEAM_SLUGS.join(", ")}`,
-    );
-    ok = false;
-  }
-  for (const entry of teams) {
-    console.warn(
-      `::notice title=E2E team filter::@team-${entry.slug} -> ${entry.specCount} spec(s) in ${checkDir}`,
-    );
-  }
-  for (const slug of emptyTeams) {
-    console.warn(
-      `::warning title=E2E team owns no specs::@team-${slug} owns no spec in ${checkDir}; it contributes nothing to this run`,
-    );
-  }
-  if (unknownTeams.length > 0) {
-    console.warn(
-      `::error title=Unknown E2E team::${unknownTeams.join(", ")} — known teams: ${TEAM_SLUGS.map(slug => `@team-${slug}`).join(", ")}`,
     );
     ok = false;
   }
@@ -269,6 +237,9 @@ export function resolveE2eSelection({
   const filter = applySmokeFilter(baseFilter, smokeTests);
   if (!ok || !hasTeam) return { filter, runner_filter: filter, ok, notes };
 
+  const expander = specFiles.length
+    ? createTeamExpander({ files: specFiles, specRoot, runner })
+    : null;
   const teamPatterns = expander?.expand(selectedTeam) ?? [];
   if (teamPatterns.length === 0) {
     // Unconditional: a team that owns nothing intersected with ANY filter is still nothing. Falling
@@ -305,6 +276,9 @@ export function resolveE2eSelection({
         `::warning title=E2E team filter may select nothing::no ${selectedTeam} spec mentions "${conjunct}"; the run may select 0 tests`,
       );
     }
+    console.warn(
+      `::notice title=E2E team filter::team=${selectedTeam} -> ${expander.specCount(selectedTeam)} spec file(s) in ${checkDir}`,
+    );
     notes.push(`team ${selectedTeam} (${expander.specCount(selectedTeam)} spec files)`);
     return { filter, runner_filter: runnerFilter, ok, notes };
   }
@@ -333,6 +307,9 @@ export function resolveE2eSelection({
     );
     return { filter, runner_filter: filter, ok: false, notes };
   }
+  console.warn(
+    `::notice title=E2E team filter::team=${selectedTeam} -> ${selected.length} spec(s) selected in ${checkDir}`,
+  );
   notes.push(
     `team ${selectedTeam} (${expander.specCount(selectedTeam)} spec files) -> ${selected.length} selected`,
   );
@@ -392,8 +369,6 @@ function parseArgs(args) {
   return parsed;
 }
 
-// Heredoc-delimited, because a resolved value can now carry "|"-joined paths (~1 KB) and must
-// never be able to forge a second key in $GITHUB_OUTPUT.
 function formatGithubOutput(values) {
   const lines = [];
   for (const [key, value] of Object.entries(values)) {
@@ -407,14 +382,27 @@ if (process.argv[1] === currentFile) {
   const options = parseArgs(process.argv.slice(2));
 
   if (options.listTeams) {
+    if (!options.checkDir) {
+      console.error(
+        "--list-teams requires --check-dir, e.g.\n" +
+          "  node e2e/tooling/filter/resolve.mjs --list-teams --check-dir e2e/desktop/tests --runner playwright\n" +
+          "  node e2e/tooling/filter/resolve.mjs --list-teams --check-dir e2e/mobile/specs  --runner detox",
+      );
+      process.exit(1);
+    }
     const specRoot = path.resolve(repoRoot, options.checkDir);
-    const expander = createTeamExpander({
-      files: findSpecFiles(specRoot),
-      specRoot,
-      runner: options.runner,
-    });
+    const files = findSpecFiles(specRoot);
+    if (files.length === 0) {
+      // Distinguish a typo from a real but empty tree: both are useless to report counts for.
+      console.error(
+        `No .spec.ts files under ${options.checkDir} (resolved to ${specRoot}) — check the path.`,
+      );
+      process.exit(1);
+    }
+    const expander = createTeamExpander({ files, specRoot, runner: options.runner });
+    console.log(`# ${files.length} spec file(s) in ${options.checkDir}`);
     for (const slug of TEAM_SLUGS) {
-      console.log(`@team-${slug}\t${expander.specCount(slug)} spec file(s)`);
+      console.log(`${slug}\t${expander.specCount(slug)} spec file(s)`);
     }
   } else {
     const { filter, runner_filter: runnerFilter, ok } = resolveE2eSelection(options);
