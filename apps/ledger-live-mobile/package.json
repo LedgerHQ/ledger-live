@@ -113,6 +113,7 @@
     "@features/flow-app-lock": "workspace:*",
     "@features/flow-pay-card": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
+    "@features/flow-pay-card-widget": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",
     "@features/flow-pay-deposit": "workspace:^",

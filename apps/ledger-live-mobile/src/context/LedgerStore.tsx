@@ -6,6 +6,7 @@ import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/la
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -206,6 +207,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restorePayCardFeatureTour(payCardState));
         store.dispatch(restoreReceiveVerifyHint(payCardState));
         store.dispatch(restorePayCardBalanceFilter(payCardState));
+        store.dispatch(restorePayCardOnboardingWidget(payCardState));
       }
 
       store.dispatch(importTrustchainStoreState(trustchainStore));
