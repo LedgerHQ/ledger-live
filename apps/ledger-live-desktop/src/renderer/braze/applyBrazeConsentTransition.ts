@@ -6,12 +6,11 @@ import {
   type BrazeIdentityLifecycleSdk,
 } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { exportDesktopBrazeUserId } from "./brazeIdentity";
-
-const brazeSdk = braze as typeof braze & Pick<BrazeIdentityLifecycleSdk, "wipeData" | "enableSDK">;
+import { requireBrazeLifecycleMethod } from "./brazeWebSdkLifecycle";
 
 const webBrazeSdk: BrazeIdentityLifecycleSdk = {
-  wipeData: () => brazeSdk.wipeData(),
-  enableSDK: () => brazeSdk.enableSDK(),
+  wipeData: () => requireBrazeLifecycleMethod("wipeData")(),
+  enableSDK: () => requireBrazeLifecycleMethod("enableSDK")(),
   changeUser: userId => braze.changeUser(userId),
   refreshContentCards: () => braze.requestContentCardsRefresh(),
 };

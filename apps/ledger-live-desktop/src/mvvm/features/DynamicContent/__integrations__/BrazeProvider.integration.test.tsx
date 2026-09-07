@@ -13,6 +13,8 @@ const mockedEnableSDK = jest.mocked(braze.enableSDK);
 const mockedRequestContentCardsRefresh = jest.mocked(braze.requestContentCardsRefresh);
 const mockedSubscribeToContentCardsUpdates = jest.mocked(braze.subscribeToContentCardsUpdates);
 const mockedRemoveSubscription = jest.mocked(braze.removeSubscription);
+const mockedAutomaticallyShowInAppMessages = jest.mocked(braze.automaticallyShowInAppMessages);
+const mockedOpenSession = jest.mocked(braze.openSession);
 
 const REAL_USER_ID = UserId.fromString("11111111-1111-1111-1111-111111111111");
 const resolvedRefresh = () => Promise.resolve();
@@ -182,6 +184,99 @@ describe("BrazeProvider", () => {
     expect(store.getState().dynamicContent.portfolioCards).toEqual([
       expect.objectContaining({ id: "wallet-card" }),
     ]);
+    unmount();
+  });
+
+  it("should apply the latest consent when it flips back while opt-out is in flight", async () => {
+    let completeWipe: () => void = () => {};
+    mockedWipeData.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeWipe = resolve;
+        }),
+    );
+
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    mockedChangeUser.mockClear();
+    mockedRequestContentCardsRefresh.mockClear();
+    mockedEnableSDK.mockClear();
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(false));
+    });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(1);
+    expect(mockedEnableSDK).not.toHaveBeenCalled();
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(true));
+    });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+
+    mockedSubscribeToContentCardsUpdates.mockReturnValue("subscription-id-2");
+
+    await act(async () => {
+      completeWipe();
+    });
+
+    expect(mockedEnableSDK).toHaveBeenCalledTimes(1);
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+
+    const postWipeListener = mockedSubscribeToContentCardsUpdates.mock.calls.at(-1)?.[0];
+    expect(postWipeListener).toEqual(expect.any(Function));
+
+    await act(async () => {
+      postWipeListener?.(mockContentCards([]));
+      await Promise.resolve();
+    });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(2);
+    expect(mockedChangeUser).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+    unmount();
+  });
+
+  it("should retry the consent transition when SDK re-initialization fails", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    mockedInitialize.mockClear();
+    mockedWipeData.mockClear();
+    mockedEnableSDK.mockClear();
+    mockedAutomaticallyShowInAppMessages.mockClear();
+    mockedOpenSession.mockClear();
+    mockedInitialize.mockReturnValueOnce(false).mockReturnValue(true);
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(false));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockedInitialize).toHaveBeenCalledTimes(2);
+    expect(mockedWipeData).toHaveBeenCalledTimes(2);
+    expect(mockedEnableSDK).toHaveBeenCalledTimes(2);
+    expect(mockedAutomaticallyShowInAppMessages).toHaveBeenCalledTimes(1);
+    expect(mockedOpenSession).toHaveBeenCalledTimes(1);
     unmount();
   });
 });

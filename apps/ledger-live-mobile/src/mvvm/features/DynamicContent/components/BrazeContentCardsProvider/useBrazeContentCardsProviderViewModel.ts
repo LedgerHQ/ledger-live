@@ -1,12 +1,10 @@
 import Braze from "@braze/react-native-sdk";
+import {
+  createBrazePendingRefresh,
+  type BrazePendingRefresh,
+} from "@ledgerhq/live-common/braze/identityLifecycle";
 import { useCallback, useEffect, useRef } from "react";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
-
-type PendingRefresh = {
-  promise: Promise<void>;
-  resolve: () => void;
-  reject: (error: unknown) => void;
-};
 
 export function useBrazeContentCardsProviderViewModel() {
   const { updateDynamicContent, clearOldDismissedContentCards, setDynamicContentLoading } =
@@ -14,7 +12,7 @@ export function useBrazeContentCardsProviderViewModel() {
   const updateDynamicContentRef = useRef(updateDynamicContent);
   const clearOldDismissedContentCardsRef = useRef(clearOldDismissedContentCards);
   const subscriptionRef = useRef<ReturnType<typeof Braze.addListener> | null>(null);
-  const pendingRefreshRef = useRef<PendingRefresh | null>(null);
+  const pendingRefreshRef = useRef<BrazePendingRefresh | null>(null);
   const subscriptionEpochRef = useRef(0);
 
   useEffect(() => {
@@ -64,18 +62,8 @@ export function useBrazeContentCardsProviderViewModel() {
       return pendingRefreshRef.current.promise;
     }
 
-    let resolveRefresh: () => void = () => {};
-    let rejectRefresh: (error: unknown) => void = () => {};
-    const promise = new Promise<void>((resolve, reject) => {
-      resolveRefresh = resolve;
-      rejectRefresh = reject;
-    });
-
-    pendingRefreshRef.current = {
-      promise,
-      resolve: resolveRefresh,
-      reject: rejectRefresh,
-    };
+    const pendingRefresh = createBrazePendingRefresh();
+    pendingRefreshRef.current = pendingRefresh;
 
     setDynamicContentLoading(true);
     ensureSubscription();
@@ -85,10 +73,10 @@ export function useBrazeContentCardsProviderViewModel() {
     } catch (error) {
       pendingRefreshRef.current = null;
       setDynamicContentLoading(false);
-      rejectRefresh(error);
+      pendingRefresh.reject(error);
     }
 
-    return promise;
+    return pendingRefresh.promise;
   }, [ensureSubscription, setDynamicContentLoading]);
 
   useEffect(() => {

@@ -2,11 +2,19 @@ import * as braze from "@braze/web-sdk";
 import { type UserId, userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { getEnv } from "@shared/env";
+import {
+  createBrazePendingRefresh,
+  prepareBrazeIdentitySync,
+  trackBrazeConsentTransition,
+  type BrazePendingRefresh,
+  type SyncedBrazeIdentity,
+} from "@ledgerhq/live-common/braze/identityLifecycle";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getBrazeConfig } from "~/braze-setup";
 import { applyBrazeConsentTransition } from "~/renderer/braze/applyBrazeConsentTransition";
 import { resolveDesktopBrazeUserId } from "~/renderer/braze/brazeIdentity";
+import { requireBrazeLifecycleMethod } from "~/renderer/braze/brazeWebSdkLifecycle";
 import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
 import {
   clearDismissedContentCards,
@@ -19,34 +27,7 @@ import {
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 
-const brazeSdk = braze as typeof braze & {
-  wipeData: () => void;
-  enableSDK: () => void;
-};
-
-type SyncedBrazeIdentity = {
-  userId: UserId;
-  isTrackedUser: boolean;
-  brazeOptOutIdentityCleanup: boolean;
-};
-
-type PendingRefresh = {
-  promise: Promise<void>;
-  resolve: () => void;
-  reject: (error: unknown) => void;
-};
-
-const MAX_CONSENT_TRANSITION_RETRIES = 1;
-
-const identitiesMatch = (
-  left: SyncedBrazeIdentity | null,
-  right: SyncedBrazeIdentity | null,
-): boolean =>
-  left != null &&
-  right != null &&
-  left.userId.equals(right.userId) &&
-  left.isTrackedUser === right.isTrackedUser &&
-  left.brazeOptOutIdentityCleanup === right.brazeOptOutIdentityCleanup;
+const userIdsMatch = (left: UserId, right: UserId): boolean => left.equals(right);
 
 const initializeBrazeSdk = (devMode: boolean, isTrackedUser: boolean): boolean => {
   const brazeConfig = getBrazeConfig();
@@ -74,10 +55,10 @@ export function useBrazeProviderViewModel() {
   contentCardsDismissedRef.current = contentCardsDismissed;
 
   const subscriptionIdRef = useRef<string | null>(null);
-  const pendingRefreshRef = useRef<PendingRefresh | null>(null);
+  const pendingRefreshRef = useRef<BrazePendingRefresh | null>(null);
   const subscriptionEpochRef = useRef(0);
-  const lastSyncedIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
-  const targetIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
+  const lastSyncedIdentityRef = useRef<SyncedBrazeIdentity<UserId> | null>(null);
+  const targetIdentityRef = useRef<SyncedBrazeIdentity<UserId> | null>(null);
   const pendingConsentTransitionRef = useRef<Promise<boolean> | null>(null);
   const retryCountRef = useRef(0);
   const syncBrazeIdentityRef = useRef<() => void>(() => {});
@@ -128,18 +109,8 @@ export function useBrazeProviderViewModel() {
       return pendingRefreshRef.current.promise;
     }
 
-    let resolveRefresh: () => void = () => {};
-    let rejectRefresh: (error: unknown) => void = () => {};
-    const promise = new Promise<void>((resolve, reject) => {
-      resolveRefresh = resolve;
-      rejectRefresh = reject;
-    });
-
-    pendingRefreshRef.current = {
-      promise,
-      resolve: resolveRefresh,
-      reject: rejectRefresh,
-    };
+    const pendingRefresh = createBrazePendingRefresh();
+    pendingRefreshRef.current = pendingRefresh;
 
     ensureSubscription();
 
@@ -147,10 +118,10 @@ export function useBrazeProviderViewModel() {
       braze.requestContentCardsRefresh();
     } catch (error) {
       pendingRefreshRef.current = null;
-      rejectRefresh(error);
+      pendingRefresh.reject(error);
     }
 
-    return promise;
+    return pendingRefresh.promise;
   }, [ensureSubscription]);
 
   const syncBrazeIdentity = useCallback(() => {
@@ -158,81 +129,49 @@ export function useBrazeProviderViewModel() {
       return;
     }
 
-    if (isDummyUserId(userId)) {
-      lastSyncedIdentityRef.current = null;
-      targetIdentityRef.current = null;
-      retryCountRef.current = 0;
-      return;
-    }
-
-    const currentIdentity: SyncedBrazeIdentity = {
+    const currentIdentity: SyncedBrazeIdentity<UserId> = {
       userId,
       isTrackedUser,
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     };
+    const identitySync = prepareBrazeIdentitySync({
+      currentIdentity,
+      isDummyUser: isDummyUserId(userId),
+      userIdsMatch,
+      lastSyncedIdentityRef,
+      targetIdentityRef,
+      pendingConsentTransitionRef,
+      retryCountRef,
+    });
+    if (!identitySync) return;
 
-    if (!identitiesMatch(targetIdentityRef.current, currentIdentity)) {
-      targetIdentityRef.current = currentIdentity;
-      retryCountRef.current = 0;
-    }
-
-    if (identitiesMatch(lastSyncedIdentityRef.current, currentIdentity)) {
-      retryCountRef.current = 0;
-      return;
-    }
-
-    if (pendingConsentTransitionRef.current) {
-      return;
-    }
-
-    const lastSyncedIdentity = lastSyncedIdentityRef.current;
-    const isConsentTransition =
-      brazeOptOutIdentityCleanupEnabled &&
-      lastSyncedIdentity != null &&
-      lastSyncedIdentity.isTrackedUser !== currentIdentity.isTrackedUser;
-
-    if (isConsentTransition) {
-      const transition = Promise.resolve(
-        applyBrazeConsentTransition(
+    if (identitySync.isConsentTransition) {
+      trackBrazeConsentTransition({
+        transition: applyBrazeConsentTransition(
           { isTrackedUser, userId },
           {
             prepareForIdentityTransition,
             refreshContentCards,
             enableSDK: () => {
-              brazeSdk.enableSDK();
-              initializeBrazeSdk(devMode, isTrackedUser);
+              requireBrazeLifecycleMethod("enableSDK")();
+              const isInitialized = initializeBrazeSdk(devMode, isTrackedUser);
+              if (!isInitialized) {
+                throw new Error("Failed to initialize Braze SDK");
+              }
             },
           },
         ),
-      )
-        .then(() => {
+        currentIdentity,
+        userIdsMatch,
+        lastSyncedIdentityRef,
+        targetIdentityRef,
+        pendingConsentTransitionRef,
+        retryCountRef,
+        syncBrazeIdentity: () => syncBrazeIdentityRef.current(),
+        onIdentitySynced: () => {
           braze.automaticallyShowInAppMessages();
           braze.openSession();
-          return true as const;
-        })
-        .catch(error => {
-          console.warn("Braze consent transition failed", error);
-          return false;
-        });
-
-      pendingConsentTransitionRef.current = transition;
-      void transition.then(didTransitionSucceed => {
-        if (pendingConsentTransitionRef.current === transition) {
-          pendingConsentTransitionRef.current = null;
-        }
-
-        if (didTransitionSucceed) {
-          lastSyncedIdentityRef.current = currentIdentity;
-          retryCountRef.current = 0;
-          return;
-        }
-
-        if (retryCountRef.current >= MAX_CONSENT_TRANSITION_RETRIES) {
-          return;
-        }
-
-        retryCountRef.current += 1;
-        syncBrazeIdentityRef.current();
+        },
       });
       return;
     }
