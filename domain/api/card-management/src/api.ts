@@ -33,6 +33,10 @@ import type {
 
 const GRANT = { authenticated: false } as const;
 
+type PayCardLogoutRequest = Readonly<Record<string, never>>;
+
+const logoutAccessTokens = new WeakMap<PayCardLogoutRequest, string | null>();
+
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
@@ -65,12 +69,18 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardSessionSchema,
       }),
 
-      logout: build.mutation<PayCardLogoutResult, void>({
-        query: () => ({
-          url: "/v1/auth/logout",
-          method: "POST",
-        }),
-        extraOptions: { renewSession: false },
+      logout: build.mutation<PayCardLogoutResult, PayCardLogoutRequest>({
+        query: request => {
+          const accessToken = logoutAccessTokens.get(request) ?? null;
+          logoutAccessTokens.delete(request);
+          return {
+            url: "/v1/auth/logout",
+            method: "POST",
+            headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
+            signal: null,
+          };
+        },
+        extraOptions: { authenticated: false },
         responseSchema: PayCardLogoutResponseSchema,
       }),
 
@@ -170,10 +180,17 @@ export const cardManagementApi = cardApi
     }),
   });
 
+export function initiatePayCardLogout(accessToken: string | null) {
+  const request = {};
+  logoutAccessTokens.set(request, accessToken);
+  return cardManagementApi.endpoints.logout.initiate(request, {
+    track: false,
+  });
+}
+
 export type CardManagementApi = typeof cardManagementApi;
 
 export const {
-  useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,

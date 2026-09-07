@@ -8,6 +8,7 @@ import {
 import * as apiModule from "./api";
 import {
   cardManagementApi,
+  initiatePayCardLogout,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
@@ -155,9 +156,10 @@ describe("cardManagementApi configuration", () => {
     }
   });
 
-  it("exports no hook for either grant", () => {
+  it("exports no hook for credential-bearing endpoints", () => {
     expect(Object.keys(apiModule)).not.toContain("useExchangeAuthorizationCodeMutation");
     expect(Object.keys(apiModule)).not.toContain("useRefreshSessionMutation");
+    expect(Object.keys(apiModule)).not.toContain("useLogoutMutation");
   });
 
   it("exposes the orderCard endpoint and its hook", () => {
@@ -321,20 +323,20 @@ describe("cardManagementApi requests", () => {
   });
 
   describe("logout", () => {
-    it("omits the bearer token when no session is open", async () => {
+    it("omits the bearer token when none was captured", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
       const store = makeStore();
-      await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+      await store.dispatch(initiatePayCardLogout(null));
 
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();
     });
 
-    it("sends the session bearer token alongside the client key", async () => {
+    it("sends the captured bearer token alongside the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
       const store = makeStore("session-token");
-      const result = await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+      const result = await store.dispatch(initiatePayCardLogout("session-token"));
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/logout");
       expect(request(fetchSpy).method).toBe("POST");
@@ -350,10 +352,43 @@ describe("cardManagementApi requests", () => {
       const refreshCardSession = jest.fn(async () => ({ kind: "session-ended" as const }));
       const store = makeStore("session-token", { refreshCardSession });
 
-      await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+      await store.dispatch(initiatePayCardLogout("session-token"));
 
       expect(refreshCardSession).not.toHaveBeenCalled();
       expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("sends a captured bearer after the local session has ended", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+      const readCardSession = jest.fn(async () => ({ token: null, sessionId: 2 }));
+      const store = makeStore(null, { readCardSession });
+      const logout = store.dispatch(initiatePayCardLogout("captured-token"));
+
+      await logout;
+
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer captured-token");
+      expect(readCardSession).not.toHaveBeenCalled();
+      expect(JSON.stringify(logout.arg.originalArgs)).not.toContain("captured-token");
+    });
+
+    it("survives an API cache reset after the POST starts", async () => {
+      let answer!: (response: Response) => void;
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(
+        () =>
+          new Promise<Response>(resolve => {
+            answer = resolve;
+          }),
+      );
+      const store = makeStore();
+      const logout = store.dispatch(initiatePayCardLogout("captured-token"));
+      await flushPendingRequests();
+
+      store.dispatch(cardManagementApi.util.resetApiState());
+
+      expect(request(fetchSpy).signal.aborted).toBe(false);
+      await expect(logout.unwrap()).rejects.toMatchObject({ name: "AbortError" });
+      answer(jsonResponse({ success: true }));
+      await flushPendingRequests();
     });
   });
 

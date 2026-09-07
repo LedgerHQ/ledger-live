@@ -113,17 +113,14 @@ function liveSession(): Record<string, string> {
 }
 
 let logoutInitiate: jest.SpyInstance;
-let warn: jest.SpyInstance;
 
 beforeEach(() => {
   logoutInitiate = jest.spyOn(cardManagementApi.endpoints.logout, "initiate");
   logoutInitiate.mockReturnValue(logoutAction);
-  warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
 });
 
 afterEach(() => {
   logoutInitiate.mockRestore();
-  warn.mockRestore();
 });
 
 describe("createCardSession storage", () => {
@@ -463,9 +460,9 @@ describe("createCardSession renewal failures", () => {
       await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
       expect(slots.size).toBe(0);
       expect(logout).toHaveBeenCalledTimes(1);
-      expect(logoutInitiate).toHaveBeenCalledWith(undefined, { track: false });
+      expect(logoutInitiate).toHaveBeenCalledWith({}, { track: false });
+      expect(JSON.stringify(logoutInitiate.mock.calls[0]?.[0])).not.toContain("at_token");
       expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-      expect(warn).toHaveBeenCalled();
     },
   );
 
@@ -512,7 +509,6 @@ describe("createCardSession renewal failures", () => {
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(slots.size).toBe(0);
-    expect(warn).toHaveBeenCalled();
   });
 
   it("ends the session when a renewed session cannot be stored", async () => {
@@ -538,7 +534,6 @@ describe("createCardSession renewal failures", () => {
 
     expect(result).toEqual({ kind: "session-ended" });
     expect(JSON.stringify(result)).not.toContain("sensitive-token");
-    expect(logText(warn)).not.toContain("sensitive-token");
   });
 
   it("spends the refresh token once, because the first failure ended the session", async () => {

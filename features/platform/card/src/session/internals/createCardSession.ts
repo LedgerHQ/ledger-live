@@ -1,4 +1,4 @@
-import { cardManagementApi } from "@domain/api-card-management";
+import { cardManagementApi, initiatePayCardLogout } from "@domain/api-card-management";
 import type { CardSessionRefreshResult, CardSessionSnapshot } from "@shared/api-services";
 import {
   CardSessionNotStoredError,
@@ -122,6 +122,7 @@ export function createCardSession(store: CardSessionStore) {
     requestSessionId: number,
     failedAccessToken: string,
   ): Promise<CardSessionRefreshResult> {
+    let logoutAccessToken = failedAccessToken;
     try {
       const currentAccessToken = await readAccessToken();
 
@@ -138,13 +139,14 @@ export function createCardSession(store: CardSessionStore) {
       }
 
       const session = await grantNewSession();
+      logoutAccessToken = session.accessToken;
       const outcome = await takeTurn(() => writeSession(session, requestSessionId));
 
       return outcome === "written"
         ? { kind: "refreshed", accessToken: session.accessToken }
         : { kind: "session-replaced" };
     } catch {
-      return endIfCurrent(requestSessionId);
+      return endIfCurrent(requestSessionId, logoutAccessToken);
     }
   }
 
@@ -165,7 +167,10 @@ export function createCardSession(store: CardSessionStore) {
       .unwrap();
   }
 
-  async function endIfCurrent(renewing: number): Promise<CardSessionRefreshResult> {
+  async function endIfCurrent(
+    renewing: number,
+    failedAccessToken: string,
+  ): Promise<CardSessionRefreshResult> {
     if (renewing !== sessionId) {
       return { kind: "session-replaced" };
     }
@@ -173,7 +178,7 @@ export function createCardSession(store: CardSessionStore) {
     if (renewal) {
       try {
         void renewal
-          .dispatch(cardManagementApi.endpoints.logout.initiate(undefined, { track: false }))
+          .dispatch(initiatePayCardLogout(failedAccessToken))
           .unwrap()
           .catch(() => undefined);
       } catch {
@@ -182,7 +187,6 @@ export function createCardSession(store: CardSessionStore) {
     }
 
     const clearing = clear();
-    console.warn("[card] the session renewal failed, so the session is over");
     await clearing;
     try {
       renewal?.onCardSessionEnded();

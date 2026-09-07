@@ -55,10 +55,11 @@ Renewal starts only after an authenticated request returns 401. Success stores b
 and replays once; a second 401 is returned to the caller. No expiry or clock is stored.
 
 A new session written to storage is the only outcome that keeps the session. Any network, provider,
-schema, token-read or write failure inside renewal attempts `/v1/auth/logout`, then clears it locally
-and publishes signed-out without waiting for the remote answer. Local cleanup can therefore discard
-the request before it is sent. This deliberately signs users out during a token-endpoint outage in
-exchange for one recovery rule.
+schema, token-read or write failure inside renewal sends `/v1/auth/logout` with the most recent access
+token available, then clears the session locally and publishes signed-out without waiting for the
+remote answer. The logout request carries the captured token instead of reading storage, so immediate
+local cleanup cannot discard it before it is sent. This deliberately signs users out during a
+token-endpoint outage in exchange for one recovery rule.
 
 `session-replaced` is different: a newer login or logout already won, so the request returns
 `card_stale_request` and leaves that session untouched. A keychain read rejection before the request
