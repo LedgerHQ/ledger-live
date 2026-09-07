@@ -9733,12 +9733,12 @@
     "emptyAccounts" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
     "addAccount" : "Hesap ekle",
     "unsupportedAssetExplanation" : {
-      "title" : "{{asset}} isn't supported yet",
-      "description" : "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
+      "title" : "{{asset}} henüz desteklenmiyor",
+      "description" : "Kişilerinize henüz bir {{asset}} adresi ekleyemezsiniz. Zamanla daha fazla kripto eklemeye devam edeceğiz."
     },
     "unsupportedNetworkExplanation" : {
-      "title" : "{{network}} Network isn't supported yet",
-      "description" : "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
+      "title" : "{{network}} ağı henüz desteklenmiyor",
+      "description" : "{{asset}} için {{network}} ağını seçemezsiniz. Zamanla daha fazla ağ eklemeye devam edeceğiz."
     },
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
@@ -10562,18 +10562,18 @@
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Explore now",
+      "primaryAction" : "Hemen keşfet",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Save addresses by a name you choose",
-          "description" : "Exchanges, friends, your own external accounts."
+          "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
+          "description" : "Borsalar, arkadaşlar, kendi harici hesaplarınız."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "See a name you trust, not an address."
+          "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Securely top up via Ledger Wallet™",
+          "title" : "Ledger Wallet™ ile güvenli bir şekilde bakiye yükleyin",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
