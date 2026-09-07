@@ -1,1 +1,1 @@
-export const PLACEHODLER = "WIDGET";
+export { CardOnboardingWidget } from "./components/CardOnboardingWidget/CardOnboardingWidget";

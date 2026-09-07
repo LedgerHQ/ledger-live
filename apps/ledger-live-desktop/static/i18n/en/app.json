@@ -921,6 +921,17 @@
       "title": "Crypto card",
       "balanceLabel": "Balance"
     },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Complete your card",
+        "stepComplete": "Completed",
+        "gotIt": "Got it"
+      }
+    },
     "contacts": {
       "title": "Pay contact",
       "empty": {
