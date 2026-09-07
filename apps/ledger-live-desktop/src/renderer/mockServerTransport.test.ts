@@ -1,4 +1,4 @@
-import { getEnv, setEnv, setEnvUnsafe } from "@shared/env";
+import { getEnv, getEnvDefault, setEnv, setEnvUnsafe } from "@shared/env";
 import network from "@ledgerhq/live-network";
 import {
   bootstrapMockServerTransport,
@@ -48,6 +48,7 @@ describe("bootstrapMockServerTransport", () => {
 
   afterEach(() => {
     window.localStorage.clear();
+    setEnv("BASE_SOCKET_URL", getEnvDefault("BASE_SOCKET_URL"));
     setEnv("MOCK_SERVER_TRANSPORT", false);
     setEnv("MOCK_SERVER_SEED", "");
     setEnv("MOCK_SERVER_SESSION", defaultSession);
@@ -129,6 +130,24 @@ describe("bootstrapMockServerTransport", () => {
     await bootstrapMockServerTransport();
 
     expect(requestsTo("/import")[0]).toEqual(expect.objectContaining({ data: override }));
+  });
+
+  it("resets a mock BASE_SOCKET_URL once the transport is disabled", async () => {
+    window.localStorage.setItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY, "0");
+    setEnv("BASE_SOCKET_URL", "wss://mock.example/secure-channel/a-token");
+
+    await bootstrapMockServerTransport();
+
+    expect(getEnv("BASE_SOCKET_URL")).toBe(getEnvDefault("BASE_SOCKET_URL"));
+  });
+
+  it("keeps a BASE_SOCKET_URL that does not point at a mock secure channel", async () => {
+    window.localStorage.setItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY, "0");
+    setEnv("BASE_SOCKET_URL", "wss://scriptrunner.example/update");
+
+    await bootstrapMockServerTransport();
+
+    expect(getEnv("BASE_SOCKET_URL")).toBe("wss://scriptrunner.example/update");
   });
 
   it("leaves the token unpublished when provisioning fails", async () => {

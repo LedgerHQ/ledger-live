@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getEnv, isEnvDefault } from "@shared/env";
+import { getEnv, getEnvDefault, isEnvDefault } from "@shared/env";
 import {
   setMockServerSessionToken,
   getMockServerSessionToken,
@@ -9,6 +9,9 @@ import {
 import { setEnvOnAllThreads } from "~/helpers/env";
 
 const REQUEST_TIMEOUT_MS = 4000;
+
+/** Path segment that marks a `BASE_SOCKET_URL` as the mock server's secure channel. */
+const MOCK_SCRIPT_RUNNER_PATH = "/secure-channel/";
 
 /**
  * localStorage key backing the developer "Mock server transport" toggle. The
@@ -45,6 +48,13 @@ export async function bootstrapMockServerTransport(): Promise<void> {
   const existingToken = getMockServerSessionToken();
 
   if (!enabled) {
+    // The internal thread is not reloaded by reloadRenderer, so a mock override
+    // pushed in a previous session would keep the scriptrunner flows pointed at
+    // the mock server. Only a mock url is reset, so a deliberate
+    // `BASE_SOCKET_URL` override survives.
+    if (getEnv("BASE_SOCKET_URL").includes(MOCK_SCRIPT_RUNNER_PATH)) {
+      setEnvOnAllThreads("BASE_SOCKET_URL", getEnvDefault("BASE_SOCKET_URL"));
+    }
     return;
   }
   if (existingToken) {
