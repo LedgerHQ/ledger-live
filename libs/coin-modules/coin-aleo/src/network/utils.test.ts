@@ -37,6 +37,7 @@ import {
   decryptRecordAmount,
   sumUnspentRecords,
   getStakingPosition,
+  getUnbondingValidators,
   resolveBondArguments,
 } from "./utils";
 
@@ -3397,6 +3398,60 @@ describe("getStakingPosition", () => {
       .mockRejectedValue(new LedgerAPI5xx("Internal Server Error"));
 
     await expect(getStakingPosition(config, ADDRESS)).rejects.toThrow("Internal Server Error");
+  });
+});
+
+describe("getUnbondingValidators", () => {
+  const config = getMockedConfig("mainnet");
+  const UNBONDING = "aleo1l7avejc23yv6e8nx4udjwz89dw6mg95dzsp936hf77yuhnjywv9syl0ywc";
+  const SETTLED = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+  const UNBONDING_RAW = "{\n  microcredits: 10000000000u64,\n  height: 7862785u32\n}";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest
+      .mocked(apiClient.getUnbondingMapping)
+      .mockImplementation(async (_config, address) =>
+        address === UNBONDING ? UNBONDING_RAW : null,
+      );
+  });
+
+  it("returns only the addresses that have an entry", async () => {
+    const unbonding = await getUnbondingValidators(config, [UNBONDING, SETTLED]);
+
+    expect([...unbonding]).toEqual([UNBONDING]);
+  });
+
+  it("reads the mapping once per address", async () => {
+    await getUnbondingValidators(config, [UNBONDING, SETTLED]);
+
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledTimes(2);
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledWith(config, UNBONDING);
+    expect(apiClient.getUnbondingMapping).toHaveBeenCalledWith(config, SETTLED);
+  });
+
+  // Any entry blocks the bond: the program asserts on `contains unbonding[validator]`, so a
+  // matured `height` still counts until `claim_unbond_public` removes the row.
+  it("counts a matured entry, not just one still within its unbonding period", async () => {
+    jest
+      .mocked(apiClient.getUnbondingMapping)
+      .mockResolvedValue("{\n  microcredits: 1u64,\n  height: 1u32\n}");
+
+    const unbonding = await getUnbondingValidators(config, [SETTLED]);
+
+    expect(unbonding.has(SETTLED)).toBe(true);
+  });
+
+  it("omits an address whose lookup fails rather than rejecting", async () => {
+    jest
+      .mocked(apiClient.getUnbondingMapping)
+      .mockImplementation(async (_config, address) =>
+        address === UNBONDING ? UNBONDING_RAW : Promise.reject(new LedgerAPI5xx("boom")),
+      );
+
+    const unbonding = await getUnbondingValidators(config, [UNBONDING, SETTLED]);
+
+    expect([...unbonding]).toEqual([UNBONDING]);
   });
 });
 

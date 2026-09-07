@@ -15,7 +15,7 @@ import {
   mockUnspentTokenRecord1,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { estimateFees, validateAddress } from "../logic";
+import { estimateFees, getValidators, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
 import aleoCoinConfig from "../config";
@@ -25,12 +25,15 @@ import {
   TRANSACTION_TYPE,
 } from "../constants";
 import {
+  AleoAlreadyBondedElsewhere,
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoClosedValidator,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
+  AleoUnbondingValidator,
 } from "../errors";
 import { getTransactionStatus } from "./getTransactionStatus";
 
@@ -44,6 +47,7 @@ jest.mock("../logic/utils", () => ({
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockValidateAddress = jest.mocked(validateAddress);
 const mockCalculateAmount = jest.mocked(calculateAmount);
+const mockGetValidators = jest.mocked(getValidators);
 const mockAleoConfig = jest.mocked(aleoCoinConfig);
 
 describe("getTransactionStatus", () => {
@@ -179,6 +183,96 @@ describe("getTransactionStatus", () => {
       };
 
       const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+  });
+
+  describe("bond validator validation", () => {
+    const VALIDATOR = "aleo1validator";
+    const bondTransaction: Transaction = {
+      ...mockTransaction,
+      recipient: VALIDATOR,
+      mode: TRANSACTION_TYPE.BOND_PUBLIC,
+      withdrawal: mockAccount.freshAddress,
+    };
+    const bondable = {
+      address: VALIDATOR,
+      stakeMicrocredits: 20_000_000,
+      isOpen: true,
+      isUnbonding: false,
+      commissionPercent: 10,
+    };
+
+    const mockValidator = (overrides: Partial<typeof bondable> = {}) =>
+      mockGetValidators.mockResolvedValue([{ ...bondable, ...overrides }]);
+
+    it("accepts a validator that is open and not unbonding", async () => {
+      mockValidator();
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+
+    it("rejects a closed validator", async () => {
+      mockValidator({ isOpen: false });
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoClosedValidator);
+    });
+
+    it("rejects a validator that is unbonding, open though it still is", async () => {
+      mockValidator({ isUnbonding: true });
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoUnbondingValidator);
+    });
+
+    it("names unbonding, not closed, when the validator is both", async () => {
+      mockValidator({ isOpen: false, isUnbonding: true });
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoUnbondingValidator);
+    });
+
+    it("rejects an unbonding validator the account is already bonded to", async () => {
+      mockValidator({ isUnbonding: true });
+      const account = getMockedAccount({
+        aleoResources: { ...mockAleoResources, bondedValidator: VALIDATOR },
+      });
+
+      const result = await getTransactionStatus(account, bondTransaction);
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoUnbondingValidator);
+    });
+
+    it("reports the bonded-elsewhere conflict ahead of the validator's own state", async () => {
+      mockValidator({ isUnbonding: true });
+      const account = getMockedAccount({
+        aleoResources: { ...mockAleoResources, bondedValidator: "aleo1other" },
+      });
+
+      const result = await getTransactionStatus(account, bondTransaction);
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoAlreadyBondedElsewhere);
+    });
+
+    it("does not block the bond when the validator list cannot be fetched", async () => {
+      mockGetValidators.mockRejectedValue(new Error("boom"));
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+
+    it("does not block a validator missing from the committee", async () => {
+      mockGetValidators.mockResolvedValue([{ ...bondable, address: "aleo1someone_else" }]);
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction);
 
       expect(result.errors.recipient).toBeUndefined();
     });

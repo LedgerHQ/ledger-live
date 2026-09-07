@@ -21,11 +21,11 @@ import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 
 /**
- * Closed to new stake, or paying nothing: still listed and still linkable to the
- * explorer, but sunk below anything better and not selectable.
+ * Closed to new stake, unbonding its own stake, or paying nothing: still listed and still
+ * linkable to the explorer, but sunk below anything better and not selectable.
  */
 export const isDisabled = (validator: AleoValidator) =>
-  !validator.isOpen || validator.nonEarningReason === "overConcentrated";
+  !validator.isOpen || validator.isUnbonding || validator.nonEarningReason === "overConcentrated";
 
 type Props = {
   validator: AleoValidator;
@@ -43,7 +43,7 @@ export default function AleoValidatorRow({
   onSelect,
 }: Props) {
   const { t } = useTranslation();
-  const { address, name, nonEarningReason, isOpen, commissionPercent } = validator;
+  const { address, name, nonEarningReason, isOpen, isUnbonding, commissionPercent } = validator;
   const unit = currency.units[0];
   const rate = validator.estimatedYearlyRewardsRate;
   const label = name || shortAddressPreview(address);
@@ -58,6 +58,23 @@ export default function AleoValidatorRow({
   // no hover affordance either. It stays at full opacity though — unlike a row that is
   // listed but unpickable, it is not being passed over.
   const pickable = !locked && !isDisabled(validator);
+
+  let warning: React.ReactNode = null;
+  if (isUnbonding) {
+    warning = (
+      <ToolTip content={t("aleo.bond.flow.steps.validator.unbondingTooltip")}>
+        <Warning label={t("aleo.bond.flow.steps.validator.rowSubtitleUnbonding")} />
+      </ToolTip>
+    );
+  } else if (!isOpen) {
+    warning = <Warning label={t("aleo.bond.flow.steps.validator.rowSubtitleClosed")} />;
+  } else if (nonEarningReason) {
+    warning = (
+      <ToolTip content={t(`aleo.bond.flow.steps.validator.nonEarning.${nonEarningReason}`)}>
+        <Warning label={t("aleo.bond.flow.steps.validator.rowSubtitleEarnsNothing")} />
+      </ToolTip>
+    );
+  }
 
   return (
     <RowWrapper
@@ -75,13 +92,7 @@ export default function AleoValidatorRow({
         title={label}
         subtitle={
           <Text ff="Inter|Medium" fontSize={2} color="neutral.c70">
-            {!isOpen ? (
-              <Warning label={t("aleo.bond.flow.steps.validator.rowSubtitleClosed")} />
-            ) : nonEarningReason ? (
-              <ToolTip content={t(`aleo.bond.flow.steps.validator.nonEarning.${nonEarningReason}`)}>
-                <Warning label={t("aleo.bond.flow.steps.validator.rowSubtitleEarnsNothing")} />
-              </ToolTip>
-            ) : (
+            {warning ?? (
               <Text fontSize={2}>
                 {rate === undefined
                   ? t("aleo.bond.flow.steps.validator.commissionOnly", {
