@@ -33,8 +33,10 @@ export class PostOnboardingPage extends AppPage {
   }
 
   @step("Expect post-onboarding action $0 to be pending")
-  async expectActionPending(actionId: string) {
-    await expect(this.actionRow(actionId)).toBeVisible();
+  async expectActionPending(actionId: string, completedLabel: string) {
+    const row = this.actionRow(actionId);
+    await expect(row).toBeVisible();
+    await expect(row).not.toContainText(completedLabel);
   }
 
   @step("Expect post-onboarding action $0 to be completed")

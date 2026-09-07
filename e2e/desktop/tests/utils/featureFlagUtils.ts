@@ -79,6 +79,15 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
   analyticsOptIn: { enabled: false },
 } satisfies PartialFeatures;
 
+// Wallet 4.0 without analytics consent; pins flags that would block the finish-onboarding widget.
+export const FF_POST_ONBOARDING_DESKTOP = {
+  ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  onboardingWidget: { enabled: true },
+  protectServicesDesktop: { enabled: false },
+  lwdProductTour: { enabled: false },
+  lldLedgerSyncEntryPoints: { enabled: false },
+} satisfies OptionalFeatureMap;
+
 export const FF_BORROW_DESKTOP = {
   ptxBorrowLiveApp: {
     enabled: true,
