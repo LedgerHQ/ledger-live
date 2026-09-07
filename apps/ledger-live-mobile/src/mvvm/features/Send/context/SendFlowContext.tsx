@@ -18,6 +18,7 @@ type DataContextValue = Readonly<{
     setValue: (value: string) => void;
     clear: () => void;
   }>;
+  selectContactBeforeAccount?: boolean;
 }>;
 
 const SendFlowDataContext = createContext<DataContextValue | null>(null);
@@ -46,8 +47,9 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
       state: value.state,
       uiConfig: value.uiConfig,
       recipientSearch: value.recipientSearch,
+      selectContactBeforeAccount: value.selectContactBeforeAccount,
     }),
-    [value.state, value.uiConfig, value.recipientSearch],
+    [value.state, value.uiConfig, value.recipientSearch, value.selectContactBeforeAccount],
   );
 
   const actionsValue = useMemo<ActionsContextValue>(

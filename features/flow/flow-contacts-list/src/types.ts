@@ -61,6 +61,12 @@ export type ContactsCompactListLabels = Readonly<{
   formatAddressCount: (count: number) => string;
 }>;
 
+export type ContactsCompactRowProps = Readonly<{
+  contact: Contact;
+  labels: ContactsCompactListLabels;
+  onContactSelect: (contact: Contact) => void;
+}>;
+
 export type ContactsCompactListProps = Readonly<{
   contacts: readonly Contact[];
   labels: ContactsCompactListLabels;

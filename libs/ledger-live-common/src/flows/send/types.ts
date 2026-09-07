@@ -114,6 +114,7 @@ export type SendFlowInitParams = Readonly<{
   memo?: string;
   fromMAD?: boolean;
   source?: string;
+  selectContactBeforeAccount?: boolean;
 }>;
 
 export function hasDirectRecipient(
@@ -139,6 +140,7 @@ export type SendFlowBusinessContext = Readonly<{
   status: FlowStatusActions;
   uiConfig: SendFlowUiConfig;
   source?: string;
+  selectContactBeforeAccount?: boolean;
   recipientSearch: Readonly<{
     value: string;
     setValue: (value: string) => void;

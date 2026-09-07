@@ -30,7 +30,8 @@ export function useSendFlowBusinessLogic({
     () => ({
       ...businessLogic,
       close: onClose,
+      selectContactBeforeAccount: initParams?.selectContactBeforeAccount,
     }),
-    [businessLogic, onClose],
+    [businessLogic, initParams?.selectContactBeforeAccount, onClose],
   );
 }

@@ -11,7 +11,6 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
-import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -37,8 +36,6 @@ export function useRecipientScreenView({
   const contacts = useContacts();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("mobile");
-  const { selectedContact } = useRecipientContactSelection();
-
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
 
@@ -73,9 +70,8 @@ export function useRecipientScreenView({
         contact.addresses.length > 1 && contact.name.trim().toLowerCase() === normalizedSearchValue,
     );
   }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
-  const showContactSearchResult =
-    hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;
-  const showInitialState = !hasSearchValue && selectedContact === undefined;
+  const showContactSearchResult = hasSearchValue && contactSearchResult !== undefined;
+  const showInitialState = !hasSearchValue;
   const showContactsList =
     showInitialState && isContactsFeatureEnabled && hasAddressBook && contactsOnNetwork.length > 0;
   const showEmptyContactsState = useMemo(() => {
@@ -137,7 +133,7 @@ export function useRecipientScreenView({
     recipientSupportsDomain,
   });
 
-  const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
+  const shouldHideRegularSearchState = showContactSearchResult;
 
   return {
     searchValue: recipientSearch.value,
@@ -152,7 +148,6 @@ export function useRecipientScreenView({
     showEmptyContactsState,
     contactsOnNetwork,
     contactSearchResult,
-    selectedContact,
     clipboardAddress,
     handlePasteFromClipboard,
     handleAddressSelect,

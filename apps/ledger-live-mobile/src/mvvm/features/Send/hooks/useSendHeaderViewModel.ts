@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
@@ -27,8 +27,6 @@ import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
-import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
-
 export type SendHeaderViewModel = {
   title: string;
   descriptionText: string;
@@ -76,7 +74,6 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
-  const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
 
   const accountName = useMaybeAccountName(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
@@ -86,14 +83,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const currencyName = state.account.currency?.ticker ?? "";
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
-  const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
   const showTitle = currentStepConfig?.showTitle !== false;
   const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
   const isCoinControlStep = currentStep === SEND_FLOW_STEP.COIN_CONTROL;
   let title = "";
-  if (isSelectingContactAddress) {
-    title = t("send.newSendFlow.selectAddress");
-  } else if (showTitle) {
+  if (showTitle) {
     if (isCustomFeesStep) {
       title = t("send.newSendFlow.customFees.title");
     } else if (isCoinControlStep) {
@@ -102,28 +96,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       title = t("send.newSendFlow.title", { currency: currencyName });
     }
   }
-  const descriptionText = isSelectingContactAddress
-    ? selectedContact.name
-    : showTitle && !isCustomFeesStep
+  const descriptionText =
+    showTitle && !isCustomFeesStep
       ? [accountName, spendableBalanceText].filter(Boolean).join(" · ")
       : "";
 
-  const showHeaderRight =
-    !isSelectingContactAddress && currentStepConfig?.showHeaderRight !== false;
-  const canGoBack =
-    isSelectingContactAddress || Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
-  const showRecipientInput = Boolean(currentStepConfig?.addressInput) && !isSelectingContactAddress;
-
-  useEffect(() => {
-    if (!isSelectingContactAddress) {
-      return;
-    }
-
-    return navigation.addListener("beforeRemove", event => {
-      event.preventDefault();
-      clearSelectedContact();
-    });
-  }, [clearSelectedContact, isSelectingContactAddress, navigation]);
+  const showHeaderRight = currentStepConfig?.showHeaderRight !== false;
+  const canGoBack = Boolean(currentStepConfig?.canGoBack && navigation.canGoBack());
+  const showRecipientInput = Boolean(currentStepConfig?.addressInput);
 
   const recipientFromTransaction = useMemo(() => {
     const address = state.transaction.transaction?.recipient;
@@ -159,11 +139,6 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
   const handleBackPress = useCallback(() => {
-    if (isSelectingContactAddress) {
-      clearSelectedContact();
-      return;
-    }
-
     if (canGoBack) {
       if (currentStep === SEND_FLOW_STEP.AMOUNT) {
         transaction.updateTransaction(tx => ({
@@ -177,15 +152,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     } else {
       close();
     }
-  }, [
-    canGoBack,
-    clearSelectedContact,
-    close,
-    currentStep,
-    isSelectingContactAddress,
-    navigation,
-    transaction,
-  ]);
+  }, [canGoBack, close, currentStep, navigation, transaction]);
 
   const handleClose = useCallback(() => {
     close();

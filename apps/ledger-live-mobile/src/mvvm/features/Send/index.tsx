@@ -37,6 +37,7 @@ type SendWorkflowParams = Readonly<{
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
+  selectContactBeforeAccount?: boolean;
 }>;
 
 type SendWorkflowRouteParams = {
@@ -50,6 +51,7 @@ type SendWorkflowRouteParams = {
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
+  selectContactBeforeAccount?: boolean;
 };
 
 export default function SendWorkflow() {
@@ -78,6 +80,8 @@ export default function SendWorkflow() {
       amount: params?.amount ?? routeParams?.amount,
       memo: params?.memo ?? routeParams?.memo,
       fromMAD: params?.fromMAD ?? routeParams?.fromMAD ?? false,
+      selectContactBeforeAccount:
+        params?.selectContactBeforeAccount ?? routeParams?.selectContactBeforeAccount,
     }),
     [params, routeParams],
   );
@@ -86,6 +90,10 @@ export default function SendWorkflow() {
     <DomainServiceProvider>
       <React.Suspense fallback={null}>
         <SendFlowOrchestrator
+          key={
+            initParams.account?.id ??
+            (initParams.selectContactBeforeAccount ? "contacts-first" : "send")
+          }
           initParams={initParams}
           onClose={handleClose}
           stepRegistry={stepRegistry}

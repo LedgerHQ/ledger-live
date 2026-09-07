@@ -83,6 +83,11 @@
       ],
       "default": "./lib-es/*.js"
     },
+    "./portfolio/portfolioReact": {
+      "@ledgerhq/source": "./src/portfolio/portfolioReact.tsx",
+      "types": "./lib-es/portfolio/portfolioReact.d.ts",
+      "default": "./lib-es/portfolio/portfolioReact.js"
+    },
     "./exchange/transactionStatus": {
       "@ledgerhq/source": "./src/exchange/swapTransactionStatus/transactionStatus.ts",
       "types": "./lib-es/exchange/swapTransactionStatus/transactionStatus.d.ts",

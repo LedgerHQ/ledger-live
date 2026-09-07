@@ -57,6 +57,7 @@ type UseSendFlowBusinessLogicResult = Readonly<{
   setIsRecipientAddressComplete: (value: boolean) => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
   source?: string;
+  selectContactBeforeAccount?: boolean;
 }>;
 
 /**
@@ -189,6 +190,7 @@ export function useSendFlowBusinessLogic({
       setIsRecipientAddressComplete,
       setAccountAndNavigate,
       source: initParams?.source,
+      selectContactBeforeAccount: initParams?.selectContactBeforeAccount,
     }),
     [
       state,
@@ -201,6 +203,7 @@ export function useSendFlowBusinessLogic({
       isRecipientAddressComplete,
       setAccountAndNavigate,
       initParams?.source,
+      initParams?.selectContactBeforeAccount,
     ],
   );
 }
