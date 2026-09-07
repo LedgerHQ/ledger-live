@@ -8,8 +8,7 @@
 ---
 
 Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
-When a refresh fails, ask Baanx to end the session with the most recent access token before removing
-its tokens locally.
+When a refresh fails, ask Baanx to end the session before removing its tokens locally.
 
 The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
 renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
