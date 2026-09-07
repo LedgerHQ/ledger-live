@@ -488,32 +488,18 @@ describe("signOperation", () => {
     it("does not re-estimate when preparation persisted the energy", async () => {
       const { account, transaction } = tokenTransaction();
 
-      await sign(transaction, account);
+      await expect(sign(transaction, account)).rejects.toThrow();
 
       expect(estimateFees).not.toHaveBeenCalled();
     });
 
-    it("crafts with the persisted pair, not a fresh estimate", async () => {
+    // Reaching the device at all is the defect here: a completed signature would
+    // be a CCD transfer. Flipped back by LIVE-28337.
+    it("refuses to sign a token transfer, rather than signing a native one", async () => {
       const { account, transaction } = tokenTransaction();
 
-      await sign(transaction, account);
-
-      expect(craftTransaction).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ fee: new BigNumber(3600), energy: BigInt(1080) }),
-      );
-    });
-
-    it("signs against the persisted cost", async () => {
-      const { account, transaction } = tokenTransaction();
-
-      const { mockSigner } = await sign(transaction, account);
-
-      expect(mockSigner.signTransaction).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.any(String),
-        BigInt(3600),
-      );
+      await expect(sign(transaction, account)).rejects.toThrow(/not supported yet/);
+      expect(craftTransaction).not.toHaveBeenCalled();
     });
 
     it("keeps estimating for a native transfer", async () => {

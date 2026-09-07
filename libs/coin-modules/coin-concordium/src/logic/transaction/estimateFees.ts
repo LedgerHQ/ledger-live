@@ -61,10 +61,11 @@ export async function estimateFees(
  * the token id's length and the blob's size, so there is no constant to
  * substitute.
  *
- * The rejection propagates through `prepareTransaction`, which the send flow
- * surfaces and retries with backoff. Catching it to leave the fee unset defeats
- * that retry, and a cleared fee reads as a blocking validation error rather than
- * a pending one — a user who stopped typing during a proxy blip would stay stuck.
+ * The rejection propagates through `prepareTransaction`. The send flow retries
+ * that with backoff, so catching it to leave the fee unset would defeat the
+ * retry, and a cleared fee reads as a blocking validation error rather than a
+ * pending one. `estimateMaxSpendable` is the other caller and has no such retry,
+ * so it catches on its own behalf.
  */
 export async function estimateTokenFees(
   config: ConcordiumCoinConfig,
