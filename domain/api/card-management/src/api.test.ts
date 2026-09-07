@@ -342,6 +342,19 @@ describe("cardManagementApi requests", () => {
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ success: true });
     });
+
+    it("does not start another renewal when logout answers 401", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(errorResponse(401, "unauthorized"));
+      const refreshCardSession = jest.fn(async () => ({ kind: "session-ended" as const }));
+      const store = makeStore("session-token", { refreshCardSession });
+
+      await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+
+      expect(refreshCardSession).not.toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("getUser", () => {

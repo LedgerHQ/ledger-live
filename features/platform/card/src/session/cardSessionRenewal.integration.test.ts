@@ -164,7 +164,6 @@ describe("the Card session renewal, end to end", () => {
     await expect(request.unwrap()).rejects.toMatchObject({ status: 401 });
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
     await expect(session.cardSession.get()).resolves.toBeNull();
-
     await flushTimers();
     expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
   });

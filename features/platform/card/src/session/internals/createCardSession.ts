@@ -170,6 +170,17 @@ export function createCardSession(store: CardSessionStore) {
       return { kind: "session-replaced" };
     }
 
+    if (renewal) {
+      try {
+        void renewal
+          .dispatch(cardManagementApi.endpoints.logout.initiate(undefined, { track: false }))
+          .unwrap()
+          .catch(() => undefined);
+      } catch {
+        // Remote logout is best effort.
+      }
+    }
+
     const clearing = clear();
     console.warn("[card] the session renewal failed, so the session is over");
     await clearing;

@@ -70,6 +70,7 @@ export const cardManagementApi = cardApi
           url: "/v1/auth/logout",
           method: "POST",
         }),
+        extraOptions: { renewSession: false },
         responseSchema: PayCardLogoutResponseSchema,
       }),
 
