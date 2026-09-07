@@ -31,6 +31,12 @@ describe("segment before start()", () => {
     ]);
   });
 
+  it("should not log [Identify] when the store is not initialised", async () => {
+    await segment.updateIdentify();
+
+    expect(logged).toEqual([]);
+  });
+
   it("should log screen as skipped_no_store when the store is not initialised", async () => {
     await segment.screen("Portfolio", "Detail");
 

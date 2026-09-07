@@ -59,7 +59,7 @@ jest.mock("../Body", () => {
     onUfvkChanged: (ufvk: string) => void;
     handleBirthdayChange: (birthday: string) => void;
     handleSyncFromZero: () => void;
-    handleEnableShieldedBalance: (nextSyncState: "ready" | "running") => void;
+    handleEnableShieldedBalance: (options: { startSyncNow: boolean }) => void;
     invalidBirthday: boolean;
   }) {
     return (
@@ -78,10 +78,10 @@ jest.mock("../Body", () => {
           sync from zero
         </button>
         <span data-testid="invalid-birthday">{String(invalidBirthday)}</span>
-        <button type="button" onClick={() => handleEnableShieldedBalance("ready")}>
+        <button type="button" onClick={() => handleEnableShieldedBalance({ startSyncNow: false })}>
           Close
         </button>
-        <button type="button" onClick={() => handleEnableShieldedBalance("running")}>
+        <button type="button" onClick={() => handleEnableShieldedBalance({ startSyncNow: true })}>
           Start sync
         </button>
       </div>
@@ -490,7 +490,11 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
     expect(mockDispatch).toHaveBeenCalledWith({ type: "TEST_SYNC_STATE_ACTION" });
   });
 
-  it("persists ufvk and birthday when clicking Start sync", async () => {
+  // "Start sync" persists the key as "ready" exactly like Close, and leaves the
+  // "running" transition to startShieldedSync, which is the only place that also
+  // registers the subscription driving the sync. Persisting "running" here instead
+  // stranded the account on a 0% spinner nothing ever advanced.
+  it("persists ufvk and birthday as ready when clicking Start sync", async () => {
     mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
     render(<ExportKeyModal account={account} />);
 
@@ -502,12 +506,16 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
       expect(mockSyncStateUpdater).toHaveBeenCalledWith(
         account,
         expect.objectContaining({
-          syncState: "running",
+          syncState: "ready",
           ufvk: "test-ufvk",
           birthday: "2026-08-01",
         }),
       );
     });
+    expect(mockSyncStateUpdater).not.toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ syncState: "running" }),
+    );
     expect(mockDispatch).toHaveBeenCalledWith({ type: "TEST_SYNC_STATE_ACTION" });
   });
 

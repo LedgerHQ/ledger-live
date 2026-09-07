@@ -4,6 +4,7 @@ import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
+import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 
 // Transfer types that actually spend transparent UTXOs as inputs. A pure
 // shielded send ("shielded" / "shielded-to-transparent") spends Ironwood notes
@@ -21,13 +22,66 @@ export const isTransparentInputTransfer = (transferType: Transaction["transferTy
   TRANSPARENT_INPUT_TRANSFER_TYPES.has(transferType);
 
 /**
+ * Sorts the account's synced transparent UTXOs largest-first and bounds them
+ * to the device's per-PCZT input ceiling: picking the largest N maximizes the
+ * amount a single send can carry (ZIP-317 prices per input, so more of the
+ * account's value per spent input is strictly better) and mirrors the
+ * "largest-first stays" selection strategy already used on the shielded side
+ * (logic/coin-selection.ts's selectNotes).
+ *
+ * Shared by `resolveTransparentUtxos` (below) and `estimateMaxSpendable`'s
+ * no-transaction fallback, so "Max" can never disagree with what a real send
+ * would bound its input set to -- a caller-supplied `selectedUtxos` override
+ * is deliberately never passed through here (see `resolveTransparentUtxos`).
+ */
+export function boundTransparentUtxos(utxos: BitcoinOutput[]): BitcoinOutput[] {
+  return [...utxos]
+    .sort((a, b) => b.value.comparedTo(a.value))
+    .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+}
+
+/**
  * Resolves the transparent UTXOs spent by a Public→* flow. Returns an empty
  * set for transfer types that do not spend transparent inputs. Caller-supplied
  * `selectedUtxos` takes precedence over the account's synced UTXO set.
  */
 export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction): BitcoinOutput[] {
   if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return [];
-  return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+  // A caller-supplied override is an explicit UTXO selection (coin control),
+  // not a pool the wallet is free to pick from -- reordering or truncating it
+  // would silently spend a different set than the caller asked for, so it
+  // passes through exactly as it did before this ceiling existed. Only the
+  // account-synced default set is bounded.
+  if (tx.selectedUtxos) return tx.selectedUtxos;
+  return boundTransparentUtxos(account.bitcoinResources?.utxos ?? []);
+}
+
+/**
+ * True when the transparent-input bound is the reason `totalSpent` cannot be
+ * covered -- the account's full transparent balance covers it, only the
+ * bounded PCZT (device-safe) selection does not. Lets the caller raise a
+ * "too large for one send" error instead of NotEnoughBalance in exactly that
+ * case, and never in a genuine-shortfall case.
+ *
+ * Inherits `resolveTransparentUtxos`'s exclusion of `tx.selectedUtxos`: a
+ * caller-supplied override is never bounded (see that function's comment), so
+ * this always answers `false` when one is set, however many UTXOs it holds --
+ * there is no bounded-only shortfall to report for an unbounded set.
+ */
+export function hasBoundedTransparentShortfall(
+  account: ZcashAccount,
+  tx: Transaction,
+  totalSpent: BigNumber,
+): boolean {
+  if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return false;
+  const allUtxos = tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+  if (allUtxos.length <= ZCASH_MAX_TRANSPARENT_INPUTS) return false; // nothing was bounded
+  const fullBalance = allUtxos.reduce((sum, u) => sum.plus(u.value), new BigNumber(0));
+  const boundedBalance = resolveTransparentUtxos(account, tx).reduce(
+    (sum, u) => sum.plus(u.value),
+    new BigNumber(0),
+  );
+  return totalSpent.gt(boundedBalance) && totalSpent.lte(fullBalance);
 }
 
 /**

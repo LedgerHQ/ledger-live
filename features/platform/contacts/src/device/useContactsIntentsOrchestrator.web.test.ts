@@ -113,7 +113,7 @@ describe("useContactsIntentsOrchestrator", () => {
     expect(result.current.dieProps).toBeUndefined();
   });
 
-  it("GIVEN an active operation WHEN its intent reports failure THEN it rejects with that failure", async () => {
+  it("GIVEN an active operation WHEN its intent reports failure THEN it rejects with that failure and keeps the DIE open", async () => {
     // GIVEN
     const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
@@ -131,6 +131,54 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBe(error);
+    // The failure's own JobState is the user-facing error screen, rendered by
+    // the executor while idle (lastIntentSnapshot) -- the DIE must stay mounted
+    // so it actually gets a chance to show, instead of vanishing instantly.
+    expect(result.current.dieProps).toBeDefined();
+  });
+
+  it("GIVEN an active operation whose intent reported failure WHEN its observable also errors THEN it still keeps the DIE open", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+    const error = new Error("registration failed");
+
+    // WHEN -- a buggy job could report a failure and still let its observable
+    // error afterward instead of completing; the already-showing failure
+    // screen must not be ripped away because of that contract violation.
+    act(() => {
+      dieProps.intent.onResult?.({ type: "failure", error });
+      dieProps.intent.onJobError?.(new Error("late observable error"));
+    });
+
+    // THEN
+    await expect(request.promise).rejects.toBe(error);
+    expect(result.current.dieProps).toBeDefined();
+  });
+
+  it("GIVEN an active operation whose intent reported failure WHEN the user dismisses the error screen THEN it closes the DIE", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+    const error = new Error("registration failed");
+    act(() => {
+      dieProps.intent.onResult?.({ type: "failure", error });
+      dieProps.intent.onJobComplete?.();
+    });
+    await expect(request.promise).rejects.toBe(error);
+
+    // WHEN
+    act(() => getActiveDieProps(result.current).onUserCancel());
+
+    // THEN
     expect(result.current.dieProps).toBeUndefined();
   });
 
@@ -197,10 +245,13 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBeInstanceOf(ContactDeviceIntentMissingResultError);
-    expect(result.current.dieProps).toBeUndefined();
+    // Success is the only ending that dismisses the DIE on the job's behalf, so
+    // this contract violation leaves it up for the user to close, same as any
+    // other failure.
+    expect(result.current.dieProps).toBeDefined();
   });
 
-  it("GIVEN an active operation WHEN its observable errors THEN it rejects with the fallback error", async () => {
+  it("GIVEN an active operation WHEN its observable errors THEN it rejects with the fallback error and keeps the DIE open", async () => {
     // GIVEN
     const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
     let request!: ReturnType<typeof startRegisterExternalAddress>;
@@ -217,6 +268,29 @@ describe("useContactsIntentsOrchestrator", () => {
 
     // THEN
     await expect(request.promise).rejects.toBe(error);
+    // The executor falls back to its generic IntentErrorComponent (retry/close)
+    // for an observable error -- the DIE must stay mounted for it to be seen.
+    expect(result.current.dieProps).toBeDefined();
+  });
+
+  it("GIVEN an active operation whose observable errored WHEN the user dismisses the fallback screen THEN it closes the DIE", async () => {
+    // GIVEN
+    const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));
+    let request!: ReturnType<typeof startRegisterExternalAddress>;
+    act(() => {
+      request = startRegisterExternalAddress(result.current);
+    });
+    const dieProps = getActiveDieProps(result.current);
+    const error = new Error("unexpected observable error");
+    act(() => {
+      dieProps.intent.onJobError?.(error);
+    });
+    await expect(request.promise).rejects.toBe(error);
+
+    // WHEN
+    act(() => getActiveDieProps(result.current).onUserCancel());
+
+    // THEN
     expect(result.current.dieProps).toBeUndefined();
   });
 

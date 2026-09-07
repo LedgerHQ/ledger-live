@@ -25,6 +25,6 @@ export type CardLoginViewProps = {
 
 /**
  * `null` once the card holder is signed in, because the login has nothing left to offer then.
- * `CardLogout` takes over at that point, and it reads the same flag to know it.
+ * `CardMore` takes over at that point, and it reads the same flag to know it.
  */
 export type CardLoginViewModel = CardLoginViewProps | null;

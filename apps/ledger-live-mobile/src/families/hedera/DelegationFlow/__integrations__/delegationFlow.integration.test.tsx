@@ -4,30 +4,36 @@ import BigNumber from "bignumber.js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { renderWithReactQuery as render, screen, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
 import { HEDERA_ACCOUNT_1, overrideWithHederaAccount1 } from "../../__mocks__/account.mock";
 import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
+const MOCK_VALIDATORS = [
+  {
+    id: "0",
+    name: "Hedera Node 0",
+    address: "0.0.3",
+    addressChecksum: null,
+    minStake: new BigNumber(0),
+    maxStake: new BigNumber(250_000_000_000_000_000),
+    activeStake: new BigNumber(0),
+    activeStakePercentage: new BigNumber(0),
+    overstaked: false,
+    isLedgerNode: false,
+  },
+];
+
+let mockValidatorsQuery: HederaValidatorsQuery;
+
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => [
-    {
-      id: "0",
-      name: "Hedera Node 0",
-      address: "0.0.3",
-      addressChecksum: null,
-      minStake: new BigNumber(0),
-      maxStake: new BigNumber(250_000_000_000_000_000),
-      activeStake: new BigNumber(0),
-      activeStakePercentage: new BigNumber(0),
-      overstaked: false,
-    },
-  ]),
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(() => null),
 }));
 
@@ -56,7 +62,7 @@ jest.mock("~/datadog", () => ({
   broadcastLogger: jest.fn(),
 }));
 
-const mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
+let mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
   stakingNodeId: 0,
 });
 
@@ -106,8 +112,10 @@ function renderFlow() {
 }
 describe("Hedera DelegationFlow (integration)", () => {
   beforeEach(() => {
-    mockAccountBridge.createTransaction.mockClear();
-    mockAccountBridge.signOperation.mockClear();
+    mockAccountBridge = makeMockAccountBridge(HEDERA_TRANSACTION_MODES.Delegate, {
+      stakingNodeId: 0,
+    });
+    mockValidatorsQuery = { validators: MOCK_VALIDATORS, loading: false, error: null };
   });
 
   it("completes the happy path: Summary → SelectDevice → ConnectDevice → ValidationSuccess", async () => {
@@ -149,5 +157,21 @@ describe("Hedera DelegationFlow (integration)", () => {
 
     await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 15000 });
     expect(screen.queryByTestId("validate-success-screen")).toBeNull();
+  });
+
+  it("blocks Continue and shows the error when the validator list fails to load", async () => {
+    mockValidatorsQuery = { validators: [], loading: false, error: new Error("network down") };
+    mockAccountBridge = makeMockAccountBridge(
+      HEDERA_TRANSACTION_MODES.Delegate,
+      { stakingNodeId: 0 },
+      { validators: new Error("network down") },
+    );
+
+    renderFlow();
+
+    await waitFor(() => expect(screen.getByText(/network down/i)).toBeVisible(), {
+      timeout: 10000,
+    });
+    expect(screen.getByTestId("disabled-hedera-summary-continue-button")).toBeVisible();
   });
 });

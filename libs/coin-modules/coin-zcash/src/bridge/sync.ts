@@ -980,7 +980,7 @@ const isShieldedOperation = (op: BtcOperation): boolean =>
  * copy from one leg's emission can never wholesale-replace the other leg's same-tick
  * progress once it reaches `makeSync`'s `shouldMergeOps: false` merge (bridge/index.ts).
  */
-function reconcileLegOperations(
+export function reconcileLegOperations(
   latest: { transparent: BtcOperation[]; shielded: BtcOperation[] },
   leg: "transparent" | "shielded",
   result: Partial<ZcashAccount>,
@@ -991,9 +991,29 @@ function reconcileLegOperations(
     leg === "shielded" ? isShieldedOperation(op) : !isShieldedOperation(op),
   );
 
+  // A t→z shield or z→t deshield is one transaction that both legs sync
+  // independently and each records as its own operation for the same `hash`
+  // (different `type`): the transparent leg's IN/OUT already carries the full
+  // value moved (see `mapTxToOperations`), so the shielded leg's record of that
+  // same hash is a duplicate, not a second real event -- dropped here (the only
+  // place both legs' buckets are available together) rather than shown twice in
+  // `account.operations`. The shielded record is the only one carrying a memo
+  // (`convertShieldedTransactionsToOperations`; the transparent leg's `extra`
+  // only ever has UTXO inputs), so that memo is copied onto the surviving
+  // transparent operation before the shielded one is dropped -- otherwise a
+  // memo attached to a shielding/de-shielding send would silently vanish.
+  const shieldedByHash = new Map(latest.shielded.map(op => [op.hash, op]));
+  const transparent = latest.transparent.map(op => {
+    const twinMemo = (shieldedByHash.get(op.hash)?.extra as ZcashOperationExtra | undefined)?.memo;
+    if (!twinMemo || (op.extra as ZcashOperationExtra | undefined)?.memo) return op;
+    return { ...op, extra: { ...(op.extra as ZcashOperationExtra | undefined), memo: twinMemo } };
+  });
+  const transparentHashes = new Set(latest.transparent.map(op => op.hash));
+  const shielded = latest.shielded.filter(op => !transparentHashes.has(op.hash));
+
   return {
     ...result,
-    operations: [...latest.transparent, ...latest.shielded].sort(
+    operations: [...transparent, ...shielded].sort(
       (a, b) => b.date.valueOf() - a.date.valueOf(),
     ) as BtcOperation[],
   };

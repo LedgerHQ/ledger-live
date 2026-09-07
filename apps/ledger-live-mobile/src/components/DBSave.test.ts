@@ -20,17 +20,21 @@ describe("featureFlagsLense", () => {
 });
 
 describe("payCardPersistedSelector (mobile persistence lens)", () => {
-  it("composes { hasSeenFeatureTour, balanceFilter } from both pay card flow slices", () => {
+  it("composes the pay card flow slices into one persisted blob", () => {
     const state = {
       payCardFeatureTour: { hasSeenFeatureTour: true },
+      payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+      payCardOnboardingWidget: { hasCompletedOnboarding: true },
     } as unknown as State;
 
     const projected = payCardPersistedSelector(state);
 
     expect(projected).toEqual({
       hasSeenFeatureTour: true,
+      hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
+      hasCompletedOnboarding: true,
     });
   });
 });

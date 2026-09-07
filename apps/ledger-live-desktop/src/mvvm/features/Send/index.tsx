@@ -17,10 +17,16 @@ import { AddNewContactScreen } from "./screens/AddNewContact/AddNewContactScreen
 import { AddToExistingContactScreen } from "./screens/AddToExistingContact/AddToExistingContactScreen";
 import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
 import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
+import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
+import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
+import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
+import { AddNewContactHeaderProvider } from "./context/AddNewContactHeaderContext";
+import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
+  [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: SkipMemoConfirmationScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.RECENT_HISTORY]: RecentHistoryScreen,
   [SEND_FLOW_STEP.ADD_CONTACT]: AddContactScreen,
@@ -30,6 +36,7 @@ const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+  [SEND_FLOW_STEP.PAY_SUCCESS]: PaySuccessScreen,
 };
 
 type SendWorkflowParams = Readonly<{
@@ -41,6 +48,7 @@ type SendWorkflowParams = Readonly<{
   memo?: string;
   fromMAD?: boolean;
   startWithWarning?: boolean;
+  source?: string;
 }>;
 
 type SendWorkflowProps = Readonly<{
@@ -63,13 +71,20 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
       amount: params?.amount,
       memo: params?.memo,
       fromMAD: params?.fromMAD ?? false,
+      source: params?.source,
     }),
     [params],
   );
 
   return (
     <SendFlowOrchestrator initParams={initParams} onClose={handleClose} stepRegistry={stepRegistry}>
-      <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+      <SendFlowTrackingProvider>
+        <AddNewContactHeaderProvider>
+          <RecipientContactSelectionProvider>
+            <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+          </RecipientContactSelectionProvider>
+        </AddNewContactHeaderProvider>
+      </SendFlowTrackingProvider>
     </SendFlowOrchestrator>
   );
 }

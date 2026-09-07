@@ -695,7 +695,7 @@ export function hasSpecificIntentData<Type extends AleoTransactionIntentData["ty
   return "data" in txIntent && txIntent.data.type === expectedType;
 }
 
-function validateRecordsCount(transactionType: TransactionType, recordsCount: number): void {
+function validateRecordsCount(transactionType: Transaction["mode"], recordsCount: number): void {
   const isTokenTx = isTokenTransaction({ mode: transactionType });
   const maxRecords = isTokenTx
     ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION

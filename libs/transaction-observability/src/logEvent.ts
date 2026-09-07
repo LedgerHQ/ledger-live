@@ -1,4 +1,5 @@
 import type { TransactionSource } from "@ledgerhq/types-live";
+import type { StakingMethod } from "./stakingApps";
 import type { ErrorCategory } from "./errorCategory";
 import type { EarnTransactionType } from "./earnTransactionType";
 
@@ -50,6 +51,22 @@ type CommonLogEvent = {
    * on the source distinguishes the route, not the kind of identifier. Absent for native send.
    */
   manifestId?: string;
+  /**
+   * How the originating app stakes. Absent for native staking, and absent when the manifest
+   * serves more than one product — see `stakingApps.ts`.
+   */
+  stakingMethod?: StakingMethod;
+  /**
+   * The staking contract a dApp call targeted. Public infrastructure, identical for every
+   * user, and only ever set for a call inside a known staking app — never for a plain send,
+   * whose recipient is the user's own payee.
+   */
+  dappContract?: string;
+  /**
+   * Receipt token a deposit returns, e.g. `stETH`. Native staking has none: stake ADA and
+   * nothing comes back. Matches the Earn live-app's field of the same name.
+   */
+  outputCurrency?: string;
   source?: TransactionSource;
   /** Parent/network currency id (e.g. "ethereum"); token id is reported separately. */
   currencyId: string;

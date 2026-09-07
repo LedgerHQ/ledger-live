@@ -21,11 +21,16 @@ describe("useRecipientScreenViewModel", () => {
   const clearRecipientSearch = jest.fn();
   const setRecipient = jest.fn();
   const navigate = jest.fn();
+  const goBack = jest.fn();
+  const getState = jest.fn(() => ({
+    routes: [{ name: ScreenName.SendFlowRecipient }],
+    index: 0,
+  }));
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGetAccountCurrency.mockReturnValue(account.currency);
-    mockedUseNavigation.mockReturnValue({ navigate } as never);
+    mockedUseNavigation.mockReturnValue({ navigate, goBack, getState } as never);
     mockedUseSendFlowActions.mockReturnValue({
       transaction: { setRecipient },
     } as never);
@@ -91,5 +96,24 @@ describe("useRecipientScreenViewModel", () => {
 
     expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
+  });
+
+  it("returns to the existing Amount screen instead of stacking another", () => {
+    getState.mockReturnValue({
+      routes: [{ name: ScreenName.SendFlowAmount }, { name: ScreenName.SendFlowRecipient }],
+      index: 1,
+    });
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("destination");
+    });
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

@@ -6,13 +6,13 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 import type { ApplicationOptions } from "@e2e/page/index";
-import type { OptionalFeatureMap, PartialFeatures } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 // Pinned so E2E_MOBILE_FEATURE_FLAGS can't downgrade earnUpselling and change the earn UI.
 // https://ledgerhq.atlassian.net/browse/LIVE-35026
-const EARN_V2_FLAGS: OptionalFeatureMap = {
+const EARN_V2_FLAGS: PartialFeatures = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
   ...FF_LWM_WALLET_40_Q2,
 };

@@ -37,18 +37,27 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [state.account.currency, account],
   );
 
+  const goToAmount = useCallback(() => {
+    const { routes, index } = navigation.getState();
+    if (routes[index - 1]?.name === ScreenName.SendFlowAmount) {
+      navigation.goBack();
+      return;
+    }
+    navigation.navigate(ScreenName.SendFlowAmount);
+  }, [navigation]);
+
   const onMemoProceed = useCallback(() => {
     recipientSearch.clear();
-    navigation.navigate(ScreenName.SendFlowAmount);
-  }, [recipientSearch, navigation]);
+    goToAmount();
+  }, [recipientSearch, goToAmount]);
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string) => {
       transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
       recipientSearch.clear();
-      navigation.navigate(ScreenName.SendFlowAmount);
+      goToAmount();
     },
-    [transaction, state.recipient?.memo, recipientSearch, navigation],
+    [transaction, state.recipient?.memo, recipientSearch, goToAmount],
   );
 
   if (!account || !currency) {

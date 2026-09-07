@@ -25,7 +25,6 @@ import * as logicUtils from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import * as networkUtils from "../network/utils";
-import * as preloadData from "../preload-data";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import {
@@ -33,7 +32,7 @@ import {
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
-import type { EstimateFeesResult, HederaPreloadData, Transaction } from "../types";
+import type { EstimateFeesResult, HederaValidator, Transaction } from "../types";
 
 // Mock modules before importing
 jest.mock("../logic/estimateFees", () => ({
@@ -49,6 +48,7 @@ jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   getCurrencyToUSDRate: jest.fn(),
   checkAccountTokenAssociationStatus: jest.fn(),
+  getHederaValidators: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
@@ -58,11 +58,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
     findSubAccountById: jest.fn(actual.findSubAccountById),
   };
 });
-
-jest.mock("../preload-data", () => ({
-  ...jest.requireActual("../preload-data"),
-  getCurrentHederaPreloadData: jest.fn(),
-}));
 
 jest.mock("../network/rpc", () => ({
   rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
@@ -75,14 +70,14 @@ const mockGetCurrencyToUSDRate = networkUtils.getCurrencyToUSDRate as unknown as
 const mockResolveConfig = logicUtils.resolveConfig as jest.Mock;
 const mockCheckAccountTokenAssociationStatus =
   networkUtils.checkAccountTokenAssociationStatus as unknown as jest.Mock;
-const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
+const mockGetHederaValidators = networkUtils.getHederaValidators as unknown as jest.Mock;
 const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
 
 describe("getTransactionStatus", () => {
   const mockConfig = getMockedConfig();
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
   const mockedUsdRate = new BigNumber(1);
-  const mockPreload = { validators: [{ id: "1" }, { id: "2" }] } as HederaPreloadData;
+  const mockValidators = [{ id: "1" }, { id: "2" }] as HederaValidator[];
   const validRecipientAddress = "0.0.1234567";
   const validRecipientAddressWithChecksum = "0.0.1234567-ylkls";
 
@@ -93,7 +88,7 @@ describe("getTransactionStatus", () => {
     mockResolveConfig.mockReturnValue(mockConfig);
     mockEstimateFees.mockResolvedValue(mockedEstimatedFee);
     mockGetCurrencyToUSDRate.mockResolvedValue(mockedUsdRate);
-    mockGetCurrentHederaPreloadData.mockReturnValue(mockPreload);
+    mockGetHederaValidators.mockResolvedValue(mockValidators);
     // Default: association is verified
     mockCheckAccountTokenAssociationStatus.mockResolvedValue(true);
     // Reset findSubAccountById to use actual implementation
@@ -504,6 +499,67 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(account, transaction);
 
     expect(result.errors.missingStakingNodeId).toBeInstanceOf(HederaInvalidStakingNodeIdError);
+  });
+
+  it("resolves with errors.validators instead of rejecting when validators fetch fails", async () => {
+    mockGetHederaValidators.mockRejectedValueOnce(new Error("network down"));
+    const account = getMockedAccount();
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      properties: { stakingNodeId: 1 },
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors.validators).toBeInstanceOf(Error);
+    expect(result.errors.stakingNodeId).toBeUndefined();
+  });
+
+  it("wraps a non-Error rejection from the validators fetch into an Error", async () => {
+    mockGetHederaValidators.mockRejectedValueOnce("network down");
+    const account = getMockedAccount();
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      properties: { stakingNodeId: 1 },
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors.validators).toBeInstanceOf(Error);
+    expect(result.errors.validators?.message).toBe("network down");
+  });
+
+  const hederaResourcesWithRewards = {
+    maxAutomaticTokenAssociations: 0,
+    isAutoTokenAssociationEnabled: false,
+    delegation: {
+      nodeId: 1,
+      pendingReward: new BigNumber(10),
+      delegated: new BigNumber(1000),
+    },
+  };
+
+  it("does not fetch validators when undelegating", async () => {
+    const account = getMockedAccount({ hederaResources: hederaResourcesWithRewards });
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Undelegate,
+      properties: { stakingNodeId: null },
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(mockGetHederaValidators).not.toHaveBeenCalled();
+    expect(result.errors.validators).toBeUndefined();
+  });
+
+  it("does not fetch validators when claiming rewards", async () => {
+    const account = getMockedAccount({ hederaResources: hederaResourcesWithRewards });
+    const transaction = getMockedTransaction({ mode: HEDERA_TRANSACTION_MODES.ClaimRewards });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(mockGetHederaValidators).not.toHaveBeenCalled();
+    expect(result.errors.validators).toBeUndefined();
   });
 
   it("adds error for delegation with invalid staking node id", async () => {

@@ -79,6 +79,12 @@ runs:
           fs.appendFileSync(out, `nx-cache-key-prefix=${nxCacheKeyPrefix}\n`);
           fs.appendFileSync(out, `cache-profile=${cacheProfile}\n`);
 
+    - name: Export NX_CACHE_KEY_PREFIX
+      shell: bash
+      env:
+        NX_CACHE_KEY_PREFIX: ${{ steps.resolve.outputs.nx-cache-key-prefix }}
+      run: echo "NX_CACHE_KEY_PREFIX=${NX_CACHE_KEY_PREFIX}" >> "$GITHUB_ENV" # zizmor: ignore[github-env]
+
     - name: Write Nx cache config (gitignored nx.cache-config.json)
       shell: bash
       run: node "${{ github.workspace }}/tools/nx/write-nx-cache-config.mjs" --cache-key-prefix "${{ steps.resolve.outputs.nx-cache-key-prefix }}"

@@ -16,8 +16,10 @@ jest.mock("@datadog/mobile-react-native", () => ({
 
 const segmentSdk = require("@segment/analytics-react-native") as {
   createClient: jest.Mock;
+  _identifyMock: jest.Mock;
   _trackMock: jest.Mock;
 };
+const mockIdentify = segmentSdk._identifyMock;
 const mockTrack = segmentSdk._trackMock;
 const mockDdWarn = jest.mocked(DdLogs.warn);
 
@@ -260,6 +262,89 @@ describe("segment analytics delivery", () => {
           deliveryStatus: "failed",
         }),
       ]);
+    });
+  });
+
+  describe("identify overlay", () => {
+    it("should log [Identify] next to Start when analytics starts with tracking on", async () => {
+      store.dispatch(setAnalytics(true));
+      logged.length = 0;
+
+      await segment.start(store);
+
+      expect(logged.map(event => event.eventName)).toEqual(["[Identify]", "Start"]);
+      expect(logged[0]).toEqual(
+        expect.objectContaining({
+          eventName: "[Identify]",
+          eventProperties: { userIdPresent: expect.any(Boolean) },
+          deliveryStatus: "enqueued",
+        }),
+      );
+      expect(logged[1]).toEqual(
+        expect.objectContaining({
+          eventName: "Start",
+          deliveryStatus: "enqueued",
+        }),
+      );
+    });
+
+    it("should keep track, screen and flush overlay entries after identify", async () => {
+      await startWithTracking();
+      pendingEvents.mockResolvedValue(2);
+
+      await segment.updateIdentify();
+      await segment.track("TestEvent", { foo: "bar" });
+      await segment.screen("Portfolio", "Detail");
+      await segment.flush();
+
+      expect(logged.map(event => event.eventName)).toEqual([
+        "[Identify]",
+        "TestEvent",
+        "Page Portfolio Detail",
+        "[Flush]",
+      ]);
+    });
+
+    it("should log [Identify] as enqueued after a successful identify", async () => {
+      await startWithTracking();
+      mockIdentify.mockClear();
+
+      await segment.updateIdentify();
+
+      expect(mockIdentify).toHaveBeenCalledTimes(1);
+      expect(logged).toEqual([
+        expect.objectContaining({
+          eventName: "[Identify]",
+          eventProperties: { userIdPresent: expect.any(Boolean) },
+          deliveryStatus: "enqueued",
+        }),
+      ]);
+    });
+
+    it("should log [Identify] as failed and not throw when the Segment client rejects", async () => {
+      await startWithTracking();
+      mockIdentify.mockRejectedValueOnce(new Error("sdk down"));
+
+      await expect(segment.updateIdentify()).resolves.toBeUndefined();
+
+      expect(logged).toEqual([
+        expect.objectContaining({
+          eventName: "[Identify]",
+          eventProperties: { userIdPresent: expect.any(Boolean) },
+          deliveryStatus: "failed",
+        }),
+      ]);
+    });
+
+    it("should not log [Identify] when tracking consent is off", async () => {
+      await segment.start(store);
+      jest.clearAllMocks();
+      logged.length = 0;
+
+      await segment.updateIdentify();
+
+      expect(mockIdentify).not.toHaveBeenCalled();
+      expect(logged).toEqual([]);
     });
   });
 

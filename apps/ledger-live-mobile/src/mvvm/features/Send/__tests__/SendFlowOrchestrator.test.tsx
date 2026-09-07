@@ -80,6 +80,10 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
         canGoBack: false,
         screenName: "RecipientScreen",
       },
+      [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: {
+        id: SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
+        canGoBack: true,
+      },
       [SEND_FLOW_STEP.RECENT_HISTORY]: { id: SEND_FLOW_STEP.RECENT_HISTORY, canGoBack: true },
       [SEND_FLOW_STEP.ADD_CONTACT]: { id: SEND_FLOW_STEP.ADD_CONTACT, canGoBack: true },
       [SEND_FLOW_STEP.ADD_NEW_CONTACT]: { id: SEND_FLOW_STEP.ADD_NEW_CONTACT, canGoBack: true },
@@ -97,6 +101,7 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
         screenOptions: { title: "Sign" },
       },
       [SEND_FLOW_STEP.CONFIRMATION]: { id: SEND_FLOW_STEP.CONFIRMATION, canGoBack: true },
+      [SEND_FLOW_STEP.PAY_SUCCESS]: { id: SEND_FLOW_STEP.PAY_SUCCESS, canGoBack: false },
     },
     ...overrides,
   };

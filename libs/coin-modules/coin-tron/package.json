@@ -31,9 +31,6 @@
       "network": [
         "lib/network/index"
       ],
-      "signer": [
-        "lib/signer/index"
-      ],
       "types": [
         "lib/types/index"
       ],
@@ -50,11 +47,6 @@
       "require": "./lib/network/index.js",
       "default": "./lib-es/network/index.js"
     },
-    "./signer": {
-      "@ledgerhq/source": "./src/signer/index.ts",
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -65,7 +57,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",

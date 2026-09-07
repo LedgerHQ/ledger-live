@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 import {
   computeAmountError,
   computeRecipientError,
@@ -8,10 +10,14 @@ import {
   resolveTransparentUtxos,
 } from "./statusHelpers";
 import { TRANSPARENT_OUTPUT_DUST_THRESHOLD, ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
-import { ZcashAmountBelowDustThreshold } from "../types/errors";
+import { ZcashAmountBelowDustThreshold, ZcashSendTooLarge } from "../types/errors";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
-import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
+import {
+  ZCASH_MAX_IRONWOOD_ACTIONS,
+  ZCASH_MAX_TRANSPARENT_INPUTS,
+  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+} from "../constants";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
@@ -488,6 +494,144 @@ describe("getTransactionStatus, transparent-input flows", () => {
   });
 });
 
+describe("getTransactionStatus, bounded-selection shortfall (ZcashSendTooLarge)", () => {
+  const FEE = 10_000;
+
+  it.each(["transparent", "transparent-to-shielded"] as ZcashTransferType[])(
+    "resolves without an amount error for a %s send within the bounded max, from an account above the bound",
+    async transferType => {
+      const utxoCount = ZCASH_MAX_TRANSPARENT_INPUTS + 5;
+      const acc = account({ utxos: Array(utxoCount).fill(100_000) });
+      const boundedBalance = ZCASH_MAX_TRANSPARENT_INPUTS * 100_000;
+      const recipient = transferType === "transparent" ? T_ADDRESS : U_ADDRESS;
+      const tx = transaction({
+        transferType,
+        recipient,
+        amount: new BigNumber(boundedBalance - FEE),
+        zcashFee: new BigNumber(FEE),
+      });
+
+      const status = await getTransactionStatus(acc, tx);
+
+      expect(status.errors.amount).toBeUndefined();
+    },
+  );
+
+  it.each(["transparent", "transparent-to-shielded"] as ZcashTransferType[])(
+    "rejects a %s send between the bounded max and the full balance with ZcashSendTooLarge",
+    async transferType => {
+      const utxoCount = ZCASH_MAX_TRANSPARENT_INPUTS + 5;
+      const acc = account({ utxos: Array(utxoCount).fill(100_000) });
+      const boundedBalance = ZCASH_MAX_TRANSPARENT_INPUTS * 100_000;
+      const fullBalance = utxoCount * 100_000;
+      const recipient = transferType === "transparent" ? T_ADDRESS : U_ADDRESS;
+      // amount + FEE sits strictly between boundedBalance and fullBalance.
+      const tx = transaction({
+        transferType,
+        recipient,
+        amount: new BigNumber(boundedBalance),
+        zcashFee: new BigNumber(FEE),
+      });
+
+      const status = await getTransactionStatus(acc, tx);
+
+      expect(status.errors.amount).toBeInstanceOf(ZcashSendTooLarge);
+      expect(status.errors.amount).not.toBeInstanceOf(NotEnoughBalance);
+      expect(boundedBalance + FEE).toBeLessThanOrEqual(fullBalance);
+    },
+  );
+
+  it("keeps reporting NotEnoughBalance for a genuine shortfall, on an account below the bound", async () => {
+    const acc = account({ utxos: [10_000, 10_000, 10_000] }); // full balance 30_000, well below the bound
+    const tx = transaction({
+      amount: new BigNumber(100_000),
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toEqual(new NotEnoughBalance());
+    expect(status.errors.amount).not.toBeInstanceOf(ZcashSendTooLarge);
+  });
+
+  it("resolves without an amount error for a shielded send within the bounded max, from a pool above the bound", async () => {
+    const noteCount = ZCASH_MAX_IRONWOOD_ACTIONS + 5;
+    const acc = account({ ironwoodNotes: Array(noteCount).fill(100_000) });
+    const boundedTotal = ZCASH_MAX_IRONWOOD_ACTIONS * 100_000;
+    const selectedNotes = Array.from({ length: ZCASH_MAX_IRONWOOD_ACTIONS }, (_, i) =>
+      note(100_000, i),
+    );
+    const tx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(boundedTotal - FEE),
+      selectedNotes,
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toBeUndefined();
+  });
+
+  it("rejects a shielded send between the bounded and full pool with ZcashSendTooLarge, not the generic insufficiency error", async () => {
+    const noteCount = ZCASH_MAX_IRONWOOD_ACTIONS + 5;
+    const acc = account({ ironwoodNotes: Array(noteCount).fill(100_000) });
+    const boundedTotal = ZCASH_MAX_IRONWOOD_ACTIONS * 100_000;
+    const fullTotal = noteCount * 100_000;
+    const tx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(boundedTotal),
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toBeInstanceOf(ZcashSendTooLarge);
+    expect(status.errors.amount).not.toEqual(new Error("Insufficient shielded balance"));
+    expect(boundedTotal + FEE).toBeLessThanOrEqual(fullTotal);
+  });
+
+  it("rejects a shielded-to-transparent send between the bounded and full pool with ZcashSendTooLarge", async () => {
+    // shielded-to-transparent (z->t) also spends the Ironwood pool and routes
+    // through the same shielded branch of getTransactionStatus as "shielded"
+    // -- this is the transfer type the sibling test above doesn't cover.
+    const noteCount = ZCASH_MAX_IRONWOOD_ACTIONS + 5;
+    const acc = account({ ironwoodNotes: Array(noteCount).fill(100_000) });
+    const boundedTotal = ZCASH_MAX_IRONWOOD_ACTIONS * 100_000;
+    const fullTotal = noteCount * 100_000;
+    const tx = transaction({
+      transferType: "shielded-to-transparent",
+      recipient: T_ADDRESS,
+      amount: new BigNumber(boundedTotal),
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toBeInstanceOf(ZcashSendTooLarge);
+    expect(status.errors.amount).not.toEqual(new Error("Insufficient shielded balance"));
+    expect(boundedTotal + FEE).toBeLessThanOrEqual(fullTotal);
+  });
+
+  it("keeps reporting the generic insufficiency error for a genuine shielded shortfall, on a pool below the bound", async () => {
+    const acc = account({ ironwoodNotes: [10_000, 10_000] }); // pool 20_000, well below the bound
+    const tx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(100_000),
+      selectedNotes: [note(20_000)],
+      zcashFee: new BigNumber(FEE),
+    });
+
+    const status = await getTransactionStatus(acc, tx);
+
+    expect(status.errors.amount).toEqual(new Error("Insufficient shielded balance"));
+    expect(status.errors.amount).not.toBeInstanceOf(ZcashSendTooLarge);
+  });
+});
+
 describe("getTransactionStatus, note-spending flows", () => {
   it("refuses to price anything before the shielded scan has run", async () => {
     const status = await getTransactionStatus(
@@ -659,6 +803,96 @@ describe("getTransactionStatus, note-spending flows", () => {
     expect(errorNames(status.errors)).toEqual({
       recipient: "ZcashSaplingRecipientNotSupported",
     });
+  });
+});
+
+// The fee is resolved by prepareTransaction and only carried by
+// getTransactionStatus, so the two are chained here -- setting `zcashFee` by hand
+// would assert nothing about the ZIP-317 computation behind the figure the flow
+// shows. Each row spells out its logical-action count, so a fee pinned to the
+// 2-action floor passes the first row and fails the rest.
+describe("getTransactionStatus, ZIP-317 fee surfaced by the flow", () => {
+  it.each([
+    [
+      "a t->t send over one UTXO (max(1 in, 2 out) = 2 actions)",
+      "10000",
+      account({ utxos: [100_000] }),
+      transaction({ amount: new BigNumber(30_000) }),
+    ],
+    [
+      "a t->t send over three UTXOs (max(3 in, 2 out) = 3 actions)",
+      "15000",
+      account({ utxos: [50_000, 50_000, 50_000] }),
+      transaction({ amount: new BigNumber(30_000) }),
+    ],
+    [
+      "a shielding send (1 transparent in + Orchard floor of 2 = 3 actions)",
+      "15000",
+      account({ utxos: [100_000] }),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(30_000),
+      }),
+    ],
+    [
+      "a z->t send (Orchard floor of 2 + 1 transparent out = 3 actions)",
+      "15000",
+      account({ ironwoodNotes: [50_000] }),
+      transaction({
+        transferType: "shielded-to-transparent",
+        recipient: T_ADDRESS,
+        amount: new BigNumber(20_000),
+      }),
+    ],
+  ] as [string, string, ZcashAccount, Transaction][])(
+    "prices %s at %s zatoshi",
+    async (_label, expectedFee, acc, tx) => {
+      const prepared = await prepareTransaction(acc, tx);
+      const status = await getTransactionStatus(acc, prepared);
+
+      expect(status.errors).toEqual({});
+      expect(status.estimatedFees.toString()).toBe(expectedFee);
+      expect(status.totalSpent).toEqual(prepared.amount.plus(new BigNumber(expectedFee)));
+    },
+  );
+
+  // The same layout priced above at 15_000 must not fall back to the floor, which
+  // is what a constant fee would surface.
+  it("does not surface the minimum for a 3-action layout", async () => {
+    const acc = account({ utxos: [50_000, 50_000, 50_000] });
+
+    const prepared = await prepareTransaction(acc, transaction({ amount: new BigNumber(30_000) }));
+    const status = await getTransactionStatus(acc, prepared);
+
+    expect(status.estimatedFees.toNumber()).not.toBe(ZIP317_MINIMUM_FEE);
+  });
+});
+
+describe("getTransactionStatus, memo byte limit", () => {
+  it.each([
+    [
+      "transparent-input",
+      transaction({ transferType: "transparent-to-shielded", recipient: U_ADDRESS }),
+    ],
+    ["note-spending", transaction({ transferType: "shielded", recipient: U_ADDRESS })],
+  ])("rejects an oversized UTF-8 memo for %s flows", async (_label, tx) => {
+    const status = await getTransactionStatus(account(), { ...tx, memo: "😀".repeat(129) });
+
+    expect(status.errors.transaction?.name).toBe("ZcashMemoTooLong");
+  });
+
+  it("accepts a memo at exactly 512 UTF-8 bytes", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        memo: "😀".repeat(128),
+      }),
+    );
+
+    expect(status.errors.transaction).toBeUndefined();
   });
 });
 

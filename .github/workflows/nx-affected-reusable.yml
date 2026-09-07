@@ -11,11 +11,6 @@ on:
         description: "Head branch"
         type: string
         required: true
-      affected_debug:
-        description: "Enable verbose debug output for nx affected merge-base diagnostics"
-        type: boolean
-        required: false
-        default: false
       skip_nx_cache:
         description: "Skip Nx task cache when computing affected projects (e.g. external fork workflows)"
         type: boolean

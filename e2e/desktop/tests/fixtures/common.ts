@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
@@ -53,7 +53,7 @@ type TestFixtures = {
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
-  featureFlags: OptionalFeatureMap;
+  featureFlags: PartialFeatures;
   simulateCamera: string;
   app: Application;
   cliCommands?: CliCommand[];
@@ -70,7 +70,10 @@ type TestFixtures = {
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
+setEnv(
+  "SWAP_API_BASE",
+  process.env.SWAP_API_BASE || "https://global.api.stg.ledger-test.com/swap/v5",
+);
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   // Factories tag commands via `named(...)`; treat the inferred "cmd" (from `const cmd = …`

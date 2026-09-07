@@ -1,34 +1,34 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
 import type { ContactsNativeProps } from "@features/flow-pay-contact";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { usePayTabNewPayment } from "./usePayTabNewPayment";
 import { usePayTabOutgoingOperations } from "./usePayTabOutgoingOperations";
 
-export function usePayTabContacts(): ContactsNativeProps {
+export function usePayTabContacts(open: (contact?: Contact) => void): ContactsNativeProps {
   const { t } = useTranslation();
-  const { open } = usePayTabNewPayment();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const outgoingOperations = usePayTabOutgoingOperations();
 
-  const onSeeAll = useCallback(() => {
+  const openPayContactList = useCallback(() => {
     navigation.navigate(NavigatorName.MyWallet, {
       screen: ScreenName.MyWalletContacts,
-      params: { title: t("payTab.contacts.seeAllTitle") },
+      params: { title: t("payTab.contacts.seeAllTitle"), selectContactToPay: true },
     });
   }, [navigation, t]);
+  const onPay = useCallback(() => open(), [open]);
+  const onContactPress = useCallback((contact: Contact) => open(contact), [open]);
 
   return useMemo(
     () => ({
-      title: t("payTab.contacts.title"),
-      payLabel: t("payTab.contacts.pay"),
-      onPay: open,
-      onSeeAll,
+      onPay,
+      onContactPress,
+      onSeeAll: openPayContactList,
       outgoingOperations,
     }),
-    [t, open, onSeeAll, outgoingOperations],
+    [onContactPress, onPay, openPayContactList, outgoingOperations],
   );
 }

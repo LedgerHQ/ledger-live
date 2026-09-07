@@ -1,5 +1,6 @@
 import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import {
+  isContactDeviceCurrencySupported,
   resolveContactDeviceContext,
   UnsupportedContactDeviceCurrencyError,
 } from "./resolveContactDeviceContext";
@@ -67,5 +68,31 @@ describe("resolveContactDeviceContext", () => {
 
     // THEN
     expect(resolve).toThrow(UnsupportedContactDeviceCurrencyError);
+  });
+
+  it("GIVEN an EVM network running its own app WHEN resolving its context THEN it rejects the currency", () => {
+    // GIVEN
+    const currencyId = ContactCurrencyIdSchema.parse("ethereum_classic");
+
+    // WHEN
+    const resolve = () => resolveContactDeviceContext(currencyId);
+
+    // THEN
+    expect(resolve).toThrow(UnsupportedContactDeviceCurrencyError);
+  });
+});
+
+describe("isContactDeviceCurrencySupported", () => {
+  it.each([
+    ["ethereum", true],
+    ["polygon", true],
+    ["base/erc20/usd_coin", true],
+    ["tron", true],
+    ["ethereum_classic", false],
+    ["bitcoin", false],
+  ])("GIVEN %s THEN it reports %s", (currencyId, isSupported) => {
+    expect(isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse(currencyId))).toBe(
+      isSupported,
+    );
   });
 });

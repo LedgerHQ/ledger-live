@@ -601,10 +601,27 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
     : baseProperties;
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
+  if (!segmentClient) return;
   const segmentUserId = shouldIncludeSegmentIdentity(state)
     ? userExtraProperties.userId
     : undefined;
-  await segmentClient?.identify(segmentUserId, allProperties);
+  const overlayProperties = { userIdPresent: Boolean(segmentUserId) };
+  try {
+    await segmentClient.identify(segmentUserId, allProperties);
+    trackSubject.next({
+      eventName: "[Identify]",
+      eventProperties: overlayProperties,
+      date: new Date(),
+      deliveryStatus: "enqueued",
+    });
+  } catch {
+    trackSubject.next({
+      eventName: "[Identify]",
+      eventProperties: overlayProperties,
+      date: new Date(),
+      deliveryStatus: "failed",
+    });
+  }
 };
 
 type Properties = Error | Record<string, unknown> | null;

@@ -1,9 +1,12 @@
 import { z } from "zod";
 import {
   PayCardErrorResponseSchema,
+  PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
+  PayCardOnboardingStepSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -22,6 +25,8 @@ export type PayCardUser = z.infer<typeof PayCardUserResponseSchema>;
 
 export type PayCardOrderResult = z.infer<typeof PayCardOrderResponseSchema>;
 
+export type PayCardFreezeStateResult = z.infer<typeof PayCardFreezeStateResponseSchema>;
+
 export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 
 export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
@@ -38,3 +43,7 @@ export type PayCardRefreshSessionRequest = {
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;
+
+export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
+
+export type PayCardOnboardingStatus = z.infer<typeof PayCardOnboardingStatusResponseSchema>;

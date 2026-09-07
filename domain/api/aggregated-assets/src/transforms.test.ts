@@ -180,7 +180,6 @@ describe("convertApiAssets, via getAssetData", () => {
         family: "unknownfamily",
         explorerViews: [],
         symbol: "U",
-        disableCountervalue: true,
         supportsSegwit: true,
       });
     });

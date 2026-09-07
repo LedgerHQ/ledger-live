@@ -2,12 +2,41 @@ import { bufferToHexaString, hexaStringToBuffer } from "@ledgerhq/device-managem
 import { ContactDeviceIntentInputError } from "./errors";
 
 /**
- * Shared conversions between Ledger Wallet's string/number Contacts intent
- * contracts and `@ledgerhq/device-contacts-kit`'s byte/bigint wire types.
- * Every Contacts intent job needs some subset of these; keep intent-specific
- * shapes (e.g. an intent's own `existingContactGroup` composite) local to
- * that intent's job instead.
+ * Shared conversions between Ledger Wallet's string/number Contacts contracts
+ * and `@ledgerhq/device-contacts-kit`'s byte/bigint wire types. Contacts intent
+ * jobs and the EVM address-book snapshot both cross this boundary; keep
+ * caller-specific shapes (e.g. an intent's own `existingContactGroup`
+ * composite) local to that caller instead.
+ *
+ * Proof material and identifiers are persisted as whatever `mapBytesTo*`
+ * produced, which is `0x`-prefixed because the kit's `bufferToHexaString`
+ * always prefixes. Decoding therefore has to accept that prefix, and every
+ * decoder here shares `tryDecodeHex` so the two directions cannot drift apart.
  */
+
+/**
+ * Decodes hex to bytes, or `null` when the string is not a faithful encoding.
+ *
+ * Stricter than the kit's own `hexaStringToBuffer`, which left-pads an
+ * odd-length string and maps an empty one to zero bytes: either would turn a
+ * truncated handle into a valid-looking but different value on its way to the
+ * device, where the caller wants to reject it instead.
+ */
+export function tryDecodeHex(value: string): Uint8Array | null {
+  const digits = value.replace(/^0x/i, "");
+  if (digits.length === 0 || digits.length % 2 !== 0) return null;
+
+  return hexaStringToBuffer(digits);
+}
+
+function decodeHexOrThrow(value: string, subject: string): Uint8Array {
+  const bytes = tryDecodeHex(value);
+  if (bytes === null) {
+    throw new ContactDeviceIntentInputError(`${subject} ${JSON.stringify(value)} is not valid hex`);
+  }
+
+  return bytes;
+}
 
 /**
  * Contact addresses are family-agnostic in the domain layer (Solana base58,
@@ -20,13 +49,7 @@ import { ContactDeviceIntentInputError } from "./errors";
  * action.
  */
 export function mapIdentifierToBytes(identifier: string): Uint8Array {
-  const bytes = hexaStringToBuffer(identifier);
-  if (bytes === null) {
-    throw new ContactDeviceIntentInputError(
-      `identifier ${JSON.stringify(identifier)} is not valid hex`,
-    );
-  }
-  return bytes;
+  return decodeHexOrThrow(identifier, "identifier");
 }
 
 export function mapChainIdToBigInt(chainId: string | number): bigint {
@@ -38,13 +61,7 @@ export function mapChainIdToBigInt(chainId: string | number): bigint {
 }
 
 export function mapGroupHandleToBytes(groupHandle: string): Uint8Array {
-  const bytes = hexaStringToBuffer(groupHandle);
-  if (bytes === null) {
-    throw new ContactDeviceIntentInputError(
-      `groupHandle ${JSON.stringify(groupHandle)} is not valid hex`,
-    );
-  }
-  return bytes;
+  return decodeHexOrThrow(groupHandle, "groupHandle");
 }
 
 export function mapBytesToGroupHandle(bytes: Uint8Array): string {
@@ -52,11 +69,7 @@ export function mapBytesToGroupHandle(bytes: Uint8Array): string {
 }
 
 export function mapProofToBytes(proof: string): Uint8Array {
-  const bytes = hexaStringToBuffer(proof);
-  if (bytes === null) {
-    throw new ContactDeviceIntentInputError(`proof ${JSON.stringify(proof)} is not valid hex`);
-  }
-  return bytes;
+  return decodeHexOrThrow(proof, "proof");
 }
 
 export function mapBytesToProof(bytes: Uint8Array): string {

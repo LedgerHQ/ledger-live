@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "oxlint .",
+    "lint:test-names": "node ./scripts/check-test-names.mjs",
     "lint:fix": "oxfmt . && oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",

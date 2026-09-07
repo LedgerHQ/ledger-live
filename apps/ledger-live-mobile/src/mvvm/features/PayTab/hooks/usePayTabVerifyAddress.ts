@@ -5,7 +5,7 @@ import type {
   VerifyAddressLabels,
   VerifyAddressProps,
 } from "@features/flow-pay-request";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 
 export const PAY_REQUEST_VERIFY_PAGE = "Request Address Verification";
 

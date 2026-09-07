@@ -36,10 +36,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
-  //Check if the account is a Persistence or Quicksilver account
   const shouldDisplayAllValidators =
     account.type === "Account" &&
-    ["quicksilver", "persistence", "mantra", "axelar"].includes(account.currency.id);
+    ["quicksilver", "persistence", "mantra", "axelar", "osmo"].includes(account.currency.id);
 
   useEffect(() => {
     if (shouldDisplayAllValidators) {

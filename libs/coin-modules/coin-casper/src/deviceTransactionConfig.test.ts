@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { CASPER_NETWORK } from "./constants";
+import { CASPER_FEES_MOTES, CASPER_NETWORK } from "./constants";
 import { methodToString } from "./logic";
 import { createMockAccount } from "./__tests__/fixtures/account.fixture";
 import { createMockTransaction } from "./__tests__/fixtures/transaction.fixture";
@@ -81,6 +81,20 @@ describe("getDeviceTransactionConfig", () => {
       type: "casper.extendedAmount",
       label: "Amount",
       value: new BigNumber(0),
+    });
+  });
+
+  test("should default fee to estimated fees when fees is null", async () => {
+    const tx = {
+      ...createMockTransaction({ amount: MOCK_AMOUNT }),
+      fees: null,
+    };
+    const fields = await getConfigFields(tx);
+
+    expect(fields[2]).toEqual({
+      type: "casper.extendedAmount",
+      label: "Fee",
+      value: new BigNumber(CASPER_FEES_MOTES),
     });
   });
 

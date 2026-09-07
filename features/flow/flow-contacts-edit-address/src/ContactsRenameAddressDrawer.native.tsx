@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AddressInput,
   Banner,
   BottomSheetHeader,
   BottomSheetView,
@@ -8,6 +7,7 @@ import {
   Button,
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
 import type { ContactsRenameAddressDrawerProps } from "./types";
@@ -19,6 +19,7 @@ export function ContactsRenameAddressDialog({
   isSaving,
   draftLabel,
   invalidLabelError,
+  isDeviceRequired,
   bottomInset = 0,
   keyboardInset = 0,
   labels,
@@ -41,9 +42,8 @@ export function ContactsRenameAddressDialog({
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader density="expanded" title={labels.title} />
           <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
-            <AddressInput
+            <TextInput
               testID="contacts-edit-address-input"
-              prefix=""
               value={addressInput.value}
               placeholder={labels.addressValidation.addressPlaceholder}
               onChangeText={addressInput.onChangeText}
@@ -73,6 +73,7 @@ export function ContactsRenameAddressDialog({
               size="lg"
               isFull
               disabled={!isConfirmEnabled}
+              icon={isDeviceRequired ? LedgerLogo : undefined}
               loading={isSaving}
               onPress={() => void onConfirm()}
               testID="contacts-rename-address-confirm"

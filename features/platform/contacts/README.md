@@ -18,14 +18,14 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   color and Unicode initial. Import it from the package root; the consumer's platform
   configuration resolves the target implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
-- `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
+- `@features/platform-contacts/test`: exposes deterministic device intent results for tests.
 - Contacts analytics building blocks: `ContactsGlobalProperties`,
   `buildContactsGlobalProperties()`, and `resolveContactsCurrencyAnalytics()` for shared global
   event properties and currency resolution.
 - `useContactsFeature()` and related resolvers: expose the Contacts feature configuration for both
   applications and Contacts leaf flows.
 - `resolveEligibleAddressCurrencyIds()`: resolves configured Contacts families to production
-  network identifiers.
+  network identifiers, keeping only the networks the device can register an address on.
 - `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
   operation, including device credentials for external contacts.
 - `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared
@@ -59,16 +59,12 @@ rename. The edit intent covers three ADR operations on its own — identifier ed
 both at once — through its `EditExternalAddressStep`.
 
 Each intent lives in its own directory with `types.ts`, `job.ts` and a component-less
-`intentDefinition.ts`. Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
-`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking DMK
-or `@ledgerhq/device-contacts-kit`.
+`intentDefinition.ts`. The three external-contact intents — registration, rename and edit — drive
+`@ledgerhq/device-contacts-kit`'s `ContactsManager` for real. The two Ledger-account intents are
+still deterministic scaffolds: they emit `pending`, `awaiting-device-confirmation`, then a
+persistence-friendly `completed` result without invoking DMK or the kit.
 
 The renderers are app-owned, because a `features/` package cannot resolve translations today. Each
 app keeps them under `src/mvvm/features/Contacts/deviceIntents/<intent>/`, composes each shared
 definition with its own component into an `IntentPlatformDefinition`, and injects the resulting bag
 into `useContactsIntentsOrchestrator`.
-
-The combined edit intentionally emits an identifier `partial-result` before the scope confirmation
-when both fields change. This preserves the ADR's non-atomic recovery contract: a consumer must
-persist that intermediate result before the scope step completes. Real ContactsManager adapters and
-application-flow wiring are deferred to their dedicated work.

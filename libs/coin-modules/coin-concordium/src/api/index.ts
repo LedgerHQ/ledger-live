@@ -20,6 +20,7 @@ import {
   TransactionType,
 } from "@ledgerhq/concordium-core";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
@@ -105,11 +106,27 @@ export function createApi(currencyId: string) {
   } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>;
 }
 
+/**
+ * Crafting ignores `asset` and always emits a native transfer, so without this
+ * a PLT intent would be signed as a CCD transfer of the same integer amount.
+ * `getBalance` reports PLT balances, which makes such an intent constructible;
+ * PLT crafting itself lands in LIVE-28337.
+ */
+function assertNativeAsset(transactionIntent: TransactionIntent<ConcordiumMemo>): void {
+  invariant(
+    transactionIntent.asset.type === "native",
+    "concordium: asset type %s is not supported",
+    transactionIntent.asset.type,
+  );
+}
+
 async function craftTransaction(
   config: ConcordiumCoinConfig,
   transactionIntent: TransactionIntent<ConcordiumMemo>,
   currencyId: string,
 ): Promise<CraftedTransaction> {
+  assertNativeAsset(transactionIntent);
+
   const nextSequenceNumber = await getNextValidSequence(
     config,
     transactionIntent.sender,
@@ -139,6 +156,10 @@ async function estimateFees(
   transactionIntent: TransactionIntent<ConcordiumMemo>,
   currencyId: string,
 ): Promise<FeeEstimation> {
+  // Rejected here too, or a caller gets a plausible native fee for a send that
+  // cannot be crafted.
+  assertNativeAsset(transactionIntent);
+
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value

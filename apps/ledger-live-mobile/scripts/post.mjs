@@ -118,17 +118,19 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
     await $`rndebugger-open`;
   }
 
-  try {
-    await which("bundle");
+  if (os.platform() === "darwin") {
     try {
-      await $`bundle install`;
+      await which("bundle");
+      try {
+        await $`bundle install`;
+      } catch (error) {
+        echo(chalk.red(error));
+      }
     } catch (error) {
-      echo(chalk.red(error));
+      echo(
+        chalk.red("Error: `bundle` command is missing. Please install Bundler. https://bundler.io"),
+      );
     }
-  } catch (error) {
-    echo(
-      chalk.red("Error: `bundle` command is missing. Please install Bundler. https://bundler.io"),
-    );
   }
 
   let hashesAreEquals = false;

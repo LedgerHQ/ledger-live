@@ -1,5 +1,11 @@
 import BigNumber from "bignumber.js";
-import type { ConcordiumResources, RawOperation } from "../types";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import type {
+  ConcordiumAccount,
+  ConcordiumAccountRaw,
+  ConcordiumResources,
+  RawOperation,
+} from "../types";
 import {
   createTestAccount,
   createTestConcordiumAccount,
@@ -12,6 +18,19 @@ import {
   assignToAccountRaw,
   assignFromAccountRaw,
 } from "./serialization";
+
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: { getCoinConfig: jest.fn() },
+}));
+
+const coinConfig = jest.requireMock("../config").default;
+
+// Token state only survives deserialization while the feature is on. The suites
+// below assume it is; "assignFromAccountRaw and the token flag" varies it.
+beforeEach(() => {
+  coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
+});
 
 const ACCOUNT_ID = "js:2:concordium_testnet:someaddr:";
 
@@ -120,7 +139,7 @@ describe("assignToAccountRaw", () => {
     expect("concordiumResources" in accountRaw).toBe(false);
   });
 
-  it("should handle undefined values in resources", () => {
+  it("should materialize missing fields as undefined rather than aliasing the source", () => {
     const resources = {
       isOnboarded: false,
     } as ConcordiumResources;
@@ -129,11 +148,16 @@ describe("assignToAccountRaw", () => {
 
     assignToAccountRaw(account, accountRaw);
 
-    expect("concordiumResources" in accountRaw).toBe(true);
-    if ("concordiumResources" in accountRaw) {
-      expect(accountRaw.concordiumResources).not.toBeUndefined();
-      expect((accountRaw.concordiumResources as any)?.isOnboarded).toBe(false);
-    }
+    // toStrictEqual, not toEqual: toEqual ignores undefined-valued keys and so
+    // passes against the old Object.assign too.
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).toStrictEqual({
+      isOnboarded: false,
+      credId: undefined,
+      publicKey: undefined,
+      identityIndex: undefined,
+      credNumber: undefined,
+      ipIdentity: undefined,
+    });
   });
 });
 
@@ -198,6 +222,102 @@ describe("roundtrip serialization", () => {
       expect(restoredAccount.concordiumResources).toEqual(originalResources);
     }
   });
+
+  it("should preserve the per-token map, including through JSON storage", () => {
+    const originalResources: ConcordiumResources = {
+      isOnboarded: true,
+      credId: "roundtrip-cred",
+      publicKey: "roundtrip-key",
+      identityIndex: 10,
+      credNumber: 20,
+      ipIdentity: 30,
+      tokens: {
+        PLT: { transferStatus: "allowed", paused: false },
+        "EUR.e": { transferStatus: "blocked", paused: true },
+        UNKNOWN: { transferStatus: "unknown" },
+      },
+    };
+    const account = createTestConcordiumAccount({ concordiumResources: originalResources });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    const stored = JSON.parse(JSON.stringify(accountRaw));
+    const restoredAccount = createTestAccount();
+    assignFromAccountRaw(stored, restoredAccount);
+
+    expect("concordiumResources" in restoredAccount).toBe(true);
+    if ("concordiumResources" in restoredAccount) {
+      expect(restoredAccount.concordiumResources).toEqual(originalResources);
+    }
+  });
+
+  it("should omit tokens entirely for an account that has none", () => {
+    const account = createTestConcordiumAccount({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "no-tokens",
+        publicKey: "no-tokens-key",
+        identityIndex: 1,
+        credNumber: 2,
+        ipIdentity: 3,
+      },
+    });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    expect("tokens" in (accountRaw as ConcordiumAccountRaw).concordiumResources).toBe(false);
+  });
+
+  it("should drop keys it does not know about in both directions", () => {
+    // Storage can hold a key written by a newer app version. Carrying it back
+    // out would make it self-propagating, so the converter is an allowlist.
+    const withStrayKey = {
+      isOnboarded: true,
+      credId: "c",
+      publicKey: "p",
+      identityIndex: 1,
+      credNumber: 2,
+      ipIdentity: 3,
+      stray: "should not survive",
+    } as unknown as ConcordiumResources;
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(
+      createTestConcordiumAccount({ concordiumResources: withStrayKey }),
+      accountRaw,
+    );
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toHaveProperty("stray");
+
+    const account = createTestAccount();
+    assignFromAccountRaw(
+      createTestConcordiumAccountRaw({ concordiumResources: withStrayKey }),
+      account,
+    );
+    expect((account as ConcordiumAccount).concordiumResources).not.toHaveProperty("stray");
+  });
+
+  it("should rebuild the resources object rather than aliasing it", () => {
+    const account = createTestConcordiumAccount({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "alias-check",
+        publicKey: "alias-key",
+        identityIndex: 1,
+        credNumber: 2,
+        ipIdentity: 3,
+        tokens: { PLT: { transferStatus: "allowed", paused: false } },
+      },
+    });
+
+    const accountRaw = createTestAccountRaw();
+    assignToAccountRaw(account, accountRaw);
+
+    expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toBe(
+      account.concordiumResources,
+    );
+  });
 });
 
 describe("mapRawOperationToBridgeOperation", () => {
@@ -245,5 +365,76 @@ describe("mapRawOperationToBridgeOperation", () => {
     const result = mapRawOperationToBridgeOperation(raw, ACCOUNT_ID);
 
     expect(result.blockHash).toBeNull();
+  });
+});
+
+/**
+ * Deserialization is the one account-producing path no `postSync` covers, so
+ * the flag has to be enforced here too.
+ */
+describe("assignFromAccountRaw and the token flag", () => {
+  const storedTokens = { "t-USDT": { transferStatus: "allowed" } };
+
+  const raw = () =>
+    ({
+      concordiumResources: {
+        isOnboarded: true,
+        credId: "",
+        publicKey: "",
+        identityIndex: 0,
+        credNumber: 0,
+        ipIdentity: 0,
+        tokens: { ...storedTokens },
+      },
+    }) as unknown as AccountRaw;
+
+  const account = () =>
+    ({
+      currency: { id: "concordium_testnet", family: "concordium" },
+      subAccounts: [{ id: "sub", type: "TokenAccount" }],
+    }) as unknown as Account;
+
+  beforeEach(() => jest.clearAllMocks());
+
+  it("drops sub-accounts and stored token state when the flag is off", () => {
+    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: false });
+    const target = account();
+
+    assignFromAccountRaw(raw(), target);
+
+    expect(target.subAccounts).toBeUndefined();
+    expect(
+      "tokens" in (target as never as { concordiumResources: object }).concordiumResources,
+    ).toBe(false);
+  });
+
+  it("keeps both when the flag is on", () => {
+    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
+    const target = account();
+
+    assignFromAccountRaw(raw(), target);
+
+    expect(target.subAccounts).toHaveLength(1);
+    expect(
+      (target as never as { concordiumResources: { tokens?: object } }).concordiumResources.tokens,
+    ).toEqual(storedTokens);
+  });
+
+  it.each([
+    [
+      "the config cannot be resolved",
+      () => {
+        throw new Error("MissingCoinConfig");
+      },
+    ],
+    ["the flag is absent from the config", () => ({})],
+  ])("fails closed and strips tokens when %s", (_case, impl) => {
+    // An unreadable flag must not expose token UI for a feature that is off by
+    // default. Sub-accounts are rebuilt from chain on the next sync.
+    coinConfig.getCoinConfig.mockImplementation(impl);
+    const target = account();
+
+    expect(() => assignFromAccountRaw(raw(), target)).not.toThrow();
+    expect(target.subAccounts).toBeUndefined();
   });
 });

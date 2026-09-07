@@ -1,36 +1,16 @@
-import React, { useCallback } from "react";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import React from "react";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import { useTranslation } from "react-i18next";
+import { TransferIdProps } from "./types";
+import { useTransferIdChange } from "./hooks";
 
-const TranferIdField = ({
-  onChange,
-  account,
-  transaction,
-  status,
-}: {
-  onChange: (t: Transaction) => void;
-  account: Account;
-  transaction: Transaction;
-  status: TransactionStatus;
-}) => {
+const TransferIdField = ({ onChange, account, transaction, status }: TransferIdProps) => {
   invariant(transaction.family === "casper", "TransferIdField: casper family expected");
 
   const { t } = useTranslation();
 
-  const bridge = useAccountBridge<Transaction>(account);
-
-  const onTransferIdFieldChange = useCallback(
-    (value: string) => {
-      value = value.replace(/\D/g, "");
-      if (value !== "") onChange(bridge.updateTransaction(transaction, { transferId: value }));
-      else onChange(bridge.updateTransaction(transaction, { transferId: undefined }));
-    },
-    [onChange, transaction, bridge],
-  );
+  const onTransferIdFieldChange = useTransferIdChange(account, transaction, onChange);
 
   return (
     <Input
@@ -44,4 +24,4 @@ const TranferIdField = ({
   );
 };
 
-export default TranferIdField;
+export default TransferIdField;

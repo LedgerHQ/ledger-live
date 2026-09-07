@@ -12,7 +12,9 @@ const CONTENT_LX = { gap: "s8" } as const;
 export function Section({ title, children }: SectionProps) {
   return (
     <Box lx={CONTAINER_LX}>
-      <Text typography="body2">{title}</Text>
+      <Text typography="body2" lx={{ color: "base" }}>
+        {title}
+      </Text>
       <Box lx={CONTENT_LX}>{children}</Box>
     </Box>
   );

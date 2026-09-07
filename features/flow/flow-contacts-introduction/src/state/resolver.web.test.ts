@@ -33,12 +33,22 @@ describe("resolveContactsFeatureIntroductionRequested", () => {
 });
 
 describe("resolveContactsLedgerSyncIntroductionOpen", () => {
+  it("stays closed until the user requests a mutation that needs Ledger Sync", () => {
+    expect(
+      resolveContactsLedgerSyncIntroductionOpen({
+        isFeatureIntroductionRequested: false,
+        ledgerSyncStatus: "inactive",
+        isLedgerSyncIntroductionRequested: false,
+      }),
+    ).toBe(false);
+  });
+
   it("defers the Ledger Sync introduction while the feature introduction is requested", () => {
     expect(
       resolveContactsLedgerSyncIntroductionOpen({
         isFeatureIntroductionRequested: true,
         ledgerSyncStatus: "inactive",
-        isLedgerSyncIntroductionDismissed: false,
+        isLedgerSyncIntroductionRequested: true,
       }),
     ).toBe(false);
   });
@@ -48,7 +58,7 @@ describe("resolveContactsLedgerSyncIntroductionOpen", () => {
       resolveContactsLedgerSyncIntroductionOpen({
         isFeatureIntroductionRequested: false,
         ledgerSyncStatus: "inactive",
-        isLedgerSyncIntroductionDismissed: false,
+        isLedgerSyncIntroductionRequested: true,
       }),
     ).toBe(true);
   });
@@ -58,7 +68,7 @@ describe("resolveContactsLedgerSyncIntroductionOpen", () => {
       resolveContactsLedgerSyncIntroductionOpen({
         isFeatureIntroductionRequested: false,
         ledgerSyncStatus: "checking",
-        isLedgerSyncIntroductionDismissed: false,
+        isLedgerSyncIntroductionRequested: true,
       }),
     ).toBe(false);
   });
@@ -68,18 +78,8 @@ describe("resolveContactsLedgerSyncIntroductionOpen", () => {
       resolveContactsLedgerSyncIntroductionOpen({
         isFeatureIntroductionRequested: false,
         ledgerSyncStatus: "unavailable",
-        isLedgerSyncIntroductionDismissed: false,
+        isLedgerSyncIntroductionRequested: true,
       }),
     ).toBe(true);
-  });
-
-  it("does not reopen the Ledger Sync introduction after session dismissal", () => {
-    expect(
-      resolveContactsLedgerSyncIntroductionOpen({
-        isFeatureIntroductionRequested: false,
-        ledgerSyncStatus: "inactive",
-        isLedgerSyncIntroductionDismissed: true,
-      }),
-    ).toBe(false);
   });
 });

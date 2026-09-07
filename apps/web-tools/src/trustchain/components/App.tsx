@@ -39,6 +39,7 @@ import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
 import { trustchainLifecycle } from "./walletSync";
 import type { DistantDocument } from "@shared/cloud-sync-module";
+import { contactsInitialState } from "@domain/entity-contact";
 import { Loading } from "./Loading";
 import { State } from "./types";
 
@@ -47,6 +48,7 @@ const initialState: State = {
   nonImportedAccounts: [],
   walletState: {
     accountNames: new Map(),
+    contacts: contactsInitialState.contacts,
     walletSyncState: { data: null, version: 0 },
     recentAddresses: {},
   },

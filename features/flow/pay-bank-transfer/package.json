@@ -27,6 +27,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-bank-transfer"
   },
+  "dependencies": {
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
+  },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",

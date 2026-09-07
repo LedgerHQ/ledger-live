@@ -5,7 +5,9 @@ import { useBankTransferIntroAdapter } from "../useBankTransferIntroAdapter";
 const labels: BankTransferIntroLabels = {
   title: "Convert cash to stablecoins",
   description: "Transfer USD or EUR from your bank.",
-  continueLabel: "Continue",
+  createAccountLabel: "Create an account",
+  logInLabel: "Log in",
+  providedBy: "Provided by Noah",
   rows: [{ icon: "Bank", title: "Bank transfer", description: "Send USD or EUR." }],
 };
 
@@ -30,23 +32,31 @@ describe("useBankTransferIntroAdapter", () => {
     const onTrackEvent = jest.fn();
 
     const { result } = renderHook(() =>
-      useBankTransferIntroAdapter({ labels, onBankTransfer, onTrackEvent }),
+      useBankTransferIntroAdapter({
+        labels,
+        heroImage: 7,
+        bottomInset: 34,
+        onBankTransfer,
+        onTrackEvent,
+      }),
     );
 
     const { bankTransferIntro } = result.current;
     expect(bankTransferIntro.labels).toBe(labels);
+    expect(bankTransferIntro.heroImage).toBe(7);
+    expect(bankTransferIntro.bottomInset).toBe(34);
     expect(bankTransferIntro.onBankTransfer).toBe(onBankTransfer);
     expect(bankTransferIntro.onTrackEvent).toBe(onTrackEvent);
   });
 
-  it("emits onBankTransfer and closes on continue", () => {
+  it("emits onBankTransfer and closes on create account", () => {
     const onBankTransfer = jest.fn();
     const { result } = renderHook(() => useBankTransferIntroAdapter({ labels, onBankTransfer }));
 
     act(() => result.current.open());
-    act(() => result.current.onContinuePress());
+    act(() => result.current.onCreateAccountPress());
 
-    expect(onBankTransfer).toHaveBeenCalledTimes(1);
+    expect(onBankTransfer).toHaveBeenCalledWith("createAccount");
     expect(result.current.isOpen).toBe(false);
   });
 });

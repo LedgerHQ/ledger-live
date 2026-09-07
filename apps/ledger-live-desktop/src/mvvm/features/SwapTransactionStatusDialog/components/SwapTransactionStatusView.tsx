@@ -2,6 +2,7 @@ import React from "react";
 import type { SwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
 import { TransactionHeader } from "./TransactionHeader";
 import { StatusSection } from "./Status/StatusSection";
+import { EarnBanner } from "./EarnBanner/EarnBanner";
 import { DetailsSection } from "./Details/DetailsSection";
 import { FooterSection } from "./Footer/FooterSection";
 
@@ -41,6 +42,12 @@ export function SwapTransactionStatusView({
         sentAmount={sentAmount}
         receivedAmount={receivedAmount}
         isLoading={isStatusSectionLoading}
+      />
+
+      <EarnBanner
+        sendCurrency={sendCurrency}
+        receiveCurrency={receiveCurrency}
+        provider={provider}
       />
 
       <DetailsSection

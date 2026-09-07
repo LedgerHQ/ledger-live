@@ -58,7 +58,7 @@
     "@domain/entity-currency-unit": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
-    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/context-module": "catalog:",

@@ -1,0 +1,3 @@
+# Rendered from zebra.toml.template at spawn time (regtestNode.ts), with the
+# test account's own miner address baked in -- never a source file.
+src/docker/zebra.toml

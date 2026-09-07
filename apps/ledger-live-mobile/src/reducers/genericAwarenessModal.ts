@@ -61,6 +61,13 @@ const genericAwarenessModalSlice = createSlice({
 
       state.contentCards = [...existingCards, ...action.payload];
     },
+    replaceBrazeGenericAwarenessModalContentCards: (
+      state,
+      action: PayloadAction<GenericAwarenessModalContentCard[]>,
+    ) => {
+      const localCards = state.contentCards.filter(card => card.isLocal);
+      state.contentCards = [...localCards, ...action.payload];
+    },
     markGenericAwarenessModalContentCardAsRead: (
       state,
       action: PayloadAction<MarkGenericAwarenessModalContentCardAsReadPayload>,
@@ -84,6 +91,7 @@ export const {
   setGenericAwarenessModalContentCards,
   clearLocalGenericAwarenessModalContentCards,
   appendGenericAwarenessModalContentCards,
+  replaceBrazeGenericAwarenessModalContentCards,
   markGenericAwarenessModalContentCardAsRead,
 } = genericAwarenessModalSlice.actions;
 

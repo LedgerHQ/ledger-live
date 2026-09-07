@@ -3,13 +3,13 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
-import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
@@ -37,8 +37,7 @@ export function useRecipientScreenView({
   const contacts = useContacts();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("mobile");
-  const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
-  const [pendingContactAddress, setPendingContactAddress] = useState<string>();
+  const { selectedContact } = useRecipientContactSelection();
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
@@ -105,39 +104,26 @@ export function useRecipientScreenView({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
-      setPendingContactAddress(undefined);
       onAddressSelected(address, ensName);
     },
     [onAddressSelected],
   );
 
-  const validateContactAddress = useCallback(
-    (address: string) => {
-      setPendingContactAddress(address);
-      recipientSearch.setValue(address);
+  const handleContactAddressSelect = useCallback(
+    (address: ContactAddress) => {
+      handleAddressSelect(address.address);
     },
-    [recipientSearch],
+    [handleAddressSelect],
   );
+  const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
+    onSelectAddress: handleContactAddressSelect,
+  });
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
-      const address = pickContactAddressForCurrency(contact.addresses, currency.id);
-      if (address) {
-        validateContactAddress(address.address);
-        return;
-      }
-
-      selectContact(contact);
+      openPicker(contact);
     },
-    [currency.id, selectContact, validateContactAddress],
-  );
-
-  const handleContactAddressSelect = useCallback(
-    (address: string) => {
-      clearSelectedContact();
-      validateContactAddress(address);
-    },
-    [clearSelectedContact, validateContactAddress],
+    [openPicker],
   );
 
   const featureIntroduction = useContactsFeatureIntroductionViewModel({
@@ -150,25 +136,6 @@ export function useRecipientScreenView({
     isLoading,
     recipientSupportsDomain,
   });
-
-  useEffect(() => {
-    const selectedAddressIsValidated =
-      Boolean(pendingContactAddress) &&
-      pendingContactAddress === recipientSearch.value &&
-      searchState.isAddressValid &&
-      !searchState.showBridgeSenderError &&
-      !searchState.showBridgeRecipientWarning;
-    if (selectedAddressIsValidated && pendingContactAddress) {
-      handleAddressSelect(pendingContactAddress);
-    }
-  }, [
-    handleAddressSelect,
-    pendingContactAddress,
-    recipientSearch.value,
-    searchState.isAddressValid,
-    searchState.showBridgeRecipientWarning,
-    searchState.showBridgeSenderError,
-  ]);
 
   const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
 
@@ -190,7 +157,7 @@ export function useRecipientScreenView({
     handlePasteFromClipboard,
     handleAddressSelect,
     handleContactSelect,
-    handleContactAddressSelect,
+    contactAddressPicker,
     isContactsFeatureEnabled,
     featureIntroduction,
     ...searchState,

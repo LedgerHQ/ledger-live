@@ -1,7 +1,10 @@
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   ConcordiumAddressVerificationFailedError,
+  ConcordiumAppOutdatedError,
   ConcordiumInvalidMaxFeeError,
+  ConcordiumInvalidPltPayloadError,
+  ConcordiumSignerProtocolError,
   ConcordiumTrustedMetadataServiceError,
 } from "@ledgerhq/coin-concordium/types";
 import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
@@ -243,6 +246,96 @@ describe("DmkSignerConcordium", () => {
       await expect(signer.signTransaction(mockTx, mockPath, mockMaxFee)).rejects.toThrow(
         ConcordiumInvalidMaxFeeError,
       );
+    });
+
+    describe("PLT error mapping", () => {
+      const expectMappedError = async (errorCode: string, expected: new () => Error) => {
+        // toThrow(undefined) matches any thrown value, so a class that resolves
+        // to undefined (a stale coin-concordium build, a renamed export) would
+        // let every case below pass without asserting anything.
+        expect(expected).toEqual(expect.any(Function));
+
+        mockSignerConcordium.signTransaction.mockReturnValue({
+          observable: of({
+            status: DeviceActionStatus.Error,
+            error: { _tag: "ConcordiumAppCommandError", errorCode },
+          }),
+        });
+
+        await expect(signer.signTransaction(mockTx, mockPath, mockMaxFee)).rejects.toBeInstanceOf(
+          expected,
+        );
+      };
+
+      it.each(["6b04", "6b0d", "6b0e", "6b0f", "6b10", "6b11", "invalid_plt_transaction"])(
+        "should map %s to ConcordiumInvalidPltPayloadError",
+        async errorCode => {
+          await expectMappedError(errorCode, ConcordiumInvalidPltPayloadError);
+        },
+      );
+
+      it.each(["6b00", "6b01", "6b02", "6b03", "6b06", "6b07", "unsupported_transaction_type"])(
+        "should map %s to ConcordiumSignerProtocolError",
+        async errorCode => {
+          await expectMappedError(errorCode, ConcordiumSignerProtocolError);
+        },
+      );
+
+      it.each(["unsupported_app_version", "6d00"])(
+        "should map %s to ConcordiumAppOutdatedError",
+        async errorCode => {
+          await expectMappedError(errorCode, ConcordiumAppOutdatedError);
+        },
+      );
+
+      it("should carry the original error message through the mapped error", async () => {
+        mockSignerConcordium.signTransaction.mockReturnValue({
+          observable: of({
+            status: DeviceActionStatus.Error,
+            error: {
+              _tag: "ConcordiumAppCommandError",
+              errorCode: "6b0d",
+              originalError: new Error("PLT CBOR error"),
+            },
+          }),
+        });
+
+        await expect(signer.signTransaction(mockTx, mockPath, mockMaxFee)).rejects.toThrow(
+          "PLT CBOR error",
+        );
+      });
+
+      // mapError is shared by every flow, so the codes above also change what
+      // the non-PLT flows throw.
+      it("should map 6d00 to ConcordiumAppOutdatedError on getPublicKey", async () => {
+        mockSignerConcordium.getPublicKey.mockReturnValue({
+          observable: of({
+            status: DeviceActionStatus.Error,
+            error: { _tag: "ConcordiumAppCommandError", errorCode: "6d00" },
+          }),
+        });
+
+        await expect(signer.getPublicKey(mockPath)).rejects.toBeInstanceOf(
+          ConcordiumAppOutdatedError,
+        );
+      });
+
+      it("should map 6b02 to ConcordiumSignerProtocolError on verifyAddress", async () => {
+        mockSignerConcordium.verifyAddress.mockReturnValue({
+          observable: of({
+            status: DeviceActionStatus.Error,
+            error: { _tag: "ConcordiumAppCommandError", errorCode: "6b02" },
+          }),
+        });
+
+        await expect(
+          signer.verifyAddress(
+            mockPath,
+            "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+            "mainnet",
+          ),
+        ).rejects.toBeInstanceOf(ConcordiumSignerProtocolError);
+      });
     });
   });
 

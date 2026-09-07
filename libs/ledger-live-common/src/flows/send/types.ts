@@ -5,6 +5,7 @@ import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
+  SKIP_MEMO_CONFIRMATION: "SKIP_MEMO_CONFIRMATION",
   RECENT_HISTORY: "RECENT_HISTORY",
   ADD_CONTACT: "ADD_CONTACT",
   ADD_NEW_CONTACT: "ADD_NEW_CONTACT",
@@ -14,9 +15,21 @@ export const SEND_FLOW_STEP = {
   COIN_CONTROL: "COIN_CONTROL",
   SIGNATURE: "SIGNATURE",
   CONFIRMATION: "CONFIRMATION",
+  PAY_SUCCESS: "PAY_SUCCESS",
 } as const;
 
 export type SendFlowStep = (typeof SEND_FLOW_STEP)[keyof typeof SEND_FLOW_STEP];
+
+export const SEND_FLOW_COMPLETION = {
+  SUCCESS: "SUCCESS",
+  FAILURE: "FAILURE",
+} as const;
+
+export type SendFlowCompletion = (typeof SEND_FLOW_COMPLETION)[keyof typeof SEND_FLOW_COMPLETION];
+
+export const SEND_FLOW_SOURCE = {
+  PAY: "Pay",
+} as const;
 
 export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
   Readonly<{
@@ -28,6 +41,7 @@ export type BaseSendStepConfig = FlowStepConfig<SendFlowStep> &
 export type BaseSendFlowConfig = FlowConfig<SendFlowStep, BaseSendStepConfig>;
 
 export type SendFlowUiConfig = Readonly<{
+  /** Whether the currency supports memos. */
   hasMemo: boolean;
   memoType?: string;
   memoMaxLength?: number;
@@ -99,6 +113,7 @@ export type SendFlowInitParams = Readonly<{
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
+  source?: string;
 }>;
 
 export function hasDirectRecipient(
@@ -123,6 +138,7 @@ export type SendFlowBusinessContext = Readonly<{
   operation: SendFlowOperationActions;
   status: FlowStatusActions;
   uiConfig: SendFlowUiConfig;
+  source?: string;
   recipientSearch: Readonly<{
     value: string;
     setValue: (value: string) => void;

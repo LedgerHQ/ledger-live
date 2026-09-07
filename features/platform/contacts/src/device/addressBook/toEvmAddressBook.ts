@@ -4,6 +4,7 @@ import type {
   EvmContactGroup,
   EvmExternalAddress,
 } from "@ledgerhq/device-signer-kit-ethereum";
+import { tryDecodeHex } from "../contactsKitMappers";
 
 /**
  * Contacts persist `currency.family` in their device context. Only this family
@@ -12,7 +13,6 @@ import type {
  */
 const EVM_BLOCKCHAIN_FAMILY = "evm";
 
-const HEX_PATTERN = /^[0-9a-f]+$/;
 const EVM_ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
 
 /**
@@ -34,8 +34,8 @@ function toEvmContactGroup(contact: Contact): EvmContactGroup[] {
   const credentials = contact.deviceCredentials;
   if (credentials === undefined) return [];
 
-  const groupHandle = hexToBytes(credentials.groupHandle);
-  const hmacProof = hexToBytes(credentials.hmacProof);
+  const groupHandle = tryDecodeHex(credentials.groupHandle);
+  const hmacProof = tryDecodeHex(credentials.hmacProof);
   if (groupHandle === null || hmacProof === null) return [];
 
   const externalAddresses = contact.addresses.flatMap(toEvmExternalAddress);
@@ -48,7 +48,7 @@ function toEvmExternalAddress(address: ContactAddress): EvmExternalAddress[] {
   const { blockchainFamily, chainId, hmacRest } = address.device;
   if (blockchainFamily !== EVM_BLOCKCHAIN_FAMILY) return [];
 
-  const proof = hexToBytes(hmacRest);
+  const proof = tryDecodeHex(hmacRest);
   const parsedChainId = toChainId(chainId);
   if (proof === null || parsedChainId === null || !isEvmAddress(address.address)) return [];
 
@@ -74,18 +74,4 @@ function toChainId(value: string | number): bigint | null {
   } catch {
     return null;
   }
-}
-
-function hexToBytes(value: string): Uint8Array | null {
-  const normalized = value.toLowerCase();
-  if (normalized.length === 0 || normalized.length % 2 !== 0 || !HEX_PATTERN.test(normalized)) {
-    return null;
-  }
-
-  const bytes = new Uint8Array(normalized.length / 2);
-  for (let index = 0; index < bytes.length; index++) {
-    bytes[index] = Number.parseInt(normalized.slice(index * 2, index * 2 + 2), 16);
-  }
-
-  return bytes;
 }

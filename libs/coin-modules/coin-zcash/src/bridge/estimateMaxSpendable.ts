@@ -5,7 +5,11 @@ import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
 } from "../logic/coin-selection";
-import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
+import {
+  boundTransparentUtxos,
+  isTransparentInputTransfer,
+  resolveTransparentUtxos,
+} from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
 import { collectSelectableIronwoodNotes } from "../logic/account/spendability";
 
@@ -24,7 +28,12 @@ export const estimateMaxSpendable: AccountBridge<
   const transferType = tx?.transferType ?? "transparent";
   // Max spendable from the Ironwood note pool for shielded-input flows.
   if (transferType !== "shielded" && transferType !== "shielded-to-transparent") {
-    const utxoValues = (mainAccount.bitcoinResources?.utxos ?? []).map(utxo => utxo.value);
+    // No transaction to resolve a caller override through -- bound the
+    // account-synced set directly so this path can never disagree with
+    // resolveTransparentUtxos's bound above.
+    const utxoValues = boundTransparentUtxos(mainAccount.bitcoinResources?.utxos ?? []).map(
+      utxo => utxo.value,
+    );
     return estimateMaxSpendableTransparent(utxoValues, "transparent");
   }
 

@@ -22,6 +22,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import DelegationStatusIcon from "~/families/hedera/Delegations/DelegationStatusIcon";
 import { DelegationStatusModal } from "~/families/hedera/shared/DelegationStatusModal";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import Skeleton from "~/components/Skeleton";
 import { useAccountName } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { rgba } from "../../../colors";
@@ -88,15 +89,17 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
       {
         label: t("delegation.validator"),
         Component: (
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            ellipsizeMode="middle"
-            style={[styles.valueText]}
-            color="live"
-          >
-            {enrichedDelegation.validator.name}
-          </Text>
+          <Skeleton loading={enrichedDelegation.loading} style={styles.statusSkeleton}>
+            <Text
+              numberOfLines={1}
+              fontWeight="semiBold"
+              ellipsizeMode="middle"
+              style={[styles.valueText]}
+              color="live"
+            >
+              {enrichedDelegation.validator.name}
+            </Text>
+          </Skeleton>
         ),
       },
       {
@@ -133,20 +136,24 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
         label: t("hedera.delegatedPositions.details.status.title"),
         Component: (
           <Touchable event="DelegationOpenStatusModal" onPress={openStatusModal}>
-            <Flex flexDirection="row" alignItems="center" columnGap={4}>
-              <DelegationStatusIcon status={enrichedDelegation.status} color={colors.live} />
-              <Text
-                numberOfLines={1}
-                fontWeight="semiBold"
-                ellipsizeMode="middle"
-                style={styles.valueText}
-                color="live"
-              >
-                <Trans
-                  i18nKey={`hedera.delegatedPositions.details.status.${enrichedDelegation.status}`}
-                />
-              </Text>
-            </Flex>
+            <Skeleton loading={enrichedDelegation.loading} style={styles.statusSkeleton}>
+              <Flex flexDirection="row" alignItems="center" columnGap={4}>
+                <DelegationStatusIcon status={enrichedDelegation.status} color={colors.live} />
+                <Text
+                  numberOfLines={1}
+                  fontWeight="semiBold"
+                  ellipsizeMode="middle"
+                  style={styles.valueText}
+                  color="live"
+                >
+                  <Trans
+                    i18nKey={`hedera.delegatedPositions.details.status.${
+                      enrichedDelegation.error ? "fetchError" : enrichedDelegation.status
+                    }`}
+                  />
+                </Text>
+              </Flex>
+            </Skeleton>
           </Touchable>
         ),
       },
@@ -182,9 +189,10 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
     ] satisfies HEDERA_TRANSACTION_MODES[];
 
     const mapStakeActionToDisabled = {
-      [HEDERA_TRANSACTION_MODES.Redelegate]: false,
-      [HEDERA_TRANSACTION_MODES.ClaimRewards]: enrichedDelegation.pendingReward.isZero(),
-      [HEDERA_TRANSACTION_MODES.Undelegate]: false,
+      [HEDERA_TRANSACTION_MODES.Redelegate]: enrichedDelegation.loading,
+      [HEDERA_TRANSACTION_MODES.ClaimRewards]:
+        enrichedDelegation.loading || enrichedDelegation.pendingReward.isZero(),
+      [HEDERA_TRANSACTION_MODES.Undelegate]: enrichedDelegation.loading,
     } as const satisfies Record<(typeof allStakeActions)[number], boolean>;
 
     const mapStakeActionToColor = {
@@ -264,6 +272,7 @@ function Delegations({ account, delegatedPosition }: Readonly<Props>) {
       />
       <DelegationStatusModal
         status={enrichedDelegation.status}
+        error={!!enrichedDelegation.error}
         isOpen={isStatusModalOpen}
         onClose={onCloseStatusModal}
       />
@@ -327,6 +336,11 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   delegationsWrapper: {
+    borderRadius: 4,
+  },
+  statusSkeleton: {
+    width: 90,
+    height: 16,
     borderRadius: 4,
   },
   valueText: {

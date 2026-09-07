@@ -2,6 +2,7 @@ import React from "react";
 import { BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import type { SwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
 import { DetailsSection } from "./Details/DetailsSection";
+import { EarnBanner } from "./EarnBanner/EarnBanner";
 import { FooterSection } from "./Footer/FooterSection";
 import { StatusSection } from "./Status/StatusSection";
 import { TransactionHeader } from "./TransactionHeader";
@@ -48,6 +49,12 @@ export function SwapTransactionStatusView({
           receivedAmount={receivedAmount}
           showReceivedAmountEstimated={showReceivedAmountEstimated}
           isLoading={isStatusSectionLoading}
+        />
+
+        <EarnBanner
+          sendCurrency={sendCurrency}
+          receiveCurrency={receiveCurrency}
+          provider={provider}
         />
 
         <DetailsSection

@@ -1,6 +1,5 @@
 import { type ContactId } from "@domain/entity-contact";
 import {
-  type ContactsEditSignerDrawerProps,
   type ContactsEditSignerMismatchDrawerProps,
   type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
@@ -27,7 +26,6 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
   }>;
   renameDrawer: ContactsRenameContactDrawerProps;
   deleteDrawer: ContactsDeleteContactDrawerProps;
-  signerDrawer: ContactsEditSignerDrawerProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
   onOpenActionsMenu: () => void;
 }>;
@@ -80,7 +78,6 @@ export function useContactDetailEditDeleteAdapter(
     },
     renameDrawer: uiState.rename,
     deleteDrawer: uiState.delete,
-    signerDrawer: uiState.signer,
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

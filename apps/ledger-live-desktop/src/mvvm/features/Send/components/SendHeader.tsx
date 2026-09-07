@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { useSendFlowData } from "../context/SendFlowContext";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   SEND_FLOW_STEP,
@@ -16,14 +16,12 @@ import { AddressDisclaimer } from "./AddressDisclaimer";
 import { RecipientHeaderPrefix } from "./RecipientHeaderPrefix";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
-import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { RecipientQrScanner } from "../screens/Recipient/components/RecipientQrScanner";
 import type { SendStepConfig } from "../types";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
-  const { close } = useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
   const { t } = useTranslation();
   const { currentStep } = wizard;
@@ -39,11 +37,6 @@ export function SendHeader() {
     onMemoTypeChange,
     showMemoValueInput,
     onMemoValueChange,
-    showSkipMemo,
-    skipMemoState,
-    onSkipMemoRequestConfirm,
-    onSkipMemoCancelConfirm,
-    onSkipMemoConfirm,
     resetViewState,
   } = useSendHeaderMemo();
 
@@ -51,8 +44,10 @@ export function SendHeader() {
     addressInputValue,
     descriptionText,
     handleBack,
+    handleClose,
     handleRecipientInputClick,
     handleRecipientInputChange,
+    handleRecipientPaste,
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen,
@@ -110,6 +105,7 @@ export function SendHeader() {
           prefix={t("newSendFlow.to")}
           value={addressInputValue}
           onChange={e => handleRecipientInputChange(e.target.value)}
+          onPaste={handleRecipientPaste}
           onClear={recipientSearch.clear}
           onQrCodeClick={handleQrCodeClick}
           placeholder={recipientPlaceholder}
@@ -140,16 +136,6 @@ export function SendHeader() {
                 />
               ) : null}
             </div>
-
-            {showSkipMemo && !transactionError && (
-              <SkipMemoSection
-                currencyId={currencyId}
-                state={skipMemoState}
-                onRequestConfirm={onSkipMemoRequestConfirm}
-                onCancelConfirm={onSkipMemoCancelConfirm}
-                onConfirm={onSkipMemoConfirm}
-              />
-            )}
           </div>
         ) : null}
       </>
@@ -176,13 +162,9 @@ export function SendHeader() {
     transactionError,
     transactionErrorName,
     onMemoValueChange,
-    showSkipMemo,
-    skipMemoState,
-    onSkipMemoRequestConfirm,
-    onSkipMemoCancelConfirm,
-    onSkipMemoConfirm,
     handleRecipientInputClick,
     handleRecipientInputChange,
+    handleRecipientPaste,
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen,
@@ -196,7 +178,7 @@ export function SendHeader() {
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}
-          onClose={close}
+          onClose={handleClose}
         />
       </div>
       {recipientInputContent}

@@ -1,29 +1,36 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
-import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
 import { useRecipientScreenContentViewModel } from "../useRecipientScreenContentViewModel";
+import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/analytics");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
-jest.mock("../../../../context/SendFlowContext");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
+jest.mock("../useSettleRecipientInputFocus");
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: jest.fn(() => ({ currency: "bitcoin" })),
 }));
 jest.mock("~/logic/keyboardVisible", () => ({
   shouldUseKeyboardAvoidance: jest.fn(() => true),
 }));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: {
+    hasMemoForRecipient: jest.fn(),
+  },
+}));
 
 const mockedTrack = jest.mocked(track);
 const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
-const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
+const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFocus);
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
@@ -32,6 +39,9 @@ const onMemoProceed = jest.fn();
 const recipientViewModel = {
   isLoading: false,
   showInitialState: false,
+  showContactsList: false,
+  showEmptyContactsState: false,
+  featureIntroduction: { isOpen: false },
   showMatchedAddress: true,
   result: {
     status: "valid",
@@ -81,9 +91,7 @@ const addressMatchedSectionViewModel = {
 describe("useRecipientScreenContentViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseSendFlowData.mockReturnValue({
-      uiConfig: { hasMemo: true },
-    } as never);
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
     mockedUseRecipientScreenView.mockReturnValue(recipientViewModel);
     mockedUseMemoViewModel.mockReturnValue(memoViewModel);
     mockedUseAddressMatchedSectionViewModel.mockReturnValue(
@@ -124,6 +132,7 @@ describe("useRecipientScreenContentViewModel", () => {
     );
     expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
       address: "resolved-address",
+      hasMemo: true,
       onSkip: expect.any(Function),
     });
     expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenCalledWith(
@@ -134,6 +143,23 @@ describe("useRecipientScreenContentViewModel", () => {
         onAddContact: expect.any(Function),
       }),
     );
+  });
+
+  it("hides memo controls when the recipient does not support memos", () => {
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(false);
+
+    const { result } = renderViewModel();
+
+    expect(mockedSendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+      account.currency,
+      "resolved-address",
+    );
+    expect(result.current.showMemo).toBe(false);
+    expect(mockedUseMemoViewModel).toHaveBeenCalledWith({
+      address: "",
+      hasMemo: false,
+      onSkip: expect.any(Function),
+    });
   });
 
   it("tracks and forwards matched-address selection", () => {
@@ -149,6 +175,36 @@ describe("useRecipientScreenContentViewModel", () => {
       expect.objectContaining({ button: "my accounts", page: "step recipient" }),
     );
     expect(handleAddressSelect).toHaveBeenCalledWith("destination", "name.eth");
+  });
+
+  it.each([
+    ["a contacts list", { showInitialState: true, showContactsList: true }],
+    ["a clipboard suggestion", { showInitialState: true, clipboardAddress: "clipboard-address" }],
+    [
+      "the contacts introduction",
+      { showInitialState: true, featureIntroduction: { isOpen: true } },
+    ],
+    ["search results", { showInitialState: false }],
+  ])("reports %s as content the user has to deal with first", (_, overrides) => {
+    mockedUseRecipientScreenView.mockReturnValue({
+      ...(recipientViewModel as object),
+      ...overrides,
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(true);
+  });
+
+  it("reports an empty initial step as free for the address input to focus", () => {
+    mockedUseRecipientScreenView.mockReturnValue({
+      ...(recipientViewModel as object),
+      showInitialState: true,
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(false);
   });
 
   it("tracks memo skipping before proceeding", () => {

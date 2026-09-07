@@ -1,6 +1,6 @@
 import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import { DescriptorEventType } from "@ledgerhq/hw-transport";
-import { AccountRaw } from "@ledgerhq/types-live";
+import { AccountRaw, type PostOnboardingState } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BleState, SettingsState } from "~/reducers/types";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -83,6 +83,7 @@ export type MessageData =
     }
   | { type: "importTrustchain"; id: string; payload: TrustchainStore }
   | { type: "importBle"; id: string; payload: BleState }
+  | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }

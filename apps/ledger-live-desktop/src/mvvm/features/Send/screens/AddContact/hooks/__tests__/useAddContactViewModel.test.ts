@@ -12,6 +12,11 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
     navigation: { goToStep },
   }),
 }));
+jest.mock("../../../../context/SendFlowContext", () => ({
+  useSendFlowData: () => ({
+    state: { account: { account: null, parentAccount: null } },
+  }),
+}));
 
 describe("useAddContactViewModel", () => {
   beforeEach(() => {

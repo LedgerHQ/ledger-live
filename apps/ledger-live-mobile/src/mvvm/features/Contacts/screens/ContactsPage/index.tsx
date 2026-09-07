@@ -1,10 +1,13 @@
 import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
 import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import { ContactAddressPicker } from "@features/flow-pay-contact";
+import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { TrackScreen } from "~/analytics";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
@@ -22,10 +25,13 @@ function ContactsScreenRedirect() {
   return null;
 }
 
-function ContactsScreenContent() {
-  const { params } =
-    useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContacts>>();
-  const pageViewModel = useContactsPageViewModel();
+type ContactsScreenBodyProps = Readonly<{
+  title?: string;
+  onSelectContact?: (contact: Contact) => void;
+}>;
+
+function ContactsScreenBody({ title, onSelectContact }: ContactsScreenBodyProps) {
+  const pageViewModel = useContactsPageViewModel(onSelectContact);
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
     onSearchQueryChange("");
@@ -44,10 +50,32 @@ function ContactsScreenContent() {
     pageViewModel.labels.addContact,
     !isContactsSearchNoResultsViewModel(pageViewModel.viewModel),
     onAddContact,
-    params?.title,
+    title,
   );
 
   return <ContactsPageContent {...viewModel} />;
+}
+
+function ContactsPaySelectContent({ title }: Readonly<{ title?: string }>) {
+  const payment = usePayTabNewPayment();
+
+  return (
+    <>
+      <ContactsScreenBody title={title} onSelectContact={payment.open} />
+      <ContactAddressPicker {...payment.contactAddressPicker} />
+    </>
+  );
+}
+
+function ContactsScreenContent() {
+  const { params } =
+    useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContacts>>();
+
+  if (params?.selectContactToPay) {
+    return <ContactsPaySelectContent title={params.title} />;
+  }
+
+  return <ContactsScreenBody title={params?.title} />;
 }
 
 export function ContactsScreen() {

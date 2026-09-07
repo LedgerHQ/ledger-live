@@ -38,6 +38,7 @@ function createViewModel(
     isSaving: false,
     draftName: "",
     invalidNameError: null,
+    isDeviceRequired: false,
     labels: {
       title: "Edit contact",
       namePlaceholder: "Contact name",

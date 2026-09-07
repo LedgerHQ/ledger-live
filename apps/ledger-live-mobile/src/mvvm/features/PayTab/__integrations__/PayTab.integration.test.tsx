@@ -2,12 +2,19 @@ import React from "react";
 import { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
+import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
+import {
+  mockContact,
+  mockContactWithAddress,
+  mockContactWithMultipleAddresses,
+  mockMeContact,
+} from "@domain/entity-contact/schema.mock";
 import {
   EMPTY_DESCRIPTION,
   EMPTY_TITLE,
@@ -38,6 +45,45 @@ jest.mock("@features/flow-pay-card", () => ({
   ),
 }));
 
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet } = actual;
+
+  function MockQueuedBottomSheet({
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+    onOpened,
+    ...props
+  }: QueuedBottomSheetProps) {
+    const shouldOpen = !!(isRequestingToBeOpened || isForcingToBeOpened);
+    React.useEffect(() => {
+      if (shouldOpen) {
+        onOpened?.();
+      }
+    }, [onOpened, shouldOpen]);
+    return (
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isRequestingToBeOpened}
+        isForcingToBeOpened={isForcingToBeOpened}
+        onOpened={onOpened}
+        {...props}
+      />
+    );
+  }
+
+  return {
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
+  };
+});
+
+async function openBankTransferIntro(user: ReturnType<typeof renderPayTab>["user"]) {
+  await user.press(await screen.findByText("Add stablecoin"));
+  await user.press(await screen.findByText("Bank transfer"));
+  await screen.findByRole("header", { name: "Send cash, receive stablecoin" });
+}
+
 describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -53,7 +99,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("should persist dismissal and hide the tour after pressing Got it", async () => {
+    it("should persist dismissal and hide the tour after pressing Explore Pay", async () => {
       const { user, store } = renderPayTab({ hasSeenFeatureTour: false });
 
       await waitFor(() => {
@@ -282,16 +328,71 @@ describe("PayTab integration", () => {
         });
       });
     });
+  });
 
-    it("navigates to the Noah fiat provider when the bank transfer option is selected", async () => {
+  describe("bank transfer", () => {
+    it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
       const { user } = renderPayTab({ holdsUsdc: true });
 
-      await user.press(await screen.findByTestId("action-tile-deposit"));
-      await user.press(await screen.findByTestId("pay-card-deposit-option-bankTransfer"));
+      await openBankTransferIntro(user);
 
-      expect(await screen.findByTestId("receive-funds-screen")).toHaveTextContent(
-        `${ScreenName.ReceiveProvider}:noah`,
-      );
+      expect(screen.getByRole("header", { name: "Send cash, receive stablecoin" })).toBeVisible();
+      expect(
+        screen.getByText("Transfer cash and receive stablecoins straight to your Ledger Wallet™."),
+      ).toBeVisible();
+      expect(screen.getByText("Receive transfers from any bank")).toBeVisible();
+      expect(screen.getByText("No hidden fees")).toBeVisible();
+      expect(screen.getByText("Put your money to work right away")).toBeVisible();
+      expect(screen.getByText("Provided by Noah")).toBeVisible();
+      expect(screen.getByRole("button", { name: "Create an account" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Log in to Noah" })).toBeVisible();
+      expect(screen.queryByText(`${ScreenName.ReceiveProvider}:noah`)).toBeNull();
+    });
+
+    it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "bank transfer",
+        buttonLocation: "deposit",
+        page: "Pay",
+      });
+      expect(jest.mocked(track)).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    });
+
+    it("should open Noah when Create an account is pressed", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+      await user.press(screen.getByRole("button", { name: "Create an account" }));
+
+      expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "create an account",
+        flow: "C2S",
+        page: "cash to stable",
+      });
+      expect(jest.mocked(track)).not.toHaveBeenCalledWith("button_clicked", {
+        button: "close",
+        flow: "C2S",
+        page: "cash to stable",
+      });
+    });
+
+    it("should open Noah when Log in to Noah is pressed", async () => {
+      const { user } = renderPayTab({ holdsUsdc: true });
+
+      await openBankTransferIntro(user);
+      await user.press(screen.getByRole("button", { name: "Log in to Noah" }));
+
+      expect(await screen.findByText(`${ScreenName.ReceiveProvider}:noah`)).toBeVisible();
+      expect(jest.mocked(track)).toHaveBeenCalledWith("button_clicked", {
+        button: "log in to noah",
+        flow: "C2S",
+        page: "cash to stable",
+      });
     });
   });
 
@@ -369,8 +470,15 @@ describe("PayTab integration", () => {
   });
 
   describe("contacts strip", () => {
-    it("should render the Pay tile without see-all when 8 or fewer contacts are saved", async () => {
+    it("should not render the contacts section when lwmContacts is disabled", async () => {
       renderPayTab({ contacts: seedContacts(8) });
+
+      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
+      expect(screen.queryByTestId("pay-contacts")).toBeNull();
+    });
+
+    it("should render the Pay tile without see-all when 8 or fewer contacts are saved", async () => {
+      renderPayTab({ contacts: seedContacts(8), contactsEnabled: true });
 
       expect(await screen.findByTestId("pay-contacts-pay-tile")).toBeVisible();
       expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
@@ -379,7 +487,7 @@ describe("PayTab integration", () => {
     });
 
     it("should cap the strip at 8 and open the contacts list with a Pay title via see-all", async () => {
-      const { user } = renderPayTab({ contacts: seedContacts(9) });
+      const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByTestId("pay-contacts-tile-7")).toBeVisible();
       expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
@@ -387,8 +495,95 @@ describe("PayTab integration", () => {
       await user.press(screen.getByTestId("pay-contacts-see-all"));
 
       expect(await screen.findByTestId("my-wallet-contacts-screen")).toHaveTextContent(
-        `${ScreenName.MyWalletContacts}:Pay contact`,
+        `${ScreenName.MyWalletContacts}:Pay contact:selectContactToPay`,
       );
+    });
+
+    it("should pick a contact address before opening MAD", async () => {
+      const contact = mockContactWithMultipleAddresses({
+        id: "contact-stephanie",
+        name: "Stephanie",
+      });
+      const address = contact.addresses[0];
+      const { user, store } = renderPayTab({
+        contacts: [mockMeContact(), contact],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "Stephanie" }));
+
+      expect(await screen.findByText("Select Stephanie's address")).toBeVisible();
+
+      await user.press(screen.getByLabelText(`${address.label}, ${address.address}`));
+
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: true,
+        flow: "send",
+        source: "Pay",
+        uiUseCase: "pay",
+        preselectedCurrencies: [address.currencyId],
+      });
+      expect(
+        screen.queryByText(`${ScreenName.SendCoin}:${address.currencyId}`),
+      ).not.toBeOnTheScreen();
+    });
+
+    it("should still open the address sheet when the contact has one address", async () => {
+      const contact = mockContactWithAddress({
+        id: "contact-yana",
+        name: "Yana",
+      });
+      const address = contact.addresses[0];
+      const { user, store } = renderPayTab({
+        contacts: [mockMeContact(), contact],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "Yana" }));
+
+      expect(await screen.findByText("Select Yana's address")).toBeVisible();
+
+      await user.press(screen.getByLabelText(`${address.label}, ${address.address}`));
+
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: true,
+        flow: "send",
+        uiUseCase: "pay",
+        preselectedCurrencies: [address.currencyId],
+      });
+    });
+
+    it("should open the contact to add an address when the picker has none", async () => {
+      const contact = mockContact({
+        id: "contact-rosa",
+        name: "Rosa",
+      });
+      const { user } = renderPayTab({
+        contacts: [mockMeContact(), contact],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "Rosa" }));
+
+      expect(await screen.findByText("Select Rosa's address")).toBeVisible();
+
+      await user.press(screen.getByText("Add address"));
+
+      expect(
+        await screen.findByText(`${ScreenName.MyWalletContactDetail}:${contact.id}`),
+      ).toBeVisible();
+    });
+
+    it("should open the modular send drawer from New", async () => {
+      const { user, store } = renderPayTab({
+        contacts: seedContacts(2),
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByTestId("pay-contacts-pay-tile"));
+
+      expect(store.getState().modularDrawer.isOpen).toBe(true);
+      expect(store.getState().modularDrawer.uiUseCase).not.toBe("pay");
     });
   });
 });

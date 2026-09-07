@@ -1,9 +1,11 @@
 import { cardApi } from "@shared/api-services";
-import { CARD_MANAGEMENT_TAGS } from "./constants";
+import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
+  PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -13,9 +15,11 @@ import {
 import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
+  PayCardFreezeStateResult,
   PayCardInternalWallet,
   PayCardLinkedWallet,
   PayCardLogoutResult,
+  PayCardOnboardingStatus,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
@@ -23,35 +27,35 @@ import type {
   PayCardUser,
 } from "./types";
 
+const GRANT = { authenticated: false } as const;
+
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
     endpoints: build => ({
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
-        query: ({ code, codeVerifier }) => ({
-          url: "/v1/auth/oauth2/token",
+        query: request => ({
+          url: OAUTH2_TOKEN_PATH,
           method: "POST",
           body: {
             grant_type: "authorization_code",
-            code,
-            code_verifier: codeVerifier,
+            code: request.code,
+            code_verifier: request.codeVerifier,
           },
         }),
+        extraOptions: GRANT,
         rawResponseSchema: PayCardSessionResponseSchema,
         transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
       }),
 
-      /** Same endpoint as the code exchange, separated by `grant_type`. */
       refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
-        query: ({ refreshToken }) => ({
-          url: "/v1/auth/oauth2/token",
+        query: request => ({
+          url: OAUTH2_TOKEN_PATH,
           method: "POST",
-          body: {
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-          },
+          body: { grant_type: "refresh_token", refresh_token: request.refreshToken },
         }),
+        extraOptions: GRANT,
         rawResponseSchema: PayCardSessionResponseSchema,
         transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
@@ -98,6 +102,24 @@ export const cardManagementApi = cardApi
         providesTags: ["CardStatus"],
       }),
 
+      freezeCard: build.mutation<PayCardFreezeStateResult, void>({
+        query: () => ({
+          url: "/v1/card/freeze",
+          method: "POST",
+        }),
+        responseSchema: PayCardFreezeStateResponseSchema,
+        invalidatesTags: ["CardStatus"],
+      }),
+
+      unfreezeCard: build.mutation<PayCardFreezeStateResult, void>({
+        query: () => ({
+          url: "/v1/card/unfreeze",
+          method: "POST",
+        }),
+        responseSchema: PayCardFreezeStateResponseSchema,
+        invalidatesTags: ["CardStatus"],
+      }),
+
       getInternalWallets: build.query<PayCardInternalWallet[], void>({
         query: () => ({
           url: "/v1/wallet/internal",
@@ -113,18 +135,29 @@ export const cardManagementApi = cardApi
         }),
         responseSchema: PayCardLinkedWalletsResponseSchema,
       }),
+
+      getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
+        query: () => ({
+          url: "/v1/card/onboarding-status",
+          method: "GET",
+        }),
+        responseSchema: PayCardOnboardingStatusResponseSchema,
+        providesTags: ["CardOnboardingStatus"],
+      }),
     }),
   });
 
 export type CardManagementApi = typeof cardManagementApi;
 
 export const {
-  useExchangeAuthorizationCodeMutation,
-  useRefreshSessionMutation,
   useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useLazyGetCardStatusQuery,
+  useFreezeCardMutation,
+  useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
   useGetCardLinkedWalletsQuery,
+  useGetCardOnboardingStatusQuery,
 } = cardManagementApi;

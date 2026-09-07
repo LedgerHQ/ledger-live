@@ -18,6 +18,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import TranslatedError from "~/renderer/components/TranslatedError";
 import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/ValidatorsSelect";
 import AmountField from "../../shared/staking/AmountField";
+import { isValidatorRemoved } from "../../shared/utils";
 import type { StepProps } from "../types";
 
 function StepValidators({
@@ -39,8 +40,12 @@ function StepValidators({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const enrichedDelegation = useHederaEnrichedDelegation(account, delegation);
   const feeError = status.errors.fee;
-  const isValidatorRemoved =
-    !enrichedDelegation.validator.address && typeof delegation.nodeId === "number";
+  const validatorRemoved = isValidatorRemoved({
+    loading: enrichedDelegation.loading,
+    error: enrichedDelegation.error,
+    hasValidator: !!enrichedDelegation.validator.address,
+    nodeId: delegation.nodeId,
+  });
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = (validator: HederaValidator | null) => {
@@ -67,7 +72,7 @@ function StepValidators({
           disabled
           account={account}
           selectedValidatorId={enrichedDelegation.validator.id}
-          showRemovedPlaceholder={isValidatorRemoved}
+          showRemovedPlaceholder={validatorRemoved}
         />
       </Box>
       <StepRecipientSeparator />
@@ -121,6 +126,7 @@ export function StepValidatorsFooter({
       </Button>
       <Button
         id="redelegation-continue-button"
+        isLoading={bridgePending}
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}

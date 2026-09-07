@@ -24,4 +24,19 @@ describe("useFeatureFlaggedCurrencies", () => {
     const { result } = renderHook(() => useFeatureFlaggedCurrencies(true), { wrapper: Wrapper });
     expect(result.current.deactivatedCurrencyIds.size).toBe(0);
   });
+
+  it("deactivates gonka by default", () => {
+    const { Wrapper } = makeStoreWrapper();
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.featureFlaggedCurrencies.gonka).toBeDefined();
+    expect(result.current.deactivatedCurrencyIds.has("gonka")).toBe(true);
+  });
+
+  it("stops deactivating gonka once its gating flag is enabled", () => {
+    const { Wrapper } = makeStoreWrapper({
+      resolved: { ...FEATURE_FLAGS_DEFAULTS, currencyGonka: { enabled: true } },
+    });
+    const { result } = renderHook(() => useFeatureFlaggedCurrencies(), { wrapper: Wrapper });
+    expect(result.current.deactivatedCurrencyIds.has("gonka")).toBe(false);
+  });
 });

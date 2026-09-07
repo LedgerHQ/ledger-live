@@ -9,7 +9,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
-import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
+import { ContactAddressPicker } from "@features/flow-pay-contact";
 import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
@@ -36,9 +36,8 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     showEmptyContactsState,
     contactsOnNetwork,
     contactSearchResult,
-    selectedContact,
     handleContactSelect,
-    handleContactAddressSelect,
+    contactAddressPicker,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -87,14 +86,6 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
             />
           )}
 
-          {selectedContact && (
-            <RecipientContactAddressSelection
-              contact={selectedContact}
-              network={recipient.mainAccount.currency}
-              onAddressSelect={handleContactAddressSelect}
-            />
-          )}
-
           {showMemo && <MemoControls vm={memo} />}
 
           {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
@@ -128,6 +119,7 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+      <ContactAddressPicker {...contactAddressPicker} />
     </SendFlowLayout>
   );
 };

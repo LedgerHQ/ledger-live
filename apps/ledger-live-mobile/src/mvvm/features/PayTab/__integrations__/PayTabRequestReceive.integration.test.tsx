@@ -2,7 +2,11 @@ import React from "react";
 import { Text } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Clipboard from "@react-native-clipboard/clipboard";
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { render, screen, waitFor, act } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
@@ -18,6 +22,7 @@ import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { payTabEthAccount, payTabUsdcAccount, usd, usdc } from "./fixtures";
 
 const REQUEST_TITLE = "Request USD Coin";
+const VERIFY_HINT_COPY = /Verify your address on/;
 const VERIFY = "Verify";
 const VERIFY_ADDRESS = "Verify address";
 const VERIFY_INTRO = "Verify your address";
@@ -89,7 +94,9 @@ function renderRequestReceive(
   );
 }
 
-function renderRequestReceiveFromPayTab() {
+function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
+  hasSeenReceiveVerifyHint: boolean;
+}) {
   return render(
     <PayTabStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <PayTabStack.Screen name="PayTabTest" component={PayTabNavigator} />
@@ -98,6 +105,9 @@ function renderRequestReceiveFromPayTab() {
       overrideInitialState: state => ({
         ...withUsdcHoldings(state),
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: true },
+        ...(payRequestVerifyHint
+          ? { payRequestVerifyHint: { ...state.payRequestVerifyHint, ...payRequestVerifyHint } }
+          : {}),
       }),
       navigationInitialState: {
         index: 0,
@@ -137,6 +147,92 @@ describe("PayTab RequestReceive integration", () => {
     mockedBuildInit.mockResolvedValue({} as never);
   });
 
+  it("should keep the verify hint closed until the opening transition ends", async () => {
+    type RequestNav = NativeStackScreenProps<
+      PayTabNavigatorParamList,
+      typeof ScreenName.PayTabRequestReceive
+    >["navigation"];
+    let onOpeningTransitionEnd: ((event: { data: { closing: boolean } }) => void) | undefined;
+
+    function RequestReceiveScreen({ navigation }: { navigation: RequestNav }) {
+      if (!onOpeningTransitionEnd) {
+        // Jest native-stack never fires transitionEnd. navigation.emit is missing.
+        const addListener = navigation.addListener.bind(navigation);
+        navigation.addListener = ((
+          event: Parameters<RequestNav["addListener"]>[0],
+          callback: Parameters<RequestNav["addListener"]>[1],
+        ) => {
+          if (event === "transitionEnd") {
+            onOpeningTransitionEnd = callback as (e: { data: { closing: boolean } }) => void;
+          }
+          return addListener(event, callback);
+        }) as unknown as RequestNav["addListener"];
+      }
+      return <PayTabRequestReceiveScreen />;
+    }
+
+    render(
+      <RequestStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+        <RequestStack.Screen
+          name={ScreenName.PayTabRequestReceive}
+          component={RequestReceiveScreen}
+          initialParams={{
+            accountId: payTabEthAccount.id,
+            currency: usdc,
+          }}
+        />
+      </RequestStack.Navigator>,
+      { overrideInitialState: withUsdcHoldings },
+    );
+
+    expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
+    expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeOnTheScreen();
+
+    act(() => {
+      if (!onOpeningTransitionEnd) {
+        throw new Error("transitionEnd listener was not registered");
+      }
+      onOpeningTransitionEnd({ data: { closing: false } });
+    });
+
+    expect(await screen.findByText(VERIFY_HINT_COPY)).toBeVisible();
+  });
+
+  it("should keep the request screen open while the verify hint is unseen", async () => {
+    const { user } = renderRequestReceive();
+
+    await user.press(await screen.findByTestId("pay-request-receive-close"));
+
+    expect(screen.getByTestId("pay-request-receive")).toBeVisible();
+  });
+
+  it("should leave the request screen when closed after the hint was seen", async () => {
+    const { user } = renderRequestReceiveFromPayTab({ hasSeenReceiveVerifyHint: true });
+
+    await user.press(await screen.findByTestId("pay-request-receive-close"));
+
+    await waitFor(() => {
+      expect(screen.queryByText(REQUEST_TITLE)).not.toBeOnTheScreen();
+    });
+    expect(screen.getByRole("button", { name: PAY_DEPOSIT })).toBeVisible();
+  });
+
+  it("should persist the verify hint as seen when Verify is pressed", async () => {
+    const { user, store } = renderRequestReceive();
+
+    await user.press(await screen.findByRole("button", { name: VERIFY }));
+
+    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+  });
+
+  it("should copy the address when Copy is pressed", async () => {
+    const { user } = renderRequestReceive();
+
+    await user.press(await screen.findByRole("button", { name: "Copy" }));
+
+    expect(Clipboard.setString).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
+  });
+
   it("should render the request receive card for the selected account", async () => {
     renderRequestReceive();
 
@@ -152,7 +248,7 @@ describe("PayTab RequestReceive integration", () => {
     });
 
     expect(screen.getByTestId("generic-error-modal")).toBeVisible();
-    expect(screen.queryByText(REQUEST_TITLE)).toBeNull();
+    expect(screen.queryByText(REQUEST_TITLE)).not.toBeOnTheScreen();
   });
 
   it("should share a picture of the request card when Share is pressed", async () => {
@@ -193,7 +289,7 @@ describe("PayTab RequestReceive integration", () => {
       page: "Pay",
     });
     expect(screen.getByRole("button", { name: VERIFY_ADDRESS })).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Skip" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Skip" })).not.toBeOnTheScreen();
   });
 
   it("should keep the intro visible until device initialization resolves", async () => {
@@ -210,14 +306,14 @@ describe("PayTab RequestReceive integration", () => {
     await user.press(await screen.findByRole("button", { name: VERIFY_ADDRESS }));
 
     expect(screen.getByText(VERIFY_INTRO)).toBeVisible();
-    expect(screen.queryByText(DIE_LABEL)).toBeNull();
+    expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
 
     await act(async () => {
       release({} as never);
     });
 
     expect(await screen.findByText(DIE_LABEL)).toBeVisible();
-    expect(screen.queryByText(VERIFY_INTRO)).toBeNull();
+    expect(screen.queryByText(VERIFY_INTRO)).not.toBeOnTheScreen();
   });
 
   it("should mount the DIE on verify and keep the request card once the address is confirmed", async () => {
@@ -240,7 +336,7 @@ describe("PayTab RequestReceive integration", () => {
     });
 
     expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
-    expect(screen.queryByText(DIE_LABEL)).toBeNull();
+    expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_complete", {
       page: "Request Address Verification",
     });
@@ -253,7 +349,7 @@ describe("PayTab RequestReceive integration", () => {
     act(() => capturedExecutor!.onUserCancel());
 
     expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
-    expect(screen.queryByText(DIE_LABEL)).toBeNull();
+    expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_dismiss", {
       page: "Request Address Verification",
     });
@@ -275,7 +371,7 @@ describe("PayTab RequestReceive integration", () => {
       });
 
       expect(await screen.findByText(REQUEST_TITLE)).toBeVisible();
-      expect(screen.queryByText(DIE_LABEL)).toBeNull();
+      expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
       expect(jest.mocked(track)).toHaveBeenCalledWith(`request_verification_${type}`, {
         page: "Request Address Verification",
       });
@@ -306,7 +402,7 @@ describe("PayTab RequestReceive integration", () => {
     act(() => capturedExecutor!.onUserCancel());
 
     await waitFor(() => {
-      expect(screen.queryByText(REQUEST_TITLE)).toBeNull();
+      expect(screen.queryByText(REQUEST_TITLE)).not.toBeOnTheScreen();
     });
     expect(screen.getByRole("button", { name: PAY_DEPOSIT })).toBeVisible();
     expect(jest.mocked(track)).toHaveBeenCalledWith("request_verification_dismiss", {
@@ -322,7 +418,7 @@ describe("PayTab RequestReceive integration", () => {
     await user.press(await screen.findByRole("button", { name: VERIFY_ADDRESS }));
 
     await waitFor(() => expect(mockedBuildInit).toHaveBeenCalled());
-    expect(screen.queryByText(DIE_LABEL)).toBeNull();
+    expect(screen.queryByText(DIE_LABEL)).not.toBeOnTheScreen();
     expect(screen.getByText(REQUEST_TITLE)).toBeVisible();
   });
 });

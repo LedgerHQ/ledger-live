@@ -1,6 +1,7 @@
 import React from "react";
 import { act, render, screen, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import type { HederaValidatorsQuery } from "@ledgerhq/live-common/families/hedera/react";
 import ClaimRewardsModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
@@ -12,8 +13,10 @@ import {
   clickContinueWhenEnabled,
 } from "../../__mocks__/flowHelpers";
 
+const mockValidatorsQuery: HederaValidatorsQuery = { validators: [], loading: false, error: null };
+
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
-  useHederaValidators: jest.fn(() => []),
+  useHederaValidators: () => mockValidatorsQuery,
   useHederaEnrichedDelegation: jest.fn(
     () => require("../../__mocks__/delegation.mock").mockEnrichedDelegation,
   ),

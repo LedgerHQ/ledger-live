@@ -147,6 +147,14 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         assetReference: "",
         assetOwner: "",
       };
+    case "casper":
+      // Same no-sequence pattern as near/vechain/cardano above; ttl is Casper's replay protection.
+      return {
+        ...sendDefaults(currency.family),
+        memoType: null,
+        memoValue: null,
+        nonce: new BigNumber(0),
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

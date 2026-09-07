@@ -129,6 +129,12 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge": {
+      "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
+    },
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
       "description": "The network fee might be too low. Please increase"
@@ -3172,7 +3178,8 @@
       "previousStakingNodeId": "Previous node ID",
       "gasConsumed": "Gas consumed",
       "gasUsed": "Gas used",
-      "functionId": "Function ID"
+      "functionId": "Function ID",
+      "inputs": "Inputs"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -4273,6 +4280,11 @@
           "actions": {
             "viewInExplorer": "View in explorer",
             "copied": "Copied"
+          },
+          "earnBanner": {
+            "title": "Earn up to {{apy}}% {{type}}",
+            "description": "Explore Earn opportunities",
+            "button": "Explore"
           },
           "accessibility": {
             "copySwapId": "Copy swap ID"
@@ -7730,7 +7742,53 @@
     }
   },
   "mina": {
-    "memoPlaceholder": "Optional Memo"
+    "memoPlaceholder": "Optional Memo",
+    "accountHeaderManageActions": {
+      "changeDelegation": "Redelegate",
+      "earn": "Earn"
+    },
+    "stakeBanner": {
+      "title": "Earn rewards with MINA",
+      "altTitle": "Manage your MINA delegation",
+      "description": "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
+      "altDescription": "Change your delegation settings or undelegate your MINA tokens."
+    },
+    "summaryFooter": {
+      "delegatedTo": "Delegated to",
+      "stakedBalance": "Delegated Balance",
+      "producerAddress": "Producer Address",
+      "delegatedToTooltip": "Name of the block producer you are delegating to",
+      "stakedBalanceTooltip": "Total amount of MINA currently delegated to this validator",
+      "producerAddressTooltip": "Public address of the block producer you are delegating to"
+    },
+    "delegators": "Delegators",
+    "selectValidator": {
+      "stepLabels": {
+        "chooseValidator": "Choose Validator",
+        "connectDevice": "Connect Device",
+        "confirmation": "Confirmation"
+      },
+      "title": "Delegate MINA",
+      "help": "Select a validator from the list below to delegate your MINA tokens.",
+      "success": {
+        "title": "Transaction successfully broadcasted",
+        "description": "Your delegation change request has been broadcasted."
+      },
+      "error": {
+        "title": "An error occurred while broadcasting the transaction"
+      }
+    },
+    "delegation": {
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "showAll": "Show all",
+      "showLess": "Show less",
+      "iDelegate": "I delegate",
+      "listHeader": "Delegation",
+      "redelegate": "Redelegate",
+      "undelegate": "Undelegate",
+      "undelegateTitle": "Undelegate MINA"
+    }
   },
   "near": {
     "info": {
@@ -8698,7 +8756,9 @@
           "inactive": "Inactive",
           "inactiveTooltip": "Validator not found",
           "overstaked": "Overstaked",
-          "overstakedTooltip": "This node is overstaked, APY is lower than optimal"
+          "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+          "fetchError": "Unable to load",
+          "fetchErrorTooltip": "Couldn't load validator data. Please try again."
         },
         "rewards": "Rewards",
         "actions": {
@@ -9728,8 +9788,10 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountToPayFrom": "Select account to pay from",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
-    "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
+    "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
+    "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "searchPlaceholder": "Search by name or address",
@@ -10105,22 +10167,32 @@
   },
   "payTab": {
     "featureTour": {
-      "title": "Pay and get paid",
-      "description": "Stablecoin closes the gap between crypto and real life spending",
-      "cta": "Got it",
+      "title": "All your payments, in one place",
+      "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
+      "cta": "Explore Pay",
       "rows": {
         "global": {
-          "title": "Pay and get paid globally",
-          "description": "Benefits from low networks fees"
+          "title": "Pay your contacts",
+          "description": "Send crypto to saved addresses."
         },
         "volatility": {
-          "title": "Minimal volatility",
-          "description": "Stablecoin are based on fiat"
+          "title": "Request payments",
+          "description": "Ask Contacts to send funds straight to you."
         },
         "card": {
-          "title": "Spend with a card and get 1% cashback",
-          "description": "Pay in USDC, USDT, BTC, ETH and more"
+          "title": "Shop worldwide with crypto card",
+          "description": "And earn uncapped 1% cashback."
         }
+      }
+    },
+    "cardMore": {
+      "tile": "More",
+      "title": "More",
+      "rows": {
+        "managePin": "Manage PIN Code",
+        "accessBaanx": "Access to Baanx",
+        "help": "Help",
+        "logout": "Logout"
       }
     },
     "balance": {
@@ -10137,6 +10209,17 @@
     "card": {
       "title": "Crypto card"
     },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Complete your card",
+        "stepComplete": "Completed",
+        "gotIt": "Got it"
+      }
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
@@ -10150,6 +10233,10 @@
         "copied": "Copied",
         "save": "Save",
         "verify": "Verify"
+      },
+      "verifyHint": {
+        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+        "gotIt": "Got it"
       },
       "verifyAddress": {
         "introTitle": "Verify your address",
@@ -10193,10 +10280,46 @@
         }
       }
     },
+    "bankTransferIntro": {
+      "title": "Send cash, receive stablecoin",
+      "description": "Transfer cash and receive stablecoins straight to your Ledger Wallet™.",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Noah",
+      "providedBy": "Provided by Noah",
+      "rows": {
+        "bank": {
+          "title": "Receive transfers from any bank",
+          "description": "Get salary, payments, deposits via SEPA or ACH."
+        },
+        "fees": {
+          "title": "No hidden fees",
+          "description": "Direct from bank to blockchain for 0.25% fees."
+        },
+        "earn": {
+          "title": "Put your money to work right away",
+          "description": "You can swap or earn with your stablecoin."
+        }
+      }
+    },
     "contacts": {
       "title": "Pay",
       "pay": "New",
-      "seeAllTitle": "Pay contact"
+      "seeAllTitle": "Pay contact",
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
+      }
+    },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card to start spending",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Set up your card",
+        "stepComplete": "Complete",
+        "gotIt": "Got it"
+      }
     }
   },
   "syncIndicator": {
@@ -10429,6 +10552,16 @@
           "title": "Preparing your Ledger device"
         }
       },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "editExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
@@ -10441,6 +10574,10 @@
         "appVersionTooLow": {
           "title": "App update required",
           "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
         }
       }
     },
@@ -10552,12 +10689,6 @@
       "applyChanges": "Apply changes",
       "invalidLabelError": "Special characters are not allowed."
     },
-    "editSigner": {
-      "title": "Confirm on your device",
-      "description": "Connect and unlock your Ledger device to confirm this change.",
-      "confirm": "Continue",
-      "cancel": "Cancel"
-    },
     "editSignerMismatch": {
       "title": "Use the same Ledger device you used to add this contact",
       "description": "The connected device isn't a match.",
@@ -10565,10 +10696,10 @@
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
-      "title": "Turn on Ledger Sync to save contacts",
-      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "activate": "Turn on Ledger Sync",
-      "dismiss": "Got it",
+      "title": "Sync your wallet to add a contact",
+      "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      "activate": "Sync my wallet",
+      "dismiss": "Not now",
       "checkingAccessibilityLabel": "Checking Ledger Sync status"
     },
     "featureIntroduction": {

@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@tests/test-renderer";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
@@ -66,34 +66,6 @@ const idleResult: AddressSearchResult = {
   matchedRecentAddress: undefined,
   matchedContact: undefined,
 };
-
-function mockContactAddressValidation() {
-  let searchValue = "";
-  let validationResult: AddressSearchResult = idleResult;
-  const setValue = jest.fn((value: string) => {
-    searchValue = value;
-  });
-  mockedUseSendFlowData.mockImplementation(() => ({
-    recipientSearch: { ...mockRecipientSearch, value: searchValue, setValue },
-    state: {} as never,
-    uiConfig: {} as never,
-  }));
-  mockedUseAddressValidation.mockImplementation(() => ({
-    result: validationResult,
-    isLoading: false,
-    validateAddress: jest.fn(),
-  }));
-  return {
-    setValue,
-    markAddressValid() {
-      validationResult = {
-        ...idleResult,
-        status: "valid",
-        hasBridgeValidationResult: true,
-      };
-    },
-  };
-}
 
 describe("useRecipientScreenView", () => {
   beforeEach(() => {
@@ -318,53 +290,8 @@ describe("useRecipientScreenView", () => {
     });
   });
 
-  it("validates the address matching the current currency among network addresses", () => {
+  it("opens the address sheet when a contact is selected", () => {
     const onAddressSelected = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
-    const contact = mockContact({
-      addresses: [
-        mockContactAddress({
-          id: "address-eth",
-          currencyId: "ethereum",
-          address: "0xeth",
-        }),
-        mockContactAddress({
-          id: "address-usdt",
-          currencyId: "ethereum/erc20/usdt",
-          address: "0xusdt",
-        }),
-      ],
-    });
-
-    const { result, rerender } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: createMockTokenCurrency(),
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    act(() => result.current.handleContactSelect(contact));
-
-    expect(setValue).toHaveBeenCalledWith("0xusdt");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
-    expect(onAddressSelected).toHaveBeenCalledWith("0xusdt", undefined);
-  });
-
-  it("validates the only compatible contact address before continuing", () => {
-    const onAddressSelected = jest.fn();
-    const selectContact = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
-    mockedUseRecipientContactSelection.mockReturnValue({
-      selectedContact: undefined,
-      selectContact,
-      clearSelectedContact: jest.fn(),
-    });
     const contact = mockContact({
       addresses: [
         mockContactAddress({
@@ -374,57 +301,6 @@ describe("useRecipientScreenView", () => {
       ],
     });
 
-    const { result, rerender } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: createMockCurrency({ id: "ethereum" }),
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    act(() => result.current.handleContactSelect(contact));
-
-    expect(setValue).toHaveBeenCalledWith("0x1234567890123456789012345678901234567890");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-    expect(selectContact).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
-    expect(onAddressSelected).toHaveBeenCalledWith(
-      "0x1234567890123456789012345678901234567890",
-      undefined,
-    );
-  });
-
-  it.each([
-    ["invalid", "incorrect_format"],
-    ["sanctioned", "sanctioned"],
-  ] as const)("does not continue with a %s contact address", (status, error) => {
-    const onAddressSelected = jest.fn();
-    let searchValue = "";
-    const setValue = jest.fn((value: string) => {
-      searchValue = value;
-    });
-    mockedUseSendFlowData.mockImplementation(() => ({
-      recipientSearch: { ...mockRecipientSearch, value: searchValue, setValue },
-      state: {} as never,
-      uiConfig: {} as never,
-    }));
-    mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status, error },
-      isLoading: false,
-      validateAddress: jest.fn(),
-    });
-    const contact = mockContact({
-      addresses: [
-        mockContactAddress({
-          currencyId: "ethereum",
-          address: "0x1234567890123456789012345678901234567890",
-        }),
-      ],
-    });
     const { result } = renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
@@ -436,48 +312,12 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(setValue).toHaveBeenCalledWith("0x1234567890123456789012345678901234567890");
+    expect(result.current.contactAddressPicker.contact).toBe(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
-  it("opens address selection when a contact has several compatible addresses", () => {
+  it("fills the recipient after an address is chosen in the sheet", () => {
     const onAddressSelected = jest.fn();
-    const selectContact = jest.fn();
-    mockedUseRecipientContactSelection.mockReturnValue({
-      selectedContact: undefined,
-      selectContact,
-      clearSelectedContact: jest.fn(),
-    });
-    const contact = mockContact({
-      addresses: [
-        mockContactAddress({ id: "address-one", currencyId: "ethereum" }),
-        mockContactAddress({ id: "address-two", currencyId: "ethereum" }),
-      ],
-    });
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: createMockCurrency({ id: "ethereum" }),
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    act(() => result.current.handleContactSelect(contact));
-
-    expect(selectContact).toHaveBeenCalledWith(contact);
-    expect(onAddressSelected).not.toHaveBeenCalled();
-  });
-
-  it("opens address selection when several network addresses remain without a currency match", () => {
-    const onAddressSelected = jest.fn();
-    const selectContact = jest.fn();
-    mockedUseRecipientContactSelection.mockReturnValue({
-      selectedContact: undefined,
-      selectContact,
-      clearSelectedContact: jest.fn(),
-    });
     const contact = mockContact({
       addresses: [
         mockContactAddress({
@@ -485,40 +325,10 @@ describe("useRecipientScreenView", () => {
           currencyId: "ethereum",
           address: "0xeth",
         }),
-        mockContactAddress({
-          id: "address-usdc",
-          currencyId: "ethereum/erc20/usd_coin",
-          address: "0xusdc",
-        }),
       ],
     });
 
     const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: createMockTokenCurrency(),
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    act(() => result.current.handleContactSelect(contact));
-
-    expect(selectContact).toHaveBeenCalledWith(contact);
-    expect(onAddressSelected).not.toHaveBeenCalled();
-  });
-
-  it("validates the chosen address after contact address selection", () => {
-    const onAddressSelected = jest.fn();
-    const clearSelectedContact = jest.fn();
-    const { setValue, markAddressValid } = mockContactAddressValidation();
-    mockedUseRecipientContactSelection.mockReturnValue({
-      selectedContact: undefined,
-      selectContact: jest.fn(),
-      clearSelectedContact,
-    });
-
-    const { result, rerender } = renderHook(() =>
       useRecipientScreenView({
         account: mockAccount,
         currency: createMockCurrency({ id: "ethereum" }),
@@ -527,16 +337,11 @@ describe("useRecipientScreenView", () => {
       }),
     );
 
-    act(() => result.current.handleContactAddressSelect("0x456"));
+    act(() => result.current.handleContactSelect(contact));
+    act(() => result.current.contactAddressPicker.onSelectAddress(contact.addresses[0]));
 
-    expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(setValue).toHaveBeenCalledWith("0x456");
-    expect(onAddressSelected).not.toHaveBeenCalled();
-
-    markAddressValid();
-    rerender(undefined);
-
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined);
+    expect(result.current.contactAddressPicker.contact).toBeNull();
   });
 
   it("shows an exact contact search result when its network address is ambiguous", () => {

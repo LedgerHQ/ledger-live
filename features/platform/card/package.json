@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "react-native-keychain": "catalog:"
   },
   "devDependencies": {

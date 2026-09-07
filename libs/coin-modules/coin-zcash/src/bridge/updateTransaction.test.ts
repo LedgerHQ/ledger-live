@@ -77,6 +77,35 @@ describe("updateTransaction", () => {
     });
   });
 
+  // Only a shielded output carries a memo, and `mapOutputs` hands the builder
+  // whatever memo the transaction holds -- so a memo must never outlive the shielded
+  // recipient it was written for.
+  describe("memo", () => {
+    it("keeps a memo addressed to a shielded recipient", () => {
+      const updated = updateTransaction(transaction(), { recipient: U_ADDRESS, memo: "hello" });
+
+      expect(updated.memo).toBe("hello");
+    });
+
+    it("drops a memo left over when the recipient turns transparent", () => {
+      const shielded = updateTransaction(transaction(), { recipient: U_ADDRESS, memo: "hello" });
+
+      const retargeted = updateTransaction(shielded, { recipient: T_ADDRESS });
+
+      expect(retargeted).not.toHaveProperty("memo");
+    });
+
+    it.each([
+      ["a transparent recipient", T_ADDRESS],
+      ["an unparseable recipient", "not-an-address"],
+      ["no recipient", ""],
+    ])("drops a memo written against %s", (_label, recipient) => {
+      const updated = updateTransaction(transaction(), { recipient, memo: "hello" });
+
+      expect(updated).not.toHaveProperty("memo");
+    });
+  });
+
   it("keeps the rest of the patch", () => {
     const updated = updateTransaction(transaction(), {
       recipient: U_ADDRESS,

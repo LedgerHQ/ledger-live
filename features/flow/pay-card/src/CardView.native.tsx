@@ -1,6 +1,6 @@
 import React from "react";
 import { Subheader, SubheaderRow, SubheaderTitle, Box } from "@ledgerhq/lumen-ui-rnative";
-import { CardLogin, CardLogout } from "@features/flow-pay-card-auth";
+import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardVisual } from "@features/flow-pay-card-details";
 import type { CardViewProps } from "./Card.types";
 
@@ -17,7 +17,7 @@ export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewP
           nobody is signed in. Right now each child decides on its own, so they can overlap. */}
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       <CardLogin key={`${oauthConfig.apiUrl}`} oauthConfig={oauthConfig} callback={callback} />
-      <CardLogout />
+      <CardMore />
     </Box>
   );
 }

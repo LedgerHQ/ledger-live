@@ -14,7 +14,7 @@ describe("parseSwapWallet40Route", () => {
     expect(parseSwapWallet40Route("https://swap.live.app/?tab=QUOTES_LIST")).toEqual({
       routeName: "quotesList",
       headerStyle: "opaque",
-      titleKey: "transfer.swap2.quotesList.title",
+      titleKey: null,
       isTransactionComplete: false,
     });
   });

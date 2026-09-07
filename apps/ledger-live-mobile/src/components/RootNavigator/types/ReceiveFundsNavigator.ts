@@ -9,6 +9,7 @@ export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveProvider]: {
     manifestId: string;
     fromMenu?: boolean;
+    noahAuth?: "createAccount" | "logIn";
   };
   [ScreenName.ReceiveConnectDevice]: {
     account?: AccountLike;

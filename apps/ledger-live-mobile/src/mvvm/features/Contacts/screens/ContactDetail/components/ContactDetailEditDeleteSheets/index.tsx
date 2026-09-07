@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { Platform } from "react-native";
 import {
   ContactDetailActionsMenu,
-  ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
 } from "@features/flow-contacts";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
@@ -18,7 +17,6 @@ export function ContactDetailEditDeleteSheets({
   actionsMenu,
   renameDrawer,
   deleteDrawer,
-  signerDrawer,
   signerMismatchSheet,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -44,9 +42,6 @@ export function ContactDetailEditDeleteSheets({
   const onCloseDelete = useCallback(() => {
     deleteDrawer.onCancel();
   }, [deleteDrawer]);
-  const onCloseSigner = useCallback(() => {
-    signerDrawer.onCancel();
-  }, [signerDrawer]);
   const onCloseSignerMismatch = useCallback(() => {
     signerMismatchSheet.onCancel();
   }, [signerMismatchSheet]);
@@ -84,15 +79,6 @@ export function ContactDetailEditDeleteSheets({
         enableDynamicSizing
       >
         <ContactsDeleteContactDialog {...deleteDrawer} bottomInset={bottomInset} />
-      </QueuedBottomSheet>
-      <QueuedBottomSheet
-        isRequestingToBeOpened={signerDrawer.isOpen}
-        isForcingToBeOpened={signerDrawer.isOpen}
-        onClose={onCloseSigner}
-        testID="contacts-edit-signer-sheet"
-        enableDynamicSizing
-      >
-        <ContactsEditSignerDialog {...signerDrawer} bottomInset={bottomInset} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}

@@ -1,6 +1,12 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { waitFor, containsSubstringInEvent, pressUntilTextFound, getSendEvents } from "../speculos";
+import {
+  waitFor,
+  containsSubstringInEvent,
+  pressUntilTextFound,
+  getSendEvents,
+  waitForSendReviewTransaction,
+} from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import invariant from "invariant";
@@ -26,6 +32,8 @@ export const sendBTCBasedCoin = withDeviceController(
       }
 
       const buttons = getButtonsController();
+
+      await waitForSendReviewTransaction(tx);
 
       if (isTouchDevice()) {
         const events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);

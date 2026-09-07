@@ -110,7 +110,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@celo/abis": "^14.0.1",
-    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-evm": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-app-eth": "workspace:^",
