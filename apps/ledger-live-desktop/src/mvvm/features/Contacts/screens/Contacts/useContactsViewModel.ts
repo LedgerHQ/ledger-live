@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -77,7 +76,6 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
 export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
@@ -388,10 +386,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onSelectContact,
   } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
   const preference = useContactsFeatureIntroductionPreference();
-  const featureIntroductionState = useContactsFeatureIntroductionState({
-    isContactsEntryAvailable: true,
-    preference,
-  });
+  const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
+    useContactsFeatureIntroductionState({
+      isContactsEntryAvailable: true,
+      preference,
+    });
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -459,16 +458,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
-    isFeatureIntroductionRequested: featureIntroductionState.isRequested,
+    isFeatureIntroductionRequested,
     ledgerSyncStatus,
     isLedgerSyncIntroductionRequested,
   });
-  const onCompleteFeatureIntroduction = useCallback(() => {
-    featureIntroductionState.dismiss();
-  }, [featureIntroductionState]);
-  const onCloseFeatureIntroduction = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
   const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
 
   useContactsListPageAnalytics({
@@ -498,12 +491,12 @@ export function useContactsViewModel(): ContactsPageViewModel {
     ledgerSyncStatus,
     dieProps,
     featureIntroduction: {
-      isOpen: featureIntroductionState.isRequested,
+      isOpen: isFeatureIntroductionRequested,
       title: t("contacts.featureIntroduction.title"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      onComplete: onCompleteFeatureIntroduction,
-      onClose: onCloseFeatureIntroduction,
+      onComplete: dismissFeatureIntroduction,
+      onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

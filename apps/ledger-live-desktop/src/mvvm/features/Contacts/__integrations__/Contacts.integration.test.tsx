@@ -416,6 +416,21 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-list")).toBeVisible();
   });
 
+  it("should count closing the feature introduction as seen and keep the Contacts page open", async () => {
+    const { user, store } = renderContactsScreen({
+      settings: { hasDismissedContactsFeatureIntroduction: false },
+    });
+
+    await user.click(screen.getByLabelText("Close"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-feature-introduction-dialog")).not.toBeInTheDocument();
+    });
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it("should render populated Me detail on load when populated contacts are persisted", () => {
     renderContactsScreen(populatedContactsPageState);
 

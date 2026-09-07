@@ -90,14 +90,27 @@ describe("useContactsPageViewModel", () => {
     });
   });
 
-  it("should close the feature introduction by going back", () => {
-    const { result } = renderViewModel();
+  it("should count closing the feature introduction as seen and stay on Contacts", () => {
+    const { result, store } = renderViewModel();
 
     act(() => {
       result.current.featureIntroduction.onClose();
     });
 
-    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(result.current.featureIntroduction.isOpen).toBe(false);
+    expect(mockGoBack).not.toHaveBeenCalled();
+  });
+
+  it("should count completing the feature introduction as seen", () => {
+    const { result, store } = renderViewModel();
+
+    act(() => {
+      result.current.featureIntroduction.onComplete();
+    });
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(result.current.featureIntroduction.isOpen).toBe(false);
   });
 
   it("should keep the Ledger Sync introduction closed while no contact is being added", () => {
