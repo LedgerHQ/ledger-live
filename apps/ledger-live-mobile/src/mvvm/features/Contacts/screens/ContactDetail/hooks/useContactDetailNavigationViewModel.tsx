@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconButton } from "@ledgerhq/lumen-ui-rnative";
-import { MoreVertical } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { MoreHorizontal } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useTranslation } from "~/context/Locale";
@@ -16,7 +16,7 @@ export function useContactDetailNavigationViewModel(onOpenActionsMenu?: () => vo
       <IconButton
         appearance="no-background"
         size="md"
-        icon={MoreVertical}
+        icon={MoreHorizontal}
         accessibilityLabel={t("contacts.detailActions.menuAccessibilityLabel")}
         onPress={onOpenActionsMenu}
         testID="contacts-detail-actions-trigger"
