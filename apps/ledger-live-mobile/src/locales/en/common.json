@@ -10370,7 +10370,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Save and manage external wallet addresses."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
@@ -10585,7 +10585,7 @@
     "addContact": "Add contact",
     "addAddress": "Add address",
     "addYourAddress": "Add your address",
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
@@ -10604,7 +10604,8 @@
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
@@ -10631,7 +10632,7 @@
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
+      "myAddresses": "My addresses",
       "addressCount_zero": "0 address",
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
@@ -10704,7 +10705,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -10715,7 +10716,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

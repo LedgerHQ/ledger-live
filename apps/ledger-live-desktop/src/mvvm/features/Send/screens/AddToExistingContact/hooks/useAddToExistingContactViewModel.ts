@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { ContactId } from "@domain/entity-contact";
-import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import {
+  createMeDisplayNameFormatter,
+  useContacts,
+  useContactsMeContact,
+} from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
@@ -37,7 +41,10 @@ export function useAddToExistingContactViewModel() {
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(
+        t("contacts.me.myAddresses"),
+        name => t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );

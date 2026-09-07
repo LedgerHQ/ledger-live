@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
+  createMeDisplayNameFormatter,
   useContacts,
   useContactsMeContact,
   type ContactDeviceIntentsPort,
@@ -96,13 +97,16 @@ export function useContactDetailPaneAdapter(
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
-      addExternalAddress: t("contacts.addExternalAddress"),
+      addYourAddress: t("contacts.addYourAddress"),
       emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
       emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(
+        t("contacts.me.myAddresses"),
+        name => t("contacts.detail.meDisplayName", { name }),
+      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],

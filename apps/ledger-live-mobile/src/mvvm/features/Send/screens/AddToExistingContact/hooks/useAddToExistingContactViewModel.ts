@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
-import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import {
+  createMeDisplayNameFormatter,
+  useContacts,
+  useContactsMeContact,
+} from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
@@ -35,7 +39,10 @@ export function useAddToExistingContactViewModel({
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(
+        t("contacts.me.myAddresses"),
+        name => t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
