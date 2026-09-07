@@ -88,6 +88,28 @@ describe("Contacts feature introduction integration", () => {
     });
   });
 
+  it("should persist dismissal from the sheet header and keep the Contacts page open", async () => {
+    const { user, store } = render(<ContactsFeatureIntroductionTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({
+          ...state,
+          settings: { ...state.settings, hasDismissedContactsFeatureIntroduction: false },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
+
+    await waitFor(() => {
+      expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+      expect(screen.queryByTestId("contacts-feature-introduction-primary")).toBeNull();
+      expect(screen.getByTestId("contacts-screen")).toBeVisible();
+    });
+    expect(screen.queryByTestId("my-wallet-home")).toBeNull();
+  });
+
   it("should navigate to the introduction from My Wallet when the feature flag is enabled", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withFlagOverrides(

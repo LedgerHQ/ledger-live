@@ -58,10 +58,11 @@ export function useContactsPageViewModel(
     [t],
   );
   const preference = useContactsFeatureIntroductionPreference();
-  const featureIntroductionState = useContactsFeatureIntroductionState({
-    isContactsEntryAvailable: true,
-    preference,
-  });
+  const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
+    useContactsFeatureIntroductionState({
+      isContactsEntryAvailable: true,
+      preference,
+    });
   const featureIntroductionHighlights = useMemo(
     () =>
       CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
@@ -115,12 +116,6 @@ export function useContactsPageViewModel(
     },
     [ledgerSyncStatus, requestMutation],
   );
-  const onCompleteFeatureIntroduction = useCallback(() => {
-    featureIntroductionState.dismiss();
-  }, [featureIntroductionState]);
-  const onCloseFeatureIntroduction = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
 
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
@@ -129,10 +124,10 @@ export function useContactsPageViewModel(
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
-  const showFeatureIntroduction = !onSelectContact && featureIntroductionState.isRequested;
-  // Pay never shows Introducing Contacts. Until you have seen that sheet on Contacts
-  // (Explore now, or close after LIVE-36870), Add contact here would open nothing if
-  // Ledger Sync is off. Pass the intro you actually see so you still get Sync your wallet.
+  const showFeatureIntroduction = !onSelectContact && isFeatureIntroductionRequested;
+  // Pay never shows Introducing Contacts. Until you have seen that sheet on Contacts,
+  // Add contact here would open nothing if Ledger Sync is off. Pass the intro you
+  // actually see so you still get Sync your wallet.
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: showFeatureIntroduction,
     ledgerSyncStatus,
@@ -160,8 +155,8 @@ export function useContactsPageViewModel(
       title: t("contacts.featureIntroduction.title"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      onComplete: onCompleteFeatureIntroduction,
-      onClose: onCloseFeatureIntroduction,
+      onComplete: dismissFeatureIntroduction,
+      onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
