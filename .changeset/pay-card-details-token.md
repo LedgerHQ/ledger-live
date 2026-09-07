@@ -7,3 +7,5 @@ Add `createCardDetailsToken` for `POST /v1/card/details/token`.
 - Answers with a single-use token and an image URL that renders PAN, CVV and expiry, so the app never handles the card data itself.
 - A mutation, not a query: the provider spends the token on first use, so the answer must never be served from a cache.
 - Takes the documented `customCss` colours, and validates them as hex before the provider answers 422.
+- `imageUrl` must be an `https` URL: it is loaded straight into an image.
+- RTK Query retains a tracked mutation result, so callers dispatch with `track: false` or reset once the URL is used. The answer is a credential.

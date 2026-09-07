@@ -9,6 +9,7 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
@@ -107,7 +108,11 @@ export const cardManagementApi = cardApi
 
       /**
        * A mutation, though it reads: the provider spends the token on first use, so the answer must
-       * never be served from a cache. Mutations are not cached and are not retained.
+       * never be served from a cache, and a mutation is never cached.
+       *
+       * It is still **retained**: RTK Query holds a tracked mutation result in
+       * `state.cardApi.mutations`. Dispatch this one with `{ track: false }`, or reset it as soon
+       * as the URL has been used — the answer is a credential, not data.
        */
       createCardDetailsToken: build.mutation<PayCardDetailsToken, PayCardDetailsCss | void>({
         query: customCss => ({
@@ -115,6 +120,7 @@ export const cardManagementApi = cardApi
           method: "POST",
           ...(customCss ? { body: { customCss } } : {}),
         }),
+        argSchema: PayCardDetailsCssSchema.optional(),
         responseSchema: PayCardDetailsTokenResponseSchema,
       }),
 

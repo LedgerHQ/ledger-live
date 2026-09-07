@@ -70,7 +70,11 @@ export const PayCardDetailsCssSchema = z.object({
 
 export const PayCardDetailsTokenResponseSchema = z.object({
   token: z.string().min(1),
-  imageUrl: z.string().min(1),
+  /** Loaded straight into an image, so reject anything that is not an `https:` URL. */
+  imageUrl: z
+    .string()
+    .url()
+    .refine(value => value.startsWith("https://"), { message: "must be an https URL" }),
 });
 
 export const PayCardInternalWalletSchema = z.object({

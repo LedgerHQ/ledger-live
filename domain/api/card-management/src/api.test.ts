@@ -715,15 +715,70 @@ describe("cardManagementApi requests", () => {
       });
     });
 
-    it("keeps no cache entry: the provider spends the token on first use", async () => {
-      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+    it("rejects a colour that is not a hex value before the request goes out", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate({
+          cardBackgroundColor: "rebeccapurple",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The point of validating the argument: the provider never sees it.
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it("rejects an image url that is not https, which is loaded straight into an image", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () =>
+          jsonResponse({ ...detailsToken, imageUrl: "javascript:alert(1)" }),
+        );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("reaches no part of the store when the caller does not track it", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardDetailsToken.initiate(undefined, {
+            track: false,
+          }),
+        )
+        .unwrap();
+
+      // Both halves: a query result lands under `queries`, a mutation result under `mutations`.
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(detailsToken.token);
+      expect(state).not.toContain("details-image");
+    });
+
+    it("is held in the store when the caller does track it, which is why callers must not", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
 
       const store = makeStore("session-token");
       await store.dispatch(cardManagementApi.endpoints.createCardDetailsToken.initiate()).unwrap();
 
-      const cached = JSON.stringify(store.getState().cardApi.queries);
-      expect(cached).not.toContain(detailsToken.token);
-      expect(cached).not.toContain("details-image");
+      // Pinned deliberately: RTK Query retains a tracked mutation result, so a caller that drops
+      // `track: false` leaves the PAN image URL in Redux. This failing would mean that changed.
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(detailsToken.token);
     });
   });
 
