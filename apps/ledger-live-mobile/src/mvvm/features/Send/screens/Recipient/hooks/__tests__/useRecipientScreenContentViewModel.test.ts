@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
+import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
@@ -9,6 +10,7 @@ import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/analytics");
+jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
@@ -29,8 +31,10 @@ const mockedTrack = jest.mocked(track);
 const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
+const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFocus);
+const setRecipientResolution = jest.fn();
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
@@ -73,6 +77,14 @@ const recipientViewModel = {
   isContactsFeatureEnabled: true,
   hasAddressBook: false,
   addressBookFamilyName: "Bitcoin",
+  recipientResolution: {
+    queryType: "address",
+    resultType: "unknown address",
+    recipientType: "external address",
+    addressAlreadyUsed: false,
+  },
+  handleUnsupportedNetwork: jest.fn(),
+  handleDismissUnsupportedNetwork: jest.fn(),
 } as never;
 
 const memoViewModel = {
@@ -97,6 +109,16 @@ describe("useRecipientScreenContentViewModel", () => {
     mockedUseAddressMatchedSectionViewModel.mockReturnValue(
       addressMatchedSectionViewModel as never,
     );
+    mockedUseSendFlowTracking.mockReturnValue({
+      inputMethod: "manual",
+      resultType: null,
+      recipientType: null,
+      savedContactDuringFlow: false,
+      setInputMethod: jest.fn(),
+      setRecipientResolution,
+      resetRecipientResolution: jest.fn(),
+      markContactSaved: jest.fn(),
+    });
   });
 
   function renderViewModel() {
@@ -172,8 +194,14 @@ describe("useRecipientScreenContentViewModel", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith(
       "button_clicked",
-      expect.objectContaining({ button: "my accounts", page: "step recipient" }),
+      expect.objectContaining({
+        button: "send",
+        page: "step recipient",
+        resultType: "unknown address",
+        recipientType: "external address",
+      }),
     );
+    expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
     expect(handleAddressSelect).toHaveBeenCalledWith("destination", "name.eth");
   });
 
@@ -205,6 +233,37 @@ describe("useRecipientScreenContentViewModel", () => {
     renderViewModel();
 
     expect(mockedUseSettleRecipientInputFocus).toHaveBeenLastCalledWith(false);
+  });
+
+  it("tracks add contact before opening the drawer", () => {
+    const onAddContact = jest.fn();
+    renderHook(() =>
+      useRecipientScreenContentViewModel({
+        account,
+        currency: account.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+        onMemoProceed,
+        onAddContact,
+      }),
+    );
+    const { onAddContact: handleAddContact } =
+      mockedUseAddressMatchedSectionViewModel.mock.calls[0][0];
+
+    expect(handleAddContact).toEqual(expect.any(Function));
+    act(() => {
+      handleAddContact?.();
+    });
+
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "add contact",
+        page: "step recipient",
+        addressAlreadyUsed: false,
+      }),
+    );
+    expect(onAddContact).toHaveBeenCalledTimes(1);
   });
 
   it("tracks memo skipping before proceeding", () => {
