@@ -1,12 +1,16 @@
 import BigNumber from "bignumber.js";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   createFixtureCurrency,
   createFixtureOperation,
+  createFixtureTokenCurrency,
+  PLT_TOKEN_ID,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
   PUBLIC_KEY,
 } from "../test/fixtures";
 import { createTestConcordiumAccount } from "../test/testHelpers";
+import type { ConcordiumAccount } from "../types";
 import { getAccountShape as getAccountShapeOriginal, getBalance, syncOperations } from "./sync";
 const getAccountShape = getAccountShapeOriginal as any;
 
@@ -20,9 +24,16 @@ jest.mock("../logic/history/listOperations", () => ({
   listOperations: jest.fn(),
 }));
 
+// Throwing by default is what lets a tokens-off test prove it never reached the
+// CAL. A tokens-on test installs a store for the span it needs one.
+let mockCryptoAssetsStore: unknown = null;
+
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: () => {
-    throw new Error("the CAL must not be consulted while tokens are off");
+    if (!mockCryptoAssetsStore) {
+      throw new Error("the CAL must not be consulted while tokens are off");
+    }
+    return mockCryptoAssetsStore;
   },
 }));
 
@@ -37,6 +48,8 @@ const { getAccountsByPublicKey, getAccountBalance, getConsensusInfo } =
   jest.requireMock("../network/proxyClient");
 
 const { listOperations } = jest.requireMock("../logic/history/listOperations");
+
+const coinConfig = jest.requireMock("../config").default;
 
 const CURRENCY_ID = "concordium_testnet";
 const ACCOUNT_ID = "js:2:concordium_testnet:test:";
@@ -60,6 +73,13 @@ function createRawOpFixture(overrides?: Record<string, unknown>) {
     ...overrides,
   };
 }
+
+const storedAccount = (over: Record<string, unknown> = {}) =>
+  ({
+    operations: [createFixtureOperation({ blockHeight: 500 })],
+    concordiumResources: { publicKey: PUBLIC_KEY },
+    ...over,
+  }) as unknown as ConcordiumAccount;
 
 describe("getBalance token list authority", () => {
   beforeEach(() => {
@@ -174,7 +194,9 @@ describe("syncOperations", () => {
   });
 
   it("should fetch with minHeight 0 when no old operations", async () => {
-    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, []);
+    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+      enableTokens: false,
+    });
 
     expect(listOperations).toHaveBeenCalledWith(
       config,
@@ -182,13 +204,13 @@ describe("syncOperations", () => {
       { minHeight: 0, limit: 100, order: "desc" },
       CURRENCY_ID,
     );
-    expect(result).toEqual([]);
+    expect(result.operations).toEqual([]);
   });
 
   it("should use blockHeight + 1 from newest old operation as minHeight", async () => {
     const oldOp = createFixtureOperation({ blockHeight: 500 });
 
-    await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp]);
+    await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], { enableTokens: false });
 
     expect(listOperations).toHaveBeenCalledWith(
       config,
@@ -201,7 +223,7 @@ describe("syncOperations", () => {
   it("should use minHeight 0 when newest operation has blockHeight 0", async () => {
     const oldOp = createFixtureOperation({ blockHeight: 0 });
 
-    await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp]);
+    await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], { enableTokens: false });
 
     expect(listOperations).toHaveBeenCalledWith(
       config,
@@ -218,17 +240,125 @@ describe("syncOperations", () => {
       next: undefined,
     });
 
-    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp]);
+    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+      enableTokens: false,
+    });
 
-    expect(result.length).toBeGreaterThanOrEqual(1);
+    expect(result.operations.length).toBeGreaterThanOrEqual(1);
   });
 
   it("should return empty operations on listOperations failure", async () => {
     listOperations.mockRejectedValue(new Error("network error"));
 
-    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, []);
+    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+      enableTokens: false,
+    });
 
-    expect(result).toEqual([]);
+    expect(result.operations).toEqual([]);
+  });
+
+  describe("splitting PLT transfers from CCD ones", () => {
+    const pltOp = createRawOpFixture({
+      hash: "dd".repeat(32),
+      id: 102,
+      tokenId: "t-USDT",
+      decimals: 6,
+      amount: "3000000",
+      value: "3000000",
+      fee: "595400",
+    });
+
+    it("hands the token half back unmapped, for the sub-account to claim", async () => {
+      listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+        enableTokens: true,
+      });
+
+      expect(result.pltOperations).toEqual([pltOp]);
+    });
+
+    it("leaves only the CCD fee on the parent account", async () => {
+      listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+        enableTokens: true,
+      });
+
+      expect(result.operations).toHaveLength(1);
+      expect(result.operations[0].type).toBe("FEES");
+      expect(result.operations[0].value).toEqual(new BigNumber("595400"));
+    });
+
+    it("keeps CCD operations untouched alongside them", async () => {
+      listOperations.mockResolvedValue({
+        items: [createRawOpFixture(), pltOp],
+        next: undefined,
+      });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+        enableTokens: true,
+      });
+
+      expect(result.operations.map(op => op.type).sort()).toEqual(["FEES", "OUT"]);
+    });
+
+    it("re-reads from height zero when asked to, ignoring the stored watermark", async () => {
+      listOperations.mockResolvedValue({ items: [], next: undefined });
+      const oldOp = createFixtureOperation({ blockHeight: 500 });
+
+      await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+        enableTokens: true,
+        refetchAll: true,
+      });
+
+      expect(listOperations).toHaveBeenCalledWith(
+        config,
+        VALID_ADDRESS,
+        { minHeight: 0, limit: 100, order: "desc" },
+        CURRENCY_ID,
+      );
+    });
+
+    it("keeps what is already stored when re-reading, rather than replacing it", async () => {
+      // A fetch returns one page, so discarding first would truncate a longer
+      // history to its newest page.
+      const oldOp = createFixtureOperation({ id: "kept-op", blockHeight: 10 });
+      listOperations.mockResolvedValue({ items: [], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+        enableTokens: true,
+        refetchAll: true,
+      });
+
+      expect(result.operations.map(op => op.id)).toContain("kept-op");
+    });
+
+    it("keeps transfers older than everything stored, which is the point of re-reading", async () => {
+      const stored = createFixtureOperation({ id: "newest-stored", date: new Date("2024-06-01") });
+      const older = { ...pltOp, date: new Date("2020-01-01") };
+      listOperations.mockResolvedValue({ items: [older], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+        enableTokens: true,
+        refetchAll: true,
+      });
+
+      expect(result.operations.map(op => op.id)).toContain("newest-stored");
+      expect(result.operations.filter(op => op.type === "FEES")).toHaveLength(1);
+      expect(result.pltOperations).toEqual([older]);
+    });
+
+    it("discards PLT transfers entirely when tokens are off", async () => {
+      listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+        enableTokens: false,
+      });
+
+      expect(result.operations).toEqual([]);
+      expect(result.pltOperations).toEqual([]);
+    });
   });
 });
 
@@ -483,5 +613,210 @@ describe("getAccountShape with tokens disabled", () => {
 
     // `postSync` then removes the key entirely; see bridge/index.test.ts.
     expect(result.subAccounts).toEqual([]);
+  });
+
+  it("records a syncHash that names the off state", async () => {
+    const result = await shape();
+
+    expect(result.syncHash).toBe("tokens=off");
+  });
+
+  it("re-reads the history from zero once the stored assumptions no longer hold", async () => {
+    const initialAccount = {
+      operations: [createFixtureOperation({ blockHeight: 500 })],
+      syncHash: "some-earlier-hash",
+      concordiumResources: { publicKey: PUBLIC_KEY },
+    } as unknown as ConcordiumAccount;
+
+    await getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      initialAccount,
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+    expect(listOperations).toHaveBeenCalledWith(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("keeps the watermark when the stored assumptions still hold", async () => {
+    const initialAccount = {
+      operations: [createFixtureOperation({ blockHeight: 500 })],
+      syncHash: "tokens=off",
+      concordiumResources: { publicKey: PUBLIC_KEY },
+    } as unknown as ConcordiumAccount;
+
+    await getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      initialAccount,
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+    expect(listOperations).toHaveBeenCalledWith(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 501, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+});
+
+describe("getAccountShape with tokens enabled", () => {
+  const TOKEN = createFixtureTokenCurrency();
+  const SUB_ACCOUNT_ID = encodeTokenAccountId("js:2:concordium_testnet:" + PUBLIC_KEY + ":", TOKEN);
+  const tokensOnConfig = { ...config, enableTokens: true };
+
+  const PLT_ENTRY = {
+    token: { tokenId: PLT_TOKEN_ID, tokenState: { decimals: 6, moduleState: {} } },
+    tokenAccountState: { balance: { value: "500000", decimals: 6 } },
+  };
+
+  const pltRawOp = () =>
+    createRawOpFixture({
+      hash: "dd".repeat(32),
+      id: 102,
+      tokenId: PLT_TOKEN_ID,
+      decimals: 6,
+      amount: "3000000",
+      value: "3000000",
+      fee: "595400",
+    });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    coinConfig.getCoinConfig.mockReturnValue(tokensOnConfig);
+    mockCryptoAssetsStore = {
+      findTokenById: async () => undefined,
+      getTokensSyncHash: jest.fn(async () => "cal-hash"),
+      findTokenByAddressInCurrency: async (address: string) =>
+        address === PLT_TOKEN_ID ? TOKEN : undefined,
+    };
+
+    getAccountsByPublicKey.mockResolvedValue([{ address: VALID_ADDRESS }]);
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: {
+        accountAmount: "10000000",
+        accountAtDisposal: "9900000",
+        accountTokens: [PLT_ENTRY],
+      },
+    });
+    listOperations.mockResolvedValue({ items: [], next: undefined });
+    getConsensusInfo.mockResolvedValue({ lastFinalizedBlockHeight: 5000 });
+  });
+
+  afterEach(() => {
+    mockCryptoAssetsStore = null;
+    coinConfig.getCoinConfig.mockReturnValue(config);
+  });
+
+  const shape = (initialAccount?: ConcordiumAccount, blacklistedTokenIds?: string[]) =>
+    getAccountShape(
+      {
+        currency: createFixtureCurrency(),
+        derivationMode: "",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
+        index: 0,
+        ...(initialAccount ? { initialAccount } : {}),
+        rest: { publicKey: PUBLIC_KEY },
+      },
+      blacklistedTokenIds ? { blacklistedTokenIds } : undefined,
+    );
+
+  it("lands a fetched transfer on the sub-account of the token it moved", async () => {
+    listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
+
+    const result = await shape();
+
+    const subAccount = result.subAccounts?.[0];
+    expect(subAccount?.id).toBe(SUB_ACCOUNT_ID);
+    expect(subAccount?.operations).toHaveLength(1);
+    expect(subAccount?.operations[0].value).toEqual(new BigNumber("3000000"));
+  });
+
+  it("leaves only the CCD fee for that transfer on the parent account", async () => {
+    listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
+
+    const result = await shape();
+
+    expect(result.operations).toHaveLength(1);
+    expect(result.operations?.[0].type).toBe("FEES");
+    expect(result.operations?.[0].value).toEqual(new BigNumber("595400"));
+  });
+
+  it("records a syncHash that names both the CAL and the on state", async () => {
+    const result = await shape();
+
+    expect(result.syncHash).toMatch(/^0x[0-9a-f]+:tokens=on$/);
+  });
+
+  it("gives two different blacklists two different syncHashes", async () => {
+    const first = await shape(undefined, ["a"]);
+    const second = await shape(undefined, ["b"]);
+
+    expect(first.syncHash).not.toBe(second.syncHash);
+  });
+
+  it("re-reads from zero when the flag has just been turned on", async () => {
+    await shape(storedAccount({ syncHash: "tokens=off" }));
+
+    expect(listOperations).toHaveBeenCalledWith(
+      tokensOnConfig,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("does not re-read on a transient CAL outage, keeping the stored hash", async () => {
+    const stored = await shape();
+    (mockCryptoAssetsStore as { getTokensSyncHash: jest.Mock }).getTokensSyncHash.mockRejectedValue(
+      new Error("CAL down"),
+    );
+
+    const result = await shape(storedAccount({ syncHash: stored.syncHash }));
+
+    expect(result.syncHash).toBe(stored.syncHash);
+    expect(listOperations).toHaveBeenLastCalledWith(
+      tokensOnConfig,
+      VALID_ADDRESS,
+      { minHeight: 501, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("labels a first sync off when the CAL is down, so the next one re-reads", async () => {
+    (mockCryptoAssetsStore as { getTokensSyncHash: jest.Mock }).getTokensSyncHash.mockRejectedValue(
+      new Error("CAL down"),
+    );
+
+    const result = await shape();
+
+    expect(result.syncHash).toBe("tokens=off");
+  });
+
+  it("invalidates the syncHash when a balance failure leaves transfers unattributed", async () => {
+    getAccountBalance.mockRejectedValue(new Error("balance endpoint down"));
+    listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
+
+    const result = await shape();
+
+    expect(result.syncHash).toBe("refetch-pending");
+  });
+
+  it("keeps the computed syncHash when a balance failure cost it no transfers", async () => {
+    getAccountBalance.mockRejectedValue(new Error("balance endpoint down"));
+
+    const result = await shape();
+
+    expect(result.syncHash).toMatch(/:tokens=on$/);
   });
 });

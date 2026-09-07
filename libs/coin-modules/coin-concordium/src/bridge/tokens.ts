@@ -1,18 +1,19 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
-import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListStatus, isDecodedPltState } from "../network/plt";
+import { baseOperation, mergeOperations, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
   ConcordiumResources,
   ConcordiumTokenResources,
   PltAccountToken,
   PltTransferStatus,
+  RawOperation,
   Transaction,
 } from "../types";
 
@@ -27,11 +28,12 @@ const CAL_LOOKUP_CONCURRENCY = 4;
  */
 export type ResolvedTokens =
   | { kind: "cleared" }
-  | { kind: "unchanged" }
+  | { kind: "unchanged"; unattributedOperations?: true }
   | {
       kind: "resolved";
       subAccounts: TokenAccount[];
       tokens: Record<string, ConcordiumTokenResources>;
+      unattributedOperations?: true;
     };
 
 /**
@@ -99,6 +101,7 @@ function buildTokenAccount(
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber,
+  operations: Operation[],
 ): TokenAccount {
   return {
     type: "TokenAccount",
@@ -107,13 +110,43 @@ function buildTokenAccount(
     token,
     balance,
     spendableBalance: balance,
-    creationDate: new Date(),
-    operations: [],
-    operationsCount: 0,
+    // Only used for a sub-account this sync invented; `mergeSubAccounts` keeps
+    // the stored date for an existing one.
+    creationDate:
+      operations.length > 0
+        ? new Date(Math.min(...operations.map(operation => operation.date.valueOf())))
+        : new Date(),
+    operations,
+    operationsCount: operations.length,
     pendingOperations: [],
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
   };
+}
+
+/**
+ * Builds the CCD operation a PLT transfer leaves on the parent account.
+ *
+ * The type is decided from the transaction alone and never revised: an
+ * operation id embeds its type and `mergeOps` dedups on that id, so one retyped
+ * between syncs is stored twice, permanently. Promoting a stored `NONE` to
+ * `FEES` later is therefore not an option, and is never needed, since whether
+ * the account paid is known when the transaction is read.
+ *
+ * A zero fee stays `NONE`, which also keeps an incoming transfer out of the
+ * parent's history: `NONE` operations are dropped from every list.
+ */
+export function buildParentOperation(op: RawOperation, accountId: string): Operation {
+  const fee = new BigNumber(op.fee);
+  const paysFee = fee.isGreaterThan(0);
+
+  return baseOperation(
+    op,
+    accountId,
+    paysFee ? "FEES" : "NONE",
+    // `FEES` is an outgoing type, so this value is what gets debited from CCD.
+    paysFee ? fee : new BigNumber(0),
+  );
 }
 
 /**
@@ -183,7 +216,7 @@ export function mergeSubAccounts(
     const old = previousById.get(newSubAccount.id);
     if (!old) return newSubAccount;
 
-    const operations = mergeOps(old.operations, newSubAccount.operations);
+    const operations = mergeOperations(old.operations, newSubAccount.operations);
 
     return {
       ...old,
@@ -207,6 +240,37 @@ type ResolvedEntry =
   | { entry: PltAccountToken; token: TokenCurrency; tokenId: string; balance: BigNumber }
   | { untrusted: string; tokenId: string }
   | undefined;
+
+/**
+ * `resolveEntries` already refuses to publish a balance whose decimals disagree
+ * with CAL; the same disagreement per transfer would render the amount at the
+ * wrong scale, so it is dropped. A rejected transfer reports no denomination at
+ * all, which is an absence rather than a disagreement, and passes.
+ */
+function operationsForToken(
+  pltOperations: RawOperation[],
+  tokenId: string,
+  token: TokenCurrency,
+  subAccountId: string,
+): Operation[] {
+  const magnitude = token.units[0]?.magnitude;
+
+  return pltOperations
+    .filter(op => {
+      if (op.tokenId !== tokenId) return false;
+
+      if (op.decimals !== undefined && op.decimals !== magnitude) {
+        log(
+          "concordium-sync",
+          `PLT ${tokenId} operation ${op.hash} is denominated in ${op.decimals} decimals, not the curated ${magnitude}, skipping it`,
+        );
+        return false;
+      }
+
+      return true;
+    })
+    .map(op => toOperation(op, subAccountId));
+}
 
 /**
  * Resolves to `undefined` when the lookup itself failed, which is distinct from
@@ -290,6 +354,16 @@ function resolveEntries({
 }
 
 /**
+ * Reports that this sync fetched PLT transfers it could not place on a
+ * sub-account. The caller invalidates the stored `syncHash` on it, because the
+ * parent fee operations are kept either way: the watermark moves past those
+ * blocks and an incremental sync would never read them again.
+ */
+function unattributed(pltOperations: RawOperation[]): { unattributedOperations?: true } {
+  return pltOperations.length > 0 ? { unattributedOperations: true } : {};
+}
+
+/**
  * Builds the token sub-accounts and the per-token state for one sync.
  *
  * Only an actual array is authoritative enough to drop a token the account no
@@ -305,6 +379,7 @@ export async function resolveTokenSubAccounts({
   accountId,
   accountTokens,
   initialAccount,
+  pltOperations = [],
   blacklistedTokenIds = [],
 }: {
   enableTokens: boolean;
@@ -312,6 +387,7 @@ export async function resolveTokenSubAccounts({
   accountId: string;
   accountTokens: PltAccountToken[] | undefined;
   initialAccount: ConcordiumAccount | undefined;
+  pltOperations?: RawOperation[];
   blacklistedTokenIds?: string[];
 }): Promise<ResolvedTokens> {
   if (!enableTokens) {
@@ -320,7 +396,7 @@ export async function resolveTokenSubAccounts({
 
   if (!Array.isArray(accountTokens)) {
     log("concordium-sync", "PLT token list absent from the balance response, keeping known tokens");
-    return { kind: "unchanged" };
+    return { kind: "unchanged", ...unattributed(pltOperations) };
   }
 
   const resolved = await resolveEntries({
@@ -335,12 +411,13 @@ export async function resolveTokenSubAccounts({
   // it escape would discard an already-fetched CCD sync because a secondary
   // metadata service was down.
   if (resolved === undefined) {
-    return { kind: "unchanged" };
+    return { kind: "unchanged", ...unattributed(pltOperations) };
   }
 
   const newSubAccounts: TokenAccount[] = [];
   const tokens: Record<string, ConcordiumTokenResources> = {};
   const untrustedIds = new Set<string>();
+  const untrustedTokenIds = new Set<string>();
   const seenIds = new Set<string>();
 
   for (const item of resolved) {
@@ -348,6 +425,7 @@ export async function resolveTokenSubAccounts({
 
     if ("untrusted" in item) {
       untrustedIds.add(item.untrusted);
+      untrustedTokenIds.add(item.tokenId);
 
       // The sub-account survives through `keepIds`, but the resources map is
       // rebuilt wholesale, so its prior entry has to be carried over with it.
@@ -368,7 +446,15 @@ export async function resolveTokenSubAccounts({
     }
     seenIds.add(subAccountId);
 
-    newSubAccounts.push(buildTokenAccount(subAccountId, accountId, token, balance));
+    newSubAccounts.push(
+      buildTokenAccount(
+        subAccountId,
+        accountId,
+        token,
+        balance,
+        operationsForToken(pltOperations, tokenId, token, subAccountId),
+      ),
+    );
 
     const paused = readPaused(entry);
     tokens[tokenId] = {
@@ -381,6 +467,7 @@ export async function resolveTokenSubAccounts({
     kind: "resolved",
     subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, untrustedIds),
     tokens,
+    ...unattributed(pltOperations.filter(op => untrustedTokenIds.has(op.tokenId ?? ""))),
   };
 }
 
