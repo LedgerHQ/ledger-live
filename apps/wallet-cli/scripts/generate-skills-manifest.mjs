@@ -5,11 +5,13 @@
 // Content is inlined as string literals (not `with { type: "file" }`) so it
 // behaves identically in `bun run` (dev/tests) and in the standalone binary.
 //
-// SKILL.md is rewritten for standalone use (see rewriteForStandaloneBinary
-// below) before embedding — the source in .agents/skills/ is authored for
-// monorepo contributors (`pnpm --silent wallet-cli start ...`), but this
-// manifest ships inside a globally-installed binary invoked as plain
-// `wallet-cli ...`.
+// Skill files are rewritten for standalone use before embedding — the source in
+// .agents/skills/ is authored for monorepo contributors (it is named after its
+// directory and says `pnpm --silent wallet-cli start ...`), but this manifest
+// ships inside a globally-installed binary invoked as plain `wallet-cli ...`.
+// The transform lives in scripts/standalone-skill-transform.mjs, shared with
+// scripts/export-standalone-skill.mjs so the embedded copy and the copy
+// published to LedgerHQ/agent-skills cannot drift apart.
 //
 // The generated file (src/skills/manifest.gen.ts) is NOT committed — it is
 // gitignored (same convention as .bunli/commands.gen.ts) and regenerated before
@@ -23,6 +25,7 @@ import { createHash } from "node:crypto";
 import { lstat, readFile, readdir, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseFrontmatterField, rewriteSkillFile } from "./standalone-skill-transform.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -40,12 +43,18 @@ const skillsSourceDirReal = await realpath(skillsSourceDir).catch(() => skillsSo
 
 const CHECK = process.argv.includes("--check");
 
-// Only these skills ship inside the published wallet-cli binary. The source
-// directories hold ~40 internal repo dev/process skills (CI, e2e, MVVM, release
-// tooling…) that must not leak into a public npm package. The collection
-// machinery below is fully generic, so shipping another skill is a one-line
-// addition here.
-const SHIPPED_SKILLS = new Set(["ledger-wallet-cli"]);
+// Only these skill *source directories* ship inside the published wallet-cli
+// binary. The source tree holds ~40 internal repo dev/process skills (CI, e2e,
+// MVVM, release tooling…) that must not leak into a public npm package. The
+// collection machinery below is fully generic, so shipping another skill is a
+// one-line addition here.
+//
+// These are directory names under .agents/skills/, NOT the names the manifest
+// exposes: the standalone transform renames the skill (ledger-wallet-cli ->
+// wallet-cli-usage), and the manifest name is read back from the rewritten
+// frontmatter so frontmatter, manifest identity, install directory and sidecar
+// can never disagree.
+const SHIPPED_SKILL_DIRS = new Set(["ledger-wallet-cli"]);
 
 /**
  * Recursively collect files (relative paths) under `dir`. Uses `lstat` so symlinks
@@ -105,55 +114,6 @@ function hashSkillFiles(files) {
   return combined.digest("hex");
 }
 
-// The source SKILL.md is authored from a monorepo-dev point of view (it tells
-// contributors to run `pnpm --silent wallet-cli start <command>` from the repo
-// root). The binary this manifest gets embedded into ships standalone — via
-// `npm i -g @ledgerhq/wallet-cli` and friends — where pnpm/the monorepo aren't
-// present and the entry point is just `wallet-cli`. Rewrite those monorepo-only
-// instructions here (mirrors the equivalent `sed` step in
-// .github/workflows/sync-wallet-cli-skill.yml, which performs the same
-// transform for the copy published to LedgerHQ/agent-skills) so the embedded
-// copy — what `wallet-cli skill retrieve` actually returns — matches how the
-// binary is really invoked, without editing the canonical source SKILL.md.
-const STANDALONE_INSTALL_LINE =
-  "Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, " +
-  "`pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or " +
-  "`bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.";
-
-function rewriteForStandaloneBinary(skillMd) {
-  const rewritten = skillMd
-    .replace(
-      /Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`/,
-      STANDALONE_INSTALL_LINE,
-    )
-    .replace(/pnpm --silent wallet-cli start ?/g, "wallet-cli ");
-
-  if (rewritten.includes("pnpm --silent wallet-cli start")) {
-    throw new Error(
-      "Skill generation failed — SKILL.md still contains monorepo-only `pnpm --silent wallet-cli start` " +
-        "commands after rewrite. Update rewriteForStandaloneBinary() in generate-skills-manifest.mjs.",
-    );
-  }
-  if (rewritten.includes("Run from repo root")) {
-    throw new Error(
-      "Skill generation failed — SKILL.md still contains monorepo-only run instructions after rewrite. " +
-        "Update rewriteForStandaloneBinary() in generate-skills-manifest.mjs.",
-    );
-  }
-
-  return rewritten;
-}
-
-/** Extract the `description:` field from a SKILL.md YAML frontmatter block. */
-function parseDescription(skillMd) {
-  // Tolerate CRLF checkouts (Windows core.autocrlf) so the frontmatter regex matches.
-  const frontmatter = skillMd.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
-  if (!frontmatter) return "";
-  const line = frontmatter[1].match(/^description:\s*(.*)$/m);
-  if (!line) return "";
-  return line[1].trim().replace(/^["']|["']$/g, "");
-}
-
 /** Order files with SKILL.md first, then the rest alphabetically (posix). */
 function orderFiles(files) {
   return [...files].sort((a, b) => {
@@ -176,34 +136,32 @@ async function buildManifest() {
     // Use the Dirent's isDirectory() (does NOT follow symlinks) so a symlinked
     // entry can't be treated as a real skill dir and bypass collectFiles' guard.
     if (!entry.isDirectory()) continue;
-    if (!SHIPPED_SKILLS.has(entry.name)) continue;
+    if (!SHIPPED_SKILL_DIRS.has(entry.name)) continue;
 
     const skillDir = path.join(skillsSourceDir, entry.name);
-    const skillMdPath = path.join(skillDir, "SKILL.md");
-    let skillMd;
-    try {
-      skillMd = await readSkillFile(skillMdPath);
-    } catch {
-      // Not a skill directory (no SKILL.md) — skip so this scales to N skills.
-      continue;
-    }
-
     const relFiles = orderFiles(await collectFiles(skillDir));
+    // Not a skill directory (no SKILL.md) — skip so this scales to N skills. The
+    // `missing` check at the bottom of this file still fails the build, so a
+    // renamed or gutted shipped skill can't silently vanish from the binary.
+    if (!relFiles.includes("SKILL.md")) continue;
+
     const files = [];
     for (const rel of relFiles) {
       // Normalize to posix so the generated manifest is stable across OSes.
       const posixRel = rel.split(path.sep).join("/");
       const content = await readSkillFile(path.join(skillDir, rel));
-      // Only SKILL.md carries the monorepo-only run instructions — reference
-      // files (e.g. business-logic.md) are prose and left untouched.
-      const embeddedContent =
-        posixRel === "SKILL.md" ? rewriteForStandaloneBinary(content) : content;
-      files.push({ path: posixRel, content: embeddedContent });
+      files.push({ path: posixRel, content: rewriteSkillFile(posixRel, content) });
     }
 
+    // Identity and description come from the REWRITTEN SKILL.md, not the source:
+    // the embedded artifact is the renamed standalone skill, so its manifest name
+    // must be what its own frontmatter says (and what install/sidecar/doctor use).
+    const rewrittenSkillMd = files.find(file => file.path === "SKILL.md").content;
+
     skills.push({
-      name: entry.name,
-      description: parseDescription(skillMd),
+      sourceDir: entry.name,
+      name: parseFrontmatterField(rewrittenSkillMd, "name"),
+      description: parseFrontmatterField(rewrittenSkillMd, "description"),
       contentHash: hashSkillFiles(files),
       files,
     });
@@ -278,8 +236,10 @@ const total = skills.reduce((n, s) => n + s.files.length, 0);
 // Every shipped skill must be found in the sources with a SKILL.md. Enforce this
 // in BOTH modes: otherwise a renamed/missing skill would silently produce a
 // binary with skills missing, and only an explicit `--check` run would catch it.
-const found = new Set(skills.map(s => s.name));
-const missing = [...SHIPPED_SKILLS].filter(name => !found.has(name));
+// Compared on the source directory name, since the manifest name is the renamed
+// standalone one.
+const found = new Set(skills.map(s => s.sourceDir));
+const missing = [...SHIPPED_SKILL_DIRS].filter(name => !found.has(name));
 if (missing.length > 0) {
   console.error(
     `Skill generation failed — shipped skill(s) not found in sources: ${missing.join(", ")}.`,
