@@ -6,6 +6,8 @@ import type { PayCardOnboardingStep } from "@domain/api-card-management";
 type Props = {
   isOpen: boolean;
   steps: PayCardOnboardingStep[];
+  completedCount: number;
+  totalCount: number;
   onClose: () => void;
   onboardingCompleted: boolean;
   handleGotIt: () => void;

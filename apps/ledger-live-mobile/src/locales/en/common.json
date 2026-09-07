@@ -10210,17 +10210,6 @@
     "card": {
       "title": "Crypto card"
     },
-    "cardOnboarding": {
-      "widget": {
-        "title": "Set up your card",
-        "allDone": "You're all set"
-      },
-      "dialog": {
-        "title": "Complete your card",
-        "stepComplete": "Completed",
-        "gotIt": "Got it"
-      }
-    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
@@ -10313,13 +10302,17 @@
     },
     "cardOnboarding": {
       "widget": {
-        "title": "Set up your card to start spending",
+        "title": "Set up your card",
         "allDone": "You're all set"
       },
       "dialog": {
         "title": "Set up your card",
         "stepComplete": "Complete",
         "gotIt": "Got it"
+      },
+      "walletStep": {
+        "title": "Add to Apple/Google Pay",
+        "description": "Pay with your phone in store"
       }
     }
   },

@@ -6,15 +6,17 @@ import {
   ListItemLeading,
   ListItemTitle,
   ListItemTrailing,
-} from "@ledgerhq/lumen-ui-react";
+} from "@ledgerhq/lumen-ui-rnative";
 import {
+  Android,
+  Apple,
   Cart,
   CheckmarkCircleFill,
   ChevronRight,
   CreditCardFill,
   Placeholder,
   PlusCircleFill,
-} from "@ledgerhq/lumen-ui-react/symbols";
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { CardOnboardingOptionViewProps } from "./useCardOnboardingOptionViewModel";
 
 const STEP_ICONS: Record<string, typeof Placeholder> = {
@@ -22,10 +24,12 @@ const STEP_ICONS: Record<string, typeof Placeholder> = {
   "choose-card-type": CreditCardFill,
   "top-up-card": PlusCircleFill,
   "first-purchase": Cart,
-  "apple-google-pay": Placeholder,
+  Apple,
+  Android,
 };
 
 export function CardOnboardingOptionView({
+  id,
   title,
   description,
   status,
@@ -35,9 +39,13 @@ export function CardOnboardingOptionView({
   const Icon = status === "done" ? CheckmarkCircleFill : (STEP_ICONS[iconId] ?? Placeholder);
 
   return (
-    <ListItem disabled={status === "pending"} onClick={status === "active" ? onAction : undefined}>
+    <ListItem
+      disabled={status === "pending"}
+      onPress={status === "active" ? onAction : undefined}
+      testID={`pay-card-onboarding-step-${id}`}
+    >
       <ListItemLeading>
-        <Icon size={20} className={status === "done" ? "text-success" : undefined} />
+        <Icon size={20} color={status === "done" ? "success" : undefined} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{description}</ListItemDescription>
