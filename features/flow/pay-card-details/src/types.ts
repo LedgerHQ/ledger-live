@@ -15,3 +15,27 @@ export type CardVisualProps = Readonly<{
 }>;
 
 export type CardVisualViewProps = CardVisualProps;
+
+export type FreezeCardViewProps = Readonly<{
+  isFrozen: boolean;
+  /** `true` when card status is BLOCKED — disables all freeze/unfreeze actions. */
+  isBlocked: boolean;
+  isStatusLoading: boolean;
+  isFreezeLoading: boolean;
+  isUnfreezeLoading: boolean;
+  isFreezeError: boolean;
+  isUnfreezeError: boolean;
+  onFreeze: () => void;
+  onUnfreeze: () => void;
+}>;
+
+export type FreezeViewProps = Pick<
+  FreezeCardViewProps,
+  | "isFrozen"
+  | "isBlocked"
+  | "isStatusLoading"
+  | "isFreezeLoading"
+  | "isUnfreezeLoading"
+  | "onFreeze"
+  | "onUnfreeze"
+>;

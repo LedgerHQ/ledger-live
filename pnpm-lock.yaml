@@ -6874,6 +6874,9 @@ importers:
 
   features/flow/pay-card-details:
     dependencies:
+      '@domain/api-card-management':
+        specifier: workspace:*
+        version: link:../../../domain/api/card-management
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.11(react@19.1.4)
@@ -22272,11 +22275,6 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-module-framework@8.3.0':
-    resolution: {integrity: sha512-7AVtJjgDBTeoFWrzDDnOAmkiZEuMsg3fayVukRgWnID3m4sg/048XKqO9uKljw/i0OEi4pDc3hNJ8gQgYJR10w==}
-    peerDependencies:
-      '@ledgerhq/live-network': ^3.0.0
-
   '@ledgerhq/coin-module-framework@8.4.0':
     resolution: {integrity: sha512-dHt1kPdVyQPpMKCiY3Or0rcl1XvcIFrqN9/asZ5lKleNdDKw0ea1AiJwWe9rBH+QSfNQBNWO8H8Ai9ksfKFjFA==}
     peerDependencies:
@@ -23020,6 +23018,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -33643,11 +33642,6 @@ packages:
   javascript-stringify@2.1.0:
     resolution: {integrity: sha512-JVAfqNPTvNq3sB/VHQJAFxN/sPgKnsKrCwyRt15zwNCdrMMJDdcEOdubuy+DuJYYdm0ox1J4uzEuYKkN+9yhVg==}
 
-  jayson@4.1.2:
-    resolution: {integrity: sha512-5nzMWDHy6f+koZOuYsArh2AXs73NfWYVlFyJJuCedr93GpY+Ku8qq10ropSXVfHK+H0T6paA88ww+/dV+1fBNA==}
-    engines: {node: '>=8'}
-    hasBin: true
-
   jayson@4.3.0:
     resolution: {integrity: sha512-AauzHcUcqs8OBnCHOkJY280VaTiCm57AbuO7lqzcw7JapGj50BisE3xhksye4zlTSR1+1tAz67wLTl8tEH1obQ==}
     engines: {node: '>=8'}
@@ -33938,9 +33932,6 @@ packages:
 
   js-base64@3.7.7:
     resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
-
-  js-base64@3.7.8:
-    resolution: {integrity: sha512-hNngCeKxIUQiEUN3GPJOkz4wF/YvdUdbNL9hsBcMQTkKzboD7T/q3OYOuuPZLUE6dBxSGpwhk5mwuDud7JVAow==}
 
   js-base64@3.9.3:
     resolution: {integrity: sha512-uwYQp+VJ38FVvtim6qNbit6e9uT6dwWQ4Y1+H9TxhW5hcHjpHwoxlR0nMpqUmIFOmu4VqMxwdJA88gIVuZJQ/g==}
@@ -37250,7 +37241,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -43736,7 +43726,7 @@ snapshots:
 
   '@babel/template@7.28.6':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
 
@@ -43787,7 +43777,7 @@ snapshots:
 
   '@babel/traverse@7.29.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.1
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
@@ -43982,7 +43972,7 @@ snapshots:
 
   '@callstack/repack-dev-server@5.2.5':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@fastify/middie': 9.3.2
       '@fastify/sensible': 6.0.4
       fastify: 5.8.5
@@ -45681,7 +45671,7 @@ snapshots:
 
   '@expo/metro-config@54.0.14(expo@54.0.33(01371b6b08adf68dcde9ab2ace4a34f9))':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
       '@expo/config': 12.0.13
@@ -47706,15 +47696,6 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
 
-  '@ledgerhq/coin-module-framework@8.3.0':
-    dependencies:
-      bignumber.js: 9.1.2
-
-  '@ledgerhq/coin-module-framework@8.3.0(@ledgerhq/live-network@libs+live-network)':
-    dependencies:
-      '@ledgerhq/live-network': link:libs/live-network
-      bignumber.js: 9.1.2
-
   '@ledgerhq/coin-module-framework@8.4.0':
     dependencies:
       bignumber.js: 9.1.2
@@ -47727,7 +47708,7 @@ snapshots:
   '@ledgerhq/coin-stellar@9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 8.3.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       '@stellar/stellar-sdk': 14.0.0
@@ -47737,7 +47718,7 @@ snapshots:
 
   '@ledgerhq/coin-tezos@10.2.1':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.3.0
+      '@ledgerhq/coin-module-framework': 8.4.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -47747,7 +47728,7 @@ snapshots:
 
   '@ledgerhq/coin-tezos@10.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.3.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       '@taquito/ledger-signer': 23.0.1
@@ -47759,7 +47740,7 @@ snapshots:
 
   '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.3.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       bignumber.js: 9.1.2
@@ -48033,7 +48014,7 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
-      js-base64: 3.7.8
+      js-base64: 3.9.3
       purify-ts: 2.1.0
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
       react-native-ble-plx: 3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4)
@@ -49940,7 +49921,7 @@ snapshots:
       '@polkadot/x-textdecoder': 14.0.1
       '@polkadot/x-textencoder': 14.0.1
       '@types/bn.js': 5.2.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       tslib: 2.6.2
 
   '@polkadot/wasm-bridge@7.5.4(@polkadot/util@14.0.1)(@polkadot/x-randomvalues@14.0.1(@polkadot/util@14.0.1)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.1)))':
@@ -50712,7 +50693,7 @@ snapshots:
     dependencies:
       '@react-native-community/cli-tools': 18.0.1
       chalk: 4.1.2
-      cosmiconfig: 9.0.0(@typescript/typescript6@6.0.2)
+      cosmiconfig: 9.0.2(@typescript/typescript6@6.0.2)
       deepmerge: 4.3.1
       fast-glob: 3.3.2
       joi: 17.12.2
@@ -50912,7 +50893,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.81.6':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       '@react-native/codegen': 0.81.6
     transitivePeerDependencies:
       - '@babel/core'
@@ -50920,7 +50901,7 @@ snapshots:
 
   '@react-native/babel-plugin-codegen@0.81.6(@babel/core@7.28.5)':
     dependencies:
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       '@react-native/codegen': 0.81.6(@babel/core@7.28.5)
     transitivePeerDependencies:
       - '@babel/core'
@@ -51068,7 +51049,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1
       '@babel/plugin-transform-typescript': 7.28.5
       '@babel/plugin-transform-unicode-regex': 7.27.1
-      '@babel/template': 7.28.6
+      '@babel/template': 7.29.7
       '@react-native/babel-plugin-codegen': 0.81.6
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2
@@ -51118,7 +51099,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/template': 7.28.6
+      '@babel/template': 7.29.7
       '@react-native/babel-plugin-codegen': 0.81.6(@babel/core@7.28.5)
       babel-plugin-syntax-hermes-parser: 0.29.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
@@ -51151,7 +51132,7 @@ snapshots:
 
   '@react-native/codegen@0.81.6':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       glob: 7.2.3
       hermes-parser: 0.29.1
       invariant: 2.2.4
@@ -51161,7 +51142,7 @@ snapshots:
   '@react-native/codegen@0.81.6(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       glob: 7.2.3
       hermes-parser: 0.29.1
       invariant: 2.2.4
@@ -53309,12 +53290,12 @@ snapshots:
       '@solana/buffer-layout': 4.0.1
       '@solana/codecs-numbers': 2.3.0(@typescript/typescript6@6.0.2)
       agentkeepalive: 4.6.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       borsh: 0.7.0
       bs58: 4.0.1
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       fast-stable-stringify: 1.0.0
-      jayson: 4.1.2
+      jayson: 4.3.0
       node-fetch: 2.7.0
       rpc-websockets: 9.0.4
       superstruct: 2.0.2
@@ -54545,7 +54526,7 @@ snapshots:
 
   '@testing-library/dom@10.4.1':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -54724,8 +54705,8 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.28.0
@@ -59626,7 +59607,7 @@ snapshots:
       sanitize-filename: 1.6.3
       semver: 7.8.1
       serialize-error: 8.1.0
-      shell-quote: 1.8.4
+      shell-quote: 1.10.0
       signal-exit: 3.0.7
       stream-json: 1.8.0
       strip-ansi: 6.0.1
@@ -59682,7 +59663,7 @@ snapshots:
       sanitize-filename: 1.6.3
       semver: 7.8.1
       serialize-error: 8.1.0
-      shell-quote: 1.8.4
+      shell-quote: 1.10.0
       signal-exit: 3.0.7
       stream-json: 1.8.0
       strip-ansi: 6.0.1
@@ -62843,7 +62824,7 @@ snapshots:
 
   isomorphic-fetch@3.0.0:
     dependencies:
-      node-fetch: 2.6.13
+      node-fetch: 2.7.0
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
@@ -62902,7 +62883,7 @@ snapshots:
   istanbul-lib-instrument@6.0.3:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.8.1
@@ -62963,24 +62944,6 @@ snapshots:
       minimatch: 3.1.2
 
   javascript-stringify@2.1.0: {}
-
-  jayson@4.1.2:
-    dependencies:
-      '@types/connect': 3.4.38
-      '@types/node': 12.20.55
-      '@types/ws': 7.4.7
-      JSONStream: 1.3.5
-      commander: 2.20.3
-      delay: 5.0.0
-      es6-promisify: 5.0.0
-      eyes: 0.1.8
-      isomorphic-ws: 4.0.1(ws@7.5.10)
-      json-stringify-safe: 5.0.1
-      uuid: 8.3.2
-      ws: 7.5.10
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   jayson@4.3.0:
     dependencies:
@@ -63825,8 +63788,6 @@ snapshots:
   js-base64@3.7.4: {}
 
   js-base64@3.7.7: {}
-
-  js-base64@3.7.8: {}
 
   js-base64@3.9.3: {}
 
@@ -65595,11 +65556,11 @@ snapshots:
 
   metro@0.81.5:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
+      '@babel/parser': 7.29.8
+      '@babel/template': 7.29.7
       '@babel/traverse': 7.29.8
       '@babel/types': 7.29.8
       accepts: 1.3.8
