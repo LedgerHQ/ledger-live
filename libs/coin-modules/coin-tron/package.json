@@ -31,9 +31,6 @@
       "network": [
         "lib/network/index"
       ],
-      "types": [
-        "lib/types/index"
-      ],
       "*": [
         "lib/*"
       ]
@@ -60,7 +57,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "lodash": "catalog:",

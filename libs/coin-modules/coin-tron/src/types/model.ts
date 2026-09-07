@@ -1,11 +1,3 @@
-import {
-  Account,
-  AccountRaw,
-  Operation,
-  OperationExtra,
-  OperationExtraRaw,
-  OperationRaw,
-} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export type TronOperationMode =
@@ -69,17 +61,14 @@ export type TrongridTxInfo = {
   memo?: string;
 };
 
-export type TronOperation = Operation<TrongridExtraTxInfo>;
-export type TronOperationRaw = OperationRaw<TrongridExtraTxInfoRaw>;
-
-export type TrongridExtraTxInfo = OperationExtra & {
+export type TrongridExtraTxInfo = {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
   votes?: Vote[];
   unDelegatedAmount?: BigNumber;
   receiverAddress?: string;
 };
-export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
+export type TrongridExtraTxInfoRaw = {
   frozenAmount?: string;
   unfreezeAmount?: string;
   votes?: Vote[];
@@ -155,56 +144,7 @@ export type SuperRepresentative = {
   latestBlockNum: number | null | undefined;
   latestSlotNum: number | null | undefined;
 };
-export type TronResources = {
-  frozen: {
-    bandwidth: FrozenInfo | null | undefined;
-    energy: FrozenInfo | null | undefined;
-  };
-  unFrozen: {
-    bandwidth: UnFrozenInfo[] | null | undefined;
-    energy: UnFrozenInfo[] | null | undefined;
-  };
-  delegatedFrozen: {
-    bandwidth: DelegatedFrozenInfo | null | undefined;
-    energy: DelegatedFrozenInfo | null | undefined;
-  };
-  legacyFrozen: {
-    bandwidth: LegacyFrozenInfo | null | undefined;
-    energy: LegacyFrozenInfo | null | undefined;
-  };
-  votes: Vote[];
-  tronPower: number;
-  energy: BigNumber;
-  bandwidth: BandwidthInfo;
-  unwithdrawnReward: BigNumber;
-  lastWithdrawnRewardDate: Date | null | undefined;
-  lastVotedDate: Date | null | undefined;
-};
-export type TronResourcesRaw = {
-  frozen: {
-    bandwidth: FrozenInfoRaw | null | undefined;
-    energy: FrozenInfoRaw | null | undefined;
-  };
-  unFrozen: {
-    bandwidth: UnFrozenInfoRaw[] | null | undefined;
-    energy: UnFrozenInfoRaw[] | null | undefined;
-  };
-  delegatedFrozen: {
-    bandwidth: DelegatedFrozenInfoRaw | null | undefined;
-    energy: DelegatedFrozenInfoRaw | null | undefined;
-  };
-  legacyFrozen: {
-    bandwidth: LegacyFrozenInfoRaw | null | undefined;
-    energy: LegacyFrozenInfoRaw | null | undefined;
-  };
-  votes: Vote[];
-  tronPower: number;
-  energy: string;
-  bandwidth: BandwidthInfoRaw;
-  unwithdrawnReward: string;
-  lastWithdrawnRewardDate: string | null | undefined;
-  lastVotedDate: string | null | undefined;
-};
+
 export type Vote = {
   name: string | null | undefined;
   address: string;
@@ -258,8 +198,55 @@ export type BandwidthInfoRaw = {
   gainedUsed: string;
   gainedLimit: string;
 };
-export function isTronAccount(account: Account): account is TronAccount {
-  return "tronResources" in account;
-}
-export type TronAccount = Account & { tronResources: TronResources };
-export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
+
+export type TronResources = {
+  frozen: {
+    bandwidth: FrozenInfo | null | undefined;
+    energy: FrozenInfo | null | undefined;
+  };
+  unFrozen: {
+    bandwidth: UnFrozenInfo[] | null | undefined;
+    energy: UnFrozenInfo[] | null | undefined;
+  };
+  delegatedFrozen: {
+    bandwidth: DelegatedFrozenInfo | null | undefined;
+    energy: DelegatedFrozenInfo | null | undefined;
+  };
+  legacyFrozen: {
+    bandwidth: LegacyFrozenInfo | null | undefined;
+    energy: LegacyFrozenInfo | null | undefined;
+  };
+  votes: Vote[];
+  tronPower: number;
+  energy: BigNumber;
+  bandwidth: BandwidthInfo;
+  unwithdrawnReward: BigNumber;
+  lastWithdrawnRewardDate: Date | null | undefined;
+  lastVotedDate: Date | null | undefined;
+};
+
+export type TronResourcesRaw = {
+  frozen: {
+    bandwidth: FrozenInfoRaw | null | undefined;
+    energy: FrozenInfoRaw | null | undefined;
+  };
+  unFrozen: {
+    bandwidth: UnFrozenInfoRaw[] | null | undefined;
+    energy: UnFrozenInfoRaw[] | null | undefined;
+  };
+  delegatedFrozen: {
+    bandwidth: DelegatedFrozenInfoRaw | null | undefined;
+    energy: DelegatedFrozenInfoRaw | null | undefined;
+  };
+  legacyFrozen: {
+    bandwidth: LegacyFrozenInfoRaw | null | undefined;
+    energy: LegacyFrozenInfoRaw | null | undefined;
+  };
+  votes: Vote[];
+  tronPower: number;
+  energy: string;
+  bandwidth: BandwidthInfoRaw;
+  unwithdrawnReward: string;
+  lastWithdrawnRewardDate: string | null | undefined;
+  lastVotedDate: string | null | undefined;
+};
