@@ -25,11 +25,20 @@ const beforeAllTokenFunction = async (transaction: TransactionType, options?: Se
   await app.mainNavigation.waitForWallet40Ready();
 };
 
+export type NewSendFlowTokenTestOptions = SendTestOptions & {
+  /**
+   * When set, the operation-details amount is asserted to render the exact digit sequence.
+   * Use for assets whose decimal magnitude is unusual enough that a formatting regression
+   * would otherwise pass unnoticed.
+   */
+  verifyAmountPrecision?: boolean;
+};
+
 export function runNewSendFlowTokenTest(
   transaction: TransactionType,
   tmsLinks: string[],
   tags: string[],
-  options?: SendTestOptions,
+  options?: NewSendFlowTokenTestOptions,
 ) {
   setTeamOwner(
     BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
@@ -60,6 +69,9 @@ export function runNewSendFlowTokenTest(
       await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
       await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
+      if (options?.verifyAmountPrecision) {
+        await app.operationDetails.expectOperationAmountPrecision(transaction.amount);
+      }
     });
   });
 }
