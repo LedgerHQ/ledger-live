@@ -1,5 +1,5 @@
 import { cardApi } from "@shared/api-services";
-import { CARD_MANAGEMENT_TAGS } from "./constants";
+import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
@@ -27,35 +27,35 @@ import type {
   PayCardUser,
 } from "./types";
 
+const GRANT = { authenticated: false } as const;
+
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
     endpoints: build => ({
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
-        query: ({ code, codeVerifier }) => ({
-          url: "/v1/auth/oauth2/token",
+        query: request => ({
+          url: OAUTH2_TOKEN_PATH,
           method: "POST",
           body: {
             grant_type: "authorization_code",
-            code,
-            code_verifier: codeVerifier,
+            code: request.code,
+            code_verifier: request.codeVerifier,
           },
         }),
+        extraOptions: GRANT,
         rawResponseSchema: PayCardSessionResponseSchema,
         transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
       }),
 
-      /** Same endpoint as the code exchange, separated by `grant_type`. */
       refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
-        query: ({ refreshToken }) => ({
-          url: "/v1/auth/oauth2/token",
+        query: request => ({
+          url: OAUTH2_TOKEN_PATH,
           method: "POST",
-          body: {
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-          },
+          body: { grant_type: "refresh_token", refresh_token: request.refreshToken },
         }),
+        extraOptions: GRANT,
         rawResponseSchema: PayCardSessionResponseSchema,
         transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
@@ -150,8 +150,6 @@ export const cardManagementApi = cardApi
 export type CardManagementApi = typeof cardManagementApi;
 
 export const {
-  useExchangeAuthorizationCodeMutation,
-  useRefreshSessionMutation,
   useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,

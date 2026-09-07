@@ -7,13 +7,22 @@ import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   calApiExtra,
+  cardApi,
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  redactCardApiAction,
+  redactCardApiState,
   swapApiExtra,
 } from "@shared/api-services";
-import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  configureCardSessionRenewal,
+  isCardSessionCurrent,
+  readCardSession,
+  refreshCardSession,
+} from "@features/platform-card";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createAccountAliasMiddleware,
   withAccountAliases,
@@ -71,7 +80,8 @@ const customCreateStore = ({
                 // Read on every request, so the debug settings can change them without a restart.
                 getCardApiBaseUrl: () => getEnv("CARD_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-                getCardSessionToken,
+                readCardSession,
+                isCardSessionCurrent,
                 refreshCardSession,
               }),
               ...pushDevicesApiExtra({
@@ -129,7 +139,17 @@ const customCreateStore = ({
           }),
         )
         .concat(sleepingListener.middleware),
-    devTools: __DEV__,
+    devTools: __DEV__
+      ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+      : false,
+  });
+
+  configureCardSessionRenewal({
+    dispatch: store.dispatch,
+    onCardSessionEnded: () => {
+      store.dispatch(setSignedIn(false));
+      setTimeout(() => store.dispatch(cardApi.util.resetApiState()), 0);
+    },
   });
 
   return store;

@@ -1,4 +1,4 @@
-import { cardSession, getCardSessionToken } from "./cardSession.native";
+import { cardSession, getCardSessionToken, readCardSession } from "./cardSession.native";
 
 /**
  * A keychain of one entry per `service`, which is how the native store uses the library. It keeps
@@ -26,11 +26,7 @@ jest.mock("react-native-keychain", () => {
   };
 });
 
-const session = {
-  accessToken: "at_token",
-  expiresIn: 21600,
-  refreshToken: "rt_token",
-};
+const session = { accessToken: "at_token", refreshToken: "rt_token" };
 
 /** The wiring the mobile app gets: the same accessors, over the keychain store. */
 describe("cardSession.native", () => {
@@ -44,7 +40,10 @@ describe("cardSession.native", () => {
     await cardSession.set(session);
 
     await expect(getCardSessionToken()).resolves.toBe("at_token");
-    await expect(cardSession.get()).resolves.toEqual(session);
+    await expect(cardSession.get()).resolves.toMatchObject({
+      accessToken: "at_token",
+      refreshToken: "rt_token",
+    });
   });
 
   it("stops serving the token once the session is cleared", async () => {
@@ -53,5 +52,14 @@ describe("cardSession.native", () => {
     await cardSession.clear();
 
     await expect(getCardSessionToken()).resolves.toBeNull();
+  });
+
+  it("serves the base query the token and the session id of the session it came from", async () => {
+    await cardSession.set(session);
+
+    await expect(readCardSession()).resolves.toEqual({
+      token: "at_token",
+      sessionId: expect.any(Number),
+    });
   });
 });
