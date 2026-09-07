@@ -119,3 +119,67 @@ export function calculateToken2022TransferFees({
       .toNumber(),
   };
 }
+
+/**
+ * Computes Token-2022 transfer fees for the "send all" case.
+ *
+ * Unlike `calculateToken2022TransferFees` which works from net → gross, this
+ * function works from gross → net: the total deducted from the sender's ATA
+ * equals the full token balance, and the fee is derived from that total.
+ *
+ * Formula: `fee = min( ceil(total × bps / 10 000), maximumFee )`
+ *
+ * Selects the active fee schedule based on `currentEpoch` vs the
+ * `newerTransferFee.epoch` threshold.
+ */
+export function computeTransferFeeFromTotal(
+  totalAmount: BigNumber.Value,
+  config: Pick<TransferFeeConfigExt["state"], "newerTransferFee" | "olderTransferFee">,
+  currentEpoch: number,
+): TransferFeeCalculated {
+  const { newerTransferFee, olderTransferFee } = config;
+  const feeConfig = currentEpoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
+  const { maximumFee, transferFeeBasisPoints } = feeConfig;
+  const feePercent = bpsToPercent(transferFeeBasisPoints);
+
+  const totalBn = BigNumber(totalAmount);
+  const maxFeeBn = BigNumber(maximumFee);
+  let transferFeeBn = totalBn
+    .times(transferFeeBasisPoints)
+    .div(10000)
+    .decimalPlaces(0, BigNumber.ROUND_CEIL);
+  if (transferFeeBn.gt(maxFeeBn)) {
+    transferFeeBn = maxFeeBn;
+  }
+
+  return {
+    feePercent,
+    maxTransferFee: maximumFee,
+    transferFee: transferFeeBn.toNumber(),
+    feeBps: transferFeeBasisPoints,
+    transferAmountIncludingFee: totalBn.toNumber(),
+    transferAmountExcludingFee: totalBn.minus(transferFeeBn).toNumber(),
+  };
+}
+
+/**
+ * Transfer fee for an intent, picking the right direction: a send-all amount is the total leaving
+ * the account, any other amount is what the recipient should receive.
+ */
+export function transferFeeForIntent(
+  amount: bigint,
+  useAllAmount: boolean | undefined,
+  transferFeeConfigState: Pick<
+    TransferFeeConfigExt["state"],
+    "newerTransferFee" | "olderTransferFee"
+  >,
+  currentEpoch: number,
+): TransferFeeCalculated {
+  return useAllAmount
+    ? computeTransferFeeFromTotal(amount.toString(), transferFeeConfigState, currentEpoch)
+    : calculateToken2022TransferFees({
+        transferAmount: Number(amount),
+        transferFeeConfigState,
+        currentEpoch,
+      });
+}

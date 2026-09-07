@@ -15,10 +15,25 @@ const LIVE_35047_USDC_ATA = getAssociatedTokenAddressSync(
   new PublicKey(LIVE_35047_WALLET),
 ).toBase58();
 
-const KNOWN_TYPES = ["IN", "OUT", "FEES", "NONE", "DELEGATE", "UNDELEGATE", "WITHDRAW_UNBONDED"];
+// Native and token alike: the token account streams are read alongside the wallet's, so a token
+// operation reaches this list too.
+const KNOWN_TYPES = [
+  "IN",
+  "OUT",
+  "FEES",
+  "NONE",
+  "DELEGATE",
+  "UNDELEGATE",
+  "WITHDRAW_UNBONDED",
+  "OPT_IN",
+  "OPT_OUT",
+  "FREEZE",
+  "UNFREEZE",
+  "BURN",
+];
 
-// Per-type coverage (all 7 types) is in listOperations.test.ts (MSW) and
-// listOperations.unit.test.ts. This file focuses on real-RPC smoke tests.
+// Per-type coverage is in listOperations.test.ts (MSW) and listOperations.unit.test.ts. This file
+// focuses on real-RPC smoke tests.
 describe("listOperations (integration)", () => {
   it("fetches operations for an active account", async () => {
     const result = await listOperations(api, ACTIVE_ADDRESS, {

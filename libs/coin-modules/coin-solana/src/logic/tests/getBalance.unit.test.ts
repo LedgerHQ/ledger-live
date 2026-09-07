@@ -1,22 +1,24 @@
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
+import { getTokenAccountProgramId } from "../../helpers/token";
+import { PARSED_PROGRAMS } from "../../network/chain/program/constants";
+import type { SolanaTokenProgram } from "../../types";
 import type { ChainAPI } from "../../network";
 import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { getBalance } from "../getBalance";
-import {
-  computeFrameworkStakeActions,
-  computeUnstakeReserve,
-  getStakeAccounts,
-} from "../getStakes";
+import { computeUnstakeReserve, getStakeAccounts } from "../getStakes";
 
+// Only the network-bound helpers are stubbed: `mapStakeAccountToFrameworkStake` is the code
+// under test here, so it runs for real.
 jest.mock("../getStakes", () => ({
+  ...jest.requireActual("../getStakes"),
   getStakeAccounts: jest.fn().mockResolvedValue([]),
   computeUnstakeReserve: jest.fn().mockResolvedValue(0),
-  computeFrameworkStakeActions: jest.fn().mockReturnValue([]),
 }));
 
 const mockGetStakeAccounts = jest.mocked(getStakeAccounts);
 const mockComputeUnstakeReserve = jest.mocked(computeUnstakeReserve);
-const mockComputeFrameworkStakeActions = jest.mocked(computeFrameworkStakeActions);
 
 const DEFAULT_RENT_EXEMPT_RESERVE = 2_282_880;
 
@@ -28,13 +30,17 @@ function makeStakeAccountStub(
     voter?: string;
     stake?: string;
     rentExemptReserve?: number;
+    staker?: string;
+    withdrawer?: string;
   },
 ) {
   const pubkey = options?.pubkey ?? "StakeAddr1111111111111111111111111111111111";
   const state = options?.state ?? "active";
   const voter = options?.voter ?? "Validator111111111111111111111111111111111111";
   const rentExemptReserve = options?.rentExemptReserve ?? DEFAULT_RENT_EXEMPT_RESERVE;
-  // On Solana delegation.stake includes the rent-exempt reserve (full amount deposited).
+  // On chain `delegation.stake` is the delegated principal and excludes the rent-exempt reserve.
+  // The default keeps it equal to the lamports for brevity; tests that care about the difference
+  // pass an explicit `stake`.
   const delegatedStake = options?.stake ?? String(lamports);
   return {
     account: {
@@ -43,7 +49,21 @@ function makeStakeAccountStub(
         account: { lamports },
       },
       info: {
-        meta: { rentExemptReserve: { toString: () => String(rentExemptReserve) } },
+        meta: {
+          rentExemptReserve: {
+            toString: () => String(rentExemptReserve),
+            toNumber: () => rentExemptReserve,
+          },
+          authorized: {
+            staker: { toBase58: () => options?.staker ?? TEST_ADDRESS },
+            withdrawer: { toBase58: () => options?.withdrawer ?? TEST_ADDRESS },
+          },
+          lockup: {
+            custodian: { toBase58: () => "Custodian11111111111111111111111111111111111" },
+            unixTimestamp: 0,
+            epoch: 0,
+          },
+        },
         stake: {
           delegation: {
             voter: { toBase58: () => voter },
@@ -59,6 +79,55 @@ function makeStakeAccountStub(
 }
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+// A token account the wallet owns that is not the associated one for its mint.
+const OTHER_TOKEN_ACCOUNT = "35npQR1u7vycmAjRS8H2ozoY7uTXPeZqUCJAm34Kidv1";
+
+/**
+ * A parsed on-chain token account as the RPC returns it. Complete rather than minimal: the
+ * balance mapper validates it (superstruct) to read `state` and `extensions`.
+ */
+function parsedTokenAccount(
+  mint: string,
+  amount: string,
+  options?: {
+    state?: string;
+    extensions?: unknown[];
+    tokenProgram?: SolanaTokenProgram;
+    /** Defaults to the owner's associated token account — the only one the bridge can spend. */
+    pubkey?: PublicKey;
+  },
+) {
+  const tokenProgram = options?.tokenProgram ?? PARSED_PROGRAMS.SPL_TOKEN;
+  return {
+    pubkey:
+      options?.pubkey ??
+      getAssociatedTokenAddressSync(
+        new PublicKey(mint),
+        new PublicKey(TEST_ADDRESS),
+        undefined,
+        getTokenAccountProgramId(tokenProgram),
+      ),
+    account: {
+      data: {
+        parsed: {
+          info: {
+            mint,
+            owner: TEST_ADDRESS,
+            state: options?.state ?? "initialized",
+            isNative: false,
+            tokenAmount: {
+              amount,
+              decimals: 6,
+              uiAmount: Number(amount) / 1e6,
+              uiAmountString: String(Number(amount) / 1e6),
+            },
+            ...(options?.extensions ? { extensions: options.extensions } : {}),
+          },
+        },
+      },
+    },
+  };
+}
 
 describe("getBalance", () => {
   const mockGetBalance = jest.fn() as jest.MockedFunction<ChainAPI["getBalance"]>;
@@ -112,20 +181,7 @@ describe("getBalance", () => {
     mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
     const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({
-      value: [
-        {
-          account: {
-            data: {
-              parsed: {
-                info: {
-                  mint: USDC_MINT,
-                  tokenAmount: { amount: "5000000" },
-                },
-              },
-            },
-          },
-        },
-      ],
+      value: [parsedTokenAccount(USDC_MINT, "5000000")],
     });
 
     const result = await getBalance(api, TEST_ADDRESS);
@@ -145,18 +201,9 @@ describe("getBalance", () => {
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
     mockGetParsedToken2022AccountsByOwner.mockResolvedValue({
       value: [
-        {
-          account: {
-            data: {
-              parsed: {
-                info: {
-                  mint: PYUSD_MINT,
-                  tokenAmount: { amount: "10000000" },
-                },
-              },
-            },
-          },
-        },
+        parsedTokenAccount(PYUSD_MINT, "10000000", {
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN_2022,
+        }),
       ],
     });
 
@@ -170,32 +217,65 @@ describe("getBalance", () => {
     expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS);
   });
 
-  it("should aggregate multiple token accounts for the same mint", async () => {
+  it("surfaces a frozen token account so the bridge can block spending", async () => {
+    mockGetBalance.mockResolvedValue(1_000_000_000);
+    mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+    const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [parsedTokenAccount(USDC_MINT, "5000000", { state: "frozen" })],
+    });
+
+    const result = await getBalance(api, TEST_ADDRESS);
+
+    // locked === value, so buildTokenAccount derives spendableBalance 0 and the send is blocked
+    expect(result[1].locked).toBe(5_000_000n);
+    expect(result[1].value).toBe(5_000_000n);
+  });
+
+  // `craftTransaction` derives the associated token account rather than reading it off the
+  // sub-account, so anything held elsewhere is unspendable — counting it would report a balance
+  // the bridge cannot honour. The legacy bridge dropped those accounts too.
+  it("ignores token accounts that are not the owner's associated one", async () => {
     mockGetBalance.mockResolvedValue(1_000_000_000);
     mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
     const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({
       value: [
-        {
-          account: {
-            data: { parsed: { info: { mint: USDC_MINT, tokenAmount: { amount: "3000000" } } } },
-          },
-        },
-        {
-          account: {
-            data: { parsed: { info: { mint: USDC_MINT, tokenAmount: { amount: "7000000" } } } },
-          },
-        },
+        parsedTokenAccount(USDC_MINT, "7000000"),
+        parsedTokenAccount(USDC_MINT, "3000000", { pubkey: new PublicKey(OTHER_TOKEN_ACCOUNT) }),
       ],
     });
 
     const result = await getBalance(api, TEST_ADDRESS);
 
     expect(result).toHaveLength(2);
-    expect(result[1]).toEqual({
-      value: 10_000_000n,
-      asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
+    expect(result[1].value).toBe(7_000_000n);
+  });
+
+  it("reports no balance for a mint held only outside the associated token account", async () => {
+    mockGetBalance.mockResolvedValue(1_000_000_000);
+    mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+    const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [
+        parsedTokenAccount(USDC_MINT, "3000000", { pubkey: new PublicKey(OTHER_TOKEN_ACCOUNT) }),
+      ],
     });
+
+    expect(await getBalance(api, TEST_ADDRESS)).toHaveLength(1);
+  });
+
+  it("does not lock a healthy token account", async () => {
+    mockGetBalance.mockResolvedValue(1_000_000_000);
+    mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+    const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+    mockGetParsedTokenAccountsByOwner.mockResolvedValue({
+      value: [parsedTokenAccount(USDC_MINT, "5000000")],
+    });
+
+    const result = await getBalance(api, TEST_ADDRESS);
+
+    expect(result[1].locked).toBeUndefined();
   });
 
   it("should propagate errors from getBalance", async () => {
@@ -254,7 +334,7 @@ describe("getBalance", () => {
       expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
     });
 
-    it("should compute amountRewarded as the delta between lamports and delegated stake", async () => {
+    it("reports the delegated principal as amount, excluding the rent-exempt reserve", async () => {
       mockGetBalance.mockResolvedValue(1_000_000_000);
       mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
       mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
@@ -268,10 +348,15 @@ describe("getBalance", () => {
       const result = await getBalance(api, TEST_ADDRESS);
 
       const stake = result[1].stake!;
-      expect(stake.amount).toBe(BigInt(lamports));
+      // The framework sums `amount` into delegatedBalance, so it must be the delegated
+      // principal — not the account's lamports, which also cover the rent-exempt reserve.
+      expect(stake.amount).toBe(BigInt(delegated));
       expect(stake.amountDeposited).toBe(BigInt(delegated));
-      expect(stake.amountRewarded).toBe(BigInt(lamports - delegated));
+      // Solana compounds rewards into the delegation; nothing is separately claimable.
+      expect(stake.amountRewarded).toBe(0n);
       expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
+      // `value` still carries what the stake account actually holds.
+      expect(result[1].value).toBe(BigInt(lamports));
     });
 
     it("should include unstakeReserve in locked", async () => {
@@ -311,24 +396,46 @@ describe("getBalance", () => {
       });
     });
 
-    it("populates stake.actions from computeFrameworkStakeActions", async () => {
+    it("populates stake.actions and the position details the generic bridge reads", async () => {
       mockGetBalance.mockResolvedValue(1_000_000_000);
       mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
       mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
-      const stakeAccount = makeStakeAccountStub(2_000_000_000);
+      const lamports = 2_000_000_000;
+      const active = lamports - DEFAULT_RENT_EXEMPT_RESERVE - 5_000_000;
+      const stakeAccount = makeStakeAccountStub(lamports, { stake: String(active) });
+      stakeAccount.activation.active = active;
       mockGetStakeAccounts.mockResolvedValue([stakeAccount] as StakeAccount[]);
-      mockComputeFrameworkStakeActions.mockReturnValueOnce(["claim_reward", "undelegate"]);
 
       const result = await getBalance(api, TEST_ADDRESS);
 
-      expect(result[1]).toMatchObject({
-        stake: { actions: ["claim_reward", "undelegate"] },
+      const stake = result[1].stake!;
+      // active stake with withdrawable lamports on top (e.g. Jito MEV rewards)
+      expect(stake.actions).toEqual(["claim_reward", "undelegate"]);
+      expect(stake.details).toMatchObject({
+        activeAmount: active,
+        inactiveAmount: 0,
+        withdrawableAmount: 5_000_000,
+        lockedReserve: DEFAULT_RENT_EXEMPT_RESERVE,
+        canStake: true,
+        canWithdraw: true,
       });
-      expect(mockComputeFrameworkStakeActions).toHaveBeenCalledWith(
-        stakeAccount,
-        TEST_ADDRESS,
-        400,
-      );
+    });
+
+    it("reports a fully deactivated stake as inactive, with nothing delegated", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      const stakeAccount = makeStakeAccountStub(2_000_000_000, { state: "inactive" });
+      stakeAccount.activation.active = 0;
+      stakeAccount.activation.inactive = 2_000_000_000;
+      mockGetStakeAccounts.mockResolvedValue([stakeAccount] as StakeAccount[]);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      const stake = result[1].stake!;
+      expect(stake.state).toBe("inactive");
+      expect(stake.amount).toBe(0n);
+      expect(stake.actions).toEqual(["claim_reward", "delegate"]);
     });
 
     it("should sum lamports across multiple stake accounts", async () => {

@@ -20,12 +20,36 @@ import {
   buildStakeWithdrawInstructions,
   getMaybeMintAccount,
   getMaybeTokenMintProgram,
+  getMaybeTokenMint,
   getMaybeTokenAccount,
   findAssociatedTokenAccountPubkey,
 } from "../../network/chain/web3";
 import type { SolanaTokenProgram, Transaction } from "../../types";
 import { DUMMY_SIGNATURE } from "../../utils";
 import { buildVersionedTransaction, craftTransaction } from "../craftTransaction";
+import BigNumber from "bignumber.js";
+import { getStakeAccounts, type StakeAccount } from "../../network/chain/stake-activation/rpc";
+
+/** The slice `liveWithdrawable` reads; inactive unless told otherwise. */
+function stakeAccountFixture({
+  address,
+  lamports,
+  rentExemptReserve,
+  activation = { state: "inactive", active: 0, activating: 0 },
+}: {
+  address: string;
+  lamports: number;
+  rentExemptReserve: number;
+  activation?: { state: string; active: number; activating: number };
+}): StakeAccount {
+  return {
+    account: {
+      onChainAcc: { pubkey: new PublicKey(address), account: { lamports } },
+      info: { meta: { rentExemptReserve: new BigNumber(rentExemptReserve) } },
+    },
+    activation,
+  } as unknown as StakeAccount;
+}
 
 jest.mock("../../network/chain/web3", () => ({
   ...jest.requireActual("../../network/chain/web3"),
@@ -41,12 +65,18 @@ jest.mock("../../network/chain/web3", () => ({
   getStakeAccountMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(2_282_880),
   getMaybeMintAccount: jest.fn(),
   getMaybeTokenMintProgram: jest.fn(),
+  getMaybeTokenMint: jest.fn(),
   getMaybeTokenAccount: jest.fn(),
   findAssociatedTokenAccountPubkey: jest.fn(),
 }));
 
 jest.mock("../../stakeAccountSeed", () => ({
   createStakeAccountSeed: jest.fn().mockReturnValue("test-seed-123"),
+}));
+
+// No account resolves by default, so the intent's amount stands.
+jest.mock("../../network/chain/stake-activation/rpc", () => ({
+  getStakeAccounts: jest.fn().mockResolvedValue([]),
 }));
 
 const mockedBuildTransferInstructions = jest.mocked(buildTransferInstructions);
@@ -59,6 +89,14 @@ const mockedGetMaybeMintAccount = getMaybeMintAccount as jest.MockedFunction<
   DeepPartialReturn<typeof getMaybeMintAccount>
 >;
 const mockedGetMaybeTokenMintProgram = jest.mocked(getMaybeTokenMintProgram);
+const mockedGetMaybeTokenMint = getMaybeTokenMint as unknown as jest.MockedFunction<
+  DeepPartialReturn<(address: string, api: ChainAPI) => ReturnType<typeof getMaybeTokenMint>>
+>;
+
+/** One read now carries both the parsed mint and the program that owns it. */
+function mintOf(info: Record<string, unknown>, program = "spl-token") {
+  return { info, onChainAcc: { data: { program } } } as never;
+}
 const mockedGetMaybeTokenAccount = getMaybeTokenAccount as jest.MockedFunction<
   DeepPartialReturn<typeof getMaybeTokenAccount>
 >;
@@ -71,6 +109,83 @@ const TEST_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 // ---------------------------------------------------------------------------
 // craftTransaction
 // ---------------------------------------------------------------------------
+
+const PREBUILT_TX =
+  "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDNzWs4isgmR+LEHY8ZcgBBLMnC4ckD1iuhSa2/Y+69I91oyGFaAZ/9w4srgx9KoqiHtPM6Vur7h4D6XVoSgrEhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALt5JNk+MAN8BXYrlkxMEL1C/sM3+ZFYwZw4eofBOKp4BAgIAAQwCAAAAgJaYAAAAAAA=";
+const PREBUILT_FEE_PAYER = "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx";
+
+// A partner-built transaction (LiFi's swap payload) reaches the coin module through `intent.data`.
+describe("craftTransaction — partner-built transaction", () => {
+  const mockGetLatestBlockhash = jest.fn() as jest.MockedFunction<ChainAPI["getLatestBlockhash"]>;
+  const mockGetFeeForMessage = jest.fn() as jest.MockedFunction<ChainAPI["getFeeForMessage"]>;
+  const api = {
+    getLatestBlockhash: mockGetLatestBlockhash,
+    getFeeForMessage: mockGetFeeForMessage,
+  } as unknown as ChainAPI;
+
+  const intent = {
+    intentType: "transaction",
+    type: "send",
+    sender: PREBUILT_FEE_PAYER,
+    // The intent's recipient and amount are placeholders: the bytes are the transaction.
+    recipient: "",
+    amount: 0n,
+    asset: { type: "native" },
+    data: { type: "solana", raw: PREBUILT_TX },
+  } as unknown as TransactionIntent;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetLatestBlockhash.mockResolvedValue({
+      blockhash: TEST_BLOCKHASH,
+      lastValidBlockHeight: 280064048,
+    });
+    mockGetFeeForMessage.mockResolvedValue(5000);
+  });
+
+  it("signs the partner's bytes rather than crafting from the intent", async () => {
+    const result = await craftTransaction(api, intent);
+
+    const deserialized = VersionedTransaction.deserialize(
+      Buffer.from(result.transaction, "base64"),
+    );
+    expect(deserialized.message.staticAccountKeys[0].toBase58()).toBe(PREBUILT_FEE_PAYER);
+    expect(result.details?.estimatedFee).toBe("5000");
+    expect(buildTransferInstructions).not.toHaveBeenCalled();
+  });
+
+  it("refreshes the blockhash while the transaction is still unsigned", async () => {
+    const result = await craftTransaction(api, intent);
+
+    const deserialized = VersionedTransaction.deserialize(
+      Buffer.from(result.transaction, "base64"),
+    );
+    expect(deserialized.message.recentBlockhash).toBe(TEST_BLOCKHASH);
+    expect(result.details?.recentBlockhash).toBe(TEST_BLOCKHASH);
+  });
+
+  it("honours custom fees without asking the chain", async () => {
+    const result = await craftTransaction(api, intent, { value: 12345n });
+
+    expect(result.details?.estimatedFee).toBe("12345");
+    expect(mockGetFeeForMessage).not.toHaveBeenCalled();
+  });
+
+  it("refuses a transaction whose fee payer is not the sender", async () => {
+    await expect(
+      craftTransaction(api, { ...intent, sender: TEST_ADDRESS } as TransactionIntent),
+    ).rejects.toThrow("Sender does not match transaction fee payer");
+  });
+
+  it("refuses bytes it cannot deserialize", async () => {
+    await expect(
+      craftTransaction(api, {
+        ...intent,
+        data: { type: "solana", raw: "bm90LWEtdHJhbnNhY3Rpb24=" },
+      } as unknown as TransactionIntent),
+    ).rejects.toThrow("Invalid or unsupported raw transaction");
+  });
+});
 
 describe("craftTransaction", () => {
   const mockGetLatestBlockhash = jest.fn() as jest.MockedFunction<ChainAPI["getLatestBlockhash"]>;
@@ -267,17 +382,22 @@ describe("craftTransaction", () => {
           ]
         : undefined;
 
-      mockedGetMaybeMintAccount.mockResolvedValue({
-        decimals: mintDecimals,
-        supply: "1000000000",
-        isInitialized: true,
-        mintAuthority: null,
-        freezeAuthority: null,
-        extensions,
-      });
-      mockedGetMaybeTokenMintProgram.mockResolvedValue(tokenProgram);
-      mockedGetMaybeTokenAccount.mockResolvedValue(
-        recipientAtaExists ? { mint: CWIF_MINT } : undefined,
+      mockedGetMaybeTokenMint.mockResolvedValue(
+        mintOf(
+          {
+            decimals: mintDecimals,
+            supply: "1000000000",
+            isInitialized: true,
+            mintAuthority: null,
+            freezeAuthority: null,
+            extensions,
+          },
+          tokenProgram,
+        ),
+      );
+      // The recipient here is a wallet address, so only its derived associated account resolves.
+      mockedGetMaybeTokenAccount.mockImplementation(async address =>
+        address === TEST_RECIPIENT || !recipientAtaExists ? undefined : { mint: CWIF_MINT },
       );
       mockedFindAssociatedTokenAccountPubkey.mockResolvedValue(SENDER_ATA);
       mockedBuildTokenTransferInstructions.mockResolvedValue([]);
@@ -909,16 +1029,22 @@ describe("craftTransaction – staking", () => {
   });
 
   describe("stake.delegate", () => {
-    it("should craft a delegate command using valAddress and recipient", async () => {
+    // `delegateTransaction()` puts the validator on `recipient` and the stake account in the memo.
+    it("should craft a delegate command from the memo and the validator", async () => {
       await craftTransaction(api, {
         intentType: "staking",
         type: "stake.delegate",
         sender: TEST_ADDRESS,
-        recipient: "StakeAccXYZ111111111111111111111111111111111",
+        recipient: TEST_RECIPIENT,
         valAddress: TEST_RECIPIENT,
+        memo: {
+          type: "string",
+          kind: "STAKE_ACCOUNT",
+          value: "StakeAccXYZ111111111111111111111111111111111",
+        },
         amount: 0n,
         asset: { type: "native" },
-      } as StakingTransactionIntent);
+      } as unknown as StakingTransactionIntent);
 
       expect(mockedBuildStakeDelegateInstructions).toHaveBeenCalledWith(
         api,
@@ -931,18 +1057,20 @@ describe("craftTransaction – staking", () => {
       );
     });
 
-    it("should throw when no stake account address is provided via recipient", async () => {
+    // The framework always sets a memo; `{ type: "none" }` is how it says there is none.
+    it("should throw when the intent carries no stake account memo", async () => {
       await expect(
         craftTransaction(api, {
           intentType: "staking",
           type: "stake.delegate",
           sender: TEST_ADDRESS,
-          recipient: "",
+          recipient: TEST_RECIPIENT,
           valAddress: TEST_RECIPIENT,
+          memo: { type: "none" },
           amount: 0n,
           asset: { type: "native" },
-        } as StakingTransactionIntent),
-      ).rejects.toThrow("stake.delegate requires a stake account address (via recipient)");
+        } as unknown as StakingTransactionIntent),
+      ).rejects.toThrow("stake.delegate requires a stake account address (via the memo)");
     });
   });
 
@@ -990,6 +1118,56 @@ describe("craftTransaction – staking", () => {
         }),
       );
     });
+
+    // Observed on mainnet: the stale figure left 4_507 lamports behind, under the reserve.
+    it("empties an inactive stake account whose lamports grew since the last sync", async () => {
+      jest.mocked(getStakeAccounts).mockResolvedValueOnce([
+        stakeAccountFixture({
+          address: "StakeAccAddr1111111111111111111111111111111",
+          lamports: 24_552_851,
+          rentExemptReserve: 2_282_880,
+        }),
+      ]);
+
+      await craftTransaction(api, {
+        intentType: "transaction",
+        type: "stake.withdraw",
+        sender: TEST_ADDRESS,
+        recipient: "StakeAccAddr1111111111111111111111111111111",
+        amount: 24_548_344n,
+        asset: { type: "native" },
+      } as StakingTransactionIntent);
+
+      expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
+        api,
+        expect.objectContaining({ amount: 24_552_851 }),
+      );
+    });
+
+    it("withdraws only the excess of an active stake account", async () => {
+      jest.mocked(getStakeAccounts).mockResolvedValueOnce([
+        stakeAccountFixture({
+          address: "StakeAccAddr1111111111111111111111111111111",
+          lamports: 24_552_851,
+          rentExemptReserve: 2_282_880,
+          activation: { state: "active", active: 20_000_000, activating: 0 },
+        }),
+      ]);
+
+      await craftTransaction(api, {
+        intentType: "transaction",
+        type: "stake.withdraw",
+        sender: TEST_ADDRESS,
+        recipient: "StakeAccAddr1111111111111111111111111111111",
+        amount: 24_552_851n,
+        asset: { type: "native" },
+      } as StakingTransactionIntent);
+
+      expect(mockedBuildStakeWithdrawInstructions).toHaveBeenCalledWith(
+        api,
+        expect.objectContaining({ amount: 24_552_851 - 2_282_880 - 20_000_000 }),
+      );
+    });
   });
 });
 
@@ -1014,8 +1192,7 @@ describe("craftTransaction – token edge cases", () => {
   afterEach(() => jest.clearAllMocks());
 
   it("should throw when getMaybeMintAccount returns an Error", async () => {
-    mockedGetMaybeMintAccount.mockResolvedValue(new Error("network failure"));
-    mockedGetMaybeTokenMintProgram.mockResolvedValue("spl-token");
+    mockedGetMaybeTokenMint.mockResolvedValue(new Error("network failure"));
 
     await expect(
       craftTransaction(api, {
@@ -1030,8 +1207,7 @@ describe("craftTransaction – token edge cases", () => {
   });
 
   it("should throw when getMaybeMintAccount returns undefined", async () => {
-    mockedGetMaybeMintAccount.mockResolvedValue(undefined);
-    mockedGetMaybeTokenMintProgram.mockResolvedValue("spl-token");
+    mockedGetMaybeTokenMint.mockResolvedValue(undefined);
 
     await expect(
       craftTransaction(api, {
@@ -1045,6 +1221,40 @@ describe("craftTransaction – token edge cases", () => {
     ).rejects.toThrow("Cannot resolve mint account");
   });
 
+  it("should send to a token account given as the recipient, without deriving one", async () => {
+    const RECIPIENT_ATA = "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T";
+    mockedGetMaybeTokenMint.mockResolvedValue(
+      mintOf({ decimals: 6, supply: "1000", isInitialized: true }),
+    );
+    mockedGetMaybeTokenAccount.mockResolvedValue({
+      mint: "SomeMint11111111111111111111111111111111111",
+      owner: new PublicKey(TEST_RECIPIENT),
+    });
+    mockedFindAssociatedTokenAccountPubkey.mockResolvedValue(new PublicKey(TEST_ADDRESS));
+    mockedBuildTokenTransferInstructions.mockResolvedValue([]);
+
+    await craftTransaction(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: RECIPIENT_ATA,
+      amount: 1000n,
+      asset: { type: "spl-token", assetReference: "SomeMint11111111111111111111111111111111111" },
+    });
+
+    expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+      api,
+      expect.objectContaining({
+        recipientDescriptor: {
+          walletAddress: TEST_RECIPIENT,
+          tokenAccAddress: RECIPIENT_ATA,
+          shouldCreateAsAssociatedTokenAccount: false,
+          userInputType: "ata",
+        },
+      }),
+    );
+  });
+
   it("should fallback to spl-token when getMaybeTokenMintProgram returns an Error", async () => {
     mockedGetMaybeMintAccount.mockResolvedValue({
       decimals: 6,
@@ -1052,7 +1262,9 @@ describe("craftTransaction – token edge cases", () => {
       isInitialized: true,
     });
     mockedGetMaybeTokenMintProgram.mockResolvedValue(new Error("not found"));
-    mockedGetMaybeTokenAccount.mockResolvedValue({ mint: "x" });
+    mockedGetMaybeTokenAccount.mockImplementation(async address =>
+      address === TEST_RECIPIENT ? undefined : { mint: "x" },
+    );
     mockedFindAssociatedTokenAccountPubkey.mockResolvedValue(new PublicKey(TEST_RECIPIENT));
     mockedBuildTokenTransferInstructions.mockResolvedValue([]);
 

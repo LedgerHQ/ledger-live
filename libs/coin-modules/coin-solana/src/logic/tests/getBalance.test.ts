@@ -91,7 +91,8 @@ describe("getBalance (MSW integration)", () => {
 
     function splTokenAccount(mint: string, amount: string) {
       return {
-        pubkey: new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ"),
+        // The owner's associated token account for this mint — the only one the bridge spends.
+        pubkey: new PublicKey("8fyZ7QVMYNQRv1DMVf3aka8wQx1GR59Jc3MHYp9Sz7pE"),
         account: {
           data: {
             parsed: {
@@ -259,7 +260,8 @@ describe("getBalance (MSW integration)", () => {
 
     function token2022Account(mint: string, amount: string) {
       return {
-        pubkey: new PublicKey("FvbvvXMY4Rf1AtGG7UHJUesjt8FFgPnPy6o83Dna9mXK"),
+        // The owner's associated token account for this mint — the only one the bridge spends.
+        pubkey: new PublicKey("7Pvn2JVBYY5SbxHTcZnzsGt677xkT8GsQ4oaN7QoVZx8"),
         account: {
           data: {
             parsed: {

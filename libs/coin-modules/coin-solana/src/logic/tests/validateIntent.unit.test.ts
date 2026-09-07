@@ -1,5 +1,6 @@
 import type {
   Balance,
+  Stake,
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -11,9 +12,35 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { NotEnoughGas, SolanaStakeAccountAmountTooLow } from "../../errors";
+import {
+  NotEnoughGas,
+  SolanaAccountNotFunded,
+  SolanaMemoIsTooLong,
+  SolanaMintAccountNotAllowed,
+  SolanaRecipientAccountNotFunded,
+  SolanaInvalidValidator,
+  SolanaStakeAccountAmountTooLow,
+  SolanaStakeAccountIsNotDelegatable,
+  SolanaStakeAccountIsNotUndelegatable,
+  SolanaStakeAccountNotFound,
+  SolanaStakeAccountNothingToWithdraw,
+  SolanaStakeAccountValidatorIsUnchangeable,
+  SolanaStakeNoStakeAuth,
+  SolanaStakeNoWithdrawAuth,
+  SolanaTokenAccountHoldsAnotherToken,
+  SolanaTokenAccountNotAllowed,
+  SolanaTokenNonTransferable,
+  SolanaTokenRecipientIsSenderATA,
+} from "../../errors";
+import { MAX_MEMO_LENGTH } from "../validateMemo";
+import { formatAPIValue } from "../../common";
 import type { ChainAPI } from "../../network";
-import { getMaybeTokenMint } from "../../network/chain/web3";
+import {
+  getMaybeMintAccount,
+  getMaybeTokenAccount,
+  getMaybeTokenMint,
+  getMaybeVoteAccount,
+} from "../../network/chain/web3";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 
 const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
@@ -21,14 +48,41 @@ const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
 
 const STAKE_ACC_RENT_EXEMPT = 2_282_880;
 
+// Undelegate + withdraw both cost this; the reserve a fresh stake account needs is twice it.
+const UNSTAKE_TX_FEE = 5000;
+jest.mock("../estimateFees", () => ({
+  estimateTxFee: jest.fn().mockResolvedValue(5000),
+  // The undelegate and the withdraw it stands for, at the fee above; `jest.mock` is hoisted
+  // above the constants, so the figure is inlined.
+  unstakeReserve: jest.fn().mockResolvedValue(10000n),
+}));
+
 jest.mock("../../network/chain/web3", () => ({
   __esModule: true,
   getMaybeTokenMint: jest.fn(),
+  // Recipient checks default to "a plain wallet address": neither a token account nor a mint.
+  // `FakeAtaAddress` is the associated token account the fake api derives, and it does exist
+  // whenever a test says so, so `getTokenRecipient` can read its state.
+  getMaybeTokenAccount: jest.fn(async (address: string) =>
+    address === "FakeAtaAddress" ? { state: "initialized", extensions: undefined } : undefined,
+  ),
+  getMaybeMintAccount: jest.fn().mockResolvedValue(undefined),
+  // Staking flows resolve the validator on-chain; a known vote account by default.
+  getMaybeVoteAccount: jest.fn().mockResolvedValue({ voteAccAddr: "vote-acc" }),
   getStakeAccountMinimumBalanceForRentExemption: jest.fn((api: ChainAPI) =>
     api.getMinimumBalanceForRentExemption(200),
   ),
 }));
 const mockedGetMaybeTokenMint = getMaybeTokenMint as jest.MockedFunction<typeof getMaybeTokenMint>;
+const mockedGetMaybeTokenAccount = getMaybeTokenAccount as jest.MockedFunction<
+  typeof getMaybeTokenAccount
+>;
+const mockedGetMaybeMintAccount = getMaybeMintAccount as jest.MockedFunction<
+  typeof getMaybeMintAccount
+>;
+const mockedGetMaybeVoteAccount = getMaybeVoteAccount as jest.MockedFunction<
+  typeof getMaybeVoteAccount
+>;
 function makeApi(
   stakeMinimumDelegation = 1_000_000_000,
   stakeAccRentExempt: number = STAKE_ACC_RENT_EXEMPT,
@@ -36,7 +90,42 @@ function makeApi(
   return {
     getStakeMinimumDelegation: jest.fn().mockResolvedValue(stakeMinimumDelegation),
     getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(stakeAccRentExempt),
+    // Live lamports of the stake account, read by the withdraw validation.
+    getBalance: jest.fn().mockResolvedValue(STAKE_ACC_RENT_EXEMPT + 1_000_000_000),
   } as unknown as ChainAPI;
+}
+
+/**
+ * Balances carrying one stake account, the shape `getBalance` reports and the only place the
+ * staking validations can learn about a position from.
+ */
+function makeStakeBalances(
+  stakeOverrides: Partial<Stake> = {},
+  native = 5_000_000_000n,
+): Balance[] {
+  return [
+    ...makeBalances(native),
+    {
+      value: 1_000_000_000n,
+      asset: { type: "native" },
+      stake: {
+        uid: RECIPIENT,
+        address: RECIPIENT,
+        state: "active",
+        asset: { type: "native" },
+        amount: 1_000_000_000n,
+        delegate: RECIPIENT,
+        actions: [],
+        details: {
+          canStake: true,
+          canWithdraw: true,
+          activeAmount: 1_000_000_000,
+          lockedReserve: STAKE_ACC_RENT_EXEMPT,
+        },
+        ...stakeOverrides,
+      } as Stake,
+    },
+  ];
 }
 
 type IntentArg = Parameters<typeof validateIntentRaw>[1];
@@ -49,10 +138,20 @@ const validateIntent = (
   customFees?: FeesArg,
   api?: ChainAPI,
 ): ReturnType<typeof validateIntentRaw> => {
-  const resolvedApi =
-    api ?? (intent.intentType === "staking" ? makeApi() : (undefined as unknown as ChainAPI));
+  // `api` is never optional in production — it comes from `chainAPIFromContext` — so the default
+  // stands in for the real one rather than exercising an api-less path.
+  const resolvedApi = api ?? (intent.intentType === "staking" ? makeApi() : makeTransferApi());
   return validateIntentRaw(resolvedApi, intent, balances, customFees);
 };
+
+/** A funded, plain-wallet recipient — what the transfer cases below assume. */
+function makeTransferApi(): ChainAPI {
+  return {
+    getBalance: jest.fn().mockResolvedValue(1),
+    findAssocTokenAccAddress: jest.fn().mockResolvedValue("sender-ata"),
+    getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(2_039_280),
+  } as unknown as ChainAPI;
+}
 
 function makeIntent(overrides?: Partial<TransactionIntent>): TransactionIntent {
   return {
@@ -71,6 +170,49 @@ function makeBalances(native = 5_000_000_000n, locked = 890_880n): Balance[] {
 }
 
 describe("validateIntent", () => {
+  // A partner-built transaction describes itself; the intent's recipient and amount are
+  // placeholders, so validating them would reject a perfectly good payload.
+  describe("partner-built transaction", () => {
+    const prebuilt = makeIntent({
+      recipient: "",
+      amount: 0n,
+    }) as TransactionIntent & { data: { type: string; raw: string } };
+    prebuilt.data = { type: "solana", raw: "AQID" };
+
+    it("reports no error and no warning", async () => {
+      const result = await validateIntent(prebuilt, makeBalances(), { value: 5000n });
+
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+    });
+
+    it("spends exactly the fee", async () => {
+      const result = await validateIntent(prebuilt, makeBalances(), { value: 5000n });
+
+      expect(result).toMatchObject({ amount: 0n, estimatedFees: 5000n, totalSpent: 5000n });
+    });
+
+    it("still validates a transaction that carries no partner payload", async () => {
+      const result = await validateIntent(makeIntent({ recipient: "" }), makeBalances());
+
+      expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
+    });
+  });
+
+  // Recipient lookups default to "a plain wallet address"; individual tests override them.
+  beforeEach(() => {
+    mockedGetMaybeTokenAccount.mockImplementation(async (address: string) =>
+      address === "FakeAtaAddress"
+        ? ({ state: "initialized" } as unknown as Awaited<ReturnType<typeof getMaybeTokenAccount>>)
+        : undefined,
+    );
+    mockedGetMaybeMintAccount.mockResolvedValue(undefined);
+    mockedGetMaybeVoteAccount.mockResolvedValue({ voteAccAddr: "vote-acc" } as unknown as Awaited<
+      ReturnType<typeof getMaybeVoteAccount>
+    >);
+    mockedGetMaybeTokenMint.mockReset();
+  });
+
   afterEach(() => jest.clearAllMocks());
 
   it("should return valid result for a basic native transfer", async () => {
@@ -165,6 +307,56 @@ describe("validateIntent", () => {
     expect(result.totalSpent).toBe(1_000_000_000n);
   });
 
+  // Only a live app submits these. Legacy ran the same recipient checks a transfer gets; the
+  // generic bridge had narrowed them to a base58 test.
+  describe("token authority intents", () => {
+    const makeApproveIntent = (overrides?: Partial<TransactionIntent>): TransactionIntent => ({
+      ...makeIntent({ amount: 1000n, ...overrides }),
+      type: "token.approve",
+    });
+
+    it("rejects a mint address as the delegate", async () => {
+      mockedGetMaybeMintAccount.mockResolvedValueOnce(
+        {} as unknown as Awaited<ReturnType<typeof getMaybeMintAccount>>,
+      );
+
+      const result = await validateIntent(makeApproveIntent(), makeBalances(), { value: 5000n });
+
+      expect(result.errors.recipient).toBeInstanceOf(SolanaMintAccountNotAllowed);
+    });
+
+    it("rejects the sender as its own delegate", async () => {
+      const result = await validateIntent(
+        makeApproveIntent({ recipient: SENDER }),
+        makeBalances(),
+        {
+          value: 5000n,
+        },
+      );
+
+      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+    });
+
+    it("requires an amount to approve", async () => {
+      const result = await validateIntent(makeApproveIntent({ amount: 0n }), makeBalances(), {
+        value: 5000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
+    // Revoking names no delegate, so the recipient is not checked -- only the fee is at stake.
+    it("accepts a revoke with no recipient", async () => {
+      const result = await validateIntent(
+        { ...makeIntent({ recipient: "", amount: 0n }), type: "token.revoke" },
+        makeBalances(),
+        { value: 5000n },
+      );
+
+      expect(result.errors).toEqual({});
+    });
+  });
+
   describe("staking intents", () => {
     describe("stake.createAccount", () => {
       function makeStakeIntent(
@@ -189,6 +381,47 @@ describe("validateIntent", () => {
         expect(result.errors).toEqual({});
         expect(result.amount).toBe(1_000_000_000n);
         expect(result.totalSpent).toBe(1_000_000_000n + 5000n);
+      });
+
+      // The seed rides in `data`, which also flags a partner-built payload; only the latter skips
+      // validation, or a delegation would be checked against nothing.
+      it("still validates an intent carrying the stake account seed", async () => {
+        const result = await validateIntent(
+          makeStakeIntent({
+            amount: 100_000_000_000n,
+            data: { type: "solana", stakeAccountSeed: "seed" },
+          } as Partial<StakingTransactionIntent>),
+          makeBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      // Legacy set aside the stake account's rent plus the fees of the eventual undelegate and
+      // withdraw (`estimateMaxSpendable.ts`), so the account is never left unable to unstake.
+      it("reserves the future undelegate and withdraw fees when sending all", async () => {
+        const available = 5_000_000_000n - 890_880n;
+
+        const result = await validateIntent(
+          makeStakeIntent({ useAllAmount: true }),
+          makeBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.amount).toBe(available - 5000n - BigInt(2 * UNSTAKE_TX_FEE));
+      });
+
+      it("counts the stake account rent and that reserve against a typed amount", async () => {
+        const available = 5_000_000_000n - 890_880n;
+        // Just affordable without the reserve and the rent, short once both are counted.
+        const amount = available - 5000n - 1n;
+
+        const result = await validateIntent(makeStakeIntent({ amount }), makeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
       });
 
       it("should error when recipient is missing", async () => {
@@ -235,7 +468,7 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors).toEqual({});
-        expect(result.amount).toBe(2_000_000_000n - 890_880n - 5000n);
+        expect(result.amount).toBe(2_000_000_000n - 890_880n - 5000n - BigInt(2 * UNSTAKE_TX_FEE));
       });
 
       it("should clamp amount to 0 when useAllAmount and balance is insufficient", async () => {
@@ -395,24 +628,34 @@ describe("validateIntent", () => {
           valAddress: RECIPIENT,
           amount: 0n,
           asset: { type: "native", name: "Solana" },
+          // Delegating carries the stake account as a memo; the recipient is the validator.
+          memo: { type: "string", kind: "text", value: RECIPIENT },
           ...overrides,
-        };
+        } as StakingTransactionIntent;
       }
 
+      const delegatableBalances = (native = 5_000_000_000n) =>
+        makeStakeBalances({ state: "inactive" }, native);
+
       it("should set amount to 0 and totalSpent to fees", async () => {
-        const result = await validateIntent(makeDelegateIntent(), makeBalances(), { value: 5000n });
+        const result = await validateIntent(makeDelegateIntent(), delegatableBalances(), {
+          value: 5000n,
+        });
 
         expect(result.errors).toEqual({});
         expect(result.amount).toBe(0n);
         expect(result.totalSpent).toBe(5000n);
       });
 
-      it("should error when fees exceed available balance (value - locked)", async () => {
-        const result = await validateIntent(makeDelegateIntent(), makeBalances(10_000n, 8_000n), {
-          value: 5000n,
-        });
+      it("should error when fees exceed the liquid balance", async () => {
+        const result = await validateIntent(
+          makeDelegateIntent(),
+          makeStakeBalances({ state: "inactive" }, 10_000n),
+          { value: 5000n },
+        );
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        // Keyed on `fee`: that is what the staking screens render.
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
       });
     });
 
@@ -434,7 +677,7 @@ describe("validateIntent", () => {
       }
 
       it("should set amount to 0 and totalSpent to fees", async () => {
-        const result = await validateIntent(makeUndelegateIntent(), makeBalances(), {
+        const result = await validateIntent(makeUndelegateIntent(), makeStakeBalances(), {
           value: 5000n,
         });
 
@@ -443,12 +686,176 @@ describe("validateIntent", () => {
         expect(result.totalSpent).toBe(5000n);
       });
 
-      it("should error when fees exceed total native value (not available)", async () => {
-        const result = await validateIntent(makeUndelegateIntent(), makeBalances(3000n, 0n), {
+      it("should error when fees exceed the liquid balance", async () => {
+        const result = await validateIntent(makeUndelegateIntent(), makeStakeBalances({}, 3000n), {
           value: 5000n,
         });
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      // A fully deactivated stake delegates nothing, so `stake.amount` is 0 while the account still
+      // holds its lamports. Subtracting the principal rather than the position's value would count
+      // the whole stake account as liquid.
+      it("does not let a deactivated stake's lamports pay the fee", async () => {
+        const staked = 10_000_000_000n;
+        const balances: Balance[] = [
+          { value: staked, asset: { type: "native" }, locked: staked },
+          {
+            value: staked,
+            asset: { type: "native" },
+            stake: {
+              uid: RECIPIENT,
+              address: RECIPIENT,
+              state: "inactive",
+              asset: { type: "native" },
+              amount: 0n,
+              actions: [],
+            },
+          },
+        ];
+
+        const result = await validateIntent(makeUndelegateIntent(), balances, { value: 5000n });
+
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      // `getBalance` reports the native value as liquid + staked, so comparing the fee against it
+      // could never fail: any stake account dwarfs a 5000-lamport fee.
+      it("does not let staked lamports pay the fee", async () => {
+        const balances = makeStakeBalances({}, 1_000_003_000n);
+
+        const result = await validateIntent(makeUndelegateIntent(), balances, { value: 5000n });
+
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+      });
+    });
+
+    describe("checks the legacy bridge used to run", () => {
+      const VOTE_ACC = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
+
+      const delegateIntent = (overrides: Record<string, unknown> = {}) =>
+        ({
+          intentType: "staking",
+          type: "stake.delegate",
+          mode: "delegate",
+          sender: SENDER,
+          recipient: VOTE_ACC,
+          valAddress: VOTE_ACC,
+          amount: 0n,
+          asset: { type: "native", name: "Solana" },
+          memo: { type: "string", kind: "text", value: RECIPIENT },
+          ...overrides,
+        }) as StakingTransactionIntent;
+
+      const undelegateIntent = () =>
+        ({
+          intentType: "staking",
+          type: "stake.undelegate",
+          mode: "undelegate",
+          sender: SENDER,
+          recipient: RECIPIENT,
+          valAddress: "",
+          amount: 0n,
+          asset: { type: "native", name: "Solana" },
+        }) as StakingTransactionIntent;
+
+      const withdrawIntent = () =>
+        makeIntent({
+          intentType: "transaction",
+          type: "stake.withdraw",
+          recipient: RECIPIENT,
+          amount: 1_000n,
+        } as Partial<TransactionIntent>);
+
+      it("rejects a stake account that is not among the account's positions", async () => {
+        const result = await validateIntent(delegateIntent(), makeBalances(), { value: 5000n });
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeAccountNotFound);
+      });
+
+      it("rejects an unknown validator", async () => {
+        mockedGetMaybeVoteAccount.mockResolvedValue(undefined);
+
+        const result = await validateIntent(
+          delegateIntent(),
+          makeStakeBalances({ state: "inactive" }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.voteAccAddr).toBeInstanceOf(SolanaInvalidValidator);
+      });
+
+      it("rejects delegating a stake that is already active", async () => {
+        const result = await validateIntent(delegateIntent(), makeStakeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeAccountIsNotDelegatable);
+      });
+
+      it("refuses to move a deactivating stake to another validator", async () => {
+        const result = await validateIntent(
+          delegateIntent(),
+          makeStakeBalances({ state: "deactivating", delegate: "AnotherValidator" }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(
+          SolanaStakeAccountValidatorIsUnchangeable,
+        );
+      });
+
+      it("accepts reactivating a deactivating stake on the same validator", async () => {
+        const result = await validateIntent(
+          delegateIntent(),
+          makeStakeBalances({ state: "deactivating", delegate: VOTE_ACC }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.stakeAccAddr).toBeUndefined();
+        expect(result.errors.voteAccAddr).toBeUndefined();
+      });
+
+      it("rejects delegating without the stake authority", async () => {
+        const result = await validateIntent(
+          delegateIntent(),
+          makeStakeBalances({
+            state: "inactive",
+            details: { canStake: false, canWithdraw: false },
+          }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeNoStakeAuth);
+      });
+
+      it("rejects deactivating a stake that is not active", async () => {
+        const result = await validateIntent(
+          undelegateIntent(),
+          makeStakeBalances({ state: "inactive" }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeAccountIsNotUndelegatable);
+      });
+
+      it("rejects withdrawing without the withdraw authority", async () => {
+        const result = await validateIntent(
+          withdrawIntent(),
+          makeStakeBalances({ state: "inactive", details: { canWithdraw: false } }),
+          { value: 5000n },
+        );
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeNoWithdrawAuth);
+      });
+
+      it("rejects withdrawing from a stake with nothing free", async () => {
+        const result = await validateIntent(withdrawIntent(), makeStakeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.stakeAccAddr).toBeInstanceOf(SolanaStakeAccountNothingToWithdraw);
       });
     });
 
@@ -466,7 +873,12 @@ describe("validateIntent", () => {
       }
 
       it("should use the provided amount", async () => {
-        const result = await validateIntent(makeWithdrawIntent(), makeBalances(), { value: 5000n });
+        // You withdraw from a stake that has finished deactivating, so its whole balance is free.
+        const result = await validateIntent(
+          makeWithdrawIntent(),
+          makeStakeBalances({ state: "inactive" }),
+          { value: 5000n },
+        );
 
         expect(result.errors).toEqual({});
         expect(result.amount).toBe(2_000_000_000n);
@@ -493,12 +905,12 @@ describe("validateIntent", () => {
         expect(result.amount).toBe(0n);
       });
 
-      it("should error when fees exceed total native value", async () => {
+      it("should error when fees exceed the liquid balance", async () => {
         const result = await validateIntent(makeWithdrawIntent(), makeBalances(3000n, 0n), {
           value: 5000n,
         });
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
       });
 
       it("keeps the returned amount clamped to 0 even when errors are set", async () => {
@@ -508,7 +920,7 @@ describe("validateIntent", () => {
           { value: 5000n },
         );
 
-        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
         expect(result.amount).toBe(0n);
         expect(result.totalSpent).toBe(5000n);
       });
@@ -531,6 +943,202 @@ describe("validateIntent", () => {
         { value: 10_000_000n, asset: { type: "spl-token", assetReference: USDC_MINT } },
       ];
     }
+
+    function makePartlyFrozenBalances(): Balance[] {
+      return [
+        { value: 5_000_000_000n, asset: { type: "native" }, locked: 890_880n },
+        {
+          value: 10_000_000n,
+          // 3 USDC sit in a frozen token account and cannot be transferred
+          locked: 3_000_000n,
+          asset: { type: "spl-token", assetReference: USDC_MINT },
+        },
+      ];
+    }
+
+    describe("recipient checks the legacy bridge used to run", () => {
+      // A token account typed in as the destination of a *native* transfer.
+      it("rejects a token account when the transfer is not a token transfer", async () => {
+        mockedGetMaybeTokenAccount.mockResolvedValueOnce({
+          state: "initialized",
+        } as unknown as Awaited<ReturnType<typeof getMaybeTokenAccount>>);
+
+        const result = await validateIntent(makeIntent({ amount: 1n }), makeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.recipient).toBeInstanceOf(SolanaTokenAccountNotAllowed);
+      });
+
+      it("rejects a mint address as the recipient", async () => {
+        mockedGetMaybeMintAccount.mockResolvedValueOnce(
+          {} as unknown as Awaited<ReturnType<typeof getMaybeMintAccount>>,
+        );
+
+        const result = await validateIntent(makeIntent({ amount: 1n }), makeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.recipient).toBeInstanceOf(SolanaMintAccountNotAllowed);
+      });
+
+      const unfundedRecipientApi = () =>
+        ({
+          getBalance: jest.fn().mockResolvedValue(0),
+          findAssocTokenAccAddress: jest.fn().mockResolvedValue("FakeAtaAddress"),
+          getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(890_880),
+        }) as unknown as ChainAPI;
+
+      it("warns when the recipient wallet is not funded, and rejects a dust amount", async () => {
+        const result = await validateIntent(
+          makeIntent({ amount: 1n }),
+          makeBalances(),
+          { value: 5000n },
+          unfundedRecipientApi(),
+        );
+
+        expect(result.errors.recipient).toBeUndefined();
+        expect(result.warnings.recipient).toBeInstanceOf(SolanaAccountNotFunded);
+        // 1 lamport cannot create the recipient account, which needs the rent-exempt minimum.
+        expect(result.errors.amount).toBeInstanceOf(SolanaRecipientAccountNotFunded);
+      });
+
+      it("accepts an unfunded recipient when the amount covers its rent", async () => {
+        const result = await validateIntent(
+          makeIntent({ amount: 890_880n }),
+          makeBalances(),
+          { value: 5000n },
+          unfundedRecipientApi(),
+        );
+
+        expect(result.errors.amount).toBeUndefined();
+        expect(result.warnings.recipient).toBeInstanceOf(SolanaAccountNotFunded);
+      });
+
+      // A real token account address is a PDA, so it is always off the ed25519 curve.
+      const OFF_CURVE_TOKEN_ACCOUNT = "35npQR1u7vycmAjRS8H2ozoY7uTXPeZqUCJAm34Kidv1";
+
+      it("reports a non-transferable mint as an error rather than throwing", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValue({
+          onChainAcc: { data: { program: "spl-token-2022" } },
+          info: { extensions: [{ extension: "nonTransferable" }] },
+        } as unknown as Awaited<ReturnType<typeof getMaybeTokenMint>>);
+
+        const result = await validateIntent(makeTokenIntent({ amount: 1n }), makeTokenBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.amount).toBeInstanceOf(SolanaTokenNonTransferable);
+      });
+
+      // These parsers return an Error to mean "not that kind of account", which must not abort
+      // the whole status computation.
+      it("treats an unparseable recipient account as a plain address", async () => {
+        mockedGetMaybeTokenAccount.mockResolvedValue(new Error("not a token account"));
+        mockedGetMaybeMintAccount.mockResolvedValue(new Error("not a mint account"));
+
+        const result = await validateIntent(makeIntent({ amount: 1_000_000n }), makeBalances(), {
+          value: 5000n,
+        });
+
+        expect(result.errors.recipient).toBeUndefined();
+      });
+
+      it("rejects a token account that holds another mint", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValue({
+          onChainAcc: { data: { program: "spl-token" } },
+          info: { extensions: [] },
+        } as unknown as Awaited<ReturnType<typeof getMaybeTokenMint>>);
+        // The recipient is a token account, but for a different mint than the one being sent.
+        mockedGetMaybeTokenAccount.mockResolvedValue({
+          state: "initialized",
+          mint: { toBase58: () => "AnotherMint11111111111111111111111111111111" },
+          owner: { toBase58: () => "SomeOwner" },
+        } as unknown as Awaited<ReturnType<typeof getMaybeTokenAccount>>);
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n, recipient: OFF_CURVE_TOKEN_ACCOUNT }),
+          makeTokenBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(SolanaTokenAccountHoldsAnotherToken);
+      });
+
+      it("rejects sending a token to the sender's own associated token account", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValue({
+          onChainAcc: { data: { program: "spl-token" } },
+          info: { extensions: [] },
+        } as unknown as Awaited<ReturnType<typeof getMaybeTokenMint>>);
+        const api = {
+          getBalance: jest.fn().mockResolvedValue(1),
+          findAssocTokenAccAddress: jest.fn().mockResolvedValue(RECIPIENT),
+          getMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(2_039_280),
+        } as unknown as ChainAPI;
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          makeTokenBalances(),
+          { value: 5000n },
+          api,
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(SolanaTokenRecipientIsSenderATA);
+      });
+
+      it("rejects a memo longer than the on-chain limit", async () => {
+        const result = await validateIntent(
+          makeIntent({
+            amount: 1n,
+            memo: { type: "string", kind: "text", value: "a".repeat(MAX_MEMO_LENGTH + 1) },
+          } as Partial<TransactionIntent>),
+          makeBalances(),
+          { value: 5000n },
+        );
+
+        expect(result.errors.memo).toBeInstanceOf(SolanaMemoIsTooLong);
+        expect(result.errors.transaction).toBe(result.errors.memo);
+      });
+    });
+
+    it("rejects an amount that dips into the frozen share", async () => {
+      const result = await validateIntent(
+        makeTokenIntent({ amount: 8_000_000n }),
+        makePartlyFrozenBalances(),
+        { value: 5000n },
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("caps send-max at the unfrozen share", async () => {
+      const result = await validateIntent(
+        makeTokenIntent({ amount: 0n, useAllAmount: true }),
+        makePartlyFrozenBalances(),
+        { value: 5000n },
+      );
+
+      expect(result.amount).toBe(7_000_000n);
+      expect(result.errors).toEqual({});
+    });
+
+    it("refuses a send-max when the whole token balance is frozen", async () => {
+      const result = await validateIntent(
+        makeTokenIntent({ amount: 0n, useAllAmount: true }),
+        [
+          { value: 5_000_000_000n, asset: { type: "native" }, locked: 890_880n },
+          {
+            value: 10_000_000n,
+            locked: 10_000_000n,
+            asset: { type: "spl-token", assetReference: USDC_MINT },
+          },
+        ],
+        { value: 5000n },
+      );
+
+      expect(result.amount).toBe(0n);
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
 
     it("should validate a basic token transfer", async () => {
       const result = await validateIntent(
@@ -575,6 +1183,16 @@ describe("validateIntent", () => {
       expect(result.amount).toBe(0n);
     });
 
+    // Lamports against token units is meaningless, and the recipient's ATA rent rides in the fee,
+    // so this fired on every first transfer to a given recipient.
+    it("never warns that fees are too high on a token transfer", async () => {
+      const result = await validateIntent(makeTokenIntent({ amount: 1n }), makeBalances(), {
+        value: 2_044_280n,
+      });
+
+      expect(result.warnings.feeTooHigh).toBeUndefined();
+    });
+
     describe("native SOL coverage for ATA rent + fee (via api)", () => {
       const FEE = 5000n;
       const CLASSIC_ATA_RENT = 2_039_280n;
@@ -616,58 +1234,54 @@ describe("validateIntent", () => {
         mockedGetMaybeTokenMint.mockReset();
       });
 
-      it("packs NotEnoughGas when spendable equals classic ATA rent + fee but the Token-2022 ATA needs more SOL", async () => {
+      // `estimateFees` sizes the rent from the mint and folds it into the fee; this only checks
+      // that the fee it hands over is what the coverage check compares against.
+      it("packs NotEnoughGas when spendable cannot cover the fee the estimation reported", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(2_935_160n),
-          { value: FEE },
+          { value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE },
           api,
         );
 
         expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
-        expect((result.errors.gasPrice as Error & { fees?: string }).fees).toBe(
-          (TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE).toString(),
-        );
+        // The message interpolates a human-readable amount, not raw lamports.
+        expect(result.errors.gasPrice as Error & Record<string, unknown>).toMatchObject({
+          fees: formatAPIValue(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE),
+          ticker: "SOL",
+          cryptoName: "Solana",
+        });
       });
 
-      it("does not pack NotEnoughGas when spendable covers mint-aware ATA rent + fee", async () => {
+      it("does not pack NotEnoughGas when spendable covers that fee", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE + 890_880n),
-          { value: FEE },
+          { value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE },
           api,
         );
 
         expect(result.errors.gasPrice).toBeUndefined();
       });
 
-      it("packs NotEnoughGas when classic SPL ATA needs to be created and spendable can't cover rent + fee", async () => {
+      it("packs NotEnoughGas when a classic SPL ATA has to be created and funds fall one short", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
-        const api = makeFakeApi({
-          ataExists: false,
-          rentLamports: Number(CLASSIC_ATA_RENT),
-        });
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(CLASSIC_ATA_RENT + FEE - 1n + 890_880n),
-          { value: FEE },
+          { value: CLASSIC_ATA_RENT + FEE },
           api,
         );
 
@@ -707,17 +1321,6 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
-      });
-
-      it("skips the native coverage check when api is not provided (back-compat)", async () => {
-        const result = await validateIntent(
-          makeTokenIntent({ amount: 1n }),
-          balancesWithNative(0n),
-          { value: FEE },
-        );
-
-        expect(result.errors.gasPrice).toBeUndefined();
-        expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
       });
 
       it("skips the native coverage check when recipient address is invalid", async () => {

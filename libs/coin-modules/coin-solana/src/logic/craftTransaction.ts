@@ -15,14 +15,10 @@ import {
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
 } from "@solana/web3.js";
-import BigNumber from "bignumber.js";
-import { bpsToPercent, calculateToken2022TransferFees } from "../helpers/token";
+import { transferFeeForIntent } from "../helpers/token";
 import { isValidBase58Address } from "../logic";
 import type { ChainAPI } from "../network";
-import type {
-  TransferFeeConfigExt,
-  TransferFeeConfigState,
-} from "../network/chain/account/tokenExtensions";
+import type { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import {
   buildTransferInstructions,
@@ -36,27 +32,29 @@ import {
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
   findAssociatedTokenAccountPubkey,
-  getMaybeMintAccount,
   getMaybeTokenAccount,
-  getMaybeTokenMintProgram,
+  getMaybeTokenMint,
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
 } from "../network/chain/web3";
 import { UserInputType } from "../signer";
+import { withdrawableFromStake } from "../logic";
+import { getStakeAccounts } from "../network/chain/stake-activation/rpc";
 import { createStakeAccountSeed } from "../stakeAccountSeed";
 import type {
   Command,
   StakeCreateAccountCommand,
   StakeDelegateCommand,
   StakeUndelegateCommand,
+  StakeSplitCommand,
   StakeWithdrawCommand,
   TokenTransferCommand,
   TransferCommand,
-  TransferFeeCalculated,
   Transaction,
   SolanaTokenProgram,
+  SolanaTxData,
 } from "../types";
-import { assertUnreachable, DUMMY_SIGNATURE } from "../utils";
+import { assertUnreachable, DUMMY_SIGNATURE, ZERO_FILLED_DUMMY_SIGNATURE } from "../utils";
 
 // ---------------------------------------------------------------------------
 // Coin Module API: craft a transaction from a TransactionIntent
@@ -64,11 +62,20 @@ import { assertUnreachable, DUMMY_SIGNATURE } from "../utils";
 
 export async function craftTransaction(
   api: ChainAPI,
-  intent: TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent,
+  intent: (TransactionIntent<StringMemo | MemoNotSupported> | StakingTransactionIntent) & {
+    data?: { type: string };
+  },
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
   if (!isValidBase58Address(intent.sender)) {
     throw new Error("Invalid sender address");
+  }
+
+  if (intent.data?.type === "solana") {
+    const data = intent.data as SolanaTxData;
+    if (data.raw) {
+      return craftPrebuiltTransaction(api, { ...data, raw: data.raw }, intent.sender, customFees);
+    }
   }
 
   if (intent.type === "stake.withdraw") {
@@ -91,7 +98,97 @@ export async function craftTransaction(
     return craftUndelegateFromIntent(api, intent as StakingTransactionIntent, customFees);
   }
 
+  if (intent.type === "stake.split") {
+    return craftSplitStakeFromIntent(
+      api,
+      intent as StakingTransactionIntent<StringMemo | MemoNotSupported>,
+      customFees,
+    );
+  }
+
+  if (
+    intent.type === "token.createATA" ||
+    intent.type === "token.approve" ||
+    intent.type === "token.revoke"
+  ) {
+    return craftTokenAuthorityFromIntent(api, intent, customFees);
+  }
+
   return craftSendTransactionFromIntent(api, intent, customFees);
+}
+
+/**
+ * A transaction a partner already built: the bytes are the transaction, so nothing is derived from
+ * the intent. Only the blockhash is refreshed, and only while the transaction is still unsigned —
+ * mirroring what `buildVersionedTransaction` does for the same payload on the legacy path.
+ */
+async function craftPrebuiltTransaction(
+  api: ChainAPI,
+  data: SolanaTxData & { raw: string },
+  sender: string,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  let transaction: VersionedTransaction;
+  try {
+    transaction = VersionedTransaction.deserialize(Buffer.from(data.raw, "base64"));
+  } catch {
+    throw new Error("Invalid or unsupported raw transaction");
+  }
+
+  const feePayer = transaction.message.staticAccountKeys[0]?.toBase58();
+  if (feePayer && feePayer !== sender) {
+    throw new Error("Sender does not match transaction fee payer");
+  }
+
+  const recentBlockhash = await api.getLatestBlockhash();
+  // Both fills mean "not signed yet" -- `signOperation.ts` reads them the same way. A partner's
+  // transaction arrives zero-filled, so checking only `DUMMY_SIGNATURE` would leave it on a
+  // blockhash that may already have expired.
+  const unsigned = transaction.signatures.every(sig => {
+    const buf = Buffer.from(sig);
+    return buf.equals(DUMMY_SIGNATURE) || buf.equals(ZERO_FILLED_DUMMY_SIGNATURE);
+  });
+  if (unsigned) {
+    transaction.message.recentBlockhash = recentBlockhash.blockhash;
+  }
+
+  const fee = customFees
+    ? customFees.value
+    : BigInt((await api.getFeeForMessage(transaction.message)) ?? 5000);
+
+  return {
+    transaction: Buffer.from(transaction.serialize()).toString("base64"),
+    details: {
+      recentBlockhash: transaction.message.recentBlockhash,
+      lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+      estimatedFee: fee.toString(),
+    },
+  };
+}
+
+/**
+ * Read live: withdrawing the synced amount off a grown account leaves a residue under the
+ * rent-exempt reserve, which the stake program rejects. `undefined` if the account is gone.
+ */
+async function liveWithdrawable(
+  api: ChainAPI,
+  intent: StakingTransactionIntent,
+): Promise<number | undefined> {
+  const stakeAccounts = await getStakeAccounts(api, intent.sender);
+  const stakeAccount = stakeAccounts.find(
+    ({ account }) => account.onChainAcc.pubkey.toBase58() === intent.recipient,
+  );
+  if (!stakeAccount) return undefined;
+
+  const { account, activation } = stakeAccount;
+  return Math.max(
+    0,
+    withdrawableFromStake({
+      stakeAccBalance: account.onChainAcc.account.lamports,
+      activation,
+      rentExemptReserve: account.info.meta.rentExemptReserve.toNumber(),
+    }),
+  );
 }
 
 async function craftWithdrawTransaction(
@@ -99,12 +196,13 @@ async function craftWithdrawTransaction(
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
+  const withdrawable = await liveWithdrawable(api, intent);
   const command: StakeWithdrawCommand = {
     kind: "stake.withdraw",
     authorizedAccAddr: intent.sender,
     stakeAccAddr: intent.recipient,
     toAccAddr: intent.sender,
-    amount: Number(intent.amount),
+    amount: withdrawable ?? Number(intent.amount),
   };
   const instructions = await buildInstructionsForCommand(api, command);
   const recentBlockhash = await api.getLatestBlockhash();
@@ -140,7 +238,7 @@ async function craftCreateStakeAccountFromIntent(
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const seed = createStakeAccountSeed();
+  const seed = stakeAccountSeedOfIntent(intent) ?? createStakeAccountSeed();
   const stakeAccAddress = await getStakeAccountAddressWithSeed({
     fromAddress: intent.sender,
     seed,
@@ -167,9 +265,12 @@ async function craftDelegateFromIntent(
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
   const valAddress = "valAddress" in intent ? intent.valAddress : undefined;
-  const stakeAccAddr = "memo" in intent ? intent.memo.value : intent.recipient;
+  // The framework always sets a memo, `{ type: "none" }` at worst, so a `"memo" in intent` guard
+  // would never fall through -- read the value and let an absent one be the error.
+  const memo = "memo" in intent ? intent.memo : undefined;
+  const stakeAccAddr = memo?.type === "string" ? memo.value : undefined;
   if (!stakeAccAddr) {
-    throw new Error("stake.delegate requires a stake account address (via recipient)");
+    throw new Error("stake.delegate requires a stake account address (via the memo)");
   }
   const voteAccAddr = valAddress ?? intent.recipient;
   const command: StakeDelegateCommand = {
@@ -191,6 +292,91 @@ async function craftUndelegateFromIntent(
     authorizedAccAddr: intent.sender,
     stakeAccAddr: intent.recipient,
   };
+  return craftCommandToTransaction(api, command, intent.sender, customFees);
+}
+
+/**
+ * Splitting a stake account moves part of it into a new one, derived from a fresh seed here the
+ * same way `stake.createAccount` derives its own.
+ */
+async function craftSplitStakeFromIntent(
+  api: ChainAPI,
+  intent: StakingTransactionIntent<StringMemo | MemoNotSupported>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const memo = "memo" in intent ? intent.memo : undefined;
+  const stakeAccAddr = memo?.type === "string" ? memo.value : intent.recipient;
+  if (!stakeAccAddr) {
+    throw new Error("stake.split requires a stake account address");
+  }
+
+  const seed = stakeAccountSeedOfIntent(intent) ?? createStakeAccountSeed();
+  const command: StakeSplitCommand = {
+    kind: "stake.split",
+    authorizedAccAddr: intent.sender,
+    stakeAccAddr,
+    amount: Number(intent.amount),
+    seed,
+    splitStakeAccAddr: await getStakeAccountAddressWithSeed({ fromAddress: intent.sender, seed }),
+  };
+  return craftCommandToTransaction(api, command, intent.sender, customFees);
+}
+
+/**
+ * Opening a token account, delegating spending authority over one, and taking that authority back.
+ * Only a live app reaches these; no first-party screen builds them. The addresses the instructions
+ * need are derived from the chain, exactly as the legacy `deriveCommandDescriptor` did -- the wallet
+ * API carries only the token and the delegate.
+ */
+async function craftTokenAuthorityFromIntent(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const mintAddress = getTokenMintAddress(intent);
+  if (!mintAddress) {
+    throw new Error(`${intent.type} requires a token asset`);
+  }
+
+  const mint = await getMaybeTokenMint(mintAddress, api);
+  if (!mint || mint instanceof Error) {
+    throw new Error(`Cannot resolve mint account for ${mintAddress}`);
+  }
+  const tokenProgram: SolanaTokenProgram =
+    mint.onChainAcc.data.program === PARSED_PROGRAMS.SPL_TOKEN_2022
+      ? PARSED_PROGRAMS.SPL_TOKEN_2022
+      : PARSED_PROGRAMS.SPL_TOKEN;
+
+  const ownerAta = (
+    await findAssociatedTokenAccountPubkey(intent.sender, mintAddress, tokenProgram)
+  ).toBase58();
+
+  const command: Command =
+    intent.type === "token.createATA"
+      ? {
+          kind: "token.createATA",
+          owner: intent.sender,
+          mint: mintAddress,
+          associatedTokenAccountAddress: ownerAta,
+        }
+      : intent.type === "token.revoke"
+        ? { kind: "token.revoke", account: ownerAta, owner: intent.sender, tokenProgram }
+        : {
+            kind: "token.approve",
+            account: ownerAta,
+            mintAddress,
+            recipientDescriptor: await resolveRecipientDescriptor(
+              api,
+              intent.recipient,
+              mintAddress,
+              tokenProgram,
+            ),
+            owner: intent.sender,
+            amount: Number(intent.amount),
+            decimals: mint.info.decimals,
+            tokenProgram,
+          };
+
   return craftCommandToTransaction(api, command, intent.sender, customFees);
 }
 
@@ -402,6 +588,11 @@ function resolveNativeTransferCommand(intent: TransactionIntent, memo?: string):
   };
 }
 
+export function stakeAccountSeedOfIntent(intent: unknown): string | undefined {
+  const data = (intent as { data?: SolanaTxData } | undefined)?.data;
+  return data?.type === "solana" ? data.stakeAccountSeed : undefined;
+}
+
 function getTokenMintAddress(intent: TransactionIntent): string | undefined {
   if (intent.asset.type === "native") return undefined;
   if ("assetReference" in intent.asset && intent.asset.assetReference) {
@@ -410,22 +601,56 @@ function getTokenMintAddress(intent: TransactionIntent): string | undefined {
   return undefined;
 }
 
+// The recipient may be a token account rather than a wallet: deriving an associated account from
+// one throws `TokenOwnerOffCurveError`, an ATA being off the ed25519 curve.
+export async function resolveRecipientDescriptor(
+  api: ChainAPI,
+  recipient: string,
+  mintAddress: string,
+  tokenProgram: SolanaTokenProgram,
+): Promise<TokenTransferCommand["recipientDescriptor"]> {
+  const recipientTokenAccount = await getMaybeTokenAccount(recipient, api);
+  if (recipientTokenAccount && !(recipientTokenAccount instanceof Error)) {
+    return {
+      walletAddress: recipientTokenAccount.owner.toBase58(),
+      tokenAccAddress: recipient,
+      shouldCreateAsAssociatedTokenAccount: false,
+      userInputType: UserInputType.ATA,
+    };
+  }
+
+  const associatedAddress = (
+    await findAssociatedTokenAccountPubkey(recipient, mintAddress, tokenProgram)
+  ).toBase58();
+  const associatedAccount = await getMaybeTokenAccount(associatedAddress, api);
+
+  return {
+    walletAddress: recipient,
+    tokenAccAddress: associatedAddress,
+    shouldCreateAsAssociatedTokenAccount:
+      associatedAccount === undefined || associatedAccount instanceof Error,
+    userInputType: UserInputType.SOL,
+  };
+}
+
 async function resolveTokenTransferCommand(
   api: ChainAPI,
   intent: TransactionIntent,
   mintAddress: string,
   memo?: string,
 ): Promise<TokenTransferCommand> {
-  const [mintAccount, mintProgram] = await Promise.all([
-    getMaybeMintAccount(mintAddress, api),
-    getMaybeTokenMintProgram(mintAddress, api),
-  ]);
-  if (!mintAccount || mintAccount instanceof Error) {
+  // One read, not two: `getMaybeTokenMint` carries both the parsed mint and the program that owns
+  // it, where `getMaybeMintAccount` and `getMaybeTokenMintProgram` each fetched the same account.
+  const mint = await getMaybeTokenMint(mintAddress, api);
+  if (!mint || mint instanceof Error) {
     throw new Error(`Cannot resolve mint account for ${mintAddress}`);
   }
 
+  const mintAccount = mint.info;
   const resolvedProgram: SolanaTokenProgram =
-    mintProgram && !(mintProgram instanceof Error) ? mintProgram : "spl-token";
+    mint.onChainAcc.data.program === PARSED_PROGRAMS.SPL_TOKEN_2022
+      ? PARSED_PROGRAMS.SPL_TOKEN_2022
+      : PARSED_PROGRAMS.SPL_TOKEN;
   const mintDecimals = mintAccount.decimals;
 
   const senderAta = await findAssociatedTokenAccountPubkey(
@@ -434,27 +659,16 @@ async function resolveTokenTransferCommand(
     resolvedProgram,
   );
 
-  const recipientAta = await findAssociatedTokenAccountPubkey(
-    intent.recipient,
-    mintAddress,
-    resolvedProgram,
-  );
-  const recipientAtaAddress = recipientAta.toBase58();
-
-  const recipientTokenAccount = await getMaybeTokenAccount(recipientAtaAddress, api);
-  const shouldCreateAta =
-    recipientTokenAccount === undefined || recipientTokenAccount instanceof Error;
-
   const command: TokenTransferCommand = {
     kind: "token.transfer",
     ownerAddress: intent.sender,
     ownerAssociatedTokenAccountAddress: senderAta.toBase58(),
-    recipientDescriptor: {
-      walletAddress: intent.recipient,
-      tokenAccAddress: recipientAtaAddress,
-      shouldCreateAsAssociatedTokenAccount: shouldCreateAta,
-      userInputType: UserInputType.SOL,
-    },
+    recipientDescriptor: await resolveRecipientDescriptor(
+      api,
+      intent.recipient,
+      mintAddress,
+      resolvedProgram,
+    ),
     amount: Number(intent.amount),
     mintAddress,
     mintDecimals,
@@ -479,67 +693,16 @@ async function resolveTokenTransferCommand(
     );
     if (transferFeeConfigExt) {
       const { epoch } = await api.getEpochInfo();
-      if (intent.useAllAmount) {
-        command.extensions = {
-          transferFee: computeTransferFeeFromTotal(
-            intent.amount.toString(),
-            transferFeeConfigExt.state,
-            epoch,
-          ),
-        };
-      } else {
-        command.extensions = {
-          transferFee: calculateToken2022TransferFees({
-            transferAmount: Number(intent.amount),
-            transferFeeConfigState: transferFeeConfigExt.state,
-            currentEpoch: epoch,
-          }),
-        };
-      }
+      command.extensions = {
+        transferFee: transferFeeForIntent(
+          intent.amount,
+          intent.useAllAmount,
+          transferFeeConfigExt.state,
+          epoch,
+        ),
+      };
     }
   }
 
   return command;
-}
-
-/**
- * Computes Token-2022 transfer fees for the "send all" case.
- *
- * Unlike `calculateToken2022TransferFees` which works from net → gross, this
- * function works from gross → net: the total deducted from the sender's ATA
- * equals the full token balance, and the fee is derived from that total.
- *
- * Formula: `fee = min( ceil(total × bps / 10 000), maximumFee )`
- *
- * Selects the active fee schedule based on `currentEpoch` vs the
- * `newerTransferFee.epoch` threshold.
- */
-function computeTransferFeeFromTotal(
-  totalAmount: BigNumber.Value,
-  config: Pick<TransferFeeConfigState, "newerTransferFee" | "olderTransferFee">,
-  currentEpoch: number,
-): TransferFeeCalculated {
-  const { newerTransferFee, olderTransferFee } = config;
-  const feeConfig = currentEpoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
-  const { maximumFee, transferFeeBasisPoints } = feeConfig;
-  const feePercent = bpsToPercent(transferFeeBasisPoints);
-
-  const totalBn = BigNumber(totalAmount);
-  const maxFeeBn = BigNumber(maximumFee);
-  let transferFeeBn = totalBn
-    .times(transferFeeBasisPoints)
-    .div(10000)
-    .decimalPlaces(0, BigNumber.ROUND_CEIL);
-  if (transferFeeBn.gt(maxFeeBn)) {
-    transferFeeBn = maxFeeBn;
-  }
-
-  return {
-    feePercent,
-    maxTransferFee: maximumFee,
-    transferFee: transferFeeBn.toNumber(),
-    feeBps: transferFeeBasisPoints,
-    transferAmountIncludingFee: totalBn.toNumber(),
-    transferAmountExcludingFee: totalBn.minus(transferFeeBn).toNumber(),
-  };
 }
