@@ -9,7 +9,6 @@ import {
   LedgerDevices,
   CoinsCheck,
 } from "@ledgerhq/lumen-ui-react/symbols";
-import { cn } from "LLD/utils/cn";
 
 export function RecipientIntroCard() {
   const { t } = useTranslation();
@@ -20,10 +19,7 @@ export function RecipientIntroCard() {
   }, []);
 
   return (
-    <div
-      className={cn("pt-12", isOpen ? "mb-16" : "mt-32")}
-      data-testid="send-recipient-intro-card"
-    >
+    <div className="mt-auto pt-12" data-testid="send-recipient-intro-card">
       <div className="overflow-hidden rounded-sm bg-surface">
         <ListItem
           className="cursor-pointer py-16"

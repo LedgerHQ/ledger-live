@@ -7,6 +7,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import { canSkipRecipientStep } from "@ledgerhq/live-common/flows/send/types";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
@@ -20,6 +21,7 @@ type OpenSendFlowOverride = Readonly<{
   currencyIds?: string[];
   recipient?: string;
   skipRecipientStep?: boolean;
+  categories?: AssetCategory[];
 }>;
 
 type UseOpenSendFlowProps = Readonly<{
@@ -28,6 +30,7 @@ type UseOpenSendFlowProps = Readonly<{
   recipient?: string;
   skipRecipientStep?: boolean;
   sourceScreenName: string;
+  categories?: AssetCategory[];
 }>;
 
 export function useOpenSendFlow({
@@ -36,6 +39,7 @@ export function useOpenSendFlow({
   recipient,
   skipRecipientStep,
   sourceScreenName,
+  categories,
 }: UseOpenSendFlowProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer } = useModularDrawerController();
@@ -52,6 +56,9 @@ export function useOpenSendFlow({
       const params: SendFundsNavigatorStackParamList[typeof ScreenName.SendSelectRecipient] = {
         accountId: account.id,
         parentId: account.type === "TokenAccount" ? account.parentId : undefined,
+        // Forward the resolved account so the recipient screen doesn't have to re-resolve a
+        // token sub-account from the store by id (which can fail with "account is missing").
+        account,
       };
 
       const canPrefillRecipient = Boolean(
@@ -170,6 +177,7 @@ export function useOpenSendFlow({
       const resolvedCurrencyIds = override?.currencyIds ?? currencyIds;
       const resolvedRecipient = override?.recipient ?? recipient;
       const resolvedSkipRecipientStep = override?.skipRecipientStep ?? skipRecipientStep;
+      const resolvedCategories = override?.categories ?? categories;
       const hasCurrencyIds = Boolean(resolvedCurrencyIds?.length);
       let currencies: string[] = [];
 
@@ -181,6 +189,7 @@ export function useOpenSendFlow({
 
       openDrawer({
         currencies,
+        categories: resolvedCategories,
         flow: "send",
         source: sourceScreenName,
         areCurrenciesFiltered: hasCurrencyIds || Boolean(currency),
@@ -195,6 +204,7 @@ export function useOpenSendFlow({
       });
     },
     [
+      categories,
       currency,
       currencyIds,
       navigateAfterAccountSelection,

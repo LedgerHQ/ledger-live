@@ -1,19 +1,31 @@
+// tsconfig-paths for the Jest controller (globalSetup/globalTeardown) and workers.
+// Must be first (CJS has no hoisting). Explicit baseUrl: __dirname keeps this CWD-independent.
+const { register } = require("tsconfig-paths");
+const { compilerOptions } = require("./tsconfig.json");
+register({ baseUrl: __dirname, paths: compilerOptions.paths });
+
+// Workers are separate processes that don't inherit the register() call above.
+// Setting NODE_OPTIONS here propagates to workers via fork() environment inheritance.
+const tsconfigPathsRegister = require.resolve("tsconfig-paths/register");
+if (!process.env.NODE_OPTIONS?.includes(tsconfigPathsRegister)) {
+  process.env.NODE_OPTIONS = [process.env.NODE_OPTIONS, `--require ${tsconfigPathsRegister}`]
+    .filter(Boolean)
+    .join(" ");
+}
+
 const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
-const { compilerOptions } = require("./tsconfig.json");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   const jestPaths = {};
   if (!paths) return jestPaths;
 
   Object.keys(paths).forEach(pathKey => {
-    // tsconfig uses "*": ["./*"] instead of baseUrl; mapping (.*) -> $1 breaks every module in Jest
-    if (pathKey === "*") return;
     const pathEntry = paths[pathKey];
     const pathValues = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
     pathValues.forEach(pathValue => {
       const jestKey = `^${pathKey.replace(/\*$/, "(.*)")}$`;
-      const jestValue = pathValue.replace(/\*/g, "$1");
+      const jestValue = pathValue.replace(/^\.\//, "").replace(/\*/g, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });

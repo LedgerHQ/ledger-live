@@ -61,6 +61,10 @@ jest.mock("~/renderer/store", () => ({
   resetStore: jest.fn(),
 }));
 
+// Device intents resolve without a device so these tests cover the dialog flows only.
+// The executor wiring is covered by Contacts.deviceIntents.integration.test.tsx.
+jest.mock("@features/platform-contacts/device");
+
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   ...jest.requireActual<typeof import("@ledgerhq/live-common/bridge/index")>(
     "@ledgerhq/live-common/bridge/index",
@@ -311,8 +315,9 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
-      expect(screen.getByText("Coinbase 1")).toBeVisible();
     });
+
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Coinbase 1");
   });
 
   it("should open Ledger Sync activation instead of adding a contact while sync is inactive", async () => {
@@ -371,7 +376,7 @@ describe("Contacts integration", () => {
     expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 
-  it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {
+  it("should show the one-time feature introduction on first visit and complete it from Explore now", async () => {
     const { user, store } = renderContactsScreen({
       settings: { hasDismissedContactsFeatureIntroduction: false },
     });

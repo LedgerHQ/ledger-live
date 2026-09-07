@@ -22,6 +22,7 @@ type ModularDrawerStateProps = {
   currencyIds: string[];
   isDrawerOpen?: boolean;
   onClose?: () => void;
+  onSilentClose?: () => void;
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
   onCurrencySelected?: NonNullable<ModularDrawerProps["onCurrencySelected"]>;
   hasSearchedValue?: boolean;
@@ -33,6 +34,7 @@ export function useModularDrawerState({
   currencyIds,
   isDrawerOpen,
   onClose,
+  onSilentClose,
   hasSearchedValue,
   onAccountSelected,
   onCurrencySelected,
@@ -83,6 +85,7 @@ export function useModularDrawerState({
 
   const { navigateToDeviceWithCurrency } = useDeviceNavigation({
     onClose,
+    onSilentClose,
     resetSelection: reset,
     onAccountSelected,
   });
@@ -206,6 +209,7 @@ export function useModularDrawerState({
 
   return {
     accountCurrency,
+    selectedAssetName: asset?.name,
     network,
     availableNetworks,
     shouldShowBackButton,

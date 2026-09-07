@@ -40,11 +40,12 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
     [routeAssetId, decodedAssetId, marketState, distribution],
   );
 
-  // The market API expects a CoinGecko id, which only coincidentally matches the
-  // ledger id for some coins (e.g. "hedera" vs "hedera-hashgraph").
+  // Prefer the market ledger id over the route param: a bare market id can collide
+  // with a same-named chain (e.g. "arbitrum" resolves to the Arbitrum One chain, ETH).
+  const fallbackLedgerId = marketState?.ledgerIds?.[0] ?? decodedAssetId;
   const fallbackCurrency = useMemo(
-    () => (decodedAssetId ? findCryptoCurrencyById(decodedAssetId) : undefined),
-    [decodedAssetId],
+    () => (fallbackLedgerId ? findCryptoCurrencyById(fallbackLedgerId) : undefined),
+    [fallbackLedgerId],
   );
 
   const { marketApiId, knownLedgerIds } = useMemo(

@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "~/context/Locale";
 
 /**

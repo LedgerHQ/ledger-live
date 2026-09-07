@@ -141,6 +141,177 @@ describe("ContactDetailView", () => {
     fireEvent.click(screen.getByTestId("contacts-detail-add-address"));
 
     expect(handleAddAddress).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("contacts-detail-add-address")).toHaveAttribute(
+      "aria-label",
+      "Add external address",
+    );
+  });
+
+  it("should compact the header when scrolling addresses and expand it at the top", () => {
+    const contact = mockContact({
+      id: "contact-scroll",
+      name: "Benoit",
+      addresses: [mockContactAddress()],
+    });
+    const address = contact.addresses[0]!;
+
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={contact}
+        addressGroups={[
+          {
+            networkId: getCryptoCurrencyById("ethereum").id,
+            networkName: getCryptoCurrencyById("ethereum").name,
+            networkTicker: getCryptoCurrencyById("ethereum").ticker,
+            rows: [
+              {
+                addressId: address.id,
+                label: address.label,
+                address: address.address,
+                currencyId: address.currencyId,
+                intent: createContactDetailAddressRowIntent(contact.id, address.id),
+              },
+            ],
+          },
+        ]}
+        onAddressRowPress={jest.fn()}
+      />,
+    );
+
+    const header = screen.getByTestId("contacts-detail-header");
+    const addressList = screen.getByTestId("contacts-detail-address-list");
+
+    expect(header).toHaveAttribute("data-state", "expanded");
+
+    fireEvent.scroll(addressList, { target: { scrollTop: 150 } });
+
+    expect(header).toHaveAttribute("data-state", "expanded");
+
+    fireEvent.scroll(addressList, { target: { scrollTop: 151 } });
+
+    expect(header).toHaveAttribute("data-state", "collapsed");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveClass("heading-5-semi-bold");
+    expect(screen.getByText("1 address")).toHaveClass("body-2");
+    expect(screen.getByTestId("contacts-detail-add-address-icon")).toHaveAttribute(
+      "aria-label",
+      "Add address",
+    );
+
+    fireEvent.scroll(addressList, { target: { scrollTop: 0 } });
+
+    expect(header).toHaveAttribute("data-state", "expanded");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveClass("heading-3-semi-bold");
+    expect(screen.queryByTestId("contacts-detail-add-address-icon")).not.toBeInTheDocument();
+  });
+
+  it("should reset the expanded header and address list when changing contact", () => {
+    const firstContact = mockContact({
+      id: "contact-first",
+      name: "Benoit",
+      addresses: [mockContactAddress()],
+    });
+    const secondContact = mockContact({
+      id: "contact-second",
+      name: "David",
+      addresses: [mockContactAddress()],
+    });
+    const createAddressGroups = (contact: typeof firstContact) => {
+      const address = contact.addresses[0]!;
+      return [
+        {
+          networkId: getCryptoCurrencyById("ethereum").id,
+          networkName: getCryptoCurrencyById("ethereum").name,
+          networkTicker: getCryptoCurrencyById("ethereum").ticker,
+          rows: [
+            {
+              addressId: address.id,
+              label: address.label,
+              address: address.address,
+              currencyId: address.currencyId,
+              intent: createContactDetailAddressRowIntent(contact.id, address.id),
+            },
+          ],
+        },
+      ];
+    };
+    const { rerender } = render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={firstContact}
+        addressGroups={createAddressGroups(firstContact)}
+        onAddressRowPress={jest.fn()}
+      />,
+    );
+
+    const firstAddressList = screen.getByTestId("contacts-detail-address-list");
+    fireEvent.scroll(firstAddressList, { target: { scrollTop: 24 } });
+
+    rerender(
+      <ContactDetailView
+        {...defaultProps}
+        contact={secondContact}
+        addressGroups={createAddressGroups(secondContact)}
+        onAddressRowPress={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-detail-header")).toHaveAttribute("data-state", "expanded");
+    expect(screen.getByTestId("contacts-detail-address-list")).not.toBe(firstAddressList);
+  });
+
+  it("should keep detail actions available after the header compacts", () => {
+    const contact = mockContact({
+      id: "contact-actions",
+      name: "Benoit",
+      addresses: [mockContactAddress()],
+    });
+    const address = contact.addresses[0]!;
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    const onCompactAddAddress = jest.fn();
+
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={contact}
+        onAddAddress={onCompactAddAddress}
+        addressGroups={[
+          {
+            networkId: getCryptoCurrencyById("ethereum").id,
+            networkName: getCryptoCurrencyById("ethereum").name,
+            networkTicker: getCryptoCurrencyById("ethereum").ticker,
+            rows: [
+              {
+                addressId: address.id,
+                label: address.label,
+                address: address.address,
+                currencyId: address.currencyId,
+                intent: createContactDetailAddressRowIntent(contact.id, address.id),
+              },
+            ],
+          },
+        ]}
+        onAddressRowPress={jest.fn()}
+        detailActions={{
+          canDelete: true,
+          labels: { editContact: "Edit contact", deleteContact: "Delete contact" },
+          onEdit,
+          onDelete,
+        }}
+      />,
+    );
+
+    fireEvent.scroll(screen.getByTestId("contacts-detail-address-list"), {
+      target: { scrollTop: 24 },
+    });
+    fireEvent.click(screen.getByTestId("contacts-detail-add-address"));
+    fireEvent.click(screen.getByTestId("contacts-detail-edit-action"));
+    fireEvent.click(screen.getByTestId("contacts-detail-delete-action"));
+
+    expect(onCompactAddAddress).toHaveBeenCalledTimes(1);
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
   });
 
   it("should render the Ledger Wallet addresses entry for Me", () => {

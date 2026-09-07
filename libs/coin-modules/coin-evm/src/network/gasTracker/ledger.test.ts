@@ -1,6 +1,5 @@
 import { AssertionError } from "assert";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
@@ -17,14 +16,6 @@ const ledgerGasTrackerConfig = {
   gasTracker: { type: "ledger", explorerId: "eth" },
   eip1559BaseFeeMultiplier: TEST_EIP1559_BASE_FEE_MULTIPLIER,
 } as unknown as EvmConfigInfo;
-
-const fakeCurrency: Partial<CryptoCurrency> = {
-  id: CryptoCurrencyIdSchema.parse("ethereum"),
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
-  units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-};
 
 describe("EVM Family", () => {
   describe("network/gasTracker/index.ts", () => {
@@ -95,7 +86,7 @@ describe("EVM Family", () => {
           mockedNetwork.mockReturnValueOnce(gastrackerBarometerMock);
 
           const gasOptions: GasOptions = await getGasOptions({
-            currencyId: fakeCurrency.id!,
+            currencyId: "ethereum",
             config: { ...ledgerGasTrackerConfig, eip1559BaseFeeMultiplier: 1.5 },
             options: {
               useEIP1559: true,

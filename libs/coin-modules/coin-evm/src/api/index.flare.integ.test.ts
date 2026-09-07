@@ -17,7 +17,6 @@ describe("Flare (external node)", () => {
         type: "blockscout",
         uri: "https://I.AM.FAILING", // so that internal txs cannot be retrieved from explorer
       },
-      showNfts: false,
     };
     beforeAll(() => {
       module = createApi("flare");

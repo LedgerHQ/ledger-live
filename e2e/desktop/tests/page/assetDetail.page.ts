@@ -1,6 +1,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { AppPage } from "tests/page/abstractClasses";
 import { SwapContainer } from "tests/component/swap/swap-container";
 
 export class AssetDetailPage extends AppPage {
@@ -134,7 +134,7 @@ export class AssetDetailPage extends AppPage {
   }
 
   @step("Open the asset options menu")
-  async openOptionsMenu() {
+  private async openOptionsMenu() {
     await this.optionsTrigger.click();
   }
 

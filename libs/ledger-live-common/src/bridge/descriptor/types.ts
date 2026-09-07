@@ -22,7 +22,7 @@ export type InputFieldType = "text" | "number" | "tag" | "typed";
 export type InputDescriptor = Readonly<{
   type: InputFieldType;
   maxLength?: number;
-  maxValue?: number;
+  maxValue?: number | bigint;
   options?: readonly string[];
   defaultOption?: string;
   supportsDomain?: boolean; // Whether the field supports domain names (ENS for EVM)
@@ -356,7 +356,6 @@ export type SendDescriptor = {
   };
   fees: FeeDescriptor;
   amount?: SendAmountDescriptor;
-  addressBook?: boolean;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
 };

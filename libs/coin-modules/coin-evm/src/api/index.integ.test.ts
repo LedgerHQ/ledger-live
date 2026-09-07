@@ -19,7 +19,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     },
   ],
   [
@@ -30,7 +30,7 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
@@ -38,7 +38,6 @@ describe.each([
   // The logic layer resolves config from the threaded context (ADR-019), so the context must
   // carry this suite's node/explorer config — not the empty default fixture.
   const context = createMockEvmContext(config as Partial<EvmConfigInfo>);
-
   beforeAll(() => {
     module = createApi("ethereum");
   });
@@ -530,7 +529,13 @@ describe.each([
       const expectAddressEq = (actual: string, expected: string) =>
         expect(actual.toLowerCase()).toBe(expected.toLowerCase());
 
+      beforeEach(() => {
+        process.env.NFT_CURRENCIES = JSON.stringify([]);
+      });
+
       it("simple native transfer between EOAs", async () => {
+        process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+
         const txHash = "0x9f555da0bb8d9ff99ced6db6e5f966699f8df849f4887c80ed44ffb101f7d252";
         const blockHeight = 24600494;
         const sender = "0x12644b85A2F20F39Ade7543FBA1C0C9DFE289580";
@@ -675,6 +680,8 @@ describe.each([
       });
 
       it("Spoofed NFT transfer through smart contract", async () => {
+        process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+
         const txHash = "0x61adea29cbf2e50f9ab975636af9a624620589c2cca9b8dc82ccccaefeb9c6ad";
         const blockHeight = 21348730;
         const caller = "0x6b2ae7cc19eda092476f32cced9311da568a823c";
@@ -788,7 +795,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
       type: "etherscan",
       uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
     },
-    showNfts: true,
+    supportedTokens: ["erc721", "erc1155"],
   } as EvmConfig;
   const context = createMockEvmContext(config);
 
@@ -877,7 +884,6 @@ describe("EVM Api (Moonbeam Network)", () => {
       type: "etherscan",
       uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
     },
-    showNfts: false,
   } as EvmConfig;
   const context = createMockEvmContext(config);
 

@@ -39,6 +39,10 @@ See [domain/README.md](../domain/README.md) for details.
 ### `shared/`
 No business logic, no app-specific context. Pure utilities, schemas, Redux tooling. _e.g. `@shared/feature-flags`, `@shared/schema-primitives`._
 
+Cross-cutting app capabilities reach the lower layers by injection at the app root rather than by
+props-drilling — see [`@shared/i18n`](../shared/i18n) (`<I18nProvider>` + `useTranslation`), which
+lets `features/*` and `domain/*` resolve their own copy without depending on an app's i18n setup.
+
 ---
 
 ## Dependency rules (enforced by Nx)

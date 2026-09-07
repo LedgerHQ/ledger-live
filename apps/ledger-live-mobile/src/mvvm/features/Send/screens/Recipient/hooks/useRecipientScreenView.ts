@@ -1,16 +1,18 @@
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
-import { resolveRecipientNetworkId } from "@ledgerhq/live-common/flows/send/recipient/utils/resolveRecipientNetworkId";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
+import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
 
@@ -33,10 +35,13 @@ export function useRecipientScreenView({
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("mobile");
+  const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
+  const [pendingContactAddress, setPendingContactAddress] = useState<string>();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = sendFeatures.hasAddressBook(currency);
+  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
@@ -49,28 +54,29 @@ export function useRecipientScreenView({
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
   });
 
-  const contactsOnNetwork = useMemo(() => {
-    const networkId = resolveRecipientNetworkId(currency.id);
-
-    return contacts.reduce<Contact[]>((matchingContacts, contact) => {
-      if (contact.isMe) {
-        return matchingContacts;
-      }
-
-      const addresses = contact.addresses.filter(
-        address => resolveRecipientNetworkId(address.currencyId) === networkId,
-      );
-      if (addresses.length === 0) {
-        return matchingContacts;
-      }
-
-      matchingContacts.push({ ...contact, addresses });
-      return matchingContacts;
-    }, []);
-  }, [contacts, currency.id]);
-
+  const contactsOnNetwork = useMemo(
+    () => filterContactsByNetwork(contacts, currency.id),
+    [contacts, currency.id],
+  );
   const hasSearchValue = recipientSearch.value.length > 0;
-  const showInitialState = !hasSearchValue;
+  const contactSearchResult = useMemo(() => {
+    if (!isContactsFeatureEnabled || !hasAddressBook) {
+      return undefined;
+    }
+
+    const normalizedSearchValue = recipientSearch.value.trim().toLowerCase();
+    if (!normalizedSearchValue) {
+      return undefined;
+    }
+
+    return contactsOnNetwork.find(
+      contact =>
+        contact.addresses.length > 1 && contact.name.trim().toLowerCase() === normalizedSearchValue,
+    );
+  }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
+  const showContactSearchResult =
+    hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;
+  const showInitialState = !hasSearchValue && selectedContact === undefined;
   const showContactsList =
     showInitialState && isContactsFeatureEnabled && hasAddressBook && contactsOnNetwork.length > 0;
   const showEmptyContactsState = useMemo(() => {
@@ -99,20 +105,44 @@ export function useRecipientScreenView({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      setPendingContactAddress(undefined);
       onAddressSelected(address, ensName);
     },
     [onAddressSelected],
+  );
+
+  const validateContactAddress = useCallback(
+    (address: string) => {
+      setPendingContactAddress(address);
+      recipientSearch.setValue(address);
+    },
+    [recipientSearch],
   );
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
       const address = pickContactAddressForCurrency(contact.addresses, currency.id);
       if (address) {
-        handleAddressSelect(address.address);
+        validateContactAddress(address.address);
+        return;
       }
+
+      selectContact(contact);
     },
-    [currency.id, handleAddressSelect],
+    [currency.id, selectContact, validateContactAddress],
   );
+
+  const handleContactAddressSelect = useCallback(
+    (address: string) => {
+      clearSelectedContact();
+      validateContactAddress(address);
+    },
+    [clearSelectedContact, validateContactAddress],
+  );
+
+  const featureIntroduction = useContactsFeatureIntroductionViewModel({
+    isContactsEntryAvailable: isContactsFeatureEnabled && hasAddressBook,
+  });
 
   const searchState = useRecipientSearchState({
     searchValue: recipientSearch.value,
@@ -121,22 +151,60 @@ export function useRecipientScreenView({
     recipientSupportsDomain,
   });
 
+  useEffect(() => {
+    const selectedAddressIsValidated =
+      Boolean(pendingContactAddress) &&
+      pendingContactAddress === recipientSearch.value &&
+      searchState.isAddressValid &&
+      !searchState.showBridgeSenderError &&
+      !searchState.showBridgeRecipientWarning;
+    if (selectedAddressIsValidated && pendingContactAddress) {
+      handleAddressSelect(pendingContactAddress);
+    }
+  }, [
+    handleAddressSelect,
+    pendingContactAddress,
+    recipientSearch.value,
+    searchState.isAddressValid,
+    searchState.showBridgeRecipientWarning,
+    searchState.showBridgeSenderError,
+  ]);
+
+  const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
+
   return {
     searchValue: recipientSearch.value,
-    isLoading,
+    isLoading: !shouldHideRegularSearchState && isLoading,
     result,
     mainAccount,
     hasAddressBook,
     addressBookFamilyName: mainAccount.currency.name,
     showInitialState,
     showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
     contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
     clipboardAddress,
     handlePasteFromClipboard,
     handleAddressSelect,
     handleContactSelect,
+    handleContactAddressSelect,
     isContactsFeatureEnabled,
+    featureIntroduction,
     ...searchState,
+    showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
+    showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,
+    showAddressValidationError:
+      !shouldHideRegularSearchState && searchState.showAddressValidationError,
+    showEmptyState: !shouldHideRegularSearchState && searchState.showEmptyState,
+    showBridgeSenderError: !shouldHideRegularSearchState && searchState.showBridgeSenderError,
+    showSanctionedBanner: !shouldHideRegularSearchState && searchState.showSanctionedBanner,
+    showBridgeRecipientError: !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
+    showBridgeRecipientWarning:
+      !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
+    isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
+    isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
   };
 }

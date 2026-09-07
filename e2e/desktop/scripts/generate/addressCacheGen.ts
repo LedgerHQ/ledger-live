@@ -14,7 +14,7 @@ import {
   type AddressCacheFile,
 } from "@ledgerhq/live-e2e-shared/addressCache";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { resolveFromRoot } from "./shared";
+import { resolveFromRoot } from "scripts/generate/shared";
 
 type AccountToDerive = { index: number; derivationMode: string; accountPath: string };
 type CoinGroup = { currency: Currency; accounts: AccountToDerive[] };

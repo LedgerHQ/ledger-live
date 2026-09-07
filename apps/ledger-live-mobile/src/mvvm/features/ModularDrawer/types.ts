@@ -9,6 +9,17 @@ export enum ModularDrawerStep {
   Account = "Account",
 }
 
+export type DisabledItemExplanation = Readonly<{
+  title: string;
+  content: string;
+}>;
+
+export type DisabledItemsExplanation = Readonly<{
+  asset: (assetName: string) => DisabledItemExplanation;
+  network: (networkName: string, assetName: string) => DisabledItemExplanation;
+  onPress: (explanation: DisabledItemExplanation) => void;
+}>;
+
 export const MODULAR_DRAWER_KEY = "modularDrawer";
 
 export type ModularDrawerCompletionMode = "currency";

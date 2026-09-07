@@ -5,6 +5,7 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer/ModularDrawerWr
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 
 export { handleModularDrawerDeeplink } from "./handleModularDrawerDeeplink";
+export type { DisabledItemsExplanation, DisabledItemExplanation } from "./types";
 export {
   ModularDrawerFlow,
   type ModularDrawerFlowProps,

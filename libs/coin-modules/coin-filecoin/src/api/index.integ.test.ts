@@ -1,5 +1,6 @@
 import { generateMnemonic, accountFromMnemonic } from "iso-filecoin/wallet";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import type { FilecoinCoinConfig } from "../config";
 import { TEST_ADDRESSES } from "../test/fixtures";
@@ -10,7 +11,25 @@ describe("createApi (integration)", () => {
   const context = createMockFilecoinContext();
 
   beforeAll(() => {
-    api = createApi();
+    // Through withDefaults, as the consumer resolver does: the module omits the capabilities the
+    // chain has none of, and the wrapper is what turns them into the "not supported" answer below.
+    api = withDefaults(createApi());
+  });
+
+  it("omits the capabilities the chain has none of", () => {
+    const impl = createApi();
+    for (const method of [
+      "call",
+      "register",
+      "craftRawTransaction",
+      "getBlock",
+      "getBlockInfo",
+      "getStakes",
+      "getRewards",
+      "getValidators",
+    ] as const) {
+      expect(impl).not.toHaveProperty(method);
+    }
   });
 
   describe("unsupported methods", () => {

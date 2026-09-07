@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
-import { Component } from "../../page/abstractClasses";
-import { AssetCategory, AssetSection } from "./assetSection";
-import { AssetsTable } from "./assetsTable";
+import { Component } from "tests/page/abstractClasses";
+import { AssetCategory, AssetSection } from "tests/component/portfolio/assetSection";
+import { AssetsTable } from "tests/component/portfolio/assetsTable";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export class AssetsView extends Component {

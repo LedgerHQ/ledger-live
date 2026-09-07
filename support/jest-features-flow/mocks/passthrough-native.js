@@ -16,14 +16,24 @@ function wrapTextChildren(children) {
   return children;
 }
 
-function Banner({ children, description, primaryAction, secondaryAction, ...props }) {
+function Banner({ children, title, description, primaryAction, secondaryAction, ...props }) {
   return React.createElement(
     "Banner",
-    { ...props, description, primaryAction, secondaryAction },
+    { ...props, title, description, primaryAction, secondaryAction },
+    title === undefined ? null : React.createElement("Text", undefined, title),
     description === undefined ? null : React.createElement("Text", undefined, description),
     children,
     primaryAction,
     secondaryAction,
+  );
+}
+
+function Tag({ label, children, ...props }) {
+  return React.createElement(
+    "Tag",
+    { ...props, label },
+    label === undefined ? null : React.createElement("Text", undefined, label),
+    wrapTextChildren(children),
   );
 }
 
@@ -32,7 +42,7 @@ function Banner({ children, description, primaryAction, secondaryAction, ...prop
 // Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
 // per-component mocks, no peer installs.
 module.exports = new Proxy(
-  { __esModule: true, Banner },
+  { __esModule: true, Banner, Tag },
   {
     get(target, prop) {
       if (prop in target) return target[prop];

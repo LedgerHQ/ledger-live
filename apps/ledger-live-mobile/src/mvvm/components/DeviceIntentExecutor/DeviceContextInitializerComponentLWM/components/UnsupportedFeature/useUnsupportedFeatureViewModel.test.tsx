@@ -43,6 +43,7 @@ describe("useUnsupportedFeatureViewModel", () => {
       openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding: jest.fn(),
       openSupport,
+      openExperimentalSettings: jest.fn(),
     });
   });
 

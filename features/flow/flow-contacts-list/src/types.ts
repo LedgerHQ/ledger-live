@@ -87,9 +87,17 @@ export type ContactsListViewProps = ContactsPageSharedProps &
     ledgerSyncIntroduction?: ReactNode;
   }>;
 
+/**
+ * Surface the list is painted on. `base` is the app canvas (full page), `canvasSheet` the bottom
+ * sheet canvas. The list owns opaque backgrounds (root, pinned search bar, sticky section headers)
+ * that must match their host, otherwise two different blacks are visible.
+ */
+export type ContactsListSurface = "base" | "canvasSheet";
+
 export type ContactsListViewNativeProps = ContactsPageSharedProps &
   Readonly<{
     onSearchQueryChange: (query: string) => void;
+    surface?: ContactsListSurface;
   }>;
 
 export function isPopulatedContactsListViewModel(

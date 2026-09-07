@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { type UserId, userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
-import { start, updateUserPreferences } from "./braze";
+import { applyBrazeConsentTransition, start, updateUserPreferences } from "./braze";
 
 type SyncedBrazeIdentity = {
   userId: UserId;
@@ -11,50 +11,131 @@ type SyncedBrazeIdentity = {
   brazeOptOutIdentityCleanup: boolean;
 };
 
+const MAX_CONSENT_TRANSITION_RETRIES = 1;
+
+const identitiesMatch = (
+  left: SyncedBrazeIdentity | null,
+  right: SyncedBrazeIdentity | null,
+): boolean =>
+  left != null &&
+  right != null &&
+  left.userId.equals(right.userId) &&
+  left.isTrackedUser === right.isTrackedUser &&
+  left.brazeOptOutIdentityCleanup === right.brazeOptOutIdentityCleanup;
+
 const HookNotifications = () => {
   const notifications = useSelector(notificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const userId = useSelector(userIdSelector);
   const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
+  const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
   const lastSyncedIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
+  const pendingConsentTransitionRef = useRef<Promise<boolean> | null>(null);
+  const targetIdentityRef = useRef<SyncedBrazeIdentity | null>(null);
+  const retryCountRef = useRef(0);
+  const syncBrazeIdentityRef = useRef<() => void>(() => {});
+  const [syncedEpoch, setSyncedEpoch] = useState(0);
 
   const syncBrazeIdentity = useCallback(() => {
     if (isDummyUserId(userId)) {
       lastSyncedIdentityRef.current = null;
+      targetIdentityRef.current = null;
+      retryCountRef.current = 0;
       return;
     }
 
-    const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
     const currentIdentity: SyncedBrazeIdentity = {
       userId,
       isTrackedUser,
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     };
-    const lastSyncedIdentity = lastSyncedIdentityRef.current;
-    if (
-      lastSyncedIdentity &&
-      lastSyncedIdentity.userId.equals(currentIdentity.userId) &&
-      lastSyncedIdentity.isTrackedUser === currentIdentity.isTrackedUser &&
-      lastSyncedIdentity.brazeOptOutIdentityCleanup === currentIdentity.brazeOptOutIdentityCleanup
-    ) {
+
+    if (!identitiesMatch(targetIdentityRef.current, currentIdentity)) {
+      targetIdentityRef.current = currentIdentity;
+      retryCountRef.current = 0;
+    }
+
+    if (identitiesMatch(lastSyncedIdentityRef.current, currentIdentity)) {
+      retryCountRef.current = 0;
       return;
     }
 
-    lastSyncedIdentityRef.current = currentIdentity;
+    if (pendingConsentTransitionRef.current) {
+      return;
+    }
+
+    const lastSyncedIdentity = lastSyncedIdentityRef.current;
+    const isConsentTransition =
+      brazeOptOutIdentityCleanupEnabled &&
+      lastSyncedIdentity != null &&
+      lastSyncedIdentity.isTrackedUser !== currentIdentity.isTrackedUser;
+
+    if (isConsentTransition) {
+      const transition = Promise.resolve(applyBrazeConsentTransition({ isTrackedUser, userId }))
+        .then(() => true)
+        .catch(error => {
+          console.warn("Braze consent transition failed", error);
+          return false;
+        });
+
+      pendingConsentTransitionRef.current = transition;
+      void transition.then(didTransitionSucceed => {
+        if (pendingConsentTransitionRef.current === transition) {
+          pendingConsentTransitionRef.current = null;
+        }
+
+        if (didTransitionSucceed) {
+          lastSyncedIdentityRef.current = currentIdentity;
+          retryCountRef.current = 0;
+          if (!identitiesMatch(currentIdentity, targetIdentityRef.current)) {
+            syncBrazeIdentityRef.current();
+            return;
+          }
+          setSyncedEpoch(epoch => epoch + 1);
+          return;
+        }
+
+        if (retryCountRef.current >= MAX_CONSENT_TRANSITION_RETRIES) {
+          return;
+        }
+
+        retryCountRef.current += 1;
+        syncBrazeIdentityRef.current();
+      });
+      return;
+    }
+
     start(isTrackedUser, userId, {
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     });
-  }, [brazeOptOutIdentityCleanup?.enabled, isTrackedUser, userId]);
+    lastSyncedIdentityRef.current = currentIdentity;
+  }, [brazeOptOutIdentityCleanupEnabled, isTrackedUser, userId]);
+
+  useEffect(() => {
+    syncBrazeIdentityRef.current = syncBrazeIdentity;
+  }, [syncBrazeIdentity]);
 
   useEffect(() => {
     syncBrazeIdentity();
   }, [syncBrazeIdentity]);
 
   useEffect(() => {
+    const currentIdentity: SyncedBrazeIdentity | null = isDummyUserId(userId)
+      ? null
+      : {
+          userId,
+          isTrackedUser,
+          brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
+        };
+
+    if (!identitiesMatch(lastSyncedIdentityRef.current, currentIdentity)) {
+      return;
+    }
+
     updateUserPreferences(notifications, isTrackedUser, {
-      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     });
-  }, [notifications, isTrackedUser, brazeOptOutIdentityCleanup?.enabled]);
+  }, [brazeOptOutIdentityCleanupEnabled, isTrackedUser, notifications, syncedEpoch, userId]);
 
   return null;
 };

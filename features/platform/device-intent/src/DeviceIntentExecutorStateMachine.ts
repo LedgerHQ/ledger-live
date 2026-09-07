@@ -13,7 +13,7 @@ const LOG_TYPE = "DIEStateMachine";
 
 // ---- Listener types ----
 
-export type StateMachineListeners<JobState, Input, ExtraProps> = {
+export type StateMachineListeners<JobState, Input, ExtraProps, Result = undefined> = {
   /**
    * Called when the executor state changes.
    */
@@ -22,72 +22,75 @@ export type StateMachineListeners<JobState, Input, ExtraProps> = {
    * Called when the job Observable emits a new value.
    */
   onIntentJobStateChanged: (
-    intent: Intent<JobState, Input, ExtraProps>,
+    intent: Intent<JobState, Input, ExtraProps, Result>,
     jobState: JobState,
   ) => void;
   /**
    * Called when the job Observable completes.
    */
-  onIntentJobComplete: (intent: Intent<JobState, Input, ExtraProps>) => void;
+  onIntentJobComplete: (intent: Intent<JobState, Input, ExtraProps, Result>) => void;
   /**
    * Called when the job Observable emits an error.
    */
-  onIntentJobError: (intent: Intent<JobState, Input, ExtraProps>, error: unknown) => void;
+  onIntentJobError: (intent: Intent<JobState, Input, ExtraProps, Result>, error: unknown) => void;
 };
 
 // ---- Internal machine types ----
 
-type MachineContext<JobState, Input, ExtraProps> = {
-  listeners: StateMachineListeners<JobState, Input, ExtraProps>;
+type MachineContext<JobState, Input, ExtraProps, Result> = {
+  listeners: StateMachineListeners<JobState, Input, ExtraProps, Result>;
   deviceConnectionParams: DeviceConnectionParams;
-  currentIntent: Intent<JobState, Input, ExtraProps>;
+  currentIntent: Intent<JobState, Input, ExtraProps, Result>;
   deviceConnectionResult: DeviceConnectionResult | null;
   deviceExtractedContext: DeviceExtractedContext | null;
   error: unknown;
 };
 
-type MachineEvent<JobState, Input, ExtraProps> =
+type MachineEvent<JobState, Input, ExtraProps, Result> =
   | { type: "DEVICE_CONNECTED"; result: DeviceConnectionResult }
   | { type: "DEVICE_INITIALIZED"; context: DeviceExtractedContext }
   | { type: "DEVICE_DISCONNECTED" }
   | { type: "RETRY" }
-  | { type: "SET_INTENT"; intent: Intent<JobState, Input, ExtraProps> }
+  | { type: "SET_INTENT"; intent: Intent<JobState, Input, ExtraProps, Result> }
   | { type: "REINITIALIZE" }
   | { type: "STOP_INTENT" };
 
-type MachineInput<JobState, Input, ExtraProps> = {
+type MachineInput<JobState, Input, ExtraProps, Result> = {
   deviceConnectionParams: DeviceConnectionParams;
-  intent: Intent<JobState, Input, ExtraProps>;
-  listeners: StateMachineListeners<JobState, Input, ExtraProps>;
+  intent: Intent<JobState, Input, ExtraProps, Result>;
+  listeners: StateMachineListeners<JobState, Input, ExtraProps, Result>;
 };
 
-type JobInvokeInput<JobState, Input> = {
+type JobInvokeInput<JobState, Input, Result> = {
   job: (params: {
     deviceConnectionResult: DeviceConnectionResult;
     deviceExtractedContext: DeviceExtractedContext;
     input: Input;
+    onResult: (result: Result) => void;
   }) => Observable<JobState>;
   deviceConnectionResult: DeviceConnectionResult;
   deviceExtractedContext: DeviceExtractedContext;
   intentInput: Input;
+  onResult: (result: Result) => void;
 };
 
 // ---- Machine factory ----
 
-function createExecutorMachine<JobState, Input, ExtraProps>() {
+function createExecutorMachine<JobState, Input, ExtraProps, Result>() {
   /** @xstate-layout N4IgpgJg5mDOIC5QBEwDcCWBjMBJAdgC5hECiAHmFgK6ED2ATgHQTrZgDCd++VhG3AMTJSANVwdSAfQ4B5AHLzSHACqlkAbQAMAXUSgADnVgZ+3fSHKIAjNYAcAVibWAbHZcBmAOxeAnG60HOwAaEABPGy1rJg8PXzsAJi0PawAWa18vVIcAXxzQ1EwcAmIyShp6ZlYisGQMWCxuXixiCEEAJVIVdoBNbT0kECMTM3wLKwQ7XyctVPTfeKSEjwcvUIiEBJcmTN9vVJd7VK1HXPyQQvYSkkIKKlpGFjZi-FMMAEMAGwwAL3fR4RiCTSXDyXAqXAAQQAMrgAFrqfoWYZvcyDCa2KbOWIOFy+E7WBJTELhRAuLweJiHdyrDx2OmJXx5ArPPBEG53CqPapXV78L6-f4CfCCADKXSkoLU8hUSMGKNG4xsc0pKwcvlSCWsDlxuvWiFiqSYDi05JSXgSRLs1uZF1Z1zK90qTxqBDeAr+AJE4kkUmQuFFckUyjUml0yOMqLG6MQ9KNCXShw8S2sXgc+oQOKps0ceLs2QcydtlxepVu5QeVXtfI+309wo6pFB4KhsIRcsMkcVMYQ2uslKSmo8qS8ZsJGeWlNSvgSXgydkCppHCWL1bLnMrTAw7MdFQbEG4YC3+DQdAA1keS2z1xXndub07hQht6esELuP0O0Mu8Klb3B0wI6xAs2RTPYaykr2theEws6jqkjjWi4lorucV4OuWTqPPeHK3g2YAMAwjwGJ8-wAGaMAAtkw6E7phXLMDhu60E+L50G+oyfuG8o-mioATBS2wuFolralMLguOkqQZnO2yTvODj2MsWhMmha64VhjF0RuXpAr6-qBgoSiqIi3GdiMv49nGsGJv2KZZL4GZBL4MSjvYyaSaaUyrq62m3thfmPkI4oqJKMqkDKX4KpZ-GIPE2yBKO+bxOqWg+Bm+bbCaWSJHY9jTISPm8g+DHHiVLHBSosgAAphdKspmd+Fl8ZYNhagksEZA4CS7NkwkQRs1iBNERLpN1SSpssLhFaWGmlUx9EVSKnTNhCMLwqQUW8dGsUIH4lJTCaHhaMkCwOJqGUHMaaXzMlqaHDN15zZuC2kIRjCNt0fSNdFLUCYSVJuFscTZWkCQZkN5JMHlLjnRJM5ePSHiPRhOkBeu70MGKEpShFDUDOZUZ-u4diwTDUSWtMQTSZBkMwTDcN4rO9JnCyvnlXe2mY42q2thtW3NTtrWZpkziIV4KnUohTnpM45JpRLWQmtNans89d4QJ8YDY6FuORT921-mkriA9qebuP2I4Q7YTg+GmiTCXiqQrCjgXzZr2vesCfoBkGxmhgLRM9q4TgrESmRzEkqz5hDs5aNDI74isUxzCprsc9hHs82Ca1tptBuC0bJrRCqzupo4UkkhsimkxSo6ZHiUQrKkeTnPgdCsPAgy0RnDARoXwepjE3VTFkmqJTHkEALT2Ns9JbLYImuKOyzp+r3KslwPB8DFTVB7ttgLIBPgpArc4Lum0-xDsik6v4d9xJ4a-Mc6PI4HUDRNHwkD9-vwuZUwG6w5VgajpIjDMR8th2BPvmLUhw0rP0Wq-as7o6zviFr9IWGIExCXVLiaBEtNQuAzKBWCc5Yh4iyNqC0LdVbFXXlpDmu9MFGwyPHaYPg5jQOOgcGSiRjSxEEWDCWWxEFo0YRyTGv9uy7ViB1K0zsfAJFxISDUMlYiAWQgrPY7gVjIzobNF+mctbSN3tg-szgRKzj2EENM0xY4SxiAmBCCEL7Jn0WzehRitJoAFBAWQBgCLoNMX9RA05bZagpMkbwyQtQZUUjfNy-ZtTJBtK3IAA */
   return setup({
     types: {
-      context: {} as MachineContext<JobState, Input, ExtraProps>,
-      events: {} as MachineEvent<JobState, Input, ExtraProps>,
-      input: {} as MachineInput<JobState, Input, ExtraProps>,
+      context: {} as MachineContext<JobState, Input, ExtraProps, Result>,
+      events: {} as MachineEvent<JobState, Input, ExtraProps, Result>,
+      input: {} as MachineInput<JobState, Input, ExtraProps, Result>,
     },
     actors: {
-      executeJob: fromObservable(({ input }: { input: JobInvokeInput<JobState, Input> }) =>
+      executeJob: fromObservable(({ input }: { input: JobInvokeInput<JobState, Input, Result> }) =>
         input.job({
           deviceConnectionResult: input.deviceConnectionResult,
           deviceExtractedContext: input.deviceExtractedContext,
           input: input.intentInput,
+          onResult: input.onResult,
         }),
       ),
     },
@@ -191,6 +194,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             deviceConnectionResult: context.deviceConnectionResult!,
             deviceExtractedContext: context.deviceExtractedContext!,
             intentInput: context.currentIntent.input,
+            onResult: context.currentIntent.onResult ?? (() => undefined),
           }),
           onSnapshot: {
             actions: ({ event, context }) => {
@@ -326,23 +330,28 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
 
 // ---- Public interface ----
 
-export interface DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
+export interface DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps, Result = undefined> {
   start(): void;
   deviceConnected(result: DeviceConnectionResult): void;
   deviceContextInitialized(context: DeviceExtractedContext): void;
   deviceDisconnected(): void;
   retry(): void;
-  setIntent(intent: Intent<JobState, Input, ExtraProps>): void;
+  setIntent(intent: Intent<JobState, Input, ExtraProps, Result>): void;
   reinitialize(): void;
   stopIntent(): void;
   stop(): void;
 }
 
-export type StateMachineConstructor<JobState, Input, ExtraProps> = new (params: {
+export type StateMachineConstructor<
+  JobState,
+  Input,
+  ExtraProps,
+  Result = undefined,
+> = new (params: {
   deviceConnectionParams: DeviceConnectionParams;
-  intent: Intent<JobState, Input, ExtraProps>;
-  listeners: StateMachineListeners<JobState, Input, ExtraProps>;
-}) => DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps>;
+  intent: Intent<JobState, Input, ExtraProps, Result>;
+  listeners: StateMachineListeners<JobState, Input, ExtraProps, Result>;
+}) => DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps, Result>;
 
 // ---- Default implementation ----
 
@@ -350,16 +359,17 @@ export class DefaultDeviceIntentExecutorStateMachine<
   JobState,
   Input,
   ExtraProps,
-> implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
+  Result = undefined,
+> implements DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps, Result> {
   private readonly actor;
   private hasStarted = false;
 
   constructor(params: {
     deviceConnectionParams: DeviceConnectionParams;
-    intent: Intent<JobState, Input, ExtraProps>;
-    listeners: StateMachineListeners<JobState, Input, ExtraProps>;
+    intent: Intent<JobState, Input, ExtraProps, Result>;
+    listeners: StateMachineListeners<JobState, Input, ExtraProps, Result>;
   }) {
-    const machine = createExecutorMachine<JobState, Input, ExtraProps>();
+    const machine = createExecutorMachine<JobState, Input, ExtraProps, Result>();
     this.actor = createActor(machine, { input: params });
   }
 
@@ -396,7 +406,7 @@ export class DefaultDeviceIntentExecutorStateMachine<
 
   // -- Caller-driven events --
 
-  setIntent(intent: Intent<JobState, Input, ExtraProps>): void {
+  setIntent(intent: Intent<JobState, Input, ExtraProps, Result>): void {
     log(LOG_TYPE, "event: setIntent", { label: intent.label });
     this.actor.send({ type: "SET_INTENT", intent });
   }

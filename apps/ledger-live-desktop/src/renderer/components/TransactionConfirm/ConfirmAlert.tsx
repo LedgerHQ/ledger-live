@@ -32,7 +32,7 @@ const ConfirmAlert = ({ t, transaction, typeTransaction, fields }: Props) => {
       : "approve.limited";
   }
   return (
-    <Alert type="primary" mb={26}>
+    <Alert type="primary" mb={26} data-testid="device-signature-notice">
       <Trans
         i18nKey={alertContentKey}
         values={{

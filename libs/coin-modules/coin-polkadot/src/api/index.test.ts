@@ -3,6 +3,7 @@ import type {
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { AnyTuple } from "@polkadot/types/types";
 import type { CoreTransaction } from "../types";
@@ -32,48 +33,42 @@ function generateApi() {
 }
 
 describe("index", () => {
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(generateApi(), context)).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getBlock",
+        "getBlockInfo",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "register",
+        "validateIntent",
+      ],
+      inconsistent: [],
+    });
+  });
   describe("createApi", () => {
     beforeEach(() => {
       jest.clearAllMocks();
     });
 
-    it("should generate an instance of CoinModuleApi", () => {
+    it("declares every method the chain supports", () => {
       const api = generateApi();
       expect(api).toEqual({
         broadcast: expect.any(Function),
-        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
-        craftRawTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
-        getBlock: expect.any(Function),
-        getBlockInfo: expect.any(Function),
-        getRewards: expect.any(Function),
-        getStakes: expect.any(Function),
-        getValidators: expect.any(Function),
         listOperations: expect.any(Function),
-        register: expect.any(Function),
-        validateIntent: expect.any(Function),
         validateAddress: expect.any(Function),
-        getNextSequence: expect.any(Function),
         craftTransactionData: expect.any(Function),
         lastBlock: expect.any(Function),
       });
-    });
-  });
-
-  describe("call", () => {
-    it("should reject as unsupported", async () => {
-      const api = generateApi();
-      await expect(api.call(context, {})).rejects.toThrow("call is not supported");
-    });
-  });
-
-  describe("register", () => {
-    it("should reject as unsupported", async () => {
-      const api = generateApi();
-      await expect(api.register(context, "address")).rejects.toThrow("register is not supported");
     });
   });
 
@@ -83,56 +78,6 @@ describe("index", () => {
       expect(() =>
         api.combine(context, "", [""], pubkey === undefined ? undefined : { pubkey }),
       ).toThrow("UnsupportedMethod");
-    });
-  });
-
-  describe("craftRawTransaction", () => {
-    it("should throw an error when pubkey is %s", () => {
-      const api = generateApi();
-      expect(() => api.craftRawTransaction(context, "", "", "", BigInt(0))).toThrow(
-        "craftRawTransaction is not supported",
-      );
-    });
-  });
-
-  describe("getBlock", () => {
-    it("should throw an error", () => {
-      const api = generateApi();
-      expect(() => api.getBlock(context, 0)).toThrow("getBlock is not supported");
-    });
-  });
-
-  describe("getBlockInfo", () => {
-    it("should throw an error", () => {
-      const api = generateApi();
-      expect(() => api.getBlockInfo(context, 0)).toThrow("getBlockInfo is not supported");
-    });
-  });
-
-  describe("getRewards", () => {
-    it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
-      const api = generateApi();
-      expect(() =>
-        api.getRewards(context, "", cursor === undefined ? undefined : { cursor }),
-      ).toThrow("getRewards is not supported");
-    });
-  });
-
-  describe("getStakes", () => {
-    it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
-      const api = generateApi();
-      expect(() =>
-        api.getStakes(context, "", cursor === undefined ? undefined : { cursor }),
-      ).toThrow("getStakes is not supported");
-    });
-  });
-
-  describe("getValidators", () => {
-    it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
-      const api = generateApi();
-      expect(() =>
-        api.getValidators(context, cursor === undefined ? undefined : { cursor }),
-      ).toThrow("getValidators is not supported");
     });
   });
 

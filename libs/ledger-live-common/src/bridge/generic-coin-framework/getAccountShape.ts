@@ -16,6 +16,7 @@ import { getAccountRawAssignHooks } from "./accountRawAssign";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
+import { paginateOperations } from "./paginateOperations";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type {
@@ -565,18 +566,20 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const cursor = oldOps[0]?.extra?.pagingToken || "";
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
-    // Calculate minHeight for pagination
+    // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
+    // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
+    // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
-    const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const { items: newCoreOps } = await coinModuleApi.listOperations(context, address, {
-      minHeight,
-      cursor: paginationCursor,
-      order: "desc",
-    });
+    const newCoreOps = await paginateOperations(cursor =>
+      coinModuleApi.listOperations(context, address, {
+        minHeight,
+        cursor,
+        order: "desc",
+      }),
+    );
     // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
     // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
     // definition of it. Loaded per sync rather than per operation; the registry caches the import.

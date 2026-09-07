@@ -80,6 +80,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 # Platform — support
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
+support/jest-shared/                                     @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -122,16 +123,21 @@ features/platform/contacts/                               @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp
 features/flow/flow-contacts-add-contact/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-edit-address/                 @ledgerhq/wallet-xp
 features/flow/flow-contacts-edit-contact/                 @ledgerhq/wallet-xp
+features/flow/flow-contacts-delete-contact/               @ledgerhq/wallet-xp
 features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp
 features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 
 # Wallet — Pay Card
-features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
-features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
-features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
-features/flow/pay-card-request/                          @ledgerhq/wallet-xp
+features/flow/pay-card/                                  @ledgerhq/wallet-xp
+features/flow/pay-balance/                               @ledgerhq/wallet-xp
+features/flow/pay-deposit/                               @ledgerhq/wallet-xp
+features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
+features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
+features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
+features/flow/pay-contact/                               @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
@@ -142,6 +148,7 @@ features/flow/app-lock/                                  @ledgerhq/wallet-xp
 /shared/password-verifier/                               @ledgerhq/wallet-xp
 
 # Wallet — shared UI
+/shared/ui-info-state/                                   @ledgerhq/wallet-xp
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
@@ -264,6 +271,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
+libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
@@ -318,6 +326,10 @@ apps/ledger-live-mobile/src/mvvm/features/Borrow/                               
 apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Perps/                                       @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Perps/                                        @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/PerpsEntryPoint/        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioPerpsEntryPoint/ @ledgerhq/ptx
 
 # wallet-cli
 apps/wallet-cli/                                                              @ledgerhq/agentic-core
@@ -364,6 +376,8 @@ apps/ledger-live-mobile/src/mvvm/components/DeviceActionContent/   @ledgerhq/liv
 apps/ledger-live-mobile/src/mvvm/features/WalletApiSignature/ @ledgerhq/live-devices @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/ @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/DeviceActionContent/  @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/Contacts/deviceIntents/  @ledgerhq/live-devices
+apps/ledger-live-desktop/src/mvvm/features/Contacts/deviceIntents/ @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
@@ -398,6 +412,7 @@ libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/liv
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-intent/                                                @ledgerhq/live-devices
 features/platform/device-intent/                                   @ledgerhq/live-devices
+features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/live-dmk/                                                     @ledgerhq/live-devices

@@ -1,8 +1,8 @@
 /**
- * Unit tests for the createApi factory — verifies the coin config is set, every
- * CoinModuleApi method is wired and delegates to its logic function with the
- * right arguments, and unsupported methods throw synchronously. Network and
- * logic layers are mocked; no network access.
+ * Unit tests for the createApi factory — verifies the coin config is set, every method the chain
+ * supports is wired and delegates to its logic function with the right arguments, and the
+ * capabilities the module omits raise "not supported" once the resolver's `withDefaults` is
+ * applied. Network and logic layers are mocked; no network access.
  */
 import type {
   Balance,
@@ -13,6 +13,7 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { createApi } from "./index";
 import { type KaspaCoinConfig } from "../config";
 import { createMockKaspaContext } from "../test/context";
@@ -55,7 +56,23 @@ describe("createApi", () => {
     jest.clearAllMocks();
   });
 
-  it("returns an object with every CoinModuleApi method", () => {
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(), createMockKaspaContext())).resolves.toEqual({
+      unsupported: [
+        "call",
+        "craftRawTransaction",
+        "getNextSequence",
+        "getRewards",
+        "getStakes",
+        "getValidators",
+        "register",
+        "validateAddress",
+      ],
+      inconsistent: [],
+    });
+  });
+  it("declares every method the chain supports", () => {
     const api = createApi();
 
     expect(api).toEqual(
@@ -63,7 +80,6 @@ describe("createApi", () => {
         broadcast: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
-        craftRawTransaction: expect.any(Function),
         craftTransactionData: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
@@ -71,12 +87,7 @@ describe("createApi", () => {
         listOperations: expect.any(Function),
         getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
-        getRewards: expect.any(Function),
-        getStakes: expect.any(Function),
-        getValidators: expect.any(Function),
         validateIntent: expect.any(Function),
-        getNextSequence: expect.any(Function),
-        validateAddress: expect.any(Function),
       }),
     );
   });
@@ -212,35 +223,5 @@ describe("createApi", () => {
 
     expect(validateIntent).toHaveBeenCalledWith(nativeIntent, [], undefined);
     expect(result).toEqual(validation);
-  });
-
-  it("throws synchronously for methods not applicable to Kaspa's UTXO model", () => {
-    const api = createApi();
-    const context = createMockKaspaContext();
-
-    expect(() => api.getNextSequence(context, SENDER)).toThrow(
-      "getNextSequence is not applicable for Kaspa",
-    );
-    expect(() => api.craftRawTransaction(context, "raw", SENDER, "pubkey", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-    expect(() => api.validateAddress(context, SENDER, {})).toThrow(
-      "validateAddress is not supported",
-    );
-    expect(() => api.getStakes(context, SENDER)).toThrow("getStakes is not supported");
-    expect(() => api.getRewards(context, SENDER)).toThrow("getRewards is not supported");
-    expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
-  });
-
-  it("rejects for call (not supported)", async () => {
-    const api = createApi();
-    const context = createMockKaspaContext();
-    await expect(api.call(context, {})).rejects.toThrow("call is not supported");
-  });
-
-  it("rejects for register (not supported)", async () => {
-    const api = createApi();
-    const context = createMockKaspaContext();
-    await expect(api.register(context, SENDER)).rejects.toThrow("register is not supported");
   });
 });

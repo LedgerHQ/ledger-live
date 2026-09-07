@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import {
   getTrustchainAccountName,

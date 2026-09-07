@@ -5,12 +5,14 @@ import {
   type DeviceIntentExecutorHookState,
 } from "./useDeviceIntentExecutor";
 
-type Props<JobState, Input, ExtraProps, InitInput, InitializerConfig> = DeviceIntentExecutorProps<
+type Props<
   JobState,
   Input,
   ExtraProps,
-  InitInput
-> & {
+  InitInput,
+  InitializerConfig,
+  Result = undefined,
+> = DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput, Result> & {
   platformConfig: ExecutorPlatformConfiguration<InitInput, InitializerConfig>;
   initializerConfig?: InitializerConfig;
   /**
@@ -19,16 +21,30 @@ type Props<JobState, Input, ExtraProps, InitInput, InitializerConfig> = DeviceIn
    * runtime scenarios.
    */
   useExecutorHook?: (
-    props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>,
+    props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput, Result>,
   ) => DeviceIntentExecutorHookState<JobState, Input, ExtraProps, InitInput> | null;
 };
 
-export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, InitializerConfig>({
+export function DeviceIntentExecutor<
+  JobState,
+  Input,
+  ExtraProps,
+  InitInput,
+  InitializerConfig,
+  Result = undefined,
+>({
   useExecutorHook = useDeviceIntentExecutor,
   platformConfig,
   initializerConfig,
   ...executorProps
-}: Props<JobState, Input, ExtraProps, InitInput, InitializerConfig>): React.ReactElement | null {
+}: Props<
+  JobState,
+  Input,
+  ExtraProps,
+  InitInput,
+  InitializerConfig,
+  Result
+>): React.ReactElement | null {
   const state = useExecutorHook(executorProps);
   if (!state) return null;
 

@@ -1,9 +1,9 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
-import { AssetCategory } from "../component/portfolio/assetSection";
+import { AppPage } from "tests/page/abstractClasses";
+import { AssetCategory } from "tests/component/portfolio/assetSection";
 import { PageHeader } from "tests/component/pageHeader.component";
-import { AssetsTable } from "../component/portfolio/assetsTable";
+import { AssetsTable } from "tests/component/portfolio/assetsTable";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export class CryptoAssetsPage extends AppPage {

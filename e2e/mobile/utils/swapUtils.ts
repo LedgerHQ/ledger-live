@@ -4,7 +4,7 @@ import { allure } from "jest-allure2-reporter/api";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
-import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
+import { deleteSpeculos, launchSpeculos, registerSpeculos } from "@e2e/utils/speculosUtils";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see

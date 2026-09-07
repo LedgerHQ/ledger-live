@@ -67,7 +67,7 @@ const TS_WIDTH = 28;
 const LEVEL_WIDTH = 7;
 const INDENT = "  ";
 
-export type WebviewConsoleEntry = { timestamp?: string; level?: string; text?: string };
+type WebviewConsoleEntry = { timestamp?: string; level?: string; text?: string };
 
 function stripConsoleFormatting(text: string): string {
   return text
@@ -99,7 +99,7 @@ function splitSummaryAndJson(text: string): { summary: string; body: string | nu
   }
 }
 
-export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
+function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
   const lines: string[] = [
     "TIMESTAMP                      | LEVEL   | MESSAGE",
     "-------------------------------|---------|--------",

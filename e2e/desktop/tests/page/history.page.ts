@@ -1,5 +1,5 @@
-import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import * as path from "node:path";
@@ -168,11 +168,5 @@ export class HistoryPage extends AppPage {
   async closeExportSuccessDialog() {
     await this.exportDoneButton.click();
     await expect(this.exportSuccessTitle).not.toBeVisible();
-  }
-
-  @step("Close export dialog")
-  async closeExportDialog() {
-    await this.page.keyboard.press("Escape");
-    await expect(this.exportDialog).not.toBeVisible();
   }
 }

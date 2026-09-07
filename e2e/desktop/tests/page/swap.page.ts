@@ -1,9 +1,9 @@
-import { WebViewAppPage } from "./webViewApp.page";
+import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect, Page } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { sendDeepLink } from "tests/utils/deeplink";
-import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
+import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";

@@ -32,12 +32,17 @@ import {
   type AddAddressFlowState,
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
+import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMockContactDeviceIntentsPort,
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
 } from "@features/platform-contacts";
+import {
+  useContactsIntentsOrchestrator,
+  type ContactsDeviceIntentExecutorProps,
+} from "@features/platform-contacts/device";
+import { contactsIntentLWMDefinitions } from "../../deviceIntents/contactsIntentPlatformDefinitions";
 import {
   resolveContactsCurrencyAnalytics,
   useContactsAnalytics,
@@ -66,6 +71,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      isAddressDetailActionSheetOpen: boolean;
       addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
@@ -73,6 +79,7 @@ type ContactDetailScreenViewModel =
         ContactsLedgerSyncIntroductionContentProps,
         "title" | "activateLabel" | "onActivate"
       >;
+      dieProps: ContactsDeviceIntentExecutorProps | undefined;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -94,7 +101,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+    intents: contactsIntentLWMDefinitions,
+    getLiveConfigMinVersion: getMinVersion,
+  });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
@@ -335,32 +345,31 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [navigation]);
   const addressDetailAsset = selection?.network?.networkTicker;
   const addressDetailNetwork = selection?.network?.networkName;
-  const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
+  const editDeleteFlow = useContactDetailEditDeleteAdapter(
+    route.params.contactId,
+    onDeleteSuccess,
+    deviceIntents,
+  );
   const addressDetailActions = useContactAddressDetailActionsAdapter(
     route.params.contactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
+    deviceIntents,
     addressDetailAsset,
     addressDetailNetwork,
   );
+  const isAddressDetailActionSheetOpen =
+    addressDetailActions.deleteSheet.isOpen ||
+    addressDetailActions.renameSheet.isOpen ||
+    addressDetailActions.signerSheet.isOpen ||
+    addressDetailActions.signerMismatchSheet.isOpen;
   const onCloseAddressDetailSheet = useCallback(() => {
-    if (
-      addressDetailActions.deleteSheet.isOpen ||
-      addressDetailActions.renameSheet.isOpen ||
-      addressDetailActions.signerSheet.isOpen ||
-      addressDetailActions.signerMismatchSheet.isOpen
-    ) {
+    if (isAddressDetailActionSheetOpen) {
       return;
     }
 
     onCloseAddressDetail();
-  }, [
-    addressDetailActions.deleteSheet.isOpen,
-    addressDetailActions.renameSheet.isOpen,
-    addressDetailActions.signerSheet.isOpen,
-    addressDetailActions.signerMismatchSheet.isOpen,
-    onCloseAddressDetail,
-  ]);
+  }, [isAddressDetailActionSheetOpen, onCloseAddressDetail]);
   const shouldRedirect = !isEnabled || !contact;
 
   useEffect(() => {
@@ -461,6 +470,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       onClose: onCloseAddressDetailSheet,
       ...addressDetailActions.addressDetailDialog,
     },
+    isAddressDetailActionSheetOpen,
     addressDetailActions,
     editDeleteFlow,
     ledgerSyncIntroduction: {
@@ -475,5 +485,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       onActivate: onActivateLedgerSync,
     },
+    dieProps,
   };
 }

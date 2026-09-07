@@ -1,9 +1,9 @@
-import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
-import { FileUtils } from "../utils/fileUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 
 export class SettingsPage extends AppPage {
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");

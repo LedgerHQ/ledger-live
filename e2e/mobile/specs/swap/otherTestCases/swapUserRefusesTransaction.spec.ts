@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runUserRefusesTransactionTest } from "./swap.other";
+import { runUserRefusesTransactionTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const userRefusesTransactionSwapTestConfig = {
   fromAccount: Account.ETH_1,

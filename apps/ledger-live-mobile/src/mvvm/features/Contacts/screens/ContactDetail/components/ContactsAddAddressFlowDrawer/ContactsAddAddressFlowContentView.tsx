@@ -13,9 +13,8 @@ const FLOW_OPTIONS = {
   snapPoints: [FLOW_SNAP_POINT],
 } as const satisfies QueuedDrawerFlowOptions;
 
-const LOCKED_STEP_OPTIONS = {
+const FORM_STEP_OPTIONS = {
   hasBackButton: true,
-  noCloseButton: true,
   hideHandle: true,
   preventBackdropClick: true,
   enablePanDownToClose: false,
@@ -29,6 +28,7 @@ export function ContactsAddAddressFlowContentView({
   isOpen,
   onBack,
   onClose,
+  onHeaderClosePressed,
 }: ContactsAddAddressFlowContentViewModel): React.JSX.Element {
   const flowContentProps = { addressEntryProps, addressNameProps };
   const screens: QueuedDrawerFlowScreenRegistry<ContactsAddAddressDrawerStep> = {
@@ -41,11 +41,11 @@ export function ContactsAddAddressFlowContentView({
     },
     address: {
       content: <ContactsAddAddressFlowContent {...flowContentProps} step="address" />,
-      options: LOCKED_STEP_OPTIONS,
+      options: { ...FORM_STEP_OPTIONS, onHeaderClosePressed },
     },
     name: {
       content: <ContactsAddAddressFlowContent {...flowContentProps} step="name" />,
-      options: LOCKED_STEP_OPTIONS,
+      options: { ...FORM_STEP_OPTIONS, onHeaderClosePressed },
     },
   };
 

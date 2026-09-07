@@ -17,15 +17,21 @@ Ledger Hardware Wallet Exchange app.
 
 #### Table of Contents
 
+*   [OkStatus](#okstatus)
 *   [SwapPayloadFieldExceedsLimit](#swappayloadfieldexceedslimit)
     *   [Parameters](#parameters)
-*   [resolveTransactionType](#resolvetransactiontype)
-    *   [Parameters](#parameters-1)
-*   [OkStatus](#okstatus)
 *   [decodePayloadProtobuf](#decodepayloadprotobuf)
+    *   [Parameters](#parameters-1)
+*   [resolveTransactionType](#resolvetransactiontype)
     *   [Parameters](#parameters-2)
 *   [findSwapPayloadSpecViolation](#findswappayloadspecviolation)
     *   [Parameters](#parameters-3)
+
+### OkStatus
+
+Those values map the one defined in the app-exchange code (@see protocol.md and swap\_errors.h)
+
+Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
 ### SwapPayloadFieldExceedsLimit
 
@@ -42,6 +48,16 @@ DESERIALIZATION\_FAILED (0x6a81) status, which is opaque for investigations.
 *   `limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 *   `actual` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
+### decodePayloadProtobuf
+
+deprecated use `decodeSwapPayload` instead
+
+#### Parameters
+
+*   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SwapPayload>**&#x20;
+
 ### resolveTransactionType
 
 Adapt ExchangeTypes following partner info.
@@ -54,22 +70,6 @@ For new one, we call the new APDU commands (Ng, Next Gen).
 *   `partnerVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
 Returns **ExchangeTypes**&#x20;
-
-### OkStatus
-
-Those values map the one defined in the app-exchange code (@see protocol.md and swap\_errors.h)
-
-Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
-
-### decodePayloadProtobuf
-
-deprecated use `decodeSwapPayload` instead
-
-#### Parameters
-
-*   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SwapPayload>**&#x20;
 
 ### findSwapPayloadSpecViolation
 

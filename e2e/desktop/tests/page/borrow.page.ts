@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { peekBorrowAddress, readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { step } from "tests/misc/reporters/step";
-import { WebViewAppPage } from "./webViewApp.page";
+import { WebViewAppPage } from "tests/page/webViewApp.page";
 
 const FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";

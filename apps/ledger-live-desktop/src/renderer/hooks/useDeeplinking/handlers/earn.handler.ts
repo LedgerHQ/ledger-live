@@ -13,6 +13,8 @@ export const earnHandler: DeeplinkHandler<"earn"> = (route, { navigate }) => {
       },
       search,
     );
+  } else if (path === "simulate") {
+    navigate("/earn", { intent: "simulate" }, search);
   } else {
     navigate("/earn", undefined, search);
   }

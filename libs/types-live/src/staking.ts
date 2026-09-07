@@ -8,7 +8,34 @@ export type StakingDelegationStatus =
   | "unbonding" // validator removed from active set, voting power frozen for a network-specific unbonding period
   | "unbonded";
 
-export type StakingDelegation = {
+/**
+ * Chains that materialize each position as its own on-chain account (Solana stake accounts) expose
+ * a per-position breakdown instead of a single validator-level total. Optional everywhere else.
+ */
+export type StakingPositionDetails = {
+  // Chain-level identifier of the position, e.g. a Solana stake account address
+  positionId?: string;
+  activeAmount?: BigNumber;
+  inactiveAmount?: BigNumber;
+  withdrawableAmount?: BigNumber;
+  // Whether the account holds the authority to (re)delegate / withdraw this position
+  canStake?: boolean;
+  canWithdraw?: boolean;
+  // Amount the chain keeps locked for the position to exist, e.g. Solana's rent-exempt reserve
+  lockedReserve?: BigNumber;
+};
+
+export type StakingPositionDetailsRaw = {
+  positionId?: string;
+  activeAmount?: string;
+  inactiveAmount?: string;
+  withdrawableAmount?: string;
+  canStake?: boolean;
+  canWithdraw?: boolean;
+  lockedReserve?: string;
+};
+
+export type StakingDelegation = StakingPositionDetails & {
   validatorAddress: string;
   validatorId?: string;
   validatorName?: string;
@@ -18,7 +45,7 @@ export type StakingDelegation = {
   shares?: BigNumber;
 };
 
-export type StakingDelegationRaw = {
+export type StakingDelegationRaw = StakingPositionDetailsRaw & {
   validatorAddress: string;
   validatorId?: string;
   validatorName?: string;
@@ -46,7 +73,7 @@ export type StakingUnbondingStatus =
   | "deactivating" // unbonding period still in progress; funds remain locked
   | "withdrawable"; // unbonding period elapsed; funds are released (the chain requires an explicit withdraw to claim them)
 
-export type StakingUnbonding = {
+export type StakingUnbonding = StakingPositionDetails & {
   validatorAddress: string;
   validatorId?: string;
   validatorName?: string;
@@ -56,7 +83,7 @@ export type StakingUnbonding = {
   status?: StakingUnbondingStatus;
 };
 
-export type StakingUnbondingRaw = {
+export type StakingUnbondingRaw = StakingPositionDetailsRaw & {
   validatorAddress: string;
   validatorId?: string;
   validatorName?: string;
@@ -74,6 +101,8 @@ export type StakingResources = {
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
   validators?: StakingValidatorItem[];
+  // Balance held back to cover the fees of staking actions, e.g. Solana's unstake reserve
+  actionFeeReserve?: BigNumber;
 };
 
 export type StakingResourcesRaw = {
@@ -84,6 +113,7 @@ export type StakingResourcesRaw = {
   pendingRewardsBalance: string;
   unbondingBalance: string;
   validators?: StakingValidatorItem[];
+  actionFeeReserve?: string;
 };
 
 export type StakingDelegationInfo = {

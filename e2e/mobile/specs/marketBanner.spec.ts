@@ -1,5 +1,5 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 const testConfig = {
   tmsLinks: [
@@ -26,7 +26,6 @@ describe("Market banner", () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
     });
-    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });

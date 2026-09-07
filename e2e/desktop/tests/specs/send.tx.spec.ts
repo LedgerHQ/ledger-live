@@ -101,7 +101,7 @@ const transactionAddressValid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM),
     expectedWarningMessage: null,
     testName: "existing account",
-    xrayTicket: "B2CQA-2715, B2CQA-2716",
+    xrayTicket: "B2CQA-2715",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
@@ -181,55 +181,65 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTickets: ["LIVE-28070"],
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
     xrayTicket: "B2CQA-2808",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
     xrayTicket: "B2CQA-2809",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
     xrayTicket: "B2CQA-2810",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
     xrayTicket: "B2CQA-2811",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
     xrayTicket: "B2CQA-2812",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTickets: ["LIVE-24214", "LIVE-29554"],
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-2814",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
     xrayTicket: "B2CQA-2815",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
@@ -239,30 +249,36 @@ const transactionE2E = [
       "0.00001",
       Fee.MEDIUM,
     ),
-    xrayTicket: "B2CQA-3925",
+    xrayTicket: "B2CQA-2724",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.0001", Fee.SLOW),
     xrayTicket: "B2CQA-3924",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined),
     xrayTicket: "B2CQA-3802",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
+    disableBroadcast: true,
     bugTickets: ["LIVE-28070"],
   },
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
     xrayTicket: "B2CQA-4247",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
@@ -274,11 +290,13 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
     xrayTicket: "B2CQA-4742",
+    disableBroadcast: true,
     teamOwner: Team.BST,
   },
   {

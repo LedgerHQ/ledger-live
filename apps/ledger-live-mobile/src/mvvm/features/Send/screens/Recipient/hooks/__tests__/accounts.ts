@@ -19,8 +19,8 @@ type TokenCurrencyOverrides = Omit<Partial<TokenCurrency>, "id" | "parentCurrenc
 };
 
 export const createMockCurrency = (overrides?: CryptoCurrencyOverrides): CryptoCurrency => {
-  const currency = getCryptoCurrencyById("bitcoin");
   const { id: rawId, ...rest } = overrides ?? {};
+  const currency = getCryptoCurrencyById(rawId ?? "bitcoin");
   const id = rawId != null ? CryptoCurrencyIdSchema.parse(rawId) : currency.id;
   return {
     ...currency,

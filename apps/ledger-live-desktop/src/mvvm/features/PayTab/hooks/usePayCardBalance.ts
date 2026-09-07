@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import BigNumber from "bignumber.js";
-import { useTranslation } from "react-i18next";
 import {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
@@ -13,17 +12,15 @@ import {
   type FormattedValue,
   type BalanceData,
   type BalanceFilter,
-  type BalanceLabels,
-} from "@features/flow-pay-card-balance";
+} from "@features/flow-pay-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { usePayStablecoins } from "./usePayStablecoins";
 
-export function usePayCardBalance(): BalanceData & { labels: BalanceLabels } {
+export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
@@ -65,23 +62,12 @@ export function usePayCardBalance(): BalanceData & { labels: BalanceLabels } {
     track(event, params);
   }, []);
 
-  const labels: BalanceLabels = {
-    emptyTitle: t("payTab.balance.emptyTitle"),
-    emptyDescription: t("payTab.balance.emptyDescription"),
-    allStablecoins: t("payTab.balance.filter.allStablecoins"),
-    filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
-    filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
-    filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
-    confirm: t("payTab.balance.filter.confirm"),
-  };
-
-  const data = useBalanceData({
+  return useBalanceData({
     stablecoins,
     defaultStablecoins,
     filter,
     isLoading,
     isError,
-    allLabel: labels.allStablecoins,
     formatFiat,
     formatCrypto,
     formatCountervalue,
@@ -89,6 +75,4 @@ export function usePayCardBalance(): BalanceData & { labels: BalanceLabels } {
     onResetFilter,
     onTrackEvent,
   });
-
-  return { ...data, labels };
 }

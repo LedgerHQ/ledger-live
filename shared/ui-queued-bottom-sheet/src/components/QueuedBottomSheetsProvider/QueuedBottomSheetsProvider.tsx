@@ -14,11 +14,11 @@ type QueueItem = {
   markedForClose?: boolean;
 };
 
-type Props = {
+type Props = Readonly<{
   /** App-specific behaviour. Must be stable across renders. Defaults to a no-op set. */
   adapters?: QueuedBottomSheetAdapters;
   children: React.ReactNode;
-};
+}>;
 
 export function QueuedBottomSheetsProvider({
   adapters = defaultQueuedBottomSheetAdapters,
@@ -56,16 +56,13 @@ export function QueuedBottomSheetsProvider({
           "addBottomSheetToQueue -> force close opened & queued drawers, and clear queue",
           id,
         );
-        const previousQueue = queueRef.current;
-        if (previousQueue.length > 0) {
-          previousQueue[0].stateHandlers.close();
-        }
-        queueRef.current =
-          previousQueue.length > 0
-            ? [{ ...previousQueue[0], markedForClose: true }, newQueueItem]
-            : [newQueueItem];
+        const [openedItem, ...queuedItems] = queueRef.current;
+        queueRef.current = openedItem
+          ? [{ ...openedItem, markedForClose: true }, newQueueItem]
+          : [newQueueItem];
         // The forced drawer opens once the first (marked-for-close) item is removed from the queue.
-        for (const queueItem of previousQueue.slice(1)) {
+        openedItem?.stateHandlers.close();
+        for (const queueItem of queuedItems) {
           queueItem.stateHandlers.close();
         }
       } else {

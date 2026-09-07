@@ -1,11 +1,13 @@
 import React, { useCallback } from "react";
+import { Platform } from "react-native";
 import {
   ContactsDeleteAddressDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-  ContactsRenameAddressDialog,
 } from "@features/flow-contacts";
+import { ContactsRenameAddressDialog } from "@features/flow-contacts-edit-address";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts";
 
@@ -21,6 +23,14 @@ export function ContactAddressDetailActionsSheets({
   signerMismatchSheet,
 }: ContactAddressDetailActionsSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
+    eventTiming: Platform.OS === "ios" ? "will" : "did",
+  });
+  const iosKeyboardGap = 32;
+  const keyboardInset =
+    isKeyboardVisible && shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
+      ? keyboardHeight + (Platform.OS === "ios" ? iosKeyboardGap : 0)
+      : 0;
   const onCloseDelete = useCallback(() => {
     deleteSheet.onCancel();
   }, [deleteSheet]);
@@ -67,7 +77,11 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-rename-address-sheet"
         enableDynamicSizing
       >
-        <ContactsRenameAddressDialog {...renameSheet} bottomInset={bottomInset} />
+        <ContactsRenameAddressDialog
+          {...renameSheet}
+          bottomInset={bottomInset}
+          keyboardInset={keyboardInset}
+        />
       </QueuedBottomSheet>
     </>
   );

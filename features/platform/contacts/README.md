@@ -28,6 +28,8 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   network identifiers.
 - `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
   operation, including device credentials for external contacts.
+- `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared
+  Contact address update operation, including device credentials for external addresses.
 - `ContactNameInput`: a cross-platform primitive resolved from the package root and shared by Add
   and Edit contact without coupling their leaf flows.
 - `ContactNameDisclaimer`: a Web-only primitive shared by the Add and Edit contact dialogs.
@@ -35,6 +37,8 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - Address-entry primitives: validation types, entry-state transitions, presentation resolution,
   and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
   their respective leaf flows.
+- `ContactConfirmationDialog` and `ContactConfirmationBottomSheet`: shared confirmation
+  presentation primitives used by Contacts deletion and signer-confirmation journeys.
 
 ## Device Intent Executor scaffold
 
@@ -45,18 +49,24 @@ import {
   createIntent,
 } from "@features/platform-device-intent";
 import {
-  registerExternalAddressIntentPlatformDefinition,
+  registerExternalAddressIntentDefinition,
 } from "@features/platform-contacts/device/intents";
 ```
 
-The subpath exports the seven ADR intents: external-address registration, external-contact rename,
-identifier edit, scope edit, combined external-address edit, Ledger-account registration, and
-Ledger-account rename. Each intent lives in its own directory with `types.ts`, `job.ts`, a shared
-`intentDefinition.ts` that binds `./component`, and matching `component.web.tsx` /
-`component.native.tsx` files.
-Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
-`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking
-DMK or `@ledgerhq/device-contacts-kit`.
+The subpath exports five intents covering the seven ADR operations: external-address registration,
+external-contact rename, external-address edit, Ledger-account registration and Ledger-account
+rename. The edit intent covers three ADR operations on its own — identifier edit, scope edit, and
+both at once — through its `EditExternalAddressStep`.
+
+Each intent lives in its own directory with `types.ts`, `job.ts` and a component-less
+`intentDefinition.ts`. Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
+`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking DMK
+or `@ledgerhq/device-contacts-kit`.
+
+The renderers are app-owned, because a `features/` package cannot resolve translations today. Each
+app keeps them under `src/mvvm/features/Contacts/deviceIntents/<intent>/`, composes each shared
+definition with its own component into an `IntentPlatformDefinition`, and injects the resulting bag
+into `useContactsIntentsOrchestrator`.
 
 The combined edit intentionally emits an identifier `partial-result` before the scope confirmation
 when both fields change. This preserves the ADR's non-atomic recovery contract: a consumer must

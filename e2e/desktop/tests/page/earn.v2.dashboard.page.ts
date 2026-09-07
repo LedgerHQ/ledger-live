@@ -1,9 +1,9 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { EarnBasePage } from "./earn.base.page";
+import { EarnBasePage } from "tests/page/earn.base.page";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import type { Application } from "./index";
+import type { Application } from "tests/page/index";
 
 export class EarnV2Page extends EarnBasePage {
   private readonly maxPotentialRewards = "max-potential-rewards";
@@ -105,23 +105,9 @@ export class EarnV2Page extends EarnBasePage {
     await row.first().click();
   }
 
-  @step("Expect modular selector to be visible and validate items: $0")
-  async expectModularSelectorToBeVisible(app: Application, type: "ASSET" | "ACCOUNT") {
-    const selector = await getModularSelector(app, type);
-    expect(selector, `Expected ${type} modular selector to be visible`).not.toBeNull();
-    await selector!.validateItems();
-  }
-
   @step("Verify modal container is visible")
   async verifyModalContainerVisible() {
     await expect(this.modalContainer).toBeVisible();
-  }
-
-  @step("Verify provider is visible inside modal")
-  async verifyProviderVisible() {
-    await expect(
-      this.modalContainer.getByTestId(/stake-provider-container-/).first(),
-    ).toBeVisible();
   }
 
   private readonly ethProviderPanel = "eth-provider-panel";

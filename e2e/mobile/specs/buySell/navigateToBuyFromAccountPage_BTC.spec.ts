@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNavigateToBuyFromAccountPageTest } from "./buySell";
+import { runNavigateToBuyFromAccountPageTest } from "@e2e/specs/buySell/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const btcBuySell = {

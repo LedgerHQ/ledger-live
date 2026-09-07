@@ -42,6 +42,9 @@ export function transformApiTokenToTokenCurrency(
 export function validateAndTransformSingleTokenResponse(
   response: unknown,
 ): TokenCurrency | undefined {
+  if (response === undefined || response === null) {
+    return undefined;
+  }
   const validatedResponse = ApiResponseSchema.parse(response);
   const apiToken = validatedResponse[0];
   if (!apiToken) {

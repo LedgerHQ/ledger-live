@@ -77,6 +77,8 @@ export type ZcashOperationExtra = BtcOperationExtra & {
    * Mirrors the transparent inputs/inputRefs fields for shielded sends.
    */
   shieldedNullifiers?: string[];
+  /** Memo attached to the shielded output, decoded from the note. */
+  memo?: string;
 };
 
 export type BtcOperation = Operation<BtcOperationExtra>;

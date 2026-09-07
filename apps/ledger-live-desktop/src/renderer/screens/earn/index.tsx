@@ -76,6 +76,17 @@ const Earn = () => {
         : undefined,
     [swapToEarnFlag],
   );
+  const stableSavingsFlag = useFeature("stableSavings");
+  const stableSavingsParam = useMemo(
+    () =>
+      stableSavingsFlag
+        ? JSON.stringify({
+            enabled: stableSavingsFlag.enabled,
+            params: stableSavingsFlag.params,
+          })
+        : undefined,
+    [stableSavingsFlag],
+  );
 
   const { updateManifests } = useRemoteLiveAppContext();
 
@@ -97,6 +108,7 @@ const Earn = () => {
       stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
       ethDepositCohort,
       swapToEarn: swapToEarnParam,
+      stableSavings: stableSavingsParam,
     };
 
     return {
@@ -120,6 +132,7 @@ const Earn = () => {
     stakeCurrenciesParam,
     ethDepositCohort,
     swapToEarnParam,
+    stableSavingsParam,
   ]);
 
   if (!manifest) {

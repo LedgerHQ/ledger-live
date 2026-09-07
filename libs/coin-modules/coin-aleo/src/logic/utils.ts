@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type {
   Account,
@@ -22,11 +23,15 @@ import {
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
+  ANNUAL_INFLATION_RATE,
   BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
   EXPLORER_TRANSFER_TYPES,
   FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MAX_VALIDATOR_STAKE_SHARE,
+  MICROCREDITS_PER_CREDIT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
@@ -59,9 +64,14 @@ import type {
   AleoTokenDetails,
   AleoTokenType,
   EnrichedPrivateRecord,
+  AleoStakingPosition,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export function normalizeAleoPlaintext(v: string): string {
   return v.trim().replace(/\.(private|public|constant)$/, "");
@@ -81,6 +91,70 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
+}
+
+const VALIDATOR_FIELD_REGEX = /validator:\s*(aleo1[0-9a-z]+)/;
+const MICROCREDITS_FIELD_REGEX = /microcredits:\s*(\d+u64)/;
+const HEIGHT_FIELD_REGEX = /height:\s*(\d+)u32/;
+const ADDRESS_PLAINTEXT_REGEX = /^(aleo1[0-9a-z]+)$/;
+
+function parseBondedMapping(raw: string): { validator: string; microcredits: BigNumber } | null {
+  const validator = VALIDATOR_FIELD_REGEX.exec(raw)?.[1];
+  const microcredits = MICROCREDITS_FIELD_REGEX.exec(raw)?.[1];
+  if (!validator || !microcredits) return null;
+
+  return { validator, microcredits: parseAmount(microcredits) };
+}
+
+function parseUnbondingMapping(raw: string): { microcredits: BigNumber; height: number } | null {
+  const microcredits = MICROCREDITS_FIELD_REGEX.exec(raw)?.[1];
+  const height = HEIGHT_FIELD_REGEX.exec(raw)?.[1];
+  if (!microcredits || !height) return null;
+
+  return { microcredits: parseAmount(microcredits), height: Number(height) };
+}
+
+function parseWithdrawMapping(raw: string): string | null {
+  return ADDRESS_PLAINTEXT_REGEX.exec(normalizeAleoPlaintext(raw))?.[1] ?? null;
+}
+
+function parseStakingMapping<T>(
+  mapping: string,
+  raw: string | null,
+  parse: (raw: string) => T | null,
+): T | null {
+  // `res.data` is an unchecked cast, so treat any empty value as "no entry" rather than
+  // trusting the declared `string | null` — the node answers 200 + JSON null for that case.
+  if (!raw) return null;
+
+  const parsed = parse(raw);
+  if (parsed === null) {
+    log("aleo/stakingPosition", `unparseable ${mapping} mapping value`, { raw });
+    throw new Error(`aleo: unparseable ${mapping} mapping value`);
+  }
+
+  return parsed;
+}
+
+export function toStakingPosition({
+  bondedRaw,
+  unbondingRaw,
+  withdrawRaw,
+}: {
+  bondedRaw: string | null;
+  unbondingRaw: string | null;
+  withdrawRaw: string | null;
+}): AleoStakingPosition {
+  const bonded = parseStakingMapping("bonded", bondedRaw, parseBondedMapping);
+  const unbonding = parseStakingMapping("unbonding", unbondingRaw, parseUnbondingMapping);
+
+  return {
+    bondedBalance: bonded?.microcredits ?? new BigNumber(0),
+    bondedValidator: bonded?.validator ?? null,
+    unbondingBalance: unbonding?.microcredits ?? new BigNumber(0),
+    unbondingHeight: unbonding?.height ?? null,
+    withdrawalAddress: parseStakingMapping("withdraw", withdrawRaw, parseWithdrawMapping),
+  };
 }
 
 export function isTokenRecord(record: AleoPrivateRecord): boolean {
@@ -597,12 +671,7 @@ export function findBestRecordForFee({
 
 function isPrivateOperation(operation: Operation): boolean {
   const { extra } = operation;
-  return (
-    typeof extra === "object" &&
-    extra !== null &&
-    "transactionType" in extra &&
-    extra.transactionType === "private"
-  );
+  return isRecord(extra) && "transactionType" in extra && extra.transactionType === "private";
 }
 
 export function splitPrivateAndPublicOperations(
@@ -1293,4 +1362,72 @@ export function findTransferArguments(plaintexts: (string | null)[]): {
   }
 
   return null;
+}
+
+/** `latest/totalSupply` is untrusted JSON: a bare scalar, in **credits**. */
+export function parseTotalSupply(value: unknown): BigNumber | null {
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  const parsed = new BigNumber(value);
+
+  return parsed.isFinite() && parsed.isGreaterThan(0) ? parsed : null;
+}
+
+/**
+ * The network-wide gross staking rate before any validator commission, as a fraction
+ * (0.078 = 7.8%), or null when the inputs cannot yield one.
+ *
+ * Derived from the delegator's `block_reward * stake / total_stake` share in snarkVM
+ * (synthesizer/src/vm/helpers/rewards.rs).
+ */
+export function estimateGrossRate(
+  totalSupplyCredits: BigNumber,
+  totalStakeMicrocredits: BigNumber,
+): BigNumber | null {
+  if (!totalSupplyCredits.isFinite() || totalSupplyCredits.isLessThanOrEqualTo(0)) return null;
+  if (!totalStakeMicrocredits.isFinite() || totalStakeMicrocredits.isLessThanOrEqualTo(0)) {
+    return null;
+  }
+
+  const totalStakeCredits = totalStakeMicrocredits.dividedBy(MICROCREDITS_PER_CREDIT);
+
+  return totalSupplyCredits.multipliedBy(ANNUAL_INFLATION_RATE).dividedBy(totalStakeCredits);
+}
+
+/**
+ * What a delegator can expect from one validator: the gross network rate less that
+ * validator's commission, as a fraction (0.07 = 7%). A **lower bound** — every surface
+ * showing it must label it an estimate.
+ *
+ * Null means "cannot be derived", zero means "earns nothing"; not interchangeable.
+ */
+export function estimateNetRate({
+  totalSupplyCredits,
+  totalStakeMicrocredits,
+  validatorStakeMicrocredits,
+  commissionPercent,
+  delegatorStakeMicrocredits,
+}: {
+  totalSupplyCredits: BigNumber;
+  totalStakeMicrocredits: BigNumber;
+  validatorStakeMicrocredits: BigNumber;
+  commissionPercent: BigNumber;
+  /** The delegator's own position. Omit for the generic rate a picker shows. */
+  delegatorStakeMicrocredits?: BigNumber;
+}): BigNumber | null {
+  const grossRate = estimateGrossRate(totalSupplyCredits, totalStakeMicrocredits);
+  if (grossRate === null) return null;
+
+  if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
+
+  const validatorOverConcentrated = validatorStakeMicrocredits
+    .dividedBy(totalStakeMicrocredits)
+    .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE);
+  const delegatorBelowMinimum =
+    delegatorStakeMicrocredits !== undefined &&
+    delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+  if (validatorOverConcentrated || delegatorBelowMinimum) return new BigNumber(0);
+
+  const keptShare = BigNumber.maximum(new BigNumber(1).minus(commissionPercent.dividedBy(100)), 0);
+
+  return grossRate.multipliedBy(keptShare);
 }

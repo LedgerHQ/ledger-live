@@ -1,4 +1,4 @@
-import { runSendSPLAddressValid } from "../subAccount";
+import { runSendSPLAddressValid } from "@e2e/specs/subAccount/subAccount";
 const transactionE2E = {
   tx: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
   expectedWarningMessage:

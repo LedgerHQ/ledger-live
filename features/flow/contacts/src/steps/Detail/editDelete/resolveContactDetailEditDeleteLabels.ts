@@ -2,7 +2,7 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { ContactsDeleteContactDialogLabels } from "../components/ContactsDeleteContactDialog/types";
+import type { ContactsDeleteContactDialogLabels } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactLabels } from "@features/flow-contacts-edit-contact";
 import type { ContactDetailActionsLabels } from "../types";
 import { resolveContactEditSignerActionLabels } from "../model/resolveContactEditSignerActionLabels";

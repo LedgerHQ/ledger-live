@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runVerifyAddressTest } from "./verifyAddress";
+import { runVerifyAddressTest } from "@e2e/specs/verifyAddress/verifyAddress";
 
 runVerifyAddressTest(
   Account.XTZ_1,

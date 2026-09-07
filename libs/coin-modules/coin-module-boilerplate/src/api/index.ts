@@ -1,23 +1,14 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  CoinModuleApi,
-  Balance,
-  Block,
-  BlockInfo,
+  CoinModuleImpl,
   BalanceOptions,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
-  Page,
-  Reward,
-  Stake,
   TransactionIntent,
-  TransactionValidation,
-  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
-import { type BoilerplateCoinConfig, type BoilerplateContext } from "../config";
+import { type BoilerplateCoinConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -29,63 +20,26 @@ import {
   listOperations,
 } from "../logic";
 
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it: a module lists the
+// methods it implements and simply omits the capabilities the chain does not have. `satisfies` keeps
+// the precise type of what is returned, so a caller sees exactly which methods exist — an annotation
+// would widen every capability back to optional, including the ones this module does implement. The consumer reaches it through a resolver that applies the
+// framework's `withDefaults`, which supplies each omitted capability — so there is nothing to stub
+// here, and `supports()` can tell a caller which ones are real.
+//
 // The caller builds the {@link BoilerplateContext} (config + logger) and passes it to each method (ADR-019).
-export function createApi(): CoinModuleApi<BoilerplateCoinConfig> {
+export function createApi() {
   return {
-    broadcast: (_context, tx) => broadcast(tx),
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
-    craftTransaction: (_context, transactionIntent) => craft(transactionIntent),
-    craftRawTransaction: (
-      _context: BoilerplateContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: (_context, transactionIntent) => estimate(transactionIntent),
+    broadcast: (_context, tx, _options?) => broadcast(tx),
+    combine: (_context, tx, signature, options?) => combine(tx, signature, options?.pubkey),
+    craftTransaction: (_context, transactionIntent, _options?) => craft(transactionIntent),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
+    estimateFees: (_context, transactionIntent, _options?) => estimate(transactionIntent),
     getBalance: (context, address, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance(context, address), options),
     lastBlock: _context => lastBlock(),
     listOperations: (_context, address, options) => listOperations(address, options),
-    getBlock(_context, _height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(_context, _options?: { cursor?: Cursor }): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateIntent: async (
-      _context: BoilerplateContext,
-      _transactionIntent: TransactionIntent,
-      _balances: Balance[],
-      _options?: { customFees?: FeeEstimation },
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_context: BoilerplateContext, _address: string) => {
-      throw new Error("getNextSequence is not supported");
-    },
-    validateAddress: async (_context: BoilerplateContext, _address: string) => {
-      throw new Error("validateAddress is not supported");
-    },
-    craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<BoilerplateCoinConfig>;
 }
 
 async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {

@@ -1,5 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
+  solanaActivationState,
   stakeActions as solanaStakeActions,
   stakeActivePercent,
 } from "@ledgerhq/live-common/families/solana/logic";
@@ -98,6 +99,7 @@ type Props = {
 };
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake, meta } = stakeWithMeta;
+  const activationState = solanaActivationState(stake);
   const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
   const unit = useAccountUnit(account);
   const onSelect = useCallback(
@@ -107,14 +109,18 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
     [onManageAction, stakeWithMeta],
   );
 
-  const validatorName = meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-";
+  const validatorName = meta.validator?.name || stake.validatorAddress || "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
-  const formatAmount = (amount: number) => {
-    return formatCurrencyUnit(unit, new BigNumber(amount), {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    });
+  const formatAmount = (amount: BigNumber | number) => {
+    return formatCurrencyUnit(
+      unit,
+      BigNumber.isBigNumber(amount) ? amount : new BigNumber(amount),
+      {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      },
+    );
   };
   return (
     <Wrapper>
@@ -123,26 +129,26 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
           {meta.validator?.img !== undefined && (
             <Image resource={meta.validator.img} height={32} width={32} alt="" />
           )}
-          {meta.validator?.img === undefined && <FirstLetterIcon label={validatorName ?? "-"} />}
+          {meta.validator?.img === undefined && <FirstLetterIcon label={validatorName} />}
         </Box>
         <Ellipsis>{validatorName}</Ellipsis>
       </Column>
       <Column>
-        {stake.activation.state === "active" && (
+        {activationState === "active" && (
           <Box color="positiveGreen">
             <ToolTip content={<Trans i18nKey="solana.delegation.activeTooltip" />}>
               <CheckCircle size={14} />
             </ToolTip>
           </Box>
         )}
-        {stake.activation.state === "inactive" && (
+        {activationState === "inactive" && (
           <Box color="alertRed">
             <ToolTip content={<Trans i18nKey="solana.delegation.inactiveTooltip" />}>
               <ExclamationCircleThin size={14} />
             </ToolTip>
           </Box>
         )}
-        {(stake.activation.state === "activating" || stake.activation.state === "deactivating") && (
+        {(activationState === "activating" || activationState === "deactivating") && (
           <Box color="orange">
             <ToolTip content={<Trans i18nKey="solana.delegation.inactiveTooltip" />}>
               <Loader size={14} />
@@ -150,15 +156,15 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
           </Box>
         )}
         <Box ml={1}>
-          <Trans i18nKey={`solana.delegation.states.${stake.activation.state}`} />
+          <Trans i18nKey={`solana.delegation.states.${activationState}`} />
         </Box>
       </Column>
       <Column>
-        <Discreet>{formatAmount(stake.delegation?.stake ?? 0)}</Discreet>
+        <Discreet>{formatAmount(stake.amount)}</Discreet>
       </Column>
-      <Column>{stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %</Column>
+      <Column>{stake.validatorAddress ? stakeActivePercent(stake).toFixed(2) : "0"} %</Column>
       <Column>
-        <Discreet>{formatAmount(stake.withdrawable)}</Discreet>
+        <Discreet>{formatAmount(stake.withdrawableAmount ?? new BigNumber(0))}</Discreet>
       </Column>
       <Column>
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>

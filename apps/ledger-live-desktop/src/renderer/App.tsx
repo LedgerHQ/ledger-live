@@ -32,6 +32,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
+import { I18nextProvider } from "react-i18next";
+import { I18nProvider } from "@shared/i18n";
+import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 
 const reloadApp = (event: KeyboardEvent) => {
@@ -121,9 +124,15 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>
-      <Provider store={store}>
-        <InnerApp initialCountervalues={initialCountervalues} />
-      </Provider>
+      {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
+          sites, `I18nProvider` serves the DDD packages through `@shared/i18n`. */}
+      <I18nextProvider i18n={i18n}>
+        <I18nProvider i18n={i18n}>
+          <Provider store={store}>
+            <InnerApp initialCountervalues={initialCountervalues} />
+          </Provider>
+        </I18nProvider>
+      </I18nextProvider>
     </LiveStyleSheetManager>
   );
 };

@@ -23,6 +23,7 @@ import {
   trackBackupHubFeatureIntroViewed,
   resetBackupHubFeatureIntroViewTracking,
 } from "../../analytics";
+import { BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK } from "../../constants";
 
 const BACKUP_HUB_FEATURE_INTRO_ID = "backup-hub-feature-intro";
 
@@ -55,9 +56,9 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
 
   const primaryButtonLink = useCustomURI(
     recoverServices,
-    "resumeActivate",
-    "llm-bottom-sheet",
-    "llm-bottom-sheet-native",
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.redirectTo,
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.source,
+    BACKUP_HUB_RECOVER_ONE_MONTH_FREE_DEEPLINK.campaign,
   );
   const secondaryButtonLink = useCustomURI(
     recoverServices,

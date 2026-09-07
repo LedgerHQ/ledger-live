@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  CoinModuleApi,
+  CoinModuleImpl,
   BalanceOptions,
   CraftedTransaction,
   FeeEstimation,
@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
-import { type SuiCoinConfig, type SuiContext } from "../config";
+import { type SuiCoinConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -27,33 +27,23 @@ import {
 // In the {@link SuiContext}-based API (ADR-019) each method resolves its coin configuration from
 // `context.config()` and threads it explicitly (as the required first argument) into the
 // network/logic layers (`network/sdk.ts`), which derive the chain from `config.node`.
-export function createApi(): CoinModuleApi<SuiCoinConfig> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `validateIntent` and
+// `getNextSequence`. The consumer resolver applies `withDefaults`, which answers "not supported".
+export function createApi() {
   return {
-    broadcast: async (context, tx) => {
+    broadcast: async (context, tx, _options?) => {
       const config = await context.config();
       return broadcast(config, tx);
     },
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context, tx, signature) => combine(tx, signature),
-    craftTransaction: async (context, transactionIntent) => {
+    combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    craftTransaction: async (context, transactionIntent, _options?) => {
       const config = await context.config();
       return craft(config, transactionIntent);
     },
-    craftRawTransaction: (
-      _context: SuiContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: async (context, transactionIntent) => {
+    estimateFees: async (context, transactionIntent, _options?) => {
       const config = await context.config();
       return estimate(config, transactionIntent);
     },
@@ -77,26 +67,20 @@ export function createApi(): CoinModuleApi<SuiCoinConfig> {
       const config = await context.config();
       return logicListOperations(config, address, options);
     },
-    getStakes: async (context, address, options) => {
+    getStakes: async (context, address, options?) => {
       const config = await context.config();
       return getStakes(config, address, options?.cursor);
     },
-    getRewards: async (_context, address, options) => {
+    getRewards: async (_context, address, options?) => {
       return getRewards(address, options?.cursor);
     },
-    getValidators: async (context, options) => {
+    getValidators: async (context, options?) => {
       const config = await context.config();
       return logicGetValidators(config, options?.cursor);
     },
-    validateIntent: async (): Promise<never> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (): Promise<never> => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<SuiCoinConfig>;
 }
 
 async function craft(

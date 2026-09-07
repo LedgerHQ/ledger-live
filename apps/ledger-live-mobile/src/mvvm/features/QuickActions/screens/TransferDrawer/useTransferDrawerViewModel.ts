@@ -11,6 +11,7 @@ import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settin
 import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import { resolveRemoteCopy } from "@ledgerhq/live-common/analytics/remoteABTesting/resolveRemoteCopy";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
@@ -88,15 +89,28 @@ export const useTransferDrawerViewModel = ({
     handleOpenReceiveDrawer();
   }, [closeDrawer, handleOpenReceiveDrawer, sourceScreenName]);
 
-  const { isEnabled: isNewSendFlowEnabled } = useNewSendFlowFeature();
+  const { isEnabled: isNewSendFlowEnabled, isEnabledForFamily } = useNewSendFlowFeature();
   const { handleOpenSendFlow } = useOpenSendFlow({
     currency,
     currencyIds: ledgerIds,
     sourceScreenName,
   });
+
+  // The flag also filters on family / excluded currency, so a globally enabled
+  // flag does not mean the asset at hand actually lands in the new send flow.
+  const assetCurrencyId =
+    currency?.type === "TokenCurrency" ? currency.parentCurrencyId : currency?.id;
+  const assetFamily = useMemo(
+    () => (assetCurrencyId ? getFamilyByCurrencyId(assetCurrencyId) : undefined),
+    [assetCurrencyId],
+  );
+  const canOpenNewSendFlowFromEntry = Boolean(currency || ledgerIds?.length);
+  const isNewSendFlowEnabledForAsset =
+    canOpenNewSendFlowFromEntry && isEnabledForFamily(assetFamily, assetCurrencyId);
+
   const trackingProperties = useMemo(() => {
-    return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabled);
-  }, [isNewSendFlowEnabled]);
+    return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabledForAsset);
+  }, [isNewSendFlowEnabledForAsset]);
 
   const handleSendPress = useCallback(() => {
     track("button_clicked", {
@@ -106,7 +120,7 @@ export const useTransferDrawerViewModel = ({
       page: sourceScreenName,
     });
     closeDrawer();
-    if (isNewSendFlowEnabled && (currency || ledgerIds?.length)) {
+    if (isNewSendFlowEnabled && canOpenNewSendFlowFromEntry) {
       handleOpenSendFlow();
       return;
     }
@@ -125,6 +139,7 @@ export const useTransferDrawerViewModel = ({
       });
     }
   }, [
+    canOpenNewSendFlowFromEntry,
     closeDrawer,
     currency,
     handleOpenSendFlow,

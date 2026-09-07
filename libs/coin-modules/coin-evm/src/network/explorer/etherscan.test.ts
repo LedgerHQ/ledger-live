@@ -75,7 +75,7 @@ describe("EVM Family", () => {
             type: "external",
             uri: "mock",
           },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       };
     });
@@ -615,7 +615,7 @@ describe("EVM Family", () => {
           info: {
             explorer: { type: "etherscan", uri: "mock" },
             node: { type: "external", uri: "mock" },
-            showNfts: true,
+            supportedTokens: ["erc721", "erc1155"],
             ...info,
           },
         }));
@@ -1595,7 +1595,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
       const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
@@ -1629,7 +1629,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
       const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
@@ -1663,7 +1663,7 @@ describe("EVM Family", () => {
         info: {
           explorer,
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
 
@@ -1681,7 +1681,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
       jest.spyOn(axios, "request").mockResolvedValueOnce({
@@ -1701,7 +1701,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
       jest.spyOn(axios, "request").mockResolvedValueOnce({
@@ -1722,7 +1722,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
 
@@ -1777,7 +1777,7 @@ describe("EVM Family", () => {
         info: {
           explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           node: { type: "external", uri: "mock" },
-          showNfts: true,
+          supportedTokens: ["erc721", "erc1155"],
         },
       }));
       jest.mocked(axios.request).mockReset();
@@ -1802,7 +1802,6 @@ describe("EVM Family", () => {
               type: "external",
               uri: "mock",
             },
-            showNfts: false,
           },
         };
       });
@@ -1822,6 +1821,87 @@ describe("EVM Family", () => {
         boundBlock: 0,
         isPageFull: false,
       });
+    });
+  });
+
+  describe("getNftOperations supportedTokens atomicity", () => {
+    const withSupportedTokens = (supportedTokens: ("erc721" | "erc1155")[]) => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "mock" },
+          node: { type: "external", uri: "mock" },
+          supportedTokens,
+        },
+      }));
+    };
+
+    // ERC721 ops are fetched from the `tokennfttx` endpoint, ERC1155 ops from `token1155tx`.
+    const fetchNfts = async () => {
+      const requestSpy = jest.spyOn(axios, "request").mockImplementation(async params => ({
+        data: {
+          result: params.url?.includes("tokennfttx")
+            ? etherscanERC721Operations
+            : etherscanERC1155Operations,
+        },
+      }));
+      // Drop call history from previous tests so `requestedUrls` reflects only this invocation.
+      requestSpy.mockClear();
+      const response = await ETHERSCAN_API.getNftOperations({
+        currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        fromBlock: 0,
+        sort: "desc",
+      });
+      const requestedUrls = requestSpy.mock.calls.map(([{ url }]) => url ?? "");
+      return {
+        assetTypes: new Set(response.operations.map(op => op.asset.type)),
+        fetchedErc721: requestedUrls.some(url => url.includes("tokennfttx")),
+        fetchedErc1155: requestedUrls.some(url => url.includes("token1155tx")),
+      };
+    };
+
+    it("fetches only ERC721 operations (and skips the ERC1155 endpoint) when only erc721 is supported", async () => {
+      withSupportedTokens(["erc721"]);
+      const { assetTypes, fetchedErc721, fetchedErc1155 } = await fetchNfts();
+      expect(assetTypes).toEqual(new Set(["erc721"]));
+      expect(fetchedErc721).toBe(true);
+      expect(fetchedErc1155).toBe(false);
+    });
+
+    it("fetches only ERC1155 operations (and skips the ERC721 endpoint) when only erc1155 is supported", async () => {
+      withSupportedTokens(["erc1155"]);
+      const { assetTypes, fetchedErc721, fetchedErc1155 } = await fetchNfts();
+      expect(assetTypes).toEqual(new Set(["erc1155"]));
+      expect(fetchedErc721).toBe(false);
+      expect(fetchedErc1155).toBe(true);
+    });
+
+    it("fetches both standards when both are supported", async () => {
+      withSupportedTokens(["erc721", "erc1155"]);
+      const { assetTypes, fetchedErc721, fetchedErc1155 } = await fetchNfts();
+      expect(assetTypes).toEqual(new Set(["erc721", "erc1155"]));
+      expect(fetchedErc721).toBe(true);
+      expect(fetchedErc1155).toBe(true);
+    });
+
+    it("fetches neither endpoint when supportedTokens is empty", async () => {
+      withSupportedTokens([]);
+      const { assetTypes, fetchedErc721, fetchedErc1155 } = await fetchNfts();
+      expect(assetTypes).toEqual(new Set());
+      expect(fetchedErc721).toBe(false);
+      expect(fetchedErc1155).toBe(false);
+    });
+
+    // Guards against the fragile `supportedTokens.length === 0` proxy: a non-empty array holding
+    // only non-NFT standards (e.g. a future "erc20") must NOT activate NFT fetching. Activation is
+    // driven by explicit NFT-standard membership, not by the array being non-empty.
+    it("does not activate NFTs for a non-NFT standard such as erc20", async () => {
+      withSupportedTokens(["erc20"] as unknown as ("erc721" | "erc1155")[]);
+      const { assetTypes, fetchedErc721, fetchedErc1155 } = await fetchNfts();
+      expect(assetTypes).toEqual(new Set());
+      expect(fetchedErc721).toBe(false);
+      expect(fetchedErc1155).toBe(false);
     });
   });
 

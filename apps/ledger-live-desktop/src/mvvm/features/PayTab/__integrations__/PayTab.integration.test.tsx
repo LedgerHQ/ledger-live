@@ -15,7 +15,7 @@ import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecu
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, makeItem } from "../hooks/__tests__/fixtures";
@@ -33,6 +33,12 @@ import {
   onboardedState,
   tourSeenState,
 } from "./fixtures";
+import {
+  aliceContact,
+  CONTACT_HISTORY_ID,
+  CONTACT_HISTORY_NAME,
+  createEthAccountWithContactTransfers,
+} from "../../History/__integrations__/contactHistory.fixtures";
 
 const mockNavigate = jest.fn();
 
@@ -62,11 +68,6 @@ function mockFundedPayStablecoins() {
     stablecoins: [makeItem(USDC.id, USDC.ticker, USDC.name, 1000)],
   });
 }
-
-jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <button type="button">Login</button>,
-  CardLogout: () => null,
-}));
 
 type CapturedExecutor = {
   sourceFlow: string;
@@ -181,12 +182,13 @@ describe("PayTab integration", () => {
     );
   });
 
-  it("should still render the card login block below the hero", async () => {
+  it("should leave the card and its login to the right panel", async () => {
     renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: { ...onboardedState, ...tourSeenState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(await screen.findByRole("button", { name: "Login" })).toBeVisible();
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Login" })).not.toBeInTheDocument();
   });
 
   it("should open the balance filter dialog from the hero pill and track the interaction", async () => {
@@ -285,7 +287,7 @@ describe("PayTab integration", () => {
     };
     act(() => onSuccess(USDC_TOKEN, ETH_ACCOUNT_WITH_USDC));
 
-    await user.click(await screen.findByTestId("pay-card-request-receive-verify"));
+    await user.click(await screen.findByTestId("pay-request-receive-verify"));
     await user.click(await screen.findByTestId("pay-card-verify-address-verify-cta"));
 
     await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
@@ -299,7 +301,36 @@ describe("PayTab integration", () => {
       });
     });
 
-    expect(await screen.findByTestId("pay-card-request-receive")).toBeVisible();
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
     expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
+  });
+
+  it("should count send and receive transfers with a contact and open History from View transactions", async () => {
+    const account = createEthAccountWithContactTransfers();
+    const { user } = render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [account],
+        contacts: { contacts: [aliceContact()] },
+      },
+    });
+
+    expect(await screen.findByTestId(`pay-contacts-tile-${CONTACT_HISTORY_ID}`)).toBeVisible();
+    expect(screen.getByText(CONTACT_HISTORY_NAME)).toBeVisible();
+    expect(screen.getByText("2 transactions")).toBeVisible();
+
+    const moreButton = screen.getByRole("button", { name: "More options" });
+    expect(moreButton).toBeEnabled();
+    await user.click(moreButton);
+    await user.click(await screen.findByRole("menuitem", { name: "View transactions" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/history?contactId=${CONTACT_HISTORY_ID}`,
+      expect.objectContaining({
+        state: { historyBackPath: "/paytab" },
+      }),
+    );
   });
 });

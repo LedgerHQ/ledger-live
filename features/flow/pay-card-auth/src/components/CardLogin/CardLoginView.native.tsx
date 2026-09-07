@@ -15,7 +15,6 @@ export function CardLoginView({
       lx={{
         flexDirection: "column",
         gap: "s4",
-        paddingHorizontal: "s16",
         paddingTop: "s16",
       }}
     >

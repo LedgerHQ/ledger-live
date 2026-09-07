@@ -37,6 +37,7 @@ Two kinds of preset:
 | --- | --- |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
+| [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
 | [`lint-rules`](./lint-rules) | monorepo-wide custom ESLint rules |
 
 ## Adding a package

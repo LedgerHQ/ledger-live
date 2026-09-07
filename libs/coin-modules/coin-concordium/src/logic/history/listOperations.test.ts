@@ -217,6 +217,7 @@ describe("listOperations", () => {
     expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
+      includeRawRejectReason: true,
     });
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
@@ -229,6 +230,21 @@ describe("listOperations", () => {
     });
     expect(result.items[0].value).toBe(String(BigInt(1000000) + BigInt(500)));
     expect(result.next).toBeUndefined();
+  });
+
+  it("should always request the raw reject reason", async () => {
+    getTransactionsMock.mockResolvedValue({
+      transactions: [],
+      count: 0,
+      limit: 100,
+      order: "descending",
+    });
+
+    await listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+
+    // The proxy tests the parameter for presence, so `false` would enable it.
+    const [, , , params] = getTransactionsMock.mock.calls[0];
+    expect(params.includeRawRejectReason).toBe(true);
   });
 
   it("should pass blockHeightFrom when minHeight > 0", async () => {
@@ -244,6 +260,7 @@ describe("listOperations", () => {
     expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
+      includeRawRejectReason: true,
       blockHeightFrom: 500,
     });
   });
@@ -266,6 +283,7 @@ describe("listOperations", () => {
     expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
+      includeRawRejectReason: true,
       from: "42",
     });
   });

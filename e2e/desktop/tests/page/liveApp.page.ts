@@ -1,5 +1,5 @@
-import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class LiveApp extends AppPage {

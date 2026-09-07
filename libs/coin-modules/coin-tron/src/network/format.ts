@@ -114,6 +114,12 @@ export const formatTrongridTxResponse = async (
     const isTrc20 = type === "TriggerSmartContract" && contract_address;
     const isTrc10 = type === "TransferAssetContract";
     const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
+    // The memo the sender attached rides hex-encoded in `raw_data.data`; decode it back to UTF-8 so
+    // synced history can surface it (the mirror of the write path's `extra_data`). Only a native or
+    // TRC-10 transfer carries a user memo there, so decoding `data` on any other type would be garbage.
+    const isTransfer = type === "TransferContract" || type === "TransferAssetContract";
+    const rawMemo = isTransfer ? tx.raw_data.data : undefined;
+    const memo = rawMemo ? Buffer.from(rawMemo, "hex").toString("utf8") : undefined;
     const txInfo: TrongridTxInfo = {
       txID,
       date,
@@ -129,6 +135,7 @@ export const formatTrongridTxResponse = async (
       blockHeight,
       hasFailed,
       feesPayer: from,
+      memo,
     };
 
     const getExtra = async (): Promise<TrongridExtraTxInfo | null | undefined> => {

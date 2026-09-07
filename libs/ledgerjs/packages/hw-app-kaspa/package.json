@@ -34,11 +34,12 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "exports": {

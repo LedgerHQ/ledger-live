@@ -76,7 +76,12 @@ function createFlowJestConfig(overrides = {}) {
         displayName: "web",
         testEnvironment: "jsdom",
         moduleFileExtensions: platformExtensions("web"),
-        testMatch: ["**/*.web.test.ts?(x)", "**/*.web.spec.ts?(x)"],
+        testMatch: [
+          "**/*.web.test.ts?(x)",
+          "**/*.web.spec.ts?(x)",
+          "**/!(*.web|*.native).test.ts?(x)",
+          "**/!(*.web|*.native).spec.ts?(x)",
+        ],
         moduleNameMapper: { ...webMocks },
         setupFilesAfterEnv: ["@testing-library/jest-dom", path.join(__dirname, "setup/web.js")],
       },

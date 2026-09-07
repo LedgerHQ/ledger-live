@@ -45,9 +45,13 @@ export function useRenameContactDialogViewModel({
         return;
       }
 
+      /**
+       * Dismiss the dialog before save(): the Device Intent Executor takes over the device
+       * interaction UI.
+       */
+      onCloseRequest();
       await save();
       onSaveSuccess();
-      onCloseRequest();
     } catch {
       return;
     } finally {

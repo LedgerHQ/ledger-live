@@ -32,6 +32,9 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
+// Device intents resolve without a device so these tests cover the calling flows only.
+// The executor wiring is covered by Contacts.deviceIntents.integration.test.tsx.
+jest.mock("@features/platform-contacts/device");
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
     validateAddress: async ({ address }: { address: string }) => ({
@@ -820,6 +823,45 @@ describe("Contacts integration", () => {
     });
   });
 
+  it.each(["address", "name"] as const)("should close Add Address from the %s step", async step => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: savedContactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag, state => ({
+        ...state,
+        contacts: { contacts: [mockMeContact(), contact] },
+      })),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+    await user.press(screen.getByTestId("contacts-address-entry-select-currency"));
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+
+    if (step === "name") {
+      await user.type(addressInput, SCANNED_ADDRESS);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
+      });
+
+      await user.press(screen.getByTestId("contacts-add-address-confirm"));
+      expect(await screen.findByTestId("contacts-add-address-name-input")).toBeVisible();
+    } else {
+      expect(addressInput).toBeVisible();
+    }
+
+    const closeButton = screen.getByTestId("bottom-sheet-header-close-button");
+    expect(closeButton).toBeVisible();
+
+    await user.press(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+      expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    });
+  });
+
   it("should keep the currency selector usable when searching for a network", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
@@ -846,24 +888,65 @@ describe("Contacts integration", () => {
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
 
-    const bitcoinAsset = await screen.findByTestId("asset-item-BTC");
+    const bitcoinAsset = await screen.findByTestId("asset-item-explanation-BTC");
     const tetherAsset = screen.getByTestId("asset-item-USDT");
-    expect(bitcoinAsset).toBeDisabled();
+    expect(bitcoinAsset).toBeEnabled();
     expect(tetherAsset).toBeEnabled();
+
+    await user.press(bitcoinAsset);
+
+    await waitFor(() => {
+      expect(screen.getByText("Bitcoin isn't supported yet")).toBeVisible();
+      expect(
+        screen.getByText(
+          "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",
+        ),
+      ).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Bitcoin isn't supported yet")).toBeNull();
+    });
+    expect(
+      screen.getByLabelText("Bitcoin isn't supported yet", {
+        exact: true,
+      }),
+    ).toBeVisible();
 
     await user.press(tetherAsset);
 
-    const solanaNetwork = await screen.findByTestId("network-item-Solana");
+    const solanaNetwork = await screen.findByTestId("network-item-explanation-Solana");
     const ethereumNetwork = screen.getByTestId("network-item-Ethereum");
-    expect(solanaNetwork).toBeDisabled();
+    expect(solanaNetwork).toBeEnabled();
     expect(ethereumNetwork).toBeEnabled();
+
+    await user.press(solanaNetwork);
+
+    await waitFor(() => {
+      expect(screen.getByText("Solana Network isn't supported yet")).toBeVisible();
+      expect(
+        screen.getByText(
+          "You can't select Solana network for Tether USD. We're adding more networks over time.",
+        ),
+      ).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Solana Network isn't supported yet")).toBeNull();
+    });
 
     await user.press(ethereumNetwork);
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
     });
-  });
+  }, 10_000);
 
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
@@ -1056,6 +1139,35 @@ describe("Contacts integration", () => {
         "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
       );
     });
+  });
+
+  it("should reopen the edit address sheet after closing it", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+
+    expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
+
+    // The address detail sheet stays mounted behind the edit sheet, which is rendered last.
+    const closeButtons = screen.getAllByTestId("bottom-sheet-header-close-button");
+    await user.press(closeButtons[closeButtons.length - 1]);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+
+    expect(await screen.findByTestId("contacts-rename-address-confirm")).toBeVisible();
   });
 
   it("should rename an address after confirming on the signer sheet", async () => {

@@ -41,8 +41,6 @@ in the `src/components/index.ts` file.
 
 Types should also be importable (but not from root because of name conflicts!).
 
-- If you are creating a new component you should write a related [storybook](https://https://storybook.js.org/) story.
-
 - Avoid installing new packages unless necessary.
 
 ## Maintenance

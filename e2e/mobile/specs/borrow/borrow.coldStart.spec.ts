@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { FF_BORROW_ENABLED } from "../../utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { FF_BORROW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 describe("Borrow - Cold start", () => {
   beforeAll(async () => {

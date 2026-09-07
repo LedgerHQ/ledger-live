@@ -111,7 +111,6 @@ test.describe("Settings", () => {
       await app.settings.expectCounterValue("Euro - EUR");
       await app.mainNavigation.openTargetFromMainNavigation("home");
 
-      await app.layout.waitForAccountsSyncToBeDone();
       await app.portfolio.expectTotalBalanceCounterValue("€");
 
       await app.portfolio.expectBalanceDiffCounterValue("%");

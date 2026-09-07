@@ -1,6 +1,7 @@
 import React from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import { I18nextProvider } from "react-i18next";
+import { I18nProvider } from "@shared/i18n";
 import { MemoryRouter } from "react-router";
 import theme, { colors } from "~/renderer/styles/theme";
 import i18n from "~/renderer/i18n/init";
@@ -22,11 +23,13 @@ const App = ({ error }: { error: Error }) => (
   <LiveStyleSheetManager>
     <ThemeProvider theme={lightLiveTheme}>
       <I18nextProvider i18n={i18n}>
-        <MemoryRouter>
-          <RenderError withoutAppData error={error}>
-            <TriggerAppReady />
-          </RenderError>
-        </MemoryRouter>
+        <I18nProvider i18n={i18n}>
+          <MemoryRouter>
+            <RenderError withoutAppData error={error}>
+              <TriggerAppReady />
+            </RenderError>
+          </MemoryRouter>
+        </I18nProvider>
       </I18nextProvider>
     </ThemeProvider>
   </LiveStyleSheetManager>

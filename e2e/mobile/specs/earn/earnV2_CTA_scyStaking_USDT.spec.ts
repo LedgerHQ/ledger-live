@@ -1,5 +1,5 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runScyStakingCTATest } from "./earnV2";
+import { runScyStakingCTATest } from "@e2e/specs/earn/earnV2";
 
 const testConfig = {
   account: TokenAccount.ETH_USDT_1,

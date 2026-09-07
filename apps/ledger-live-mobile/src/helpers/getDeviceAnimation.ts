@@ -1,6 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { LottieViewProps } from "lottie-react-native";
 import { ViewStyle } from "react-native";
+import {
+  getDeviceActionAnimation,
+  type DeviceActionAnimationTheme,
+  type DeviceActionContentAction,
+  type DeviceActionModelId,
+} from "@features/platform-device-action-content";
 
 import BluePlugAndPinCode from "../animations/device/blue/1PlugAndPinCode/data.json";
 import BlueEnterPinCode from "../animations/device/blue/3EnterPinCode/data.json";
@@ -9,34 +15,10 @@ import BlueAllowManager from "../animations/device/blue/5AllowManager/data.json"
 import BlueOpenApp from "../animations/device/blue/6OpenApp/data.json";
 import BlueValidate from "../animations/device/blue/7Validate/data.json";
 
-import NanoSPPinDark from "../animations/device/nanoSP/dark/pin.json";
-import NanoSPPinLight from "../animations/device/nanoSP/light/pin.json";
-import NanoSPContinueDark from "../animations/device/nanoSP/dark/continue.json";
-import NanoSPContinueLight from "../animations/device/nanoSP/light/continue.json";
-
-import NanoXPinDark from "../animations/device/nanoX/dark/pin.json";
-import NanoXPinLight from "../animations/device/nanoX/light/pin.json";
-import NanoXContinueDark from "../animations/device/nanoX/dark/continue.json";
-import NanoXContinueLight from "../animations/device/nanoX/light/continue.json";
 import NanoXPairingDark from "../animations/device/nanoX/dark/pairing.json";
 import NanoXPairingLight from "../animations/device/nanoX/light/pairing.json";
 import NanoXPairedDark from "../animations/device/nanoX/dark/paired.json";
 import NanoXPairedLight from "../animations/device/nanoX/light/paired.json";
-
-import StaxPinDark from "../animations/device/stax/dark/pin.json";
-import StaxPinLight from "../animations/device/stax/light/pin.json";
-import StaxContinueDark from "../animations/device/stax/dark/continue.json";
-import StaxContinueLight from "../animations/device/stax/light/continue.json";
-
-import FlexPinDark from "../animations/device/flex/dark/pin.json";
-import FlexPinLight from "../animations/device/flex/light/pin.json";
-import FlexContinueDark from "../animations/device/flex/dark/continue.json";
-import FlexContinueLight from "../animations/device/flex/light/continue.json";
-
-import ApexPinDark from "../animations/device/apex/dark/pin.json";
-import ApexPinLight from "../animations/device/apex/light/pin.json";
-import ApexContinueDark from "../animations/device/apex/dark/continue.json";
-import ApexContinueLight from "../animations/device/apex/light/continue.json";
 
 import NanoSPlugAndPinCodeDark from "../animations/device/nanoS/1PlugAndPinCode/dark.json";
 import NanoSPlugAndPinCodeLight from "../animations/device/nanoS/1PlugAndPinCode/light.json";
@@ -51,6 +33,41 @@ import NanoSValidateLight from "../animations/device/nanoS/7Validate/light.json"
 
 export type AnimationSource = LottieViewProps["source"];
 export type AnimationRecord = Record<"light" | "dark", AnimationSource>;
+
+/**
+ * The pin and continue assets below are owned by `@features/platform-device-action-content`,
+ * which ships them for both platforms. Keeping app-local copies bundled the same bytes twice.
+ */
+const asset = (
+  modelId: DeviceActionModelId,
+  action: DeviceActionContentAction,
+  theme: DeviceActionAnimationTheme,
+) => getDeviceActionAnimation({ modelId, action, theme });
+
+const NanoSPPinDark = asset("nanoSP", "power-and-unlock", "dark");
+const NanoSPPinLight = asset("nanoSP", "power-and-unlock", "light");
+const NanoSPContinueDark = asset("nanoSP", "continue", "dark");
+const NanoSPContinueLight = asset("nanoSP", "continue", "light");
+
+const NanoXPinDark = asset("nanoX", "power-and-unlock", "dark");
+const NanoXPinLight = asset("nanoX", "power-and-unlock", "light");
+const NanoXContinueDark = asset("nanoX", "continue", "dark");
+const NanoXContinueLight = asset("nanoX", "continue", "light");
+
+const StaxPinDark = asset("stax", "power-and-unlock", "dark");
+const StaxPinLight = asset("stax", "power-and-unlock", "light");
+const StaxContinueDark = asset("stax", "continue", "dark");
+const StaxContinueLight = asset("stax", "continue", "light");
+
+const FlexPinDark = asset("europa", "power-and-unlock", "dark");
+const FlexPinLight = asset("europa", "power-and-unlock", "light");
+const FlexContinueDark = asset("europa", "continue", "dark");
+const FlexContinueLight = asset("europa", "continue", "light");
+
+const ApexPinDark = asset("apex", "power-and-unlock", "dark");
+const ApexPinLight = asset("apex", "power-and-unlock", "light");
+const ApexContinueDark = asset("apex", "continue", "dark");
+const ApexContinueLight = asset("apex", "continue", "light");
 
 type NanoSKeys = CommonKeys;
 type NanoSPKeys = CommonKeys;

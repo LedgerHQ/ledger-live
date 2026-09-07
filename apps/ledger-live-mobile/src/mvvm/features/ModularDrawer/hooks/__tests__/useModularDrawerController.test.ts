@@ -136,6 +136,48 @@ describe("useModularDrawerController", () => {
       expect(onAccountSelected).toHaveBeenCalledTimes(1);
     });
 
+    it("should not invoke onCancel when hideDrawer is called, but should hide the drawer", () => {
+      const onCancel = jest.fn();
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({ flow: "test_flow", source: "test_source", onCancel });
+      });
+
+      const cancelCallbackIdBefore = store.getState().modularDrawer.cancelCallbackId;
+      expect(cancelCallbackIdBefore).toBeDefined();
+
+      act(() => {
+        result.current.hideDrawer();
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(store.getState().modularDrawer.isOpen).toBe(false);
+      expect(store.getState().modularDrawer.cancelCallbackId).toBe(cancelCallbackIdBefore);
+    });
+
+    it("should invoke onCancel via closeDrawer after hideDrawer was called", () => {
+      const onCancel = jest.fn();
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({ flow: "test_flow", source: "test_source", onCancel });
+      });
+
+      act(() => {
+        result.current.hideDrawer();
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.closeDrawer();
+      });
+
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(store.getState().modularDrawer.cancelCallbackId).toBeUndefined();
+    });
+
     it("should not invoke onCancel when handleCurrencySelected is used", () => {
       const onCancel = jest.fn();
       const onCurrencySelected = jest.fn();

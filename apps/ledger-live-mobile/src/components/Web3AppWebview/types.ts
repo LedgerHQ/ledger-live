@@ -14,6 +14,8 @@ export type WebviewProps = {
   allowsBackForwardNavigationGestures?: boolean;
   customHandlers?: WalletAPICustomHandlers;
   onWalletApiTransactionBroadcast?: () => void;
+  onAccountRequestCancel?: () => void;
+  onAccountRequestSuccess?: () => void;
   onScroll?: ComponentProps<typeof WebView>["onScroll"];
   Loader?: () => React.JSX.Element;
 };

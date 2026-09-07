@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNativeStakingCTATest } from "./earnV2";
+import { runNativeStakingCTATest } from "@e2e/specs/earn/earnV2";
 
 const testConfig = {
   account: Account.SOL_2,

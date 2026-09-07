@@ -19,6 +19,7 @@ jest.mock(
   () => ({
     useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
     usePayCardToolProps: () => ({ marker: "pay-card-props" }),
+    useEnvDevToolProps: () => ({ marker: "env-props" }),
   }),
   { virtual: true },
 );
@@ -63,6 +64,7 @@ describe("DevToolsScreen", () => {
 
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
+      { id: "env", config: { marker: "env-props" } },
       { id: "pay-card", config: { marker: "pay-card-props" } },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);

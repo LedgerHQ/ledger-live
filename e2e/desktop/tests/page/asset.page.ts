@@ -1,5 +1,5 @@
-import { step } from "../misc/reporters/step";
-import { AppPage } from "./abstractClasses";
+import { step } from "tests/misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
 
 export class AssetPage extends AppPage {
   // Buy CTA differs between the legacy Asset page (`asset-page-buy-button`) and the Wallet 4.0

@@ -6,7 +6,7 @@ import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";

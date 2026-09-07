@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidAddressTest } from "../send";
+import { runSendInvalidAddressTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001");
 runSendInvalidAddressTest(

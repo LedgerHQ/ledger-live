@@ -1,5 +1,5 @@
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runSwapCrossAccountTest } from "./swap.crossAccount";
+import { runSwapCrossAccountTest } from "@e2e/specs/swap/otherTestCases/swap.crossAccount";
 
 const dexProviders = [
   SwapProvider.ONE_INCH,

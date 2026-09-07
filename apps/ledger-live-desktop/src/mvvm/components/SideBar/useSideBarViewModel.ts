@@ -147,6 +147,19 @@ export function useSideBarViewModel(): SideBarViewModel {
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const wasNarrowRef = useRef<boolean | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const dropSideBarFocus = () => {
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement && navRef.current?.contains(focused)) {
+        focused.blur();
+      }
+    };
+
+    window.addEventListener("blur", dropSideBarFocus);
+    return () => window.removeEventListener("blur", dropSideBarFocus);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -316,6 +329,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   return {
     pathname: location.pathname,
     location,
+    navRef,
     collapsed,
     navigationLocked,
     noAccounts,

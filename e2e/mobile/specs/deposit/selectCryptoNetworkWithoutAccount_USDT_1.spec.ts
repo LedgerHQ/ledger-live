@@ -1,6 +1,6 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { assetAvailableNetworks } from "@ledgerhq/live-e2e-shared/data/assetsDrawer";
-import { runSelectCryptoNetworkTest } from "./deposit";
+import { runSelectCryptoNetworkTest } from "@e2e/specs/deposit/deposit";
 
 const testConfig = {
   account: TokenAccount.ETH_USDT_1,

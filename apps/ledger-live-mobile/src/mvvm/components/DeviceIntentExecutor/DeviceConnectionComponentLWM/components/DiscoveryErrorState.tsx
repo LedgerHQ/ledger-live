@@ -7,7 +7,7 @@ import {
   type DiscoveryError,
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { useTranslation } from "~/context/Locale";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";

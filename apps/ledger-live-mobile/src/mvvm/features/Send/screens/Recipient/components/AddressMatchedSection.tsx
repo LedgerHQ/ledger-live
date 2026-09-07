@@ -59,6 +59,7 @@ export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps)
             addressBookUnsupportedDescription={suggestion.addressBookUnsupportedDescription}
             addContactLabel={suggestion.addContactLabel}
             sendLabel={suggestion.sendLabel}
+            onAddContact={suggestion.onAddContact}
             onSend={suggestion.onSend}
           />
         ) : suggestion.kind === "matched-ledger-accounts" ? (

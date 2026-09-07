@@ -21,3 +21,23 @@ export const isRevertLike = (error: unknown): boolean => {
     message.includes("invalid opcode")
   );
 };
+
+/**
+ * Stable substring of the revert reason emitted by Celo's
+ * `Blockable.onlyWhenNotBlocked` modifier while the `EpochManager` is processing
+ * an epoch. The full reason is "Contract is blocked from performing this action";
+ * matching the "contract is blocked" prefix tolerates provider-side truncation.
+ * `Election.vote` (and other blockable staking mutations) revert with it while
+ * that window is open.
+ */
+export const EPOCH_BLOCK_REVERT = "contract is blocked";
+
+/**
+ * True when an error is the transient "epoch processing" block (see
+ * {@link EPOCH_BLOCK_REVERT}) rather than a generic revert. Lets the bridge map
+ * it to a dedicated, user-friendly error instead of an opaque RPC failure.
+ */
+export const isEpochBlockRevert = (error: unknown): boolean => {
+  const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  return message.includes(EPOCH_BLOCK_REVERT);
+};

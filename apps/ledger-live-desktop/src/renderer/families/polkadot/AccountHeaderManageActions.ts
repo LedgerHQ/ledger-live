@@ -13,6 +13,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import { useNavigate } from "react-router";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
+import { getAccountUrl } from "~/renderer/utils";
 
 type Props = {
   account: PolkadotAccount | TokenAccount;
@@ -40,8 +41,8 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
           accountId: account.id,
           returnTo:
             account.type === "TokenAccount"
-              ? `/account/${account.parentId}/${account.id}`
-              : `/account/${account.id}`,
+              ? getAccountUrl(account.id, account.parentId)
+              : getAccountUrl(account.id),
         },
       });
     } else if (bridge.isAccountEmpty(mainAccount)) {

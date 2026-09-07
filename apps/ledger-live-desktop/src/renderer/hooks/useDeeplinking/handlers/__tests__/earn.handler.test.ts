@@ -85,6 +85,27 @@ describe("earn.handler", () => {
       );
     });
 
+    it("navigates with simulate intent when path is simulate", () => {
+      const context = createMockContext();
+
+      earnHandler(
+        {
+          type: "earn",
+          path: "simulate",
+          search: "?ref=campaign",
+        },
+        context,
+      );
+
+      expect(context.navigate).toHaveBeenCalledWith(
+        "/earn",
+        {
+          intent: "simulate",
+        },
+        "?ref=campaign",
+      );
+    });
+
     it("navigates without deposit intent for other paths", () => {
       const context = createMockContext();
 

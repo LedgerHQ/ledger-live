@@ -8,11 +8,16 @@ import {
   serializeTransaction,
   getTransactionType,
   insertAccountOwnershipProofs,
+  serializeTokenUpdate,
+  deserializeTokenUpdate,
+  isTokenUpdateTransaction,
 } from "./serialization";
+import { encodePltTransferOperations } from "./plt";
 import { AccountAddress } from "./address";
 import { TransactionType } from "./types";
 import type {
   CredentialDeploymentTransaction,
+  TokenUpdateTransaction,
   Transaction,
   TransferWithMemoPayload,
 } from "./types";
@@ -1119,6 +1124,286 @@ describe("serialization", () => {
       const countOffset = 64 + 48 + 32;
       expect(buf.readUInt32BE(countOffset)).toBe(2);
       expect(buf.readUInt32BE(countOffset + 4)).toBe(0); // First entry index is 0
+    });
+  });
+});
+
+describe("serialization: TokenUpdate (PLT)", () => {
+  const SENDER = AccountAddress.fromBuffer(Buffer.alloc(32, 0xaa));
+  const RECIPIENT = AccountAddress.fromBuffer(Buffer.alloc(32, 0xbb));
+
+  const header = {
+    sender: SENDER,
+    nonce: 10n,
+    energyAmount: 100n,
+    expiry: 1675432871n,
+  };
+
+  const buildTransaction = (
+    overrides: Partial<TokenUpdateTransaction["payload"]> = {},
+  ): TokenUpdateTransaction => ({
+    header,
+    type: TransactionType.TokenUpdate,
+    payload: {
+      tokenId: Buffer.from("PLT", "utf-8"),
+      operations: encodePltTransferOperations({
+        recipient: RECIPIENT,
+        amount: 1_000_000n,
+        decimals: 6,
+      }),
+      ...overrides,
+    },
+  });
+
+  describe("serializeTokenUpdate", () => {
+    it("lays out the flat wire transaction the device hashes", () => {
+      const tx = buildTransaction();
+      const serialized = serializeTokenUpdate(tx);
+
+      const { tokenId, operations } = tx.payload;
+      const cborLengthOffset = 60 + 1 + 1 + tokenId.length;
+
+      expect(serialized.subarray(0, 32)).toEqual(SENDER.toBuffer());
+      // The kind byte lands at offset 60, which is what keeps the existing
+      // TYPE_OFFSET dispatch working in both this package and the signer.
+      expect(serialized.readUInt8(60)).toBe(0x1b);
+      expect(serialized.readUInt8(61)).toBe(tokenId.length);
+      expect(serialized.subarray(62, 62 + tokenId.length)).toEqual(tokenId);
+      expect(serialized.readUInt32BE(cborLengthOffset)).toBe(operations.length);
+      expect(serialized.subarray(cborLengthOffset + 4)).toEqual(operations);
+    });
+
+    it("counts the kind byte in the header payload size", () => {
+      const tx = buildTransaction();
+      const serialized = serializeTokenUpdate(tx);
+      const payloadLength = 1 + 1 + tx.payload.tokenId.length + 4 + tx.payload.operations.length;
+
+      expect(serialized.readUInt32BE(48)).toBe(payloadLength);
+    });
+
+    it("accepts the shortest and longest token id the device allows", () => {
+      expect(() =>
+        serializeTokenUpdate(buildTransaction({ tokenId: Buffer.alloc(1) })),
+      ).not.toThrow();
+      expect(() =>
+        serializeTokenUpdate(buildTransaction({ tokenId: Buffer.alloc(128) })),
+      ).not.toThrow();
+    });
+
+    it.each([
+      ["an empty token id", Buffer.alloc(0)],
+      ["a token id above 128 bytes", Buffer.alloc(129)],
+    ])("rejects %s", (_label, tokenId) => {
+      expect(() => serializeTokenUpdate(buildTransaction({ tokenId }))).toThrow(
+        /Token id length .* outside the device range/,
+      );
+    });
+
+    it("rejects an empty operations blob", () => {
+      expect(() => serializeTokenUpdate(buildTransaction({ operations: Buffer.alloc(0) }))).toThrow(
+        /must not be empty/,
+      );
+    });
+
+    it("rejects an operations blob above the device CBOR budget", () => {
+      expect(() =>
+        serializeTokenUpdate(buildTransaction({ operations: Buffer.alloc(513) })),
+      ).toThrow(/exceeding the device limit/);
+    });
+
+    // The blob is opaque bytes here, so nothing stops a caller skipping
+    // encodePltTransferOperations. The device answers a second operation with
+    // 0x6B10 only after the user has been prompted, so reject it locally.
+    it("rejects a multi-operation array smuggled in as raw bytes", () => {
+      const single = buildTransaction().payload.operations;
+      const twoOps = Buffer.concat([Buffer.from([0x82]), single.subarray(1), single.subarray(1)]);
+
+      expect(() => serializeTokenUpdate(buildTransaction({ operations: twoOps }))).toThrow(
+        /single-element CBOR array/,
+      );
+    });
+
+    it("rejects an operations blob that is not a CBOR array at all", () => {
+      expect(() =>
+        serializeTokenUpdate(buildTransaction({ operations: Buffer.from([0x00]) })),
+      ).toThrow(/single-element CBOR array/);
+    });
+
+    it("rejects a TokenUpdate carrying a CCD payload", () => {
+      const mislabelled = {
+        header,
+        type: TransactionType.TokenUpdate,
+        payload: { toAddress: RECIPIENT, amount: 5000n },
+      } as unknown as TokenUpdateTransaction;
+
+      expect(() => serializeTokenUpdate(mislabelled)).toThrow(
+        /must contain tokenId and operations/,
+      );
+    });
+
+    it("rejects a transaction of the wrong type", () => {
+      const wrongType = {
+        ...buildTransaction(),
+        type: TransactionType.Transfer,
+      } as unknown as TokenUpdateTransaction;
+
+      expect(() => serializeTokenUpdate(wrongType)).toThrow(/must be TokenUpdate type/);
+    });
+  });
+
+  describe("deserializeTokenUpdate", () => {
+    it("round-trips a transaction", () => {
+      const tx = buildTransaction();
+      const decoded = deserializeTokenUpdate(serializeTokenUpdate(tx));
+
+      expect(decoded.type).toBe(TransactionType.TokenUpdate);
+      expect(decoded.header.nonce).toBe(10n);
+      expect(decoded.header.energyAmount).toBe(100n);
+      expect(decoded.header.expiry).toBe(1675432871n);
+      expect(decoded.header.sender.toBuffer()).toEqual(SENDER.toBuffer());
+      expect(decoded.payload.tokenId).toEqual(tx.payload.tokenId);
+      expect(decoded.payload.operations).toEqual(tx.payload.operations);
+    });
+
+    it("round-trips a 128-byte token id", () => {
+      const tokenId = Buffer.alloc(128, 0x7a);
+      const decoded = deserializeTokenUpdate(serializeTokenUpdate(buildTransaction({ tokenId })));
+
+      expect(decoded.payload.tokenId).toEqual(tokenId);
+    });
+
+    it("rejects a buffer that is too short", () => {
+      expect(() => deserializeTokenUpdate(Buffer.alloc(60))).toThrow(/too short/);
+    });
+
+    it("rejects a buffer whose kind byte is not TokenUpdate", () => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+      serialized.writeUInt8(TransactionType.Transfer, 60);
+
+      expect(() => deserializeTokenUpdate(serialized)).toThrow(/Expected TokenUpdate type/);
+    });
+
+    it("rejects a declared CBOR length that disagrees with the remaining bytes", () => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+      const cborLengthOffset = 60 + 2 + 3;
+      // Inside the device range, so this exercises the mismatch check rather
+      // than the bounds check below.
+      serialized.writeUInt32BE(500, cborLengthOffset);
+
+      expect(() => deserializeTokenUpdate(serialized)).toThrow(/does not match/);
+    });
+
+    it.each([0, 513])("rejects a declared CBOR length of %s", cborLength => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+      serialized.writeUInt32BE(cborLength, 60 + 2 + 3);
+
+      expect(() => deserializeTokenUpdate(serialized)).toThrow(
+        /outside the device range of 1\.\.512/,
+      );
+    });
+
+    it("rejects a header payloadSize that disagrees with the payload", () => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+      serialized.writeUInt32BE(999, 48);
+
+      expect(() => deserializeTokenUpdate(serialized)).toThrow(/Invalid payload size/);
+    });
+  });
+
+  describe("dispatchers", () => {
+    it("reports TokenUpdate from getTransactionType", () => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+
+      expect(getTransactionType(serialized)).toBe(TransactionType.TokenUpdate);
+    });
+
+    it("routes TokenUpdate through serializeTransaction", () => {
+      const tx = buildTransaction();
+
+      expect(serializeTransaction(tx)).toEqual(serializeTokenUpdate(tx));
+    });
+
+    it("narrows a TokenUpdate transaction", () => {
+      expect(isTokenUpdateTransaction(buildTransaction())).toBe(true);
+    });
+
+    // An unsafe cast can produce a CCD-shaped object that claims to be
+    // TokenUpdate. The guard must not wave it through to the PLT serializer.
+    it("does not narrow a CCD payload mislabelled as TokenUpdate", () => {
+      const mislabelled = {
+        header,
+        type: TransactionType.TokenUpdate,
+        payload: { toAddress: RECIPIENT, amount: 5000n },
+      } as unknown as Transaction;
+
+      expect(isTokenUpdateTransaction(mislabelled)).toBe(false);
+    });
+
+    // A JS caller or an unsafe cast can supply these; the guard must return
+    // false rather than throw on the `in` operator.
+    it.each([
+      ["a null payload", null],
+      ["an undefined payload", undefined],
+      ["a primitive payload", 42],
+    ])("does not narrow %s", (_label, payload) => {
+      const malformed = {
+        header,
+        type: TransactionType.TokenUpdate,
+        payload,
+      } as unknown as Transaction;
+
+      expect(() => isTokenUpdateTransaction(malformed)).not.toThrow();
+      expect(isTokenUpdateTransaction(malformed)).toBe(false);
+    });
+
+    // Presence alone is not enough: a payload with the right keys but the wrong
+    // field types would reach serializeTokenUpdate and fail on readUInt8.
+    it("does not narrow a payload whose fields are not Buffers", () => {
+      const wrongTypes = {
+        header,
+        type: TransactionType.TokenUpdate,
+        payload: { tokenId: "PLT", operations: "deadbeef" },
+      } as unknown as Transaction;
+
+      expect(isTokenUpdateTransaction(wrongTypes)).toBe(false);
+      expect(() => serializeTransaction(wrongTypes)).toThrow(
+        /Unsupported transaction type for serialization/,
+      );
+    });
+
+    it("does not narrow a CCD transfer", () => {
+      const transfer: Transaction = {
+        header,
+        type: TransactionType.Transfer,
+        payload: { toAddress: RECIPIENT, amount: 5000n },
+      };
+
+      expect(isTokenUpdateTransaction(transfer)).toBe(false);
+    });
+
+    // deserializeTransaction stays CCD-only: production never decodes a PLT
+    // payload, so it points the caller at the explicit function instead of
+    // returning a widened type that would defeat narrowing at every CCD site.
+    it("refuses TokenUpdate in deserializeTransaction with a directed message", () => {
+      const serialized = serializeTokenUpdate(buildTransaction());
+
+      expect(() => deserializeTransaction(serialized)).toThrow(/use deserializeTokenUpdate/);
+    });
+  });
+
+  describe("CCD paths are unaffected", () => {
+    it("still serializes a Transfer identically", () => {
+      const transfer: Transaction = {
+        header,
+        type: TransactionType.Transfer,
+        payload: { toAddress: RECIPIENT, amount: 5000n },
+      };
+
+      const serialized = serializeTransfer(transfer);
+
+      expect(serialized.readUInt8(60)).toBe(TransactionType.Transfer);
+      expect(serialized).toHaveLength(101);
+      expect(deserializeTransaction(serialized).type).toBe(TransactionType.Transfer);
     });
   });
 });

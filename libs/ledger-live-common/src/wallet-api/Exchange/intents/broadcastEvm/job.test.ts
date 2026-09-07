@@ -37,6 +37,7 @@ function collect(input: BroadcastEvmIntentInput = BASE_INPUT): Promise<Broadcast
       deviceConnectionResult: FAKE_CONNECTION,
       deviceExtractedContext: FAKE_CONTEXT,
       input,
+      onResult: jest.fn(),
     }).pipe(toArray()),
   );
 }

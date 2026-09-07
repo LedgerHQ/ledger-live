@@ -7,6 +7,7 @@ import {
   PartialFeatures,
 } from "@shared/feature-flags";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -18,6 +19,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { I18nextProvider } from "react-i18next";
+import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
@@ -171,31 +173,38 @@ function Providers({
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        {skipRouter ? (
-          routerContent
-        ) : (
-          <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-            {routerContent}
-          </MemoryRouter>
-        )}
-      </Provider>
-    </QueryClientProvider>
+    // Outside the `minimal` branch on purpose: `useI18n` throws rather than falling back, so any
+    // @shared/i18n consumer in a `minimal` tree would crash. (react-i18next itself still resolves
+    // there — `initReactI18next` registers the app instance as its module default.)
+    <I18nextProvider i18n={i18n}>
+      <I18nProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            {skipRouter ? (
+              routerContent
+            ) : (
+              <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+                {routerContent}
+              </MemoryRouter>
+            )}
+          </Provider>
+        </QueryClientProvider>
+      </I18nProvider>
+    </I18nextProvider>
   );
 }
 
 function EnhancedProviders({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <I18nextProvider i18n={i18n}>
-      <DrawerProvider>
+    <DrawerProvider>
+      <ThemeProvider colorScheme="dark">
         <StyleProvider selectedPalette="dark">
           <LiveStyleSheetManager>
             <ContextMenuWrapper>{children}</ContextMenuWrapper>
           </LiveStyleSheetManager>
         </StyleProvider>
-      </DrawerProvider>
-    </I18nextProvider>
+      </ThemeProvider>
+    </DrawerProvider>
   );
 }
 

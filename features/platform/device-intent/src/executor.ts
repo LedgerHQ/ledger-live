@@ -142,8 +142,15 @@ export type ExecutorState =
  * @typeParam Input - Input type for the current intent's job.
  * @typeParam ExtraProps - Extra props forwarded to the intent's UI component.
  * @typeParam InitInput - Input type for the device context initializer.
+ * @typeParam Result - Final consumer-facing value produced by the intent's job.
  */
-export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput = void> {
+export interface DeviceIntentExecutorProps<
+  JobState,
+  Input,
+  ExtraProps,
+  InitInput = void,
+  Result = undefined,
+> {
   /** Parameters for device selection / connection. */
   deviceConnectionParams: DeviceConnectionParams;
   /** Initialization input; changing it triggers a new device-context initialisation. */
@@ -151,15 +158,9 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   /** Called whenever the executor's own lifecycle state changes. */
   onExecutorStateChanged: (executorState: ExecutorState) => void;
   /** The current intent to execute. */
-  intent: Intent<JobState, Input, ExtraProps>;
+  intent: Intent<JobState, Input, ExtraProps, Result>;
   /** Extra props forwarded directly to the intent's UI component. */
   intentComponentExtraProps: ExtraProps;
-  /** Optional. Called whenever the running job emits a new state. */
-  onIntentJobStateChanged?: (jobState: JobState) => void;
-  /** Optional. Called when the job observable completes. */
-  onIntentJobComplete?: () => void;
-  /** Optional. Called when the job observable errors. */
-  onIntentJobError?: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
   /** Called when the user performs an action that cancels the current execution
@@ -168,4 +169,10 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   onUserCancel: () => void;
   /** Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId: string | undefined;
+  /** Optional. Called whenever the running job emits a new state. */
+  onIntentJobStateChanged?: (jobState: JobState) => void;
+  /** Optional. Called when the job observable completes. */
+  onIntentJobComplete?: () => void;
+  /** Optional. Called when the job observable errors. */
+  onIntentJobError?: (error: unknown) => void;
 }

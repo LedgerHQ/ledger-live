@@ -49,6 +49,7 @@ describe("useDeviceOutOfStorageSpaceViewModel", () => {
       openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding: jest.fn(),
       openSupport: jest.fn(),
+      openExperimentalSettings: jest.fn(),
     });
   });
 

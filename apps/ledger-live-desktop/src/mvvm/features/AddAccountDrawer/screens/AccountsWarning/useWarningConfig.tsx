@@ -12,6 +12,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useAccountFormatter } from "../AccountsAdded/hooks";
+import { getAccountUrl } from "~/renderer/utils";
 
 export const useWarningConfig = (
   currency: CryptoCurrency,
@@ -34,7 +35,7 @@ export const useWarningConfig = (
 
   const handleAccountClick = useCallback(
     (accountId: string) => {
-      navigate(`/account/${accountId}`);
+      navigate(getAccountUrl(accountId));
       setDrawer();
     },
     [navigate],

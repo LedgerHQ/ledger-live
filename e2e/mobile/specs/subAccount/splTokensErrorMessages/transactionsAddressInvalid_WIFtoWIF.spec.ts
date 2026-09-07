@@ -1,4 +1,4 @@
-import { runSendSPLAddressInvalid } from "../subAccount";
+import { runSendSPLAddressInvalid } from "@e2e/specs/subAccount/subAccount";
 
 const transactionE2E = {
   tx: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_WIF_2, "0.1", undefined),

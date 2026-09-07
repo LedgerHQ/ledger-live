@@ -7,7 +7,6 @@ export default class OperationPage {
   sectionHeaderId = "operations-section-header";
   operationItemId = "operations-list-item";
   operationCounterValueId = "operations-list-item-counter-value";
-  emptyStateId = "operations-empty-state";
 
   @Step("Expect Operations List to be visible")
   async expectOperationsListVisible() {
@@ -34,11 +33,5 @@ export default class OperationPage {
   async getOperationCounterValue() {
     await waitForElementById(this.operationsListId);
     return await getTextOfElement(this.operationCounterValueId);
-  }
-
-  @Step("Expect empty state to be visible")
-  async expectEmptyStateVisible() {
-    await waitForElementById(this.emptyStateId);
-    await detoxExpect(getElementById(this.emptyStateId)).toBeVisible();
   }
 }

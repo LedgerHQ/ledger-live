@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
+import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { TokenType } from "@ledgerhq/live-e2e-shared/enum/TokenType";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-e2e-shared/enum/ReceiveFundsOptions";
 

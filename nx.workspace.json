@@ -399,15 +399,6 @@
     "knip-check": {
       "cache": false
     },
-    "prebuild:storybook": {
-      "dependsOn": ["^build"],
-      "cache": true
-    },
-    "build:storybook": {
-      "dependsOn": ["^build", "prebuild:storybook"],
-      "outputs": ["{projectRoot}/storybook-static/**"],
-      "cache": true
-    },
     "android:apk:local": {
       "dependsOn": ["^build"],
       "cache": true,

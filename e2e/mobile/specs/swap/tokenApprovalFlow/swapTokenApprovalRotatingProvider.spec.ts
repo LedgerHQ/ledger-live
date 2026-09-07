@@ -1,5 +1,5 @@
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runSwapTokenApprovalFlow } from "./swapTokenApprovalFlow";
+import { runSwapTokenApprovalFlow } from "@e2e/specs/swap/tokenApprovalFlow/swapTokenApprovalFlow";
 
 const eligibleProviders = [
   SwapProvider.THORCHAIN,

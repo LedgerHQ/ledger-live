@@ -31,6 +31,7 @@ describe("useDeviceNotOnboardedViewModel", () => {
       openMyLedgerFirmwareUpdate: jest.fn(),
       openOnboarding,
       openSupport: jest.fn(),
+      openExperimentalSettings: jest.fn(),
     });
   });
 

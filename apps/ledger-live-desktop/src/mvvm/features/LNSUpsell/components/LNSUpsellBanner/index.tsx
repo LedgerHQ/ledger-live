@@ -1,4 +1,4 @@
-import { t } from "i18next";
+import { t } from "~/renderer/i18n/init";
 import { Trans } from "react-i18next";
 import React, { type ReactElement } from "react";
 import { BannerCard, Button, Flex, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";

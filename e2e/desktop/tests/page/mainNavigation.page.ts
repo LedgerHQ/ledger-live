@@ -3,8 +3,8 @@ import { expect } from "@playwright/test";
 import { Drawer } from "tests/component/drawer.component";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
-import { AppPage } from "./abstractClasses";
-import { MyWalletPage } from "./myWallet.page";
+import { AppPage } from "tests/page/abstractClasses";
+import { MyWalletPage } from "tests/page/myWallet.page";
 import { isAssetSectionEnabled, isMyWalletEnabled } from "tests/utils/featureFlagUtils";
 
 type NavigationTarget = {

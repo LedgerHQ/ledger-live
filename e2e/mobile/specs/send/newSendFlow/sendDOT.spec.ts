@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runNewSendFlowTest } from "../newSendFlow";
-import { FF_NEW_SEND_FLOW_ENABLED } from "../../../utils/featureFlagUtils";
+import { runNewSendFlowTest } from "@e2e/specs/send/newSendFlow";
+import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 runNewSendFlowTest(
   new Transaction(Account.DOT_1, Account.DOT_2, "0.01"),

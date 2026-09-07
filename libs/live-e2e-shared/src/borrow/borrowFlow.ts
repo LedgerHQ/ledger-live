@@ -283,14 +283,6 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
   }
 }
 
-export const openBorrowPosition = (
-  options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
-): Promise<void> => runBorrow({ ...options, flow: "open" });
-
 export const closeBorrowPosition = (
   options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
 ): Promise<void> => runBorrow({ ...options, flow: "close" });
-
-export const repayBorrowPosition = (
-  options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
-): Promise<void> => runBorrow({ ...options, flow: "repay" });

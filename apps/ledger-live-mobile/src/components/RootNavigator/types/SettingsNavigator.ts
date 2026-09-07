@@ -43,6 +43,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugDeviceIntentExecutorInitialization]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInitializerStates]: undefined;
   [ScreenName.DebugDeviceIntentExecutorOrchestration]: undefined;
+  [ScreenName.DebugOsUpdateOrchestrator]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]:
     | {
@@ -68,6 +69,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugCrash]: undefined;
   [ScreenName.DebugStore]: undefined;
   [ScreenName.DebugEnv]: undefined;
+  [ScreenName.DebugDeviceSimulation]: undefined;
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;

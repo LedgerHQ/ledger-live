@@ -1,11 +1,11 @@
 import { Page } from "@playwright/test";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Dialog } from "../../component/dialog.component";
-import { ModularAssetDialog } from "./modular.asset.dialog";
-import { ModularNetworkDialog } from "./modular.network.dialog";
-import { ModularAccountDialog } from "./modular.account.dialog";
-import { ModularScanAccountsDrawer } from "../drawer/modular.scan.accounts.drawer";
+import { Dialog } from "tests/component/dialog.component";
+import { ModularAssetDialog } from "tests/page/dialog/modular.asset.dialog";
+import { ModularNetworkDialog } from "tests/page/dialog/modular.network.dialog";
+import { ModularAccountDialog } from "tests/page/dialog/modular.account.dialog";
+import { ModularScanAccountsDrawer } from "tests/page/drawer/modular.scan.accounts.drawer";
 
 export class ModularDialog extends Dialog {
   protected assetDialog: ModularAssetDialog;

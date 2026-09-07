@@ -5,6 +5,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { Contact } from "@domain/entity-contact";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useHistoryOperations } from "../useHistoryOperations";
 import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
@@ -137,6 +138,74 @@ function createAccountWithNativeOutgoingOperations(): Account {
   };
 }
 
+const CONTACT_ADDRESS = "0xC0FFEE0000000000000000000000000000C0FFEE";
+const OTHER_ADDRESS = "0xDEAD0000000000000000000000000000DEADDEAD";
+const OUT_TO_CONTACT_OP_ID = "out-to-contact-op-id";
+const OUT_TO_OTHER_OP_ID = "out-to-other-op-id";
+const IN_FROM_CONTACT_OP_ID = "in-from-contact-op-id";
+const IN_FROM_OTHER_OP_ID = "in-from-other-op-id";
+
+function createNativeTransfer(
+  accountId: string,
+  id: string,
+  type: "IN" | "OUT",
+  parties: { senders: string[]; recipients: string[] },
+): Operation {
+  return {
+    id,
+    hash: id,
+    type,
+    value: new BigNumber(10),
+    fee: new BigNumber(0),
+    senders: parties.senders,
+    recipients: parties.recipients,
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId,
+    date: new Date(),
+    extra: {},
+  };
+}
+
+function createEthAccountWithContactTransfers(): Account {
+  const account = genAccount("eth-contact-scope", {
+    currency: ETH_ACCOUNT.currency,
+    subAccountsCount: 0,
+    operationsSize: 0,
+  });
+  const operations = [
+    createNativeTransfer(account.id, OUT_TO_CONTACT_OP_ID, "OUT", {
+      senders: [OTHER_ADDRESS],
+      recipients: [CONTACT_ADDRESS],
+    }),
+    createNativeTransfer(account.id, OUT_TO_OTHER_OP_ID, "OUT", {
+      senders: [OTHER_ADDRESS],
+      recipients: [OTHER_ADDRESS],
+    }),
+    createNativeTransfer(account.id, IN_FROM_CONTACT_OP_ID, "IN", {
+      senders: [CONTACT_ADDRESS],
+      recipients: [OTHER_ADDRESS],
+    }),
+    createNativeTransfer(account.id, IN_FROM_OTHER_OP_ID, "IN", {
+      senders: [OTHER_ADDRESS],
+      recipients: [OTHER_ADDRESS],
+    }),
+  ];
+
+  return { ...account, operations, operationsCount: operations.length };
+}
+
+function contactWithEthereumAddress(): Contact {
+  return {
+    id: "contact-scope",
+    isMe: false,
+    name: "Alice",
+    addresses: [
+      { id: "addr-1", currencyId: "ethereum", label: "Ethereum", address: CONTACT_ADDRESS },
+    ],
+  } as unknown as Contact;
+}
+
 describe("useHistoryOperations", () => {
   beforeEach(() => {
     mockCalculate.mockReset();
@@ -208,6 +277,18 @@ describe("useHistoryOperations", () => {
     const items = result.current;
     expect(items.length).toBeGreaterThan(0);
     expect(items.every(item => item.account.id === usdc.id)).toBe(true);
+  });
+
+  it("scopes to a contact's addresses, keeping IN (senders) and OUT (recipients) that touch them", () => {
+    const account = createEthAccountWithContactTransfers();
+
+    const { result } = renderHook(() => useHistoryOperations(contactWithEthereumAddress()), {
+      initialState: { accounts: [account], settings: INITIAL_STATE },
+    });
+
+    expect(result.current.map(item => item.operation.id).sort()).toEqual(
+      [OUT_TO_CONTACT_OP_ID, IN_FROM_CONTACT_OP_ID].sort(),
+    );
   });
 
   it("keeps zero-value token operations when dust filtering is disabled", () => {

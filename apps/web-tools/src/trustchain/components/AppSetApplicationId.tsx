@@ -4,6 +4,7 @@ import { Actionable } from "./Actionable";
 const KNOWN_APPLICATIONS: { id: number; label: string }[] = [
   { id: 16, label: "16 — Ledger Sync" },
   { id: 17, label: "17 — wallet-cli ring" },
+  { id: 18, label: "18 — Agent Intent" },
 ];
 
 export function AppSetApplicationId({

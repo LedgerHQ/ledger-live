@@ -1,5 +1,5 @@
-import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class MarketBannerPage extends AppPage {
@@ -41,7 +41,7 @@ export class MarketBannerPage extends AppPage {
   }
 
   @step("Get first asset tile")
-  async getFirstAssetTile() {
+  private async getFirstAssetTile() {
     const firstAsset = this.page.locator("[data-testid^='market-banner-asset-']").first();
     await expect(firstAsset).toBeVisible();
     return firstAsset;

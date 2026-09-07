@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runDeleteAccountTest } from "./deleteAccount";
+import { runDeleteAccountTest } from "@e2e/specs/deleteAccount/deleteAccount";
 
 runDeleteAccountTest(
   Account.ATOM_1,

@@ -13,7 +13,6 @@ import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
   SetCurrentAccountHistDb,
-  safeGetRefValue,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
@@ -46,6 +45,29 @@ type UseWebviewStateParams = {
 type WebviewPartition = {
   partition?: string;
 };
+
+/**
+ * Electron drops a `<webview>`'s guest as soon as the element leaves the DOM, and every
+ * guest-forwarded method then throws "The WebView must be attached to the DOM and the
+ * dom-ready event emitted before this method can be called." A holder of the ref (a top
+ * bar button, the network error retry, the wallet-api reload hook) can still reach the
+ * node during a teardown race, so probe liveness with `getWebContentsId` — the cheapest
+ * forwarded call — and let callers no-op instead of throwing.
+ */
+export function getAttachedWebview(ref: RefObject<WebviewTag | null>): WebviewTag | null {
+  const webview = ref.current;
+  if (!webview) {
+    return null;
+  }
+
+  try {
+    webview.getWebContentsId();
+  } catch {
+    return null;
+  }
+
+  return webview;
+}
 
 type UseWebviewStateReturn = {
   webviewState: WebviewState;
@@ -89,24 +111,16 @@ export function useWebviewState(
   useImperativeHandle(webviewAPIRef, () => {
     return {
       reload: () => {
-        const webview = safeGetRefValue(webviewRef);
-
-        webview.reload();
+        getAttachedWebview(webviewRef)?.reload();
       },
       goBack: () => {
-        const webview = safeGetRefValue(webviewRef);
-
-        webview.goBack();
+        getAttachedWebview(webviewRef)?.goBack();
       },
       goForward: () => {
-        const webview = safeGetRefValue(webviewRef);
-
-        webview.goForward();
+        getAttachedWebview(webviewRef)?.goForward();
       },
       openDevTools: () => {
-        const webview = safeGetRefValue(webviewRef);
-
-        webview.openDevTools();
+        getAttachedWebview(webviewRef)?.openDevTools();
       },
       loadURL: (url: string): Promise<void> => {
         if (
@@ -115,14 +129,16 @@ export function useWebviewState(
         ) {
           return Promise.reject(new Error("URL not allowed by manifest domains"));
         }
-        const webview = safeGetRefValue(webviewRef);
+        const webview = getAttachedWebview(webviewRef);
+        if (!webview) {
+          // Callers fall back to router navigation when the webview cannot be driven.
+          return Promise.reject(new Error("Webview is not attached"));
+        }
 
         return webview.loadURL(url);
       },
       clearHistory: () => {
-        const webview = safeGetRefValue(webviewRef);
-
-        webview.clearHistory();
+        getAttachedWebview(webviewRef)?.clearHistory();
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       notify: (method: `event.${string}`, params: any) => {
@@ -226,6 +242,11 @@ export function useWebviewState(
 
   const handleFailLoad = useCallback((errorEvent: Electron.DidFailLoadEvent) => {
     const { errorCode, validatedURL, isMainFrame } = errorEvent;
+
+    // ERR_ABORTED (-3) means the navigation was cancelled (e.g. user closed the drawer
+    // before the webview finished loading). This is intentional — not an error.
+    if (errorCode === -3) return;
+
     const fullURL = new URL(validatedURL);
     const errorInfo = {
       errorCode,
@@ -252,8 +273,7 @@ export function useWebviewState(
   }, []);
 
   const handleRefresh = useCallback(() => {
-    const webview = safeGetRefValue(webviewRef);
-    webview.reload();
+    getAttachedWebview(webviewRef)?.reload();
   }, [webviewRef]);
 
   useEffect(() => {

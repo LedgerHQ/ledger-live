@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { InfoState } from "LLD/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 
 export function UnknownErrorState(): React.ReactNode {
   const { t } = useTranslation();

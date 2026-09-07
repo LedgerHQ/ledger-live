@@ -1,17 +1,17 @@
-import { step } from "../misc/reporters/step";
-import { WebViewAppPage } from "./webViewApp.page";
+import { step } from "tests/misc/reporters/step";
+import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { expect } from "@playwright/test";
-import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
+import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
-import { doubleDecodeGoToURL } from "../utils/urlUtils";
-import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
-import { waitFor } from "../utils/waitFor";
-import { ModularDialog } from "./dialog/modular.dialog";
-import { getModularSelectorFromInstance } from "../utils/modularSelectorUtils";
+import { doubleDecodeGoToURL } from "tests/utils/urlUtils";
+import { getAccountAddressesFromAppJson } from "tests/utils/getAccountAddressesUtils";
+import { waitFor } from "tests/utils/waitFor";
+import { ModularDialog } from "tests/page/dialog/modular.dialog";
+import { getModularSelectorFromInstance } from "tests/utils/modularSelectorUtils";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;

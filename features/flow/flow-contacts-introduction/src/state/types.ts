@@ -20,7 +20,6 @@ export type ContactsFeatureIntroductionHighlight = Readonly<{
 export type ContactsFeatureIntroduction = Readonly<{
   isOpen: boolean;
   title: string;
-  description: string;
   highlights: readonly ContactsFeatureIntroductionHighlight[];
   primaryActionLabel: string;
   heroImageSrc?: string;

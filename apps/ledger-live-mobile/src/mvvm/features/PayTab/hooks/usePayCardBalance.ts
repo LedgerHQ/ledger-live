@@ -12,17 +12,15 @@ import {
   type FormattedValue,
   type BalanceData,
   type BalanceFilter,
-} from "@features/flow-pay-card-balance";
+} from "@features/flow-pay-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
 import { usePayStablecoins } from "./usePayStablecoins";
 
 export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
@@ -70,7 +68,6 @@ export function usePayCardBalance(): BalanceData {
     filter,
     isLoading,
     isError,
-    allLabel: t("payTab.balance.filter.allStablecoins"),
     formatFiat,
     formatCrypto,
     formatCountervalue,

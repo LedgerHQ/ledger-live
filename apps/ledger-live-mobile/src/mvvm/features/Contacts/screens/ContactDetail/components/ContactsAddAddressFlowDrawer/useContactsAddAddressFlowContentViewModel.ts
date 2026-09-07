@@ -13,7 +13,7 @@ export function useContactsAddAddressFlowContentViewModel({
   viewModel,
   currencyShell,
 }: UseContactsAddAddressFlowContentViewModelOptions) {
-  const { currentStep, onBack: onFlowBack } = viewModel;
+  const { currentStep, onBack: onFlowBack, onFlowClose } = viewModel;
   const {
     hasBackButton: hasCurrencyBackButton,
     onBack: onCurrencyBack,
@@ -34,6 +34,12 @@ export function useContactsAddAddressFlowContentViewModel({
     }
   }, [currentStep, onCurrencyClose]);
 
+  const handleHeaderClosePressed = useCallback(() => {
+    if (currentStep === "currency") return;
+
+    onFlowClose();
+  }, [currentStep, onFlowClose]);
+
   useFocusEffect(
     useCallback(() => {
       if (Platform.OS !== "android") return;
@@ -52,6 +58,7 @@ export function useContactsAddAddressFlowContentViewModel({
     currencyShell,
     onBack: handleBack,
     onClose: handleClose,
+    onHeaderClosePressed: handleHeaderClosePressed,
   } as const;
 }
 

@@ -31,6 +31,7 @@ export const INITIAL_STATE = {
         accounts: true,
         settings: true,
         postOnboarding: true,
+        sendFlow: true,
       },
     },
   }),

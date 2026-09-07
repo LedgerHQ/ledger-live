@@ -1,9 +1,15 @@
 import { generateContactName } from "@ledgerhq/live-e2e-shared/contacts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import {
+  LEDGER_SYNC_FEATURE_FLAGS,
+  cleanupLedgerSyncAfterAll,
+  setupLedgerSyncSeed,
+} from "@e2e/helpers/ledgerSyncHelpers";
+import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
-import type { ApplicationOptions } from "page";
+import type { ApplicationOptions } from "@e2e/page/index";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 // Pinned: the Contacts entry point lives on My Wallet, which the Q1 preset turns off.
@@ -12,6 +18,9 @@ const CONTACTS_FEATURE_FLAGS: OptionalFeatureMap = {
     enabled: true,
     params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
   },
+  // Contacts gates every mutation behind a Ledger Sync status of exactly "ready", which needs both
+  // this flag and a hydrated trustchain — see `useContactsLedgerSyncMutationGuard`.
+  ...LEDGER_SYNC_FEATURE_FLAGS,
   ...FF_LWM_WALLET_40_Q2,
 };
 
@@ -23,22 +32,30 @@ const RENAMED_CONTACT_NAME = generateContactName();
 // i18n `contacts.addressCount_zero`.
 const NO_ADDRESS_LABEL = "0 address";
 
+/** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
 async function initApp(options: ApplicationOptions = {}) {
   await app.init({
     userdata: options.userdata ?? CONTACTS_USERDATA,
-    speculosApp: options.speculosApp,
-    cliCommands: options.cliCommands,
+    speculosApp: AppInfos.LS,
     featureFlags: { ...CONTACTS_FEATURE_FLAGS, ...options.featureFlags },
+    cliCommands: [
+      ...app.ledgerSync.initializeEmptyTrustchain(),
+      userdataPath => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
+    ],
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
 
 /**
- * B2CQA-6238. No device confirmation is asserted: `initApp` starts without a Speculos device, so a
- * step needing one would block rather than pass.
+ * B2CQA-6238. Speculos is used to create the trustchain the app boots into, not to confirm anything
+ * in the test itself: Contacts blocks create/rename/delete until Ledger Sync reports "ready", and
+ * pre-seeding is what gets it there without the in-app activation prompt.
  */
 export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: string[]) {
-  describe("Contacts", () => {
+  describeIfNotNanoS("Contacts", () => {
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
+
     beforeAll(async () => {
       await initApp();
     });

@@ -11,7 +11,7 @@ import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
-import { LiveAppBackground } from "LLM/components/LiveAppBackground";
+import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import type { WebviewState } from "~/components/Web3AppWebview/types";
@@ -107,7 +107,7 @@ export const EarnV2Webview = ({
       testID="earn-screen"
       style={[styles.container, displayBackgroundCanvas && { backgroundColor: canvasColor }]}
     >
-      {showsBackground && <LiveAppBackground type="earn" scrollY={scrollY} />}
+      {showsBackground && <Wallet40Background type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest ? (
           <Fragment>

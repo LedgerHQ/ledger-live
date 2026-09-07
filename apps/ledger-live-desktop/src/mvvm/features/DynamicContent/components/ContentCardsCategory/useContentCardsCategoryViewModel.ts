@@ -17,6 +17,12 @@ import { openURL } from "~/renderer/linking";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { useDynamicContent } from "../../hooks/useDynamicContent";
+import {
+  trackHardwareCarouselCardDismiss,
+  trackHardwareCarouselDeviceClick,
+  type HardwareCarouselSharedAnalyticsProps,
+} from "../../hardwareCarousel/analytics";
+import { extractHardwareCarouselDevice } from "../../hardwareCarousel/extractHardwareCarouselDevice";
 import { shouldShowHardwareCarouselCloseAll } from "../../hardwareCarousel/shouldShowHardwareCarouselCloseAll";
 import { getRenderableSmallSquareSlides } from "../../utils/getRenderableSmallSquareSlides";
 import type { SmallSquareContentCard } from "../../utils/mapSmallSquareContentCard";
@@ -64,6 +70,7 @@ export type UseContentCardsCategoryViewModelArgs = Readonly<{
   category: CategoryContentCard;
   categoryContentCards: BrazeCard[];
   leadingSlide?: React.ReactNode;
+  hardwareCarouselSharedProps?: HardwareCarouselSharedAnalyticsProps;
 }>;
 
 export type UseContentCardsCategoryViewModelResult = Readonly<{
@@ -84,6 +91,7 @@ export function useContentCardsCategoryViewModel({
   category,
   categoryContentCards,
   leadingSlide,
+  hardwareCarouselSharedProps,
 }: UseContentCardsCategoryViewModelArgs): UseContentCardsCategoryViewModelResult {
   const navigate = useNavigate();
   const { dismissCard, logClickCard, trackContentCardEvent } = useDynamicContent();
@@ -145,6 +153,14 @@ export function useContentCardsCategoryViewModel({
       if (!card.link) {
         return;
       }
+
+      if (hardwareCarouselSharedProps) {
+        const deviceType = extractHardwareCarouselDevice(card.title);
+        if (deviceType) {
+          trackHardwareCarouselDeviceClick(deviceType, hardwareCarouselSharedProps);
+        }
+      }
+
       trackCategoryEvent(ContentCardEvent.Clicked, card, displayedPosition);
       logClickCard(card.id);
       openContentCardLink(
@@ -154,16 +170,20 @@ export function useContentCardsCategoryViewModel({
         navigate,
       );
     },
-    [category, logClickCard, navigate, trackCategoryEvent],
+    [category, hardwareCarouselSharedProps, logClickCard, navigate, trackCategoryEvent],
   );
 
   const onCardDismiss = useCallback(
     (card: SmallSquareContentCard, displayedPosition: number) => {
       if (dismissCard(card.id)) {
+        if (hardwareCarouselSharedProps) {
+          trackHardwareCarouselCardDismiss(hardwareCarouselSharedProps);
+        }
+
         trackCategoryEvent(ContentCardEvent.Dismissed, card, displayedPosition);
       }
     },
-    [dismissCard, trackCategoryEvent],
+    [dismissCard, hardwareCarouselSharedProps, trackCategoryEvent],
   );
 
   return {

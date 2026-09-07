@@ -1,20 +1,13 @@
 import invariant from "invariant";
 import type {
   AccountInfo,
-  CoinModuleApi,
+  CoinModuleImpl,
   Balance,
-  Block,
   BlockInfo,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   MemoNotSupported,
-  Page,
-  Reward,
-  Stake,
   TransactionIntent,
-  TransactionValidation,
-  Validator,
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -44,7 +37,11 @@ import type {
 } from "../types";
 import { listOperations } from "../logic/listOperations";
 
-type AleoCoinModuleApi = CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>;
+type AleoCoinModuleImpl = CoinModuleImpl<
+  AleoCoinConfig,
+  MemoNotSupported,
+  AleoTransactionIntentData
+>;
 
 function requireViewKey(context: AleoContext, action: string): string {
   const { viewKey } = context;
@@ -57,12 +54,24 @@ function requireViewKey(context: AleoContext, action: string): string {
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
 // the classic bridge (config-based), so each method resolves the config itself and passes it down —
 // no context-first wrappers.
-export function createApi(currencyId: string): AleoCoinModuleApi {
+//
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed: `call`, `craftRawTransaction`, `getBlock`, `getBlockInfo`,
+// `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer
+// resolver applies `withDefaults`, which answers "not supported" for each.
+//
+// `getAccountInfo`, `register` and `validateAddress` stay: they are real implementations —
+// enrollment into the Provable record scanner and the scan status it reports are central to Aleo's
+// private balance and history, so listing them here is what tells a caller they are not placeholders.
+export function createApi(currencyId: string) {
   return {
-    async call() {
-      throw new Error("call is not supported");
-    },
-    broadcast: async (context: AleoContext, signedTransaction: string): Promise<string> => {
+    broadcast: async (
+      context: AleoContext,
+      signedTransaction: string,
+      _options?,
+    ): Promise<string> => {
       const config = await context.config();
       return broadcast({
         configOrCurrencyId: config,
@@ -73,6 +82,7 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
       context: AleoContext,
       transaction: string,
       signatures: string[],
+      _options?,
     ): Promise<string> => {
       const config = await context.config();
       const viewKey = requireViewKey(context, "combine a transaction");
@@ -138,16 +148,7 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
         ...(context.viewKey && { viewKey: context.viewKey }),
       });
     },
-    craftRawTransaction: (
-      _context: AleoContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    estimateFees: async (context: AleoContext, intent): Promise<FeeEstimation> => {
+    estimateFees: async (context: AleoContext, intent, _options?): Promise<FeeEstimation> => {
       const config = await context.config();
       return estimateFees({
         configOrCurrencyId: config,
@@ -184,32 +185,6 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
 
       return listOperations({ config, address, options, provableId, viewKey });
     },
-    getBlock(_context, _height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_context, _height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(_context, _options?: { cursor?: Cursor }): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateIntent: (
-      _context: AleoContext,
-      _transactionIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
-      _balances: Balance[],
-      _options?: { customFees?: FeeEstimation },
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: (_context: AleoContext, _address: string) => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: (_context: AleoContext, address, parameters) =>
       validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
@@ -219,5 +194,5 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
       const config = await context.config();
       return register(config, viewKey);
     },
-  };
+  } satisfies AleoCoinModuleImpl;
 }

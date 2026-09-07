@@ -83,6 +83,11 @@
             ],
             "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
             "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
+          },
+          {
+            "group": ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
+            "importNamePattern": "^createApi$",
+            "message": "Reach a coin module through getCoinModuleApi (bridge/generic-coin-framework/api), which applies the framework's withDefaults. Since a module may omit the capabilities its chain lacks, calling createApi directly yields an object with those methods missing, and the call fails at runtime with nothing failing at compile time. If a direct call is genuinely needed, add the file to the exemptions in this config and record in the PR why it cannot break."
           }
         ]
       }
@@ -155,7 +160,19 @@
       "plugins": ["jest"],
       "rules": {
         "typescript/no-explicit-any": "warn",
-        "eslint/no-console": "off"
+        "eslint/no-console": "off",
+        "eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": [
+        "src/families/*/coinModuleApi.ts",
+        "src/families/evm/getTokenAllowance.ts",
+        "src/families/tezos/bridge/api.ts",
+        "src/families/canton/bridge/mock.ts"
+      ],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
       }
     }
   ]

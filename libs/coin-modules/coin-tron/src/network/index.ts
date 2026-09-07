@@ -267,6 +267,7 @@ const CHAIN_PARAMETER_KEYS = {
   transactionFee: "getTransactionFee",
   createAccountFee: "getCreateAccountFee",
   createNewAccountFeeInSystemContract: "getCreateNewAccountFeeInSystemContract",
+  memoFee: "getMemoFee",
 } as const;
 
 const FALLBACK_CHAIN_PARAMETERS: ChainParameters = {
@@ -274,6 +275,10 @@ const FALLBACK_CHAIN_PARAMETERS: ChainParameters = {
   transactionFee: 1000,
   createAccountFee: 100_000,
   createNewAccountFeeInSystemContract: 1_000_000,
+  // A node that returns the other parameters but not `getMemoFee` predates TIP-387 and charges no
+  // memo fee, so the correct fallback here is 0 — not a pessimistic 1 TRX, which would over-quote a
+  // memo send on such a chain. The network-down path below quotes pessimistically instead.
+  memoFee: 0,
 };
 
 const fetchChainParameters = async (config: TronCoinConfig): Promise<ChainParameters> => {

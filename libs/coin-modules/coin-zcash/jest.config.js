@@ -12,7 +12,11 @@ module.exports = {
     ],
   },
   passWithNoTests: true,
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: [
+    "@ledgerhq/wallet-framework-test-setup",
+    "@ledgerhq/disable-network-setup",
+    "@ledgerhq/test-quarantine/jest-retries",
+  ],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
@@ -36,5 +40,6 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

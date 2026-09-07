@@ -54,6 +54,13 @@ export enum BlockingStateType {
   WrongDeviceForAccount = "blocking-wrong-device-for-account",
   /** To map to wording of error.DeviceNotOnboarded */
   DeviceNotOnboarded = "blocking-device-not-onboarded",
+  /**
+   * To use when the configured My Ledger provider cannot serve the device
+   * firmware metadata, which makes every catalog call fail.
+   *
+   * To map to wording of error.FirmwareNotRecognized
+   */
+  InvalidProvider = "blocking-invalid-provider",
 }
 
 /** For all recoverable errors (job retry will fix) */
@@ -128,6 +135,9 @@ export type EnsureAppReadyState =
     }
   | {
       type: BlockingStateType.DeviceNotOnboarded;
+    }
+  | {
+      type: BlockingStateType.InvalidProvider;
     }
   | { type: FinalStateType.Error; error: unknown }
   | { type: FinalStateType.Success; extractedContext: DeviceExtractedContext };

@@ -17,7 +17,7 @@ import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
-import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
+import { OperationCounterpartyCell } from "./OperationCounterpartyCell";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -84,21 +84,16 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
       </TableCell>
       <TableCell align="end" data-testid="history-operation-address">
         <TableCellItem align="end">
-          <TableCellContent>
-            <TableCellContentTitle>
-              <div className="inline-flex items-center gap-4">
-                <OperationCounterpartyLabel item={item} prefix={addressPrefix} />
-                {iconCurrency && (
-                  <SquaredCryptoIcon
-                    ledgerId={iconCurrency.id}
-                    ticker={iconCurrency.ticker}
-                    size={20}
-                    network={iconNetwork}
-                  />
-                )}
-              </div>
-            </TableCellContentTitle>
-          </TableCellContent>
+          <OperationCounterpartyCell item={item} prefix={addressPrefix}>
+            {iconCurrency ? (
+              <SquaredCryptoIcon
+                ledgerId={iconCurrency.id}
+                ticker={iconCurrency.ticker}
+                size={20}
+                network={iconNetwork}
+              />
+            ) : null}
+          </OperationCounterpartyCell>
         </TableCellItem>
       </TableCell>
       <TableCell align="end" data-testid="history-operation-amount">

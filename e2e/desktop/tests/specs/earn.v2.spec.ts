@@ -10,7 +10,7 @@ import {
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
@@ -113,12 +113,8 @@ test.describe("Earn v2", () => {
     });
   }
 
-  // Hot start & Position → Account: accounts with active stake positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
+  // Hot start & Position → Account: accounts with active stake positions (provided by QA: NEAR_1, ATOM_1)
   const activePositionCurrencies = [
-    {
-      account: Account.SOL_2,
-      xrayTickets: ["B2CQA-4641", "B2CQA-4646"],
-    },
     {
       account: Account.NEAR_1,
       xrayTickets: ["B2CQA-4720", "B2CQA-4725"],
@@ -370,7 +366,6 @@ test.describe("Earn v2", () => {
       },
       async ({ app, page }) => {
         await navigateToEarn(app);
-        await addBugLink(["LIVE-29872"]);
         await app.earnV2Dashboard.verifyHotStartPage();
         await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);

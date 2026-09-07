@@ -75,8 +75,8 @@ Renewal and the desktop redirect are later work (LIVE-34741, LIVE-34740).
 App composition and DevTools consume shared Pay Card entity state through
 `@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
 `payCardAuth` slice, exposed through `@features/flow-pay-card-auth/state`. Other Pay Card UI state is
-owned by the flow it belongs to: the balance filter by `@features/flow-pay-card-balance` and the
-feature-tour flag by `@features/flow-pay-card-feature-tour`.
+owned by the flow it belongs to: the balance filter by `@features/flow-pay-balance` and the
+feature-tour flag by `@features/flow-pay-feature-tour`.
 
 ## Card API
 

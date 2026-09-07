@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { runSwapDexNativeFlow } from "./swapDexNativeFlow";
+import { runSwapDexNativeFlow } from "@e2e/specs/swap/otherTestCases/swapDexNativeFlow";
 
 const swapCheckProviderTestConfig = {
   fromAccount: Account.ETH_1,

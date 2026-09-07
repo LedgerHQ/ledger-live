@@ -3,7 +3,7 @@ import {
   DefaultDeviceIntentExecutorStateMachine,
   type StateMachineListeners,
 } from "./DeviceIntentExecutorStateMachine";
-import type { Intent } from "./core";
+import type { Intent, Job } from "./core";
 import type { ExecutorState } from "./executor";
 import {
   makeExtractedContext,
@@ -16,7 +16,7 @@ import {
 
 type TestJobState = { step: "running" } | { step: "done" };
 
-const makeIntent = (job: () => Observable<unknown> = () => NEVER) => makeBaseIntent({ job });
+const makeIntent = (job: Job<unknown, unknown> = () => NEVER) => makeBaseIntent({ job });
 
 function makeListeners(): StateMachineListeners<unknown, unknown, unknown> & {
   executorStates: ExecutorState[];
@@ -52,7 +52,7 @@ function makeListeners(): StateMachineListeners<unknown, unknown, unknown> & {
 
 function createSM(
   overrides: {
-    job?: () => Observable<unknown>;
+    job?: Job<unknown, unknown>;
     intent?: Intent<unknown, unknown, unknown>;
     listeners?: ReturnType<typeof makeListeners>;
   } = {},
@@ -239,6 +239,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
 
   describe("GIVEN the machine is in intentExecution state", () => {
     it("THEN the job receives the correct parameters", () => {
+      // GIVEN
       const connectionResult = makeConnectionResult();
       const extractedContext = makeExtractedContext();
       const jobInput = { amount: 42 };
@@ -249,11 +250,16 @@ describe("DeviceIntentExecutorStateMachine", () => {
         input: jobInput,
       };
       const { sm } = createSM({ intent });
+
+      // WHEN
       driveToExecution(sm, connectionResult, extractedContext);
+
+      // THEN
       expect(jobSpy).toHaveBeenCalledWith({
         deviceConnectionResult: connectionResult,
         deviceExtractedContext: extractedContext,
         input: jobInput,
+        onResult: expect.any(Function),
       });
       sm.stop();
     });
@@ -677,6 +683,42 @@ describe("DeviceIntentExecutorStateMachine", () => {
   });
 
   describe("intent-level listeners", () => {
+    it("GIVEN a job reports multiple results WHEN it executes THEN every result is forwarded", () => {
+      // GIVEN
+      const onResult = jest.fn();
+      const intent: Intent<unknown, unknown, unknown, string> = {
+        ...makeBaseIntent(),
+        job: ({ onResult }) => {
+          onResult("first");
+          onResult("second");
+          return NEVER;
+        },
+        onResult,
+      };
+      const listeners: StateMachineListeners<unknown, unknown, unknown, string> = {
+        onExecutorStateChanged: jest.fn(),
+        onIntentJobStateChanged: jest.fn(),
+        onIntentJobComplete: jest.fn(),
+        onIntentJobError: jest.fn(),
+      };
+      const sm = new DefaultDeviceIntentExecutorStateMachine({
+        deviceConnectionParams: { acceptedDeviceModelIds: [] },
+        intent,
+        listeners,
+      });
+      sm.start();
+
+      // WHEN
+      sm.deviceConnected(makeConnectionResult());
+      sm.deviceContextInitialized(makeExtractedContext());
+
+      // THEN
+      expect(onResult).toHaveBeenCalledTimes(2);
+      expect(onResult).toHaveBeenNthCalledWith(1, "first");
+      expect(onResult).toHaveBeenNthCalledWith(2, "second");
+      sm.stop();
+    });
+
     it("WHEN the job emits THEN intent.onJobStateChanged fires before the executor listener", async () => {
       const callOrder: string[] = [];
       const subject = new Subject<TestJobState>();

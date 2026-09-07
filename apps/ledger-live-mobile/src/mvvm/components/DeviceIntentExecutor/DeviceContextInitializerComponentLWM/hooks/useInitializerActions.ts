@@ -55,11 +55,19 @@ export function useInitializerActions(device: InitializerDevice) {
     Linking.openURL(contactSupportUrl);
   }, [contactSupportUrl]);
 
+  const openExperimentalSettings = useCallback(() => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Settings,
+      params: { screen: ScreenName.ExperimentalSettings },
+    });
+  }, [navigation]);
+
   return {
     openMyLedger,
     openMyLedgerFirmwareUpdate,
     openOnboarding,
     openSupport,
+    openExperimentalSettings,
   };
 }
 

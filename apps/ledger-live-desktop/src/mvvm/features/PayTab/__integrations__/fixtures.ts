@@ -1,7 +1,12 @@
 import type { TokenAccount } from "@ledgerhq/types-live";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
-import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
+import {
+  BTC_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_WITH_USDC,
+} from "LLD/features/__mocks__/accounts.mock";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { withFlagOverrides } from "tests/testSetup";
 import type { PayStablecoins } from "../hooks/usePayStablecoins";
@@ -45,3 +50,14 @@ export const defaultPayStablecoins: PayStablecoins = {
 export const INIT_INPUT = { appName: "Ethereum" } as InitializationInput;
 
 export const USDC_TOKEN = ETH_ACCOUNT_WITH_USDC.subAccounts![0] as TokenAccount;
+
+export const UNISWAP = TokenCurrencySchema.parse({
+  type: "TokenCurrency",
+  id: "ethereum/erc20/uniswap",
+  parentCurrencyId: ETH_ACCOUNT.currency.id,
+  contractAddress: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+  tokenType: "erc20",
+  ticker: "UNI",
+  name: "Uniswap",
+  units: [{ name: "Uniswap", code: "UNI", magnitude: 18 }],
+});

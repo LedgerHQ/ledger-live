@@ -35,7 +35,7 @@ const A4ConfigSchema = z.object({
   chains: z.record(z.string(), A4ChainEntrySchema).default({}),
 });
 
-// https://explorers.api.vault.ledger.com/a4/networks
+// https://explorers.api.live.ledger.com/a4/networks
 export const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
   "adi",
   "arbitrum",

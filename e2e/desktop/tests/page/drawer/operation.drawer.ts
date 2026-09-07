@@ -1,7 +1,7 @@
-import { step } from "../../misc/reporters/step";
-import { Drawer } from "../../component/drawer.component";
+import { step } from "tests/misc/reporters/step";
+import { Drawer } from "tests/component/drawer.component";
 import { expect } from "@playwright/test";
-import type { ClickedHistoryOperationSnapshot } from "../history.page";
+import type { ClickedHistoryOperationSnapshot } from "tests/page/history.page";
 
 export class OperationDrawer extends Drawer {
   readonly transactionIdLabel = this.page.getByTestId("operation-id-label");

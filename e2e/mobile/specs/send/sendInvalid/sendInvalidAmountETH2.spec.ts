@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendInvalidAmountTest } from "../send";
+import { runSendInvalidAmountTest } from "@e2e/specs/send/send";
 
 const transaction = new Transaction(Account.ETH_1, Account.ETH_2, "0", Fee.MEDIUM);
 runSendInvalidAmountTest(

@@ -1,5 +1,5 @@
 import { Account, type AccountType, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSwapDiscreetModeTest } from "./swap.other";
+import { runSwapDiscreetModeTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const fundedAssetsAccounts: AccountType[] = [
   Account.BTC_NATIVE_SEGWIT_1,

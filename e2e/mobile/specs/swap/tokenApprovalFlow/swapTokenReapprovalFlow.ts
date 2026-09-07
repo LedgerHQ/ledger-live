@@ -3,14 +3,14 @@ import {
   ensureTokenApproval,
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
-} from "../../../utils/swapUtils";
+} from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { beforeAllFunctionSwap } from "../swap.setup";
-import { setTeamOwner } from "../../../helpers/allure/allure-helper";
+import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
-import { BroadcastFlow, shouldRunBroadcastFlow } from "../../../helpers/broadcastRotation";
+import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,

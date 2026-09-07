@@ -921,11 +921,12 @@ describe("getChainParameters", () => {
       { key: "getTransactionFee", value: 1000 },
       { key: "getCreateAccountFee", value: 100_000 },
       { key: "getCreateNewAccountFeeInSystemContract", value: 1_000_000 },
+      { key: "getMemoFee", value: 1_000_000 },
       { key: "getMaintenanceTimeInterval", value: 21_600_000 },
     ],
   };
 
-  it("parses the four governance-voted parameters used for fee estimation", async () => {
+  it("parses the governance-voted parameters used for fee estimation", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse(fullParams));
 
     const params = await getChainParameters(mockConfig);
@@ -935,6 +936,7 @@ describe("getChainParameters", () => {
       transactionFee: 1000,
       createAccountFee: 100_000,
       createNewAccountFeeInSystemContract: 1_000_000,
+      memoFee: 1_000_000,
     });
   });
 
@@ -954,6 +956,7 @@ describe("getChainParameters", () => {
     expect(params.energyFee).toBe(100); // fallback
     expect(params.createAccountFee).toBe(100_000); // fallback
     expect(params.createNewAccountFeeInSystemContract).toBe(1_000_000); // fallback
+    expect(params.memoFee).toBe(0); // fallback: absent key ⇒ chain predates TIP-387 ⇒ no memo fee
   });
 
   it("caches the result across calls (no second HTTP request)", async () => {

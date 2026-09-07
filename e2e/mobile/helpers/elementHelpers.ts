@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web, log } from "detox";
-import { delay, isAndroid, isIos } from "./commonHelpers";
-import { retryUntilTimeout } from "../utils/retry";
-import { PageScroller } from "./pageScroller";
-import { checkForErrorElement } from "./errorHelpers";
+import { delay, isAndroid, isIos } from "@e2e/helpers/commonHelpers";
+import { retryUntilTimeout } from "@e2e/utils/retry";
+import { PageScroller } from "@e2e/helpers/pageScroller";
+import { checkForErrorElement } from "@e2e/helpers/errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {
@@ -39,14 +39,14 @@ const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
 
-export type RevealForTapOptions = {
+type RevealForTapOptions = {
   /** Scroll container. Omitted means the engine guesses the first scrollable by type. */
   container?: string | RegExp;
   /** Search direction; the edge clearance always continues the same way. Defaults to "down". */
   direction?: Direction;
 };
 
-export type WaitForElementOptions = {
+type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
   checkVisibility?: boolean;

@@ -11,6 +11,11 @@ import { Container } from "../shared/Container";
 import ToolTip from "~/renderer/components/Tooltip";
 import { Title, TitleWrapper } from "../../AccountBalanceSummaryFooter";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
+
+// Placeholder support article; content owners plan to swap this for a dedicated one later.
+const BIRTHDAY_LEARN_MORE_URL = "https://support.ledger.com/article/115005177269-zd";
 
 function StepBirthday({
   t,
@@ -41,11 +46,11 @@ function StepBirthday({
             color="neutral.c100"
             fontSize={13}
           >
-            <Trans i18nKey="zcash.shielded.flows.export.steps.birthday.text" />
-            <b>
-              {" "}
-              <Trans i18nKey="zcash.shielded.flows.export.steps.birthday.cta" />
-            </b>
+            <Trans i18nKey="zcash.shielded.flows.export.steps.birthday.text" />{" "}
+            <LinkWithExternalIcon
+              label={<Trans i18nKey="zcash.shielded.flows.export.steps.birthday.cta" />}
+              onClick={() => openURL(BIRTHDAY_LEARN_MORE_URL)}
+            />
           </Text>
         )}
       />

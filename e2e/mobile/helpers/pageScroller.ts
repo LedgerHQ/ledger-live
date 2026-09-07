@@ -1,7 +1,7 @@
 import { element, by, waitFor, log } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { delay, isAndroid } from "./commonHelpers";
+import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;

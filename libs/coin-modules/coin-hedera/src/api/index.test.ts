@@ -1,3 +1,5 @@
+import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -36,30 +38,48 @@ const mockGetStakes = jest.mocked(logic.getStakes);
 const mockGetRewards = jest.mocked(logic.getRewards);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 
+// The consumer resolver hands the module to callers through `withDefaults`, so exercise the API the
+// way a consumer sees it: the capabilities Hedera omits are backfilled by the framework.
+const buildApi = (currencyId: string) => withDefaults(createApi(currencyId));
+
 describe("createApi", () => {
-  let api: ReturnType<typeof createApi>;
+  let api: ReturnType<typeof buildApi>;
   const mockContext = getMockedContext();
   const mockCurrency = getMockedCurrency();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    api = createApi(mockCurrency.id);
+    api = buildApi(mockCurrency.id);
   });
 
-  it("should return an API object with coin module api methods", () => {
-    expect(api.broadcast).toBeInstanceOf(Function);
-    expect(api.call).toBeInstanceOf(Function);
-    expect(api.combine).toBeInstanceOf(Function);
-    expect(api.craftTransaction).toBeInstanceOf(Function);
-    expect(api.estimateFees).toBeInstanceOf(Function);
-    expect(api.getBalance).toBeInstanceOf(Function);
-    expect(api.getBlock).toBeInstanceOf(Function);
-    expect(api.getBlockInfo).toBeInstanceOf(Function);
-    expect(api.getValidators).toBeInstanceOf(Function);
-    expect(api.getStakes).toBeInstanceOf(Function);
-    expect(api.getRewards).toBeInstanceOf(Function);
-    expect(api.lastBlock).toBeInstanceOf(Function);
-    expect(api.listOperations).toBeInstanceOf(Function);
+  // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
+  //
+  // Kept out rather than stubbed: intent validation still lives in the account bridge's
+  // getTransactionStatus, and the module exposes no sequence, no externally-built transaction,
+  // no contract-call escape hatch and no enrollment step.
+  it("omits the capabilities the chain has none of", async () => {
+    await expect(capabilityReport(createApi(mockCurrency.id), mockContext)).resolves.toEqual({
+      unsupported: ["call", "craftRawTransaction", "getNextSequence", "register", "validateIntent"],
+      inconsistent: [],
+    });
+  });
+  it("declares every method the chain supports", () => {
+    const impl = createApi(mockCurrency.id);
+
+    expect(impl.broadcast).toBeInstanceOf(Function);
+    expect(impl.combine).toBeInstanceOf(Function);
+    expect(impl.craftTransaction).toBeInstanceOf(Function);
+    expect(impl.craftTransactionData).toBeInstanceOf(Function);
+    expect(impl.estimateFees).toBeInstanceOf(Function);
+    expect(impl.getBalance).toBeInstanceOf(Function);
+    expect(impl.getBlock).toBeInstanceOf(Function);
+    expect(impl.getBlockInfo).toBeInstanceOf(Function);
+    expect(impl.getValidators).toBeInstanceOf(Function);
+    expect(impl.getStakes).toBeInstanceOf(Function);
+    expect(impl.getRewards).toBeInstanceOf(Function);
+    expect(impl.lastBlock).toBeInstanceOf(Function);
+    expect(impl.listOperations).toBeInstanceOf(Function);
+    expect(impl.validateAddress).toBeInstanceOf(Function);
   });
 
   describe("broadcast", () => {
@@ -109,28 +129,6 @@ describe("createApi", () => {
 
       await expect(api.craftTransaction(mockContext, txIntent)).rejects.toThrow(
         "useAllAmount is not supported",
-      );
-    });
-  });
-
-  describe("call", () => {
-    it("should throw 'call is not supported'", async () => {
-      await expect(api.call(mockContext, {})).rejects.toThrow("call is not supported");
-    });
-  });
-
-  describe("register", () => {
-    it("should throw 'register is not supported'", async () => {
-      await expect(api.register(mockContext, "address")).rejects.toThrow(
-        "register is not supported",
-      );
-    });
-  });
-
-  describe("craftRawTransaction", () => {
-    it("should throw when called", () => {
-      expect(() => api.craftRawTransaction(mockContext, "tx", "sender", "pubkey", 1n)).toThrow(
-        "craftRawTransaction is not supported",
       );
     });
   });
@@ -517,23 +515,6 @@ describe("createApi", () => {
 
       await expect(api.listOperations(mockContext, mockAddress, mockOptions)).rejects.toThrow(
         "hedera: evm address is missing",
-      );
-    });
-  });
-
-  describe("validateIntent", () => {
-    it("should throw when called", async () => {
-      // @ts-expect-error - testing unsupported method
-      await expect(api.validateIntent(mockContext, {}, [], undefined)).rejects.toThrow(
-        "validateIntent is not supported",
-      );
-    });
-  });
-
-  describe("getNextSequence", () => {
-    it("should throw when called", async () => {
-      await expect(api.getNextSequence(mockContext, "0.0.1234")).rejects.toThrow(
-        "getNextSequence is not supported",
       );
     });
   });

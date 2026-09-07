@@ -16,7 +16,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
   const bridge = useAccountBridge(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { solanaResources } = mainAccount;
+  const { stakingResources } = mainAccount;
 
   const onClick = useCallback(() => {
     if (bridge.isAccountEmpty(account)) {
@@ -28,7 +28,8 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
     } else {
       dispatch(
         openModal(
-          solanaResources && solanaResources.stakes.length > 0
+          stakingResources &&
+            stakingResources.delegations.length + stakingResources.unbondings.length > 0
             ? "MODAL_SOLANA_DELEGATE"
             : "MODAL_SOLANA_REWARDS_INFO",
           {
@@ -38,7 +39,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
         ),
       );
     }
-  }, [account, bridge, dispatch, source, solanaResources, mainAccount]);
+  }, [account, bridge, dispatch, source, stakingResources, mainAccount]);
 
   if (account.type === "TokenAccount") {
     return null;

@@ -22,8 +22,8 @@ import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
-import type { PayCardBalanceState } from "@features/flow-pay-card-balance/state";
-import type { PayCardFeatureTourState } from "@features/flow-pay-card-feature-tour/state";
+import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
+import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 
 /** Persisted pay card blob: the tour flag and the balance filter, stored under one key. */
 type PayCardPersistedState = PayCardFeatureTourState & PayCardBalanceState;

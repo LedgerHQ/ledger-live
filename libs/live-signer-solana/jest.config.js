@@ -1,7 +1,11 @@
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js", "@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: [
+    "<rootDir>/jest.setup.js",
+    "@ledgerhq/disable-network-setup",
+    "@ledgerhq/test-quarantine/jest-retries",
+  ],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
@@ -12,5 +16,9 @@ module.exports = {
       },
     ],
   },
-  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  reporters: [
+    "default",
+    ...(process.env.CI ? ["github-actions"] : []),
+    "@ledgerhq/test-quarantine/jest",
+  ],
 };

@@ -1,19 +1,25 @@
 import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
+  PayCardInternalWalletsResponseSchema,
+  PayCardLinkedWalletsResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
+  PayCardInternalWallet,
+  PayCardLinkedWallet,
   PayCardLogoutResult,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
+  PayCardStatus,
   PayCardUser,
 } from "./types";
 
@@ -78,6 +84,34 @@ export const cardManagementApi = cardApi
           body: { type: "VIRTUAL" },
         }),
         responseSchema: PayCardOrderResponseSchema,
+        // The order answers `{ success: true }` and nothing else, so the card it created only
+        // becomes observable once the status is read again.
+        invalidatesTags: ["CardStatus"],
+      }),
+
+      getCardStatus: build.query<PayCardStatus, void>({
+        query: () => ({
+          url: "/v1/card/status",
+          method: "GET",
+        }),
+        responseSchema: PayCardStatusResponseSchema,
+        providesTags: ["CardStatus"],
+      }),
+
+      getInternalWallets: build.query<PayCardInternalWallet[], void>({
+        query: () => ({
+          url: "/v1/wallet/internal",
+          method: "GET",
+        }),
+        responseSchema: PayCardInternalWalletsResponseSchema,
+      }),
+
+      getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
+        query: () => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "GET",
+        }),
+        responseSchema: PayCardLinkedWalletsResponseSchema,
       }),
     }),
   });
@@ -90,4 +124,7 @@ export const {
   useLogoutMutation,
   useGetUserQuery,
   useOrderCardMutation,
+  useGetCardStatusQuery,
+  useGetInternalWalletsQuery,
+  useGetCardLinkedWalletsQuery,
 } = cardManagementApi;

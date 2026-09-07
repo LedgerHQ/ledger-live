@@ -1,5 +1,4 @@
-import protobuf from "protobufjs";
-import * as protoJson from "./generate-protocol.json";
+import { ledger_trade } from "./generate-protocol";
 import { isHexadecimal } from "./shared-utils";
 import { SwapPayloadFieldExceedsLimit } from "./errors";
 
@@ -49,13 +48,9 @@ function decodeNewTransactionResponse(payload: string): SwapProtobufPayload {
   const buffer = isHexadecimal(normalized)
     ? Buffer.from(normalized, "hex")
     : Buffer.from(normalized.replace(/-/g, "+").replace(/_/g, "/"), "base64");
-  const root = protobuf.Root.fromJSON(protoJson);
-  // lookupType is protobufjs' public API for resolving a fully-qualified type; it is robust
-  // across runtimes, unlike reaching into `root.nested.*` which relies on internals.
-  const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
   // `decode` throws on malformed wire bytes, which is the validation we want here.
   // (protobufjs `verify` only checks a plain message object, not an encoded buffer.)
-  return TransactionResponse.decode(buffer) as unknown as SwapProtobufPayload;
+  return ledger_trade.NewTransactionResponse.decode(buffer) as unknown as SwapProtobufPayload;
 }
 
 export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {

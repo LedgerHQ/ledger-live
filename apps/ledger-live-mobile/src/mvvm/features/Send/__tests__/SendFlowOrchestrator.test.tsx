@@ -82,6 +82,11 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
       },
       [SEND_FLOW_STEP.RECENT_HISTORY]: { id: SEND_FLOW_STEP.RECENT_HISTORY, canGoBack: true },
       [SEND_FLOW_STEP.ADD_CONTACT]: { id: SEND_FLOW_STEP.ADD_CONTACT, canGoBack: true },
+      [SEND_FLOW_STEP.ADD_NEW_CONTACT]: { id: SEND_FLOW_STEP.ADD_NEW_CONTACT, canGoBack: true },
+      [SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT]: {
+        id: SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
+        canGoBack: true,
+      },
       [SEND_FLOW_STEP.AMOUNT]: { id: SEND_FLOW_STEP.AMOUNT, canGoBack: true },
       [SEND_FLOW_STEP.CUSTOM_FEES]: { id: SEND_FLOW_STEP.CUSTOM_FEES, canGoBack: true },
       [SEND_FLOW_STEP.COIN_CONTROL]: { id: SEND_FLOW_STEP.COIN_CONTROL, canGoBack: true },

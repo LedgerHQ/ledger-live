@@ -835,9 +835,9 @@ describe("coin-framework utils", () => {
     describe("memo", () => {
       const account = { currency: { name: "ethereum", units: [{}] } } as Account;
 
-      it("defaults to NO_MEMO when no memo or tag is provided", () => {
+      it("defaults to the framework's MemoNotSupported when no memo or tag is provided", () => {
         const intent = transactionToIntent(account, {} as GenericTransaction);
-        expect(intent.memo).toEqual({ type: "NO_MEMO" });
+        expect(intent.memo).toEqual({ type: "none" });
       });
 
       it.each([
@@ -851,12 +851,12 @@ describe("coin-framework utils", () => {
         });
       });
 
-      it("maps memoType/memoValue to a typed memo", () => {
+      it("maps memoType/memoValue to a StringMemo with memoType as its kind", () => {
         const intent = transactionToIntent(account, {
           memoType: "memo-type",
           memoValue: "memo-value",
         } as GenericTransaction);
-        expect(intent.memo).toEqual({ type: "memo-type", value: "memo-value" });
+        expect(intent.memo).toEqual({ type: "string", kind: "memo-type", value: "memo-value" });
       });
 
       it("prefers tag over memoType/memoValue when both are set", () => {
@@ -1547,6 +1547,17 @@ describe("coin-framework utils", () => {
 
       expect(result.transactionSequenceNumber).toEqual(expected);
     });
+
+    it("maps details.transferId to extra.transferId", () => {
+      const op = { ...baseOp, details: { transferId: "12345" } };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect((result.extra as Record<string, unknown>).transferId).toBe("12345");
+    });
+
+    it("does not set extra.transferId when details.transferId is absent", () => {
+      const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
+      expect("transferId" in (result.extra as Record<string, unknown>)).toBe(false);
+    });
   });
 
   describe("nextSequenceWithPending", () => {
@@ -1632,15 +1643,15 @@ describe("coin-framework utils", () => {
     });
 
     it("never lets the family shadow a framework-owned extra", () => {
-      // Including `pagingToken`, which the framework only reads and never writes here. The reviver
-      // spreads its input, so this also pins the strip as running after it.
+      // Including `memo`, which the framework writes only when the coin module supplies one. The
+      // reviver spreads its input, so this also pins the strip as running after it.
       const operation = adaptCoreOperationToLiveOperation(
         "accountId",
         {
           ...coreOperation,
           details: {
             ledgerOpType: "FREEZE",
-            familyExtra: { ledgerOpType: "HIJACKED", internal: true, pagingToken: "hijacked" },
+            familyExtra: { ledgerOpType: "HIJACKED", internal: true, memo: "hijacked" },
           },
         },
         extraRaw => ({ ...(extraRaw as Record<string, unknown>) }),
@@ -1649,7 +1660,7 @@ describe("coin-framework utils", () => {
 
       expect(extra.ledgerOpType).toBe("FREEZE");
       expect(extra.internal).toBeUndefined();
-      expect(extra.pagingToken).toBeUndefined();
+      expect(extra.memo).toBeUndefined();
     });
 
     it("leaves the framework's own keys alone when the coin module sends no family bag", () => {

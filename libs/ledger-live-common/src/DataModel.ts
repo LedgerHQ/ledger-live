@@ -1,4 +1,5 @@
 import { getCurrencyConfiguration } from "./config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 /**
@@ -45,8 +46,13 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
     let { data } = raw;
     const { currencyId } = data;
     const currency = findCryptoCurrencyById(currencyId);
-    if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency.id).showNfts) {
-      if (Array.isArray(data.operations)) {
+    if (currency && currency.family == "evm") {
+      const supportedTokens =
+        getCurrencyConfiguration<EvmConfigInfo>(currency.id).supportedTokens ?? [];
+      const nftUnsupported =
+        !supportedTokens ||
+        (!supportedTokens.includes("erc721") && !supportedTokens.includes("erc1155"));
+      if (nftUnsupported && Array.isArray(data.operations)) {
         data.operations = data.operations.filter(tx => !("nftOperations" in tx));
       }
     }

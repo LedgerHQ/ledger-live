@@ -20,6 +20,7 @@
   ],
   "ignoreUnimported": [
     "src/errors.ts",
+    "src/network/plt.ts",
     "src/test/concordiumTestUtils.ts",
     "src/test/fixtures.ts",
     "src/test/testHelpers.ts",

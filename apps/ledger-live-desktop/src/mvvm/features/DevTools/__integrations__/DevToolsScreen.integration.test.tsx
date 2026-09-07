@@ -26,6 +26,15 @@ jest.mock("@devtools/shell", () => ({
 jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
   usePayCardToolProps: () => ({ marker: "pay-card-props" }),
+  useEnvDevToolProps: () => ({ marker: "env-props" }),
+  useProdToggle: () => ({
+    useProd: false,
+    setUseProd: jest.fn(),
+    trustchainApiBaseUrl: "http://trustchain.test",
+    cloudSyncApiBaseUrl: "http://cloud-sync.test",
+  }),
+  useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
+  useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -55,7 +64,10 @@ describe("DevToolsScreen", () => {
       expect.objectContaining({
         config: [
           { id: "feature-flags", config: { marker: "ff-props" } },
+          { id: "env", config: { marker: "env-props" } },
           { id: "pay-card", config: { marker: "pay-card-props" } },
+          { id: "trustchain", config: { marker: "trustchain-props" } },
+          { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
         ],
       }),
     );

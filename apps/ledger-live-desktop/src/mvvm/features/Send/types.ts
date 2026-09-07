@@ -17,6 +17,7 @@ export type SendStepConfig = FlowStepConfig<SendFlowStep> &
     backTarget?: SendFlowStep;
     /** Whether the "Available $XX" description is shown in the header. Defaults to true when showTitle is true. */
     showAvailable?: boolean;
+    headerDensity?: "compact" | "expanded";
   }>;
 
 export type SendFlowConfig = FlowConfig<SendFlowStep, SendStepConfig>;

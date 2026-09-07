@@ -7,6 +7,8 @@ export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
   RECENT_HISTORY: "RECENT_HISTORY",
   ADD_CONTACT: "ADD_CONTACT",
+  ADD_NEW_CONTACT: "ADD_NEW_CONTACT",
+  ADD_TO_EXISTING_CONTACT: "ADD_TO_EXISTING_CONTACT",
   AMOUNT: "AMOUNT",
   CUSTOM_FEES: "CUSTOM_FEES",
   COIN_CONTROL: "COIN_CONTROL",
@@ -29,7 +31,7 @@ export type SendFlowUiConfig = Readonly<{
   hasMemo: boolean;
   memoType?: string;
   memoMaxLength?: number;
-  memoMaxValue?: number;
+  memoMaxValue?: number | bigint;
   memoOptions?: readonly string[];
   recipientSupportsDomain: boolean;
   hasFeePresets: boolean;

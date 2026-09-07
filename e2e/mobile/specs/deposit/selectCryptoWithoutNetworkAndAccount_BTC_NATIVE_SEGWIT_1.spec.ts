@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSelectCryptoWithoutNetworkAndAccountTest } from "./deposit";
+import { runSelectCryptoWithoutNetworkAndAccountTest } from "@e2e/specs/deposit/deposit";
 
 const testConfig = {
   account: Account.BTC_NATIVE_SEGWIT_1,

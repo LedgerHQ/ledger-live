@@ -25,14 +25,16 @@ export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssets
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
 
   const onAssetClick = useCallback(
-    (id: string) => () => {
+    (item: MarketItemPerformer) => () => {
       track("button_clicked", {
         button: "Market Tile",
-        currency: id,
+        currency: item.id,
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
       setTrackingSource(MARKET_BANNER_TRACKING_SOURCE);
-      navigate(getMarketOrAssetDetailPath(id, shouldDisplayAggregatedAssets));
+      navigate(getMarketOrAssetDetailPath(item.id, shouldDisplayAggregatedAssets), {
+        state: { id: item.id, ledgerIds: item.ledgerIds },
+      });
     },
     [navigate, shouldDisplayAggregatedAssets],
   );

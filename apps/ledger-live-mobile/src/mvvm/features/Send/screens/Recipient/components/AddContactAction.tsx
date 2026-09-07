@@ -17,6 +17,7 @@ type AddContactActionProps = Readonly<{
   label: string;
   unsupportedTitle: string;
   unsupportedDescription: string;
+  onAddContact: () => void;
 }>;
 
 export function AddContactAction({
@@ -24,6 +25,7 @@ export function AddContactAction({
   label,
   unsupportedTitle,
   unsupportedDescription,
+  onAddContact,
 }: AddContactActionProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const unsupportedSheetRef = useBottomSheetRef();
@@ -33,11 +35,16 @@ export function AddContactAction({
     unsupportedSheetRef.current?.present();
   }, [unsupportedSheetRef]);
 
+  const handleAddContact = useCallback(() => {
+    Keyboard.dismiss();
+    onAddContact();
+  }, [onAddContact]);
+
   const button = (
     <Button
       appearance="gray"
       size="sm"
-      onPress={() => undefined}
+      onPress={handleAddContact}
       disabled={!hasAddressBook}
       testID="send-recipient-card-add-contact"
       isFull

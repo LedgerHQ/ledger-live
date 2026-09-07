@@ -1,5 +1,5 @@
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
@@ -7,8 +7,18 @@ import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
+// `currency.list` crawls every token family from the live CAL API (~40 paginated requests of
+// 1000 ERC20s each), which blows past the expect timeout in CI. The assertions below only look at
+// parent currencies, which come from the local `listSupportedCurrencies()`, so tokens can be empty.
+async function mockCalTokens(page: Page) {
+  await page.route(/\/cal\/v1\/tokens(\?|$)/, route =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "[]" }),
+  );
+}
+
 test.use({
   userdata: "1AccountBTC1AccountETH",
+  mockRoutes: [mockCalTokens],
   featureFlags: {
     lldModularDrawer: {
       enabled: false,

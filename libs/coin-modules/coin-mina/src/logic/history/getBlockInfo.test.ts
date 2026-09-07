@@ -25,6 +25,21 @@ describe("getBlockInfo", () => {
     const result = await getBlockInfo(50);
 
     expect(result).toEqual(mockData);
-    expect(mockRosettaGetBlockInfo).toHaveBeenCalledWith(50);
+    expect(mockRosettaGetBlockInfo).toHaveBeenCalledWith(50, undefined);
+  });
+
+  it("should forward the timeout to rosetta", async () => {
+    const mockData = {
+      block: {
+        block_identifier: { index: 50, hash: "bh" },
+        parent_block_identifier: { index: 49, hash: "pbh" },
+        timestamp: 12345,
+      },
+    };
+    mockRosettaGetBlockInfo.mockResolvedValue(mockData);
+
+    await getBlockInfo(50, 30000);
+
+    expect(mockRosettaGetBlockInfo).toHaveBeenCalledWith(50, 30000);
   });
 });

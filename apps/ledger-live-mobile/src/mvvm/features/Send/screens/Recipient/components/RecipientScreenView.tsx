@@ -1,4 +1,5 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { ContactsFeatureIntroductionSheet } from "LLM/features/Contacts/screens/ContactsPage/components/ContactsFeatureIntroductionSheet";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
 import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import React from "react";
@@ -8,6 +9,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
 import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
@@ -30,8 +32,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     isLoading,
     showInitialState,
     showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
     contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
+    handleContactSelect,
+    handleContactAddressSelect,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -43,11 +50,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
-    handleContactSelect,
+    featureIntroduction,
   } = recipient;
 
   return (
     <SendFlowLayout>
+      <ContactsFeatureIntroductionSheet {...featureIntroduction} />
+
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={keyboardBehavior}>
         <ScrollView
           style={{ flex: 1, marginHorizontal: -8 }}
@@ -68,6 +77,21 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
             <RecipientContactsList
               contacts={contactsOnNetwork}
               onContactSelect={handleContactSelect}
+            />
+          )}
+
+          {showContactSearchResult && contactSearchResult && (
+            <RecipientContactsList
+              contacts={[contactSearchResult]}
+              onContactSelect={handleContactSelect}
+            />
+          )}
+
+          {selectedContact && (
+            <RecipientContactAddressSelection
+              contact={selectedContact}
+              network={recipient.mainAccount.currency}
+              onAddressSelect={handleContactAddressSelect}
             />
           )}
 

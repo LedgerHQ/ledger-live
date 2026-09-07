@@ -41,6 +41,7 @@ describe("isRetryableState", () => {
     [BlockingStateType.WrongDeviceForAccount]: true,
     [BlockingStateType.DeviceOutOfStorageSpace]: true,
     [BlockingStateType.DeviceNotOnboarded]: true,
+    [BlockingStateType.InvalidProvider]: true,
     [FinalStateType.Error]: true,
     [FinalStateType.Success]: true,
   };

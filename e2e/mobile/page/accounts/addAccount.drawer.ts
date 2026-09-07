@@ -1,13 +1,16 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
-import CommonPage from "../common.page";
-import { retryUntilTimeout } from "../../utils/retry";
-import { checkForErrorModals } from "../../helpers/errorHelpers";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import CommonPage from "@e2e/page/common.page";
+import { retryUntilTimeout } from "@e2e/utils/retry";
+import { checkForErrorModals } from "@e2e/helpers/errorHelpers";
 
 // Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
 // consume the whole budget in a single attempt.
 const CONTINUE_DISMISS_TIMEOUT = 5_000;
+
+// Long enough to outlast the drawer animation, short enough to not stall the variant that skips it.
+const IMPORT_PROMPT_TIMEOUT = 5_000;
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
@@ -15,8 +18,6 @@ export default class AddAccountDrawer extends CommonPage {
   modalButtonId = "add-accounts-modal-add-button";
   continueButtonId = "enabled-add-accounts-continue-button";
   closeAddAccountButtonId = "button-close-add-account";
-  addFundsButtonId = "button-add-funds";
-  actionDrawerReceiveButtonId = "action-drawer-receive-button";
 
   accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
 
@@ -29,6 +30,17 @@ export default class AddAccountDrawer extends CommonPage {
   async importWithYourLedger() {
     await waitForElementById(this.modalButtonId);
     await tapById(this.modalButtonId);
+  }
+
+  /**
+   * The aggregated-assets portfolio opens the asset selector straight from its add-account CTA,
+   * with no intermediate modal to import from, so the step only exists in the other variant.
+   */
+  @Step("Click on 'Import with your Ledger' button if asked")
+  async importWithYourLedgerIfAsked() {
+    if (await IsIdVisible(this.modalButtonId, IMPORT_PROMPT_TIMEOUT)) {
+      await tapById(this.modalButtonId);
+    }
   }
 
   @Step("Wait for accounts discovery")
@@ -96,22 +108,14 @@ export default class AddAccountDrawer extends CommonPage {
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
     await this.waitAccountsDiscovery();
     const accountCount = await countElementsById(this.accountItemRegExp());
+    // A lone discovered account arrives already selected, so tapping it would clear the selection
+    // and disable Confirm. Only the multi-account case needs deselecting and then picking one.
     if (accountCount > 1) {
       await tapById(this.deselectAllButtonId);
+      await tapById(this.accountItemRegExp(), index);
     }
-    await tapById(this.accountItemRegExp(), 0);
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
     await this.finishAccountsDiscovery();
     return accountId;
-  }
-
-  @Step("Click on 'Add funds to my account' button")
-  async tapAddFunds() {
-    await tapById(this.addFundsButtonId);
-  }
-
-  @Step("Click on 'Receive' in action drawer")
-  async tapReceiveActionDrawer() {
-    await tapById(this.actionDrawerReceiveButtonId);
   }
 }

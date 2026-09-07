@@ -94,3 +94,15 @@ export const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
+
+export const MICROCREDITS_PER_CREDIT = 1_000_000;
+
+// Below this bonded total the protocol pays a delegator nothing at all.
+export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
+
+// snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
+// rates derived from this alone are a lower bound.
+export const ANNUAL_INFLATION_RATE = 0.05;
+
+// A validator above this share of total stake earns zero, not a reduced rate.
+export const MAX_VALIDATOR_STAKE_SHARE = 0.25;

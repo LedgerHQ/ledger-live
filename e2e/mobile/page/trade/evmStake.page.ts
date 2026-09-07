@@ -21,12 +21,6 @@ export default class EvmStakePage {
     await tapById(ctaId);
   }
 
-  @Step("Tap on Add delegation CTA")
-  async tapAddDelegation() {
-    await waitForElementById(this.addDelegationCtaId);
-    await tapById(this.addDelegationCtaId);
-  }
-
   @Step("Wait for the validator list to be visible")
   async waitForValidatorListVisible() {
     await waitForElement(getElementById(VALIDATOR_ROW_REGEX));

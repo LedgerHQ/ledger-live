@@ -192,7 +192,7 @@ export function SendHeader() {
     <div className="flex flex-col">
       <div data-testid="send-dialog-header">
         <DialogHeader
-          density="compact"
+          density={wizard.currentStepConfig?.headerDensity ?? "compact"}
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}

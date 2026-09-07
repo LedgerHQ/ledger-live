@@ -8,6 +8,7 @@ export const PAGE_BACKGROUNDS: Record<string, string> = {
   "/": homeBg,
   "/earn": earnBg,
   "/card-new-wallet": cardBg,
+  "/paytab": cardBg,
   "/swap": swapBg,
   "/exchange": swapBg,
 } as const;

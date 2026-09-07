@@ -1,99 +1,53 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import * as animationModule from "./getDeviceActionAnimation";
-import { DeviceActionContent } from ".";
+import * as platformModule from "@features/platform-device-action-content";
+import { DeviceActionContent, supportedDeviceActionModelIds } from ".";
 
-jest.mock("./getDeviceActionAnimation", () => {
-  const actual = jest.requireActual<typeof import("./getDeviceActionAnimation")>(
-    "./getDeviceActionAnimation",
+jest.mock("@features/platform-device-action-content", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-device-action-content")>(
+    "@features/platform-device-action-content",
   );
   return {
     ...actual,
-    getDeviceActionAnimation: jest.fn(actual.getDeviceActionAnimation),
+    DeviceActionContent: jest.fn(() => null),
   };
 });
+
+const mockedPlatformDeviceActionContent = jest.mocked(platformModule.DeviceActionContent);
+
+function lastProps() {
+  return mockedPlatformDeviceActionContent.mock.calls.at(-1)?.[0];
+}
 
 describe("DeviceActionContent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders title, description, device label, and banner", () => {
-    render(
-      <DeviceActionContent
-        title="Unlock your device"
-        description="Enter your PIN code to continue."
-        deviceName="Ledger Flex CDA1"
-        deviceModelId={DeviceModelId.europa}
-        action="power-and-unlock"
-        banner={{
-          title: "Keep the device connected",
-          description: "Do not disconnect your Ledger.",
-        }}
-      />,
-    );
-
-    expect(screen.getByText("Unlock your device")).toBeVisible();
-    expect(screen.getByText("Enter your PIN code to continue.")).toBeVisible();
-    expect(screen.getByText("Ledger Flex CDA1")).toBeVisible();
-    expect(screen.getByText("Keep the device connected")).toBeVisible();
-    expect(screen.getByText("Do not disconnect your Ledger.")).toBeVisible();
-  });
-
-  it("renders the root container and animation", () => {
+  it("converts the legacy DeviceModelId and leaves the theme to the platform package", () => {
     render(
       <DeviceActionContent
         title="Continue on device"
-        description="Follow the instructions on your Ledger."
-        deviceName="Ledger Flex CDA1"
-        deviceModelId={DeviceModelId.europa}
-        action="continue"
-        testID="device-action-content"
-      />,
-    );
-
-    expect(screen.getByTestId("device-action-content")).toBeVisible();
-    expect(screen.getByTestId("device-action-content-animation")).toBeVisible();
-  });
-
-  it("hides optional title, description, and banner when props are omitted", () => {
-    render(
-      <DeviceActionContent
-        deviceName="Ledger Apex CDA1"
-        deviceModelId={DeviceModelId.apex}
-        action="continue"
-      />,
-    );
-
-    expect(screen.queryByText("Continue on device")).toBeNull();
-    expect(screen.queryByText("Keep the device connected")).toBeNull();
-    expect(screen.getByText("Ledger Apex CDA1")).toBeVisible();
-  });
-
-  it("uses the current styled theme when no animation theme override is provided", () => {
-    render(
-      <DeviceActionContent
-        title="Continue on device"
-        description="Follow the instructions on your Ledger."
         deviceName="Ledger Flex CDA1"
         deviceModelId={DeviceModelId.europa}
         action="continue"
       />,
     );
 
-    expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
-      action: "continue",
-      modelId: DeviceModelId.europa,
-      theme: "dark",
-    });
+    expect(lastProps()).toEqual(
+      expect.objectContaining({
+        title: "Continue on device",
+        deviceName: "Ledger Flex CDA1",
+        deviceModelId: "europa",
+        action: "continue",
+      }),
+    );
   });
 
-  it("uses the explicit animation theme override when provided", () => {
+  it("forwards an explicit theme override", () => {
     render(
       <DeviceActionContent
-        title="Continue on device"
-        description="Follow the instructions on your Ledger."
         deviceName="Ledger Flex CDA1"
         deviceModelId={DeviceModelId.europa}
         action="continue"
@@ -101,10 +55,37 @@ describe("DeviceActionContent", () => {
       />,
     );
 
-    expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
-      action: "continue",
-      modelId: DeviceModelId.europa,
-      theme: "light",
-    });
+    expect(lastProps()).toEqual(expect.objectContaining({ theme: "light" }));
+  });
+
+  it("converts blue to null", () => {
+    render(
+      <DeviceActionContent
+        deviceName="Ledger Blue"
+        deviceModelId={DeviceModelId.blue}
+        action="continue"
+      />,
+    );
+
+    expect(lastProps()).toEqual(expect.objectContaining({ deviceModelId: null }));
+  });
+
+  it("lists every supported model id except blue", () => {
+    expect(supportedDeviceActionModelIds).toEqual(
+      Object.values(DeviceModelId).filter(modelId => modelId !== DeviceModelId.blue),
+    );
+    expect(supportedDeviceActionModelIds).not.toContain(DeviceModelId.blue);
+  });
+
+  // The platform package can't import DeviceModelId (legacy libs/ is forbidden in features/), so
+  // its DeviceActionModelId union is hand-written. This is the only layer that sees both: it
+  // fails if a device model is added to the enum without teaching the package about it, which
+  // would otherwise silently render no animation.
+  it("fails loudly when a supported model is missing from the platform union", () => {
+    expect(
+      supportedDeviceActionModelIds.filter(
+        modelId => platformModule.toDeviceActionModelId(modelId) === null,
+      ),
+    ).toEqual([]);
   });
 });

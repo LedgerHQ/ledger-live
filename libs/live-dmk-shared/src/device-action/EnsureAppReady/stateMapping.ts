@@ -204,6 +204,14 @@ export function mapConnectAppDAErrorStatus(params: {
     };
   }
 
+  // The manager API answers 404 for an unknown My Ledger provider, which DMK
+  // surfaces as this generic metadata error.
+  if (hasTag(error, "InvalidGetFirmwareMetadataResponseError")) {
+    return {
+      type: BlockingStateType.InvalidProvider,
+    };
+  }
+
   const deviceState = getCurrentDeviceState();
 
   if (error instanceof UnsupportedFirmwareDAError) {

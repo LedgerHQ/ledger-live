@@ -4,7 +4,7 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import type { ContactsDeleteAddressDialogLabels } from "../components/ContactsDeleteAddressDialog/types";
-import type { ContactsRenameAddressLabels } from "../../EditAddress/types";
+import type { ContactsRenameAddressLabels } from "@features/flow-contacts-edit-address";
 import { resolveContactEditSignerActionLabels } from "./resolveContactEditSignerActionLabels";
 
 export type ContactAddressDetailActionsLabels = Readonly<{

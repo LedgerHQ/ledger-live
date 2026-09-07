@@ -12,6 +12,7 @@ export type QueuedDrawerFlowOptions = Readonly<
     | "hideHandle"
     | "maxDynamicContentSize"
     | "noCloseButton"
+    | "onHeaderClosePressed"
     | "preventBackdropClick"
     | "snapPoints"
   >

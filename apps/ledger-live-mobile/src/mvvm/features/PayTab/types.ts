@@ -1,3 +1,4 @@
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
 
 export type PayTabNavigatorParamList = {
@@ -6,4 +7,9 @@ export type PayTabNavigatorParamList = {
    * us, so the login flow receives the value from the route rather than from the raw URL.
    */
   [ScreenName.PayTab]: { code?: string } | undefined;
+  [ScreenName.PayTabRequestReceive]: {
+    accountId: string;
+    parentId?: string;
+    currency: CryptoOrTokenCurrency;
+  };
 };

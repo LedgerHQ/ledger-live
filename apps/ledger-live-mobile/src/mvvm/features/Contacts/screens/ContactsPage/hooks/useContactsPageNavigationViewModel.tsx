@@ -8,6 +8,7 @@ export function useContactsPageNavigationViewModel(
   addContactLabel: string,
   showAddContact: boolean,
   onAddContact: () => void,
+  title?: string,
 ) {
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
@@ -20,12 +21,13 @@ export function useContactsPageNavigationViewModel(
   );
 
   useLayoutEffect(() => {
-    const opts: Partial<LumenNativeStackNavigationOptions> = {
+    const options: Partial<LumenNativeStackNavigationOptions> = {
       lumenNavBar: {
         renderTrailing: showAddContact ? renderTrailing : undefined,
       },
+      ...(title !== undefined && { title }),
     };
 
-    navigation.setOptions(opts);
-  }, [navigation, renderTrailing, showAddContact]);
+    navigation.setOptions(options);
+  }, [navigation, renderTrailing, showAddContact, title]);
 }

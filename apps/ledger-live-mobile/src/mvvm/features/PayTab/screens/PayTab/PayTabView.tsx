@@ -1,58 +1,47 @@
 import React from "react";
-import {
-  CardLogin,
-  CardLogout,
-  type CardLoginOauthConfig,
-  type PayCardAuthCallback,
-} from "@features/flow-pay-card-auth";
-import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
-import {
-  Balance,
-  type ActionTilesProps,
-  type BalanceData,
-  type BalanceLabels,
-} from "@features/flow-pay-card-balance";
-import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
-import { RequestReceive, type RequestReceiveProps } from "@features/flow-pay-card-request";
+import { Card, type CardProps } from "@features/flow-pay-card";
+import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
+import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
+import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
+import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
-  readonly oauthConfig: CardLoginOauthConfig;
-  readonly callback: PayCardAuthCallback | null;
+  readonly cardTitle: string;
+  readonly oauthConfig: CardProps["oauthConfig"];
+  readonly callback: CardProps["callback"];
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
-  readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
+  readonly contacts: ContactsNativeProps;
   readonly depositOptions: DepositOptionsProps;
-  readonly requestReceive: RequestReceiveProps;
 };
 
 export function PayTabView({
   top,
+  cardTitle,
   oauthConfig,
   callback,
   featureTour,
   balance,
-  balanceLabels,
   actionTiles,
+  contacts,
   depositOptions,
-  requestReceive,
 }: PayTabViewProps) {
   return (
-    <Box
-      lx={{ flex: 1, backgroundColor: "canvas" }}
-      style={{ paddingTop: top }}
-      testID="paytab-screen"
-    >
-      <TrackScreen category="Pay" balance_filter={balance.filter} />
-      <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
-      <DepositOptions {...depositOptions} />
-      <RequestReceive {...requestReceive} />
-      <CardLogin oauthConfig={oauthConfig} callback={callback} />
-      <CardLogout />
-      <FeatureTour {...featureTour} />
+    <Box lx={{ flex: 1 }} testID="paytab-screen">
+      <Wallet40Background type="pay" />
+      <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
+        <TrackScreen category="Pay" balance_filter={balance.filter} />
+        <Balance {...balance} actionTiles={actionTiles} />
+        <Contacts {...contacts} />
+        <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
+        <FeatureTour {...featureTour} />
+        <DepositOptions {...depositOptions} />
+      </Box>
     </Box>
   );
 }

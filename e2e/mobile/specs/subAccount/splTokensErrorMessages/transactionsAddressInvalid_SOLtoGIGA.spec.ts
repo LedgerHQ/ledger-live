@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendSPLAddressInvalid } from "../subAccount";
+import { runSendSPLAddressInvalid } from "@e2e/specs/subAccount/subAccount";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const transactionE2E = {

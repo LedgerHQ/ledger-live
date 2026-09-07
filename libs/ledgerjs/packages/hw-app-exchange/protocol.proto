@@ -1,5 +1,5 @@
 syntax = "proto3";
-package ledger_swap;
+package ledger_trade;
 
 message NewTransactionResponse {
     string payin_address = 1;

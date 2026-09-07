@@ -7,6 +7,7 @@
  * and does not depend on this module.
  */
 
+import { BigNumber } from "bignumber.js";
 import { colors, writeStdout, hyperlink } from "../shared/ui";
 import type { HumanFormatter } from "../wallet/formatter/human";
 import type {
@@ -273,8 +274,8 @@ export function renderEarnWithdrawResult(result: EarnWithdrawResult): void {
 // ---------------------------------------------------------------------------
 
 /** Lamports → SOL (1e9), 4 dp, for readability. The stake-account addresses are what matters. */
-function lamportsToSol(lamports: number): string {
-  return (lamports / 1e9).toFixed(4);
+function lamportsToSol(lamports: string): string {
+  return new BigNumber(lamports).shiftedBy(-9).toFixed(4);
 }
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {

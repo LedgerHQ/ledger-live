@@ -219,6 +219,9 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     const bridge = {};
     return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
   }),
+  getAccountBridgeByFamily: jest.fn(async () => ({
+    validateAddress: jest.fn(async () => true),
+  })),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
@@ -235,6 +238,9 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
     const bridge = {};
     return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
   }),
+  getAccountBridgeByFamily: jest.fn(async () => ({
+    validateAddress: jest.fn(async () => true),
+  })),
 }));
 
 jest.mock("@ledgerhq/domain-service/hooks/index", () => ({

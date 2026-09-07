@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, {
   Easing,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -28,17 +29,30 @@ export function StoryProgressBar({
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    progress.value = 0;
-    if (isActivated) {
-      progress.value = withTiming(100, { duration: durationMs, easing: Easing.linear });
+    // A completed story keeps a full bar, every other state starts from an empty one.
+    progress.value = isCompleted ? 100 : 0;
+
+    // durationMs is 0 until the video reports its length. Animating over 0ms would
+    // snap the bar to full, then restart it once the real duration arrives.
+    if (isActivated && !isCompleted && durationMs > 0) {
+      progress.value = withTiming(100, {
+        duration: durationMs,
+        easing: Easing.linear,
+        // The bar mirrors the video playing behind it, so it has to run even when the
+        // system asks for less motion: withTiming would otherwise jump straight to full.
+        reduceMotion: ReduceMotion.Never,
+      });
     }
   }, [durationMs, isActivated, isCompleted, progress, restartKey]);
 
+  // The width comes from the shared value alone: mixing props into the worklet makes it
+  // re-register on every story change, and the bar then keeps the previous story's width
+  // until that lands.
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      width: isCompleted ? "100%" : `${progress.value}%`,
+      width: `${progress.value}%`,
     };
-  }, [progress, isCompleted]);
+  }, [progress]);
 
   return (
     <View style={styles.container} testID="welcome-progress-bar">

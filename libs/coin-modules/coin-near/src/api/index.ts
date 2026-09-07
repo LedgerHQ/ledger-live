@@ -3,17 +3,15 @@ import type {
   AddressValidationCurrencyParameters,
   Balance,
   BalanceOptions,
-  Block,
   BlockInfo,
   BroadcastConfig,
-  CoinModuleApi,
+  CoinModuleImpl,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
   Stake,
   TransactionValidation,
   Validator,
@@ -37,10 +35,22 @@ import { validateIntent } from "../logic/validateIntent";
 // and threads it to the logic/network layers, which resolve config from `context.config()` — the
 // api path never reads the getCoinConfig() singleton. createApi keeps its `config` param and seeds
 // it via setCoinConfig only for the classic account bridge, which still resolves config that way.
-// Staking reads are implemented (real pool-contract delegation);
-// getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline
-// throws below for why.
-export function createApi(): CoinModuleApi<NearConfig> {
+//
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist. Staking reads are implemented (real
+// pool-contract delegation); tokens are not.
+//
+// Omitted rather than stubbed, and why:
+//   - `getNextSequence`     — no account-level nonce: on NEAR the nonce belongs to an access key,
+//                             not to an account.
+//   - `getRewards`          — there is no reward distribution event to list; a staking pool
+//                             compounds rewards into the staked balance, which `getStakes` reports.
+//   - `getBlock`            — reading a block together with all its transactions is not supported.
+//   - `craftRawTransaction` — the module accepts no externally-built transaction.
+//   - `call`                — no read-only contract-call escape hatch is exposed.
+//   - `register`            — no enrollment step.
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
+export function createApi() {
   return {
     // --- Blocks / chain state ---
     lastBlock: (context: NearContext): Promise<BlockInfo> => lastBlock(context),
@@ -60,9 +70,9 @@ export function createApi(): CoinModuleApi<NearConfig> {
     ): Promise<Page<Operation>> => listOperations(context, address, options),
 
     // --- Transaction lifecycle ---
-    craftTransaction: (context, transactionIntent, options): Promise<CraftedTransaction> =>
+    craftTransaction: (context, transactionIntent, options?): Promise<CraftedTransaction> =>
       craftTransaction(context, transactionIntent, options?.customFees),
-    estimateFees: (context, transactionIntent, options): Promise<FeeEstimation> =>
+    estimateFees: (context, transactionIntent, options?): Promise<FeeEstimation> =>
       estimateFees(context, transactionIntent, options?.customFeesParameters),
     combine: (
       _context: NearContext,
@@ -79,7 +89,7 @@ export function createApi(): CoinModuleApi<NearConfig> {
       context,
       transactionIntent,
       balances,
-      options,
+      options?,
     ): Promise<TransactionValidation> =>
       validateIntent(context, transactionIntent, balances, options?.customFees),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
@@ -99,39 +109,7 @@ export function createApi(): CoinModuleApi<NearConfig> {
       context: NearContext,
       options?: { cursor?: Cursor },
     ): Promise<Page<Validator>> => getValidators(context, options?.cursor),
-
-    // --- Not supported ---
-    getBlock: (_context: NearContext, _height: number): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
-    getNextSequence: (_context: NearContext, _address: string): Promise<bigint> => {
-      throw new Error(
-        "getNextSequence is not applicable for Near: the nonce belongs to an access key, not to an account",
-      );
-    },
-    getRewards: (
-      _context: NearContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
-    craftRawTransaction: (
-      _context: NearContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
-    call: async (_context: NearContext) => {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-  };
+  } satisfies CoinModuleImpl<NearConfig>;
 }
 
 export default createApi;

@@ -3,9 +3,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-reac
 
 type ContactDetailNameProps = Readonly<{
   name: string;
+  size?: "heading-3-semi-bold" | "heading-5-semi-bold";
 }>;
 
-export function ContactDetailName({ name }: ContactDetailNameProps): React.JSX.Element {
+export function ContactDetailName({
+  name,
+  size = "heading-3-semi-bold",
+}: ContactDetailNameProps): React.JSX.Element {
   const nameRef = useRef<HTMLHeadingElement>(null);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -24,7 +28,7 @@ export function ContactDetailName({ name }: ContactDetailNameProps): React.JSX.E
       <TooltipTrigger asChild>
         <h2
           ref={nameRef}
-          className="heading-3-semi-bold min-w-0 max-w-full truncate text-base"
+          className={`${size} min-w-0 max-w-full truncate text-base`}
           data-testid="contacts-detail-name"
         >
           {name}

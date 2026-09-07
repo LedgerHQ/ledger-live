@@ -27,6 +27,7 @@ type RecipientCardProps = Readonly<{
   addressBookUnsupportedDescription: string;
   addContactLabel: string;
   sendLabel: string;
+  onAddContact: () => void;
   onSend: () => void;
 }>;
 
@@ -41,6 +42,7 @@ export function RecipientCard({
   addressBookUnsupportedDescription,
   addContactLabel,
   sendLabel,
+  onAddContact,
   onSend,
 }: RecipientCardProps) {
   return (
@@ -85,6 +87,7 @@ export function RecipientCard({
               label={addContactLabel}
               unsupportedTitle={addressBookUnsupportedTitle}
               unsupportedDescription={addressBookUnsupportedDescription}
+              onAddContact={onAddContact}
             />
           )}
           <Button

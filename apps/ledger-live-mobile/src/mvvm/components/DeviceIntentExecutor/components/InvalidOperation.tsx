@@ -1,7 +1,7 @@
 import React from "react";
 import type { InvalidOperationComponent } from "@features/platform-device-intent";
 import { Trans } from "~/context/Locale";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 import {

@@ -80,6 +80,7 @@ function run(input: SignSwapEvmIntentInput = BASE_INPUT) {
     deviceConnectionResult: FAKE_CONNECTION,
     deviceExtractedContext: FAKE_CONTEXT,
     input,
+    onResult: jest.fn(),
   });
 }
 

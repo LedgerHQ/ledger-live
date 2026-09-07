@@ -35,6 +35,7 @@ async function collectStates(
       deviceConnectionResult: FAKE_DEVICE_CONNECTION,
       deviceExtractedContext: FAKE_DEVICE_CONTEXT,
       input,
+      onResult: jest.fn(),
     }).pipe(toArray()),
   );
 }
@@ -155,6 +156,7 @@ describe("submitRfqOrderEvmJob", () => {
         deviceConnectionResult: FAKE_DEVICE_CONNECTION,
         deviceExtractedContext: FAKE_DEVICE_CONTEXT,
         input: { ...BASE_INPUT, fetchImpl },
+        onResult: jest.fn(),
       }),
     );
     expect(first).toEqual({ type: "submitting" });

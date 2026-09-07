@@ -1,7 +1,7 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AddressValidationCurrencyParameters,
-  CoinModuleApi,
+  CoinModuleImpl,
   Balance,
   BalanceOptions,
   BroadcastConfig,
@@ -31,7 +31,7 @@ import { validateIntent } from "../logic/validateIntent";
 import { ChainAPI, getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-type SolanaCoinModuleApi = CoinModuleApi<SolanaCoinConfig, StringMemo | MemoNotSupported>;
+type SolanaCoinModuleImpl = CoinModuleImpl<SolanaCoinConfig, StringMemo | MemoNotSupported>;
 
 /**
  * Resolves the coin configuration from the {@link SolanaContext} and builds the {@link ChainAPI}
@@ -51,7 +51,12 @@ async function chainAPIFromContext(
 }
 
 // The `currencyId` selector is captured here; the caller builds the {@link SolanaContext} (config + logger) and passes it to each method (ADR-019).
-export function createApi(currencyId: string): SolanaCoinModuleApi {
+// Checked against the authoring type with `satisfies` rather than annotated as it, so the precise
+// shape survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed: `call`, `register`, `getBlock`, `getBlockInfo` and `getRewards`. The
+// consumer resolver applies `withDefaults`, which answers "not supported" for each.
+export function createApi(currencyId: string) {
   return {
     broadcast: async (
       context: SolanaContext,
@@ -60,12 +65,6 @@ export function createApi(currencyId: string): SolanaCoinModuleApi {
     ) => {
       const { api } = await chainAPIFromContext(context, currencyId);
       return broadcast(api, tx);
-    },
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
     },
     combine: (
       _context: SolanaContext,
@@ -122,16 +121,7 @@ export function createApi(currencyId: string): SolanaCoinModuleApi {
       const { api } = await chainAPIFromContext(context, currencyId);
       return listOperations(api, address, options);
     },
-    getBlock: () => {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo: () => {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getRewards: (_context: SolanaContext, _address: string, _options?: { cursor?: Cursor }) => {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators: async (context: SolanaContext) => {
+    getValidators: async (context: SolanaContext, _options?) => {
       const { config } = await chainAPIFromContext(context, currencyId);
       return getValidators(config.validatorsUrl);
     },
@@ -159,5 +149,5 @@ export function createApi(currencyId: string): SolanaCoinModuleApi {
       return validateAddress(address, parameters);
     },
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies SolanaCoinModuleImpl;
 }

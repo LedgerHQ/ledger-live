@@ -14,6 +14,7 @@ import {
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { type WalletState } from "~/renderer/reducers/wallet";
 import { useVersionedStakePrograms } from "./useVersionedStakePrograms";
+import { getAccountUrl } from "~/renderer/utils";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -122,8 +123,8 @@ export function useStake() {
       );
 
       const returnToAccount = isTokenAccount(account)
-        ? `/account/${earningsAccountId}/${account.id}`
-        : `/account/${earningsAccountId}`;
+        ? getAccountUrl(account.id, earningsAccountId)
+        : getAccountUrl(earningsAccountId);
 
       const customPartnerParams = appDetails?.queryParams ?? {};
 

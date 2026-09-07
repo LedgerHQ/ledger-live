@@ -122,12 +122,14 @@ function AddressMatchedSectionContainer({
   hasAddressBook = true,
   addressBookFamilyName = "Ethereum",
   onSelect = jest.fn(),
+  onAddContact = jest.fn(),
 }: Readonly<{
   result: AddressSearchResult;
   isContactsFeatureEnabled?: boolean;
   hasAddressBook?: boolean;
   addressBookFamilyName?: string;
   onSelect?: (address: string, ensName?: string) => void;
+  onAddContact?: () => void;
 }>) {
   const viewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
@@ -137,6 +139,7 @@ function AddressMatchedSectionContainer({
     isContactsFeatureEnabled,
     hasAddressBook,
     addressBookFamilyName,
+    onAddContact,
   });
 
   return <AddressMatchedSection viewModel={viewModel} />;
@@ -182,7 +185,7 @@ describe("AddressMatchedSection", () => {
     expect(onSelect).toHaveBeenCalledWith(address, "vitalik.eth");
   });
 
-  it("keeps add contact enabled when the address book is supported", () => {
+  it("keeps add contact enabled when the contacts feature is enabled", () => {
     render(
       <AddressMatchedSectionContainer
         result={{
@@ -196,6 +199,24 @@ describe("AddressMatchedSection", () => {
 
     expect(screen.getByTestId("send-recipient-card-add-contact")).toBeEnabled();
     expect(screen.getByTestId("send-recipient-card-send")).toBeEnabled();
+  });
+
+  it("opens add contact from the recipient card", () => {
+    const onAddContact = jest.fn();
+    render(
+      <AddressMatchedSectionContainer
+        result={{
+          ...searchResult,
+          status: "valid",
+          resolvedAddress: address,
+        }}
+        isContactsFeatureEnabled
+        onAddContact={onAddContact}
+      />,
+    );
+
+    fireEvent.press(screen.getByTestId("send-recipient-card-add-contact"));
+    expect(onAddContact).toHaveBeenCalledTimes(1);
   });
 
   it("opens the unsupported address book sheet from the disabled add contact button", () => {

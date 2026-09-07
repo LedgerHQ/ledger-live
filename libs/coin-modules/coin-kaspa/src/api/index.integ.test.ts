@@ -1,3 +1,4 @@
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { KaspaCoinConfig } from "../config";
 import { publicKeyToAddress } from "../logic/kaspaAddresses";
@@ -26,14 +27,16 @@ describe("createApi (integration)", () => {
   const context = createMockKaspaContext();
 
   beforeAll(() => {
-    api = createApi();
+    // Through withDefaults, as the consumer resolver does: the module omits the capabilities Kaspa
+    // has none of, and the wrapper backfills them.
+    api = withDefaults(createApi());
   });
 
   // These methods throw synchronously (they never return a promise), so they are asserted with a
   // synchronous `expect(() => …).toThrow`, not `.rejects` (mirrors coin-filecoin's api integ test).
   it("getNextSequence throws (not applicable to a UTXO chain)", () => {
     expect(() => api.getNextSequence(context, PRISTINE_SENDER)).toThrow(
-      "getNextSequence is not applicable for Kaspa",
+      "getNextSequence is not supported",
     );
   });
 

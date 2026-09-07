@@ -74,12 +74,6 @@
   },
   "overrides": [
     {
-      "files": ["**/*.stories.{ts,tsx,js,jsx}", "**/storybook/**"],
-      "rules": {
-        "react-hooks/rules-of-hooks": "off"
-      }
-    },
-    {
       "files": ["**/*.test.{ts,tsx}", "**/__tests__/**"],
       "env": { "jest": true },
       "plugins": ["jest"],

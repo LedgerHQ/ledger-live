@@ -1,5 +1,5 @@
 import type {
-  CoinModuleApi,
+  CoinModuleImpl,
   Balance,
   Block,
   BlockInfo,
@@ -13,8 +13,6 @@ import type {
   MemoNotSupported,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
   TransactionValidation,
   Validator,
@@ -48,9 +46,20 @@ import { isHexString } from "../utils";
 // The framework contract passes opaque params (object or array); EVM only accepts the object
 // form { to, data, block? }, and parseCallParams rejects arrays defensively at runtime. `call`
 // returns a hex string, which satisfies the framework's `CallResult` (unknown).
-export function createApi(
-  currencyId: string,
-): CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> {
+// Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
+// survives and a caller sees exactly which methods exist.
+//
+// Omitted rather than stubbed:
+//   - `craftRawTransaction` — the chain takes no externally-built transaction.
+//   - `register`            — no enrollment step.
+//   - `getStakes`, `getRewards` — no staking positions or reward events are read here; only the
+//                             validator list is, which `getValidators` serves.
+// The consumer resolver applies `withDefaults`, which answers "not supported" for each.
+// The return type is the precise object shape `satisfies CoinModuleImpl` infers. Annotating it
+// would widen every optional capability back and defeat the authoring type, which is the point of
+// the migration — hence the exemption below rather than a return annotation.
+// oxlint-disable-next-line explicit-function-return-type
+export function createApi(currencyId: string) {
   // The {@link EvmContext} is threaded to every public API method (ADR-019) and forwarded to the
   // low layers, which resolve config through `context.config(currencyId)` — no module-level
   // singleton read.
@@ -71,7 +80,7 @@ export function createApi(
       tx: string,
       signature: string[],
       _options?: { pubkey?: string },
-    ) => combine(tx, signature),
+    ): string => combine(tx, signature),
     craftTransaction: (
       context: EvmContext,
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
@@ -81,15 +90,6 @@ export function createApi(
         transactionIntent,
         customFees: options?.customFees,
       }),
-    craftRawTransaction: (
-      _context: EvmContext,
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
     estimateFees: (
       context: EvmContext,
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
@@ -114,19 +114,6 @@ export function createApi(
       getBlock(context, currencyId, height),
     getBlockInfo: (context: EvmContext, height: number): Promise<BlockInfo> =>
       getBlockInfo(context, currencyId, height),
-    async register() {
-      throw new Error("register is not supported");
-    },
-    getStakes(_context: EvmContext, _address: string): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(
-      _context: EvmContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
     getValidators: async (
       context: EvmContext,
       options?: { cursor?: Cursor },
@@ -136,7 +123,7 @@ export function createApi(
     },
     getNextSequence: (context: EvmContext, address: string): Promise<bigint> =>
       getNextSequence(context, currencyId, address),
-    validateAddress: (_context: EvmContext, address, parameters) =>
+    validateAddress: (_context: EvmContext, address, parameters): Promise<boolean> =>
       validateAddress(address, parameters),
     validateIntent: (
       context: EvmContext,
@@ -148,8 +135,8 @@ export function createApi(
     craftTransactionData: (
       _context: EvmContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
-    ) => craftTransactionData(intent),
-  };
+    ): BufferTxData => craftTransactionData(intent),
+  } satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData>;
 }
 
 export function parseCallParams(params: unknown): EvmCallParams {

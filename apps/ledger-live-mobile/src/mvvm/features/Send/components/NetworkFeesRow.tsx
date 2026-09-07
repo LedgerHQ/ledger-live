@@ -13,7 +13,7 @@ import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symb
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
-import { InfoState } from "LLM/components/InfoState";
+import { InfoState } from "@shared/ui-info-state";
 import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { track } from "~/analytics";

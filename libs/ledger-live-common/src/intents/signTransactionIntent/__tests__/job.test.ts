@@ -80,7 +80,12 @@ function mockGetAccountBridgeResolvedValue(bridge: BridgeMock) {
 }
 
 function startJob() {
-  return signTransactionIntentJob({ deviceConnectionResult, deviceExtractedContext, input });
+  return signTransactionIntentJob({
+    deviceConnectionResult,
+    deviceExtractedContext,
+    input,
+    onResult: jest.fn(),
+  });
 }
 
 async function flushPromises() {

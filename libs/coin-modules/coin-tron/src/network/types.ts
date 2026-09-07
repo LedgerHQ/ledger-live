@@ -238,6 +238,9 @@ export type ChainParameters = {
   transactionFee: number;
   createAccountFee: number;
   createNewAccountFeeInSystemContract: number;
+  // Flat fee burned when a transaction carries a memo (`raw_data.data`), regardless of contract type
+  // (TIP-387). 0 on chains that predate the feature.
+  memoFee: number;
 };
 
 //-- Trigger constant contract

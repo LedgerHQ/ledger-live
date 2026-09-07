@@ -4,6 +4,7 @@ export enum EntryPoint {
   settings = "settings",
   onboarding = "onboarding",
   postOnboarding = "postOnboarding",
+  sendFlow = "sendFlow",
 }
 
 export type EntryPointsData = Record<

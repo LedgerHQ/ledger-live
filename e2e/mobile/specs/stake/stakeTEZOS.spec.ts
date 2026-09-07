@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runStakeTezos } from "./stake";
+import { runStakeTezos } from "@e2e/specs/stake/stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: Earn opens the stake amount step directly.
 const delegation = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");

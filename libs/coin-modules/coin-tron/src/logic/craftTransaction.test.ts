@@ -159,7 +159,10 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
+    await craftTransaction(mockConfig, transactionIntent, {
+      value: customFees,
+      parameters: { fees: customFees },
+    });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       mockConfig,
       "contractAddress",
@@ -189,7 +192,10 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
+    await craftTransaction(mockConfig, transactionIntent, {
+      value: customFees,
+      parameters: { fees: customFees },
+    });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       mockConfig,
       "contractAddress",
@@ -219,7 +225,10 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
+    await craftTransaction(mockConfig, transactionIntent, {
+      value: customFees,
+      parameters: { fees: customFees },
+    });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       mockConfig,
       "contractAddress",
@@ -262,6 +271,38 @@ describe("craftTransaction", () => {
     );
   });
 
+  it("should ignore an auto-resolved fee with no override marker and default the fee limit for a TRC20 transaction", async () => {
+    // LIVE-36865: the generic framework forwards the net display fee as customFees.value on every send,
+    // with no override marker. That value collapses to 0 for an energy-covered account, so it must NOT
+    // pin the fee_limit to 0 (OUT_OF_ENERGY) — the default ceiling applies instead.
+    const amount = 1000;
+    const transactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      asset: {
+        type: "trc20",
+        assetReference: "contractAddress",
+      },
+      amount: BigInt(amount),
+    } as TronIntent;
+
+    (decode58Check as jest.Mock).mockImplementation(_address => undefined);
+    (craftTrc20Transaction as jest.Mock).mockResolvedValue({
+      raw_data_hex: "extendedRawDataHex",
+    });
+
+    await craftTransaction(mockConfig, transactionIntent, { value: 0n });
+    expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
+      "contractAddress",
+      undefined,
+      undefined,
+      BigNumber(amount),
+      undefined,
+      undefined,
+    );
+  });
+
   it.each([-1n, BigInt(2 * Number.MAX_SAFE_INTEGER)])(
     "should throw an error when user provides fees which exceeds Typescript Number type value limit for crafting a TRC20 transaction",
     async (customFees: bigint) => {
@@ -276,7 +317,7 @@ describe("craftTransaction", () => {
               assetReference: "contractAddress",
             },
           } as TronIntent,
-          { value: customFees },
+          { value: customFees, parameters: { fees: customFees } },
         ),
       ).rejects.toThrow(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,

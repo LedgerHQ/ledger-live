@@ -199,6 +199,10 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloEpochProcessingActive": {
+      "title": "This action is temporarily unavailable",
+      "description": "Celo is currently processing an epoch update. During this short on-chain window, staking actions such as voting, activating, revoking, locking, and unlocking are temporarily blocked by the network. Please try again once epoch processing is complete."
+    },
     "CeloGroupNotVotable": {
       "title": "This validator group cannot receive votes. It may be full or no longer eligible."
     },
@@ -3830,6 +3834,23 @@
           "entriesLabel": "Entries ({{count}})",
           "untitledEntry": "Untitled entry"
         }
+      },
+      "deviceSimulationDevTool": {
+        "title": "Device simulation (QA)",
+        "description": "Simulate device history to test Nano-user upsell surfaces without physical devices.",
+        "currentHistory": "Active QA devices: {{devices}}",
+        "resetWarning": "Reset clears the 6 QA device toggles only. Other device history entries are unchanged; real history cannot be restored without the simulation engine.",
+        "reset": "Reset device history",
+        "none": "none",
+        "deviceDesc": "Mark this device as previously connected for QA testing.",
+        "devices": {
+          "nanoS": "Nano S",
+          "nanoSP": "Nano S Plus",
+          "nanoX": "Nano X",
+          "stax": "Ledger Stax",
+          "europa": "Ledger Flex",
+          "apex": "Ledger Flex Plus"
+        }
       }
     }
   },
@@ -4539,6 +4560,7 @@
   "send": {
     "newSendFlow": {
       "title": "Send {{currency}}",
+      "selectAddress": "Select address",
       "available": "Available {{amount}}",
       "to": "To:",
       "addressDisclaimer": {
@@ -4553,6 +4575,15 @@
       "pasteFromClipboard": {
         "title": "Paste from clipboard",
         "cta": "Paste"
+      },
+      "addContact": {
+        "newContact": "Add a new contact",
+        "existingContact": "Add to an existing contact",
+        "selectContact": "Select contact",
+        "syncWallet": {
+          "title": "Sync your wallet to add a contact",
+          "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers."
+        }
       },
       "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
@@ -5172,6 +5203,10 @@
         "deviceOutOfStorageSpace": {
           "title": "Uninstall some apps to free up Ledger device memory",
           "description": "Your device doesn’t have enough memory."
+        },
+        "invalidProvider": {
+          "title": "Invalid Provider",
+          "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
         }
       },
       "cta": {
@@ -5180,7 +5215,8 @@
         "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
-        "contactLedgerSupport": "Contact Ledger support"
+        "contactLedgerSupport": "Contact Ledger support",
+        "goToSettings": "Go to settings"
       }
     },
     "connectDevice": {
@@ -9213,6 +9249,10 @@
         "title": "Ledger Sync",
         "description": "Sync your accounts automatically, even when switching to a new phone.",
         "cta": "Turn on Ledger Sync"
+      },
+      "sendFlow": {
+        "title": "Sync my wallet",
+        "later": "Not now"
       }
     },
     "activation": {
@@ -9698,6 +9738,14 @@
     "accountCount_other": "{{count}} accounts",
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
     "addAccount": "Add account",
+    "unsupportedAssetExplanation": {
+      "title": "{{asset}} isn't supported yet",
+      "description": "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
+    },
+    "unsupportedNetworkExplanation": {
+      "title": "{{network}} Network isn't supported yet",
+      "description": "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
+    },
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
@@ -10086,9 +10134,43 @@
         "confirm": "Confirm"
       }
     },
+    "card": {
+      "title": "Crypto card"
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
+    },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      },
+      "verifyAddress": {
+        "introTitle": "Verify your address",
+        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
+        "verifyCta": "Verify address",
+        "successTitle": "Address displayed on the device's Secure Screen",
+        "nextStepsLabel": "Next steps",
+        "nextStepShare": "Share your address via your desired app.",
+        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "gotItCta": "Got it",
+        "device": {
+          "cancelledTitle": "Address verification cancelled",
+          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
+          "mismatchTitle": "Addresses don't match",
+          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
+          "unsupportedTitle": "Verification not available",
+          "unsupportedDescription": "This device app can't display the address for on-device verification.",
+          "retryCta": "Show address again",
+          "closeCta": "Close"
+        }
+      }
     },
     "deposit": {
       "title": "Add stablecoins",
@@ -10110,6 +10192,11 @@
           "description": "Buy stablecoins with credit card."
         }
       }
+    },
+    "contacts": {
+      "title": "Pay",
+      "pay": "New",
+      "seeAllTitle": "Pay contact"
     }
   },
   "syncIndicator": {
@@ -10336,6 +10423,27 @@
     }
   },
   "contacts": {
+    "deviceIntents": {
+      "registerExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "errors": {
+        "wrongDevice": {
+          "title": "Use the same Ledger device you used to add this contact",
+          "description": "The connected device isn't a match."
+        },
+        "invalidData": {
+          "title": "This address can't be saved",
+          "description": "Your Ledger device rejected the contact details. Try again or contact Ledger Support if the issue continues."
+        },
+        "appVersionTooLow": {
+          "title": "App update required",
+          "description": "Update the app on your Ledger device to save contacts, then try again."
+        }
+      }
+    },
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
@@ -10465,19 +10573,18 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
-      "primaryAction": "Try contacts",
+      "primaryAction": "Explore now",
       "highlights": {
         "saveAddresses": {
-          "title": "Save addresses once",
-          "description": "Keep the addresses you send to in one place."
+          "title": "Save addresses by a name you choose",
+          "description": "Exchanges, friends, your own external accounts."
         },
         "sendToRightAddress": {
           "title": "Send to the right address",
-          "description": "Funds reach the right wallet every time."
+          "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Private across your devices",
+          "title": "Securely top up via Ledger Wallet™",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

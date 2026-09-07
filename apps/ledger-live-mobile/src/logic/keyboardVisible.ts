@@ -19,6 +19,30 @@ export function shouldUseKeyboardAvoidance(
   return platform === "ios" || (platform === "android" && Number(version) >= 35);
 }
 
+const IOS_KEYBOARD_GAP = 32;
+
+export function resolveKeyboardBottomOffset({
+  isKeyboardVisible,
+  keyboardHeight,
+  platform,
+  version,
+}: Readonly<{
+  isKeyboardVisible: boolean;
+  keyboardHeight: number;
+  platform: PlatformOSType;
+  version: number | string;
+}>): number {
+  if (!isKeyboardVisible || !shouldUseKeyboardAvoidance(platform, version)) {
+    return 0;
+  }
+
+  if (platform === "ios") {
+    return keyboardHeight + IOS_KEYBOARD_GAP;
+  }
+
+  return keyboardHeight;
+}
+
 export function useKeyboardVisible({
   eventTiming = "did",
 }: UseKeyboardVisibleOptions = {}): KeyboardVisibility {

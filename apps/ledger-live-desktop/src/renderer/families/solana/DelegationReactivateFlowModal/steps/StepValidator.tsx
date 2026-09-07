@@ -1,7 +1,3 @@
-import {
-  useSolanaStakesWithMeta,
-  useValidators,
-} from "@ledgerhq/live-common/families/solana/react";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -13,26 +9,10 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import { StepProps } from "../types";
 import ValidatorRow from "../../shared/components/ValidatorRow";
-import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useStakeValidatorStep } from "../../shared/hooks/useStakeValidatorStep";
 
 export default function StepValidator({ account, transaction, status, error }: StepProps) {
-  const unit = useMaybeAccountUnit(account);
-  if (account === null || transaction === null || account?.solanaResources === undefined || !unit) {
-    throw new Error("account, transaction and solana resouces required");
-  }
-  const { solanaResources } = account;
-  if (transaction?.model.kind !== "stake.delegate") {
-    throw new Error("unsupported transaction");
-  }
-  const { stakeAccAddr } = transaction.model.uiState;
-  const stakesWithMeta = useSolanaStakesWithMeta(account.currency, solanaResources.stakes);
-  const stakeWithMeta = stakesWithMeta.find(s => s.stake.stakeAccAddr === stakeAccAddr);
-  if (stakeWithMeta === undefined) {
-    throw new Error(`stake with account address <${stakeAccAddr}> not found`);
-  }
-  const { stake } = stakeWithMeta;
-  const validators = useValidators(account.currency);
-  const validator = validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
+  const { unit, validator } = useStakeValidatorStep(account, transaction, "stake.delegate");
   if (validator === undefined) {
     return null;
   }

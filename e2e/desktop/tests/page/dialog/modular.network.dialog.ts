@@ -1,6 +1,6 @@
-import { step } from "../../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { Dialog } from "../../component/dialog.component";
+import { Dialog } from "tests/component/dialog.component";
 import { expect } from "@playwright/test";
 
 export class ModularNetworkDialog extends Dialog {

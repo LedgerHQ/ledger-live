@@ -1,20 +1,15 @@
 import type {
-  CoinModuleApi,
+  CoinModuleImpl,
   Balance,
   BalanceOptions,
   BlockInfo,
   Block,
   CraftedTransaction,
-  Cursor,
   FeeEstimation,
   ListOperationsOptions,
   Operation,
   Page,
-  Reward,
-  Stake,
   TransactionIntent,
-  TransactionValidation,
-  Validator,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
@@ -51,28 +46,33 @@ type ConcordiumApiContext = Context<ConcordiumCoinConfig>;
  * network/logic layers. The `currencyId` used for chain selection is captured once from
  * {@link createApi} and forwarded from this closure unchanged. The classic bridge resolves the same
  * config from its `getCoinConfig` singleton and threads it the same way.
+ *
+ * Checked against {@link CoinModuleImpl} with `satisfies` rather than annotated as it, so the
+ * precise shape survives and a caller sees exactly which methods exist.
+ *
+ * Omitted rather than stubbed:
+ *   - `call`, `register` — the module implements neither.
+ *   - `getStakes`, `getRewards`, `getValidators` — Concordium staking is not exposed here.
+ *   - `validateIntent` — no intent validation is implemented on this path.
+ *   - `getNextSequence` — not published; the crafting path resolves the sequence internally via
+ *     `getNextValidSequence`.
+ * The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
  */
-export function createApi(currencyId: string): CoinModuleApi<ConcordiumCoinConfig, ConcordiumMemo> {
+export function createApi(currencyId: string) {
   return {
-    broadcast: async (context, tx) => {
+    broadcast: async (context, tx, _options?) => {
       const config = await context.config();
       return broadcast(config, tx, currencyId);
     },
-    async call() {
-      throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
-    },
-    combine: (_context, tx, signature) => combine(tx, signature),
-    craftTransaction: async (context, transactionIntent) => {
+    combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    craftTransaction: async (context, transactionIntent, _options?) => {
       const config = await context.config();
       return craftTransaction(config, transactionIntent, currencyId);
     },
     craftRawTransaction: async (_context, transaction, sender, publicKey, sequence) => {
       return craftRawTransaction(transaction, sender, publicKey, sequence);
     },
-    estimateFees: async (context, transactionIntent) => {
+    estimateFees: async (context, transactionIntent, _options?) => {
       const config = await context.config();
       return estimateFees(config, transactionIntent, currencyId);
     },
@@ -96,44 +96,13 @@ export function createApi(currencyId: string): CoinModuleApi<ConcordiumCoinConfi
       const config = await context.config();
       return getBlockInfo(config, height, currencyId);
     },
-    getStakes(
-      _context: ConcordiumApiContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards(
-      _context: ConcordiumApiContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Reward>> {
-      throw new Error("getRewards is not supported");
-    },
-    getValidators(
-      _context: ConcordiumApiContext,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
-    validateIntent: async (
-      _context: ConcordiumApiContext,
-      _transactionIntent: TransactionIntent,
-      _balances: Balance[],
-      _options?: { customFees?: FeeEstimation },
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_context: ConcordiumApiContext, _address: string): Promise<bigint> => {
-      throw new Error("getNextSequence is not supported");
-    },
     validateAddress: async (
       _context: ConcordiumApiContext,
       address: string,
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
-  };
+  } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo>;
 }
 
 async function craftTransaction(

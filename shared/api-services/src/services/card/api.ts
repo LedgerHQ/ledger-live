@@ -44,10 +44,10 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
 
   const runWithToken = (token: string | null | undefined) =>
     fetchBaseQuery({
-      baseUrl: extra.cardApiBaseUrl,
+      baseUrl: extra.getCardApiBaseUrl(),
       prepareHeaders: headers => {
         headers.set("Content-Type", "application/json");
-        headers.set(HEADER_X_CLIENT_KEY, extra.cardBaanxClientKey);
+        headers.set(HEADER_X_CLIENT_KEY, extra.getCardBaanxClientKey());
         if (token) {
           headers.set("authorization", `Bearer ${token}`);
         }

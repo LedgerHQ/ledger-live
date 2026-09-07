@@ -3,7 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { ContextMenu } from "../components/ContextMenu";
 
@@ -137,6 +137,24 @@ describe("My Wallet LNS upsell profile banner", () => {
     expect(screen.getByText("Learn more about security features.")).toBeVisible();
     expect(screen.getByRole("button", { name: "Explore" })).toBeVisible();
     expect(screen.queryByText("Explore all Ledger devices")).toBeNull();
+  });
+
+  it("should fire a Profile page event when the banner is shown", async () => {
+    await renderMyWalletProfile();
+
+    expect(trackPage).toHaveBeenCalledWith(
+      "Profile",
+      undefined,
+      {
+        name: "Profile",
+        deviceModel: "lns",
+        personalRecoOptIn: true,
+        offerType: "discount",
+        platform: "lwd",
+      },
+      true,
+      false,
+    );
   });
 
   it("should open the opted_out URL and fire opted-out tracking when personalized recommendations are off", async () => {

@@ -6,8 +6,12 @@ describe("applyMemoToTransaction", () => {
       expect(applyMemoToTransaction("xrp", "")).toEqual({ tag: undefined });
     });
 
-    it("casper: empty string clears the transferId", () => {
-      expect(applyMemoToTransaction("casper", "")).toEqual({ transferId: undefined });
+    it("casper: empty string clears the memo", () => {
+      expect(applyMemoToTransaction("casper", "")).toEqual({
+        transferId: undefined,
+        memoType: "transferId",
+        memoValue: undefined,
+      });
     });
 
     it("solana: empty string clears the memo", () => {
@@ -32,8 +36,12 @@ describe("applyMemoToTransaction", () => {
       expect(applyMemoToTransaction("xrp", "123")).toEqual({ tag: 123 });
     });
 
-    it("casper: transferId", () => {
-      expect(applyMemoToTransaction("casper", "42")).toEqual({ transferId: "42" });
+    it("casper: sets transferId/memoType/memoValue", () => {
+      expect(applyMemoToTransaction("casper", "42")).toEqual({
+        transferId: "42",
+        memoType: "transferId",
+        memoValue: "42",
+      });
     });
 
     it("stellar: forwards value and type", () => {

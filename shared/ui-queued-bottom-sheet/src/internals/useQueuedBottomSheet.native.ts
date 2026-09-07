@@ -21,6 +21,8 @@ interface UseQueuedBottomSheetProps {
 
 type BottomSheetState = "idle" | "open" | "dismissing";
 
+const DISMISS_FALLBACK_DELAY_MS = 600;
+
 export function useQueuedBottomSheet({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -66,10 +68,13 @@ export function useQueuedBottomSheet({
 
   // Bumped at the end of handleDismiss to re-trigger the open/close effect below. This defers
   // the "should we reopen?" decision to a React commit, ensuring any state update scheduled by
-  // the consumer's onClose (from handleCloseAnimationStart) has been applied before we read
+  // the consumer's onClose (from handleAnimate) has been applied before we read
   // isRequestingToBeOpened — otherwise a fast backdrop dismiss could see a stale `true` and
   // re-enqueue the drawer.
   const [reopenCheckSignal, setReopenCheckSignal] = useState(0);
+
+  const wantsToBeOpenRef = useRef(false);
+  wantsToBeOpenRef.current = isRequestingToBeOpened || isForcingToBeOpened;
 
   const cleanupQueue = useCallback(() => {
     if (bottomSheetInQueueRef.current) {
@@ -78,13 +83,63 @@ export function useQueuedBottomSheet({
     }
   }, []);
 
+  const dismissFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearDismissFallback = useCallback(() => {
+    if (dismissFallbackRef.current) {
+      clearTimeout(dismissFallbackRef.current);
+      dismissFallbackRef.current = null;
+    }
+  }, []);
+
+  const settleClosed = useCallback(() => {
+    clearDismissFallback();
+    stateRef.current = "idle";
+    cleanupQueue();
+  }, [clearDismissFallback, cleanupQueue]);
+
+  const beginDismissing = useCallback(() => {
+    stateRef.current = "dismissing";
+    cleanupQueue();
+
+    clearDismissFallback();
+    dismissFallbackRef.current = setTimeout(() => {
+      dismissFallbackRef.current = null;
+      if (stateRef.current !== "dismissing") return;
+
+      logBottomSheet("onDismiss never arrived - settling this sheet as closed");
+      settleClosed();
+      setReopenCheckSignal(s => s + 1);
+    }, DISMISS_FALLBACK_DELAY_MS);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet, settleClosed]);
+
+  // Hiding the keyboard resizes the sheet container. Doing it while the sheet is already animating
+  // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
+  // mounted at the closed position. Retracting the keyboard as soon as a close begins keeps the
+  // closing layout stable.
+  const dismissKeyboard = useCallback(() => {
+    if (Keyboard.isVisible()) {
+      Keyboard.dismiss();
+    }
+  }, []);
+
+  // Closing a sheet often also clears the reason the sheet queued behind it wanted to be open, so
+  // by the time the queue promotes us our consumer may no longer want us. Presenting anyway leaves
+  // an empty sheet on screen that swallows the next tap, so decline the promotion instead.
   const handleOpen = useCallback(() => {
     if (stateRef.current !== "idle") return;
 
+    if (!wantsToBeOpenRef.current) {
+      logBottomSheet("Promoted by the queue but no longer requested - releasing the slot");
+      cleanupQueue();
+      return;
+    }
+
     logBottomSheet("Opening drawer");
+    clearDismissFallback();
     stateRef.current = "open";
     bottomSheetRef.current?.present();
-  }, [bottomSheetRef, logBottomSheet]);
+  }, [bottomSheetRef, cleanupQueue, clearDismissFallback, logBottomSheet]);
 
   const handleClose = useCallback(() => {
     const state = stateRef.current;
@@ -94,13 +149,19 @@ export function useQueuedBottomSheet({
       return;
     }
 
-    if (state === "dismissing") return;
+    if (state === "dismissing") {
+      logBottomSheet("Close signalled while already dismissing - re-issuing dismiss");
+      bottomSheetRef.current?.dismiss();
+      return;
+    }
 
     logBottomSheet("Closing drawer");
-    stateRef.current = "dismissing";
+    beginDismissing();
+    dismissKeyboard();
+
     bottomSheetRef.current?.dismiss();
     onCloseRef.current?.();
-  }, [bottomSheetRef, cleanupQueue, logBottomSheet]);
+  }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
   // open/close state handlers.
@@ -115,8 +176,9 @@ export function useQueuedBottomSheet({
 
   const handleUserClose = useCallback(() => {
     logBottomSheet("User initiated close");
+    dismissKeyboard();
     bottomSheetRef.current?.dismiss();
-  }, [bottomSheetRef, logBottomSheet]);
+  }, [bottomSheetRef, dismissKeyboard, logBottomSheet]);
 
   // Notifies the consumer of the explicit backdrop press before dismissing. Unlike onClose
   // (which fires for any closing reason), this reflects a real user close interaction.
@@ -130,51 +192,60 @@ export function useQueuedBottomSheet({
     if (stateRef.current === "dismissing") return;
 
     logBottomSheet("Header close pressed");
-    stateRef.current = "dismissing";
+    beginDismissing();
+    dismissKeyboard();
     onHeaderClosePressedRef.current?.();
     onCloseRef.current?.();
-  }, [logBottomSheet]);
+  }, [beginDismissing, dismissKeyboard, logBottomSheet]);
 
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
   // backdrop and the pan-down gesture alike. We clear consumer state here rather than waiting for
   // onDismiss (which the X button defers until the close animation finishes). Otherwise a tap on
   // another trigger during the close window sets new state that the late onDismiss would wipe,
-  // forcing the user to tap twice. Queue cleanup stays in onDismiss to preserve overlap protection.
-  const handleCloseAnimationStart = useCallback(
-    (_fromIndex: number, toIndex: number) => {
+  // forcing the user to tap twice.
+  const handleAnimate = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      if (toIndex >= 0) {
+        const restoredWhileDismissing = fromIndex === -1 && stateRef.current === "dismissing";
+        if (restoredWhileDismissing) {
+          logBottomSheet("Sheet opening while considered closed - dismissing it again");
+          bottomSheetRef.current?.dismiss();
+        }
+
+        return;
+      }
+
       if (toIndex === -1 && stateRef.current === "open") {
         logBottomSheet("Close animation started");
-        stateRef.current = "dismissing";
+        beginDismissing();
+        dismissKeyboard();
         onCloseRef.current?.();
       }
     },
-    [logBottomSheet],
+    [beginDismissing, bottomSheetRef, dismissKeyboard, logBottomSheet],
   );
 
   const handleDismiss = useCallback(() => {
     logBottomSheet("BottomSheet dismissed (onDismiss)");
 
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
-    }
+    dismissKeyboard();
 
-    // Fallback for dismissals that bypass the close animation (and thus handleCloseAnimationStart).
+    // Fallback for dismissals that bypass the close animation (and thus handleAnimate).
     if (stateRef.current === "open") {
       onCloseRef.current?.();
     }
 
-    stateRef.current = "idle";
-    cleanupQueue();
+    settleClosed();
     onModalHideRef.current?.();
 
     // Defer the "should we reopen?" decision to the open/close effect below. Bumping the signal
     // forces a re-render; by the time the effect runs, React has committed any state update
-    // scheduled by the consumer's onClose (called from handleCloseAnimationStart), so reading
+    // scheduled by the consumer's onClose (called from handleAnimate), so reading
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [cleanupQueue, logBottomSheet]);
+  }, [dismissKeyboard, logBottomSheet, settleClosed]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
@@ -204,9 +275,10 @@ export function useQueuedBottomSheet({
   useEffect(() => {
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
+      clearDismissFallback();
       cleanupQueue();
     };
-  }, [cleanupQueue, logBottomSheet]);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet]);
 
   return {
     bottomSheetRef,
@@ -215,7 +287,7 @@ export function useQueuedBottomSheet({
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
-    handleCloseAnimationStart,
+    handleAnimate,
     onBack,
     enablePanDownToClose: !areBottomSheetsLocked && !preventBackdropClick,
     backgroundContextValue,

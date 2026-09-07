@@ -1,13 +1,9 @@
 import {
-  ContactError,
   deleteAddress as deleteAddressAction,
-  parseContactAddressLabel,
   selectContactAddressById,
-  selectContactById,
-  updateAddress as updateAddressAction,
 } from "@domain/entity-contact";
 import {
-  createMockContactDeviceIntentsPort,
+  createContactAddressEditPort,
   type ContactDeviceIntentsPort,
 } from "@features/platform-contacts";
 import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
@@ -15,55 +11,16 @@ import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
 type ContactAddressDetailActionsPortsDeps = Readonly<{
   dispatch: (action: { type: string }) => void;
   getState: () => Parameters<typeof selectContactAddressById>[0];
-  deviceIntents?: ContactDeviceIntentsPort;
+  deviceIntents: ContactDeviceIntentsPort;
 }>;
 
 export function createContactAddressDetailActionsPorts({
   dispatch,
   getState,
-  deviceIntents = createMockContactDeviceIntentsPort(),
+  deviceIntents,
 }: ContactAddressDetailActionsPortsDeps): ContactAddressDetailActionsDataPorts {
   return {
-    edit: {
-      updateAddress: async ({ contactId, addressId, label, address }) => {
-        const currentAddress = selectContactAddressById(getState(), contactId, addressId);
-
-        if (currentAddress === undefined) {
-          throw new ContactError(`Address not found: ${addressId}`);
-        }
-        const currentContact = selectContactById(getState(), contactId);
-        if (currentContact === undefined) {
-          throw new ContactError(`Contact not found: ${contactId}`);
-        }
-        const parsedLabel = parseContactAddressLabel(label);
-        const device = await deviceIntents.editExternalAddressScope({
-          contact: currentContact,
-          address: currentAddress,
-          label: parsedLabel,
-          updatedAddress: address,
-        });
-
-        dispatch(
-          updateAddressAction({
-            contactId,
-            address: {
-              ...currentAddress,
-              label: parsedLabel,
-              address,
-              device,
-            },
-          }),
-        );
-
-        const updatedAddress = selectContactAddressById(getState(), contactId, addressId);
-
-        if (updatedAddress === undefined) {
-          throw new ContactError(`Address not found after update: ${addressId}`);
-        }
-
-        return updatedAddress;
-      },
-    },
+    edit: createContactAddressEditPort({ dispatch, getState, deviceIntents }),
     deletion: {
       deleteAddress: async input => {
         dispatch(deleteAddressAction(input));

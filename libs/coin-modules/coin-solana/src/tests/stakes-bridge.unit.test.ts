@@ -10,6 +10,7 @@ import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from ".
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { prepareTransaction } from "../prepareTransaction";
 import { SolanaAccount, SolanaStake, Transaction, TransactionStatus } from "../types";
+import { solanaStakesToStakingResources } from "../logic/stakingResources";
 import { testOnChainData } from "./test-onchain-data.fixture";
 
 const baseAccount = {
@@ -152,21 +153,28 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
   const account: SolanaAccount = {
     ...baseAccount,
     freshAddress: testOnChainData.fundedSenderAddress,
-    solanaResources: {
-      stakes: [
+    stakingResources: solanaStakesToStakingResources(
+      [
         {
           stakeAccAddr: testOnChainData.unfundedAddress,
+          hasStakeAuth: true,
+          hasWithdrawAuth: true,
           delegation: {
             stake: 1,
             voteAccAddr: testOnChainData.validatorAddress,
           },
+          stakeAccBalance: 1,
+          rentExemptReserve: 0,
+          withdrawable: 0,
           activation: {
             state: stakeTestSpec.activationState,
+            active: stakeTestSpec.activationState === "active" ? 1 : 0,
+            inactive: stakeTestSpec.activationState === "active" ? 0 : 1,
           },
-        } as SolanaStake,
+        },
       ],
-      unstakeReserve: BigNumber(0),
-    },
+      BigNumber(0),
+    ),
   };
 
   const tx: Transaction = {

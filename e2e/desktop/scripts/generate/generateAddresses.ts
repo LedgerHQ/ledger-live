@@ -1,7 +1,7 @@
 import { ADDRESS_CACHE_FILE, isUtxoBasedCurrency } from "@ledgerhq/live-e2e-shared/addressCache";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { generateAddressCache } from "./addressCacheGen";
-import { runGenerator } from "./shared";
+import { generateAddressCache } from "scripts/generate/addressCacheGen";
+import { runGenerator } from "scripts/generate/shared";
 
 const NON_DERIVABLE_FAMILIES = new Set(["hedera", "concordium"]);
 

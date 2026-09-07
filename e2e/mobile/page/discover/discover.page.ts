@@ -1,7 +1,7 @@
 import { randomInt } from "node:crypto";
 import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "@e2e/helpers/commonHelpers";
 
 const discoverApps = [
   { name: "MoonPay", url: "https://www.moonpay.com/" },
@@ -42,7 +42,7 @@ export default class DiscoverPage {
     await openDeeplink(this.baseLink + (appName ?? ""));
   }
 
-  getAppUrl(name: DiscoverAppName) {
+  private getAppUrl(name: DiscoverAppName) {
     const app = this.discoverApps.find(app => app.name === name)!;
     return app.url;
   }

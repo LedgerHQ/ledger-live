@@ -1,4 +1,4 @@
-import { runAddSubAccountTest } from "../subAccount";
+import { runAddSubAccountTest } from "@e2e/specs/subAccount/subAccount";
 
 const testConfig = {
   asset: TokenAccount.SUI_USDC_1,

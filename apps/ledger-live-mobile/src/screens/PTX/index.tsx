@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import storage from "LLM/storage";
 import semver from "semver";
@@ -11,6 +11,7 @@ import {
 
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import InfiniteLoader from "~/components/InfiniteLoader";
@@ -47,6 +48,14 @@ export function PtxScreen({ route, config }: Props) {
   const goBackOnAccountRequestCancel = (
     route.params as { goBackOnAccountRequestCancel?: boolean } | undefined
   )?.goBackOnAccountRequestCancel;
+  const navigation = useNavigation();
+  const shouldGoBackRef = useRef(!!goBackOnAccountRequestCancel);
+  const onAccountRequestCancel = useCallback(() => {
+    if (shouldGoBackRef.current && navigation.canGoBack()) navigation.goBack();
+  }, [navigation]);
+  const onAccountRequestSuccess = useCallback(() => {
+    shouldGoBackRef.current = false;
+  }, []);
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
@@ -132,13 +141,12 @@ export function PtxScreen({ route, config }: Props) {
             providerTestId: localManifest?.providerTestId,
           }),
           ...customParams,
-          ...(goBackOnAccountRequestCancel !== undefined && {
-            goBackOnAccountRequestCancel: goBackOnAccountRequestCancel ? "true" : "false",
-          }),
           ...searchInput,
         }}
         config={config}
         softExit={softExit === "true"}
+        onAccountRequestCancel={goBackOnAccountRequestCancel ? onAccountRequestCancel : undefined}
+        onAccountRequestSuccess={goBackOnAccountRequestCancel ? onAccountRequestSuccess : undefined}
         Interstitial={providerInterstitialEnabled ? ProviderInterstitial : undefined}
       />
     </SafeAreaView>

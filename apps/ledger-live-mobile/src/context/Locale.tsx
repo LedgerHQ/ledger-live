@@ -1,8 +1,6 @@
 import React, { useMemo, useContext, useCallback, useEffect, useState } from "react";
 import type { ComponentProps } from "react";
-import i18next from "i18next";
 import {
-  initReactI18next,
   // eslint-disable-next-line no-restricted-imports
   useTranslation as useReactI18nextTranslation,
   // eslint-disable-next-line no-restricted-imports
@@ -10,12 +8,13 @@ import {
 } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { UseTranslationOptions, UseTranslationResponse } from "react-i18next";
+import i18next from "~/i18n/instance";
 import { getTimeZone } from "react-native-localize";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
 
-import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
+import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale } from "../languages";
 import { setLanguage } from "~/actions/settings";
 import { useDispatch } from "~/context/hooks";
 import { useSettings } from "~/hooks";
@@ -37,16 +36,6 @@ try {
   console.log(error);
 }
 
-i18next.use(initReactI18next).init({
-  fallbackLng: DEFAULT_LANGUAGE_LOCALE,
-  resources: locales,
-  supportedLngs: Object.keys(locales),
-  ns: ["common"],
-  defaultNS: "common",
-  interpolation: {
-    escapeValue: false, // not needed for react as it does escape per default to prevent xss!
-  },
-});
 export { i18next as i18n };
 
 // Wrapper around `useTranslation` that ensures the correct `i18next` instance is used

@@ -55,10 +55,11 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
 // app mirrors into live-common (`bridge/zcashRouting.ts`). This module never has
 // to ask: it is only ever reached when the answer is yes.
 
-// NU5 activation, the earliest block a Ledger-created shielded account can hold
-// a note -- and so the default birthday a scan starts from.
-export const ZCASH_ACTIVATION_DATE = new Date("2022-05-31");
-export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
+// Ironwood (NU6.3) activation, not Orchard/NU5 -- Ledger's shielded balance
+// covers the Ironwood pool only. The earliest block a Ledger-created
+// shielded account can hold a note, and so the default birthday a scan starts from.
+export const ZCASH_ACTIVATION_DATE = new Date("2026-07-28");
+export const ZCASH_ACTIVATION_DATE_STRING = "2026-07-28";
 // A freshly shielded note is scanned into the spendable (Ironwood) balance
 // before it can actually be spent: it first needs to gain confirmations. Until
 // the note's transaction has this many blocks mined on top of it, the spendable

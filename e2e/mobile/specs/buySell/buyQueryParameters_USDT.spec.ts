@@ -1,4 +1,4 @@
-import { runQueryParametersTest } from "./buySell";
+import { runQueryParametersTest } from "@e2e/specs/buySell/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const testConfig = {

@@ -13,6 +13,7 @@ import { modularDrawerStateSelector } from "~/reducers/modularDrawer";
 
 type UseDeviceNavigationParams = {
   onClose?: () => void;
+  onSilentClose?: () => void;
   resetSelection: () => void;
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
 };
@@ -36,6 +37,7 @@ function getAccountToReturn(
 
 export function useDeviceNavigation({
   onClose,
+  onSilentClose,
   resetSelection,
   onAccountSelected,
 }: UseDeviceNavigationParams) {
@@ -63,7 +65,10 @@ export function useDeviceNavigation({
 
   const navigateToDevice = useCallback(
     (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
-      onClose?.();
+      // Use silent close so the drawer UI disappears without firing the cancel callback.
+      // This keeps the current account.request pending while the user navigates through the device flow.
+      // onClose (= closeDrawer, fires cancel) is kept for onCloseNavigation so it still fires if the user abandons.
+      (onSilentClose ?? onClose)?.();
       resetSelection();
 
       // Number of screens in the navigation stack to pop when closing:
@@ -83,7 +88,7 @@ export function useDeviceNavigation({
         },
       });
     },
-    [onClose, resetSelection, navigation, isInline, onSuccess],
+    [onClose, onSilentClose, resetSelection, navigation, isInline, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

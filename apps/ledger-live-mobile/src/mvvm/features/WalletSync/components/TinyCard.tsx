@@ -31,7 +31,7 @@ export const TinyCard = ({ text, cta, onClick, testID, currentInstance = false }
           {text}
         </Text>
       </Flex>
-      <Pressable onPressIn={onClick} hitSlop={16}>
+      <Pressable onPressIn={onClick} hitSlop={16} testID={`${testID}-cta`}>
         <Text
           fontSize={14}
           variant="body"

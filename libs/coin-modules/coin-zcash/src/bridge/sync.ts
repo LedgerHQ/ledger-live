@@ -30,7 +30,12 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge";
+import type {
+  BitcoinOutput,
+  BtcOperation,
+  ZcashAccount,
+  ZcashOperationExtra,
+} from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
 import { ZCASH_SHIELDED_TX_TYPES } from "../network/types";
@@ -918,11 +923,18 @@ export function buildExtraSyncObservable(
     !!zcashInitialAccount.privateInfo?.ufvk &&
     zcashInitialAccount.privateInfo.ufvk.length > 0;
 
+  // "stopped" is overloaded: the leg sets it on its own after an error/timeout (see the
+  // catchError below, which also sets lastSyncError) so the next automatic tick can retry,
+  // but useZcashShieldedSync's manual stop sets the same value to mean "leave it alone until
+  // the user restarts it" -- without checking lastSyncError, the automatic wallet sync (which
+  // always requests the shielded leg for zcash, see BridgeSync.tsx) would rebuild it on its
+  // next tick and flip syncState back to "running", making a manual stop never stick.
   const syncStateIsEnabled =
     !!zcashInitialAccount &&
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
       zcashInitialAccount.privateInfo?.syncState === "running" ||
-      zcashInitialAccount.privateInfo?.syncState === "stopped" ||
+      (zcashInitialAccount.privateInfo?.syncState === "stopped" &&
+        !!zcashInitialAccount.privateInfo?.lastSyncError) ||
       zcashInitialAccount.privateInfo?.syncState === "outdated" ||
       zcashInitialAccount.privateInfo?.syncState === "complete");
 
@@ -1062,8 +1074,18 @@ function reconcileConfirmedPendingOperations(account: ZcashAccount): ZcashAccoun
     const optimistic = pendingByHash.get(op.hash);
     // An incoming operation shares its hash with the send that produced it, but
     // it is not the operation that paid the entered address.
-    if (!optimistic?.recipients.length || op.type.endsWith("IN")) return op;
-    return { ...op, recipients: optimistic.recipients };
+    if (!optimistic || op.type.endsWith("IN")) return op;
+    const patch: Partial<BtcOperation> = {};
+    if (optimistic.recipients.length) patch.recipients = optimistic.recipients;
+    const optimisticMemo = (optimistic.extra as ZcashOperationExtra | undefined)?.memo;
+    if (optimisticMemo && !(op.extra as ZcashOperationExtra | undefined)?.memo) {
+      const newExtra: ZcashOperationExtra = {
+        ...(op.extra as ZcashOperationExtra | undefined),
+        memo: optimisticMemo,
+      };
+      patch.extra = newExtra;
+    }
+    return Object.keys(patch).length ? { ...op, ...patch } : op;
   });
 
   // Only the optimistic operations that now have a confirmed counterpart are

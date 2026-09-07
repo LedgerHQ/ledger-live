@@ -11,16 +11,16 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { restorePayCardBalanceFilter } from "@features/flow-pay-card-balance/state";
-import { restorePayCardFeatureTour } from "@features/flow-pay-card-feature-tour/state";
-import i18n from "i18next";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
+import i18n from "~/renderer/i18n/init";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
-import "~/renderer/i18n/init";
+import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
@@ -45,6 +45,9 @@ import {
   migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
+import { toEvmAddressBook } from "@features/platform-contacts";
+import { selectContacts } from "@domain/entity-contact";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
@@ -181,6 +184,7 @@ async function init() {
   const initialSettings = (await getKey("app", "settings")) || {};
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
+  evmAddressBookProvider.setSource(() => toEvmAddressBook(selectContacts(store.getState())));
 
   const settingsToLoad = { ...initialSettings };
 

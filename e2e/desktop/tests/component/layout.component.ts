@@ -31,26 +31,6 @@ export class Layout extends Component {
   );
   readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
-  @step("Go to Portfolio")
-  async goToPortfolio() {
-    await this.drawerPortfolioButton.click();
-  }
-
-  @step("Navigate to Market")
-  async goToMarket() {
-    await this.drawerMarketButton.click();
-  }
-
-  @step("Open send modal")
-  async openSendModalFromSideBar() {
-    await this.drawerSendButton.click();
-  }
-
-  @step("Go to Settings")
-  async goToSettings() {
-    await this.topbarSettingsButton.click();
-  }
-
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
@@ -61,11 +41,6 @@ export class Layout extends Component {
     if (await this.topbarSynchronizeButton.isEnabled()) {
       await this.syncAccounts();
     }
-  }
-
-  @step("Wait for accounts sync to be finished")
-  async waitForAccountsSyncToBeDone() {
-    await expect(this.topbarSynchronizeButton).not.toHaveText("Synchronizing");
   }
 
   @step("Wait for accounts sync to be finished")

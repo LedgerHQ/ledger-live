@@ -1,4 +1,4 @@
-import { runUserCanAccessLedgerSupportTest } from "./settings";
+import { runUserCanAccessLedgerSupportTest } from "@e2e/specs/settings/settings";
 
 const testConfig = {
   tmsLinks: ["B2CQA-820"],

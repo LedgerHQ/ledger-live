@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { allure } from "jest-allure2-reporter/api";
-import { runSendTest } from "./send";
+import { runSendTest } from "@e2e/specs/send/send";
 
 allure.issue("LIVE-28070");
 

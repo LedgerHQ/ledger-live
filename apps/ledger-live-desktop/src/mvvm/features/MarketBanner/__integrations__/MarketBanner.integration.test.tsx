@@ -96,6 +96,8 @@ describe("MarketBanner integration", () => {
 
     await user.click(screen.getByTestId("market-banner-asset-bitcoin"));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
+    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin", {
+      state: { id: "bitcoin", ledgerIds: ["bitcoin"] },
+    });
   });
 });

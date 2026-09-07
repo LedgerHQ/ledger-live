@@ -1,4 +1,5 @@
 import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
+import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -52,9 +53,14 @@ export async function getAccountReadiness(
   currency: CryptoCurrency,
   address: string,
 ): Promise<AccountReadiness> {
-  const api = createTezosApi();
-  const { revealed } = await api.getAccountInfo!(buildContext(currency.id), address);
-  return revealed ? { ready: true } : { ready: false, reason: "unrevealed" };
+  // Through withDefaults, so the metadata call is always there: a module that reports none answers
+  // with the `{ type: "none" }` sentinel instead of leaving the method undefined and throwing here.
+  const api = withDefaults(createTezosApi());
+  const info = await api.getAccountInfo(buildContext(currency.id), address);
+  // Nothing reported means there is no reveal state to gate on — the position of every family that
+  // provides no readiness hook at all, which leaves the account ungated.
+  if (info.type === "none") return { ready: true };
+  return info.revealed ? { ready: true } : { ready: false, reason: "unrevealed" };
 }
 
 export default {

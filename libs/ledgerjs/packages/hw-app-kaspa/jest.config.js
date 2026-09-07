@@ -16,5 +16,10 @@ module.exports = {
       },
     ],
   },
-  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  reporters: [
+    "default",
+    ...(process.env.CI ? ["github-actions"] : []),
+    "@ledgerhq/test-quarantine/jest",
+  ],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };

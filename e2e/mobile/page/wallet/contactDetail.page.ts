@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "../drawer/contactName.drawer";
+import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "@e2e/page/drawer/contactName.drawer";
 
 export default class ContactDetailPage {
   renameDrawer = new ContactNameDrawer(RENAME_CONTACT_PREFIX);

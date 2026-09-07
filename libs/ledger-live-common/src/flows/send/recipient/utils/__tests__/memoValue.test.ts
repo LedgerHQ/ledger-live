@@ -23,4 +23,22 @@ describe("sanitizeMemoValue", () => {
   it("keeps an empty string when no digits remain", () => {
     expect(sanitizeMemoValue({ value: "", memoType: "tag", memoMaxValue: 100 })).toBe("");
   });
+
+  it("clamps correctly with a bigint memoMaxValue (u64 upper bound)", () => {
+    const U64_MAX = BigInt("18446744073709551615");
+    expect(sanitizeMemoValue({ value: "0", memoType: "tag", memoMaxValue: U64_MAX })).toBe("0");
+    expect(
+      sanitizeMemoValue({ value: "18446744073709551615", memoType: "tag", memoMaxValue: U64_MAX }),
+    ).toBe("18446744073709551615");
+    expect(
+      sanitizeMemoValue({ value: "18446744073709551616", memoType: "tag", memoMaxValue: U64_MAX }),
+    ).toBe("18446744073709551615");
+    expect(
+      sanitizeMemoValue({ value: "99999999999999999999", memoType: "tag", memoMaxValue: U64_MAX }),
+    ).toBe("18446744073709551615");
+    // value just above Number.MAX_SAFE_INTEGER stays exact (no rounding)
+    expect(
+      sanitizeMemoValue({ value: "9007199254740993", memoType: "tag", memoMaxValue: U64_MAX }),
+    ).toBe("9007199254740993");
+  });
 });

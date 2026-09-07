@@ -1,14 +1,14 @@
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "../../../utils/swapUtils";
+import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "@e2e/utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { beforeAllFunctionSwap } from "../swap.setup";
-import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";
+import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransactionStatus.drawer";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

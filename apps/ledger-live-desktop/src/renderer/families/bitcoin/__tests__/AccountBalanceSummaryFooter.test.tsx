@@ -440,6 +440,40 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
+  it("stops a running sync when clicking stop even for the very first sync, which the automatic wallet sync started without ever tracking a subscription", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    const { user } = render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "running",
+          },
+        }}
+      />,
+      {
+        initialState: {
+          ...withFlagOverrides({ zcashShielded: { enabled: true } }),
+          shieldedSyncSubscriptions: [],
+        },
+      },
+    );
+
+    await user.click(screen.getByTestId("stop-sync-button"));
+
+    expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+      { syncState: "stopped", progress: 0, lastSyncError: null },
+    );
+  });
+
   it("shows only the ironwoodBalance as the private balance, excluding the deprecated Orchard/Sapling pools", async () => {
     mockedUseAccountUnit.mockReturnValue({
       code: "ZEC",

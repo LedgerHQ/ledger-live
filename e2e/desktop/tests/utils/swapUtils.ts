@@ -6,7 +6,7 @@ import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
-import { getModularSelector } from "./modularSelectorUtils";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   isTokenAllowanceSufficientCommand,
@@ -17,7 +17,7 @@ import {
 import { getEnv } from "@shared/env";
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
-import { launchSpeculos, cleanSpeculos } from "./speculosUtils";
+import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   test.use({
@@ -28,7 +28,7 @@ export function setupEnv(disableBroadcast: boolean = false): void {
   });
 }
 
-export async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
+async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.clickSyncBtnForAccount(swap.accountToDebit.accountName);
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);

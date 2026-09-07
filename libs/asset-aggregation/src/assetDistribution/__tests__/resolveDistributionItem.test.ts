@@ -127,6 +127,32 @@ describe("resolveDistributionItem", () => {
     expect(result).toBe(usdt);
   });
 
+  it("does not match a network by a bare market id that collides with a chain id", () => {
+    const eth = item(cryptoCurrency("ethereum"), ["arbitrum", "optimism"]);
+    const result = resolveDistributionItem(
+      base({
+        routeAssetId: "arbitrum",
+        decodedAssetId: "arbitrum",
+        distribution: { bySlug: {}, list: [eth] },
+        marketState: { ledgerIds: ["ethereum/erc20/arbitrum"] },
+      }),
+    );
+    expect(result).toBeUndefined();
+  });
+
+  it("matches a token by its ledger id hint when its market id collides with a chain id", () => {
+    const token = item(tokenCurrency("ethereum/erc20/arbitrum"));
+    const result = resolveDistributionItem(
+      base({
+        routeAssetId: "arbitrum",
+        decodedAssetId: "arbitrum",
+        distribution: { bySlug: {}, list: [token] },
+        marketState: { ledgerIds: ["ethereum/erc20/arbitrum"] },
+      }),
+    );
+    expect(result).toBe(token);
+  });
+
   it("matches by market ledger id in the distribution list", () => {
     const btc = item(cryptoCurrency("bitcoin"));
     const result = resolveDistributionItem(

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { Component } from "../../page/abstractClasses";
+import { Component } from "tests/page/abstractClasses";
 
 export class CryptoAddressesBanner extends Component {
   readonly root = this.page.getByTestId("crypto-addresses-banner");

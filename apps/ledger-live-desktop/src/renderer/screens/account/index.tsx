@@ -35,6 +35,7 @@ import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hoo
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useAccountBackNavigation } from "./hooks/useAccountBackNavigation";
+import { useAccountIdFromRoute } from "~/renderer/hooks/useAccountIdFromRoute";
 
 type Params = {
   id?: string;
@@ -202,12 +203,15 @@ const ConnectedAccountPage = compose<React.ComponentType<OwnProps>>(
   withTranslation(),
 )(AccountPage);
 
-// Wrapper component that extracts route params and passes them to the connected component
+// Wrapper component that resolves the aliased route params and passes them to the connected component
 const AccountPageWrapper = () => {
   const { id, parentId, "*": splat } = useParams<Params & { "*"?: string }>();
+  // legacy links carry a raw account id, whose slashes react-router hands over in the splat
   const fullId =
     id && parentId && splat && splat.indexOf("account/") === -1 ? `${id}/${splat}` : id;
-  return <ConnectedAccountPage id={fullId} parentId={parentId} />;
+  const accountId = useAccountIdFromRoute(fullId);
+  const parentAccountId = useAccountIdFromRoute(parentId);
+  return <ConnectedAccountPage id={accountId} parentId={parentAccountId} />;
 };
 
 export default AccountPageWrapper;

@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runPartnerDappPositionTest } from "./earnV2";
+import { runPartnerDappPositionTest } from "@e2e/specs/earn/earnV2";
 
 const testConfig = {
   account: Account.ETH_1,
