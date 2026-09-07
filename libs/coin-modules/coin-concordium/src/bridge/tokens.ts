@@ -96,6 +96,16 @@ export function applyTokensToResources(
   }
 }
 
+/** Reduced rather than spread into `Math.min`, which overflows the stack on a long history. */
+function oldestDate(operations: Operation[]): Date {
+  return new Date(
+    operations.reduce(
+      (earliest, operation) => Math.min(earliest, operation.date.valueOf()),
+      Infinity,
+    ),
+  );
+}
+
 function buildTokenAccount(
   id: string,
   parentId: string,
@@ -112,10 +122,7 @@ function buildTokenAccount(
     spendableBalance: balance,
     // Only used for a sub-account this sync invented; `mergeSubAccounts` keeps
     // the stored date for an existing one.
-    creationDate:
-      operations.length > 0
-        ? new Date(Math.min(...operations.map(operation => operation.date.valueOf())))
-        : new Date(),
+    creationDate: operations.length > 0 ? oldestDate(operations) : new Date(),
     operations,
     operationsCount: operations.length,
     pendingOperations: [],
