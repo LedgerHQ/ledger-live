@@ -48,7 +48,7 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "prebuild": "pnpm pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto && pnpm pbts -o src/generate-protocol.d.ts src/generate-protocol.js",
+    "prebuild": "pnpm pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto && pnpm pbts -o src/generate-protocol.d.ts src/generate-protocol.js && pnpm exec oxfmt -c ../../../../.oxfmtrc.json src/generate-protocol.js src/generate-protocol.d.ts",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "postbuild": "cp src/generate-protocol.d.ts lib/generate-protocol.d.ts && cp src/generate-protocol.d.ts lib-es/generate-protocol.d.ts && rm -f lib/generate-protocol.d.ts.map lib-es/generate-protocol.d.ts.map",
     "coverage": "jest --coverage --passWithNoTests",
