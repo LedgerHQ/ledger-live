@@ -7,6 +7,5 @@ export function DeviceScreen() {
   return <DeviceScreenView viewModel={viewModel} />;
 }
 
-export default DeviceScreen;
 export { useDeviceScreenViewModel } from "./useDeviceScreenViewModel";
 export type { DeviceScreenViewModel } from "./types";
