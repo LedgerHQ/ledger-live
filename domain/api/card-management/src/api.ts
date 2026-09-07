@@ -9,6 +9,8 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardDetailsCssSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -23,6 +25,8 @@ import type {
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
+  PayCardDetailsCss,
+  PayCardDetailsToken,
   PayCardStatus,
   PayCardUser,
 } from "./types";
@@ -102,6 +106,24 @@ export const cardManagementApi = cardApi
         providesTags: ["CardStatus"],
       }),
 
+      /**
+       * A mutation, though it reads: the provider spends the token on first use, so the answer must
+       * never be served from a cache, and a mutation is never cached.
+       *
+       * It is still **retained**: RTK Query holds a tracked mutation result in
+       * `state.cardApi.mutations`. Dispatch this one with `{ track: false }`, or reset it as soon
+       * as the URL has been used — the answer is a credential, not data.
+       */
+      createCardDetailsToken: build.mutation<PayCardDetailsToken, PayCardDetailsCss | void>({
+        query: customCss => ({
+          url: "/v1/card/details/token",
+          method: "POST",
+          ...(customCss ? { body: { customCss } } : {}),
+        }),
+        argSchema: PayCardDetailsCssSchema.optional(),
+        responseSchema: PayCardDetailsTokenResponseSchema,
+      }),
+
       freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
@@ -154,6 +176,7 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useCreateCardDetailsTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,
   useUnfreezeCardMutation,

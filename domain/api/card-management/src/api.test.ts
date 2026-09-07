@@ -11,6 +11,7 @@ import {
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
+  useCreateCardDetailsTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
@@ -129,6 +130,7 @@ describe("cardManagementApi configuration", () => {
 
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
+      "createCardDetailsToken",
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
@@ -168,6 +170,11 @@ describe("cardManagementApi configuration", () => {
     expect(useGetCardStatusQuery).toBeDefined();
     // The devtool fetches on press, not on mount, so the lazy hook is part of the surface too.
     expect(useLazyGetCardStatusQuery).toBeDefined();
+  });
+
+  it("exposes the card details token endpoint and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardDetailsToken).toBeDefined();
+    expect(useCreateCardDetailsTokenMutation).toBeDefined();
   });
 
   it("exposes the freeze endpoints and their hooks", () => {
@@ -666,6 +673,112 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("createCardDetailsToken", () => {
+    // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+    const detailsToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      imageUrl: "https://card.test/details-image?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("asks for a token with the bearer token and the client key, and sends no body by default", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(),
+      );
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/details/token");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      // No colours asked for: the provider paints its own defaults.
+      expect(await request(fetchSpy).clone().text()).toBe("");
+      expect(result.data).toEqual(detailsToken);
+    });
+
+    it("sends the colours the host asked for", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardDetailsToken.initiate({ panTextColor: "#000000" }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
+        customCss: { panTextColor: "#000000" },
+      });
+    });
+
+    it("rejects a colour that is not a hex value before the request goes out", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate({
+          cardBackgroundColor: "rebeccapurple",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The point of validating the argument: the provider never sees it.
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it("rejects an image url that is not https, which is loaded straight into an image", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () =>
+          jsonResponse({ ...detailsToken, imageUrl: "javascript:alert(1)" }),
+        );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("reaches no part of the store when the caller does not track it", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardDetailsToken.initiate(undefined, {
+            track: false,
+          }),
+        )
+        .unwrap();
+
+      // Both halves: a query result lands under `queries`, a mutation result under `mutations`.
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(detailsToken.token);
+      expect(state).not.toContain("details-image");
+    });
+
+    it("is held in the store when the caller does track it, which is why callers must not", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () => jsonResponse(detailsToken));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardDetailsToken.initiate()).unwrap();
+
+      // Pinned deliberately: RTK Query retains a tracked mutation result, so a caller that drops
+      // `track: false` leaves the PAN image URL in Redux. This failing would mean that changed.
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(detailsToken.token);
     });
   });
 

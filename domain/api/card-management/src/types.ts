@@ -10,6 +10,8 @@ import {
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
+  PayCardDetailsCssSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -30,6 +32,17 @@ export type PayCardFreezeStateResult = z.infer<typeof PayCardFreezeStateResponse
 export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 
 export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
+
+export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
+
+/**
+ * Single use, and short-lived: the provider invalidates the token once the image has been read.
+ *
+ * Neither field may be logged or stored. RTK Query does not enforce that: it holds a tracked
+ * mutation result in `state.cardApi.mutations`, so the caller has to dispatch with
+ * `{ track: false }` or reset as soon as the URL has been used.
+ */
+export type PayCardDetailsToken = z.infer<typeof PayCardDetailsTokenResponseSchema>;
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;
