@@ -9,6 +9,22 @@ import {
   isTokenTransaction,
 } from "../logic/utils";
 
+// `transaction.recipient` is the validator for BOND but the staker itself for
+// UNBOND/WITHDRAW_UNBONDED (see prepareTransaction), so only BOND's is a counterparty.
+function resolveStakingExtra(
+  stakingType: OperationType | undefined,
+  transaction: Transaction,
+): Partial<AleoOperationExtra> {
+  switch (stakingType) {
+    case "BOND":
+      return { validator: transaction.recipient, stakedAmount: transaction.amount };
+    case "UNBOND":
+      return { stakedAmount: transaction.amount };
+    default:
+      return {};
+  }
+}
+
 export function buildOptimisticOperation({
   account,
   transaction,
@@ -28,14 +44,7 @@ export function buildOptimisticOperation({
     functionId: getFunctionNameFromTransactionType(transaction.mode),
     transactionType: getOperationTransactionType(transaction.mode),
   };
-  // `transaction.recipient` is the validator for BOND and the staker for UNBOND/WITHDRAW_UNBONDED
-  // (see prepareTransaction), so only BOND's is a counterparty worth keeping.
-  const stakingExtra: Partial<AleoOperationExtra> =
-    stakingType === "BOND"
-      ? { validator: transaction.recipient, stakedAmount: transaction.amount }
-      : stakingType === "UNBOND"
-        ? { stakedAmount: transaction.amount }
-        : {};
+  const stakingExtra = resolveStakingExtra(stakingType, transaction);
 
   if (isTokenTx && tokenSubAccount) {
     const subOperationType: OperationType = "OUT";
