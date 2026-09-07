@@ -14,6 +14,14 @@ export interface DeviceScreenImageProps {
 }
 
 /**
+ * Round a ratio of a frame's own dimension to a device pixel, clamped to the
+ * screen: rounding at the very edge of the image otherwise yields `size` or a
+ * negative value, and Speculos is sent a point that is not on the screen.
+ */
+const toPixelIndex = (value: number, size: number): number =>
+  Math.min(Math.max(Math.round(value), 0), size - 1);
+
+/**
  * A still frame of the device screen. The PNG's own dimensions drive the aspect
  * ratio and the touch mapping, so every model is handled without a per-model
  * size table.
@@ -22,14 +30,6 @@ export interface DeviceScreenImageProps {
  * holding the mouse holds the finger — Stax and Flex gate their confirmations
  * behind exactly that.
  */
-/**
- * Round a ratio of a frame's own dimension to a device pixel, clamped to the
- * screen: rounding at the very edge of the image otherwise yields `size` or a
- * negative value, and Speculos is sent a point that is not on the screen.
- */
-const toPixelIndex = (value: number, size: number): number =>
-  Math.min(Math.max(Math.round(value), 0), size - 1);
-
 export function DeviceScreenImage({ src, onTouch }: DeviceScreenImageProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [aspectRatio, setAspectRatio] = useState<number>();
