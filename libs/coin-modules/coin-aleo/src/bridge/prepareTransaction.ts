@@ -217,6 +217,8 @@ export const prepareTransaction: AccountBridge<
     });
 
     return updateTransaction(transaction, {
+      // `claim_unbond_public` names only the staker: the chain pays out whatever is claimable,
+      // so no amount is signed.
       amount: new BigNumber(0),
       fees: estimatedFees,
       recipient: account.freshAddress,

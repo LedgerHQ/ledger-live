@@ -41,7 +41,6 @@ async function getDeviceTransactionConfig({
 
   // `claim_unbond_public` takes only the staker: the amount is decided by the chain and
   // absent from the signed payload, so the device displays none and neither do we.
-  // `transaction.amount` is pinned to 0 for this mode, which would render as "0 ALEO".
   if (transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
     fields.push({ type: "amount", label: "Amount" });
   }
