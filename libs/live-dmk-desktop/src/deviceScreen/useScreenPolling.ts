@@ -22,9 +22,25 @@ export function useScreenPolling(api: ScreenApi, polling: boolean): DeviceScreen
 
   const objectUrl = useRef<string | null>(null);
   const inFlight = useRef(false);
+  /**
+   * A screenshot in flight when the panel closes resolves after teardown, and
+   * its state write would land on a hook that is gone.
+   */
+  const mounted = useRef(true);
   /** Read by the poll loop to pick its delay. */
   const isLive = useRef(false);
   isLive.current = state.kind === "image";
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  const publish = useCallback((next: DeviceScreenState) => {
+    if (mounted.current) setState(next);
+  }, []);
 
   const releaseObjectUrl = useCallback(() => {
     if (objectUrl.current) {
@@ -43,13 +59,13 @@ export function useScreenPolling(api: ScreenApi, polling: boolean): DeviceScreen
     const send = (call: Promise<void>) =>
       void call
         .then(() => refreshRef.current())
-        .catch((error: unknown) => setState({ kind: "error", message: describe(error) }));
+        .catch((error: unknown) => publish({ kind: "error", message: describe(error) }));
 
     return {
       pressButton: (button, action) => send(api.pressButton(button, action)),
       touch: (x, y, action) => send(api.touch(x, y, action)),
     };
-  }, [api]);
+  }, [api, publish]);
 
   const refresh = useCallback(async () => {
     if (inFlight.current) return;
@@ -59,16 +75,16 @@ export function useScreenPolling(api: ScreenApi, polling: boolean): DeviceScreen
       releaseObjectUrl();
       if (blob) {
         objectUrl.current = URL.createObjectURL(blob);
-        setState({ kind: "image", src: objectUrl.current, input });
+        publish({ kind: "image", src: objectUrl.current, input });
       } else {
-        setState((await api.idle?.()) ?? { kind: "error", message: "No screen to capture" });
+        publish((await api.idle?.()) ?? { kind: "error", message: "No screen to capture" });
       }
     } catch (error) {
-      setState({ kind: "error", message: describe(error) });
+      publish({ kind: "error", message: describe(error) });
     } finally {
       inFlight.current = false;
     }
-  }, [api, input, releaseObjectUrl]);
+  }, [api, input, publish, releaseObjectUrl]);
 
   useEffect(() => {
     refreshRef.current = () => void refresh();
@@ -83,7 +99,7 @@ export function useScreenPolling(api: ScreenApi, polling: boolean): DeviceScreen
       return;
     }
 
-    let timer: ReturnType<typeof setTimeout>;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
 
     const tick = async () => {
