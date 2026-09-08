@@ -351,7 +351,7 @@ test.describe("Delegate", () => {
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloVoteButton();
-      await app.delegate.selectProviderOnRow(1);
+      const provider = await app.delegate.selectProviderOnRow(1);
       await app.delegate.continue();
       await app.delegate.fillAmount(account.amount);
       await app.delegate.continue();
@@ -361,7 +361,7 @@ test.describe("Delegate", () => {
       await app.drawer.waitForDrawerToBeVisible();
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Voted");
-      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.validatorGroupIsVisible(provider);
       await app.delegateDrawer.operationTypeIsCorrect("Voted");
       await app.drawer.closeDrawer();
     },

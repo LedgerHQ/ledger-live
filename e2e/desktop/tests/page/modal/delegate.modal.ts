@@ -48,8 +48,10 @@ export class DelegateModal extends Modal {
   }
 
   @step("Select provider on row $0")
-  async selectProviderOnRow(row: number) {
-    await this.selectProviderByName(await this.getTitleProvider(row));
+  async selectProviderOnRow(row: number): Promise<string> {
+    const provider = await this.getTitleProvider(row);
+    await this.selectProviderByName(provider);
+    return provider;
   }
 
   @step("Select provider $0")
