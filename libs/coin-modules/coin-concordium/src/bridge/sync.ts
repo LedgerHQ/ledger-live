@@ -91,8 +91,13 @@ const TOKENS_OFF_SYNC_HASH = "tokens=off";
 
 /**
  * Stored in place of the computed hash by a sync that fetched PLT transfers it
- * could not attribute. It matches nothing `computeSyncHash` returns, so the
- * next sync re-reads from height zero and picks them up.
+ * could not attribute, so that the next sync mismatches and re-reads from
+ * height zero.
+ *
+ * A CAL outage is the one case that echoes this value back rather than
+ * mismatching, deferring the re-read. That costs nothing: attributing those
+ * transfers needs the CAL that is down, and the first healthy sync computes a
+ * real hash, mismatches, and picks them up.
  */
 const REFETCH_SYNC_HASH = "refetch-pending";
 

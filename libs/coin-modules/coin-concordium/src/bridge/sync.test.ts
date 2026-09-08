@@ -826,6 +826,33 @@ describe("getAccountShape with tokens enabled", () => {
     expect(result.syncHash).toBe("refetch-pending");
   });
 
+  it("re-reads from zero on the first healthy sync after transfers went unattributed", async () => {
+    await shape(storedAccount({ syncHash: "refetch-pending" }));
+
+    expect(listOperations).toHaveBeenLastCalledWith(
+      tokensOnConfig,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("defers that re-read while the CAL is still down, rather than losing it", async () => {
+    (mockCryptoAssetsStore as { getTokensSyncHash: jest.Mock }).getTokensSyncHash.mockRejectedValue(
+      new Error("CAL down"),
+    );
+
+    const result = await shape(storedAccount({ syncHash: "refetch-pending" }));
+
+    expect(result.syncHash).toBe("refetch-pending");
+    expect(listOperations).toHaveBeenLastCalledWith(
+      tokensOnConfig,
+      VALID_ADDRESS,
+      { minHeight: 501, limit: 100, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
   it("keeps the computed syncHash when a balance failure cost it no transfers", async () => {
     getAccountBalance.mockRejectedValue(new Error("balance endpoint down"));
 
