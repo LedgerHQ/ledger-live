@@ -1,4 +1,4 @@
-import { featureFlagsLense, payCardPersistedSelector } from "./DBSave";
+import { featureFlagsLense, payCardDbSaveSliceSelector, payCardPersistedSelector } from "./DBSave";
 import type { State } from "~/reducers/types";
 
 describe("featureFlagsLense", () => {
@@ -25,6 +25,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       payCardFeatureTour: { hasSeenFeatureTour: true },
       payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+      payCardLoginIntro: { hasSeenLoginIntro: true },
       payCardOnboardingWidget: { hasCompletedOnboarding: true },
     } as unknown as State;
 
@@ -34,7 +35,34 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       hasSeenFeatureTour: true,
       hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
+      hasSeenLoginIntro: true,
       hasCompletedOnboarding: true,
     });
+  });
+});
+
+describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
+  const base = {
+    payCardFeatureTour: { hasSeenFeatureTour: false },
+    payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+    payCardBalance: { balanceFilter: "all" },
+    payCardLoginIntro: { hasSeenLoginIntro: false },
+    payCardOnboardingWidget: { hasCompletedOnboarding: false },
+  } as unknown as State;
+
+  it("holds its identity while no pay card slice changes", () => {
+    expect(payCardDbSaveSliceSelector(base)).toBe(payCardDbSaveSliceSelector(base));
+  });
+
+  it.each([
+    "payCardFeatureTour",
+    "payRequestVerifyHint",
+    "payCardBalance",
+    "payCardLoginIntro",
+    "payCardOnboardingWidget",
+  ] as const)("re-triggers the save when only %s changes", slice => {
+    const next = { ...base, [slice]: {} } as unknown as State;
+
+    expect(payCardDbSaveSliceSelector(next)).not.toBe(payCardDbSaveSliceSelector(base));
   });
 });

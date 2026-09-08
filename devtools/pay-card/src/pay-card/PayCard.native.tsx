@@ -43,6 +43,8 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetCardOnboarding,
     onNavigateToPortfolio,
     onNavigateToPayTab,
+    hasSeenLoginIntro,
+    resetPayCardLoginIntroSeen,
     auth,
     openSecureBrowser,
   } = props;
@@ -198,6 +200,15 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             </Section>
           </>
         ) : null}
+
+        <Divider />
+
+        <SeenReset
+          title="Card login intro"
+          seen={hasSeenLoginIntro}
+          resetLabel="Reset card login intro"
+          onReset={resetPayCardLoginIntroSeen}
+        />
 
         {openSecureBrowser ? (
           <>

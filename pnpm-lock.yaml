@@ -49,8 +49,8 @@ catalogs:
       specifier: 9.6.0
       version: 9.6.0
     '@ledgerhq/coin-tezos':
-      specifier: 10.2.1
-      version: 10.2.1
+      specifier: 10.2.2
+      version: 10.2.2
     '@ledgerhq/coin-xrp':
       specifier: 10.1.0
       version: 10.1.0
@@ -3193,6 +3193,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@features/flow-pay-card-auth':
+        specifier: workspace:*
+        version: link:../../features/flow/pay-card-auth
       '@features/flow-pay-card-wallets':
         specifier: workspace:*
         version: link:../../features/flow/pay-card-wallets
@@ -11866,7 +11869,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.1
+        version: 10.2.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13033,7 +13036,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 10.2.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -15316,9 +15319,6 @@ importers:
 
   libs/live-currency-format:
     dependencies:
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -22362,8 +22362,8 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-tezos@10.2.1':
-    resolution: {integrity: sha512-X0wlTeCDghPgCxIU/EjRzgUgC7HHZEEEOfPNssH1ykoCh9b+lSfU4jD1o7L+u2dE7q16RFW450VWSQJsQ4wfng==}
+  '@ledgerhq/coin-tezos@10.2.2':
+    resolution: {integrity: sha512-yFQQ7adR6xJG0Mv5U9YHEzyv0xP3IdGWuTNAFlEnX9njp6me2y/gZl2+GI2pBpWscIRVqqzjaxkHfB/qdLiw4A==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -28578,7 +28578,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -37328,6 +37328,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -47803,7 +47804,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ledgerhq/coin-tezos@10.2.1':
+  '@ledgerhq/coin-tezos@10.2.2':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.4.0
       '@taquito/ledger-signer': 23.0.1
@@ -47813,7 +47814,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-tezos@10.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-tezos@10.2.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
@@ -65378,7 +65379,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

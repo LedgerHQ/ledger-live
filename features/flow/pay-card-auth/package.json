@@ -87,6 +87,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-svg": "catalog:",
     "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -100,6 +101,9 @@
       "optional": true
     },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-svg": {
       "optional": true
     }
   }

@@ -40,6 +40,8 @@ export type CardLoginOauthConfig = Readonly<{
   /** Base of the Card API, which also hosts the authorize page the browser opens. */
   apiUrl: string;
   clientId: string;
+  /** Base of the provider's hosted UI, which carries the signup page the intro opens. */
+  hostedUiUrl: string;
   /**
    * Sent to the provider on authorize. The token exchange does not repeat it. The provider whitelists
    * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
@@ -158,4 +160,8 @@ export type PayCardAuthState = Readonly<{
    * it reads this flag instead, because two machines would each hydrate and neither would agree.
    */
   isSignedIn: boolean;
+}>;
+
+export type PayCardLoginIntroState = Readonly<{
+  hasSeenLoginIntro: boolean;
 }>;
