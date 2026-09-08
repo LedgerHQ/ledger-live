@@ -25,8 +25,10 @@ export type FreezeCardViewProps = Readonly<{
   isUnfreezeLoading: boolean;
   isFreezeError: boolean;
   isUnfreezeError: boolean;
-  onFreeze: () => void;
-  onUnfreeze: () => void;
+  isConfirmOpen: boolean;
+  onOpenConfirm: () => void;
+  onCloseConfirm: () => void;
+  onConfirm: () => void;
 }>;
 
 export type FreezeViewProps = Pick<
@@ -36,6 +38,16 @@ export type FreezeViewProps = Pick<
   | "isStatusLoading"
   | "isFreezeLoading"
   | "isUnfreezeLoading"
-  | "onFreeze"
-  | "onUnfreeze"
+  | "isConfirmOpen"
+  | "onOpenConfirm"
+  | "onCloseConfirm"
+  | "onConfirm"
 >;
+
+export type FreezeConfirmSheetProps = Readonly<{
+  isOpen: boolean;
+  isFrozen: boolean;
+  isLoading: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}>;

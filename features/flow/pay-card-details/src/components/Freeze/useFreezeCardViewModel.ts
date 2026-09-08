@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   useFreezeCardMutation,
   useGetCardStatusQuery,
@@ -23,11 +23,24 @@ export function useFreezeCardViewModel(): FreezeCardViewProps {
   const [unfreeze, { isLoading: isUnfreezeLoading, isError: isUnfreezeError }] =
     useUnfreezeCardMutation();
 
-  return useMemo(() => {
-    const statusFromApi = cardStatus?.status;
-    const isFrozen = resolveOptimisticFrozen(statusFromApi, isFreezeLoading, isUnfreezeLoading);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-    return {
+  const statusFromApi = cardStatus?.status;
+  const isFrozen = resolveOptimisticFrozen(statusFromApi, isFreezeLoading, isUnfreezeLoading);
+
+  const onOpenConfirm = useCallback(() => setIsConfirmOpen(true), []);
+  const onCloseConfirm = useCallback(() => setIsConfirmOpen(false), []);
+  const onConfirm = useCallback(() => {
+    setIsConfirmOpen(false);
+    if (isFrozen) {
+      unfreeze();
+    } else {
+      freeze();
+    }
+  }, [isFrozen, freeze, unfreeze]);
+
+  return useMemo(
+    () => ({
       isFrozen,
       isBlocked: statusFromApi === "BLOCKED",
       isStatusLoading,
@@ -35,17 +48,23 @@ export function useFreezeCardViewModel(): FreezeCardViewProps {
       isUnfreezeLoading,
       isFreezeError,
       isUnfreezeError,
-      onFreeze: () => void freeze(),
-      onUnfreeze: () => void unfreeze(),
-    };
-  }, [
-    cardStatus,
-    isStatusLoading,
-    isFreezeLoading,
-    isUnfreezeLoading,
-    isFreezeError,
-    isUnfreezeError,
-    freeze,
-    unfreeze,
-  ]);
+      isConfirmOpen,
+      onOpenConfirm,
+      onCloseConfirm,
+      onConfirm,
+    }),
+    [
+      isFrozen,
+      statusFromApi,
+      isStatusLoading,
+      isFreezeLoading,
+      isUnfreezeLoading,
+      isFreezeError,
+      isUnfreezeError,
+      isConfirmOpen,
+      onOpenConfirm,
+      onCloseConfirm,
+      onConfirm,
+    ],
+  );
 }
